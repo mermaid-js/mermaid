@@ -1,0 +1,24 @@
+{
+  "name": "mermaid",
+  "version": "0.0.1",
+  "authors": [
+    "knsv <knut@sveido.com>"
+  ],
+  "description": "Markdownish syntax for generating diagrams",
+  "main": "mermaid.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "diagram",
+    "markdown"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
