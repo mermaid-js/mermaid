@@ -126,3 +126,8 @@ borderWidth: NUM UNIT
 borderStyle: BORDER_STYLE
         {$$ = $1;}
     ;
+
+%%
+define('parser/mermaid',function(){
+    return mermaid;
+});

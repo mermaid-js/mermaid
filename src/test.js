@@ -2,17 +2,12 @@
 //console.log(p.parse('#fcfcfc'));
 //console.log(p.parse('background: #fcfcfc'));
 //console.log(p.parse('background: black'));
-var scope={
-	addVertex:function(id,text,type,style){
-	console.log('Got node '+id+' '+type+' '+text+' styles: '+JSON.stringify(style));
-},
-addLink:function(start,end,type,linktext){
-	console.log('Got link from '+start+' to '+end+' type:'+type.type+' linktext:'+linktext);
-}
-};
+//
 
-var p = require('./mermaid.js');
-p.parser.yy = scope;
+
+/*
+var p = require('./parser/mermaid.js');
+p.parser.yy = require('./parser/scope');
 
 
 console.log(p.parse('A-->B;'));
@@ -32,3 +27,4 @@ console.log(p.parse('style R background:#fff,border:1px solid red;'));
 console.log(p.parse('style S background:#aaa;\nstyle T background:#bbb,border:1px solid red;'));
 //console.log(p.parse('A;'));
 
+*/

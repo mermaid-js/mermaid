@@ -12,6 +12,10 @@
     "gulp": "~3.8.9",
     "jison": "~0.4.15",
     "jasmine": "~2.0.1",
-    "gulp-jison": "~1.0.0"
+    "gulp-jison": "~1.0.0",
+    "karma": "~0.12.20",
+    "karma-jasmine": "~0.2.1",
+    "karma-chrome-launcher": "~0.1.5",
+    "karma-requirejs": "~0.2.2"
   }
 }

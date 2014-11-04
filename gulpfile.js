@@ -11,5 +11,5 @@ gulp.task('jison', function() {
 gulp.task('shorthand', shell.task([
   'echo hello',
   'echo world',
-  'jison src/mermaid.jison -o src/mermaid.js'
+  'jison src/parser/mermaid.jison -o src/parser/mermaid.js'
 ]))
