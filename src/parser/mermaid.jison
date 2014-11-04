@@ -103,7 +103,7 @@ styles:
     styledef
         {$$ = [$1];}
     | styles COMMA styledef
-        {console.log('in styles:'+JSON.stringify($1));$1.push($3);$$ = $1;}
+        {$1.push($3);$$ = $1;}
     ;
 styledef: BKG COLON colordef
     {$$={"background":$3}}
@@ -129,5 +129,5 @@ borderStyle: BORDER_STYLE
 
 %%
 define('parser/mermaid',function(){
-    return mermaid;
+    return parser;
 });
