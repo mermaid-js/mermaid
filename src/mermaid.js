@@ -21,7 +21,7 @@ define(['parser/graph','parser/mermaid'],function(graph,parser){
                 g.setNode(vertice.id,    { label: verticeText,rx:5,ry:5 });
             }else{
                 if(vertice.type==='diamond'){
-                    g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0 });
+                    g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0,style: "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;"  });
                 }else{
                     g.setNode(vertice.id,    { label: verticeText,rx:0,ry:0 });
                 }

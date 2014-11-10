@@ -6,13 +6,14 @@ define('parser/graph',function() {
     var edges = [];
     var graph = {
         addVertex: function (id, text, type, style) {
+            console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
             if(typeof vertices[id] === 'undefined'){
                 vertices[id]={id:id, styles:[]};
             }
-            if(typeof text !== undefined){
+            if(typeof text !== 'undefined'){
                 vertices[id].text = text;
             }
-            if(typeof type !== undefined){
+            if(typeof type !== 'undefined'){
                 vertices[id].type = type;
             }
             if(typeof style !== 'undefined'){
@@ -23,7 +24,6 @@ define('parser/graph',function() {
                     });
                 }
             }
-            //console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
         },
         getVertices:function(){
             return vertices;
