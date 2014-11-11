@@ -5,26 +5,18 @@
 
 %%
 "style"               return 'STYLE';
-"background"          return 'BKG';
-"red"                 return 'COLOR';
-"blue"                return 'COLOR';
-"black"               return 'COLOR';
 \#[a-f0-9]+           return 'HEX';
 [0-9]+                return 'NUM';
-"border"              return 'BORDER';
-"dotted"              return 'BORDER_STYLE';
-"dashed"              return 'BORDER_STYLE';
-"solid"               return 'BORDER_STYLE';
 "px"                  return 'UNIT';
 "pt"                  return 'UNIT';
 "dot"                 return 'UNIT';
 ":"                   return 'COLON';
+\-                    return 'MINUS';
 ";"                   return ';';
 ","                   return 'COMMA';
-\-\-[x]               return 'ARROW_CROSS';
-\-\-">"               return 'ARROW_POINT';
-\-\-[o]               return 'ARROW_CIRCLE';
-\-\-\-                return 'ARROW_OPEN';
+[x]                   return 'ARROW_CROSS';
+">"                   return 'ARROW_POINT';
+[o]                   return 'ARROW_CIRCLE';
 [a-zA-Z]+             return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
@@ -61,7 +53,9 @@ graph
         { $$ = $1;}
     ;
 
-edge: vertex link vertex PIPE text
+edge: styleStatement
+    {$$ = 'ya';}
+    | vertex link vertex PIPE text
         { yy.addLink($1,$3,$2,$5);$$ = 'oy'}
     | vertex link vertex
         { yy.addLink($1,$3,$2);$$ = 'oy'}
@@ -69,10 +63,11 @@ edge: vertex link vertex PIPE text
         {$$ = 'yo';}
     ;
 
+styleStatement:STYLE SPACE ALPHA SPACE stylesOpt
+    {console.log('a4');$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
+    ;
 
-vertex: STYLE SPACE ALPHA SPACE styles
-        {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
-    | ALPHA SQS text SQE
+vertex:  ALPHA SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
     | ALPHA PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
@@ -90,29 +85,44 @@ text: ALPHA SPACE text
         {$$ = $1;}        
     ;
 
-link: ARROW_POINT
+link: MINUS MINUS ARROW_POINT
         {$$ = {"type":"arrow"};}
-    | ARROW_CIRCLE
+    | MINUS MINUS ARROW_CIRCLE
         {$$ = {"type":"arrow_circle"};}
-    | ARROW_CROSS
+    | MINUS MINUS ARROW_CROSS
         {$$ = {"type":"arrow_cross"};}
-    | ARROW_OPEN
+    | MINUS MINUS MINUS
         {$$ = {"type":"arrow_open"};}
     ;
-styles:
-    styledef
-        {$$ = [$1];}
-    | styles COMMA styledef
-        {$1.push($3);$$ = $1;}
+
+stylesOpt: style
+        {console.log('a:'+$1);$$ = [$1]}
+    | stylesOpt COMMA style
+        {console.log('a3:'+$1.length+','+$3);$1.push($3);$$ = $1;}
     ;
-styledef: BKG COLON colordef
-    {$$={"background":$3}}
-    | COL COLON COLORDEF
-    {$$={"color":$3}}
-    | BORDER COLON borderWidth SPACE borderStyle SPACE colordef
-    {$$={"border":$3+' '+$5+' '+$7}}
+
+style: styleComponent
+    {$$=$1;}
+    |style styleComponent
+    {console.log('b1:');$$ = $1 + $2;}
     ;
-    
+
+styleComponent: ALPHA
+    {$$=$1}
+    | COLON
+    {$$=$1}
+    | MINUS
+    {$$=$1}
+    | NUM
+    {$$=$1}
+    | UNIT
+    {$$=$1}
+    | SPACE
+    {$$=$1}
+    | HEX
+    {$$=$1}
+    ;
+
 colordef: COLOR
         {$$ = yytext;}
     |   HEX
@@ -129,5 +139,6 @@ borderStyle: BORDER_STYLE
 
 %%
 define('parser/mermaid',function(){
+    console.log('abc123'+parser.parseError);
     return parser;
 });

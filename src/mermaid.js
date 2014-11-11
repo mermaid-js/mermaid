@@ -2,28 +2,46 @@
  * Created by knut on 14-11-06.
  */
 // Now we're ready to require JointJS and write our application code.
-define(['parser/graph','parser/mermaid'],function(graph,parser){
+define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
     var addVertices = function(vert,g){
         var keys = Object.keys(vert);
 
         keys.forEach(function(id){
             var vertice = vert[id];
             var verticeText;
-            //console.log(vertice);
+
+
+            console.log(vertice.styles.length);
+
+            var i;
+            var style='';
+            for(i=0;i<vertice.styles.length;i++){
+                if(typeof vertice.styles[i] !== 'undefined'){
+                    style=style+vertice.styles[i]+';';
+                }
+            }
+
             if(vertice.text === undefined){
                 verticeText = vertice.id;
             }
             else{
                 verticeText = vertice.text;
             }
+
+
+            if(style === ''){
+                style = graph.defaultStyle();
+            }
+
             console.log('g.setNode("'+vertice.id+'",    { label: "'+verticeText+'" });');
             if(vertice.type==='round'){
-                g.setNode(vertice.id,    { label: verticeText,rx:5,ry:5 });
+                g.setNode(vertice.id,    { label: verticeText,rx:5,ry:5,style:style });
             }else{
                 if(vertice.type==='diamond'){
-                    g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0,style: "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;"  });
+                    //g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0,style: "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;"  });
+                    g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0,style: style  });
                 }else{
-                    g.setNode(vertice.id,    { label: verticeText,rx:0,ry:0 });
+                    g.setNode(vertice.id,    { label: verticeText,rx:0,ry:0,style:style });
                 }
             }
         });

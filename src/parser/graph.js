@@ -18,7 +18,7 @@ define('parser/graph',function() {
             }
             if(typeof style !== 'undefined'){
                 if(style !== null){
-                    //console.log('Adding style: '+style[0]);
+                    console.log('Adding style: '+style);
                     style.forEach(function(s){
                         vertices[id].styles.push(s);
                     });
@@ -42,6 +42,9 @@ define('parser/graph',function() {
         clear:function(){
             vertices = {};
             edges = [];
+        },
+        defaultStyle:function(){
+            return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
         }
     };
 

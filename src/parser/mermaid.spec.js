@@ -7,6 +7,9 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
         beforeEach(function(){
             graph.clear();
             p.yy = graph;
+            /*p.parse.parseError= function parseError(str, hash) {
+                console.log(str);
+            }*/
         });
 
         it('should handle a nodes and edges',function(){
@@ -145,7 +148,7 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
             var style = vert['Q'].styles[0];
 
             expect(vert['Q'].styles.length).toBe(1);
-            expect(vert['Q'].styles[0].background).toBe('#fff');
+            expect(vert['Q'].styles[0]).toBe('background:#fff');
         });
         it('should handle multiple styles for a vortex',function(){
             var res = p.parse('style R background:#fff,border:1px solid red;');
@@ -154,8 +157,8 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
             var edges = p.yy.getEdges();
 
             expect(vert['R'].styles.length).toBe(2);
-            expect(vert['R'].styles[0].background).toBe('#fff');
-            expect(vert['R'].styles[1].border).toBe('1px solid red');
+            expect(vert['R'].styles[0]).toBe('background:#fff');
+            expect(vert['R'].styles[1]).toBe('border:1px solid red');
         });
 
         it('should handle multiple styles in a graph',function(){
@@ -166,9 +169,9 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
 
             expect(vert['S'].styles.length).toBe(1);
             expect(vert['T'].styles.length).toBe(2);
-            expect(vert['S'].styles[0].background).toBe('#aaa');
-            expect(vert['T'].styles[0].background).toBe('#bbb');
-            expect(vert['T'].styles[1].border).toBe('1px solid red');
+            expect(vert['S'].styles[0]).toBe('background:#aaa');
+            expect(vert['T'].styles[0]).toBe('background:#bbb');
+            expect(vert['T'].styles[1]).toBe('border:1px solid red');
         });
 
         it('should handle styles and graph definitons in a graph',function(){
@@ -179,11 +182,20 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
 
             expect(vert['S'].styles.length).toBe(1);
             expect(vert['T'].styles.length).toBe(2);
-            expect(vert['S'].styles[0].background).toBe('#aaa');
-            expect(vert['T'].styles[0].background).toBe('#bbb');
-            expect(vert['T'].styles[1].border).toBe('1px solid red');
+            expect(vert['S'].styles[0]).toBe('background:#aaa');
+            expect(vert['T'].styles[0]).toBe('background:#bbb');
+            expect(vert['T'].styles[1]).toBe('border:1px solid red');
         });
+        it('should handle styles and graph definitons in a graph',function(){
+            var res = p.parse('style T background:#bbb,border:1px solid red;');
+            //var res = p.parse('style T background: #bbb;');
 
+            var vert = p.yy.getVertices();
+
+            expect(vert['T'].styles.length).toBe(2);
+            expect(vert['T'].styles[0]).toBe('background:#bbb');
+            expect(vert['T'].styles[1]).toBe('border:1px solid red');
+        });
         //console.log(p.parse('style S background:#aaa;\nstyle T background:#bbb,border:1px solid red;'));
     });
 

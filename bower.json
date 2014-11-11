@@ -23,6 +23,11 @@
   ],
   "devDependencies": {
     "jasmine": "~2.0.4",
-    "requirejs": "~2.1.15"
+    "requirejs": "~2.1.15",
+    "raphael": "~2.1.2",
+    "snap": "*",
+    "Snap.svg": "~0.3.0",
+    "dagre": "~0.6.4",
+    "dagre-d3": "~0.3.2"
   }
 }
