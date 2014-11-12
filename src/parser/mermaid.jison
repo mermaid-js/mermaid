@@ -17,7 +17,7 @@
 [x]                   return 'ARROW_CROSS';
 ">"                   return 'ARROW_POINT';
 [o]                   return 'ARROW_CIRCLE';
-[a-zA-Z]+             return 'ALPHA';
+[a-zåäöæøA-ZÅÄÖÆØ]+   return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -78,7 +78,9 @@ vertex:  ALPHA SQS text SQE
     ;
 // Characters and spaces
 text: ALPHA SPACE text
-        {$$ = $1 + ' ' +$3;} 
+        {$$ = $1 + ' ' +$3;}
+    | ALPHA MINUS text
+         {$$ = $1 + '-' +$3;}
     | ALPHA SPACE
         {$$ = $1;}
     | ALPHA
@@ -139,6 +141,5 @@ borderStyle: BORDER_STYLE
 
 %%
 define('parser/mermaid',function(){
-    console.log('abc123'+parser.parseError);
     return parser;
 });

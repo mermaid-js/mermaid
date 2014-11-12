@@ -10,6 +10,7 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
             /*p.parse.parseError= function parseError(str, hash) {
                 console.log(str);
             }*/
+            console.log('in mm spec');
         });
 
         it('should handle a nodes and edges',function(){
@@ -126,6 +127,25 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
             expect(vert['A'].type).toBe('diamond');
             expect(vert['A'].text).toBe('chimpansen hoppar');
         });
+        it('should handle text in vertices with space',function(){
+            var res = p.parse('A-->C{Chimpansen hoppar};');
+
+            var vert = p.yy.getVertices();
+            var edges = p.yy.getEdges();
+
+            expect(vert['C'].type).toBe('diamond');
+            expect(vert['C'].text).toBe('Chimpansen hoppar');
+        });
+
+        it('should handle text in vertices with åäö and minus',function(){
+            var res = p.parse('A-->C{Chimpansen hoppar åäö-ÅÄÖ};');
+
+            var vert = p.yy.getVertices();
+            var edges = p.yy.getEdges();
+
+            expect(vert['C'].type).toBe('diamond');
+            expect(vert['C'].text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
+        });
 
         it('should handle a single node',function(){
             // Silly but syntactically correct
@@ -196,7 +216,6 @@ define('parser/mermaid.spec',['parser/graph','parser/mermaid'],function(graph, p
             expect(vert['T'].styles[0]).toBe('background:#bbb');
             expect(vert['T'].styles[1]).toBe('border:1px solid red');
         });
-        //console.log(p.parse('style S background:#aaa;\nstyle T background:#bbb,border:1px solid red;'));
     });
 
 });

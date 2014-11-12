@@ -30,7 +30,7 @@ define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
 
 
             if(style === ''){
-                style = graph.defaultStyle();
+                //style = graph.defaultStyle();
             }
 
             console.log('g.setNode("'+vertice.id+'",    { label: "'+verticeText+'" });');
@@ -38,8 +38,7 @@ define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
                 g.setNode(vertice.id,    { label: verticeText,rx:5,ry:5,style:style });
             }else{
                 if(vertice.type==='diamond'){
-                    //g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0,style: "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;"  });
-                    g.setNode(vertice.id,    {shape: "house", label: verticeText,rx:0,ry:0,style: style  });
+                    g.setNode(vertice.id,    {shape: "question", label: verticeText,rx:0,ry:0,style: style  });
                 }else{
                     g.setNode(vertice.id,    { label: verticeText,rx:0,ry:0,style:style });
                 }
@@ -93,16 +92,11 @@ define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
         addVertices(vert,g);
         addEdges(edges,g);
 
-        /*g.nodes().forEach(function(v) {
-            var node = g.node(v);
-            // Round the corners of the nodes
-            node.rx = node.ry = 5;
-        });
-*/
         // Create the renderer
         var render = new dagreD3.render();
-// Add our custom shape (a house)
-        render.shapes().house = function(parent, bbox, node) {
+
+        // Add our custom shape
+        render.shapes().question = function(parent, bbox, node) {
             var w = bbox.width,
                 h = bbox.height*3,
                 points = [
@@ -115,6 +109,8 @@ define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
                 .attr("points", points.map(function(d) { return d.x + "," + d.y; }).join(" "))
                 .style("fill", "#fff")
                 .style("stroke", "#333")
+                .attr("rx", 5)
+                .attr("ry", 5)
                 .attr("transform", "translate(" + (-w/2) + "," + (h * 2/4) + ")");
             node.intersect = function(point) {
                 return dagreD3.intersect.polygon(node, points, point);

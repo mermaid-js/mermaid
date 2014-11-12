@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,7],$V2=[1,8],$V3=[8,12,23],$V4=[1,23],$V5=[8,18,20,22],$V6=[1,46],$V7=[1,41],$V8=[1,43],$V9=[1,42],$Va=[1,44],$Vb=[1,45],$Vc=[1,47],$Vd=[8,28],$Ve=[6,8,15,23,28,30,31,32,33];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[5,8];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"expressions":3,"graph":4,"EOF":5,"SPACE":6,"edge":7,";":8,"styleStatement":9,"vertex":10,"link":11,"PIPE":12,"text":13,"STYLE":14,"ALPHA":15,"stylesOpt":16,"SQS":17,"SQE":18,"PS":19,"PE":20,"DIAMOND_START":21,"DIAMOND_STOP":22,"MINUS":23,"ARROW_POINT":24,"ARROW_CIRCLE":25,"ARROW_CROSS":26,"style":27,"COMMA":28,"styleComponent":29,"COLON":30,"NUM":31,"UNIT":32,"HEX":33,"colordef":34,"COLOR":35,"borderWidth":36,"borderStyle":37,"BORDER_STYLE":38,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",6:"SPACE",8:";",12:"PIPE",14:"STYLE",15:"ALPHA",17:"SQS",18:"SQE",19:"PS",20:"PE",21:"DIAMOND_START",22:"DIAMOND_STOP",23:"MINUS",24:"ARROW_POINT",25:"ARROW_CIRCLE",26:"ARROW_CROSS",28:"COMMA",30:"COLON",31:"NUM",32:"UNIT",33:"HEX",35:"COLOR",38:"BORDER_STYLE"},
-productions_: [0,[3,2],[4,2],[4,3],[4,2],[7,1],[7,5],[7,3],[7,1],[9,5],[10,4],[10,4],[10,4],[10,1],[13,3],[13,3],[13,2],[13,1],[11,3],[11,3],[11,3],[11,3],[16,1],[16,3],[27,1],[27,2],[29,1],[29,1],[29,1],[29,1],[29,1],[29,1],[29,1],[34,1],[34,1],[36,2],[37,1]],
+symbols_: {"error":2,"expressions":3,"id":4,"EOF":5,"flow":6,"STYLE":7,"MINUS":8,"word":9,"ALPHA":10,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"STYLE",8:"MINUS",10:"ALPHA"},
+productions_: [0,[3,2],[6,1],[6,1],[4,3],[4,1],[9,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -86,88 +86,22 @@ switch (yystate) {
 case 1:
 return $$[$0-1];
 break;
-case 2: case 3:
- this.$ = $$[$0];
+case 2:
+this.$='key';
 break;
-case 4:
- this.$ = $$[$0-1];
-break;
-case 5:
-this.$ = 'ya';
-break;
-case 6:
- yy.addLink($$[$0-4],$$[$0-2],$$[$0-3],$$[$0]);this.$ = 'oy'
-break;
-case 7:
- yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
-break;
-case 8:
-this.$ = 'yo';
-break;
-case 9:
-console.log('a4');this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
-break;
-case 10:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
-break;
-case 11:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
-break;
-case 12:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
-break;
-case 13:
-this.$ = $$[$0];yy.addVertex($$[$0]);
-break;
-case 14:
-this.$ = $$[$0-2] + ' ' +$$[$0];
-break;
-case 15:
-this.$ = $$[$0-2] + '-' +$$[$0];
-break;
-case 16:
-this.$ = $$[$0-1];
-break;
-case 17: case 36:
-this.$ = $$[$0];
-break;
-case 18:
-this.$ = {"type":"arrow"};
-break;
-case 19:
-this.$ = {"type":"arrow_circle"};
-break;
-case 20:
-this.$ = {"type":"arrow_cross"};
-break;
-case 21:
-this.$ = {"type":"arrow_open"};
-break;
-case 22:
-console.log('a:'+$$[$0]);this.$ = [$$[$0]]
-break;
-case 23:
-console.log('a3:'+$$[$0-2].length+','+$$[$0]);$$[$0-2].push($$[$0]);this.$ = $$[$0-2];
-break;
-case 24:
+case 3:
 this.$=$$[$0];
 break;
-case 25:
-console.log('b1:');this.$ = $$[$0-1] + $$[$0];
+case 4:
+this.$=$$[$0-2]+'-'+$$[$0]
 break;
-case 26: case 27: case 28: case 29: case 30: case 31: case 32:
+case 5: case 6:
 this.$=$$[$0]
-break;
-case 33: case 34:
-this.$ = yytext;
-break;
-case 35:
-this.$ = $$[$0-1]+''+$$[$0];
 break;
 }
 },
-table: [{3:1,4:2,6:$V0,7:4,9:5,10:6,14:$V1,15:$V2},{1:[3]},{5:[1,9]},{4:10,6:$V0,7:4,9:5,10:6,14:$V1,15:$V2},{8:[1,11]},{8:[2,5]},{8:[2,8],11:12,23:[1,13]},{6:[1,14]},o($V3,[2,13],{17:[1,15],19:[1,16],21:[1,17]}),{1:[2,1]},{5:[2,2]},{4:18,5:[2,4],6:$V0,7:4,9:5,10:6,14:$V1,15:$V2},{10:19,15:$V2},{23:[1,20]},{15:[1,21]},{13:22,15:$V4},{13:24,15:$V4},{13:25,15:$V4},{5:[2,3]},{8:[2,7],12:[1,26]},{23:[1,30],24:[1,27],25:[1,28],26:[1,29]},{6:[1,31]},{18:[1,32]},o($V5,[2,17],{6:[1,33],23:[1,34]}),{20:[1,35]},{22:[1,36]},{13:37,15:$V4},{15:[2,18]},{15:[2,19]},{15:[2,20]},{15:[2,21]},{6:$V6,15:$V7,16:38,23:$V8,27:39,29:40,30:$V9,31:$Va,32:$Vb,33:$Vc},o($V3,[2,10]),o($V5,[2,16],{13:48,15:$V4}),{13:49,15:$V4},o($V3,[2,11]),o($V3,[2,12]),{8:[2,6]},{8:[2,9],28:[1,50]},o($Vd,[2,22],{29:51,6:$V6,15:$V7,23:$V8,30:$V9,31:$Va,32:$Vb,33:$Vc}),o($Ve,[2,24]),o($Ve,[2,26]),o($Ve,[2,27]),o($Ve,[2,28]),o($Ve,[2,29]),o($Ve,[2,30]),o($Ve,[2,31]),o($Ve,[2,32]),o($V5,[2,14]),o($V5,[2,15]),{6:$V6,15:$V7,23:$V8,27:52,29:40,30:$V9,31:$Va,32:$Vb,33:$Vc},o($Ve,[2,25]),o($Vd,[2,23],{29:51,6:$V6,15:$V7,23:$V8,30:$V9,31:$Va,32:$Vb,33:$Vc})],
-defaultActions: {5:[2,5],9:[2,1],10:[2,2],18:[2,3],27:[2,18],28:[2,19],29:[2,20],30:[2,21],37:[2,6]},
+table: [{3:1,4:2,9:3,10:$V0},{1:[3]},{5:[1,5],8:[1,6]},o($V1,[2,5]),o($V1,[2,6]),{1:[2,1]},{9:7,10:$V0},o($V1,[2,4])],
+defaultActions: {5:[2,1]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -313,7 +247,8 @@ parse: function parse(input) {
     return true;
 }};
 
-define('parser/mermaid',function(){
+define('parser/flow',function(){
+    console.log('bcs123');
     return parser;
 });/* generated by jison-lex 0.3.4 */
 var lexer = (function(){
@@ -643,49 +578,49 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 14;
+case 0:return 7;
 break;
-case 1:return 33;
+case 1:return 10;
 break;
-case 2:return 31;
+case 2:return 'HEX';
 break;
-case 3:return 32;
+case 3:return 'NUM';
 break;
-case 4:return 32;
+case 4:return 'UNIT';
 break;
-case 5:return 32;
+case 5:return 'UNIT';
 break;
-case 6:return 30;
+case 6:return 'UNIT';
 break;
-case 7:return 23;
+case 7:return 'COLON';
 break;
 case 8:return 8;
 break;
-case 9:return 28;
+case 9:return ';';
 break;
-case 10:return 26;
+case 10:return 'COMMA';
 break;
-case 11:return 24;
+case 11:return 'ARROW_CROSS';
 break;
-case 12:return 25;
+case 12:return 'ARROW_POINT';
 break;
-case 13:return 15;
+case 13:return 'ARROW_CIRCLE';
 break;
-case 14:return 12;
+case 14:return 'PIPE';
 break;
-case 15:return 19;
+case 15:return 'PS';
 break;
-case 16:return 20;
+case 16:return 'PE';
 break;
-case 17:return 17;
+case 17:return 'SQS';
 break;
-case 18:return 18;
+case 18:return 'SQE';
 break;
-case 19:return 21
+case 19:return 'DIAMOND_START'
 break;
-case 20:return 22
+case 20:return 'DIAMOND_STOP'
 break;
-case 21:return 6;
+case 21:return 'SPACE';
 break;
 case 22:return 'NEWLINE';
 break;
@@ -693,7 +628,7 @@ case 23:return 5;
 break;
 }
 },
-rules: [/^(?:style\b)/,/^(?:#[a-f0-9]+)/,/^(?:[0-9]+)/,/^(?:px\b)/,/^(?:pt\b)/,/^(?:dot\b)/,/^(?::)/,/^(?:-)/,/^(?:;)/,/^(?:,)/,/^(?:[x])/,/^(?:>)/,/^(?:[o])/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ]+)/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
+rules: [/^(?:style\b)/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ]+)/,/^(?:#[a-f0-9]+)/,/^(?:[0-9]+)/,/^(?:px\b)/,/^(?:pt\b)/,/^(?:dot\b)/,/^(?::)/,/^(?:-)/,/^(?:;)/,/^(?:,)/,/^(?:[x])/,/^(?:>)/,/^(?:[o])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],"inclusive":true}}
 });
 return lexer;

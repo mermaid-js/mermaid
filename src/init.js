@@ -1,4 +1,4 @@
-
+/*
 require.config({
     // Karma serves files from '/base'
     baseUrl: './'
@@ -8,3 +8,7 @@ require.config({
 require(['mermaid'],function(mermaid){
    mermaid.init();
 });
+
+    */
+
+console.log('Init running');

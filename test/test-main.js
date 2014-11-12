@@ -6,11 +6,14 @@ for (var file in window.__karma__.files) {
     if (window.__karma__.files.hasOwnProperty(file)) {
         if (/spec\.js$/.test(file)) {
             var file2 = file.substr(10,file.length-13);
-            console.log(file2);
+            console.log('Testing with: '+file2);
+
             tests.push(file2);
+            //
         }
     }
 }
+//tests.push('parser/flow.spec');
 
 require.config({
     // Karma serves files from '/base'
