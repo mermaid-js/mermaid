@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style id="css">
+        /* This sets the color for "TK" nodes to a light blue green. */
+        g.type-TK > rect {
+            fill: #00ffd0;
+        }
+
+        text {
+            font-weight: 300;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+            font-size: 14px;
+        }
+
+        .node rect {
+            stroke: #999;
+            fill: #f99;
+            stroke-width: 1.5px;
+        }
+
+        .edgePath path {
+            stroke: #333;
+            stroke-width: 1.5px;
+            fill:#fff;
+
+        }
+
+    </style>
+</head>
+    <body>
+    <div class="mermaid">
+        A(Astrid)-->B[Irene];
+        A-->C[Christer];
+        B-->D[Micke];
+        B-->E[Maria];
+        E-->F[Hjalte];
+        E-->G[Embla];
+        E-->J[Vidar];
+        E-->H[Bjarke];
+        E-->I[Ingvild];
+    </div>
+    <div class="mermaid">
+        a[Lasa bok]-->b;
+        b{Fundera}-->c(Vidar)|Klocka;
+        b-->d(Bjarke går)|Lego;
+        style a fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
+        style #2 stroke:#0f0;
+    </div>
+    <script src="../dist/mermaid.full.js"></script>
+    </body>
+</html>
