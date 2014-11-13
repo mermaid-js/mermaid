@@ -6,9 +6,6 @@ module.exports = function (config) {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
-        browserify: {
-            watch: true
-        },
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -17,15 +14,12 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'vendor/requirejs/require.js',
-            'vendor/jasmine/lib/jasmine-core/jasmine.js',
-            'src/**/*.spec.js',
-            'test/test-main.js'
+            '../src/**/*.js'
         ],
 
 
         // list of files to exclude
-        exclude: [],
+        exclude: ['../src/backup/**/*.js'],
 
 
         // preprocess matching files before serving them to the browser

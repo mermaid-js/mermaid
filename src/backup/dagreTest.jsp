@@ -38,3 +38,12 @@ g.nodes().forEach(function(v) {
 g.edges().forEach(function(e) {
     console.log("Edge " + e.v + " -> " + e.w + ": " + JSON.stringify(g.edge(e)));
 });
+
+    var benv = require('benv');
+    benv.setup();
+    benv.require('./lib/d3.v3.min.js');
+    benv.require('./lib/dagre-d3.min.js');
+    benv.require('./lib/flow.js');
+
+    document.body.innerHTML='<div class="mermaid">a-->b;</div>;';
+    benv.require('./src/main.js');

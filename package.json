@@ -16,6 +16,9 @@
     "karma": "~0.12.20",
     "karma-jasmine": "~0.2.1",
     "karma-chrome-launcher": "~0.1.5",
-    "karma-requirejs": "~0.2.2"
+    "karma-requirejs": "~0.2.2",
+    "gulp-concat": "~2.4.1",
+    "gulp-uglify": "~1.0.1",
+    "gulp-ext-replace": "~0.1.0"
   }
 }

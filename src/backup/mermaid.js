@@ -2,7 +2,7 @@
  * Created by knut on 14-11-06.
  */
 // Now we're ready to require JointJS and write our application code.
-define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
+define('mermaid',['../parser/graph','parser/mermaid'],function(graph,parser){
     var addVertices = function(vert,g){
         var keys = Object.keys(vert);
 
@@ -54,9 +54,10 @@ define('mermaid',['parser/graph','parser/mermaid'],function(graph,parser){
                 g.setEdge(edge.start,edge.end);
             }
             else{
-                g.setEdge(edge.start,edge.end,{ label: edge.text });
+                g.setEdge(edge.start,edge.end,{ label: edge.text,style:"stroke: #f66; stroke-width: 1.5px;",
+                    arrowheadStyle: "fill: #f66" });
             }
-            console.log('g.setEdge("'+edge.start+'","'+edge.end+'")');
+            console.log('g.setEdge("'+edge.start+'","'+edge.end+'") ---');
 
         });
     };
