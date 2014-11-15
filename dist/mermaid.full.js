@@ -104,66 +104,45 @@ module.exports={graphlib:require("./lib/graphlib"),dagre:require("./lib/dagre"),
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,3],$V1=[1,7],$V2=[1,8],$V3=[8,12,24],$V4=[1,24],$V5=[8,19,21,23],$V6=[1,48],$V7=[1,43],$V8=[1,49],$V9=[1,45],$Va=[1,44],$Vb=[1,46],$Vc=[1,47],$Vd=[1,53],$Ve=[8,29],$Vf=[6,8,15,17,24,29,31,32,33];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[2,10],$V2=[1,12],$V3=[1,11],$V4=[6,9],$V5=[11,17,32],$V6=[11,27],$V7=[1,37],$V8=[20,22,24,31],$V9=[17,31],$Va=[1,62],$Vb=[1,57],$Vc=[1,59],$Vd=[1,63],$Ve=[1,58],$Vf=[1,60],$Vg=[1,61],$Vh=[1,67],$Vi=[11,36],$Vj=[9,11,17,27,34,36,38,39,40];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"expressions":3,"graph":4,"EOF":5,"SPACE":6,"edge":7,";":8,"styleStatement":9,"vertex":10,"link":11,"PIPE":12,"text":13,"STYLE":14,"ALPHA":15,"stylesOpt":16,"HEX":17,"SQS":18,"SQE":19,"PS":20,"PE":21,"DIAMOND_START":22,"DIAMOND_STOP":23,"MINUS":24,"ARROW_POINT":25,"ARROW_CIRCLE":26,"ARROW_CROSS":27,"style":28,"COMMA":29,"styleComponent":30,"COLON":31,"NUM":32,"UNIT":33,"colordef":34,"COLOR":35,"borderWidth":36,"borderStyle":37,"BORDER_STYLE":38,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",6:"SPACE",8:";",12:"PIPE",14:"STYLE",15:"ALPHA",17:"HEX",18:"SQS",19:"SQE",20:"PS",21:"PE",22:"DIAMOND_START",23:"DIAMOND_STOP",24:"MINUS",25:"ARROW_POINT",26:"ARROW_CIRCLE",27:"ARROW_CROSS",29:"COMMA",31:"COLON",32:"NUM",33:"UNIT",35:"COLOR",38:"BORDER_STYLE"},
-productions_: [0,[3,2],[4,2],[4,3],[4,2],[7,1],[7,5],[7,3],[7,1],[9,5],[9,5],[10,4],[10,4],[10,4],[10,1],[13,3],[13,3],[13,2],[13,1],[11,3],[11,3],[11,3],[11,3],[16,1],[16,3],[28,1],[28,2],[30,1],[30,1],[30,1],[30,1],[30,1],[30,1],[30,1],[34,1],[34,1],[36,2],[37,1]],
+symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceList":7,"GRAPH":8,"SPACE":9,"DIR":10,"SEMI":11,"statement":12,"verticeStatement":13,"styleStatement":14,"vertex":15,"link":16,"ALPHA":17,"SQS":18,"text":19,"SQE":20,"PS":21,"PE":22,"DIAMOND_START":23,"DIAMOND_STOP":24,"linkStatement":25,"arrowText":26,"MINUS":27,"ARROW_POINT":28,"ARROW_CIRCLE":29,"ARROW_CROSS":30,"PIPE":31,"STYLE":32,"stylesOpt":33,"HEX":34,"style":35,"COMMA":36,"styleComponent":37,"COLON":38,"NUM":39,"UNIT":40,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",11:"SEMI",17:"ALPHA",18:"SQS",20:"SQE",21:"PS",22:"PE",23:"DIAMOND_START",24:"DIAMOND_STOP",27:"MINUS",28:"ARROW_POINT",29:"ARROW_CIRCLE",30:"ARROW_CROSS",31:"PIPE",32:"STYLE",34:"HEX",36:"COMMA",38:"COLON",39:"NUM",40:"UNIT"},
+productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,2],[7,1],[12,2],[12,2],[13,0],[13,3],[13,1],[15,4],[15,4],[15,4],[15,1],[16,2],[16,1],[25,3],[25,3],[25,3],[25,3],[26,3],[19,3],[19,3],[19,2],[19,1],[14,5],[14,5],[33,1],[33,3],[35,1],[35,2],[37,1],[37,1],[37,1],[37,1],[37,1],[37,1],[37,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1:
-return $$[$0-1];
+case 2:
+this.$=$$[$0-3];
 break;
-case 2: case 3:
- this.$ = $$[$0];
-break;
-case 4:
- this.$ = $$[$0-1];
-break;
-case 5:
-this.$ = 'ya';
-break;
-case 6:
- yy.addLink($$[$0-4],$$[$0-2],$$[$0-3],$$[$0]);this.$ = 'oy'
-break;
-case 7:
- yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
-break;
-case 8:
-this.$ = 'yo';
-break;
-case 9:
-this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
-break;
-case 10:
-console.log('In parser - style: '+$$[$0]);this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
+case 3:
+ console.log('In graph config');yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
 break;
 case 11:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
+ console.log('In vertexStatement');yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
 break;
 case 12:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
+console.log('In vertexStatement ... ');this.$ = 'yo';
 break;
 case 13:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
 break;
 case 14:
-this.$ = $$[$0];yy.addVertex($$[$0]);
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
 break;
 case 15:
-this.$ = $$[$0-2] + ' ' +$$[$0];
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
 break;
 case 16:
-this.$ = $$[$0-2] + '-' +$$[$0];
+console.log('In vertex'); this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
 case 17:
-this.$ = $$[$0-1];
+$$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 18: case 37:
+case 18: case 27:
 this.$ = $$[$0];
 break;
 case 19:
@@ -179,30 +158,42 @@ case 22:
 this.$ = {"type":"arrow_open"};
 break;
 case 23:
-this.$ = [$$[$0]]
+console.log('Nice link text here: '+$$[$0-1]);this.$ = $$[$0-1];
 break;
 case 24:
-$$[$0-2].push($$[$0]);this.$ = $$[$0-2];
+this.$ = $$[$0-2] + ' ' +$$[$0];
 break;
 case 25:
-this.$=$$[$0];
+this.$ = $$[$0-2] + '-' +$$[$0];
 break;
 case 26:
+this.$ = $$[$0-1];
+break;
+case 28:
+this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
+break;
+case 29:
+console.log('In parser - style: '+$$[$0]);this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
+break;
+case 30:
+this.$ = [$$[$0]]
+break;
+case 31:
+$$[$0-2].push($$[$0]);this.$ = $$[$0-2];
+break;
+case 32:
+this.$=$$[$0];
+break;
+case 33:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 27: case 28: case 29: case 30: case 31: case 32: case 33:
+case 34: case 35: case 36: case 37: case 38: case 39: case 40:
 this.$=$$[$0]
-break;
-case 34: case 35:
-this.$ = yytext;
-break;
-case 36:
-this.$ = $$[$0-1]+''+$$[$0];
 break;
 }
 },
-table: [{3:1,4:2,6:$V0,7:4,9:5,10:6,14:$V1,15:$V2},{1:[3]},{5:[1,9]},{4:10,6:$V0,7:4,9:5,10:6,14:$V1,15:$V2},{8:[1,11]},{8:[2,5]},{8:[2,8],11:12,24:[1,13]},{6:[1,14]},o($V3,[2,14],{18:[1,15],20:[1,16],22:[1,17]}),{1:[2,1]},{5:[2,2]},{4:18,5:[2,4],6:$V0,7:4,9:5,10:6,14:$V1,15:$V2},{10:19,15:$V2},{24:[1,20]},{15:[1,21],17:[1,22]},{13:23,15:$V4},{13:25,15:$V4},{13:26,15:$V4},{5:[2,3]},{8:[2,7],12:[1,27]},{24:[1,31],25:[1,28],26:[1,29],27:[1,30]},{6:[1,32]},{6:[1,33]},{19:[1,34]},o($V5,[2,18],{6:[1,35],24:[1,36]}),{21:[1,37]},{23:[1,38]},{13:39,15:$V4},{15:[2,19]},{15:[2,20]},{15:[2,21]},{15:[2,22]},{6:$V6,15:$V7,16:40,17:$V8,24:$V9,28:41,30:42,31:$Va,32:$Vb,33:$Vc},{6:$V6,15:$V7,16:50,17:$V8,24:$V9,28:41,30:42,31:$Va,32:$Vb,33:$Vc},o($V3,[2,11]),o($V5,[2,17],{13:51,15:$V4}),{13:52,15:$V4},o($V3,[2,12]),o($V3,[2,13]),{8:[2,6]},{8:[2,9],29:$Vd},o($Ve,[2,23],{30:54,6:$V6,15:$V7,17:$V8,24:$V9,31:$Va,32:$Vb,33:$Vc}),o($Vf,[2,25]),o($Vf,[2,27]),o($Vf,[2,28]),o($Vf,[2,29]),o($Vf,[2,30]),o($Vf,[2,31]),o($Vf,[2,32]),o($Vf,[2,33]),{8:[2,10],29:$Vd},o($V5,[2,15]),o($V5,[2,16]),{6:$V6,15:$V7,17:$V8,24:$V9,28:55,30:42,31:$Va,32:$Vb,33:$Vc},o($Vf,[2,26]),o($Ve,[2,24],{30:54,6:$V6,15:$V7,17:$V8,24:$V9,31:$Va,32:$Vb,33:$Vc})],
-defaultActions: {5:[2,5],9:[2,1],10:[2,2],18:[2,3],28:[2,19],29:[2,20],30:[2,21],31:[2,22],39:[2,6]},
+table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,11:$V1,12:6,13:8,14:9,15:10,17:$V2,32:$V3},{9:[1,13]},{6:[1,14],7:15,9:$V0},{5:16,11:$V1,12:6,13:8,14:9,15:10,17:$V2,32:$V3},o($V4,[2,5]),o($V5,[2,7],{7:17,9:$V0}),{11:[1,18]},{11:[1,19]},{11:[2,12],16:20,25:21,27:[1,22]},{9:[1,23]},o($V6,[2,16],{18:[1,24],21:[1,25],23:[1,26]}),{10:[1,27]},{1:[2,1]},{11:$V1,12:28,13:8,14:9,15:10,17:$V2,32:$V3},{6:[1,29],7:15,9:$V0},o($V5,[2,6]),o($V4,[2,8]),o($V4,[2,9]),{15:30,17:$V2},{17:[2,18],26:31,31:[1,32]},{27:[1,33]},{17:[1,34],34:[1,35]},{17:$V7,19:36},{17:$V7,19:38},{17:$V7,19:39},{11:[1,40]},o($V4,[2,4]),{1:[2,2]},{11:[2,11]},{17:[2,17]},{17:$V7,19:41},{27:[1,45],28:[1,42],29:[1,43],30:[1,44]},{9:[1,46]},{9:[1,47]},{20:[1,48]},o($V8,[2,27],{9:[1,49],27:[1,50]}),{22:[1,51]},{24:[1,52]},o([9,11,17,32],[2,3]),{31:[1,53]},o($V9,[2,19]),o($V9,[2,20]),o($V9,[2,21]),o($V9,[2,22]),{9:$Va,17:$Vb,27:$Vc,33:54,34:$Vd,35:55,37:56,38:$Ve,39:$Vf,40:$Vg},{9:$Va,17:$Vb,27:$Vc,33:64,34:$Vd,35:55,37:56,38:$Ve,39:$Vf,40:$Vg},o($V6,[2,13]),o($V8,[2,26],{19:65,17:$V7}),{17:$V7,19:66},o($V6,[2,14]),o($V6,[2,15]),{17:[2,23]},{11:[2,28],36:$Vh},o($Vi,[2,30],{37:68,9:$Va,17:$Vb,27:$Vc,34:$Vd,38:$Ve,39:$Vf,40:$Vg}),o($Vj,[2,32]),o($Vj,[2,34]),o($Vj,[2,35]),o($Vj,[2,36]),o($Vj,[2,37]),o($Vj,[2,38]),o($Vj,[2,39]),o($Vj,[2,40]),{11:[2,29],36:$Vh},o($V8,[2,24]),o($V8,[2,25]),{9:$Va,17:$Vb,27:$Vc,34:$Vd,35:69,37:56,38:$Ve,39:$Vf,40:$Vg},o($Vj,[2,33]),o($Vi,[2,31],{37:68,9:$Va,17:$Vb,27:$Vc,34:$Vd,38:$Ve,39:$Vf,40:$Vg})],
+defaultActions: {14:[2,1],29:[2,2],30:[2,11],31:[2,17],53:[2,23]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -678,60 +669,66 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 14;
+case 0:return 32;
 break;
-case 1:return 17;
+case 1:return 8;
 break;
-case 2:return 32;
+case 2:return 10;
 break;
-case 3:return 'BRKT';
+case 3:return 10;
 break;
-case 4:return 33;
+case 4:return 34;
 break;
-case 5:return 33;
+case 5:return 39;
 break;
-case 6:return 33;
+case 6:return 'BRKT';
 break;
-case 7:return 31;
+case 7:return 40;
 break;
-case 8:return 24;
+case 8:return 40;
 break;
-case 9:return 8;
+case 9:return 40;
 break;
-case 10:return 29;
+case 10:return 38;
 break;
 case 11:return 27;
 break;
-case 12:return 25;
+case 12:return 11;
 break;
-case 13:return 26;
+case 13:return 36;
 break;
-case 14:return 15;
+case 14:return 30;
 break;
-case 15:return 12;
+case 15:return 28;
 break;
-case 16:return 20;
+case 16:return 29;
 break;
-case 17:return 21;
+case 17:return 17;
 break;
-case 18:return 18;
+case 18:return 31;
 break;
-case 19:return 19;
+case 19:return 21;
 break;
-case 20:return 22
+case 20:return 22;
 break;
-case 21:return 23
+case 21:return 18;
 break;
-case 22:return 6;
+case 22:return 20;
 break;
-case 23:return 'NEWLINE';
+case 23:return 23
 break;
-case 24:return 5;
+case 24:return 24
+break;
+case 25:return 9;
+break;
+case 26:return 'NEWLINE';
+break;
+case 27:return 6;
 break;
 }
 },
-rules: [/^(?:style\b)/,/^(?:#[a-f0-9]+)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?:px\b)/,/^(?:pt\b)/,/^(?:dot\b)/,/^(?::)/,/^(?:-)/,/^(?:;)/,/^(?:,)/,/^(?:[x])/,/^(?:>)/,/^(?:[o])/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ]+)/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],"inclusive":true}}
+rules: [/^(?:style\b)/,/^(?:graph\b)/,/^(?:LR\b)/,/^(?:TD\b)/,/^(?:#[a-f0-9]+)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?:px\b)/,/^(?:pt\b)/,/^(?:dot\b)/,/^(?::)/,/^(?:-)/,/^(?:;)/,/^(?:,)/,/^(?:[x])/,/^(?:>)/,/^(?:[o])/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ]+)/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"inclusive":true}}
 });
 return lexer;
 })();
@@ -771,6 +768,13 @@ mermaid.vertices = {};
 mermaid.edges = [];
 
 mermaid.graph = {
+    /**
+     *
+     * @param id
+     * @param text
+     * @param type
+     * @param style
+     */
     addVertex: function (id, text, type, style) {
         console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
         if(typeof mermaid.vertices[id] === 'undefined'){
@@ -796,6 +800,7 @@ mermaid.graph = {
     },
     addLink: function (start, end, type, linktext) {
         var edge = {start:start, end:end, type:undefined, text:''};
+        var linktext = type.text;
         if(typeof linktext !== 'undefined'){
             edge.text = linktext;
         }
@@ -811,6 +816,9 @@ mermaid.graph = {
         var position = pos.substr(1);
         console.log('Got link style for ' + position + ' style ' + style);
         mermaid.edges[position].style = style;
+    },
+    setDirection: function(dir){
+        mermaid.direction = dir;
     },
     getEdges: function () {
         return mermaid.edges;
@@ -830,6 +838,11 @@ if (typeof mermaid === 'undefined') {
     mermaid = {}
 }
 
+/**
+ * Function used by parser to store vertices/nodes found in graph script.
+ * @param vert
+ * @param g
+ */
 mermaid.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
@@ -934,10 +947,19 @@ mermaid.drawChart = function (text, id) {
 
     var keys = Object.keys(vert);
 
+    var dir;
+    dir = mermaid.direction;
+    if(typeof dir === 'undefined'){
+        dir='TD';
+    }
+
+
+
     // Create the input mermaid.graph
     var g = new dagreD3.graphlib.Graph()
         .setGraph({
             //rankdir: "LR",
+            rankdir: dir,
             marginx: 20,
             marginy: 20
         })

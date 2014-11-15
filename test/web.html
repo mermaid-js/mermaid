@@ -5,7 +5,7 @@
     <style id="css">
         /* This sets the color for "TK" nodes to a light blue green. */
         g.type-TK > rect {
-            fill: #00ffd0;
+            fill: #ccffd0;
         }
 
         text {
@@ -16,7 +16,7 @@
 
         .node rect {
             stroke: #999;
-            fill: #f99;
+            fill: #fff;
             stroke-width: 1.5px;
         }
 
@@ -31,7 +31,7 @@
 </head>
     <body>
     <div class="mermaid">
-        A(Astrid)-->B[Irene];
+        graph TD;A(Astrid)-->B[Irene];
         A-->C[Christer];
         B-->D[Micke];
         B-->E[Maria];
@@ -42,11 +42,14 @@
         E-->I[Ingvild];
     </div>
     <div class="mermaid">
-        a[Lasa bok]-->b;
-        b{Fundera}-->c(Vidar)|Klocka;
-        b-->d(Bjarke går)|Lego;
-        style a fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
-        style #2 stroke:#0f0;
+        graph TD;
+            a[Lasa bok]-->b;
+            b{Fundera}-->|Klocka|c(Vidar);
+            b-->|Lego text|d(Bjarke går);
+            e(Orphan);
+
+            style a fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
+            style #2 stroke:#0f0;
     </div>
     <script src="../dist/mermaid.full.js"></script>
     </body>

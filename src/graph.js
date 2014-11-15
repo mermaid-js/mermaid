@@ -9,6 +9,13 @@ mermaid.vertices = {};
 mermaid.edges = [];
 
 mermaid.graph = {
+    /**
+     *
+     * @param id
+     * @param text
+     * @param type
+     * @param style
+     */
     addVertex: function (id, text, type, style) {
         console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
         if(typeof mermaid.vertices[id] === 'undefined'){
@@ -34,6 +41,7 @@ mermaid.graph = {
     },
     addLink: function (start, end, type, linktext) {
         var edge = {start:start, end:end, type:undefined, text:''};
+        var linktext = type.text;
         if(typeof linktext !== 'undefined'){
             edge.text = linktext;
         }
@@ -49,6 +57,9 @@ mermaid.graph = {
         var position = pos.substr(1);
         console.log('Got link style for ' + position + ' style ' + style);
         mermaid.edges[position].style = style;
+    },
+    setDirection: function(dir){
+        mermaid.direction = dir;
     },
     getEdges: function () {
         return mermaid.edges;

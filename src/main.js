@@ -3,6 +3,11 @@ if (typeof mermaid === 'undefined') {
     mermaid = {}
 }
 
+/**
+ * Function used by parser to store vertices/nodes found in graph script.
+ * @param vert
+ * @param g
+ */
 mermaid.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
@@ -107,10 +112,19 @@ mermaid.drawChart = function (text, id) {
 
     var keys = Object.keys(vert);
 
+    var dir;
+    dir = mermaid.direction;
+    if(typeof dir === 'undefined'){
+        dir='TD';
+    }
+
+
+
     // Create the input mermaid.graph
     var g = new dagreD3.graphlib.Graph()
         .setGraph({
             //rankdir: "LR",
+            rankdir: dir,
             marginx: 20,
             marginy: 20
         })
