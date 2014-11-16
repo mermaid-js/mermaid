@@ -104,12 +104,12 @@ module.exports={graphlib:require("./lib/graphlib"),dagre:require("./lib/dagre"),
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[2,10],$V2=[1,12],$V3=[1,11],$V4=[6,9],$V5=[11,17,32],$V6=[11,27],$V7=[1,37],$V8=[20,22,24,31],$V9=[17,31],$Va=[1,62],$Vb=[1,57],$Vc=[1,59],$Vd=[1,63],$Ve=[1,58],$Vf=[1,60],$Vg=[1,61],$Vh=[1,67],$Vi=[11,36],$Vj=[9,11,17,27,34,36,38,39,40];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[2,10],$V2=[1,14],$V3=[1,15],$V4=[1,11],$V5=[6,9],$V6=[11,26,27,36],$V7=[11,30,31,32,33],$V8=[11,18,21,23,30,31,32,33],$V9=[11,18,21,23,26,27,30,31,32,33],$Va=[26,27],$Vb=[26,27,34],$Vc=[1,43],$Vd=[20,22,24,34],$Ve=[1,64],$Vf=[1,59],$Vg=[1,62],$Vh=[1,61],$Vi=[1,65],$Vj=[1,60],$Vk=[1,63],$Vl=[1,69],$Vm=[11,40],$Vn=[9,11,26,27,35,38,40,42,43];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceList":7,"GRAPH":8,"SPACE":9,"DIR":10,"SEMI":11,"statement":12,"verticeStatement":13,"styleStatement":14,"vertex":15,"link":16,"ALPHA":17,"SQS":18,"text":19,"SQE":20,"PS":21,"PE":22,"DIAMOND_START":23,"DIAMOND_STOP":24,"linkStatement":25,"arrowText":26,"MINUS":27,"ARROW_POINT":28,"ARROW_CIRCLE":29,"ARROW_CROSS":30,"PIPE":31,"STYLE":32,"stylesOpt":33,"HEX":34,"style":35,"COMMA":36,"styleComponent":37,"COLON":38,"NUM":39,"UNIT":40,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",11:"SEMI",17:"ALPHA",18:"SQS",20:"SQE",21:"PS",22:"PE",23:"DIAMOND_START",24:"DIAMOND_STOP",27:"MINUS",28:"ARROW_POINT",29:"ARROW_CIRCLE",30:"ARROW_CROSS",31:"PIPE",32:"STYLE",34:"HEX",36:"COMMA",38:"COLON",39:"NUM",40:"UNIT"},
-productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,2],[7,1],[12,2],[12,2],[13,0],[13,3],[13,1],[15,4],[15,4],[15,4],[15,1],[16,2],[16,1],[25,3],[25,3],[25,3],[25,3],[26,3],[19,3],[19,3],[19,2],[19,1],[14,5],[14,5],[33,1],[33,3],[35,1],[35,2],[37,1],[37,1],[37,1],[37,1],[37,1],[37,1],[37,1]],
+symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceList":7,"GRAPH":8,"SPACE":9,"DIR":10,"SEMI":11,"statement":12,"verticeStatement":13,"styleStatement":14,"vertex":15,"link":16,"alphaNum":17,"SQS":18,"text":19,"SQE":20,"PS":21,"PE":22,"DIAMOND_START":23,"DIAMOND_STOP":24,"alphaNumToken":25,"ALPHA":26,"NUM":27,"linkStatement":28,"arrowText":29,"ARROW_POINT":30,"ARROW_CIRCLE":31,"ARROW_CROSS":32,"ARROW_OPEN":33,"PIPE":34,"MINUS":35,"STYLE":36,"stylesOpt":37,"HEX":38,"style":39,"COMMA":40,"styleComponent":41,"COLON":42,"UNIT":43,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",11:"SEMI",18:"SQS",20:"SQE",21:"PS",22:"PE",23:"DIAMOND_START",24:"DIAMOND_STOP",26:"ALPHA",27:"NUM",30:"ARROW_POINT",31:"ARROW_CIRCLE",32:"ARROW_CROSS",33:"ARROW_OPEN",34:"PIPE",35:"MINUS",36:"STYLE",38:"HEX",40:"COMMA",42:"COLON",43:"UNIT"},
+productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,2],[7,1],[12,2],[12,2],[13,0],[13,3],[13,1],[15,4],[15,4],[15,4],[15,1],[17,1],[17,2],[25,1],[25,1],[16,2],[16,1],[28,1],[28,1],[28,1],[28,1],[29,3],[19,3],[19,3],[19,2],[19,1],[14,5],[14,5],[37,1],[37,3],[39,1],[39,2],[41,1],[41,1],[41,1],[41,1],[41,1],[41,1],[41,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -139,61 +139,64 @@ break;
 case 16:
 console.log('In vertex'); this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 17:
-$$[$0-1].text = $$[$0];this.$ = $$[$0-1];
-break;
-case 18: case 27:
-this.$ = $$[$0];
-break;
-case 19:
-this.$ = {"type":"arrow"};
-break;
-case 20:
-this.$ = {"type":"arrow_circle"};
-break;
-case 21:
-this.$ = {"type":"arrow_cross"};
-break;
-case 22:
-this.$ = {"type":"arrow_open"};
-break;
-case 23:
-console.log('Nice link text here: '+$$[$0-1]);this.$ = $$[$0-1];
-break;
-case 24:
-this.$ = $$[$0-2] + ' ' +$$[$0];
-break;
-case 25:
-this.$ = $$[$0-2] + '-' +$$[$0];
-break;
-case 26:
-this.$ = $$[$0-1];
-break;
-case 28:
-this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
-break;
-case 29:
-console.log('In parser - style: '+$$[$0]);this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
-break;
-case 30:
-this.$ = [$$[$0]]
-break;
-case 31:
-$$[$0-2].push($$[$0]);this.$ = $$[$0-2];
-break;
-case 32:
+case 17: case 19: case 20: case 36:
 this.$=$$[$0];
 break;
+case 18:
+this.$=$$[$0-1]+''+$$[$0];
+break;
+case 21:
+$$[$0-1].text = $$[$0];this.$ = $$[$0-1];
+break;
+case 22: case 31:
+this.$ = $$[$0];
+break;
+case 23:
+this.$ = {"type":"arrow"};
+break;
+case 24:
+this.$ = {"type":"arrow_circle"};
+break;
+case 25:
+this.$ = {"type":"arrow_cross"};
+break;
+case 26:
+this.$ = {"type":"arrow_open"};
+break;
+case 27:
+console.log('Nice link text here: '+$$[$0-1]);this.$ = $$[$0-1];
+break;
+case 28:
+this.$ = $$[$0-2] + ' ' +$$[$0];
+break;
+case 29:
+this.$ = $$[$0-2] + '-' +$$[$0];
+break;
+case 30:
+this.$ = $$[$0-1];
+break;
+case 32:
+this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
+break;
 case 33:
+console.log('In parser - style: '+$$[$0]);this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
+break;
+case 34:
+this.$ = [$$[$0]]
+break;
+case 35:
+$$[$0-2].push($$[$0]);this.$ = $$[$0-2];
+break;
+case 37:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 34: case 35: case 36: case 37: case 38: case 39: case 40:
+case 38: case 39: case 40: case 41: case 42: case 43: case 44:
 this.$=$$[$0]
 break;
 }
 },
-table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,11:$V1,12:6,13:8,14:9,15:10,17:$V2,32:$V3},{9:[1,13]},{6:[1,14],7:15,9:$V0},{5:16,11:$V1,12:6,13:8,14:9,15:10,17:$V2,32:$V3},o($V4,[2,5]),o($V5,[2,7],{7:17,9:$V0}),{11:[1,18]},{11:[1,19]},{11:[2,12],16:20,25:21,27:[1,22]},{9:[1,23]},o($V6,[2,16],{18:[1,24],21:[1,25],23:[1,26]}),{10:[1,27]},{1:[2,1]},{11:$V1,12:28,13:8,14:9,15:10,17:$V2,32:$V3},{6:[1,29],7:15,9:$V0},o($V5,[2,6]),o($V4,[2,8]),o($V4,[2,9]),{15:30,17:$V2},{17:[2,18],26:31,31:[1,32]},{27:[1,33]},{17:[1,34],34:[1,35]},{17:$V7,19:36},{17:$V7,19:38},{17:$V7,19:39},{11:[1,40]},o($V4,[2,4]),{1:[2,2]},{11:[2,11]},{17:[2,17]},{17:$V7,19:41},{27:[1,45],28:[1,42],29:[1,43],30:[1,44]},{9:[1,46]},{9:[1,47]},{20:[1,48]},o($V8,[2,27],{9:[1,49],27:[1,50]}),{22:[1,51]},{24:[1,52]},o([9,11,17,32],[2,3]),{31:[1,53]},o($V9,[2,19]),o($V9,[2,20]),o($V9,[2,21]),o($V9,[2,22]),{9:$Va,17:$Vb,27:$Vc,33:54,34:$Vd,35:55,37:56,38:$Ve,39:$Vf,40:$Vg},{9:$Va,17:$Vb,27:$Vc,33:64,34:$Vd,35:55,37:56,38:$Ve,39:$Vf,40:$Vg},o($V6,[2,13]),o($V8,[2,26],{19:65,17:$V7}),{17:$V7,19:66},o($V6,[2,14]),o($V6,[2,15]),{17:[2,23]},{11:[2,28],36:$Vh},o($Vi,[2,30],{37:68,9:$Va,17:$Vb,27:$Vc,34:$Vd,38:$Ve,39:$Vf,40:$Vg}),o($Vj,[2,32]),o($Vj,[2,34]),o($Vj,[2,35]),o($Vj,[2,36]),o($Vj,[2,37]),o($Vj,[2,38]),o($Vj,[2,39]),o($Vj,[2,40]),{11:[2,29],36:$Vh},o($V8,[2,24]),o($V8,[2,25]),{9:$Va,17:$Vb,27:$Vc,34:$Vd,35:69,37:56,38:$Ve,39:$Vf,40:$Vg},o($Vj,[2,33]),o($Vi,[2,31],{37:68,9:$Va,17:$Vb,27:$Vc,34:$Vd,38:$Ve,39:$Vf,40:$Vg})],
-defaultActions: {14:[2,1],29:[2,2],30:[2,11],31:[2,17],53:[2,23]},
+table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,11:$V1,12:6,13:8,14:9,15:10,17:12,25:13,26:$V2,27:$V3,36:$V4},{9:[1,16]},{6:[1,17],7:18,9:$V0},{5:19,11:$V1,12:6,13:8,14:9,15:10,17:12,25:13,26:$V2,27:$V3,36:$V4},o($V5,[2,5]),o($V6,[2,7],{7:20,9:$V0}),{11:[1,21]},{11:[1,22]},{11:[2,12],16:23,28:24,30:[1,25],31:[1,26],32:[1,27],33:[1,28]},{9:[1,29]},o($V7,[2,16],{18:[1,30],21:[1,31],23:[1,32]}),o($V8,[2,17],{25:13,17:33,26:$V2,27:$V3}),o($V9,[2,19]),o($V9,[2,20]),{10:[1,34]},{1:[2,1]},{11:$V1,12:35,13:8,14:9,15:10,17:12,25:13,26:$V2,27:$V3,36:$V4},{6:[1,36],7:18,9:$V0},o($V6,[2,6]),o($V5,[2,8]),o($V5,[2,9]),{15:37,17:12,25:13,26:$V2,27:$V3},o($Va,[2,22],{29:38,34:[1,39]}),o($Vb,[2,23]),o($Vb,[2,24]),o($Vb,[2,25]),o($Vb,[2,26]),{26:[1,40],38:[1,41]},{19:42,26:$Vc},{19:44,26:$Vc},{19:45,26:$Vc},o($V8,[2,18]),{11:[1,46]},o($V5,[2,4]),{1:[2,2]},{11:[2,11]},o($Va,[2,21]),{19:47,26:$Vc},{9:[1,48]},{9:[1,49]},{20:[1,50]},o($Vd,[2,31],{9:[1,51],35:[1,52]}),{22:[1,53]},{24:[1,54]},o([9,11,26,27,36],[2,3]),{34:[1,55]},{9:$Ve,26:$Vf,27:$Vg,35:$Vh,37:56,38:$Vi,39:57,41:58,42:$Vj,43:$Vk},{9:$Ve,26:$Vf,27:$Vg,35:$Vh,37:66,38:$Vi,39:57,41:58,42:$Vj,43:$Vk},o($V7,[2,13]),o($Vd,[2,30],{19:67,26:$Vc}),{19:68,26:$Vc},o($V7,[2,14]),o($V7,[2,15]),o($Va,[2,27]),{11:[2,32],40:$Vl},o($Vm,[2,34],{41:70,9:$Ve,26:$Vf,27:$Vg,35:$Vh,38:$Vi,42:$Vj,43:$Vk}),o($Vn,[2,36]),o($Vn,[2,38]),o($Vn,[2,39]),o($Vn,[2,40]),o($Vn,[2,41]),o($Vn,[2,42]),o($Vn,[2,43]),o($Vn,[2,44]),{11:[2,33],40:$Vl},o($Vd,[2,28]),o($Vd,[2,29]),{9:$Ve,26:$Vf,27:$Vg,35:$Vh,38:$Vi,39:71,41:58,42:$Vj,43:$Vk},o($Vn,[2,37]),o($Vm,[2,35],{41:70,9:$Ve,26:$Vf,27:$Vg,35:$Vh,38:$Vi,42:$Vj,43:$Vk})],
+defaultActions: {17:[2,1],36:[2,2],37:[2,11]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -669,7 +672,7 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 32;
+case 0:return 36;
 break;
 case 1:return 8;
 break;
@@ -677,35 +680,35 @@ case 2:return 10;
 break;
 case 3:return 10;
 break;
-case 4:return 34;
+case 4:return 38;
 break;
-case 5:return 39;
+case 5:return 27;
 break;
 case 6:return 'BRKT';
 break;
-case 7:return 40;
+case 7:return 43;
 break;
-case 8:return 40;
+case 8:return 43;
 break;
-case 9:return 40;
+case 9:return 43;
 break;
-case 10:return 38;
+case 10:return 42;
 break;
-case 11:return 27;
+case 11:return 11;
 break;
-case 12:return 11;
+case 12:return 40;
 break;
-case 13:return 36;
+case 13:return 32;
 break;
 case 14:return 30;
 break;
-case 15:return 28;
+case 15:return 31;
 break;
-case 16:return 29;
+case 16:return 33;
 break;
-case 17:return 17;
+case 17:return 26;
 break;
-case 18:return 31;
+case 18:return 34;
 break;
 case 19:return 21;
 break;
@@ -727,7 +730,7 @@ case 27:return 6;
 break;
 }
 },
-rules: [/^(?:style\b)/,/^(?:graph\b)/,/^(?:LR\b)/,/^(?:TD\b)/,/^(?:#[a-f0-9]+)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?:px\b)/,/^(?:pt\b)/,/^(?:dot\b)/,/^(?::)/,/^(?:-)/,/^(?:;)/,/^(?:,)/,/^(?:[x])/,/^(?:>)/,/^(?:[o])/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ]+)/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
+rules: [/^(?:style\b)/,/^(?:graph\b)/,/^(?:LR\b)/,/^(?:TD\b)/,/^(?:#[a-f0-9]+)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?:px\b)/,/^(?:pt\b)/,/^(?:dot\b)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:==[x])/,/^(?:==>)/,/^(?:==[o])/,/^(?:===)/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ\-]+)/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"inclusive":true}}
 });
 return lexer;

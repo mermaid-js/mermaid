@@ -15,13 +15,13 @@
 "pt"                  return 'UNIT';
 "dot"                 return 'UNIT';
 ":"                   return 'COLON';
-\-                    return 'MINUS';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
-[x]                   return 'ARROW_CROSS';
-">"                   return 'ARROW_POINT';
-[o]                   return 'ARROW_CIRCLE';
-[a-zåäöæøA-ZÅÄÖÆØ]+   return 'ALPHA';
+\=\=[x]                   return 'ARROW_CROSS';
+\=\=\>                   return 'ARROW_POINT';
+\=\=[o]               return 'ARROW_CIRCLE';
+\=\=\=               return 'ARROW_OPEN';
+[a-zåäöæøA-ZÅÄÖÆØ\-]+   return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -105,13 +105,13 @@ link: linkStatement arrowText
     {$$ = $1;}
     ;
 
-linkStatement: MINUS MINUS ARROW_POINT
+linkStatement: ARROW_POINT
         {$$ = {"type":"arrow"};}
-    | MINUS MINUS ARROW_CIRCLE
+    | ARROW_CIRCLE
         {$$ = {"type":"arrow_circle"};}
-    | MINUS MINUS ARROW_CROSS
+    | ARROW_CROSS
         {$$ = {"type":"arrow_cross"};}
-    | MINUS MINUS MINUS
+    | ARROW_OPEN
         {$$ = {"type":"arrow_open"};}
     ;
 

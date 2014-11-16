@@ -31,24 +31,24 @@
 </head>
     <body>
     <div class="mermaid">
-        graph TD;A(Astrid)-->B[Irene];
-        A-->C[Christer];
-        B-->D[Micke];
-        B-->E[Maria];
-        E-->F[Hjalte];
-        E-->G[Embla];
-        E-->J[Vidar];
-        E-->H[Bjarke];
-        E-->I[Ingvild];
+        graph TD;A(Astrid)==>B[Irene];
+        A==>C[Christer];
+        B==>D[Micke];
+        B==>E[Maria];
+        E==>F[Hjalte];
+        E==>G[Embla];
+        E==>J[Vidar];
+        E==>H[Bjarke];
+        E==>I[Ingvild];
     </div>
     <div class="mermaid">
         graph TD;
-            a[Lasa bok]-->b;
-            b{Fundera}-->|Klocka|c(Vidar);
-            b-->|Lego text|d(Bjarke går);
-            e(Orphan);
+            eag-book[Läsa bok]==>b;
+            b{Fundera}==>|Klocka|c(Vidar);
+            b==>|Lego text|d(Bjarke går);
+            e(orphan);
 
-            style a fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
+            style eag-book fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
             style #2 stroke:#0f0;
     </div>
     <script src="../dist/mermaid.full.js"></script>

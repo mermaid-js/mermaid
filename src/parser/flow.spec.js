@@ -12,7 +12,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle a nodes and edges',function(){
-        var res = parser.parse('graph TD;A-->B;');
+        var res = parser.parse('graph TD;A==>B;');
 
 
         var vert = parser.yy.getVertices();
@@ -28,7 +28,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle open ended edges',function(){
-        var res = parser.parse('graph TD;A---B;');
+        var res = parser.parse('graph TD;A===B;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -38,7 +38,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle cross ended edges',function(){
-        var res = parser.parse('graph TD;A--xB;');
+        var res = parser.parse('graph TD;A==xB;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -48,7 +48,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle open ended edges',function(){
-        var res = parser.parse('graph TD;A--oB;');
+        var res = parser.parse('graph TD;A==oB;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -58,7 +58,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle text on edges without space',function(){
-        var res = parser.parse('graph TD;A--x|textNoSpace|B;');
+        var res = parser.parse('graph TD;A==x|textNoSpace|B;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -68,7 +68,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle text on edges with space',function(){
-        var res = parser.parse('graph TD;A--x|text including space|B;');
+        var res = parser.parse('graph TD;A==x|text including space|B;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -78,7 +78,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle multi-line text',function(){
-        var res = parser.parse('graph TD;A--o|text space|B;\n B-->|more text with space|C;');
+        var res = parser.parse('graph TD;A==o|text space|B;\n B==>|more text with space|C;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -98,7 +98,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle text in vertices with space',function(){
-        var res = parser.parse('graph TD;A[chimpansen hoppar]-->C;');
+        var res = parser.parse('graph TD;A[chimpansen hoppar]==>C;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -108,7 +108,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle text in vertices with space',function(){
-        var res = parser.parse('graph TD;A(chimpansen hoppar)-->C;');
+        var res = parser.parse('graph TD;A(chimpansen hoppar)==>C;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -118,7 +118,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle text in vertices with space',function(){
-        var res = parser.parse('graph TD;A{chimpansen hoppar}-->C;');
+        var res = parser.parse('graph TD;A{chimpansen hoppar}==>C;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -127,7 +127,7 @@ describe('when parsing ',function(){
         expect(vert['A'].text).toBe('chimpansen hoppar');
     });
     it('should handle text in vertices with space',function(){
-        var res = parser.parse('graph TD;A-->C{Chimpansen hoppar};');
+        var res = parser.parse('graph TD;A==>C{Chimpansen hoppar};');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -137,7 +137,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle text in vertices with åäö and minus',function(){
-        var res = parser.parse('graph TD;A-->C{Chimpansen hoppar åäö-ÅÄÖ};');
+        var res = parser.parse('graph TD;A==>C{Chimpansen hoppar åäö-ÅÄÖ};');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
@@ -191,7 +191,7 @@ describe('when parsing ',function(){
 
     //console.log(parser.parse('graph TD;style Q background:#fff;'));
     it('should handle styles for edges',function(){
-        var res = parser.parse('graph TD;a-->b;\nstyle #0 stroke: #f66;');
+        var res = parser.parse('graph TD;a==>b;\nstyle #0 stroke: #f66;');
 
         var edges = parser.yy.getEdges();
 
@@ -223,7 +223,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle styles and graph definitons in a graph',function(){
-        var res = parser.parse('graph TD;S-->T;\nstyle S background:#aaa;\nstyle T background:#bbb,border:1px solid red;');
+        var res = parser.parse('graph TD;S==>T;\nstyle S background:#aaa;\nstyle T background:#bbb,border:1px solid red;');
 
         var vert = parser.yy.getVertices();
         var edges = parser.yy.getEdges();
