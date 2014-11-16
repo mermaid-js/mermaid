@@ -17,11 +17,12 @@
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
-\=\=[x]                   return 'ARROW_CROSS';
-\=\=\>                   return 'ARROW_POINT';
-\=\=[o]               return 'ARROW_CIRCLE';
-\=\=\=               return 'ARROW_OPEN';
-[a-zåäöæøA-ZÅÄÖÆØ\-]+   return 'ALPHA';
+\-\-[x]                   return 'ARROW_CROSS';
+\-\-\>                   return 'ARROW_POINT';
+\-\-[o]               return 'ARROW_CIRCLE';
+\-\-\-               return 'ARROW_OPEN';
+\-                    return 'MINUS';
+[a-zåäöæøA-ZÅÄÖÆØ]+   return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -83,15 +84,23 @@ vertex:  alphaNum SQS text SQE
     | alphaNum DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum
-        {console.log('In vertex'); $$ = $1;yy.addVertex($1);}
+        {console.log('In vertex:'+$1); $$ = $1;yy.addVertex($1);}
     ;
 
 alphaNum
-    : alphaNumToken
+    : alphaNumStatement
     {$$=$1;}
-    | alphaNumToken alphaNum
+    | alphaNumStatement alphaNum
     {$$=$1+''+$2;}
     ;
+
+alphaNumStatement
+    : alphaNumToken
+        {console.log('Found token (statement): '+$1);$$=$1;}
+    | alphaNumToken MINUS alphaNumToken
+        {$$=$1+'-'+$3;}
+    ;
+
 alphaNumToken
     : ALPHA
     {$$=$1;}
