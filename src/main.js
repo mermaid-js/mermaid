@@ -66,24 +66,32 @@ mermaid.addEdges = function (edges, g) {
             type = edge.type;
         }
 
+        if(type === 'arrow_open'){
+            aHead = 'none';
+        }
+        else{
+            aHead = 'vee';
+        }
+
+
         var edgeText;
         //console.log(vertice);
         if (edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333"});
+                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
             }else{
                 g.setEdge(edge.start, edge.end, {
-                    style: edge.style, arrowheadStyle: "fill: #333"
+                    style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
                 });
             }
 
         }
         else {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #333"});
+                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead});
             }else{
                 g.setEdge(edge.start, edge.end, {
-                    style: edge.style, arrowheadStyle: "fill: #333", label: edge.text
+                    style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
                 });
             }
         }
@@ -123,7 +131,6 @@ mermaid.drawChart = function (text, id) {
     // Create the input mermaid.graph
     var g = new dagreD3.graphlib.Graph()
         .setGraph({
-            //rankdir: "LR",
             rankdir: dir,
             marginx: 20,
             marginy: 20
@@ -164,6 +171,24 @@ mermaid.drawChart = function (text, id) {
         };
         return shapeSvg;
     };
+
+    // Add our custom arrow - an empty arrowhead
+    render.arrows().none = function normal(parent, id, edge, type) {
+      var marker = parent.append("marker")
+        .attr("id", id)
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 9)
+        .attr("refY", 5)
+        .attr("markerUnits", "strokeWidth")
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto");
+
+      var path = marker.append("path")
+        .attr("d", "M 0 0 L 0 0 L 0 0 z");
+      dagreD3.util.applyStyle(path, edge[type + "Style"]);
+    };
+
     // Set up an SVG group so that we can translate the final graph.
     var svg = d3.select("#" + id);
     svgGroup = d3.select("#" + id + " g");
@@ -180,28 +205,19 @@ mermaid.drawChart = function (text, id) {
 mermaid.init = function () {
     var arr = document.querySelectorAll('.mermaid');
 
-
     var cnt = 0;
     for (i = 0; i < arr.length; i++) {
         var element = arr[i];
         var id;
-        //if(element.id.length === 0){
+
         id = 'mermaidChart' + cnt;
-        //arr[i].id = id;
         cnt++;
-        //}
-        //else{
-        //    id=element.id;
-        //}
 
         var chartText = element.textContent.trim();
-
-        console.log(element);
 
         element.innerHTML = '<svg id="' + id + '" width="100%">' +
         '<g />' +
         '</svg>';
-
 
         this.drawChart(chartText, id);
     }
