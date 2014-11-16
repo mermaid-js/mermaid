@@ -18,21 +18,69 @@ graph TD;
 ```
 
 would render this lovely chart:
- €€€ IMG €€€
 
- Format:
+![Example 1](http://www.sveido.com/mermaid/img/ex1.png)
 
-#Installation and usage
+
+#Installation
+
+Either use the bower package manager as per below:
+
+```
+bower install mermaid --save-dev
+```
+
+Or download javascript files:
+
+* [mermaid including dependencies](http://www.sveido.com/mermaid/dist/mermaid.full.min.js)
+
+This file bundles mermaid with d3 and dagre-d3.
+
+* [mermaid without dependencies](http://www.sveido.com/mermaid/dist/mermaid.slim.min.js)
+
+With this file you need to include d3 and dagre-d3 yourself.
+
+# Usage
+
+Include mermaid on your web page:
+
+```
+<script src="mermaid.full.min.js"></script>
+```
+
+Further down on your page mer maid will look for tags with ```class="mermaid"``` from these tags mermaid will try to
+read the chart definiton which will be replaced with the svg chart.
+
+
+A chart defined like this:
+```
+<div class="mermaid">
+    CHART DEFINITION GOES HERE
+</div>
+```
+
+Would end up like this:
+```
+<div class="mermaid" id="mermaidChart0">
+    <svg>
+        Chart ends up here
+    </svg>
+</div>
+```
+
+An id is also added to mermaid tags without id.
 
 # A graph example
 
-<pre>
-graph LR
-    A[Hard edge]-->|Link text|B(Round edge)
-    B-->C{Decision}
-    C-->D[Result 1]|Option 1
-    C-->E[Result 2]|Option 2
-</pre>
+```
+graph LR;
+    A[Hard edge]-->|Link text|B(Round edge);
+    B-->C{Decision};
+    C-->|One|D[Result one];
+    C-->|Two|E[Result two];
+```
+
+![Example 2](http://www.sveido.com/mermaid/img/ex2.png)
 
 
 #Syntax
@@ -42,7 +90,10 @@ This statement declares a new graph and the direction of the graph layout.
 ```
 graph TD
 ```
+
 Would declare a graph oriented from top to bottom.
+
+![Example 3](http://www.sveido.com/mermaid/img/ex3.png)
 
 ```
 graph LR
@@ -50,50 +101,84 @@ graph LR
 
 Would declare a graph oriented from left to right.
 
+![Example 4](http://www.sveido.com/mermaid/img/ex4.png)
+
 ## Nodes
 
 ### A node (default)
 ```
-id1
+id1;
 ```
 
+![Single node](http://www.sveido.com/mermaid/img/ex5.png)
+
+Note that the id is what is displayed in the box.
 
 ### A node with text
+It is also possible to set text in the box that differs from the id. If this is done several times it is the last text
+found for the node that will be used. Also if you define edges for the node later on you can omit text definitions, the
+one previously defined will be used when rendering the box.
+
 ```
-id1[This is the text in the box]
+id1[This is the text in the box];
 ```
+
+![Text in node](http://www.sveido.com/mermaid/img/ex6.png)
+
 
 ### A node with round edges
 ```
-id1[This is the text in the box]
+id1(This is the text in the box);
 ```
+
+![Node with round edges](http://www.sveido.com/mermaid/img/ex7.png)
 
 ### A node (rhombus)
 ```
-id1{This is the text in the box}
+id1{This is the text in the box};
 ```
 
+![Decision box](http://www.sveido.com/mermaid/img/ex8.png)
+
 ### Styling a node
+It is possible to give a node specific styling as thicker border or a different background color.
+
+```
+graph LR;
+    id1(Start)-->id2(Stop);
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px;
+    style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
+```
+
+![Node with styles](http://www.sveido.com/mermaid/img/ex9.png)
 
 ## Links between nodes
 
+Nodes can be connected with links/edges. It is spoosible to have different types of links and it is also possible to
+attach a text string to a link.
+
 ### A link with arrow head
 ```
-A-->B
+A-->B;
 ```
+
+![Link with arrowhead](http://www.sveido.com/mermaid/img/ex4.png)
 
 ### An open link
 
 ```
-A---B
+A---B;
 ```
+
+![Open link](http://www.sveido.com/mermaid/img/ex10.png)
 
 ### Text on links
 
 ```
-A---B|This is the text
+A---|This is the text|B;
 ```
 
+![Text on links](http://www.sveido.com/mermaid/img/ex11.png)
 
 # Credits
- Many thanks to the d3 and dagre-d3 projects that is used to graph layout and drawing.
+ Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects that is used for graph layout and drawing!!!

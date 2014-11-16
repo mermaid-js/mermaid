@@ -130,17 +130,17 @@ arrowText:
     ;
 
 // Characters and spaces
-text: ALPHA SPACE text
+text: alphaNum SPACE text
         {$$ = $1 + ' ' +$3;}
-    | ALPHA MINUS text
+    | alphaNum MINUS text
          {$$ = $1 + '-' +$3;}
-    | ALPHA SPACE
+    | alphaNum SPACE
         {$$ = $1;}
-    | ALPHA
+    | alphaNum
         {$$ = $1;}
     ;
 
-styleStatement:STYLE SPACE ALPHA SPACE stylesOpt
+styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
     | STYLE SPACE HEX SPACE stylesOpt
           {console.log('In parser - style: '+$5);$$ = $1;yy.updateLink($3,$5);}
