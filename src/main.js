@@ -4,28 +4,28 @@ if (typeof mermaid === 'undefined') {
 }
 
 /**
- * Function used by parser to store vertices/nodes found in graph script.
- * @param vert
- * @param g
+ * Function that adds the vertices found in the graph definition to the graph to be rendered.
+ * @param vert Object containing the vertices.
+ * @param g The graph that is to be drawn.
  */
 mermaid.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
+    // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
     keys.forEach(function (id) {
         var vertice = vert[id];
         var verticeText;
 
-
-        console.log(vertice.styles.length);
-
         var i;
         var style = '';
+        // Create a compund style definiton from the style definitions found for the node in the graph definition
         for (i = 0; i < vertice.styles.length; i++) {
             if (typeof vertice.styles[i] !== 'undefined') {
                 style = style + vertice.styles[i] + ';';
             }
         }
 
+        // Use vertice id as text in the box if no text is provided by the graph definition
         if (vertice.text === undefined) {
             verticeText = vertice.id;
         }
@@ -33,12 +33,7 @@ mermaid.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
-
-        if (style === '') {
-            //style = graph.defaultStyle();
-        }
-
-        console.log('g.setNode("' + vertice.id + '",    { label: "' + verticeText + '" });');
+        // Create the node in the graph nased on defined form
         if (vertice.type === 'round') {
             g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
         } else {
@@ -51,31 +46,23 @@ mermaid.addVertices = function (vert, g) {
     });
 };
 
+/**
+ * Add edges to graph based on parsed graph defninition
+ * @param edges
+ * @param g
+ */
 mermaid.addEdges = function (edges, g) {
     edges.forEach(function (edge) {
-        var type, style;
 
-        if(typeof edge.type === 'undefined'){
-            type = 'arrow';
-        }else{
-            type = edge.type;
-        }
-        if(typeof edge.style === 'undefined'){
-            style = 'arrow';
-        }else{
-            type = edge.type;
-        }
-
-        if(type === 'arrow_open'){
+        // Set link type for rendering
+        if(edge.type === 'arrow_open'){
             aHead = 'none';
         }
         else{
             aHead = 'vee';
         }
 
-
-        var edgeText;
-        //console.log(vertice);
+        // Add the edge to the graph
         if (edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
                 g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
@@ -84,7 +71,6 @@ mermaid.addEdges = function (edges, g) {
                     style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
                 });
             }
-
         }
         else {
             if(typeof edge.style === 'undefined'){
@@ -95,38 +81,27 @@ mermaid.addEdges = function (edges, g) {
                 });
             }
         }
-        console.log('g.setEdge("' + edge.start + '","' + edge.end + '") ---');
-
     });
 };
 
+/**
+ * Draws a chart in the tag with id: id based on the graph definition in text.
+ * @param text
+ * @param id
+ */
 mermaid.drawChart = function (text, id) {
-
-    console.log('drawing char with id:' + id);
-    console.log(text);
     mermaid.graph.clear();
     parser.yy = mermaid.graph;
 
-    var err = function () {
-        console.log('Syntax error!!!');
-    };
-
+    // Parse the graph definition
     parser.parse(text);
 
-    var vert = mermaid.graph.getVertices();
-    var edges = mermaid.graph.getEdges();
-
-    console.log(edges);
-
-    var keys = Object.keys(vert);
-
+    // Fetch the default direction, use TD if none was found
     var dir;
     dir = mermaid.direction;
     if(typeof dir === 'undefined'){
         dir='TD';
     }
-
-
 
     // Create the input mermaid.graph
     var g = new dagreD3.graphlib.Graph()
@@ -139,7 +114,9 @@ mermaid.drawChart = function (text, id) {
             return {};
         });
 
-    console.log(g);
+    // Fetch the verices/nodes and edges/links from the parsed graph definition
+    var vert = mermaid.graph.getVertices();
+    var edges = mermaid.graph.getEdges();
 
     this.addVertices(vert, g);
     this.addEdges(edges, g);
@@ -147,7 +124,7 @@ mermaid.drawChart = function (text, id) {
     // Create the renderer
     var render = new dagreD3.render();
 
-    // Add our custom shape
+    // Add custom shape for rhombus type of boc (decision)
     render.shapes().question = function (parent, bbox, node) {
         var w = bbox.width,
             h = bbox.height * 3,
@@ -202,6 +179,9 @@ mermaid.drawChart = function (text, id) {
     svg.attr("height", g.graph().height + 40);
 };
 
+/**
+ * Go through the document and find the chart definitions in there and render the charts
+ */
 mermaid.init = function () {
     var arr = document.querySelectorAll('.mermaid');
 
@@ -223,4 +203,10 @@ mermaid.init = function () {
     }
     ;
 };
-mermaid.init();
+
+/**
+ * Wait for coument loaded before starting the execution
+ */
+document.addEventListener('DOMContentLoaded', function(){
+        mermaid.init();
+    }, false);

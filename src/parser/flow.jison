@@ -52,7 +52,7 @@ expressions
 
 graphConfig
     : GRAPH SPACE DIR SEMI
-        { console.log('In graph config');yy.setDirection($3);$$ = $3;}
+        { yy.setDirection($3);$$ = $3;}
     ;
 
 statements
@@ -72,9 +72,9 @@ statement
 
 verticeStatement:
     | vertex link vertex
-        { console.log('In vertexStatement');yy.addLink($1,$3,$2);$$ = 'oy'}
+        { yy.addLink($1,$3,$2);$$ = 'oy'}
     | vertex
-        {console.log('In vertexStatement ... ');$$ = 'yo';}
+        {$$ = 'yo';}
     ;
 
 vertex:  alphaNum SQS text SQE
@@ -84,7 +84,7 @@ vertex:  alphaNum SQS text SQE
     | alphaNum DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum
-        {console.log('In vertex:'+$1); $$ = $1;yy.addVertex($1);}
+        {$$ = $1;yy.addVertex($1);}
     ;
 
 alphaNum
@@ -96,7 +96,7 @@ alphaNum
 
 alphaNumStatement
     : alphaNumToken
-        {console.log('Found token (statement): '+$1);$$=$1;}
+        {$$=$1;}
     | alphaNumToken MINUS alphaNumToken
         {$$=$1+'-'+$3;}
     ;
@@ -126,16 +126,14 @@ linkStatement: ARROW_POINT
 
 arrowText:
     PIPE text PIPE
-    {console.log('Nice link text here: '+$2);$$ = $2;}
+    {$$ = $2;}
     ;
 
 // Characters and spaces
 text: alphaNum SPACE text
         {$$ = $1 + ' ' +$3;}
-    | alphaNum MINUS text
-         {$$ = $1 + '-' +$3;}
-    | alphaNum SPACE
-        {$$ = $1;}
+    | alphaNum spaceList MINUS spaceList text
+         {$$ = $1 + ' - ' +$5;}
     | alphaNum
         {$$ = $1;}
     ;
@@ -143,7 +141,7 @@ text: alphaNum SPACE text
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
     | STYLE SPACE HEX SPACE stylesOpt
-          {console.log('In parser - style: '+$5);$$ = $1;yy.updateLink($3,$5);}
+          {$$ = $1;yy.updateLink($3,$5);}
     ;
 
 stylesOpt: style
@@ -174,6 +172,3 @@ styleComponent: ALPHA
     {$$=$1}
     ;
 %%
-/*define('parser/mermaid',function(){
-    return parser;
-});*/

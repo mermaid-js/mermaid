@@ -145,6 +145,15 @@ describe('when parsing ',function(){
         expect(vert['C'].type).toBe('diamond');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
     });
+    it('should handle text in vertices with åäö, minus and space',function(){
+        var res = parser.parse('graph TD;A-->C{Chimpansen hoppar åäö  -  ÅÄÖ};');
+
+        var vert = parser.yy.getVertices();
+        var edges = parser.yy.getEdges();
+
+        expect(vert['C'].type).toBe('diamond');
+        expect(vert['C'].text).toBe('Chimpansen hoppar åäö - ÅÄÖ');
+    });
 
     it('should handle a single node',function(){
         // Silly but syntactically correct

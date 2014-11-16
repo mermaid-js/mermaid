@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[2,10],$V2=[1,15],$V3=[1,16],$V4=[1,11],$V5=[6,9],$V6=[11,28,29,37],$V7=[11,32,33,34,35],$V8=[9,11,18,20,21,22,23,24,27,32,33,34,35,36],$V9=[9,11,18,20,21,22,23,24,27,28,29,32,33,34,35,36],$Va=[28,29],$Vb=[28,29,36],$Vc=[20,22,24,36],$Vd=[1,67],$Ve=[1,64],$Vf=[1,62],$Vg=[1,65],$Vh=[1,68],$Vi=[1,63],$Vj=[1,66],$Vk=[1,72],$Vl=[11,41],$Vm=[9,11,27,28,29,39,41,43,44];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[2,10],$V2=[1,15],$V3=[1,16],$V4=[1,11],$V5=[6,9],$V6=[11,28,29,37],$V7=[11,32,33,34,35],$V8=[9,11,18,20,21,22,23,24,32,33,34,35,36],$V9=[9,11,18,20,21,22,23,24,28,29,32,33,34,35,36],$Va=[9,11,18,20,21,22,23,24,27,28,29,32,33,34,35,36],$Vb=[28,29],$Vc=[28,29,36],$Vd=[20,22,24,36],$Ve=[1,66],$Vf=[1,63],$Vg=[1,61],$Vh=[1,64],$Vi=[1,67],$Vj=[1,62],$Vk=[1,65],$Vl=[1,70],$Vm=[11,41],$Vn=[9,11,27,28,29,39,41,43,44];
 var parser = {trace: function trace() { },
 yy: {},
 symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceList":7,"GRAPH":8,"SPACE":9,"DIR":10,"SEMI":11,"statement":12,"verticeStatement":13,"styleStatement":14,"vertex":15,"link":16,"alphaNum":17,"SQS":18,"text":19,"SQE":20,"PS":21,"PE":22,"DIAMOND_START":23,"DIAMOND_STOP":24,"alphaNumStatement":25,"alphaNumToken":26,"MINUS":27,"ALPHA":28,"NUM":29,"linkStatement":30,"arrowText":31,"ARROW_POINT":32,"ARROW_CIRCLE":33,"ARROW_CROSS":34,"ARROW_OPEN":35,"PIPE":36,"STYLE":37,"stylesOpt":38,"HEX":39,"style":40,"COMMA":41,"styleComponent":42,"COLON":43,"UNIT":44,"$accept":0,"$end":1},
 terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",11:"SEMI",18:"SQS",20:"SQE",21:"PS",22:"PE",23:"DIAMOND_START",24:"DIAMOND_STOP",27:"MINUS",28:"ALPHA",29:"NUM",32:"ARROW_POINT",33:"ARROW_CIRCLE",34:"ARROW_CROSS",35:"ARROW_OPEN",36:"PIPE",37:"STYLE",39:"HEX",41:"COMMA",43:"COLON",44:"UNIT"},
-productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,2],[7,1],[12,2],[12,2],[13,0],[13,3],[13,1],[15,4],[15,4],[15,4],[15,1],[17,1],[17,2],[25,1],[25,3],[26,1],[26,1],[16,2],[16,1],[30,1],[30,1],[30,1],[30,1],[31,3],[19,3],[19,3],[19,2],[19,1],[14,5],[14,5],[38,1],[38,3],[40,1],[40,2],[42,1],[42,1],[42,1],[42,1],[42,1],[42,1],[42,1]],
+productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,2],[7,1],[12,2],[12,2],[13,0],[13,3],[13,1],[15,4],[15,4],[15,4],[15,1],[17,1],[17,2],[25,1],[25,3],[26,1],[26,1],[16,2],[16,1],[30,1],[30,1],[30,1],[30,1],[31,3],[19,3],[19,2],[19,1],[14,5],[14,5],[38,1],[38,3],[40,1],[40,2],[42,1],[42,1],[42,1],[42,1],[42,1],[42,1],[42,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -107,7 +107,7 @@ break;
 case 16:
 console.log('In vertex:'+$$[$0]); this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 17: case 21: case 22: case 38:
+case 17: case 21: case 22: case 37:
 this.$=$$[$0];
 break;
 case 18:
@@ -122,7 +122,7 @@ break;
 case 23:
 $$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 24: case 33:
+case 24: case 32:
 this.$ = $$[$0];
 break;
 case 25:
@@ -144,32 +144,29 @@ case 30:
 this.$ = $$[$0-2] + ' ' +$$[$0];
 break;
 case 31:
-this.$ = $$[$0-2] + '-' +$$[$0];
-break;
-case 32:
 this.$ = $$[$0-1];
 break;
-case 34:
+case 33:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
-case 35:
+case 34:
 console.log('In parser - style: '+$$[$0]);this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
-case 36:
+case 35:
 this.$ = [$$[$0]]
 break;
-case 37:
+case 36:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 39:
+case 38:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 40: case 41: case 42: case 43: case 44: case 45: case 46:
+case 39: case 40: case 41: case 42: case 43: case 44: case 45:
 this.$=$$[$0]
 break;
 }
 },
-table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,11:$V1,12:6,13:8,14:9,15:10,17:12,25:13,26:14,28:$V2,29:$V3,37:$V4},{9:[1,17]},{6:[1,18],7:19,9:$V0},{5:20,11:$V1,12:6,13:8,14:9,15:10,17:12,25:13,26:14,28:$V2,29:$V3,37:$V4},o($V5,[2,5]),o($V6,[2,7],{7:21,9:$V0}),{11:[1,22]},{11:[1,23]},{11:[2,12],16:24,30:25,32:[1,26],33:[1,27],34:[1,28],35:[1,29]},{9:[1,30]},o($V7,[2,16],{18:[1,31],21:[1,32],23:[1,33]}),o($V8,[2,17],{25:13,26:14,17:34,28:$V2,29:$V3}),o([9,11,18,20,21,22,23,24,28,29,32,33,34,35,36],[2,19],{27:[1,35]}),o($V9,[2,21]),o($V9,[2,22]),{10:[1,36]},{1:[2,1]},{11:$V1,12:37,13:8,14:9,15:10,17:12,25:13,26:14,28:$V2,29:$V3,37:$V4},{6:[1,38],7:19,9:$V0},o($V6,[2,6]),o($V5,[2,8]),o($V5,[2,9]),{15:39,17:12,25:13,26:14,28:$V2,29:$V3},o($Va,[2,24],{31:40,36:[1,41]}),o($Vb,[2,25]),o($Vb,[2,26]),o($Vb,[2,27]),o($Vb,[2,28]),{17:42,25:13,26:14,28:$V2,29:$V3,39:[1,43]},{17:45,19:44,25:13,26:14,28:$V2,29:$V3},{17:45,19:46,25:13,26:14,28:$V2,29:$V3},{17:45,19:47,25:13,26:14,28:$V2,29:$V3},o($V8,[2,18]),{26:48,28:$V2,29:$V3},{11:[1,49]},o($V5,[2,4]),{1:[2,2]},{11:[2,11]},o($Va,[2,23]),{17:45,19:50,25:13,26:14,28:$V2,29:$V3},{9:[1,51]},{9:[1,52]},{20:[1,53]},o($Vc,[2,33],{9:[1,54],27:[1,55]}),{22:[1,56]},{24:[1,57]},o($V9,[2,20]),o([9,11,28,29,37],[2,3]),{36:[1,58]},{9:$Vd,27:$Ve,28:$Vf,29:$Vg,38:59,39:$Vh,40:60,42:61,43:$Vi,44:$Vj},{9:$Vd,27:$Ve,28:$Vf,29:$Vg,38:69,39:$Vh,40:60,42:61,43:$Vi,44:$Vj},o($V7,[2,13]),o($Vc,[2,32],{25:13,26:14,17:45,19:70,28:$V2,29:$V3}),{17:45,19:71,25:13,26:14,28:$V2,29:$V3},o($V7,[2,14]),o($V7,[2,15]),o($Va,[2,29]),{11:[2,34],41:$Vk},o($Vl,[2,36],{42:73,9:$Vd,27:$Ve,28:$Vf,29:$Vg,39:$Vh,43:$Vi,44:$Vj}),o($Vm,[2,38]),o($Vm,[2,40]),o($Vm,[2,41]),o($Vm,[2,42]),o($Vm,[2,43]),o($Vm,[2,44]),o($Vm,[2,45]),o($Vm,[2,46]),{11:[2,35],41:$Vk},o($Vc,[2,30]),o($Vc,[2,31]),{9:$Vd,27:$Ve,28:$Vf,29:$Vg,39:$Vh,40:74,42:61,43:$Vi,44:$Vj},o($Vm,[2,39]),o($Vl,[2,37],{42:73,9:$Vd,27:$Ve,28:$Vf,29:$Vg,39:$Vh,43:$Vi,44:$Vj})],
+table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,11:$V1,12:6,13:8,14:9,15:10,17:12,25:13,26:14,28:$V2,29:$V3,37:$V4},{9:[1,17]},{6:[1,18],7:19,9:$V0},{5:20,11:$V1,12:6,13:8,14:9,15:10,17:12,25:13,26:14,28:$V2,29:$V3,37:$V4},o($V5,[2,5]),o($V6,[2,7],{7:21,9:$V0}),{11:[1,22]},{11:[1,23]},{11:[2,12],16:24,30:25,32:[1,26],33:[1,27],34:[1,28],35:[1,29]},{9:[1,30]},o($V7,[2,16],{18:[1,31],21:[1,32],23:[1,33]}),o($V8,[2,17],{25:13,26:14,17:34,28:$V2,29:$V3}),o($V9,[2,19],{27:[1,35]}),o($Va,[2,21]),o($Va,[2,22]),{10:[1,36]},{1:[2,1]},{11:$V1,12:37,13:8,14:9,15:10,17:12,25:13,26:14,28:$V2,29:$V3,37:$V4},{6:[1,38],7:19,9:$V0},o($V6,[2,6]),o($V5,[2,8]),o($V5,[2,9]),{15:39,17:12,25:13,26:14,28:$V2,29:$V3},o($Vb,[2,24],{31:40,36:[1,41]}),o($Vc,[2,25]),o($Vc,[2,26]),o($Vc,[2,27]),o($Vc,[2,28]),{17:42,25:13,26:14,28:$V2,29:$V3,39:[1,43]},{17:45,19:44,25:13,26:14,28:$V2,29:$V3},{17:45,19:46,25:13,26:14,28:$V2,29:$V3},{17:45,19:47,25:13,26:14,28:$V2,29:$V3},o($V8,[2,18]),{26:48,28:$V2,29:$V3},{11:[1,49]},o($V5,[2,4]),{1:[2,2]},{11:[2,11]},o($Vb,[2,23]),{17:45,19:50,25:13,26:14,28:$V2,29:$V3},{9:[1,51]},{9:[1,52]},{20:[1,53]},o($Vd,[2,32],{9:[1,54]}),{22:[1,55]},{24:[1,56]},o($V9,[2,20]),o([9,11,28,29,37],[2,3]),{36:[1,57]},{9:$Ve,27:$Vf,28:$Vg,29:$Vh,38:58,39:$Vi,40:59,42:60,43:$Vj,44:$Vk},{9:$Ve,27:$Vf,28:$Vg,29:$Vh,38:68,39:$Vi,40:59,42:60,43:$Vj,44:$Vk},o($V7,[2,13]),o($Vd,[2,31],{25:13,26:14,17:45,19:69,28:$V2,29:$V3}),o($V7,[2,14]),o($V7,[2,15]),o($Vb,[2,29]),{11:[2,33],41:$Vl},o($Vm,[2,35],{42:71,9:$Ve,27:$Vf,28:$Vg,29:$Vh,39:$Vi,43:$Vj,44:$Vk}),o($Vn,[2,37]),o($Vn,[2,39]),o($Vn,[2,40]),o($Vn,[2,41]),o($Vn,[2,42]),o($Vn,[2,43]),o($Vn,[2,44]),o($Vn,[2,45]),{11:[2,34],41:$Vl},o($Vd,[2,30]),{9:$Ve,27:$Vf,28:$Vg,29:$Vh,39:$Vi,40:72,42:60,43:$Vj,44:$Vk},o($Vn,[2,38]),o($Vm,[2,36],{42:71,9:$Ve,27:$Vf,28:$Vg,29:$Vh,39:$Vi,43:$Vj,44:$Vk})],
 defaultActions: {18:[2,1],38:[2,2],39:[2,11]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
@@ -748,7 +745,7 @@ mermaid.edges = [];
 
 mermaid.graph = {
     /**
-     *
+     * Function called by parser when a node definition has been found
      * @param id
      * @param text
      * @param type
@@ -767,16 +764,19 @@ mermaid.graph = {
         }
         if(typeof style !== 'undefined'){
             if(style !== null){
-                console.log('Adding style: '+style);
                 style.forEach(function(s){
                     mermaid.vertices[id].styles.push(s);
                 });
             }
         }
     },
-    getVertices:function(){
-        return mermaid.vertices;
-    },
+    /**
+     * Function called by parser when a link/edge definition has been found
+     * @param start
+     * @param end
+     * @param type
+     * @param linktext
+     */
     addLink: function (start, end, type, linktext) {
         var edge = {start:start, end:end, type:undefined, text:''};
         var linktext = type.text;
@@ -788,24 +788,49 @@ mermaid.graph = {
             edge.type = type.type;
         }
         mermaid.edges.push(edge);
-        //console.log('Got link from ' + start + ' to ' + end + ' type:' + type.type + ' linktext:' + linktext);
     },
+    /**
+     * Updates a link with a style
+     * @param pos
+     * @param style
+     */
     updateLink: function (pos, style) {
-        //mermaid.edges.push(edge);
         var position = pos.substr(1);
-        console.log('Got link style for ' + position + ' style ' + style);
         mermaid.edges[position].style = style;
     },
+    /**
+     * Called by parser when a graph definition is found, stores the direction of the chart.
+     * @param dir
+     */
     setDirection: function(dir){
         mermaid.direction = dir;
     },
+    /**
+     * Retrieval function for fetching the found nodes after parsing has completed.
+     * @returns {{}|*|mermaid.vertices}
+     */
+    getVertices:function(){
+        return mermaid.vertices;
+    },
+    /**
+     * Retrieval function for fetching the found links after parsing has completed.
+     * @returns {{}|*|mermaid.edges}
+     */
     getEdges: function () {
         return mermaid.edges;
     },
+
+    /**
+     * Clears the internal graph db so that a new graph can be parsed.
+     */
     clear:function(){
         mermaid.vertices = {};
         mermaid.edges = [];
     },
+    /**
+     *
+     * @returns {string}
+     */
     defaultStyle:function(){
         return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
     }
@@ -818,28 +843,28 @@ if (typeof mermaid === 'undefined') {
 }
 
 /**
- * Function used by parser to store vertices/nodes found in graph script.
- * @param vert
- * @param g
+ * Function that adds the vertices found in the graph definition to the graph to be rendered.
+ * @param vert Object containing the vertices.
+ * @param g The graph that is to be drawn.
  */
 mermaid.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
+    // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
     keys.forEach(function (id) {
         var vertice = vert[id];
         var verticeText;
 
-
-        console.log(vertice.styles.length);
-
         var i;
         var style = '';
+        // Create a compund style definiton from the style definitions found for the node in the graph definition
         for (i = 0; i < vertice.styles.length; i++) {
             if (typeof vertice.styles[i] !== 'undefined') {
                 style = style + vertice.styles[i] + ';';
             }
         }
 
+        // Use vertice id as text in the box if no text is provided by the graph definition
         if (vertice.text === undefined) {
             verticeText = vertice.id;
         }
@@ -847,12 +872,7 @@ mermaid.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
-
-        if (style === '') {
-            //style = graph.defaultStyle();
-        }
-
-        console.log('g.setNode("' + vertice.id + '",    { label: "' + verticeText + '" });');
+        // Create the node in the graph nased on defined form
         if (vertice.type === 'round') {
             g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
         } else {
@@ -865,31 +885,23 @@ mermaid.addVertices = function (vert, g) {
     });
 };
 
+/**
+ * Add edges to graph based on parsed graph defninition
+ * @param edges
+ * @param g
+ */
 mermaid.addEdges = function (edges, g) {
     edges.forEach(function (edge) {
-        var type, style;
 
-        if(typeof edge.type === 'undefined'){
-            type = 'arrow';
-        }else{
-            type = edge.type;
-        }
-        if(typeof edge.style === 'undefined'){
-            style = 'arrow';
-        }else{
-            type = edge.type;
-        }
-
-        if(type === 'arrow_open'){
+        // Set link type for rendering
+        if(edge.type === 'arrow_open'){
             aHead = 'none';
         }
         else{
             aHead = 'vee';
         }
 
-
-        var edgeText;
-        //console.log(vertice);
+        // Add the edge to the graph
         if (edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
                 g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
@@ -898,7 +910,6 @@ mermaid.addEdges = function (edges, g) {
                     style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
                 });
             }
-
         }
         else {
             if(typeof edge.style === 'undefined'){
@@ -909,38 +920,27 @@ mermaid.addEdges = function (edges, g) {
                 });
             }
         }
-        console.log('g.setEdge("' + edge.start + '","' + edge.end + '") ---');
-
     });
 };
 
+/**
+ * Draws a chart in the tag with id: id based on the graph definition in text.
+ * @param text
+ * @param id
+ */
 mermaid.drawChart = function (text, id) {
-
-    console.log('drawing char with id:' + id);
-    console.log(text);
     mermaid.graph.clear();
     parser.yy = mermaid.graph;
 
-    var err = function () {
-        console.log('Syntax error!!!');
-    };
-
+    // Parse the graph definition
     parser.parse(text);
 
-    var vert = mermaid.graph.getVertices();
-    var edges = mermaid.graph.getEdges();
-
-    console.log(edges);
-
-    var keys = Object.keys(vert);
-
+    // Fetch the default direction, use TD if none was found
     var dir;
     dir = mermaid.direction;
     if(typeof dir === 'undefined'){
         dir='TD';
     }
-
-
 
     // Create the input mermaid.graph
     var g = new dagreD3.graphlib.Graph()
@@ -953,7 +953,9 @@ mermaid.drawChart = function (text, id) {
             return {};
         });
 
-    console.log(g);
+    // Fetch the verices/nodes and edges/links from the parsed graph definition
+    var vert = mermaid.graph.getVertices();
+    var edges = mermaid.graph.getEdges();
 
     this.addVertices(vert, g);
     this.addEdges(edges, g);
@@ -961,7 +963,7 @@ mermaid.drawChart = function (text, id) {
     // Create the renderer
     var render = new dagreD3.render();
 
-    // Add our custom shape
+    // Add custom shape for rhombus type of boc (decision)
     render.shapes().question = function (parent, bbox, node) {
         var w = bbox.width,
             h = bbox.height * 3,
@@ -1016,6 +1018,9 @@ mermaid.drawChart = function (text, id) {
     svg.attr("height", g.graph().height + 40);
 };
 
+/**
+ * Go through the document and find the chart definitions in there and render the charts
+ */
 mermaid.init = function () {
     var arr = document.querySelectorAll('.mermaid');
 
@@ -1037,4 +1042,10 @@ mermaid.init = function () {
     }
     ;
 };
-mermaid.init();
+
+/**
+ * Wait for coument loaded before starting the execution
+ */
+document.addEventListener('DOMContentLoaded', function(){
+        mermaid.init();
+    }, false);

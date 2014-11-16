@@ -1,13 +1,13 @@
 mermaid
 =======
 
-Generation of diagram and flowchart from text in a similar manner as markdown.
+Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
-Ever wanted to simplify documentation and avoid heavy tools like visio when explaining your code?
+Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-The code below would render to the image
+The code below would render the following image
 
 ```
 graph TD;
@@ -38,7 +38,7 @@ This file bundles mermaid with d3 and dagre-d3.
 
 * [mermaid without dependencies](http://www.sveido.com/mermaid/dist/mermaid.slim.min.js)
 
-With this file you need to include d3 and dagre-d3 yourself.
+With this file you will need to include d3 and dagre-d3 yourself.
 
 # Usage
 
@@ -48,7 +48,7 @@ Include mermaid on your web page:
 <script src="mermaid.full.min.js"></script>
 ```
 
-Further down on your page mer maid will look for tags with ```class="mermaid"``` from these tags mermaid will try to
+Further down on your page mermaid will look for tags with ```class="mermaid"```. From these tags mermaid will try to
 read the chart definiton which will be replaced with the svg chart.
 
 
@@ -91,7 +91,7 @@ This statement declares a new graph and the direction of the graph layout.
 graph TD
 ```
 
-Would declare a graph oriented from top to bottom.
+This declares a graph oriented from top to bottom.
 
 ![Example 3](http://www.sveido.com/mermaid/img/ex3.png)
 
@@ -99,7 +99,7 @@ Would declare a graph oriented from top to bottom.
 graph LR
 ```
 
-Would declare a graph oriented from left to right.
+This declares a graph oriented from left to right.
 
 ![Example 4](http://www.sveido.com/mermaid/img/ex4.png)
 
@@ -115,8 +115,8 @@ id1;
 Note that the id is what is displayed in the box.
 
 ### A node with text
-It is also possible to set text in the box that differs from the id. If this is done several times it is the last text
-found for the node that will be used. Also if you define edges for the node later on you can omit text definitions, the
+It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
+found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
 one previously defined will be used when rendering the box.
 
 ```
@@ -141,7 +141,7 @@ id1{This is the text in the box};
 ![Decision box](http://www.sveido.com/mermaid/img/ex8.png)
 
 ### Styling a node
-It is possible to give a node specific styling as thicker border or a different background color.
+It is possible to apply specific styles such as a thicker border or a different background color to a node.
 
 ```
 graph LR;
@@ -154,8 +154,7 @@ graph LR;
 
 ## Links between nodes
 
-Nodes can be connected with links/edges. It is spoosible to have different types of links and it is also possible to
-attach a text string to a link.
+Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
 
 ### A link with arrow head
 ```
@@ -181,4 +180,4 @@ A---|This is the text|B;
 ![Text on links](http://www.sveido.com/mermaid/img/ex11.png)
 
 # Credits
- Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects that is used for graph layout and drawing!!!
+Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!!!
