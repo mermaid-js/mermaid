@@ -1,33 +1,29 @@
 {
   "name": "mermaid",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "authors": [
     "knsv <knut@sveido.com>"
   ],
-  "description": "Markdownish syntax for generating diagrams",
-  "main": "mermaid.js",
-  "moduleType": [
-    "amd"
-  ],
+  "description": "Markdownish syntax for generating flowcharts",
+  "main": "dist/mermaid.slim.js",
   "keywords": [
     "diagram",
-    "markdown"
+    "markdown",
+    "flowchart"
   ],
   "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
+    "vendor",
     "test",
     "tests"
   ],
   "devDependencies": {
     "jasmine": "~2.0.4",
-    "requirejs": "~2.1.15",
-    "raphael": "~2.1.2",
-    "snap": "*",
-    "Snap.svg": "~0.3.0",
-    "dagre": "~0.6.4",
-    "dagre-d3": "~0.3.2"
+    "dagre": "0.6.2",
+    "d3": "3.3.8",
+    "dagre-d3": "0.3.2"
   }
 }

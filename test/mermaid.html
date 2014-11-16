@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="../lib/dagre-d3.min.js"></script>
-    <script data-main="init.js" src="../vendor/requirejs/require.js"></script>
+    <script src="../vendor/d3/d3.js"></script>
+    <script src="../vendor/dagre-d3/dist/dagre-d3.core.js"></script>
+    <script src="../dist/mermaid.slim.js"></script>
     <style id="css">
         /* This sets the color for "TK" nodes to a light blue green. */
         g.type-TK > rect {
@@ -31,17 +31,9 @@
 </head>
     <body>
     <div class="mermaid">
+        graph LR;
         A-->B;
         B-->D;
-        A[AnnaStina]-->C[Målar skåp];
-        C-->D(Bjarke trummar på bordet);
-        B-->C{Obs-gränby};
-    </div>
-    <div class="mermaid">
-        a[Lasa bok]-->b;
-        b{Fundera}-->c(Vidar)|Klocka;
-        b-->d(Bjarke går)|Lego;
-        style a fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
     </div>
     </body>
 </html>
