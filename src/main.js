@@ -203,12 +203,13 @@ mermaid.init = function () {
     }
     ;
 };
+
 /**
  * Version management
  * @returns {string}
  */
 mermaid.version = function(){
-    return '0.1.0';
+    return '0.1.1';
 }
 /**
  * Wait for coument loaded before starting the execution
