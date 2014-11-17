@@ -67,8 +67,28 @@ Would end up like this:
     </svg>
 </div>
 ```
-
 An id is also added to mermaid tags without id.
+
+## Default style
+
+Set the default styles for the graphics in css:
+
+```
+text {
+    font-weight: 300;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+    font-size: 14px;
+}
+.node rect {
+    stroke: #999;
+    fill: #fff;
+    stroke-width: 1.5px;
+}
+.edgePath path {
+    stroke: #333;
+    stroke-width: 1.5px;
+}
+```
 
 # A graph example
 
