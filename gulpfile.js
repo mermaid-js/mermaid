@@ -12,12 +12,14 @@ gulp.task('jison2', function() {
 });
 
 gulp.task('jison', shell.task([
-  'jison src/parser/flow.jison -o src/parser/flow.js',
-  'source scripts/compileJison.sh'
+  'jison src/parser/flow.jison -o src/parser/flow.js'
+  //'source scripts/compileJison.sh'
+  //  'jison src/parser/flow.jison -o src/parser/flow.js',
 ]))
 
 gulp.task('jison2', shell.task([
     'jison src/parser/flow.jison -o src/parser/flow.js',
+    'jison src/parser/sequence.jison -o src/parser/sequence.js',
     'source scripts/compileFlow.sh'
 ]))
 
