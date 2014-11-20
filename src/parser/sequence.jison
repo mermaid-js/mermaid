@@ -10,7 +10,7 @@
 \-                    return 'MINUS';
 \+                    return 'PLUS';
 \=                    return 'EQUALS';
-[a-zåäöæøA-ZÅÄÖÆØ]+   return 'ALPHA';
+[a-zåäöæøA-ZÅÄÖÆØ()]+   return 'ALPHA';
 "/"                   return 'SLASH';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -41,18 +41,22 @@ statements
         {$$=$1;}
     | statement EOF
         {$$=$1;}
+    | statement newlines EOF
+        {$$=$1;}
     ;
 
 preStatement
     : alphaNum COLON alphaNum
-              {console.log('Got new actor id='+$1+' descr='+$3);$$={a:$1,b:$3}}
+              {$$={a:$1,b:$3}}
               ;
 
 statement
     : preStatement
-              {console.log('Got new actor id='+$1.a+' descr='+$1.b);$$='actor';}
+              {yy.addActor($1.a,'actor',$1.b);$$='actor';}
+    |     preStatement DOT message
+              {yy.addMessage($1.a,$1.b,$3);$$='message';}
     |     preStatement EQUALS callee DOT message
-              {console.log('Got new message from='+$1.a+' to='+$3+' message='+$5+' answer='+$1.b);$$='actor';}
+              {yy.addMessage($1.a,$3,$5,$1.b);$$='actor';}
     ;
 
 action:
@@ -62,7 +66,7 @@ action:
 
 actorDefinition:
     alphaNum COLON alphaNum
-        {console.log('Got new actor id='+$1+' descr='+$3);$$='actor';}
+        {$$='actor';}
     ;
 messageDefinition:
     caller COLON answer EQUALS callee DOT message

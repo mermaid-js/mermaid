@@ -1,14 +1,12 @@
-var mermaid;
-if (typeof mermaid === 'undefined') {
-    mermaid = {}
-}
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
 
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-mermaid.addVertices = function (vert, g) {
+var addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
     // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
@@ -51,7 +49,7 @@ mermaid.addVertices = function (vert, g) {
  * @param edges
  * @param g
  */
-mermaid.addEdges = function (edges, g) {
+var addEdges = function (edges, g) {
     edges.forEach(function (edge) {
 
         // Set link type for rendering
@@ -89,16 +87,16 @@ mermaid.addEdges = function (edges, g) {
  * @param text
  * @param id
  */
-mermaid.drawChart = function (text, id) {
-    mermaid.graph.clear();
-    parser.yy = mermaid.graph;
+var drawChart = function (text, id) {
+    graph.clear();
+    flow.parser.yy = graph;
 
     // Parse the graph definition
-    parser.parse(text);
+    flow.parser.parse(text);
 
     // Fetch the default direction, use TD if none was found
     var dir;
-    dir = mermaid.direction;
+    dir = graph.getDirection();
     if(typeof dir === 'undefined'){
         dir='TD';
     }
@@ -115,11 +113,11 @@ mermaid.drawChart = function (text, id) {
         });
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
-    var vert = mermaid.graph.getVertices();
-    var edges = mermaid.graph.getEdges();
+    var vert = graph.getVertices();
+    var edges = graph.getEdges();
 
-    this.addVertices(vert, g);
-    this.addEdges(edges, g);
+    addVertices(vert, g);
+    addEdges(edges, g);
 
     // Create the renderer
     var render = new dagreD3.render();
@@ -182,7 +180,7 @@ mermaid.drawChart = function (text, id) {
 /**
  * Go through the document and find the chart definitions in there and render the charts
  */
-mermaid.init = function () {
+var init = function () {
     var arr = document.querySelectorAll('.mermaid');
 
     var cnt = 0;
@@ -199,7 +197,7 @@ mermaid.init = function () {
         '<g />' +
         '</svg>';
 
-        this.drawChart(chartText, id);
+        drawChart(chartText, id);
     }
     ;
 };
@@ -208,12 +206,12 @@ mermaid.init = function () {
  * Version management
  * @returns {string}
  */
-mermaid.version = function(){
-    return '0.1.1';
+exports.version = function(){
+    return '0.2.0';
 }
 /**
  * Wait for coument loaded before starting the execution
  */
 document.addEventListener('DOMContentLoaded', function(){
-        mermaid.init();
+        init();
     }, false);
