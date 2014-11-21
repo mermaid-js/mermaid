@@ -16,7 +16,7 @@ var addVertices = function (vert, g) {
 
         var i;
         var style = '';
-        // Create a compund style definiton from the style definitions found for the node in the graph definition
+        // Create a compound style definition from the style definitions found for the node in the graph definition
         for (i = 0; i < vertice.styles.length; i++) {
             if (typeof vertice.styles[i] !== 'undefined') {
                 style = style + vertice.styles[i] + ';';
@@ -181,6 +181,7 @@ var drawChart = function (text, id) {
  * Go through the document and find the chart definitions in there and render the charts
  */
 var init = function () {
+    console.log('Mermaid v'+exports.version()+' starting');
     var arr = document.querySelectorAll('.mermaid');
 
     var cnt = 0;
@@ -207,11 +208,40 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.0';
+    return '0.2.1';
 }
+
+var equals = function (val, variable){
+    if(typeof variable !== 'undefined'){
+        return false;
+    }
+    else{
+        return (val === variable);
+    }
+};
+
 /**
  * Wait for coument loaded before starting the execution
  */
 document.addEventListener('DOMContentLoaded', function(){
+    // Check presence of config object
+    if(typeof mermaid_config !== 'undefined'){
+        // Check if property startOnLoad is set
+        if(equals(true,mermaid_config.startOnLoad)){
+            init();
+        }
+    }
+    else{
+        // No config found, do autostart in this simple case
         init();
-    }, false);
+    }
+}, false);
+
+global.mermaid = {
+    init:function(){
+        init();
+    },
+    version:function(){
+        return exports.version();
+    }
+};

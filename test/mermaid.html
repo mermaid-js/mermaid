@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <scrpt src="../vendor/d3/d3.js"></scrpt>
-    <scrpt src="../vendor/dagre-d3/dist/dagre-d3.core.js"></scrpt>
-    <script src="../dist/mm.full.js"></script>
+    <script src="../dist/mermaid.full.min.js"></script>
     <style id="css">
         /* This sets the color for "TK" nodes to a light blue green. */
         g.type-TK > rect {
@@ -28,6 +26,11 @@
             fill:#fff;
         }
     </style>
+    <script>
+        var mermaid_config = {
+            startOnLoad:false
+        }
+    </script>
 </head>
     <body>
     <div class="mermaid">

@@ -1,3 +1,654 @@
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+},{}],2:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require("1YiZ5S"))
+},{"1YiZ5S":3}],3:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    if (canPost) {
+        var queue = [];
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+}
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],4:[function(require,module,exports){
+(function (global){
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
+
+/**
+ * Function that adds the vertices found in the graph definition to the graph to be rendered.
+ * @param vert Object containing the vertices.
+ * @param g The graph that is to be drawn.
+ */
+var addVertices = function (vert, g) {
+    var keys = Object.keys(vert);
+
+    // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
+    keys.forEach(function (id) {
+        var vertice = vert[id];
+        var verticeText;
+
+        var i;
+        var style = '';
+        // Create a compound style definition from the style definitions found for the node in the graph definition
+        for (i = 0; i < vertice.styles.length; i++) {
+            if (typeof vertice.styles[i] !== 'undefined') {
+                style = style + vertice.styles[i] + ';';
+            }
+        }
+
+        // Use vertice id as text in the box if no text is provided by the graph definition
+        if (vertice.text === undefined) {
+            verticeText = vertice.id;
+        }
+        else {
+            verticeText = vertice.text;
+        }
+
+        // Create the node in the graph nased on defined form
+        if (vertice.type === 'round') {
+            g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
+        } else {
+            if (vertice.type === 'diamond') {
+                g.setNode(vertice.id, {shape: "question", label: verticeText, rx: 0, ry: 0, style: style});
+            } else {
+                g.setNode(vertice.id, {label: verticeText, rx: 0, ry: 0, style: style});
+            }
+        }
+    });
+};
+
+/**
+ * Add edges to graph based on parsed graph defninition
+ * @param edges
+ * @param g
+ */
+var addEdges = function (edges, g) {
+    edges.forEach(function (edge) {
+
+        // Set link type for rendering
+        if(edge.type === 'arrow_open'){
+            aHead = 'none';
+        }
+        else{
+            aHead = 'vee';
+        }
+
+        // Add the edge to the graph
+        if (edge.text === 'undefined') {
+            if(typeof edge.style === 'undefined'){
+                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
+            }else{
+                g.setEdge(edge.start, edge.end, {
+                    style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
+                });
+            }
+        }
+        else {
+            if(typeof edge.style === 'undefined'){
+                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead});
+            }else{
+                g.setEdge(edge.start, edge.end, {
+                    style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
+                });
+            }
+        }
+    });
+};
+
+/**
+ * Draws a chart in the tag with id: id based on the graph definition in text.
+ * @param text
+ * @param id
+ */
+var drawChart = function (text, id) {
+    graph.clear();
+    flow.parser.yy = graph;
+
+    // Parse the graph definition
+    flow.parser.parse(text);
+
+    // Fetch the default direction, use TD if none was found
+    var dir;
+    dir = graph.getDirection();
+    if(typeof dir === 'undefined'){
+        dir='TD';
+    }
+
+    // Create the input mermaid.graph
+    var g = new dagreD3.graphlib.Graph()
+        .setGraph({
+            rankdir: dir,
+            marginx: 20,
+            marginy: 20
+        })
+        .setDefaultEdgeLabel(function () {
+            return {};
+        });
+
+    // Fetch the verices/nodes and edges/links from the parsed graph definition
+    var vert = graph.getVertices();
+    var edges = graph.getEdges();
+
+    addVertices(vert, g);
+    addEdges(edges, g);
+
+    // Create the renderer
+    var render = new dagreD3.render();
+
+    // Add custom shape for rhombus type of boc (decision)
+    render.shapes().question = function (parent, bbox, node) {
+        var w = bbox.width,
+            h = bbox.height * 3,
+            points = [
+                {x: w / 2, y: 0},
+                {x: w, y: -h / 2},
+                {x: w / 2, y: -h},
+                {x: 0, y: -h / 2}
+            ];
+        shapeSvg = parent.insert("polygon", ":first-child")
+            .attr("points", points.map(function (d) {
+                return d.x + "," + d.y;
+            }).join(" "))
+            .style("fill", "#fff")
+            .style("stroke", "#333")
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+        node.intersect = function (point) {
+            return dagreD3.intersect.polygon(node, points, point);
+        };
+        return shapeSvg;
+    };
+
+    // Add our custom arrow - an empty arrowhead
+    render.arrows().none = function normal(parent, id, edge, type) {
+      var marker = parent.append("marker")
+        .attr("id", id)
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 9)
+        .attr("refY", 5)
+        .attr("markerUnits", "strokeWidth")
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto");
+
+      var path = marker.append("path")
+        .attr("d", "M 0 0 L 0 0 L 0 0 z");
+      dagreD3.util.applyStyle(path, edge[type + "Style"]);
+    };
+
+    // Set up an SVG group so that we can translate the final graph.
+    var svg = d3.select("#" + id);
+    svgGroup = d3.select("#" + id + " g");
+
+    // Run the renderer. This is what draws the final graph.
+    render(d3.select("#" + id + " g"), g);
+
+    // Center the graph
+    var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
+    //svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
+    svg.attr("height", g.graph().height + 40);
+};
+
+/**
+ * Go through the document and find the chart definitions in there and render the charts
+ */
+var init = function () {
+    console.log('Mermaid v'+exports.version()+' starting');
+    var arr = document.querySelectorAll('.mermaid');
+
+    var cnt = 0;
+    for (i = 0; i < arr.length; i++) {
+        var element = arr[i];
+        var id;
+
+        id = 'mermaidChart' + cnt;
+        cnt++;
+
+        var chartText = element.textContent.trim();
+
+        element.innerHTML = '<svg id="' + id + '" width="100%">' +
+        '<g />' +
+        '</svg>';
+
+        drawChart(chartText, id);
+    }
+    ;
+};
+
+/**
+ * Version management
+ * @returns {string}
+ */
+exports.version = function(){
+    return '0.2.1';
+}
+
+var equals = function (val, variable){
+    if(typeof variable !== 'undefined'){
+        return false;
+    }
+    else{
+        return (val === variable);
+    }
+};
+
+/**
+ * Wait for coument loaded before starting the execution
+ */
+document.addEventListener('DOMContentLoaded', function(){
+    // Check presence of config object
+    if(typeof mermaid_config !== 'undefined'){
+        // Check if property startOnLoad is set
+        if(equals(true,mermaid_config.startOnLoad)){
+            init();
+        }
+    }
+    else{
+        // No config found, do autostart in this simple case
+        init();
+    }
+}, false);
+
+global.mermaid = {
+    init:function(){
+        init();
+    },
+    version:function(){
+        exports.version();
+    }
+};
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./graphDb":5,"./parser/flow":6}],5:[function(require,module,exports){
+/**
+ * Created by knut on 14-11-03.
+ */
+
+var vertices = {};
+var edges = [];
+var direction;
+/**
+ * Function called by parser when a node definition has been found
+ * @param id
+ * @param text
+ * @param type
+ * @param style
+ */
+exports.addVertex = function (id, text, type, style) {
+    console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
+    if (typeof vertices[id] === 'undefined') {
+        vertices[id] = {id: id, styles: []};
+    }
+    if (typeof text !== 'undefined') {
+        vertices[id].text = text;
+    }
+    if (typeof type !== 'undefined') {
+        vertices[id].type = type;
+    }
+    if (typeof style !== 'undefined') {
+        if (style !== null) {
+            style.forEach(function (s) {
+                vertices[id].styles.push(s);
+            });
+        }
+    }
+};
+/**
+ * Function called by parser when a link/edge definition has been found
+ * @param start
+ * @param end
+ * @param type
+ * @param linktext
+ */
+exports.addLink = function (start, end, type, linktext) {
+    var edge = {start: start, end: end, type: undefined, text: ''};
+    var linktext = type.text;
+    if (typeof linktext !== 'undefined') {
+        edge.text = linktext;
+    }
+
+    if (typeof type !== 'undefined') {
+        edge.type = type.type;
+    }
+    edges.push(edge);
+};
+/**
+ * Updates a link with a style
+ * @param pos
+ * @param style
+ */
+exports.updateLink = function (pos, style) {
+    var position = pos.substr(1);
+    edges[position].style = style;
+};
+/**
+ * Called by parser when a graph definition is found, stores the direction of the chart.
+ * @param dir
+ */
+exports.setDirection = function (dir) {
+    direction = dir;
+};
+exports.getDirection = function () {
+    return direction;
+};
+/**
+ * Retrieval function for fetching the found nodes after parsing has completed.
+ * @returns {{}|*|vertices}
+ */
+exports.getVertices = function () {
+    return vertices;
+};
+
+/**
+ * Retrieval function for fetching the found links after parsing has completed.
+ * @returns {{}|*|edges}
+ */
+exports.getEdges = function () {
+    return edges;
+};
+
+/**
+ * Clears the internal graph db so that a new graph can be parsed.
+ */
+exports.clear = function () {
+    vertices = {};
+    edges = [];
+};
+/**
+ *
+ * @returns {string}
+ */
+exports.defaultStyle = function () {
+    return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
+};
+
+
+},{}],6:[function(require,module,exports){
+(function (process){
 /* parser generated by jison 0.4.15 */
 /*
   Returns a Parser object of the following structure:
@@ -87,13 +738,13 @@ case 2:
 this.$=$$[$0-3];
 break;
 case 3:
- console.log('In graph config');yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
+ yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
 break;
 case 11:
- console.log('In vertexStatement');yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
+ yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
 break;
 case 12:
-console.log('In vertexStatement ... ');this.$ = 'yo';
+this.$ = 'yo';
 break;
 case 13:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
@@ -105,16 +756,13 @@ case 15:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
 break;
 case 16:
-console.log('In vertex:'+$$[$0]); this.$ = $$[$0];yy.addVertex($$[$0]);
+this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 17: case 21: case 22: case 37:
+case 17: case 19: case 21: case 22: case 37:
 this.$=$$[$0];
 break;
 case 18:
 this.$=$$[$0-1]+''+$$[$0];
-break;
-case 19:
-console.log('Found token (statement): '+$$[$0]);this.$=$$[$0];
 break;
 case 20:
 this.$=$$[$0-2]+'-'+$$[$0];
@@ -138,7 +786,7 @@ case 28:
 this.$ = {"type":"arrow_open"};
 break;
 case 29:
-console.log('Nice link text here: '+$$[$0-1]);this.$ = $$[$0-1];
+this.$ = $$[$0-1];
 break;
 case 30:
 this.$ = $$[$0-2] + ' ' +$$[$0];
@@ -150,7 +798,7 @@ case 33:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
 case 34:
-console.log('In parser - style: '+$$[$0]);this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
+this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
 case 35:
 this.$ = [$$[$0]]
@@ -312,10 +960,7 @@ parse: function parse(input) {
     }
     return true;
 }};
-
-/*define('parser/mermaid',function(){
-    return parser;
-});*//* generated by jison-lex 0.3.4 */
+/* generated by jison-lex 0.3.4 */
 var lexer = (function(){
 var lexer = ({
 
@@ -733,326 +1378,5 @@ if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
 }
-/**
- * Created by knut on 14-11-03.
- */
-var mermaid;
-if(typeof mermaid === 'undefined') {
-    mermaid = {}
-}
-mermaid.vertices = {};
-mermaid.edges = [];
-
-mermaid.graph = {
-    /**
-     * Function called by parser when a node definition has been found
-     * @param id
-     * @param text
-     * @param type
-     * @param style
-     */
-    addVertex: function (id, text, type, style) {
-        console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
-        if(typeof mermaid.vertices[id] === 'undefined'){
-            mermaid.vertices[id]={id:id, styles:[]};
-        }
-        if(typeof text !== 'undefined'){
-            mermaid.vertices[id].text = text;
-        }
-        if(typeof type !== 'undefined'){
-            mermaid.vertices[id].type = type;
-        }
-        if(typeof style !== 'undefined'){
-            if(style !== null){
-                style.forEach(function(s){
-                    mermaid.vertices[id].styles.push(s);
-                });
-            }
-        }
-    },
-    /**
-     * Function called by parser when a link/edge definition has been found
-     * @param start
-     * @param end
-     * @param type
-     * @param linktext
-     */
-    addLink: function (start, end, type, linktext) {
-        var edge = {start:start, end:end, type:undefined, text:''};
-        var linktext = type.text;
-        if(typeof linktext !== 'undefined'){
-            edge.text = linktext;
-        }
-
-        if(typeof type !== 'undefined'){
-            edge.type = type.type;
-        }
-        mermaid.edges.push(edge);
-    },
-    /**
-     * Updates a link with a style
-     * @param pos
-     * @param style
-     */
-    updateLink: function (pos, style) {
-        var position = pos.substr(1);
-        mermaid.edges[position].style = style;
-    },
-    /**
-     * Called by parser when a graph definition is found, stores the direction of the chart.
-     * @param dir
-     */
-    setDirection: function(dir){
-        mermaid.direction = dir;
-    },
-    /**
-     * Retrieval function for fetching the found nodes after parsing has completed.
-     * @returns {{}|*|mermaid.vertices}
-     */
-    getVertices:function(){
-        return mermaid.vertices;
-    },
-    /**
-     * Retrieval function for fetching the found links after parsing has completed.
-     * @returns {{}|*|mermaid.edges}
-     */
-    getEdges: function () {
-        return mermaid.edges;
-    },
-
-    /**
-     * Clears the internal graph db so that a new graph can be parsed.
-     */
-    clear:function(){
-        mermaid.vertices = {};
-        mermaid.edges = [];
-    },
-    /**
-     *
-     * @returns {string}
-     */
-    defaultStyle:function(){
-        return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
-    }
-};
-
-
-var mermaid;
-if (typeof mermaid === 'undefined') {
-    mermaid = {}
-}
-
-/**
- * Function that adds the vertices found in the graph definition to the graph to be rendered.
- * @param vert Object containing the vertices.
- * @param g The graph that is to be drawn.
- */
-mermaid.addVertices = function (vert, g) {
-    var keys = Object.keys(vert);
-
-    // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
-    keys.forEach(function (id) {
-        var vertice = vert[id];
-        var verticeText;
-
-        var i;
-        var style = '';
-        // Create a compund style definiton from the style definitions found for the node in the graph definition
-        for (i = 0; i < vertice.styles.length; i++) {
-            if (typeof vertice.styles[i] !== 'undefined') {
-                style = style + vertice.styles[i] + ';';
-            }
-        }
-
-        // Use vertice id as text in the box if no text is provided by the graph definition
-        if (vertice.text === undefined) {
-            verticeText = vertice.id;
-        }
-        else {
-            verticeText = vertice.text;
-        }
-
-        // Create the node in the graph nased on defined form
-        if (vertice.type === 'round') {
-            g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
-        } else {
-            if (vertice.type === 'diamond') {
-                g.setNode(vertice.id, {shape: "question", label: verticeText, rx: 0, ry: 0, style: style});
-            } else {
-                g.setNode(vertice.id, {label: verticeText, rx: 0, ry: 0, style: style});
-            }
-        }
-    });
-};
-
-/**
- * Add edges to graph based on parsed graph defninition
- * @param edges
- * @param g
- */
-mermaid.addEdges = function (edges, g) {
-    edges.forEach(function (edge) {
-
-        // Set link type for rendering
-        if(edge.type === 'arrow_open'){
-            aHead = 'none';
-        }
-        else{
-            aHead = 'vee';
-        }
-
-        // Add the edge to the graph
-        if (edge.text === 'undefined') {
-            if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
-            }else{
-                g.setEdge(edge.start, edge.end, {
-                    style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
-                });
-            }
-        }
-        else {
-            if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead});
-            }else{
-                g.setEdge(edge.start, edge.end, {
-                    style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
-                });
-            }
-        }
-    });
-};
-
-/**
- * Draws a chart in the tag with id: id based on the graph definition in text.
- * @param text
- * @param id
- */
-mermaid.drawChart = function (text, id) {
-    mermaid.graph.clear();
-    parser.yy = mermaid.graph;
-
-    // Parse the graph definition
-    parser.parse(text);
-
-    // Fetch the default direction, use TD if none was found
-    var dir;
-    dir = mermaid.direction;
-    if(typeof dir === 'undefined'){
-        dir='TD';
-    }
-
-    // Create the input mermaid.graph
-    var g = new dagreD3.graphlib.Graph()
-        .setGraph({
-            rankdir: dir,
-            marginx: 20,
-            marginy: 20
-        })
-        .setDefaultEdgeLabel(function () {
-            return {};
-        });
-
-    // Fetch the verices/nodes and edges/links from the parsed graph definition
-    var vert = mermaid.graph.getVertices();
-    var edges = mermaid.graph.getEdges();
-
-    this.addVertices(vert, g);
-    this.addEdges(edges, g);
-
-    // Create the renderer
-    var render = new dagreD3.render();
-
-    // Add custom shape for rhombus type of boc (decision)
-    render.shapes().question = function (parent, bbox, node) {
-        var w = bbox.width,
-            h = bbox.height * 3,
-            points = [
-                {x: w / 2, y: 0},
-                {x: w, y: -h / 2},
-                {x: w / 2, y: -h},
-                {x: 0, y: -h / 2}
-            ];
-        shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .style("fill", "#fff")
-            .style("stroke", "#333")
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
-        node.intersect = function (point) {
-            return dagreD3.intersect.polygon(node, points, point);
-        };
-        return shapeSvg;
-    };
-
-    // Add our custom arrow - an empty arrowhead
-    render.arrows().none = function normal(parent, id, edge, type) {
-      var marker = parent.append("marker")
-        .attr("id", id)
-        .attr("viewBox", "0 0 10 10")
-        .attr("refX", 9)
-        .attr("refY", 5)
-        .attr("markerUnits", "strokeWidth")
-        .attr("markerWidth", 8)
-        .attr("markerHeight", 6)
-        .attr("orient", "auto");
-
-      var path = marker.append("path")
-        .attr("d", "M 0 0 L 0 0 L 0 0 z");
-      dagreD3.util.applyStyle(path, edge[type + "Style"]);
-    };
-
-    // Set up an SVG group so that we can translate the final graph.
-    var svg = d3.select("#" + id);
-    svgGroup = d3.select("#" + id + " g");
-
-    // Run the renderer. This is what draws the final graph.
-    render(d3.select("#" + id + " g"), g);
-
-    // Center the graph
-    var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
-    //svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
-    svg.attr("height", g.graph().height + 40);
-};
-
-/**
- * Go through the document and find the chart definitions in there and render the charts
- */
-mermaid.init = function () {
-    var arr = document.querySelectorAll('.mermaid');
-
-    var cnt = 0;
-    for (i = 0; i < arr.length; i++) {
-        var element = arr[i];
-        var id;
-
-        id = 'mermaidChart' + cnt;
-        cnt++;
-
-        var chartText = element.textContent.trim();
-
-        element.innerHTML = '<svg id="' + id + '" width="100%">' +
-        '<g />' +
-        '</svg>';
-
-        this.drawChart(chartText, id);
-    }
-    ;
-};
-
-/**
- * Version management
- * @returns {string}
- */
-mermaid.version = function(){
-    return '0.1.1';
-}
-/**
- * Wait for coument loaded before starting the execution
- */
-document.addEventListener('DOMContentLoaded', function(){
-        mermaid.init();
-    }, false);
+}).call(this,require("1YiZ5S"))
+},{"1YiZ5S":3,"fs":1,"path":2}]},{},[4])

@@ -4,6 +4,8 @@ var shell = require('gulp-shell');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var extReplace = require('gulp-ext-replace');
+var rename = require('gulp-rename');
+
 
 gulp.task('jison2', function() {
     return gulp.src('./src/*.jison')
@@ -23,31 +25,36 @@ gulp.task('jisonSd', shell.task([
     //'source scripts/compileFlow.sh'
 ]));
 
-gulp.task('distSlim', function() {
-    gulp.src(['./src/parser/flow.js','./src/graph.js','./src/main.js'])
-        .pipe(concat('mermaid.slim.js'))
-        .pipe(gulp.dest('./dist/'))
-        .pipe(uglify())
-        .pipe(extReplace('.min.js'))
-        .pipe(gulp.dest('./dist/'));
-
-});
-
-gulp.task('distFull', function() {
-    gulp.src(['./lib/d3.v3.min.js', './lib/dagre-d3.min.js', './src/parser/flow.js','./src/graph.js','./src/main.js'])
-        .pipe(concat('mermaid.full.js'))
-        .pipe(gulp.dest('./dist/'))
-});
-
-gulp.task('dist', ['distSlim', 'distFull'], function() {
-    gulp.src(['./lib/d3.v3.min.js', './lib/dagre-d3.min.js', './dist/mermaid.slim.min.js'])
-        .pipe(concat('mermaid.full.min.js'))
-        .pipe(gulp.dest('./dist/'))
-});
+gulp.task('dist', ['slimDist', 'fullDist']);
 
 var jasmine = require('gulp-jasmine');
 
 gulp.task('jasmine',['jison'], function () {
     return gulp.src('src/parser/flow.spec.js')
         .pipe(jasmine());
+});
+
+var browserify = require('gulp-browserify');
+
+// Basic usage
+gulp.task('slimDist', function() {
+    // Single entry point to browserify
+    return gulp.src('src/main.js')
+        .pipe(browserify())
+        .pipe(rename('mermaid.slim.js'))
+        .pipe(gulp.dest('./dist/'))
+        .pipe(uglify())
+        .pipe(extReplace('.min.js'))
+        .pipe(gulp.dest('./dist/'));
+});
+
+// Basic usage
+gulp.task('fullDist', ['slimDist'], function() {
+    // Single entry point to browserify
+    gulp.src(['node_modules/d3/d3.min.js','node_modules/dagre-d3/dist/dagre-d3.min.js','dist/mermaid.slim.js'])
+        .pipe(concat('mermaid.full.js'))
+        .pipe(gulp.dest('./dist/'));
+    return gulp.src(['node_modules/d3/d3.min.js','node_modules/dagre-d3/dist/dagre-d3.min.js','dist/mermaid.slim.min.js'])
+        .pipe(concat('mermaid.full.min.js'))
+        .pipe(gulp.dest('./dist/'));
 });
