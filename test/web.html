@@ -29,13 +29,18 @@
 
     </style>
     <script src="../dist/mermaid.full.js"></script>
-    <script>
+    <scrpt>
         var mermaid_config = {
-            startOnLoad:false
+            startOnLoad:true
         }
-    </script>
+    </scrpt>
 </head>
     <body>
+    <div class="mermaid">
+        graph LR;
+        A---|This is the 123 s text|B;
+        A---|This is the second edge|B;
+    </div>
     <div class="mermaid">
         graph TD;A(Astrid)-->B[Irene];
         A-->C[Christer];
@@ -57,9 +62,6 @@
             style eag fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
             style #2 stroke:#0f0;
     </div>
-    <div class="mermaid">
-        graph LR;
-        A---|This is the 123 s -text|B;
-    </div>
+
     </body>
 </html>

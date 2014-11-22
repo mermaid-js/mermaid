@@ -17,12 +17,19 @@
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
-\-\-[x]                   return 'ARROW_CROSS';
-\-\-\>                   return 'ARROW_POINT';
+"="                   return 'EQUALS';
+"*"                   return 'MULT';
+"."                   return 'DOT';
+"<"                   return 'TAGSTART';
+">"                   return 'TAGEND';
+\-\-[x]               return 'ARROW_CROSS';
+\-\-\>                return 'ARROW_POINT';
 \-\-[o]               return 'ARROW_CIRCLE';
-\-\-\-               return 'ARROW_OPEN';
+\-\-\-                return 'ARROW_OPEN';
 \-                    return 'MINUS';
-[a-zåäöæøA-ZÅÄÖÆØ]+   return 'ALPHA';
+\+                    return 'PLUS';
+\=                    return 'EQUALS';
+[a-zåäöæøA-ZÅÄÖÆØ_]+  return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -106,6 +113,22 @@ alphaNumToken
     {$$=$1;}
     | NUM
     {$$=$1;}
+    | COLON
+        {$$ = $1;}
+    | COMMA
+        {$$ = $1;}
+    | PLUS
+        {$$ = $1;}
+    | EQUALS
+        {$$ = $1;}
+    | MULT
+        {$$ = $1;}
+    | DOT
+        {$$ = $1;}
+    | TAGSTART
+        {$$ = $1;}
+    | TAGEND
+        {$$ = $1;}
     ;
 
 link: linkStatement arrowText

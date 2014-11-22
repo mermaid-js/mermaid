@@ -267,4 +267,59 @@ describe('when parsing ',function(){
         expect(vert['T'].styles[0]).toBe('background:#bbb');
         expect(vert['T'].styles[1]).toBe('border:1px solid red');
     });
+
+    ddescribe('special characters should be be handled.',function(){
+        var charTest = function(char){
+            var res = flow.parser.parse('graph TD;A('+char+')-->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(vert['A'].id).toBe('A');
+            expect(vert['B'].id).toBe('B');
+            expect(vert['A'].text).toBe(char);
+        };
+
+        it('it should be able to parse a \'.\'',function(){
+            charTest('.');
+            charTest('Start 103a.a1');
+        });
+
+        it('it should be able to parse text containing \'_\'',function(){
+            charTest('_');
+        });
+
+        it('it should be able to parse a \':\'',function(){
+            charTest(':');
+        });
+
+        it('it should be able to parse a \',\'',function(){
+            charTest(',');
+        });
+
+        it('it should be able to parse text containing \'-\'',function(){
+            charTest('a-b');
+        });
+
+        it('it should be able to parse a \'+\'',function(){
+            charTest('+');
+        });
+
+        it('it should be able to parse a \'*\'',function(){
+            charTest('*');
+        });
+
+        it('it should be able to parse a \'<\'',function(){
+            charTest('<');
+        });
+
+        it('it should be able to parse a \'>\'',function(){
+            charTest('>');
+        });
+
+        it('it should be able to parse a \'=\'',function(){
+            charTest('=');
+        });
+
+    });
 });
