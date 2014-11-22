@@ -12,7 +12,6 @@ describe('when parsing ',function(){
         /*flow.parser.parse.parseError= function parseError(str, hash) {
             console.log(str);
         }*/
-        console.log('in mm spec');
     });
 
     it('should handle a nodes and edges',function(){
@@ -99,6 +98,22 @@ describe('when parsing ',function(){
         expect(edges[1].start).toBe('B');
         expect(edges[1].end).toBe('C');
         expect(edges[1].text).toBe('more text with space');
+    });
+
+    it('should handle multiple edges',function(){
+        var res = flow.parser.parse('graph TD;A---|This is the 123 s text|B;\nA---|This is the second edge|B;');
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(2);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].text).toBe('This is the 123 s text');
+        expect(edges[1].start).toBe('A');
+        expect(edges[1].end).toBe('B');
+        expect(edges[1].text).toBe('This is the second edge');
     });
 
     it('should handle text in vertices with space',function(){
@@ -268,7 +283,7 @@ describe('when parsing ',function(){
         expect(vert['T'].styles[1]).toBe('border:1px solid red');
     });
 
-    ddescribe('special characters should be be handled.',function(){
+    describe('special characters should be be handled.',function(){
         var charTest = function(char){
             var res = flow.parser.parse('graph TD;A('+char+')-->B;');
 
@@ -321,5 +336,51 @@ describe('when parsing ',function(){
             charTest('=');
         });
 
+    });
+
+    it('should be possible to declare a class',function(){
+        var res = flow.parser.parse('graph TD;classDef exClass background:#bbb,border:1px solid red;');
+        //var res = flow.parser.parse('graph TD;style T background: #bbb;');
+
+        var classes = flow.parser.yy.getClasses();
+
+        expect(classes['exClass'].styles.length).toBe(2);
+        expect(classes['exClass'].styles[0]).toBe('background:#bbb');
+        expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    });
+    it('should be possible to apply a class to a vertex',function(){
+        var statement = '';
+
+        statement = statement + 'graph TD;' + '\n';
+        statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n';
+        statement = statement + 'a-->b;' + '\n';
+        statement = statement + 'class a exClass;';
+
+        var res = flow.parser.parse(statement);
+
+        var classes = flow.parser.yy.getClasses();
+
+        expect(classes['exClass'].styles.length).toBe(2);
+        expect(classes['exClass'].styles[0]).toBe('background:#bbb');
+        expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    });
+    it('should be possible to apply a class to a comma separated list of vertices',function(){
+        var statement = '';
+
+        statement = statement + 'graph TD;' + '\n';
+        statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n';
+        statement = statement + 'a-->b;' + '\n';
+        statement = statement + 'class a,b exClass;';
+
+        var res = flow.parser.parse(statement);
+
+        var classes = flow.parser.yy.getClasses();
+        var vertices  = flow.parser.yy.getVertices();
+
+        expect(classes['exClass'].styles.length).toBe(2);
+        expect(classes['exClass'].styles[0]).toBe('background:#bbb');
+        expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+        expect(vertices['a'].classes[0]).toBe('exClass');
+        expect(vertices['b'].classes[0]).toBe('exClass');
     });
 });

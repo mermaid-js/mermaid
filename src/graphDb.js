@@ -4,6 +4,7 @@
 
 var vertices = {};
 var edges = [];
+var classes = [];
 var direction;
 /**
  * Function called by parser when a node definition has been found
@@ -13,12 +14,15 @@ var direction;
  * @param style
  */
 exports.addVertex = function (id, text, type, style) {
-    console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
+    //console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
     if (typeof vertices[id] === 'undefined') {
-        vertices[id] = {id: id, styles: []};
+        vertices[id] = {id: id, styles: [], classes:[]};
     }
     if (typeof text !== 'undefined') {
         vertices[id].text = text;
+    }
+    if (typeof type !== 'undefined') {
+        vertices[id].type = type;
     }
     if (typeof type !== 'undefined') {
         vertices[id].type = type;
@@ -59,6 +63,22 @@ exports.updateLink = function (pos, style) {
     var position = pos.substr(1);
     edges[position].style = style;
 };
+
+exports.addClass = function (id, style) {
+    if (typeof classes[id] === 'undefined') {
+        classes[id] = {id: id, styles: []};
+    }
+
+    if (typeof style !== 'undefined') {
+        if (style !== null) {
+            style.forEach(function (s) {
+                console.log('Adding style'+s)
+                classes[id].styles.push(s);
+            });
+        }
+    }
+};
+
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
@@ -66,6 +86,26 @@ exports.updateLink = function (pos, style) {
 exports.setDirection = function (dir) {
     direction = dir;
 };
+
+/**
+ * Called by parser when a graph definition is found, stores the direction of the chart.
+ * @param dir
+ */
+exports.setClass = function (id,className) {
+    console.log('Got id:'+id);
+    if(id.indexOf(',')>0){
+        id.split(',').forEach(function(id2){
+            if(typeof vertices[id2] !== 'undefined'){
+                vertices[id2].classes.push(className);
+            }
+        });
+    }else{
+        if(typeof vertices[id] !== 'undefined'){
+            vertices[id].classes.push(className);
+        }
+    }
+};
+
 exports.getDirection = function () {
     return direction;
 };
@@ -86,10 +126,19 @@ exports.getEdges = function () {
 };
 
 /**
+ * Retrieval function for fetching the found class definitions after parsing has completed.
+ * @returns {{}|*|classes}
+ */
+exports.getClasses = function () {
+    return classes;
+};
+
+/**
  * Clears the internal graph db so that a new graph can be parsed.
  */
 exports.clear = function () {
     vertices = {};
+    classes = {};
     edges = [];
 };
 /**

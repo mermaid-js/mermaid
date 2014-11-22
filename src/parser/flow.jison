@@ -5,6 +5,8 @@
 
 %%
 "style"               return 'STYLE';
+"classDef"            return 'CLASSDEF';
+"class"               return 'CLASS';
 "graph"               return 'GRAPH';
 "LR"                  return 'DIR';
 "TD"                  return 'DIR';
@@ -75,6 +77,8 @@ spaceList
 statement
     : verticeStatement SEMI
     | styleStatement SEMI
+    | classDefStatement SEMI
+    | classStatement SEMI
     ;
 
 verticeStatement:
@@ -159,6 +163,14 @@ text: alphaNum SPACE text
          {$$ = $1 + ' - ' +$5;}
     | alphaNum
         {$$ = $1;}
+    ;
+
+classDefStatement:CLASSDEF SPACE alphaNum SPACE stylesOpt
+    {$$ = $1;yy.addClass($3,$5);}
+    ;
+
+classStatement:CLASS SPACE alphaNum SPACE alphaNum
+    {$$ = $1;yy.setClass($3, $5);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt

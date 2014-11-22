@@ -9,19 +9,35 @@ var flow = require('./parser/flow');
 var addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
+    var styleFromStyleArr = function(styleStr,arr){
+        var i;
+        // Create a compound style definition from the style definitions found for the node in the graph definition
+        for (i = 0; i < arr.length; i++) {
+            if (typeof arr[i] !== 'undefined') {
+                styleStr = styleStr + arr[i] + ';';
+            }
+        }
+
+        return styleStr;
+    }
+
     // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
     keys.forEach(function (id) {
         var vertice = vert[id];
         var verticeText;
 
         var i;
+
         var style = '';
-        // Create a compound style definition from the style definitions found for the node in the graph definition
-        for (i = 0; i < vertice.styles.length; i++) {
-            if (typeof vertice.styles[i] !== 'undefined') {
-                style = style + vertice.styles[i] + ';';
-            }
+        var classes = graph.getClasses();
+        // Check if class is defined for the node
+        for (i = 0; i < vertice.classes.length; i++) {
+            style = styleFromStyleArr(style,classes[vertice.classes[i]].styles);
         }
+
+
+        // Create a compound style definition from the style definitions found for the node in the graph definition
+        style = styleFromStyleArr(style, vertice.styles);
 
         // Use vertice id as text in the box if no text is provided by the graph definition
         if (vertice.text === undefined) {
@@ -31,7 +47,7 @@ var addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
-        // Create the node in the graph nased on defined form
+        // Create the node in the graph based on defined form
         if (vertice.type === 'round') {
             g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
         } else {
@@ -50,7 +66,9 @@ var addVertices = function (vert, g) {
  * @param g
  */
 var addEdges = function (edges, g) {
+    var cnt=0;
     edges.forEach(function (edge) {
+        cnt++;
 
         // Set link type for rendering
         if(edge.type === 'arrow_open'){
@@ -61,22 +79,26 @@ var addEdges = function (edges, g) {
         }
 
         // Add the edge to the graph
-        if (edge.text === 'undefined') {
+        if (typeof edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
+                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
-                });
+                },cnt);
             }
         }
+        // Edge with text
         else {
+
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead});
+                console.log('Edge with Text no style: '+edge.text);
+                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead},cnt);
             }else{
+
                 g.setEdge(edge.start, edge.end, {
                     style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
-                });
+                },cnt);
             }
         }
     });
@@ -102,11 +124,12 @@ var drawChart = function (text, id) {
     }
 
     // Create the input mermaid.graph
-    var g = new dagreD3.graphlib.Graph()
+    var g = new dagreD3.graphlib.Graph({multigraph:true})
         .setGraph({
             rankdir: dir,
             marginx: 20,
             marginy: 20
+
         })
         .setDefaultEdgeLabel(function () {
             return {};

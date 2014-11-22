@@ -38,8 +38,11 @@
     <body>
     <div class="mermaid">
         graph LR;
+        classDef red fill:#ddd,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
         A---|This is the 123 s text|B;
-        A---|This is the second edge|B;
+        B---|This is the second edge|C;
+        class A red;
+        class B,C red;
     </div>
     <div class="mermaid">
         graph TD;A(Astrid)-->B[Irene];
@@ -52,15 +55,13 @@
         E-->H[Bjarke];
         E-->I[Ingvild];
     </div>
-    <div class="mermaid">
+    <div class="mermaid2">
         graph TD;
             eag[Läsa bok 2]-->b;
             b{Fundera}---|Klocka|c(Vidar);
             b-->|Lego text|d(Bjarke går);
             e(orphan);
-
-            style eag fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
-            style #2 stroke:#0f0;
+            style eag red;
     </div>
 
     </body>
