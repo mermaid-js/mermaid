@@ -72,7 +72,6 @@ exports.addClass = function (id, style) {
     if (typeof style !== 'undefined') {
         if (style !== null) {
             style.forEach(function (s) {
-                console.log('Adding style'+s)
                 classes[id].styles.push(s);
             });
         }
@@ -92,7 +91,6 @@ exports.setDirection = function (dir) {
  * @param dir
  */
 exports.setClass = function (id,className) {
-    console.log('Got id:'+id);
     if(id.indexOf(',')>0){
         id.split(',').forEach(function(id2){
             if(typeof vertices[id2] !== 'undefined'){

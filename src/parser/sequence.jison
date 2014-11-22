@@ -61,7 +61,7 @@ statement
 
 action:
     SQS SQE
-        {console.log('#a');$$='action';}
+        {$$='action';}
     ;
 
 actorDefinition:

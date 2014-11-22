@@ -385,7 +385,7 @@ var addEdges = function (edges, g) {
         // Add the edge to the graph
         if (typeof edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{ style: "stroke: #333; stroke-width: 1.5px;fill:none", arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
@@ -396,8 +396,7 @@ var addEdges = function (edges, g) {
         else {
 
             if(typeof edge.style === 'undefined'){
-                console.log('Edge with Text no style: '+edge.text);
-                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{style: "stroke: #333; stroke-width: 1.5px;fill:none", label: edge.text, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
 
                 g.setEdge(edge.start, edge.end, {
@@ -448,9 +447,6 @@ var drawChart = function (text, id) {
         classes.default = {id:'default'};
         classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
     }
-
-    console.log(classes);
-
     addVertices(vert, g);
     addEdges(edges, g);
 
@@ -516,7 +512,6 @@ var drawChart = function (text, id) {
  * Go through the document and find the chart definitions in there and render the charts
  */
 var init = function () {
-    console.log('Mermaid v'+exports.version()+' starting');
     var arr = document.querySelectorAll('.mermaid');
 
     var cnt = 0;
@@ -543,7 +538,7 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.0';
+    return '0.2.2';
 }
 
 var equals = function (val, variable){
@@ -656,7 +651,6 @@ exports.addClass = function (id, style) {
     if (typeof style !== 'undefined') {
         if (style !== null) {
             style.forEach(function (s) {
-                console.log('Adding style'+s)
                 classes[id].styles.push(s);
             });
         }
@@ -676,7 +670,6 @@ exports.setDirection = function (dir) {
  * @param dir
  */
 exports.setClass = function (id,className) {
-    console.log('Got id:'+id);
     if(id.indexOf(',')>0){
         id.split(',').forEach(function(id2){
             if(typeof vertices[id2] !== 'undefined'){
