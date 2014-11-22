@@ -101,6 +101,14 @@ graph LR
 
 This declares a graph oriented from left to right.
 
+Possible directions are:
+
+* TB - top bottom
+* BT - bottom top
+* RL - right left
+* LR - left right
+* TD - same as TB
+
 ![Example 4](http://www.sveido.com/mermaid/img/ex4.png)
 
 ## Nodes
@@ -151,6 +159,37 @@ graph LR;
 ```
 
 ![Node with styles](http://www.sveido.com/mermaid/img/ex9.png)
+
+#### Classes
+More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
+should have a different look.
+
+a class definition looks like the example below:
+
+```
+    classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
+Attachment of a  class to a node is done as per below:
+
+```
+    class nodeId1 className;
+```
+
+It is also possible to attach a class to a list of nodes in one statement:
+
+```
+    class nodeId1,nodeId2 className;
+```
+
+#### Default class
+
+If a class is named default it will be assigned to all classes without specific class definitions.
+
+```
+    classDef default fill:#f9f,stroke:#333,stroke-width:4px;
+```
+
 
 ## Links between nodes
 

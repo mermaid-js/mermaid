@@ -5,9 +5,15 @@
 
 %%
 "style"               return 'STYLE';
+"classDef"            return 'CLASSDEF';
+"class"               return 'CLASS';
 "graph"               return 'GRAPH';
 "LR"                  return 'DIR';
+"RL"                  return 'DIR';
+"TB"                  return 'DIR';
+"BT"                  return 'DIR';
 "TD"                  return 'DIR';
+"BR"                  return 'DIR';
 \#[a-f0-9]+           return 'HEX';
 [0-9]+                return 'NUM';
 \#                    return 'BRKT';
@@ -17,12 +23,19 @@
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
-\-\-[x]                   return 'ARROW_CROSS';
-\-\-\>                   return 'ARROW_POINT';
+"="                   return 'EQUALS';
+"*"                   return 'MULT';
+"."                   return 'DOT';
+"<"                   return 'TAGSTART';
+">"                   return 'TAGEND';
+\-\-[x]               return 'ARROW_CROSS';
+\-\-\>                return 'ARROW_POINT';
 \-\-[o]               return 'ARROW_CIRCLE';
-\-\-\-               return 'ARROW_OPEN';
+\-\-\-                return 'ARROW_OPEN';
 \-                    return 'MINUS';
-[a-zåäöæøA-ZÅÄÖÆØ]+   return 'ALPHA';
+\+                    return 'PLUS';
+\=                    return 'EQUALS';
+[a-zåäöæøA-ZÅÄÖÆØ_]+  return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -68,6 +81,8 @@ spaceList
 statement
     : verticeStatement SEMI
     | styleStatement SEMI
+    | classDefStatement SEMI
+    | classStatement SEMI
     ;
 
 verticeStatement:
@@ -106,6 +121,22 @@ alphaNumToken
     {$$=$1;}
     | NUM
     {$$=$1;}
+    | COLON
+        {$$ = $1;}
+    | COMMA
+        {$$ = $1;}
+    | PLUS
+        {$$ = $1;}
+    | EQUALS
+        {$$ = $1;}
+    | MULT
+        {$$ = $1;}
+    | DOT
+        {$$ = $1;}
+    | TAGSTART
+        {$$ = $1;}
+    | TAGEND
+        {$$ = $1;}
     ;
 
 link: linkStatement arrowText
@@ -136,6 +167,14 @@ text: alphaNum SPACE text
          {$$ = $1 + ' - ' +$5;}
     | alphaNum
         {$$ = $1;}
+    ;
+
+classDefStatement:CLASSDEF SPACE alphaNum SPACE stylesOpt
+    {$$ = $1;yy.addClass($3,$5);}
+    ;
+
+classStatement:CLASS SPACE alphaNum SPACE alphaNum
+    {$$ = $1;yy.setClass($3, $5);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt

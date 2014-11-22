@@ -29,10 +29,23 @@
 
     </style>
     <script src="../dist/mermaid.full.js"></script>
+    <scrpt>
+        var mermaid_config = {
+            startOnLoad:true
+        }
+    </scrpt>
 </head>
     <body>
     <div class="mermaid">
-        graph TD;A(Astrid)-->B[Irene];
+        graph BR;
+        classDef red fill:#ddd,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
+        classDef default fill:#0f0,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
+        A---|This is the 123 s text|B;
+        B---|This is the second edge|C;
+        class A,C red;
+    </div>
+    <div class="mermaid">
+        graph TB;A(Astrid)-->B[Irene];
         A-->C[Christer];
         B-->D[Micke];
         B-->E[Maria];
@@ -48,13 +61,8 @@
             b{Fundera}---|Klocka|c(Vidar);
             b-->|Lego text|d(Bjarke går);
             e(orphan);
+            style eag red;
+    </div>
 
-            style eag fill:#6ff,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
-            style #2 stroke:#0f0;
-    </div>
-    <div class="mermaid">
-        graph LR;
-        A---|This is the 123 s -text|B;
-    </div>
     </body>
 </html>

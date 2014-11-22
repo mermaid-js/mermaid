@@ -19,6 +19,11 @@
     "karma-requirejs": "~0.2.2",
     "gulp-concat": "~2.4.1",
     "gulp-uglify": "~1.0.1",
-    "gulp-ext-replace": "~0.1.0"
+    "gulp-ext-replace": "~0.1.0",
+    "browserify": "~6.2.0",
+    "gulp-jasmine": "~1.0.1",
+    "d3": "~3.4.13",
+    "dagre-d3": "~0.3.2",
+    "gulp-rename": "~1.2.0"
   }
 }

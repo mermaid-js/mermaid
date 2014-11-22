@@ -1,15 +1,25 @@
-var mermaid;
-if (typeof mermaid === 'undefined') {
-    mermaid = {}
-}
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
 
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-mermaid.addVertices = function (vert, g) {
+var addVertices = function (vert, g) {
     var keys = Object.keys(vert);
+
+    var styleFromStyleArr = function(styleStr,arr){
+        var i;
+        // Create a compound style definition from the style definitions found for the node in the graph definition
+        for (i = 0; i < arr.length; i++) {
+            if (typeof arr[i] !== 'undefined') {
+                styleStr = styleStr + arr[i] + ';';
+            }
+        }
+
+        return styleStr;
+    }
 
     // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
     keys.forEach(function (id) {
@@ -17,13 +27,24 @@ mermaid.addVertices = function (vert, g) {
         var verticeText;
 
         var i;
+
         var style = '';
-        // Create a compund style definiton from the style definitions found for the node in the graph definition
-        for (i = 0; i < vertice.styles.length; i++) {
-            if (typeof vertice.styles[i] !== 'undefined') {
-                style = style + vertice.styles[i] + ';';
+        var classes = graph.getClasses();
+        // Check if class is defined for the node
+
+        if(vertice.classes.length >0){
+            for (i = 0; i < vertice.classes.length; i++) {
+                style = styleFromStyleArr(style,classes[vertice.classes[i]].styles);
             }
         }
+        else{
+            // Use default classes
+            style = styleFromStyleArr(style,classes.default.styles);
+        }
+
+
+        // Create a compound style definition from the style definitions found for the node in the graph definition
+        style = styleFromStyleArr(style, vertice.styles);
 
         // Use vertice id as text in the box if no text is provided by the graph definition
         if (vertice.text === undefined) {
@@ -33,7 +54,7 @@ mermaid.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
-        // Create the node in the graph nased on defined form
+        // Create the node in the graph based on defined form
         if (vertice.type === 'round') {
             g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
         } else {
@@ -51,8 +72,10 @@ mermaid.addVertices = function (vert, g) {
  * @param edges
  * @param g
  */
-mermaid.addEdges = function (edges, g) {
+var addEdges = function (edges, g) {
+    var cnt=0;
     edges.forEach(function (edge) {
+        cnt++;
 
         // Set link type for rendering
         if(edge.type === 'arrow_open'){
@@ -63,22 +86,26 @@ mermaid.addEdges = function (edges, g) {
         }
 
         // Add the edge to the graph
-        if (edge.text === 'undefined') {
+        if (typeof edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead});
+                g.setEdge(edge.start, edge.end,{ arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     style: edge.style, arrowheadStyle: "fill: #333", arrowhead: aHead
-                });
+                },cnt);
             }
         }
+        // Edge with text
         else {
+
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead});
+                console.log('Edge with Text no style: '+edge.text);
+                g.setEdge(edge.start, edge.end,{label: edge.text, arrowheadStyle: "fill: #33f", arrowhead: aHead},cnt);
             }else{
+
                 g.setEdge(edge.start, edge.end, {
                     style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
-                });
+                },cnt);
             }
         }
     });
@@ -89,37 +116,46 @@ mermaid.addEdges = function (edges, g) {
  * @param text
  * @param id
  */
-mermaid.drawChart = function (text, id) {
-    mermaid.graph.clear();
-    parser.yy = mermaid.graph;
+var drawChart = function (text, id) {
+    graph.clear();
+    flow.parser.yy = graph;
 
     // Parse the graph definition
-    parser.parse(text);
+    flow.parser.parse(text);
 
     // Fetch the default direction, use TD if none was found
     var dir;
-    dir = mermaid.direction;
+    dir = graph.getDirection();
     if(typeof dir === 'undefined'){
         dir='TD';
     }
 
     // Create the input mermaid.graph
-    var g = new dagreD3.graphlib.Graph()
+    var g = new dagreD3.graphlib.Graph({multigraph:true})
         .setGraph({
             rankdir: dir,
             marginx: 20,
             marginy: 20
+
         })
         .setDefaultEdgeLabel(function () {
             return {};
         });
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
-    var vert = mermaid.graph.getVertices();
-    var edges = mermaid.graph.getEdges();
+    var vert = graph.getVertices();
+    var edges = graph.getEdges();
+    var classes = graph.getClasses();
 
-    this.addVertices(vert, g);
-    this.addEdges(edges, g);
+    if(typeof classes.default === 'undefined'){
+        classes.default = {id:'default'};
+        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
+    }
+
+    console.log(classes);
+
+    addVertices(vert, g);
+    addEdges(edges, g);
 
     // Create the renderer
     var render = new dagreD3.render();
@@ -182,7 +218,8 @@ mermaid.drawChart = function (text, id) {
 /**
  * Go through the document and find the chart definitions in there and render the charts
  */
-mermaid.init = function () {
+var init = function () {
+    console.log('Mermaid v'+exports.version()+' starting');
     var arr = document.querySelectorAll('.mermaid');
 
     var cnt = 0;
@@ -199,7 +236,7 @@ mermaid.init = function () {
         '<g />' +
         '</svg>';
 
-        this.drawChart(chartText, id);
+        drawChart(chartText, id);
     }
     ;
 };
@@ -208,12 +245,41 @@ mermaid.init = function () {
  * Version management
  * @returns {string}
  */
-mermaid.version = function(){
-    return '0.1.1';
+exports.version = function(){
+    return '0.2.0';
 }
+
+var equals = function (val, variable){
+    if(typeof variable !== 'undefined'){
+        return false;
+    }
+    else{
+        return (val === variable);
+    }
+};
+
 /**
  * Wait for coument loaded before starting the execution
  */
 document.addEventListener('DOMContentLoaded', function(){
-        mermaid.init();
-    }, false);
+    // Check presence of config object
+    if(typeof mermaid_config !== 'undefined'){
+        // Check if property startOnLoad is set
+        if(equals(true,mermaid_config.startOnLoad)){
+            init();
+        }
+    }
+    else{
+        // No config found, do autostart in this simple case
+        init();
+    }
+}, false);
+
+global.mermaid = {
+    init:function(){
+        init();
+    },
+    version:function(){
+        return exports.version();
+    }
+};
