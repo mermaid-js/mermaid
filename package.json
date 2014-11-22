@@ -6,24 +6,36 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/username/repository.git"
+  },
   "author": "",
   "license": "BSD-2-Clause",
   "devDependencies": {
-    "gulp": "~3.8.9",
-    "jison": "~0.4.15",
-    "jasmine": "~2.0.1",
-    "gulp-jison": "~1.0.0",
-    "karma": "~0.12.20",
-    "karma-jasmine": "~0.2.1",
-    "karma-chrome-launcher": "~0.1.5",
-    "karma-requirejs": "~0.2.2",
-    "gulp-concat": "~2.4.1",
-    "gulp-uglify": "~1.0.1",
-    "gulp-ext-replace": "~0.1.0",
     "browserify": "~6.2.0",
-    "gulp-jasmine": "~1.0.1",
     "d3": "~3.4.13",
     "dagre-d3": "~0.3.2",
-    "gulp-rename": "~1.2.0"
+    "gulp": "~3.8.9",
+    "gulp-concat": "~2.4.1",
+    "gulp-ext-replace": "~0.1.0",
+    "gulp-jasmine": "~1.0.1",
+    "gulp-jison": "~1.0.0",
+    "gulp-rename": "~1.2.0",
+    "gulp-uglify": "~1.0.1",
+    "jasmine": "~2.0.1",
+    "jison": "~0.4.15",
+    "karma": "~0.12.20",
+    "karma-chrome-launcher": "~0.1.5",
+    "karma-jasmine": "~0.2.1",
+    "karma-requirejs": "~0.2.2",
+    "lodash": "^2.4.1",
+    "lodash._escapestringchar": "^2.4.1",
+    "lodash._objecttypes": "^2.4.1",
+    "lodash._reinterpolate": "^2.4.1",
+    "lodash._reunescapedhtml": "^2.4.1",
+    "lodash.defaults": "^2.4.1",
+    "lodash.templatesettings": "^2.4.1",
+    "lodash.values": "^2.4.1"
   }
 }
