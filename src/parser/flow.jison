@@ -9,7 +9,11 @@
 "class"               return 'CLASS';
 "graph"               return 'GRAPH';
 "LR"                  return 'DIR';
+"RL"                  return 'DIR';
+"TB"                  return 'DIR';
+"BT"                  return 'DIR';
 "TD"                  return 'DIR';
+"BR"                  return 'DIR';
 \#[a-f0-9]+           return 'HEX';
 [0-9]+                return 'NUM';
 \#                    return 'BRKT';

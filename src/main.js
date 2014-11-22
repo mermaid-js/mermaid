@@ -31,8 +31,15 @@ var addVertices = function (vert, g) {
         var style = '';
         var classes = graph.getClasses();
         // Check if class is defined for the node
-        for (i = 0; i < vertice.classes.length; i++) {
-            style = styleFromStyleArr(style,classes[vertice.classes[i]].styles);
+
+        if(vertice.classes.length >0){
+            for (i = 0; i < vertice.classes.length; i++) {
+                style = styleFromStyleArr(style,classes[vertice.classes[i]].styles);
+            }
+        }
+        else{
+            // Use default classes
+            style = styleFromStyleArr(style,classes.default.styles);
         }
 
 
@@ -138,6 +145,14 @@ var drawChart = function (text, id) {
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
     var edges = graph.getEdges();
+    var classes = graph.getClasses();
+
+    if(typeof classes.default === 'undefined'){
+        classes.default = {id:'default'};
+        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
+    }
+
+    console.log(classes);
 
     addVertices(vert, g);
     addEdges(edges, g);
@@ -231,7 +246,7 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.1';
+    return '0.2.0';
 }
 
 var equals = function (val, variable){

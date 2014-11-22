@@ -37,15 +37,15 @@
 </head>
     <body>
     <div class="mermaid">
-        graph LR;
+        graph BR;
         classDef red fill:#ddd,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
+        classDef default fill:#0f0,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
         A---|This is the 123 s text|B;
         B---|This is the second edge|C;
-        class A red;
-        class B,C red;
+        class A,C red;
     </div>
     <div class="mermaid">
-        graph TD;A(Astrid)-->B[Irene];
+        graph TB;A(Astrid)-->B[Irene];
         A-->C[Christer];
         B-->D[Micke];
         B-->E[Maria];
@@ -55,7 +55,7 @@
         E-->H[Bjarke];
         E-->I[Ingvild];
     </div>
-    <div class="mermaid2">
+    <div class="mermaid">
         graph TD;
             eag[Läsa bok 2]-->b;
             b{Fundera}---|Klocka|c(Vidar);
