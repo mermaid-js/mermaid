@@ -246,7 +246,7 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.0';
+    return '0.2.1';
 }
 
 var equals = function (val, variable){
