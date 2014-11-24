@@ -1,6 +1,7 @@
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
-
+var utils = require('./utils');
+var seq = require('./sequenceRenderer');
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
@@ -56,12 +57,12 @@ var addVertices = function (vert, g) {
 
         // Create the node in the graph based on defined form
         if (vertice.type === 'round') {
-            g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style});
+            g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style, id:vertice.id});
         } else {
             if (vertice.type === 'diamond') {
-                g.setNode(vertice.id, {shape: "question", label: verticeText, rx: 0, ry: 0, style: style});
+                g.setNode(vertice.id, {shape: "question", label: verticeText, rx: 0, ry: 0, style: style, id:vertice.id});
             } else {
-                g.setNode(vertice.id, {label: verticeText, rx: 0, ry: 0, style: style});
+                g.setNode(vertice.id, {label: verticeText, rx: 0, ry: 0, style: style, id:vertice.id});
             }
         }
     });
@@ -111,11 +112,11 @@ var addEdges = function (edges, g) {
 };
 
 /**
- * Draws a chart in the tag with id: id based on the graph definition in text.
+ * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
  */
-var drawChart = function (text, id) {
+var draw = function (text, id) {
     graph.clear();
     flow.parser.yy = graph;
 
@@ -231,7 +232,14 @@ var init = function () {
         '<g />' +
         '</svg>';
 
-        drawChart(chartText, id);
+        if(utils.detectType(chartText) === 'graph'){
+            draw(chartText, id);
+            graph.bindFunctions();
+        }
+        else{
+            seq.draw(chartText,id);
+        }
+
     }
     ;
 };
@@ -241,7 +249,7 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.2';
+    return '0.2.3';
 }
 
 var equals = function (val, variable){

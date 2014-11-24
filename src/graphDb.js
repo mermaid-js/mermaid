@@ -6,6 +6,8 @@ var vertices = {};
 var edges = [];
 var classes = [];
 var direction;
+// Functions to be run after graph rendering
+var funs = [];
 /**
  * Function called by parser when a node definition has been found
  * @param id
@@ -103,7 +105,53 @@ exports.setClass = function (id,className) {
         }
     }
 };
+/**
+ * Called by parser when a graph definition is found, stores the direction of the chart.
+ * @param dir
+ */
+exports.setClickEvent = function (id,functionName) {
 
+
+        if(id.indexOf(',')>0){
+            id.split(',').forEach(function(id2) {
+                if (typeof vertices[id2] !== 'undefined') {
+                    funs.push(function () {
+                        var elem = document.getElementById(id2);
+                        if (elem !== null) {
+                            elem.onclick = function () {
+                                eval(functionName + '(\'' + id2 + '\')');
+                            };
+                        }
+                    });
+                }
+            });
+        }else{
+            //console.log('Checking now for ::'+id);
+            if(typeof vertices[id] !== 'undefined'){
+                funs.push(function(){
+                    var elem = document.getElementById(id);
+                    if(elem !== null){
+                        //console.log('id was NOT null: '+id);
+                        elem.onclick = function(){eval(functionName+'(\'' + id + '\')');};
+                    }
+                    else{
+                        //console.log('id was null: '+id);
+                    }
+                });
+            }
+        }
+
+
+};
+
+exports.bindFunctions = function(){
+    //setTimeout(function(){
+        funs.forEach(function(fun){
+            fun();
+        });
+    //},1000);
+
+};
 exports.getDirection = function () {
     return direction;
 };
@@ -138,6 +186,7 @@ exports.clear = function () {
     vertices = {};
     classes = {};
     edges = [];
+    funs = [];
 };
 /**
  *

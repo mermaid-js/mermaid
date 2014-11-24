@@ -7,6 +7,7 @@
 "style"               return 'STYLE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
+"click"               return 'CLICK';
 "graph"               return 'GRAPH';
 "LR"                  return 'DIR';
 "RL"                  return 'DIR';
@@ -83,6 +84,7 @@ statement
     | styleStatement SEMI
     | classDefStatement SEMI
     | classStatement SEMI
+    | clickStatement SEMI
     ;
 
 verticeStatement:
@@ -175,6 +177,10 @@ classDefStatement:CLASSDEF SPACE alphaNum SPACE stylesOpt
 
 classStatement:CLASS SPACE alphaNum SPACE alphaNum
     {$$ = $1;yy.setClass($3, $5);}
+    ;
+
+clickStatement:CLICK SPACE alphaNum SPACE alphaNum
+    {$$ = $1;yy.setClickEvent($3, $5);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt

@@ -8,15 +8,18 @@
             startOnLoad:true
         }
     </scrpt>
+    <script>
+        function apa(){
+            console.log('CLICKED');
+        }
+    </script>
 </head>
     <body>
     <div class="mermaid">
-        graph BR;
-        classDef red fill:#ddd,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
-        classDef default fill:#0f0,stroke:#00f,stroke-width:2px,stroke-dasharray: 5, 5;
-        A---|This is the 123 s text|B;
-        B---|This is the second edge|C;
-        class A,C red;
+    sequence TB
+        apa:Apanhoppar
+        bapa:Server
+        chimp:Chimpansenhoppar
     </div>
     <div class="mermaid">
         graph TB;A(Astrid)-->B[Irene];
@@ -28,6 +31,7 @@
         E-->J[Vidar];
         E-->H[Bjarke];
         E-->I[Ingvild];
+        click A apa;
     </div>
     <div class="mermaid">
         graph TD;

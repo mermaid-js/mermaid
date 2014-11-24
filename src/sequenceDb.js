@@ -2,10 +2,12 @@
  * Created by knut on 14-11-19.
  */
 var actors = {};
+var actorKeys = [];
 var messages = [];
 exports.addActor = function(id,name,description){
-    //console.log('Adding actor: '+id);
+    console.log('Adding actor: '+id);
     actors[id] = {name:name, description:description};
+    actorKeys.push(id);
 };
 
 exports.addMessage = function(idFrom, idTo, message,  answer){
@@ -19,6 +21,10 @@ exports.getMessages = function(){
 
 exports.getActors = function(){
     return actors;
+};
+
+exports.getActorKeys = function(){
+    return actorKeys;
 };
 
 exports.clear = function(){

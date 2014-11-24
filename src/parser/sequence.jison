@@ -5,6 +5,8 @@
 
 %%
 \n                    return 'NEWLINE';
+"sequence"            return 'SEQ';
+"TB"                  return 'DIR';
 [0-9]+                return 'NUM';
 ":"                   return 'COLON';
 \-                    return 'MINUS';
@@ -31,9 +33,13 @@
 %% /* language grammar */
 
 expressions
-    : statements
+    : sequenceConfig statements
     {$$=$1;}
     | EOF
+    ;
+sequenceConfig
+    : SEQ SPACE DIR newlines
+        { $$ = $3;}
     ;
 
 statements
@@ -46,7 +52,7 @@ statements
     ;
 
 preStatement
-    : alphaNum COLON alphaNum
+    : alphaNum COLON text
               {$$={a:$1,b:$3}}
               ;
 
@@ -95,7 +101,9 @@ spaceList
     ;
 newlines
     : NEWLINE newlines
+    | SPACE newlines
     | NEWLINE
+    | SPACE
     ;
 alphaNum
     :alphaNumStatement
@@ -115,13 +123,29 @@ alphaNumToken
     {$$=$1;}
     ;
 
-// Characters and spaces
-text: alphaNum SPACE text
-        {$$ = $1 + ' ' +$3;}
-    | alphaNum spaceList MINUS spaceList text
-         {$$ = $1 + ' - ' +$5;}
-    | alphaNum
-        {$$ = $1;}
+text
+    :textStatement
+        {$$=$1;}
     ;
+
+textStatement
+    : text textToken
+        {$$=$1+''+$2;}
+    | textToken
+    ;
+
+textToken
+    : alphaNumToken
+    | SPACE
+    {$$=$1;}
+    ;
+
+// Characters and spaces
+//text: alphaNum SPACE text
+//        {$$ = $1 + ' ' +$3;}
+//    | alphaNum spaceList MINUS spaceList text
+//         {$$ = $1 + ' - ' +$5;}
+//    | alphaNum
+//        {$$ = $1;}
 
 %%
