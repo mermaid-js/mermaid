@@ -1,4 +1,4 @@
-mermaid
+mermaid [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid)
 =======
 
 Generation of diagrams and flowcharts from text in a similar manner as markdown.
