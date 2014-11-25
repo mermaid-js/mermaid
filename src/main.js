@@ -57,7 +57,7 @@ var addVertices = function (vert, g) {
 
         // Create the node in the graph based on defined form
         if (vertice.type === 'round') {
-            g.setNode(vertice.id, {label: verticeText, rx: 5, ry: 5, style: style, id:vertice.id});
+            g.setNode(vertice.id, {labelType: "html",label: verticeText, rx: 5, ry: 5, style: style, id:vertice.id});
         } else {
             if (vertice.type === 'diamond') {
                 g.setNode(vertice.id, {shape: "question", label: verticeText, rx: 0, ry: 0, style: style, id:vertice.id});
@@ -249,7 +249,7 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.3';
+    return '0.2.4';
 }
 
 var equals = function (val, variable){

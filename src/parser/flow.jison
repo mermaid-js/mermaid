@@ -15,12 +15,8 @@
 "BT"                  return 'DIR';
 "TD"                  return 'DIR';
 "BR"                  return 'DIR';
-\#[a-f0-9]+           return 'HEX';
-[0-9]+                return 'NUM';
+[0-9]                 return 'NUM';
 \#                    return 'BRKT';
-"px"                  return 'UNIT';
-"pt"                  return 'UNIT';
-"dot"                 return 'UNIT';
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
@@ -36,7 +32,7 @@
 \-                    return 'MINUS';
 \+                    return 'PLUS';
 \=                    return 'EQUALS';
-[a-zåäöæøA-ZÅÄÖÆØ_]+  return 'ALPHA';
+[a-zåäöæøA-ZÅÄÖÆØ_]   return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -46,6 +42,7 @@
 "}"                   return 'DIAMOND_STOP'
 \s                    return 'SPACE';
 \n                    return 'NEWLINE';
+
 <<EOF>>               return 'EOF';
 
 /lex
@@ -70,7 +67,7 @@ graphConfig
     ;
 
 statements
-    : statements spaceList statement
+    : statement spaceList statements
     | statement
     ;
 
@@ -88,9 +85,9 @@ statement
     ;
 
 verticeStatement:
-    | vertex link vertex
+     vertex link vertex
         { yy.addLink($1,$3,$2);$$ = 'oy'}
-    | vertex
+     | vertex
         {$$ = 'yo';}
     ;
 
@@ -139,6 +136,8 @@ alphaNumToken
         {$$ = $1;}
     | TAGEND
         {$$ = $1;}
+    | BRKT
+        {$$ = '<br>';}
     ;
 
 link: linkStatement arrowText
@@ -163,12 +162,51 @@ arrowText:
     ;
 
 // Characters and spaces
-text: alphaNum SPACE text
-        {$$ = $1 + ' ' +$3;}
-    | alphaNum spaceList MINUS spaceList text
-         {$$ = $1 + ' - ' +$5;}
-    | alphaNum
-        {$$ = $1;}
+//text: alphaNum SPACE text
+//        {$$ = $1 + ' ' +$3;}
+//    | alphaNum spaceList MINUS spaceList text
+//         {$$ = $1 + ' - ' +$5;}
+//    | alphaNum spaceList TAGSTART DIR TAGEND spaceList text
+//         {$$ = $1 + ' - ' +$5;}
+//    | alphaNum
+//        {$$ = $1;}
+//    ;
+text: textToken
+    {$$=$1;}
+    | text textToken
+    {$$=$1+''+$2;}
+    ;
+
+textStatement: textToken
+    | textToken textStatement
+    ;
+
+textToken: ALPHA
+   {$$=$1;}
+   | NUM
+   {$$=$1;}
+   | COLON
+       {$$ = $1;}
+   | COMMA
+       {$$ = $1;}
+   | PLUS
+       {$$ = $1;}
+   | EQUALS
+       {$$ = $1;}
+   | MULT
+       {$$ = $1;}
+   | DOT
+       {$$ = $1;}
+   | TAGSTART
+       {$$ = $1;}
+   | TAGEND
+       {$$ = $1;}
+   | BRKT
+       {$$ = '<br>';}
+   | SPACE
+       {$$ = $1;}
+   | MINUS
+       {$$ = $1;}
     ;
 
 classDefStatement:CLASSDEF SPACE alphaNum SPACE stylesOpt
@@ -214,6 +252,10 @@ styleComponent: ALPHA
     | SPACE
     {$$=$1}
     | HEX
+    {$$=$1}
+    | BRKT
+    {$$=$1}
+    | DOT
     {$$=$1}
     ;
 %%

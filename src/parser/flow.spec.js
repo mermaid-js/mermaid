@@ -164,14 +164,14 @@ describe('when parsing ',function(){
         expect(vert['C'].type).toBe('diamond');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
     });
-    it('should handle text in vertices with åäö, minus and space',function(){
-        var res = flow.parser.parse('graph TD;A-->C{Chimpansen hoppar åäö  -  ÅÄÖ};');
+    it('should handle text in vertices with åäö, minus and space and br',function(){
+        var res = flow.parser.parse('graph TD;A-->C{Chimpansen hoppar åäö  <br> -  ÅÄÖ};');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
 
         expect(vert['C'].type).toBe('diamond');
-        expect(vert['C'].text).toBe('Chimpansen hoppar åäö - ÅÄÖ');
+        expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
 
     it('should handle a single node',function(){
@@ -183,6 +183,49 @@ describe('when parsing ',function(){
 
         expect(edges.length).toBe(0);
         expect(vert['A'].styles.length).toBe(0);
+    });
+
+    it('should handle a single square node',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a[A];');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].styles.length).toBe(0);
+        expect(vert['a'].type).toBe('square');
+    });
+    it('should handle a single round square node',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a(A);');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].styles.length).toBe(0);
+        expect(vert['a'].type).toBe('round');
+    });
+    it('should handle a single diamond node',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a{A};');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].type).toBe('diamond');
+    });
+    it('should handle a single odd node',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a>A];');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].type).toBe('diamond');
     });
     it('should handle a single node with alphanumerics starting on a char',function(){
         // Silly but syntactically correct
@@ -347,6 +390,27 @@ describe('when parsing ',function(){
         expect(classes['exClass'].styles.length).toBe(2);
         expect(classes['exClass'].styles[0]).toBe('background:#bbb');
         expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
+    });
+
+    it('should be possible to declare a class with a dot in the style',function(){
+        var res = flow.parser.parse('graph TD;classDef exClass background:#bbb,border:1.5px solid red;');
+        //var res = flow.parser.parse('graph TD;style T background: #bbb;');
+
+        var classes = flow.parser.yy.getClasses();
+
+        expect(classes['exClass'].styles.length).toBe(2);
+        expect(classes['exClass'].styles[0]).toBe('background:#bbb');
+        expect(classes['exClass'].styles[1]).toBe('border:1.5px solid red');
+    });
+    it('should be possible to declare a class with a space in the style',function(){
+        var res = flow.parser.parse('graph TD;classDef exClass background:  #bbb,border:1.5px solid red;');
+        //var res = flow.parser.parse('graph TD;style T background  :  #bbb;');
+
+        var classes = flow.parser.yy.getClasses();
+
+        expect(classes['exClass'].styles.length).toBe(2);
+        expect(classes['exClass'].styles[0]).toBe('background:  #bbb');
+        expect(classes['exClass'].styles[1]).toBe('border:1.5px solid red');
     });
     it('should be possible to apply a class to a vertex',function(){
         var statement = '';

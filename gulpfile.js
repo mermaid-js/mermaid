@@ -29,7 +29,7 @@ gulp.task('dist', ['slimDist', 'fullDist']);
 
 var jasmine = require('gulp-jasmine');
 
-gulp.task('jasmine',['jison','jisonSd'], function () {
+gulp.task('jasmine',['jison'], function () {
     return gulp.src(['src/**/*.spec.js'])
         .pipe(jasmine());
 });
