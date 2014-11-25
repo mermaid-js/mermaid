@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp jasmine"
   },
   "repository": {
     "type": "git",
@@ -17,11 +17,13 @@
     "d3": "~3.4.13",
     "dagre-d3": "~0.3.2",
     "gulp": "~3.8.9",
+    "gulp-browserify": "^0.5.0",
     "gulp-concat": "~2.4.1",
     "gulp-ext-replace": "~0.1.0",
     "gulp-jasmine": "~1.0.1",
     "gulp-jison": "~1.0.0",
     "gulp-rename": "~1.2.0",
+    "gulp-shell": "^0.2.10",
     "gulp-uglify": "~1.0.1",
     "he": "^0.5.0",
     "jasmine": "~2.0.1",
