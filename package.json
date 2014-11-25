@@ -23,6 +23,7 @@
     "gulp-jison": "~1.0.0",
     "gulp-rename": "~1.2.0",
     "gulp-uglify": "~1.0.1",
+    "he": "^0.5.0",
     "jasmine": "~2.0.1",
     "jison": "~0.4.15",
     "karma": "~0.12.20",

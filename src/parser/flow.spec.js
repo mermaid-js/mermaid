@@ -225,7 +225,39 @@ describe('when parsing ',function(){
         var edges = flow.parser.yy.getEdges();
 
         expect(edges.length).toBe(0);
+        expect(vert['a'].type).toBe('odd');
+    });
+    it('should handle a single diamond node',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a<A>;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
         expect(vert['a'].type).toBe('diamond');
+    });
+    it('should handle a single diamond node with html in it',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a<A <br> end>;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].type).toBe('diamond');
+        expect(vert['a'].text).toBe('A <br> end');
+    });
+    it('should handle a single diamond node with html in it',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a(A <br> end);');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].type).toBe('round');
+        expect(vert['a'].text).toBe('A <br> end');
     });
     it('should handle a single node with alphanumerics starting on a char',function(){
         // Silly but syntactically correct

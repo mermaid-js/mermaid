@@ -40,6 +40,7 @@
 "]"                   return 'SQE';
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
+"\""                  return 'QUOTE';
 \s                    return 'SPACE';
 \n                    return 'NEWLINE';
 
@@ -97,6 +98,10 @@ vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | alphaNum DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
+    | alphaNum TAGEND text SQE
+        {$$ = $1;yy.addVertex($1,$3,'odd');}
+    | alphaNum TAGSTART text TAGEND
+        {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum
         {$$ = $1;yy.addVertex($1);}
     ;
@@ -132,10 +137,7 @@ alphaNumToken
         {$$ = $1;}
     | DOT
         {$$ = $1;}
-    | TAGSTART
-        {$$ = $1;}
-    | TAGEND
-        {$$ = $1;}
+
     | BRKT
         {$$ = '<br>';}
     ;
@@ -161,16 +163,6 @@ arrowText:
     {$$ = $2;}
     ;
 
-// Characters and spaces
-//text: alphaNum SPACE text
-//        {$$ = $1 + ' ' +$3;}
-//    | alphaNum spaceList MINUS spaceList text
-//         {$$ = $1 + ' - ' +$5;}
-//    | alphaNum spaceList TAGSTART DIR TAGEND spaceList text
-//         {$$ = $1 + ' - ' +$5;}
-//    | alphaNum
-//        {$$ = $1;}
-//    ;
 text: textToken
     {$$=$1;}
     | text textToken
@@ -200,6 +192,35 @@ textToken: ALPHA
    | TAGSTART
        {$$ = $1;}
    | TAGEND
+       {$$ = $1;}
+   | BRKT
+       {$$ = '<br>';}
+   | SPACE
+       {$$ = $1;}
+   | MINUS
+       {$$ = $1;}
+    ;
+textNoTags: textNoTagsToken
+    {$$=$1;}
+    | textNoTags textNoTagsToken
+    {$$=$1+''+$2;}
+    ;
+
+textNoTagsToken: ALPHA
+   {$$=$1;}
+   | NUM
+   {$$=$1;}
+   | COLON
+       {$$ = $1;}
+   | COMMA
+       {$$ = $1;}
+   | PLUS
+       {$$ = $1;}
+   | EQUALS
+       {$$ = $1;}
+   | MULT
+       {$$ = $1;}
+   | DOT
        {$$ = $1;}
    | BRKT
        {$$ = '<br>';}

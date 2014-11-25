@@ -2,6 +2,8 @@ var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var utils = require('./utils');
 var seq = require('./sequenceRenderer');
+var he = require('he');
+
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
@@ -57,6 +59,7 @@ var addVertices = function (vert, g) {
 
         // Create the node in the graph based on defined form
         if (vertice.type === 'round') {
+            console.log(verticeText);
             g.setNode(vertice.id, {labelType: "html",label: verticeText, rx: 5, ry: 5, style: style, id:vertice.id});
         } else {
             if (vertice.type === 'diamond') {
@@ -226,18 +229,21 @@ var init = function () {
         id = 'mermaidChart' + cnt;
         cnt++;
 
-        var chartText = element.textContent.trim();
+        var txt = element.innerHTML;
+        txt = txt.replace(/>/g,'&gt;');
+        txt = txt.replace(/</g,'&lt;');
+        txt = he.decode(txt).trim();
 
         element.innerHTML = '<svg id="' + id + '" width="100%">' +
         '<g />' +
         '</svg>';
 
-        if(utils.detectType(chartText) === 'graph'){
-            draw(chartText, id);
+        if(utils.detectType(txt) === 'graph'){
+            draw(txt, id);
             graph.bindFunctions();
         }
         else{
-            seq.draw(chartText,id);
+            seq.draw(txt,id);
         }
 
     }
@@ -253,7 +259,7 @@ exports.version = function(){
 }
 
 var equals = function (val, variable){
-    if(typeof variable !== 'undefined'){
+    if(typeof variable === 'undefined'){
         return false;
     }
     else{

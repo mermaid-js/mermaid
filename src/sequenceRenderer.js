@@ -22,7 +22,7 @@ module.exports.draw = function (text, id) {
     for(i=0;i<actorKeys.length;i++){
         var key = actorKeys[i];
 
-        console.log('Doing key: '+key)
+        //console.log('Doing key: '+key)
 
         var startMargin = 50;
         var margin = 50;
