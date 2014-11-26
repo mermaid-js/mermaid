@@ -719,17 +719,28 @@ var addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
-        // Create the node in the graph based on defined form
-        if (vertice.type === 'round') {
-            console.log(verticeText);
-            g.setNode(vertice.id, {labelType: "html",label: verticeText, rx: 5, ry: 5, style: style, id:vertice.id});
-        } else {
-            if (vertice.type === 'diamond') {
-                g.setNode(vertice.id, {shape: "question", label: verticeText, rx: 0, ry: 0, style: style, id:vertice.id});
-            } else {
-                g.setNode(vertice.id, {label: verticeText, rx: 0, ry: 0, style: style, id:vertice.id});
-            }
+        var radious = 0;
+        var _shape = '';
+
+        // Set the shape based parameters
+        switch(vertice.type){
+            case 'round':
+                radious = 5;
+                _shape = 'rect';
+                break;
+            case 'square':
+                _shape = 'rect';
+                break;
+            case 'diamond':
+                _shape = 'question';
+                break;
+            case 'odd':
+                _shape = 'question';
+                break;
         }
+
+        // Add the node
+        g.setNode(vertice.id, {labelType: "html",shape:_shape, label: verticeText, rx: radious, ry: radious, style: style, id:vertice.id});
     });
 };
 
