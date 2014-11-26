@@ -5,6 +5,7 @@
 
 %%
 "style"               return 'STYLE';
+"linkStyle"           return 'LINKSTYLE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
@@ -80,6 +81,7 @@ spaceList
 statement
     : verticeStatement SEMI
     | styleStatement SEMI
+    | linkStyleStatement SEMI
     | classDefStatement SEMI
     | classStatement SEMI
     | clickStatement SEMI
@@ -245,6 +247,11 @@ clickStatement:CLICK SPACE alphaNum SPACE alphaNum
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
     | STYLE SPACE HEX SPACE stylesOpt
+          {$$ = $1;yy.updateLink($3,$5);}
+    ;
+
+linkStyleStatement:
+    LINKSTYLE SPACE NUM SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     ;
 
