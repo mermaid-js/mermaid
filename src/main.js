@@ -114,11 +114,11 @@ var addEdges = function (edges, g) {
         else {
 
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{style: "stroke: #333; stroke-width: 1.5px;fill:none", label: edge.text, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{labelType: "html",style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
 
                 g.setEdge(edge.start, edge.end, {
-                    style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
+                    labelType: "html",style: edge.style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
                 },cnt);
             }
         }
