@@ -126,7 +126,17 @@ describe('when parsing ',function(){
         expect(vert['A'].text).toBe('chimpansen hoppar');
     });
 
-    it('should handle text in vertices with space',function(){
+    it('should handle text in circle vertices with space',function(){
+        var res = flow.parser.parse('graph TD;A((chimpansen hoppar))-->C;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].type).toBe('circle');
+        expect(vert['A'].text).toBe('chimpansen hoppar');
+    });
+
+    it('should handle text in diamond vertices with space',function(){
         var res = flow.parser.parse('graph TD;A(chimpansen hoppar)-->C;');
 
         var vert = flow.parser.yy.getVertices();
@@ -135,23 +145,13 @@ describe('when parsing ',function(){
         expect(vert['A'].type).toBe('round');
         expect(vert['A'].text).toBe('chimpansen hoppar');
     });
-
     it('should handle text in vertices with space',function(){
-        var res = flow.parser.parse('graph TD;A{chimpansen hoppar}-->C;');
+        var res = flow.parser.parse('graph TD;A-->C(Chimpansen hoppar);');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
 
-        expect(vert['A'].type).toBe('diamond');
-        expect(vert['A'].text).toBe('chimpansen hoppar');
-    });
-    it('should handle text in vertices with space',function(){
-        var res = flow.parser.parse('graph TD;A-->C{Chimpansen hoppar};');
-
-        var vert = flow.parser.yy.getVertices();
-        var edges = flow.parser.yy.getEdges();
-
-        expect(vert['C'].type).toBe('diamond');
+        expect(vert['C'].type).toBe('round');
         expect(vert['C'].text).toBe('Chimpansen hoppar');
     });
 
@@ -165,12 +165,12 @@ describe('when parsing ',function(){
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö-ÅÄÖ');
     });
     it('should handle text in vertices with åäö, minus and space and br',function(){
-        var res = flow.parser.parse('graph TD;A-->C{Chimpansen hoppar åäö  <br> -  ÅÄÖ};');
+        var res = flow.parser.parse('graph TD;A-->C(Chimpansen hoppar åäö  <br> -  ÅÄÖ);');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
 
-        expect(vert['C'].type).toBe('diamond');
+        expect(vert['C'].type).toBe('round');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
 
@@ -198,24 +198,34 @@ describe('when parsing ',function(){
     });
     it('should handle a single round square node',function(){
         // Silly but syntactically correct
-        var res = flow.parser.parse('graph TD;a(A);');
+        var res = flow.parser.parse('graph TD;a[A];');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
 
         expect(edges.length).toBe(0);
         expect(vert['a'].styles.length).toBe(0);
-        expect(vert['a'].type).toBe('round');
+        expect(vert['a'].type).toBe('square');
     });
-    it('should handle a single diamond node',function(){
+    it('should handle a single circle node',function(){
         // Silly but syntactically correct
-        var res = flow.parser.parse('graph TD;a{A};');
+        var res = flow.parser.parse('graph TD;a((A));');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
 
         expect(edges.length).toBe(0);
-        expect(vert['a'].type).toBe('diamond');
+        expect(vert['a'].type).toBe('circle');
+    });
+    it('should handle a single round node',function(){
+        // Silly but syntactically correct
+        var res = flow.parser.parse('graph TD;a(A);');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges.length).toBe(0);
+        expect(vert['a'].type).toBe('round');
     });
     it('should handle a single odd node',function(){
         // Silly but syntactically correct
@@ -229,7 +239,7 @@ describe('when parsing ',function(){
     });
     it('should handle a single diamond node',function(){
         // Silly but syntactically correct
-        var res = flow.parser.parse('graph TD;a<A>;');
+        var res = flow.parser.parse('graph TD;a{A};');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
@@ -239,7 +249,7 @@ describe('when parsing ',function(){
     });
     it('should handle a single diamond node with html in it',function(){
         // Silly but syntactically correct
-        var res = flow.parser.parse('graph TD;a<A <br> end>;');
+        var res = flow.parser.parse('graph TD;a{A <br> end};');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
@@ -248,7 +258,7 @@ describe('when parsing ',function(){
         expect(vert['a'].type).toBe('diamond');
         expect(vert['a'].text).toBe('A <br> end');
     });
-    it('should handle a single diamond node with html in it',function(){
+    it('should handle a single round node with html in it',function(){
         // Silly but syntactically correct
         var res = flow.parser.parse('graph TD;a(A <br> end);');
 
@@ -480,3 +490,5 @@ describe('when parsing ',function(){
         expect(vertices['b'].classes[0]).toBe('exClass');
     });
 });
+
+

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "gulp jasmine"
+    "test": "gulp coverage"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
     "gulp-browserify": "^0.5.0",
     "gulp-concat": "~2.4.1",
     "gulp-ext-replace": "~0.1.0",
+    "gulp-istanbul": "^0.4.0",
     "gulp-jasmine": "~1.0.1",
     "gulp-jison": "~1.0.0",
     "gulp-rename": "~1.2.0",
@@ -39,6 +40,8 @@
     "lodash._reunescapedhtml": "^2.4.1",
     "lodash.defaults": "^2.4.1",
     "lodash.templatesettings": "^2.4.1",
-    "lodash.values": "^2.4.1"
+    "lodash.values": "^2.4.1",
+    "mock-browser": "^0.90.27",
+    "rewire": "^2.1.3"
   }
 }

@@ -96,6 +96,8 @@ verticeStatement:
 
 vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
+    | alphaNum PS PS text PE PE
+        {$$ = $1;yy.addVertex($1,$4,'circle');}
     | alphaNum PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | alphaNum DIAMOND_START text DIAMOND_STOP

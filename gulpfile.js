@@ -5,6 +5,7 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var extReplace = require('gulp-ext-replace');
 var rename = require('gulp-rename');
+var istanbul = require('gulp-istanbul');
 
 
 gulp.task('jison2', function() {
@@ -32,6 +33,17 @@ var jasmine = require('gulp-jasmine');
 gulp.task('jasmine',['jison'], function () {
     return gulp.src(['src/**/*.spec.js'])
         .pipe(jasmine());
+});
+
+gulp.task('coverage', function (cb) {
+    gulp.src(['src/**/*.js', '!src/**/*.spec.js'])
+        .pipe(istanbul()) // Covering files
+        .on('finish', function () {
+            gulp.src(['src/**/*.spec.js'])
+                .pipe(jasmine())
+                .pipe(istanbul.writeReports()) // Creating the reports after tests runned
+                .on('end', cb);
+        });
 });
 
 var browserify = require('gulp-browserify');
