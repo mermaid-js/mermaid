@@ -73,7 +73,10 @@ var addVertices = function (vert, g) {
                 _shape = 'question';
                 break;
             case 'odd':
-                _shape = 'question';
+                _shape = 'rect_left_inv_arrow';
+                break;
+            case 'circle':
+                _shape = 'circle';
                 break;
         }
 
@@ -180,12 +183,13 @@ var draw = function (text, id) {
     // Add custom shape for rhombus type of boc (decision)
     render.shapes().question = function (parent, bbox, node) {
         var w = bbox.width,
-            h = bbox.height * 3,
+            h = bbox.height,
+            s = (w + h) * 0.8,
             points = [
-                {x: w / 2, y: 0},
-                {x: w, y: -h / 2},
-                {x: w / 2, y: -h},
-                {x: 0, y: -h / 2}
+                {x: s / 2, y: 0},
+                {x: s, y: -s / 2},
+                {x: s / 2, y: -s},
+                {x: 0, y: -s / 2}
             ];
         shapeSvg = parent.insert("polygon", ":first-child")
             .attr("points", points.map(function (d) {
@@ -195,6 +199,30 @@ var draw = function (text, id) {
             .style("stroke", "#333")
             .attr("rx", 5)
             .attr("ry", 5)
+            .attr("transform", "translate(" + (-s / 2) + "," + (s * 2 / 4) + ")");
+        node.intersect = function (point) {
+            return dagreD3.intersect.polygon(node, points, point);
+        };
+        return shapeSvg;
+    };
+
+    // Add custom shape for box with inverted arrow on left side
+    render.shapes().rect_left_inv_arrow = function (parent, bbox, node) {
+        var w = bbox.width,
+            h = bbox.height,
+            points = [
+                {x: -h/2, y: 0},
+                {x: w, y: 0},
+                {x: w, y: -h},
+                {x: -h/2, y: -h},
+                {x: 0, y: -h/2},
+            ];
+        shapeSvg = parent.insert("polygon", ":first-child")
+            .attr("points", points.map(function (d) {
+                return d.x + "," + d.y;
+            }).join(" "))
+            .style("fill", "#fff")
+            .style("stroke", "#333")
             .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);

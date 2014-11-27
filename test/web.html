@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
 
     <script src="../dist/mermaid.full.js"></script>
     <script>
@@ -40,6 +41,17 @@
             b-->|Lego text|d(Bjarke går);
             e(orphan);
             style eag red;
+    </div>
+    <h1>Shapes</h1>
+    <div class="mermaid">
+        graph TD;
+            sq[Square shape]-->ci(Circle shape);
+            od>Odd shape]---|Two line<br>edge comment|ro;
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
+            di[Diamond is broken]-->ro{Rounded<br>square<br>shape};
+            di[Diamond is broken]-->ro2{Rounded square shape};
+            e(Inner circle);
+            style e red;
     </div>
 
     </body>
