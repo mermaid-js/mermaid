@@ -22,7 +22,7 @@ describe('when detecting chart type ',function() {
         div = document.createElement('div');
         mermaid_config ={startOnLoad : false};
         main = rewire('./main');
-        expect(main.version()).toBe('0.2.4');
+        expect(main.version()).toBe('0.2.5');
     });
     it('should not call start anything with an empty document', function () {
 

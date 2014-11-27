@@ -62,7 +62,6 @@ exports.addLink = function (start, end, type, linktext) {
  * @param style
  */
 exports.updateLink = function (pos, style) {
-    console.log('Updating '+pos+'link:'+style);
     var position = pos.substr(1);
     edges[pos].style = style;
 };

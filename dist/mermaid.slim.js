@@ -652,7 +652,7 @@ var addVertices = function (vert, g) {
         }
 
         return styleStr;
-    }
+    };
 
     // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
     keys.forEach(function (id) {
@@ -722,6 +722,7 @@ var addVertices = function (vert, g) {
  */
 var addEdges = function (edges, g) {
     var cnt=0;
+    var aHead;
     edges.forEach(function (edge) {
         cnt++;
 
@@ -922,7 +923,7 @@ var init = function () {
         }
 
     }
-    ;
+
 };
 
 /**
@@ -930,8 +931,8 @@ var init = function () {
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.4';
-}
+    return '0.2.5';
+};
 
 var equals = function (val, variable){
     if(typeof variable === 'undefined'){
@@ -1033,7 +1034,6 @@ exports.addLink = function (start, end, type, linktext) {
  * @param style
  */
 exports.updateLink = function (pos, style) {
-    console.log('Updating '+pos+'link:'+style);
     var position = pos.substr(1);
     edges[pos].style = style;
 };
