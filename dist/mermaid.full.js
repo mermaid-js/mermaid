@@ -2643,7 +2643,7 @@ var actors = {};
 var actorKeys = [];
 var messages = [];
 exports.addActor = function(id,name,description){
-    console.log('Adding actor: '+id);
+    //console.log('Adding actor: '+id);
     actors[id] = {name:name, description:description};
     actorKeys.push(id);
 };
