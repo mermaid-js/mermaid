@@ -238,11 +238,15 @@ It is possible to style links for instance a link that is going back in the flow
 
 ```
 linkStyle 3 stroke:#ff3,stroke-width:4px;
-``
+```
 
 ## Interaction
 
-It is possible to bind a click event to a node: click nodeId callback.
+It is possible to bind a click event to a node:
+
+```
+click nodeId callback
+```
 
 * nodeId is the id of the node
 * callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
