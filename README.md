@@ -141,6 +141,21 @@ id1(This is the text in the box);
 
 ![Node with round edges](http://www.sveido.com/mermaid/img/ex7.png)
 
+### A node in the form of a circle
+```
+id1((This is the text in the box));
+```
+
+![Node with round edges](http://www.sveido.com/mermaid/img/ex12.png)
+
+### A node in an asymetric shape
+```
+id1>This is the text in the box];
+```
+
+![Node with round edges](http://www.sveido.com/mermaid/img/ex13.png)
+
+
 ### A node (rhombus)
 ```
 id1{This is the text in the box};
@@ -217,6 +232,20 @@ A---|This is the text|B;
 ```
 
 ![Text on links](http://www.sveido.com/mermaid/img/ex11.png)
+
+### Styling links
+It is possible to style links for instance a link that is going back in the flow. This is done by the linkStyle statement as in the example below:
+
+```
+linkStyle 3 stroke:#ff3,stroke-width:4px;
+``
+
+## Interaction
+
+It is possible to bind a click event to a node: click nodeId callback.
+
+* nodeId is the id of the node
+* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
 
 # Credits
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!!!
