@@ -680,7 +680,7 @@ var addVertices = function (vert, g) {
         style = styleFromStyleArr(style, vertice.styles);
 
         // Use vertice id as text in the box if no text is provided by the graph definition
-        if (vertice.text === undefined) {
+        if (typeof vertice.text === 'undefined') {
             verticeText = vertice.id;
         }
         else {
@@ -708,8 +708,9 @@ var addVertices = function (vert, g) {
             case 'circle':
                 _shape = 'circle';
                 break;
+            default:
+                _shape = 'rect';
         }
-
         // Add the node
         g.setNode(vertice.id, {labelType: "html",shape:_shape, label: verticeText, rx: radious, ry: radious, style: style, id:vertice.id});
     });
@@ -926,12 +927,14 @@ var init = function () {
 
 };
 
+exports.tester = function(){};
+
 /**
  * Version management
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.5';
+    return '0.2.6';
 };
 
 var equals = function (val, variable){
