@@ -665,13 +665,14 @@ var flow = require('./parser/flow');
 var utils = require('./utils');
 var seq = require('./sequenceRenderer');
 var he = require('he');
+//var dagreD3 = require('dagre-d3');
 
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-var addVertices = function (vert, g) {
+exports.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
     var styleFromStyleArr = function(styleStr,arr){
@@ -753,7 +754,7 @@ var addVertices = function (vert, g) {
  * @param edges
  * @param g
  */
-var addEdges = function (edges, g) {
+exports.addEdges = function (edges, g) {
     var cnt=0;
     var aHead;
     edges.forEach(function (edge) {
@@ -838,8 +839,8 @@ var draw = function (text, id) {
         classes.default = {id:'default'};
         classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
     }
-    addVertices(vert, g);
-    addEdges(edges, g);
+    exports.addVertices(vert, g);
+    exports.addEdges(edges, g);
 
     // Create the renderer
     var render = new dagreD3.render();
@@ -939,6 +940,7 @@ var init = function () {
         cnt++;
 
         var txt = element.innerHTML;
+
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
@@ -966,7 +968,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.6';
+    return '0.2.9';
 };
 
 var equals = function (val, variable){
@@ -1941,7 +1943,7 @@ case 40:return 6;
 break;
 }
 },
-rules: [/^(?:style\b)/,/^(?:linkStyle\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:LR\b)/,/^(?:RL\b)/,/^(?:TB\b)/,/^(?:BT\b)/,/^(?:TD\b)/,/^(?:BR\b)/,/^(?:[0-9])/,/^(?:#)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:=)/,/^(?:\*)/,/^(?:\.)/,/^(?:<)/,/^(?:>)/,/^(?:--[x])/,/^(?:-->)/,/^(?:--[o])/,/^(?:---)/,/^(?:-)/,/^(?:\+)/,/^(?:=)/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ_])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
+rules: [/^(?:style\b)/,/^(?:linkStyle\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:LR\b)/,/^(?:RL\b)/,/^(?:TB\b)/,/^(?:BT\b)/,/^(?:TD\b)/,/^(?:BR\b)/,/^(?:[0-9])/,/^(?:#)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:=)/,/^(?:\*)/,/^(?:\.)/,/^(?:<)/,/^(?:>)/,/^(?:--[x])/,/^(?:-->)/,/^(?:--[o])/,/^(?:---)/,/^(?:-)/,/^(?:\+)/,/^(?:=)/,/^(?:[a-zåäöæøA-ZÅÄÖÆØ_\u2000-\u206F\u2E00-\u2E7F\u0400-\u04FF])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40],"inclusive":true}}
 });
 return lexer;

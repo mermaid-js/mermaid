@@ -33,7 +33,7 @@
 \-                    return 'MINUS';
 \+                    return 'PLUS';
 \=                    return 'EQUALS';
-[a-zåäöæøA-ZÅÄÖÆØ_]   return 'ALPHA';
+[a-zåäöæøA-ZÅÄÖÆØ_\u2000-\u206F\u2E00-\u2E7F\u0400-\u04FF]   return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
