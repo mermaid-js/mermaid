@@ -3,7 +3,6 @@ var flow = require('./parser/flow');
 var utils = require('./utils');
 var seq = require('./sequenceRenderer');
 var he = require('he');
-//var dagreD3 = require('dagre-d3');
 
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
@@ -278,7 +277,6 @@ var init = function () {
         cnt++;
 
         var txt = element.innerHTML;
-
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
