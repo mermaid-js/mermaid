@@ -966,7 +966,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.9';
+    return '0.2.10';
 };
 
 var equals = function (val, variable){

@@ -23,7 +23,7 @@ describe('when using main and ',function() {
             div = document.createElement('div');
             mermaid_config ={startOnLoad : false};
             main = rewire('./main');
-            expect(main.version()).toBe('0.2.9');
+            expect(main.version()).toBe('0.2.10');
         });
         it('should not call start anything with an empty document', function () {
 
