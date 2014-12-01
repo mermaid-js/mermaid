@@ -79,7 +79,15 @@ describe('when parsing ',function(){
 
         expect(edges[0].type).toBe('arrow_cross');
     });
+    it('should handle text on edges with space CAPS',function(){
+        var res = flow.parser.parse('graph TD;A--x|text including CAPS space|B;');
 
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow_cross');
+    });
     it('should handle multi-line text',function(){
         var res = flow.parser.parse('graph TD;A--o|text space|B;\n B-->|more text with space|C;');
 
@@ -173,7 +181,15 @@ describe('when parsing ',function(){
         expect(vert['C'].type).toBe('round');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
+    it('should handle text in vertices with CAPS',function(){
+        var res = flow.parser.parse('graph TD;A-->C(some CAPS);');
 
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['C'].type).toBe('round');
+        expect(vert['C'].text).toBe('some CAPS');
+    });
     it('should handle a single node',function(){
         // Silly but syntactically correct
         var res = flow.parser.parse('graph TD;A;');
