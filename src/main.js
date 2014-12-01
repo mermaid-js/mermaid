@@ -304,7 +304,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.6';
+    return '0.2.7';
 };
 
 var equals = function (val, variable){
