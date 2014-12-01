@@ -21,7 +21,7 @@ would render this lovely chart:
 
 ![Example 1](http://www.sveido.com/mermaid/img/ex1.png)
 
-
+A simple page with a live example can be seen [here](http://www.sveido.com/mermaid/simpleExample.html).
 #Installation
 
 Either use the bower package manager as per below:
