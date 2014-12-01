@@ -251,5 +251,27 @@ click nodeId callback
 * nodeId is the id of the node
 * callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
 
+## Usage of the parser as a seperate module
+
+### Setup
+```
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
+flow.parser.yy = graph;
+```
+
+### Parsing
+
+```
+flow.parser.parse(text);
+```
+
+### Data extraction
+```
+graph.getDirection();
+graph.getVertices();
+graph.getEdges();
+```
+
 # Credits
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
