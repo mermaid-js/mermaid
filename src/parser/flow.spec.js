@@ -181,6 +181,13 @@ describe('when parsing ',function(){
         expect(vert['C'].type).toBe('round');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
+    it('should handle text in vertices with unicode chars',function(){
+        var res = flow.parser.parse('graph TD;A-->C(Начало);');
+
+        var vert = flow.parser.yy.getVertices();
+
+        expect(vert['C'].text).toBe('Начало');
+    });
     it('should handle text in vertices with CAPS',function(){
         var res = flow.parser.parse('graph TD;A-->C(some CAPS);');
 
