@@ -13274,7 +13274,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.11';
+    return '0.2.12';
 };
 
 var equals = function (val, variable){
