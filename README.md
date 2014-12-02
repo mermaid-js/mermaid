@@ -21,7 +21,7 @@ would render this lovely chart:
 
 ![Example 1](http://www.sveido.com/mermaid/img/ex1.png)
 
-
+A simple page with a live example can be seen [here](http://www.sveido.com/mermaid/simpleExample.html). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
 #Installation
 
 Either use the bower package manager as per below:

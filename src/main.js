@@ -9,7 +9,7 @@ var he = require('he');
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-var addVertices = function (vert, g) {
+exports.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
     var styleFromStyleArr = function(styleStr,arr){
@@ -91,7 +91,7 @@ var addVertices = function (vert, g) {
  * @param edges
  * @param g
  */
-var addEdges = function (edges, g) {
+exports.addEdges = function (edges, g) {
     var cnt=0;
     var aHead;
     edges.forEach(function (edge) {
@@ -176,8 +176,8 @@ var draw = function (text, id) {
         classes.default = {id:'default'};
         classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
     }
-    addVertices(vert, g);
-    addEdges(edges, g);
+    exports.addVertices(vert, g);
+    exports.addEdges(edges, g);
 
     // Create the renderer
     var render = new dagreD3.render();
@@ -304,7 +304,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.8';
+    return '0.2.10';
 };
 
 var equals = function (val, variable){
