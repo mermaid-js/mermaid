@@ -3,7 +3,7 @@ var flow = require('./parser/flow');
 var utils = require('./utils');
 var seq = require('./sequenceRenderer');
 var he = require('he');
-
+var dagreD3 = require('dagre-d3');
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
@@ -304,7 +304,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.10';
+    return '0.2.11';
 };
 
 var equals = function (val, variable){
@@ -315,23 +315,25 @@ var equals = function (val, variable){
         return (val === variable);
     }
 };
-
-/**
- * Wait for coument loaded before starting the execution
- */
-document.addEventListener('DOMContentLoaded', function(){
-    // Check presence of config object
-    if(typeof mermaid_config !== 'undefined'){
-        // Check if property startOnLoad is set
-        if(equals(true,mermaid_config.startOnLoad)){
+if(typeof document !== 'undefined'){
+    /**
+     * Wait for coument loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function(){
+        // Check presence of config object
+        if(typeof mermaid_config !== 'undefined'){
+            // Check if property startOnLoad is set
+            if(equals(true,mermaid_config.startOnLoad)){
+                init();
+            }
+        }
+        else{
+            // No config found, do autostart in this simple case
             init();
         }
-    }
-    else{
-        // No config found, do autostart in this simple case
-        init();
-    }
-}, false);
+    }, false);
+
+}
 
 global.mermaid = {
     init:function(){

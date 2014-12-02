@@ -1,8 +1,8 @@
 {
   "name": "mermaid",
-  "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.2.11",
+  "description": "Markdownish syntax for generating flowcharts",
+  "main": "src/main.js",
   "scripts": {
     "test": "gulp coverage"
   },

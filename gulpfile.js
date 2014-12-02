@@ -95,3 +95,11 @@ gulp.task('fullDist', ['slimDist'], function() {
         .pipe(concat('mermaid.full.min.js'))
         .pipe(gulp.dest('./dist/'));
 });
+
+// Basic usage
+gulp.task('npmDist', ['slimDist'], function() {
+    // Single entry point to browserify
+    return gulp.src('src/main.js')
+        .pipe(browserify())
+        .pipe(gulp.dest('./dist/'));
+});
