@@ -264,9 +264,12 @@ textToken: ALPHA
        {$$ = $1;}
    | MINUS
        {$$ = $1;}
-   | DIR
+   | keywords
        {$$ = $1;}
     ;
+keywords
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR;
+
 
 textNoTags: textNoTagsToken
     {$$=$1;}
@@ -296,7 +299,7 @@ textNoTagsToken: ALPHA
        {$$ = $1;}
    | MINUS
        {$$ = $1;}
-   | DIR
+   | keywords
        {$$ = $1;}
     ;
 

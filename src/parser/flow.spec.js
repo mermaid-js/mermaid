@@ -99,6 +99,15 @@ describe('when parsing ',function(){
         expect(edges[0].text).toBe('text including URL space');
 
     });
+    it('should handle text on edges with graph keyword',function(){
+        var res = flow.parser.parse('graph TD;A--x|text including graph space|B;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges[0].text).toBe('text including graph space');
+
+    });
     it('should handle multi-line text',function(){
         var res = flow.parser.parse('graph TD;A--o|text space|B;\n B-->|more text with space|C;');
 
