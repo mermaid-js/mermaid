@@ -347,5 +347,8 @@ global.mermaid = {
     },
     version:function(){
         return exports.version();
+    },
+    getParser:function(){
+        return flow.parser;
     }
 };
