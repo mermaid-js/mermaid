@@ -173,6 +173,37 @@ describe('when parsing ',function(){
         expect(vert['A'].type).toBe('round');
         expect(vert['A'].text).toBe('chimpansen hoppar');
     });
+
+    it('should handle text in with ?',function(){
+        var res = flow.parser.parse('graph TD;A(?)-->|?|C;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].text).toBe('?');
+        expect(edges[0].text).toBe('?');
+    });
+    it('should handle text in with éèêàçô',function(){
+        var res = flow.parser.parse('graph TD;A(éèêàçô)-->|éèêàçô|C;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].text).toBe('éèêàçô');
+        expect(edges[0].text).toBe('éèêàçô');
+    });
+
+    it('should handle text in with ,.?!+-*',function(){
+        var res = flow.parser.parse('graph TD;A(,.?!+-*)-->|,.?!+-*|C;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].text).toBe(',.?!+-*');
+        expect(edges[0].text).toBe(',.?!+-*');
+    });
+
+
     it('should handle text in vertices with space',function(){
         var res = flow.parser.parse('graph TD;A-->C(Chimpansen hoppar);');
 
