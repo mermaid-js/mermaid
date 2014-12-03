@@ -273,5 +273,15 @@ graph.getVertices();
 graph.getEdges();
 ```
 
+The parser is also exposed in the mermaid api by calling:
+```
+var parser = mermaid.getParser();
+```
+Note that the parse needs a graph object to store the data as per:
+```
+flow.parser.yy = graph;
+```
+
+Look at graphDb.js for more details on that object.
 # Credits
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
