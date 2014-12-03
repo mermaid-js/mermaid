@@ -46,4 +46,23 @@ Never prepend "/images/" when using image_path or image_tag.
 Also for the CDN, always use cwd-relative paths rather than root-relative paths in image URLs in any CSS. So instead of
 url('/images/blah.gif'), use url('../images/blah.gif').
 
+# Build instructions
+Fork, then:
+
+```
+npm install
+```
+
+Then the dependencies will have been installed. You use gulp as build tool.
+
+The following targets are probably interesting:
+
+* jison - compiles the jison grammars to parser files
+* jasmine - runs the jasmine tests (will trigger the jison target)
+* dist - complies files to the dist catalog
+
+for instance:
+```
+gulp jasmine
+```
 Thanks, Knut Sveidqvist
