@@ -264,7 +264,10 @@ textToken: ALPHA
        {$$ = $1;}
    | MINUS
        {$$ = $1;}
+   | DIR
+       {$$ = $1;}
     ;
+
 textNoTags: textNoTagsToken
     {$$=$1;}
     | textNoTags textNoTagsToken
@@ -292,6 +295,8 @@ textNoTagsToken: ALPHA
    | SPACE
        {$$ = $1;}
    | MINUS
+       {$$ = $1;}
+   | DIR
        {$$ = $1;}
     ;
 
