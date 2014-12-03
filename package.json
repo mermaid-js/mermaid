@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "dagre-d3": "~0.3.2",
     "gulp": "~3.8.9",
     "gulp-browserify": "^0.5.0",
+    "gulp-bump": "^0.1.11",
     "gulp-concat": "~2.4.1",
     "gulp-ext-replace": "~0.1.0",
     "gulp-istanbul": "^0.4.0",
@@ -31,6 +32,7 @@
     "gulp-less": "^1.3.6",
     "gulp-rename": "~1.2.0",
     "gulp-shell": "^0.2.10",
+    "gulp-tag-version": "^1.2.1",
     "gulp-uglify": "~1.0.1",
     "he": "^0.5.0",
     "jasmine": "~2.0.1",

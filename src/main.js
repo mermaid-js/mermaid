@@ -310,7 +310,7 @@ exports.tester = function(){};
  * @returns {string}
  */
 exports.version = function(){
-    return '0.2.12';
+    return require('../package.json').version;
 };
 
 var equals = function (val, variable){
