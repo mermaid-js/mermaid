@@ -271,6 +271,12 @@ var init = function () {
     var cnt = 0;
     for (i = 0; i < arr.length; i++) {
         var element = arr[i];
+
+        // Check if previously processed
+        if(!element.getAttribute("data-processed")) {
+            element.setAttribute("data-processed", true);
+        } else continue;
+
         var id;
 
         id = 'mermaidChart' + cnt;
