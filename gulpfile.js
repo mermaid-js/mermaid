@@ -137,14 +137,14 @@ function inc(importance) {
         // bump the version number in those files
         .pipe(bump({type: importance}))
         // save it back to filesystem
-        .pipe(gulp.dest('./'))
+        .pipe(gulp.dest('./'));
         // commit the changed version number
-        .pipe(git.commit('bumps package version'))
+        //.pipe(git.commit('bumps package version'))
 
         // read only one file to get the version number
-        .pipe(filter('package.json'))
+        //.pipe(filter('package.json'))
         // **tag it in the repository**
-        .pipe(tag_version());
+        //.pipe(tag_version());
 }
 
 gulp.task('patch', function() { return inc('patch'); })

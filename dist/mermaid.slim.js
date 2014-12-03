@@ -12969,7 +12969,7 @@ process.chdir = function (dir) {
 },{}],102:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.2.12",
+  "version": "0.2.14",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "scripts": {

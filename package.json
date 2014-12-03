@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "0.2.13",
+  "version": "0.2.14",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "scripts": {
