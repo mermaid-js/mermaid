@@ -2,7 +2,7 @@
  * Created by knut on 14-11-23.
  */
 
-var sq = require('./parser/sequence').parser;
+var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 
 /**
@@ -27,139 +27,116 @@ module.exports.draw = function (text, id) {
         var startMargin = 50;
         var margin = 50;
         var width = 150;
+        var height = 65;
         var yStartMargin = 10;
 
         console.log('x=: '+(startMargin  + i*margin +i*150))
 
-        var cont = d3.select("#mermaidChart0");
-        var g = cont.append("g")
+        var cont = d3.select('#'+id);
+        var g = cont.append("g");
+        actors[actorKeys[i]].x = startMargin  + i*margin +i*150;
+        actors[actorKeys[i]].y = yStartMargin;
+        actors[actorKeys[i]].width = yStartMargin;
+        actors[actorKeys[i]].height = yStartMargin;
+
+        var center = actors[actorKeys[i]].x +(width/2);
+
+        g.append("line")
+            .attr("x1", center)
+            .attr("y1", yStartMargin)
+            .attr("x2", center)
+            .attr("y2", 2000)
+            .attr("stroke-width", '0.5px')
+            .attr("stroke", '#999')
+
         g.append("rect")
             .attr("x", startMargin  + i*margin +i*150)
             .attr("y", yStartMargin)
             .attr("fill", '#eaeaea')
             .attr("stroke", '#666')
-            .attr("width", 150)
-            .attr("height", 65)
+            .attr("width", width)
+            .attr("height", height)
             .attr("rx", 3)
             .attr("ry", 3)
         g.append("text")      // text label for the x axis
-            .attr("x", startMargin  + i*margin +i*150 + 75)
+            .attr("x", startMargin  + i*margin +i*width + 75)
             .attr("y", yStartMargin+37.5)
             .style("text-anchor", "middle")
             .text(actors[actorKeys[i]].description)
             ;
 
+
     }
-    //
-    ////var cont = d3.select(id);
-    //var cont = d3.select("#mermaidChart0");
-    //var g = cont.append("g")
-    //    .attr("x", 150)
-    //    .attr("y", 10);
-    //g.append("rect")
-    //    .attr("fill", '#eaeaea')
-    //    .attr("stroke", '#666')
-    //    .attr("width", 150)
-    //    .attr("height", 75)
-    //    .attr("rx", 5)
-    //    .attr("ry", 5)
-    //g.append("text")      // text label for the x axis
-    //    .style("text-anchor", "middle")
-    //    .text("Date pok  ")
-    //    .attr("y", 10);
-    /*
-     graph.clear();
-     flow.parser.yy = graph;
 
-     // Parse the graph definition
-     flow.parser.parse(text);
 
-     // Fetch the default direction, use TD if none was found
-     var dir;
-     dir = graph.getDirection();
-     if(typeof dir === 'undefined'){
-     dir='TD';
-     }
+    var messages = sq.yy.getMessages();
 
-     // Create the input mermaid.graph
-     var g = new dagreD3.graphlib.Graph({multigraph:true})
-     .setGraph({
-     rankdir: dir,
-     marginx: 20,
-     marginy: 20
+    // Setup arrow head
+    // define marker
+    cont.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("refX", 5) /*must be smarter way to calculate shift*/
+        .attr("refY", 2)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
 
-     })
-     .setDefaultEdgeLabel(function () {
-     return {};
-     });
 
-     // Fetch the verices/nodes and edges/links from the parsed graph definition
-     var vert = graph.getVertices();
-     var edges = graph.getEdges();
-     var classes = graph.getClasses();
 
-     if(typeof classes.default === 'undefined'){
-     classes.default = {id:'default'};
-     classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
-     }
-     addVertices(vert, g);
-     addEdges(edges, g);
 
-     // Create the renderer
-     var render = new dagreD3.render();
+    var verticalPos = startMargin + 30;
+    messages.forEach(function(msg){
 
-     // Add custom shape for rhombus type of boc (decision)
-     render.shapes().question = function (parent, bbox, node) {
-     var w = bbox.width,
-     h = bbox.height * 3,
-     points = [
-     {x: w / 2, y: 0},
-     {x: w, y: -h / 2},
-     {x: w / 2, y: -h},
-     {x: 0, y: -h / 2}
-     ];
-     shapeSvg = parent.insert("polygon", ":first-child")
-     .attr("points", points.map(function (d) {
-     return d.x + "," + d.y;
-     }).join(" "))
-     .style("fill", "#fff")
-     .style("stroke", "#333")
-     .attr("rx", 5)
-     .attr("ry", 5)
-     .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
-     node.intersect = function (point) {
-     return dagreD3.intersect.polygon(node, points, point);
-     };
-     return shapeSvg;
-     };
+        console.log('start',msg.from);
+        console.log('actor',actors[msg.from]);
 
-     // Add our custom arrow - an empty arrowhead
-     render.arrows().none = function normal(parent, id, edge, type) {
-     var marker = parent.append("marker")
-     .attr("id", id)
-     .attr("viewBox", "0 0 10 10")
-     .attr("refX", 9)
-     .attr("refY", 5)
-     .attr("markerUnits", "strokeWidth")
-     .attr("markerWidth", 8)
-     .attr("markerHeight", 6)
-     .attr("orient", "auto");
+        verticalPos = verticalPos + 40;
+        var startx = actors[msg.from].x + width/2;
+        var stopx = actors[msg.to].x + width/2;
+        var txtCenter = startx + (stopx-startx)/2;
+        console.log('txtCenter',txtCenter);
+        console.log(txtCenter);
+        console.log(msg.message);
 
-     var path = marker.append("path")
-     .attr("d", "M 0 0 L 0 0 L 0 0 z");
-     dagreD3.util.applyStyle(path, edge[type + "Style"]);
-     };
+        //Make an SVG Container
+        //Draw the line
+        if(msg.type===1){
+            var circle = g.append("line")
+                .attr("x1", startx)
+                .attr("y1", verticalPos)
+                .attr("x2", stopx)
+                .attr("y2", verticalPos)
+                .attr("stroke-width", 2)
+                .attr("stroke", "black")
+                .style("stroke-dasharray", ("3, 3"))
+                .attr("class", "link")
+                .attr("marker-end", "url(#arrowhead)")
+            //.attr("d", diagonal);
+        }
+        else{
+            var circle = g.append("line")
+                .attr("x1", startx)
+                .attr("y1", verticalPos)
+                .attr("x2", stopx)
+                .attr("y2", verticalPos)
+                .attr("stroke-width", 2)
+                .attr("stroke", "black")
+                .attr("class", "link")
+                .attr("marker-end", "url(#arrowhead)")
+            //.attr("d", diagonal);
+        }
 
-     // Set up an SVG group so that we can translate the final graph.
-     var svg = d3.select("#" + id);
-     svgGroup = d3.select("#" + id + " g");
+        g.append("text")      // text label for the x axis
+            .attr("x", txtCenter)
+            .attr("y", verticalPos-10)
+            .style("text-anchor", "middle")
+            .text(msg.message);
+    });
 
-     // Run the renderer. This is what draws the final graph.
-     render(d3.select("#" + id + " g"), g);
 
-     // Center the graph
-     var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
-     //svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
-     svg.attr("height", g.graph().height + 40);
-     */
+
+    cont.attr("height", verticalPos + 40);
+
 };

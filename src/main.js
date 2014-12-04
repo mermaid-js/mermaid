@@ -1,5 +1,6 @@
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
+var dot = require('./parser/dot');
 var utils = require('./utils');
 var seq = require('./sequenceRenderer');
 var he = require('he');
@@ -141,12 +142,19 @@ exports.addEdges = function (edges, g) {
  * @param text
  * @param id
  */
-var draw = function (text, id) {
+var draw = function (text, id,isDot) {
+    var parser;
     graph.clear();
-    flow.parser.yy = graph;
+    if(isDot){
+        parser = dot.parser;
+
+    }else{
+        parser = flow.parser;
+    }
+    parser.yy = graph;
 
     // Parse the graph definition
-    flow.parser.parse(text);
+    parser.parse(text);
 
     // Fetch the default direction, use TD if none was found
     var dir;
@@ -291,12 +299,19 @@ var init = function () {
         '<g />' +
         '</svg>';
 
-        if(utils.detectType(txt) === 'graph'){
-            draw(txt, id);
-            graph.bindFunctions();
-        }
-        else{
-            seq.draw(txt,id);
+        var graphType = utils.detectType(txt);
+
+        switch(graphType){
+            case 'graph':
+                draw(txt, id,false);
+                graph.bindFunctions();
+            break;
+            case 'dotGraph':
+                draw(txt, id,true);
+                break;
+            case 'sequenceDiagram':
+                seq.draw(txt,id);
+                break;
         }
 
     }
@@ -340,6 +355,7 @@ if(typeof document !== 'undefined'){
     }, false);
 
 }
+
 
 global.mermaid = {
     init:function(){

@@ -16,21 +16,72 @@
     </script>
 </head>
     <body>
-    <div class="mermaid">
-        graph TD;
-        sq[Square shape]-->ci((Circle shape Начало));
-    </div>
     <h1>Shapes</h1>
-    <div class="mermaid">
+    Shape examples:
+    <pre>
         graph TD;
             sq[Square shape]-->ci((Circle shape));
-            od>Odd shape]---|Two line<br>edge comment|ro;
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
-            di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+            od>Odd shape]---|Two line &lt;br>edge comment|ro;
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak &lt;br>in an Odd shape];
+            di{Diamond is  &lt;br> broken}-->ro(Rounded &lt;br>square &lt;br>shape);
             di-->ro2(Rounded square shape);
             e((Inner circle))-->f(,.?!+-*ز);
             style e red;
+    </pre>
+    <div class="mermaid">
+        graph TD;
+        sq[Square shape]-->ci((Circle shape));
+        od>Odd shape]---|Two line<br>edge comment|ro;
+        od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
+        di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+        di-->ro2(Rounded square shape);
+        e((Inner circle))-->f(,.?!+-*ز);
+        cyr[Cyrillic]-->cyr2((Circle shape Начало));
+        style e red;
     </div>
+
+    <h1>Sequence diagrams (experimental)</h1>
+    <pre>
+        sequenceDiagram
+        Alice->Bob: Hello Bob, how are you?
+        Note right of Bob: Bob thinks
+        Bob-->Alice: I am good thanks!
+        Bob-->John the Long: How about you John?
+        Bob-->Alice: Checking with John...
+        Alice->John the Long: Yes... John, how are you?
+        John the Long-->Alice: Better then you!
+    </pre>
+    <div class="mermaid">
+        sequenceDiagram
+        Alice->Bob: Hello Bob, how are you?
+        Note right of Bob: Bob thinks
+        Bob-->Alice: I am good thanks!
+        Bob-->John the Long: How about you John?
+        Bob-->Alice: Checking with John...
+        Alice->John the Long: Yes... John, how are you?
+        John the Long-->Alice: Better then you!
+    </div>
+
+    <pre>
+    graph TD;
+        sq[Square shape]-->ci((Circle shape Начало));
+    </pre>
+    <h1>Dot syntax (experimental)</h1>
+    <pre>
+        digraph
+        {
+        a -> b -> c -- d -> e;
+        a -- e;
+        }
+    </pre>
+    <div class="mermaid">
+        digraph
+        {
+        a -> b -> c -- d -> e;
+        a -- e;
+        }
+    </div>
+
 
     </body>
 </html>

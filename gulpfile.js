@@ -14,14 +14,16 @@ var tag_version = require('gulp-tag-version');
 gulp.task('jison2', function() {
     return gulp.src('./src/*.jison')
         .pipe(jison({ moduleType: 'amd' }))
-        .pipe(gulp.dest('./src/'));
+        .pipe(gulp.dest('./src/parser'));
 });
 
 gulp.task('jison', shell.task([
-  'jison src/parser/flow.jison -o src/parser/flow.js'
+  'jison src/parser/flow.jison -o src/parser/flow.js',
+  'jison src/parser/dot.jison -o src/parser/dot.js',
+  'jison src/parser/js-sequence-diagram.jison -o src/parser/sequenceDiagram.js'
   //'source scripts/compileJison.sh'
   //  'jison src/parser/flow.jison -o src/parser/flow.js',
-]))
+]));
 
 gulp.task('jisonSd', shell.task([
     //'jison src/parser/flow.jison -o src/parser/flow.js',

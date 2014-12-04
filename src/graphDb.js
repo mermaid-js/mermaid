@@ -16,7 +16,14 @@ var funs = [];
  * @param style
  */
 exports.addVertex = function (id, text, type, style) {
-    //console.log('Got node ' + id + ' ' + type + ' ' + text + ' styles: ' + JSON.stringify(style));
+
+    if(typeof id === 'undefined'){
+        return;
+    }
+    if(id.trim().length === 0){
+        return;
+    }
+
     if (typeof vertices[id] === 'undefined') {
         vertices[id] = {id: id, styles: [], classes:[]};
     }
@@ -37,6 +44,7 @@ exports.addVertex = function (id, text, type, style) {
         }
     }
 };
+
 /**
  * Function called by parser when a link/edge definition has been found
  * @param start
@@ -45,6 +53,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
+    //console.log('Got edge', start, end);
     var edge = {start: start, end: end, type: undefined, text: ''};
     var linktext = type.text;
     if (typeof linktext !== 'undefined') {

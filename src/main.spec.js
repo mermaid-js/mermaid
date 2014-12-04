@@ -36,8 +36,8 @@ describe('when using main and ',function() {
         it('should start something with a mermaid document', function () {
             mermaid_config ={startOnLoad : false};
             main = rewire('./main');
-
-            document.body.innerHTML = '<div class="mermaid"></div>';
+            console.log('here');
+            document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(utils,'detectType');
             mermaid.init();
             expect(utils.detectType).toHaveBeenCalled();
