@@ -21,7 +21,7 @@ would render this lovely chart:
 
 ![Example 1](http://www.sveido.com/mermaid/img/ex1.png)
 
-A simple page with a live example can be seen [here](http://www.sveido.com/mermaid/simpleExample.html). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
+A page with a live example can be seen [here](http://www.sveido.com/mermaid/demo/html/web.html). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
 #Installation
 
 Either use the bower package manager as per below:
@@ -284,4 +284,4 @@ flow.parser.yy = graph;
 
 Look at graphDb.js for more details on that object.
 # Credits
-Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
+Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries! Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams.
