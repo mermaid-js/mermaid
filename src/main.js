@@ -267,7 +267,8 @@ var draw = function (text, id,isDot) {
     // Center the graph
     var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
     //svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
-    svg.attr("height", g.graph().height + 40);
+    svg.attr("height", g.graph().height );
+    svg.attr("width", g.graph().width );
 };
 
 /**
@@ -295,7 +296,7 @@ var init = function () {
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
 
-        element.innerHTML = '<svg id="' + id + '" width="100%">' +
+        element.innerHTML = '<svg id="' + id + '">' +
         '<g />' +
         '</svg>';
 

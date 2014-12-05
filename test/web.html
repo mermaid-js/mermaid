@@ -62,10 +62,28 @@
         John the Long-->Alice: Better then you!
     </div>
 
-    <pre>
-    graph TD;
-        sq[Square shape]-->ci((Circle shape Начало));
-    </pre>
+    <div  class="mermaid">
+graph LR;
+                A[Start]-->B{a = '1,2'};
+                B-->|True|C[test = 1];
+                B-->|False|Z[Store];
+                C-->D{condition};
+                D-->|True|E[test = 2];
+                D-->|False|F[test = 3];
+                E-->G{condition2 = ''};
+                F-->G;
+                G-->|True|H[test = 4];
+                G-->|False|I[test = 5];
+                H-->J{condition3};
+                I-->J;
+                J-->|True|K[test = 6];
+                J-->|False|L;
+                K-->L[Print];
+                L-->M[Any Action];
+                M-->N[Any Other Action];
+                N-->Z;
+
+    </div>
     <h1>Dot syntax (experimental)</h1>
     <pre>
         digraph
