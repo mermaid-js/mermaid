@@ -13001,7 +13001,7 @@ process.chdir = function (dir) {
 },{}],102:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "scripts": {
@@ -13009,7 +13009,7 @@ module.exports={
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/username/repository.git"
+    "url": "https://github.com/knsv/mermaid"
   },
   "author": "",
   "license": "BSD-2-Clause",
