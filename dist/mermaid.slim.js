@@ -13131,7 +13131,7 @@ exports.addEdges = function (edges, g) {
             aHead = 'none';
         }
         else{
-            aHead = 'vee';
+            aHead = 'normal';
         }
 
         var style = '';

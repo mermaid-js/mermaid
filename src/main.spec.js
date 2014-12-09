@@ -68,7 +68,7 @@ describe('when using main and ',function() {
                 setEdge:function(start, end,options,name){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
-                    expect(options.arrowhead).toBe('vee');
+                    expect(options.arrowhead).toBe('normal');
                     expect(options.label.match('text ex')).toBeTruthy();
                 }
             };
@@ -85,7 +85,7 @@ describe('when using main and ',function() {
                 setEdge:function(start, end,options,name){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
-                    expect(options.arrowhead).toBe('vee');
+                    expect(options.arrowhead).toBe('normal');
                 }
             };
 

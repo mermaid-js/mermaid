@@ -234,7 +234,10 @@ A---|This is the text|B;
 ![Text on links](http://www.sveido.com/mermaid/img/ex11.png)
 
 ### Styling links
-It is possible to style links for instance a link that is going back in the flow. This is done by the linkStyle statement as in the example below:
+It is possible to style links, for instance you might want to style a link that is going backwards in the flow. As links
+has no ids in the same way as nodes, some other way of deciding what link the style should be attached to is required.
+Instead of ids the order number of when the link was defined in the graph is used. In the example below the style
+defined in the linkStyle statement will belong to the forth link in the graph:
 
 ```
 linkStyle 3 stroke:#ff3,stroke-width:4px;
