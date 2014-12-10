@@ -55,7 +55,8 @@ exports.addVertex = function (id, text, type, style) {
 exports.addLink = function (start, end, type, linktext) {
     //console.log('Got edge', start, end);
     var edge = {start: start, end: end, type: undefined, text: ''};
-    var linktext = type.text;
+    linktext = type.text;
+
     if (typeof linktext !== 'undefined') {
         edge.text = linktext;
     }
@@ -204,4 +205,3 @@ exports.clear = function () {
 exports.defaultStyle = function () {
     return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
 };
-
