@@ -10,6 +10,12 @@ var rename = require('gulp-rename');
 var istanbul = require('gulp-istanbul');
 var bump = require('gulp-bump');
 var tag_version = require('gulp-tag-version');
+var jshint = require('gulp-jshint');
+var stylish = require('jshint-stylish');
+
+var paths = {
+  scripts: ['./src/*.js']
+};
 
 gulp.task('jison2', function() {
     return gulp.src('./src/*.jison')
@@ -152,3 +158,10 @@ function inc(importance) {
 gulp.task('patch', function() { return inc('patch'); })
 gulp.task('feature', function() { return inc('minor'); })
 gulp.task('release', function() { return inc('major'); })
+
+// Using gulp-jshint and jshint-stylish
+gulp.task('lint', function() {
+    return gulp.src(paths.scripts)
+        .pipe(jshint())
+        .pipe(jshint.reporter(stylish));
+});
