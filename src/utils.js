@@ -18,4 +18,4 @@ module.exports.detectType = function(text){
     }
 
     return "graph";
-}
+};
