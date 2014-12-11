@@ -24,4 +24,4 @@ module.exports.detectType = function(text,a){
     }
 
     return "graph";
-}
+};
