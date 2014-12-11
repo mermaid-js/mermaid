@@ -10,6 +10,8 @@ var rename = require('gulp-rename');
 var istanbul = require('gulp-istanbul');
 var bump = require('gulp-bump');
 var tag_version = require('gulp-tag-version');
+var dox = require("gulp-dox");
+var markdown = require("metalsmith-markdown");
 
 gulp.task('jison2', function() {
     return gulp.src('./src/*.jison')
@@ -152,3 +154,4 @@ function inc(importance) {
 gulp.task('patch', function() { return inc('patch'); })
 gulp.task('feature', function() { return inc('minor'); })
 gulp.task('release', function() { return inc('major'); })
+
