@@ -32,6 +32,10 @@ exports.addVertices = function (vert, g) {
 
         var i;
 
+        /**
+         * Variable for storing the extracted style for the vertice
+         * @type {string}
+         */
         var style = '';
         var classes = graph.getClasses();
         // Check if class is defined for the node
@@ -89,8 +93,8 @@ exports.addVertices = function (vert, g) {
 
 /**
  * Add edges to graph based on parsed graph defninition
- * @param edges
- * @param g
+ * @param {Object} edges The edges to add to the graph
+ * @param {Object} g The graph object
  */
 exports.addEdges = function (edges, g) {
     var cnt=0;
@@ -272,7 +276,17 @@ var draw = function (text, id,isDot) {
 };
 
 /**
- * Go through the document and find the chart definitions in there and render the charts
+ * Function that goes through the document to find the chart definitions in there and render them.
+ *
+ * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
+ * attribute already set. This way the init function can be triggered several times.
+ *
+ * ```
+ * graph LR;
+ *  a(Find elements)-->b{Processed};
+ *  b-->|Yes|c(Leave element);
+ *  c-->|No |d(Transform);
+ * ```
  */
 var init = function () {
     var arr = document.querySelectorAll('.mermaid');
@@ -322,8 +336,8 @@ var init = function () {
 exports.tester = function(){};
 
 /**
- * Version management
- * @returns {string}
+ * Function returning version information
+ * @returns {string} A string containing the version info
  */
 exports.version = function(){
     return require('../package.json').version;

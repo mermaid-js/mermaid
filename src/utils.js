@@ -1,7 +1,13 @@
 /**
  * Created by knut on 14-11-23.
  */
-module.exports.detectType = function(text){
+/**
+ * Detects the type of the graph text.
+ * @param {string} text The text defining the graph
+ * @param {string} text The second text defining the graph
+ * @returns {string} A graph definition key
+ */
+module.exports.detectType = function(text,a){
     if(text.match(/^\s*sequenceDiagram/)){
         console.log('Detected sequenceDiagram syntax');
         return "sequenceDiagram";

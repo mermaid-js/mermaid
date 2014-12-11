@@ -30,6 +30,38 @@ describe('when parsing ',function(){
         expect(edges[0].text).toBe('');
     });
 
+    it('should handle a comments',function(){
+        var res = flow.parser.parse('graph TD;\n%% CComment\n A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+    it('should handle a comments with blank rows in-between',function(){
+        var res = flow.parser.parse('graph TD;\n\n\n %% CComment\n A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
     it('should handle open ended edges',function(){
         var res = flow.parser.parse('graph TD;A---B;');
 

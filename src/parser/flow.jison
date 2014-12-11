@@ -32,6 +32,7 @@
 \-\-\-                return 'ARROW_OPEN';
 \-                    return 'MINUS';
 \+                    return 'PLUS';
+\%                    return 'PCT';
 \=                    return 'EQUALS';
 [\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u0061-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -103,9 +104,8 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-\s                    return 'SPACE';
 \n                    return 'NEWLINE';
-
+\s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
 /lex
@@ -120,7 +120,7 @@
 
 expressions
     : graphConfig statements EOF
-    | graphConfig spaceList statements EOF
+    | graphConfig spaceListNewline statements EOF
         {$$=$1;}
     ;
 
@@ -130,9 +130,17 @@ graphConfig
     ;
 
 statements
-    : statement spaceList statements
+    : statement spaceListNewline statements
     | statement
     ;
+
+
+spaceListNewline
+    : spaceList
+    | NEWLINE spaceListNewline
+    | NEWLINE
+    ;
+
 
 spaceList
     : SPACE spaceList
@@ -140,7 +148,9 @@ spaceList
     ;
 
 statement
-    : verticeStatement SEMI
+    : commentStatement NEWLINE
+    {$$='Comment';}
+    | verticeStatement SEMI
     | styleStatement SEMI
     | linkStyleStatement SEMI
     | classDefStatement SEMI
@@ -202,7 +212,6 @@ alphaNumToken
         {$$ = $1;}
     | DOT
         {$$ = $1;}
-
     | BRKT
         {$$ = '<br>';}
     ;
@@ -325,7 +334,10 @@ linkStyleStatement:
     LINKSTYLE SPACE NUM SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     ;
-
+commentStatement:
+    PCT PCT text
+          {$$ = $1;}
+    ;
 stylesOpt: style
         {$$ = [$1]}
     | stylesOpt COMMA style
