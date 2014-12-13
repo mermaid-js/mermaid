@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <script src="../dist/mermaid.full.js"></script>
+    <script>
+        var mermaid_config = {
+            startOnLoad:true
+        }
+    </script>
+    <script>
+        function apa(){
+            console.log('CLICKED');
+        }
+    </script>
+    <style>
+        .node-square { 
+            stroke-width: 4px; 
+            stroke: #339933; 
+            fill: #999900;   
+            font-weight: 300;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+            font-size: 14px; } 
+        .node-circle { stroke-width: 0.5px; stroke: #339999; fill: #009900; }
+    </style>
+</head>
+    <body>
+    <h1>Shapes</h1>
+    Shape examples:
+    <pre>
+        graph TD;
+            sq[Square shape]-->ci((Circle shape));
+            od>Odd shape]---|Two line &lt;br>edge comment|ro;
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak &lt;br>in an Odd shape];
+            di{Diamond is  &lt;br> broken}-->ro(Rounded &lt;br>square &lt;br>shape);
+
+            %% Comments after double percent signs
+            di-->ro2(Rounded square shape);
+            e((Inner circle))-->f(,.?!+-*ز);
+            style e red;
+
+            class sq node-square;
+            class e node-circle;
+    </pre>
+
+    <div class="mermaid">
+        graph TD;
+        sq[Square shape]-->ci((Circle shape));
+        od>Odd shape]---|Two line<br>edge comment|ro;
+        od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
+        di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+        di-->ro2(Rounded square shape);
+        %% Comments after double percent signs
+        e((Inner circle))-->f(,.?!+-*ز);
+        cyr[Cyrillic]-->cyr2((Circle shape Начало));
+        style e red;
+
+        class sq node-square;
+        class e node-circle;
+    </div>
+
+
+
+    </body>
+</html>

@@ -41,23 +41,27 @@ var init = function () {
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
 
-        element.innerHTML = '<svg id="' + id + '">' +
-        '<g />' +
-        '</svg>';
+        element.innerHTML = '<svg id="' + id + '" width="100%">' +
+            '<g />' +
+            '</svg>';
 
         var graphType = utils.detectType(txt);
 
         switch(graphType){
             case 'graph':
                 console.log('FC');
-                flowRenderer.draw(txt, id,false);
+                flowRenderer.draw(txt, id, false);
+                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
                 graph.bindFunctions();
             break;
             case 'dotGraph':
                 flowRenderer.draw(txt, id,true);
+                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
                 break;
             case 'sequenceDiagram':
                 seq.draw(txt,id);
+                // TODO - Get default styles for sequence diagram
+                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
                 break;
         }
 

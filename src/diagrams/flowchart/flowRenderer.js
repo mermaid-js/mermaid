@@ -33,24 +33,20 @@ exports.addVertices = function (vert, g) {
         var i;
 
         /**
+         * Variable for storing the classes for the vertice
+         * @type {string}
+         */
+        var classStr = '';
+        
+        if(vertice.classes.length >0){
+            classStr = vertice.classes.join(" ");
+        }
+
+        /**
          * Variable for storing the extracted style for the vertice
          * @type {string}
          */
         var style = '';
-        var classes = graph.getClasses();
-        // Check if class is defined for the node
-
-        if(vertice.classes.length >0){
-            for (i = 0; i < vertice.classes.length; i++) {
-                style = styleFromStyleArr(style,classes[vertice.classes[i]].styles);
-            }
-        }
-        else{
-            // Use default classes
-            style = styleFromStyleArr(style,classes.default.styles);
-        }
-
-
         // Create a compound style definition from the style definitions found for the node in the graph definition
         style = styleFromStyleArr(style, vertice.styles);
 
@@ -87,7 +83,7 @@ exports.addVertices = function (vert, g) {
                 _shape = 'rect';
         }
         // Add the node
-        g.setNode(vertice.id, {labelType: "html",shape:_shape, label: verticeText, rx: radious, ry: radious, style: style, id:vertice.id});
+        g.setNode(vertice.id, {labelType: "html",shape:_shape, label: verticeText, rx: radious, ry: radious, class: classStr, style: style, id:vertice.id});
     });
 };
 
@@ -142,6 +138,14 @@ exports.addEdges = function (edges, g) {
 };
 
 /**
+ * Returns the default style for nodes.
+ * @returns {string} Default style for nodes
+ */
+exports.defaultNodeStyle = function () {
+    return ".node {fill:#eaeaea; stroke:#666; stroke-width:1.5px;}";
+};
+
+/**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
@@ -182,12 +186,6 @@ exports.draw = function (text, id,isDot) {
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
     var edges = graph.getEdges();
-    var classes = graph.getClasses();
-
-    if(typeof classes.default === 'undefined'){
-        classes.default = {id:'default'};
-        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
-    }
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 
@@ -209,8 +207,6 @@ exports.draw = function (text, id,isDot) {
             .attr("points", points.map(function (d) {
                 return d.x + "," + d.y;
             }).join(" "))
-            .style("fill", "#fff")
-            .style("stroke", "#333")
             .attr("rx", 5)
             .attr("ry", 5)
             .attr("transform", "translate(" + (-s / 2) + "," + (s * 2 / 4) + ")");
@@ -235,8 +231,6 @@ exports.draw = function (text, id,isDot) {
             .attr("points", points.map(function (d) {
                 return d.x + "," + d.y;
             }).join(" "))
-            .style("fill", "#fff")
-            .style("stroke", "#333")
             .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
