@@ -4,8 +4,6 @@
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
-var utils = require('../../utils');
-var he = require('he');
 var dagreD3 = require('dagre-d3');
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
@@ -207,7 +205,7 @@ exports.draw = function (text, id,isDot) {
                 {x: s / 2, y: -s},
                 {x: 0, y: -s / 2}
             ];
-        shapeSvg = parent.insert("polygon", ":first-child")
+        var shapeSvg = parent.insert("polygon", ":first-child")
             .attr("points", points.map(function (d) {
                 return d.x + "," + d.y;
             }).join(" "))
@@ -233,7 +231,7 @@ exports.draw = function (text, id,isDot) {
                 {x: -h/2, y: -h},
                 {x: 0, y: -h/2},
             ];
-        shapeSvg = parent.insert("polygon", ":first-child")
+        var shapeSvg = parent.insert("polygon", ":first-child")
             .attr("points", points.map(function (d) {
                 return d.x + "," + d.y;
             }).join(" "))
@@ -271,8 +269,6 @@ exports.draw = function (text, id,isDot) {
     render(d3.select("#" + id + " g"), g);
 
     // Center the graph
-    var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
-    //svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
     svg.attr("height", g.graph().height );
     svg.attr("width", g.graph().width );
 };

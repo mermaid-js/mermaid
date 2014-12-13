@@ -14,7 +14,7 @@ var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 
 var paths = {
-  scripts: ['./src/*.js']
+  scripts: ['./src/**/*.js', '!**/parser/*.js']
 };
 
 gulp.task('jison2', function() {
@@ -40,7 +40,7 @@ gulp.task('dist', ['slimDist', 'fullDist','jasmine']);
 
 var jasmine = require('gulp-jasmine');
 
-gulp.task('jasmine',['jison'], function () {
+gulp.task('jasmine',['jison','lint'], function () {
     return gulp.src(['src/**/*.spec.js'])
         .pipe(jasmine({includeStackTrace:true}));
 });
