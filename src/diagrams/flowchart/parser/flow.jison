@@ -136,9 +136,10 @@ statements
 
 
 spaceListNewline
-    : spaceList
+    : SPACE spaceListNewline
     | NEWLINE spaceListNewline
     | NEWLINE
+    | SPACE
     ;
 
 
@@ -243,10 +244,6 @@ text: textToken
     {$$=$1+''+$2;}
     ;
 
-textStatement: textToken
-    | textToken textStatement
-    ;
-
 textToken: ALPHA
    {$$=$1;}
    | NUM
@@ -276,6 +273,73 @@ textToken: ALPHA
    | keywords
        {$$ = $1;}
     ;
+
+commentText: commentToken
+    {$$=$1;}
+    | commentText commentToken
+    {$$=$1+''+$2;}
+    ;
+
+commentToken: ALPHA
+   {$$=$1;}
+   | NUM
+   {$$=$1;}
+   | COLON
+       {$$ = $1;}
+   | COMMA
+       {$$ = $1;}
+   | PLUS
+       {$$ = $1;}
+   | EQUALS
+       {$$ = $1;}
+   | MULT
+       {$$ = $1;}
+   | DOT
+       {$$ = $1;}
+   | TAGSTART
+       {$$ = $1;}
+   | TAGEND
+       {$$ = $1;}
+   | BRKT
+       {$$ = '<br>';}
+   | PIPE
+       {$$ = '<br>';}
+   | PS
+       {$$ = '<br>';}
+   | PE
+       {$$ = '<br>';}
+   | SQS
+       {$$ = '<br>';}
+   | SQE
+       {$$ = '<br>';}
+   | DIAMOND_START
+       {$$ = '<br>';}
+   | DIAMOND_STOP
+       {$$ = '<br>';}
+   | TAG_START
+       {$$ = '<br>';}
+   | TAG_END
+       {$$ = '<br>';}
+   | ARROW_CROSS
+       {$$ = '<br>';}
+   | ARROW_POINT
+       {$$ = '<br>';}
+   | ARROW_CIRCLE
+       {$$ = '<br>';}
+   | ARROW_OPEN
+       {$$ = '<br>';}
+   | QUOTE
+       {$$ = '<br>';}
+   | SPACE
+       {$$ = $1;}
+   | MINUS
+       {$$ = $1;}
+   | SEMI
+       {$$ = $1;}
+   | keywords
+       {$$ = $1;}
+    ;
+
 keywords
     : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR;
 
@@ -335,7 +399,7 @@ linkStyleStatement:
           {$$ = $1;yy.updateLink($3,$5);}
     ;
 commentStatement:
-    PCT PCT text
+    PCT PCT commentText
           {$$ = $1;}
     ;
 stylesOpt: style

@@ -19,23 +19,22 @@ var paths = {
 
 gulp.task('jison2', function() {
     return gulp.src('./src/*.jison')
-        .pipe(jison({ moduleType: 'amd' }))
+        .pipe(jison({ moduleType: 'commonjs' }))
         .pipe(gulp.dest('./src/parser'));
 });
 
 gulp.task('jison', shell.task([
-  'jison src/parser/flow.jison -o src/parser/flow.js',
-  'jison src/parser/dot.jison -o src/parser/dot.js',
-  'jison src/parser/js-sequence-diagram.jison -o src/parser/sequenceDiagram.js'
-  //'source scripts/compileJison.sh'
-  //  'jison src/parser/flow.jison -o src/parser/flow.js',
+  'jison src/diagrams/flowchart/parser/flow.jison -o src/diagrams/flowchart/parser/flow.js',
+  'jison src/diagrams/flowchart/parser/dot.jison -o src/diagrams/flowchart/parser/dot.js',
+  'jison src/diagrams/sequenceDiagram/parser/sequenceDiagram.jison -o src/diagrams/sequenceDiagram/parser/sequenceDiagram.js',
+  //'jison src/diagrams/sequenceDiagram/parser/sequence.jison -o src/diagrams/sequenceDiagram/parser/sequence.js'
 ]));
 
-gulp.task('jisonSd', shell.task([
-    //'jison src/parser/flow.jison -o src/parser/flow.js',
-    'jison src/parser/sequence.jison -o src/parser/sequence.js'
-    //'source scripts/compileFlow.sh'
-]));
+gulp.task('jison2', function() {
+    return gulp.src('./src/diagrams/flowchart/**/*.jison')
+        .pipe(jison({  }))
+        .pipe(gulp.dest('./src/diagrams/flowchart'));
+});
 
 gulp.task('dist', ['slimDist', 'fullDist','jasmine']);
 
@@ -43,7 +42,7 @@ var jasmine = require('gulp-jasmine');
 
 gulp.task('jasmine',['jison'], function () {
     return gulp.src(['src/**/*.spec.js'])
-        .pipe(jasmine());
+        .pipe(jasmine({includeStackTrace:true}));
 });
 
 gulp.task('coverage', function (cb) {

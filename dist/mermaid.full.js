@@ -13030,6 +13030,7 @@ module.exports={
     "gulp-istanbul": "^0.4.0",
     "gulp-jasmine": "~1.0.1",
     "gulp-jison": "~1.0.0",
+    "gulp-jshint": "^1.9.0",
     "gulp-less": "^1.3.6",
     "gulp-rename": "~1.2.0",
     "gulp-shell": "^0.2.10",
@@ -13038,6 +13039,7 @@ module.exports={
     "he": "^0.5.0",
     "jasmine": "~2.0.1",
     "jison": "~0.4.15",
+    "jshint-stylish": "^1.0.0",
     "karma": "~0.12.20",
     "karma-chrome-launcher": "~0.1.5",
     "karma-jasmine": "~0.2.1",
@@ -13052,17 +13054,19 @@ module.exports={
     "lodash.values": "^2.4.1",
     "mock-browser": "^0.90.27",
     "path": "^0.4.9",
+    "phantomjs": "^1.9.12",
     "rewire": "^2.1.3"
   }
 }
 
 },{}],103:[function(require,module,exports){
-(function (global){
+/**
+ * Created by knut on 14-12-11.
+ */
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
-var utils = require('./utils');
-var seq = require('./sequenceRenderer');
+var utils = require('../../utils');
 var he = require('he');
 var dagreD3 = require('dagre-d3');
 /**
@@ -13206,7 +13210,7 @@ exports.addEdges = function (edges, g) {
  * @param text
  * @param id
  */
-var draw = function (text, id,isDot) {
+exports.draw = function (text, id,isDot) {
     var parser;
     graph.clear();
     if(isDot){
@@ -13306,19 +13310,19 @@ var draw = function (text, id,isDot) {
 
     // Add our custom arrow - an empty arrowhead
     render.arrows().none = function normal(parent, id, edge, type) {
-      var marker = parent.append("marker")
-        .attr("id", id)
-        .attr("viewBox", "0 0 10 10")
-        .attr("refX", 9)
-        .attr("refY", 5)
-        .attr("markerUnits", "strokeWidth")
-        .attr("markerWidth", 8)
-        .attr("markerHeight", 6)
-        .attr("orient", "auto");
+        var marker = parent.append("marker")
+            .attr("id", id)
+            .attr("viewBox", "0 0 10 10")
+            .attr("refX", 9)
+            .attr("refY", 5)
+            .attr("markerUnits", "strokeWidth")
+            .attr("markerWidth", 8)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto");
 
-      var path = marker.append("path")
-        .attr("d", "M 0 0 L 0 0 L 0 0 z");
-      dagreD3.util.applyStyle(path, edge[type + "Style"]);
+        var path = marker.append("path")
+            .attr("d", "M 0 0 L 0 0 L 0 0 z");
+        dagreD3.util.applyStyle(path, edge[type + "Style"]);
     };
 
     // Set up an SVG group so that we can translate the final graph.
@@ -13334,117 +13338,7 @@ var draw = function (text, id,isDot) {
     svg.attr("height", g.graph().height );
     svg.attr("width", g.graph().width );
 };
-
-/**
- * Function that goes through the document to find the chart definitions in there and render them.
- *
- * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
- * attribute already set. This way the init function can be triggered several times.
- *
- * ```
- * graph LR;
- *  a(Find elements)-->b{Processed};
- *  b-->|Yes|c(Leave element);
- *  c-->|No |d(Transform);
- * ```
- */
-var init = function () {
-    var arr = document.querySelectorAll('.mermaid');
-
-    var cnt = 0;
-    for (i = 0; i < arr.length; i++) {
-        var element = arr[i];
-
-        // Check if previously processed
-        if(!element.getAttribute("data-processed")) {
-            element.setAttribute("data-processed", true);
-        } else continue;
-
-        var id;
-
-        id = 'mermaidChart' + cnt;
-        cnt++;
-
-        var txt = element.innerHTML;
-        txt = txt.replace(/>/g,'&gt;');
-        txt = txt.replace(/</g,'&lt;');
-        txt = he.decode(txt).trim();
-
-        element.innerHTML = '<svg id="' + id + '">' +
-        '<g />' +
-        '</svg>';
-
-        var graphType = utils.detectType(txt);
-
-        switch(graphType){
-            case 'graph':
-                draw(txt, id,false);
-                graph.bindFunctions();
-            break;
-            case 'dotGraph':
-                draw(txt, id,true);
-                break;
-            case 'sequenceDiagram':
-                seq.draw(txt,id);
-                break;
-        }
-
-    }
-
-};
-
-exports.tester = function(){};
-
-/**
- * Function returning version information
- * @returns {string} A string containing the version info
- */
-exports.version = function(){
-    return require('../package.json').version;
-};
-
-var equals = function (val, variable){
-    if(typeof variable === 'undefined'){
-        return false;
-    }
-    else{
-        return (val === variable);
-    }
-};
-if(typeof document !== 'undefined'){
-    /**
-     * Wait for coument loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function(){
-        // Check presence of config object
-        if(typeof mermaid_config !== 'undefined'){
-            // Check if property startOnLoad is set
-            if(equals(true,mermaid_config.startOnLoad)){
-                init();
-            }
-        }
-        else{
-            // No config found, do autostart in this simple case
-            init();
-        }
-    }, false);
-
-}
-
-
-global.mermaid = {
-    init:function(){
-        init();
-    },
-    version:function(){
-        return exports.version();
-    },
-    getParser:function(){
-        return flow.parser;
-    }
-};
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":102,"./graphDb":104,"./parser/dot":105,"./parser/flow":106,"./sequenceRenderer":109,"./utils":110,"dagre-d3":1,"he":100}],104:[function(require,module,exports){
+},{"../../utils":111,"./graphDb":104,"./parser/dot":105,"./parser/flow":106,"dagre-d3":1,"he":100}],104:[function(require,module,exports){
 /**
  * Created by knut on 14-11-03.
  */
@@ -13502,7 +13396,8 @@ exports.addVertex = function (id, text, type, style) {
 exports.addLink = function (start, end, type, linktext) {
     //console.log('Got edge', start, end);
     var edge = {start: start, end: end, type: undefined, text: ''};
-    var linktext = type.text;
+    linktext = type.text;
+
     if (typeof linktext !== 'undefined') {
         edge.text = linktext;
     }
@@ -13651,7 +13546,6 @@ exports.clear = function () {
 exports.defaultStyle = function () {
     return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
 };
-
 
 },{}],105:[function(require,module,exports){
 (function (process){
@@ -14467,12 +14361,12 @@ if (typeof module !== 'undefined' && require.main === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,16],$V1=[1,8],$V2=[1,27],$V3=[1,28],$V4=[1,29],$V5=[1,30],$V6=[1,31],$V7=[1,32],$V8=[1,33],$V9=[1,34],$Va=[1,35],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,22],$Vf=[1,23],$Vg=[1,17],$Vh=[37,38,39,40,41,42,43,44,45,56,57,58,59,60,65],$Vi=[11,48,49,50,51],$Vj=[9,11,25,28,30,32,33,48,49,50,51],$Vk=[9,11,25,28,30,32,33,37,38,39,40,41,42,43,44,45,48,49,50,51],$Vl=[9,11,25,28,30,32,33,36,37,38,39,40,41,42,43,44,45,48,49,50,51],$Vm=[6,9,14],$Vn=[1,92],$Vo=[1,84],$Vp=[1,93],$Vq=[1,82],$Vr=[1,81],$Vs=[1,85],$Vt=[1,73],$Vu=[1,74],$Vv=[1,75],$Vw=[1,76],$Vx=[1,77],$Vy=[1,78],$Vz=[1,79],$VA=[1,80],$VB=[1,83],$VC=[1,87],$VD=[1,88],$VE=[1,89],$VF=[1,90],$VG=[1,91],$VH=[37,38,39,40,41,42,43,44,45],$VI=[37,38,39,40,41,42,43,44,45,52],$VJ=[8,9,10,14,27,29,31,32,33,36,37,38,39,40,41,42,43,44,45,52,56,57,58,59,60],$VK=[2,60],$VL=[1,134],$VM=[1,131],$VN=[1,129],$VO=[1,132],$VP=[1,130],$VQ=[1,137],$VR=[1,136],$VS=[1,135],$VT=[1,133],$VU=[2,25],$VV=[1,144],$VW=[11,40],$VX=[9,11,36,37,38,39,40,44,45,64,68];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,8],$V2=[1,26],$V3=[1,27],$V4=[1,28],$V5=[1,29],$V6=[1,30],$V7=[1,31],$V8=[1,32],$V9=[1,33],$Va=[1,34],$Vb=[1,18],$Vc=[1,19],$Vd=[1,20],$Ve=[1,21],$Vf=[1,22],$Vg=[1,16],$Vh=[37,38,39,40,41,42,43,44,45,60,61,62,63,64,69],$Vi=[11,48,49,50,51],$Vj=[9,11,25,28,30,32,33,48,49,50,51],$Vk=[9,11,25,28,30,32,33,37,38,39,40,41,42,43,44,45,48,49,50,51],$Vl=[9,11,25,28,30,32,33,36,37,38,39,40,41,42,43,44,45,48,49,50,51],$Vm=[6,9,13],$Vn=[1,106],$Vo=[1,97],$Vp=[1,107],$Vq=[1,99],$Vr=[1,86],$Vs=[1,87],$Vt=[1,84],$Vu=[1,85],$Vv=[1,88],$Vw=[1,89],$Vx=[1,81],$Vy=[1,80],$Vz=[1,98],$VA=[1,72],$VB=[1,73],$VC=[1,74],$VD=[1,75],$VE=[1,76],$VF=[1,77],$VG=[1,78],$VH=[1,79],$VI=[1,82],$VJ=[1,93],$VK=[1,94],$VL=[1,92],$VM=[1,95],$VN=[1,83],$VO=[1,90],$VP=[1,91],$VQ=[1,96],$VR=[1,101],$VS=[1,102],$VT=[1,103],$VU=[1,104],$VV=[1,105],$VW=[37,38,39,40,41,42,43,44,45],$VX=[37,38,39,40,41,42,43,44,45,52],$VY=[1,130],$VZ=[1,128],$V_=[1,127],$V$=[1,131],$V01=[1,119],$V11=[1,120],$V21=[1,121],$V31=[1,122],$V41=[1,123],$V51=[1,124],$V61=[1,125],$V71=[1,126],$V81=[1,129],$V91=[8,9,10,11,13,25,27,28,29,30,31,32,33,36,37,38,39,40,41,42,43,44,45,48,49,50,51,52,57,58,59,60,61,62,63,64],$Va1=[8,9,10,27,29,31,32,33,36,37,38,39,40,41,42,43,44,45,52,60,61,62,63,64],$Vb1=[2,59],$Vc1=[1,164],$Vd1=[1,161],$Ve1=[1,159],$Vf1=[1,162],$Vg1=[1,160],$Vh1=[1,167],$Vi1=[1,166],$Vj1=[1,165],$Vk1=[1,163],$Vl1=[2,26],$Vm1=[1,174],$Vn1=[11,40],$Vo1=[9,11,36,37,38,39,40,44,45,68,72];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceListNewline":7,"GRAPH":8,"SPACE":9,"DIR":10,"SEMI":11,"statement":12,"spaceList":13,"NEWLINE":14,"commentStatement":15,"verticeStatement":16,"styleStatement":17,"linkStyleStatement":18,"classDefStatement":19,"classStatement":20,"clickStatement":21,"vertex":22,"link":23,"alphaNum":24,"SQS":25,"text":26,"SQE":27,"PS":28,"PE":29,"DIAMOND_START":30,"DIAMOND_STOP":31,"TAGEND":32,"TAGSTART":33,"alphaNumStatement":34,"alphaNumToken":35,"MINUS":36,"ALPHA":37,"NUM":38,"COLON":39,"COMMA":40,"PLUS":41,"EQUALS":42,"MULT":43,"DOT":44,"BRKT":45,"linkStatement":46,"arrowText":47,"ARROW_POINT":48,"ARROW_CIRCLE":49,"ARROW_CROSS":50,"ARROW_OPEN":51,"PIPE":52,"textToken":53,"textStatement":54,"keywords":55,"STYLE":56,"LINKSTYLE":57,"CLASSDEF":58,"CLASS":59,"CLICK":60,"textNoTags":61,"textNoTagsToken":62,"stylesOpt":63,"HEX":64,"PCT":65,"style":66,"styleComponent":67,"UNIT":68,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",11:"SEMI",14:"NEWLINE",25:"SQS",27:"SQE",28:"PS",29:"PE",30:"DIAMOND_START",31:"DIAMOND_STOP",32:"TAGEND",33:"TAGSTART",36:"MINUS",37:"ALPHA",38:"NUM",39:"COLON",40:"COMMA",41:"PLUS",42:"EQUALS",43:"MULT",44:"DOT",45:"BRKT",48:"ARROW_POINT",49:"ARROW_CIRCLE",50:"ARROW_CROSS",51:"ARROW_OPEN",52:"PIPE",56:"STYLE",57:"LINKSTYLE",58:"CLASSDEF",59:"CLASS",60:"CLICK",64:"HEX",65:"PCT",68:"UNIT"},
-productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,1],[7,2],[7,1],[13,2],[13,1],[12,2],[12,2],[12,2],[12,2],[12,2],[12,2],[12,2],[16,3],[16,1],[22,4],[22,6],[22,4],[22,4],[22,4],[22,4],[22,1],[24,1],[24,2],[34,1],[34,3],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[23,2],[23,1],[46,1],[46,1],[46,1],[46,1],[47,3],[26,1],[26,2],[54,1],[54,2],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[55,1],[55,1],[55,1],[55,1],[55,1],[55,1],[55,1],[61,1],[61,2],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[62,1],[19,5],[20,5],[21,5],[17,5],[17,5],[18,5],[15,3],[63,1],[63,3],[66,1],[66,2],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1],[67,1]],
+symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceListNewline":7,"GRAPH":8,"SPACE":9,"DIR":10,"SEMI":11,"statement":12,"NEWLINE":13,"spaceList":14,"commentStatement":15,"verticeStatement":16,"styleStatement":17,"linkStyleStatement":18,"classDefStatement":19,"classStatement":20,"clickStatement":21,"vertex":22,"link":23,"alphaNum":24,"SQS":25,"text":26,"SQE":27,"PS":28,"PE":29,"DIAMOND_START":30,"DIAMOND_STOP":31,"TAGEND":32,"TAGSTART":33,"alphaNumStatement":34,"alphaNumToken":35,"MINUS":36,"ALPHA":37,"NUM":38,"COLON":39,"COMMA":40,"PLUS":41,"EQUALS":42,"MULT":43,"DOT":44,"BRKT":45,"linkStatement":46,"arrowText":47,"ARROW_POINT":48,"ARROW_CIRCLE":49,"ARROW_CROSS":50,"ARROW_OPEN":51,"PIPE":52,"textToken":53,"keywords":54,"commentText":55,"commentToken":56,"TAG_START":57,"TAG_END":58,"QUOTE":59,"STYLE":60,"LINKSTYLE":61,"CLASSDEF":62,"CLASS":63,"CLICK":64,"textNoTags":65,"textNoTagsToken":66,"stylesOpt":67,"HEX":68,"PCT":69,"style":70,"styleComponent":71,"UNIT":72,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",11:"SEMI",13:"NEWLINE",25:"SQS",27:"SQE",28:"PS",29:"PE",30:"DIAMOND_START",31:"DIAMOND_STOP",32:"TAGEND",33:"TAGSTART",36:"MINUS",37:"ALPHA",38:"NUM",39:"COLON",40:"COMMA",41:"PLUS",42:"EQUALS",43:"MULT",44:"DOT",45:"BRKT",48:"ARROW_POINT",49:"ARROW_CIRCLE",50:"ARROW_CROSS",51:"ARROW_OPEN",52:"PIPE",57:"TAG_START",58:"TAG_END",59:"QUOTE",60:"STYLE",61:"LINKSTYLE",62:"CLASSDEF",63:"CLASS",64:"CLICK",68:"HEX",69:"PCT",72:"UNIT"},
+productions_: [0,[3,3],[3,4],[4,4],[5,3],[5,1],[7,2],[7,2],[7,1],[7,1],[14,2],[14,1],[12,2],[12,2],[12,2],[12,2],[12,2],[12,2],[12,2],[16,3],[16,1],[22,4],[22,6],[22,4],[22,4],[22,4],[22,4],[22,1],[24,1],[24,2],[34,1],[34,3],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[35,1],[23,2],[23,1],[46,1],[46,1],[46,1],[46,1],[47,3],[26,1],[26,2],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[53,1],[55,1],[55,2],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[56,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[54,1],[65,1],[65,2],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[19,5],[20,5],[21,5],[17,5],[17,5],[18,5],[15,3],[67,1],[67,3],[70,1],[70,2],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -14484,100 +14378,100 @@ break;
 case 3:
  yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
 break;
-case 11:
+case 12:
 this.$='Comment';
 break;
-case 18:
+case 19:
  yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
 break;
-case 19:
+case 20:
 this.$ = 'yo';
 break;
-case 20:
+case 21:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
 break;
-case 21:
+case 22:
 this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
 break;
-case 22:
+case 23:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
 break;
-case 23: case 25:
+case 24: case 26:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
 break;
-case 24:
+case 25:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
 break;
-case 26:
+case 27:
 this.$ = $$[$0];yy.addVertex($$[$0]);
 break;
-case 27: case 29: case 31: case 32: case 47: case 51: case 52: case 72: case 74: case 75: case 95:
+case 28: case 30: case 32: case 33: case 48: case 50: case 51: case 64: case 66: case 67: case 102: case 104: case 105: case 125:
 this.$=$$[$0];
 break;
-case 28: case 48: case 73:
+case 29: case 49: case 65: case 103:
 this.$=$$[$0-1]+''+$$[$0];
 break;
-case 30:
+case 31:
 this.$=$$[$0-2]+'-'+$$[$0];
 break;
-case 33: case 34: case 35: case 36: case 37: case 38: case 41: case 53: case 54: case 55: case 56: case 57: case 58: case 59: case 60: case 62: case 63: case 64: case 76: case 77: case 78: case 79: case 80: case 81: case 83: case 84: case 85:
+case 34: case 35: case 36: case 37: case 38: case 39: case 42: case 52: case 53: case 54: case 55: case 56: case 57: case 58: case 59: case 61: case 62: case 63: case 68: case 69: case 70: case 71: case 72: case 73: case 74: case 75: case 91: case 92: case 93: case 94: case 106: case 107: case 108: case 109: case 110: case 111: case 113: case 114: case 115:
 this.$ = $$[$0];
 break;
-case 39: case 61: case 82:
+case 40: case 60: case 76: case 77: case 78: case 79: case 80: case 81: case 82: case 83: case 84: case 85: case 86: case 87: case 88: case 89: case 90: case 112:
 this.$ = '<br>';
 break;
-case 40:
+case 41:
 $$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 42:
+case 43:
 this.$ = {"type":"arrow"};
 break;
-case 43:
+case 44:
 this.$ = {"type":"arrow_circle"};
 break;
-case 44:
+case 45:
 this.$ = {"type":"arrow_cross"};
 break;
-case 45:
+case 46:
 this.$ = {"type":"arrow_open"};
 break;
-case 46:
+case 47:
 this.$ = $$[$0-1];
 break;
-case 86:
+case 116:
 this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
 break;
-case 87:
+case 117:
 this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
 break;
-case 88:
+case 118:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], $$[$0]);
 break;
-case 89:
+case 119:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
-case 90: case 91:
+case 120: case 121:
 this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
-case 92:
+case 122:
 this.$ = $$[$0-2];
 break;
-case 93:
+case 123:
 this.$ = [$$[$0]]
 break;
-case 94:
+case 124:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 96:
+case 126:
 this.$ = $$[$0-1] + $$[$0];
 break;
-case 97: case 98: case 99: case 100: case 101: case 102: case 103: case 104: case 105:
+case 127: case 128: case 129: case 130: case 131: case 132: case 133: case 134: case 135:
 this.$=$$[$0]
 break;
 }
 },
-table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,12:6,13:7,14:$V1,15:9,16:10,17:11,18:12,19:13,20:14,21:15,22:18,24:24,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,56:$Vb,57:$Vc,58:$Vd,59:$Ve,60:$Vf,65:$Vg},{9:[1,36]},{6:[1,37]},{5:38,12:6,15:9,16:10,17:11,18:12,19:13,20:14,21:15,22:18,24:24,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,56:$Vb,57:$Vc,58:$Vd,59:$Ve,60:$Vf,65:$Vg},{6:[2,5],7:39,9:$V0,13:7,14:$V1},o($Vh,[2,6]),o($Vh,[2,8],{13:7,7:40,9:$V0,14:$V1}),{14:[1,41]},{11:[1,42]},{11:[1,43]},{11:[1,44]},{11:[1,45]},{11:[1,46]},{11:[1,47]},o($Vh,[2,10],{13:48,9:$V0}),{65:[1,49]},{11:[2,19],23:50,46:51,48:[1,52],49:[1,53],50:[1,54],51:[1,55]},{9:[1,56]},{9:[1,57]},{9:[1,58]},{9:[1,59]},{9:[1,60]},o($Vi,[2,26],{25:[1,61],28:[1,62],30:[1,63],32:[1,64],33:[1,65]}),o($Vj,[2,27],{34:25,35:26,24:66,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va}),o($Vk,[2,29],{36:[1,67]}),o($Vl,[2,31]),o($Vl,[2,32]),o($Vl,[2,33]),o($Vl,[2,34]),o($Vl,[2,35]),o($Vl,[2,36]),o($Vl,[2,37]),o($Vl,[2,38]),o($Vl,[2,39]),{10:[1,68]},{1:[2,1]},{6:[1,69]},{5:70,12:6,15:9,16:10,17:11,18:12,19:13,20:14,21:15,22:18,24:24,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,56:$Vb,57:$Vc,58:$Vd,59:$Ve,60:$Vf,65:$Vg},o($Vh,[2,7]),o($Vm,[2,11]),o($Vm,[2,12]),o($Vm,[2,13]),o($Vm,[2,14]),o($Vm,[2,15]),o($Vm,[2,16]),o($Vm,[2,17]),o($Vh,[2,9]),{8:$Vn,9:$Vo,10:$Vp,26:71,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{22:94,24:24,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},o($VH,[2,41],{47:95,52:[1,96]}),o($VI,[2,42]),o($VI,[2,43]),o($VI,[2,44]),o($VI,[2,45]),{24:97,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,64:[1,98]},{38:[1,99]},{24:100,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{24:101,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{24:102,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{8:$Vn,9:$Vo,10:$Vp,26:103,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,26:105,28:[1,104],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,26:106,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,26:107,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,26:108,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},o($Vj,[2,28]),{35:109,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{11:[1,110]},{1:[2,2]},{6:[2,4]},{8:$Vn,9:$Vo,10:$Vp,14:[2,92],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},o($VJ,[2,47]),o($VJ,[2,51]),o($VJ,[2,52]),o($VJ,[2,53]),o($VJ,[2,54]),o($VJ,[2,55]),o($VJ,[2,56]),o($VJ,[2,57]),o($VJ,[2,58]),o($VJ,[2,59]),o($VJ,$VK),o($VJ,[2,61]),o($VJ,[2,62]),o($VJ,[2,63]),o($VJ,[2,64]),o($VJ,[2,65]),o($VJ,[2,66]),o($VJ,[2,67]),o($VJ,[2,68]),o($VJ,[2,69]),o($VJ,[2,70]),o($VJ,[2,71]),{11:[2,18]},o($VH,[2,40]),{8:$Vn,9:$Vo,10:$Vp,26:112,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{9:[1,113]},{9:[1,114]},{9:[1,115]},{9:[1,116]},{9:[1,117]},{9:[1,118]},{8:$Vn,9:$Vo,10:$Vp,27:[1,119],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,26:120,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:72,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,29:[1,121],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,31:[1,122],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,27:[1,123],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{8:$Vn,9:$Vo,10:$Vp,32:[1,124],33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},o($Vk,[2,30]),o([9,14,37,38,39,40,41,42,43,44,45,56,57,58,59,60,65],[2,3]),o($VJ,[2,48]),{8:$Vn,9:$Vo,10:$Vp,32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,52:[1,125],53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},{9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,63:126,64:$VS,66:127,67:128,68:$VT},{9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,63:138,64:$VS,66:127,67:128,68:$VT},{9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,63:139,64:$VS,66:127,67:128,68:$VT},{9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,63:140,64:$VS,66:127,67:128,68:$VT},{24:141,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{24:142,34:25,35:26,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},o($Vi,[2,20]),{8:$Vn,9:$Vo,10:$Vp,29:[1,143],32:$Vq,33:$Vr,36:$Vs,37:$Vt,38:$Vu,39:$Vv,40:$Vw,41:$Vx,42:$Vy,43:$Vz,44:$VA,45:$VB,53:111,55:86,56:$VC,57:$VD,58:$VE,59:$VF,60:$VG},o($Vi,[2,22]),o($Vi,[2,23]),o($Vi,[2,24]),o([8,9,10,32,33,36,37,38,39,40,41,42,43,44,45,56,57,58,59,60],$VK,{11:$VU,48:$VU,49:$VU,50:$VU,51:$VU}),o($VH,[2,46]),{11:[2,89],40:$VV},o($VW,[2,93],{67:145,9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,64:$VS,68:$VT}),o($VX,[2,95]),o($VX,[2,97]),o($VX,[2,98]),o($VX,[2,99]),o($VX,[2,100]),o($VX,[2,101]),o($VX,[2,102]),o($VX,[2,103]),o($VX,[2,104]),o($VX,[2,105]),{11:[2,90],40:$VV},{11:[2,91],40:$VV},{11:[2,86],40:$VV},{11:[2,87]},{11:[2,88]},{29:[1,146]},{9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,64:$VS,66:147,67:128,68:$VT},o($VX,[2,96]),o($Vi,[2,21]),o($VW,[2,94],{67:145,9:$VL,36:$VM,37:$VN,38:$VO,39:$VP,44:$VQ,45:$VR,64:$VS,68:$VT})],
-defaultActions: {37:[2,1],69:[2,2],70:[2,4],94:[2,18],141:[2,87],142:[2,88]},
+table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,12:6,13:$V1,15:9,16:10,17:11,18:12,19:13,20:14,21:15,22:17,24:23,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,60:$Vb,61:$Vc,62:$Vd,63:$Ve,64:$Vf,69:$Vg},{9:[1,35]},{6:[1,36]},{5:37,12:6,15:9,16:10,17:11,18:12,19:13,20:14,21:15,22:17,24:23,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,60:$Vb,61:$Vc,62:$Vd,63:$Ve,64:$Vf,69:$Vg},{6:[2,5],7:38,9:$V0,13:$V1},o($Vh,[2,9],{7:39,9:$V0,13:$V1}),o($Vh,[2,8],{7:40,9:$V0,13:$V1}),{13:[1,41]},{11:[1,42]},{11:[1,43]},{11:[1,44]},{11:[1,45]},{11:[1,46]},{11:[1,47]},{69:[1,48]},{11:[2,20],23:49,46:50,48:[1,51],49:[1,52],50:[1,53],51:[1,54]},{9:[1,55]},{9:[1,56]},{9:[1,57]},{9:[1,58]},{9:[1,59]},o($Vi,[2,27],{25:[1,60],28:[1,61],30:[1,62],32:[1,63],33:[1,64]}),o($Vj,[2,28],{34:24,35:25,24:65,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va}),o($Vk,[2,30],{36:[1,66]}),o($Vl,[2,32]),o($Vl,[2,33]),o($Vl,[2,34]),o($Vl,[2,35]),o($Vl,[2,36]),o($Vl,[2,37]),o($Vl,[2,38]),o($Vl,[2,39]),o($Vl,[2,40]),{10:[1,67]},{1:[2,1]},{6:[1,68]},{5:69,12:6,15:9,16:10,17:11,18:12,19:13,20:14,21:15,22:17,24:23,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,60:$Vb,61:$Vc,62:$Vd,63:$Ve,64:$Vf,69:$Vg},o($Vh,[2,6]),o($Vh,[2,7]),o($Vm,[2,12]),o($Vm,[2,13]),o($Vm,[2,14]),o($Vm,[2,15]),o($Vm,[2,16]),o($Vm,[2,17]),o($Vm,[2,18]),{8:$Vn,9:$Vo,10:$Vp,11:$Vq,25:$Vr,27:$Vs,28:$Vt,29:$Vu,30:$Vv,31:$Vw,32:$Vx,33:$Vy,36:$Vz,37:$VA,38:$VB,39:$VC,40:$VD,41:$VE,42:$VF,43:$VG,44:$VH,45:$VI,48:$VJ,49:$VK,50:$VL,51:$VM,52:$VN,54:100,55:70,56:71,57:$VO,58:$VP,59:$VQ,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{22:108,24:23,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},o($VW,[2,42],{47:109,52:[1,110]}),o($VX,[2,43]),o($VX,[2,44]),o($VX,[2,45]),o($VX,[2,46]),{24:111,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va,68:[1,112]},{38:[1,113]},{24:114,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{24:115,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{24:116,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{8:$Vn,9:$VY,10:$Vp,26:117,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,26:134,28:[1,133],32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,26:135,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,26:136,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,26:137,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},o($Vj,[2,29]),{35:138,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{11:[1,139]},{1:[2,2]},{6:[2,4]},{8:$Vn,9:$Vo,10:$Vp,11:$Vq,13:[2,122],25:$Vr,27:$Vs,28:$Vt,29:$Vu,30:$Vv,31:$Vw,32:$Vx,33:$Vy,36:$Vz,37:$VA,38:$VB,39:$VC,40:$VD,41:$VE,42:$VF,43:$VG,44:$VH,45:$VI,48:$VJ,49:$VK,50:$VL,51:$VM,52:$VN,54:100,56:140,57:$VO,58:$VP,59:$VQ,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},o($V91,[2,64]),o($V91,[2,66]),o($V91,[2,67]),o($V91,[2,68]),o($V91,[2,69]),o($V91,[2,70]),o($V91,[2,71]),o($V91,[2,72]),o($V91,[2,73]),o($V91,[2,74]),o($V91,[2,75]),o($V91,[2,76]),o($V91,[2,77]),o($V91,[2,78]),o($V91,[2,79]),o($V91,[2,80]),o($V91,[2,81]),o($V91,[2,82]),o($V91,[2,83]),o($V91,[2,84]),o($V91,[2,85]),o($V91,[2,86]),o($V91,[2,87]),o($V91,[2,88]),o($V91,[2,89]),o($V91,[2,90]),o($V91,[2,91]),o($V91,[2,92]),o($V91,[2,93]),o($V91,[2,94]),o($V91,[2,95]),o($V91,[2,96]),o($V91,[2,97]),o($V91,[2,98]),o($V91,[2,99]),o($V91,[2,100]),o($V91,[2,101]),{11:[2,19]},o($VW,[2,41]),{8:$Vn,9:$VY,10:$Vp,26:141,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{9:[1,142]},{9:[1,143]},{9:[1,144]},{9:[1,145]},{9:[1,146]},{9:[1,147]},{8:$Vn,9:$VY,10:$Vp,27:[1,148],32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},o($Va1,[2,48]),o($Va1,[2,50]),o($Va1,[2,51]),o($Va1,[2,52]),o($Va1,[2,53]),o($Va1,[2,54]),o($Va1,[2,55]),o($Va1,[2,56]),o($Va1,[2,57]),o($Va1,[2,58]),o($Va1,$Vb1),o($Va1,[2,60]),o($Va1,[2,61]),o($Va1,[2,62]),o($Va1,[2,63]),{8:$Vn,9:$VY,10:$Vp,26:150,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:118,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,29:[1,151],32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,31:[1,152],32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,27:[1,153],32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{8:$Vn,9:$VY,10:$Vp,32:[1,154],33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},o($Vk,[2,31]),o([9,13,37,38,39,40,41,42,43,44,45,60,61,62,63,64,69],[2,3]),o($V91,[2,65]),{8:$Vn,9:$VY,10:$Vp,32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,52:[1,155],53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},{9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,67:156,68:$Vj1,70:157,71:158,72:$Vk1},{9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,67:168,68:$Vj1,70:157,71:158,72:$Vk1},{9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,67:169,68:$Vj1,70:157,71:158,72:$Vk1},{9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,67:170,68:$Vj1,70:157,71:158,72:$Vk1},{24:171,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},{24:172,34:24,35:25,37:$V2,38:$V3,39:$V4,40:$V5,41:$V6,42:$V7,43:$V8,44:$V9,45:$Va},o($Vi,[2,21]),o($Va1,[2,49]),{8:$Vn,9:$VY,10:$Vp,29:[1,173],32:$VZ,33:$V_,36:$V$,37:$V01,38:$V11,39:$V21,40:$V31,41:$V41,42:$V51,43:$V61,44:$V71,45:$V81,53:149,54:132,60:$VR,61:$VS,62:$VT,63:$VU,64:$VV},o($Vi,[2,23]),o($Vi,[2,24]),o($Vi,[2,25]),o([8,9,10,32,33,36,37,38,39,40,41,42,43,44,45,60,61,62,63,64],$Vb1,{11:$Vl1,48:$Vl1,49:$Vl1,50:$Vl1,51:$Vl1}),o($VW,[2,47]),{11:[2,119],40:$Vm1},o($Vn1,[2,123],{71:175,9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,68:$Vj1,72:$Vk1}),o($Vo1,[2,125]),o($Vo1,[2,127]),o($Vo1,[2,128]),o($Vo1,[2,129]),o($Vo1,[2,130]),o($Vo1,[2,131]),o($Vo1,[2,132]),o($Vo1,[2,133]),o($Vo1,[2,134]),o($Vo1,[2,135]),{11:[2,120],40:$Vm1},{11:[2,121],40:$Vm1},{11:[2,116],40:$Vm1},{11:[2,117]},{11:[2,118]},{29:[1,176]},{9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,68:$Vj1,70:177,71:158,72:$Vk1},o($Vo1,[2,126]),o($Vi,[2,22]),o($Vn1,[2,124],{71:175,9:$Vc1,36:$Vd1,37:$Ve1,38:$Vf1,39:$Vg1,44:$Vh1,45:$Vi1,68:$Vj1,72:$Vk1})],
+defaultActions: {36:[2,1],68:[2,2],69:[2,4],108:[2,19],171:[2,117],172:[2,118]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -15051,15 +14945,15 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 56;
+case 0:return 60;
 break;
-case 1:return 57;
+case 1:return 61;
 break;
-case 2:return 58;
+case 2:return 62;
 break;
-case 3:return 59;
+case 3:return 63;
 break;
-case 4:return 60;
+case 4:return 64;
 break;
 case 5:return 8;
 break;
@@ -15107,7 +15001,7 @@ case 26:return 36;
 break;
 case 27:return 41;
 break;
-case 28:return 65;
+case 28:return 69;
 break;
 case 29:return 42;
 break;
@@ -15127,9 +15021,9 @@ case 36:return 30
 break;
 case 37:return 31
 break;
-case 38:return 'QUOTE';
+case 38:return 59;
 break;
-case 39:return 14;
+case 39:return 13;
 break;
 case 40:return 9;
 break;
@@ -16091,6 +15985,126 @@ module.exports.draw = function (text, id) {
 };
 
 },{"./parser/sequenceDiagram":107,"./sequenceDb":108}],110:[function(require,module,exports){
+(function (global){
+var graph = require('./diagrams/flowchart/graphDb');
+var flow = require('./diagrams/flowchart/parser/flow');
+var utils = require('./utils');
+var flowRenderer = require('./diagrams/flowchart/flowRenderer');
+var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
+var he = require('he');
+
+/**
+ * Function that goes through the document to find the chart definitions in there and render them.
+ *
+ * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
+ * attribute already set. This way the init function can be triggered several times.
+ *
+ * ```
+ * graph LR;
+ *  a(Find elements)-->b{Processed};
+ *  b-->|Yes|c(Leave element);
+ *  c-->|No |d(Transform);
+ * ```
+ */
+var init = function () {
+    var arr = document.querySelectorAll('.mermaid');
+    var i;
+
+    var cnt = 0;
+    for (i = 0; i < arr.length; i++) {
+        var element = arr[i];
+
+        // Check if previously processed
+        if(!element.getAttribute("data-processed")) {
+            element.setAttribute("data-processed", true);
+        } else continue;
+
+        var id;
+
+        id = 'mermaidChart' + cnt;
+        cnt++;
+
+        var txt = element.innerHTML;
+        txt = txt.replace(/>/g,'&gt;');
+        txt = txt.replace(/</g,'&lt;');
+        txt = he.decode(txt).trim();
+
+        element.innerHTML = '<svg id="' + id + '">' +
+        '<g />' +
+        '</svg>';
+
+        var graphType = utils.detectType(txt);
+
+        switch(graphType){
+            case 'graph':
+                console.log('FC');
+                flowRenderer.draw(txt, id,false);
+                graph.bindFunctions();
+            break;
+            case 'dotGraph':
+                flowRenderer.draw(txt, id,true);
+                break;
+            case 'sequenceDiagram':
+                seq.draw(txt,id);
+                break;
+        }
+
+    }
+
+};
+
+exports.tester = function(){};
+
+/**
+ * Function returning version information
+ * @returns {string} A string containing the version info
+ */
+exports.version = function(){
+    return require('../package.json').version;
+};
+
+var equals = function (val, variable){
+    if(typeof variable === 'undefined'){
+        return false;
+    }
+    else{
+        return (val === variable);
+    }
+};
+if(typeof document !== 'undefined'){
+    /**
+     * Wait for coument loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function(){
+        // Check presence of config object
+        if(typeof mermaid_config !== 'undefined'){
+            // Check if property startOnLoad is set
+            if(equals(true,mermaid_config.startOnLoad)){
+                init();
+            }
+        }
+        else{
+            // No config found, do autostart in this simple case
+            init();
+        }
+    }, false);
+
+}
+
+
+global.mermaid = {
+    init:function(){
+        init();
+    },
+    version:function(){
+        return exports.version();
+    },
+    getParser:function(){
+        return flow.parser;
+    }
+};
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../package.json":102,"./diagrams/flowchart/flowRenderer":103,"./diagrams/flowchart/graphDb":104,"./diagrams/flowchart/parser/flow":106,"./diagrams/sequenceDiagram/sequenceRenderer":109,"./utils":111,"he":100}],111:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -16117,5 +16131,6 @@ module.exports.detectType = function(text,a){
     }
 
     return "graph";
-}
-},{}]},{},[103])
+};
+
+},{}]},{},[110])

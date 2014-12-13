@@ -53,6 +53,7 @@
     "lodash.values": "^2.4.1",
     "mock-browser": "^0.90.27",
     "path": "^0.4.9",
+    "phantomjs": "^1.9.12",
     "rewire": "^2.1.3"
   }
 }
