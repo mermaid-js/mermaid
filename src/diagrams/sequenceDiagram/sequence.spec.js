@@ -24,7 +24,7 @@ str = str + 'bfs:someNode.setLevel';
 //console.log(sq.parse(str));
 
 
-describe('when parsing ',function() {
+describe('when parsing a sequence it',function() {
     var parseError;
     beforeEach(function () {
         sq = require('./parser/sequence').parser;

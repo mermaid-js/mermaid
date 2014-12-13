@@ -21,7 +21,7 @@ would render this lovely chart:
 
 ![Example 1](http://www.sveido.com/mermaid/img/ex1.png)
 
-
+A page with a live example can be seen [here](http://www.sveido.com/mermaid/demo/html/web.html). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output). If you want a live demo, there is aan editor provided in mermaid the mermaid project or you can simply look at this [great editor](http://danielmschmidt.github.io/mermaid-demo/)
 #Installation
 
 Either use the bower package manager as per below:
@@ -141,6 +141,21 @@ id1(This is the text in the box);
 
 ![Node with round edges](http://www.sveido.com/mermaid/img/ex7.png)
 
+### A node in the form of a circle
+```
+id1((This is the text in the box));
+```
+
+![Node with round edges](http://www.sveido.com/mermaid/img/ex12.png)
+
+### A node in an asymetric shape
+```
+id1>This is the text in the box];
+```
+
+![Node with round edges](http://www.sveido.com/mermaid/img/ex13.png)
+
+
 ### A node (rhombus)
 ```
 id1{This is the text in the box};
@@ -218,5 +233,60 @@ A---|This is the text|B;
 
 ![Text on links](http://www.sveido.com/mermaid/img/ex11.png)
 
+### Styling links
+It is possible to style links, for instance you might want to style a link that is going backwards in the flow. As links
+has no ids in the same way as nodes, some other way of deciding what link the style should be attached to is required.
+Instead of ids the order number of when the link was defined in the graph is used. In the example below the style
+defined in the linkStyle statement will belong to the forth link in the graph:
+
+```
+linkStyle 3 stroke:#ff3,stroke-width:4px;
+```
+
+## Interaction
+
+It is possible to bind a click event to a node:
+
+```
+click nodeId callback
+```
+
+* nodeId is the id of the node
+* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+
+## Usage of the parser as a seperate module
+
+### Setup
+```
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
+flow.parser.yy = graph;
+```
+
+### Parsing
+
+```
+flow.parser.parse(text);
+```
+
+### Data extraction
+```
+graph.getDirection();
+graph.getVertices();
+graph.getEdges();
+```
+
+The parser is also exposed in the mermaid api by calling:
+```
+var parser = mermaid.getParser();
+```
+Note that the parse needs a graph object to store the data as per:
+```
+flow.parser.yy = graph;
+```
+
+Look at graphDb.js for more details on that object.
 # Credits
-Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!!!
+Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries! Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams.
+
+*Mermaid was created by Knut Sveidqvist for easier documentation.*

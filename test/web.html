@@ -16,43 +16,93 @@
     </script>
 </head>
     <body>
-    <div class="mermaid">
-    sequence TB
-        apa:Apanhoppar
-        bapa:Server
-        chimp:Chimpansenhoppar
-    </div>
-    <div class="mermaid">
-        graph TB;A(Astrid <br> b)-->B[Irene];
-        A-->C[Christer];
-        B-->D[Micke];
-        B-->E[Maria];
-        E-->F[Hjalte];
-        E-->G[Embla];
-        E-->J[Vidar];
-        E-->H[Bjarke];
-        E-->I[Ingvild];
-        click A apa;
-    </div>
-    <div class="mermaid">
-        graph TD;
-            eag[Läsa bok 2]-->b;
-            b{Fundera}---|Klocka|c(Vidar);
-            b-->|Lego text|d(Bjarke går);
-            e(orphan);
-            style eag red;
-    </div>
     <h1>Shapes</h1>
+    Shape examples:
+    <pre>
+        graph TD;
+            sq[Square shape]-->ci((Circle shape));
+            od>Odd shape]---|Two line &lt;br>edge comment|ro;
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak &lt;br>in an Odd shape];
+            di{Diamond is  &lt;br> broken}-->ro(Rounded &lt;br>square &lt;br>shape);
+
+            %% Comments after double percent signs
+            di-->ro2(Rounded square shape);
+            e((Inner circle))-->f(,.?!+-*ز);
+            style e red;
+    </pre>
     <div class="mermaid">
         graph TD;
-            sq[Square shape]-->ci(Circle shape);
-            od>Odd shape]---|Two line<br>edge comment|ro;
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
-            di[Diamond is broken]-->ro{Rounded<br>square<br>shape};
-            di[Diamond is broken]-->ro2{Rounded square shape};
-            e(Inner circle);
-            style e red;
+        sq[Square shape]-->ci((Circle shape));
+        od>Odd shape]---|Two line<br>edge comment|ro;
+        od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
+        di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+        di-->ro2(Rounded square shape);
+        %% Comments after double percent signs
+        e((Inner circle))-->f(,.?!+-*ز);
+        cyr[Cyrillic]-->cyr2((Circle shape Начало));
+        style e red;
     </div>
+
+    <h1>Sequence diagrams (experimental)</h1>
+    <pre>
+        sequenceDiagram
+        Alice->Bob: Hello Bob, how are you?
+        Note right of Bob: Bob thinks
+        Bob-->Alice: I am good thanks!
+        Bob-->John the Long: How about you John?
+        Bob-->Alice: Checking with John...
+        Alice->John the Long: Yes... John, how are you?
+        John the Long-->Alice: Better then you!
+    </pre>
+    <div class="mermaid">
+        sequenceDiagram
+        Alice->Bob: Hello Bob, how are you?
+        Note right of Bob: Bob thinks
+        Bob-->Alice: I am good thanks!
+        Bob-->John the Long: How about you John?
+        Bob-->Alice: Checking with John...
+        Alice->John the Long: Yes... John, how are you?
+        John the Long-->Alice: Better then you!
+    </div>
+
+    <div  class="mermaid">
+graph LR;
+                A[Start]-->B{a = '1,2'};
+                B-->|True|C[test = 1];
+                B-->|False|Z[Store];
+                C-->D{condition};
+                D-->|True|E[test = 2];
+                D-->|False|F[test = 3];
+                E-->G{condition2 = ''};
+                F-->G;
+                G-->|True|H[test = 4];
+                G-->|False|I[test = 5];
+                H-->J{condition3};
+                I-->J;
+                J-->|True|K[test = 6];
+                J-->|False|L;
+                K-->L[Print];
+                L-->M[Any Action];
+                M-->N[Any Other Action];
+                N-->Z;
+
+    </div>
+    <h1>Dot syntax (experimental)</h1>
+    <pre>
+        digraph
+        {
+        a -> b -> c -- d -> e;
+        a -- e;
+        }
+    </pre>
+    <div class="mermaid">
+        digraph
+        {
+        a -> b -> c -- d -> e;
+        a -- e;
+        }
+    </div>
+
 
     </body>
 </html>
