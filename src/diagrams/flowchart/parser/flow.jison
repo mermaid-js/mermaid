@@ -208,26 +208,6 @@ alphaNumStatement
         {$$=$1+'-'+$3;}
     ;
 
-alphaNumToken
-    : ALPHA
-    {$$=$1;}
-    | NUM
-    {$$=$1;}
-    | COLON
-        {$$ = $1;}
-    | COMMA
-        {$$ = $1;}
-    | PLUS
-        {$$ = $1;}
-    | EQUALS
-        {$$ = $1;}
-    | MULT
-        {$$ = $1;}
-    | DOT
-        {$$ = $1;}
-    | BRKT
-        {$$ = '<br>';}
-    ;
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
@@ -260,35 +240,7 @@ text: textToken
     {$$=$1+''+$2;}
     ;
 
-textToken: ALPHA
-   {$$=$1;}
-   | NUM
-   {$$=$1;}
-   | COLON
-       {$$ = $1;}
-   | COMMA
-       {$$ = $1;}
-   | PLUS
-       {$$ = $1;}
-   | EQUALS
-       {$$ = $1;}
-   | MULT
-       {$$ = $1;}
-   | DOT
-       {$$ = $1;}
-   | TAGSTART
-       {$$ = $1;}
-   | TAGEND
-       {$$ = $1;}
-   | BRKT
-       {$$ = '<br>';}
-   | SPACE
-       {$$ = $1;}
-   | MINUS
-       {$$ = $1;}
-   | keywords
-       {$$ = $1;}
-    ;
+
 
 commentText: commentToken
     {$$=$1;}
@@ -296,65 +248,6 @@ commentText: commentToken
     {$$=$1+''+$2;}
     ;
 
-commentToken: ALPHA
-   {$$=$1;}
-   | NUM
-   {$$=$1;}
-   | COLON
-       {$$ = $1;}
-   | COMMA
-       {$$ = $1;}
-   | PLUS
-       {$$ = $1;}
-   | EQUALS
-       {$$ = $1;}
-   | MULT
-       {$$ = $1;}
-   | DOT
-       {$$ = $1;}
-   | TAGSTART
-       {$$ = $1;}
-   | TAGEND
-       {$$ = $1;}
-   | BRKT
-       {$$ = '<br>';}
-   | PIPE
-       {$$ = '<br>';}
-   | PS
-       {$$ = '<br>';}
-   | PE
-       {$$ = '<br>';}
-   | SQS
-       {$$ = '<br>';}
-   | SQE
-       {$$ = '<br>';}
-   | DIAMOND_START
-       {$$ = '<br>';}
-   | DIAMOND_STOP
-       {$$ = '<br>';}
-   | TAG_START
-       {$$ = '<br>';}
-   | TAG_END
-       {$$ = '<br>';}
-   | ARROW_CROSS
-       {$$ = '<br>';}
-   | ARROW_POINT
-       {$$ = '<br>';}
-   | ARROW_CIRCLE
-       {$$ = '<br>';}
-   | ARROW_OPEN
-       {$$ = '<br>';}
-   | QUOTE
-       {$$ = '<br>';}
-   | SPACE
-       {$$ = $1;}
-   | MINUS
-       {$$ = $1;}
-   | SEMI
-       {$$ = $1;}
-   | keywords
-       {$$ = $1;}
-    ;
 
 keywords
     : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR;
@@ -366,31 +259,6 @@ textNoTags: textNoTagsToken
     {$$=$1+''+$2;}
     ;
 
-textNoTagsToken: ALPHA
-   {$$=$1;}
-   | NUM
-   {$$=$1;}
-   | COLON
-       {$$ = $1;}
-   | COMMA
-       {$$ = $1;}
-   | PLUS
-       {$$ = $1;}
-   | EQUALS
-       {$$ = $1;}
-   | MULT
-       {$$ = $1;}
-   | DOT
-       {$$ = $1;}
-   | BRKT
-       {$$ = '<br>';}
-   | SPACE
-       {$$ = $1;}
-   | MINUS
-       {$$ = $1;}
-   | keywords
-       {$$ = $1;}
-    ;
 
 classDefStatement:CLASSDEF SPACE alphaNum SPACE stylesOpt
     {$$ = $1;yy.addClass($3,$5);}
@@ -414,10 +282,9 @@ linkStyleStatement:
     LINKSTYLE SPACE NUM SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     ;
-commentStatement:
-    PCT PCT commentText
-          {$$ = $1;}
-    ;
+
+commentStatement: PCT PCT commentText;
+
 stylesOpt: style
         {$$ = [$1]}
     | stylesOpt COMMA style
@@ -425,28 +292,21 @@ stylesOpt: style
     ;
 
 style: styleComponent
-    {$$=$1;}
     |style styleComponent
     {$$ = $1 + $2;}
     ;
 
-styleComponent: ALPHA
-    {$$=$1}
-    | COLON
-    {$$=$1}
-    | MINUS
-    {$$=$1}
-    | NUM
-    {$$=$1}
-    | UNIT
-    {$$=$1}
-    | SPACE
-    {$$=$1}
-    | HEX
-    {$$=$1}
-    | BRKT
-    {$$=$1}
-    | DOT
-    {$$=$1}
-    ;
+styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT;
+
+/* Token lists */
+
+commentToken   : textToken | graphCodeTokens ;
+
+textToken      : textNoTagsToken | TAGSTART | TAGEND ;
+
+textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
+
+alphaNumToken  : ALPHA | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+
+graphCodeTokens:  PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAG_START | TAG_END | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%
