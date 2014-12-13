@@ -168,17 +168,29 @@ verticeStatement:
 
 vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
+    |  alphaNum SQS text SQE SPACE
+        {$$ = $1;yy.addVertex($1,$3,'square');}
     | alphaNum PS PS text PE PE
+        {$$ = $1;yy.addVertex($1,$4,'circle');}
+    | alphaNum PS PS text PE PE SPACE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
     | alphaNum PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
+    | alphaNum PS text PE SPACE
+        {$$ = $1;yy.addVertex($1,$3,'round');}
     | alphaNum DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
+    | alphaNum DIAMOND_START text DIAMOND_STOP SPACE
+        {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum TAGEND text SQE
+        {$$ = $1;yy.addVertex($1,$3,'odd');}
+    | alphaNum TAGEND text SQE SPACE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
     | alphaNum TAGSTART text TAGEND
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum
+        {$$ = $1;yy.addVertex($1);}
+    | alphaNum SPACE
         {$$ = $1;yy.addVertex($1);}
     ;
 
@@ -219,7 +231,11 @@ alphaNumToken
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
+    | linkStatement arrowText SPACE
+    {$1.text = $2;$$ = $1;}
     | linkStatement
+    {$$ = $1;}
+    | linkStatement SPACE
     {$$ = $1;}
     ;
 

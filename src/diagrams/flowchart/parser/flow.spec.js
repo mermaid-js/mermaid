@@ -30,6 +30,22 @@ describe('when parsing ',function(){
         expect(edges[0].text).toBe('');
     });
 
+    it('should handle a nodes and edges and a space between link and node',function(){
+        var res = flow.parser.parse('graph TD;A --> B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
     it('should handle a comments',function(){
         var res = flow.parser.parse('graph TD;\n%% CComment\n A-->B;');
 
@@ -134,6 +150,16 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow_cross');
     });
 
+    it('should handle text on edges without space and space between vertices and link',function(){
+        var res = flow.parser.parse('graph TD;A --x|textNoSpace| B;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow_cross');
+    });
+
     it('should handle text on edges with space',function(){
         var res = flow.parser.parse('graph TD;A--x|text including space|B;');
 
@@ -210,6 +236,16 @@ describe('when parsing ',function(){
 
     it('should handle text in vertices with space',function(){
         var res = flow.parser.parse('graph TD;A[chimpansen hoppar]-->C;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].type).toBe('square');
+        expect(vert['A'].text).toBe('chimpansen hoppar');
+    });
+
+    it('should handle text in vertices with space with spaces between vertices and link',function(){
+        var res = flow.parser.parse('graph TD;A[chimpansen hoppar] --> C;');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
