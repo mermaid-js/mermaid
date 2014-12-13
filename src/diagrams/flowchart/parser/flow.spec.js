@@ -169,6 +169,17 @@ describe('when parsing ',function(){
 
         expect(edges[0].type).toBe('arrow_cross');
     });
+
+    it('should handle text on edges with space',function(){
+        var res = flow.parser.parse('graph TD;A--x|text with / should work|B;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].text).toBe('text with / should work');
+    });
+
     it('should handle text on edges with space CAPS',function(){
         var res = flow.parser.parse('graph TD;A--x|text including CAPS space|B;');
 

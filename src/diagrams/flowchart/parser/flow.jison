@@ -94,7 +94,7 @@
 [\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|
 [\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]]|
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
-[\uFFD2-\uFFD7\uFFDA-\uFFDC_]
+[\uFFD2-\uFFD7\uFFDA-\uFFDC_\/]
                       return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
