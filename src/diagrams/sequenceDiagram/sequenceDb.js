@@ -42,7 +42,8 @@ exports.clear = function(){
 
 exports.LINETYPE = {
     SOLID  : 0,
-    DOTTED : 1
+    DOTTED : 1,
+    NOTE   : 2
 };
 
 exports.ARROWTYPE = {
@@ -60,6 +61,7 @@ exports.addNote = function (actor, placement, message){
     var note = {actor:actor, placement: placement, message:message};
 
     notes.push(note);
+    messages.push({from:actor, to:actor, message:message, type:exports.LINETYPE.NOTE});
 };
 
 

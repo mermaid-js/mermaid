@@ -52,11 +52,11 @@ describe('when parsing a sequenceDiagram',function() {
 
         var messages = sq.yy.getMessages();
 
-        expect(messages.length).toBe(2);
+        expect(messages.length).toBe(3);
         //console.log('messages');
         //console.log(messages);
         expect(messages[0].from).toBe('Alice');
-        expect(messages[1].from).toBe('Bob');
+        expect(messages[2].from).toBe('Bob');
     });
 
 });
