@@ -7,6 +7,57 @@ var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 
 /**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the liost of actors
+ * @param description The text in the box
+ */
+var drawNote = function(elem, startX, verticalPos, msg){
+    var insertLinebreaks = function (d) {
+        var el = d3.select(this);
+        var words = d.split(' ');
+        el.text('');
+
+        for (var i = 0; i < words.length; i++) {
+            var tspan = el.append('tspan').text(words[i]);
+            if (i > 0)
+                tspan.attr('x', 0).attr('dy', '15');
+        }
+    };
+
+    var g = elem.append("g");
+    var rectElem = g.append("rect")
+        .attr("x", startX + 25)
+        .attr("y", verticalPos -25)
+        .attr("fill", '#EDF2AE')
+        .attr("stroke", '#666')
+        .attr("width", 150)
+        .attr("height", 100)
+        .attr("rx", 0)
+        .attr("ry", 0);
+    var textElem = g.append("text")
+        .attr("x", startX + 10)
+        .attr("y", verticalPos - 15)
+        .style("text-anchor", "start");
+    msg.message.split('<br>').forEach(function(rowText){
+        textElem.append("tspan")
+            .attr("x", startX + 35)
+            .attr("dy", '1em')
+            .text(rowText);
+    });
+
+    console.log('textElem.height');
+    console.log(textElem[0][0].getBBox());
+    rectElem.attr('height',textElem[0][0].getBBox().height+20);
+    //console.log(textElem.getBBox().height);
+
+        //.text(msg.message + '\n' + msg.message)
+
+
+    return verticalPos + textElem[0][0].getBBox().height - 10;
+};
+
+/**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
@@ -74,37 +125,46 @@ module.exports.draw = function (text, id) {
         var g = elem.append("g");
         //Make an SVG Container
         //Draw the line
-        if(msg.type===1){
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .style("stroke-dasharray", ("3, 3"))
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-            //.attr("d", diagonal);
+        if(msg.type !== 2) {
+            if (msg.type === 1) {
+                g.append("line")
+                    .attr("x1", startx)
+                    .attr("y1", verticalPos)
+                    .attr("x2", stopx)
+                    .attr("y2", verticalPos)
+                    .attr("stroke-width", 2)
+                    .attr("stroke", "black")
+                    .style("stroke-dasharray", ("3, 3"))
+                    .attr("class", "link")
+                    .attr("marker-end", "url(#arrowhead)");
+                //.attr("d", diagonal);
+            }
+            else {
+                g.append("line")
+                    .attr("x1", startx)
+                    .attr("y1", verticalPos)
+                    .attr("x2", stopx)
+                    .attr("y2", verticalPos)
+                    .attr("stroke-width", 2)
+                    .attr("stroke", "black")
+                    .attr("class", "link")
+                    .attr("marker-end", "url(#arrowhead)");
+                //.attr("d", diagonal);
+            }
+
+            g.append("text")      // text label for the x axis
+                .attr("x", txtCenter)
+                .attr("y", verticalPos - 10)
+                .style("text-anchor", "middle")
+                .text(msg.message);
         }
         else{
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-            //.attr("d", diagonal);
+            g.append("text")      // text label for the x axis
+                .attr("x", txtCenter)
+                .attr("y", verticalPos - 10)
+                .style("text-anchor", "middle")
+                .text(msg.message);
         }
-
-        g.append("text")      // text label for the x axis
-            .attr("x", txtCenter)
-            .attr("y", verticalPos-10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
     };
 
     // Fetch data from the parsing
@@ -146,7 +206,15 @@ module.exports.draw = function (text, id) {
         var startx = actors[msg.from].x + width/2;
         var stopx = actors[msg.to].x + width/2;
         var txtCenter = startx + (stopx-startx)/2;
-        drawMessage(diagram, startx, stopx, verticalPos, txtCenter, msg);
+        if(msg.type === 2){
+            console.log('VP before:',verticalPos);
+            verticalPos =  drawNote(diagram, startx, verticalPos, msg);
+            console.log('VP after:',verticalPos);
+        } else {
+            drawMessage(diagram, startx, stopx, verticalPos, txtCenter, msg);
+            // Keep track of width for with setting on the svg
+            maxX = Math.max(maxX,startx + 176);
+        }
 
     });
 
