@@ -21,7 +21,7 @@ would render this lovely chart:
 
 ![Example 1](http://www.sveido.com/mermaid/img/ex1.png)
 
-A page with a live example can be seen [here](http://www.sveido.com/mermaid/demo/html/web.html). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output). If you want a live demo, there is aan editor provided in mermaid the mermaid project or you can simply look at this [great editor](http://danielmschmidt.github.io/mermaid-demo/)
+A page with a live example can be seen [here](http://www.sveido.com/mermaid/demo/html/web.html). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output). If you want a live demo, there is an editor provided in the mermaid project or you can simply look at this [great editor](http://danielmschmidt.github.io/mermaid-demo/)
 
 
 # [The main documentation is located in the wiki](https://github.com/knsv/mermaid/wiki)
