@@ -41,9 +41,6 @@ var init = function () {
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
 
-        var classDefStyles = '';
-        var defaultStyles = ''; 
-
         element.innerHTML = '<svg id="' + id + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
             '<g />' +
             '</svg>';
