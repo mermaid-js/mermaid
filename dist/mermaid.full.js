@@ -13099,7 +13099,7 @@ exports.addVertices = function (vert, g) {
          * @type {string}
          */
         var classStr = '';
-        
+
         if(vertice.classes.length >0){
             classStr = vertice.classes.join(" ");
         }
@@ -13200,11 +13200,34 @@ exports.addEdges = function (edges, g) {
 };
 
 /**
- * Returns the default style for nodes.
- * @returns {string} Default style for nodes
+ * Returns the all the styles from classDef statements in the graph definition.
+ * @returns {object} classDef styles
  */
-exports.defaultNodeStyle = function () {
-    return ".node {fill:#eaeaea; stroke:#666; stroke-width:1.5px;}";
+exports.getClasses = function (text, isDot) {
+    var parser;
+    graph.clear();
+    if(isDot){
+        parser = dot.parser;
+
+    }else{
+        parser = flow.parser;
+    }
+    parser.yy = graph;
+
+    // Parse the graph definition
+    parser.parse(text);
+
+    var classDefStylesObj = {};
+    var classDefStyleStr = '';
+
+    var classes = graph.getClasses();
+
+    // Add default class if undefined
+    if(typeof classes.default === 'undefined') {
+        classes.default = {id:'default'};
+        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
+    } 
+    return classes;
 };
 
 /**
@@ -16031,27 +16054,33 @@ var init = function () {
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
 
+        var classDefStyles = '';
+        var defaultStyles = ''; 
+
         element.innerHTML = '<svg id="' + id + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
             '<g />' +
             '</svg>';
 
         var graphType = utils.detectType(txt);
+        var classes = {};
 
         switch(graphType){
-            case 'graph':
+            case 'graph': 
                 console.log('FC');
+                classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
-                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
+                utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();
-            break;
-            case 'dotGraph':
-                flowRenderer.draw(txt, id,true);
-                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
                 break;
-            case 'sequenceDiagram':
+            case 'dotGraph': 
+                classes = flowRenderer.getClasses(txt, true);
+                flowRenderer.draw(txt, id, true);
+                utils.cloneCssStyles(element.firstChild, classes);
+                break;
+            case 'sequenceDiagram': 
                 seq.draw(txt,id);
-                // TODO - Get default styles for sequence diagram
-                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
+                // TODO - Get styles for sequence diagram
+                utils.cloneCssStyles(element.firstChild, classes);
                 break;
         }
 
@@ -16143,28 +16172,57 @@ module.exports.detectType = function(text,a){
  * Copies all relevant CSS content into the graph SVG.
  * This allows the SVG to be copied as is while keeping class based styling
  * @param {element} svg The root element of the SVG
- * @param {string} defaultStyle Default style definitions (for elements without classes)
+ * @param {object} Hash table of class definitions from the graph definition
  */
-module.exports.cloneCssStyles = function(svg, defaultStyle){
-    var used = "";
+module.exports.cloneCssStyles = function(svg, classes){
+    var usedStyles = "";
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
-        var rules = sheets[i].cssRules;
-        for (var j = 0; j < rules.length; j++) {
-            var rule = rules[j];
-            if (typeof(rule.style) != "undefined") {
-                var elems = svg.querySelectorAll(rule.selectorText);
-                if (elems.length > 0) {
-                    used += rule.selectorText + " { " + rule.style.cssText + " }\n";
+        // Avoid multiple inclusion on pages with multiple graphs
+        if (sheets[i].title != 'mermaid-svg-internal-css') {
+            var rules = sheets[i].cssRules;
+            for (var j = 0; j < rules.length; j++) {
+                var rule = rules[j];
+                if (typeof(rule.style) != "undefined") {
+                    var elems = svg.querySelectorAll(rule.selectorText);
+                    if (elems.length > 0) {
+                        usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                    }
                 }
+            }
+        } 
+    }
+
+    var defaultStyles = "";
+    var embeddedStyles = "";
+
+    for (var className in classes) {
+        if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
+            if (className === 'default') {
+                defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+            } else {
+                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
             }
         }
     }
 
-    var s = document.createElement('style');
-    s.setAttribute('type', 'text/css');
-    s.innerHTML = "/* <![CDATA[ */\n" + defaultStyle + "\n" + used + "\n/* ]]> */";
-    svg.insertBefore(s, svg.firstChild);
+    if (usedStyles !== "" || defaultStyles !== "" || embeddedStyles !== "") {
+        var s = document.createElement('style');
+        s.setAttribute('type', 'text/css');
+        s.setAttribute('title', 'mermaid-svg-internal-css');
+        s.innerHTML = "/* <![CDATA[ */\n";
+        if (defaultStyles !== "") {
+            s.innerHTML += defaultStyles;
+        }
+        if (usedStyles !== "") {
+            s.innerHTML += usedStyles;
+        }
+        if (embeddedStyles !== "") {
+            s.innerHTML += embeddedStyles;
+        }
+        s.innerHTML += "/* ]]> */\n";
+        svg.insertBefore(s, svg.firstChild);
+    }
 };
 
 },{}]},{},[110])

@@ -41,27 +41,33 @@ var init = function () {
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
 
+        var classDefStyles = '';
+        var defaultStyles = ''; 
+
         element.innerHTML = '<svg id="' + id + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
             '<g />' +
             '</svg>';
 
         var graphType = utils.detectType(txt);
+        var classes = {};
 
         switch(graphType){
-            case 'graph':
+            case 'graph': 
                 console.log('FC');
+                classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
-                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
+                utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();
-            break;
-            case 'dotGraph':
-                flowRenderer.draw(txt, id,true);
-                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
                 break;
-            case 'sequenceDiagram':
+            case 'dotGraph': 
+                classes = flowRenderer.getClasses(txt, true);
+                flowRenderer.draw(txt, id, true);
+                utils.cloneCssStyles(element.firstChild, classes);
+                break;
+            case 'sequenceDiagram': 
                 seq.draw(txt,id);
-                // TODO - Get default styles for sequence diagram
-                utils.cloneCssStyles(element.firstChild, flowRenderer.defaultNodeStyle());
+                // TODO - Get styles for sequence diagram
+                utils.cloneCssStyles(element.firstChild, classes);
                 break;
         }
 

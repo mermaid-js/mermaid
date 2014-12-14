@@ -37,7 +37,7 @@ exports.addVertices = function (vert, g) {
          * @type {string}
          */
         var classStr = '';
-        
+
         if(vertice.classes.length >0){
             classStr = vertice.classes.join(" ");
         }
@@ -138,11 +138,34 @@ exports.addEdges = function (edges, g) {
 };
 
 /**
- * Returns the default style for nodes.
- * @returns {string} Default style for nodes
+ * Returns the all the styles from classDef statements in the graph definition.
+ * @returns {object} classDef styles
  */
-exports.defaultNodeStyle = function () {
-    return ".node {fill:#eaeaea; stroke:#666; stroke-width:1.5px;}";
+exports.getClasses = function (text, isDot) {
+    var parser;
+    graph.clear();
+    if(isDot){
+        parser = dot.parser;
+
+    }else{
+        parser = flow.parser;
+    }
+    parser.yy = graph;
+
+    // Parse the graph definition
+    parser.parse(text);
+
+    var classDefStylesObj = {};
+    var classDefStyleStr = '';
+
+    var classes = graph.getClasses();
+
+    // Add default class if undefined
+    if(typeof classes.default === 'undefined') {
+        classes.default = {id:'default'};
+        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
+    } 
+    return classes;
 };
 
 /**
