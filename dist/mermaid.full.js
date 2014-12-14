@@ -13095,24 +13095,20 @@ exports.addVertices = function (vert, g) {
         var i;
 
         /**
+         * Variable for storing the classes for the vertice
+         * @type {string}
+         */
+        var classStr = '';
+
+        if(vertice.classes.length >0){
+            classStr = vertice.classes.join(" ");
+        }
+
+        /**
          * Variable for storing the extracted style for the vertice
          * @type {string}
          */
         var style = '';
-        var classes = graph.getClasses();
-        // Check if class is defined for the node
-
-        if(vertice.classes.length >0){
-            for (i = 0; i < vertice.classes.length; i++) {
-                style = styleFromStyleArr(style,classes[vertice.classes[i]].styles);
-            }
-        }
-        else{
-            // Use default classes
-            style = styleFromStyleArr(style,classes.default.styles);
-        }
-
-
         // Create a compound style definition from the style definitions found for the node in the graph definition
         style = styleFromStyleArr(style, vertice.styles);
 
@@ -13149,7 +13145,7 @@ exports.addVertices = function (vert, g) {
                 _shape = 'rect';
         }
         // Add the node
-        g.setNode(vertice.id, {labelType: "html",shape:_shape, label: verticeText, rx: radious, ry: radious, style: style, id:vertice.id});
+        g.setNode(vertice.id, {labelType: "html",shape:_shape, label: verticeText, rx: radious, ry: radious, class: classStr, style: style, id:vertice.id});
     });
 };
 
@@ -13204,6 +13200,37 @@ exports.addEdges = function (edges, g) {
 };
 
 /**
+ * Returns the all the styles from classDef statements in the graph definition.
+ * @returns {object} classDef styles
+ */
+exports.getClasses = function (text, isDot) {
+    var parser;
+    graph.clear();
+    if(isDot){
+        parser = dot.parser;
+
+    }else{
+        parser = flow.parser;
+    }
+    parser.yy = graph;
+
+    // Parse the graph definition
+    parser.parse(text);
+
+    var classDefStylesObj = {};
+    var classDefStyleStr = '';
+
+    var classes = graph.getClasses();
+
+    // Add default class if undefined
+    if(typeof classes.default === 'undefined') {
+        classes.default = {id:'default'};
+        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
+    } 
+    return classes;
+};
+
+/**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
@@ -13244,12 +13271,6 @@ exports.draw = function (text, id,isDot) {
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
     var edges = graph.getEdges();
-    var classes = graph.getClasses();
-
-    if(typeof classes.default === 'undefined'){
-        classes.default = {id:'default'};
-        classes.default.styles = ['fill:#eaeaea','stroke:#666','stroke-width:1.5px'];
-    }
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 
@@ -13271,8 +13292,6 @@ exports.draw = function (text, id,isDot) {
             .attr("points", points.map(function (d) {
                 return d.x + "," + d.y;
             }).join(" "))
-            .style("fill", "#fff")
-            .style("stroke", "#333")
             .attr("rx", 5)
             .attr("ry", 5)
             .attr("transform", "translate(" + (-s / 2) + "," + (s * 2 / 4) + ")");
@@ -13297,8 +13316,6 @@ exports.draw = function (text, id,isDot) {
             .attr("points", points.map(function (d) {
                 return d.x + "," + d.y;
             }).join(" "))
-            .style("fill", "#fff")
-            .style("stroke", "#333")
             .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
@@ -16107,23 +16124,30 @@ var init = function () {
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
 
-        element.innerHTML = '<svg id="' + id + '">' +
-        '<g />' +
-        '</svg>';
+        element.innerHTML = '<svg id="' + id + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
+            '<g />' +
+            '</svg>';
 
         var graphType = utils.detectType(txt);
+        var classes = {};
 
         switch(graphType){
-            case 'graph':
+            case 'graph': 
                 console.log('FC');
-                flowRenderer.draw(txt, id,false);
+                classes = flowRenderer.getClasses(txt, false);
+                flowRenderer.draw(txt, id, false);
+                utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();
-            break;
-            case 'dotGraph':
-                flowRenderer.draw(txt, id,true);
                 break;
-            case 'sequenceDiagram':
+            case 'dotGraph': 
+                classes = flowRenderer.getClasses(txt, true);
+                flowRenderer.draw(txt, id, true);
+                utils.cloneCssStyles(element.firstChild, classes);
+                break;
+            case 'sequenceDiagram': 
                 seq.draw(txt,id);
+                // TODO - Get styles for sequence diagram
+                utils.cloneCssStyles(element.firstChild, classes);
                 break;
         }
 
@@ -16209,6 +16233,63 @@ module.exports.detectType = function(text,a){
     }
 
     return "graph";
+};
+
+/**
+ * Copies all relevant CSS content into the graph SVG.
+ * This allows the SVG to be copied as is while keeping class based styling
+ * @param {element} svg The root element of the SVG
+ * @param {object} Hash table of class definitions from the graph definition
+ */
+module.exports.cloneCssStyles = function(svg, classes){
+    var usedStyles = "";
+    var sheets = document.styleSheets;
+    for (var i = 0; i < sheets.length; i++) {
+        // Avoid multiple inclusion on pages with multiple graphs
+        if (sheets[i].title != 'mermaid-svg-internal-css') {
+            var rules = sheets[i].cssRules;
+            for (var j = 0; j < rules.length; j++) {
+                var rule = rules[j];
+                if (typeof(rule.style) != "undefined") {
+                    var elems = svg.querySelectorAll(rule.selectorText);
+                    if (elems.length > 0) {
+                        usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                    }
+                }
+            }
+        } 
+    }
+
+    var defaultStyles = "";
+    var embeddedStyles = "";
+
+    for (var className in classes) {
+        if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
+            if (className === 'default') {
+                defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+            } else {
+                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+            }
+        }
+    }
+
+    if (usedStyles !== "" || defaultStyles !== "" || embeddedStyles !== "") {
+        var s = document.createElement('style');
+        s.setAttribute('type', 'text/css');
+        s.setAttribute('title', 'mermaid-svg-internal-css');
+        s.innerHTML = "/* <![CDATA[ */\n";
+        if (defaultStyles !== "") {
+            s.innerHTML += defaultStyles;
+        }
+        if (usedStyles !== "") {
+            s.innerHTML += usedStyles;
+        }
+        if (embeddedStyles !== "") {
+            s.innerHTML += embeddedStyles;
+        }
+        s.innerHTML += "/* ]]> */\n";
+        svg.insertBefore(s, svg.firstChild);
+    }
 };
 
 },{}]},{},[110])
