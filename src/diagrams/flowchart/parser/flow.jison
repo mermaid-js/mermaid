@@ -138,6 +138,7 @@ graphConfig
 
 statements
     : statement spaceListNewline statements
+    | statement statements
     | statement
     ;
 
@@ -157,26 +158,15 @@ spaceList
 
 statement
     : commentStatement NEWLINE
-    {$$='Comment';}
-    | verticeStatement SEMI
-    | verticeStatement NEWLINE
-    | verticeStatement EOF
-    | styleStatement SEMI
-    | styleStatement NEWLINE
-    | styleStatement EOF
-    | linkStyleStatement SEMI
-    | linkStyleStatement NEWLINE
-    | linkStyleStatement EOF
-    | classDefStatement SEMI
-    | classDefStatement NEWLINE
-    | classDefStatement EOF
-    | classStatement SEMI
-    | classStatement NEWLINE
-    | classStatement EOF
-    | clickStatement SEMI
-    | clickStatement NEWLINE
-    | clickStatement EOF
+    | verticeStatement separator
+    | styleStatement separator
+    | linkStyleStatement separator
+    | classDefStatement separator
+    | classStatement separator
+    | clickStatement separator
     ;
+
+separator: NEWLINE | SEMI | EOF ;
 
 verticeStatement:
      vertex link vertex

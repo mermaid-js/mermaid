@@ -13,18 +13,6 @@ sq.yy = require('./sequenceDb');
  * @param description The text in the box
  */
 var drawNote = function(elem, startX, verticalPos, msg){
-    var insertLinebreaks = function (d) {
-        var el = d3.select(this);
-        var words = d.split(' ');
-        el.text('');
-
-        for (var i = 0; i < words.length; i++) {
-            var tspan = el.append('tspan').text(words[i]);
-            if (i > 0)
-                tspan.attr('x', 0).attr('dy', '15');
-        }
-    };
-
     var g = elem.append("g");
     var rectElem = g.append("rect")
         .attr("x", startX + 25)
@@ -41,7 +29,7 @@ var drawNote = function(elem, startX, verticalPos, msg){
         .style("text-anchor", "start");
     msg.message.split('<br>').forEach(function(rowText){
         textElem.append("tspan")
-            .attr("x", startX + 35)
+            .attr("x", startX + 35 )
             .attr("dy", '1em')
             .text(rowText);
     });
@@ -49,12 +37,24 @@ var drawNote = function(elem, startX, verticalPos, msg){
     console.log('textElem.height');
     console.log(textElem[0][0].getBBox());
     rectElem.attr('height',textElem[0][0].getBBox().height+20);
-    //console.log(textElem.getBBox().height);
-
-        //.text(msg.message + '\n' + msg.message)
-
 
     return verticalPos + textElem[0][0].getBBox().height - 10;
+};
+
+
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+var insertArrowHead = function(elem){
+    elem.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("refX", 5) /*must be smarter way to calculate shift*/
+        .attr("refY", 2)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
 };
 
 /**
@@ -73,6 +73,7 @@ module.exports.draw = function (text, id) {
     var height = 65;
     var yStartMargin = 10;
     var diagram = d3.select('#'+id);
+
     /**
      * Draws an actor in the diagram with the attaced line
      * @param center - The center of the the actor
@@ -104,21 +105,6 @@ module.exports.draw = function (text, id) {
             .style("text-anchor", "middle")
             .text(description)
         ;
-    };
-
-    /**
-     * Setup arrow head and define the marker. The result is appended to the svg.
-     */
-    var insertArrowHead = function(elem){
-        elem.append("defs").append("marker")
-            .attr("id", "arrowhead")
-            .attr("refX", 5) /*must be smarter way to calculate shift*/
-            .attr("refY", 2)
-            .attr("markerWidth", 6)
-            .attr("markerHeight", 4)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
     };
 
     var drawMessage = function(elem, startx, stopx, verticalPos, txtCenter, msg){
@@ -220,4 +206,5 @@ module.exports.draw = function (text, id) {
 
     diagram.attr("height", verticalPos + 40);
     diagram.attr("width", maxX );
+    diagram.attr("transform", 'translate(150 0)' );
 };
