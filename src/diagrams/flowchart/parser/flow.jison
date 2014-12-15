@@ -120,12 +120,19 @@
 
 expressions
     : graphConfig statements EOF
+    | graphConfig statements 
     | graphConfig spaceListNewline statements EOF
+        {$$=$1;}
+    | graphConfig spaceListNewline statements
         {$$=$1;}
     ;
 
 graphConfig
     : GRAPH SPACE DIR SEMI
+        { yy.setDirection($3);$$ = $3;}
+    | GRAPH SPACE DIR NEWLINE
+        { yy.setDirection($3);$$ = $3;}
+    | GRAPH SPACE DIR spaceList NEWLINE
         { yy.setDirection($3);$$ = $3;}
     ;
 
@@ -152,11 +159,23 @@ statement
     : commentStatement NEWLINE
     {$$='Comment';}
     | verticeStatement SEMI
+    | verticeStatement NEWLINE
+    | verticeStatement EOF
     | styleStatement SEMI
+    | styleStatement NEWLINE
+    | styleStatement EOF
     | linkStyleStatement SEMI
+    | linkStyleStatement NEWLINE
+    | linkStyleStatement EOF
     | classDefStatement SEMI
+    | classDefStatement NEWLINE
+    | classDefStatement EOF
     | classStatement SEMI
+    | classStatement NEWLINE
+    | classStatement EOF
     | clickStatement SEMI
+    | clickStatement NEWLINE
+    | clickStatement EOF
     ;
 
 verticeStatement:
