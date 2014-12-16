@@ -58,9 +58,10 @@
     <div class="mermaid">
         sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
-        Note right of Alice: Bob thinks about <br/> things <br/> to think about
+        Note left of Bob: Bob thinks about <br/> things <br/> to think about
         Bob-->Alice: I am good thanks!
         Bob-->John the Long: How about you John?
+
         Bob-->Alice: Checking with John...
         Alice->John the Long: Yes... John, how are you?
         John the Long-->Alice: Better then you!
@@ -68,9 +69,9 @@
 
     <div  class="mermaid">
 graph LR;
-                A[Start]-->B{a = '1,2'};
-                B-->|True|C[test = 1];
-                B-->|False|Z[Store];
+                A[Start]-->B{a = '1,2'}
+                B-->|True|C[test = 1]
+                B-->|False|Z[Store]
                 C-->D{condition};
                 D-->|True|E[test = 2];
                 D-->|False|F[test = 3];

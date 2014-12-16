@@ -41,9 +41,11 @@ exports.clear = function(){
 };
 
 exports.LINETYPE = {
-    SOLID  : 0,
-    DOTTED : 1,
-    NOTE   : 2
+    SOLID     : 0,
+    DOTTED    : 1,
+    NOTE      : 2,
+    LOOP_START: 10,
+    LOOP_END  : 11,
 };
 
 exports.ARROWTYPE = {

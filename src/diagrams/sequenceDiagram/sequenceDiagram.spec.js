@@ -47,16 +47,95 @@ describe('when parsing a sequenceDiagram',function() {
         expect(actors.Alice).ToBdescription = 'Alice';
         actors.Bob.description = 'Bob';
 
-        //console.log('actors');
-        //console.log(actors);
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(3);
+
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[2].from).toBe('Bob');
+    });
+    it('it should handle comments in a sequenceDiagram', function () {
+        str = 'sequenceDiagram\n' +
+        'Alice->Bob: Hello Bob, how are you?\n' +
+        '%% Comment\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'Bob-->Alice: I am good thanks!\n';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice).ToBdescription = 'Alice';
+        actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-        //console.log('messages');
-        //console.log(messages);
+
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
+    });
+
+    it('it should handle new lines in a sequenceDiagram', function () {
+        str = 'sequenceDiagram\n' +
+        'Alice->Bob: Hello Bob, how are you?\n\n' +
+        '%% Comment\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'Bob-->Alice: I am good thanks!\n';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice).ToBdescription = 'Alice';
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(3);
+
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[2].from).toBe('Bob');
+    });
+
+    it('it should handle loop statements a sequenceDiagram', function () {
+        var str = 'sequenceDiagram\n' +
+        'Alice->Bob: Hello Bob, how are you?\n\n' +
+        '%% Comment\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'loop Multiple happy responses\n\n' +
+        'Bob-->Alice: I am good thanks!\n' +
+        'end\n';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice).ToBdescription = 'Alice';
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(5);
+
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[3].from).toBe('Bob');
+    });
+
+    it('it should handle loop statements a sequenceDiagram', function () {
+        var str = 'sequenceDiagram\n' +
+        'Alice->Bob: Hello Bob, how are you?\n\n' +
+        '%% Comment\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'loop Multiple happy responses\n\n' +
+        'Bob-->Alice: I am good thanks!\n' +
+        'end';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice).ToBdescription = 'Alice';
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(5);
+
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[3].from).toBe('Bob');
     });
 
 });
