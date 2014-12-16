@@ -38,6 +38,17 @@ graph LR;
     C-->|Two|E[Result two];
 ```
 
+Below is the new declaration of the graph which since 0.2.16  also is valid along with the old declaration of the graph as described in the graph example on the home wiki page.
+
+```
+graph LR
+    A[Hard edge] -->|Link text| B(Round edge)
+    B --> C{Decision}
+    C -->|One| D[Result one]
+    C -->|Two| E[Result two]
+```
+
+
 ![Example 2](http://www.sveido.com/mermaid/img/ex2.png)
 
 
