@@ -61,7 +61,7 @@ statement
 	;
 
 note_statement
-	: 'note' placement actor message   { $$ = yy.addNote($3, $2, $4); }
+	: 'note' placement actor message   { console.log('Got note');$$ = yy.addNote($3, $2, $4); }
 	| 'note' 'over' actor_pair message { $$ = yy.addNote($3, yy.PLACEMENT.OVER, $4); }
 	;
 

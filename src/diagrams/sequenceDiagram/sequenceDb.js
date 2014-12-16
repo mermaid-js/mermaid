@@ -61,7 +61,7 @@ exports.addNote = function (actor, placement, message){
     var note = {actor:actor, placement: placement, message:message};
 
     notes.push(note);
-    messages.push({from:actor, to:actor, message:message, type:exports.LINETYPE.NOTE});
+    messages.push({from:actor, to:actor, message:message, type:exports.LINETYPE.NOTE, placement: placement});
 };
 
 

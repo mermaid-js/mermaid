@@ -102,7 +102,7 @@ case 9:
  yy.setTitle($$[$0]);  
 break;
 case 10:
- this.$ = yy.addNote($$[$0-1], $$[$0-2], $$[$0]); 
+ console.log('Got note');this.$ = yy.addNote($$[$0-1], $$[$0-2], $$[$0]); 
 break;
 case 11:
  this.$ = yy.addNote($$[$0-1], yy.PLACEMENT.OVER, $$[$0]); 

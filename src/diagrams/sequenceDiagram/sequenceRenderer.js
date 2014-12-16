@@ -58,6 +58,61 @@ var insertArrowHead = function(elem){
 };
 
 /**
+ * Draws a message
+ * @param elem
+ * @param startx
+ * @param stopx
+ * @param verticalPos
+ * @param txtCenter
+ * @param msg
+ */
+var drawMessage = function(elem, startx, stopx, verticalPos, msg){
+    var g = elem.append("g");
+    var txtCenter = startx + (stopx-startx)/2;
+    //Make an SVG Container
+    //Draw the line
+    if(msg.type !== 2) {
+        if (msg.type === 1) {
+            g.append("line")
+                .attr("x1", startx)
+                .attr("y1", verticalPos)
+                .attr("x2", stopx)
+                .attr("y2", verticalPos)
+                .attr("stroke-width", 2)
+                .attr("stroke", "black")
+                .style("stroke-dasharray", ("3, 3"))
+                .attr("class", "link")
+                .attr("marker-end", "url(#arrowhead)");
+            //.attr("d", diagonal);
+        }
+        else {
+            g.append("line")
+                .attr("x1", startx)
+                .attr("y1", verticalPos)
+                .attr("x2", stopx)
+                .attr("y2", verticalPos)
+                .attr("stroke-width", 2)
+                .attr("stroke", "black")
+                .attr("class", "link")
+                .attr("marker-end", "url(#arrowhead)");
+            //.attr("d", diagonal);
+        }
+
+        g.append("text")      // text label for the x axis
+            .attr("x", txtCenter)
+            .attr("y", verticalPos - 10)
+            .style("text-anchor", "middle")
+            .text(msg.message);
+    }
+    else{
+        g.append("text")      // text label for the x axis
+            .attr("x", txtCenter)
+            .attr("y", verticalPos - 10)
+            .style("text-anchor", "middle")
+            .text(msg.message);
+    }
+};
+/**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
@@ -107,58 +162,14 @@ module.exports.draw = function (text, id) {
         ;
     };
 
-    var drawMessage = function(elem, startx, stopx, verticalPos, txtCenter, msg){
-        var g = elem.append("g");
-        //Make an SVG Container
-        //Draw the line
-        if(msg.type !== 2) {
-            if (msg.type === 1) {
-                g.append("line")
-                    .attr("x1", startx)
-                    .attr("y1", verticalPos)
-                    .attr("x2", stopx)
-                    .attr("y2", verticalPos)
-                    .attr("stroke-width", 2)
-                    .attr("stroke", "black")
-                    .style("stroke-dasharray", ("3, 3"))
-                    .attr("class", "link")
-                    .attr("marker-end", "url(#arrowhead)");
-                //.attr("d", diagonal);
-            }
-            else {
-                g.append("line")
-                    .attr("x1", startx)
-                    .attr("y1", verticalPos)
-                    .attr("x2", stopx)
-                    .attr("y2", verticalPos)
-                    .attr("stroke-width", 2)
-                    .attr("stroke", "black")
-                    .attr("class", "link")
-                    .attr("marker-end", "url(#arrowhead)");
-                //.attr("d", diagonal);
-            }
 
-            g.append("text")      // text label for the x axis
-                .attr("x", txtCenter)
-                .attr("y", verticalPos - 10)
-                .style("text-anchor", "middle")
-                .text(msg.message);
-        }
-        else{
-            g.append("text")      // text label for the x axis
-                .attr("x", txtCenter)
-                .attr("y", verticalPos - 10)
-                .style("text-anchor", "middle")
-                .text(msg.message);
-        }
-    };
 
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
 
-    var i, maxX = 0;
+    var i, maxX = 0, minX=0;
 
     // Draw the actors
     for(i=0;i<actorKeys.length;i++){
@@ -191,13 +202,24 @@ module.exports.draw = function (text, id) {
         verticalPos = verticalPos + 40;
         var startx = actors[msg.from].x + width/2;
         var stopx = actors[msg.to].x + width/2;
-        var txtCenter = startx + (stopx-startx)/2;
+
+        console.log(msg);
         if(msg.type === 2){
             console.log('VP before:',verticalPos);
-            verticalPos =  drawNote(diagram, startx, verticalPos, msg);
+            if(msg.placement !== 0){
+                // Right of
+                verticalPos =  drawNote(diagram, startx, verticalPos, msg);
+
+            }else{
+                // Left of
+                verticalPos =  drawNote(diagram, startx - 200, verticalPos, msg);
+                // Keep track of width for with setting on the svg
+                minX = Math.min(minX,startx -200);
+
+            }
             console.log('VP after:',verticalPos);
         } else {
-            drawMessage(diagram, startx, stopx, verticalPos, txtCenter, msg);
+            drawMessage(diagram, startx, stopx, verticalPos, msg);
             // Keep track of width for with setting on the svg
             maxX = Math.max(maxX,startx + 176);
         }
@@ -206,5 +228,5 @@ module.exports.draw = function (text, id) {
 
     diagram.attr("height", verticalPos + 40);
     diagram.attr("width", maxX );
-    diagram.attr("transform", 'translate(150 0)' );
+    diagram.attr("viewBox", minX + ' 0 '+maxX+ ' ' +(verticalPos + 40));
 };
