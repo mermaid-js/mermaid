@@ -26,6 +26,8 @@
 "."                   return 'DOT';
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
+"^"                   return 'UP'
+"v"                   return 'DOWN'
 \-\-[x]               return 'ARROW_CROSS';
 \-\-\>                return 'ARROW_POINT';
 \-\-[o]               return 'ARROW_CIRCLE';
@@ -128,13 +130,20 @@ expressions
     ;
 
 graphConfig
-    : GRAPH SPACE DIR SEMI
+    : GRAPH SPACE DIR FirstStmtSeperator
         { yy.setDirection($3);$$ = $3;}
-    | GRAPH SPACE DIR NEWLINE
-        { yy.setDirection($3);$$ = $3;}
-    | GRAPH SPACE DIR spaceList NEWLINE
-        { yy.setDirection($3);$$ = $3;}
+    | GRAPH SPACE TAGEND FirstStmtSeperator
+        { yy.setDirection("LR");$$ = $3;}
+    | GRAPH SPACE TAGSTART FirstStmtSeperator
+        { yy.setDirection("RL");$$ = $3;}
+    | GRAPH SPACE UP FirstStmtSeperator
+        { yy.setDirection("BT");$$ = $3;}
+    | GRAPH SPACE DOWN FirstStmtSeperator
+        { yy.setDirection("TB");$$ = $3;}
     ;
+
+FirstStmtSeperator 
+    : SEMI | NEWLINE | spaceList NEWLINE ;
 
 statements
     : statement spaceListNewline statements

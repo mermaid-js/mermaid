@@ -30,6 +30,84 @@ describe('when parsing ',function(){
         expect(edges[0].text).toBe('');
     });
 
+    it('should handle angle bracket '>' as direction LR',function(){
+        var res = flow.parser.parse('graph >;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('LR');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+    it('should handle angle bracket '<' as direction RL',function(){
+        var res = flow.parser.parse('graph <;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('RL');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+
+    it('should handle caret '^' as direction BT',function(){
+        var res = flow.parser.parse('graph ^;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('BT');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+
+    it('should handle lower-case \'v\' as direction TB',function(){
+        var res = flow.parser.parse('graph v;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('TB');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
     it('should handle a nodes and edges and a space between link and node',function(){
         var res = flow.parser.parse('graph TD;A --> B;');
 
