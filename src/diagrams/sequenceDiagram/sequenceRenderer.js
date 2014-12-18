@@ -6,6 +6,85 @@
 var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 
+exports.bounds = {
+    data:{
+        startx:undefined,
+        stopx :undefined,
+        starty:undefined,
+        stopy :undefined,
+    },
+    verticalPos:0,
+
+    list: [],
+    init    : function(){
+        this.list = [];
+        this.data = {
+            startx:undefined,
+                stopx :undefined,
+                starty:undefined,
+                stopy :undefined,
+        };
+        this.verticalPos =0;
+    },
+    applyMin:function(minVal, margin){
+        var minValue = minVal;
+        this.list.forEach(function(loop){
+            if(typeof loop.startx === 'undefined'){
+                loop.startx = minValue  - margin;
+            }else{
+                loop.startx = Math.min(minValue - margin,loop.startx);
+            }
+            minValue = loop.startx;
+        });
+        return minValue;
+    },
+    applyMax:function(maxVal, margin){
+        var maxValue = maxVal;
+        this.list.forEach(function(loop){
+            if(typeof loop.stopx === 'undefined'){
+                loop.stopx = maxValue + margin;
+            }else{
+                loop.stopx = Math.max(maxValue + margin,loop.stopx);
+            }
+            maxValue = loop.stopx;
+        });
+
+        return maxValue;
+    },
+    insert:function(startx,starty,stopx,stopy){
+        var updateVal = function (key,val,fun){
+            if(typeof exports.bounds.data[key] === 'undefined'){
+                //console.log('Setting startx',startx);
+                exports.bounds.data[key] = val;
+            }else{
+                exports.bounds.data[key] = fun(val,exports.bounds.data[key]);
+            }
+        };
+        updateVal('startx',startx,Math.min);
+        updateVal('starty',starty,Math.min);
+        updateVal('stopx' ,stopx ,Math.max);
+        updateVal('stopy' ,stopy ,Math.max);
+
+        //updateLoops();
+    },
+    newLoop:function(){
+        this.list.push({startx:undefined,starty:exports.bounds.getVerticalPos(),stopx:undefined,stopy:undefined});
+    },
+    endLoop:function(){
+        var loop = this.list.pop();
+        loop.stopy =  exports.bounds.getVerticalPos();
+    },
+    bumpVerticalPos:function(bump){
+        this.verticalPos = this.verticalPos + bump;
+    },
+    getVerticalPos:function(){
+        return this.verticalPos;
+    },
+    getBounds:function(){
+        return this.data;
+    }
+};
+
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -15,11 +94,11 @@ sq.yy = require('./sequenceDb');
 var drawNote = function(elem, startX, verticalPos, msg){
     var g = elem.append("g");
     var rectElem = g.append("rect")
-        .attr("x", startX + 25)
-        .attr("y", verticalPos -25)
+        .attr("x", startX + conf.noteMargin)
+        .attr("y", verticalPos - conf.noteMargin)
         .attr("fill", '#EDF2AE')
         .attr("stroke", '#666')
-        .attr("width", 150)
+        .attr("width", conf.width)
         .attr("height", 100)
         .attr("rx", 0)
         .attr("ry", 0);
@@ -34,9 +113,13 @@ var drawNote = function(elem, startX, verticalPos, msg){
             .text(rowText);
     });
 
-    console.log('textElem.height');
-    console.log(textElem[0][0].getBBox());
+    exports.bounds.insert(startX + conf.noteMargin, verticalPos -conf.noteMargin, startX + conf.noteMargin + conf.width,  verticalPos -conf.noteMargin + textElem[0][0].getBBox().height+20);
+
+    //console.log('textElem.height');
+    //console.log(textElem[0][0].getBBox());
     rectElem.attr('height',textElem[0][0].getBBox().height+20);
+
+    exports.bounds.verticalPos = verticalPos + textElem[0][0].getBBox().height - 10;
 
     return verticalPos + textElem[0][0].getBBox().height - 10;
 };
@@ -103,14 +186,101 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
             .attr("y", verticalPos - 10)
             .style("text-anchor", "middle")
             .text(msg.message);
+
+        //console.log('Setting message bounds');
+        exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     else{
-        g.append("text")      // text label for the x axis
+        var textElem = g.append("text")
             .attr("x", txtCenter)
-            .attr("y", verticalPos - 10)
+            .attr("y", exports.bounds.getVerticalPos() - 10)
             .style("text-anchor", "middle")
             .text(msg.message);
+        var box = textElem[0][0].getBBox();
+
+        exports.bounds.insert(box.x, exports.bounds.getVerticalPos() -10, box.x+box.width,  exports.bounds.getVerticalPos()-10 + box.height);
     }
+};
+
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the liost of actors
+ * @param description The text in the box
+ */
+var drawActor = function(elem, center, pos, description,i){
+    var g = elem.append("g");
+    g.append("line")
+        .attr("x1", center)
+        .attr("y1", conf.diagramMarginY)
+        .attr("x2", center)
+        .attr("y2", 2000)
+        .attr("stroke-width", '0.5px')
+        .attr("stroke", '#999');
+
+    g.append("rect")
+        .attr("x", conf.diagramMarginX  + pos*conf.messageMargin +i*150)
+        .attr("y", conf.diagramMarginY)
+        .attr("fill", '#eaeaea')
+        .attr("stroke", '#666')
+        .attr("width", conf.width)
+        .attr("height", conf.height)
+        .attr("rx", 3)
+        .attr("ry", 3);
+    g.append("text")      // text label for the x axis
+        .attr("x", conf.diagramMarginX  + pos*conf.messageMargin +i*conf.width + 75)
+        .attr("y", conf.diagramMarginY+37.5)
+        .style("text-anchor", "middle")
+        .text(description)
+    ;
+
+    exports.bounds.insert(conf.diagramMarginX  + pos*conf.margin +i*150, conf.diagramMarginY, conf.diagramMarginX  + pos*conf.margin +i*150 + conf.width,  conf.diagramMarginY + conf.height);
+};
+
+module.exports.drawActors = function(diagram, actors, actorKeys){
+    var i;
+    // Draw the actors
+    for(i=0;i<actorKeys.length;i++){
+        var key = actorKeys[i];
+
+        // Add some rendering data to the object
+        actors[key].x = conf.diagramMarginX  + i*conf.messageMargin +i*conf.width;
+        actors[key].y = conf.diagramMarginY;
+        actors[key].width = conf.diagramMarginY;
+        actors[key].height = conf.diagramMarginY;
+
+        var center = actors[key].x + (conf.width/2);
+
+        // Keep track of width for with setting on the svg
+        //maxX = Math.max(maxX,actors[key].x);
+
+        // Draw the box with the attached line
+        drawActor(diagram, center,i, actors[key].description, i);
+    }
+
+    // Add a margin between the actor boxes and the first arrow
+    exports.bounds.bumpVerticalPos(conf.diagramMarginY + conf.height);
+};
+
+var conf = {
+
+    diagramMarginX:50,
+    diagramMarginY:10,
+    // Margin between actors
+    margin:50,
+    // Width of actor moxes
+    width:150,
+    // Height of actor boxes
+    height:65,
+    // Margin around loop boxes
+    loopMargin:10,
+
+    noteMargin:25,
+    // Space between messages
+    messageMargin:40
+};
+module.exports.setConf = function(cnf){
+    conf = cnf;
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
@@ -121,48 +291,7 @@ module.exports.draw = function (text, id) {
     sq.yy.clear();
     sq.parse(text);
 
-    // Intial config for margins etc
-    var startMargin = 50;
-    var margin = 50;
-    var width = 150;
-    var height = 65;
-    var yStartMargin = 10;
     var diagram = d3.select('#'+id);
-
-    /**
-     * Draws an actor in the diagram with the attaced line
-     * @param center - The center of the the actor
-     * @param pos The position if the actor in the liost of actors
-     * @param description The text in the box
-     */
-    var drawActor = function(elem, center, pos, description){
-        var g = elem.append("g");
-        g.append("line")
-            .attr("x1", center)
-            .attr("y1", yStartMargin)
-            .attr("x2", center)
-            .attr("y2", 2000)
-            .attr("stroke-width", '0.5px')
-            .attr("stroke", '#999');
-
-        g.append("rect")
-            .attr("x", startMargin  + pos*margin +i*150)
-            .attr("y", yStartMargin)
-            .attr("fill", '#eaeaea')
-            .attr("stroke", '#666')
-            .attr("width", width)
-            .attr("height", height)
-            .attr("rx", 3)
-            .attr("ry", 3);
-        g.append("text")      // text label for the x axis
-            .attr("x", startMargin  + pos*margin +i*width + 75)
-            .attr("y", yStartMargin+37.5)
-            .style("text-anchor", "middle")
-            .text(description)
-        ;
-    };
-
-
 
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
@@ -171,62 +300,55 @@ module.exports.draw = function (text, id) {
 
     var i, maxX = 0, minX=0;
 
-    // Draw the actors
-    for(i=0;i<actorKeys.length;i++){
-        var key = actorKeys[i];
-
-        // Add some rendering data to the object
-        actors[key].x = startMargin  + i*margin +i*150;
-        actors[key].y = yStartMargin;
-        actors[key].width = yStartMargin;
-        actors[key].height = yStartMargin;
-
-        var center = actors[key].x + (width/2);
-
-        // Keep track of width for with setting on the svg
-        maxX = Math.max(maxX,actors[key].x);
-
-        // Draw the box with the attached line
-        drawActor(diagram, center,i, actors[key].description);
-    }
-    maxX = maxX + width;
-
+    module.exports.drawActors(diagram, actors, actorKeys);
 
     // The arrow head definition is attached to the svg once
     insertArrowHead(diagram);
 
     // Draw the messages/signals
-    var verticalPos = startMargin + 30;
     messages.forEach(function(msg){
 
-        verticalPos = verticalPos + 40;
-        var startx = actors[msg.from].x + width/2;
-        var stopx = actors[msg.to].x + width/2;
+        exports.bounds.bumpVerticalPos(conf.messageMargin);
+        var startx;
+        var stopx;
+        switch(msg.type){
+            case sq.yy.LINETYPE.NOTE:
+                startx = actors[msg.from].x + conf.width/2;
+                stopx = actors[msg.to].x + conf.width/2;
 
-        console.log(msg);
-        if(msg.type === 2){
-            console.log('VP before:',verticalPos);
-            if(msg.placement !== 0){
-                // Right of
-                verticalPos =  drawNote(diagram, startx, verticalPos, msg);
+                if(msg.placement !== 0){
+                    // Right of
+                    drawNote(diagram, startx, exports.bounds.getVerticalPos(), msg);
 
-            }else{
-                // Left of
-                verticalPos =  drawNote(diagram, startx - 200, verticalPos, msg);
+                }else{
+                    // Left of
+                    drawNote(diagram, startx - conf.width - conf.margin, exports.bounds.getVerticalPos(), msg);
+                }
+                break;
+            case sq.yy.LINETYPE.LOOP_START:
+                //var loop = exports.bounds.newLoop();
+                exports.bounds.newLoop();
+                break;
+            case sq.yy.LINETYPE.LOOP_END:
+                exports.bounds.endLoop();
+                //var loopData = loopList.pop();
+                //loopData.stopy = exports.bounds.getVerticalPos();
+                //drawLoop(loopData,10);
+                break;
+            default:
+                startx = actors[msg.from].x + conf.width/2;
+                stopx = actors[msg.to].x + conf.width/2;
+
+                drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
                 // Keep track of width for with setting on the svg
-                minX = Math.min(minX,startx -200);
+                maxX = Math.max(maxX,startx + 176);
+                exports.bounds.applyMax(maxX,conf.loopMargin);
 
-            }
-            console.log('VP after:',verticalPos);
-        } else {
-            drawMessage(diagram, startx, stopx, verticalPos, msg);
-            // Keep track of width for with setting on the svg
-            maxX = Math.max(maxX,startx + 176);
         }
-
     });
 
-    diagram.attr("height", verticalPos + 40);
+    // TODO fetch from bounds
+    diagram.attr("height", exports.bounds.getVerticalPos() + 40);
     diagram.attr("width", maxX );
-    diagram.attr("viewBox", minX + ' 0 '+maxX+ ' ' +(verticalPos + 40));
+    diagram.attr("viewBox", minX + ' 0 '+maxX+ ' ' +(exports.bounds.getVerticalPos() + 40));
 };

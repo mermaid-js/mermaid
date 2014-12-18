@@ -50,7 +50,6 @@ var init = function () {
 
         switch(graphType){
             case 'graph': 
-                console.log('FC');
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);

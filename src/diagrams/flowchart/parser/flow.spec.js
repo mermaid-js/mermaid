@@ -452,6 +452,15 @@ describe('when parsing ',function(){
         expect(vert['C'].type).toBe('round');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
     });
+    xit('should handle text in vertices with åäö, minus and space and br',function(){
+        var res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['C'].type).toBe('round');
+        expect(vert['C'].text).toBe(' A[Object&#40;foo,bar&#41;]-->B(Thing);');
+    });
     it('should handle text in vertices with unicode chars',function(){
         var res = flow.parser.parse('graph TD;A-->C(Начало);');
 
