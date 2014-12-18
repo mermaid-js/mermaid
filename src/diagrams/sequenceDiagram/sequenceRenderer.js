@@ -93,35 +93,36 @@ exports.bounds = {
  */
 var drawNote = function(elem, startX, verticalPos, msg){
     var g = elem.append("g");
-    var rectElem = g.append("rect")
-        .attr("x", startX + conf.noteMargin)
-        .attr("y", verticalPos - conf.noteMargin)
-        .attr("fill", '#EDF2AE')
-        .attr("stroke", '#666')
-        .attr("width", conf.width)
-        .attr("height", 100)
-        .attr("rx", 0)
-        .attr("ry", 0);
-    var textElem = g.append("text")
-        .attr("x", startX + 10)
-        .attr("y", verticalPos - 15)
-        .style("text-anchor", "start");
+    var rectElem = g.append("rect");
+    rectElem.attr("x", startX + conf.noteMargin);
+    rectElem.attr("y", verticalPos - conf.noteMargin);
+    rectElem.attr("fill", '#EDF2AE');
+    rectElem.attr("stroke", '#666');
+    rectElem.attr("width", conf.width);
+    rectElem.attr("height", 100);
+    rectElem.attr("rx", 0);
+    rectElem.attr("ry", 0);
+
+    var textElem = g.append("text");
+    textElem.attr("x", startX + 10);
+    textElem.attr("y", verticalPos - 15);
+    textElem.style("text-anchor", "start");
+
     msg.message.split('<br>').forEach(function(rowText){
-        textElem.append("tspan")
-            .attr("x", startX + 35 )
-            .attr("dy", '1em')
-            .text(rowText);
+        var span = textElem.append("tspan");
+        span.attr("x", startX + 35 );
+        span.attr("dy", '1em');
+        span.text(rowText);
     });
 
-    exports.bounds.insert(startX + conf.noteMargin, verticalPos -conf.noteMargin, startX + conf.noteMargin + conf.width,  verticalPos -conf.noteMargin + textElem[0][0].getBBox().height+20);
+    var textHeight = textElem[0][0].getBBox().height;
+    exports.bounds.insert(startX + conf.noteMargin, verticalPos -conf.noteMargin, startX + conf.noteMargin + conf.width,  verticalPos -conf.noteMargin + textHeight+20);
 
-    //console.log('textElem.height');
-    //console.log(textElem[0][0].getBBox());
-    rectElem.attr('height',textElem[0][0].getBBox().height+20);
+    rectElem.attr('height',textHeight+20);
 
-    exports.bounds.verticalPos = verticalPos + textElem[0][0].getBBox().height - 10;
+    exports.bounds.verticalPos = verticalPos + textHeight - 10;
 
-    return verticalPos + textElem[0][0].getBBox().height - 10;
+    return verticalPos + textHeight - 10;
 };
 
 
