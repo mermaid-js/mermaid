@@ -10,7 +10,7 @@ describe('when parsing ',function(){
         flow.parser.yy = require('../graphDb');
         flow.parser.yy.clear();
         /*flow.parser.parse.parseError= function parseError(str, hash) {
-            console.log(str);
+            console.logconsole.log(str);
         }*/
     });
 
@@ -307,6 +307,18 @@ describe('when parsing ',function(){
 
         expect(edges[0].type).toBe('arrow_cross');
         expect(edges[0].text).toBe('text including URL space');
+
+    });
+
+    it('should handle text on edges with space dir',function(){
+        var res = flow.parser.parse('graph TD;A--x|text including R TD space|B;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow_cross');
+        expect(edges[0].text).toBe('text including R TD space');
 
     });
     it('should handle text on edges with graph keyword',function(){
