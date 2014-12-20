@@ -121,6 +121,7 @@ describe('when checking the bounds in a sequenceDiagram',function() {
             height:65,
             boxMargin:10,
             messageMargin:40,
+            boxTextMargin:15,
             noteMargin:25
         };
         sd.setConf(conf);
@@ -169,6 +170,7 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         sd.bounds.init();
 
         sd.bounds.insert(25,50,300,400);
+        sd.bounds.verticalPos  = 150;
         sd.bounds.newLoop();
         sd.bounds.insert(125,150,150,200);
 
@@ -193,6 +195,7 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         sd.bounds.init();
 
         sd.bounds.insert(100,100,1000,1000);
+        sd.bounds.verticalPos  = 200;
         sd.bounds.newLoop();
         sd.bounds.newLoop();
         sd.bounds.insert(200,200,300,300);
@@ -226,6 +229,7 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         sd.bounds.init();
 
         sd.bounds.insert(100,100,200,200);
+        sd.bounds.verticalPos  = 200;
         sd.bounds.newLoop();
         sd.bounds.insert(50,50,300,300);
 
@@ -328,6 +332,7 @@ describe('when rendering a sequenceDiagram',function() {
             height:65,
             boxMargin:10,
             messageMargin:40,
+            boxTextMargin:15,
             noteMargin:25
         };
         sd.setConf(conf);
@@ -430,7 +435,7 @@ describe('when rendering a sequenceDiagram',function() {
         var expStopX = conf.actorMargin +conf.width+ (conf.width/2) + conf.noteMargin + conf.width;
 
         expect(bounds.stopx ).toBe(expStopX);
-        expect(bounds.stopy ).toBe(2*conf.messageMargin + conf.height + conf.boxMargin);
+        expect(bounds.stopy ).toBe(2*conf.messageMargin + conf.height + conf.boxMargin + 10+ 2*conf.noteMargin);
 
     });
     it('it should draw two actors notes to the left', function () {
@@ -448,7 +453,7 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.starty).toBe(0);
 
         expect(bounds.stopx ).toBe( conf.width*2 + conf.actorMargin);
-        expect(bounds.stopy ).toBe( 2*conf.messageMargin + conf.height + conf.boxMargin);
+        expect(bounds.stopy ).toBe( 2*conf.messageMargin + conf.height + conf.boxMargin +10+ 2*conf.noteMargin);
 
     });
 
@@ -467,7 +472,7 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.starty).toBe(0);
 
         expect(bounds.stopx ).toBe(0 + conf.width*2 + conf.actorMargin);
-        expect(bounds.stopy ).toBe(0 + 2*conf.messageMargin + conf.height + conf.boxMargin);
+        expect(bounds.stopy ).toBe(0 + 2*conf.messageMargin + conf.height + 3*conf.boxMargin + conf.boxTextMargin);
 
     });
 });

@@ -18,6 +18,7 @@ var conf = {
     height:65,
     // Margin around loop boxes
     boxMargin:10,
+    boxTextMargin:15,
 
     noteMargin:10,
     // Space between messages
@@ -72,15 +73,23 @@ exports.bounds = {
     },
     insert:function(startx,starty,stopx,stopy){
 
-        this.updateVal(exports.bounds.data,'startx',startx,Math.min);
-        this.updateVal(exports.bounds.data,'starty',starty,Math.min);
-        this.updateVal(exports.bounds.data,'stopx' ,stopx ,Math.max);
-        this.updateVal(exports.bounds.data,'stopy' ,stopy ,Math.max);
+        var _startx, _starty, _stopx, _stopy;
 
-        this.updateLoops(startx,starty,stopx,stopy);
+        _startx = Math.min(startx,stopx);
+        _stopx  = Math.max(startx,stopx);
+        _starty = Math.min(starty,stopy);
+        _stopy  = Math.max(starty,stopy);
+
+        this.updateVal(exports.bounds.data,'startx',_startx,Math.min);
+        this.updateVal(exports.bounds.data,'starty',_starty,Math.min);
+        this.updateVal(exports.bounds.data,'stopx' ,_stopx ,Math.max);
+        this.updateVal(exports.bounds.data,'stopy' ,_stopy ,Math.max);
+
+        this.updateLoops(_startx,_starty,_stopx,_stopy);
+
     },
-    newLoop:function(){
-        this.list.push({startx:undefined,starty:undefined,stopx:undefined,stopy:undefined});
+    newLoop:function(title){
+        this.list.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
     },
     endLoop:function(){
         var loop = this.list.pop();
@@ -127,12 +136,13 @@ var drawNote = function(elem, startx, verticalPos, msg){
     exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
 
     rectElem.attr('height',textHeight+ 2*conf.noteMargin);
+    exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
 };
 
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
+ * @param pos The position if the actor in the list of actors
  * @param description The text in the box
  */
 exports.drawLoop = function(elem,bounds){
@@ -144,13 +154,30 @@ exports.drawLoop = function(elem,bounds){
             .attr("x2", stopx )
             .attr("y2", stopy )
             .attr("stroke-width", 2)
-            .attr("stroke", "#339999");
+            .attr("stroke", "#339933");
     };
     drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
     drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
+
+    var txt = svgDraw.getTextObj();
+    txt.text = "Loop";
+    txt.x = bounds.startx;
+    txt.y = bounds.starty;
+    txt.labelMargin =  1.5 * conf.boxMargin;
+
+    svgDraw.drawLabel(g,txt);
+
+    txt = svgDraw.getTextObj();
+    txt.text = bounds.title;
+    txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
+    txt.y = bounds.starty + 1.5 * conf.boxMargin;
+    txt.anchor = 'middle';
+
+    svgDraw.drawText(g,txt);
 };
+
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
@@ -179,6 +206,7 @@ var insertArrowHead = function(elem){
 var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var g = elem.append("g");
     var txtCenter = startx + (stopx-startx)/2;
+
     //Make an SVG Container
     //Draw the line
     if(msg.type !== 2) {
@@ -212,7 +240,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
             .attr("y", verticalPos - 10)
             .style("text-anchor", "middle")
             .text(msg.message);
-
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     else{
@@ -318,6 +345,7 @@ module.exports.draw = function (text, id) {
         switch(msg.type){
             case sq.yy.LINETYPE.NOTE:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
+
                 startx = actors[msg.from].x;
                 stopx = actors[msg.to].x;
 
@@ -331,14 +359,15 @@ module.exports.draw = function (text, id) {
                 }
                 break;
             case sq.yy.LINETYPE.LOOP_START:
-                //var loop = exports.bounds.newLoop();
-                exports.bounds.newLoop();
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.LOOP_END:
                 var loopData = exports.bounds.endLoop();
-                //var loopData = loopList.pop();
-                //loopData.stopy = exports.bounds.getVerticalPos();
+
                 exports.drawLoop(diagram, loopData);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
