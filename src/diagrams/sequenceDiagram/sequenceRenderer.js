@@ -205,7 +205,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
                 .attr("stroke", "black")
                 .attr("class", "link")
                 .attr("marker-end", "url(#arrowhead)");
-            //.attr("d", diagonal);
         }
 
         g.append("text")      // text label for the x axis
@@ -214,7 +213,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
             .style("text-anchor", "middle")
             .text(msg.message);
 
-        //console.log('Setting message bounds');
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     else{

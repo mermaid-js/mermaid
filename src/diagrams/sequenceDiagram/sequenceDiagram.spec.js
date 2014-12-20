@@ -459,7 +459,6 @@ describe('when rendering a sequenceDiagram',function() {
             'loop Cheers\n' +
             'Bob->Alice: Fine!\n' +
             'end';
-
         sq.parse(str);
         sd.draw(str,'tst');
 
