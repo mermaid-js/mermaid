@@ -16,7 +16,10 @@
 [\n]+             return 'NL';
 \s+               /* skip whitespace */
 \#[^\n]*          /* skip comments */
+\%%[^\n]*          /* skip comments */
 "participant"     return 'participant';
+"loop"     		  return 'loop';
+"end"     		  return 'end';
 "left of"         return 'left_of';
 "right of"        return 'right_of';
 "over"            return 'over';
@@ -30,6 +33,7 @@
 ">>"              return 'OPENARROW';
 ">"               return 'ARROW';
 :[^#\n]+          return 'MESSAGE';
+"%%"		      return 'CMT';
 <<EOF>>           return 'EOF';
 .                 return 'INVALID';
 
@@ -58,6 +62,10 @@ statement
 	| signal               { $$='signal'; }
 	| note_statement       { $$='note';  }
 	| 'title' message      { yy.setTitle($2);  }
+	| 'loop' ACTOR
+	 { yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);$$='loop';  }
+	| 'end'
+	 { yy.addSignal(undefined, undefined, undefined, yy.LINETYPE.LOOP_END);$$='loop';  }
 	;
 
 note_statement

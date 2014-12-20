@@ -10,7 +10,7 @@ describe('when parsing ',function(){
         flow.parser.yy = require('../graphDb');
         flow.parser.yy.clear();
         /*flow.parser.parse.parseError= function parseError(str, hash) {
-            console.log(str);
+            console.logconsole.log(str);
         }*/
     });
 
@@ -20,6 +20,84 @@ describe('when parsing ',function(){
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+    it('should handle angle bracket '>' as direction LR',function(){
+        var res = flow.parser.parse('graph >;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('LR');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+    it('should handle angle bracket '<' as direction RL',function(){
+        var res = flow.parser.parse('graph <;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('RL');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+
+    it('should handle caret '^' as direction BT',function(){
+        var res = flow.parser.parse('graph ^;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('BT');
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+
+    it('should handle lower-case \'v\' as direction TB',function(){
+        var res = flow.parser.parse('graph v;A-->B;');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+        var direction = flow.parser.yy.getDirection();
+
+        expect(direction).toBe('TB');
 
         expect(vert['A'].id).toBe('A');
         expect(vert['B'].id).toBe('B');
@@ -42,6 +120,37 @@ describe('when parsing ',function(){
         expect(edges.length).toBe(1);
         expect(edges[0].start).toBe('A');
         expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+
+    it('should handle a nodes and edges, a space between link and node and each line ending without semicolon',function(){
+        var res = flow.parser.parse('graph TD\nA --> B\n style e red');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+    it('should handle statements ending without semicolon',function(){
+        var res = flow.parser.parse('graph TD\nA-->B\nB-->C');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(2);
+        expect(edges[1].start).toBe('B');
+        expect(edges[1].end).toBe('C');
         expect(edges[0].type).toBe('arrow');
         expect(edges[0].text).toBe('');
     });
@@ -200,6 +309,18 @@ describe('when parsing ',function(){
         expect(edges[0].text).toBe('text including URL space');
 
     });
+
+    it('should handle text on edges with space dir',function(){
+        var res = flow.parser.parse('graph TD;A--x|text including R TD space|B;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow_cross');
+        expect(edges[0].text).toBe('text including R TD space');
+
+    });
     it('should handle text on edges with graph keyword',function(){
         var res = flow.parser.parse('graph TD;A--x|text including graph space|B;');
 
@@ -342,6 +463,15 @@ describe('when parsing ',function(){
 
         expect(vert['C'].type).toBe('round');
         expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ');
+    });
+    xit('should handle text in vertices with åäö, minus and space and br',function(){
+        var res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['C'].type).toBe('round');
+        expect(vert['C'].text).toBe(' A[Object&#40;foo,bar&#41;]-->B(Thing);');
     });
     it('should handle text in vertices with unicode chars',function(){
         var res = flow.parser.parse('graph TD;A-->C(Начало);');

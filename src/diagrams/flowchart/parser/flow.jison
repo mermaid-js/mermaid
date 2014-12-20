@@ -26,6 +26,8 @@
 "."                   return 'DOT';
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
+"^"                   return 'UP'
+"v"                   return 'DOWN'
 \-\-[x]               return 'ARROW_CROSS';
 \-\-\>                return 'ARROW_POINT';
 \-\-[o]               return 'ARROW_CIRCLE';
@@ -120,17 +122,32 @@
 
 expressions
     : graphConfig statements EOF
+    | graphConfig statements 
     | graphConfig spaceListNewline statements EOF
+        {$$=$1;}
+    | graphConfig spaceListNewline statements
         {$$=$1;}
     ;
 
 graphConfig
-    : GRAPH SPACE DIR SEMI
+    : GRAPH SPACE DIR FirstStmtSeperator
         { yy.setDirection($3);$$ = $3;}
+    | GRAPH SPACE TAGEND FirstStmtSeperator
+        { yy.setDirection("LR");$$ = $3;}
+    | GRAPH SPACE TAGSTART FirstStmtSeperator
+        { yy.setDirection("RL");$$ = $3;}
+    | GRAPH SPACE UP FirstStmtSeperator
+        { yy.setDirection("BT");$$ = $3;}
+    | GRAPH SPACE DOWN FirstStmtSeperator
+        { yy.setDirection("TB");$$ = $3;}
     ;
+
+FirstStmtSeperator 
+    : SEMI | NEWLINE | spaceList NEWLINE ;
 
 statements
     : statement spaceListNewline statements
+    | statement statements
     | statement
     ;
 
@@ -150,14 +167,15 @@ spaceList
 
 statement
     : commentStatement NEWLINE
-    {$$='Comment';}
-    | verticeStatement SEMI
-    | styleStatement SEMI
-    | linkStyleStatement SEMI
-    | classDefStatement SEMI
-    | classStatement SEMI
-    | clickStatement SEMI
+    | verticeStatement separator
+    | styleStatement separator
+    | linkStyleStatement separator
+    | classDefStatement separator
+    | classStatement separator
+    | clickStatement separator
     ;
+
+separator: NEWLINE | SEMI | EOF ;
 
 verticeStatement:
      vertex link vertex
