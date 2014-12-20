@@ -363,7 +363,7 @@ describe('when rendering a sequenceDiagram',function() {
         // 10 comes from mock of text height
         expect(bounds.stopy ).toBe( conf.height + conf.boxMargin + 2*conf.noteMargin +10);
     });
-    iit('it should handle one actor and a note to the right', function () {
+    it('it should handle one actor and a note to the right', function () {
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
             'participant Alice\n' +
@@ -388,10 +388,10 @@ describe('when rendering a sequenceDiagram',function() {
         sd.draw(str,'tst');
 
         var bounds = sd.bounds.getBounds();
-        expect(bounds.startx).toBe(conf.diagramMarginX);
-        expect(bounds.starty).toBe(conf.diagramMarginY);
-        expect(bounds.stopx ).toBe(conf.diagramMarginX + conf.width*2 + conf.actorMargin);
-        expect(bounds.stopy ).toBe(conf.diagramMarginY + conf.messageMargin + conf.height);
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
+        expect(bounds.stopx ).toBe(conf.width*2 + conf.actorMargin);
+        expect(bounds.stopy ).toBe(0 + conf.messageMargin + conf.height);
 
     });
 
@@ -405,10 +405,10 @@ describe('when rendering a sequenceDiagram',function() {
         sd.draw(str,'tst');
 
         var bounds = sd.bounds.getBounds();
-        expect(bounds.startx).toBe(conf.diagramMarginX);
-        expect(bounds.starty).toBe(conf.diagramMarginY);
-        expect(bounds.stopx ).toBe(conf.diagramMarginX + conf.width*2 + conf.actorMargin);
-        expect(bounds.stopy ).toBe(conf.diagramMarginY + 2*conf.messageMargin + conf.height);
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
+        expect(bounds.stopx ).toBe(0 + conf.width*2 + conf.actorMargin);
+        expect(bounds.stopy ).toBe(0 + 2*conf.messageMargin + conf.height);
 
     });
 
@@ -424,13 +424,13 @@ describe('when rendering a sequenceDiagram',function() {
         sd.draw(str,'tst');
 
         var bounds = sd.bounds.getBounds();
-        expect(bounds.startx).toBe(conf.diagramMarginX);
-        expect(bounds.starty).toBe(conf.diagramMarginY);
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
 
-        var expStopX = conf.diagramMarginX  + conf.messageMargin +conf.width+ (conf.width/2) + conf.noteMargin + conf.width;
+        var expStopX = conf.actorMargin +conf.width+ (conf.width/2) + conf.noteMargin + conf.width;
 
         expect(bounds.stopx ).toBe(expStopX);
-        expect(bounds.stopy ).toBe(conf.diagramMarginY + 3*conf.messageMargin + conf.height);
+        expect(bounds.stopy ).toBe(2*conf.messageMargin + conf.height + conf.boxMargin);
 
     });
     it('it should draw two actors notes to the left', function () {
@@ -444,11 +444,11 @@ describe('when rendering a sequenceDiagram',function() {
         sd.draw(str,'tst');
 
         var bounds = sd.bounds.getBounds();
-        expect(bounds.startx).toBe(conf.diagramMarginX - conf.width + conf.actorMargin);
-        expect(bounds.starty).toBe(conf.diagramMarginY);
+        expect(bounds.startx).toBe( -(conf.width/2)-(conf.actorMargin/2));
+        expect(bounds.starty).toBe(0);
 
-        expect(bounds.stopx ).toBe(conf.diagramMarginX + conf.width*2 + conf.actorMargin);
-        expect(bounds.stopy ).toBe(conf.diagramMarginY + 3*conf.messageMargin + conf.height);
+        expect(bounds.stopx ).toBe( conf.width*2 + conf.actorMargin);
+        expect(bounds.stopy ).toBe( 2*conf.messageMargin + conf.height + conf.boxMargin);
 
     });
 
@@ -464,11 +464,11 @@ describe('when rendering a sequenceDiagram',function() {
         sd.draw(str,'tst');
 
         var bounds = sd.bounds.getBounds();
-        expect(bounds.startx).toBe(conf.diagramMarginX);
-        expect(bounds.starty).toBe(conf.diagramMarginY);
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
 
-        expect(bounds.stopx ).toBe(conf.diagramMarginX + conf.width*2 + conf.actorMargin);
-        expect(bounds.stopy ).toBe(conf.diagramMarginY + 3*conf.messageMargin + conf.height + conf.boxMargin);
+        expect(bounds.stopx ).toBe(0 + conf.width*2 + conf.actorMargin);
+        expect(bounds.stopy ).toBe(0 + 2*conf.messageMargin + conf.height + conf.boxMargin);
 
     });
 });

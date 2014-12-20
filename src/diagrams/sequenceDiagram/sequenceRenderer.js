@@ -46,7 +46,6 @@ exports.bounds = {
     },
     updateVal : function (obj,key,val,fun){
         if(typeof obj[key] === 'undefined'){
-            //console.log('Setting startx',startx);
             obj[key] = val;
         }else{
             obj[key] = fun(val,obj[key]);
@@ -112,32 +111,17 @@ var drawNote = function(elem, startx, verticalPos, msg){
     rect.y = verticalPos;
     rect.width = conf.width;
 
-    //svgDraw.drawRect(elem, rect);
-
     var g = elem.append("g");
-    //svgDraw.drawRect(g, rect);
+    var rectElem = svgDraw.drawRect(g, rect);
 
-    var rectElem = g.append("rect");
-    rectElem.attr("x", startx);
-    rectElem.attr("y", verticalPos);
-    rectElem.attr("fill", '#EDF2AE');
-    rectElem.attr("stroke", '#666');
-    rectElem.attr("width", conf.width);
-    rectElem.attr("height", 100);
-    rectElem.attr("rx", 0);
-    rectElem.attr("ry", 0);
+    var textObj = svgDraw.getTextObj();
+    textObj.x = startx;
+    textObj.y = verticalPos+conf.noteMargin;
+    textObj.textMargin = conf.noteMargin;
+    textObj.dy = '1em';
+    textObj.text = msg.message;
 
-    var textElem = g.append("text");
-    textElem.attr("x", startx);
-    textElem.attr("y", verticalPos+conf.noteMargin);
-    textElem.style("text-anchor", "start");
-
-    msg.message.split('<br>').forEach(function(rowText){
-        var span = textElem.append("tspan");
-        span.attr("x", startx +conf.noteMargin);
-        span.attr("dy", '1em');
-        span.text(rowText);
-    });
+    var textElem = svgDraw.drawText(g,textObj);
 
     var textHeight = textElem[0][0].getBBox().height;
     exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
@@ -288,7 +272,7 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
         var key = actorKeys[i];
 
         // Add some rendering data to the object
-        actors[key].x = i*conf.messageMargin +i*conf.width;
+        actors[key].x = i*conf.actorMargin +i*conf.width;
         actors[key].y = 0;
         actors[key].width = conf.diagramMarginY;
         actors[key].height = conf.diagramMarginY;
@@ -341,7 +325,6 @@ module.exports.draw = function (text, id) {
 
                 if(msg.placement !== 0){
                     // Right of
-                    console.log(exports.bounds.getVerticalPos());
                     drawNote(diagram, startx + (conf.width + conf.actorMargin)/2, exports.bounds.getVerticalPos(), msg);
 
                 }else{
