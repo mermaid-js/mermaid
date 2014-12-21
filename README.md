@@ -56,7 +56,7 @@ graph LR
 
 Installing mermaid globally (`npm install -g mermaid`) will expose the `mermaid` command to your environment, allowing you to generate PNGs from any file containing mermaid markup via the command line.
 
-**Note:** The `mermaid` command requires PhantomJS to be installed and available in your *$PATH*. You can specify it's location with the `-e` option.
+**Note:** The `mermaid` command requires [PhantomJS](http://phantomjs.org/) (version `^1.9.0`) to be installed and available in your *$PATH*, or you can specify it's location with the `-e` option. For most environments, `npm install -g phantomjs` will satisfy this requirement.
 
 ## Usage
 
