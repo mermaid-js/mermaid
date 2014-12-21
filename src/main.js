@@ -64,9 +64,8 @@ var init = function () {
                 break;
             case 'sequenceDiagram': 
                 seq.draw(txt,id);
-                //classes = flowRenderer.getClasses(txt, true);
                 // TODO - Get styles for sequence diagram
-                utils.cloneCssStyles(element.firstChild, classes);
+                utils.cloneCssStyles(element.firstChild, []);
                 break;
         }
 

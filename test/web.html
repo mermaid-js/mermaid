@@ -28,6 +28,7 @@
             %% Comments after double percent signs
             di-->ro2(Rounded square shape);
             e((Inner circle))-->f(,.?!+-*ز);
+            A[Object]-->B(Thing);
             style e red;
     </pre>
 
@@ -41,26 +42,55 @@
         %% Comments after double percent signs
         e((Inner / circle))-->f(,.?!+-*ز);
         cyr[Cyrillic]-->cyr2((Circle shape Начало));
+        A[Object foo,bar]-->B(Thing);
         style e red;
+    </div>
+    <div class="mermaid">
+        graph LR;
+        A(Central Message Router);
+        B(R TD);
+        C(XYZ);
+        D(S Writer);
+        A-->|R TD Router|B;
+        B-->C;
+        C-->|XYZ Router|D;
     </div>
 
     <h1>Sequence diagrams (experimental)</h1>
     <pre>
         sequenceDiagram
+        participant John the Long
         Alice->Bob: Hello Bob, how are you?
-        Note right of Bob: Bob thinks
+        Note left of Bob: Bob thinks
         Bob-->Alice: I am good thanks!
         Bob-->John the Long: How about you John?
+        Note left of John the Long: Bob thinks
         Bob-->Alice: Checking with John...
+
+        loop Multiple status checks
+        loog Naging
         Alice->John the Long: Yes... John, how are you?
+        end
         John the Long-->Alice: Better then you!
+        end
     </pre>
     <div class="mermaid">
         sequenceDiagram
+        participant Alice
+        Note left of Alice: Bob thinks about <br/> things <br/> to think about
+    </div>
+    <div class="mermaid">
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John the Long
         Alice->Bob: Hello Bob, how are you?
-        Note left of Bob: Bob thinks about <br/> things <br/> to think about
+        Note left of Alice: Bob thinks about <br/> things <br/> to think about
         Bob-->Alice: I am good thanks!
+        loop Multiple status checks
         Bob-->John the Long: How about you John?
+        Note right of John the Long: Bob thinks
+        end
 
         Bob-->Alice: Checking with John...
         Alice->John the Long: Yes... John, how are you?

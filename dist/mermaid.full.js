@@ -16024,6 +16024,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     rect.x = startx;
     rect.y = verticalPos;
     rect.width = conf.width;
+    rect.class = 'note';
 
     var g = elem.append("g");
     var rectElem = svgDraw.drawRect(g, rect);
@@ -16034,6 +16035,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = msg.message;
+    textObj.class = 'noteText';
 
     var textElem = svgDraw.drawText(g,textObj);
 
@@ -16059,7 +16061,8 @@ exports.drawLoop = function(elem,bounds){
             .attr("x2", stopx )
             .attr("y2", stopy )
             .attr("stroke-width", 2)
-            .attr("stroke", "#339933");
+            .attr("stroke", "#526e52")
+            .attr('class','loopLine');
     };
     drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
     drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
@@ -16071,6 +16074,8 @@ exports.drawLoop = function(elem,bounds){
     txt.x = bounds.startx;
     txt.y = bounds.starty;
     txt.labelMargin =  1.5 * conf.boxMargin;
+    txt.class =  'labelText';
+    txt.fill =  'white';
 
     svgDraw.drawLabel(g,txt);
 
@@ -16079,6 +16084,7 @@ exports.drawLoop = function(elem,bounds){
     txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
     txt.y = bounds.starty + 1.5 * conf.boxMargin;
     txt.anchor = 'middle';
+    txt.class = 'loopText';
 
     svgDraw.drawText(g,txt);
 };
@@ -16114,49 +16120,38 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
 
     //Make an SVG Container
     //Draw the line
-    if(msg.type !== 2) {
-        if (msg.type === 1) {
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .style("stroke-dasharray", ("3, 3"))
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-            //.attr("d", diagonal);
-        }
-        else {
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-        }
-
-        g.append("text")      // text label for the x axis
-            .attr("x", txtCenter)
-            .attr("y", verticalPos - 10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
-        exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
+    if (msg.type === 1) {
+        g.append("line")
+            .attr("x1", startx)
+            .attr("y1", verticalPos)
+            .attr("x2", stopx)
+            .attr("y2", verticalPos)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black")
+            .style("stroke-dasharray", ("3, 3"))
+            .attr("class", "messageLine1")
+            .attr("marker-end", "url(#arrowhead)");
+        //.attr("d", diagonal);
     }
-    else{
-        var textElem = g.append("text")
-            .attr("x", txtCenter)
-            .attr("y", exports.bounds.getVerticalPos() - 10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
-        var box = textElem[0][0].getBBox();
-
-        exports.bounds.insert(box.x, exports.bounds.getVerticalPos() -10, box.x+box.width,  exports.bounds.getVerticalPos()-10 + box.height);
+    else {
+        g.append("line")
+            .attr("x1", startx)
+            .attr("y1", verticalPos)
+            .attr("x2", stopx)
+            .attr("y2", verticalPos)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black")
+            .attr("class", "messageLine0")
+            .attr("marker-end", "url(#arrowhead)");
     }
+
+    g.append("text")      // text label for the x axis
+        .attr("x", txtCenter)
+        .attr("y", verticalPos - 7)
+        .style("text-anchor", "middle")
+        .attr("class", "messageText")
+        .text(msg.message);
+    exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
 };
 
 /**
@@ -16173,6 +16168,7 @@ var drawActor = function(elem, left,description){
         .attr("y1", 5)
         .attr("x2", center)
         .attr("y2", 2000)
+        .attr("class", 'actor-line')
         .attr("stroke-width", '0.5px')
         .attr("stroke", '#999');
 
@@ -16183,11 +16179,13 @@ var drawActor = function(elem, left,description){
         .attr("stroke", '#666')
         .attr("width", conf.width)
         .attr("height", conf.height)
+        .attr("class", 'actor')
         .attr("rx", 3)
         .attr("ry", 3);
     g.append("text")      // text label for the x axis
         .attr("x", center)
         .attr("y", (conf.height/2)+5)
+        .attr('class','actor')
         .style("text-anchor", "middle")
         .text(description)
     ;
@@ -16309,6 +16307,10 @@ exports.drawRect = function(elem , rectData){
     rectElem.attr("rx", rectData.rx);
     rectElem.attr("ry", rectData.ry);
 
+    if(typeof rectData.class !== 'undefined'){
+        rectElem.attr("class", rectData.class);
+    }
+
     return rectElem;
 };
 
@@ -16317,7 +16319,7 @@ exports.drawText = function(elem , textData){
     textElem.attr('x', textData.x);
     textElem.attr('y', textData.y);
     textElem.style('text-anchor', textData.anchor);
-    textElem.style('fill', textData.fill);
+    textElem.attr('fill', textData.fill);
 
     textData.text.split('<br>').forEach(function(rowText){
         var span = textElem.append('tspan');
@@ -16325,6 +16327,10 @@ exports.drawText = function(elem , textData){
         span.attr('dy', textData.dy);
         span.text(rowText);
     });
+
+    if(typeof textData.class !== 'undefined'){
+        textElem.attr("class", textData.class);
+    }
 
     return textElem;
 };
@@ -16335,8 +16341,9 @@ exports.drawLabel = function(elem , txtObject){
     rectData.y = txtObject.y;
     rectData.width = 50;
     rectData.height = 20;
-    rectData.fill = '#339933';
+    rectData.fill = '#526e52';
     rectData.stroke = 'none';
+    rectData.class = 'labelBox';
     //rectData.color = 'white';
 
     var label = exports.drawRect(elem, rectData);
@@ -16351,7 +16358,7 @@ exports.drawLabel = function(elem , txtObject){
 
 
 exports.getTextObj = function(){
-    var rect = {
+    var txt = {
         x: 0,
         y: 0,
         'fill':'black',
@@ -16363,7 +16370,7 @@ exports.getTextObj = function(){
         rx: 0,
         ry: 0
     };
-    return rect;
+    return txt;
 };
 
 exports.getNoteRect = function(){
@@ -16449,9 +16456,8 @@ var init = function () {
                 break;
             case 'sequenceDiagram': 
                 seq.draw(txt,id);
-                //classes = flowRenderer.getClasses(txt, true);
                 // TODO - Get styles for sequence diagram
-                utils.cloneCssStyles(element.firstChild, classes);
+                utils.cloneCssStyles(element.firstChild, []);
                 break;
         }
 
@@ -16550,14 +16556,16 @@ module.exports.cloneCssStyles = function(svg, classes){
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
-        if (sheets[i].title != 'mermaid-svg-internal-css') {
+        if (sheets[i].title !== 'mermaid-svg-internal-css') {
             var rules = sheets[i].cssRules;
-            for (var j = 0; j < rules.length; j++) {
-                var rule = rules[j];
-                if (typeof(rule.style) != "undefined") {
-                    var elems = svg.querySelectorAll(rule.selectorText);
-                    if (elems.length > 0) {
-                        usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+            if(rules !== null) {
+                for (var j = 0; j < rules.length; j++) {
+                    var rule = rules[j];
+                    if (typeof(rule.style) !== 'undefined') {
+                        var elems = svg.querySelectorAll(rule.selectorText);
+                        if (elems.length > 0) {
+                            usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                        }
                     }
                 }
             }

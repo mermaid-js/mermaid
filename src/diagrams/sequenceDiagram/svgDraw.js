@@ -12,6 +12,10 @@ exports.drawRect = function(elem , rectData){
     rectElem.attr("rx", rectData.rx);
     rectElem.attr("ry", rectData.ry);
 
+    if(typeof rectData.class !== 'undefined'){
+        rectElem.attr("class", rectData.class);
+    }
+
     return rectElem;
 };
 
@@ -20,7 +24,7 @@ exports.drawText = function(elem , textData){
     textElem.attr('x', textData.x);
     textElem.attr('y', textData.y);
     textElem.style('text-anchor', textData.anchor);
-    textElem.style('fill', textData.fill);
+    textElem.attr('fill', textData.fill);
 
     textData.text.split('<br>').forEach(function(rowText){
         var span = textElem.append('tspan');
@@ -28,6 +32,10 @@ exports.drawText = function(elem , textData){
         span.attr('dy', textData.dy);
         span.text(rowText);
     });
+
+    if(typeof textData.class !== 'undefined'){
+        textElem.attr("class", textData.class);
+    }
 
     return textElem;
 };
@@ -38,8 +46,9 @@ exports.drawLabel = function(elem , txtObject){
     rectData.y = txtObject.y;
     rectData.width = 50;
     rectData.height = 20;
-    rectData.fill = '#339933';
+    rectData.fill = '#526e52';
     rectData.stroke = 'none';
+    rectData.class = 'labelBox';
     //rectData.color = 'white';
 
     var label = exports.drawRect(elem, rectData);
@@ -54,7 +63,7 @@ exports.drawLabel = function(elem , txtObject){
 
 
 exports.getTextObj = function(){
-    var rect = {
+    var txt = {
         x: 0,
         y: 0,
         'fill':'black',
@@ -66,7 +75,7 @@ exports.getTextObj = function(){
         rx: 0,
         ry: 0
     };
-    return rect;
+    return txt;
 };
 
 exports.getNoteRect = function(){
