@@ -3,6 +3,9 @@
   "version": "0.2.16",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
+  "bin": {
+    "mermaid": "./bin/mermaid.js"
+  },
   "scripts": {
     "test": "gulp coverage"
   },
@@ -13,8 +16,13 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^0.5.1",
+    "dagre-d3": "~0.3.2",
     "he": "^0.5.0",
-    "dagre-d3": "~0.3.2"
+    "minimist": "^1.1.0",
+    "mkdirp": "^0.5.0",
+    "semver": "^4.1.1",
+    "which": "^1.0.8"
   },
   "devDependencies": {
     "browserify": "~6.2.0",
