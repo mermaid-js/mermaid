@@ -7,7 +7,7 @@
     "mermaid": "./bin/mermaid.js"
   },
   "scripts": {
-    "test": "gulp coverage"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",

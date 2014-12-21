@@ -12972,8 +12972,11 @@ module.exports={
   "version": "0.2.16",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
+  "bin": {
+    "mermaid": "./bin/mermaid.js"
+  },
   "scripts": {
-    "test": "gulp coverage"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -12982,11 +12985,18 @@ module.exports={
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^0.5.1",
+    "dagre-d3": "~0.3.2",
     "he": "^0.5.0",
-    "dagre-d3": "~0.3.2"
+    "minimist": "^1.1.0",
+    "mkdirp": "^0.5.0",
+    "semver": "^4.1.1",
+    "which": "^1.0.8"
   },
   "devDependencies": {
+    "async": "^0.9.0",
     "browserify": "~6.2.0",
+    "clone": "^0.2.0",
     "codeclimate-test-reporter": "0.0.4",
     "d3": "~3.4.13",
     "dagre-d3": "~0.3.2",
@@ -13023,7 +13033,9 @@ module.exports={
     "mock-browser": "^0.90.27",
     "path": "^0.4.9",
     "phantomjs": "^1.9.12",
-    "rewire": "^2.1.3"
+    "rewire": "^2.1.3",
+    "rimraf": "^2.2.8",
+    "tape": "^3.0.3"
   }
 }
 
@@ -15714,44 +15726,48 @@ case 4:return 10;
 break;
 case 5:return 16;
 break;
-case 6:return 18;
+case 6:return 16;
 break;
-case 7:return 24;
+case 7:return 16;
 break;
-case 8:return 25;
+case 8:return 18;
 break;
-case 9:return 21;
+case 9:return 24;
 break;
-case 10:return 19;
+case 10:return 25;
 break;
-case 11:return 14;
+case 11:return 21;
 break;
-case 12:return 4;
+case 12:return 19;
 break;
-case 13:return 23;
+case 13:return 14;
 break;
-case 14:return 17;
+case 14:return 4;
 break;
-case 15:return 30;
+case 15:return 23;
 break;
-case 16:return 29;
+case 16:return 17;
 break;
-case 17:return 32;
+case 17:return 30;
 break;
-case 18:return 31;
+case 18:return 29;
 break;
-case 19:return 33;
+case 19:return 32;
 break;
-case 20:return 'CMT';
+case 20:return 31;
 break;
-case 21:return 6;
+case 21:return 33;
 break;
-case 22:return 'INVALID';
+case 22:return 'CMT';
+break;
+case 23:return 6;
+break;
+case 24:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:loop\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:[^\->:\n,]+)/i,/^(?:--)/i,/^(?:-)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:[^#\n]+)/i,/^(?:%%)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:[^\->:\n,]+)/i,/^(?:--)/i,/^(?:-)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:[^#\n]+)/i,/^(?:%%)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],"inclusive":true}}
 });
 return lexer;
 })();
@@ -15875,6 +15891,7 @@ var conf = {
     height:65,
     // Margin around loop boxes
     boxMargin:10,
+    boxTextMargin:15,
 
     noteMargin:10,
     // Space between messages
@@ -15929,15 +15946,23 @@ exports.bounds = {
     },
     insert:function(startx,starty,stopx,stopy){
 
-        this.updateVal(exports.bounds.data,'startx',startx,Math.min);
-        this.updateVal(exports.bounds.data,'starty',starty,Math.min);
-        this.updateVal(exports.bounds.data,'stopx' ,stopx ,Math.max);
-        this.updateVal(exports.bounds.data,'stopy' ,stopy ,Math.max);
+        var _startx, _starty, _stopx, _stopy;
 
-        this.updateLoops(startx,starty,stopx,stopy);
+        _startx = Math.min(startx,stopx);
+        _stopx  = Math.max(startx,stopx);
+        _starty = Math.min(starty,stopy);
+        _stopy  = Math.max(starty,stopy);
+
+        this.updateVal(exports.bounds.data,'startx',_startx,Math.min);
+        this.updateVal(exports.bounds.data,'starty',_starty,Math.min);
+        this.updateVal(exports.bounds.data,'stopx' ,_stopx ,Math.max);
+        this.updateVal(exports.bounds.data,'stopy' ,_stopy ,Math.max);
+
+        this.updateLoops(_startx,_starty,_stopx,_stopy);
+
     },
-    newLoop:function(){
-        this.list.push({startx:undefined,starty:undefined,stopx:undefined,stopy:undefined});
+    newLoop:function(title){
+        this.list.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
     },
     endLoop:function(){
         var loop = this.list.pop();
@@ -15984,12 +16009,13 @@ var drawNote = function(elem, startx, verticalPos, msg){
     exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
 
     rectElem.attr('height',textHeight+ 2*conf.noteMargin);
+    exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
 };
 
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
+ * @param pos The position if the actor in the list of actors
  * @param description The text in the box
  */
 exports.drawLoop = function(elem,bounds){
@@ -16001,13 +16027,30 @@ exports.drawLoop = function(elem,bounds){
             .attr("x2", stopx )
             .attr("y2", stopy )
             .attr("stroke-width", 2)
-            .attr("stroke", "#339999");
+            .attr("stroke", "#339933");
     };
     drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
     drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
+
+    var txt = svgDraw.getTextObj();
+    txt.text = "Loop";
+    txt.x = bounds.startx;
+    txt.y = bounds.starty;
+    txt.labelMargin =  1.5 * conf.boxMargin;
+
+    svgDraw.drawLabel(g,txt);
+
+    txt = svgDraw.getTextObj();
+    txt.text = bounds.title;
+    txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
+    txt.y = bounds.starty + 1.5 * conf.boxMargin;
+    txt.anchor = 'middle';
+
+    svgDraw.drawText(g,txt);
 };
+
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
@@ -16036,6 +16079,7 @@ var insertArrowHead = function(elem){
 var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var g = elem.append("g");
     var txtCenter = startx + (stopx-startx)/2;
+
     //Make an SVG Container
     //Draw the line
     if(msg.type !== 2) {
@@ -16069,8 +16113,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
             .attr("y", verticalPos - 10)
             .style("text-anchor", "middle")
             .text(msg.message);
-
-        //console.log('Setting message bounds');
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     else{
@@ -16176,6 +16218,7 @@ module.exports.draw = function (text, id) {
         switch(msg.type){
             case sq.yy.LINETYPE.NOTE:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
+
                 startx = actors[msg.from].x;
                 stopx = actors[msg.to].x;
 
@@ -16189,14 +16232,15 @@ module.exports.draw = function (text, id) {
                 }
                 break;
             case sq.yy.LINETYPE.LOOP_START:
-                //var loop = exports.bounds.newLoop();
-                exports.bounds.newLoop();
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.LOOP_END:
                 var loopData = exports.bounds.endLoop();
-                //var loopData = loopList.pop();
-                //loopData.stopy = exports.bounds.getVerticalPos();
+
                 exports.drawLoop(diagram, loopData);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
@@ -16240,7 +16284,8 @@ exports.drawText = function(elem , textData){
     var textElem = elem.append('text');
     textElem.attr('x', textData.x);
     textElem.attr('y', textData.y);
-    textElem.style('text-anchor', 'start');
+    textElem.style('text-anchor', textData.anchor);
+    textElem.style('fill', textData.fill);
 
     textData.text.split('<br>').forEach(function(rowText){
         var span = textElem.append('tspan');
@@ -16252,14 +16297,37 @@ exports.drawText = function(elem , textData){
     return textElem;
 };
 
+exports.drawLabel = function(elem , txtObject){
+    var rectData = exports.getNoteRect();
+    rectData.x = txtObject.x;
+    rectData.y = txtObject.y;
+    rectData.width = 50;
+    rectData.height = 20;
+    rectData.fill = '#339933';
+    rectData.stroke = 'none';
+    //rectData.color = 'white';
+
+    var label = exports.drawRect(elem, rectData);
+
+    txtObject.y = txtObject.y + txtObject.labelMargin;
+    txtObject.x = txtObject.x + 0.5*txtObject.labelMargin;
+    txtObject.fill = 'white';
+    exports.drawText(elem, txtObject);
+
+    //return textElem;
+};
+
+
 exports.getTextObj = function(){
     var rect = {
         x: 0,
         y: 0,
+        'fill':'black',
         'text-anchor': 'start',
         style: '#666',
         width: 100,
         height: 100,
+        textMargin:0,
         rx: 0,
         ry: 0
     };
@@ -16273,6 +16341,7 @@ exports.getNoteRect = function(){
         fill: '#EDF2AE',
         stroke: '#666',
         width: 100,
+        anchor:'start',
         height: 100,
         rx: 0,
         ry: 0
@@ -16313,7 +16382,9 @@ var init = function () {
         // Check if previously processed
         if(!element.getAttribute("data-processed")) {
             element.setAttribute("data-processed", true);
-        } else continue;
+        } else {
+            continue;
+        }
 
         var id;
 
@@ -16346,6 +16417,7 @@ var init = function () {
                 break;
             case 'sequenceDiagram': 
                 seq.draw(txt,id);
+                //classes = flowRenderer.getClasses(txt, true);
                 // TODO - Get styles for sequence diagram
                 utils.cloneCssStyles(element.firstChild, classes);
                 break;
@@ -16381,7 +16453,7 @@ if(typeof document !== 'undefined'){
         // Check presence of config object
         if(typeof mermaid_config !== 'undefined'){
             // Check if property startOnLoad is set
-            if(equals(true,mermaid_config.startOnLoad)){
+            if(equals(true, mermaid_config.startOnLoad)){
                 init();
             }
         }

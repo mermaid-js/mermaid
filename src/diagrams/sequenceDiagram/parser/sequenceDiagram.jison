@@ -19,6 +19,8 @@
 \%%[^\n]*          /* skip comments */
 "participant"     return 'participant';
 "loop"     		  return 'loop';
+"alt"     		  return 'loop';
+"else"     		  return 'loop';
 "end"     		  return 'end';
 "left of"         return 'left_of';
 "right of"        return 'right_of';

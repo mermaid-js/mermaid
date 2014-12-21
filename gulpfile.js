@@ -37,6 +37,7 @@ gulp.task('jison2', function() {
 });
 
 gulp.task('dist', ['slimDist', 'fullDist','jasmine']);
+gulp.task('rdist', ['slimDist', 'fullDist']);
 
 var jasmine = require('gulp-jasmine');
 
@@ -166,3 +167,5 @@ gulp.task('lint', function() {
         .pipe(jshint())
         .pipe(jshint.reporter(stylish));
 });
+
+gulp.task('test',['coverage','tape']);
