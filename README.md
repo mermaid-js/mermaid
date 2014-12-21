@@ -77,7 +77,7 @@ Options:
   --version         Print version and quit
 ```
 
-## Known Issues
+## CLI Known Issues
 
 - SVG output currently does some replacement on text, as mermaid's SVG output is only appropriate for browsers. Text color and background color is not yet replicated; please use PNGs for most purposes until this is resolved.
 - SVG output is decidedly non-standard. It works, but may cause issues in some viewers.
