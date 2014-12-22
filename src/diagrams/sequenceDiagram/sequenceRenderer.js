@@ -18,11 +18,11 @@ var conf = {
     height:65,
     // Margin around loop boxes
     boxMargin:10,
-    boxTextMargin:15,
+    boxTextMargin:5,
 
     noteMargin:10,
     // Space between messages
-    messageMargin:40
+    messageMargin:35
 };
 
 exports.bounds = {
@@ -213,19 +213,32 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var g = elem.append("g");
     var txtCenter = startx + (stopx-startx)/2;
 
+    var textElem = g.append("text")      // text label for the x axis
+        .attr("x", txtCenter)
+        .attr("y", verticalPos - 7)
+        .style("text-anchor", "middle")
+        .attr("class", "messageText")
+        .text(msg.message);
+
+    var textWidth = textElem[0][0].getBBox().width;
+
     var line;
 
     if(startx===stopx){
         line  = g.append("path")
-            .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ','+(verticalPos+30)+' ' +startx+ ','+(verticalPos+20))
+            .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ',' +
+            (verticalPos+30)+' ' +startx+ ','+(verticalPos+20));
 
         exports.bounds.bumpVerticalPos(30);
+        var dx = Math.max(textWidth/2,100);
+        exports.bounds.insert(startx-dx, exports.bounds.getVerticalPos() -10, stopx+dx,  exports.bounds.getVerticalPos());
     }else{
         line = g.append("line");
-        line.attr("x1", startx)
+        line.attr("x1", startx);
         line.attr("y1", verticalPos);
         line.attr("x2", stopx);
         line.attr("y2", verticalPos);
+        exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     //Make an SVG Container
     //Draw the line
@@ -242,13 +255,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     line.style("fill", "none");     // remove any fill colour
     line.attr("marker-end", "url(#arrowhead)");
 
-    g.append("text")      // text label for the x axis
-        .attr("x", txtCenter)
-        .attr("y", verticalPos - 7)
-        .style("text-anchor", "middle")
-        .attr("class", "messageText")
-        .text(msg.message);
-    exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
 };
 
 /**

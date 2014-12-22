@@ -8,14 +8,17 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
 The code below would render the following image
-
-```
+<table>
+<tr><td>
+|```
 graph TD;
     A-->B;
     A-->C;
     B-->D;
     C-->D;
 ```
+</td></tr>
+</table>
 
 would render this lovely chart:
 
