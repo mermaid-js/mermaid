@@ -480,6 +480,13 @@ describe('when parsing ',function(){
 
         expect(vert['C'].text).toBe('Начало');
     });
+    it('should handle text in vertices with backslask',function(){
+        var res = flow.parser.parse('graph TD;A-->C(c:\\windows);');
+
+        var vert = flow.parser.yy.getVertices();
+
+        expect(vert['C'].text).toBe('c:\\windows');
+    });
     it('should handle text in vertices with CAPS',function(){
         var res = flow.parser.parse('graph TD;A-->C(some CAPS);');
 
