@@ -213,32 +213,34 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var g = elem.append("g");
     var txtCenter = startx + (stopx-startx)/2;
 
+    var line;
+
+    if(startx===stopx){
+        line  = g.append("path")
+            .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ','+(verticalPos+30)+' ' +startx+ ','+(verticalPos+20))
+
+        exports.bounds.bumpVerticalPos(30);
+    }else{
+        line = g.append("line");
+        line.attr("x1", startx)
+        line.attr("y1", verticalPos);
+        line.attr("x2", stopx);
+        line.attr("y2", verticalPos);
+    }
     //Make an SVG Container
     //Draw the line
     if (msg.type === 1) {
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", verticalPos)
-            .attr("x2", stopx)
-            .attr("y2", verticalPos)
-            .attr("stroke-width", 2)
-            .attr("stroke", "black")
-            .style("stroke-dasharray", ("3, 3"))
-            .attr("class", "messageLine1")
-            .attr("marker-end", "url(#arrowhead)");
-        //.attr("d", diagonal);
+        line.style("stroke-dasharray", ("3, 3"));
+        line.attr("class", "messageLine1");
     }
     else {
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", verticalPos)
-            .attr("x2", stopx)
-            .attr("y2", verticalPos)
-            .attr("stroke-width", 2)
-            .attr("stroke", "black")
-            .attr("class", "messageLine0")
-            .attr("marker-end", "url(#arrowhead)");
+        line.attr("class", "messageLine0");
     }
+
+    line.attr("stroke-width", 2);
+    line.attr("stroke", "black");
+    line.style("fill", "none");     // remove any fill colour
+    line.attr("marker-end", "url(#arrowhead)");
 
     g.append("text")      // text label for the x axis
         .attr("x", txtCenter)
