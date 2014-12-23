@@ -13326,10 +13326,12 @@ exports.draw = function (text, id,isDot) {
 
     // Run the renderer. This is what draws the final graph.
     render(d3.select("#" + id + " g"), g);
+    var svgb = document.querySelector('#mermaidChart0');
 
     // Center the graph
     svg.attr("height", g.graph().height );
     svg.attr("width", g.graph().width );
+    svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
 };
 },{"./graphDb":104,"./parser/dot":105,"./parser/flow":106,"dagre-d3":1}],104:[function(require,module,exports){
 /**
