@@ -26,12 +26,13 @@
 "."                   return 'DOT';
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
-"^"                   return 'UP'
-"v"                   return 'DOWN'
+"^"                   return 'UP';
+"v"                   return 'DOWN';
 \-\-[x]               return 'ARROW_CROSS';
 \-\-\>                return 'ARROW_POINT';
 \-\-[o]               return 'ARROW_CIRCLE';
 \-\-\-                return 'ARROW_OPEN';
+\-\-                  return '--';
 \-                    return 'MINUS';
 \+                    return 'PLUS';
 \%                    return 'PCT';
@@ -235,6 +236,12 @@ link: linkStatement arrowText
     {$$ = $1;}
     | linkStatement SPACE
     {$$ = $1;}
+    | '--' SPACE text SPACE linkStatement
+    {$5.text = $3;$$ = $5;}
+    | '--' SPACE text SPACE linkStatement SPACE
+    {$5.text = $3;$$ = $5;}
+    | '--' text linkStatement SPACE
+    {$5.text = $3;$$ = $5;}
     ;
 
 linkStatement: ARROW_POINT
