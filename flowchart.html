@@ -132,8 +132,10 @@
 
     <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
       <ul class="menu horizontal black">
+        <li><a href="development.html">development</a></li>
         <li class="active"><a href="flowchart.html">flowchart</a></li>
         <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
+        <li><a href="usage.html">usage</a></li>
       </ul>
     </nav>
 
@@ -194,11 +196,11 @@ graph LR;
 <p>It is possible to bind a click event to a node:</p>
 <pre>click nodeId callback</pre><ul>
 <li>nodeId is the id of the node</li>
-<li>callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.</li>
-</ul>
+<li>callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.<h2 id="styling-and-classes">Styling and classes</h2>
 <h4 id="classes">Classes</h4>
-<p>More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
-should have a different look.</p>
+More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
+should have a different look.</li>
+</ul>
 <p>a class definition looks like the example below:</p>
 <pre>    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</pre><p>Attachment of a  class to a node is done as per below:</p>
 <pre>    class nodeId1 className;</pre>

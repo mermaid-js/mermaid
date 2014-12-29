@@ -134,8 +134,8 @@
       <ul class="menu horizontal black">
         <li><a href="development.html">development</a></li>
         <li><a href="flowchart.html">flowchart</a></li>
-        <li class="active"><a href="sequenceDiagram.html">sequenceDiagram</a></li>
-        <li><a href="usage.html">usage</a></li>
+        <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
+        <li class="active"><a href="usage.html">usage</a></li>
       </ul>
     </nav>
 
@@ -144,204 +144,31 @@
   <section class="column-group gutters article">
     <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
       <article>
-        <h1 id="sequence-diagrams">Sequence diagrams</h1>
-<blockquote>
-<p>A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.</p>
-</blockquote>
-<p>Mermaid can render sequence diagrams. The code snippet below:</p>
-<pre>%% Example of sequence diagram
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!</pre><p>Renders to the diagram below:</p>
-<div class="mermaid">sequenceDiagram
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!</div><h2 id="syntax">Syntax</h2>
-<h3 id="participants">Participants</h3>
-<p>The participants can be defined implicitly as in the first example in this page. The participants or actors are
-rendered in order of appearance in the diagram source text. Sometimes you might want to show the participants in a
-different order then when the first message from the actor appears. Then it is possible to introduce the actor
-explicitly in by doing this decing the order of appearance.</p>
-<pre>%% Example of sequence diagram
-sequenceDiagram
-    participant John
-    participant Alice
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!</pre><p>Renders to the diagram below:</p>
-<div class="mermaid">sequenceDiagram
-    participant John
-    participant Alice
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!</div><h3 id="messages">Messages</h3>
-<p>Messages can be of two displayed either solid or with a dotted line.</p>
-<pre>[Actor][Arrow][Actor]:Message text</pre><p>There are two types of arrows currently supported:</p>
-<p>-&gt; which will render a solid line</p>
-<p>--&gt; which will render a dotted line</p>
-<h3 id="notes">Notes</h3>
-<p>It is possible to add notes to a sequence diagram. This is done by the notation
-Note [right|left] of [Actor]: Text in note content</p>
-<p>See the example below:</p>
-<pre>%% Example of sequence diagram
-sequenceDiagram
-    participant John
-    Note right of John: Text in note</pre><p>Renders to the diagram below:</p>
-<div class="mermaid">sequenceDiagram
-    participant John
-    Note right of John: Text in note</div><p>It is possible to break text into different rows by using &lt;br/&gt; as a line breaker.</p>
-<pre>%% Example of sequence diagram
-sequenceDiagram
-    participant John
-    Note right of John: Text in note&lt;br/>spanning several&lt;br/>rows.</pre><div class="mermaid">sequenceDiagram
-    participant John
-    Note right of John: Text in note<br/>spanning several<br/>rows.</div><h3 id="loops">Loops</h3>
-<p>It is possible to express loops in a sequence diagram. This is done by the notation</p>
-<pre>loop Loop text
-... statements ...
-end</pre><p>See the example below</p>
-<pre>%% Example of sequence diagram
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    loop Reply every minute
-        John-->Alice: Great!
-    end</pre><div class="mermaid">sequenceDiagram
-    Alice->John: Hello John, how are you?
-    loop Every minute
-        John-->Alice: Great!
-    end</div><h2 id="styling">Styling</h2>
-<p>Styling of the a sequence diagram is done by defining a number of css classes. These classes are during rendering extracted from the</p>
-<h3 id="classes-used">Classes used</h3>
-<table class="ink-table bordered hover alternating"><tr>
-<th>Class</th>
-<th>Description</th>
-</tr>
-<tr>
-<td>actor</td>
-<td>Style for the actor box at the top of the diagram.</td>
-</tr>
-<tr>
-<td>text.actor</td>
-<td>Styles for text in the actor box at the top of the diagram.</td>
-</tr>
-<tr>
-<td>actor-line</td>
-<td>The vertical line for an actor.</td>
-</tr>
-<tr>
-<td>messageLine0</td>
-<td>Styles for the solid message line.</td>
-</tr>
-<tr>
-<td>messageLine1</td>
-<td>Styles for the dotted message line.</td>
-</tr>
-<tr>
-<td>messageText</td>
-<td>Defines styles for the text on the message arrows.</td>
-</tr>
-<tr>
-<td>labelBox</td>
-<td>Defines styles label to left in a loop.</td>
-</tr>
-<tr>
-<td>labelText</td>
-<td>Styles for the text in label for loops.</td>
-</tr>
-<tr>
-<td>loopText</td>
-<td>Styles for the text in the loop box.</td>
-</tr>
-<tr>
-<td>loopLine</td>
-<td>Defines styles for the lines in the loop box.</td>
-</tr>
-<tr>
-<td>note</td>
-<td>Styles for the note box.</td>
-</tr>
-<tr>
-<td>noteText</td>
-<td>Styles for the text on in the note boxes.</td>
-</tr>
-</table><h3 id="sample-stylesheet">Sample stylesheet</h3>
-<pre>
-body {
-    background: white;
-}
+        <h1 id="installation">Installation</h1>
+<p>Either use the bower package manager as per below:</p>
+<pre>bower install mermaid --save-dev</pre><p>Or download javascript files:</p>
+<ul>
+<li><a href="http://www.sveido.com/mermaid/dist/mermaid.full.min.js">mermaid including dependencies</a></li>
+</ul>
+<p>This file bundles mermaid with d3 and dagre-d3.</p>
+<ul>
+<li><a href="http://www.sveido.com/mermaid/dist/mermaid.slim.min.js">mermaid without dependencies</a></li>
+</ul>
+<p>With this file you will need to include d3 and dagre-d3 yourself.</p>
+<h1 id="usage">Usage</h1>
+<p>Include mermaid on your web page:</p>
+<pre><script src="mermaid.full.min.js"></script></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
+read the chart definiton which will be replaced with the svg chart.</p>
+<p>A chart defined like this:</p>
+<pre><div class="mermaid">
+    CHART DEFINITION GOES HERE
+</div></pre><p>Would end up like this:</p>
+<pre><div class="mermaid" id="mermaidChart0">
+    <svg>
+        Chart ends up here
+    </svg>
+</div></pre><p>An id is also added to mermaid tags without id.</p>
 
-.actor {
-    stroke: #CCCCFF;
-    fill: #ECECFF;
-}
-text.actor {
-    fill:black;
-    stroke:none;
-    font-family: Helvetica;
-}
-
-.actor-line {
-    stroke:grey;
-}
-
-.messageLine0 {
-    stroke-width:1.5;
-    stroke-dasharray: "2 2";
-    marker-end:"url(#arrowhead)";
-    stroke:black;
-}
-
-.messageLine1 {
-    stroke-width:1.5;
-    stroke-dasharray: "2 2";
-    stroke:black;
-}
-
-#arrowhead {
-    fill:black;
-
-}
-
-.messageText {
-    fill:black;
-    stroke:none;
-    font-family: 'trebuchet ms', verdana, arial;
-    font-size:14px;
-}
-
-.labelBox {
-    stroke: #CCCCFF;
-    fill: #ECECFF;
-}
-
-.labelText {
-    fill:black;
-    stroke:none;
-    font-family: 'trebuchet ms', verdana, arial;
-}
-
-.loopText {
-    fill:black;
-    stroke:none;
-    font-family: 'trebuchet ms', verdana, arial;
-}
-
-.loopLine {
-    stroke-width:2;
-    stroke-dasharray: "2 2";
-    marker-end:"url(#arrowhead)";
-    stroke: #CCCCFF;
-}
-
-.note {
-    stroke: #decc93;
-    stroke: #CCCCFF;
-    fill: #fff5ad;
-}
-
-.noteText {
-    fill:black;
-    stroke:none;
-    font-family: 'trebuchet ms', verdana, arial;
-    font-size:14px;
-}</pre>
       </article>
     </div>
     <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
