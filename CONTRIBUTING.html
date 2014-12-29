@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Article page</title>
+  <meta name="description" content="">
+  <meta name="author" content="ink, cookbook, recipes">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+  <!-- Place favicon.ico and apple-touch-icon(s) here  -->
+
+  <link rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
+  <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
+  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png" media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
+  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
+
+  <!-- load Ink's css from the cdn -->
+  <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/font-awesome.min.css">
+
+  <!-- load Ink's css for IE8 -->
+  <!--[if lt IE 9 ]>
+  <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <![endif]-->
+
+  <!-- test browser flexbox support and load legacy grid if unsupported -->
+  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
+  <script type="text/javascript">
+    Modernizr.load({
+      test: Modernizr.flexbox,
+      nope : 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
+    });
+  </script>
+
+  <!-- load Ink's javascript files from the cdn -->
+  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
+  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
+  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
+  <script type="text/javascript" src="/dist/mermaid.full.min.js"></script>
+
+
+  <style type="text/css">
+
+    body {
+      background: #ededed;
+    }
+
+    header h1 small:before  {
+      content: "|";
+      margin: 0 0.5em;
+      font-size: 1.6em;
+    }
+
+    article header{
+      padding: 0;
+      overflow: hidden;
+    }
+
+    article footer {
+      background: none;
+    }
+
+    article {
+      padding-bottom: 2em;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .date {
+      float: right;
+    }
+
+    summary {
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    footer {
+      background: #ccc;
+    }
+  </style>
+  <script>
+    Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
+      DomLoaded.run(function(){
+        var elements = document.querySelectorAll ('article h1,h2');
+        var i;
+        var sections = document.getElementById('sections');
+        for(i=0;i<elements.length;i++){
+          var e = elements[i];
+
+          sections.innerHTML = sections.innerHTML +  '<li><a href="#'+e.id+'">'+e.innerText+'</a></li>';
+          //$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
+        }
+
+        Ink.requireModules( ['Ink.UI.Sticky_1'], function( Sticky ){
+          new Sticky('#sidenav')
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+
+<div class="ink-grid">
+
+  <!--[if lte IE 9 ]>
+  <div class="ink-alert basic" role="alert">
+      <button class="ink-dismiss">&times;</button>
+      <p>
+          <strong>You are using an outdated Internet Explorer version.</strong>
+          Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
+      </p>
+  </div>
+  -->
+
+  <!-- Add your site or application content here -->
+
+  <header class="clearfix vertical-padding">
+
+    <h1 class="logo xlarge-push-left large-push-left">
+      mermaid<small>Diagrams and flowcharts from textsimilar to markdown</small>
+    </h1>
+
+    <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
+      <ul class="menu horizontal black">
+        <li class="active"><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
+        <li><a href="README.html">README</a></li>
+        <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
+      </ul>
+    </nav>
+
+  </header>
+
+  <section class="column-group gutters article">
+    <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
+      <article>
+        <h1 id="how-to-contribute">How to contribute</h1>
+<p>Great that you want to be involved in this project! Contributing is fun and contributions are GREAT! :)</p>
+<p>This page is currently a starting point is not so rigorous to start with.</p>
+<p>Some important guidlines:</p>
+<ul>
+<li>The work will be organized using the issues list<ul>
+<li>In the list there will be the bugs/enhancements etc we are working with in the project</li>
+<li>There will be milestones outlineing the roadmap ahead</li>
+<li>There will issues marked with help wanted</li>
+</ul>
+</li>
+</ul>
+<p>The issue list and the items marked with <strong>help wanted</strong> is a good starting point if you want to do some work.</p>
+<h2 id="guidelines-for-avoiding-duplicate-work">Guidelines for avoiding duplicate work</h2>
+<p>Contributing is great. It is not so fun when you are done with your issue and just before you&#39;re about to push your
+change you cant because someone else just pushed the same fix so you have wasted your time. The guidelines below are in
+place to prevent this:</p>
+<ul>
+<li>Comment in the issue that you are working on it. You will then be added as an assignee (eventually).</li>
+<li>When you pick an issue to work on.<ul>
+<li>Check that the issue not assigned</li>
+<li>Also check the comments so that no one has started working on it before beeing officially assigned.</li>
+</ul>
+</li>
+</ul>
+<h2 id="submitting-changes">Submitting changes</h2>
+<p>Please send a GitHub Pull Request with a clear list of what you&#39;ve done (read more about pull requests). When you send
+a pull request, we will love you forever if you include jasmine tests. We can always use more test coverage.</p>
+<p>Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:</p>
+<p>$ git commit -m &quot;A brief summary of the commit</p>
+<blockquote>
+<p>A paragraph describing what changed and its impact.&quot;
+Coding conventions
+Start reading our code and you&#39;ll get the hang of it. We optimize for readability:</p>
+</blockquote>
+<p>This is open source software. Consider the people who will read your code, and make it look nice for them. It&#39;s sort of
+like driving a car: Perhaps you love doing donuts when you&#39;re alone, but with passengers the goal is to make the ride as
+smooth as possible.</p>
+<p>So that we can consistently serve images from the CDN, always use image_path or image_tag when referring to images.
+Never prepend &quot;/images/&quot; when using image_path or image_tag.
+Also for the CDN, always use cwd-relative paths rather than root-relative paths in image URLs in any CSS. So instead of
+url(&#39;/images/blah.gif&#39;), use url(&#39;../images/blah.gif&#39;).</p>
+<h3 id="build-instructions">Build instructions</h3>
+<p>Fork, then:</p>
+<pre>npm install</pre><p>Then the dependencies will have been installed. You use gulp as build tool.</p>
+<p>The following targets are probably interesting:</p>
+<ul>
+<li>jison - compiles the jison grammars to parser files</li>
+<li>jasmine - runs the jasmine tests (will trigger the jison target)</li>
+<li>dist - complies files to the dist catalog</li>
+</ul>
+<p>for instance:</p>
+<pre>gulp jasmine</pre><p>Thanks, Knut Sveidqvist</p>
+
+      </article>
+    </div>
+    <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
+      <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
+           data-bottom-element="#sticky-stop">
+        <ul class="menu vertical black" id="sections">
+          <li class="heading active"><a href="#">Quicklinks:</a></li>
+        </ul>
+      </nav>
+    </section>
+  </section>
+  <div id="sticky-stop">&nbsp;</div>
+
+  <section class="column-group gutters">
+    <div class="all-20 small-100 tiny-100">
+      <h3>heading</h3>
+      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
+      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+    </div>
+    <div class="all-20 small-100 tiny-100">
+      <h3>heading</h3>
+      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
+      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+    </div>
+    <div class="all-20 small-100 tiny-100">
+      <h3>heading</h3>
+      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
+      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+    </div>
+    <div class="all-20 small-100 tiny-100">
+      <h3>heading</h3>
+      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
+      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+    </div>
+    <div class="all-20 small-100 tiny-100">
+      <h3>heading</h3>
+      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
+      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+    </div>
+  </section>
+</div>
+<footer class="clearfix">
+  <div class="ink-grid">
+    <ul class="unstyled inline half-vertical-space">
+      <li class="active"><a href="#">About</a></li>
+      <li><a href="#">Sitemap</a></li>
+      <li><a href="#">Contacts</a></li>
+    </ul>
+    <p class="note">Identification of the owner of the copyright, either by name, abbreviation, or other designation by which it is generally known.</p>
+  </div>
+</footer>
+</body>
+</html>

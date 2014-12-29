@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" >
+
+<head>
+  <meta charset="utf-8">
+  <!-- If you delete this meta tag World War Z will become a reality -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foundation 5</title>
+
+  <!-- If you are using the CSS version, only link these 2 files, you may add app.css to use for your overrides if you like -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/foundation.css">
+
+  <!-- If you are using the gem version, you need this only -->
+  <link rel="stylesheet" href="css/app.css">
+
+  <script src="js/vendor/modernizr.js"></script>
+
+</head>
+<body>
+<div class="fixed">
+<nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">Mermaid</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <!-- Left Nav Section -->
+    <ul class="left">
+      {{#list}}
+      {{#active}}
+      <li class="active"><a href="{{{name}}}.html">{{{name}}}</a></li>
+      {{/active}}
+      {{^active}}
+      <li><a href="{{{name}}}.html">{{{name}}}</a></li>
+      {{/active}}
+      {{/list}}
+    </ul>
+  </section>
+</nav>
+</div>
+
+<div class="row">
+
+  <div id="sidebar" style="top: 50px;position: fixed; width: 200px;">
+    <ul id="sections" class="side-nav panel">
+
+    </ul>
+  </div>
+
+  <div class="large-12 columns" id="content" style="top: 50px;padding-left: 250px">
+    {{{contents}}
+  </div>
+
+</div>
+
+  <script src="js/vendor/jquery.js"></script>
+  <script src="js/foundation.min.js"></script>
+  <script src="js/foundation/foundation.topbar.js"></script>
+  <script src="js/foundation/foundation.magellan.js"></script>
+  <script>
+;(function ($, window, undefined) {
+  'use strict';
+
+  var $doc = $(document),
+      Modernizr = window.Modernizr;
+
+  $(document).ready(function() {
+    $.fn.foundationAlerts           ? $doc.foundationAlerts() : null;
+    $.fn.foundationButtons          ? $doc.foundationButtons() : null;
+    $.fn.foundationAccordion        ? $doc.foundationAccordion() : null;
+    $.fn.foundationNavigation       ? $doc.foundationNavigation() : null;
+    $.fn.foundationTopBar           ? $doc.foundationTopBar() : null;
+    $.fn.foundationCustomForms      ? $doc.foundationCustomForms() : null;
+    $.fn.foundationMediaQueryViewer ? $doc.foundationMediaQueryViewer() : null;
+    $.fn.foundationTabs             ? $doc.foundationTabs({callback : $.foundation.customForms.appendCustomMarkup}) : null;
+    $.fn.foundationTooltips         ? $doc.foundationTooltips() : null;
+    $.fn.foundationMagellan         ? $doc.foundationMagellan({threshold: 75}) : null;
+    $.fn.foundationClearing         ? $doc.foundationClearing() : null;
+
+    $.fn.placeholder                ? $('input, textarea').placeholder() : null;
+  });
+
+  // UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE8 SUPPORT AND ARE USING .block-grids
+  // $('.block-grid.two-up>li:nth-child(2n+1)').css({clear: 'both'});
+  // $('.block-grid.three-up>li:nth-child(3n+1)').css({clear: 'both'});
+  // $('.block-grid.four-up>li:nth-child(4n+1)').css({clear: 'both'});
+  // $('.block-grid.five-up>li:nth-child(5n+1)').css({clear: 'both'});
+
+  // Hide address bar on mobile devices (except if #hash present, so we don't mess up deep linking).
+  if (Modernizr.touch && !window.location.hash) {
+    $(window).load(function () {
+      setTimeout(function () {
+        window.scrollTo(0, 1);
+      }, 0);
+    });
+  }
+
+  var elements = $('#content h1,h2');
+  var i;
+  for(i=0;i<elements.length;i++){
+    var $e = $(elements[i]);
+
+    if($e.prop('tagName') === 'H1'){
+      console.log('H');
+    }
+    //$("#sections").append('<li><a href="#'+$e.attr('id')+'">'+$e.text()+'</a></li>');
+    $("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
+  }
+})(jQuery, this);
+
+  </script>
+</body>
+</html>

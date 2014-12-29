@@ -1,0 +1,8 @@
+#!/usr/local/bin/node
+var express = require('express');
+var app = express();
+
+app.use('/dist/',express.static('./dist'));
+app.use('/',express.static('./'));
+
+app.listen(process.env.PORT || 3000);

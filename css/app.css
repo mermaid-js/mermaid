@@ -1,0 +1,11 @@
+.top-bar {
+    background: #00043e;
+}
+
+.top-bar-section li:not(.has-form) a:not(.button){
+    background: #00043e;
+}
+
+.top-bar-section li.active:not(.has-form) a:not(.button) {
+    background: #353338;
+}

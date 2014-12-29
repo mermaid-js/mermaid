@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" >
+
+<head>
+  <meta charset="utf-8">
+  <!-- If you delete this meta tag World War Z will become a reality -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foundation 5</title>
+
+  <!-- If you are using the CSS version, only link these 2 files, you may add app.css to use for your overrides if you like -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/foundation.css">
+
+  <!-- If you are using the gem version, you need this only -->
+  <lnk rel="stylesheet" href="css/app.css">
+
+  <script src="js/vendor/modernizr.js"></script>
+
+</head>
+<body>
+<div class="contain-to-grid sticky">
+<nav class="top-bar" data-topbar role="navigation">
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">My Site</a></h1>
+    </li>
+     <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+    <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+  </ul>
+</div>
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="active"><a href="#">Right Button Active</a></li>
+      <li class="has-dropdown">
+        <a href="#">Right Button Dropdown</a>
+        <ul class="dropdown">
+          <li><a href="#">First link in dropdown</a></li>
+          <li class="active"><a href="#">Active link in dropdown</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Left Nav Button</a></li>
+    </ul>
+  </section>
+</nav>
+      <div class="row">
+        <div class="large-12 columns">
+          <div class="nav-bar right">
+           <ul class="button-group">
+             <li><a href="#" class="button">Link 1</a></li>
+             <li><a href="#" class="button">Link 2</a></li>
+             <li><a href="#" class="button">Link 3</a></li>
+             <li><a href="#" class="button">Link 4</a></li>
+            </ul>
+          </div>
+          <h1>Blog <small>This is my blog. It's awesome.</small></h1>
+          <hr/>
+        </div>
+      </div>
+
+
+
+
+
+
+      <div class="row">
+
+
+        <div class="large-9 columns" role="content">
+
+          <article>
+
+            {{{contents}}}
+
+          </article>
+
+        </div>
+
+
+
+
+
+
+        <aside class="large-3 columns">
+
+          <h5>Categories</h5>
+          <ul class="side-nav">
+            <li><a href="#">News</a></li>
+            <li><a href="#">Code</a></li>
+            <li><a href="#">Design</a></li>
+            <li><a href="#">Fun</a></li>
+            <li><a href="#">Weasels</a></li>
+          </ul>
+
+          <div class="panel">
+            <h5>Featured</h5>
+            <p>Pork drumstick turkey fugiat. Tri-tip elit turducken pork chop in. Swine short ribs meatball irure bacon nulla pork belly cupidatat meatloaf cow.</p>
+            <a href="#">Read More →</a>
+          </div>
+
+        </aside>
+
+
+      </div>
+
+
+
+
+
+
+      <footer class="row">
+        <div class="large-12 columns">
+          <hr/>
+          <div class="row">
+            <div class="large-6 columns">
+              <p>© Copyright no one at all. Go to town.</p>
+            </div>
+            <div class="large-6 columns">
+              <ul class="inline-list right">
+                <li><a href="#">Link 1</a></li>
+                <li><a href="#">Link 2</a></li>
+                <li><a href="#">Link 3</a></li>
+                <li><a href="#">Link 4</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+  <script src="js/vendor/jquery.js"></script>
+  <script src="js/foundation.min.js"></script>
+  <script src="js/foundation/foundation.topbar.js"></script>
+  <script>
+    $(document).foundation();
+
+  </script>
+</body>
+</html>
