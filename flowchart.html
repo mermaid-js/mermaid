@@ -12,7 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-  <!-- Place favicon.ico and apple-touch-icon(s) here  -->
+    
+<link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
 
   <link rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
   <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
@@ -30,7 +31,14 @@
   <!-- load Ink's css for IE8 -->
   <!--[if lt IE 9 ]>
   <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
   <![endif]-->
+  <link rel="stylesheet" href="/css/monokai_sublime.css">
+
+
+  <scrpt src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></scrpt>
+  <script src="/js/highlight.pack.js"></script>
+  <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
   <!-- test browser flexbox support and load legacy grid if unsupported -->
   <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
@@ -51,15 +59,21 @@
   <style type="text/css">
 
     body {
-      background: #ededed;
+      background: #ffffff;
+      font-family: sans-serif;
+      font-size: 90%;
     }
 
     header h1 small:before  {
       content: "|";
       margin: 0 0.5em;
-      font-size: 1.6em;
+      font-size: 1.5em;
     }
-
+      
+    h1 {
+    color: #104e8b
+        }        
+      
     article header{
       padding: 0;
       overflow: hidden;
@@ -73,7 +87,11 @@
       padding-bottom: 2em;
       border-bottom: 1px solid #ccc;
     }
-
+    
+    table, th, td {
+    border: 1px solid #8b8989;
+    } 
+      
     .date {
       float: right;
     }
@@ -82,12 +100,103 @@
       font-weight: 700;
       line-height: 1.5;
     }
-
+    .push, footer {
+        height: 120px;
+        margin-top: 0;
+        margin-bottom: 10;
+      } 
     footer {
-      background: #ccc;
+      background: #cdc5bf;
     }
   </style>
   <script>
+    var f = function (e) {
+      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")",
+      a = {
+        keyword: "sequenceDiagram note loop right left after and andalso|10 band begin bnot bor bsl bzr bxor case catch cond div end fun if let not of orelse|10 Note query receive rem try when xor",
+        literal: "false true"
+      }, n = {cN: "comment", b: "%", e: "$"}, b = {
+        cN: "number",
+        b: "\\b(\\d+#[a-fA-F0-9]+|\\d+(\\.\\d+)?([eE][-+]?\\d+)?)",
+        r: 0
+      }, i = {b: "fun\\s+" + r + "/\\d+"}, o = {
+        b: c + "\\(",
+        e: "\\)",
+        rB: !0,
+        r: 0,
+        c: [{cN: "function_name", b: c, r: 0}, {b: "\\(", e: "\\)", eW: !0, rE: !0, r: 0}]
+      }, d = {cN: "tuple", b: "{", e: "}", r: 0}, t = {
+        cN: "variable",
+        b: "\\b_([A-Z][A-Za-z0-9_]*)?",
+        r: 0
+      }, l = {cN: "variable", b: "[A-Z][a-zA-Z0-9_]*", r: 0}, f = {
+        b: "#" + e.UIR,
+        r: 0,
+        rB: !0,
+        c: [{cN: "record_name", b: "#" + e.UIR, r: 0}, {b: "{", e: "}", r: 0}]
+      }, s = {bK: "fun receive if loop try case", e: "end", k: a};
+      s.c = [n, i, e.inherit(e.ASM, {cN: ""}), s, o, e.QSM, b, d, t, l, f];
+      var u = [n, i, s, o, e.QSM, b, d, t, l, f];
+      o.c[1].c = u, d.c = u, f.c[1].c = u;
+      var v = {cN: "params", b: "\\(", e: "\\)", c: u};
+      return {
+        case_insensitive: true,
+        aliases: ["mermaid"],
+        k: a,
+        i: "(</|\\*=|\\+=|-=|/\\*|\\*/|\\(\\*|\\*\\))",
+        c: [{
+          cN: "function",
+          b: "^" + r + "\\s*\\(",
+          e: "->",
+          rB: !0,
+          i: "\\(|#|//|/\\*|\\\\|:|;",
+          c: [v, e.inherit(e.TM, {b: r})],
+          starts: {e: ";|\\.", k: a, c: u}
+        }, n, {
+          cN: "pp",
+          b: "^-",
+          e: "\\.",
+          r: 0,
+          eE: !0,
+          rB: !0,
+          l: "-" + e.IR,
+          k: "-module -record -undef -export -ifdef -ifndef -author -copyright -doc -vsn -import -include -include_lib -compile -define -else -endif -file -behaviour -behavior -spec",
+          c: [v]
+        }, b, e.QSM, f, t, l, d, {b: /\.$/}]
+      }
+    };
+    var g = function(hljs) {
+      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+      var keyw = {
+        keyword:
+                'graph sequenceDiagram participant loop end',
+        typename:
+                'Note',
+        literal: "false true left right"
+      };
+        return {
+          case_insensitive: false,
+          aliases: ["mermaid"],
+          k: keyw,
+          i: 'for',
+          c: [{
+            cN: "function",
+            b: "^" + r + "\\s*\\(",
+            e: "->",
+            rB: !0,
+            i: "\\(|#|//|/\\*|\\\\|:|;",
+            starts: {e: ";|\\.", k: keyw, c:[
+              {cN: "comment", b: "%", e: "$"}
+            ]}
+          },
+            {cN: "comment", b: "%", e: "$"}
+          ]
+
+        };
+    };
+    hljs.registerLanguage('mm',g);
+    hljs.initHighlightingOnLoad();
+
     Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
       DomLoaded.run(function(){
         var elements = document.querySelectorAll ('article h1,h2');
@@ -103,8 +212,11 @@
         Ink.requireModules( ['Ink.UI.Sticky_1'], function( Sticky ){
           new Sticky('#sidenav')
         });
+        console.log('Registering new lang');
+
       });
     });
+
   </script>
 </head>
 
@@ -147,8 +259,8 @@
         <h1 id="flowcharts-basic-syntax">Flowcharts - Basic Syntax</h1>
 <h2 id="graph">Graph</h2>
 <p>This statement declares a new graph and the direction of the graph layout.</p>
-<pre>%% Example code
-graph TD</pre><p>This declares a graph oriented from top to bottom.</p>
+<pre><code>%% Example code
+graph TD</code></pre><p>This declares a graph oriented from top to bottom.</p>
 <p><img src="http://www.sveido.com/mermaid/img/ex3.png" alt="Example 3"></p>
 <div class="mermaid">graph LR</div><p>This declares a graph oriented from left to right.</p>
 <p>Possible directions are:</p>
@@ -162,39 +274,39 @@ graph TD</pre><p>This declares a graph oriented from top to bottom.</p>
 <p><img src="http://www.sveido.com/mermaid/img/ex4.png" alt="Example 4"></p>
 <h2 id="nodes">Nodes</h2>
 <h3 id="a-node-default-">A node (default)</h3>
-<pre>id1;</pre><p><img src="http://www.sveido.com/mermaid/img/ex5.png" alt="Single node"></p>
+<pre><code>id1;</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex5.png" alt="Single node"></p>
 <p>Note that the id is what is displayed in the box.</p>
 <h3 id="a-node-with-text">A node with text</h3>
 <p>It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
 found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
 one previously defined will be used when rendering the box.</p>
-<pre>id1[This is the text in the box];</pre><p><img src="http://www.sveido.com/mermaid/img/ex6.png" alt="Text in node"></p>
+<pre><code>id1[This is the text in the box];</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex6.png" alt="Text in node"></p>
 <h3 id="a-node-with-round-edges">A node with round edges</h3>
-<pre>id1(This is the text in the box);</pre><p><img src="http://www.sveido.com/mermaid/img/ex7.png" alt="Node with round edges"></p>
+<pre><code>id1(This is the text in the box);</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex7.png" alt="Node with round edges"></p>
 <h3 id="a-node-in-the-form-of-a-circle">A node in the form of a circle</h3>
-<pre>id1((This is the text in the box));</pre><p><img src="http://www.sveido.com/mermaid/img/ex12.png" alt="Node with round edges"></p>
+<pre><code>id1((This is the text in the box));</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex12.png" alt="Node with round edges"></p>
 <h3 id="a-node-in-an-asymetric-shape">A node in an asymetric shape</h3>
-<pre>id1>This is the text in the box];</pre><p><img src="http://www.sveido.com/mermaid/img/ex13.png" alt="Node with round edges"></p>
+<pre><code>id1>This is the text in the box];</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex13.png" alt="Node with round edges"></p>
 <h3 id="a-node-rhombus-">A node (rhombus)</h3>
-<pre>id1{This is the text in the box};</pre><p><img src="http://www.sveido.com/mermaid/img/ex8.png" alt="Decision box"></p>
+<pre><code>id1{This is the text in the box};</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex8.png" alt="Decision box"></p>
 <h3 id="styling-a-node">Styling a node</h3>
 <p>It is possible to apply specific styles such as a thicker border or a different background color to a node.</p>
-<pre>%% Example code
+<pre><code>%% Example code
 graph LR;
     id1(Start)-->id2(Stop);
     style id1 fill:#f9f,stroke:#333,stroke-width:4px;
-    style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;</pre><p><img src="http://www.sveido.com/mermaid/img/ex9.png" alt="Node with styles"></p>
+    style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex9.png" alt="Node with styles"></p>
 <h2 id="links-between-nodes">Links between nodes</h2>
 <p>Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.</p>
 <h3 id="a-link-with-arrow-head">A link with arrow head</h3>
-<pre>A-->B;</pre><p><img src="http://www.sveido.com/mermaid/img/ex4.png" alt="Link with arrowhead"></p>
+<pre><code>A-->B;</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex4.png" alt="Link with arrowhead"></p>
 <h3 id="an-open-link">An open link</h3>
-<pre>A---B;</pre><p><img src="http://www.sveido.com/mermaid/img/ex10.png" alt="Open link"></p>
+<pre><code>A---B;</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex10.png" alt="Open link"></p>
 <h3 id="text-on-links">Text on links</h3>
-<pre>A---|This is the text|B;</pre><p><img src="http://www.sveido.com/mermaid/img/ex11.png" alt="Text on links"></p>
+<pre><code>A---|This is the text|B;</code></pre><p><img src="http://www.sveido.com/mermaid/img/ex11.png" alt="Text on links"></p>
 <h2 id="interaction">Interaction</h2>
 <p>It is possible to bind a click event to a node:</p>
-<pre>click nodeId callback</pre><ul>
+<pre><code>click nodeId callback</code></pre><ul>
 <li>nodeId is the id of the node</li>
 <li>callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.<h2 id="styling-and-classes">Styling and classes</h2>
 <h4 id="classes">Classes</h4>
@@ -202,8 +314,8 @@ More convenient then defining the style everytime is to define a class of styles
 should have a different look.</li>
 </ul>
 <p>a class definition looks like the example below:</p>
-<pre>    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</pre><p>Attachment of a  class to a node is done as per below:</p>
-<pre>    class nodeId1 className;</pre>
+<pre><code>    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><p>Attachment of a  class to a node is done as per below:</p>
+<pre><code>    class nodeId1 className;</code></pre>
       </article>
     </div>
     <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
@@ -219,29 +331,29 @@ should have a different look.</li>
 
   <section class="column-group gutters">
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
   </section>
 </div>

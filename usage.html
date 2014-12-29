@@ -12,7 +12,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-  <!-- Place favicon.ico and apple-touch-icon(s) here  -->
+    
+<link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
 
   <link rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
   <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
@@ -30,7 +31,14 @@
   <!-- load Ink's css for IE8 -->
   <!--[if lt IE 9 ]>
   <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
   <![endif]-->
+  <link rel="stylesheet" href="/css/monokai_sublime.css">
+
+
+  <scrpt src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></scrpt>
+  <script src="/js/highlight.pack.js"></script>
+  <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
   <!-- test browser flexbox support and load legacy grid if unsupported -->
   <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
@@ -51,15 +59,21 @@
   <style type="text/css">
 
     body {
-      background: #ededed;
+      background: #ffffff;
+      font-family: sans-serif;
+      font-size: 90%;
     }
 
     header h1 small:before  {
       content: "|";
       margin: 0 0.5em;
-      font-size: 1.6em;
+      font-size: 1.5em;
     }
-
+      
+    h1 {
+    color: #104e8b
+        }        
+      
     article header{
       padding: 0;
       overflow: hidden;
@@ -73,7 +87,11 @@
       padding-bottom: 2em;
       border-bottom: 1px solid #ccc;
     }
-
+    
+    table, th, td {
+    border: 1px solid #8b8989;
+    } 
+      
     .date {
       float: right;
     }
@@ -82,12 +100,103 @@
       font-weight: 700;
       line-height: 1.5;
     }
-
+    .push, footer {
+        height: 120px;
+        margin-top: 0;
+        margin-bottom: 10;
+      } 
     footer {
-      background: #ccc;
+      background: #cdc5bf;
     }
   </style>
   <script>
+    var f = function (e) {
+      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")",
+      a = {
+        keyword: "sequenceDiagram note loop right left after and andalso|10 band begin bnot bor bsl bzr bxor case catch cond div end fun if let not of orelse|10 Note query receive rem try when xor",
+        literal: "false true"
+      }, n = {cN: "comment", b: "%", e: "$"}, b = {
+        cN: "number",
+        b: "\\b(\\d+#[a-fA-F0-9]+|\\d+(\\.\\d+)?([eE][-+]?\\d+)?)",
+        r: 0
+      }, i = {b: "fun\\s+" + r + "/\\d+"}, o = {
+        b: c + "\\(",
+        e: "\\)",
+        rB: !0,
+        r: 0,
+        c: [{cN: "function_name", b: c, r: 0}, {b: "\\(", e: "\\)", eW: !0, rE: !0, r: 0}]
+      }, d = {cN: "tuple", b: "{", e: "}", r: 0}, t = {
+        cN: "variable",
+        b: "\\b_([A-Z][A-Za-z0-9_]*)?",
+        r: 0
+      }, l = {cN: "variable", b: "[A-Z][a-zA-Z0-9_]*", r: 0}, f = {
+        b: "#" + e.UIR,
+        r: 0,
+        rB: !0,
+        c: [{cN: "record_name", b: "#" + e.UIR, r: 0}, {b: "{", e: "}", r: 0}]
+      }, s = {bK: "fun receive if loop try case", e: "end", k: a};
+      s.c = [n, i, e.inherit(e.ASM, {cN: ""}), s, o, e.QSM, b, d, t, l, f];
+      var u = [n, i, s, o, e.QSM, b, d, t, l, f];
+      o.c[1].c = u, d.c = u, f.c[1].c = u;
+      var v = {cN: "params", b: "\\(", e: "\\)", c: u};
+      return {
+        case_insensitive: true,
+        aliases: ["mermaid"],
+        k: a,
+        i: "(</|\\*=|\\+=|-=|/\\*|\\*/|\\(\\*|\\*\\))",
+        c: [{
+          cN: "function",
+          b: "^" + r + "\\s*\\(",
+          e: "->",
+          rB: !0,
+          i: "\\(|#|//|/\\*|\\\\|:|;",
+          c: [v, e.inherit(e.TM, {b: r})],
+          starts: {e: ";|\\.", k: a, c: u}
+        }, n, {
+          cN: "pp",
+          b: "^-",
+          e: "\\.",
+          r: 0,
+          eE: !0,
+          rB: !0,
+          l: "-" + e.IR,
+          k: "-module -record -undef -export -ifdef -ifndef -author -copyright -doc -vsn -import -include -include_lib -compile -define -else -endif -file -behaviour -behavior -spec",
+          c: [v]
+        }, b, e.QSM, f, t, l, d, {b: /\.$/}]
+      }
+    };
+    var g = function(hljs) {
+      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+      var keyw = {
+        keyword:
+                'graph sequenceDiagram participant loop end',
+        typename:
+                'Note',
+        literal: "false true left right"
+      };
+        return {
+          case_insensitive: false,
+          aliases: ["mermaid"],
+          k: keyw,
+          i: 'for',
+          c: [{
+            cN: "function",
+            b: "^" + r + "\\s*\\(",
+            e: "->",
+            rB: !0,
+            i: "\\(|#|//|/\\*|\\\\|:|;",
+            starts: {e: ";|\\.", k: keyw, c:[
+              {cN: "comment", b: "%", e: "$"}
+            ]}
+          },
+            {cN: "comment", b: "%", e: "$"}
+          ]
+
+        };
+    };
+    hljs.registerLanguage('mm',g);
+    hljs.initHighlightingOnLoad();
+
     Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
       DomLoaded.run(function(){
         var elements = document.querySelectorAll ('article h1,h2');
@@ -103,8 +212,11 @@
         Ink.requireModules( ['Ink.UI.Sticky_1'], function( Sticky ){
           new Sticky('#sidenav')
         });
+        console.log('Registering new lang');
+
       });
     });
+
   </script>
 </head>
 
@@ -146,7 +258,7 @@
       <article>
         <h1 id="installation">Installation</h1>
 <p>Either use the bower package manager as per below:</p>
-<pre>bower install mermaid --save-dev</pre><p>Or download javascript files:</p>
+<pre><code>bower install mermaid --save-dev</code></pre><p>Or download javascript files:</p>
 <ul>
 <li><a href="http://www.sveido.com/mermaid/dist/mermaid.full.min.js">mermaid including dependencies</a></li>
 </ul>
@@ -157,17 +269,17 @@
 <p>With this file you will need to include d3 and dagre-d3 yourself.</p>
 <h1 id="usage">Usage</h1>
 <p>Include mermaid on your web page:</p>
-<pre><script src="mermaid.full.min.js"></script></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
+<pre><code><script src="mermaid.full.min.js"></script></code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
 read the chart definiton which will be replaced with the svg chart.</p>
 <p>A chart defined like this:</p>
-<pre><div class="mermaid">
+<pre><code><div class="mermaid">
     CHART DEFINITION GOES HERE
-</div></pre><p>Would end up like this:</p>
-<pre><div class="mermaid" id="mermaidChart0">
+</div></code></pre><p>Would end up like this:</p>
+<pre><code><div class="mermaid" id="mermaidChart0">
     <svg>
         Chart ends up here
     </svg>
-</div></pre><p>An id is also added to mermaid tags without id.</p>
+</div></code></pre><p>An id is also added to mermaid tags without id.</p>
 
       </article>
     </div>
@@ -184,29 +296,29 @@ read the chart definiton which will be replaced with the svg chart.</p>
 
   <section class="column-group gutters">
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
     <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
+      <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
     </div>
   </section>
 </div>

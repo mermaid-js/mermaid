@@ -29,7 +29,7 @@ gulp.task('www',['indexSite'], function() {
             return '<div class="mermaid">'+code+'</div>';
         }
         else{
-            return "<pre>"+code+'</pre>';
+            return '<pre><code>'+code+'</code></pre>';
         }
     };
     // Compile a template for rendering each page
