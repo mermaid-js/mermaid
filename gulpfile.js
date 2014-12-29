@@ -10,7 +10,7 @@ var ext_replace = require('gulp-ext-replace');
 
 var fileList = [];
 gulp.task('indexSite', function() {
-    return gulp.src('docs/**/*.md')
+    return gulp.src('markdown/**/*.md')
         // Extract YAML front-matter, convert content to markdown via gulp-data
         .pipe(data(function(file) {
             var name = file.relative.substr(0,file.relative.length-3);
@@ -35,7 +35,7 @@ gulp.task('www',['indexSite'], function() {
     // Compile a template for rendering each page
     var template = hogan.compile(String(fs.readFileSync('templates/ink.html')));
 
-    return gulp.src('docs/**/*.md')
+    return gulp.src('markdown/**/*.md')
 
         // Extract YAML front-matter, convert content to markdown via gulp-data
         .pipe(data(function(file) {
