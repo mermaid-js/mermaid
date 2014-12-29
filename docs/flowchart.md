@@ -130,7 +130,7 @@ click nodeId callback
 
 * nodeId is the id of the node
 * callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
-
+## Styling and classes
 #### Classes
 More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
 should have a different look.
