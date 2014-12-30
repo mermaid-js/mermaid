@@ -2,261 +2,213 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Article page</title>
-  <meta name="description" content="">
-  <meta name="author" content="ink, cookbook, recipes">
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-
-    
-<link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
-
-  <link rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
-  <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
-  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png" media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
-  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
-  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
-
-  <!-- load Ink's css from the cdn -->
-  <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
-  <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/font-awesome.min.css">
-
-  <!-- load Ink's css for IE8 -->
-  <!--[if lt IE 9 ]>
-  <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-
-  <![endif]-->
-  <link rel="stylesheet" href="/css/monokai_sublime.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Article page</title>
+    <meta name="description" content="">
+    <meta name="author" content="ink, cookbook, recipes">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
 
-  <scrpt src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></scrpt>
-  <script src="/js/highlight.pack.js"></script>
-  <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
 
-  <!-- test browser flexbox support and load legacy grid if unsupported -->
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
-  <script type="text/javascript">
-    Modernizr.load({
-      test: Modernizr.flexbox,
-      nope : 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
-    });
-  </script>
+    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
+        <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
+        <link rel="apple-touch-icon" sizes="120x120"
+              href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png"
+              media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png"
+              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
+              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
 
-  <!-- load Ink's javascript files from the cdn -->
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-  <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js"></script>
+        <!-- load Ink's css from the cdn -->
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/font-awesome.min.css">
+
+        <!-- load Ink's css for IE8 -->
+        <!--[if lt IE 9 ]>
+        <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen"
+              title="no title" charset="utf-8">
+
+        <![endif]-->
 
 
-  <style type="text/css">
+        <link rel="stylesheet" href="css/monokai_sublime.css">
+        <script src="js/highlight.pack.js"></script>
+        <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
-    body {
-      background: #ffffff;
-      font-family: sans-serif;
-      font-size: 90%;
-    }
+        <!-- test browser flexbox support and load legacy grid if unsupported -->
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
+        <script type="text/javascript">
+            Modernizr.load({
+                test: Modernizr.flexbox,
+                nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
+            });
+        </script>
 
-    header h1 small:before  {
-      content: "|";
-      margin: 0 0.5em;
-      font-size: 1.5em;
-    }
-      
-    h1 {
-    color: #104e8b
-        }        
-      
-    article header{
-      padding: 0;
-      overflow: hidden;
-    }
+        <!-- load Ink's javascript files from the cdn -->
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js"></script>
 
-    article footer {
-      background: none;
-    }
 
-    article {
-      padding-bottom: 2em;
-      border-bottom: 1px solid #ccc;
-    }
-    
-    table, th, td {
-    border: 1px solid #8b8989;
-    } 
-      
-    .date {
-      float: right;
-    }
+        <style type="text/css">
 
-    summary {
-      font-weight: 700;
-      line-height: 1.5;
-    }
-    .push, footer {
-        height: 120px;
-        margin-top: 0;
-        margin-bottom: 10;
-      } 
-    footer {
-      background: #cdc5bf;
-    }
-  </style>
-  <script>
-    var f = function (e) {
-      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")",
-      a = {
-        keyword: "sequenceDiagram note loop right left after and andalso|10 band begin bnot bor bsl bzr bxor case catch cond div end fun if let not of orelse|10 Note query receive rem try when xor",
-        literal: "false true"
-      }, n = {cN: "comment", b: "%", e: "$"}, b = {
-        cN: "number",
-        b: "\\b(\\d+#[a-fA-F0-9]+|\\d+(\\.\\d+)?([eE][-+]?\\d+)?)",
-        r: 0
-      }, i = {b: "fun\\s+" + r + "/\\d+"}, o = {
-        b: c + "\\(",
-        e: "\\)",
-        rB: !0,
-        r: 0,
-        c: [{cN: "function_name", b: c, r: 0}, {b: "\\(", e: "\\)", eW: !0, rE: !0, r: 0}]
-      }, d = {cN: "tuple", b: "{", e: "}", r: 0}, t = {
-        cN: "variable",
-        b: "\\b_([A-Z][A-Za-z0-9_]*)?",
-        r: 0
-      }, l = {cN: "variable", b: "[A-Z][a-zA-Z0-9_]*", r: 0}, f = {
-        b: "#" + e.UIR,
-        r: 0,
-        rB: !0,
-        c: [{cN: "record_name", b: "#" + e.UIR, r: 0}, {b: "{", e: "}", r: 0}]
-      }, s = {bK: "fun receive if loop try case", e: "end", k: a};
-      s.c = [n, i, e.inherit(e.ASM, {cN: ""}), s, o, e.QSM, b, d, t, l, f];
-      var u = [n, i, s, o, e.QSM, b, d, t, l, f];
-      o.c[1].c = u, d.c = u, f.c[1].c = u;
-      var v = {cN: "params", b: "\\(", e: "\\)", c: u};
-      return {
-        case_insensitive: true,
-        aliases: ["mermaid"],
-        k: a,
-        i: "(</|\\*=|\\+=|-=|/\\*|\\*/|\\(\\*|\\*\\))",
-        c: [{
-          cN: "function",
-          b: "^" + r + "\\s*\\(",
-          e: "->",
-          rB: !0,
-          i: "\\(|#|//|/\\*|\\\\|:|;",
-          c: [v, e.inherit(e.TM, {b: r})],
-          starts: {e: ";|\\.", k: a, c: u}
-        }, n, {
-          cN: "pp",
-          b: "^-",
-          e: "\\.",
-          r: 0,
-          eE: !0,
-          rB: !0,
-          l: "-" + e.IR,
-          k: "-module -record -undef -export -ifdef -ifndef -author -copyright -doc -vsn -import -include -include_lib -compile -define -else -endif -file -behaviour -behavior -spec",
-          c: [v]
-        }, b, e.QSM, f, t, l, d, {b: /\.$/}]
-      }
-    };
-    var g = function(hljs) {
-      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
-      var keyw = {
-        keyword:
-                'graph sequenceDiagram participant loop end',
-        typename:
-                'Note',
-        literal: "false true left right"
-      };
-        return {
-          case_insensitive: false,
-          aliases: ["mermaid"],
-          k: keyw,
-          i: 'for',
-          c: [{
-            cN: "function",
-            b: "^" + r + "\\s*\\(",
-            e: "->",
-            rB: !0,
-            i: "\\(|#|//|/\\*|\\\\|:|;",
-            starts: {e: ";|\\.", k: keyw, c:[
-              {cN: "comment", b: "%", e: "$"}
-            ]}
-          },
-            {cN: "comment", b: "%", e: "$"}
-          ]
+            body {
+                background: #ffffff;
+                font-family: sans-serif;
+                font-size: 90%;
+            }
 
-        };
-    };
-    hljs.registerLanguage('mm',g);
-    hljs.initHighlightingOnLoad();
+            header h1 small:before {
+                content: "|";
+                margin: 0 0.5em;
+                font-size: 1.5em;
+            }
 
-    Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
-      DomLoaded.run(function(){
-        var elements = document.querySelectorAll ('article h1,h2');
-        var i;
-        var sections = document.getElementById('sections');
-        for(i=0;i<elements.length;i++){
-          var e = elements[i];
+            h1 {
+                color: #104e8b
+            }
 
-          sections.innerHTML = sections.innerHTML +  '<li><a href="#'+e.id+'">'+e.innerText+'</a></li>';
-          //$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
-        }
+            article header {
+                padding: 0;
+                overflow: hidden;
+            }
 
-        Ink.requireModules( ['Ink.UI.Sticky_1'], function( Sticky ){
-          new Sticky('#sidenav')
-        });
-        console.log('Registering new lang');
+            article footer {
+                background: none;
+            }
 
-      });
-    });
+            article {
+                padding-bottom: 2em;
+                border-bottom: 1px solid #ccc;
+            }
 
-  </script>
+            table, th, td {
+                border: 1px solid #8b8989;
+            }
+
+            .date {
+                float: right;
+            }
+
+            summary {
+                font-weight: 700;
+                line-height: 1.5;
+            }
+
+            .push, footer {
+                height: 120px;
+                margin-top: 0;
+                margin-bottom: 10;
+            }
+
+            footer {
+                background: #cdc5bf;
+            }
+        </style>
+        <script>
+            var g = function (hljs) {
+                var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+                var keyw = {
+                    keyword: 'graph sequenceDiagram participant loop end',
+                    typename: 'Note',
+                    literal: "false true left right"
+                };
+                return {
+                    case_insensitive: false,
+                    aliases: ["mermaid"],
+                    k: keyw,
+                    i: 'for',
+                    c: [{
+                        cN: "function",
+                        b: "^" + r + "\\s*\\(",
+                        e: "->",
+                        rB: !0,
+                        i: "\\(|#|//|/\\*|\\\\|:|;",
+                        starts: {
+                            e: ";|\\.", k: keyw, c: [
+                                {cN: "comment", b: "%", e: "$"}
+                            ]
+                        }
+                    },
+                        {cN: "comment", b: "%", e: "$"}
+                    ]
+
+                };
+            };
+            hljs.registerLanguage('mm', g);
+            hljs.initHighlightingOnLoad();
+
+            Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
+                DomLoaded.run(function () {
+                    var elements = document.querySelectorAll('article h1,h2');
+                    var i;
+                    var sections = document.getElementById('sections');
+                    for (i = 0; i < elements.length; i++) {
+                        var e = elements[i];
+
+                        sections.innerHTML = sections.innerHTML + '<li><a href="#' + e.id + '">' + e.innerText + '</a></li>';
+                        //$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
+                    }
+
+                    Ink.requireModules(['Ink.UI.Sticky_1'], function (Sticky) {
+                        new Sticky('#sidenav')
+                    });
+                    console.log('Registering new lang');
+
+                });
+            });
+
+        </script>
 </head>
 
 <body>
 
 <div class="ink-grid">
 
-  <!--[if lte IE 9 ]>
-  <div class="ink-alert basic" role="alert">
-      <button class="ink-dismiss">&times;</button>
-      <p>
-          <strong>You are using an outdated Internet Explorer version.</strong>
-          Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
-      </p>
-  </div>
-  -->
+    <!--[if lte IE 9 ]>
+    <div class="ink-alert basic" role="alert">
+        <button class="ink-dismiss">&times;</button>
+        <p>
+            <strong>You are using an outdated Internet Explorer version.</strong>
+            Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
+        </p>
+    </div>
+    -->
 
-  <!-- Add your site or application content here -->
+    <!-- Add your site or application content here -->
 
-  <header class="clearfix vertical-padding">
+    <header class="clearfix vertical-padding">
 
-    <h1 class="logo xlarge-push-left large-push-left">
-      mermaid<small>Diagrams and flowcharts from textsimilar to markdown</small>
-    </h1>
+        <h1 class="logo xlarge-push-left large-push-left">
+            mermaid
+            <small>Diagrams and flowcharts from textsimilar to markdown</small>
+        </h1>
 
-    <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-      <ul class="menu horizontal black">
-        <li class="active"><a href="development.html">development</a></li>
-        <li><a href="flowchart.html">flowchart</a></li>
-        <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
-        <li><a href="usage.html">usage</a></li>
-      </ul>
-    </nav>
+        <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
+            <ul class="menu horizontal black">
+                <li class="active"><a href="development.html">development</a></li>
+                <li><a href="flowchart.html">flowchart</a></li>
+                <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
+                <li><a href="usage.html">usage</a></li>
+            </ul>
+        </nav>
 
-  </header>
+    </header>
 
-  <section class="column-group gutters article">
-    <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
-      <article>
-        <h1 id="things-to-be-done-in-order-to-add-a-new-diagram-type">Things to be done in order to add a new diagram type</h1>
+    <section class="column-group gutters article">
+        <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
+            <article>
+                <h1 id="things-to-be-done-in-order-to-add-a-new-diagram-type">Things to be done in order to add a new diagram type</h1>
 <h2 id="step-1-grammar-parsing">Step 1: Grammar &amp; Parsing</h2>
 <h3 id="grammar">Grammar</h3>
 <p>This would be to  define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.</p>
@@ -281,56 +233,30 @@
 <h2 id="step-4-the-final-piece-triggering-the-rendering">Step 4: The final piece - triggering the rendering</h2>
 <p>At this point when mermaid is trying to render the diagram it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step num 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument</p>
 
-      </article>
-    </div>
-    <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
-      <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
-           data-bottom-element="#sticky-stop">
-        <ul class="menu vertical black" id="sections">
-          <li class="heading active"><a href="#">Quicklinks:</a></li>
-        </ul>
-      </nav>
+            </article>
+        </div>
+        <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
+            <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
+                 data-bottom-element="#sticky-stop">
+                <ul class="menu vertical black" id="sections">
+                    <li class="heading active"><a href="#">Quicklinks:</a></li>
+                </ul>
+            </nav>
+        </section>
     </section>
-  </section>
-  <div id="sticky-stop">&nbsp;</div>
+    <div id="sticky-stop">&nbsp;</div>
 
-  <section class="column-group gutters">
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-  </section>
 </div>
 <footer class="clearfix">
-  <div class="ink-grid">
-    <ul class="unstyled inline half-vertical-space">
-      <li class="active"><a href="#">About</a></li>
-      <li><a href="#">Sitemap</a></li>
-      <li><a href="#">Contacts</a></li>
-    </ul>
-    <p class="note">Identification of the owner of the copyright, either by name, abbreviation, or other designation by which it is generally known.</p>
-  </div>
+    <div class="ink-grid">
+        <ul class="unstyled inline half-vertical-space">
+            <li class="active"><a href="#">About</a></li>
+            <li><a href="#">Sitemap</a></li>
+            <li><a href="#">Contacts</a></li>
+        </ul>
+        <p class="note">Identification of the owner of the copyright, either by name, abbreviation, or other designation
+            by which it is generally known.</p>
+    </div>
 </footer>
 </body>
 </html>
