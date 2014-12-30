@@ -110,61 +110,6 @@
     }
   </style>
   <script>
-    var f = function (e) {
-      var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")",
-      a = {
-        keyword: "sequenceDiagram note loop right left after and andalso|10 band begin bnot bor bsl bzr bxor case catch cond div end fun if let not of orelse|10 Note query receive rem try when xor",
-        literal: "false true"
-      }, n = {cN: "comment", b: "%", e: "$"}, b = {
-        cN: "number",
-        b: "\\b(\\d+#[a-fA-F0-9]+|\\d+(\\.\\d+)?([eE][-+]?\\d+)?)",
-        r: 0
-      }, i = {b: "fun\\s+" + r + "/\\d+"}, o = {
-        b: c + "\\(",
-        e: "\\)",
-        rB: !0,
-        r: 0,
-        c: [{cN: "function_name", b: c, r: 0}, {b: "\\(", e: "\\)", eW: !0, rE: !0, r: 0}]
-      }, d = {cN: "tuple", b: "{", e: "}", r: 0}, t = {
-        cN: "variable",
-        b: "\\b_([A-Z][A-Za-z0-9_]*)?",
-        r: 0
-      }, l = {cN: "variable", b: "[A-Z][a-zA-Z0-9_]*", r: 0}, f = {
-        b: "#" + e.UIR,
-        r: 0,
-        rB: !0,
-        c: [{cN: "record_name", b: "#" + e.UIR, r: 0}, {b: "{", e: "}", r: 0}]
-      }, s = {bK: "fun receive if loop try case", e: "end", k: a};
-      s.c = [n, i, e.inherit(e.ASM, {cN: ""}), s, o, e.QSM, b, d, t, l, f];
-      var u = [n, i, s, o, e.QSM, b, d, t, l, f];
-      o.c[1].c = u, d.c = u, f.c[1].c = u;
-      var v = {cN: "params", b: "\\(", e: "\\)", c: u};
-      return {
-        case_insensitive: true,
-        aliases: ["mermaid"],
-        k: a,
-        i: "(</|\\*=|\\+=|-=|/\\*|\\*/|\\(\\*|\\*\\))",
-        c: [{
-          cN: "function",
-          b: "^" + r + "\\s*\\(",
-          e: "->",
-          rB: !0,
-          i: "\\(|#|//|/\\*|\\\\|:|;",
-          c: [v, e.inherit(e.TM, {b: r})],
-          starts: {e: ";|\\.", k: a, c: u}
-        }, n, {
-          cN: "pp",
-          b: "^-",
-          e: "\\.",
-          r: 0,
-          eE: !0,
-          rB: !0,
-          l: "-" + e.IR,
-          k: "-module -record -undef -export -ifdef -ifndef -author -copyright -doc -vsn -import -include -include_lib -compile -define -else -endif -file -behaviour -behavior -spec",
-          c: [v]
-        }, b, e.QSM, f, t, l, d, {b: /\.$/}]
-      }
-    };
     var g = function(hljs) {
       var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
       var keyw = {
@@ -274,33 +219,6 @@
   </section>
   <div id="sticky-stop">&nbsp;</div>
 
-  <section class="column-group gutters">
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-  </section>
 </div>
 <footer class="clearfix">
   <div class="ink-grid">
