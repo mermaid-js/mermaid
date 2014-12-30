@@ -78,3 +78,6 @@ text.actor {
     font-family: 'trebuchet ms', verdana, arial;
     font-size:14px;
 }
+
+
+.node { fill:#eaeaea; stroke:#666; stroke-width:1.5px; }

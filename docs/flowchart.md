@@ -12,6 +12,7 @@ This declares a graph oriented from top to bottom.
 ![Example 3](http://www.sveido.com/mermaid/img/ex3.png)
 
 ```
+%% Example code
 graph LR
 ```
 
@@ -31,11 +32,12 @@ Possible directions are:
 
 ### A node (default)
 ```
-id1;
+id1
 ```
-
-![Single node](http://www.sveido.com/mermaid/img/ex5.png)
-
+```
+graph LR
+    id1
+```
 Note that the id is what is displayed in the box.
 
 ### A node with text
@@ -44,10 +46,13 @@ found for the node that will be used. Also if you define edges for the node late
 one previously defined will be used when rendering the box.
 
 ```
-id1[This is the text in the box];
+id1[This is the text in the box]
 ```
 
-![Text in node](http://www.sveido.com/mermaid/img/ex6.png)
+```
+graph LR
+    id1[This is the text in the box]
+```
 
 
 ### A node with round edges
@@ -55,42 +60,57 @@ id1[This is the text in the box];
 id1(This is the text in the box);
 ```
 
-![Node with round edges](http://www.sveido.com/mermaid/img/ex7.png)
+```
+graph LR
+    id1(This is the text in the box)
+```
 
 ### A node in the form of a circle
 ```
-id1((This is the text in the box));
+    id1((This is the text in the circle));
 ```
 
-![Node with round edges](http://www.sveido.com/mermaid/img/ex12.png)
+```
+graph LR
+    id1(This is the text in the circle)
+```
 
 ### A node in an asymetric shape
 ```
-id1>This is the text in the box];
+    id1>This is the text in the box]
 ```
 
-![Node with round edges](http://www.sveido.com/mermaid/img/ex13.png)
-
+```
+graph LR
+    id1>This is the text in the box]
+```
 
 ### A node (rhombus)
 ```
-id1{This is the text in the box};
+    id1{This is the text in the box}
 ```
 
-![Decision box](http://www.sveido.com/mermaid/img/ex8.png)
+```
+graph LR
+    id1{This is the text in the box}
+```
 
 ### Styling a node
 It is possible to apply specific styles such as a thicker border or a different background color to a node.
 
 ```
 %% Example code
-graph LR;
-    id1(Start)-->id2(Stop);
+graph LR
+    id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px;
     style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5;
 ```
-
-![Node with styles](http://www.sveido.com/mermaid/img/ex9.png)
+```
+graph LR
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5
+```
 
 ## Links between nodes
 
@@ -98,26 +118,38 @@ Nodes can be connected with links/edges. It is possible to have different types 
 
 ### A link with arrow head
 ```
-A-->B;
+A-->B
 ```
-
-![Link with arrowhead](http://www.sveido.com/mermaid/img/ex4.png)
+```
+graph LR;
+    A-->B
+```
 
 ### An open link
 
 ```
-A---B;
+A --- B
 ```
 
-![Open link](http://www.sveido.com/mermaid/img/ex10.png)
+```
+graph LR;
+    A --- B
+```
 
 ### Text on links
 
 ```
+A-- This is the text -- B
+```
+or
+```
 A---|This is the text|B;
 ```
 
-![Text on links](http://www.sveido.com/mermaid/img/ex11.png)
+```
+graph LR;
+   A---|This is the text|B;
+```
 
 
 ## Interaction
