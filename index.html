@@ -2,172 +2,240 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Article page</title>
-  <meta name="description" content="">
-  <meta name="author" content="ink, cookbook, recipes">
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-
-  <!-- Place favicon.ico and apple-touch-icon(s) here  -->
-
-  <link rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
-  <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
-  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png" media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
-  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
-  <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
-
-  <!-- load Ink's css from the cdn -->
-  <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
-  <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/font-awesome.min.css">
-
-  <!-- load Ink's css for IE8 -->
-  <!--[if lt IE 9 ]>
-  <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <![endif]-->
-
-  <!-- test browser flexbox support and load legacy grid if unsupported -->
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
-  <script type="text/javascript">
-    Modernizr.load({
-      test: Modernizr.flexbox,
-      nope : 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
-    });
-  </script>
-
-  <!-- load Ink's javascript files from the cdn -->
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
-  <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-  <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Article page</title>
+    <meta name="description" content="">
+    <meta name="author" content="ink, cookbook, recipes">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
 
-  <style type="text/css">
+    <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
 
-    body {
-      background: #ededed;
-    }
+    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
+        <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
+        <link rel="apple-touch-icon" sizes="120x120"
+              href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png"
+              media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png"
+              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
+              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
 
-    header h1 small:before  {
-      content: "|";
-      margin: 0 0.5em;
-      font-size: 1.6em;
-    }
+        <!-- load Ink's css from the cdn -->
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/font-awesome.min.css">
 
-    article header{
-      padding: 0;
-      overflow: hidden;
-    }
+        <!-- load Ink's css for IE8 -->
+        <!--[if lt IE 9 ]>
+        <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen"
+              title="no title" charset="utf-8">
 
-    article footer {
-      background: none;
-    }
+        <![endif]-->
 
-    article {
-      padding-bottom: 2em;
-      border-bottom: 1px solid #ccc;
-    }
 
-    .date {
-      float: right;
-    }
+        <link rel="stylesheet" href="css/monokai_sublime.css">
+        <script src="js/highlight.pack.js"></script>
+        <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
-    summary {
-      font-weight: 700;
-      line-height: 1.5;
-    }
+        <!-- test browser flexbox support and load legacy grid if unsupported -->
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
+        <script type="text/javascript">
+            Modernizr.load({
+                test: Modernizr.flexbox,
+                nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
+            });
+        </script>
 
-    footer {
-      background: #ccc;
-    }
-  </style>
-  <script>
-    Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
-      DomLoaded.run(function(){
-        var elements = document.querySelectorAll ('article h1,h2');
-        var i;
-        var sections = document.getElementById('sections');
-        for(i=0;i<elements.length;i++){
-          var e = elements[i];
+        <!-- load Ink's javascript files from the cdn -->
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js"></script>
 
-          sections.innerHTML = sections.innerHTML +  '<li><a href="#'+e.id+'">'+e.innerText+'</a></li>';
-          //$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
-        }
 
-        Ink.requireModules( ['Ink.UI.Sticky_1'], function( Sticky ){
-          new Sticky('#sidenav')
-        });
-      });
-    });
-  </script>
+        <style type="text/css">
+
+            body {
+                background: #ffffff;
+                font-family: sans-serif;
+                font-size: 90%;
+            }
+
+            header h1 small:before {
+                content: "|";
+                margin: 0 0.5em;
+                font-size: 1.5em;
+            }
+
+            h1 {
+                color: #104e8b
+            }
+
+            article header {
+                padding: 0;
+                overflow: hidden;
+            }
+
+            article footer {
+                background: none;
+            }
+
+            article {
+                padding-bottom: 2em;
+                border-bottom: 1px solid #ccc;
+            }
+
+            table, th, td {
+                border: 1px solid #8b8989;
+            }
+
+            .date {
+                float: right;
+            }
+
+            summary {
+                font-weight: 700;
+                line-height: 1.5;
+            }
+
+            .push, footer {
+                height: 120px;
+                margin-top: 0;
+                margin-bottom: 10;
+            }
+
+            footer {
+                background: #cdc5bf;
+            }
+        </style>
+        <script>
+            var g = function (hljs) {
+                var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+                var keyw = {
+                    keyword: 'graph sequenceDiagram participant loop end',
+                    typename: 'Note',
+                    literal: "false true left right"
+                };
+                return {
+                    case_insensitive: false,
+                    aliases: ["mermaid"],
+                    k: keyw,
+                    i: 'for',
+                    c: [{
+                        cN: "function",
+                        b: "^" + r + "\\s*\\(",
+                        e: "->",
+                        rB: !0,
+                        i: "\\(|#|//|/\\*|\\\\|:|;",
+                        starts: {
+                            e: ";|\\.", k: keyw, c: [
+                                {cN: "comment", b: "%", e: "$"}
+                            ]
+                        }
+                    },
+                        {cN: "comment", b: "%", e: "$"}
+                    ]
+
+                };
+            };
+            hljs.registerLanguage('mm', g);
+            hljs.initHighlightingOnLoad();
+
+            Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
+                DomLoaded.run(function () {
+                    var elements = document.querySelectorAll('article h1,h2');
+                    var i;
+                    var sections = document.getElementById('sections');
+                    for (i = 0; i < elements.length; i++) {
+                        var e = elements[i];
+
+                        sections.innerHTML = sections.innerHTML + '<li><a href="#' + e.id + '">' + e.innerText + '</a></li>';
+                        //$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
+                    }
+
+                    Ink.requireModules(['Ink.UI.Sticky_1'], function (Sticky) {
+                        new Sticky('#sidenav')
+                    });
+                    console.log('Registering new lang');
+
+                });
+            });
+
+        </script>
 </head>
 
 <body>
 
 <div class="ink-grid">
 
-  <!--[if lte IE 9 ]>
-  <div class="ink-alert basic" role="alert">
-      <button class="ink-dismiss">&times;</button>
-      <p>
-          <strong>You are using an outdated Internet Explorer version.</strong>
-          Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
-      </p>
-  </div>
-  -->
+    <!--[if lte IE 9 ]>
+    <div class="ink-alert basic" role="alert">
+        <button class="ink-dismiss">&times;</button>
+        <p>
+            <strong>You are using an outdated Internet Explorer version.</strong>
+            Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
+        </p>
+    </div>
+    -->
 
-  <!-- Add your site or application content here -->
+    <!-- Add your site or application content here -->
 
-  <header class="clearfix vertical-padding">
+    <header class="clearfix vertical-padding">
 
-    <h1 class="logo xlarge-push-left large-push-left">
-      mermaid<small>Diagrams and flowcharts from textsimilar to markdown</small>
-    </h1>
+        <h1 class="logo xlarge-push-left large-push-left">
+            mermaid
+            <small>Diagrams and flowcharts from textsimilar to markdown</small>
+        </h1>
 
-    <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-      <ul class="menu horizontal black">
-        <li><a href="CONTRIBUTING.html">CONTRIBUTING</a></li>
-        <li><a href="README.html">README</a></li>
-        <li class="active"><a href="index.html">index</a></li>
-        <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
-      </ul>
-    </nav>
+        <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
+            <ul class="menu horizontal black">
+                <li><a href="development.html">development</a></li>
+                <li><a href="flowchart.html">flowchart</a></li>
+                <li class="active"><a href="index.html">index</a></li>
+                <li><a href="mermaidCLI.html">mermaidCLI</a></li>
+                <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
+                <li><a href="usage.html">usage</a></li>
+            </ul>
+        </nav>
 
-  </header>
+    </header>
 
-  <section class="column-group gutters article">
-    <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
-      <article>
-        <h1 id="mermaid-build-status-https-travis-ci-org-knsv-mermaid-svg-branch-master-https-travis-ci-org-knsv-mermaid-code-climate-https-codeclimate-com-github-knsv-mermaid-badges-gpa-svg-https-codeclimate-com-github-knsv-mermaid-">mermaid <a href="https://travis-ci.org/knsv/mermaid"><img src="https://travis-ci.org/knsv/mermaid.svg?branch=master" alt="Build Status"></a> <a href="https://codeclimate.com/github/knsv/mermaid"><img src="https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg" alt="Code Climate"></a></h1>
+    <section class="column-group gutters article">
+        <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
+            <article>
+                <h1 id="mermaid-build-status-https-travis-ci-org-knsv-mermaid-svg-branch-master-https-travis-ci-org-knsv-mermaid-code-climate-https-codeclimate-com-github-knsv-mermaid-badges-gpa-svg-https-codeclimate-com-github-knsv-mermaid-">mermaid <a href="https://travis-ci.org/knsv/mermaid"><img src="https://travis-ci.org/knsv/mermaid.svg?branch=master" alt="Build Status"></a> <a href="https://codeclimate.com/github/knsv/mermaid"><img src="https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg" alt="Code Climate"></a></h1>
 <p>Generation of diagrams and flowcharts from text in a similar manner as markdown.</p>
 <p>Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?</p>
 <p>This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.</p>
 <p>The code below would render the following image</p>
 <table>
+<tr><th>Code</th><th>Rendered diagram</th></tr>
 <tr><td>
 <pre>
+<code>
 graph TD;
     A--&gt;B;
     A--&gt;C;
     B--&gt;D;
     C--&gt;D;
+<code>
 </pre>
 </td>
 <td>
-would render this lovely chart:
-
 <img src='http://www.sveido.com/mermaid/img/ex1.png' alt='Example 1'>
 </td>
 </tr>
 <tr>
 <td>
 <pre>
+<code>
 sequenceDiagram
     participant Alice
     participant Bob
@@ -179,106 +247,49 @@ sequenceDiagram
     John--&gt;Alice: Great!
     John-&gt;Bob: How about you?
     Bob--&gt;John: Jolly good!
+</code>
 </pre>
 </td>
 <td>
-would render this lovely chart:
-
 <img src='http://www.sveido.com/mermaid/img/seq1.png' alt='Example 2'>
 </td>
 </tr>
-
 </table>
 
-<p>A page with a live example can be seen <a href="http://www.sveido.com/mermaid/demo/html/web.html">here</a>. You can also look at mermaid in action using <a href="http://jsbin.com/faxunexeku/1/edit?html,output">jsbin</a>. If you want a live demo, there is an editor provided in the mermaid project or you can simply look at this <a href="http://danielmschmidt.github.io/mermaid-demo/">great editor</a></p>
-<h1 id="-the-main-documentation-is-located-in-the-wiki-https-github-com-knsv-mermaid-wiki-"><a href="https://github.com/knsv/mermaid/wiki">The main documentation is located in the wiki</a></h1>
-<h1 id="another-graph-example">Another graph example</h1>
-<div class="mermaid">graph LR;
-    A[Hard edge]-->|Link text|B(Round edge);
-    B-->C{Decision};
-    C-->|One|D[Result one];
-    C-->|Two|E[Result two];</div><p>Below is the new declaration of the graph which since 0.2.16  also is valid along with the old declaration of the graph as described in the graph example on the home wiki page.</p>
-<div class="mermaid">graph LR
-    A[Hard edge] -->|Link text| B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]</div><p><img src="http://www.sveido.com/mermaid/img/ex2.png" alt="Example 2"></p>
-<h1 id="mermaid-cli">mermaid CLI</h1>
-<p>Installing mermaid globally (<code>npm install -g mermaid</code>) will expose the <code>mermaid</code> command to your environment, allowing you to generate PNGs from any file containing mermaid markup via the command line.</p>
-<p><strong>Note:</strong> The <code>mermaid</code> command requires <a href="http://phantomjs.org/">PhantomJS</a> (version <code>^1.9.0</code>) to be installed and available in your <em>$PATH</em>, or you can specify it&#39;s location with the <code>-e</code> option. For most environments, <code>npm install -g phantomjs</code> will satisfy this requirement.</p>
-<h2 id="usage">Usage</h2>
-<pre>$ mermaid --help
-
-Usage: mermaid [options] <file>...
-
-file    The mermaid description file to be rendered
-
-Options:
-  -s --svg          Output SVG instead of PNG (experimental)
-  -p --png          If SVG was selected, and you also want PNG, set this flag
-  -o --outputDir    Directory to save files, will be created automatically, defaults to `cwd`
-  -e --phantomPath  Specify the path to the phantomjs executable
-  -h --help         Show this message
-  -v --verbose      Show logging
-  --version         Print version and quit</pre><h2 id="cli-known-issues">CLI Known Issues</h2>
+<p>Play with mermaid using this <a href="http://danielmschmidt.github.io/mermaid-demo/">editor</a>. You can also look at mermaid in action using <a href="http://jsbin.com/faxunexeku/1/edit?html,output">jsbin</a>.</p>
+<h2 id="further-reading">Further reading</h2>
 <ul>
-<li>SVG output currently does some replacement on text, as mermaid&#39;s SVG output is only appropriate for browsers. Text color and background color is not yet replicated; please use PNGs for most purposes until this is resolved.</li>
-<li>SVG output is decidedly non-standard. It works, but may cause issues in some viewers.</li>
+<li><a href="http://knsv.github.io/mermaid/usage.html">Usage</a></li>
+<li><a href="http://knsv.github.io/mermaid/flowchart.html">Flowchart syntax</a></li>
+<li><a href="http://knsv.github.io/mermaid/sequenceDiagram.html">Sequence diagram syntax</a></li>
+<li><a href="http://knsv.github.io/mermaid/mermaidCLI.html">Mermaid client</a></li>
 </ul>
 <h1 id="credits">Credits</h1>
-<p>Many thanks to the <a href="http://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing the graphical layout and drawing libraries! Thanks also to the <a href="http://bramp.github.io/js-sequence-diagrams">js-sequence-diagram</a> project for usage of the grammar for the sequence diagrams.</p>
+<p>Many thanks to the <a href="http://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing
+the graphical layout and drawing libraries! Thanks also to the
+<a href="http://bramp.github.io/js-sequence-diagrams">js-sequence-diagram</a> project for usage of the grammar for the
+sequence diagrams.</p>
 <p><em>Mermaid was created by Knut Sveidqvist for easier documentation.</em></p>
+<p>Knut has not done all work by him self, here is the full list of the projects <a href="https://github.com/knsv/mermaid/graphs/contributors">contributors</a>.</p>
 
-      </article>
-    </div>
-    <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
-      <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
-           data-bottom-element="#sticky-stop">
-        <ul class="menu vertical black" id="sections">
-          <li class="heading active"><a href="#">Quicklinks:</a></li>
-        </ul>
-      </nav>
+            </article>
+        </div>
+        <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
+            <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
+                 data-bottom-element="#sticky-stop">
+                <ul class="menu vertical black" id="sections">
+                    <li class="heading active"><a href="#">Quicklinks:</a></li>
+                </ul>
+            </nav>
+        </section>
     </section>
-  </section>
-  <div id="sticky-stop">&nbsp;</div>
+    <div id="sticky-stop">&nbsp;</div>
 
-  <section class="column-group gutters">
-    <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h3>heading</h3>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Red is not the right word," was the reply. "The plague was scarlet.  The whole face and body turned scarlet in an hour's time. Don't I  know? Didn't I see enough of it? And I am telling you it was scarlet  because&mdash;well, because it was scarlet. There is no other word for it."</p>
-    </div>
-  </section>
 </div>
 <footer class="clearfix">
-  <div class="ink-grid">
-    <ul class="unstyled inline half-vertical-space">
-      <li class="active"><a href="#">About</a></li>
-      <li><a href="#">Sitemap</a></li>
-      <li><a href="#">Contacts</a></li>
-    </ul>
-    <p class="note">Identification of the owner of the copyright, either by name, abbreviation, or other designation by which it is generally known.</p>
-  </div>
+    <div class="ink-grid">
+        <p class="note"><br/>These pages are generated from markdown source files. <a href="https://raw.githubusercontent.com/knsv/mermaid/gh-pages/docs/flowchart.md">flowchart.md</a> is an example of a markdown file which includes mermaid source.</p>
+    </div>
 </footer>
 </body>
 </html>
