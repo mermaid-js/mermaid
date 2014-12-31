@@ -52,7 +52,17 @@ sequenceDiagram
 
 ## Further reading
 
+* [Usage](http://knsv.github.io/mermaid/usage.html)
 * [Flowchart syntax](http://knsv.github.io/mermaid/flowchart.html)
-* [Seqeucen diagram syntax](http://knsv.github.io/mermaid/sequenceDiagram.html)
-* Mermaid client
+* [Sequence diagram syntax](http://knsv.github.io/mermaid/sequenceDiagram.html)
+* [Mermaid client](http://knsv.github.io/mermaid/mermaidCLI.html)
 
+# Credits
+Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
+the graphical layout and drawing libraries! Thanks also to the
+[js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the
+sequence diagrams.
+
+*Mermaid was created by Knut Sveidqvist for easier documentation.*
+
+Knut has not done all work by him self, here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
