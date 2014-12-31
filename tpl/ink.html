@@ -12,8 +12,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-    
-<link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
+<!-- Place favicon.ico and apple-touch-icon(s) here  -->
 
   <link rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
   <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
@@ -83,6 +82,8 @@
     
     table, th, td {
     border: 1px solid #8b8989;
+    border-spacing: 2px;
+    border-collapse: collapse;
     } 
       
     .date {
@@ -99,7 +100,7 @@
         margin-bottom: 10;
       } 
     footer {
-      background: #cdc5bf;
+      background: #E6E6E6;
     }
   </style>
   <script>
@@ -146,7 +147,7 @@
     </h1>
 
     <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-      <ul class="menu horizontal black">
+      <ul class="menu horizontal blue">
         {{#list}}
         {{#active}}
         <li class="active"><a href="{{{name}}}.html">{{{name}}}</a></li>
@@ -161,15 +162,15 @@
   </header>
 
   <section class="column-group gutters article">
-    <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
+    <div class="xlarge-80 large-80 medium-60 small-100 tiny-100">
       <article>
         {{{contents}}}
       </article>
     </div>
-    <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
+    <section class="xlarge-20 large-20 medium-40 small-100 tiny-100">
       <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
            data-bottom-element="#sticky-stop">
-        <ul class="menu vertical black" id="sections">
+        <ul class="menu vertical blue" id="sections">
           <li class="heading active"><a href="#">Quicklinks:</a></li>
         </ul>
       </nav>
@@ -178,16 +179,6 @@
   <div id="sticky-stop">&nbsp;</div>
 
   <section class="column-group gutters">
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
-    <div class="all-20 small-100 tiny-100">
-      <h4>heading</h4>
-      <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
-      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vel tortor vel nisl vestibulum congue vel vel lectus. Cras vehicula metus nec nibh ornare, in ullamcorper ipsum sodales. Duis luctus tempus augue, sed facilisis sem semper non. Pellentesque elementum auctor lectus, a fringilla quam."</p>
-    </div>
     <div class="all-20 small-100 tiny-100">
       <h4>heading</h4>
       <img class="half-bottom-space" src="holder.js/1200x600/auto/ink" alt="">
