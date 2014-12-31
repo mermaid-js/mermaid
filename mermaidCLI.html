@@ -196,10 +196,10 @@
 
         <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
             <ul class="menu horizontal black">
-                <li class="active"><a href="development.html">development</a></li>
+                <li><a href="development.html">development</a></li>
                 <li><a href="flowchart.html">flowchart</a></li>
                 <li><a href="index.html">index</a></li>
-                <li><a href="mermaidCLI.html">mermaidCLI</a></li>
+                <li class="active"><a href="mermaidCLI.html">mermaidCLI</a></li>
                 <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
                 <li><a href="usage.html">usage</a></li>
             </ul>
@@ -210,30 +210,28 @@
     <section class="column-group gutters article">
         <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
             <article>
-                <h1 id="things-to-be-done-in-order-to-add-a-new-diagram-type">Things to be done in order to add a new diagram type</h1>
-<h2 id="step-1-grammar-parsing">Step 1: Grammar &amp; Parsing</h2>
-<h3 id="grammar">Grammar</h3>
-<p>This would be to  define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.</p>
-<p>For instance:</p>
+                <h1 id="mermaid-cli">mermaid CLI</h1>
+<p>Installing mermaid globally (<code>npm install -g mermaid</code>) will expose the <code>mermaid</code> command to your environment, allowing you to generate PNGs from any file containing mermaid markup via the command line.</p>
+<p><strong>Note:</strong> The <code>mermaid</code> command requires <a href="http://phantomjs.org/">PhantomJS</a> (version <code>^1.9.0</code>) to be installed and available in your <em>$PATH</em>, or you can specify it&#39;s location with the <code>-e</code> option. For most environments, <code>npm install -g phantomjs</code> will satisfy this requirement.</p>
+<h2 id="usage">Usage</h2>
+<pre><code>$ mermaid --help
+
+Usage: mermaid [options] <file>...
+
+file    The mermaid description file to be rendered
+
+Options:
+  -s --svg          Output SVG instead of PNG (experimental)
+  -p --png          If SVG was selected, and you also want PNG, set this flag
+  -o --outputDir    Directory to save files, will be created automatically, defaults to `cwd`
+  -e --phantomPath  Specify the path to the phantomjs executable
+  -h --help         Show this message
+  -v --verbose      Show logging
+  --version         Print version and quit</code></pre><h2 id="cli-known-issues">CLI Known Issues</h2>
 <ul>
-<li>the flowchart starts with the keyword graph.</li>
-<li>the sequence diagram starts with the keyword sequenceDiagram</li>
+<li>SVG output currently does some replacement on text, as mermaid&#39;s SVG output is only appropriate for browsers. Text color and background color is not yet replicated; please use PNGs for most purposes until this is resolved.</li>
+<li>SVG output is decidedly non-standard. It works, but may cause issues in some viewers.</li>
 </ul>
-<h3 id="store-data-found-during-parsing">Store data found during parsing</h3>
-<p>There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call a object provided to the parser by the user of the parser. This object can be called during parsing for storing data.</p>
-<pre><code>statement
-    : 'participant' actor  { $$='actor'; }
-    | signal               { $$='signal'; }
-    | note_statement       { $$='note';  }
-    | 'title' message      { yy.setTitle($2);  }
-    ;</code></pre><p>In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.</p>
-<h2 id="step-2-rendering">Step 2: Rendering</h2>
-<p>Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequendeRenderer.js rather then the flowchart renderer as this is a more generic example.</p>
-<p>Place the renderer in the diagram folder.</p>
-<h2 id="step-3-detection-of-the-new-diagram-type">Step 3: Detection of the new diagram type</h2>
-<p>The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.</p>
-<h2 id="step-4-the-final-piece-triggering-the-rendering">Step 4: The final piece - triggering the rendering</h2>
-<p>At this point when mermaid is trying to render the diagram it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step num 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument</p>
 
             </article>
         </div>
