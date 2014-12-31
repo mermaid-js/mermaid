@@ -81,6 +81,7 @@ flow.parser.parse(text);
 
 ## Data extraction
 ```
+// Javascript example
 graph.getDirection();
 graph.getVertices();
 graph.getEdges();
