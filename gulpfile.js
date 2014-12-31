@@ -18,7 +18,7 @@ gulp.task('indexSite', function() {
         }));
 });
 
-gulp.task('www',['indexSite'], function() {
+gulp.task('site',['indexSite'], function() {
     var renderer = new marked.Renderer();
     renderer.table = function (header, body) {
         return "<table class=\"ink-table bordered hover alternating\">" +header + body+ "</table>";
@@ -73,4 +73,16 @@ gulp.task('www',['indexSite'], function() {
         .pipe(ext_replace('.html'))
         // Output to build directory
         .pipe(gulp.dest('./'));
+});
+
+gulp.task('www', ['indexSite'], function() {
+    console.log('Starting webserver. Running at: http://127.0.0.1:3000/');
+    console.log('Hold ctrl+c to quit.');
+    var express = require('express');
+    var app = express();
+
+    app.use('/dist/', express.static('./dist'));
+    app.use('/', express.static('./'));
+
+    app.listen(process.env.PORT || 3000);
 });

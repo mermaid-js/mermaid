@@ -50,6 +50,8 @@ sequenceDiagram
 </tr>
 </table>
 
+Play with mermaid using this [editor](http://danielmschmidt.github.io/mermaid-demo/). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
+
 ## Further reading
 
 * [Usage](http://knsv.github.io/mermaid/usage.html)
