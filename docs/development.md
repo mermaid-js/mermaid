@@ -80,6 +80,7 @@ flow.parser.parse(text);
 ```
 
 ## Data extraction
+
 ```
 // Javascript example
 graph.getDirection();

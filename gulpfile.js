@@ -75,7 +75,7 @@ gulp.task('site',['indexSite'], function() {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('www', ['indexSite'], function() {
+gulp.task('www', ['site'], function() {
     console.log('Starting webserver. Running at: http://127.0.0.1:3000/');
     console.log('Hold ctrl+c to quit.');
     var express = require('express');

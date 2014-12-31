@@ -256,9 +256,10 @@ remember to run this command before submitting your changes as they will not be 
 var flow = require('./parser/flow');
 flow.parser.yy = graph;</code></pre><h2 id="parsing">Parsing</h2>
 <pre><code>flow.parser.parse(text);</code></pre><h2 id="data-extraction">Data extraction</h2>
-<div class="mermaid">graph.getDirection();
+<pre><code>// Javascript example
+graph.getDirection();
 graph.getVertices();
-graph.getEdges();</div><p>The parser is also exposed in the mermaid api by calling:</p>
+graph.getEdges();</code></pre><p>The parser is also exposed in the mermaid api by calling:</p>
 <pre><code>var parser = mermaid.getParser();</code></pre><p>Note that the parse needs a graph object to store the data as per:</p>
 <pre><code>flow.parser.yy = graph;</code></pre><p>Look at graphDb.js for more details on that object.</p>
 
