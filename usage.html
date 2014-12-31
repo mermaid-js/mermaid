@@ -198,6 +198,7 @@
             <ul class="menu horizontal black">
                 <li><a href="development.html">development</a></li>
                 <li><a href="flowchart.html">flowchart</a></li>
+                <li><a href="index.html">index</a></li>
                 <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
                 <li class="active"><a href="usage.html">usage</a></li>
             </ul>
@@ -209,29 +210,34 @@
         <div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
             <article>
                 <h1 id="installation">Installation</h1>
-<p>Either use the bower package manager as per below:</p>
-<pre><code>bower install mermaid --save-dev</code></pre><p>Or download javascript files:</p>
+<p>Either use the npm or bower package managers as per below:</p>
+<pre><code>bower install mermaid --save-dev</code></pre><pre><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files:</p>
 <ul>
-<li><a href="http://www.sveido.com/mermaid/dist/mermaid.full.min.js">mermaid including dependencies</a></li>
+<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js">mermaid including dependencies</a></li>
 </ul>
 <p>This file bundles mermaid with d3 and dagre-d3.</p>
 <ul>
-<li><a href="http://www.sveido.com/mermaid/dist/mermaid.slim.min.js">mermaid without dependencies</a></li>
+<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.slim.js">mermaid without dependencies</a></li>
 </ul>
 <p>With this file you will need to include d3 and dagre-d3 yourself.</p>
+<p><strong> Important: </strong></p>
+<blockquote>
+<p>It&#39;s best to use a specific tag or commit hash in the URL (not a branch). Files are cached permanently after the first request.</p>
+</blockquote>
+<p>Read more about that at <a href="https://rawgit.com/">https://rawgit.com/</a></p>
 <h1 id="usage">Usage</h1>
 <p>Include mermaid on your web page:</p>
-<pre><code><script src="mermaid.full.min.js"></script></code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
+<pre><code>&lt;script src=&quot;mermaid.full.min.js&quot;&gt;&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
 read the chart definiton which will be replaced with the svg chart.</p>
 <p>A chart defined like this:</p>
-<pre><code><div class="mermaid">
+<pre><code>&lt;div class=&quot;mermaid&quot;&gt;
     CHART DEFINITION GOES HERE
-</div></code></pre><p>Would end up like this:</p>
-<pre><code><div class="mermaid" id="mermaidChart0">
-    <svg>
+&lt;/div&gt;</code></pre><p>Would end up like this:</p>
+<pre><code>&lt;div class=&quot;mermaid&quot; id=&quot;mermaidChart0&quot;&gt;
+    &lt;svg&gt;
         Chart ends up here
-    </svg>
-</div></code></pre><p>An id is also added to mermaid tags without id.</p>
+    &lt;/svg&gt;
+&lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
 
             </article>
         </div>

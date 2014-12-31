@@ -1,47 +1,58 @@
-#Installation
 
-Either use the bower package manager as per below:
+mermaid [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid) [![Code Climate](https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg)](https://codeclimate.com/github/knsv/mermaid)
+=======
 
-```
-bower install mermaid --save-dev
-```
+Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
-Or download javascript files:
+Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
 
-* [mermaid including dependencies](http://www.sveido.com/mermaid/dist/mermaid.full.min.js)
+This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-This file bundles mermaid with d3 and dagre-d3.
+The code below would render the following image
+<table>
+<tr><th>Code</th><th>Rendered diagram</th></tr>
+<tr><td>
+<pre>
+<code>
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+<code>
+</pre>
+</td>
+<td>
+<img src='http://www.sveido.com/mermaid/img/ex1.png' alt='Example 1'>
+</td>
+</tr>
+<tr>
+<td>
+<pre>
+<code>
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->John: Hello John, how are you?
+    loop Healthcheck
+        John->John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts &lt;br/>prevail...
+    John-->Alice: Great!
+    John->Bob: How about you?
+    Bob-->John: Jolly good!
+</code>
+</pre>
+</td>
+<td>
+<img src='http://www.sveido.com/mermaid/img/seq1.png' alt='Example 2'>
+</td>
+</tr>
+</table>
 
-* [mermaid without dependencies](http://www.sveido.com/mermaid/dist/mermaid.slim.min.js)
+## Further reading
 
-With this file you will need to include d3 and dagre-d3 yourself.
-
-# Usage
-
-Include mermaid on your web page:
-
-```
-<script src="mermaid.full.min.js"></script>
-```
-
-Further down on your page mermaid will look for tags with ```class="mermaid"```. From these tags mermaid will try to
-read the chart definiton which will be replaced with the svg chart.
-
-
-A chart defined like this:
-```
-<div class="mermaid">
-    CHART DEFINITION GOES HERE
-</div>
-```
-
-Would end up like this:
-```
-<div class="mermaid" id="mermaidChart0">
-    <svg>
-        Chart ends up here
-    </svg>
-</div>
-```
-An id is also added to mermaid tags without id.
+* [Flowchart syntax](http://knsv.github.io/mermaid/flowchart.html)
+* [Seqeucen diagram syntax](http://knsv.github.io/mermaid/sequenceDiagram.html)
+* Mermaid client
 
