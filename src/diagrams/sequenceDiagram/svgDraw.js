@@ -26,7 +26,7 @@ exports.drawText = function(elem , textData){
     textElem.style('text-anchor', textData.anchor);
     textElem.attr('fill', textData.fill);
 
-    textData.text.split('<br>').forEach(function(rowText){
+    textData.text.split(/<br\/?>/ig).forEach(function(rowText){
         var span = textElem.append('tspan');
         span.attr('x', textData.x +textData.textMargin);
         span.attr('dy', textData.dy);
