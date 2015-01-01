@@ -42,7 +42,9 @@ gulp.task('site',['indexSite'], function() {
             var content = fm(String(file.contents));
             //console.log('yaml:',file.relative);
             file.contents = new Buffer(marked(content.body, {renderer:renderer}));
-            file.apa = content.apa;
+            file.title = content.attributes.title;
+            //console.log(content.attributes);
+            console.log(content.attributes.title);
             file.bapa = 'chimp';
 
             var name = file.relative.substr(0,file.relative.length-3);
