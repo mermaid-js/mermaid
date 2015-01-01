@@ -1,6 +1,6 @@
 ---
 title: Flowchart Basic Syntax
-order: 1
+order: 2
 ---
 
 #Flowcharts - Basic Syntax

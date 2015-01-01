@@ -1,3 +1,8 @@
+---
+title: Development tips
+order: 4
+---
+
 # Updating the documentation
 
 ## Getting the development environment up

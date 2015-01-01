@@ -1,3 +1,7 @@
+---
+title: Usage
+order: 1
+---
 #Installation
 
 Either use the npm or bower package managers as per below:
