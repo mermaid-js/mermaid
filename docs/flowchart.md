@@ -1,3 +1,8 @@
+---
+title: Flowchart Basic Syntax
+order: 1
+---
+
 #Flowcharts - Basic Syntax
 ## Graph
 This statement declares a new graph and the direction of the graph layout.
@@ -133,7 +138,6 @@ A---|This is the text|B;
 graph LR;
    A---|This is the text|B;
 ```
-
 
 ## Interaction
 
