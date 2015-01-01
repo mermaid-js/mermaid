@@ -77,7 +77,7 @@ graph LR
 
 ```
 graph LR
-    id1(This is the text in the circle)
+    id1((This is the text in the circle))
 ```
 
 ### A node in an asymetric shape
