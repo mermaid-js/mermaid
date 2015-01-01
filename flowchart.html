@@ -29,12 +29,12 @@
               media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
 
         <!-- load Ink's css from the cdn -->
-        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
-        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="3.1.1/css/font-awesome.min.css">
 
         <!-- load Ink's css for IE8 -->
         <!--[if lt IE 9 ]>
-        <link rel="stylesheet" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-ie.min.css" type="text/css" media="screen"
+        <link rel="stylesheet" href="css/ink-ie.min.css" type="text/css" media="screen"
               title="no title" charset="utf-8">
 
         <![endif]-->
@@ -290,13 +290,11 @@ should have a different look.</p>
 </li>
 </ul>
 <p>Below is the new declaration of the graph which is also valid along with the old declaration of the graph as described in the graph example on the home wiki page.</p>
-<p>```
-graph LR
-    A[Hard edge] --&gt;|Link text| B(Round edge)
-    B --&gt; C{Decision}
-    C --&gt;|One| D[Result one]
-    C --&gt;|Two| E[Result two]</p>
-
+<div class="mermaid">graph LR
+    A[Hard edge] -->|Link text| B(Round edge)
+    B --> C{Decision}
+    C -->|One| D[Result one]
+    C -->|Two| E[Result two]</div>
             </article>
         </div>
         <section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
