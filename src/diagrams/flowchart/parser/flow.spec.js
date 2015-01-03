@@ -323,6 +323,17 @@ describe('when parsing ',function(){
             expect(edges[0].text).toBe('text including R TD space');
 
         });
+        it('should handle `',function(){
+            var res = flow.parser.parse('graph TD;A--x|text including `|B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow_cross');
+            expect(edges[0].text).toBe('text including `');
+
+        });
         it('should handle keywords',function(){
             var res = flow.parser.parse('graph TD;A--x|text including graph space|B;');
 
