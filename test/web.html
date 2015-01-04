@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
 
     <script src="../dist/mermaid.full.js"></script>
+    <scrpt src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.min.js"></scrpt>
     <script>
         var mermaid_config = {
             startOnLoad:true
@@ -31,7 +32,14 @@
             A[Object]-->B(Thing);
             style e red;
     </pre>
-
+    <div class="mermaid">
+    graph TD;
+        A-->B;
+        A-->C;
+        A-->D;
+        B-->D;
+        A-->|Link text|B
+    </div>
     <div class="mermaid">
         graph TD;
         sq[Square shape]-->ci((Circle shape));
@@ -45,7 +53,7 @@
         A[Object foo,bar]-->B(Thing);
         style e red;
     </div>
-    <div class="mermaid">
+    <div class="mermaid2">
         graph LR;
         A(Central Message Router);
         B(R TD);
@@ -74,7 +82,7 @@
         John the Long-->Alice: Better then you!
         end
     </pre>
-    <div class="mermaid">
+    <div class="mermaid2">
         sequenceDiagram
         participant Alice
         Note left of Alice: Bob thinks about <br/> things <br/> to think about
@@ -83,18 +91,19 @@
         sequenceDiagram
         participant Alice
         participant Bob
-        participant John the Long
-        Alice->Bob: Hello Bob, how are you?
+        participant John
+        Alice->>Bob: Hello Bob, how are you?
         Note left of Alice: Bob thinks about <br/> things <br/> to think about
-        Bob-->Alice: I am good thanks!
+        Bob-->>Alice: I am good thanks!
         loop Multiple status checks
-        Bob-->John the Long: How about you John?
-        Note right of John the Long: Bob thinks
+        Bob--xJohn: How about you John?
+        Note right of John: Bob thinks
         end
 
-        Bob-->Alice: Checking with John...
+        Bob--xAlice: Checking with John...
         Alice->John the Long: Yes... John, how are you?
-        John the Long-->Alice: Better then you!
+        John the Long-->Alice: Better then you!!
+
     </div>
 
     <div  class="mermaid">
@@ -127,7 +136,7 @@ graph LR;
         a -- e;
         }
     </pre>
-    <div class="mermaid">
+    <div class="mermaid2">
         digraph
         {
         a -> b -> c -- d -> e;

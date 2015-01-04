@@ -9,7 +9,6 @@
  */
 module.exports.detectType = function(text,a){
     if(text.match(/^\s*sequenceDiagram/)){
-        console.log('Detected sequenceDiagram syntax');
         return "sequenceDiagram";
     }
 

@@ -199,6 +199,24 @@ var insertArrowHead = function(elem){
         .append("path")
         .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
 };
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+var insertArrowCrossHead = function(elem){
+    elem.append("defs").append("marker")
+        .attr("id", "crosshead")
+        .attr("refX", 20) /*must be smarter way to calculate shift*/
+        .attr("refY", 4)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 8)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("fill",'none')
+        .attr("stroke",'#000000')
+        .style("stroke-dasharray", ("0, 0"))
+        .attr("stroke-width",'1px')
+        .attr("d", "M 0,0 L 8,8 M 8,0 L 0,8"); //this is actual shape for arrowhead
+};
 
 /**
  * Draws a message
@@ -242,7 +260,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     }
     //Make an SVG Container
     //Draw the line
-    if (msg.type === 1) {
+    if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
         line.style("stroke-dasharray", ("3, 3"));
         line.attr("class", "messageLine1");
     }
@@ -253,7 +271,13 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     line.attr("stroke-width", 2);
     line.attr("stroke", "black");
     line.style("fill", "none");     // remove any fill colour
-    line.attr("marker-end", "url(#arrowhead)");
+    if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
+        line.attr("marker-end", "url(#arrowhead)");
+    }
+
+    if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
+        line.attr("marker-end", "url(#crosshead)");
+    }
 
 };
 
@@ -328,7 +352,8 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     sq.yy.clear();
-    sq.parse(text);
+    //console.log(text);
+    sq.parse(text+'\n');
     exports.bounds.init();
     var diagram = d3.select('#'+id);
 
@@ -341,6 +366,7 @@ module.exports.draw = function (text, id) {
 
     // The arrow head definition is attached to the svg once
     insertArrowHead(diagram);
+    insertArrowCrossHead(diagram);
 
     // Draw the messages/signals
     messages.forEach(function(msg){
