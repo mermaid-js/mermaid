@@ -16281,6 +16281,9 @@ module.exports.draw = function (text, id) {
     exports.bounds.init();
     var diagram = d3.select('#'+id);
 
+    var startx;
+    var stopx;
+
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
@@ -16360,9 +16363,6 @@ module.exports.draw = function (text, id) {
                 drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
 
         }
-
-        var startx;
-        var stopx;
     });
 
     var box = exports.bounds.getBounds();
@@ -16429,7 +16429,7 @@ exports.drawLabel = function(elem , txtObject){
     rectData.class = 'labelBox';
     //rectData.color = 'white';
 
-    var label = exports.drawRect(elem, rectData);
+    exports.drawRect(elem, rectData);
 
     txtObject.y = txtObject.y + txtObject.labelMargin;
     txtObject.x = txtObject.x + 0.5*txtObject.labelMargin;
@@ -16457,16 +16457,16 @@ exports.drawActor = function(elem, left,description,conf){
         .attr("stroke-width", '0.5px')
         .attr("stroke", '#999');
 
-    g.append("rect")
-        .attr("x", left)
-        .attr("y", 0)
-        .attr("fill", '#eaeaea')
-        .attr("stroke", '#666')
-        .attr("width", conf.width)
-        .attr("height", conf.height)
-        .attr("class", 'actor')
-        .attr("rx", 3)
-        .attr("ry", 3);
+    var rect = exports.getNoteRect();
+    rect.x = left;
+    rect.fill = '#eaeaea';
+    rect.width = conf.width;
+    rect.height = conf.height;
+    rect.class = 'actor';
+    rect.rx = 3;
+    rect.ry = 3;
+    exports.drawRect(g, rect);
+
     g.append("text")      // text label for the x axis
         .attr("x", center)
         .attr("y", (conf.height/2)+5)
@@ -16481,7 +16481,7 @@ exports.drawActor = function(elem, left,description,conf){
 exports.insertArrowHead = function(elem){
     elem.append("defs").append("marker")
         .attr("id", "arrowhead")
-        .attr("refX", 5) /*must be smarter way to calculate shift*/
+        .attr("refX", 5)
         .attr("refY", 2)
         .attr("markerWidth", 6)
         .attr("markerHeight", 4)
@@ -16495,11 +16495,11 @@ exports.insertArrowHead = function(elem){
 exports.insertArrowCrossHead = function(elem){
     elem.append("defs").append("marker")
         .attr("id", "crosshead")
-        .attr("refX", 15) /*must be smarter way to calculate shift*/
-        .attr("refY", 4)
         .attr("markerWidth", 8)
         .attr("markerHeight", 8)
         .attr("orient", "auto")
+        .attr("refX", 15)
+        .attr("refY", 4)
         .append("path")
         .attr("fill",'none')
         .attr("stroke",'#000000')

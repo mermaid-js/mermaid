@@ -97,6 +97,59 @@ exports.drawActor = function(elem, left,description,conf){
         .text(description)
     ;
 };
+
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the list of actors
+ * @param description The text in the box
+ */
+exports.drawLoop = function(elem,bounds,labelText, conf){
+    var g = elem.append("g");
+    var drawLoopLine = function(startx,starty,stopx,stopy){
+        g.append("line")
+            .attr("x1", startx)
+            .attr("y1", starty)
+            .attr("x2", stopx )
+            .attr("y2", stopy )
+            .attr("stroke-width", 2)
+            .attr("stroke", "#526e52")
+            .attr('class','loopLine');
+    };
+    drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
+    drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
+    drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
+    drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
+    if(typeof bounds.elsey !== 'undefined'){
+        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey );
+    }
+
+    var txt = exports.getTextObj();
+    txt.text = labelText;
+    txt.x = bounds.startx;
+    txt.y = bounds.starty;
+    txt.labelMargin =  1.5 * conf.boxMargin;
+    txt.class =  'labelText';
+    txt.fill =  'white';
+
+    exports.drawLabel(g,txt);
+
+    txt = exports.getTextObj();
+    txt.text = '[ ' + bounds.title + ' ]';
+    txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
+    txt.y = bounds.starty + 1.5 * conf.boxMargin;
+    txt.anchor = 'middle';
+    txt.class = 'loopText';
+
+    exports.drawText(g,txt);
+
+    if(typeof bounds.elseText !== 'undefined') {
+        txt.text = '[ ' + bounds.elseText + ' ]';
+        txt.y = bounds.elsey + 1.5 * conf.boxMargin;
+        exports.drawText(g, txt);
+    }
+};
+
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
