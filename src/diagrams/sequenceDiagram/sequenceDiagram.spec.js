@@ -248,7 +248,58 @@ describe('when parsing a sequenceDiagram',function() {
 
 
     });
-});
+
+    it('it should handle opt statements a sequenceDiagram', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n\n' +
+            '%% Comment\n' +
+            'Note right of Bob: Bob thinks\n' +
+            'opt Perhaps a happy response\n\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        //console.log(actors);
+        expect(actors.Alice.description).toBe('Alice');
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+        //console.log(messages);
+
+        expect(messages.length).toBe(5);
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[1].from).toBe('Bob');
+
+
+    });
+
+    it('it should handle alt statements a sequenceDiagram', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n\n' +
+            '%% Comment\n' +
+            'Note right of Bob: Bob thinks\n' +
+            'alt isWell\n\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'else isSick\n' +
+            'Bob-->Alice: Feel sick...\n' +
+            'end';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+
+        expect(actors.Alice.description).toBe('Alice');
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+        //console.log(messages);
+
+        expect(messages.length).toBe(7);
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[1].from).toBe('Bob');
+
+
+    });});
 
 describe('when checking the bounds in a sequenceDiagram',function() {
     var parseError, _d3, conf;
@@ -389,31 +440,6 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         expect(loop.starty).toBe(50  - conf.boxMargin);
         expect(loop.stopx ).toBe(300 + conf.boxMargin);
         expect(loop.stopy ).toBe(300 + conf.boxMargin);
-
-        // Check bounds after the loop
-        var bounds = sd.bounds.getBounds();
-
-        expect(bounds.startx).toBe(loop.startx);
-        expect(bounds.starty).toBe(loop.starty);
-        expect(bounds.stopx ).toBe(loop.stopx);
-        expect(bounds.stopy ).toBe(loop.stopy);
-    });
-
-    xit('it should handle multiple loops that expands the area', function () {
-        sd.bounds.init();
-
-        sd.bounds.insert(100,100,200,200);
-        sd.bounds.newLoop();
-        sd.bounds.newLoop();
-        sd.bounds.insert(50,50,300,300);
-
-        var loop = sd.bounds.endLoop();
-        loop = sd.bounds.endLoop();
-
-        expect(loop.startx).toBe(50  - 2 * conf.boxMargin);
-        expect(loop.starty).toBe(50  - 2 * conf.boxMargin);
-        expect(loop.stopx ).toBe(300 + 2 * conf.boxMargin);
-        expect(loop.stopy ).toBe(300 + 2 * conf.boxMargin);
 
         // Check bounds after the loop
         var bounds = sd.bounds.getBounds();

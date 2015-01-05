@@ -49,7 +49,13 @@ exports.LINETYPE = {
     SOLID_OPEN  : 5,
     DOTTED_OPEN : 6,
     LOOP_START  : 10,
-    LOOP_END    : 11
+    LOOP_END    : 11,
+    ALT_START   : 12,
+    ALT_ELSE    : 13,
+    ALT_END     : 14,
+    OPT_START   : 15,
+    OPT_END     : 16
+
 };
 
 exports.ARROWTYPE = {
@@ -81,7 +87,7 @@ exports.apply = function(param){
             exports.apply(item);
         });
     } else {
-        //console.log(param);
+        // console.log(param);
         switch(param.type){
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.actor);
@@ -98,6 +104,25 @@ exports.apply = function(param){
                 //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
                 break;
             case 'loopEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+            case 'optStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.optText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'optEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+            case 'altStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.altText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'else':
+                exports.addSignal(undefined, undefined, param.altText, param.signalType);
+                break;
+            case 'altEnd':
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
         }

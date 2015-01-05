@@ -22,6 +22,7 @@
 \#[^\n]*          /* skip comments */
 \%%[^\n]*          /* skip comments */
 "participant"     return 'participant';
+"opt"     		  return 'opt';
 "loop"     		  return 'loop';
 "alt"     		  return 'alt';
 "else"     		  return 'else';
@@ -76,10 +77,23 @@ statement
 		$3.unshift({type: 'loopStart', loopText:$2.actor, signalType: yy.LINETYPE.LOOP_START});
 		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
 		$$=$3;}
-	| alt actor document else document end
+	| opt actor document end
 	{
-		$3.unshift({type: 'loopStart', loopText:$2.actor, signalType: yy.LINETYPE.LOOP_START});
-		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
+		$3.unshift({type: 'optStart', optText:$2.actor, signalType: yy.LINETYPE.OPT_START});
+		$3.push({type: 'optEnd', optText:$2.actor, signalType: yy.LINETYPE.OPT_END});
+		$$=$3;}
+	| alt actor document else actor document end
+	{
+		// Alt start
+		$3.unshift({type: 'altStart', altText:$2.actor, signalType: yy.LINETYPE.ALT_START});
+		// Content in alt is already in $3
+		// Else
+		$3.push({type: 'else', altText:$5.actor, signalType: yy.LINETYPE.ALT_ELSE});
+		// Content in other alt
+		$3 = $3.concat($6);
+		// End
+		$3.push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
+
 		$$=$3;}
 	;
 
