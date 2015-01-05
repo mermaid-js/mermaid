@@ -10,19 +10,19 @@ Mermaid can render sequence diagrams. The code snippet below:
 ```
 %% Example of sequence diagram
 sequenceDiagram
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
 ```
 
 Renders to the diagram below:
 
 ```
 sequenceDiagram
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
 ```
 
-## Syntax
+# Syntax
 
 ### Participants
 
@@ -36,8 +36,8 @@ explicitly in by doing this decing the order of appearance.
 sequenceDiagram
     participant John
     participant Alice
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
 ```
 
 Renders to the diagram below:
@@ -46,26 +46,35 @@ Renders to the diagram below:
 sequenceDiagram
     participant John
     participant Alice
-    Alice->John: Hello John, how are you?
-    John-->Alice: Great!
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
 ```
 
-### Messages
+## Messages
 Messages can be of two displayed either solid or with a dotted line.
 
 ```
 [Actor][Arrow][Actor]:Message text
 ```
-There are two types of arrows currently supported:
 
--> which will render a solid line
+There are six types of arrows currently supported:
 
---> which will render a dotted line
+-> which will render a solid line without arrow
+
+--> which will render a dotted line  without arrow
+
+->> which will render a solid line with arrowhead
+
+-->> which will render a dotted line  with arrowhead
+
+-x which will render a solid line with a cross at the end (async)
+
+--x which will render a dotted line with a cross at the end (async)
 
 
-### Notes
+## Notes
 It is possible to add notes to a sequence diagram. This is done by the notation
-Note [right|left] of [Actor]: Text in note content
+Note [ right | left ] of [Actor]: Text in note content
 
 See the example below:
 ```
@@ -88,16 +97,16 @@ It is possible to break text into different rows by using &lt;br/> as a line bre
 %% Example of sequence diagram
 sequenceDiagram
     participant John
-    Note right of John: Text in note&lt;br/>spanning several&lt;br/>rows.
+    Note left of John: Text in note&lt;br/>spanning several&lt;br/>rows.
 ```
 
 ```
 sequenceDiagram
     participant John
-    Note right of John: Text in note<br/>spanning several<br/>rows.
+    Note left of John: Text in note<br/>spanning several<br/>rows.
 ```
 
-### Loops
+## Loops
 It is possible to express loops in a sequence diagram. This is done by the notation
 ```
 loop Loop text
@@ -123,6 +132,52 @@ sequenceDiagram
     end
 ```
 
+## Alt
+It is possible to express alternative paths in a sequence diagram. This is done by the notation
+```
+alt Describing text
+... statements ...
+else
+... statements ...
+end
+```
+
+or if there is sequence that is optionat (if without else).
+
+```
+opt Describing text
+... statements ...
+end
+```
+
+See the example below
+```
+%% Example of sequence diagram
+    sequenceDiagram
+        Alice->>Bob: Hello Bob, how are you?
+        alt is sick
+            Bob->>Alice: Not so good :(
+        else is well
+            Bob->>Alice: Feeling fresh like a daisy
+        end
+        opt Extra response
+            Bob->>Alice: Thanks for asking
+        end
+
+```
+
+```
+sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    alt is sick
+        Bob->>Alice: Not so good :(
+    else is well
+        Bob->>Alice: Feeling fresh like a daisy
+    end
+    opt Extra response
+        Bob->>Alice: Thanks for asking
+    end
+```
 ## Styling
 
 Styling of the a sequence diagram is done by defining a number of css classes. These classes are during rendering extracted from the

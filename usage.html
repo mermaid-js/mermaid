@@ -46,7 +46,7 @@ nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
 <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
 <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
 <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.1/dist/mermaid.full.js"></script>
 <style type="text/css">
 body {
 background: #ffffff;
@@ -164,7 +164,7 @@ Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to impr
 <!-- Add your site or application content here -->
 <header class="clearfix vertical-padding">
 <h1 class="logo xlarge-push-left large-push-left">
-mermaid
+<a href="https://github.com/knsv/mermaid" >mermaid</a>
 <small>Diagrams and flowcharts from textsimilar to markdown</small>
 </h1>
 
@@ -201,10 +201,28 @@ read the chart definiton which will be replaced with the svg chart.</p>
         Chart ends up here
     &lt;/svg&gt;
 &lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
+<h1 id="example-of-marked-renderer">Example of marked renderer</h1>
+<p>This is the renderer used for transforming the documentation from markdown to html with mermaid diagrams in the html.</p>
+<pre><code>    var renderer = new marked.Renderer();
+    renderer.code = function (code, language) {
+        if(code.match(/^sequenceDiagram/)||code.match(/^graph/)){
 
+            return '&lt;div class="mermaid">'+code+'&gt;/div>';
+        }
+        else{
+            return '&lt;pre>&lt;code>'+code+'&gt;/code>&gt;/pre>';
+        }
+    };</code></pre>
 </article>
 </div>
 <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
+    
+<a href="https://github.com/knsv/mermaid" class="github-button">Star</a>
+<a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
+<a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
+<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+        
+    
 <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
 data-bottom-element="#sticky-stop">
 <ul class="menu vertical grey" id="sections">
