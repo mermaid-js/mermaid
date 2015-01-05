@@ -1,26 +1,3 @@
- Skip to content
-This repository
-
-    Explore
-    Gist
-    Blog
-    Help
-
-    gkchic gkchic
-
-    146
-    5,304
-    145
-
-knsv/mermaid
-
-mermaid/tpl/ink.html
-Knut Sveidqvist knsv 4 days ago
-Fixes for css styles not breaking rendering
-
-2 contributors
-Knut Sveidqvist gkchic
-236 lines (196 sloc) 8.989 kb
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,7 +88,7 @@ margin-top: 0;
 margin-bottom: 10;
 }
 footer {
-background: #cdc5bf;
+background: #a9a9a9;
 }
 </style>
 <script>
@@ -164,6 +141,18 @@ console.log('Registering new lang');
 </script>
 </head>
 <body>
+    <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
+        <ul class="menu horizontal blue">
+            {{#list}}
+            {{#active}}
+            <li class="active"><a href="{{{name}}}.html">{{{name}}}</a></li>
+            {{/active}}
+            {{^active}}
+            <li><a href="{{{name}}}.html">{{{name}}}</a></li>
+            {{/active}}
+            {{/list}}
+        </ul>
+    </nav>
 <div class="ink-grid">
 <!--[if lte IE 9 ]>
 <div class="ink-alert basic" role="alert">
@@ -180,30 +169,19 @@ Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to impr
 mermaid
 <small>Diagrams and flowcharts from textsimilar to markdown</small>
 </h1>
-<nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-<ul class="menu horizontal black">
-{{#list}}
-{{#active}}
-<li class="active"><a href="{{{name}}}.html">{{{name}}}</a></li>
-{{/active}}
-{{^active}}
-<li><a href="{{{name}}}.html">{{{name}}}</a></li>
-{{/active}}
-{{/list}}
-</ul>
-</nav>
+
 </header>
 <section class="column-group gutters article">
-<div class="xlarge-70 large-70 medium-60 small-100 tiny-100">
+<div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
 <article>
 {{{contents}}}
 </article>
 </div>
-<section class="xlarge-30 large-30 medium-40 small-100 tiny-100">
+<section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
 <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
 data-bottom-element="#sticky-stop">
-<ul class="menu vertical black" id="sections">
-<li class="heading active"><a href="#">Quicklinks:</a></li>
+<ul class="menu vertical grey" id="sections">
+<li class="heading active"><a href="#">Index:</a></li>
 </ul>
 </nav>
 </section>

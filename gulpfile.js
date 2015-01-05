@@ -33,7 +33,7 @@ gulp.task('site',['indexSite'], function() {
         }
     };
     // Compile a template for rendering each page
-    var template = hogan.compile(String(fs.readFileSync('tpl/ink.html')));
+    var template = hogan.compile(String(fs.readFileSync('tpl/ink_org.html')));
 
     return gulp.src('docs/**/*.md')
 
