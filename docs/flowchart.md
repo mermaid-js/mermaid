@@ -33,7 +33,7 @@ Possible directions are:
 
 ![Example 4](http://www.sveido.com/mermaid/img/ex4.png)
 
-## Nodes
+## Nodes & shapes
 
 ### A node (default)
 ```
@@ -89,6 +89,7 @@ graph LR
 graph LR
     id1>This is the text in the box]
 ```
+Currently only the shape above is possible and not its mirror. *This might change with future releases.*
 
 ### A node (rhombus)
 ```
@@ -99,7 +100,15 @@ graph LR
 graph LR
     id1{This is the text in the box}
 ```
+### A node (rhombus)
+```
+    id1{This is the text in the box}
+```
 
+```
+graph LR
+    id1{This is the text in the box}
+```
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
