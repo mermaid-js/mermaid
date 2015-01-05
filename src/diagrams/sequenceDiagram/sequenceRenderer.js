@@ -201,39 +201,6 @@ exports.drawLoop = function(elem,bounds,labelText){
 
 
 /**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
-var insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5) /*must be smarter way to calculate shift*/
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
-};
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
-var insertArrowCrossHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "crosshead")
-        .attr("refX", 15) /*must be smarter way to calculate shift*/
-        .attr("refY", 4)
-        .attr("markerWidth", 8)
-        .attr("markerHeight", 8)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("fill",'none')
-        .attr("stroke",'#000000')
-        .style("stroke-dasharray", ("0, 0"))
-        .attr("stroke-width",'1px')
-        .attr("d", "M 1,1 L 7,7 M 7,1 L 1,7"); //this is actual shape for arrowhead
-};
-
-/**
  * Draws a message
  * @param elem
  * @param startx
@@ -296,45 +263,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
 
 };
 
-/**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
- */
-var drawActor = function(elem, left,description){
-    var center = left + (conf.width/2);
-    var g = elem.append("g");
-    g.append("line")
-        .attr("x1", center)
-        .attr("y1", 5)
-        .attr("x2", center)
-        .attr("y2", 2000)
-        .attr("class", 'actor-line')
-        .attr("stroke-width", '0.5px')
-        .attr("stroke", '#999');
-
-    g.append("rect")
-        .attr("x", left)
-        .attr("y", 0)
-        .attr("fill", '#eaeaea')
-        .attr("stroke", '#666')
-        .attr("width", conf.width)
-        .attr("height", conf.height)
-        .attr("class", 'actor')
-        .attr("rx", 3)
-        .attr("ry", 3);
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", (conf.height/2)+5)
-        .attr('class','actor')
-        .style("text-anchor", "middle")
-        .text(description)
-    ;
-
-    exports.bounds.insert(left, 0, left + conf.width, conf.height);
-};
-
 module.exports.drawActors = function(diagram, actors, actorKeys){
     var i;
     // Draw the actors
@@ -348,7 +276,9 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
-        drawActor(diagram, actors[key].x, actors[key].description);
+        svgDraw.drawActor(diagram, actors[key].x, actors[key].description, conf);
+        exports.bounds.insert(actors[key].x, 0, actors[key].x + conf.width, conf.height);
+
     }
 
     // Add a margin between the actor boxes and the first arrow
@@ -380,8 +310,8 @@ module.exports.draw = function (text, id) {
     module.exports.drawActors(diagram, actors, actorKeys);
 
     // The arrow head definition is attached to the svg once
-    insertArrowHead(diagram);
-    insertArrowCrossHead(diagram);
+    svgDraw.insertArrowHead(diagram);
+    svgDraw.insertArrowCrossHead(diagram);
 
     // Draw the messages/signals
     messages.forEach(function(msg){

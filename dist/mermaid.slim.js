@@ -15177,12 +15177,12 @@ if (typeof module !== 'undefined' && require.main === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,15,17,19,21,32],$V1=[2,2],$V2=[1,6],$V3=[1,8],$V4=[1,9],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,16],$V9=[1,17],$Va=[2,7],$Vb=[6,8,10,11,15,17,18,19,20,21,32],$Vc=[6,8,10,11,15,17,18,19,21,32],$Vd=[1,43],$Ve=[1,46],$Vf=[1,49];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,15,17,19,20,22,33],$V1=[2,2],$V2=[1,6],$V3=[1,8],$V4=[1,9],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[2,7],$Vc=[6,8,10,11,15,17,18,19,20,21,22,33],$Vd=[6,8,10,11,15,17,18,19,20,22,33],$Ve=[1,46],$Vf=[1,49],$Vg=[1,53];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"start":3,"SD":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"participant":11,"actor":12,"signal":13,"note_statement":14,"title":15,"text":16,"loop":17,"end":18,"alt":19,"else":20,"note":21,"placement":22,"text2":23,"over":24,"spaceList":25,"actor_pair":26,",":27,"left_of":28,"right_of":29,"signaltype":30,"actors":31,"ACTOR":32,"SOLID_OPEN_ARROW":33,"DOTTED_OPEN_ARROW":34,"SOLID_ARROW":35,"DOTTED_ARROW":36,"SOLID_CROSS":37,"DOTTED_CROSS":38,"TXT":39,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SD",6:"EOF",8:"SPACE",10:"NL",11:"participant",15:"title",16:"text",17:"loop",18:"end",19:"alt",20:"else",21:"note",24:"over",27:",",28:"left_of",29:"right_of",32:"ACTOR",33:"SOLID_OPEN_ARROW",34:"DOTTED_OPEN_ARROW",35:"SOLID_ARROW",36:"DOTTED_ARROW",37:"SOLID_CROSS",38:"DOTTED_CROSS",39:"TXT"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,3],[9,2],[9,2],[9,4],[9,4],[9,6],[14,4],[14,5],[25,2],[25,1],[26,1],[26,3],[22,1],[22,1],[13,4],[31,2],[31,1],[12,1],[30,1],[30,1],[30,1],[30,1],[30,1],[30,1],[23,1]],
+symbols_: {"error":2,"start":3,"SD":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"participant":11,"actor":12,"signal":13,"note_statement":14,"title":15,"text":16,"loop":17,"end":18,"opt":19,"alt":20,"else":21,"note":22,"placement":23,"text2":24,"over":25,"spaceList":26,"actor_pair":27,",":28,"left_of":29,"right_of":30,"signaltype":31,"actors":32,"ACTOR":33,"SOLID_OPEN_ARROW":34,"DOTTED_OPEN_ARROW":35,"SOLID_ARROW":36,"DOTTED_ARROW":37,"SOLID_CROSS":38,"DOTTED_CROSS":39,"TXT":40,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SD",6:"EOF",8:"SPACE",10:"NL",11:"participant",15:"title",16:"text",17:"loop",18:"end",19:"opt",20:"alt",21:"else",22:"note",25:"over",28:",",29:"left_of",30:"right_of",33:"ACTOR",34:"SOLID_OPEN_ARROW",35:"DOTTED_OPEN_ARROW",36:"SOLID_ARROW",37:"DOTTED_ARROW",38:"SOLID_CROSS",39:"DOTTED_CROSS",40:"TXT"},
+productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,3],[9,2],[9,2],[9,4],[9,4],[9,4],[9,7],[14,4],[14,5],[26,2],[26,1],[27,1],[27,3],[23,1],[23,1],[13,4],[32,2],[32,1],[12,1],[31,1],[31,1],[31,1],[31,1],[31,1],[31,1],[24,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -15214,56 +15214,70 @@ case 12:
 break;
 case 13:
 
-		$$[$0-3].unshift({type: 'loopStart', loopText:$$[$0-4].actor, signalType: yy.LINETYPE.LOOP_START});
-		$$[$0-3].push({type: 'loopEnd', loopText:$$[$0-4], signalType: yy.LINETYPE.LOOP_END});
-		this.$=$$[$0-3];
+		$$[$0-1].unshift({type: 'optStart', optText:$$[$0-2].actor, signalType: yy.LINETYPE.OPT_START});
+		$$[$0-1].push({type: 'optEnd', optText:$$[$0-2].actor, signalType: yy.LINETYPE.OPT_END});
+		this.$=$$[$0-1];
 break;
 case 14:
+
+		// Alt start
+		$$[$0-4].unshift({type: 'altStart', altText:$$[$0-5].actor, signalType: yy.LINETYPE.ALT_START});
+		// Content in alt is already in $$[$0-4]
+		// Else
+		$$[$0-4].push({type: 'else', altText:$$[$0-2].actor, signalType: yy.LINETYPE.ALT_ELSE});
+		// Content in other alt
+		$$[$0-4] = $$[$0-4].concat($$[$0-1]);
+		// End
+		$$[$0-4].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
+
+		this.$=$$[$0-4];
+break;
+case 15:
 this.$=[$$[$0-1],{type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 18:
+case 19:
  this.$ = $$[$0]; 
 break;
-case 19:
+case 20:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 20:
+case 21:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 21:
+case 22:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 22:
+case 23:
 this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 25:
+case 26:
 this.$={type: 'addActor', actor:$$[$0]}
 break;
-case 26:
+case 27:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 27:
+case 28:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 28:
+case 29:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 29:
+case 30:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 30:
+case 31:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 31:
+case 32:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 32:
+case 33:
 this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,$V1,{5:3}),{6:[1,4],7:5,8:$V2,9:7,10:$V3,11:$V4,12:15,13:10,14:11,15:$V5,17:$V6,19:$V7,21:$V8,32:$V9},o($V0,$Va,{1:[2,1]}),o($Vb,[2,3]),{9:18,11:$V4,12:15,13:10,14:11,15:$V5,17:$V6,19:$V7,21:$V8,32:$V9},o($Vb,[2,5]),o($Vb,[2,6]),{12:19,32:$V9},{10:[1,20]},{10:[1,21]},{8:[1,22]},{12:23,32:$V9},{12:24,32:$V9},{30:25,33:[1,26],34:[1,27],35:[1,28],36:[1,29],37:[1,30],38:[1,31]},{22:32,24:[1,33],28:[1,34],29:[1,35]},o([6,8,10,11,15,17,18,19,20,21,27,32,33,34,35,36,37,38,39],[2,25]),o($Vb,[2,4]),{10:[1,36]},o($Vb,[2,9]),o($Vb,[2,10]),{16:[1,37]},o($Vc,$V1,{5:38}),o([6,8,10,11,15,17,19,20,21,32],$V1,{5:39}),{12:40,32:$V9},{32:[2,26]},{32:[2,27]},{32:[2,28]},{32:[2,29]},{32:[2,30]},{32:[2,31]},{12:41,32:$V9},{8:$Vd,25:42},{32:[2,20]},{32:[2,21]},o($Vb,[2,8]),{10:[1,44]},{6:$Ve,7:5,8:$V2,9:7,10:$V3,11:$V4,12:15,13:10,14:11,15:$V5,17:$V6,18:[1,45],19:$V7,21:$V8,32:$V9},{6:$Ve,7:5,8:$V2,9:7,10:$V3,11:$V4,12:15,13:10,14:11,15:$V5,17:$V6,19:$V7,20:[1,47],21:$V8,32:$V9},{23:48,39:$Vf},{23:50,39:$Vf},{12:52,26:51,32:$V9},{8:$Vd,25:53,32:[2,17]},o($Vb,[2,11]),o($Vb,[2,12]),o($Vb,$Va),o($Vc,$V1,{5:54}),{10:[2,22]},{10:[2,32]},{10:[2,14]},{12:55,32:$V9},{27:[1,56],32:[2,18]},{32:[2,16]},{6:$Ve,7:5,8:$V2,9:7,10:$V3,11:$V4,12:15,13:10,14:11,15:$V5,17:$V6,18:[1,57],19:$V7,21:$V8,32:$V9},{10:[2,15]},{12:58,32:$V9},o($Vb,[2,13]),{32:[2,19]}],
-defaultActions: {26:[2,26],27:[2,27],28:[2,28],29:[2,29],30:[2,30],31:[2,31],34:[2,20],35:[2,21],48:[2,22],49:[2,32],50:[2,14],53:[2,16],55:[2,15],58:[2,19]},
+table: [{3:1,4:[1,2]},{1:[3]},o($V0,$V1,{5:3}),{6:[1,4],7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,22:$V9,33:$Va},o($V0,$Vb,{1:[2,1]}),o($Vc,[2,3]),{9:19,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,22:$V9,33:$Va},o($Vc,[2,5]),o($Vc,[2,6]),{12:20,33:$Va},{10:[1,21]},{10:[1,22]},{8:[1,23]},{12:24,33:$Va},{12:25,33:$Va},{12:26,33:$Va},{31:27,34:[1,28],35:[1,29],36:[1,30],37:[1,31],38:[1,32],39:[1,33]},{23:34,25:[1,35],29:[1,36],30:[1,37]},o([6,8,10,11,15,17,18,19,20,21,22,28,33,34,35,36,37,38,39,40],[2,26]),o($Vc,[2,4]),{10:[1,38]},o($Vc,[2,9]),o($Vc,[2,10]),{16:[1,39]},o($Vd,$V1,{5:40}),o($Vd,$V1,{5:41}),o([6,8,10,11,15,17,19,20,21,22,33],$V1,{5:42}),{12:43,33:$Va},{33:[2,27]},{33:[2,28]},{33:[2,29]},{33:[2,30]},{33:[2,31]},{33:[2,32]},{12:44,33:$Va},{8:$Ve,26:45},{33:[2,21]},{33:[2,22]},o($Vc,[2,8]),{10:[1,47]},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,48],19:$V7,20:$V8,22:$V9,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,50],19:$V7,20:$V8,22:$V9,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,21:[1,51],22:$V9,33:$Va},{24:52,40:$Vg},{24:54,40:$Vg},{12:56,27:55,33:$Va},{8:$Ve,26:57,33:[2,18]},o($Vc,[2,11]),o($Vc,[2,12]),o($Vc,$Vb),o($Vc,[2,13]),{12:58,33:$Va},{10:[2,23]},{10:[2,33]},{10:[2,15]},{12:59,33:$Va},{28:[1,60],33:[2,19]},{33:[2,17]},o($Vd,$V1,{5:61}),{10:[2,16]},{12:62,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,63],19:$V7,20:$V8,22:$V9,33:$Va},{33:[2,20]},o($Vc,[2,14])],
+defaultActions: {28:[2,27],29:[2,28],30:[2,29],31:[2,30],32:[2,31],33:[2,32],36:[2,21],37:[2,22],52:[2,23],53:[2,33],54:[2,15],57:[2,17],59:[2,16],62:[2,20]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -15740,13 +15754,13 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:return 10;
 break;
-case 1: return 37;
+case 1: return 38;
 break;
-case 2: return 38;
+case 2: return 39;
 break;
-case 3: return 35;
+case 3: return 36;
 break;
-case 4: return 36;
+case 4: return 37;
 break;
 case 5:/* skip whitespace */
 break;
@@ -15756,29 +15770,29 @@ case 7:/* skip comments */
 break;
 case 8:return 11;
 break;
-case 9:return 17;
+case 9:return 19;
 break;
-case 10:return 19;
+case 10:return 17;
 break;
 case 11:return 20;
 break;
-case 12:return 18;
+case 12:return 21;
 break;
-case 13:return 28;
+case 13:return 18;
 break;
 case 14:return 29;
 break;
-case 15:return 24;
+case 15:return 30;
 break;
-case 16:return 21;
+case 16:return 25;
 break;
-case 17:return 15;
+case 17:return 22;
 break;
-case 18:return 4;
+case 18:return 15;
 break;
-case 19:return 27;
+case 19:return 4;
 break;
-case 20:return 32;
+case 20:return 28;
 break;
 case 21:return 33;
 break;
@@ -15788,16 +15802,18 @@ case 23:return 35;
 break;
 case 24:return 36;
 break;
-case 25:return 39;
+case 25:return 37;
 break;
-case 26:return 6;
+case 26:return 40;
 break;
-case 27:return 'INVALID';
+case 27:return 6;
+break;
+case 28:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:[\-][x])/i,/^(?:[\-][\-][x])/i,/^(?:[\-][>][>])/i,/^(?:[\-][\-][>][>])/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:[^\->:\n,]+)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?::[^#\n]+)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:[\-][x])/i,/^(?:[\-][\-][x])/i,/^(?:[\-][>][>])/i,/^(?:[\-][\-][>][>])/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:opt\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:[^\->:\n,]+)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?::[^#\n]+)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],"inclusive":true}}
 });
 return lexer;
 })();
@@ -15879,7 +15895,13 @@ exports.LINETYPE = {
     SOLID_OPEN  : 5,
     DOTTED_OPEN : 6,
     LOOP_START  : 10,
-    LOOP_END    : 11
+    LOOP_END    : 11,
+    ALT_START   : 12,
+    ALT_ELSE    : 13,
+    ALT_END     : 14,
+    OPT_START   : 15,
+    OPT_END     : 16
+
 };
 
 exports.ARROWTYPE = {
@@ -15911,7 +15933,7 @@ exports.apply = function(param){
             exports.apply(item);
         });
     } else {
-        //console.log(param);
+        // console.log(param);
         switch(param.type){
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.actor);
@@ -15928,6 +15950,25 @@ exports.apply = function(param){
                 //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
                 break;
             case 'loopEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+            case 'optStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.optText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'optEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+            case 'altStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.altText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'else':
+                exports.addSignal(undefined, undefined, param.altText, param.signalType);
+                break;
+            case 'altEnd':
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
         }
@@ -16034,6 +16075,12 @@ exports.bounds = {
         //loop.stopy =  exports.bounds.getVerticalPos();
         return loop;
     },
+    addElseToLoop:function(message){
+        var loop = this.list.pop();
+        loop.elsey =  exports.bounds.getVerticalPos();
+        loop.elseText = message;
+        this.list.push(loop);
+    },
     bumpVerticalPos:function(bump){
         this.verticalPos = this.verticalPos + bump;
         this.data.stopy = this.verticalPos;
@@ -16085,7 +16132,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
  * @param pos The position if the actor in the list of actors
  * @param description The text in the box
  */
-exports.drawLoop = function(elem,bounds){
+exports.drawLoop = function(elem,bounds,labelText){
     var g = elem.append("g");
     var drawLoopLine = function(startx,starty,stopx,stopy){
         g.append("line")
@@ -16101,9 +16148,12 @@ exports.drawLoop = function(elem,bounds){
     drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
+    if(typeof bounds.elsey !== 'undefined'){
+        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey );
+    }
 
     var txt = svgDraw.getTextObj();
-    txt.text = "Loop";
+    txt.text = labelText;
     txt.x = bounds.startx;
     txt.y = bounds.starty;
     txt.labelMargin =  1.5 * conf.boxMargin;
@@ -16113,48 +16163,21 @@ exports.drawLoop = function(elem,bounds){
     svgDraw.drawLabel(g,txt);
 
     txt = svgDraw.getTextObj();
-    txt.text = bounds.title;
+    txt.text = '[ ' + bounds.title + ' ]';
     txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
     txt.y = bounds.starty + 1.5 * conf.boxMargin;
     txt.anchor = 'middle';
     txt.class = 'loopText';
 
     svgDraw.drawText(g,txt);
+
+    if(typeof bounds.elseText !== 'undefined') {
+        txt.text = '[ ' + bounds.elseText + ' ]';
+        txt.y = bounds.elsey + 1.5 * conf.boxMargin;
+        svgDraw.drawText(g, txt);
+    }
 };
 
-
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
-var insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5) /*must be smarter way to calculate shift*/
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
-};
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
-var insertArrowCrossHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "crosshead")
-        .attr("refX", 20) /*must be smarter way to calculate shift*/
-        .attr("refY", 4)
-        .attr("markerWidth", 8)
-        .attr("markerHeight", 8)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("fill",'none')
-        .attr("stroke",'#000000')
-        .style("stroke-dasharray", ("0, 0"))
-        .attr("stroke-width",'1px')
-        .attr("d", "M 0,0 L 8,8 M 8,0 L 0,8"); //this is actual shape for arrowhead
-};
 
 /**
  * Draws a message
@@ -16219,45 +16242,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
 
 };
 
-/**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
- */
-var drawActor = function(elem, left,description){
-    var center = left + (conf.width/2);
-    var g = elem.append("g");
-    g.append("line")
-        .attr("x1", center)
-        .attr("y1", 5)
-        .attr("x2", center)
-        .attr("y2", 2000)
-        .attr("class", 'actor-line')
-        .attr("stroke-width", '0.5px')
-        .attr("stroke", '#999');
-
-    g.append("rect")
-        .attr("x", left)
-        .attr("y", 0)
-        .attr("fill", '#eaeaea')
-        .attr("stroke", '#666')
-        .attr("width", conf.width)
-        .attr("height", conf.height)
-        .attr("class", 'actor')
-        .attr("rx", 3)
-        .attr("ry", 3);
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", (conf.height/2)+5)
-        .attr('class','actor')
-        .style("text-anchor", "middle")
-        .text(description)
-    ;
-
-    exports.bounds.insert(left, 0, left + conf.width, conf.height);
-};
-
 module.exports.drawActors = function(diagram, actors, actorKeys){
     var i;
     // Draw the actors
@@ -16271,7 +16255,9 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
-        drawActor(diagram, actors[key].x, actors[key].description);
+        svgDraw.drawActor(diagram, actors[key].x, actors[key].description, conf);
+        exports.bounds.insert(actors[key].x, 0, actors[key].x + conf.width, conf.height);
+
     }
 
     // Add a margin between the actor boxes and the first arrow
@@ -16303,15 +16289,13 @@ module.exports.draw = function (text, id) {
     module.exports.drawActors(diagram, actors, actorKeys);
 
     // The arrow head definition is attached to the svg once
-    insertArrowHead(diagram);
-    insertArrowCrossHead(diagram);
+    svgDraw.insertArrowHead(diagram);
+    svgDraw.insertArrowCrossHead(diagram);
 
     // Draw the messages/signals
     messages.forEach(function(msg){
+        var loopData;
 
-
-        var startx;
-        var stopx;
         switch(msg.type){
             case sq.yy.LINETYPE.NOTE:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
@@ -16334,9 +16318,38 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.LOOP_END:
-                var loopData = exports.bounds.endLoop();
+                loopData = exports.bounds.endLoop();
 
-                exports.drawLoop(diagram, loopData);
+                exports.drawLoop(diagram, loopData,'loop');
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.OPT_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.OPT_END:
+                loopData = exports.bounds.endLoop();
+
+                exports.drawLoop(diagram, loopData, 'opt');
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_ELSE:
+
+                //exports.drawLoop(diagram, loopData);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                loopData = exports.bounds.addElseToLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_END:
+                loopData = exports.bounds.endLoop();
+
+                exports.drawLoop(diagram, loopData,'alt');
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
@@ -16347,6 +16360,9 @@ module.exports.draw = function (text, id) {
                 drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
 
         }
+
+        var startx;
+        var stopx;
     });
 
     var box = exports.bounds.getBounds();
@@ -16423,6 +16439,74 @@ exports.drawLabel = function(elem , txtObject){
     //return textElem;
 };
 
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the liost of actors
+ * @param description The text in the box
+ */
+exports.drawActor = function(elem, left,description,conf){
+    var center = left + (conf.width/2);
+    var g = elem.append("g");
+    g.append("line")
+        .attr("x1", center)
+        .attr("y1", 5)
+        .attr("x2", center)
+        .attr("y2", 2000)
+        .attr("class", 'actor-line')
+        .attr("stroke-width", '0.5px')
+        .attr("stroke", '#999');
+
+    g.append("rect")
+        .attr("x", left)
+        .attr("y", 0)
+        .attr("fill", '#eaeaea')
+        .attr("stroke", '#666')
+        .attr("width", conf.width)
+        .attr("height", conf.height)
+        .attr("class", 'actor')
+        .attr("rx", 3)
+        .attr("ry", 3);
+    g.append("text")      // text label for the x axis
+        .attr("x", center)
+        .attr("y", (conf.height/2)+5)
+        .attr('class','actor')
+        .style("text-anchor", "middle")
+        .text(description)
+    ;
+};
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+exports.insertArrowHead = function(elem){
+    elem.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("refX", 5) /*must be smarter way to calculate shift*/
+        .attr("refY", 2)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
+};
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+exports.insertArrowCrossHead = function(elem){
+    elem.append("defs").append("marker")
+        .attr("id", "crosshead")
+        .attr("refX", 15) /*must be smarter way to calculate shift*/
+        .attr("refY", 4)
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 8)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("fill",'none')
+        .attr("stroke",'#000000')
+        .style("stroke-dasharray", ("0, 0"))
+        .attr("stroke-width",'1px')
+        .attr("d", "M 1,1 L 7,7 M 7,1 L 1,7"); //this is actual shape for arrowhead
+};
 
 exports.getTextObj = function(){
     var txt = {
@@ -16595,7 +16679,6 @@ global.mermaid = {
  */
 module.exports.detectType = function(text,a){
     if(text.match(/^\s*sequenceDiagram/)){
-        //console.log('Detected sequenceDiagram syntax');
         return "sequenceDiagram";
     }
 
