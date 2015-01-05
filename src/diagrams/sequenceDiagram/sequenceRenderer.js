@@ -302,6 +302,9 @@ module.exports.draw = function (text, id) {
     exports.bounds.init();
     var diagram = d3.select('#'+id);
 
+    var startx;
+    var stopx;
+
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
@@ -381,9 +384,6 @@ module.exports.draw = function (text, id) {
                 drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
 
         }
-
-        var startx;
-        var stopx;
     });
 
     var box = exports.bounds.getBounds();
