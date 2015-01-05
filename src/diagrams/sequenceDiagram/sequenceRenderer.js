@@ -292,7 +292,7 @@ module.exports.draw = function (text, id) {
             case sq.yy.LINETYPE.LOOP_END:
                 loopData = exports.bounds.endLoop();
 
-                exports.drawLoop(diagram, loopData,'loop', conf);
+                svgDraw.drawLoop(diagram, loopData,'loop', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             case sq.yy.LINETYPE.OPT_START:
@@ -303,7 +303,7 @@ module.exports.draw = function (text, id) {
             case sq.yy.LINETYPE.OPT_END:
                 loopData = exports.bounds.endLoop();
 
-                exports.drawLoop(diagram, loopData, 'opt', conf);
+                svgDraw.drawLoop(diagram, loopData, 'opt', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             case sq.yy.LINETYPE.ALT_START:
@@ -321,7 +321,7 @@ module.exports.draw = function (text, id) {
             case sq.yy.LINETYPE.ALT_END:
                 loopData = exports.bounds.endLoop();
 
-                exports.drawLoop(diagram, loopData,'alt', conf);
+                svgDraw.drawLoop(diagram, loopData,'alt', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
