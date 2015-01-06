@@ -161,9 +161,9 @@ click nodeId callback
 ## Styling and classes
 
 ### Styling links
-It is possible to style links, for instance you might want to style a link that is going backwards in the flow. As links
-has no ids in the same way as nodes, some other way of deciding what link the style should be attached to is required.
-Instead of ids the order number of when the link was defined in the graph is used. In the example below the style
+It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links
+have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
+Instead of ids, the order number of when the link was defined in the graph is used. In the example below the style
 defined in the linkStyle statement will belong to the fourth link in the graph:
 
 ```
@@ -197,7 +197,7 @@ a class definition looks like the example below:
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
-Attachment of a  class to a node is done as per below:
+Attachment of a class to a node is done as per below:
 
 ```
     class nodeId1 className;
@@ -220,9 +220,9 @@ If a class is named default it will be assigned to all classes without specific 
 
 ## Graph declarations with spaces between vertices and link and without semicolon
 
-* In graph declarations, the statements can now end without a semicolon also. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
+* In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
 
-* A single space is allowed between a vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduce to improve readability.
+* A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduce to improve readability.
 
 Below is the new declaration of the graph which is also valid along with the old declaration of the graph as described in the graph example on the home wiki page.
 

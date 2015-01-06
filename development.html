@@ -172,26 +172,26 @@
     <section class="column-group gutters article">
         <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
             <article id="main">
-                <h1 id="updating-the-documentation">Updating the documentation</h1>
+                <h1 id="development-updating-the-documentation">Development: Updating the documentation</h1>
 <h2 id="getting-the-development-environment-up">Getting the development environment up</h2>
 <ol>
 <li>Fork the gh-pages branch in the the mermaid repository</li>
 <li>Do npm install</li>
 </ol>
-<h2 id="working-with-the-documentaion">Working with the documentaion</h2>
+<h2 id="working-with-the-documentation">Working with the documentation</h2>
 <p>The html files are generated from the markdown files in the docs folder.</p>
 <p>Thus ... One important thing to remember. <em> Do not edit the html files directly! </em> Those changes will be overwritten
 when the site is re-generated.</p>
 <p>There are some commands that are important in working with the documentation:</p>
 <pre><code>gulp site</code></pre><p>This command generates html files from the markdown files in the docs folder. If you do a small fix to a markdown file,
 remember to run this command before submitting your changes as they will not be reflected in the html files if you don&#39;t.</p>
-<pre><code>gulp www</code></pre><p>This command starts a small, mini, express server for viewing the documentation site.</p>
+<pre><code>gulp www</code></pre><p>This command starts a small mini express server for viewing the documentation site.</p>
 <h2 id="committing-the-changes">Committing the changes</h2>
-<p>Do a pull request and for merging the changes to the site.</p>
+<p>Do a pull request to merge the changes to the site.</p>
 <h1 id="things-to-be-done-in-order-to-add-a-new-diagram-type">Things to be done in order to add a new diagram type</h1>
 <h2 id="step-1-grammar-parsing">Step 1: Grammar &amp; Parsing</h2>
 <h3 id="grammar">Grammar</h3>
-<p>This would be to  define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.</p>
+<p>This would be to define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.</p>
 <p>For instance:</p>
 <ul>
 <li>the flowchart starts with the keyword graph.</li>
@@ -211,7 +211,7 @@ remember to run this command before submitting your changes as they will not be 
 <h2 id="step-3-detection-of-the-new-diagram-type">Step 3: Detection of the new diagram type</h2>
 <p>The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.</p>
 <h2 id="step-4-the-final-piece-triggering-the-rendering">Step 4: The final piece - triggering the rendering</h2>
-<p>At this point when mermaid is trying to render the diagram it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step num 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument</p>
+<p>At this point when mermaid is trying to render the diagram, it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step number 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument.</p>
 <h1 id="usage-of-the-parser-as-a-separate-module">Usage of the parser as a separate module</h1>
 <h2 id="setup">Setup</h2>
 <pre><code>var graph = require('./graphDb');

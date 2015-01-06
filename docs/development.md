@@ -3,13 +3,13 @@ title: Development
 order: 5
 ---
 
-# Updating the documentation
+# Development: Updating the documentation
 
 ## Getting the development environment up
 1. Fork the gh-pages branch in the the mermaid repository
 2. Do npm install
 
-## Working with the documentaion
+## Working with the documentation
 
 The html files are generated from the markdown files in the docs folder.
 
@@ -28,16 +28,16 @@ remember to run this command before submitting your changes as they will not be 
 gulp www
 ```
 
-This command starts a small, mini, express server for viewing the documentation site.
+This command starts a small mini express server for viewing the documentation site.
 
 ## Committing the changes
 
-Do a pull request and for merging the changes to the site.
+Do a pull request to merge the changes to the site.
 
 # Things to be done in order to add a new diagram type
 ## Step 1: Grammar & Parsing
 ### Grammar
-This would be to  define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
+This would be to define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.
 
 For instance:
 
@@ -67,7 +67,7 @@ Place the renderer in the diagram folder.
 The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.
 
 ## Step 4: The final piece - triggering the rendering
-At this point when mermaid is trying to render the diagram it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step num 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument
+At this point when mermaid is trying to render the diagram, it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step number 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument.
 
 # Usage of the parser as a separate module
 

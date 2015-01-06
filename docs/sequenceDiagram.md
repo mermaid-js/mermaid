@@ -14,7 +14,7 @@ sequenceDiagram
     John-->>Alice: Great!
 ```
 
-Renders to the diagram below:
+Renders the following diagram:
 
 ```
 sequenceDiagram
@@ -26,9 +26,9 @@ sequenceDiagram
 
 ### Participants
 
-The participants can be defined implicitly as in the first example in this page. The participants or actors are
+The participants can be defined implicitly as in the first example on this page. The participants or actors are
 rendered in order of appearance in the diagram source text. Sometimes you might want to show the participants in a
-different order then when the first message from the actor appears. Then it is possible to introduce the actor
+different order then when the first message from when the actor appears. Then it is possible to introduce the actor
 explicitly in by doing this decing the order of appearance.
 
 ```
@@ -180,7 +180,7 @@ sequenceDiagram
 ```
 ## Styling
 
-Styling of the a sequence diagram is done by defining a number of css classes. These classes are during rendering extracted from the
+Styling of the a sequence diagram is done by defining a number of css classes.  During rendering these classes are extracted from the
 
 ### Classes used
 
