@@ -1,178 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>Usage</title>
-<meta name="description" content="">
-<meta name="author" content="ink, cookbook, recipes">
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
-<lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
-<link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
-<link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
-<link rel="apple-touch-icon" sizes="120x120"
-href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
-<link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
-<link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png"
-media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
-<link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png"
-media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
-<link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
-media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
-<!-- load Ink's css from the cdn -->
-<link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
-<link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
-<!-- load Ink's css for IE8 -->
-<!--[if lt IE 9 ]>
-<link rel="stylesheet" title="mermaid-svg-internal-css" href="css/ink-ie.min.css" type="text/css" media="screen"
-title="no title" charset="utf-8">
-<![endif]-->
-<link rel="stylesheet" href="css/monokai_sublime.css">
-<script src="js/highlight.pack.js"></script>
-<link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
-<!-- test browser flexbox support and load legacy grid if unsupported -->
-<script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
-<script type="text/javascript">
-Modernizr.load({
-test: Modernizr.flexbox,
-nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
-});
-</script>
-<!-- load Ink's javascript files from the cdn -->
-<script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
-<script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
-<script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.1/dist/mermaid.full.js"></script>
-<style type="text/css">
-body {
-background: #ffffff;
-font-family: sans-serif;
-font-size: 90%;
-}
-header h1 small:before {
-content: "|";
-margin: 0 0.5em;
-font-size: 1.5em;
-}
-h1 {
-color: #104e8b
-}
-article header {
-padding: 0;
-overflow: hidden;
-}
-article footer {
-background: none;
-}
-article {
-padding-bottom: 2em;
-border-bottom: 1px solid #ccc;
-}
-table, th, td {
-border: 1px solid #8b8989;
-}
-.date {
-float: right;
-}
-summary {
-font-weight: 700;
-line-height: 1.5;
-}
-.push, footer {
-height: 120px;
-margin-top: 0;
-margin-bottom: 10;
-}
-footer {
-background: #a9a9a9;
-}
-</style>
-<script>
-var g = function (hljs) {
-var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
-var keyw = {
-keyword: 'graph sequenceDiagram participant loop end',
-typename: 'Note',
-literal: "false true left right"
-};
-return {
-case_insensitive: false,
-aliases: ["mermaid"],
-k: keyw,
-i: 'for',
-c: [{
-cN: "function",
-b: "^" + r + "\\s*\\(",
-e: "->",
-rB: !0,
-i: "\\(|#|//|/\\*|\\\\|:|;",
-starts: {
-e: ";|\\.", k: keyw, c: [
-{cN: "comment", b: "%", e: "$"}
-]
-}
-},
-{cN: "comment", b: "%", e: "$"}
-]
-};
-};
-hljs.registerLanguage('mm', g);
-hljs.initHighlightingOnLoad();
-Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
-DomLoaded.run(function () {
-var elements = document.querySelectorAll('article h1,h2');
-var i;
-var sections = document.getElementById('sections');
-for (i = 0; i < elements.length; i++) {
-var e = elements[i];
-sections.innerHTML = sections.innerHTML + '<li><a href="#' + e.id + '">' + e.innerHTML + '</a></li>';
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Usage</title>
+    <meta name="description" content="">
+    <meta name="author" content="ink, cookbook, recipes">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
+    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
+        <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
+        <link rel="apple-touch-icon" sizes="120x120"
+              href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png"
+              media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png"
+              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
+        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
+              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
+        <!-- load Ink's css from the cdn -->
+        <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
+        <!-- load Ink's css for IE8 -->
+        <!--[if lt IE 9 ]>
+        <link rel="stylesheet" title="mermaid-svg-internal-css" href="css/ink-ie.min.css" type="text/css" media="screen"
+              title="no title" charset="utf-8">
+        <![endif]-->
+        <link rel="stylesheet" href="css/monokai_sublime.css">
+        <script src="js/highlight.pack.js"></script>
+        <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <!-- test browser flexbox support and load legacy grid if unsupported -->
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
+        <script type="text/javascript">
+            Modernizr.load({
+                test: Modernizr.flexbox,
+                nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
+            });
+        </script>
+        <!-- load Ink's javascript files from the cdn -->
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
+        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.1/dist/mermaid.full.js"></script>
+        <style type="text/css">
+            body {
+                background: #ffffff;
+                font-family: sans-serif;
+                font-size: 90%;
+            }
+            header h1 small:before {
+                content: "|";
+                margin: 0 0.5em;
+                font-size: 1.5em;
+            }
+            h1 {
+                color: #104e8b
+            }
+            article header {
+                padding: 0;
+                overflow: hidden;
+            }
+            article footer {
+                background: none;
+            }
+            article {
+                padding-bottom: 2em;
+                border-bottom: 1px solid #ccc;
+            }
+            table, th, td {
+                border: 1px solid #8b8989;
+            }
+            .date {
+                float: right;
+            }
+            summary {
+                font-weight: 700;
+                line-height: 1.5;
+            }
+            .push, footer {
+                height: 120px;
+                margin-top: 0;
+                margin-bottom: 10;
+            }
+            footer {
+                background: #a9a9a9;
+            }
+        </style>
+        <script>
+            var g = function (hljs) {
+                var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+                var keyw = {
+                    keyword: 'graph sequenceDiagram participant loop end',
+                    typename: 'Note',
+                    literal: "false true left right"
+                };
+                return {
+                    case_insensitive: false,
+                    aliases: ["mermaid"],
+                    k: keyw,
+                    i: 'for',
+                    c: [{
+                        cN: "function",
+                        b: "^" + r + "\\s*\\(",
+                        e: "->",
+                        rB: !0,
+                        i: "\\(|#|//|/\\*|\\\\|:|;",
+                        starts: {
+                            e: ";|\\.", k: keyw, c: [
+                                {cN: "comment", b: "%", e: "$"}
+                            ]
+                        }
+                    },
+                        {cN: "comment", b: "%", e: "$"}
+                    ]
+                };
+            };
+            hljs.registerLanguage('mm', g);
+            hljs.initHighlightingOnLoad();
+            Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
+                DomLoaded.run(function () {
+                    var elements = document.querySelectorAll('article h1,h2');
+                    var i;
+                    var sections = document.getElementById('sections');
+                    for (i = 0; i < elements.length; i++) {
+                        var e = elements[i];
+                        sections.innerHTML = sections.innerHTML + '<li><a href="#' + e.id + '">' + e.innerHTML + '</a></li>';
 //$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
-}
-Ink.requireModules(['Ink.UI.Sticky_1'], function (Sticky) {
-new Sticky('#sidenav')
-});
-console.log('Registering new lang');
-});
-});
-</script>
+                    }
+                    Ink.requireModules(['Ink.UI.Sticky_1'], function (Sticky) {
+                        new Sticky('#sidenav')
+                    });
+                    console.log('Registering new lang');
+                });
+            });
+        </script>
 </head>
 <body>
-    <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-        <ul class="menu horizontal blue">
-            <li><a href="development.html">development</a></li>
-            <li><a href="flowchart.html">flowchart</a></li>
-            <li><a href="index.html">index</a></li>
-            <li><a href="mermaidCLI.html">mermaidCLI</a></li>
-            <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
-            <li class="active"><a href="usage.html">usage</a></li>
-        </ul>
-    </nav>
+<nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
+    <ul class="menu horizontal blue">
+        <li><a href="development.html">development</a></li>
+        <li><a href="flowchart.html">flowchart</a></li>
+        <li><a href="index.html">index</a></li>
+        <li><a href="mermaidCLI.html">mermaidCLI</a></li>
+        <li><a href="sequenceDiagram.html">sequenceDiagram</a></li>
+        <li class="active"><a href="usage.html">usage</a></li>
+    </ul>
+</nav>
 <div class="ink-grid">
-<!--[if lte IE 9 ]>
-<div class="ink-alert basic" role="alert">
-<button class="ink-dismiss">&times;</button>
-<p>
-<strong>You are using an outdated Internet Explorer version.</strong>
-Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
-</p>
-</div>
--->
-<!-- Add your site or application content here -->
-<header class="clearfix vertical-padding">
-<h1 class="logo xlarge-push-left large-push-left">
-<a href="https://github.com/knsv/mermaid" >mermaid</a>
-<small>Diagrams and flowcharts from textsimilar to markdown</small>
-</h1>
+    <!--[if lte IE 9 ]>
+    <div class="ink-alert basic" role="alert">
+    <button class="ink-dismiss">&times;</button>
+    <p>
+    <strong>You are using an outdated Internet Explorer version.</strong>
+    Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
+    </p>
+    </div>
+    -->
+    <!-- Add your site or application content here -->
+    <header class="clearfix vertical-padding">
+        <h1 class="logo xlarge-push-left large-push-left">
+            <a href="https://github.com/knsv/mermaid" >mermaid</a>
+            <small>Diagrams and flowcharts from textsimilar to markdown</small>
+        </h1>
 
-</header>
-<section class="column-group gutters article">
-<div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
-<article>
-<h1 id="installation">Installation</h1>
+    </header>
+    <section class="column-group gutters article">
+        <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
+            <article id="main">
+                <h1 id="installation">Installation</h1>
 <p>Either use the npm or bower package managers as per below:</p>
 <pre><code>bower install mermaid --save-dev</code></pre><pre><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files:</p>
 <ul>
@@ -213,30 +213,30 @@ read the chart definiton which will be replaced with the svg chart.</p>
             return '&lt;pre>&lt;code>'+code+'&gt;/code>&gt;/pre>';
         }
     };</code></pre>
-</article>
-</div>
-<section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
-    
-<a href="https://github.com/knsv/mermaid" class="github-button">Star</a>
-<a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
-<a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
-<script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
-        
-    
-<nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
-data-bottom-element="#sticky-stop">
-<ul class="menu vertical grey" id="sections">
-<li class="heading active"><a href="#">Index:</a></li>
-</ul>
-</nav>
-</section>
-</section>
-<div id="sticky-stop">&nbsp;</div>
+            </article>
+        </div>
+        <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
+
+            <a href="https://github.com/knsv/mermaid" class="github-button">Star</a>
+            <a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
+            <a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
+            <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+            <a href="https://travis-ci.org/knsv/mermaid"><img src="https://travis-ci.org/knsv/mermaid.svg?branch=master" alt="Build Status"></a>
+            <a href="https://codeclimate.com/github/knsv/mermaid"><img src="https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg" alt="Code Climate"></a>
+            <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
+                 data-bottom-element="#sticky-stop">
+                <ul class="menu vertical grey" id="sections">
+                    <li class="heading active"><a href="#">Index:</a></li>
+                </ul>
+            </nav>
+        </section>
+    </section>
+    <div id="sticky-stop">&nbsp;</div>
 </div>
 <footer class="clearfix">
-<div class="ink-grid">
-<p class="note"><br/>These pages are generated from markdown source files. <a href="https://raw.githubusercontent.com/knsv/mermaid/gh-pages/docs/flowchart.md">flowchart.md</a> is an example of a markdown file which includes mermaid source.</p>
-</div>
+    <div class="ink-grid">
+        <p class="note"><br/>These pages are generated from markdown source files. <a href="https://raw.githubusercontent.com/knsv/mermaid/gh-pages/docs/flowchart.md">flowchart.md</a> is an example of a markdown file which includes mermaid source.</p>
+    </div>
 </footer>
 </body>
 </html>
