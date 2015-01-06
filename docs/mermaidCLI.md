@@ -1,6 +1,6 @@
 ---
 title: mermaid CLI
-order: 2
+order: 4
 ---
 # mermaid CLI
 

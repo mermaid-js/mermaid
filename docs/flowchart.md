@@ -1,5 +1,5 @@
 ---
-title: Flowchart Basic Syntax
+title: Flowchart
 order: 2
 ---
 

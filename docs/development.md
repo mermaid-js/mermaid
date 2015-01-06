@@ -1,6 +1,6 @@
 ---
-title: Development tips
-order: 4
+title: Development
+order: 5
 ---
 
 # Updating the documentation

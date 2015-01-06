@@ -1,5 +1,5 @@
 ---
-title: Mermaid home
+title: Home
 order: 0
 ---
 mermaid

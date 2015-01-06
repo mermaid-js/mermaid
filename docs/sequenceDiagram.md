@@ -1,6 +1,6 @@
 ---
-title: Sequence diagrams
-order: 1
+title: Sequence Diagram
+order: 3
 ---
 # Sequence diagrams
 
