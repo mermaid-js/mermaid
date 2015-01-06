@@ -70,4 +70,4 @@ sequence diagrams.
 
 *Mermaid was created by Knut Sveidqvist for easier documentation.*
 
-Knut has not done all work by him self, here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
+Knut has not done all work by himself, here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
