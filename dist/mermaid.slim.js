@@ -12969,7 +12969,7 @@ process.chdir = function (dir) {
 },{}],102:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "bin": {
@@ -15794,26 +15794,28 @@ case 19:return 4;
 break;
 case 20:return 28;
 break;
-case 21:return 33;
+case 21:return 10;
 break;
-case 22:return 34;
+case 22:return 33;
 break;
-case 23:return 35;
+case 23:return 34;
 break;
-case 24:return 36;
+case 24:return 35;
 break;
-case 25:return 37;
+case 25:return 36;
 break;
-case 26:return 40;
+case 26:return 37;
 break;
-case 27:return 6;
+case 27:return 40;
 break;
-case 28:return 'INVALID';
+case 28:return 6;
+break;
+case 29:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:[\-][x])/i,/^(?:[\-][\-][x])/i,/^(?:[\-][>][>])/i,/^(?:[\-][\-][>][>])/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:opt\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:[^\->:\n,]+)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?::[^#\n]+)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:[\-][x])/i,/^(?:[\-][\-][x])/i,/^(?:[\-][>][>])/i,/^(?:[\-][\-][>][>])/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:opt\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\->:\n,;]+)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?::[^#\n;]+)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"inclusive":true}}
 });
 return lexer;
 })();
@@ -16635,28 +16637,9 @@ var equals = function (val, variable){
         return (val === variable);
     }
 };
-if(typeof document !== 'undefined'){
-    /**
-     * Wait for coument loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function(){
-        // Check presence of config object
-        if(typeof mermaid_config !== 'undefined'){
-            // Check if property startOnLoad is set
-            if(equals(true, mermaid_config.startOnLoad)){
-                init();
-            }
-        }
-        else{
-            // No config found, do autostart in this simple case
-            init();
-        }
-    }, false);
-
-}
-
 
 global.mermaid = {
+    startOnLoad:true,
     init:function(){
         init();
     },
@@ -16667,6 +16650,39 @@ global.mermaid = {
         return flow.parser;
     }
 };
+
+exports.contentLoaded = function(){
+    // Check state of start config mermaid namespece
+    //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
+    //console.log('mermaid_config',mermaid_config);
+    if(global.mermaid.startOnLoad) {
+
+        // For backwards compatability reasons also check mermaid_config variable
+        if (typeof mermaid_config !== 'undefined') {
+            // Check if property startOnLoad is set
+            if (equals(true, mermaid_config.startOnLoad)) {
+                global.mermaid.init();
+            }
+        }
+        else {
+            // No config found, do autostart in this simple case
+            global.mermaid.init();
+        }
+    }
+
+};
+
+if(typeof document !== 'undefined'){
+    /**
+     * Wait for coument loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function(){
+        exports.contentLoaded();
+    }, false);
+}
+
+
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":102,"./diagrams/flowchart/flowRenderer":103,"./diagrams/flowchart/graphDb":104,"./diagrams/flowchart/parser/flow":106,"./diagrams/sequenceDiagram/sequenceRenderer":109,"./utils":112,"he":100}],112:[function(require,module,exports){
 /**

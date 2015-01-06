@@ -273,6 +273,25 @@ describe('when parsing a sequenceDiagram',function() {
 
 
     });
+    it('it should handle opt statements a sequenceDiagram', function () {
+        var str = 'sequenceDiagram;Alice->Bob: Hello Bob, how are you?;opt Perhaps a happy response;Bob-->Alice: I am good thanks!;end;';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        //console.log(actors);
+        expect(actors.Alice.description).toBe('Alice');
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+        //console.log(messages);
+
+        expect(messages.length).toBe(4);
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[1].type).toBe(sq.yy.LINETYPE.OPT_START);
+        expect(messages[2].from).toBe('Bob');
+
+
+    });
 
     it('it should handle alt statements a sequenceDiagram', function () {
         var str = 'sequenceDiagram\n' +

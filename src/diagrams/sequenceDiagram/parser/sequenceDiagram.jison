@@ -34,12 +34,13 @@
 "title"           return 'title';
 "sequenceDiagram" return 'SD';
 ","               return ',';
-[^\->:\n,]+       return 'ACTOR';
+";"               return 'NL';
+[^\->:\n,;]+       return 'ACTOR';
 "->"		      return 'SOLID_OPEN_ARROW';
 "-->"		 	  return 'DOTTED_OPEN_ARROW';
 "->>"			  return 'SOLID_ARROW';
 "-->>"            return 'DOTTED_ARROW';
-":"[^#\n]+        return 'TXT';
+":"[^#\n;]+        return 'TXT';
 <<EOF>>           return 'EOF';
 .                 return 'INVALID';
 

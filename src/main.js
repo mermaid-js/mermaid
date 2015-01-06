@@ -91,28 +91,9 @@ var equals = function (val, variable){
         return (val === variable);
     }
 };
-if(typeof document !== 'undefined'){
-    /**
-     * Wait for coument loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function(){
-        // Check presence of config object
-        if(typeof mermaid_config !== 'undefined'){
-            // Check if property startOnLoad is set
-            if(equals(true, mermaid_config.startOnLoad)){
-                init();
-            }
-        }
-        else{
-            // No config found, do autostart in this simple case
-            init();
-        }
-    }, false);
-
-}
-
 
 global.mermaid = {
+    startOnLoad:true,
     init:function(){
         init();
     },
@@ -123,3 +104,35 @@ global.mermaid = {
         return flow.parser;
     }
 };
+
+exports.contentLoaded = function(){
+    // Check state of start config mermaid namespece
+    //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
+    //console.log('mermaid_config',mermaid_config);
+    if(global.mermaid.startOnLoad) {
+
+        // For backwards compatability reasons also check mermaid_config variable
+        if (typeof mermaid_config !== 'undefined') {
+            // Check if property startOnLoad is set
+            if (equals(true, mermaid_config.startOnLoad)) {
+                global.mermaid.init();
+            }
+        }
+        else {
+            // No config found, do autostart in this simple case
+            global.mermaid.init();
+        }
+    }
+
+};
+
+if(typeof document !== 'undefined'){
+    /**
+     * Wait for coument loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function(){
+        exports.contentLoaded();
+    }, false);
+}
+
+
