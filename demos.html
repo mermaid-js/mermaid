@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Usage</title>
+    <title>Demos</title>
     <meta name="description" content="">
     <meta name="author" content="ink, cookbook, recipes">
     <meta name="HandheldFriendly" content="True">
@@ -144,11 +144,11 @@
 <nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
     <ul class="menu horizontal blue">
         <li><a href="index.html">Home</a></li>
-        <li class="active"><a href="usage.html">Usage</a></li>
+        <li><a href="usage.html">Usage</a></li>
         <li><a href="flowchart.html">Flowchart</a></li>
         <li><a href="sequenceDiagram.html">Sequence Diagram</a></li>
         <li><a href="mermaidCLI.html">mermaid CLI</a></li>
-        <li><a href="demos.html">Demos</a></li>
+        <li class="active"><a href="demos.html">Demos</a></li>
         <li><a href="development.html">Development</a></li>
     </ul>
 </nav>
@@ -173,47 +173,125 @@
     <section class="column-group gutters article">
         <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
             <article id="main">
-                <h1 id="installation">Installation</h1>
-<p>Either use the npm or bower package managers as per below:</p>
-<pre><code>bower install mermaid --save-dev</code></pre><pre><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files:</p>
-<ul>
-<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js">mermaid including dependencies</a></li>
-</ul>
-<p>This file bundles mermaid with d3 and dagre-d3.</p>
-<ul>
-<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.slim.js">mermaid without dependencies</a></li>
-</ul>
-<p>With this file you will need to include d3 and dagre-d3 yourself.</p>
-<p><strong> Important: </strong></p>
-<blockquote>
-<p>It&#39;s best to use a specific tag or commit hash in the URL (not a branch). Files are cached permanently after the first request.</p>
-</blockquote>
-<p>Read more about that at <a href="https://rawgit.com/">https://rawgit.com/</a></p>
-<h1 id="usage">Usage</h1>
-<p>Include mermaid on your web page:</p>
-<pre><code>&lt;script src=&quot;mermaid.full.min.js&quot;&gt;&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
-read the chart definiton which will be replaced with the svg chart.</p>
-<p>A chart defined like this:</p>
-<pre><code>&lt;div class=&quot;mermaid&quot;&gt;
-    CHART DEFINITION GOES HERE
-&lt;/div&gt;</code></pre><p>Would end up like this:</p>
-<pre><code>&lt;div class=&quot;mermaid&quot; id=&quot;mermaidChart0&quot;&gt;
-    &lt;svg&gt;
-        Chart ends up here
-    &lt;/svg&gt;
-&lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
-<h1 id="example-of-marked-renderer">Example of marked renderer</h1>
-<p>This is the renderer used for transforming the documentation from markdown to html with mermaid diagrams in the html.</p>
-<pre><code>    var renderer = new marked.Renderer();
-    renderer.code = function (code, language) {
-        if(code.match(/^sequenceDiagram/)||code.match(/^graph/)){
+                <h1 id="demos">Demos</h1>
+<h2 id="basic-flowchart">Basic flowchart</h2>
+<pre><code>%% Example diagram
+graph LR
+    A -- Link text --> B
+    A[Square Rect] --> C((Round Rect))
+    B --> D{Rhombus}
+    C --> D</code></pre><div class="mermaid">graph LR
+    A -- Link text --> B
+    A[Square Rect] --> C((Round Rect))
+    B --> D{Rhombus}
+    C --> D</div><h2 id="larger-flowchart-with-some-styling">Larger flowchart with some styling</h2>
+<pre><code>%% Code for flowchart below
+graph TB
+    sq[Square shape] --> ci((Circle shape))
 
-            return '&lt;div class="mermaid">'+code+'&gt;/div>';
-        }
-        else{
-            return '&lt;pre>&lt;code>'+code+'&gt;/code>&gt;/pre>';
-        }
-    };</code></pre>
+    od>Odd shape]-- Two line&lt;br>edge comment --> ro
+    di{Diamond with &lt;br/> line break} --> ro(Rounded&lt;br>square&lt;br>shape)
+
+    %% Notice that no text in shape are added here instead that is appended further down
+    e --> od3>Really long text with linebreak&lt;br>in an Odd shape]
+
+    di-->ro2(Rounded square shape)
+
+    %% Comments after double percent signs
+    e((Inner / circle&lt;br>and some odd &lt;br>special characters)) --> f(,.?!+-*ز)
+
+    cyr[Cyrillic]-->cyr2((Circle shape Начало));
+
+     classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+     classDef orange fill:#f96,stroke:#333,stroke-width:4px;
+     class sq,e green
+     class di orange</code></pre><div class="mermaid">graph TB
+    sq[Square shape] --> ci((Circle shape))
+
+    od>Odd shape]-- Two line<br>edge comment --> ro
+    di{Diamond with <br/> line break} --> ro(Rounded<br>square<br>shape)
+
+    %% Notice that no text in shape are added here instead that is appended further down
+    e --> od3>Really long text with linebreak<br>in an Odd shape]
+
+    di-->ro2(Rounded square shape)
+
+    %% Comments after double percent signs
+    e((Inner / circle<br>and some odd <br>special characters)) --> f(,.?!+-*ز)
+
+    cyr[Cyrillic]-->cyr2((Circle shape Начало));
+
+     classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+     classDef orange fill:#f96,stroke:#333,stroke-width:4px;
+     class sq,e green
+     class di orange</div><h2 id="basic-sequence-diagram">Basic sequence diagram</h2>
+<pre><code>%% Sequence diagram code
+sequenceDiagram
+    Alice ->> Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?
+    Bob--x Alice: I am good thanks!
+    Bob-x John: I am good thanks!
+    Note right of John: Bob thinks a long&lt;br/>long time, so long&lt;br/>that the text does&lt;br/>not fit on a row.
+
+    Bob-->Alice: Checking with John...
+    Alice->John: Yes... John, how are you?</code></pre><div class="mermaid">sequenceDiagram
+    Alice->> Bob: Hello Bob, how are you?
+    Bob-->> John: How about you John?
+    Bob--x Alice: I am good thanks!
+    Bob-x John: I am good thanks!
+
+    Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+
+    Bob-->Alice: Checking with John...
+    Alice->John: Yes... John, how are you?</div><h2 id="loops-alt-and-opt">Loops, alt and opt</h2>
+<pre><code>%% Sequence diagram code
+sequenceDiagram
+    loop Daily query
+        Alice-&gt;&gt;Bob: Hello Bob, how are you?
+        alt is sick
+            Bob-&gt;&gt;Alice: Not so good :(
+        else is well
+            Bob-&gt;&gt;Alice: Feeling fresh like a daisy
+        end
+
+        opt Extra response
+            Bob-&gt;&gt;Alice: Thanks for asking
+        end
+    end</code></pre><div class="mermaid">sequenceDiagram
+    loop Daily query
+        Alice->>Bob: Hello Bob, how are you?
+        alt is sick
+            Bob->>Alice: Not so good :(
+        else is well
+            Bob->>Alice: Feeling fresh like a daisy
+        end
+
+        opt Extra response
+            Bob->>Alice: Thanks for asking
+        end
+    end</div><h2 id="message-to-self-in-loop">Message to self in loop</h2>
+<pre><code>%% Sequence diagram code
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts&lt;br/>prevail...
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!</code></pre><div class="mermaid">sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts<br/>prevail...
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!</div>
             </article>
         </div>
         <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
