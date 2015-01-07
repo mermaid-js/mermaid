@@ -26,10 +26,10 @@ sequenceDiagram
 
 ### Participants
 
-The participants can be defined as in the first example on this page. The participants or actors are
+The participants can be defined implicitly as in the first example on this page. The participants or actors are
 rendered in order of appearance in the diagram source text. Sometimes you might want to show the participants in a
-different order than how they appear in the first message. It is possible to introduce the actor's
-order of appearance by doing the following:
+different order than how they appear in the first message. It is possible to specify the actor's order of
+appearance by doing the following:
 
 ```
 %% Example of sequence diagram
@@ -197,4 +197,91 @@ labelText    | Styles for the text in label for loops.
 loopText     | Styles for the text in the loop box.
 loopLine     | Defines styles for the lines in the loop box.
 note         | Styles for the note box.
-noteText     | Styles f
+noteText     | Styles for the text on in the note boxes.
+
+### Sample stylesheet
+
+
+```
+
+body {
+    background: white;
+}
+
+.actor {
+    stroke: #CCCCFF;
+    fill: #ECECFF;
+}
+text.actor {
+    fill:black;
+    stroke:none;
+    font-family: Helvetica;
+}
+
+.actor-line {
+    stroke:grey;
+}
+
+.messageLine0 {
+    stroke-width:1.5;
+    stroke-dasharray: "2 2";
+    marker-end:"url(#arrowhead)";
+    stroke:black;
+}
+
+.messageLine1 {
+    stroke-width:1.5;
+    stroke-dasharray: "2 2";
+    stroke:black;
+}
+
+#arrowhead {
+    fill:black;
+
+}
+
+.messageText {
+    fill:black;
+    stroke:none;
+    font-family: 'trebuchet ms', verdana, arial;
+    font-size:14px;
+}
+
+.labelBox {
+    stroke: #CCCCFF;
+    fill: #ECECFF;
+}
+
+.labelText {
+    fill:black;
+    stroke:none;
+    font-family: 'trebuchet ms', verdana, arial;
+}
+
+.loopText {
+    fill:black;
+    stroke:none;
+    font-family: 'trebuchet ms', verdana, arial;
+}
+
+.loopLine {
+    stroke-width:2;
+    stroke-dasharray: "2 2";
+    marker-end:"url(#arrowhead)";
+    stroke: #CCCCFF;
+}
+
+.note {
+    stroke: #decc93;
+    stroke: #CCCCFF;
+    fill: #fff5ad;
+}
+
+.noteText {
+    fill:black;
+    stroke:none;
+    font-family: 'trebuchet ms', verdana, arial;
+    font-size:14px;
+}
+
+```
