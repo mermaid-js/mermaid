@@ -56,6 +56,7 @@ sequenceDiagram
 * [Flowchart syntax](http://knsv.github.io/mermaid/flowchart.html)
 * [Sequence diagram syntax](http://knsv.github.io/mermaid/sequenceDiagram.html)
 * [Mermaid client](http://knsv.github.io/mermaid/mermaidCLI.html)
+* [Demos](http://knsv.github.io/mermaid/demos.html)
 
 # Credits
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
