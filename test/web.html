@@ -16,23 +16,17 @@
             console.log('CLICKED');
         }
     </script>
+    <style>
+        .cluster {
+            fill: #fcac93;
+            rx:4px;
+            stroke: grey;
+        }
+    </style>
+    <link rel="stylesheet" href="seq.css"/>
 </head>
     <body>
     <h1>Shapes</h1>
-    Shape examples:
-    <pre>
-        graph TD;
-            sq[Square shape]-->ci((Circle shape));
-            od>Odd shape]---|Two line &lt;br>edge comment|ro;
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak &lt;br>in an Odd shape];
-            di{Diamond is  &lt;br> broken}-->ro(Rounded &lt;br>square &lt;br>shape);
-
-            %% Comments after double percent signs
-            di-->ro2(Rounded square shape);
-            e((Inner circle))-->f(,.?!+-*ز);
-            A[Object]-->B(Thing);
-            style e red;
-    </pre>
     <div class="mermaid">
     graph TD;
         A-->B;
@@ -40,19 +34,52 @@
         A-->D;
         B-->D;
         A-->|Link text|B
+        classDef default fill:#9f6,stroke:#333,stroke-width:2px;
+        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        class green B;
     </div>
-    <div class="mermaid">
-        graph TD;
-        sq[Square shape]-->ci((Circle shape));
-        od>Odd shape]---|Two line<br>edge comment|ro;
-        od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
-        di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
-        di-->ro2(Rounded square shape);
+    <h1>Sub graphs</h1>
+    <div class="mermaid">graph TB
+        subgraph
+            sq[Square shape] --> ci((Circle shape))
+            od>Odd shape]-- Two line<br>edge comment --> ro
+            di{Diamond with <br/> line break} --> ro(Rounded<br>square<br>shape)
+            di-->ro2(Rounded square shape)
+        end
+
+        %% Notice that no text in shape are added here instead that is appended further down
+        subgraph
+            e --> od3>Really long text with linebreak<br>in an Odd shape]
+
+            e((Inner / circle<br>and some odd <br>special characters)) --> f(,.?!+-*ز)
+
+            cyr[Cyrillic]-->cyr2((Circle shape Начало))
+        end
+        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        classDef orange fill:#f96,stroke:#333,stroke-width:4px;
+        class sq,e green
+        class di orange
+    </div>
+    <div class="mermaid2">
+        graph TB
+        subgraph
+            sq[Square shape]-->ci((Circle shape))
+            od>Odd shape]---|Two line<br>edge comment|ro
+        end
+        subgraph
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
+            di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+            di-->ro2(Rounded square shape)
+        end
         %% Comments after double percent signs
-        e((Inner / circle))-->f(,.?!+-*ز);
-        cyr[Cyrillic]-->cyr2((Circle shape Начало));
-        A[Object foo,bar]-->B(Thing);
+        subgraph
+            e((Inner / circle))-->f(,.?!+-*ز);
+            cyr[Cyrillic]-->cyr2((Circle shape Начало));
+            A[Object foo,bar]-->B(Thing)
+        end
         style e red;
+        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        class green sq
     </div>
     <div class="mermaid2">
         graph LR;
@@ -88,7 +115,7 @@
         participant Alice
         Note left of Alice: Bob thinks about <br/> things <br/> to think about
     </div>
-    <div class="mermaid">
+    <div class="mermaid2">
         sequenceDiagram
         participant Alice
         participant Bob
@@ -107,7 +134,7 @@
 
     </div>
 
-    <div  class="mermaid">
+    <div  class="mermaid2">
 graph LR;
                 A[Start]-->B{a = '1,2'}
                 B-->|True|C[test = 1]

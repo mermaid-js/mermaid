@@ -38,6 +38,8 @@ exports.addVertices = function (vert, g) {
          */
         var classStr = '';
 
+        //console.log(vertice.classes);
+
         if(vertice.classes.length >0){
             classStr = vertice.classes.join(" ");
         }
@@ -195,7 +197,10 @@ exports.draw = function (text, id,isDot) {
     }
 
     // Create the input mermaid.graph
-    var g = new dagreD3.graphlib.Graph({multigraph:true})
+    var g = new dagreD3.graphlib.Graph({
+        multigraph:true,
+        compound: true
+    })
         .setGraph({
             rankdir: dir,
             marginx: 20,
@@ -206,9 +211,33 @@ exports.draw = function (text, id,isDot) {
             return {};
         });
 
+    var subGraphs = graph.getSubGraphs();
+    var i = 0;
+    subGraphs.forEach(function(subG){
+        i = i + 1;
+        var id = 'subG'+i;
+        graph.addVertex(id,undefined,undefined,undefined);
+    });
+
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
+
+    //console.log(vert);
     var edges = graph.getEdges();
+    //g.setParent("A", "p");
+    //g.setParent("B", "p");
+
+    //console.log(subGraphs);
+    i = 0;
+    subGraphs.forEach(function(subG){
+        i = i + 1;
+        var id = 'subG'+i;
+        //console.log('Setting id '+id);
+        subG.forEach(function(node){
+            //console.log('Setting node',node,' to subgraph '+id);
+            g.setParent(node,id);
+        });
+    });
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 

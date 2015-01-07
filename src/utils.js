@@ -60,7 +60,8 @@ module.exports.cloneCssStyles = function(svg, classes){
             if (className === 'default') {
                 defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
             } else {
-                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                //embeddedStyles += svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
             }
         }
     }

@@ -15,7 +15,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle a nodes and edges',function(){
-        var res = flow.parser.parse('graph TD;A-->B;');
+        var res = flow.parser.parse('graph TD;\nA-->B;');
 
 
         var vert = flow.parser.yy.getVertices();
@@ -204,7 +204,7 @@ describe('when parsing ',function(){
     });
 
     it('it should handle a trailing whitespaces after statememnts',function(){
-        var res = flow.parser.parse('graph TD;\n\n\n %% CComment\n A-->B; \nB-->C;');
+        var res = flow.parser.parse('graph TD;\n\n\n %% CComment\n A-->B; \n B-->C;');
 
 
         var vert = flow.parser.yy.getVertices();
@@ -247,6 +247,45 @@ describe('when parsing ',function(){
 
 
         expect(edges[0].type).toBe('arrow_circle');
+    });
+    it('should handle subgraphs',function(){
+        var res = flow.parser.parse('graph TD;A-->B;subgraph;c-->d;end;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
+    });
+
+    it('should handle subgraphs',function(){
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph\nc-->d\nend\n');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
+    });
+
+    it('should handle subgraphs',function(){
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph\nc-->d\nend;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
+    });
+
+    it('should handle subgraphs',function(){
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph\nc-- text -->d\nd-->e\n end;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
     });
 
     describe("it should handle text on edges",function(){

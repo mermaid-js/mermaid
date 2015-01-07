@@ -10,6 +10,8 @@
 "class"               return 'CLASS';
 "click"               return 'CLICK';
 "graph"               return 'GRAPH';
+"subgraph"            return 'subgraph';
+"end"                 return 'end';
 "LR"                  return 'DIR';
 "RL"                  return 'DIR';
 "TB"                  return 'DIR';
@@ -117,18 +119,31 @@
 
 %left '^'
 
-%start expressions
+%start mermaidDoc
 
 %% /* language grammar */
 
-expressions
-    : graphConfig statements EOF
-    | graphConfig statements 
-    | graphConfig spaceListNewline statements EOF
-        {$$=$1;}
-    | graphConfig spaceListNewline statements
-        {$$=$1;}
-    ;
+mermaidDoc: graphConfig document ;
+
+document
+	: /* empty */
+	{ $$ = [];}
+	| document line
+	{
+	    if($2 !== []){
+	        $1.push($2);
+	    }
+	    $$=$1;}
+	;
+
+line
+	: spaceListNewline statement
+	{$$=$2;}
+	| statement
+	{$$=$1;}
+	| SEMI
+	| EOF
+	;
 
 graphConfig
     : GRAPH SPACE DIR FirstStmtSeperator
@@ -146,12 +161,6 @@ graphConfig
 FirstStmtSeperator 
     : SEMI | NEWLINE | spaceList NEWLINE ;
 
-statements
-    : statement spaceListNewline statements
-    | statement statements
-    | statement
-    ;
-
 
 spaceListNewline
     : SPACE spaceListNewline
@@ -168,19 +177,32 @@ spaceList
 
 statement
     : commentStatement NEWLINE
+    {$$=[];}
     | verticeStatement separator
+    {$$=$1}
     | styleStatement separator
+    {$$=[];}
     | linkStyleStatement separator
+    {$$=[];}
     | classDefStatement separator
+    {$$=[];}
     | classStatement separator
+    {$$=[];}
     | clickStatement separator
+    {$$=[];}
+    | subgraph  document endStatement separator
+    {yy.addSubGraph($2);}
+    ;
+
+endStatement: end
+    | SPACE endStatement
     ;
 
 separator: NEWLINE | SEMI | EOF ;
 
 verticeStatement:
      vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = 'oy'}
+        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
      | vertex
         {$$ = 'yo';}
     ;
@@ -273,7 +295,7 @@ commentText: commentToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end ;
 
 
 textNoTags: textNoTagsToken
