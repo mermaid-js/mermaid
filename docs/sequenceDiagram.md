@@ -28,8 +28,8 @@ sequenceDiagram
 
 The participants can be defined implicitly as in the first example on this page. The participants or actors are
 rendered in order of appearance in the diagram source text. Sometimes you might want to show the participants in a
-different order then when the first message from when the actor appears. Then it is possible to introduce the actor
-explicitly in by doing this decing the order of appearance.
+different order than how they appear in the first message. It is possible to specify the actor's order of
+appearance by doing the following:
 
 ```
 %% Example of sequence diagram
