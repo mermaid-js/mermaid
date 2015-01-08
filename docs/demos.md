@@ -8,16 +8,16 @@ order: 5
 ```
 %% Example diagram
 graph LR
-	A -- Link text --> B
-	A[Square Rect] --> C((Round Rect))
+	A[Square Rect] -- Link text --> B((Circle))
+	A --> C(Round Rect)
 	B --> D{Rhombus}
 	C --> D
 ```
 
 ```
 graph LR
-	A -- Link text --> B
-	A[Square Rect] --> C((Round Rect))
+	A[Square Rect] -- Link text --> B((Circle))
+	A --> C(Round Rect)
 	B --> D{Rhombus}
 	C --> D
 ```

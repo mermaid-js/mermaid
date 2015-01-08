@@ -177,12 +177,12 @@
 <h2 id="basic-flowchart">Basic flowchart</h2>
 <pre><code>%% Example diagram
 graph LR
-    A -- Link text --> B
-    A[Square Rect] --> C((Round Rect))
+    A[Square Rect] -- Link text --> B((Circle))
+    A --> C(Round Rect)
     B --> D{Rhombus}
     C --> D</code></pre><div class="mermaid">graph LR
-    A -- Link text --> B
-    A[Square Rect] --> C((Round Rect))
+    A[Square Rect] -- Link text --> B((Circle))
+    A --> C(Round Rect)
     B --> D{Rhombus}
     C --> D</div><h2 id="larger-flowchart-with-some-styling">Larger flowchart with some styling</h2>
 <pre><code>%% Code for flowchart below
