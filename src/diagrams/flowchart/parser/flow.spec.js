@@ -288,6 +288,26 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
     });
 
+    it('should handle classDefs with style in classes',function(){
+        var res = flow.parser.parse('graph TD\nA-->B\nclassDef exClass font-style:bold;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
+    });
+
+    it('should handle classDefs with % in classes',function(){
+        var res = flow.parser.parse('graph TD\nA-->B\nclassDef exClass fill:#f96,stroke:#333,stroke-width:4px,font-size:50%,font-style:bold;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
+    });
+
     describe("it should handle text on edges",function(){
         it('it should handle text without space',function(){
             var res = flow.parser.parse('graph TD;A--x|textNoSpace|B;');

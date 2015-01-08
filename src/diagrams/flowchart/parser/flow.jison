@@ -341,7 +341,7 @@ style: styleComponent
     {$$ = $1 + $2;}
     ;
 
-styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT;
+styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
 
 /* Token lists */
 
