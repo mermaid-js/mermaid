@@ -168,19 +168,32 @@ exports.insertArrowHead = function(elem){
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 exports.insertArrowCrossHead = function(elem){
-    elem.append("defs").append("marker")
+    var defs = elem.append("defs");
+    var marker = defs.append("marker")
         .attr("id", "crosshead")
-        .attr("markerWidth", 8)
+        .attr("markerWidth", 15)
         .attr("markerHeight", 8)
         .attr("orient", "auto")
-        .attr("refX", 15)
-        .attr("refY", 4)
-        .append("path")
-        .attr("fill",'none')
-        .attr("stroke",'#000000')
-        .style("stroke-dasharray", ("0, 0"))
-        .attr("stroke-width",'1px')
-        .attr("d", "M 1,1 L 7,7 M 7,1 L 1,7"); //this is actual shape for arrowhead
+        .attr("refX", 16)
+        .attr("refY", 4);
+
+    // The arrow
+    marker.append("path")
+            .attr("fill",'black')
+            .attr("stroke",'#000000')
+            .style("stroke-dasharray", ("0, 0"))
+            .attr("stroke-width",'1px')
+            .attr("d", "M 9,2 V 6 L16,4 Z");
+
+    // The cross
+    marker.append("path")
+            .attr("fill",'none')
+            .attr("stroke",'#000000')
+            .style("stroke-dasharray", ("0, 0"))
+            .attr("stroke-width",'1px')
+            .attr("d", "M 0,1 L 6,7 M 6,1 L 0,7")
+        ; //this is actual shape for arrowhead
+
 };
 
 exports.getTextObj = function(){
