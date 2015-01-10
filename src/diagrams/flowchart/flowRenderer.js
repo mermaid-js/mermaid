@@ -250,8 +250,10 @@ exports.draw = function (text, id,isDot) {
     subGraphs.forEach(function(subG){
         i = i + 1;
         var id = 'subG'+i;
-        //console.log('Setting id '+id);
-        subG.forEach(function(node){
+
+        d3.selectAll('cluster').append('text');
+
+        subG.nodes.forEach(function(node){
             //console.log('Setting node',node,' to subgraph '+id);
             g.setParent(node,id);
         });
@@ -333,8 +335,55 @@ exports.draw = function (text, id,isDot) {
     render(d3.select("#" + id + " g"), g);
     var svgb = document.querySelector('#mermaidChart0');
 
+/*
+ var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
+ var width = document.querySelectorAll('.clusters rect')[0].width.baseVal.value;
+    var cluster = d3.selectAll('.cluster');
+    var te = cluster.append('text');
+    te.attr('x', xPos+width/2);
+    te.attr('y', 12);
+    //te.stroke('black');
+    te.attr('id', 'apa12');
+    te.style('text-anchor', 'middle');
+    te.text('Title for cluster');
+*/
     // Center the graph
     svg.attr("height", g.graph().height );
     svg.attr("width", g.graph().width );
     svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+
+
+    setTimeout(function(){
+        console.log('Fixing titles');
+        var i = 0;
+        subGraphs.forEach(function(subG){
+            console.log('Setting id '+id);
+
+
+            var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
+            var clusters     = document.querySelectorAll('#' + id + ' .cluster');
+
+
+            if(subG.title !== 'undefined'){
+                console.log(clusterRects[i]);
+                var xPos = clusterRects[i].x.baseVal.value;
+                var yPos = clusterRects[i].y.baseVal.value;
+                var width = clusterRects[i].width.baseVal.value;
+                var cluster = d3.select(clusters[i]);
+                var te = cluster.append('text');
+                te.attr('x', xPos+width/2);
+                te.attr('y', yPos +14);
+                te.attr('fill', 'black');
+                te.attr('stroke','none');
+                te.attr('id', id+'Text');
+                te.style('text-anchor', 'middle');
+                console.log('Title '+subG.title);
+                console.log('i',i);
+                console.log('x'+xPos+width/2);
+                console.log('y'+xPos);
+                te.text(subG.title);
+            }
+            i = i + 1;
+        });
+    },200);
 };

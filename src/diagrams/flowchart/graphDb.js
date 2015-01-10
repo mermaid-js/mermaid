@@ -212,7 +212,7 @@ exports.defaultStyle = function () {
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-exports.addSubGraph = function (list) {
+exports.addSubGraph = function (list, title) {
     function uniq(a) {
         var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
 
@@ -229,7 +229,7 @@ exports.addSubGraph = function (list) {
 
     subG = uniq(subG.concat.apply(subG,list));
 
-    subGraphs.push(subG);
+    subGraphs.push({nodes:subG,title:title});
 };
 exports.getSubGraphs = function (list) {
     return subGraphs;

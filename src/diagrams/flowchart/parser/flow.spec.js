@@ -249,7 +249,7 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow_circle');
     });
     it('should handle subgraphs',function(){
-        var res = flow.parser.parse('graph TD;A-->B;subgraph;c-->d;end;');
+        var res = flow.parser.parse('graph TD;A-->B;subgraph myTitle;c-->d;end;');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
@@ -259,7 +259,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle subgraphs',function(){
-        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph\nc-->d\nend\n');
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend\n');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
@@ -269,7 +269,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle subgraphs',function(){
-        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph\nc-->d\nend;');
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend;');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
@@ -279,7 +279,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle subgraphs',function(){
-        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph\nc-- text -->d\nd-->e\n end;');
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-- text -->d\nd-->e\n end;');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();

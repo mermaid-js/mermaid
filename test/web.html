@@ -40,6 +40,19 @@
     </div>
     <h1>Sub graphs</h1>
     <div class="mermaid">graph TB
+        subgraph one
+        a1-->a2
+        end
+        subgraph two
+        b1-->b2
+        end
+        subgraph three
+        c1-->c2
+        end
+        c1-->a2
+
+    </div>
+    <div class="mermaid">graph TB
         subgraph
             sq[Square shape] -.-> ci((Circle shape))
             od>Odd shape]-. Two line<br>edge comment .-> ro
@@ -48,7 +61,7 @@
         end
 
         %% Notice that no text in shape are added here instead that is appended further down
-        subgraph
+        subgraph Go go
             e --> od3>Really long text with linebreak<br>in an Odd shape]
 
             e((Inner / circle<br>and some odd <br>special characters)) --> f(,.?!+-*ز)

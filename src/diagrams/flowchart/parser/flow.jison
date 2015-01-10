@@ -204,8 +204,10 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph  document endStatement separator
-    {yy.addSubGraph($2);}
+    | subgraph  text separator document endStatement separator
+    {yy.addSubGraph($4,$2);}
+    | subgraph separator document endStatement separator
+    {yy.addSubGraph($3,undefined);}
     ;
 
 endStatement: end
