@@ -109,16 +109,34 @@ exports.addEdges = function (edges, g) {
         }
 
         var style = '';
+
+
+
         if(typeof edge.style !== 'undefined'){
             edge.style.forEach(function(s){
                 style = style + s +';';
             });
         }
+        else{
+            switch(edge.stroke){
+                case 'normal':
+                    style = 'stroke: #333; stroke-width: 1.5px;fill:none';
+                    break;
+                case 'dotted':
+                    style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
+                    break;
+                case 'thick':
+                    style = 'stroke: #333; stroke-width: 3.5px;fill:none';
+                    break;
+            }
+
+
+        }
 
         // Add the edge to the graph
         if (typeof edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ style: "stroke: #333; stroke-width: 1.5px;fill:none", arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     style: style, arrowheadStyle: "fill: #333", arrowhead: aHead
@@ -129,7 +147,7 @@ exports.addEdges = function (edges, g) {
         else {
 
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{labelType: "html",style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     labelType: "html",style: style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead

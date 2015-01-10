@@ -41,9 +41,9 @@
     <h1>Sub graphs</h1>
     <div class="mermaid">graph TB
         subgraph
-            sq[Square shape] --> ci((Circle shape))
-            od>Odd shape]-- Two line<br>edge comment --> ro
-            di{Diamond with <br/> line break} --> ro(Rounded<br>square<br>shape)
+            sq[Square shape] -.-> ci((Circle shape))
+            od>Odd shape]-. Two line<br>edge comment .-> ro
+            di{Diamond with <br/> line break} ==> ro(Rounded<br>square<br>shape)
             di-->ro2(Rounded square shape)
         end
 

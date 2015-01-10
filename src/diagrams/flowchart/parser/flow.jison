@@ -18,14 +18,12 @@
 "BT"                  return 'DIR';
 "TD"                  return 'DIR';
 "BR"                  return 'DIR';
-[0-9]                 return 'NUM';
+[0-9]+                 return 'NUM';
 \#                    return 'BRKT';
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
-"="                   return 'EQUALS';
 "*"                   return 'MULT';
-"."                   return 'DOT';
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
@@ -34,10 +32,26 @@
 \-\-\>                return 'ARROW_POINT';
 \-\-[o]               return 'ARROW_CIRCLE';
 \-\-\-                return 'ARROW_OPEN';
+\-\.\-[x]             return 'DOTTED_ARROW_CROSS';
+\-\.\-\>              return 'DOTTED_ARROW_POINT';
+\-\.\-[o]             return 'DOTTED_ARROW_CIRCLE';
+\-\.\-                return 'DOTTED_ARROW_OPEN';
+.\-[x]                return 'DOTTED_ARROW_CROSS';
+\.\-\>                return 'DOTTED_ARROW_POINT';
+\.\-[o]               return 'DOTTED_ARROW_CIRCLE';
+\.\-                  return 'DOTTED_ARROW_OPEN';
+\=\=[x]               return 'THICK_ARROW_CROSS';
+\=\=\>                return 'THICK_ARROW_POINT';
+\=\=[o]               return 'THICK_ARROW_CIRCLE';
+\=\=[\=]              return 'THICK_ARROW_OPEN';
 \-\-                  return '--';
+\-\.                  return '-.';
+\=\=                  return '==';
 \-                    return 'MINUS';
+"."                   return 'DOT';
 \+                    return 'PLUS';
 \%                    return 'PCT';
+"="                   return 'EQUALS';
 \=                    return 'EQUALS';
 [\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u005C\u005F-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -227,8 +241,6 @@ vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
     | alphaNum TAGEND text SQE SPACE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TAGSTART text TAGEND
-        {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum
         {$$ = $1;yy.addVertex($1);}
     | alphaNum SPACE
@@ -238,7 +250,7 @@ vertex:  alphaNum SQS text SQE
 alphaNum
     : alphaNumStatement
     {$$=$1;}
-    | alphaNumStatement alphaNum
+    | alphaNum alphaNumStatement
     {$$=$1+''+$2;}
     ;
 
@@ -262,17 +274,41 @@ link: linkStatement arrowText
     {$5.text = $3;$$ = $5;}
     | '--' SPACE text SPACE linkStatement SPACE
     {$5.text = $3;$$ = $5;}
+    | '-.' SPACE text SPACE linkStatement
+    {$5.text = $3;$$ = $5;}
+    | '-.' SPACE text SPACE linkStatement SPACE
+    {$5.text = $3;$$ = $5;}
+    | '==' SPACE text SPACE linkStatement
+    {$5.text = $3;$$ = $5;}
+    | '==' SPACE text SPACE linkStatement SPACE
+    {$5.text = $3;$$ = $5;}
     ;
 
 linkStatement: ARROW_POINT
-        {$$ = {"type":"arrow"};}
+        {$$ = {"type":"arrow","stroke":"normal"};}
     | ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle"};}
+        {$$ = {"type":"arrow_circle","stroke":"normal"};}
     | ARROW_CROSS
-        {$$ = {"type":"arrow_cross"};}
+        {$$ = {"type":"arrow_cross","stroke":"normal"};}
     | ARROW_OPEN
-        {$$ = {"type":"arrow_open"};}
-    ;
+        {$$ = {"type":"arrow_open","stroke":"normal"};}
+    | DOTTED_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"dotted"};}
+    | DOTTED_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"dotted"};}
+    | DOTTED_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"dotted"};}
+    | DOTTED_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"dotted"};}
+    | THICK_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"thick"};}
+    | THICK_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"thick"};}
+    | THICK_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"thick"};}
+    | THICK_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"thick"};}
+        ;
 
 arrowText:
     PIPE text PIPE
@@ -347,7 +383,7 @@ styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | 
 
 commentToken   : textToken | graphCodeTokens ;
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND ;
+textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' ;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 

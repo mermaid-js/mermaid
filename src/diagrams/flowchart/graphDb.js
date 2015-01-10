@@ -64,6 +64,7 @@ exports.addLink = function (start, end, type, linktext) {
 
     if (typeof type !== 'undefined') {
         edge.type = type.type;
+        edge.stroke = type.stroke;
     }
     edges.push(edge);
 };

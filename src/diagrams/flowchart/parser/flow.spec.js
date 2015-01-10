@@ -308,6 +308,28 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
     });
 
+    it('should handle style definitons with more then 1 digit in a row',function(){
+        var res = flow.parser.parse('graph TD\n' +
+        'A-->B1\n' +
+        'A-->B2\n' +
+        'A-->B3\n' +
+        'A-->B4\n' +
+        'A-->B5\n' +
+        'A-->B6\n' +
+        'A-->B7\n' +
+        'A-->B8\n' +
+        'A-->B9\n' +
+        'A-->B10\n' +
+        'A-->B11\n' +
+        'linkStyle 10 stroke-width:1px;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges[0].type).toBe('arrow');
+    });
+
     describe("it should handle text on edges",function(){
         it('it should handle text without space',function(){
             var res = flow.parser.parse('graph TD;A--x|textNoSpace|B;');
@@ -405,6 +427,61 @@ describe('when parsing ',function(){
 
     });
 
+    describe("it should handle new line type notation",function() {
+        it('it should handle regular lines', function () {
+            var res = flow.parser.parse('graph TD;A-->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(edges[0].stroke).toBe('normal');
+        });
+        it('it should handle dotted lines', function () {
+            var res = flow.parser.parse('graph TD;A-.->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].stroke).toBe('dotted');
+        });
+        it('it should handle dotted lines', function () {
+            var res = flow.parser.parse('graph TD;A==>B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].stroke).toBe('thick');
+        });
+        it('it should handle text on lines', function () {
+            var res = flow.parser.parse('graph TD;A-- test text with == -->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].stroke).toBe('normal');
+        });
+        it('it should handle text on lines', function () {
+            var res = flow.parser.parse('graph TD;A-. test text with == .->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].stroke).toBe('dotted');
+        });
+        it('it should handle text on lines', function () {
+            var res = flow.parser.parse('graph TD;A== test text with -- ==>B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].stroke).toBe('thick');
+        });
+    });
 
     describe("it should handle text on edges using the new notation",function(){
         it('it should handle text without space',function(){
