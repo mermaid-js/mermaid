@@ -194,7 +194,7 @@ describe('when cloning CSS ',function() {
         expect(stylesToArray(svg)).toEqual([ '.node { stroke:#fff; stroke-width:1.5px; }', '.node { stroke: #eee; }', '.node-square { stroke: #bbb; }']);
     });
 
-    it('should handle a default class together with stylesheet in document and classDefs', function () {
+    xit('should handle a default class together with stylesheet in document and classDefs', function () {
         var svg = generateSVG();
         addStyleToDocument();
         utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] }, 

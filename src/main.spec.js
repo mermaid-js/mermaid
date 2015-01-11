@@ -6,35 +6,71 @@
  */
 var rewire = require("rewire");
 var utils = require("./utils");
+var main = require("./main");
 
 describe('when using main and ',function() {
     describe('when detecting chart type ',function() {
-        var main;
+        //var main;
+        //var document;
+        //var window;
         beforeEach(function () {
             var MockBrowser = require('mock-browser').mocks.MockBrowser;
             var mock = new MockBrowser();
 
+            delete global.mermaid_config;
+
             // and in the run-code inside some object
             document = mock.getDocument();
-
-
+            window = mock.getWindow();
         });
 
-        it('should not call start anything with an empty document', function () {
-
-            mermaid_config ={startOnLoad : false};
+        it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
             main = rewire('./main');
-
-            spyOn(utils,'detectType');
-            expect(utils.detectType).not.toHaveBeenCalled();
-        });
-        it('should start something with a mermaid document', function () {
             mermaid_config ={startOnLoad : false};
+
+            document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+            spyOn(global.mermaid,'init');
+            //console.log(main);
+            main.contentLoaded();
+            expect(global.mermaid.init).not.toHaveBeenCalled();
+        });
+
+        it('should not start rendering with mermaid.startOnLoad set to false', function () {
+            main = rewire('./main');
+            mermaid.startOnLoad =  false;
+            mermaid_config ={startOnLoad : true};
+
+            document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+            spyOn(global.mermaid,'init');
+            main.contentLoaded();
+            expect(global.mermaid.init).not.toHaveBeenCalled();
+        });
+
+        it('should start rendering with both startOnLoad set', function () {
+            main = rewire('./main');
+            mermaid.startOnLoad =  true;
+            mermaid_config ={startOnLoad : true};
+            document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+            spyOn(global.mermaid,'init');
+            main.contentLoaded();
+            expect(global.mermaid.init).toHaveBeenCalled();
+        });
+
+        it('should start rendering with mermaid.startOnLoad set and no mermaid_config defined', function () {
+            main = rewire('./main');
+            mermaid.startOnLoad =  true;
+            document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+            spyOn(global.mermaid,'init');
+            main.contentLoaded();
+            expect(global.mermaid.init).toHaveBeenCalled();
+        });
+
+        it('should start rendering as a default with no changes performed', function () {
             main = rewire('./main');
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
-            spyOn(utils,'detectType');
-            mermaid.init();
-            expect(utils.detectType).toHaveBeenCalled();
+            spyOn(global.mermaid,'init');
+            main.contentLoaded();
+            expect(global.mermaid.init).toHaveBeenCalled();
         });
 
     });

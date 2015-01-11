@@ -5,6 +5,7 @@
 var vertices = {};
 var edges = [];
 var classes = [];
+var subGraphs = [];
 var direction;
 // Functions to be run after graph rendering
 var funs = [];
@@ -63,6 +64,7 @@ exports.addLink = function (start, end, type, linktext) {
 
     if (typeof type !== 'undefined') {
         edge.type = type.type;
+        edge.stroke = type.stroke;
     }
     edges.push(edge);
 };
@@ -197,6 +199,7 @@ exports.clear = function () {
     classes = {};
     edges = [];
     funs = [];
+    subGraphs = [];
 };
 /**
  *
@@ -204,4 +207,31 @@ exports.clear = function () {
  */
 exports.defaultStyle = function () {
     return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
+};
+
+/**
+ * Clears the internal graph db so that a new graph can be parsed.
+ */
+exports.addSubGraph = function (list, title) {
+    function uniq(a) {
+        var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+
+        return a.filter(function(item) {
+            var type = typeof item;
+            if(type in prims)
+                return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+            else
+                return objs.indexOf(item) >= 0 ? false : objs.push(item);
+        });
+    }
+
+    var subG = [];
+
+    subG = uniq(subG.concat.apply(subG,list));
+    //console.log(subG);
+
+    subGraphs.push({nodes:subG,title:title});
+};
+exports.getSubGraphs = function (list) {
+    return subGraphs;
 };

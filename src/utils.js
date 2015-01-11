@@ -9,7 +9,6 @@
  */
 module.exports.detectType = function(text,a){
     if(text.match(/^\s*sequenceDiagram/)){
-        console.log('Detected sequenceDiagram syntax');
         return "sequenceDiagram";
     }
 
@@ -37,14 +36,16 @@ module.exports.cloneCssStyles = function(svg, classes){
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
-        if (sheets[i].title != 'mermaid-svg-internal-css') {
+        if (sheets[i].title !== 'mermaid-svg-internal-css') {
             var rules = sheets[i].cssRules;
-            for (var j = 0; j < rules.length; j++) {
-                var rule = rules[j];
-                if (typeof(rule.style) != "undefined") {
-                    var elems = svg.querySelectorAll(rule.selectorText);
-                    if (elems.length > 0) {
-                        usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+            if(rules !== null) {
+                for (var j = 0; j < rules.length; j++) {
+                    var rule = rules[j];
+                    if (typeof(rule.style) !== 'undefined') {
+                        var elems = svg.querySelectorAll(rule.selectorText);
+                        if (elems.length > 0) {
+                            usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                        }
                     }
                 }
             }
@@ -59,7 +60,8 @@ module.exports.cloneCssStyles = function(svg, classes){
             if (className === 'default') {
                 defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
             } else {
-                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                //embeddedStyles += svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
             }
         }
     }

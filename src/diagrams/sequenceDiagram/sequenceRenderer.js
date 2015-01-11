@@ -18,11 +18,11 @@ var conf = {
     height:65,
     // Margin around loop boxes
     boxMargin:10,
-    boxTextMargin:15,
+    boxTextMargin:5,
 
     noteMargin:10,
     // Space between messages
-    messageMargin:40
+    messageMargin:35
 };
 
 exports.bounds = {
@@ -96,6 +96,12 @@ exports.bounds = {
         //loop.stopy =  exports.bounds.getVerticalPos();
         return loop;
     },
+    addElseToLoop:function(message){
+        var loop = this.list.pop();
+        loop.elsey =  exports.bounds.getVerticalPos();
+        loop.elseText = message;
+        this.list.push(loop);
+    },
     bumpVerticalPos:function(bump){
         this.verticalPos = this.verticalPos + bump;
         this.data.stopy = this.verticalPos;
@@ -119,6 +125,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     rect.x = startx;
     rect.y = verticalPos;
     rect.width = conf.width;
+    rect.class = 'note';
 
     var g = elem.append("g");
     var rectElem = svgDraw.drawRect(g, rect);
@@ -129,6 +136,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = msg.message;
+    textObj.class = 'noteText';
 
     var textElem = svgDraw.drawText(g,textObj);
 
@@ -139,60 +147,6 @@ var drawNote = function(elem, startx, verticalPos, msg){
     exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
 };
 
-/**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the list of actors
- * @param description The text in the box
- */
-exports.drawLoop = function(elem,bounds){
-    var g = elem.append("g");
-    var drawLoopLine = function(startx,starty,stopx,stopy){
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", starty)
-            .attr("x2", stopx )
-            .attr("y2", stopy )
-            .attr("stroke-width", 2)
-            .attr("stroke", "#339933");
-    };
-    drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
-    drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
-    drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
-    drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
-
-    var txt = svgDraw.getTextObj();
-    txt.text = "Loop";
-    txt.x = bounds.startx;
-    txt.y = bounds.starty;
-    txt.labelMargin =  1.5 * conf.boxMargin;
-
-    svgDraw.drawLabel(g,txt);
-
-    txt = svgDraw.getTextObj();
-    txt.text = bounds.title;
-    txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
-    txt.y = bounds.starty + 1.5 * conf.boxMargin;
-    txt.anchor = 'middle';
-
-    svgDraw.drawText(g,txt);
-};
-
-
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
-var insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5) /*must be smarter way to calculate shift*/
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
-};
 
 /**
  * Draws a message
@@ -207,87 +161,54 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var g = elem.append("g");
     var txtCenter = startx + (stopx-startx)/2;
 
-    //Make an SVG Container
-    //Draw the line
-    if(msg.type !== 2) {
-        if (msg.type === 1) {
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .style("stroke-dasharray", ("3, 3"))
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-            //.attr("d", diagonal);
-        }
-        else {
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-        }
+    var textElem = g.append("text")      // text label for the x axis
+        .attr("x", txtCenter)
+        .attr("y", verticalPos - 7)
+        .style("text-anchor", "middle")
+        .attr("class", "messageText")
+        .text(msg.message);
 
-        g.append("text")      // text label for the x axis
-            .attr("x", txtCenter)
-            .attr("y", verticalPos - 10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
+    var textWidth = textElem[0][0].getBBox().width;
+
+    var line;
+
+    if(startx===stopx){
+        line  = g.append("path")
+            .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ',' +
+            (verticalPos+30)+' ' +startx+ ','+(verticalPos+20));
+
+        exports.bounds.bumpVerticalPos(30);
+        var dx = Math.max(textWidth/2,100);
+        exports.bounds.insert(startx-dx, exports.bounds.getVerticalPos() -10, stopx+dx,  exports.bounds.getVerticalPos());
+    }else{
+        line = g.append("line");
+        line.attr("x1", startx);
+        line.attr("y1", verticalPos);
+        line.attr("x2", stopx);
+        line.attr("y2", verticalPos);
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
-    else{
-        var textElem = g.append("text")
-            .attr("x", txtCenter)
-            .attr("y", exports.bounds.getVerticalPos() - 10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
-        var box = textElem[0][0].getBBox();
-
-        exports.bounds.insert(box.x, exports.bounds.getVerticalPos() -10, box.x+box.width,  exports.bounds.getVerticalPos()-10 + box.height);
+    //Make an SVG Container
+    //Draw the line
+    if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
+        line.style("stroke-dasharray", ("3, 3"));
+        line.attr("class", "messageLine1");
     }
-};
+    else {
+        line.attr("class", "messageLine0");
+    }
 
-/**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
- */
-var drawActor = function(elem, left,description){
-    var center = left + (conf.width/2);
-    var g = elem.append("g");
-    g.append("line")
-        .attr("x1", center)
-        .attr("y1", 5)
-        .attr("x2", center)
-        .attr("y2", 2000)
-        .attr("stroke-width", '0.5px')
-        .attr("stroke", '#999');
+    line.attr("stroke-width", 2);
+    line.attr("stroke", "black");
+    line.style("fill", "none");     // remove any fill colour
+    if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
+        line.attr("marker-end", "url(#arrowhead)");
+    }
 
-    g.append("rect")
-        .attr("x", left)
-        .attr("y", 0)
-        .attr("fill", '#eaeaea')
-        .attr("stroke", '#666')
-        .attr("width", conf.width)
-        .attr("height", conf.height)
-        .attr("rx", 3)
-        .attr("ry", 3);
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", (conf.height/2)+5)
-        .style("text-anchor", "middle")
-        .text(description)
-    ;
+    if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
+        line.attr("marker-end", "url(#crosshead)");
+    }
 
-    exports.bounds.insert(left, 0, left + conf.width, conf.height);
 };
 
 module.exports.drawActors = function(diagram, actors, actorKeys){
@@ -303,7 +224,9 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
-        drawActor(diagram, actors[key].x, actors[key].description);
+        svgDraw.drawActor(diagram, actors[key].x, actors[key].description, conf);
+        exports.bounds.insert(actors[key].x, 0, actors[key].x + conf.width, conf.height);
+
     }
 
     // Add a margin between the actor boxes and the first arrow
@@ -322,9 +245,13 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     sq.yy.clear();
-    sq.parse(text);
+    //console.log(text);
+    sq.parse(text+'\n');
     exports.bounds.init();
     var diagram = d3.select('#'+id);
+
+    var startx;
+    var stopx;
 
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
@@ -334,14 +261,13 @@ module.exports.draw = function (text, id) {
     module.exports.drawActors(diagram, actors, actorKeys);
 
     // The arrow head definition is attached to the svg once
-    insertArrowHead(diagram);
+    svgDraw.insertArrowHead(diagram);
+    svgDraw.insertArrowCrossHead(diagram);
 
     // Draw the messages/signals
     messages.forEach(function(msg){
+        var loopData;
 
-
-        var startx;
-        var stopx;
         switch(msg.type){
             case sq.yy.LINETYPE.NOTE:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
@@ -364,9 +290,38 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.LOOP_END:
-                var loopData = exports.bounds.endLoop();
+                loopData = exports.bounds.endLoop();
 
-                exports.drawLoop(diagram, loopData);
+                svgDraw.drawLoop(diagram, loopData,'loop', conf);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.OPT_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.OPT_END:
+                loopData = exports.bounds.endLoop();
+
+                svgDraw.drawLoop(diagram, loopData, 'opt', conf);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_ELSE:
+
+                //exports.drawLoop(diagram, loopData);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                loopData = exports.bounds.addElseToLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_END:
+                loopData = exports.bounds.endLoop();
+
+                svgDraw.drawLoop(diagram, loopData,'alt', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:

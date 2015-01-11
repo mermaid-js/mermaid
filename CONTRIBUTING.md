@@ -2,7 +2,7 @@
 
 Great that you want to be involved in this project! Contributing is fun and contributions are GREAT! :)
 
-This page is currently a starting point is not so rigorous to start with.
+This page is currently a starting point and is not so rigorous to start with.
 
 Some important guidlines:
 
@@ -16,7 +16,7 @@ The issue list and the items marked with **help wanted** is a good starting poin
 ## Guidelines for avoiding duplicate work
 
 Contributing is great. It is not so fun when you are done with your issue and just before you're about to push your
-change you cant because someone else just pushed the same fix so you have wasted your time. The guidelines below are in
+change you can't because someone else just pushed the same fix so you have wasted your time. The guidelines below are in
 place to prevent this:
 
 * Comment in the issue that you are working on it. You will then be added as an assignee (eventually).

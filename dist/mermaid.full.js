@@ -13001,11 +13001,14 @@ process.chdir = function (dir) {
 },{}],102:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.2.16",
+  "version": "0.3.2",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
+  "bin": {
+    "mermaid": "./bin/mermaid.js"
+  },
   "scripts": {
-    "test": "gulp coverage"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -13014,19 +13017,31 @@ module.exports={
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^0.5.1",
+    "dagre-d3": "~0.3.2",
     "he": "^0.5.0",
-    "dagre-d3": "~0.3.2"
+    "minimist": "^1.1.0",
+    "mkdirp": "^0.5.0",
+    "semver": "^4.1.1",
+    "which": "^1.0.8"
   },
   "devDependencies": {
+    "async": "^0.9.0",
     "browserify": "~6.2.0",
+    "clone": "^0.2.0",
     "codeclimate-test-reporter": "0.0.4",
     "d3": "~3.4.13",
     "dagre-d3": "~0.3.2",
+    "event-stream": "^3.2.0",
+    "foundation": "^4.2.1-1",
+    "front-matter": "^0.2.0",
     "gulp": "~3.8.9",
     "gulp-browserify": "^0.5.0",
     "gulp-bump": "^0.1.11",
     "gulp-concat": "~2.4.1",
+    "gulp-data": "^1.1.1",
     "gulp-ext-replace": "~0.1.0",
+    "gulp-hogan": "^1.1.0",
     "gulp-istanbul": "^0.4.0",
     "gulp-jasmine": "~1.0.1",
     "gulp-jison": "~1.0.0",
@@ -13037,6 +13052,7 @@ module.exports={
     "gulp-tag-version": "^1.2.1",
     "gulp-uglify": "~1.0.1",
     "he": "^0.5.0",
+    "hogan.js": "^3.0.2",
     "jasmine": "~2.0.1",
     "jison": "~0.4.15",
     "jshint-stylish": "^1.0.0",
@@ -13052,10 +13068,14 @@ module.exports={
     "lodash.defaults": "^2.4.1",
     "lodash.templatesettings": "^2.4.1",
     "lodash.values": "^2.4.1",
+    "marked": "^0.3.2",
     "mock-browser": "^0.90.27",
     "path": "^0.4.9",
     "phantomjs": "^1.9.12",
-    "rewire": "^2.1.3"
+    "rewire": "^2.1.3",
+    "rimraf": "^2.2.8",
+    "semantic-ui": "^1.4.1",
+    "tape": "^3.0.3"
   }
 }
 
@@ -13100,6 +13120,8 @@ exports.addVertices = function (vert, g) {
          */
         var classStr = '';
 
+        //console.log(vertice.classes);
+
         if(vertice.classes.length >0){
             classStr = vertice.classes.join(" ");
         }
@@ -13119,6 +13141,8 @@ exports.addVertices = function (vert, g) {
         else {
             verticeText = vertice.text;
         }
+
+        console.log(verticeText);
 
         var radious = 0;
         var _shape = '';
@@ -13169,16 +13193,34 @@ exports.addEdges = function (edges, g) {
         }
 
         var style = '';
+
+
+
         if(typeof edge.style !== 'undefined'){
             edge.style.forEach(function(s){
                 style = style + s +';';
             });
         }
+        else{
+            switch(edge.stroke){
+                case 'normal':
+                    style = 'stroke: #333; stroke-width: 1.5px;fill:none';
+                    break;
+                case 'dotted':
+                    style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
+                    break;
+                case 'thick':
+                    style = 'stroke: #333; stroke-width: 3.5px;fill:none';
+                    break;
+            }
+
+
+        }
 
         // Add the edge to the graph
         if (typeof edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ style: "stroke: #333; stroke-width: 1.5px;fill:none", arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     style: style, arrowheadStyle: "fill: #333", arrowhead: aHead
@@ -13189,7 +13231,7 @@ exports.addEdges = function (edges, g) {
         else {
 
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{labelType: "html",style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     labelType: "html",style: style, arrowheadStyle: "fill: #333", label: edge.text, arrowhead: aHead
@@ -13257,7 +13299,10 @@ exports.draw = function (text, id,isDot) {
     }
 
     // Create the input mermaid.graph
-    var g = new dagreD3.graphlib.Graph({multigraph:true})
+    var g = new dagreD3.graphlib.Graph({
+        multigraph:true,
+        compound: true
+    })
         .setGraph({
             rankdir: dir,
             marginx: 20,
@@ -13268,9 +13313,35 @@ exports.draw = function (text, id,isDot) {
             return {};
         });
 
+    var subGraphs = graph.getSubGraphs();
+    var i = 0;
+    subGraphs.forEach(function(subG){
+        i = i + 1;
+        var id = 'subG'+i;
+        graph.addVertex(id,undefined,undefined,undefined);
+    });
+
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
+
+    //console.log(vert);
     var edges = graph.getEdges();
+    //g.setParent("A", "p");
+    //g.setParent("B", "p");
+
+    //console.log(subGraphs);
+    i = 0;
+    subGraphs.forEach(function(subG){
+        i = i + 1;
+        var id = 'subG'+i;
+
+        d3.selectAll('cluster').append('text');
+
+        subG.nodes.forEach(function(node){
+            //console.log('Setting node',node,' to subgraph '+id);
+            g.setParent(node,id);
+        });
+    });
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 
@@ -13346,10 +13417,59 @@ exports.draw = function (text, id,isDot) {
 
     // Run the renderer. This is what draws the final graph.
     render(d3.select("#" + id + " g"), g);
+    var svgb = document.querySelector('#mermaidChart0');
 
+/*
+ var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
+ var width = document.querySelectorAll('.clusters rect')[0].width.baseVal.value;
+    var cluster = d3.selectAll('.cluster');
+    var te = cluster.append('text');
+    te.attr('x', xPos+width/2);
+    te.attr('y', 12);
+    //te.stroke('black');
+    te.attr('id', 'apa12');
+    te.style('text-anchor', 'middle');
+    te.text('Title for cluster');
+*/
     // Center the graph
     svg.attr("height", g.graph().height );
     svg.attr("width", g.graph().width );
+    svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+
+
+    setTimeout(function(){
+        console.log('Fixing titles');
+        var i = 0;
+        subGraphs.forEach(function(subG){
+            console.log('Setting id '+id);
+
+
+            var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
+            var clusters     = document.querySelectorAll('#' + id + ' .cluster');
+
+
+            if(subG.title !== 'undefined'){
+                console.log(clusterRects[i]);
+                var xPos = clusterRects[i].x.baseVal.value;
+                var yPos = clusterRects[i].y.baseVal.value;
+                var width = clusterRects[i].width.baseVal.value;
+                var cluster = d3.select(clusters[i]);
+                var te = cluster.append('text');
+                te.attr('x', xPos+width/2);
+                te.attr('y', yPos +14);
+                te.attr('fill', 'black');
+                te.attr('stroke','none');
+                te.attr('id', id+'Text');
+                te.style('text-anchor', 'middle');
+                console.log('Title '+subG.title);
+                console.log('i',i);
+                console.log('x'+xPos+width/2);
+                console.log('y'+xPos);
+                te.text(subG.title);
+            }
+            i = i + 1;
+        });
+    },200);
 };
 },{"./graphDb":104,"./parser/dot":105,"./parser/flow":106,"dagre-d3":1}],104:[function(require,module,exports){
 /**
@@ -13359,6 +13479,7 @@ exports.draw = function (text, id,isDot) {
 var vertices = {};
 var edges = [];
 var classes = [];
+var subGraphs = [];
 var direction;
 // Functions to be run after graph rendering
 var funs = [];
@@ -13417,6 +13538,7 @@ exports.addLink = function (start, end, type, linktext) {
 
     if (typeof type !== 'undefined') {
         edge.type = type.type;
+        edge.stroke = type.stroke;
     }
     edges.push(edge);
 };
@@ -13551,6 +13673,7 @@ exports.clear = function () {
     classes = {};
     edges = [];
     funs = [];
+    subGraphs = [];
 };
 /**
  *
@@ -13558,6 +13681,33 @@ exports.clear = function () {
  */
 exports.defaultStyle = function () {
     return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
+};
+
+/**
+ * Clears the internal graph db so that a new graph can be parsed.
+ */
+exports.addSubGraph = function (list, title) {
+    function uniq(a) {
+        var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+
+        return a.filter(function(item) {
+            var type = typeof item;
+            if(type in prims)
+                return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+            else
+                return objs.indexOf(item) >= 0 ? false : objs.push(item);
+        });
+    }
+
+    var subG = [];
+
+    subG = uniq(subG.concat.apply(subG,list));
+    //console.log(subG);
+
+    subGraphs.push({nodes:subG,title:title});
+};
+exports.getSubGraphs = function (list) {
+    return subGraphs;
 };
 
 },{}],105:[function(require,module,exports){
@@ -14374,141 +14524,187 @@ if (typeof module !== 'undefined' && require.main === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,7],$V1=[1,8],$V2=[1,18],$V3=[1,19],$V4=[1,20],$V5=[1,21],$V6=[1,22],$V7=[1,27],$V8=[1,16],$V9=[1,29],$Va=[1,26],$Vb=[1,28],$Vc=[1,34],$Vd=[1,33],$Ve=[1,30],$Vf=[1,31],$Vg=[1,32],$Vh=[1,6],$Vi=[52,53,54,55,56,61,62,64,66,67,69,70,72,73,74],$Vj=[1,46],$Vk=[1,45],$Vl=[1,44],$Vm=[6,16,17],$Vn=[6,16,17,43,44,45,46],$Vo=[6,9,12,13,16,17,31,34,36,43,44,45,46],$Vp=[6,9,12,13,16,17,31,34,36,43,44,45,46,61,64,66,67,69,70,72,73,74],$Vq=[6,8,9,10,12,13,16,17,31,33,34,35,36,37,40,43,44,45,46,47,52,53,54,55,56,61,64,66,67,69,70,72,73,74,75,76,77],$Vr=[1,6,9,17,52,53,54,55,56,61,62,64,66,67,69,70,72,73,74],$Vs=[1,110],$Vt=[1,102],$Vu=[1,111],$Vv=[1,85],$Vw=[1,84],$Vx=[1,100],$Vy=[1,89],$Vz=[1,90],$VA=[1,87],$VB=[1,88],$VC=[1,91],$VD=[1,92],$VE=[1,103],$VF=[1,96],$VG=[1,97],$VH=[1,95],$VI=[1,98],$VJ=[1,86],$VK=[1,105],$VL=[1,106],$VM=[1,107],$VN=[1,108],$VO=[1,109],$VP=[1,93],$VQ=[1,94],$VR=[1,99],$VS=[61,64,66,67,69,70,72,73,74],$VT=[9,47,61,64,66,67,69,70,72,73,74],$VU=[1,134],$VV=[1,131],$VW=[1,132],$VX=[8,9,10,12,13,16,17,31,33,34,35,36,37,40,43,44,45,46,47,52,53,54,55,56,61,64,66,67,69,70,72,73,74,75,76,77],$VY=[2,97],$VZ=[8,9,10,12,13,33,35,37,40,47,52,53,54,55,56,61,64,66,67,69,70,72,73,74],$V_=[9,17,52,53,54,55,56,61,62,64,66,67,69,70,72,73,74],$V$=[1,166],$V01=[1,163],$V11=[1,167],$V21=[1,164],$V31=[1,161],$V41=[1,162],$V51=[1,165],$V61=[1,168],$V71=[1,169],$V81=[2,44],$V91=[1,180],$Va1=[6,16,17,64],$Vb1=[6,9,16,17,40,60,61,64,66,67,68,69,70];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,9,10,12,19,29,67,68,69,70,71,76,77,79,81,82,84,85,87,88,89],$V1=[2,2],$V2=[1,9],$V3=[1,10],$V4=[1,11],$V5=[1,12],$V6=[1,20],$V7=[1,23],$V8=[1,24],$V9=[1,25],$Va=[1,26],$Vb=[1,27],$Vc=[1,32],$Vd=[1,21],$Ve=[1,34],$Vf=[1,31],$Vg=[1,33],$Vh=[1,39],$Vi=[1,38],$Vj=[1,35],$Vk=[1,36],$Vl=[1,37],$Vm=[1,9,10,12,19,29,32,67,68,69,70,71,76,77,79,81,82,84,85,87,88,89],$Vn=[29,67,68,69,70,71,76,77,79,81,82,84,85,87,88,89],$Vo=[2,19],$Vp=[1,51],$Vq=[1,52],$Vr=[1,50],$Vs=[1,75],$Vt=[1,67],$Vu=[1,76],$Vv=[1,63],$Vw=[1,62],$Vx=[1,77],$Vy=[1,78],$Vz=[1,68],$VA=[1,65],$VB=[1,64],$VC=[1,70],$VD=[1,71],$VE=[1,72],$VF=[1,73],$VG=[1,74],$VH=[9,10,19],$VI=[1,85],$VJ=[1,86],$VK=[1,87],$VL=[1,88],$VM=[1,89],$VN=[1,90],$VO=[1,91],$VP=[1,92],$VQ=[1,93],$VR=[1,94],$VS=[1,95],$VT=[1,96],$VU=[9,10,19,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61],$VV=[9,10,12,15,19,36,38,40,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,76,79,81,82,84,85,87,88,89],$VW=[9,10,11,12,13,15,16,19,29,32,36,37,38,39,40,41,44,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,67,68,69,70,71,76,79,81,82,84,85,87,88,89,90,91,92],$VX=[1,110],$VY=[1,113],$VZ=[1,111],$V_=[9,10,12,19,29,32,67,68,69,70,71,76,77,79,81,82,84,85,87,88,89],$V$=[9,10,11,12,13,15,16,19,29,32,37,39,41,44,47,49,62,67,68,69,70,71,76,79,81,82,84,85,87,88,89],$V01=[9,10,11,12,13,15,16,19,29,32,36,37,38,39,40,41,44,47,49,50,51,52,53,62,67,68,69,70,71,76,79,81,82,84,85,87,88,89,90,91,92],$V11=[2,122],$V21=[1,139],$V31=[1,128],$V41=[1,129],$V51=[1,126],$V61=[1,127],$V71=[1,130],$V81=[1,131],$V91=[1,135],$Va1=[1,136],$Vb1=[1,134],$Vc1=[1,137],$Vd1=[1,125],$Ve1=[1,132],$Vf1=[1,133],$Vg1=[1,138],$Vh1=[76,79,81,82,84,85,87,88,89],$Vi1=[12,62,76,79,81,82,84,85,87,88,89],$Vj1=[1,164],$Vk1=[1,163],$Vl1=[9,11,12,13,15,16,19,29,32,36,37,38,39,40,41,44,47,49,50,51,52,53,62,67,68,69,70,71,76,79,81,82,84,85,87,88,89,90,91,92],$Vm1=[1,197],$Vn1=[1,194],$Vo1=[1,201],$Vp1=[1,198],$Vq1=[1,195],$Vr1=[1,202],$Vs1=[1,192],$Vt1=[1,193],$Vu1=[1,196],$Vv1=[1,199],$Vw1=[1,200],$Vx1=[11,12,13,15,16,29,32,44,47,49,67,68,69,70,71,76,79,81,82,84,85,87,88,89],$Vy1=[1,217],$Vz1=[9,10,19,79],$VA1=[9,10,12,19,44,67,75,76,77,79,81,82,83,84,85];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"expressions":3,"graphConfig":4,"statements":5,"EOF":6,"spaceListNewline":7,"GRAPH":8,"SPACE":9,"DIR":10,"FirstStmtSeperator":11,"TAGEND":12,"TAGSTART":13,"UP":14,"DOWN":15,"SEMI":16,"NEWLINE":17,"spaceList":18,"statement":19,"commentStatement":20,"verticeStatement":21,"separator":22,"styleStatement":23,"linkStyleStatement":24,"classDefStatement":25,"classStatement":26,"clickStatement":27,"vertex":28,"link":29,"alphaNum":30,"SQS":31,"text":32,"SQE":33,"PS":34,"PE":35,"DIAMOND_START":36,"DIAMOND_STOP":37,"alphaNumStatement":38,"alphaNumToken":39,"MINUS":40,"linkStatement":41,"arrowText":42,"ARROW_POINT":43,"ARROW_CIRCLE":44,"ARROW_CROSS":45,"ARROW_OPEN":46,"PIPE":47,"textToken":48,"commentText":49,"commentToken":50,"keywords":51,"STYLE":52,"LINKSTYLE":53,"CLASSDEF":54,"CLASS":55,"CLICK":56,"textNoTags":57,"textNoTagsToken":58,"stylesOpt":59,"HEX":60,"NUM":61,"PCT":62,"style":63,"COMMA":64,"styleComponent":65,"ALPHA":66,"COLON":67,"UNIT":68,"BRKT":69,"DOT":70,"graphCodeTokens":71,"PLUS":72,"EQUALS":73,"MULT":74,"TAG_START":75,"TAG_END":76,"QUOTE":77,"$accept":0,"$end":1},
-terminals_: {2:"error",6:"EOF",8:"GRAPH",9:"SPACE",10:"DIR",12:"TAGEND",13:"TAGSTART",14:"UP",15:"DOWN",16:"SEMI",17:"NEWLINE",31:"SQS",33:"SQE",34:"PS",35:"PE",36:"DIAMOND_START",37:"DIAMOND_STOP",40:"MINUS",43:"ARROW_POINT",44:"ARROW_CIRCLE",45:"ARROW_CROSS",46:"ARROW_OPEN",47:"PIPE",52:"STYLE",53:"LINKSTYLE",54:"CLASSDEF",55:"CLASS",56:"CLICK",60:"HEX",61:"NUM",62:"PCT",64:"COMMA",66:"ALPHA",67:"COLON",68:"UNIT",69:"BRKT",70:"DOT",72:"PLUS",73:"EQUALS",74:"MULT",75:"TAG_START",76:"TAG_END",77:"QUOTE"},
-productions_: [0,[3,3],[3,2],[3,4],[3,3],[4,4],[4,4],[4,4],[4,4],[4,4],[11,1],[11,1],[11,2],[5,3],[5,2],[5,1],[7,2],[7,2],[7,1],[7,1],[18,2],[18,1],[19,2],[19,2],[19,2],[19,2],[19,2],[19,2],[19,2],[22,1],[22,1],[22,1],[21,3],[21,1],[28,4],[28,5],[28,6],[28,7],[28,4],[28,5],[28,4],[28,5],[28,4],[28,5],[28,4],[28,1],[28,2],[30,1],[30,2],[38,1],[38,3],[29,2],[29,3],[29,1],[29,2],[41,1],[41,1],[41,1],[41,1],[42,3],[32,1],[32,2],[49,1],[49,2],[51,1],[51,1],[51,1],[51,1],[51,1],[51,1],[51,1],[57,1],[57,2],[25,5],[26,5],[27,5],[23,5],[23,5],[24,5],[20,3],[59,1],[59,3],[63,1],[63,2],[65,1],[65,1],[65,1],[65,1],[65,1],[65,1],[65,1],[65,1],[65,1],[50,1],[50,1],[48,1],[48,1],[48,1],[58,1],[58,1],[58,1],[58,1],[39,1],[39,1],[39,1],[39,1],[39,1],[39,1],[39,1],[39,1],[39,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1],[71,1]],
+symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"document":5,"line":6,"spaceListNewline":7,"statement":8,"SEMI":9,"EOF":10,"GRAPH":11,"SPACE":12,"DIR":13,"FirstStmtSeperator":14,"TAGEND":15,"TAGSTART":16,"UP":17,"DOWN":18,"NEWLINE":19,"spaceList":20,"commentStatement":21,"verticeStatement":22,"separator":23,"styleStatement":24,"linkStyleStatement":25,"classDefStatement":26,"classStatement":27,"clickStatement":28,"subgraph":29,"text":30,"endStatement":31,"end":32,"vertex":33,"link":34,"alphaNum":35,"SQS":36,"SQE":37,"PS":38,"PE":39,"DIAMOND_START":40,"DIAMOND_STOP":41,"alphaNumStatement":42,"alphaNumToken":43,"MINUS":44,"linkStatement":45,"arrowText":46,"--":47,"-.":48,"==":49,"ARROW_POINT":50,"ARROW_CIRCLE":51,"ARROW_CROSS":52,"ARROW_OPEN":53,"DOTTED_ARROW_POINT":54,"DOTTED_ARROW_CIRCLE":55,"DOTTED_ARROW_CROSS":56,"DOTTED_ARROW_OPEN":57,"THICK_ARROW_POINT":58,"THICK_ARROW_CIRCLE":59,"THICK_ARROW_CROSS":60,"THICK_ARROW_OPEN":61,"PIPE":62,"textToken":63,"commentText":64,"commentToken":65,"keywords":66,"STYLE":67,"LINKSTYLE":68,"CLASSDEF":69,"CLASS":70,"CLICK":71,"textNoTags":72,"textNoTagsToken":73,"stylesOpt":74,"HEX":75,"NUM":76,"PCT":77,"style":78,"COMMA":79,"styleComponent":80,"ALPHA":81,"COLON":82,"UNIT":83,"BRKT":84,"DOT":85,"graphCodeTokens":86,"PLUS":87,"EQUALS":88,"MULT":89,"TAG_START":90,"TAG_END":91,"QUOTE":92,"$accept":0,"$end":1},
+terminals_: {2:"error",9:"SEMI",10:"EOF",11:"GRAPH",12:"SPACE",13:"DIR",15:"TAGEND",16:"TAGSTART",17:"UP",18:"DOWN",19:"NEWLINE",29:"subgraph",32:"end",36:"SQS",37:"SQE",38:"PS",39:"PE",40:"DIAMOND_START",41:"DIAMOND_STOP",44:"MINUS",47:"--",48:"-.",49:"==",50:"ARROW_POINT",51:"ARROW_CIRCLE",52:"ARROW_CROSS",53:"ARROW_OPEN",54:"DOTTED_ARROW_POINT",55:"DOTTED_ARROW_CIRCLE",56:"DOTTED_ARROW_CROSS",57:"DOTTED_ARROW_OPEN",58:"THICK_ARROW_POINT",59:"THICK_ARROW_CIRCLE",60:"THICK_ARROW_CROSS",61:"THICK_ARROW_OPEN",62:"PIPE",67:"STYLE",68:"LINKSTYLE",69:"CLASSDEF",70:"CLASS",71:"CLICK",75:"HEX",76:"NUM",77:"PCT",79:"COMMA",81:"ALPHA",82:"COLON",83:"UNIT",84:"BRKT",85:"DOT",87:"PLUS",88:"EQUALS",89:"MULT",90:"TAG_START",91:"TAG_END",92:"QUOTE"},
+productions_: [0,[3,2],[5,0],[5,2],[6,2],[6,1],[6,1],[6,1],[4,4],[4,4],[4,4],[4,4],[4,4],[14,1],[14,1],[14,2],[7,2],[7,2],[7,1],[7,1],[20,2],[20,1],[8,2],[8,2],[8,2],[8,2],[8,2],[8,2],[8,2],[8,6],[8,5],[31,1],[31,2],[23,1],[23,1],[23,1],[22,3],[22,1],[33,4],[33,5],[33,6],[33,7],[33,4],[33,5],[33,4],[33,5],[33,4],[33,5],[33,1],[33,2],[35,1],[35,2],[42,1],[42,3],[34,2],[34,3],[34,1],[34,2],[34,5],[34,6],[34,5],[34,6],[34,5],[34,6],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[46,3],[30,1],[30,2],[64,1],[64,2],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[66,1],[72,1],[72,2],[26,5],[27,5],[28,5],[24,5],[24,5],[25,5],[21,3],[74,1],[74,3],[78,1],[78,2],[80,1],[80,1],[80,1],[80,1],[80,1],[80,1],[80,1],[80,1],[80,1],[80,1],[80,1],[65,1],[65,1],[63,1],[63,1],[63,1],[63,1],[63,1],[73,1],[73,1],[73,1],[73,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1],[86,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
+case 2:
+ this.$ = [];
+break;
 case 3:
-this.$=$$[$0-3];
+
+	    if($$[$0] !== []){
+	        $$[$0-1].push($$[$0]);
+	    }
+	    this.$=$$[$0-1];
 break;
-case 4:
-this.$=$$[$0-2];
-break;
-case 5:
- yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
-break;
-case 6:
- yy.setDirection("LR");this.$ = $$[$0-1];
-break;
-case 7:
- yy.setDirection("RL");this.$ = $$[$0-1];
-break;
-case 8:
- yy.setDirection("BT");this.$ = $$[$0-1];
-break;
-case 9:
- yy.setDirection("TB");this.$ = $$[$0-1];
-break;
-case 32:
- yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = 'oy'
-break;
-case 33:
-this.$ = 'yo';
-break;
-case 34:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
-break;
-case 35:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'square');
-break;
-case 36:
-this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
-break;
-case 37:
-this.$ = $$[$0-6];yy.addVertex($$[$0-6],$$[$0-3],'circle');
-break;
-case 38:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
-break;
-case 39:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'round');
-break;
-case 40: case 44:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
-break;
-case 41:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'diamond');
-break;
-case 42:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
-break;
-case 43:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'odd');
-break;
-case 45:
-this.$ = $$[$0];yy.addVertex($$[$0]);
-break;
-case 46:
-this.$ = $$[$0-1];yy.addVertex($$[$0-1]);
-break;
-case 47: case 49: case 60: case 62: case 71:
+case 4: case 5: case 50: case 52: case 77: case 79: case 90:
 this.$=$$[$0];
 break;
-case 48: case 61: case 63: case 72:
+case 8:
+ yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
+break;
+case 9:
+ yy.setDirection("LR");this.$ = $$[$0-1];
+break;
+case 10:
+ yy.setDirection("RL");this.$ = $$[$0-1];
+break;
+case 11:
+ yy.setDirection("BT");this.$ = $$[$0-1];
+break;
+case 12:
+ yy.setDirection("TB");this.$ = $$[$0-1];
+break;
+case 22: case 24: case 25: case 26: case 27: case 28:
+this.$=[];
+break;
+case 23:
+this.$=$$[$0-1]
+break;
+case 29:
+yy.addSubGraph($$[$0-2],$$[$0-4]);
+break;
+case 30:
+yy.addSubGraph($$[$0-2],undefined);
+break;
+case 36:
+ yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = [$$[$0-2],$$[$0]];
+break;
+case 37:
+this.$ = [$$[$0]];
+break;
+case 38:
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
+break;
+case 39:
+this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'square');
+break;
+case 40:
+this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
+break;
+case 41:
+this.$ = $$[$0-6];yy.addVertex($$[$0-6],$$[$0-3],'circle');
+break;
+case 42:
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
+break;
+case 43:
+this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'round');
+break;
+case 44:
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
+break;
+case 45:
+this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'diamond');
+break;
+case 46:
+this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
+break;
+case 47:
+this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'odd');
+break;
+case 48:
+this.$ = $$[$0];yy.addVertex($$[$0]);
+break;
+case 49:
+this.$ = $$[$0-1];yy.addVertex($$[$0-1]);
+break;
+case 51: case 78: case 80: case 91:
 this.$=$$[$0-1]+''+$$[$0];
 break;
-case 50:
+case 53:
 this.$=$$[$0-2]+'-'+$$[$0];
 break;
-case 51:
+case 54:
 $$[$0-1].text = $$[$0];this.$ = $$[$0-1];
 break;
-case 52:
+case 55:
 $$[$0-2].text = $$[$0-1];this.$ = $$[$0-2];
 break;
-case 53:
+case 56:
 this.$ = $$[$0];
 break;
-case 54: case 59:
+case 57: case 76:
 this.$ = $$[$0-1];
 break;
-case 55:
-this.$ = {"type":"arrow"};
+case 58: case 60: case 62:
+$$[$0].text = $$[$0-2];this.$ = $$[$0];
 break;
-case 56:
-this.$ = {"type":"arrow_circle"};
+case 59: case 61: case 63:
+$$[$0-1].text = $$[$0-3];this.$ = $$[$0-1];
 break;
-case 57:
-this.$ = {"type":"arrow_cross"};
+case 64:
+this.$ = {"type":"arrow","stroke":"normal"};
 break;
-case 58:
-this.$ = {"type":"arrow_open"};
+case 65:
+this.$ = {"type":"arrow_circle","stroke":"normal"};
+break;
+case 66:
+this.$ = {"type":"arrow_cross","stroke":"normal"};
+break;
+case 67:
+this.$ = {"type":"arrow_open","stroke":"normal"};
+break;
+case 68:
+this.$ = {"type":"arrow","stroke":"dotted"};
+break;
+case 69:
+this.$ = {"type":"arrow_circle","stroke":"dotted"};
+break;
+case 70:
+this.$ = {"type":"arrow_cross","stroke":"dotted"};
+break;
+case 71:
+this.$ = {"type":"arrow_open","stroke":"dotted"};
+break;
+case 72:
+this.$ = {"type":"arrow","stroke":"thick"};
 break;
 case 73:
-this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
+this.$ = {"type":"arrow_circle","stroke":"thick"};
 break;
 case 74:
-this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
+this.$ = {"type":"arrow_cross","stroke":"thick"};
 break;
 case 75:
+this.$ = {"type":"arrow_open","stroke":"thick"};
+break;
+case 92:
+this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
+break;
+case 93:
+this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
+break;
+case 94:
 this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], $$[$0]);
 break;
-case 76:
+case 95:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
 break;
-case 77: case 78:
+case 96: case 97:
 this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
 break;
-case 80:
+case 99:
 this.$ = [$$[$0]]
 break;
-case 81:
+case 100:
 $$[$0-2].push($$[$0]);this.$ = $$[$0-2];
 break;
-case 83:
+case 102:
 this.$ = $$[$0-1] + $$[$0];
 break;
 }
 },
-table: [{3:1,4:2,8:[1,3]},{1:[3]},{5:4,7:5,9:$V0,17:$V1,19:6,20:9,21:10,23:11,24:12,25:13,26:14,27:15,28:17,30:23,38:24,39:25,52:$V2,53:$V3,54:$V4,55:$V5,56:$V6,61:$V7,62:$V8,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{9:[1,35]},{1:[2,2],6:[1,36]},{5:37,19:6,20:9,21:10,23:11,24:12,25:13,26:14,27:15,28:17,30:23,38:24,39:25,52:$V2,53:$V3,54:$V4,55:$V5,56:$V6,61:$V7,62:$V8,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($Vh,[2,15],{19:6,20:9,21:10,23:11,24:12,25:13,26:14,27:15,28:17,30:23,38:24,39:25,7:38,5:39,9:$V0,17:$V1,52:$V2,53:$V3,54:$V4,55:$V5,56:$V6,61:$V7,62:$V8,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg}),o($Vi,[2,19],{7:40,9:$V0,17:$V1}),o($Vi,[2,18],{7:41,9:$V0,17:$V1}),{17:[1,42]},{6:$Vj,16:$Vk,17:$Vl,22:43},{6:$Vj,16:$Vk,17:$Vl,22:47},{6:$Vj,16:$Vk,17:$Vl,22:48},{6:$Vj,16:$Vk,17:$Vl,22:49},{6:$Vj,16:$Vk,17:$Vl,22:50},{6:$Vj,16:$Vk,17:$Vl,22:51},{62:[1,52]},o($Vm,[2,33],{29:53,41:54,43:[1,55],44:[1,56],45:[1,57],46:[1,58]}),{9:[1,59]},{9:[1,60]},{9:[1,61]},{9:[1,62]},{9:[1,63]},o($Vn,[2,45],{9:[1,69],12:[1,67],13:[1,68],31:[1,64],34:[1,65],36:[1,66]}),o($Vo,[2,47],{38:24,39:25,30:70,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg}),o($Vp,[2,49],{40:[1,71]}),o($Vq,[2,102]),o($Vq,[2,103]),o($Vq,[2,104]),o($Vq,[2,105]),o($Vq,[2,106]),o($Vq,[2,107]),o($Vq,[2,108]),o($Vq,[2,109]),o($Vq,[2,110]),{10:[1,72],12:[1,73],13:[1,74],14:[1,75],15:[1,76]},{1:[2,1]},{1:[2,4],6:[1,77]},{5:78,19:6,20:9,21:10,23:11,24:12,25:13,26:14,27:15,28:17,30:23,38:24,39:25,52:$V2,53:$V3,54:$V4,55:$V5,56:$V6,61:$V7,62:$V8,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($Vh,[2,14]),o($Vi,[2,16]),o($Vi,[2,17]),o($Vr,[2,22]),o($Vr,[2,23]),o($Vr,[2,29]),o($Vr,[2,30]),o($Vr,[2,31]),o($Vr,[2,24]),o($Vr,[2,25]),o($Vr,[2,26]),o($Vr,[2,27]),o($Vr,[2,28]),{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,16:$Vx,31:$Vy,33:$Vz,34:$VA,35:$VB,36:$VC,37:$VD,39:101,40:$VE,43:$VF,44:$VG,45:$VH,46:$VI,47:$VJ,48:81,49:79,50:80,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,71:82,72:$Ve,73:$Vf,74:$Vg,75:$VP,76:$VQ,77:$VR},{28:112,30:23,38:24,39:25,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($VS,[2,53],{42:113,9:[1,114],47:[1,115]}),o($VT,[2,55]),o($VT,[2,56]),o($VT,[2,57]),o($VT,[2,58]),{30:116,38:24,39:25,60:[1,117],61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{61:[1,118]},{30:119,38:24,39:25,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{30:120,38:24,39:25,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{30:121,38:24,39:25,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:122,39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:125,34:[1,124],39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:126,39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:127,39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:128,39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($Vn,[2,46]),o($Vo,[2,48]),{39:129,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{9:$VU,11:130,16:$VV,17:$VW,18:133},{9:$VU,11:135,16:$VV,17:$VW,18:133},{9:$VU,11:136,16:$VV,17:$VW,18:133},{9:$VU,11:137,16:$VV,17:$VW,18:133},{9:$VU,11:138,16:$VV,17:$VW,18:133},{1:[2,3]},o($Vh,[2,13]),{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,16:$Vx,17:[2,79],31:$Vy,33:$Vz,34:$VA,35:$VB,36:$VC,37:$VD,39:101,40:$VE,43:$VF,44:$VG,45:$VH,46:$VI,47:$VJ,48:81,50:139,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,71:82,72:$Ve,73:$Vf,74:$Vg,75:$VP,76:$VQ,77:$VR},o($VX,[2,62]),o($VX,[2,93]),o($VX,[2,94]),o($VX,[2,95]),o($VX,[2,96]),o($VX,$VY),o($VX,[2,111]),o($VX,[2,112]),o($VX,[2,113]),o($VX,[2,114]),o($VX,[2,115]),o($VX,[2,116]),o($VX,[2,117]),o($VX,[2,118]),o($VX,[2,119]),o($VX,[2,120]),o($VX,[2,121]),o($VX,[2,122]),o($VX,[2,123]),o($VX,[2,124]),o($VX,[2,125]),o($VX,[2,98]),o($VX,[2,99]),o($VX,[2,100]),o($VX,[2,101]),o($VX,[2,64]),o($VX,[2,65]),o($VX,[2,66]),o($VX,[2,67]),o($VX,[2,68]),o($VX,[2,69]),o($VX,[2,70]),o($Vm,[2,32]),o($VS,[2,51],{9:[1,140]}),o($VS,[2,54]),{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:141,39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{9:[1,142]},{9:[1,143]},{9:[1,144]},{9:[1,145]},{9:[1,146]},{9:[1,147]},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,33:[1,148],39:101,40:$VE,48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($VZ,[2,60]),{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,32:150,39:101,40:$VE,48:123,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,35:[1,151],39:101,40:$VE,48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,37:[1,152],39:101,40:$VE,48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,33:[1,153],39:101,40:$VE,48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{8:$Vs,9:$Vt,10:$Vu,12:[1,154],13:$Vw,39:101,40:$VE,48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($Vp,[2,50]),o($V_,[2,5]),o($V_,[2,10]),o($V_,[2,11]),{17:[1,155]},{9:$VU,17:[2,21],18:156},o($V_,[2,6]),o($V_,[2,7]),o($V_,[2,8]),o($V_,[2,9]),o($VX,[2,63]),o($VS,[2,52]),{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,39:101,40:$VE,47:[1,157],48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{9:$V$,40:$V01,59:158,60:$V11,61:$V21,63:159,65:160,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71},{9:$V$,40:$V01,59:170,60:$V11,61:$V21,63:159,65:160,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71},{9:$V$,40:$V01,59:171,60:$V11,61:$V21,63:159,65:160,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71},{9:$V$,40:$V01,59:172,60:$V11,61:$V21,63:159,65:160,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71},{30:173,38:24,39:25,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},{30:174,38:24,39:25,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($Vn,[2,34],{9:[1,175]}),o($VZ,[2,61]),{8:$Vs,9:$Vt,10:$Vu,12:$Vv,13:$Vw,35:[1,176],39:101,40:$VE,48:149,51:104,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,58:83,61:$V7,64:$V9,66:$Va,67:$Vb,69:$Vc,70:$Vd,72:$Ve,73:$Vf,74:$Vg},o($Vn,[2,38],{9:[1,177]}),o($Vn,[2,40],{9:[1,178]}),o($Vn,[2,42],{9:[1,179]}),o([8,9,10,12,13,40,52,53,54,55,56,61,64,66,67,69,70,72,73,74],$VY,{6:$V81,16:$V81,17:$V81,43:$V81,44:$V81,45:$V81,46:$V81}),o($V_,[2,12]),{17:[2,20]},o([9,61,64,66,67,69,70,72,73,74],[2,59]),o($Vm,[2,76],{64:$V91}),o($Va1,[2,80],{65:181,9:$V$,40:$V01,60:$V11,61:$V21,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71}),o($Vb1,[2,82]),o($Vb1,[2,84]),o($Vb1,[2,85]),o($Vb1,[2,86]),o($Vb1,[2,87]),o($Vb1,[2,88]),o($Vb1,[2,89]),o($Vb1,[2,90]),o($Vb1,[2,91]),o($Vb1,[2,92]),o($Vm,[2,77],{64:$V91}),o($Vm,[2,78],{64:$V91}),o($Vm,[2,73],{64:$V91}),o($Vm,[2,74]),o($Vm,[2,75]),o($Vn,[2,35]),{35:[1,182]},o($Vn,[2,39]),o($Vn,[2,41]),o($Vn,[2,43]),{9:$V$,40:$V01,60:$V11,61:$V21,63:183,65:160,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71},o($Vb1,[2,83]),o($Vn,[2,36],{9:[1,184]}),o($Va1,[2,81],{65:181,9:$V$,40:$V01,60:$V11,61:$V21,66:$V31,67:$V41,68:$V51,69:$V61,70:$V71}),o($Vn,[2,37])],
-defaultActions: {36:[2,1],77:[2,3],156:[2,20]},
+table: [{3:1,4:2,11:[1,3]},{1:[3]},o($V0,$V1,{5:4}),{12:[1,5]},{1:[2,1],6:6,7:7,8:8,9:$V2,10:$V3,12:$V4,19:$V5,21:13,22:14,24:15,25:16,26:17,27:18,28:19,29:$V6,33:22,35:28,42:29,43:30,67:$V7,68:$V8,69:$V9,70:$Va,71:$Vb,76:$Vc,77:$Vd,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{13:[1,40],15:[1,41],16:[1,42],17:[1,43],18:[1,44]},o($Vm,[2,3]),{8:45,21:13,22:14,24:15,25:16,26:17,27:18,28:19,29:$V6,33:22,35:28,42:29,43:30,67:$V7,68:$V8,69:$V9,70:$Va,71:$Vb,76:$Vc,77:$Vd,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($Vm,[2,5]),o($Vm,[2,6]),o($Vm,[2,7]),o($Vn,$Vo,{7:46,12:$V4,19:$V5}),o($Vn,[2,18],{7:47,12:$V4,19:$V5}),{19:[1,48]},{9:$Vp,10:$Vq,19:$Vr,23:49},{9:$Vp,10:$Vq,19:$Vr,23:53},{9:$Vp,10:$Vq,19:$Vr,23:54},{9:$Vp,10:$Vq,19:$Vr,23:55},{9:$Vp,10:$Vq,19:$Vr,23:56},{9:$Vp,10:$Vq,19:$Vr,23:57},{9:$Vp,10:$Vq,11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,19:$Vr,23:59,29:$Vx,30:58,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{77:[1,79]},o($VH,[2,37],{34:80,45:81,47:[1,82],48:[1,83],49:[1,84],50:$VI,51:$VJ,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,57:$VP,58:$VQ,59:$VR,60:$VS,61:$VT}),{12:[1,97]},{12:[1,98]},{12:[1,99]},{12:[1,100]},{12:[1,101]},o($VU,[2,48],{43:30,42:107,12:[1,106],15:[1,105],36:[1,102],38:[1,103],40:[1,104],76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl}),o($VV,[2,50]),o($VV,[2,52],{44:[1,108]}),o($VW,[2,125]),o($VW,[2,126]),o($VW,[2,127]),o($VW,[2,128]),o($VW,[2,129]),o($VW,[2,130]),o($VW,[2,131]),o($VW,[2,132]),o($VW,[2,133]),{9:$VX,12:$VY,14:109,19:$VZ,20:112},{9:$VX,12:$VY,14:114,19:$VZ,20:112},{9:$VX,12:$VY,14:115,19:$VZ,20:112},{9:$VX,12:$VY,14:116,19:$VZ,20:112},{9:$VX,12:$VY,14:117,19:$VZ,20:112},o($Vm,[2,4]),o($Vn,[2,16]),o($Vn,[2,17]),o($Vm,[2,22]),o($Vm,[2,23]),o($Vm,[2,33]),o($Vm,[2,34]),o($Vm,[2,35]),o($Vm,[2,24]),o($Vm,[2,25]),o($Vm,[2,26]),o($Vm,[2,27]),o($Vm,[2,28]),{9:$Vp,10:$Vq,11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,19:$Vr,23:118,29:$Vx,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($V_,$V1,{5:120}),o($V$,[2,77]),o($V01,[2,116]),o($V01,[2,117]),o($V01,[2,118]),o($V01,[2,119]),o($V01,[2,120]),o($V01,[2,121]),o($V01,$V11),o($V01,[2,123]),o($V01,[2,124]),o($V01,[2,81]),o($V01,[2,82]),o($V01,[2,83]),o($V01,[2,84]),o($V01,[2,85]),o($V01,[2,86]),o($V01,[2,87]),o($V01,[2,88]),o($V01,[2,89]),{9:$V21,11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,36:$V31,37:$V41,38:$V51,39:$V61,40:$V71,41:$V81,43:66,44:$Vz,47:$VA,49:$VB,50:$V91,51:$Va1,52:$Vb1,53:$Vc1,62:$Vd1,63:123,64:121,65:122,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,86:124,87:$Vj,88:$Vk,89:$Vl,90:$Ve1,91:$Vf1,92:$Vg1},{33:140,35:28,42:29,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($Vh1,[2,56],{46:141,12:[1,142],62:[1,143]}),{12:[1,144]},{12:[1,145]},{12:[1,146]},o($Vi1,[2,64]),o($Vi1,[2,65]),o($Vi1,[2,66]),o($Vi1,[2,67]),o($Vi1,[2,68]),o($Vi1,[2,69]),o($Vi1,[2,70]),o($Vi1,[2,71]),o($Vi1,[2,72]),o($Vi1,[2,73]),o($Vi1,[2,74]),o($Vi1,[2,75]),{35:147,42:29,43:30,75:[1,148],76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{76:[1,149]},{35:150,42:29,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{35:151,42:29,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{35:152,42:29,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:153,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:155,32:$Vy,38:[1,154],43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:156,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:157,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($VU,[2,49]),o($VV,[2,51]),{43:158,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($V0,[2,8]),o($V0,[2,13]),o($V0,[2,14]),{19:[1,159]},{12:$VY,19:[2,21],20:160},o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),o($V_,$V1,{5:161}),o($V$,[2,78]),{6:6,7:7,8:8,9:$V2,10:$V3,12:$Vj1,19:$V5,21:13,22:14,24:15,25:16,26:17,27:18,28:19,29:$V6,31:162,32:$Vk1,33:22,35:28,42:29,43:30,67:$V7,68:$V8,69:$V9,70:$Va,71:$Vb,76:$Vc,77:$Vd,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{9:$V21,11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,19:[2,98],29:$Vx,32:$Vy,36:$V31,37:$V41,38:$V51,39:$V61,40:$V71,41:$V81,43:66,44:$Vz,47:$VA,49:$VB,50:$V91,51:$Va1,52:$Vb1,53:$Vc1,62:$Vd1,63:123,65:165,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,86:124,87:$Vj,88:$Vk,89:$Vl,90:$Ve1,91:$Vf1,92:$Vg1},o($Vl1,[2,79]),o($Vl1,[2,114]),o($Vl1,[2,115]),o($Vl1,[2,134]),o($Vl1,[2,135]),o($Vl1,[2,136]),o($Vl1,[2,137]),o($Vl1,[2,138]),o($Vl1,[2,139]),o($Vl1,[2,140]),o($Vl1,[2,141]),o($Vl1,[2,142]),o($Vl1,[2,143]),o($Vl1,[2,144]),o($Vl1,[2,145]),o($Vl1,[2,146]),o($Vl1,[2,147]),o($Vl1,[2,148]),o($VH,[2,36]),o($Vh1,[2,54],{12:[1,166]}),o($Vh1,[2,57]),{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:167,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:168,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:169,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:170,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{12:[1,171],42:107,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{12:[1,172]},{12:[1,173]},{12:[1,174],42:107,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{12:[1,175],42:107,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{12:[1,176],42:107,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,37:[1,177],43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,30:178,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:60,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,39:[1,179],43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,41:[1,180],43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,37:[1,181],43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($VV,[2,53]),o($V0,[2,15]),{19:[2,20]},{6:6,7:7,8:8,9:$V2,10:$V3,12:$Vj1,19:$V5,21:13,22:14,24:15,25:16,26:17,27:18,28:19,29:$V6,31:182,32:$Vk1,33:22,35:28,42:29,43:30,67:$V7,68:$V8,69:$V9,70:$Va,71:$Vb,76:$Vc,77:$Vd,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{9:$Vp,10:$Vq,19:$Vr,23:183},o($VH,[2,31]),o($Vn,$Vo,{7:46,31:184,12:$Vj1,19:$V5,32:$Vk1}),o($Vl1,[2,80]),o($Vh1,[2,55]),{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,62:[1,185],63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:[1,186],13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:[1,187],13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{11:$Vs,12:[1,188],13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{12:$Vm1,44:$Vn1,67:$Vo1,74:189,75:$Vp1,76:$Vq1,77:$Vr1,78:190,80:191,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1},{12:$Vm1,44:$Vn1,67:$Vo1,74:203,75:$Vp1,76:$Vq1,77:$Vr1,78:190,80:191,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1},{12:$Vm1,44:$Vn1,67:$Vo1,74:204,75:$Vp1,76:$Vq1,77:$Vr1,78:190,80:191,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1},{12:$Vm1,44:$Vn1,67:$Vo1,74:205,75:$Vp1,76:$Vq1,77:$Vr1,78:190,80:191,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1},{35:206,42:29,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},{35:207,42:29,43:30,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($VU,[2,38],{12:[1,208]}),{11:$Vs,12:$Vt,13:$Vu,15:$Vv,16:$Vw,29:$Vx,32:$Vy,39:[1,209],43:66,44:$Vz,47:$VA,49:$VB,63:119,66:69,67:$VC,68:$VD,69:$VE,70:$VF,71:$VG,73:61,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl},o($VU,[2,42],{12:[1,210]}),o($VU,[2,44],{12:[1,211]}),o($VU,[2,46],{12:[1,212]}),{9:$Vp,10:$Vq,19:$Vr,23:213},o($Vm,[2,30]),o($VH,[2,32]),o([12,76,79,81,82,84,85,87,88,89],[2,76]),o($Vx1,$V11,{45:214,50:$VI,51:$VJ,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,57:$VP,58:$VQ,59:$VR,60:$VS,61:$VT}),o($Vx1,$V11,{45:215,50:$VI,51:$VJ,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,57:$VP,58:$VQ,59:$VR,60:$VS,61:$VT}),o($Vx1,$V11,{45:216,50:$VI,51:$VJ,52:$VK,53:$VL,54:$VM,55:$VN,56:$VO,57:$VP,58:$VQ,59:$VR,60:$VS,61:$VT}),o($VH,[2,95],{79:$Vy1}),o($Vz1,[2,99],{80:218,12:$Vm1,44:$Vn1,67:$Vo1,75:$Vp1,76:$Vq1,77:$Vr1,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1}),o($VA1,[2,101]),o($VA1,[2,103]),o($VA1,[2,104]),o($VA1,[2,105]),o($VA1,[2,106]),o($VA1,[2,107]),o($VA1,[2,108]),o($VA1,[2,109]),o($VA1,[2,110]),o($VA1,[2,111]),o($VA1,[2,112]),o($VA1,[2,113]),o($VH,[2,96],{79:$Vy1}),o($VH,[2,97],{79:$Vy1}),o($VH,[2,92],{79:$Vy1}),o($VH,[2,93],{43:30,42:107,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl}),o($VH,[2,94],{43:30,42:107,76:$Vc,79:$Ve,81:$Vf,82:$Vg,84:$Vh,85:$Vi,87:$Vj,88:$Vk,89:$Vl}),o($VU,[2,39]),{39:[1,219]},o($VU,[2,43]),o($VU,[2,45]),o($VU,[2,47]),o($Vm,[2,29]),o($Vh1,[2,58],{12:[1,220]}),o($Vh1,[2,60],{12:[1,221]}),o($Vh1,[2,62],{12:[1,222]}),{12:$Vm1,44:$Vn1,67:$Vo1,75:$Vp1,76:$Vq1,77:$Vr1,78:223,80:191,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1},o($VA1,[2,102]),o($VU,[2,40],{12:[1,224]}),o($Vh1,[2,59]),o($Vh1,[2,61]),o($Vh1,[2,63]),o($Vz1,[2,100],{80:218,12:$Vm1,44:$Vn1,67:$Vo1,75:$Vp1,76:$Vq1,77:$Vr1,81:$Vs1,82:$Vt1,83:$Vu1,84:$Vv1,85:$Vw1}),o($VU,[2,41])],
+defaultActions: {160:[2,20]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -14982,98 +15178,132 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 52;
+case 0:return 67;
 break;
-case 1:return 53;
+case 1:return 68;
 break;
-case 2:return 54;
+case 2:return 69;
 break;
-case 3:return 55;
+case 3:return 70;
 break;
-case 4:return 56;
+case 4:return 71;
 break;
-case 5:return 8;
+case 5:return 11;
 break;
-case 6:return 10;
+case 6:return 29;
 break;
-case 7:return 10;
+case 7:return 32;
 break;
-case 8:return 10;
+case 8:return 13;
 break;
-case 9:return 10;
+case 9:return 13;
 break;
-case 10:return 10;
+case 10:return 13;
 break;
-case 11:return 10;
+case 11:return 13;
 break;
-case 12:return 61;
+case 12:return 13;
 break;
-case 13:return 69;
+case 13:return 13;
 break;
-case 14:return 67;
+case 14:return 76;
 break;
-case 15:return 16;
+case 15:return 84;
 break;
-case 16:return 64;
+case 16:return 82;
 break;
-case 17:return 73;
+case 17:return 9;
 break;
-case 18:return 74;
+case 18:return 79;
 break;
-case 19:return 70;
+case 19:return 89;
 break;
-case 20:return 13;
+case 20:return 16;
 break;
-case 21:return 12;
+case 21:return 15;
 break;
-case 22:return 14
+case 22:return 17;
 break;
-case 23:return 15
+case 23:return 18;
 break;
-case 24:return 45;
+case 24:return 52;
 break;
-case 25:return 43;
+case 25:return 50;
 break;
-case 26:return 44;
+case 26:return 51;
 break;
-case 27:return 46;
+case 27:return 53;
 break;
-case 28:return 40;
+case 28:return 56;
 break;
-case 29:return 72;
+case 29:return 54;
 break;
-case 30:return 62;
+case 30:return 55;
 break;
-case 31:return 73;
+case 31:return 57;
 break;
-case 32:return 66;
+case 32:return 56;
 break;
-case 33:return 47;
+case 33:return 54;
 break;
-case 34:return 34;
+case 34:return 55;
 break;
-case 35:return 35;
+case 35:return 57;
 break;
-case 36:return 31;
+case 36:return 60;
 break;
-case 37:return 33;
+case 37:return 58;
 break;
-case 38:return 36
+case 38:return 59;
 break;
-case 39:return 37
+case 39:return 61;
 break;
-case 40:return 77;
+case 40:return 47;
 break;
-case 41:return 17;
+case 41:return 48;
 break;
-case 42:return 9;
+case 42:return 49;
 break;
-case 43:return 6;
+case 43:return 44;
+break;
+case 44:return 85;
+break;
+case 45:return 87;
+break;
+case 46:return 77;
+break;
+case 47:return 88;
+break;
+case 48:return 88;
+break;
+case 49:return 81;
+break;
+case 50:return 62;
+break;
+case 51:return 38;
+break;
+case 52:return 39;
+break;
+case 53:return 36;
+break;
+case 54:return 37;
+break;
+case 55:return 40
+break;
+case 56:return 41
+break;
+case 57:return 92;
+break;
+case 58:return 19;
+break;
+case 59:return 12;
+break;
+case 60:return 10;
 break;
 }
 },
-rules: [/^(?:style\b)/,/^(?:linkStyle\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:LR\b)/,/^(?:RL\b)/,/^(?:TB\b)/,/^(?:BT\b)/,/^(?:TD\b)/,/^(?:BR\b)/,/^(?:[0-9])/,/^(?:#)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:=)/,/^(?:\*)/,/^(?:\.)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:v\b)/,/^(?:--[x])/,/^(?:-->)/,/^(?:--[o])/,/^(?:---)/,/^(?:-)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u0061-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC_\/])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:\n)/,/^(?:\s)/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43],"inclusive":true}}
+rules: [/^(?:style\b)/,/^(?:linkStyle\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:subgraph\b)/,/^(?:end\b)/,/^(?:LR\b)/,/^(?:RL\b)/,/^(?:TB\b)/,/^(?:BT\b)/,/^(?:TD\b)/,/^(?:BR\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:v\b)/,/^(?:--[x])/,/^(?:-->)/,/^(?:--[o])/,/^(?:---)/,/^(?:-\.-[x])/,/^(?:-\.->)/,/^(?:-\.-[o])/,/^(?:-\.-)/,/^(?:.-[x])/,/^(?:\.->)/,/^(?:\.-[o])/,/^(?:\.-)/,/^(?:==[x])/,/^(?:==>)/,/^(?:==[o])/,/^(?:==[\=])/,/^(?:--)/,/^(?:-\.)/,/^(?:==)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u005C\u005F-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC_\/])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:\n)/,/^(?:\s)/,/^(?:$)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60],"inclusive":true}}
 });
 return lexer;
 })();
@@ -15179,87 +15409,107 @@ if (typeof module !== 'undefined' && require.main === module) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10,14,16,17,18,19],$V1=[1,16],$V2=[1,19],$V3=[17,31,32];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,15,17,19,20,22,33],$V1=[2,2],$V2=[1,6],$V3=[1,8],$V4=[1,9],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[2,7],$Vc=[6,8,10,11,15,17,18,19,20,21,22,33],$Vd=[6,8,10,11,15,17,18,19,20,22,33],$Ve=[1,46],$Vf=[1,49],$Vg=[1,53];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"start":3,"SD":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"participant":10,"actor":11,"signal":12,"note_statement":13,"title":14,"message":15,"loop":16,"ACTOR":17,"end":18,"note":19,"placement":20,"over":21,"actor_pair":22,",":23,"left_of":24,"right_of":25,"signaltype":26,"linetype":27,"arrowtype":28,"LINE":29,"DOTLINE":30,"ARROW":31,"OPENARROW":32,"MESSAGE":33,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SD",6:"EOF",9:"NL",10:"participant",14:"title",16:"loop",17:"ACTOR",18:"end",19:"note",21:"over",23:",",24:"left_of",25:"right_of",29:"LINE",30:"DOTLINE",31:"ARROW",32:"OPENARROW",33:"MESSAGE"},
-productions_: [0,[3,3],[5,0],[5,2],[7,1],[7,1],[8,2],[8,1],[8,1],[8,2],[8,2],[8,1],[13,4],[13,4],[22,1],[22,3],[20,1],[20,1],[12,4],[11,1],[26,2],[26,1],[27,1],[27,1],[28,1],[28,1],[15,1]],
+symbols_: {"error":2,"start":3,"SD":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"participant":11,"actor":12,"signal":13,"note_statement":14,"title":15,"text":16,"loop":17,"end":18,"opt":19,"alt":20,"else":21,"note":22,"placement":23,"text2":24,"over":25,"spaceList":26,"actor_pair":27,",":28,"left_of":29,"right_of":30,"signaltype":31,"actors":32,"ACTOR":33,"SOLID_OPEN_ARROW":34,"DOTTED_OPEN_ARROW":35,"SOLID_ARROW":36,"DOTTED_ARROW":37,"SOLID_CROSS":38,"DOTTED_CROSS":39,"TXT":40,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SD",6:"EOF",8:"SPACE",10:"NL",11:"participant",15:"title",16:"text",17:"loop",18:"end",19:"opt",20:"alt",21:"else",22:"note",25:"over",28:",",29:"left_of",30:"right_of",33:"ACTOR",34:"SOLID_OPEN_ARROW",35:"DOTTED_OPEN_ARROW",36:"SOLID_ARROW",37:"DOTTED_ARROW",38:"SOLID_CROSS",39:"DOTTED_CROSS",40:"TXT"},
+productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,3],[9,2],[9,2],[9,4],[9,4],[9,4],[9,7],[14,4],[14,5],[26,2],[26,1],[27,1],[27,3],[23,1],[23,1],[13,4],[32,2],[32,1],[12,1],[31,1],[31,1],[31,1],[31,1],[31,1],[31,1],[24,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return yy; 
+ yy.apply($$[$0-1]);return $$[$0-1]; 
 break;
-case 4:
- 
+case 2:
+ this.$ = [] 
 break;
-case 6:
- this.$='actor'; 
+case 3:
+$$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
-case 7:
- this.$='signal'; 
+case 4: case 5:
+ this.$ = $$[$0] 
+break;
+case 6: case 7:
+ this.$=[];
 break;
 case 8:
- this.$='note';  
-break;
-case 9:
- yy.setTitle($$[$0]);  
-break;
-case 10:
- yy.addSignal(undefined, undefined, $$[$0], yy.LINETYPE.LOOP_START);this.$='loop';  
-break;
-case 11:
- yy.addSignal(undefined, undefined, undefined, yy.LINETYPE.LOOP_END);this.$='loop';  
+this.$=$$[$0-1];
 break;
 case 12:
- this.$ = yy.addNote($$[$0-1], $$[$0-2], $$[$0]); 
+
+		$$[$0-1].unshift({type: 'loopStart', loopText:$$[$0-2].actor, signalType: yy.LINETYPE.LOOP_START});
+		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
+		this.$=$$[$0-1];
 break;
 case 13:
- this.$ = yy.addNote($$[$0-1], yy.PLACEMENT.OVER, $$[$0]); 
+
+		$$[$0-1].unshift({type: 'optStart', optText:$$[$0-2].actor, signalType: yy.LINETYPE.OPT_START});
+		$$[$0-1].push({type: 'optEnd', optText:$$[$0-2].actor, signalType: yy.LINETYPE.OPT_END});
+		this.$=$$[$0-1];
 break;
-case 14: case 21:
- this.$ = $$[$0]; 
+case 14:
+
+		// Alt start
+		$$[$0-4].unshift({type: 'altStart', altText:$$[$0-5].actor, signalType: yy.LINETYPE.ALT_START});
+		// Content in alt is already in $$[$0-4]
+		// Else
+		$$[$0-4].push({type: 'else', altText:$$[$0-2].actor, signalType: yy.LINETYPE.ALT_ELSE});
+		// Content in other alt
+		$$[$0-4] = $$[$0-4].concat($$[$0-1]);
+		// End
+		$$[$0-4].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
+
+		this.$=$$[$0-4];
 break;
 case 15:
- this.$ = [$$[$0-2], $$[$0]]; 
-break;
-case 16:
- this.$ = yy.PLACEMENT.LEFTOF; 
-break;
-case 17:
- this.$ = yy.PLACEMENT.RIGHTOF; 
-break;
-case 18:
- yy.addSignal($$[$0-3], $$[$0-1], $$[$0], $$[$0-2]); 
+this.$=[$$[$0-1],{type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
 case 19:
- yy.addActor($$[$0],$$[$0],$$[$0]); 
+ this.$ = $$[$0]; 
 break;
 case 20:
- this.$ = $$[$0-1] | ($$[$0] << 2); 
+ this.$ = [$$[$0-2], $$[$0]]; 
+break;
+case 21:
+ this.$ = yy.PLACEMENT.LEFTOF; 
 break;
 case 22:
- this.$ = yy.LINETYPE.SOLID; 
+ this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
 case 23:
- this.$ = yy.LINETYPE.DOTTED; 
-break;
-case 24:
- this.$ = yy.ARROWTYPE.FILLED; 
-break;
-case 25:
- this.$ = yy.ARROWTYPE.OPEN; 
+this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
 case 26:
- this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n"); 
+this.$={type: 'addActor', actor:$$[$0]}
+break;
+case 27:
+ this.$ = yy.LINETYPE.SOLID_OPEN; 
+break;
+case 28:
+ this.$ = yy.LINETYPE.DOTTED_OPEN; 
+break;
+case 29:
+ this.$ = yy.LINETYPE.SOLID; 
+break;
+case 30:
+ this.$ = yy.LINETYPE.DOTTED; 
+break;
+case 31:
+ this.$ = yy.LINETYPE.SOLID_CROSS; 
+break;
+case 32:
+ this.$ = yy.LINETYPE.DOTTED_CROSS; 
+break;
+case 33:
+this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8],11:14,12:9,13:10,14:[1,11],16:[1,12],17:$V1,18:[1,13],19:[1,15]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),{11:17,17:$V1},o($V0,[2,7]),o($V0,[2,8]),{15:18,33:$V2},{17:[1,20]},o($V0,[2,11]),{26:21,27:22,29:[1,23],30:[1,24]},{20:25,21:[1,26],24:[1,27],25:[1,28]},o([6,9,10,14,16,17,18,19,23,29,30,33],[2,19]),o($V0,[2,6]),o($V0,[2,9]),o($V0,[2,26]),o($V0,[2,10]),{11:29,17:$V1},{17:[2,21],28:30,31:[1,31],32:[1,32]},o($V3,[2,22]),o($V3,[2,23]),{11:33,17:$V1},{11:35,17:$V1,22:34},{17:[2,16]},{17:[2,17]},{15:36,33:$V2},{17:[2,20]},{17:[2,24]},{17:[2,25]},{15:37,33:$V2},{15:38,33:$V2},{23:[1,39],33:[2,14]},o($V0,[2,18]),o($V0,[2,12]),o($V0,[2,13]),{11:40,17:$V1},{33:[2,15]}],
-defaultActions: {4:[2,1],27:[2,16],28:[2,17],30:[2,20],31:[2,24],32:[2,25],40:[2,15]},
+table: [{3:1,4:[1,2]},{1:[3]},o($V0,$V1,{5:3}),{6:[1,4],7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,22:$V9,33:$Va},o($V0,$Vb,{1:[2,1]}),o($Vc,[2,3]),{9:19,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,22:$V9,33:$Va},o($Vc,[2,5]),o($Vc,[2,6]),{12:20,33:$Va},{10:[1,21]},{10:[1,22]},{8:[1,23]},{12:24,33:$Va},{12:25,33:$Va},{12:26,33:$Va},{31:27,34:[1,28],35:[1,29],36:[1,30],37:[1,31],38:[1,32],39:[1,33]},{23:34,25:[1,35],29:[1,36],30:[1,37]},o([6,8,10,11,15,17,18,19,20,21,22,28,33,34,35,36,37,38,39,40],[2,26]),o($Vc,[2,4]),{10:[1,38]},o($Vc,[2,9]),o($Vc,[2,10]),{16:[1,39]},o($Vd,$V1,{5:40}),o($Vd,$V1,{5:41}),o([6,8,10,11,15,17,19,20,21,22,33],$V1,{5:42}),{12:43,33:$Va},{33:[2,27]},{33:[2,28]},{33:[2,29]},{33:[2,30]},{33:[2,31]},{33:[2,32]},{12:44,33:$Va},{8:$Ve,26:45},{33:[2,21]},{33:[2,22]},o($Vc,[2,8]),{10:[1,47]},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,48],19:$V7,20:$V8,22:$V9,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,50],19:$V7,20:$V8,22:$V9,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,21:[1,51],22:$V9,33:$Va},{24:52,40:$Vg},{24:54,40:$Vg},{12:56,27:55,33:$Va},{8:$Ve,26:57,33:[2,18]},o($Vc,[2,11]),o($Vc,[2,12]),o($Vc,$Vb),o($Vc,[2,13]),{12:58,33:$Va},{10:[2,23]},{10:[2,33]},{10:[2,15]},{12:59,33:$Va},{28:[1,60],33:[2,19]},{33:[2,17]},o($Vd,$V1,{5:61}),{10:[2,16]},{12:62,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,63],19:$V7,20:$V8,22:$V9,33:$Va},{33:[2,20]},o($Vc,[2,14])],
+defaultActions: {28:[2,27],29:[2,28],30:[2,29],31:[2,30],32:[2,31],33:[2,32],36:[2,21],37:[2,22],52:[2,23],53:[2,33],54:[2,15],57:[2,17],59:[2,16],62:[2,20]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -15734,56 +15984,70 @@ performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 9;
+case 0:return 10;
 break;
-case 1:/* skip whitespace */
+case 1: return 38;
 break;
-case 2:/* skip comments */
+case 2: return 39;
 break;
-case 3:/* skip comments */
+case 3: return 36;
 break;
-case 4:return 10;
+case 4: return 37;
 break;
-case 5:return 16;
+case 5:/* skip whitespace */
 break;
-case 6:return 18;
+case 6:/* skip comments */
 break;
-case 7:return 24;
+case 7:/* skip comments */
 break;
-case 8:return 25;
+case 8:return 11;
 break;
-case 9:return 21;
+case 9:return 19;
 break;
-case 10:return 19;
+case 10:return 17;
 break;
-case 11:return 14;
+case 11:return 20;
 break;
-case 12:return 4;
+case 12:return 21;
 break;
-case 13:return 23;
+case 13:return 18;
 break;
-case 14:return 17;
+case 14:return 29;
 break;
 case 15:return 30;
 break;
-case 16:return 29;
+case 16:return 25;
 break;
-case 17:return 32;
+case 17:return 22;
 break;
-case 18:return 31;
+case 18:return 15;
 break;
-case 19:return 33;
+case 19:return 4;
 break;
-case 20:return 'CMT';
+case 20:return 28;
 break;
-case 21:return 6;
+case 21:return 10;
 break;
-case 22:return 'INVALID';
+case 22:return 33;
+break;
+case 23:return 34;
+break;
+case 24:return 35;
+break;
+case 25:return 36;
+break;
+case 26:return 37;
+break;
+case 27:return 40;
+break;
+case 28:return 6;
+break;
+case 29:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:loop\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:[^\->:\n,]+)/i,/^(?:--)/i,/^(?:-)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:[^#\n]+)/i,/^(?:%%)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:[\-][x])/i,/^(?:[\-][\-][x])/i,/^(?:[\-][>][>])/i,/^(?:[\-][\-][>][>])/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:opt\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\->:\n,;]+)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?::[^#\n;]+)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"inclusive":true}}
 });
 return lexer;
 })();
@@ -15857,11 +16121,21 @@ exports.clear = function(){
 };
 
 exports.LINETYPE = {
-    SOLID     : 0,
-    DOTTED    : 1,
-    NOTE      : 2,
-    LOOP_START: 10,
-    LOOP_END  : 11,
+    SOLID       : 0,
+    DOTTED      : 1,
+    NOTE        : 2,
+    SOLID_CROSS : 3,
+    DOTTED_CROSS: 4,
+    SOLID_OPEN  : 5,
+    DOTTED_OPEN : 6,
+    LOOP_START  : 10,
+    LOOP_END    : 11,
+    ALT_START   : 12,
+    ALT_ELSE    : 13,
+    ALT_END     : 14,
+    OPT_START   : 15,
+    OPT_END     : 16
+
 };
 
 exports.ARROWTYPE = {
@@ -15886,6 +16160,56 @@ exports.addNote = function (actor, placement, message){
 exports.parseError = function(err, hash) {
     console.log('Syntax error:' + err);
 };
+
+exports.apply = function(param){
+    if(param instanceof Array ){
+        param.forEach(function(item){
+            exports.apply(item);
+        });
+    } else {
+        // console.log(param);
+        switch(param.type){
+            case 'addActor':
+                exports.addActor(param.actor, param.actor, param.actor);
+                break;
+            case 'addNote':
+                exports.addNote(param.actor,param.placement, param.text);
+                break;
+            case 'addMessage':
+                exports.addSignal(param.from, param.to, param.msg, param.signalType);
+                break;
+            case 'loopStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.loopText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'loopEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+            case 'optStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.optText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'optEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+            case 'altStart':
+                //console.log('Loop text: ',param.loopText);
+                exports.addSignal(undefined, undefined, param.altText, param.signalType);
+                //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
+                break;
+            case 'else':
+                exports.addSignal(undefined, undefined, param.altText, param.signalType);
+                break;
+            case 'altEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
+        }
+
+        // console.log('xxx',param);
+    }
+};
 },{}],109:[function(require,module,exports){
 /* globals d3 */
 /**
@@ -15907,10 +16231,11 @@ var conf = {
     height:65,
     // Margin around loop boxes
     boxMargin:10,
+    boxTextMargin:5,
 
     noteMargin:10,
     // Space between messages
-    messageMargin:40
+    messageMargin:35
 };
 
 exports.bounds = {
@@ -15961,20 +16286,34 @@ exports.bounds = {
     },
     insert:function(startx,starty,stopx,stopy){
 
-        this.updateVal(exports.bounds.data,'startx',startx,Math.min);
-        this.updateVal(exports.bounds.data,'starty',starty,Math.min);
-        this.updateVal(exports.bounds.data,'stopx' ,stopx ,Math.max);
-        this.updateVal(exports.bounds.data,'stopy' ,stopy ,Math.max);
+        var _startx, _starty, _stopx, _stopy;
 
-        this.updateLoops(startx,starty,stopx,stopy);
+        _startx = Math.min(startx,stopx);
+        _stopx  = Math.max(startx,stopx);
+        _starty = Math.min(starty,stopy);
+        _stopy  = Math.max(starty,stopy);
+
+        this.updateVal(exports.bounds.data,'startx',_startx,Math.min);
+        this.updateVal(exports.bounds.data,'starty',_starty,Math.min);
+        this.updateVal(exports.bounds.data,'stopx' ,_stopx ,Math.max);
+        this.updateVal(exports.bounds.data,'stopy' ,_stopy ,Math.max);
+
+        this.updateLoops(_startx,_starty,_stopx,_stopy);
+
     },
-    newLoop:function(){
-        this.list.push({startx:undefined,starty:undefined,stopx:undefined,stopy:undefined});
+    newLoop:function(title){
+        this.list.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
     },
     endLoop:function(){
         var loop = this.list.pop();
         //loop.stopy =  exports.bounds.getVerticalPos();
         return loop;
+    },
+    addElseToLoop:function(message){
+        var loop = this.list.pop();
+        loop.elsey =  exports.bounds.getVerticalPos();
+        loop.elseText = message;
+        this.list.push(loop);
     },
     bumpVerticalPos:function(bump){
         this.verticalPos = this.verticalPos + bump;
@@ -15999,6 +16338,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     rect.x = startx;
     rect.y = verticalPos;
     rect.width = conf.width;
+    rect.class = 'note';
 
     var g = elem.append("g");
     var rectElem = svgDraw.drawRect(g, rect);
@@ -16009,6 +16349,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = msg.message;
+    textObj.class = 'noteText';
 
     var textElem = svgDraw.drawText(g,textObj);
 
@@ -16016,45 +16357,9 @@ var drawNote = function(elem, startx, verticalPos, msg){
     exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
 
     rectElem.attr('height',textHeight+ 2*conf.noteMargin);
+    exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
 };
 
-/**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
- */
-exports.drawLoop = function(elem,bounds){
-    var g = elem.append("g");
-    var drawLoopLine = function(startx,starty,stopx,stopy){
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", starty)
-            .attr("x2", stopx )
-            .attr("y2", stopy )
-            .attr("stroke-width", 2)
-            .attr("stroke", "#339999");
-    };
-    drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
-    drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
-    drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
-    drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
-};
-
-/**
- * Setup arrow head and define the marker. The result is appended to the svg.
- */
-var insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5) /*must be smarter way to calculate shift*/
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
-};
 
 /**
  * Draws a message
@@ -16068,89 +16373,55 @@ var insertArrowHead = function(elem){
 var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var g = elem.append("g");
     var txtCenter = startx + (stopx-startx)/2;
-    //Make an SVG Container
-    //Draw the line
-    if(msg.type !== 2) {
-        if (msg.type === 1) {
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .style("stroke-dasharray", ("3, 3"))
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-            //.attr("d", diagonal);
-        }
-        else {
-            g.append("line")
-                .attr("x1", startx)
-                .attr("y1", verticalPos)
-                .attr("x2", stopx)
-                .attr("y2", verticalPos)
-                .attr("stroke-width", 2)
-                .attr("stroke", "black")
-                .attr("class", "link")
-                .attr("marker-end", "url(#arrowhead)");
-        }
 
-        g.append("text")      // text label for the x axis
-            .attr("x", txtCenter)
-            .attr("y", verticalPos - 10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
+    var textElem = g.append("text")      // text label for the x axis
+        .attr("x", txtCenter)
+        .attr("y", verticalPos - 7)
+        .style("text-anchor", "middle")
+        .attr("class", "messageText")
+        .text(msg.message);
 
-        //console.log('Setting message bounds');
+    var textWidth = textElem[0][0].getBBox().width;
+
+    var line;
+
+    if(startx===stopx){
+        line  = g.append("path")
+            .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ',' +
+            (verticalPos+30)+' ' +startx+ ','+(verticalPos+20));
+
+        exports.bounds.bumpVerticalPos(30);
+        var dx = Math.max(textWidth/2,100);
+        exports.bounds.insert(startx-dx, exports.bounds.getVerticalPos() -10, stopx+dx,  exports.bounds.getVerticalPos());
+    }else{
+        line = g.append("line");
+        line.attr("x1", startx);
+        line.attr("y1", verticalPos);
+        line.attr("x2", stopx);
+        line.attr("y2", verticalPos);
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
-    else{
-        var textElem = g.append("text")
-            .attr("x", txtCenter)
-            .attr("y", exports.bounds.getVerticalPos() - 10)
-            .style("text-anchor", "middle")
-            .text(msg.message);
-        var box = textElem[0][0].getBBox();
-
-        exports.bounds.insert(box.x, exports.bounds.getVerticalPos() -10, box.x+box.width,  exports.bounds.getVerticalPos()-10 + box.height);
+    //Make an SVG Container
+    //Draw the line
+    if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
+        line.style("stroke-dasharray", ("3, 3"));
+        line.attr("class", "messageLine1");
     }
-};
+    else {
+        line.attr("class", "messageLine0");
+    }
 
-/**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
- */
-var drawActor = function(elem, left,description){
-    var center = left + (conf.width/2);
-    var g = elem.append("g");
-    g.append("line")
-        .attr("x1", center)
-        .attr("y1", 5)
-        .attr("x2", center)
-        .attr("y2", 2000)
-        .attr("stroke-width", '0.5px')
-        .attr("stroke", '#999');
+    line.attr("stroke-width", 2);
+    line.attr("stroke", "black");
+    line.style("fill", "none");     // remove any fill colour
+    if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
+        line.attr("marker-end", "url(#arrowhead)");
+    }
 
-    g.append("rect")
-        .attr("x", left)
-        .attr("y", 0)
-        .attr("fill", '#eaeaea')
-        .attr("stroke", '#666')
-        .attr("width", conf.width)
-        .attr("height", conf.height)
-        .attr("rx", 3)
-        .attr("ry", 3);
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", (conf.height/2)+5)
-        .style("text-anchor", "middle")
-        .text(description)
-    ;
+    if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
+        line.attr("marker-end", "url(#crosshead)");
+    }
 
-    exports.bounds.insert(left, 0, left + conf.width, conf.height);
 };
 
 module.exports.drawActors = function(diagram, actors, actorKeys){
@@ -16166,7 +16437,9 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
-        drawActor(diagram, actors[key].x, actors[key].description);
+        svgDraw.drawActor(diagram, actors[key].x, actors[key].description, conf);
+        exports.bounds.insert(actors[key].x, 0, actors[key].x + conf.width, conf.height);
+
     }
 
     // Add a margin between the actor boxes and the first arrow
@@ -16185,9 +16458,13 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     sq.yy.clear();
-    sq.parse(text);
+    //console.log(text);
+    sq.parse(text+'\n');
     exports.bounds.init();
     var diagram = d3.select('#'+id);
+
+    var startx;
+    var stopx;
 
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
@@ -16197,17 +16474,17 @@ module.exports.draw = function (text, id) {
     module.exports.drawActors(diagram, actors, actorKeys);
 
     // The arrow head definition is attached to the svg once
-    insertArrowHead(diagram);
+    svgDraw.insertArrowHead(diagram);
+    svgDraw.insertArrowCrossHead(diagram);
 
     // Draw the messages/signals
     messages.forEach(function(msg){
+        var loopData;
 
-
-        var startx;
-        var stopx;
         switch(msg.type){
             case sq.yy.LINETYPE.NOTE:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
+
                 startx = actors[msg.from].x;
                 stopx = actors[msg.to].x;
 
@@ -16221,14 +16498,44 @@ module.exports.draw = function (text, id) {
                 }
                 break;
             case sq.yy.LINETYPE.LOOP_START:
-                //var loop = exports.bounds.newLoop();
-                exports.bounds.newLoop();
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.LOOP_END:
-                var loopData = exports.bounds.endLoop();
-                //var loopData = loopList.pop();
-                //loopData.stopy = exports.bounds.getVerticalPos();
-                exports.drawLoop(diagram, loopData);
+                loopData = exports.bounds.endLoop();
+
+                svgDraw.drawLoop(diagram, loopData,'loop', conf);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.OPT_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.OPT_END:
+                loopData = exports.bounds.endLoop();
+
+                svgDraw.drawLoop(diagram, loopData, 'opt', conf);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_ELSE:
+
+                //exports.drawLoop(diagram, loopData);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                loopData = exports.bounds.addElseToLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.ALT_END:
+                loopData = exports.bounds.endLoop();
+
+                svgDraw.drawLoop(diagram, loopData,'alt', conf);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
@@ -16265,6 +16572,10 @@ exports.drawRect = function(elem , rectData){
     rectElem.attr("rx", rectData.rx);
     rectElem.attr("ry", rectData.ry);
 
+    if(typeof rectData.class !== 'undefined'){
+        rectElem.attr("class", rectData.class);
+    }
+
     return rectElem;
 };
 
@@ -16272,30 +16583,193 @@ exports.drawText = function(elem , textData){
     var textElem = elem.append('text');
     textElem.attr('x', textData.x);
     textElem.attr('y', textData.y);
-    textElem.style('text-anchor', 'start');
+    textElem.style('text-anchor', textData.anchor);
+    textElem.attr('fill', textData.fill);
 
-    textData.text.split('<br>').forEach(function(rowText){
+    textData.text.split(/<br\/?>/ig).forEach(function(rowText){
         var span = textElem.append('tspan');
         span.attr('x', textData.x +textData.textMargin);
         span.attr('dy', textData.dy);
         span.text(rowText);
     });
 
+    if(typeof textData.class !== 'undefined'){
+        textElem.attr("class", textData.class);
+    }
+
     return textElem;
 };
 
+exports.drawLabel = function(elem , txtObject){
+    var rectData = exports.getNoteRect();
+    rectData.x = txtObject.x;
+    rectData.y = txtObject.y;
+    rectData.width = 50;
+    rectData.height = 20;
+    rectData.fill = '#526e52';
+    rectData.stroke = 'none';
+    rectData.class = 'labelBox';
+    //rectData.color = 'white';
+
+    exports.drawRect(elem, rectData);
+
+    txtObject.y = txtObject.y + txtObject.labelMargin;
+    txtObject.x = txtObject.x + 0.5*txtObject.labelMargin;
+    txtObject.fill = 'white';
+    exports.drawText(elem, txtObject);
+
+    //return textElem;
+};
+
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the liost of actors
+ * @param description The text in the box
+ */
+exports.drawActor = function(elem, left,description,conf){
+    var center = left + (conf.width/2);
+    var g = elem.append("g");
+    g.append("line")
+        .attr("x1", center)
+        .attr("y1", 5)
+        .attr("x2", center)
+        .attr("y2", 2000)
+        .attr("class", 'actor-line')
+        .attr("stroke-width", '0.5px')
+        .attr("stroke", '#999');
+
+    var rect = exports.getNoteRect();
+    rect.x = left;
+    rect.fill = '#eaeaea';
+    rect.width = conf.width;
+    rect.height = conf.height;
+    rect.class = 'actor';
+    rect.rx = 3;
+    rect.ry = 3;
+    exports.drawRect(g, rect);
+
+    g.append("text")      // text label for the x axis
+        .attr("x", center)
+        .attr("y", (conf.height/2)+5)
+        .attr('class','actor')
+        .style("text-anchor", "middle")
+        .text(description)
+    ;
+};
+
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the list of actors
+ * @param description The text in the box
+ */
+exports.drawLoop = function(elem,bounds,labelText, conf){
+    var g = elem.append("g");
+    var drawLoopLine = function(startx,starty,stopx,stopy){
+        g.append("line")
+            .attr("x1", startx)
+            .attr("y1", starty)
+            .attr("x2", stopx )
+            .attr("y2", stopy )
+            .attr("stroke-width", 2)
+            .attr("stroke", "#526e52")
+            .attr('class','loopLine');
+    };
+    drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
+    drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
+    drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
+    drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
+    if(typeof bounds.elsey !== 'undefined'){
+        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey );
+    }
+
+    var txt = exports.getTextObj();
+    txt.text = labelText;
+    txt.x = bounds.startx;
+    txt.y = bounds.starty;
+    txt.labelMargin =  1.5 * conf.boxMargin;
+    txt.class =  'labelText';
+    txt.fill =  'white';
+
+    exports.drawLabel(g,txt);
+
+    txt = exports.getTextObj();
+    txt.text = '[ ' + bounds.title + ' ]';
+    txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
+    txt.y = bounds.starty + 1.5 * conf.boxMargin;
+    txt.anchor = 'middle';
+    txt.class = 'loopText';
+
+    exports.drawText(g,txt);
+
+    if(typeof bounds.elseText !== 'undefined') {
+        txt.text = '[ ' + bounds.elseText + ' ]';
+        txt.y = bounds.elsey + 1.5 * conf.boxMargin;
+        exports.drawText(g, txt);
+    }
+};
+
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+exports.insertArrowHead = function(elem){
+    elem.append("defs").append("marker")
+        .attr("id", "arrowhead")
+        .attr("refX", 5)
+        .attr("refY", 2)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 4)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
+};
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+exports.insertArrowCrossHead = function(elem){
+    var defs = elem.append("defs");
+    var marker = defs.append("marker")
+        .attr("id", "crosshead")
+        .attr("markerWidth", 15)
+        .attr("markerHeight", 8)
+        .attr("orient", "auto")
+        .attr("refX", 16)
+        .attr("refY", 4);
+
+    // The arrow
+    marker.append("path")
+            .attr("fill",'black')
+            .attr("stroke",'#000000')
+            .style("stroke-dasharray", ("0, 0"))
+            .attr("stroke-width",'1px')
+            .attr("d", "M 9,2 V 6 L16,4 Z");
+
+    // The cross
+    marker.append("path")
+            .attr("fill",'none')
+            .attr("stroke",'#000000')
+            .style("stroke-dasharray", ("0, 0"))
+            .attr("stroke-width",'1px')
+            .attr("d", "M 0,1 L 6,7 M 6,1 L 0,7")
+        ; //this is actual shape for arrowhead
+
+};
+
 exports.getTextObj = function(){
-    var rect = {
+    var txt = {
         x: 0,
         y: 0,
+        'fill':'black',
         'text-anchor': 'start',
         style: '#666',
         width: 100,
         height: 100,
+        textMargin:0,
         rx: 0,
         ry: 0
     };
-    return rect;
+    return txt;
 };
 
 exports.getNoteRect = function(){
@@ -16305,6 +16779,7 @@ exports.getNoteRect = function(){
         fill: '#EDF2AE',
         stroke: '#666',
         width: 100,
+        anchor:'start',
         height: 100,
         rx: 0,
         ry: 0
@@ -16345,7 +16820,9 @@ var init = function () {
         // Check if previously processed
         if(!element.getAttribute("data-processed")) {
             element.setAttribute("data-processed", true);
-        } else continue;
+        } else {
+            continue;
+        }
 
         var id;
 
@@ -16379,7 +16856,7 @@ var init = function () {
             case 'sequenceDiagram': 
                 seq.draw(txt,id);
                 // TODO - Get styles for sequence diagram
-                utils.cloneCssStyles(element.firstChild, classes);
+                utils.cloneCssStyles(element.firstChild, []);
                 break;
         }
 
@@ -16405,28 +16882,9 @@ var equals = function (val, variable){
         return (val === variable);
     }
 };
-if(typeof document !== 'undefined'){
-    /**
-     * Wait for coument loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function(){
-        // Check presence of config object
-        if(typeof mermaid_config !== 'undefined'){
-            // Check if property startOnLoad is set
-            if(equals(true,mermaid_config.startOnLoad)){
-                init();
-            }
-        }
-        else{
-            // No config found, do autostart in this simple case
-            init();
-        }
-    }, false);
-
-}
-
 
 global.mermaid = {
+    startOnLoad:true,
     init:function(){
         init();
     },
@@ -16437,6 +16895,39 @@ global.mermaid = {
         return flow.parser;
     }
 };
+
+exports.contentLoaded = function(){
+    // Check state of start config mermaid namespece
+    //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
+    //console.log('mermaid_config',mermaid_config);
+    if(global.mermaid.startOnLoad) {
+
+        // For backwards compatability reasons also check mermaid_config variable
+        if (typeof mermaid_config !== 'undefined') {
+            // Check if property startOnLoad is set
+            if (equals(true, mermaid_config.startOnLoad)) {
+                global.mermaid.init();
+            }
+        }
+        else {
+            // No config found, do autostart in this simple case
+            global.mermaid.init();
+        }
+    }
+
+};
+
+if(typeof document !== 'undefined'){
+    /**
+     * Wait for coument loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function(){
+        exports.contentLoaded();
+    }, false);
+}
+
+
+
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":102,"./diagrams/flowchart/flowRenderer":103,"./diagrams/flowchart/graphDb":104,"./diagrams/flowchart/parser/flow":106,"./diagrams/sequenceDiagram/sequenceRenderer":109,"./utils":112,"he":100}],112:[function(require,module,exports){
 /**
@@ -16450,7 +16941,6 @@ global.mermaid = {
  */
 module.exports.detectType = function(text,a){
     if(text.match(/^\s*sequenceDiagram/)){
-        console.log('Detected sequenceDiagram syntax');
         return "sequenceDiagram";
     }
 
@@ -16478,14 +16968,16 @@ module.exports.cloneCssStyles = function(svg, classes){
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
-        if (sheets[i].title != 'mermaid-svg-internal-css') {
+        if (sheets[i].title !== 'mermaid-svg-internal-css') {
             var rules = sheets[i].cssRules;
-            for (var j = 0; j < rules.length; j++) {
-                var rule = rules[j];
-                if (typeof(rule.style) != "undefined") {
-                    var elems = svg.querySelectorAll(rule.selectorText);
-                    if (elems.length > 0) {
-                        usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+            if(rules !== null) {
+                for (var j = 0; j < rules.length; j++) {
+                    var rule = rules[j];
+                    if (typeof(rule.style) !== 'undefined') {
+                        var elems = svg.querySelectorAll(rule.selectorText);
+                        if (elems.length > 0) {
+                            usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                        }
                     }
                 }
             }
@@ -16500,7 +16992,8 @@ module.exports.cloneCssStyles = function(svg, classes){
             if (className === 'default') {
                 defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
             } else {
-                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                //embeddedStyles += svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
             }
         }
     }
