@@ -81,3 +81,9 @@ text.actor {
 
 
 .node { fill:#DCDCFF; stroke:#666; stroke-width:1.5px; }
+
+.cluster {
+    fill: #ffebc7;
+    rx:4px;
+    stroke: grey;
+}

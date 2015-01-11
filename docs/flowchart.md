@@ -148,6 +148,70 @@ graph LR;
    A---|This is the text|B;
 ```
 
+### Dotted link
+-.->
+```
+graph LR;
+   A-.->B;
+```
+### Dotted link with text
+-. text .->
+```
+graph LR;
+   A-. text .-> B
+```
+### Thick link
+==>
+```
+graph LR;
+   A ==> B
+```
+### Think link with text
+== text ==>
+```
+graph LR;
+   A == text ==> B
+```
+
+## Subgraphs
+
+```
+subgraph title
+    graph definition
+end
+```
+
+An example below:
+ ```
+ %% Subgraph example
+ graph TB
+         subgraph one
+         a1-->a2
+         end
+         subgraph two
+         b1-->b2
+         end
+         subgraph three
+         c1-->c2
+         end
+         c1-->a2
+ ```
+
+ ```
+graph TB
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    c1-->a2
+ ```
+
+
 ## Interaction
 
 It is possible to bind a click event to a node:

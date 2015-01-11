@@ -46,7 +46,7 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.1/dist/mermaid.full.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.2/dist/mermaid.full.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -189,13 +189,14 @@ graph LR
 graph TB
     sq[Square shape] --> ci((Circle shape))
 
-    od>Odd shape]-- Two line&lt;br>edge comment --> ro
-    di{Diamond with &lt;br/> line break} --> ro(Rounded&lt;br>square&lt;br>shape)
+    subgraph A subgraph
+        od>Odd shape]-- Two line&lt;br>edge comment --> ro
+        di{Diamond with &lt;br/> line break} -.-> ro(Rounded&lt;br>square&lt;br>shape)
+        di==>ro2(Rounded square shape)
+    end
 
     %% Notice that no text in shape are added here instead that is appended further down
     e --> od3>Really long text with linebreak&lt;br>in an Odd shape]
-
-    di-->ro2(Rounded square shape)
 
     %% Comments after double percent signs
     e((Inner / circle&lt;br>and some odd &lt;br>special characters)) --> f(,.?!+-*ز)
@@ -208,13 +209,14 @@ graph TB
      class di orange</code></pre><div class="mermaid">graph TB
     sq[Square shape] --> ci((Circle shape))
 
-    od>Odd shape]-- Two line<br>edge comment --> ro
-    di{Diamond with <br/> line break} --> ro(Rounded<br>square<br>shape)
+    subgraph A subgraph
+        od>Odd shape]-- Two line&lt;br>edge comment --> ro
+        di{Diamond with &lt;br/> line break} -.-> ro(Rounded&lt;br>square&lt;br>shape)
+        di==>ro2(Rounded square shape)
+    end
 
     %% Notice that no text in shape are added here instead that is appended further down
     e --> od3>Really long text with linebreak<br>in an Odd shape]
-
-    di-->ro2(Rounded square shape)
 
     %% Comments after double percent signs
     e((Inner / circle<br>and some odd <br>special characters)) --> f(,.?!+-*ز)
