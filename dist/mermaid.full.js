@@ -13001,7 +13001,7 @@ process.chdir = function (dir) {
 },{}],102:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "bin": {
@@ -13141,6 +13141,8 @@ exports.addVertices = function (vert, g) {
         else {
             verticeText = vertice.text;
         }
+
+        console.log(verticeText);
 
         var radious = 0;
         var _shape = '';
@@ -13700,6 +13702,7 @@ exports.addSubGraph = function (list, title) {
     var subG = [];
 
     subG = uniq(subG.concat.apply(subG,list));
+    //console.log(subG);
 
     subGraphs.push({nodes:subG,title:title});
 };
@@ -14576,7 +14579,7 @@ case 36:
  yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = [$$[$0-2],$$[$0]];
 break;
 case 37:
-this.$ = 'yo';
+this.$ = [$$[$0]];
 break;
 case 38:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');

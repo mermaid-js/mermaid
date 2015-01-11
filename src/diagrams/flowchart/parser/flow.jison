@@ -220,7 +220,7 @@ verticeStatement:
      vertex link vertex
         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
      | vertex
-        {$$ = 'yo';}
+        {$$ = [$1];}
     ;
 
 vertex:  alphaNum SQS text SQE

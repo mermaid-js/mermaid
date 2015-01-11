@@ -228,6 +228,7 @@ exports.addSubGraph = function (list, title) {
     var subG = [];
 
     subG = uniq(subG.concat.apply(subG,list));
+    //console.log(subG);
 
     subGraphs.push({nodes:subG,title:title});
 };

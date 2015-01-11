@@ -127,7 +127,7 @@ case 36:
  yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = [$$[$0-2],$$[$0]];
 break;
 case 37:
-this.$ = 'yo';
+this.$ = [$$[$0]];
 break;
 case 38:
 this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');

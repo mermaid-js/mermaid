@@ -60,6 +60,8 @@ exports.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
+        console.log(verticeText);
+
         var radious = 0;
         var _shape = '';
 
