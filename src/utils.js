@@ -36,8 +36,8 @@ module.exports.cloneCssStyles = function(svg, classes){
     var usedStyles = "";
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
-        // Avoid multiple inclusion on pages with multiple graphs
-        if (sheets[i].title != 'mermaid-svg-internal-css') {
+        // Only clone css from stylesheets intended for mermaid
+        if (sheets[i].title == 'mermaid') {
             var rules = sheets[i].cssRules;
             for (var j = 0; j < rules.length; j++) {
                 var rule = rules[j];
@@ -57,9 +57,19 @@ module.exports.cloneCssStyles = function(svg, classes){
     for (var className in classes) {
         if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
             if (className === 'default') {
-                defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                if (classes.default.styles instanceof Array) {
+                    defaultStyles += '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                }
+                if (classes.default.nodeLabelStyles instanceof Array) {
+                    defaultStyles += '.node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
+                }
+                if (classes.default.edgeLabelStyles instanceof Array) {
+                    defaultStyles += '.edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
+                }
             } else {
-                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                if (classes[className].styles instanceof Array) {
+                    embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                }
             }
         }
     }
@@ -80,5 +90,40 @@ module.exports.cloneCssStyles = function(svg, classes){
         }
         s.innerHTML += "/* ]]> */\n";
         svg.insertBefore(s, svg.firstChild);
+    }
+};
+
+var equals = function (val, variable){
+    if(typeof variable === 'undefined'){
+        return false;
+    }
+    else{
+        return (val === variable);
+    }
+};
+
+var mermaid_config_exists = function() {
+    return (typeof mermaid_config !== 'undefined');
+}
+
+var mermaid_config_item_exists = function(item) {
+    return mermaid_config_exists() && (typeof mermaid_config[item] !== 'undefined');
+}
+
+module.exports.config = {};
+
+module.exports.config.startOnLoad = function() {
+    if (mermaid_config_item_exists(startOnLoad)) {
+        return mermaid_config.startOnLoad === true;
+    } else {
+        return false;
+    }
+};
+
+module.exports.config.labelStyle = function() {
+    if (mermaid_config_item_exists(labelStyle)) {
+        return mermaid_config.labelStyle === 'html';
+    } else {
+        return false;
     }
 };
