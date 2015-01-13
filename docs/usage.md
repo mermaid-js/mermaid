@@ -70,11 +70,10 @@ This is the renderer used for transforming the documentation from markdown to ht
     var renderer = new marked.Renderer();
     renderer.code = function (code, language) {
         if(code.match(/^sequenceDiagram/)||code.match(/^graph/)){
-
-            return '&lt;div class="mermaid">'+code+'&gt;/div>';
+            return '&lt;div class="mermaid">'+code+'&lt;/div>';
         }
         else{
-            return '&lt;pre>&lt;code>'+code+'&gt;/code>&gt;/pre>';
+            return '&lt;pre>&lt;code>'+code+'&lt;/code>&lt;/pre>';
         }
     };
 ```
