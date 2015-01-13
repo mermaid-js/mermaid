@@ -59,17 +59,17 @@ module.exports.cloneCssStyles = function(svg, classes){
         if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
             if (className === 'default') {
                 if (classes.default.styles instanceof Array) {
-                    defaultStyles += '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                    defaultStyles += "#" + svg.id.trim() + ' .node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
                 }
                 if (classes.default.nodeLabelStyles instanceof Array) {
-                    defaultStyles += '.node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
+                    defaultStyles += "#" + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
                 }
                 if (classes.default.edgeLabelStyles instanceof Array) {
-                    defaultStyles += '.edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
+                    defaultStyles += "#" + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
                 }
             }
         }
@@ -81,7 +81,6 @@ module.exports.cloneCssStyles = function(svg, classes){
         s.setAttribute('title', 'mermaid-svg-internal-css');
         s.innerHTML = "/* <![CDATA[ */\n";
         // Make this CSS local to this SVG
-        s.innerHTML += "#" + svg.id.trim() + " {\n"; 
         if (defaultStyles !== "") {
             s.innerHTML += defaultStyles;
         }
@@ -91,43 +90,7 @@ module.exports.cloneCssStyles = function(svg, classes){
         if (embeddedStyles !== "") {
             s.innerHTML += embeddedStyles;
         }
-        s.innerHTML += "}\n";
         s.innerHTML += "/* ]]> */\n";
         svg.insertBefore(s, svg.firstChild);
-    }
-};
-
-var equals = function (val, variable){
-    if(typeof variable === 'undefined'){
-        return false;
-    }
-    else{
-        return (val === variable);
-    }
-};
-
-var mermaid_config_exists = function() {
-    return (typeof mermaid_config !== 'undefined');
-};
-
-var mermaid_config_item_exists = function(item) {
-    return mermaid_config_exists() && (typeof mermaid_config[item] !== 'undefined');
-};
-
-module.exports.config = {};
-
-module.exports.config.startOnLoad = function() {
-    if (mermaid_config_item_exists(startOnLoad)) {
-        return mermaid_config.startOnLoad === true;
-    } else {
-        return false;
-    }
-};
-
-module.exports.config.labelStyle = function() {
-    if (mermaid_config_item_exists(labelStyle)) {
-        return mermaid_config.labelStyle === 'html';
-    } else {
-        return false;
     }
 };
