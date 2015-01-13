@@ -38,6 +38,8 @@ exports.addVertices = function (vert, g) {
          */
         var classStr = '';
 
+        //console.log(vertice.classes);
+
         if(vertice.classes.length >0){
             classStr = vertice.classes.join(" ");
         }
@@ -58,6 +60,7 @@ exports.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
+<<<<<<< HEAD
         var labelTypeStr = '';
         if(equals('html',mermaid_config.labelType)) {
             labelTypeStr = 'html';
@@ -65,6 +68,9 @@ exports.addVertices = function (vert, g) {
             verticeText = verticeText.replace(/<br>/g, "\n");
             labelTypeStr = 'text';
         }
+=======
+        console.log(verticeText);
+>>>>>>> master
 
         var radious = 0;
         var _shape = '';
@@ -115,16 +121,34 @@ exports.addEdges = function (edges, g) {
         }
 
         var style = '';
+
+
+
         if(typeof edge.style !== 'undefined'){
             edge.style.forEach(function(s){
                 style = style + s +';';
             });
         }
+        else{
+            switch(edge.stroke){
+                case 'normal':
+                    style = 'stroke: #333; stroke-width: 1.5px;fill:none';
+                    break;
+                case 'dotted':
+                    style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
+                    break;
+                case 'thick':
+                    style = 'stroke: #333; stroke-width: 3.5px;fill:none';
+                    break;
+            }
+
+
+        }
 
         // Add the edge to the graph
         if (typeof edge.text === 'undefined') {
             if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ style: "stroke: #333; stroke-width: 1.5px;fill:none", arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
                     style: style, arrowheadStyle: "fill: #333", arrowhead: aHead
@@ -135,7 +159,11 @@ exports.addEdges = function (edges, g) {
         else {
             var edgeText = edge.text.replace(/<br>/g, "\n");
             if(typeof edge.style === 'undefined'){
+<<<<<<< HEAD
                 g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+=======
+                g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+>>>>>>> master
             }else{
                 g.setEdge(edge.start, edge.end, {
                     labelType: "text",style: style, arrowheadStyle: "fill: #333", label: edgeText, arrowhead: aHead
@@ -205,7 +233,10 @@ exports.draw = function (text, id,isDot) {
     }
 
     // Create the input mermaid.graph
-    var g = new dagreD3.graphlib.Graph({multigraph:true})
+    var g = new dagreD3.graphlib.Graph({
+        multigraph:true,
+        compound: true
+    })
         .setGraph({
             rankdir: dir,
             marginx: 20,
@@ -216,9 +247,35 @@ exports.draw = function (text, id,isDot) {
             return {};
         });
 
+    var subGraphs = graph.getSubGraphs();
+    var i = 0;
+    subGraphs.forEach(function(subG){
+        i = i + 1;
+        var id = 'subG'+i;
+        graph.addVertex(id,undefined,undefined,undefined);
+    });
+
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
+
+    //console.log(vert);
     var edges = graph.getEdges();
+    //g.setParent("A", "p");
+    //g.setParent("B", "p");
+
+    //console.log(subGraphs);
+    i = 0;
+    subGraphs.forEach(function(subG){
+        i = i + 1;
+        var id = 'subG'+i;
+
+        d3.selectAll('cluster').append('text');
+
+        subG.nodes.forEach(function(node){
+            //console.log('Setting node',node,' to subgraph '+id);
+            g.setParent(node,id);
+        });
+    });
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 
@@ -294,8 +351,57 @@ exports.draw = function (text, id,isDot) {
 
     // Run the renderer. This is what draws the final graph.
     render(d3.select("#" + id + " g"), g);
+    var svgb = document.querySelector('#mermaidChart0');
 
+/*
+ var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
+ var width = document.querySelectorAll('.clusters rect')[0].width.baseVal.value;
+    var cluster = d3.selectAll('.cluster');
+    var te = cluster.append('text');
+    te.attr('x', xPos+width/2);
+    te.attr('y', 12);
+    //te.stroke('black');
+    te.attr('id', 'apa12');
+    te.style('text-anchor', 'middle');
+    te.text('Title for cluster');
+*/
     // Center the graph
     svg.attr("height", g.graph().height );
     svg.attr("width", g.graph().width );
+    svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+
+
+    setTimeout(function(){
+        console.log('Fixing titles');
+        var i = 0;
+        subGraphs.forEach(function(subG){
+            console.log('Setting id '+id);
+
+
+            var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
+            var clusters     = document.querySelectorAll('#' + id + ' .cluster');
+
+
+            if(subG.title !== 'undefined'){
+                console.log(clusterRects[i]);
+                var xPos = clusterRects[i].x.baseVal.value;
+                var yPos = clusterRects[i].y.baseVal.value;
+                var width = clusterRects[i].width.baseVal.value;
+                var cluster = d3.select(clusters[i]);
+                var te = cluster.append('text');
+                te.attr('x', xPos+width/2);
+                te.attr('y', yPos +14);
+                te.attr('fill', 'black');
+                te.attr('stroke','none');
+                te.attr('id', id+'Text');
+                te.style('text-anchor', 'middle');
+                console.log('Title '+subG.title);
+                console.log('i',i);
+                console.log('x'+xPos+width/2);
+                console.log('y'+xPos);
+                te.text(subG.title);
+            }
+            i = i + 1;
+        });
+    },200);
 };

@@ -27,7 +27,7 @@ gulp.task('jison', shell.task([
   'jison src/diagrams/flowchart/parser/flow.jison -o src/diagrams/flowchart/parser/flow.js',
   'jison src/diagrams/flowchart/parser/dot.jison -o src/diagrams/flowchart/parser/dot.js',
   'jison src/diagrams/sequenceDiagram/parser/sequenceDiagram.jison -o src/diagrams/sequenceDiagram/parser/sequenceDiagram.js',
-  //'jison src/diagrams/sequenceDiagram/parser/sequence.jison -o src/diagrams/sequenceDiagram/parser/sequence.js'
+  //'jison src/diagrams/sequenceDiagram/parser/sequenceDiagram.jison -o src/diagrams/sequenceDiagram/parser/sequenceDiagram.js'
 ]));
 
 gulp.task('jison2', function() {
@@ -37,6 +37,7 @@ gulp.task('jison2', function() {
 });
 
 gulp.task('dist', ['slimDist', 'fullDist','jasmine']);
+gulp.task('rdist', ['slimDist', 'fullDist']);
 
 var jasmine = require('gulp-jasmine');
 
@@ -44,6 +45,8 @@ gulp.task('jasmine',['jison','lint'], function () {
     return gulp.src(['src/**/*.spec.js'])
         .pipe(jasmine({includeStackTrace:true}));
 });
+
+gulp.task('tape', shell.task(['./node_modules/.bin/tape ./test/cli_test-*.js']));
 
 gulp.task('coverage', function (cb) {
     gulp.src(['src/**/*.js', '!src/**/*.spec.js'])
@@ -175,3 +178,5 @@ gulp.task('lint', function() {
         .pipe(jshint())
         .pipe(jshint.reporter(stylish));
 });
+
+gulp.task('test',['coverage','tape']);

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <script src="../dist/mermaid.full.js"></script>
+    <link rel="stylesheet" href="seq.css"/>
+    <script>
+        var mermaid_config = {
+            startOnLoad:true
+        }
+    </script>
+    <script>
+        function apa(){
+            console.log('CLICKED');
+        }
+    </script>
+
+</head>
+    <body>
+    <h1>No line breaks</h1>
+    <div class="mermaid">
+        sequenceDiagram;Alice->>Bob: Hello Bob, how are you?;Bob-->Bob: Hmmm?;Bob-->Alice: Ok;
+    </div>
+    <div class="mermaid">
+        sequenceDiagram;loop Daily query;Alice->>Bob: Hello Bob, how are you?;alt is sick;Bob->>Alice: Not so good :(;else is well;Bob->>Alice: Feeling fresh like a daisy;end;opt Extra response;Bob->>Alice: Thanks for asking;end;end;
+    </div>
+    <h1>Message types</h1>
+
+    <div class="mermaid">
+        sequenceDiagram
+        Alice->>Bob: Hello Bob, how are you?
+        Bob-->>John: How about you John?
+        Bob--xAlice: I am good thanks!
+        Bob-xJohn: I am good thanks!
+        Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+
+        Bob-->Alice: Checking with John...
+        Alice->John: Yes... John, how are you?
+    </div>
+    <h1>Loops, alt and opt</h1>
+    <div class="mermaid">
+        sequenceDiagram
+        loop Daily query
+            Alice->>Bob: Hello Bob, how are you?
+            alt is sick
+                Bob->>Alice: Not so good :(
+            else is well
+                Bob->>Alice: Feeling fresh like a daisy
+            end
+        opt Extra response
+        Bob->>Alice: Thanks for asking
+        end
+
+        end
+    </div>
+    <h1>Message to self in loop</h1>
+    <div class="mermaid">
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        Alice->>John: Hello John, how are you?
+        loop Healthcheck
+            John->>John: Fight against hypochondria
+        end
+        Note right of John: Rational thoughts<br/>prevail...
+        John-->>Alice: Great!
+        John->>Bob: How about you?
+        Bob-->>John: Jolly good!
+        </div>
+    <h1>Bounding test & async message to self</h1>
+    <div class="mermaid">
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John the Long
+        Alice->Bob: Hello Bob, how are you?
+        loop Outer loop
+        Note left of Alice: Bob thinks about <br/> things <br/> to think about
+        Bob-xBob: I am good thanks!
+        loop Inner loop
+        Bob->>John the Long: How about you John?
+        Note right of John the Long: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit.
+        end
+        end
+
+        Bob-->>Alice: Checking with John...
+        Alice->>John the Long: Yes... John, how are you?
+        John the Long-->>Alice: Super!
+    </div>
+    <br/>
+
+
+
+
+    </body>
+</html>

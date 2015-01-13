@@ -4,73 +4,176 @@
     <meta charset="UTF-8">
 
     <script src="../dist/mermaid.full.js"></script>
+    <scrpt src="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.min.js"></scrpt>
     <script>
         var mermaid_config = {
             startOnLoad:true
         }
+        mermaid.startOnLoad=true;
     </script>
     <script>
         function apa(){
             console.log('CLICKED');
         }
     </script>
+    <style>
+        .cluster {
+            fill: #fcac93;
+            rx:4px;
+            stroke: grey;
+        }
+    </style>
+    <link rel="stylesheet" href="seq.css"/>
 </head>
     <body>
     <h1>Shapes</h1>
-    Shape examples:
-    <pre>
-        graph TD;
-            sq[Square shape]-->ci((Circle shape));
-            od>Odd shape]---|Two line &lt;br>edge comment|ro;
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak &lt;br>in an Odd shape];
-            di{Diamond is  &lt;br> broken}-->ro(Rounded &lt;br>square &lt;br>shape);
-
-            %% Comments after double percent signs
-            di-->ro2(Rounded square shape);
-            e((Inner circle))-->f(,.?!+-*ز);
-            style e red;
-    </pre>
-
     <div class="mermaid">
-        graph TD;
-        sq[Square shape]-->ci((Circle shape));
-        od>Odd shape]---|Two line<br>edge comment|ro;
-        od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
-        di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
-        di-->ro2(Rounded square shape);
+    graph TD;
+        A-->B;
+        A-->C;
+        A-->D;
+        B-->D;
+        A-->|Link text|B
+        classDef default fill:#9f6,stroke:#333,stroke-width:2px;
+        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        class green B;
+    </div>
+    <h1>Sub graphs</h1>
+    <div class="mermaid">graph LR
+        subgraph old sys 1
+            a1(new client)-->b1(sys1 server)
+            oc1(Old client)-->b2
+        end
+
+        subgraph old sys 2
+            a2(new client)-->b2(sys2 server)
+            oc2(Old client)-->b2
+        end
+
+        subgraph old sys 3
+            a3(new client)-->b3(sys3 server)
+        end
+
+        subgraph New sys
+            a1
+            a2
+            a3
+        end
+
+    </div>
+    <div class="mermaid2">graph TB
+        subgraph one
+        a1-->a2
+        end
+        subgraph two
+        b1-->b2
+        end
+        subgraph three
+        c1-->c2
+        end
+        c1-->a2
+
+    </div>
+    <div class="mermaid2">graph TB
+        subgraph
+            sq[Square shape] -.-> ci((Circle shape))
+            od>Odd shape]-. Two line<br>edge comment .-> ro
+            di{Diamond with <br/> line break} ==> ro(Rounded<br>square<br>shape)
+            di-->ro2(Rounded square shape)
+        end
+
+        %% Notice that no text in shape are added here instead that is appended further down
+        subgraph Go go
+            e --> od3>Really long text with linebreak<br>in an Odd shape]
+
+            e((Inner / circle<br>and some odd <br>special characters)) --> f(,.?!+-*ز)
+
+            cyr[Cyrillic]-->cyr2((Circle shape Начало))
+        end
+        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        classDef orange fill:#f96,stroke:#333,stroke-width:4px,font-size:50%,font-style:bold;
+        class sq,e green
+        class di orange
+    </div>
+    <div class="mermaid2">
+        graph TB
+        subgraph
+            sq[Square shape]-->ci((Circle shape))
+            od>Odd shape]---|Two line<br>edge comment|ro
+        end
+        subgraph
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
+            di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+            di-->ro2(Rounded square shape)
+        end
         %% Comments after double percent signs
-        e((Inner / circle))-->f(,.?!+-*ز);
-        cyr[Cyrillic]-->cyr2((Circle shape Начало));
+        subgraph
+            e((Inner / circle))-->f(,.?!+-*ز);
+            cyr[Cyrillic]-->cyr2((Circle shape Начало));
+            A[Object foo,bar]-->B(Thing)
+        end
         style e red;
+        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
+        class green sq
+    </div>
+    <div class="mermaid2">
+        graph LR;
+        A(Central Message Router);
+        B(R TD);
+        C(XYZ);
+        D(S Writer);
+        A-->|R TD Router|B;
+        B-->C;
+        C-->|XYZ Router|D;
     </div>
 
     <h1>Sequence diagrams (experimental)</h1>
     <pre>
         sequenceDiagram
+        participant John the Long
         Alice->Bob: Hello Bob, how are you?
-        Note right of Bob: Bob thinks
+        Note left of Bob: Bob thinks
         Bob-->Alice: I am good thanks!
         Bob-->John the Long: How about you John?
+        Note left of John the Long: Bob thinks
         Bob-->Alice: Checking with John...
+
+        loop Multiple status checks
+        loog Naging
         Alice->John the Long: Yes... John, how are you?
+        end
         John the Long-->Alice: Better then you!
+        end
     </pre>
-    <div class="mermaid">
+    <div class="mermaid2">
         sequenceDiagram
-        Alice->Bob: Hello Bob, how are you?
-        Note right of Bob: Bob thinks about <br/> things <br/> to think about
-        Bob-->Alice: I am good thanks!
-        Bob-->John the Long: How about you John?
-        Bob-->Alice: Checking with John...
+        participant Alice
+        Note left of Alice: Bob thinks about <br/> things <br/> to think about
+    </div>
+    <div class="mermaid2">
+        sequenceDiagram
+        participant Alice
+        participant Bob
+        participant John
+        Alice->>Bob: Hello Bob, how are you?
+        Note left of Alice: Bob thinks about <br/> things <br/> to think about
+        Bob-->>Alice: I am good thanks!
+        loop Multiple status checks
+        Bob--xJohn: How about you John?
+        Note right of John: Bob thinks
+        end
+
+        Bob--xAlice: Checking with John...
         Alice->John the Long: Yes... John, how are you?
-        John the Long-->Alice: Better then you!
+        John the Long-->Alice: Better then you!!
+
     </div>
 
-    <div  class="mermaid">
+    <div  class="mermaid2">
 graph LR;
-                A[Start]-->B{a = '1,2'};
-                B-->|True|C[test = 1];
-                B-->|False|Z[Store];
+                A[Start]-->B{a = '1,2'}
+                B-->|True|C[test = 1]
+                B-->|False|Z[Store]
                 C-->D{condition};
                 D-->|True|E[test = 2];
                 D-->|False|F[test = 3];
@@ -96,7 +199,7 @@ graph LR;
         a -- e;
         }
     </pre>
-    <div class="mermaid">
+    <div class="mermaid2">
         digraph
         {
         a -> b -> c -- d -> e;

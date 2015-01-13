@@ -9,7 +9,6 @@
  */
 module.exports.detectType = function(text,a){
     if(text.match(/^\s*sequenceDiagram/)){
-        console.log('Detected sequenceDiagram syntax');
         return "sequenceDiagram";
     }
 
@@ -36,15 +35,17 @@ module.exports.cloneCssStyles = function(svg, classes){
     var usedStyles = "";
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
-        // Only clone css from stylesheets intended for mermaid
-        if (sheets[i].title == 'mermaid') {
+        // Avoid multiple inclusion on pages with multiple graphs
+        if (sheets[i].title !== 'mermaid-svg-internal-css') {
             var rules = sheets[i].cssRules;
-            for (var j = 0; j < rules.length; j++) {
-                var rule = rules[j];
-                if (typeof(rule.style) != "undefined") {
-                    var elems = svg.querySelectorAll(rule.selectorText);
-                    if (elems.length > 0) {
-                        usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+            if(rules !== null) {
+                for (var j = 0; j < rules.length; j++) {
+                    var rule = rules[j];
+                    if (typeof(rule.style) !== 'undefined') {
+                        var elems = svg.querySelectorAll(rule.selectorText);
+                        if (elems.length > 0) {
+                            usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                        }
                     }
                 }
             }
@@ -79,6 +80,8 @@ module.exports.cloneCssStyles = function(svg, classes){
         s.setAttribute('type', 'text/css');
         s.setAttribute('title', 'mermaid-svg-internal-css');
         s.innerHTML = "/* <![CDATA[ */\n";
+        // Make this CSS local to this SVG
+        s.innerHTML += "#" + svg.id.trim() + " {\n"; 
         if (defaultStyles !== "") {
             s.innerHTML += defaultStyles;
         }
@@ -88,6 +91,7 @@ module.exports.cloneCssStyles = function(svg, classes){
         if (embeddedStyles !== "") {
             s.innerHTML += embeddedStyles;
         }
+        s.innerHTML += "}\n";
         s.innerHTML += "/* ]]> */\n";
         svg.insertBefore(s, svg.firstChild);
     }

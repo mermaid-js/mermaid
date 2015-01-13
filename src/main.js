@@ -29,7 +29,9 @@ var init = function () {
         // Check if previously processed
         if(!element.getAttribute("data-processed")) {
             element.setAttribute("data-processed", true);
-        } else continue;
+        } else {
+            continue;
+        }
 
         var id;
 
@@ -50,7 +52,6 @@ var init = function () {
 
         switch(graphType){
             case 'graph': 
-                console.log('FC');
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
@@ -64,7 +65,7 @@ var init = function () {
             case 'sequenceDiagram': 
                 seq.draw(txt,id);
                 // TODO - Get styles for sequence diagram
-                utils.cloneCssStyles(element.firstChild, classes);
+                utils.cloneCssStyles(element.firstChild, []);
                 break;
         }
 
@@ -90,28 +91,9 @@ var equals = function (val, variable){
         return (val === variable);
     }
 };
-if(typeof document !== 'undefined'){
-    /**
-     * Wait for coument loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function(){
-        // Check presence of config object
-        if(typeof mermaid_config !== 'undefined'){
-            // Check if property startOnLoad is set
-            if(equals(true,mermaid_config.startOnLoad)){
-                init();
-            }
-        }
-        else{
-            // No config found, do autostart in this simple case
-            init();
-        }
-    }, false);
-
-}
-
 
 global.mermaid = {
+    startOnLoad:true,
     init:function(){
         init();
     },
@@ -122,3 +104,35 @@ global.mermaid = {
         return flow.parser;
     }
 };
+
+exports.contentLoaded = function(){
+    // Check state of start config mermaid namespece
+    //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
+    //console.log('mermaid_config',mermaid_config);
+    if(global.mermaid.startOnLoad) {
+
+        // For backwards compatability reasons also check mermaid_config variable
+        if (typeof mermaid_config !== 'undefined') {
+            // Check if property startOnLoad is set
+            if (equals(true, mermaid_config.startOnLoad)) {
+                global.mermaid.init();
+            }
+        }
+        else {
+            // No config found, do autostart in this simple case
+            global.mermaid.init();
+        }
+    }
+
+};
+
+if(typeof document !== 'undefined'){
+    /**
+     * Wait for coument loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function(){
+        exports.contentLoaded();
+    }, false);
+}
+
+
