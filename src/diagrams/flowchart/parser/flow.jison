@@ -243,6 +243,10 @@ vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
     | alphaNum TAGEND text SQE SPACE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
+/*  | alphaNum SQS text TAGSTART
+        {$$ = $1;yy.addVertex($1,$3,'odd_right');}
+    | alphaNum SQS text TAGSTART SPACE
+        {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
     | alphaNum
         {$$ = $1;yy.addVertex($1);}
     | alphaNum SPACE
