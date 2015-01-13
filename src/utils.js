@@ -108,11 +108,11 @@ var equals = function (val, variable){
 
 var mermaid_config_exists = function() {
     return (typeof mermaid_config !== 'undefined');
-}
+};
 
 var mermaid_config_item_exists = function(item) {
     return mermaid_config_exists() && (typeof mermaid_config[item] !== 'undefined');
-}
+};
 
 module.exports.config = {};
 

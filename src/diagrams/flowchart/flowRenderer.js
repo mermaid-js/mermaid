@@ -60,7 +60,6 @@ exports.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
-<<<<<<< HEAD
         var labelTypeStr = '';
         if(equals('html',mermaid_config.labelType)) {
             labelTypeStr = 'html';
@@ -68,9 +67,6 @@ exports.addVertices = function (vert, g) {
             verticeText = verticeText.replace(/<br>/g, "\n");
             labelTypeStr = 'text';
         }
-=======
-        console.log(verticeText);
->>>>>>> master
 
         var radious = 0;
         var _shape = '';
@@ -159,11 +155,8 @@ exports.addEdges = function (edges, g) {
         else {
             var edgeText = edge.text.replace(/<br>/g, "\n");
             if(typeof edge.style === 'undefined'){
-<<<<<<< HEAD
-                g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
-=======
+                //g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
                 g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
->>>>>>> master
             }else{
                 g.setEdge(edge.start, edge.end, {
                     labelType: "text",style: style, arrowheadStyle: "fill: #333", label: edgeText, arrowhead: aHead
