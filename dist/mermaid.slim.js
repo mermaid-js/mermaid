@@ -293,7 +293,7 @@ function createNodes(selection, g, shapes) {
         labelGroup = thisGroup.append("g").attr("class", "label"),
         labelDom = addLabel(labelGroup, node),
         shape = shapes[node.shape],
-        bbox = labelDom.node().getBBox();
+        bbox = _.pick(labelDom.node().getBBox(), "width", "height");
 
     node.elem = this;
 
@@ -363,7 +363,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":77}],10:[function(require,module,exports){
+},{"graphlib":57}],10:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -712,7 +712,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":101}],21:[function(require,module,exports){
+},{"lodash":81}],21:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1041,7 +1041,7 @@ function applyTransition(selection, g) {
 }
 
 },{"./lodash":20}],26:[function(require,module,exports){
-module.exports = "0.3.2";
+module.exports = "0.3.3";
 
 },{}],27:[function(require,module,exports){
 /*
@@ -1873,7 +1873,7 @@ function canonicalize(attrs) {
 
 },{"./acyclic":28,"./add-border-segments":29,"./coordinate-system":30,"./graphlib":33,"./lodash":36,"./nesting-graph":37,"./normalize":38,"./order":43,"./parent-dummy-chains":48,"./position":50,"./rank":52,"./util":55}],36:[function(require,module,exports){
 module.exports=require(20)
-},{"lodash":101}],37:[function(require,module,exports){
+},{"lodash":81}],37:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -5046,512 +5046,12 @@ function read(json) {
 
 },{"./graph":72,"./lodash":75}],75:[function(require,module,exports){
 module.exports=require(20)
-},{"lodash":101}],76:[function(require,module,exports){
+},{"lodash":81}],76:[function(require,module,exports){
 module.exports = '1.0.1';
 
 },{}],77:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"./lib":93,"./lib/alg":84,"./lib/json":94}],78:[function(require,module,exports){
-module.exports=require(58)
-},{"../lodash":95}],79:[function(require,module,exports){
-module.exports=require(59)
-},{"../lodash":95}],80:[function(require,module,exports){
-module.exports=require(60)
-},{"../lodash":95,"./dijkstra":81}],81:[function(require,module,exports){
-module.exports=require(61)
-},{"../data/priority-queue":91,"../lodash":95}],82:[function(require,module,exports){
-module.exports=require(62)
-},{"../lodash":95,"./tarjan":89}],83:[function(require,module,exports){
-module.exports=require(63)
-},{"../lodash":95}],84:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"./components":78,"./dijkstra":81,"./dijkstra-all":80,"./find-cycles":82,"./floyd-warshall":83,"./is-acyclic":85,"./postorder":86,"./preorder":87,"./prim":88,"./tarjan":89,"./topsort":90}],85:[function(require,module,exports){
-module.exports=require(65)
-},{"./topsort":90}],86:[function(require,module,exports){
-module.exports=require(66)
-},{"./dfs":79}],87:[function(require,module,exports){
-module.exports=require(67)
-},{"./dfs":79}],88:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"../data/priority-queue":91,"../graph":92,"../lodash":95}],89:[function(require,module,exports){
-module.exports=require(69)
-},{"../lodash":95}],90:[function(require,module,exports){
-module.exports=require(70)
-},{"../lodash":95}],91:[function(require,module,exports){
-module.exports=require(71)
-},{"../lodash":95}],92:[function(require,module,exports){
-"use strict";
 
-var _ = require("./lodash");
-
-module.exports = Graph;
-
-var DEFAULT_EDGE_NAME = "\x00",
-    GRAPH_NODE = "\x00",
-    EDGE_KEY_DELIM = "\x01";
-
-// Implementation notes:
-//
-//  * Node id query functions should return string ids for the nodes
-//  * Edge id query functions should return an "edgeObj", edge object, that is
-//    composed of enough information to uniquely identify an edge: {v, w, name}.
-//  * Internally we use an "edgeId", a stringified form of the edgeObj, to
-//    reference edges. This is because we need a performant way to look these
-//    edges up and, object properties, which have string keys, are the closest
-//    we're going to get to a performant hashtable in JavaScript.
-
-function Graph(opts) {
-  this._isDirected = _.has(opts, "directed") ? opts.directed : true;
-  this._isMultigraph = _.has(opts, "multigraph") ? opts.multigraph : false;
-  this._isCompound = _.has(opts, "compound") ? opts.compound : false;
-
-  // Label for the graph itself
-  this._label = undefined;
-
-  // Defaults to be set when creating a new node
-  this._defaultNodeLabelFn = _.constant(undefined);
-
-  // Defaults to be set when creating a new edge
-  this._defaultEdgeLabelFn = _.constant(undefined);
-
-  // v -> label
-  this._nodes = {};
-
-  if (this._isCompound) {
-    // v -> parent
-    this._parent = {};
-
-    // v -> children
-    this._children = {};
-    this._children[GRAPH_NODE] = {};
-  }
-
-  // v -> edgeObj
-  this._in = {};
-
-  // u -> v -> Number
-  this._preds = {};
-
-  // v -> edgeObj
-  this._out = {};
-
-  // v -> w -> Number
-  this._sucs = {};
-
-  // e -> edgeObj
-  this._edgeObjs = {};
-
-  // e -> label
-  this._edgeLabels = {};
-}
-
-/* Number of nodes in the graph. Should only be changed by the implementation. */
-Graph.prototype._nodeCount = 0;
-
-/* Number of edges in the graph. Should only be changed by the implementation. */
-Graph.prototype._edgeCount = 0;
-
-
-/* === Graph functions ========= */
-
-Graph.prototype.isDirected = function() {
-  return this._isDirected;
-};
-
-Graph.prototype.isMultigraph = function() {
-  return this._isMultigraph;
-};
-
-Graph.prototype.isCompound = function() {
-  return this._isCompound;
-};
-
-Graph.prototype.setGraph = function(label) {
-  this._label = label;
-  return this;
-};
-
-Graph.prototype.graph = function() {
-  return this._label;
-};
-
-
-/* === Node functions ========== */
-
-Graph.prototype.setDefaultNodeLabel = function(newDefault) {
-  if (!_.isFunction(newDefault)) {
-    newDefault = _.constant(newDefault);
-  }
-  this._defaultNodeLabelFn = newDefault;
-  return this;
-};
-
-Graph.prototype.nodeCount = function() {
-  return this._nodeCount;
-};
-
-Graph.prototype.nodes = function() {
-  return _.keys(this._nodes);
-};
-
-Graph.prototype.sources = function() {
-  return _.filter(this.nodes(), function(v) {
-    return _.isEmpty(this._in[v]);
-  }, this);
-};
-
-Graph.prototype.sinks = function() {
-  return _.filter(this.nodes(), function(v) {
-    return _.isEmpty(this._out[v]);
-  }, this);
-};
-
-Graph.prototype.setNodes = function(vs, value) {
-  var args = arguments;
-  _.each(vs, function(v) {
-    if (args.length > 1) {
-      this.setNode(v, value);
-    } else {
-      this.setNode(v);
-    }
-  }, this);
-  return this;
-};
-
-Graph.prototype.setNode = function(v, value) {
-  if (_.has(this._nodes, v)) {
-    if (arguments.length > 1) {
-      this._nodes[v] = value;
-    }
-    return this;
-  }
-
-  this._nodes[v] = arguments.length > 1 ? value : this._defaultNodeLabelFn(v);
-  if (this._isCompound) {
-    this._parent[v] = GRAPH_NODE;
-    this._children[v] = {};
-    this._children[GRAPH_NODE][v] = true;
-  }
-  this._in[v] = {};
-  this._preds[v] = {};
-  this._out[v] = {};
-  this._sucs[v] = {};
-  ++this._nodeCount;
-  return this;
-};
-
-Graph.prototype.node = function(v) {
-  return this._nodes[v];
-};
-
-Graph.prototype.hasNode = function(v) {
-  return _.has(this._nodes, v);
-};
-
-Graph.prototype.removeNode =  function(v) {
-  var self = this;
-  if (_.has(this._nodes, v)) {
-    var removeEdge = function(e) { self.removeEdge(self._edgeObjs[e]); };
-    delete this._nodes[v];
-    if (this._isCompound) {
-      this._removeFromParentsChildList(v);
-      delete this._parent[v];
-      _.each(this.children(v), function(child) {
-        this.setParent(child);
-      }, this);
-      delete this._children[v];
-    }
-    _.each(_.keys(this._in[v]), removeEdge);
-    delete this._in[v];
-    delete this._preds[v];
-    _.each(_.keys(this._out[v]), removeEdge);
-    delete this._out[v];
-    delete this._sucs[v];
-    --this._nodeCount;
-  }
-  return this;
-};
-
-Graph.prototype.setParent = function(v, parent) {
-  if (!this._isCompound) {
-    throw new Error("Cannot set parent in a non-compound graph");
-  }
-
-  if (_.isUndefined(parent)) {
-    parent = GRAPH_NODE;
-  } else {
-    for (var ancestor = parent;
-         !_.isUndefined(ancestor);
-         ancestor = this.parent(ancestor)) {
-      if (ancestor === v) {
-        throw new Error("Setting " + parent+ " as parent of " + v +
-                        " would create create a cycle");
-      }
-    }
-
-    this.setNode(parent);
-  }
-
-  this.setNode(v);
-  this._removeFromParentsChildList(v);
-  this._parent[v] = parent;
-  this._children[parent][v] = true;
-  return this;
-};
-
-Graph.prototype._removeFromParentsChildList = function(v) {
-  delete this._children[this._parent[v]][v];
-};
-
-Graph.prototype.parent = function(v) {
-  if (this._isCompound) {
-    var parent = this._parent[v];
-    if (parent !== GRAPH_NODE) {
-      return parent;
-    }
-  }
-};
-
-Graph.prototype.children = function(v) {
-  if (_.isUndefined(v)) {
-    v = GRAPH_NODE;
-  }
-
-  if (this._isCompound) {
-    var children = this._children[v];
-    if (children) {
-      return _.keys(children);
-    }
-  } else if (v === GRAPH_NODE) {
-    return this.nodes();
-  } else if (this.hasNode(v)) {
-    return [];
-  }
-};
-
-Graph.prototype.predecessors = function(v) {
-  var predsV = this._preds[v];
-  if (predsV) {
-    return _.keys(predsV);
-  }
-};
-
-Graph.prototype.successors = function(v) {
-  var sucsV = this._sucs[v];
-  if (sucsV) {
-    return _.keys(sucsV);
-  }
-};
-
-Graph.prototype.neighbors = function(v) {
-  var preds = this.predecessors(v);
-  if (preds) {
-    return _.union(preds, this.successors(v));
-  }
-};
-
-/* === Edge functions ========== */
-
-Graph.prototype.setDefaultEdgeLabel = function(newDefault) {
-  if (!_.isFunction(newDefault)) {
-    newDefault = _.constant(newDefault);
-  }
-  this._defaultEdgeLabelFn = newDefault;
-  return this;
-};
-
-Graph.prototype.edgeCount = function() {
-  return this._edgeCount;
-};
-
-Graph.prototype.edges = function() {
-  return _.values(this._edgeObjs);
-};
-
-Graph.prototype.setPath = function(vs, value) {
-  var self = this,
-      args = arguments;
-  _.reduce(vs, function(v, w) {
-    if (args.length > 1) {
-      self.setEdge(v, w, value);
-    } else {
-      self.setEdge(v, w);
-    }
-    return w;
-  });
-  return this;
-};
-
-/*
- * setEdge(v, w, [value, [name]])
- * setEdge({ v, w, [name] }, [value])
- */
-Graph.prototype.setEdge = function(v, w, value, name) {
-  var valueSpecified = arguments.length > 2;
-
-  v = String(v);
-  w = String(w);
-  if (!_.isUndefined(name)) {
-    name = String(name);
-  }
-
-  if (_.isPlainObject(arguments[0])) {
-    v = arguments[0].v;
-    w = arguments[0].w;
-    name = arguments[0].name;
-    if (arguments.length === 2) {
-      value = arguments[1];
-      valueSpecified = true;
-    }
-  }
-
-  var e = edgeArgsToId(this._isDirected, v, w, name);
-  if (_.has(this._edgeLabels, e)) {
-    if (valueSpecified) {
-      this._edgeLabels[e] = value;
-    }
-    return this;
-  }
-
-  if (!_.isUndefined(name) && !this._isMultigraph) {
-    throw new Error("Cannot set a named edge when isMultigraph = false");
-  }
-
-  // It didn't exist, so we need to create it.
-  // First ensure the nodes exist.
-  this.setNode(v);
-  this.setNode(w);
-
-  this._edgeLabels[e] = valueSpecified ? value : this._defaultEdgeLabelFn(v, w, name);
-
-  var edgeObj = edgeArgsToObj(this._isDirected, v, w, name);
-  // Ensure we add undirected edges in a consistent way.
-  v = edgeObj.v;
-  w = edgeObj.w;
-
-  Object.freeze(edgeObj);
-  this._edgeObjs[e] = edgeObj;
-  incrementOrInitEntry(this._preds[w], v);
-  incrementOrInitEntry(this._sucs[v], w);
-  this._in[w][e] = edgeObj;
-  this._out[v][e] = edgeObj;
-  this._edgeCount++;
-  return this;
-};
-
-Graph.prototype.edge = function(v, w, name) {
-  var e = (arguments.length === 1
-            ? edgeObjToId(this._isDirected, arguments[0])
-            : edgeArgsToId(this._isDirected, v, w, name));
-  return this._edgeLabels[e];
-};
-
-Graph.prototype.hasEdge = function(v, w, name) {
-  var e = (arguments.length === 1
-            ? edgeObjToId(this._isDirected, arguments[0])
-            : edgeArgsToId(this._isDirected, v, w, name));
-  return _.has(this._edgeLabels, e);
-};
-
-Graph.prototype.removeEdge = function(v, w, name) {
-  var e = (arguments.length === 1
-            ? edgeObjToId(this._isDirected, arguments[0])
-            : edgeArgsToId(this._isDirected, v, w, name)),
-      edge = this._edgeObjs[e];
-  if (edge) {
-    v = edge.v;
-    w = edge.w;
-    delete this._edgeLabels[e];
-    delete this._edgeObjs[e];
-    decrementOrRemoveEntry(this._preds[w], v);
-    decrementOrRemoveEntry(this._sucs[v], w);
-    delete this._in[w][e];
-    delete this._out[v][e];
-    this._edgeCount--;
-  }
-  return this;
-};
-
-Graph.prototype.inEdges = function(v, u) {
-  var inV = this._in[v];
-  if (inV) {
-    var edges = _.values(inV);
-    if (!u) {
-      return edges;
-    }
-    return _.filter(edges, function(edge) { return edge.v === u; });
-  }
-};
-
-Graph.prototype.outEdges = function(v, w) {
-  var outV = this._out[v];
-  if (outV) {
-    var edges = _.values(outV);
-    if (!w) {
-      return edges;
-    }
-    return _.filter(edges, function(edge) { return edge.w === w; });
-  }
-};
-
-Graph.prototype.nodeEdges = function(v, w) {
-  var inEdges = this.inEdges(v, w);
-  if (inEdges) {
-    return inEdges.concat(this.outEdges(v, w));
-  }
-};
-
-function incrementOrInitEntry(map, k) {
-  if (_.has(map, k)) {
-    map[k]++;
-  } else {
-    map[k] = 1;
-  }
-}
-
-function decrementOrRemoveEntry(map, k) {
-  if (!--map[k]) { delete map[k]; }
-}
-
-function edgeArgsToId(isDirected, v, w, name) {
-  if (!isDirected && v > w) {
-    var tmp = v;
-    v = w;
-    w = tmp;
-  }
-  return v + EDGE_KEY_DELIM + w + EDGE_KEY_DELIM +
-             (_.isUndefined(name) ? DEFAULT_EDGE_NAME : name);
-}
-
-function edgeArgsToObj(isDirected, v, w, name) {
-  if (!isDirected && v > w) {
-    var tmp = v;
-    v = w;
-    w = tmp;
-  }
-  var edgeObj =  { v: v, w: w };
-  if (name) {
-    edgeObj.name = name;
-  }
-  return edgeObj;
-}
-
-function edgeObjToId(isDirected, edgeObj) {
-  return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
-}
-
-},{"./lodash":95}],93:[function(require,module,exports){
-arguments[4][73][0].apply(exports,arguments)
-},{"./graph":92,"./version":96}],94:[function(require,module,exports){
-arguments[4][74][0].apply(exports,arguments)
-},{"./graph":92,"./lodash":95}],95:[function(require,module,exports){
-module.exports=require(20)
-},{"lodash":101}],96:[function(require,module,exports){
-module.exports = '0.9.1';
-
-},{}],97:[function(require,module,exports){
-
-},{}],98:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -5779,7 +5279,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":99}],99:[function(require,module,exports){
+},{"1YiZ5S":79}],79:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -5844,7 +5344,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],100:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -6177,7 +5677,7 @@ process.chdir = function (dir) {
 }(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],101:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -12966,7 +12466,7 @@ process.chdir = function (dir) {
 }.call(this));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],102:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
   "version": "0.3.2",
@@ -13047,7 +12547,7 @@ module.exports={
   }
 }
 
-},{}],103:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -13439,7 +12939,7 @@ exports.draw = function (text, id,isDot) {
         });
     },200);
 };
-},{"./graphDb":104,"./parser/dot":105,"./parser/flow":106,"dagre-d3":1}],104:[function(require,module,exports){
+},{"./graphDb":84,"./parser/dot":85,"./parser/flow":86,"dagre-d3":1}],84:[function(require,module,exports){
 /**
  * Created by knut on 14-11-03.
  */
@@ -13678,7 +13178,7 @@ exports.getSubGraphs = function (list) {
     return subGraphs;
 };
 
-},{}],105:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -14416,7 +13916,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":99,"fs":97,"path":98}],106:[function(require,module,exports){
+},{"1YiZ5S":79,"fs":77,"path":78}],86:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -15301,7 +14801,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":99,"fs":97,"path":98}],107:[function(require,module,exports){
+},{"1YiZ5S":79,"fs":77,"path":78}],87:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -16045,7 +15545,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":99,"fs":97,"path":98}],108:[function(require,module,exports){
+},{"1YiZ5S":79,"fs":77,"path":78}],88:[function(require,module,exports){
 /**
  * Created by knut on 14-11-19.
  */
@@ -16178,7 +15678,7 @@ exports.apply = function(param){
         // console.log('xxx',param);
     }
 };
-},{}],109:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 /* globals d3 */
 /**
  * Created by knut on 14-11-23.
@@ -16525,7 +16025,7 @@ module.exports.draw = function (text, id) {
     diagram.attr("viewBox", (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"./parser/sequenceDiagram":107,"./sequenceDb":108,"./svgDraw":110}],110:[function(require,module,exports){
+},{"./parser/sequenceDiagram":87,"./sequenceDb":88,"./svgDraw":90}],90:[function(require,module,exports){
 /**
  * Created by knut on 14-12-20.
  */
@@ -16755,7 +16255,7 @@ exports.getNoteRect = function(){
     return rect;
 };
 
-},{}],111:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 (function (global){
 var graph = require('./diagrams/flowchart/graphDb');
 var flow = require('./diagrams/flowchart/parser/flow');
@@ -16777,9 +16277,13 @@ var he = require('he');
  *  c-->|No |d(Transform);
  * ```
  */
-var init = function () {
+var init = function (sequenceConfig) {
     var arr = document.querySelectorAll('.mermaid');
     var i;
+
+    if (sequenceConfig) {
+      seq.setConf(JSON.parse(sequenceConfig));
+    }
 
     var cnt = 0;
     for (i = 0; i < arr.length; i++) {
@@ -16810,18 +16314,18 @@ var init = function () {
         var classes = {};
 
         switch(graphType){
-            case 'graph': 
+            case 'graph':
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();
                 break;
-            case 'dotGraph': 
+            case 'dotGraph':
                 classes = flowRenderer.getClasses(txt, true);
                 flowRenderer.draw(txt, id, true);
                 utils.cloneCssStyles(element.firstChild, classes);
                 break;
-            case 'sequenceDiagram': 
+            case 'sequenceDiagram':
                 seq.draw(txt,id);
                 // TODO - Get styles for sequence diagram
                 utils.cloneCssStyles(element.firstChild, []);
@@ -16853,8 +16357,8 @@ var equals = function (val, variable){
 
 global.mermaid = {
     startOnLoad:true,
-    init:function(){
-        init();
+    init:function(sequenceConfig){
+        init(sequenceConfig);
     },
     version:function(){
         return exports.version();
@@ -16897,7 +16401,7 @@ if(typeof document !== 'undefined'){
 
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":102,"./diagrams/flowchart/flowRenderer":103,"./diagrams/flowchart/graphDb":104,"./diagrams/flowchart/parser/flow":106,"./diagrams/sequenceDiagram/sequenceRenderer":109,"./utils":112,"he":100}],112:[function(require,module,exports){
+},{"../package.json":82,"./diagrams/flowchart/flowRenderer":83,"./diagrams/flowchart/graphDb":84,"./diagrams/flowchart/parser/flow":86,"./diagrams/sequenceDiagram/sequenceRenderer":89,"./utils":92,"he":80}],92:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -16985,4 +16489,4 @@ module.exports.cloneCssStyles = function(svg, classes){
     }
 };
 
-},{}]},{},[111])
+},{}]},{},[91])

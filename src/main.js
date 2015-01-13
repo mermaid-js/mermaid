@@ -18,9 +18,13 @@ var he = require('he');
  *  c-->|No |d(Transform);
  * ```
  */
-var init = function () {
+var init = function (sequenceConfig) {
     var arr = document.querySelectorAll('.mermaid');
     var i;
+
+    if (sequenceConfig) {
+      seq.setConf(JSON.parse(sequenceConfig));
+    }
 
     var cnt = 0;
     for (i = 0; i < arr.length; i++) {
@@ -51,18 +55,18 @@ var init = function () {
         var classes = {};
 
         switch(graphType){
-            case 'graph': 
+            case 'graph':
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();
                 break;
-            case 'dotGraph': 
+            case 'dotGraph':
                 classes = flowRenderer.getClasses(txt, true);
                 flowRenderer.draw(txt, id, true);
                 utils.cloneCssStyles(element.firstChild, classes);
                 break;
-            case 'sequenceDiagram': 
+            case 'sequenceDiagram':
                 seq.draw(txt,id);
                 // TODO - Get styles for sequence diagram
                 utils.cloneCssStyles(element.firstChild, []);
@@ -94,8 +98,8 @@ var equals = function (val, variable){
 
 global.mermaid = {
     startOnLoad:true,
-    init:function(){
-        init();
+    init:function(sequenceConfig){
+        init(sequenceConfig);
     },
     version:function(){
         return exports.version();
