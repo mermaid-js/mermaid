@@ -22,7 +22,7 @@ var init = function (sequenceConfig) {
     var arr = document.querySelectorAll('.mermaid');
     var i;
 
-    if (sequenceConfig) {
+    if (sequenceConfig !== 'undefined') {
       seq.setConf(JSON.parse(sequenceConfig));
     }
 

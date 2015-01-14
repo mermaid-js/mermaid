@@ -473,7 +473,7 @@ describe('when parsing ',function(){
             expect(edges[0].stroke).toBe('dotted');
         });
         it('it should handle text on lines', function () {
-            var res = flow.parser.parse('graph TD;A== test text with -- ==>B;');
+            var res = flow.parser.parse('graph TD;A== test text with - ==>B;');
 
             var vert = flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
@@ -577,7 +577,15 @@ describe('when parsing ',function(){
             expect(edges[0].text).toBe('text including graph space');
 
         });
+        xit('should handle text on open links',function(){
+            var res = flow.parser.parse('graph TD;A-- text including graph space --B');
 
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(edges[0].text).toBe('text including graph space');
+
+        });
     });
 
 
