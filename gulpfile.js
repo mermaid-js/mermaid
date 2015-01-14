@@ -71,11 +71,23 @@ gulp.task('less', function () {
 
 var browserify = require('gulp-browserify');
 
+//var slim_ext_libs = [
+//  'dagre-d3',
+//  'd3'
+//];
+
 // Basic usage
 gulp.task('slimDist', function() {
     // Single entry point to browserify
     return gulp.src('src/main.js')
         .pipe(browserify())
+        /*.pipe(browserify({standalone: 'mermaid'})) 
+            .on('prebundle', function(bundle) {
+            // Keep these external for the slim version.
+                slim_ext_libs.forEach(function(lib) {
+                    bundle.external(lib);
+                });
+            })*/
         .pipe(rename('mermaid.slim.js'))
         .pipe(gulp.dest('./dist/'))
         .pipe(uglify())

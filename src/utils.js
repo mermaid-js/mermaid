@@ -58,10 +58,19 @@ module.exports.cloneCssStyles = function(svg, classes){
     for (var className in classes) {
         if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
             if (className === 'default') {
-                defaultStyles = '.node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                if (classes.default.styles instanceof Array) {
+                    defaultStyles += "#" + svg.id.trim() + ' .node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                }
+                if (classes.default.nodeLabelStyles instanceof Array) {
+                    defaultStyles += "#" + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
+                }
+                if (classes.default.edgeLabelStyles instanceof Array) {
+                    defaultStyles += "#" + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
+                }
             } else {
-                embeddedStyles += '.' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
-                //embeddedStyles += svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                if (classes[className].styles instanceof Array) {
+                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                }
             }
         }
     }
@@ -71,6 +80,7 @@ module.exports.cloneCssStyles = function(svg, classes){
         s.setAttribute('type', 'text/css');
         s.setAttribute('title', 'mermaid-svg-internal-css');
         s.innerHTML = "/* <![CDATA[ */\n";
+        // Make this CSS local to this SVG
         if (defaultStyles !== "") {
             s.innerHTML += defaultStyles;
         }

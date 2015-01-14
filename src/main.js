@@ -94,6 +94,7 @@ var equals = function (val, variable){
 
 global.mermaid = {
     startOnLoad:true,
+    htmlLabels:true,
     init:function(){
         init();
     },
@@ -109,6 +110,12 @@ exports.contentLoaded = function(){
     // Check state of start config mermaid namespece
     //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
     //console.log('mermaid_config',mermaid_config);
+    if (typeof mermaid_config !== 'undefined') {
+        if (equals(false, mermaid_config.htmlLabels)) {
+            global.mermaid.htmlLabels = false;
+        }
+    }
+
     if(global.mermaid.startOnLoad) {
 
         // For backwards compatability reasons also check mermaid_config variable
@@ -128,7 +135,7 @@ exports.contentLoaded = function(){
 
 if(typeof document !== 'undefined'){
     /**
-     * Wait for coument loaded before starting the execution
+     * Wait for document loaded before starting the execution
      */
     document.addEventListener('DOMContentLoaded', function(){
         exports.contentLoaded();
