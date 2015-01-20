@@ -18,8 +18,13 @@ module.exports.detectType = function(text,a){
     }
 
     if(text.match(/^\s*digraph/)) {
-        console.log('Detected flow syntax');
+        console.log('Detected dot syntax');
         return "dotGraph";
+    }
+
+    if(text.match(/^\s*info/)) {
+        //console.log('Detected info syntax');
+        return "info";
     }
 
     return "graph";

@@ -3,6 +3,7 @@ var flow = require('./diagrams/flowchart/parser/flow');
 var utils = require('./utils');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
 var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
+var info = require('./diagrams/example/exampleRenderer');
 var he = require('he');
 
 /**
@@ -22,7 +23,7 @@ var init = function (sequenceConfig) {
     var arr = document.querySelectorAll('.mermaid');
     var i;
 
-    if (sequenceConfig !== 'undefined') {
+    if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
       seq.setConf(JSON.parse(sequenceConfig));
     }
 
@@ -56,6 +57,7 @@ var init = function (sequenceConfig) {
 
         switch(graphType){
             case 'graph':
+                console.log('Detetcting flow');
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
@@ -69,6 +71,11 @@ var init = function (sequenceConfig) {
             case 'sequenceDiagram':
                 seq.draw(txt,id);
                 // TODO - Get styles for sequence diagram
+                utils.cloneCssStyles(element.firstChild, []);
+                break;
+            case 'info':
+                console.log('Detetcting info');
+                info.draw(txt,id,exports.version());
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
         }
