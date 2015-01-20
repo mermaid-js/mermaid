@@ -1,8 +1,16 @@
 /**
  * Created by knut on 14-11-18.
  */
+var proxyquire = require('proxyquire');
+
+var newD3;
+var d3 = {
+    select:function(){
+        return new newD3();
+    }
+};
 var sq = require('./parser/sequenceDiagram').parser;
-var sd = require('./sequenceRenderer');
+var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
 
 var str;
 describe('when parsing a sequenceDiagram',function() {
@@ -480,7 +488,7 @@ describe('when rendering a sequenceDiagram',function() {
         };
         sq.yy.parseError = parseError;
 
-        function newD3() {
+        newD3 = function() {
             var o = {
                 append: function (type) {
                     return newD3();
@@ -508,15 +516,7 @@ describe('when rendering a sequenceDiagram',function() {
             };
 
             return o;
-        }
-
-        var _d3 = {
-            select:function(){
-                return new newD3();
-            }
         };
-
-        d3 = _d3;
 
         conf = {
             diagramMarginX:50,
