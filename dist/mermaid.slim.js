@@ -14158,18 +14158,14 @@ exports.draw = function (text, id,isDot) {
 
 
     setTimeout(function(){
-        console.log('Fixing titles');
         var i = 0;
         subGraphs.forEach(function(subG){
-            console.log('Setting id '+id);
-
 
             var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
             var clusters     = document.querySelectorAll('#' + id + ' .cluster');
 
 
             if(subG.title !== 'undefined'){
-                console.log(clusterRects[i]);
                 var xPos = clusterRects[i].x.baseVal.value;
                 var yPos = clusterRects[i].y.baseVal.value;
                 var width = clusterRects[i].width.baseVal.value;
@@ -14181,10 +14177,6 @@ exports.draw = function (text, id,isDot) {
                 te.attr('stroke','none');
                 te.attr('id', id+'Text');
                 te.style('text-anchor', 'middle');
-                console.log('Title '+subG.title);
-                console.log('i',i);
-                console.log('x'+xPos+width/2);
-                console.log('y'+xPos);
                 te.text(subG.title);
             }
             i = i + 1;
@@ -17569,7 +17561,6 @@ var init = function (sequenceConfig) {
 
         switch(graphType){
             case 'graph':
-                console.log('Detetcting flow');
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
@@ -17586,7 +17577,6 @@ var init = function (sequenceConfig) {
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
             case 'info':
-                console.log('Detetcting info');
                 info.draw(txt,id,exports.version());
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
