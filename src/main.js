@@ -57,7 +57,6 @@ var init = function (sequenceConfig) {
 
         switch(graphType){
             case 'graph':
-                console.log('Detetcting flow');
                 classes = flowRenderer.getClasses(txt, false);
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
@@ -74,7 +73,6 @@ var init = function (sequenceConfig) {
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
             case 'info':
-                console.log('Detetcting info');
                 info.draw(txt,id,exports.version());
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
