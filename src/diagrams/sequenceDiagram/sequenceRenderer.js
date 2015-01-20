@@ -1,4 +1,3 @@
-/* globals d3 */
 /**
  * Created by knut on 14-11-23.
  */
@@ -6,6 +5,7 @@
 var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
+var d3 = require('./d3');
 var conf = {
 
     diagramMarginX:50,
