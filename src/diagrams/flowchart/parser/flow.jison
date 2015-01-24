@@ -389,7 +389,7 @@ styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | 
 
 commentToken   : textToken | graphCodeTokens ;
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' ;
+textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT ;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 

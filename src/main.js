@@ -112,6 +112,10 @@ global.mermaid = {
     },
     getParser:function(){
         return flow.parser;
+    },
+    parseError:function(err,hash){
+        console.log('Mermaid Syntax error:');
+        console.log(err);
     }
 };
 

@@ -235,3 +235,7 @@ exports.addSubGraph = function (list, title) {
 exports.getSubGraphs = function (list) {
     return subGraphs;
 };
+
+exports.parseError = function(err,hash){
+    mermaid.parseError(err,hash);
+};

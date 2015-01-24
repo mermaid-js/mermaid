@@ -21,3 +21,6 @@ exports.getInfo = function(){
     return info;
 };
 
+exports.parseError = function(err,hash){
+    mermaid.parseError(err,hash);
+};

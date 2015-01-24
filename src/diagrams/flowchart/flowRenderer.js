@@ -188,7 +188,11 @@ exports.getClasses = function (text, isDot) {
     parser.yy = graph;
 
     // Parse the graph definition
-    parser.parse(text);
+    try{
+        parser.parse(text);
+    }
+    catch(err){
+    }
 
     var classDefStylesObj = {};
     var classDefStyleStr = '';
@@ -222,7 +226,13 @@ exports.draw = function (text, id,isDot) {
     parser.yy = graph;
 
     // Parse the graph definition
-    parser.parse(text);
+    try{
+
+        parser.parse(text);
+    }
+    catch(err){
+
+    }
 
     // Fetch the default direction, use TD if none was found
     var dir;
@@ -418,3 +428,4 @@ exports.draw = function (text, id,isDot) {
         });
     },200);
 };
+

@@ -77,8 +77,8 @@ exports.addNote = function (actor, placement, message){
 };
 
 
-exports.parseError = function(err, hash) {
-    console.log('Syntax error:' + err);
+exports.parseError = function(err,hash){
+    mermaid.parseError(err,hash);
 };
 
 exports.apply = function(param){
