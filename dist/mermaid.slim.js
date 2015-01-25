@@ -23363,7 +23363,7 @@ exports.draw = function (text, id,isDot) {
 
     // Run the renderer. This is what draws the final graph.
     render(d3.select("#" + id + " g"), g);
-    var svgb = document.querySelector('#mermaidChart0');
+    var svgb = document.querySelector("#" + id);
 
 /*
  var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
@@ -23407,7 +23407,7 @@ exports.draw = function (text, id,isDot) {
             }
             i = i + 1;
         });
-    },200);
+    },20);
 };
 
 
