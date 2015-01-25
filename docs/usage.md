@@ -77,3 +77,56 @@ This is the renderer used for transforming the documentation from markdown to ht
         }
     };
 ```
+
+Another example in coffeescript that also includes the mermaid script tag into the generated markup.
+```
+marked = require 'marked'
+
+module.exports = (options) ->
+  hasMermaid = false
+  renderer = new marked.Renderer()
+  renderer.defaultCode = renderer.code
+  renderer.code = (code, language) ->
+    if language is 'mermaid'
+      html = ''
+      if not hasMermaid
+        hasMermaid = true
+        html += '<script src="'+options.mermaidPath+'"></script>'
+      html + '<div class="mermaid">'+code+'</div>'
+    else
+      @defaultCode(code, language)
+
+  renderer
+  ```
+
+## Advanced usage
+
+**Error handling**
+
+When the parser encounters invalid syntax the **mermaid.parseError** function is called. It is possible to override this
+function in order to handle the error in an application specific way.
+
+**Parsing text without rendering**
+
+It is also possible to validate the syntax before rendering in order to streamline the user experience. The function
+**mermaid.parse(txt)** takes a text string as an argument and returns true if the text is syntactically correct and
+false if it is not. The parseError function will be called when the parse function returns false.
+
+The code-example below in meta code illustrates how this could work:
+
+```js
+
+mermaid.parseError = function(err,hash){
+    displayErrorInGui(err);
+};
+
+var textFieldUpdated = function(){
+    var textStr = getTextFromFormField('code');
+
+    if(mermaid.parse(textStr)){
+        reRender(textStr)
+    }
+};
+
+bindEventHandler('change', 'code', textFieldUpdated);
+```

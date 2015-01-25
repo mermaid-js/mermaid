@@ -44,7 +44,7 @@ gulp.task('site',['indexSite'], function() {
         return "<table class=\"ink-table bordered hover alternating\">" +header + body+ "</table>";
     };
     renderer.code = function (code, language) {
-        if(code.match(/^sequenceDiagram/)||code.match(/^graph/)){
+        if(code.match(/^sequenceDiagram/)||code.match(/^graph/)||code.match(/^info/)){
 
             return '<div class="mermaid">'+code+'</div>';
         }
@@ -107,7 +107,7 @@ gulp.task('www', ['site'], function() {
     var express = require('express');
     var app = express();
 
-    app.use('/dist/', express.static('./dist'));
+    app.use('/dist/', express.static('/Users/knut/source/mermaid/dist'));
     app.use('/', express.static('./'));
 
     app.listen(process.env.PORT || 3000);

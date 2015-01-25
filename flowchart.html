@@ -46,7 +46,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.2/dist/mermaid.full.js"></script>
+        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.2/dist/mermaid.full.js"></scrpt>
+        <script type="text/javascript" src="/dist/mermaid.full.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -217,9 +218,9 @@ one previously defined will be used when rendering the box.</p>
     A-->B</div><h3 id="an-open-link">An open link</h3>
 <pre><code>A --- B</code></pre><div class="mermaid">graph LR;
     A --- B</div><h3 id="text-on-links">Text on links</h3>
-<pre><code>A-- This is the text -- B</code></pre><p>or</p>
+<pre><code>A-- This is the text --- B</code></pre><p>or</p>
 <pre><code>A---|This is the text|B;</code></pre><div class="mermaid">graph LR;
-   A---|This is the text|B;</div><h3 id="dotted-link">Dotted link</h3>
+   A-- This is the text ---B</div><h3 id="dotted-link">Dotted link</h3>
 <p>-.-&gt;</p>
 <div class="mermaid">graph LR;
    A-.->B;</div><h3 id="dotted-link-with-text">Dotted link with text</h3>

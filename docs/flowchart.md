@@ -136,7 +136,7 @@ graph LR;
 ### Text on links
 
 ```
-A-- This is the text -- B
+A-- This is the text --- B
 ```
 or
 ```
@@ -145,7 +145,8 @@ A---|This is the text|B;
 
 ```
 graph LR;
-   A---|This is the text|B;
+   A-- This is the text ---B
+   
 ```
 
 ### Dotted link

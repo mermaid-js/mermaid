@@ -46,7 +46,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.2/dist/mermaid.full.js"></script>
+        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.2/dist/mermaid.full.js"></scrpt>
+        <script type="text/javascript" src="/dist/mermaid.full.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -212,7 +213,46 @@ read the chart definiton which will be replaced with the svg chart.</p>
         else{
             return '&lt;pre>&lt;code>'+code+'&lt;/code>&lt;/pre>';
         }
-    };</code></pre>
+    };</code></pre><p>Another example in coffeescript that also includes the mermaid script tag into the generated markup.</p>
+<pre><code>marked = require 'marked'
+
+module.exports = (options) ->
+  hasMermaid = false
+  renderer = new marked.Renderer()
+  renderer.defaultCode = renderer.code
+  renderer.code = (code, language) ->
+    if language is 'mermaid'
+      html = ''
+      if not hasMermaid
+        hasMermaid = true
+        html += '<script src="'+options.mermaidPath+'"></script>'
+      html + '<div class="mermaid">'+code+'</div>'
+    else
+      @defaultCode(code, language)
+
+  renderer</code></pre><h2 id="advanced-usage">Advanced usage</h2>
+<p><strong>Error handling</strong></p>
+<p>When the parser encounters invalid syntax the <strong>mermaid.parseError</strong> function is called. It is possible to override this
+function in order to handle the error in an application specific way.</p>
+<p><strong>Parsing text without rendering</strong></p>
+<p>It is also possible to validate the syntax before rendering in order to streamline the user experience. The function
+<strong>mermaid.parse(txt)</strong> takes a text string as an argument and returns true if the text is syntactically correct and
+false if it is not. The parseError function will be called when the parse function returns false.</p>
+<p>The code-example below in meta code illustrates how this could work:</p>
+<pre><code>
+mermaid.parseError = function(err,hash){
+    displayErrorInGui(err);
+};
+
+var textFieldUpdated = function(){
+    var textStr = getTextFromFormField('code');
+
+    if(mermaid.parse(textStr)){
+        reRender(textStr)
+    }
+};
+
+bindEventHandler('change', 'code', textFieldUpdated);</code></pre>
             </article>
         </div>
         <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
