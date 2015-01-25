@@ -67,20 +67,23 @@ exports.drawLabel = function(elem , txtObject){
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-exports.drawActor = function(elem, left,description,conf){
+exports.drawActor = function(elem, left, verticalPos, description,conf){
     var center = left + (conf.width/2);
     var g = elem.append("g");
-    g.append("line")
-        .attr("x1", center)
-        .attr("y1", 5)
-        .attr("x2", center)
-        .attr("y2", 2000)
-        .attr("class", 'actor-line')
-        .attr("stroke-width", '0.5px')
-        .attr("stroke", '#999');
+    if(verticalPos === 0) {
+        g.append("line")
+            .attr("x1", center)
+            .attr("y1", 5)
+            .attr("x2", center)
+            .attr("y2", 2000)
+            .attr("class", 'actor-line')
+            .attr("stroke-width", '0.5px')
+            .attr("stroke", '#999');
+    }
 
     var rect = exports.getNoteRect();
     rect.x = left;
+    rect.y = verticalPos;
     rect.fill = '#eaeaea';
     rect.width = conf.width;
     rect.height = conf.height;
@@ -91,7 +94,7 @@ exports.drawActor = function(elem, left,description,conf){
 
     g.append("text")      // text label for the x axis
         .attr("x", center)
-        .attr("y", (conf.height/2)+5)
+        .attr("y", verticalPos + (conf.height/2)+5)
         .attr('class','actor')
         .style("text-anchor", "middle")
         .text(description)

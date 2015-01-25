@@ -66,7 +66,11 @@ var init = function (sequenceConfig) {
     var i;
 
     if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
-      seq.setConf(JSON.parse(sequenceConfig));
+        if(typeof sequenceConfig === 'object'){
+            seq.setConf(sequenceConfig);
+        } else{
+            seq.setConf(JSON.parse(sequenceConfig));
+        }
     }
 
     var cnt = 0;
@@ -147,6 +151,7 @@ global.mermaid = {
     startOnLoad:true,
     htmlLabels:true,
     init:function(sequenceConfig){
+
         init(sequenceConfig);
     },
     version:function(){
@@ -180,12 +185,12 @@ exports.contentLoaded = function(){
         if (typeof mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
             if (equals(true, mermaid_config.startOnLoad)) {
-                global.mermaid.init();
+                global.mermaid.init(mermaid.sequenceConfig);
             }
         }
         else {
             // No config found, do autostart in this simple case
-            global.mermaid.init();
+            global.mermaid.init(mermaid.sequenceConfig);
         }
     }
 

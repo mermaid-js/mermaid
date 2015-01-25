@@ -22,7 +22,12 @@ var conf = {
 
     noteMargin:10,
     // Space between messages
-    messageMargin:35
+    messageMargin:35,
+    //mirror actors under diagram
+    mirrorActors:false,
+    // Depending on css styling this might need adjustment
+    // Prolongs the edge of the diagram downwards
+    bottomMarginAdj:1
 };
 
 exports.bounds = {
@@ -211,7 +216,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
 
 };
 
-module.exports.drawActors = function(diagram, actors, actorKeys){
+module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
     var i;
     // Draw the actors
     for(i=0;i<actorKeys.length;i++){
@@ -219,13 +224,13 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
 
         // Add some rendering data to the object
         actors[key].x = i*conf.actorMargin +i*conf.width;
-        actors[key].y = 0;
+        actors[key].y = verticalPos;
         actors[key].width = conf.diagramMarginY;
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
-        svgDraw.drawActor(diagram, actors[key].x, actors[key].description, conf);
-        exports.bounds.insert(actors[key].x, 0, actors[key].x + conf.width, conf.height);
+        svgDraw.drawActor(diagram, actors[key].x, verticalPos, actors[key].description, conf);
+        exports.bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height);
 
     }
 
@@ -236,7 +241,11 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
 
 
 module.exports.setConf = function(cnf){
-    conf = cnf;
+    var keys = Object.keys(cnf);
+
+    keys.forEach(function(key){
+        conf[key] = cnf[key];
+    });
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
@@ -258,7 +267,7 @@ module.exports.draw = function (text, id) {
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
 
-    module.exports.drawActors(diagram, actors, actorKeys);
+    module.exports.drawActors(diagram, actors, actorKeys, 0);
 
     // The arrow head definition is attached to the svg once
     svgDraw.insertArrowHead(diagram);
@@ -334,9 +343,20 @@ module.exports.draw = function (text, id) {
         }
     });
 
+    if(conf.mirrorActors){
+        // Draw actors below diagram
+        exports.bounds.bumpVerticalPos(conf.boxMargin*2);
+        module.exports.drawActors(diagram, actors, actorKeys, exports.bounds.getVerticalPos());
+    }
+
     var box = exports.bounds.getBounds();
 
-    var height = box.stopy-box.starty+2*conf.diagramMarginY;
+    var height = box.stopy - box.starty + 2*conf.diagramMarginY;
+
+    if(conf.mirrorActors){
+        height = height - conf.boxMargin + conf.bottomMarginAdj;
+    }
+
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;
 
     diagram.attr("height",height);

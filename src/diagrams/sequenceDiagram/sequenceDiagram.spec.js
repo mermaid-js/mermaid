@@ -477,6 +477,7 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         expect(bounds.stopy ).toBe(loop.stopy);
     });
 });
+
 describe('when rendering a sequenceDiagram',function() {
     var parseError, _d3, conf;
     beforeEach(function () {
@@ -668,6 +669,82 @@ describe('when rendering a sequenceDiagram',function() {
 
         expect(bounds.stopx ).toBe(0 + conf.width*2 + conf.actorMargin);
         expect(bounds.stopy ).toBe(0 + 2*conf.messageMargin + conf.height + 3*conf.boxMargin + conf.boxTextMargin);
+
+    });
+});
+
+describe('when rendering a sequenceDiagram with actor mirror activated',function() {
+    var parseError, _d3, conf;
+    beforeEach(function () {
+        sq.yy = require('./sequenceDb');
+        sq.yy.clear();
+        parseError = function(err, hash) {
+            console.log('Syntax error:' + err);
+            console.log(hash);
+        };
+        sq.yy.parseError = parseError;
+
+        newD3 = function() {
+            var o = {
+                append: function (type) {
+                    return newD3();
+                },
+                attr: function (key, val) {
+                    return this;
+                },
+                style: function (key, val) {
+                    return this;
+                },
+                text: function (txt) {
+                    return this;
+                },
+                0:{
+                    0: {
+                        getBBox: function () {
+                            return {
+                                height: 10,
+                                width: 20
+                            };
+                        }
+                    }
+
+                }
+            };
+
+            return o;
+        };
+
+        conf = {
+            diagramMarginX:50,
+            diagramMarginY:10,
+            actorMargin:50,
+            width:150,
+            // Height of actor boxes
+            height:65,
+            boxMargin:10,
+            messageMargin:40,
+            boxTextMargin:15,
+            noteMargin:25,
+            mirrorActors:true,
+            // Depending on css styling this might need adjustment
+            // Prolongs the edge of the diagram downwards
+            bottomMarginAdj:1
+        };
+        sd.setConf(conf);
+    });
+    it('it should handle one actor', function () {
+        sd.bounds.init();
+        var str = 'sequenceDiagram\n' +
+            'participant Alice\n';
+
+        sq.parse(str);
+        sd.draw(str,'tst');
+
+        var bounds = sd.bounds.getBounds();
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
+        expect(bounds.stopx ).toBe( conf.width);
+        expect(bounds.stopy ).toBe(2*conf.height+2*conf.boxMargin);
 
     });
 });

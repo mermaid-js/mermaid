@@ -23205,11 +23205,7 @@ exports.getClasses = function (text, isDot) {
     parser.yy = graph;
 
     // Parse the graph definition
-    try{
-        parser.parse(text);
-    }
-    catch(err){
-    }
+    parser.parse(text);
 
     var classDefStylesObj = {};
     var classDefStyleStr = '';
@@ -26232,7 +26228,12 @@ var conf = {
 
     noteMargin:10,
     // Space between messages
-    messageMargin:35
+    messageMargin:35,
+    //mirror actors under diagram
+    mirrorActors:false,
+    // Depending on css styling this might need adjustment
+    // Prolongs the edge of the diagram downwards
+    bottomMarginAdj:1
 };
 
 exports.bounds = {
@@ -26421,7 +26422,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
 
 };
 
-module.exports.drawActors = function(diagram, actors, actorKeys){
+module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
     var i;
     // Draw the actors
     for(i=0;i<actorKeys.length;i++){
@@ -26429,13 +26430,13 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
 
         // Add some rendering data to the object
         actors[key].x = i*conf.actorMargin +i*conf.width;
-        actors[key].y = 0;
+        actors[key].y = verticalPos;
         actors[key].width = conf.diagramMarginY;
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
-        svgDraw.drawActor(diagram, actors[key].x, actors[key].description, conf);
-        exports.bounds.insert(actors[key].x, 0, actors[key].x + conf.width, conf.height);
+        svgDraw.drawActor(diagram, actors[key].x, verticalPos, actors[key].description, conf);
+        exports.bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height);
 
     }
 
@@ -26446,7 +26447,11 @@ module.exports.drawActors = function(diagram, actors, actorKeys){
 
 
 module.exports.setConf = function(cnf){
-    conf = cnf;
+    var keys = Object.keys(cnf);
+
+    keys.forEach(function(key){
+        conf[key] = cnf[key];
+    });
 };
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
@@ -26455,13 +26460,8 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     sq.yy.clear();
-    //console.log(text);
-    try{
-        sq.parse(text+'\n');
-    }
-    catch(err){
+    sq.parse(text+'\n');
 
-    }
     exports.bounds.init();
     var diagram = d3.select('#'+id);
 
@@ -26473,7 +26473,7 @@ module.exports.draw = function (text, id) {
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
 
-    module.exports.drawActors(diagram, actors, actorKeys);
+    module.exports.drawActors(diagram, actors, actorKeys, 0);
 
     // The arrow head definition is attached to the svg once
     svgDraw.insertArrowHead(diagram);
@@ -26549,9 +26549,20 @@ module.exports.draw = function (text, id) {
         }
     });
 
+    if(conf.mirrorActors){
+        // Draw actors below diagram
+        exports.bounds.bumpVerticalPos(conf.boxMargin*2);
+        module.exports.drawActors(diagram, actors, actorKeys, exports.bounds.getVerticalPos());
+    }
+
     var box = exports.bounds.getBounds();
 
-    var height = box.stopy-box.starty+2*conf.diagramMarginY;
+    var height = box.stopy - box.starty + 2*conf.diagramMarginY;
+
+    if(conf.mirrorActors){
+        height = height - conf.boxMargin + conf.bottomMarginAdj;
+    }
+
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;
 
     diagram.attr("height",height);
@@ -26629,20 +26640,23 @@ exports.drawLabel = function(elem , txtObject){
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-exports.drawActor = function(elem, left,description,conf){
+exports.drawActor = function(elem, left, verticalPos, description,conf){
     var center = left + (conf.width/2);
     var g = elem.append("g");
-    g.append("line")
-        .attr("x1", center)
-        .attr("y1", 5)
-        .attr("x2", center)
-        .attr("y2", 2000)
-        .attr("class", 'actor-line')
-        .attr("stroke-width", '0.5px')
-        .attr("stroke", '#999');
+    if(verticalPos === 0) {
+        g.append("line")
+            .attr("x1", center)
+            .attr("y1", 5)
+            .attr("x2", center)
+            .attr("y2", 2000)
+            .attr("class", 'actor-line')
+            .attr("stroke-width", '0.5px')
+            .attr("stroke", '#999');
+    }
 
     var rect = exports.getNoteRect();
     rect.x = left;
+    rect.y = verticalPos;
     rect.fill = '#eaeaea';
     rect.width = conf.width;
     rect.height = conf.height;
@@ -26653,7 +26667,7 @@ exports.drawActor = function(elem, left,description,conf){
 
     g.append("text")      // text label for the x axis
         .attr("x", center)
-        .attr("y", (conf.height/2)+5)
+        .attr("y", verticalPos + (conf.height/2)+5)
         .attr('class','actor')
         .style("text-anchor", "middle")
         .text(description)
@@ -26798,7 +26812,49 @@ var flowRenderer = require('./diagrams/flowchart/flowRenderer');
 var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
 var info = require('./diagrams/example/exampleRenderer');
 var he = require('he');
+var infoParser = require('./diagrams/example/parser/example');
+var flowParser = require('./diagrams/flowchart/parser/flow');
+var dotParser = require('./diagrams/flowchart/parser/dot');
+var sequenceParser = require('./diagrams/sequenceDiagram/parser/sequenceDiagram');
+var sequenceDb = require('./diagrams/sequenceDiagram/sequenceDb');
+var infoDb = require('./diagrams/example/exampleDb');
 
+/**
+ * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
+ * thrown and
+ * @param text
+ */
+var parse = function(text){
+    var graphType = utils.detectType(text);
+    var parser;
+
+    switch(graphType){
+        case 'graph':
+            parser = flowParser;
+            parser.parser.yy = graph;
+            break;
+        case 'dotGraph':
+            parser = dotParser;
+            parser.parser.yy = graph;
+            break;
+        case 'sequenceDiagram':
+            parser = sequenceParser;
+            parser.parser.yy = sequenceDb;
+            break;
+        case 'info':
+            parser = infoParser;
+            parser.parser.yy = infoDb;
+            break;
+    }
+
+    try{
+        parser.parse(text);
+        return true;
+    }
+    catch(err){
+        return false;
+    }
+};
 /**
  * Function that goes through the document to find the chart definitions in there and render them.
  *
@@ -26817,7 +26873,11 @@ var init = function (sequenceConfig) {
     var i;
 
     if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
-      seq.setConf(JSON.parse(sequenceConfig));
+        if(typeof sequenceConfig === 'object'){
+            seq.setConf(sequenceConfig);
+        } else{
+            seq.setConf(JSON.parse(sequenceConfig));
+        }
     }
 
     var cnt = 0;
@@ -26898,6 +26958,7 @@ global.mermaid = {
     startOnLoad:true,
     htmlLabels:true,
     init:function(sequenceConfig){
+
         init(sequenceConfig);
     },
     version:function(){
@@ -26905,6 +26966,9 @@ global.mermaid = {
     },
     getParser:function(){
         return flow.parser;
+    },
+    parse:function(text){
+        return parse(text);
     },
     parseError:function(err,hash){
         console.log('Mermaid Syntax error:');
@@ -26928,12 +26992,12 @@ exports.contentLoaded = function(){
         if (typeof mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
             if (equals(true, mermaid_config.startOnLoad)) {
-                global.mermaid.init();
+                global.mermaid.init(mermaid.sequenceConfig);
             }
         }
         else {
             // No config found, do autostart in this simple case
-            global.mermaid.init();
+            global.mermaid.init(mermaid.sequenceConfig);
         }
     }
 
@@ -26951,7 +27015,7 @@ if(typeof document !== 'undefined'){
 
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":103,"./diagrams/example/exampleRenderer":105,"./diagrams/flowchart/flowRenderer":108,"./diagrams/flowchart/graphDb":109,"./diagrams/flowchart/parser/flow":111,"./diagrams/sequenceDiagram/sequenceRenderer":115,"./utils":118,"he":101}],118:[function(require,module,exports){
+},{"../package.json":103,"./diagrams/example/exampleDb":104,"./diagrams/example/exampleRenderer":105,"./diagrams/example/parser/example":106,"./diagrams/flowchart/flowRenderer":108,"./diagrams/flowchart/graphDb":109,"./diagrams/flowchart/parser/dot":110,"./diagrams/flowchart/parser/flow":111,"./diagrams/sequenceDiagram/parser/sequenceDiagram":113,"./diagrams/sequenceDiagram/sequenceDb":114,"./diagrams/sequenceDiagram/sequenceRenderer":115,"./utils":118,"he":101}],118:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -26972,7 +27036,7 @@ module.exports.detectType = function(text,a){
     }
 
     if(text.match(/^\s*digraph/)) {
-        console.log('Detected dot syntax');
+        //console.log('Detected dot syntax');
         return "dotGraph";
     }
 
