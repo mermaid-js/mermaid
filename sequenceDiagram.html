@@ -24,7 +24,8 @@
         <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
               media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
         <!-- load Ink's css from the cdn -->
-        <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
         <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
         <!-- load Ink's css for IE8 -->
         <!--[if lt IE 9 ]>
@@ -46,8 +47,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.2/dist/mermaid.full.js"></scrpt>
-        <script type="text/javascript" src="/dist/mermaid.full.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.3/dist/mermaid.full.js"></script>
+        <scrpt type="text/javascript" src="/dist/mermaid.full.js"></scrpt>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -90,6 +91,14 @@
             }
             footer {
                 background: #a9a9a9;
+            }
+            .cluster {
+                fill: #fcac93;
+                rx:4px;
+                stroke: grey;
+            }
+            svg {
+                padding-left:2px;
             }
         </style>
         <script>
@@ -404,7 +413,35 @@ text.actor {
     stroke:none;
     font-family: 'trebuchet ms', verdana, arial;
     font-size:14px;
-}</code></pre>
+}</code></pre><h2 id="configuration">Configuration</h2>
+<p>Is it possible to adjust the margins for rendering the sequence diagram.</p>
+<p>This is done by defining <strong>mermaid.sequenceConfig</strong> or by the CLI to use a json file with the configuration. How to use
+the CLI is described in the mermaidCLI page.
+mermaid.sequenceConfig can be set to a JSON string with config parameters or the corresponding object.</p>
+<pre><code>mermaid.sequenceConfig = {
+    diagramMarginX:50,
+    diagramMarginY:10,
+    boxTextMargin:5,
+    noteMargin:10,
+    messageMargin:35,
+    mirrorActors:true
+    };</code></pre><h3 id="possible-configration-params-">Possible configration params:</h3>
+<table class="ink-table bordered hover alternating"><tr>
+<th>Param</th>
+<th>Descriotion</th>
+<th>Default value</th>
+</tr>
+<tr>
+<td>mirrorActor</td>
+<td>Turns on/off the rendering of actors below the diagram as well as above it</td>
+<td>false</td>
+</tr>
+<tr>
+<td>bottomMarginAdj</td>
+<td>Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists.</td>
+<td>1</td>
+</tr>
+</table>
             </article>
         </div>
         <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">

@@ -285,3 +285,28 @@ text.actor {
 }
 
 ```
+## Configuration
+
+Is it possible to adjust the margins for rendering the sequence diagram.
+
+This is done by defining **mermaid.sequenceConfig** or by the CLI to use a json file with the configuration. How to use
+the CLI is described in the mermaidCLI page.
+mermaid.sequenceConfig can be set to a JSON string with config parameters or the corresponding object.
+
+```
+mermaid.sequenceConfig = {
+    diagramMarginX:50,
+    diagramMarginY:10,
+    boxTextMargin:5,
+    noteMargin:10,
+    messageMargin:35,
+    mirrorActors:true
+    };
+```
+
+### Possible configration params:
+
+Param | Descriotion | Default value
+--- | --- | ---
+mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
+bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists.|1
