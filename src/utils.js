@@ -18,7 +18,7 @@ module.exports.detectType = function(text,a){
     }
 
     if(text.match(/^\s*digraph/)) {
-        console.log('Detected dot syntax');
+        //console.log('Detected dot syntax');
         return "dotGraph";
     }
 

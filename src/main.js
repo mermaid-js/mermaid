@@ -5,7 +5,49 @@ var flowRenderer = require('./diagrams/flowchart/flowRenderer');
 var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
 var info = require('./diagrams/example/exampleRenderer');
 var he = require('he');
+var infoParser = require('./diagrams/example/parser/example');
+var flowParser = require('./diagrams/flowchart/parser/flow');
+var dotParser = require('./diagrams/flowchart/parser/dot');
+var sequenceParser = require('./diagrams/sequenceDiagram/parser/sequenceDiagram');
+var sequenceDb = require('./diagrams/sequenceDiagram/sequenceDb');
+var infoDb = require('./diagrams/example/exampleDb');
 
+/**
+ * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
+ * thrown and
+ * @param text
+ */
+var parse = function(text){
+    var graphType = utils.detectType(text);
+    var parser;
+
+    switch(graphType){
+        case 'graph':
+            parser = flowParser;
+            parser.parser.yy = graph;
+            break;
+        case 'dotGraph':
+            parser = dotParser;
+            parser.parser.yy = graph;
+            break;
+        case 'sequenceDiagram':
+            parser = sequenceParser;
+            parser.parser.yy = sequenceDb;
+            break;
+        case 'info':
+            parser = infoParser;
+            parser.parser.yy = infoDb;
+            break;
+    }
+
+    try{
+        parser.parse(text);
+        return true;
+    }
+    catch(err){
+        return false;
+    }
+};
 /**
  * Function that goes through the document to find the chart definitions in there and render them.
  *
@@ -112,6 +154,9 @@ global.mermaid = {
     },
     getParser:function(){
         return flow.parser;
+    },
+    parse:function(text){
+        return parse(text);
     },
     parseError:function(err,hash){
         console.log('Mermaid Syntax error:');

@@ -245,13 +245,8 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     sq.yy.clear();
-    //console.log(text);
-    try{
-        sq.parse(text+'\n');
-    }
-    catch(err){
+    sq.parse(text+'\n');
 
-    }
     exports.bounds.init();
     var diagram = d3.select('#'+id);
 

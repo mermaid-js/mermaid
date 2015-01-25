@@ -188,11 +188,7 @@ exports.getClasses = function (text, isDot) {
     parser.yy = graph;
 
     // Parse the graph definition
-    try{
-        parser.parse(text);
-    }
-    catch(err){
-    }
+    parser.parse(text);
 
     var classDefStylesObj = {};
     var classDefStyleStr = '';
