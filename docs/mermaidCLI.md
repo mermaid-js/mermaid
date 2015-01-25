@@ -18,14 +18,49 @@ Usage: mermaid [options] <file>...
 file    The mermaid description file to be rendered
 
 Options:
-  -s --svg          Output SVG instead of PNG (experimental)
-  -p --png          If SVG was selected, and you also want PNG, set this flag
-  -o --outputDir    Directory to save files, will be created automatically, defaults to `cwd`
-  -e --phantomPath  Specify the path to the phantomjs executable
-  -h --help         Show this message
-  -v --verbose      Show logging
-  --version         Print version and quit
+  -s --svg             Output SVG instead of PNG (experimental)
+  -p --png             If SVG was selected, and you also want PNG, set this flag
+  -o --outputDir       Directory to save files, will be created automatically, defaults to `cwd`
+  -e --phantomPath     Specify the path to the phantomjs executable
+  -c --sequenceConfig  Specify the path to the file with the configuration to be applied in the sequence diagram
+  -h --help            Show this message
+  -v --verbose         Show logging
+  --version            Print version and quit
 ```
+
+## Sequence diagram configuration
+
+The --sequenceConfig option allows overriding the sequence diagram configuration. It could be useful to increase the width between actors, the notes width or the margin to fit some large texts that are not well rendered with the default configuration, for example.
+
+The content of the file must be a JSON like this:
+
+```
+
+{
+    "diagramMarginX": 100,
+    "diagramMarginY": 10,
+    "actorMargin": 150,
+    "width": 150,
+    "height": 65,
+    "boxMargin": 10,
+    "boxTextMargin": 5,
+    "noteMargin": 10,
+    "messageMargin": 35
+}
+
+```
+
+These properties will override the default values and if a property is not set in this object, it will left it empty and could raise an error. The current properties (measured in px) are:
+
+- diagramMarginX: Size of the empty space to add at the left-right of the diagram.
+- diagramMarginY: Size of the empty space to add at the top-bottom of the diagram.
+- actorMargin: Horizontal space between each participant. The arrows between them would have this size too.
+- width: Width of the participant box.
+- height: Height of the participant box.
+- boxMargin: Blank area around loop boxes.
+- boxTextMargin: Blank area between the text and the border in a loop box.
+- noteMargin: Size of the empty space around a note.
+- messageMargin: Space between messages
 
 ## CLI Known Issues
 
