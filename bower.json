@@ -13,11 +13,10 @@
   ],
   "license": "MIT",
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "vendor",
-    "test",
-    "tests"
+    "*",
+    "!dist/",
+    "!dist/*",
+    "!LICENSE"
   ],
   "devDependencies": {
     "jasmine": "~2.0.4",
