@@ -100,15 +100,6 @@ Currently only the shape above is possible and not its mirror. *This might chang
 graph LR
     id1{This is the text in the box}
 ```
-### A node (rhombus)
-```
-    id1{This is the text in the box}
-```
-
-```
-graph LR
-    id1{This is the text in the box}
-```
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.
@@ -289,7 +280,15 @@ If a class is named default it will be assigned to all classes without specific 
 
 * A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduce to improve readability.
 
-Below is the new declaration of the graph which is also valid along with the old declaration of the graph as described in the graph example on the home wiki page.
+Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
+
+```
+    A[Hard edge] -->|Link text| B(Round edge)
+    B --> C{Decision}
+    C -->|One| D[Result one]
+    C -->|Two| E[Result two]
+```
+
 
 ```
 graph LR
