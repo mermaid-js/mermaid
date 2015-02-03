@@ -71,6 +71,18 @@ test('setting an output directory succeeds', function(t) {
   })
 })
 
+test('setting a css source file succeeds', function(t) {
+  t.plan(1)
+
+  var cli = require(cliPath)
+    , argv = ['-t', 'test/fixtures/test.css']
+
+  cli.parse(argv, function(err, msg, opt) {
+    t.ok(opt.css, 'css file is populated')
+    t.end()
+  })
+})
+
 test('setting an output directory incorrectly causes an error', function(t) {
   t.plan(1)
 

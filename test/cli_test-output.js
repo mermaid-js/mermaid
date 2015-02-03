@@ -80,6 +80,35 @@ test('output of multiple svg', function(t) {
   })
 })
 
+test('output including CSS', function(t) {
+  t.plan(5)
+
+  var expected = ['test.mermaid.png']
+    , opt = clone(singleFile)
+    , filename
+    , one
+    , two
+
+  opt.png = true
+
+  mermaid.process(opt.files, opt, function(code) {
+    t.equal(code, 0, 'has clean exit code')
+    filename = path.join(opt.outputDir, path.basename(expected[0]))
+    one = fs.statSync(filename)
+
+    opt.css = fs.readFileSync('test/fixtures/test.css', 'utf8')
+
+    mermaid.process(opt.files, opt, function(code) {
+      t.equal(code, 0, 'has clean exit code')
+      two = fs.statSync(filename)
+
+      t.notEqual(one.size, two.size)
+
+      verifyFiles(expected, opt.outputDir, t)
+    })
+  })
+})
+
 function verifyFiles(expected, dir, t) {
   async.each(
       expected
