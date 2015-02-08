@@ -1,4 +1,8 @@
-/* description: Parses end executes mathematical expressions. */
+/** mermaid
+ *  http://knsv.github.io/mermaid/
+ *  (c) 2015 Knut Sveidqvist
+ *  MIT license.
+ */
 
 /* lexical grammar */
 %lex
@@ -261,7 +265,9 @@ alphaNum
     ;
 
 alphaNumStatement
-    : alphaNumToken
+    : DIR
+        {$$=$1;}
+    | alphaNumToken
         {$$=$1;}
     | alphaNumToken MINUS alphaNumToken
         {$$=$1+'-'+$3;}

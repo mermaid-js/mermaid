@@ -1,7 +1,7 @@
-/** js sequence diagrams
- *  http://bramp.github.io/js-sequence-diagrams/
- *  (c) 2012-2013 Andrew Brampton (bramp.net)
- *  Simplified BSD license.
+/** mermaid
+ *  http://knsv.github.io/mermaid/
+ *  (c) 2015 Knut Sveidqvist
+ *  MIT license.
  */
 %lex
 

@@ -424,7 +424,18 @@ describe('when parsing ',function(){
             expect(edges[0].text).toBe('text including graph space');
 
         });
-
+        it('should handle keywords',function(){
+            var res = flow.parser.parse('graph TD;V-->a[v]');
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+            expect(vert['a'].text).toBe('v');
+        });
+        it('should handle keywords',function(){
+            var res = flow.parser.parse('graph TD;V-->a[v]');
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+            expect(vert['a'].text).toBe('v');
+        });
     });
 
     describe("it should handle new line type notation",function() {

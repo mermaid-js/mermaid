@@ -1,4 +1,9 @@
-/** js sequence diagrams
+/** mermaid
+ *  http://knsv.github.io/mermaid/
+ *  (c) 2014-2015 Knut Sveidqvist
+ *  MIT license.
+ *
+ *  Based on js sequence diagrams jison grammr
  *  http://bramp.github.io/js-sequence-diagrams/
  *  (c) 2012-2013 Andrew Brampton (bramp.net)
  *  Simplified BSD license.
