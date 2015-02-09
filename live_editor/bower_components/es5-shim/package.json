@@ -1,0 +1,60 @@
+{
+  "name": "es5-shim",
+  "version": "3.1.1",
+  "description": "ECMAScript 5 compatibility shims for legacy JavaScript engines",
+  "homepage": "http://github.com/es-shims/es5-shim/",
+  "contributors": [
+    "Kris Kowal <kris@cixar.com> (http://github.com/kriskowal/)",
+    "Sami Samhuri <sami.samhuri@gmail.com> (http://samhuri.net/)",
+    "Florian Schäfer <florian.schaefer@gmail.com> (http://github.com/fschaefer)",
+    "Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)",
+    "Kit Cambridge <kitcambridge@gmail.com> (http://kitcambridge.github.com)",
+    "Jordan Harband <ljharb@gmail.com> (https://github.com/ljharb/)"
+  ],
+  "bugs": {
+    "mail": "ljharb@gmail.com",
+    "url": "http://github.com/es-shims/es5-shim/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/es-shims/es5-shim/raw/master/LICENSE"
+    }
+  ],
+  "main": "es5-shim.js",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/es-shims/es5-shim.git"
+  },
+  "scripts": {
+    "minify": "npm run minify-shim && npm run minify-sham",
+    "minify-shim": "uglifyjs es5-shim.js --comments --source-map=es5-shim.map -m -b ascii_only=true,beautify=false > es5-shim.min.js",
+    "minify-sham": "uglifyjs es5-sham.js --comments --source-map=es5-sham.map -m -b ascii_only=true,beautify=false > es5-sham.min.js",
+    "test": "jasmine-node --matchall tests/spec/"
+  },
+  "devDependencies": {
+    "jasmine-node": "~1.14.2",
+    "uglify-js": "~2.4.12"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "testling": {
+    "browsers": [
+      "iexplore/6.0..latest",
+      "firefox/3.0..6.0",
+      "firefox/18.0..latest",
+      "firefox/nightly",
+      "chrome/4.0..10.0",
+      "chrome/25.0..latest",
+      "chrome/canary",
+      "opera/10.0..latest",
+      "opera/next",
+      "safari/4.0..latest",
+      "ipad/6.0..latest",
+      "iphone/6.0..latest",
+      "android-browser/4.2"
+    ]
+  }
+}
+

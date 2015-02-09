@@ -1,0 +1,34 @@
+.material-tooltip {
+    padding: 10px 8px;
+    font-size: 1rem;
+    z-index: 1000;
+    background-color: transparent;
+    @include border-radius(2px);
+    color: #fff;
+    min-height: 36px;
+    line-height: 1rem;
+    // max-width: 350px;
+    opacity: 0;
+    display: none;
+    position: absolute;
+    text-align: center;
+    overflow: hidden;
+    left:0;
+    top:0;
+
+    will-change: top, left;
+}
+
+.backdrop {
+  position: absolute;
+  opacity: 0;
+  display: none;
+  height: 7px;
+  width: 14px;
+  @include border-radius(0 0 14px 14px);
+  background-color: #323232;
+  z-index: -1;
+  @include transform-origin( 50% 10%);
+
+  will-change: transform, opacity;
+}

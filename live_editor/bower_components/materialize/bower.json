@@ -1,0 +1,55 @@
+{
+  "name": "Materialize",
+  "version": "0.95.1",
+  "description": "A modern responsive front-end framework based on Material Design",
+  "keywords": [
+    "css",
+    "js",
+    "sass",
+    "mobile-first",
+    "responsive",
+    "front-end",
+    "framework",
+    "ux",
+    "material",
+    "design"
+  ],
+  "main": [
+    "bin/materialize.css",
+    "bin/materialize.js",
+    "font/material-design-icons/Material-Design-Icons.eot",
+    "font/material-design-icons/Material-Design-Icons.svg",
+    "font/material-design-icons/Material-Design-Icons.ttf",
+    "font/material-design-icons/Material-Design-Icons.woff",
+    "font/roboto/Roboto-Bold.ttf",
+    "font/roboto/Roboto-Light.ttf",
+    "font/roboto/Roboto-Medium.ttf",
+    "font/roboto/Roboto-Regular.ttf",
+    "font/roboto/Roboto-Thin.ttf"
+  ],
+  "ignore": [
+    "jade/",
+    ".gitignore",
+    "CNAME",
+    "css/",
+    "bower.json",
+    "README.md",
+    "images/",
+    "js/jquery.timeago.js",
+    "js/init.js",
+    "js/prism.js",
+    "res/",
+    "sass/style.scss",
+    "sass/ghpages-materialize.scss",
+    "**/*.html",
+    "**/*.zip",
+    "**/*.txt",
+    "sitemap.xml",
+    "package.json",
+    "Gruntfile.js"
+
+  ],
+  "dependencies": {
+        "jquery": ">=2.1.1"
+    }
+}

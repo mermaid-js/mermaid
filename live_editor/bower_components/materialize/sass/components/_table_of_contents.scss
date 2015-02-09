@@ -1,0 +1,33 @@
+/***************
+    Nav List
+***************/
+ul.table-of-contents {
+  &.fixed {
+      position: fixed;
+    }
+
+  li {
+    padding: 2px 0;
+  }
+  a {
+    display: inline-block;
+    font-weight: 300;
+    color: #757575;
+    padding-left: 20px;
+    height: 1.5rem;
+    line-height: 1.5rem;
+    letter-spacing: .4;
+    display: inline-block;
+
+    &:hover {
+      color: lighten(#757575, 20%);
+      padding-left: 19px;
+      border-left: 1px solid lighten(color("materialize-red", "base"),10%);
+    }
+    &.active {
+      font-weight: 500;
+      padding-left: 18px;
+      border-left: 2px solid lighten(color("materialize-red", "base"),10%);
+    }
+  }
+}

@@ -1,0 +1,143 @@
+$sidenav-width: 240px;
+@media #{$medium-and-down} {
+  ul.side-nav {
+    position: fixed;
+    width: $sidenav-width;
+    left: -1 * ($sidenav-width + 10);
+    top: 0;
+    height: 100%;
+    height: calc(100% + 60px);
+    padding-bottom: 60px;
+    background-color: #FFF;
+    z-index: 999;
+
+    will-change: left;
+
+    // Right Align
+    &.right-aligned {
+      will-change: right;
+      right: -1 * ($sidenav-width + 10);
+      left: auto;
+    }
+
+    .collapsible{
+      margin: 0;
+    }
+
+
+    li {
+      float: none;
+      padding: 0 15px;
+      width: 240px;
+      &:hover, &.active { background-color: #ddd; }
+    }
+    a {
+      color: #444;
+    }
+  }
+
+}
+
+// Touch interaction
+.drag-target {
+  height: 100%;
+  width: 10px;
+  position: fixed;
+  top: 0;
+  z-index: 998;
+}
+
+
+// Hidden side-nav for all sizes
+ul.side-nav.full,
+ul.side-nav.fixed {
+  position: fixed;
+  width: $sidenav-width;
+  left: -1 * ($sidenav-width + 10);
+  top: 0;
+  margin: 0;
+  padding-bottom: 60px;
+  height: 100%;
+  height: calc(100% + 60px);
+  background-color: #FFF;
+  z-index: 999;
+  @extend .z-depth-1;
+
+  will-change: left;
+
+  // Right Align
+  &.right-aligned {
+    will-change: right;
+    right: -1 * ($sidenav-width + 10);
+    left: auto;
+  }
+
+  .collapsible{
+    margin: 0;
+  }
+
+  li {
+    float: none;
+    line-height: 64px;
+    padding: 0 15px;
+    width: $sidenav-width;
+
+    @include transition(background-color 0s);
+
+    &:hover, &.active { background-color: #ddd; }
+  }
+  a {
+    display: block;
+    padding: 0 15px;
+    color: #444;
+  }
+}
+
+
+// Fixed side-nav shown
+ul.side-nav.fixed {
+  left: 0;
+  position: fixed;
+
+  // Right Align
+  &.right-aligned {
+    will-change: right;
+    right: 0;
+    left: auto;
+  }
+}
+
+// Fixed sideNav hide on smaller
+@media #{$medium-and-down} {
+  ul.side-nav.fixed {
+    left: -1 * ($sidenav-width + 10);
+
+    &.right-aligned {
+      right: -1 * ($sidenav-width + 10);
+      left: auto;
+    }
+  }
+}
+
+
+ul.side-nav .collapsible-body li.active,
+ul.side-nav.fixed .collapsible-body li.active {
+  background-color: $primary-color;
+  a {
+    color: #fff;
+  }
+}
+
+
+#sidenav-overlay {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
+  height: 120vh;
+  background-color: rgba(0,0,0,.5);
+  z-index: 997;
+
+  will-change: opacity;
+}

@@ -1,0 +1,75 @@
+body {
+  background: #fafafa;
+  color: #333;
+}
+.actor {
+  stroke: #CCCCFF;
+  fill: #E2ECFF;
+}
+text.actor {
+  fill: black;
+  stroke: none;
+  font-size:12px;
+}
+.actor-line {
+  stroke: grey;
+}
+.messageLine0 {
+  stroke-width: 1.5;
+  stroke-dasharray: "2 2";
+  marker-end: "url(#arrowhead)";
+  stroke: black;
+}
+.messageLine1 {
+  stroke-width: 1.5;
+  stroke-dasharray: "2 2";
+  stroke: black;
+}
+#arrowhead {
+  fill: black;
+}
+.messageText {
+  fill: black;
+  stroke: none;
+  font-size:12px;
+}
+.labelBox {
+  stroke: #CCCCFF;
+  fill: #ECECFF;
+}
+.labelText {
+  fill: black;
+  stroke: none;
+}
+.loopText {
+  fill: black;
+  stroke: none;
+}
+.loopLine {
+  stroke-width: 2;
+  stroke-dasharray: "2 2";
+  marker-end: "url(#arrowhead)";
+  stroke: #CCCCFF;
+}
+.note {
+  stroke: #decc93;
+  stroke: #CCCCFF;
+  fill: #fff5ad;
+}
+.mmcode {
+  padding: 5px;
+  background:#4C4C4C;
+  color:#F0F0F0;
+  font-family: 'Consolas',courier,fixed-width;
+}
+.noteText {
+  fill: black;
+  stroke: none;
+  font-size: 12px;
+}
+.browsehappy {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}

@@ -53,7 +53,7 @@ sequenceDiagram
 </tr>
 </table>
 
-Play with mermaid using this [editor](http://danielmschmidt.github.io/mermaid-demo/). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
+Play with mermaid using this [editor](http://danielmschmidt.github.io/mermaid-demo/) or this [live editor](live_editor). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
 
 ## Further reading
 

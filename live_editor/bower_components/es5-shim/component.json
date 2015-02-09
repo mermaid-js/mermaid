@@ -1,0 +1,20 @@
+{
+    "name": "es5-shim",
+    "repo": "es-shims/es5-shim",
+    "description": "ECMAScript 5 compatibility shims for legacy JavaScript engines",
+    "version": "v3.1.1",
+    "keywords": [
+        "shim",
+        "es5",
+        "es5",
+        "shim",
+        "javascript",
+        "ecmascript",
+        "polyfill"
+    ],
+    "license": "MIT",
+    "main": "es5-shim.js",
+    "scripts": [
+        "es5-shim.js"
+    ]
+}
