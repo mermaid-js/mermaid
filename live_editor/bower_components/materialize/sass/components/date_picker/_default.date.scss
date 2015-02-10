@@ -1,0 +1,431 @@
+/* ==========================================================================
+   $BASE-DATE-PICKER
+   ========================================================================== */
+/**
+ * The picker box.
+ */
+.picker__box {
+  padding: 0 1em;
+}
+/**
+ * The header containing the month and year stuff.
+ */
+.picker__header {
+  text-align: center;
+  position: relative;
+  margin-top: .75em;
+}
+/**
+ * The month and year labels.
+ */
+.picker__month,
+.picker__year {
+//  font-weight: 500;
+  display: inline-block;
+  margin-left: .25em;
+  margin-right: .25em;
+}
+/**
+ * The month and year selectors.
+ */
+.picker__select--month,
+.picker__select--year {
+
+
+//  border: 1px solid #b7b7b7;
+
+  height: 2em;
+  padding: .5em;
+  margin-left: .25em;
+  margin-right: .25em;
+}
+@media (min-width: 24.5em) {
+  .picker__select--month,
+  .picker__select--year {
+    margin-top: -0.5em;
+  }
+}
+.picker__select--month {
+  width: 35%;
+}
+.picker__select--year {
+  width: 22.5%;
+}
+.picker__select--month:focus,
+.picker__select--year:focus {
+  border-color: #0089ec;
+}
+/**
+ * The month navigation buttons.
+ */
+.picker__nav--prev,
+.picker__nav--next {
+  position: absolute;
+  padding: .5em 1.25em;
+  width: 1em;
+  height: 1em;
+  box-sizing: content-box;
+  top: -0.25em;
+}
+//@media (min-width: 24.5em) {
+//  .picker__nav--prev,
+//  .picker__nav--next {
+//    top: -0.33em;
+//  }
+//}
+.picker__nav--prev {
+  left: -1em;
+  padding-right: 1.25em;
+}
+//@media (min-width: 24.5em) {
+//  .picker__nav--prev {
+//    padding-right: 1.5em;
+//  }
+//}
+.picker__nav--next {
+  right: -1em;
+  padding-left: 1.25em;
+}
+//@media (min-width: 24.5em) {
+//  .picker__nav--next {
+//    padding-left: 1.5em;
+//  }
+//}
+
+.picker__nav--prev:hover,
+.picker__nav--next:hover {
+  cursor: pointer;
+  color: #000000;
+  background: #b1dcfb;
+}
+.picker__nav--disabled,
+.picker__nav--disabled:hover,
+.picker__nav--disabled:before,
+.picker__nav--disabled:before:hover {
+  cursor: default;
+  background: none;
+  border-right-color: #f5f5f5;
+  border-left-color: #f5f5f5;
+}
+/**
+ * The calendar table of dates
+ */
+.picker__table {
+  text-align: center;
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+  font-size: 1rem;
+  width: 100%;
+  margin-top: .75em;
+  margin-bottom: .5em;
+}
+
+
+
+.picker__table th, .picker__table td {
+  text-align: center;
+}
+
+
+
+
+
+
+.picker__table td {
+  margin: 0;
+  padding: 0;
+}
+/**
+ * The weekday labels
+ */
+.picker__weekday {
+  width: 14.285714286%;
+  font-size: .75em;
+  padding-bottom: .25em;
+  color: #999999;
+  font-weight: 500;
+  /* Increase the spacing a tad */
+}
+@media (min-height: 33.875em) {
+  .picker__weekday {
+    padding-bottom: .5em;
+  }
+}
+/**
+ * The days on the calendar
+ */
+
+.picker__day--today {
+  position: relative;
+  color: #595959;
+  letter-spacing: -.3;
+  padding: .75rem 0;
+  font-weight: 400;
+  border: 1px solid transparent;
+
+}
+
+//.picker__day--today:before {
+//  content: " ";
+//  position: absolute;
+//  top: 2px;
+//  right: 2px;
+//  width: 0;
+//  height: 0;
+//  border-top: 0.5em solid #0059bc;
+//  border-left: .5em solid transparent;
+//}
+.picker__day--disabled:before {
+  border-top-color: #aaaaaa;
+}
+
+
+
+.picker__day--infocus:hover{
+  cursor: pointer;
+  color: #000;
+  font-weight: 500;
+}
+
+.picker__day--outfocus {
+
+  padding: .75rem 0;
+  color: #fff;
+
+}
+.picker__day--outfocus:hover {
+  cursor: pointer;
+  color: #dddddd;
+//  background: #b1dcfb;
+  font-weight: 500;
+}
+
+
+.picker__day--highlighted {
+//  border-color: #0089ec;
+}
+.picker__day--highlighted:hover,
+.picker--focused .picker__day--highlighted {
+  cursor: pointer;
+  color: #000000;
+//  background: #b1dcfb;
+//  font-weight: 500;
+}
+.picker__day--selected,
+.picker__day--selected:hover,
+.picker--focused .picker__day--selected {
+
+
+//  Circle background
+   border-radius: 50%;
+  @include transform(scale(.75));
+
+
+  background: #0089ec;
+  color: #ffffff;
+}
+.picker__day--disabled,
+.picker__day--disabled:hover,
+.picker--focused .picker__day--disabled {
+  background: #f5f5f5;
+  border-color: #f5f5f5;
+  color: #dddddd;
+  cursor: default;
+}
+.picker__day--highlighted.picker__day--disabled,
+.picker__day--highlighted.picker__day--disabled:hover {
+  background: #bbbbbb;
+}
+/**
+ * The footer containing the "today", "clear", and "close" buttons.
+ */
+.picker__footer {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.picker__button--today,
+.picker__button--clear,
+.picker__button--close {
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  font-size: .8em;
+  padding: .66em 0;
+  font-weight: bold;
+  width: 33%;
+  display: inline-block;
+  vertical-align: bottom;
+}
+.picker__button--today:hover,
+.picker__button--clear:hover,
+.picker__button--close:hover {
+  cursor: pointer;
+  color: #000000;
+  background: #b1dcfb;
+  border-bottom-color: #b1dcfb;
+}
+.picker__button--today:focus,
+.picker__button--clear:focus,
+.picker__button--close:focus {
+  background: #b1dcfb;
+  border-color: #0089ec;
+  outline: none;
+}
+.picker__button--today:before,
+.picker__button--clear:before,
+.picker__button--close:before {
+  position: relative;
+  display: inline-block;
+  height: 0;
+}
+.picker__button--today:before,
+.picker__button--clear:before {
+  content: " ";
+  margin-right: .45em;
+}
+.picker__button--today:before {
+  top: -0.05em;
+  width: 0;
+  border-top: 0.66em solid #0059bc;
+  border-left: .66em solid transparent;
+}
+.picker__button--clear:before {
+  top: -0.25em;
+  width: .66em;
+  border-top: 3px solid #ee2200;
+}
+.picker__button--close:before {
+  content: "\D7";
+  top: -0.1em;
+  vertical-align: top;
+  font-size: 1.1em;
+  margin-right: .35em;
+  color: #777777;
+}
+.picker__button--today[disabled],
+.picker__button--today[disabled]:hover {
+  background: #f5f5f5;
+  border-color: #f5f5f5;
+  color: #dddddd;
+  cursor: default;
+}
+.picker__button--today[disabled]:before {
+  border-top-color: #aaaaaa;
+}
+
+/* ==========================================================================
+   CUSTOM MATERIALIZE STYLES
+   ========================================================================== */
+.picker__box {
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.picker__date-display {
+  text-align: center;
+  background-color: color("teal", "lighten-1");
+  color: #fff;
+  padding-bottom: 15px;
+  font-weight: 300;
+}
+
+.picker__weekday-display {
+  background-color: color("teal", "darken-1");
+  padding: 10px;
+  font-weight: 200;
+  letter-spacing: .5;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.picker__month-display {
+  text-transform: uppercase;
+  font-size: 2rem;
+}
+.picker__day-display {
+
+  font-size: 4.5rem;
+  font-weight: 400;
+}
+.picker__year-display {
+  font-size: 1.8rem;
+  color: color("teal", "lighten-3");
+}
+
+.picker__box {
+  padding: 0;
+}
+.picker__calendar-container {
+  padding: 0 1rem;
+
+  thead {
+    border: none;
+  }
+}
+
+// Calendar
+.picker__table {
+  margin-top: 0;
+  margin-bottom: .5em;
+}
+
+.picker__day--infocus {
+  color: #595959;
+  letter-spacing: -.3;
+  padding: .75rem 0;
+  font-weight: 400;
+  border: 1px solid transparent;
+}
+
+//Today style
+.picker--focused .picker__day--highlighted {
+  color: color("teal", "lighten-1");
+}
+
+// Table Header
+.picker__weekday {
+  font-size: .9rem;
+}
+
+
+.picker--focused .picker__day--selected {
+  // Circle background
+  border-radius: 50%;
+  @include transform(scale(.9));
+  background-color: color("teal", "base");
+  &.picker__day--outfocus {
+    background-color: color("teal", "lighten-4");
+  }
+  color: #ffffff;
+}
+
+.picker__footer {
+  text-align: right;
+  padding: 5px 10px;
+}
+
+// Materialize modified
+.picker__close, .picker__today {
+  font-size: 1.1rem;
+  padding: 0 1rem;
+  color: color("teal", "lighten-1");
+}
+
+//month nav buttons
+.picker__nav--prev:before,
+.picker__nav--next:before {
+  content: " ";
+  border-top: .5em solid transparent;
+  border-bottom: .5em solid transparent;
+  border-right: 0.75em solid #676767;
+  width: 0;
+  height: 0;
+  display: block;
+  margin: 0 auto;
+}
+.picker__nav--next:before {
+  border-right: 0;
+  border-left: 0.75em solid #676767;
+}

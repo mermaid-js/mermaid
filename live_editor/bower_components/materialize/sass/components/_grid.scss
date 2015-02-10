@@ -1,0 +1,119 @@
+.container {
+  padding: 0 $gutter-width;
+  margin: 0 auto;
+  max-width: 1280px;
+  width: 90%;
+}
+@media #{$medium-and-up} {
+  .container {
+    width: 85%;
+  }
+}
+@media #{$large-and-up} {
+  .container {
+    width: 70%;
+  }
+}
+.container .row {
+  margin-left: (-1 * $gutter-width / 2);
+  margin-right: (-1 * $gutter-width / 2);
+}
+
+.section {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+
+  &.no-pad {
+    padding: 0;
+  }
+  &.no-pad-bot {
+    padding-bottom: 0;
+  }
+  &.no-pad-top {
+    padding-top: 0;
+  }
+}
+
+
+.row {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+
+  // Clear floating children
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .col {
+    @include transition(all .3s);
+    float: left;
+    @include box-sizing(border-box);
+    padding: 0 $gutter-width / 2;
+
+    $i: 1;
+    @while $i <= $num-cols {
+      $perc: unquote((100 / ($num-cols / $i)) + "%");
+      &.s#{$i} { 
+        width: $perc; 
+        margin-left: 0;
+      }
+      $i: $i + 1;
+    } 
+    $i: 1;
+    @while $i <= $num-cols {
+      $perc: unquote((100 / ($num-cols / $i)) + "%");
+      &.offset-s#{$i} { 
+        margin-left: $perc; 
+      }
+      $i: $i + 1;
+    } 
+
+    @media #{$medium-and-up} {
+
+      $i: 1;
+      @while $i <= $num-cols {
+        $perc: unquote((100 / ($num-cols / $i)) + "%");
+        &.m#{$i} { 
+          width: $perc; 
+          margin-left: 0;
+        }
+        $i: $i + 1;
+      } 
+      $i: 1;
+      @while $i <= $num-cols {
+        $perc: unquote((100 / ($num-cols / $i)) + "%");
+        &.offset-m#{$i} { 
+          margin-left: $perc;
+        }
+        $i: $i + 1;
+      } 
+
+    }
+
+    @media #{$large-and-up} {
+
+      $i: 1;
+      @while $i <= $num-cols {
+        $perc: unquote((100 / ($num-cols / $i)) + "%");
+        &.l#{$i} { 
+          width: $perc; 
+          margin-left: 0;
+        }
+        $i: $i + 1;
+      } 
+      $i: 1;
+      @while $i <= $num-cols {
+        $perc: unquote((100 / ($num-cols / $i)) + "%");
+        &.offset-l#{$i} { 
+          margin-left: $perc;
+        }
+        $i: $i + 1;
+      } 
+
+    }
+
+  }
+}

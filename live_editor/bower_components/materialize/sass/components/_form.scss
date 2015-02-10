@@ -1,0 +1,641 @@
+/* Remove Focus Boxes */
+select:focus {
+  outline: 1px solid color("materialize-red", "lighten-4");
+}
+button:focus {
+  outline: none;
+  background-color: lighten($button-color, 10%);
+}
+
+label {
+  font-size: $label-font-size;
+  color: $input-border-color;
+}
+
+/***************************
+   Text Inputs + Textarea
+****************************/
+
+.input-field {
+  position: relative;
+  margin-top: 1rem;
+
+  label {
+    color: $input-border-color;
+    position: absolute;
+    top: 0.8rem;
+    left: $gutter-width / 2;
+    font-size: 1rem;
+    cursor: text;
+    @include transition(.2s ease-out);
+  }
+  label.active {
+    font-size: $label-font-size;
+    @include transform(translateY(-130%));
+  }
+
+  input[type=text]:focus + label,
+  input[type=password]:focus + label,
+  input[type=email]:focus + label,
+  input[type=url]:focus + label,
+  input[type=date]:focus + label,
+  input[type=tel]:focus + label,
+  input[type=number]:focus + label,
+  input[type=search]:focus + label,
+  textarea:focus.materialize-textarea + label {
+    color: $input-focus-color;
+  }
+
+  input[type=text].valid,
+  input[type=password].valid,
+  input[type=email].valid,
+  input[type=url].valid,
+  input[type=date].valid,
+  input[type=tel].valid,
+  input[type=number].valid,
+  input[type=search].valid,
+  textarea.materialize-textarea.valid {
+    border-bottom: 1px solid $input-success-color;
+    @include box-shadow(0 1px 0 0 $input-success-color);
+  }
+
+  input[type=text].invalid,
+  input[type=password].invalid,
+  input[type=email].invalid,
+  input[type=url].invalid,
+  input[type=date].invalid,
+  input[type=tel].invalid,
+  input[type=number].invalid,
+  input[type=search].invalid,
+  textarea.materialize-textarea.invalid {
+    border-bottom: 1px solid $input-error-color;
+    @include box-shadow(0 1px 0 0 $input-error-color);
+  }
+
+  // Prefix Icons
+  .prefix {
+    position: absolute;
+    width: 3rem;
+    font-size: 2rem;
+    @include transition(color .2s);
+
+    &.active { color: $input-focus-color; }
+  }
+  .prefix ~ input,
+  .prefix ~ textarea {
+    margin-left: 3rem;
+    width: 92%;
+    width: calc(100% - 3rem);
+  }
+  .prefix ~ textarea { padding-top: .8rem; }
+  .prefix ~ label { margin-left: 3rem; }
+
+  @media #{$medium-and-down} {
+    .prefix ~ input {
+      width: 86%;
+      width: calc(100% - 3rem);
+    }
+  }
+  @media #{$small-and-down} {
+    .prefix ~ input {
+      width: 80%;
+      width: calc(100% - 3rem);
+    }
+  }
+
+}
+
+// Default textarea
+textarea {
+   width: 100%;
+   height: 3rem;
+   background-color: transparent;
+}
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=url],
+input[type=date],
+input[type=tel],
+input[type=number],
+input[type=search],
+textarea.materialize-textarea {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid $input-border-color;
+  outline: none;
+  height: 3rem;
+  width: 100%;
+
+  font-size: 1rem;
+  margin: 0 0 15px 0;
+  padding: 0;
+  @include box-shadow(none);
+  @include box-sizing(content-box);
+  @include transition(.3s);
+}
+
+input[type=text]:focus,
+input[type=password]:focus,
+input[type=email]:focus,
+input[type=url]:focus,
+input[type=date]:focus,
+input[type=tel]:focus,
+input[type=number]:focus,
+input[type=search]:focus,
+textarea:focus.materialize-textarea {
+  border-bottom: 1px solid $input-focus-color;
+  @include box-shadow(0 1px 0 0 $input-focus-color);
+}
+
+textarea.materialize-textarea {
+  overflow-y: hidden; /* prevents scroll bar flash */
+  padding: 1.6rem 0; /* prevents text jump on Enter keypress */
+  resize: none;
+}
+
+// For textarea autoresize
+.hiddendiv {
+  display: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word; /* future version of deprecated 'word-wrap' */
+  padding-top: 1.2rem; /* prevents text jump on Enter keypress */
+}
+
+
+/***************
+  Radio Buttons
+***************/
+
+/* Remove default Radio Buttons */
+[type="radio"]:not(:checked),
+[type="radio"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+
+[type="radio"]:not(:checked) + label,
+[type="radio"]:checked + label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  display: inline-block;
+  height: 25px;
+  line-height: 25px;
+  font-size: 1rem;
+  @include transition(.28s ease);
+
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+}
+
+[type="radio"] + label:before,
+[type="radio"] + label:after {
+  content: '';
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  margin: 4px;
+  width: 16px;
+  height: 16px;
+  z-index: 0;
+  @include transition(.28s ease);
+}
+
+
+/* Unchecked styles */
+[type="radio"]:not(:checked) + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+}
+[type="radio"]:not(:checked) + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-empty-color;
+  z-index: -1;
+
+  @include transform(scale(0));
+}
+
+/* Checked styles */
+[type="radio"]:checked + label:before {
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+[type="radio"]:checked + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+  background-color: $radio-fill-color;
+  z-index: 0;
+  @include transform(scale(1.02));
+}
+
+/* Radio With gap */
+[type="radio"].with-gap:checked + label:before {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+}
+[type="radio"].with-gap:checked + label:after {
+  border-radius: 50%;
+  border: 2px solid $radio-fill-color;
+  background-color: $radio-fill-color;
+  z-index: 0;
+  @include transform(scale(.5));
+}
+
+/* Disabled style */
+[type="radio"]:disabled:not(:checked) + label:before,
+[type="radio"]:disabled:checked + label:before {
+  background-color: transparent;
+  border-color: $input-disabled-color;
+}
+[type="radio"]:disabled + label {
+  color: $input-disabled-color;
+}
+[type="radio"]:disabled:not(:checked) + label:hover:before {
+  border-color: $input-disabled-color;
+}
+
+
+/***************
+   Checkboxes
+***************/
+
+/* CUSTOM CSS CHECKBOXES */
+form p {
+  margin-bottom: 10px;
+  text-align: left;
+}
+  form p:last-child {
+    margin-bottom: 0px;
+  }
+
+/* Remove default checkbox */
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+[type="checkbox"]:not(:checked) + label,
+[type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  display: inline-block;
+  height: 25px;
+  line-height: 25px;
+  font-size: 1rem;
+
+  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
+  -moz-user-select: none; /* mozilla browsers */
+  -khtml-user-select: none; /* webkit (konqueror) browsers */
+  -ms-user-select: none; /* IE10+ */
+}
+
+/* checkbox aspect */
+[type="checkbox"] + label:before {
+  content: '';
+  position: absolute;
+  margin-top: 2px;
+  left: 0;
+  z-index: 0;
+  @include border-radius(1px);
+  @include transition(.2s);
+}
+/* Unchecked styles */
+[type="checkbox"]:not(:checked) + label:before {
+  top: 0px;
+  width: 18px; height: 18px;
+  border: 2px solid $radio-empty-color;
+}
+
+/* Checked styles */
+[type="checkbox"]:checked + label:before {
+  left: -3px;
+  top: -4px;
+  width: 12px; height: 22px;
+  border-top: 2px solid transparent;
+  border-left: 2px solid transparent;
+  border-right: 2px solid $radio-fill-color;
+  border-bottom: 2px solid $radio-fill-color;
+  @include transform(rotateZ(40deg));
+  -webkit-backface-visibility: hidden;
+
+  @include transform-origin(100% 100%);
+}
+
+/* disabled checkbox */
+[type="checkbox"]:disabled:not(:checked) + label:before {
+  top: 0;
+  left: 0;
+  box-shadow: none;
+  background-color: $input-disabled-color;
+  width: 18px; height: 18px;
+  border: 2px solid $input-disabled-color;
+  @include transform(rotateZ(0deg));
+}
+
+[type="checkbox"]:disabled:checked + label:before {
+  left: -3px;
+  top: -4px;
+  width: 12px; height: 22px;
+  border-top: 2px solid transparent;
+  border-left: 2px solid transparent;
+  border-right: 2px solid $input-disabled-color;
+  border-bottom: 2px solid $input-disabled-color;
+  @include transform(rotateZ(40deg));
+  -webkit-backface-visibility: hidden;
+
+  @include transform-origin(100% 100%);
+}
+[type="checkbox"]:disabled:checked + label {
+  color: $input-disabled-color;
+}
+[type="checkbox"]:disabled:not(:checked) + label:hover:before {
+  border-color: $input-disabled-color;
+}
+
+
+// Switch
+.switch,
+.switch * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+.switch label {
+    cursor: pointer;
+}
+.switch label input[type=checkbox]:first-child {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.switch label input[type=checkbox]:first-child:checked + .lever {
+    background-color: #7bc5be;
+}
+.switch label input[type=checkbox]:first-child:checked + .lever:after {
+    background-color: #009587;
+}
+.switch label .lever,
+.switch label input[type=checkbox][disabled]:first-child + .lever {
+    content: "";
+    display: inline-block;
+    width: 45px;
+    height: 15px;
+    background-color: #818181;
+    border-radius: 15px;
+    margin-right: 10px;
+    transition: background 0.3s ease;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+.switch label .lever:after {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color: #F1F1F1;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4);
+    left: -5px;
+    top: -2px;
+    transition: left 0.3s ease, background 0.3s ease, box-shadow 0.1s ease;
+}
+.switch label input[type=checkbox][disabled]:first-child + .lever:after,
+.switch label input[type=checkbox][disabled]:checked:first-child + .lever:after {
+    background-color: #BDBDBD;
+}
+input[type=checkbox]:first-child:checked ~ .lever:active:after {
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px rgba(0, 149, 135, 0.1);
+}
+input[type=checkbox]:first-child ~ .lever:active:after,
+input[type=checkbox][disabled]:first-child ~ .lever:active:after {
+       box-shadow: 0 1px 3px 1px rgba(0,0,0,0.4), 0 0 0 15px rgba(0, 0, 0, 0.1);
+}
+.switch label input[type=checkbox]:first-child:checked + .lever:after {
+    left: 30px;
+}
+
+
+/***************
+  Select Field
+***************/
+
+.select-wrapper span.select-dropdown {
+  position: relative;
+  cursor: pointer;
+  color: #444;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid $input-border-color;
+  outline: none;
+  height: 3rem;
+  line-height: 3rem;
+  width: 100%;
+  font-size: 1rem;
+  margin: 0 0 15px 0;
+  padding: 0;
+  display: block;
+  position: relative;
+
+  &:after {
+    position: absolute;
+    right: 0;
+    font-size: 23px;
+    @extend [class^="mdi-"];
+    @extend .mdi-navigation-arrow-drop-down:before;
+  }
+}
+
+select { display: none; }
+select.browser-default { display: block; }
+
+
+// Disabled styles
+select:disabled {
+  color: rgba(0,0,0,.3);
+}
+.select-wrapper span.select-dropdown.disabled {
+  color: rgba(0,0,0,.3);
+}
+.select-dropdown li.disabled {
+  color: rgba(0,0,0,.3);
+
+  &:hover { background-color: transparent; }
+}
+
+
+/***************
+      Range
+***************/
+
+.range-field {
+  position: relative;
+}
+
+input[type=range], input[type=range] + .thumb {
+  @extend .no-select;
+  cursor: pointer;
+}
+
+input[type=range] {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin: 15px 0px;
+  padding: 0;
+}
+input[type=range] + .thumb {
+  position: absolute;
+  border: none;
+  height: 0;
+  width: 0;
+  border-radius: 50%;
+  background-color: $radio-fill-color;
+  top: 10px;
+  margin-left: -6px;
+
+  @include transform-origin(50% 50%);
+  @include transform(rotate(-45deg));
+
+  .value {
+    display: block;
+    width: 30px;
+    text-align: center;
+    color: $radio-fill-color;
+    font-size: 0px;
+    @include transform(rotate(45deg));
+  }
+
+  &.active {
+    border-radius: 50% 50% 50% 0;
+
+    .value {
+      color: #fff;
+      margin-left: -1px;
+      margin-top: 8px;
+      font-size: 10px;
+    }
+  }
+}
+
+
+input[type=range]:focus {
+  outline: none;
+}
+
+
+
+// WebKit
+input[type=range]{
+  -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  height: 3px;
+  background: #c2c0c2;
+  border: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background-color: $radio-fill-color;
+  transform-origin: 50% 50%;
+  margin: -5px 0 0 0;
+  @include transition(.3s);
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #ccc;
+}
+
+// FireFox
+input[type=range]{
+  /* fix for FF unable to apply focus style bug  */
+  border: 1px solid white;
+
+  /*required for proper track sizing in FF*/
+}
+
+input[type=range]::-moz-range-track {
+  height: 3px;
+  background: #ddd;
+  border: none;
+}
+
+input[type=range]::-moz-range-thumb {
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: $radio-fill-color;
+  margin-top: -5px;
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring{
+  outline: 1px solid white;
+  outline-offset: -1px;
+}
+
+input[type=range]:focus::-moz-range-track {
+  background: #ccc;
+}
+
+// IE 10+
+input[type=range]::-ms-track {
+  height: 3px;
+
+  /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+  background: transparent;
+
+  /*leave room for the larger thumb to overflow with a transparent border */
+  border-color: transparent;
+  border-width: 6px 0;
+
+  /*remove default tick marks*/
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #777;
+}
+input[type=range]::-ms-fill-upper {
+  background: #ddd;
+}
+input[type=range]::-ms-thumb {
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: $radio-fill-color;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #888;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #ccc;
+}
+
+/***************************
+   Text Inputs + Textarea
+****************************/
+
+select {
+   background-color: #fffafa;
+   width: 100%;
+   padding: 5px;
+   border: 1px solid #f2f2f2;
+   border-radius: 2px;
+   height: 3rem;
+   }

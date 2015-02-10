@@ -1,0 +1,42 @@
+.materialboxed {
+  cursor: zoom-in;
+  position: relative;
+  @include transition(opacity .4s);
+
+  &:hover {
+    &:not(.active) {
+      @include opacity(0.8);
+    }
+    will-change: left, top, width, height;
+  }
+}
+
+.materialboxed.active {
+  cursor: zoom-out;
+}
+
+#materialbox-overlay {
+  position:fixed;
+  top:0;
+  left:0;
+  right: 0;
+  bottom: 0;
+  background-color: #292929;
+  z-index: 999;
+
+  will-change: opacity;
+}
+.materialbox-caption {
+  position: fixed;
+  display: none;
+  color: #fff;
+  line-height: 50px;
+  bottom: 0px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  padding: 0% 15%;
+  height: 50px;
+  z-index: 1000;
+  -webkit-font-smoothing: antialiased;
+}

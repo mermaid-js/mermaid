@@ -1,0 +1,121 @@
+
+
+.card-panel {
+  padding: $card-padding;
+  margin: $element-top-margin 0 $element-bottom-margin 0;
+  @include border-radius(2px);
+  @extend .z-depth-1;
+  background-color: $card-bg-color;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  margin: $element-top-margin 0 $element-bottom-margin 0;
+  background-color: $card-bg-color;
+  @include box-sizing(border-box);
+  @include border-radius(2px);
+  @extend .z-depth-1;
+
+
+  .card-title {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 300;
+    &.activator {
+      cursor: pointer;
+    }
+  }
+
+  a {
+    color: color("orange", "accent-2");
+    margin-right: $card-padding;
+    @include transition(color .3s ease);
+    text-transform: uppercase;
+
+    &:hover { color: lighten(color("orange", "accent-2"), 20%); }
+  }
+
+
+  &.small {
+    height: 300px;
+    position: relative;
+
+    .card-image {
+      overflow: hidden;
+      height: 150px;
+    }
+    .card-content {
+      overflow: hidden;
+      height: 150px;
+    }
+    .card-action {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+
+
+  .card-image {
+    position: relative;
+    overflow: hidden;
+
+    // Image background for content
+    img {
+      @include border-radius(2px 2px 0 0);
+      position: relative;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .card-title {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      padding: $card-padding;
+    }
+
+  }
+
+  .card-content {
+    padding: $card-padding;
+    @include border-radius(0 0 2px 2px);
+    @include box-sizing(border-box);
+
+    p {
+      margin: 0;
+      color: inherit;
+    }
+    .card-title {
+      line-height: 48px;
+    }
+  }
+
+  .card-action {
+    border-top: 1px solid rgba(160,160,160,.2);
+    padding: $card-padding;
+  }
+
+  .card-reveal {
+    padding: $card-padding;
+    position: absolute;
+    background-color: #FFF;
+    width: 100%;
+    overflow-y: auto;
+    top: 100%;
+    height: 100%;
+    z-index: 1;
+
+    .card-title {
+      cursor: pointer;
+      display: block;
+    }
+
+    @include box-sizing(border-box);
+  }
+}

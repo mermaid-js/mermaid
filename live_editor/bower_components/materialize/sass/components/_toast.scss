@@ -1,0 +1,64 @@
+#toast-container {
+  display:block;
+  position: fixed;
+  z-index: 1001;
+
+  @media #{$small-and-down} {
+    min-width: 100%;
+    bottom: 0%;
+  }
+  @media #{$medium-only} {
+    min-width: 30%;
+    left: 5%;
+    bottom: 7%;
+  }
+  @media #{$large-and-up} {
+    min-width: 8%;
+    top: 10%;
+    right: 7%;
+  }
+}
+
+.toast {
+  @extend .z-depth-1;
+  @include border-radius(2px);
+  @include box-sizing(border-box);
+  top: 0px;
+  width: auto;
+  clear: both;
+  margin-top: 10px;
+  position: relative;
+  max-width:100%;
+  height: $toast-height;
+  line-height: $toast-height;
+  background-color: $toast-color;
+  padding: 0px 25px;
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: $toast-text-color;
+
+  @include flexbox();
+  @include align(center);
+  @include justify-content(space-between);
+
+  .btn, .btn-flat {
+    margin: 0;
+    margin-left: 3rem;
+  }
+
+  &.rounded{
+    border-radius: 24px;
+  }
+
+  @media #{$small-and-down} {
+    width:100%;
+    @include border-radius(0px);
+  }
+  @media #{$medium-only} {
+    float: left;
+  }
+  @media #{$large-and-up} {
+    float: right;
+  }
+
+}

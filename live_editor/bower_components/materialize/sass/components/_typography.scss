@@ -1,0 +1,55 @@
+a {
+  text-decoration: none;
+}
+
+html{
+  line-height: 1.5;
+  
+  @media only screen and (min-width: 0) {
+    font-size: 14px;
+  }
+  
+  @media only screen and (min-width: $medium-screen) {
+    font-size: 14.5px;
+  }
+  
+  @media only screen and (min-width: $large-screen) {
+    font-size: 15px;
+  }
+  
+  font-family: "Roboto", sans-serif;
+  font-weight: normal;
+  color: $off-black;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 400;
+}
+
+// Header Styles
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a { font-weight: inherit; }
+h1 { font-size: $h1-fontsize; line-height: 1.1*$h1-fontsize; margin: ($h1-fontsize / 2) 0 ($h1-fontsize / 2.5) 0;}
+h2 { font-size: $h2-fontsize; line-height: 1.1*$h2-fontsize; margin: ($h2-fontsize / 2) 0 ($h2-fontsize / 2.5) 0;}
+h3 { font-size: $h3-fontsize; line-height: 1.1*$h3-fontsize; margin: ($h3-fontsize / 2) 0 ($h3-fontsize / 2.5) 0;}
+h4 { font-size: $h4-fontsize; line-height: 1.1*$h4-fontsize; margin: ($h4-fontsize / 2) 0 ($h4-fontsize / 2.5) 0;}
+h5 { font-size: $h5-fontsize; line-height: 1.1*$h5-fontsize; margin: ($h5-fontsize / 2) 0 ($h5-fontsize / 2.5) 0;}
+h6 { font-size: $h6-fontsize; line-height: 1.1*$h6-fontsize; margin: ($h6-fontsize / 2) 0 ($h6-fontsize / 2.5) 0;}
+
+// Text Styles
+em { font-style: italic; }
+strong { font-weight: 500; }
+small { font-size: 75%; }
+.light { font-weight: 300; }
+
+.flow-text{
+  font-weight: 300;
+  $i: 0;
+  @while $i <= $intervals {
+    @media only screen and (min-width : 360 + ($i * $interval-size)) {
+      font-size: 1.2rem * (1 + (.02 * $i));
+    }
+    @media only screen and (min-width : 0 + ($i * $interval-size)) {
+      line-height: .8rem * (1 + (.13 * $i));
+    }
+    $i: $i + 1;
+  }
+}

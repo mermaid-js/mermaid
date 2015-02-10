@@ -1,0 +1,124 @@
+3.1.1
+ - Update minified files (#231)
+
+3.1.0
+ - Fix String#replace in Firefox up through 29 (#228)
+
+3.0.2
+ - Fix `Function#bind` in IE 7 and 8 (#224, #225, #226)
+
+3.0.1
+ - Version bump to ensure npm has newest minified assets
+
+3.0.0
+ - es5-sham: fix `Object.getPrototypeOf` and `Object.getOwnPropertyDescriptor` for Opera Mini
+ - Better override noncompliant native ES5 methods: `Array#forEach`, `Array#map`, `Array#filter`, `Array#every`, `Array#some`, `Array#reduce`, `Date.parse`, `String#trim`
+ - Added spec-compliant shim for `parseInt`
+ - Ensure `Object.keys` handles more edge cases with `arguments` objects and boxed primitives
+ - Improve minification of builds
+
+2.3.0
+ - parseInt is now properly shimmed in ES3 browsers to default the radix
+ - update URLs to point to the new organization
+
+2.2.0
+ - Function.prototype.bind shim now reports correct length on a bound function
+ - fix node 0.6.x v8 bug in Array#forEach
+ - test improvements
+
+2.1.0
+ - Object.create fixes
+ - tweaks to the Object.defineProperties shim
+
+2.0.0
+ - Separate reliable shims from dubious shims (shams).
+
+1.2.10
+ - Group-effort Style Cleanup
+ - Took a stab at fixing Object.defineProperty on IE8 without
+   bad side-effects. (@hax)
+ - Object.isExtensible no longer fakes it. (@xavierm)
+ - Date.prototype.toISOString no longer deals with partial
+   ISO dates, per spec (@kitcambridge)
+ - More (mostly from @bryanforbes)
+
+1.2.9
+ - Corrections to toISOString by @kitcambridge
+ - Fixed three bugs in array methods revealed by Jasmine tests.
+ - Cleaned up Function.prototype.bind with more fixes and tests from
+   @bryanforbes.
+
+1.2.8
+ - Actually fixed problems with Function.prototype.bind, and regressions
+   from 1.2.7 (@bryanforbes, @jdalton #36)
+
+1.2.7 - REGRESSED
+ - Fixed problems with Function.prototype.bind when called as a constructor.
+   (@jdalton #36)
+
+1.2.6
+ - Revised Date.parse to match ES 5.1 (kitcambridge)
+
+1.2.5
+ - Fixed a bug for padding it Date..toISOString (tadfisher issue #33)
+
+1.2.4
+ - Fixed a descriptor bug in Object.defineProperty (raynos)
+
+1.2.3
+ - Cleaned up RequireJS and <script> boilerplate
+
+1.2.2
+ - Changed reduce to follow the letter of the spec with regard to having and
+   owning properties.
+ - Fixed a bug where RegExps pass as Functions in some engines in reduce.
+
+1.2.1
+ - Adding few fixes to make jshint happy.
+ - Fix for issue #12, function expressions can cause scoping issues in IE.
+ - NPM will minify on install or when `npm run-script install` is executed.
+ - Adding .gitignore to avoid publishing dev dependencies.
+
+1.2.0
+ - Making script loadable as AMD module.
+ - Adding `indexOf` to the list of safe shims.
+
+1.1.0
+ - Added support for accessor properties where possible (which is all browsers
+   except IE).
+ - Stop exposing bound function's (that are returned by
+   `Function.prototype.bind`) internal properties (`bound, boundTo, boundArgs`)
+   as in some cases (when using facade objects for example) capabilities of the
+   enclosed functions will be leaked.
+ - `Object.create` now explicitly sets `__proto__` property to guarantee
+   correct behavior of `Object.getPrototypeOf`'s on all objects created using
+   `Object.create`.
+ - Switched to `===` from `==` where possible as it's slightly faster on older
+   browsers that are target of this lib.
+ - Added names to all anonymous functions to have a better stack traces.
+
+1.0.0
+ - fixed Date.toISODate, using UTC accessors, as in
+   http://code.google.com/p/v8/source/browse/trunk/src/date.js?r=6120#986
+   (arian)
+
+0.0.4
+ - Revised Object.getPrototypeOf to work in more cases
+   in response to http://ejohn.org/blog/objectgetprototypeof/
+   [issue #2] (fschaefer)
+
+0.0.3
+ - Fixed typos in Object.keys (samsonjs)
+
+0.0.2
+   Per kangax's recommendations:
+ - faster Object.create(null)
+ - fixed a function-scope function declaration statement in Object.create
+
+0.0.1
+ - fixed Object.create(null), in so far as that's possible
+ - reworked Rhino Object.freeze(Function) bug detector and patcher
+
+0.0.0
+ - forked from narwhal-lib
+

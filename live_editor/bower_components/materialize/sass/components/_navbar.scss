@@ -1,0 +1,129 @@
+nav {
+  color: #fff;
+  @extend .z-depth-1;
+  background-color: $primary-color;
+  width: 100%;
+  height: $navbar-height-mobile;
+  line-height: $navbar-height-mobile;
+
+  .nav-wrapper {
+    position: relative;
+    height: 100%;
+  }
+
+  a { color: #fff; }
+
+  a.button-collapse {
+    float: left;
+    @extend .hide-on-large-only;
+    position: relative;
+    z-index: 1;
+    height: $navbar-height-mobile;
+
+    i {
+      font-size: 2.7rem;
+      height: $navbar-height-mobile;
+      line-height: $navbar-height-mobile;
+    }
+  }
+
+  .brand-logo {
+    position: absolute;
+    color: #fff;
+    display: inline-block;
+    font-size: 2.1rem;
+    padding: 0;
+
+    @media #{$medium-and-down} {
+      left: 0;
+      width: 100%;
+      text-align: center;
+      z-index: 0;
+    }
+
+    &.right {
+      right: 0.5rem;
+      padding: 0;
+    }
+  }
+
+  ul {
+    margin: 0;
+    float: right;
+
+    li {
+      float: left;
+      padding: 0px;
+      @include transition(background-color .3s);
+
+      &:hover, &.active {
+        background-color: rgba(0,0,0,.1);
+      }
+    }
+    a {
+      font-size: 1rem;
+      color: #fff;
+      display: block;
+      padding: 0px 15px;
+    }
+
+    &.left {
+      float: left;
+    }
+  }
+
+  // Navbar Search Form
+  .input-field {
+    input {
+      height: 100%;
+      font-size: 1.2rem;
+      border: none;
+      padding-left: 2rem;
+      @include box-sizing(border-box);
+
+      &:focus, &[type=text]:valid, &[type=password]:valid,
+      &[type=email]:valid, &[type=url]:valid, &[type=date]:valid {
+        border: none;
+        @include box-shadow(none);
+      }
+    }
+    label {
+      top: 0;
+      left: 0;
+
+      i {
+        color: rgba(255,255,255,.7);
+        @include transition(color .3s);
+      }
+      &.active i { color: #fff; }
+      &.active {
+        @include transform(translateY(0));
+      }
+    }
+
+  }
+
+}
+
+// Fixed Navbar
+.navbar-fixed {
+  position: relative;
+  height: $navbar-height-mobile;
+  z-index: 998;
+
+  nav {
+    position: fixed;
+  }
+}
+@media #{$medium-and-up} {
+  nav, nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i {
+    height: $navbar-height;
+    line-height: $navbar-height;
+  }
+  nav .nav-wrapper i {
+    font-size: 2rem;
+  }
+  .navbar-fixed {
+    height: $navbar-height;
+  }
+}

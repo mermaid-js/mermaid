@@ -1,0 +1,111 @@
+// shared styles
+.btn, .btn-flat {
+  display: inline-block;
+  height: $button-height;
+  margin-bottom: 15px;
+  padding: 0 2rem;
+  @include border-radius(2px);
+  line-height: $button-line-height;
+  text-transform: uppercase;
+  border: none;
+  outline: 0;
+  // Gets rid of tap active state
+  -webkit-tap-highlight-color: transparent;
+}
+// Disabled shared style
+.btn.disabled, .btn-floating.disabled, .btn-large.disabled, .btn:disabled, .btn-large:disabled, .btn-floating:disabled {
+  background-color: $button-bg-color-disabled;
+  box-shadow: none;
+  color: $button-color-disabled;
+
+  &:hover {
+    background-color: $button-bg-color-disabled;
+    color: $button-color-disabled;
+  }
+}
+// Shared icon styles
+.btn, .btn-floating, .btn-large, .btn-flat {
+  i {
+    font-size: $button-font-size-shared;
+    line-height: inherit;
+  }
+}
+
+// Raised Button
+.btn {
+  text-decoration:none;
+  color: $button-color-raised;
+  background-color: $button-color;
+  text-align: center;
+  letter-spacing: .5px;
+  @extend .z-depth-1;
+  @include transition(.2s ease-out);
+  cursor: pointer;
+
+  &:hover {
+    background-color: lighten($button-color, 5%);
+    @extend .z-depth-1-half;
+  }
+}
+
+// Floating button
+.btn-floating {
+  display: inline-block;
+  color: $button-color-raised;
+  position: relative;
+  z-index: 1;
+  width: $button-floating-size;
+  height: $button-floating-size;
+  line-height: $button-floating-size;
+  padding: 0;
+  background-color: $button-color;
+  @include border-radius(50%);
+  @extend .z-depth-1;
+  @include transition(.3s);
+  cursor: pointer;
+
+  i {
+    width: inherit;
+    display: inline-block;
+    text-align: center;
+    color: $button-color-raised;
+    font-size: 1.6rem;
+    line-height: $button-floating-size;
+  }
+
+  &:hover {
+    @extend .z-depth-1-half;
+  }
+  &.btn-large {
+    width: $button-floating-size * 1.5;
+    height: $button-floating-size * 1.5;
+    i{
+      line-height: $button-floating-size * 1.5;
+    }
+  }
+}
+
+// Flat button
+.btn-flat {
+  box-shadow: none;
+  background-color: transparent;
+  color: $button-color-flat;
+  cursor: pointer;
+
+  &.disabled {
+    color: lighten(#999, 10%);
+  }
+}
+
+// Large button
+.btn-large {
+  @extend .btn;
+  height: $button-height * 1.5;
+  line-height: 56px;
+
+  i {
+    font-size: 1.6rem;
+  }
+}
+
+

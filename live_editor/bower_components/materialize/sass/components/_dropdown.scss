@@ -1,0 +1,31 @@
+.dropdown-content {
+  display:none;
+  @extend .z-depth-1;
+  position: absolute;
+  background-color: #FFFFFF;
+  margin: 0px;
+  min-width: 100px;
+  z-index: 1000;
+  max-height: 70%;
+  opacity: 0;
+  overflow-y: hidden;
+
+  will-change: width, height;
+
+  li {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: $off-black;
+    line-height: 1.5rem;
+
+    &:hover {
+      background-color: rgba(0,0,0, .06);
+    }
+
+    & > a, & > span {
+      display: block;
+      padding: 1rem 1rem;
+      color: $dropdown-color;
+    }
+  }
+}

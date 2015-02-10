@@ -1,0 +1,47 @@
+{
+  "name": "json3",
+  "version": "3.3.2",
+  "main": "lib/json3.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bestiejs/json3.git"
+  },
+  "ignore": [
+    ".*",
+    "**/.*",
+    "build.js",
+    "index.html",
+    "index.js",
+    "component.json",
+    "package.json",
+    "benchmark",
+    "page",
+    "test",
+    "vendor",
+    "tests"
+  ],
+  "homepage": "https://github.com/bestiejs/json3",
+  "description": "A modern JSON implementation compatible with nearly all JavaScript platforms",
+  "keywords": [
+    "json",
+    "spec",
+    "ecma",
+    "es5",
+    "lexer",
+    "parser",
+    "stringify"
+  ],
+  "authors": [
+    "Kit Cambridge <github@kitcambridge.be>"
+  ],
+  "license": "MIT",
+  "_release": "3.3.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.3.2",
+    "commit": "dec5c2a5dc723ff867caa32a81ed93ab814f7426"
+  },
+  "_source": "git://github.com/bestiejs/json3.git",
+  "_target": "~3.3.1",
+  "_originalSource": "json3"
+}
