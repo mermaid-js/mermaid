@@ -9,7 +9,7 @@ Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
 Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
 
-This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
+This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. [Try it using our editor](http://knsv.github.io/mermaid/live_editor).
 
 The code below would render the following image
 <table>
