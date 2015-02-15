@@ -121,11 +121,11 @@
                       return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
-")"\s*                   return 'PE';
+")"                return 'PE';
 "["                   return 'SQS';
-"]"\s*                   return 'SQE';
+"]"                   return 'SQE';
 "{"                   return 'DIAMOND_START'
-"}"\s*                   return 'DIAMOND_STOP'
+"}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
 \n                    return 'NEWLINE';
 \s                    return 'SPACE';

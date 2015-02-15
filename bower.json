@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "authors": [
     "knsv <knut@sveido.com>"
   ],
@@ -22,6 +22,6 @@
     "jasmine": "~2.0.4",
     "dagre": "0.6.2",
     "d3": "3.3.8",
-    "dagre-d3": "0.3.2"
+    "dagre-d3": "0.3.3"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Markdownish syntax for generating flowcharts",
   "main": "src/main.js",
   "bin": {
@@ -18,7 +18,7 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "d3": "~3.4.13",
-    "dagre-d3": "~0.3.2",
+    "dagre-d3": "~0.3.3",
     "he": "^0.5.0",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
