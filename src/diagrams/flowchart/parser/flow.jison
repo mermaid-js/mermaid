@@ -32,25 +32,25 @@
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
 "v"                   return 'DOWN';
-\-\-[x]               return 'ARROW_CROSS';
-\-\-\>                return 'ARROW_POINT';
-\-\-[o]               return 'ARROW_CIRCLE';
-\-\-\-                return 'ARROW_OPEN';
-\-\.\-[x]             return 'DOTTED_ARROW_CROSS';
-\-\.\-\>              return 'DOTTED_ARROW_POINT';
-\-\.\-[o]             return 'DOTTED_ARROW_CIRCLE';
-\-\.\-                return 'DOTTED_ARROW_OPEN';
-.\-[x]                return 'DOTTED_ARROW_CROSS';
-\.\-\>                return 'DOTTED_ARROW_POINT';
-\.\-[o]               return 'DOTTED_ARROW_CIRCLE';
-\.\-                  return 'DOTTED_ARROW_OPEN';
-\=\=[x]               return 'THICK_ARROW_CROSS';
-\=\=\>                return 'THICK_ARROW_POINT';
-\=\=[o]               return 'THICK_ARROW_CIRCLE';
-\=\=[\=]              return 'THICK_ARROW_OPEN';
-\-\-                  return '--';
-\-\.                  return '-.';
-\=\=                  return '==';
+\s*\-\-[x]\s*            return 'ARROW_CROSS';
+\s*\-\-\>\s*             return 'ARROW_POINT';
+\s*\-\-[o]\s*            return 'ARROW_CIRCLE';
+\s*\-\-\-\s*             return 'ARROW_OPEN';
+\s*\-\.\-[x]\s*          return 'DOTTED_ARROW_CROSS';
+\s*\-\.\-\>\s*           return 'DOTTED_ARROW_POINT';
+\s*\-\.\-[o]\s*          return 'DOTTED_ARROW_CIRCLE';
+\s*\-\.\-\s*             return 'DOTTED_ARROW_OPEN';
+\s*.\-[x]\s*             return 'DOTTED_ARROW_CROSS';
+\s*\.\-\>\s*             return 'DOTTED_ARROW_POINT';
+\s*\.\-[o]\s*            return 'DOTTED_ARROW_CIRCLE';
+\s*\.\-\s*               return 'DOTTED_ARROW_OPEN';
+\s*\=\=[x]\s*            return 'THICK_ARROW_CROSS';
+\s*\=\=\>\s*             return 'THICK_ARROW_POINT';
+\s*\=\=[o]\s*            return 'THICK_ARROW_CIRCLE';
+\s*\=\=[\=]\s*           return 'THICK_ARROW_OPEN';
+\s*\-\-\s*               return '--';
+\s*\-\.\s*               return '-.';
+\s*\=\=\s*               return '==';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';
@@ -121,11 +121,11 @@
                       return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
-")"                   return 'PE';
+")"\s*                   return 'PE';
 "["                   return 'SQS';
-"]"                   return 'SQE';
+"]"\s*                   return 'SQE';
 "{"                   return 'DIAMOND_START'
-"}"                   return 'DIAMOND_STOP'
+"}"\s*                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
 \n                    return 'NEWLINE';
 \s                    return 'SPACE';
@@ -273,8 +273,7 @@ alphaNumStatement
         {$$=$1+'-'+$3;}
     ;
 
-
-link: linkStatement arrowText
+linkOld: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
     | linkStatement arrowText SPACE
     {$1.text = $2;$$ = $1;}
@@ -282,7 +281,7 @@ link: linkStatement arrowText
     {$$ = $1;}
     | linkStatement SPACE
     {$$ = $1;}
-    | '--' SPACE text SPACE linkStatement
+    | '--' text linkStatement
     {$5.text = $3;$$ = $5;}
     | '--' SPACE text SPACE linkStatement SPACE
     {$5.text = $3;$$ = $5;}
@@ -294,6 +293,38 @@ link: linkStatement arrowText
     {$5.text = $3;$$ = $5;}
     | '==' SPACE text SPACE linkStatement SPACE
     {$5.text = $3;$$ = $5;}
+    ;
+
+link: linkStatement arrowText
+    {$1.text = $2;$$ = $1;}
+    | linkStatement arrowText SPACE
+    {$1.text = $2;$$ = $1;}
+    | linkStatement
+    {$$ = $1;}
+    | '--' text ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"normal","text":$2};}
+    | '--' text ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"normal","text":$2};}
+    | '--' text ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"normal","text":$2};}
+    | '--' text ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"normal","text":$2};}
+    | '-.' text DOTTED_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"dotted","text":$2};}
+    | '-.' text DOTTED_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"dotted","text":$2};}
+    | '-.' text DOTTED_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"dotted","text":$2};}
+    | '-.' text DOTTED_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"dotted","text":$2};}
+    | '==' text THICK_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"thick","text":$2};}
+    | '==' text THICK_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"thick","text":$2};}
+    | '==' text THICK_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"thick","text":$2};}
+    | '==' text THICK_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"thick","text":$2};}
     ;
 
 linkStatement: ARROW_POINT

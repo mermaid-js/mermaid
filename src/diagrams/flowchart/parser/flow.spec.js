@@ -393,6 +393,29 @@ describe('when parsing ',function(){
 
         });
 
+        it('should handle space and send',function(){
+            var res = flow.parser.parse('graph TD;A--text including URL space and send-->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow');
+            expect(edges[0].text).toBe('text including URL space and send');
+
+        });
+        it('should handle space and send',function(){
+            var res = flow.parser.parse('graph TD;A-- text including URL space and send -->B;');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow');
+            expect(edges[0].text).toBe('text including URL space and send');
+
+        });
+
         it('should handle space and dir (TD)',function(){
             var res = flow.parser.parse('graph TD;A--x|text including R TD space|B;');
 
