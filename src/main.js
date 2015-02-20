@@ -11,6 +11,9 @@ var dotParser = require('./diagrams/flowchart/parser/dot');
 var sequenceParser = require('./diagrams/sequenceDiagram/parser/sequenceDiagram');
 var sequenceDb = require('./diagrams/sequenceDiagram/sequenceDb');
 var infoDb = require('./diagrams/example/exampleDb');
+var gantt       = require('./diagrams/gantt/ganttRenderer');
+var ganttParser = require('./diagrams/gantt/parser/gantt');
+var ganttDb = require('./diagrams/gantt/ganttDb');
 
 /**
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
@@ -38,6 +41,10 @@ var parse = function(text){
             parser = infoParser;
             parser.parser.yy = infoDb;
             break;
+        case 'gantt':
+            parser = ganttParser;
+            parser.parser.yy = ganttDb;
+            break;    
     }
 
     try{
@@ -115,7 +122,10 @@ var init = function (sequenceConfig) {
                 break;
             case 'sequenceDiagram':
                 seq.draw(txt,id);
-                // TODO - Get styles for sequence diagram
+                utils.cloneCssStyles(element.firstChild, []);
+                break;
+            case 'gantt':
+                gantt.draw(txt,id);
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
             case 'info':

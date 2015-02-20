@@ -2,38 +2,51 @@ var gantt = require('./parser/gantt').parser;
 gantt.yy = require('./ganttDb');
 var d3 = require('./d3');
 
+var conf = {
+    titleTopMargin:25,
+    barHeight:20,
+    barGap:4,
+    topPadding:75,
+    sidePadding:75
+};
+module.exports.setConf = function(cnf){
+    var keys = Object.keys(cnf);
 
-
+    keys.forEach(function(key){
+        conf[key] = cnf[key];
+    });
+};
+var w;
 module.exports.draw = function (text, id) {
     gantt.yy.clear();
     gantt.parse(text);
-    console.log(gantt.yy.getTasks());
-    var w = 1200;
-    var h = 400;
+    var elem = document.getElementById(id);
+    w = elem.offsetWidth;
+    
+    if(typeof w === 'undefined'){
+        w = 800;
+    }
 
-    var svg = d3.select('#'+id)
-        .attr("width", w)
-        .attr("height", h);
-    /*var svg = d3.selectAll(".svg")
-        //.selectAll("svg")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .attr("class", "svg");*/
+    var taskArray = gantt.yy.getTasks();
+    
+    // Set height based on number of tasks
+    var h = taskArray.length*(conf.barHeight+conf.barGap)+2*conf.topPadding;
+
+    elem.style.height = h+'px';
+    var svg = d3.select('#'+id);
 
 // http://codepen.io/anon/pen/azLvWR
 
-    var taskArray = gantt.yy.getTasks();
 
     var dateFormat = d3.time.format("%Y-%m-%d");
 
     // Set timescale
     var timeScale = d3.time.scale()
         .domain([d3.min(taskArray, function (d) {
-            return dateFormat.parse(d.startTime);
+            return d.startTime;
         }),
             d3.max(taskArray, function (d) {
-                return dateFormat.parse(d.endTime);
+                return d.endTime;
             })])
         .range([0, w - 150]);
 
@@ -53,7 +66,7 @@ module.exports.draw = function (text, id) {
     var title = svg.append("text")
         .text(gantt.yy.getTitle())
         .attr("x", w / 2)
-        .attr("y", 25)
+        .attr("y", conf.titleTopMargin)
         .attr("text-anchor", "middle")
         .attr("font-size", 18)
         .attr("fill", "#009FFC");
@@ -61,10 +74,10 @@ module.exports.draw = function (text, id) {
 
     function makeGant(tasks, pageWidth, pageHeight) {
 
-        var barHeight = 20;
-        var gap = barHeight + 4;
-        var topPadding = 75;
-        var sidePadding = 75;
+        var barHeight = conf.barHeight;
+        var gap = barHeight + conf.barGap;
+        var topPadding = conf.topPadding;
+        var sidePadding = conf.sidePadding;
 
         var colorScale = d3.scale.linear()
             .domain([0, categories.length])
@@ -96,7 +109,7 @@ module.exports.draw = function (text, id) {
             .attr("stroke", "none")
             .attr("fill", function (d) {
                 for (var i = 0; i < categories.length; i++) {
-                    if (d.type == categories[i]) {
+                    if (d.type === categories[i]) {
                         return d3.rgb(theColorScale(i));
                     }
                 }
@@ -114,19 +127,19 @@ module.exports.draw = function (text, id) {
             .attr("rx", 3)
             .attr("ry", 3)
             .attr("x", function (d) {
-                return timeScale(dateFormat.parse(d.startTime)) + theSidePad;
+                return timeScale(d.startTime) + theSidePad;
             })
             .attr("y", function (d, i) {
                 return i * theGap + theTopPad;
             })
             .attr("width", function (d) {
-                return (timeScale(dateFormat.parse(d.endTime)) - timeScale(dateFormat.parse(d.startTime)));
+                return (timeScale(d.endTime) - timeScale(d.startTime));
             })
             .attr("height", theBarHeight)
             .attr("stroke", "none")
             .attr("fill", function (d) {
                 for (var i = 0; i < categories.length; i++) {
-                    if (d.type == categories[i]) {
+                    if (d.type === categories[i]) {
                         return d3.rgb(theColorScale(i));
                     }
                 }
@@ -137,80 +150,44 @@ module.exports.draw = function (text, id) {
             .text(function (d) {
                 return d.task;
             })
+            .attr("font-size", 11)
             .attr("x", function (d) {
-                return (timeScale(dateFormat.parse(d.endTime)) - timeScale(dateFormat.parse(d.startTime))) / 2 + timeScale(dateFormat.parse(d.startTime)) + theSidePad;
+                var startX = timeScale(d.startTime),
+                    endX = timeScale(d.endTime),
+                    textWidth = this.getBBox().width;
+                
+                // Check id text width > width of rectangle
+                if(textWidth>(endX-startX)){
+                    if (endX + textWidth > w){
+                        return startX + theSidePad;
+                    }else {
+                        return endX + theSidePad;
+                    }
+                }else{
+                    return (endX - startX) / 2 + startX + theSidePad;
+                }
             })
             .attr("y", function (d, i) {
                 return i * theGap + 14 + theTopPad;
             })
-            .attr("font-size", 11)
-            .attr("text-anchor", "middle")
+            //.attr("text-anchor", "middle")
             .attr("text-height", theBarHeight)
-            .attr("fill", "#fff");
-
-
-        rectText.on('mouseover', function (e) {
-            // console.log(this.x.animVal.getItem(this));
-            var tag = "";
-
-            if (typeof d3.select(this).data()[0].details !== 'undefined') {
-                tag = "Task: " + d3.select(this).data()[0].task + "<br/>" +
-                "Type: " + d3.select(this).data()[0].type + "<br/>" +
-                "Starts: " + d3.select(this).data()[0].startTime + "<br/>" +
-                "Ends: " + d3.select(this).data()[0].endTime + "<br/>" +
-                "Details: " + d3.select(this).data()[0].details;
-            } else {
-                tag = "Task: " + d3.select(this).data()[0].task + "<br/>" +
-                "Type: " + d3.select(this).data()[0].type + "<br/>" +
-                "Starts: " + d3.select(this).data()[0].startTime + "<br/>" +
-                "Ends: " + d3.select(this).data()[0].endTime;
-            }
-            var output = document.getElementById("tag");
-
-            var x = this.x.animVal.getItem(this) + "px";
-            var y = this.y.animVal.getItem(this) + 25 + "px";
-
-            output.innerHTML = tag;
-            output.style.top = y;
-            output.style.left = x;
-            output.style.display = "block";
-        }).on('mouseout', function () {
-            var output = document.getElementById("tag");
-            output.style.display = "none";
-        });
-
-
-        innerRects.on('mouseover', function (e) {
-            //console.log(this);
-            var tag = "";
-
-            if (typeof d3.select(this).data()[0].details !== 'undefined') {
-                tag = "Task: " + d3.select(this).data()[0].task + "<br/>" +
-                "Type: " + d3.select(this).data()[0].type + "<br/>" +
-                "Starts: " + d3.select(this).data()[0].startTime + "<br/>" +
-                "Ends: " + d3.select(this).data()[0].endTime + "<br/>" +
-                "Details: " + d3.select(this).data()[0].details;
-            } else {
-                tag = "Task: " + d3.select(this).data()[0].task + "<br/>" +
-                "Type: " + d3.select(this).data()[0].type + "<br/>" +
-                "Starts: " + d3.select(this).data()[0].startTime + "<br/>" +
-                "Ends: " + d3.select(this).data()[0].endTime;
-            }
-            var output = document.getElementById("tag");
-
-            var x = (this.x.animVal.value + this.width.animVal.value / 2) + "px";
-            var y = this.y.animVal.value + 25 + "px";
-
-            output.innerHTML = tag;
-            output.style.top = y;
-            output.style.left = x;
-            output.style.display = "block";
-        }).on('mouseout', function () {
-            var output = document.getElementById("tag");
-            output.style.display = "none";
-
-        });
-
+            .attr("class",function (d) {
+                var startX = timeScale(d.startTime),
+                    endX = timeScale(d.endTime),
+                    textWidth = this.getBBox().width;
+                
+                // Check id text width > width of rectangle
+                if(textWidth>(endX-startX)) {
+                    if (endX + textWidth > w){
+                        return 'taskTextOutsideLeft';
+                    }else {
+                        return 'taskTextOutsideRight';
+                    }
+                }else{
+                    return 'taskText';
+                }
+            });
 
     }
 
@@ -220,7 +197,7 @@ module.exports.draw = function (text, id) {
         var xAxis = d3.svg.axis()
             .scale(timeScale)
             .orient('bottom')
-            .ticks(d3.time.weeks, 5)
+            //.ticks(d3.time.days, 5)
             .tickSize(-h + theTopPad + 20, 0, 0)
             .tickFormat(d3.time.format('%d %b'));
 
@@ -269,7 +246,7 @@ module.exports.draw = function (text, id) {
             .attr("text-height", 14)
             .attr("fill", function (d) {
                 for (var i = 0; i < categories.length; i++) {
-                    if (d[0] == categories[i]) {
+                    if (d[0] === categories[i]) {
                         //  console.log("true!");
                         return d3.rgb(theColorScale(i)).darker();
                     }
@@ -294,7 +271,9 @@ module.exports.draw = function (text, id) {
     function getCounts(arr) {
         var i = arr.length, // var to loop over
             obj = {}; // obj to store results
-        while (i) obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
+        while (i){
+            obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
+        } 
         return obj;
     }
 

@@ -1,6 +1,7 @@
 /**
  * Created by knut on 15-01-14.
  */
+var moment = require('moment');
 
 var dateFormat = '';
 var title = '';
@@ -29,7 +30,7 @@ exports.setTitle = function(txt){
     title = txt;
 };
 
-exports.gettitle = function(){
+exports.getTitle = function(){
     return title;
 };
 
@@ -48,12 +49,22 @@ exports.findTaskById = function(id) {
 };
 
 exports.getTasks=function(){
+    var i;
+    for(i=10000;i<tasks.length;i++){
+        tasks[i].startTime = moment(tasks[i].startTime).format('YYYY-MM-DD');
+        tasks[i].endTime = moment(tasks[i].endTime).format('YYYY-MM-DD');
+    }
+    
     return tasks;
 };
 
 
 var getStartDate = function(prevTime, dateFormat, str){
-    var moment = require('moment');
+    //console.log('Deciding start date:'+str);
+    //console.log('with dateformat:'+dateFormat);
+
+    str = str.trim();
+
     // Test for after
     var re = /^after\s+([\d\w\-]+)/;
     var afterStatement = re.exec(str.trim());
@@ -70,6 +81,9 @@ var getStartDate = function(prevTime, dateFormat, str){
     // Check for actual date set
     if(moment(str,dateFormat,true).isValid()){
         return moment(str,dateFormat).toDate();
+    }else{
+        console.log('Invalid date:'+str);
+        console.log('With date format:'+dateFormat);
     }
     
     // Default date - now
@@ -77,8 +91,8 @@ var getStartDate = function(prevTime, dateFormat, str){
 };
 
 var getEndDate = function(prevTime, dateFormat, str){
-    var moment = require('moment');
-
+    str = str.trim();
+    
     // Check for actual date 
     if(moment(str,dateFormat,true).isValid()){
         return moment(str,dateFormat).toDate();
@@ -127,7 +141,16 @@ var parseId = function(idStr){
 // length
 
 var compileData = function(prevTask, dataStr){
-    var data = dataStr.split(',');
+    var ds;
+    
+    if(dataStr.substr(0,1) === ':'){
+        ds = dataStr.substr(1,dataStr.length);
+    }
+    else{
+        ds=dataStr;
+    }
+    
+    var data = ds.split(',');
     var task = {};
     var df = exports.getDateFormat();
     
@@ -150,6 +173,7 @@ var compileData = function(prevTask, dataStr){
         default:
             
     }
+
     return task;
 };
 
@@ -159,7 +183,9 @@ exports.addTask = function(descr,data){
 
     var newTask = {
         section:currentSection,
-        description:descr
+        type:currentSection,
+        description:descr,
+        task:descr
     };
     var taskInfo = compileData(lastTask, data);
     newTask.startTime = taskInfo.startTime;

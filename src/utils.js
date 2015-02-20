@@ -27,6 +27,11 @@ module.exports.detectType = function(text,a){
         return "info";
     }
 
+    if(text.match(/^\s*gantt/)) {
+        //console.log('Detected info syntax');
+        return "gantt";
+    }
+
     return "graph";
 };
 

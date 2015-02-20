@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <script src="../dist/mermaid.full.js"></script>
+    <link rel="stylesheet" href="seq.css"/>
+    <script>
+        var mermaid_config = {
+            startOnLoad:true
+        }
+        //mermaid.sequenceConfig = '{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":45,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35, "mirrorActors":false}';
+        //mermaid.sequenceConfig = JSON.parse('{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":165,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35}');
+
+    </script>
+    <script>
+        function apa(){
+            console.log('CLICKED');
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #fff;
+            font-family: 'Open-Sans',sans-serif;
+
+        }
+
+        #container{
+            margin: 0 auto;
+            position: relative;
+            width:800px;
+            overflow: visible;
+        }
+
+
+        .svg {
+            width:800px;
+            height:400px;
+            overflow: visible;
+            position:absolute;
+        }
+
+        .grid .tick {
+            stroke: lightgrey;
+            opacity: 0.3;
+            shape-rendering: crispEdges;
+        }
+        .grid path {
+            stroke-width: 0;
+        }
+
+
+        #tag {
+            color: white;
+            background: #FA283D;
+            width: 150px;
+            position: absolute;
+            display: none;
+            padding:3px 6px;
+            margin-left: -80px;
+            font-size: 11px;
+        }
+
+
+
+        #tag:before {
+            border: solid transparent;
+            content: ' ';
+            height: 0;
+            left: 50%;
+            margin-left: -5px;
+            position: absolute;
+            width: 0;
+            border-width: 10px;
+            border-bottom-color: #FA283D;
+            top: -20px;
+        }
+        .taskText {
+            fill:white;
+            text-anchor:middle;
+        }
+        .taskTextOutsideRight {
+            fill:black;
+            text-anchor:start;
+        }
+        .taskTextOutsideLeft {
+            fill:black;
+            text-anchor:end;
+        }
+    </style>
+</head>
+    <body>
+    <h1>No line breaks</h1>
+    <div class="mermaid">
+        gantt
+        dateFormat  YYYY-MM-DD
+        title Adding GANTT diagram functionality to mermaid
+
+        section Design
+        Design jison grammar            :des1, 2014-01-01, 2014-01-04
+        Create example text             :des2, 2014-01-01, 3d
+        Bounce gantt example with users :des3, after des2, 5d
+
+        section Implementation
+        update build script             :2014-01-02,24h
+        Implement parser and jison      :after des1, 2d
+        Create tests for parser         :3d
+        Create renderer                 :5d
+        Create tests for renderer       :2d
+        Add to mermaid core bore tore gore bore lore             :1d
+
+        section Documentation
+        Describe gantt syntax               :a1, 2014-01-10, 3d
+        Add gantt diagram to demo page      :after a1  , 20h
+        Add another diagram to demo page    :after a1  , 48h
+    </div>
+    <div class="mermaid">
+        gantt
+        dateFormat  YYYY-MM-DD
+        title A small test
+
+        section Documentation
+        Describe gantt syntax               :a1, 2014-01-01, 30d
+        Add gantt diagram to demo page      :after a1  , 20d
+        Add another diagram to demo page    :after a1  , 48d
+    </div>
+    </body>
+</html>
