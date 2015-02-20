@@ -27970,7 +27970,7 @@ exports.getTasks=function(){
         tasks[i].startTime = moment(tasks[i].startTime).format('YYYY-MM-DD');
         tasks[i].endTime = moment(tasks[i].endTime).format('YYYY-MM-DD');
     }
-    
+
     return tasks;
 };
 
@@ -28143,7 +28143,7 @@ module.exports.draw = function (text, id) {
     if(typeof w === 'undefined'){
         w = 800;
     }
-
+    
     var taskArray = gantt.yy.getTasks();
     
     // Set height based on number of tasks
@@ -28511,7 +28511,7 @@ case 10:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
 case 11:
- var ds = $$[$0].substr(1,$$[$0].length);yy.addTask($$[$0-1], ds);
+yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
 }
 },

@@ -26,7 +26,7 @@ module.exports.draw = function (text, id) {
     if(typeof w === 'undefined'){
         w = 800;
     }
-
+    
     var taskArray = gantt.yy.getTasks();
     
     // Set height based on number of tasks

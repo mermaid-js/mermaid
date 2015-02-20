@@ -54,7 +54,7 @@ exports.getTasks=function(){
         tasks[i].startTime = moment(tasks[i].startTime).format('YYYY-MM-DD');
         tasks[i].endTime = moment(tasks[i].endTime).format('YYYY-MM-DD');
     }
-    
+
     return tasks;
 };
 

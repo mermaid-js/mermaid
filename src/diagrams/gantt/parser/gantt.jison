@@ -57,7 +57,7 @@ statement
 	: 'dateFormat' dateFormatInst {yy.setDateFormat($2);$$=$2;}
 	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
 	| section {yy.addSection($1.substr(8));$$=$1.substr(8);}
-	| taskTxt taskData
+	| taskTxt taskData {yy.addTask($1,$2);$$='task';}
 	;
 
 %%
