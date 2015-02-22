@@ -151,8 +151,35 @@ var compileData = function(prevTask, dataStr){
     }
     
     var data = ds.split(',');
+    
+    
     var task = {};
     var df = exports.getDateFormat();
+    
+    var matchFound = true;
+    while(matchFound){
+        matchFound = false;
+        if(data[0].match(/^\s*active\s*$/)){
+            task.active = true;
+            data.shift(1);
+            matchFound = true;
+            
+        }
+        if(data[0].match(/^\s*done\s*$/)){
+            task.done = true;
+            data.shift(1);
+            matchFound = true;
+        }
+        if(data[0].match(/^\s*crit\s*$/)){
+            task.crit = true;
+            data.shift(1);
+            matchFound = true;
+        }
+    }
+    
+    for(i=0;i<data.length;i++){
+        data[i] = data[i].trim();
+    }
     
     switch(data.length){
         case 1:
@@ -191,6 +218,9 @@ exports.addTask = function(descr,data){
     newTask.startTime = taskInfo.startTime;
     newTask.endTime   = taskInfo.endTime;
     newTask.id        = taskInfo.id;
+    newTask.active    = taskInfo.active;
+    newTask.done      = taskInfo.done;
+    newTask.crit      = taskInfo.crit;
     lastTask = newTask;
     tasks.push(newTask);
 };

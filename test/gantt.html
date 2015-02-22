@@ -9,9 +9,17 @@
         var mermaid_config = {
             startOnLoad:true
         }
-        //mermaid.sequenceConfig = '{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":45,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35, "mirrorActors":false}';
-        //mermaid.sequenceConfig = JSON.parse('{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":165,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35}');
-
+        mermaid.sequenceConfig = '{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":45,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35, "mirrorActors":false}';
+        mermaid.ganttConfig = {
+            titleTopMargin:25,
+            barHeight:20,
+            barGap:4,
+            topPadding:50,
+            sidePadding:75,
+            gridLineStartPadding:35,
+            fontSize:11,
+            numberSectionStyles:3
+        };
     </script>
     <script>
         function apa(){
@@ -29,21 +37,6 @@
 
         }
 
-        #container{
-            margin: 0 auto;
-            position: relative;
-            width:800px;
-            overflow: visible;
-        }
-
-
-        .svg {
-            width:800px;
-            height:400px;
-            overflow: visible;
-            position:absolute;
-        }
-
         .grid .tick {
             stroke: lightgrey;
             opacity: 0.3;
@@ -53,80 +46,176 @@
             stroke-width: 0;
         }
 
-
-        #tag {
-            color: white;
-            background: #FA283D;
-            width: 150px;
-            position: absolute;
-            display: none;
-            padding:3px 6px;
-            margin-left: -80px;
-            font-size: 11px;
-        }
-
-
-
-        #tag:before {
-            border: solid transparent;
-            content: ' ';
-            height: 0;
-            left: 50%;
-            margin-left: -5px;
-            position: absolute;
-            width: 0;
-            border-width: 10px;
-            border-bottom-color: #FA283D;
-            top: -20px;
-        }
         .taskText {
-            fill:white;
             text-anchor:middle;
+            font-size:11px;
+        }
+        .taskText0, .taskText3 {
+            fill:black;
+        }
+        .taskText1, .taskText2 {
+            fill:white;
         }
         .taskTextOutsideRight {
             fill:black;
             text-anchor:start;
+            font-size:11px;
         }
         .taskTextOutsideLeft {
             fill:black;
             text-anchor:end;
+            font-size:11px;
+        }
+        .taskTextOutside0,.taskTextOutside2, {
+            fill:black;
+        }
+        .taskTextOutside1, .taskTextOutside3 {
+            fill:darkblue;
+        }
+        .titleText {
+        text-anchor:middle;
+        font-size:18px;
+        fill:#633;
+        }
+        .section {
+            stroke:none;
+            opacity:0.2;
+        }
+        .section0 {
+            fill:#6666FF;
+        }
+        .section1 {
+            fill:white;
+            opacity:0.2;
+        }
+        .section2 {
+            fill:orange;
+            opacity:0.2;
+        }
+
+        .task {
+            /*stroke:none;*/
+        }
+        .task0 {
+            fill: #ffffdd;
+        }
+        .task1 {
+            fill: #8a90dd;
+        }
+        .task2 {
+            fill: #8a90dd;
+        }
+
+        .sectionTitle {
+            text-anchor:start;
+            font-size:11px;
+            text-height:14px;
+        }
+        .sectionTitle0 { fill:#454545;}
+        .sectionTitle1 { fill:#454545;}
+        .sectionTitle2 { fill:#454545;}
+        .sectionTitle3 { fill:#b23473;}
+        .done0, .done1, .done2, .done3 {
+            stroke:grey;
+            fill: lightgrey;
+            stroke-width:2;
+        }
+        .crit0, .crit1, .crit2, .crit3 {
+            stroke:#ff8888;
+            fill: red;
+            stroke-width:2;
+        }
+        .activeCrit0, .activeCrit1, .activeCrit2, .activeCrit3 {
+            stroke:#ff8888;
+            fill: #ffffc0;
+            stroke-width:2;
+        }
+        .doneCrit0, .doneCrit1, .doneCrit2, .doneCrit3 {
+            stroke:#ff8888;
+            fill: lightgrey;
+            stroke-width:2;
+            cursor: pointer;
+            shape-rendering: crispEdges;
+        }
+        .active0 {
+            stroke:black;
+            fill: #ffffdd;
+            stroke-width:2;
+        }
+        .active1 {
+            stroke:black;
+            fill: #8a90dd;
+            stroke-width:2;
+        }
+        .active2 {
+            stroke:black;
+            fill: #8a90dd;
+            stroke-width:2;
         }
     </style>
 </head>
     <body>
-    <h1>No line breaks</h1>
+    <filter id="blur-effect-1">
+        <feGaussianBlur stdDeviation="2" />
+    </filter>
+    <h1>Gantt tests</h1>
     <div class="mermaid">
         gantt
         dateFormat  YYYY-MM-DD
         title Adding GANTT diagram functionality to mermaid
 
         section Design
-        Design jison grammar            :des1, 2014-01-01, 2014-01-04
-        Create example text             :des2, 2014-01-01, 3d
-        Bounce gantt example with users :des3, after des2, 5d
+        Design jison grammar            :done, crit, des1, 2014-01-01, 2014-01-04
+        Create example text             :done, des2, 2014-01-01, 3d
+        Bounce gantt example with users :active, crit, des3, after des2, 5d
 
         section Implementation
         update build script             :2014-01-02,24h
         Implement parser and jison      :after des1, 2d
-        Create tests for parser         :3d
-        Create renderer                 :5d
+        Create tests for parser         :active, 3d
+        Create renderer                 :crit, 5d
         Create tests for renderer       :2d
         Add to mermaid core bore tore gore bore lore             :1d
 
         section Documentation
-        Describe gantt syntax               :a1, 2014-01-10, 3d
+        Describe gantt syntax               :active,a1, 2014-01-10, 3d
         Add gantt diagram to demo page      :after a1  , 20h
         Add another diagram to demo page    :after a1  , 48h
     </div>
+    Text before. Bla b la bla. Look at the diagram below:
     <div class="mermaid">
         gantt
+        title A Gantt Diagram
         dateFormat  YYYY-MM-DD
-        title A small test
-
-        section Documentation
-        Describe gantt syntax               :a1, 2014-01-01, 30d
-        Add gantt diagram to demo page      :after a1  , 20d
-        Add another diagram to demo page    :after a1  , 48d
+        section Section
+        A task           :a1, 2014-01-01, 3d
+        Another task     :after a1  , 20d
+        section Another
+        Task in sec      :2014-01-12  , 12d
+        section Another2
+        anther task      : 24d
+        section Another3
+        anther task      : 24d
+        section Another4
+        anther task      : 24d
+        section Another5
+        anther task      : 24d
+        section Another6
+        anther task      : 24d
+        section Another7
+        anther task      : 24d
+        section Another8
+        anther task      : 24d
+        section Another9
+        anther task      : 24d
+    </div>
+    As you can see, bla bla bla.
+    <div class="mermaid">
+        gantt
+        title A Gantt Diagram
+        dateFormat  YYYY-MM-DD
+        section Section
+        A task           :a1, 2014-01-01, 3h
     </div>
     </body>
 </html>

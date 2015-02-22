@@ -71,7 +71,7 @@ var parse = function(text){
 var init = function (sequenceConfig) {
     var arr = document.querySelectorAll('.mermaid');
     var i;
-
+    
     if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
         if(typeof sequenceConfig === 'object'){
             seq.setConf(sequenceConfig);
@@ -125,6 +125,10 @@ var init = function (sequenceConfig) {
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
             case 'gantt':
+                if(typeof mermaid.ganttConfig === 'object'){
+                    gantt.setConf(mermaid.ganttConfig);
+                    
+                }
                 gantt.draw(txt,id);
                 utils.cloneCssStyles(element.firstChild, []);
                 break;

@@ -24840,7 +24840,6 @@ module.exports={
     "proxyquire": "^1.3.1",
     "rewire": "^2.1.3",
     "rimraf": "^2.2.8",
-    "semantic-ui": "^1.4.1",
     "tape": "^3.0.3"
   }
 }
@@ -28067,8 +28066,35 @@ var compileData = function(prevTask, dataStr){
     }
     
     var data = ds.split(',');
+    
+    
     var task = {};
     var df = exports.getDateFormat();
+    
+    var matchFound = true;
+    while(matchFound){
+        matchFound = false;
+        if(data[0].match(/^\s*active\s*$/)){
+            task.active = true;
+            data.shift(1);
+            matchFound = true;
+            
+        }
+        if(data[0].match(/^\s*done\s*$/)){
+            task.done = true;
+            data.shift(1);
+            matchFound = true;
+        }
+        if(data[0].match(/^\s*crit\s*$/)){
+            task.crit = true;
+            data.shift(1);
+            matchFound = true;
+        }
+    }
+    
+    for(i=0;i<data.length;i++){
+        data[i] = data[i].trim();
+    }
     
     switch(data.length){
         case 1:
@@ -28107,6 +28133,9 @@ exports.addTask = function(descr,data){
     newTask.startTime = taskInfo.startTime;
     newTask.endTime   = taskInfo.endTime;
     newTask.id        = taskInfo.id;
+    newTask.active    = taskInfo.active;
+    newTask.done      = taskInfo.done;
+    newTask.crit      = taskInfo.crit;
     lastTask = newTask;
     tasks.push(newTask);
 };
@@ -28120,16 +28149,18 @@ gantt.yy = require('./ganttDb');
 var d3 = require('./d3');
 
 var conf = {
-    titleTopMargin:25,
-    barHeight:20,
-    barGap:4,
-    topPadding:75,
-    sidePadding:75
+    titleTopMargin: 25,
+    barHeight: 20,
+    barGap: 4,
+    topPadding: 50,
+    sidePadding: 75,
+    gridLineStartPadding: 35,
+    fontSize: 11
 };
-module.exports.setConf = function(cnf){
+module.exports.setConf = function (cnf) {
     var keys = Object.keys(cnf);
 
-    keys.forEach(function(key){
+    keys.forEach(function (key) {
         conf[key] = cnf[key];
     });
 };
@@ -28139,18 +28170,18 @@ module.exports.draw = function (text, id) {
     gantt.parse(text);
     var elem = document.getElementById(id);
     w = elem.offsetWidth;
-    
-    if(typeof w === 'undefined'){
+
+    if (typeof w === 'undefined') {
         w = 800;
     }
-    
-    var taskArray = gantt.yy.getTasks();
-    
-    // Set height based on number of tasks
-    var h = taskArray.length*(conf.barHeight+conf.barGap)+2*conf.topPadding;
 
-    elem.style.height = h+'px';
-    var svg = d3.select('#'+id);
+    var taskArray = gantt.yy.getTasks();
+
+    // Set height based on number of tasks
+    var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
+
+    elem.style.height = h + 'px';
+    var svg = d3.select('#' + id);
 
 // http://codepen.io/anon/pen/azLvWR
 
@@ -28184,9 +28215,7 @@ module.exports.draw = function (text, id) {
         .text(gantt.yy.getTitle())
         .attr("x", w / 2)
         .attr("y", conf.titleTopMargin)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 18)
-        .attr("fill", "#009FFC");
+        .attr('class', 'titleText');
 
 
     function makeGant(tasks, pageWidth, pageHeight) {
@@ -28223,15 +28252,14 @@ module.exports.draw = function (text, id) {
                 return w - theSidePad / 2;
             })
             .attr("height", theGap)
-            .attr("stroke", "none")
-            .attr("fill", function (d) {
+            .attr('class', function (d) {
                 for (var i = 0; i < categories.length; i++) {
                     if (d.type === categories[i]) {
-                        return d3.rgb(theColorScale(i));
+                        return 'section section' + (i % conf.numberSectionStyles);
                     }
                 }
-            })
-            .attr("opacity", 0.2);
+                return 'section section0';
+            });
 
 
         var rectangles = svg.append('g')
@@ -28241,68 +28269,100 @@ module.exports.draw = function (text, id) {
 
 
         var innerRects = rectangles.append("rect")
-            .attr("rx", 3)
-            .attr("ry", 3)
-            .attr("x", function (d) {
-                return timeScale(d.startTime) + theSidePad;
-            })
-            .attr("y", function (d, i) {
-                return i * theGap + theTopPad;
-            })
-            .attr("width", function (d) {
-                return (timeScale(d.endTime) - timeScale(d.startTime));
-            })
-            .attr("height", theBarHeight)
-            .attr("stroke", "none")
-            .attr("fill", function (d) {
-                for (var i = 0; i < categories.length; i++) {
-                    if (d.type === categories[i]) {
-                        return d3.rgb(theColorScale(i));
+                .attr("rx", 3)
+                .attr("ry", 3)
+                .attr("x", function (d) {
+                    return timeScale(d.startTime) + theSidePad;
+                })
+                .attr("y", function (d, i) {
+                    return i * theGap + theTopPad;
+                })
+                .attr("width", function (d) {
+                    return (timeScale(d.endTime) - timeScale(d.startTime));
+                })
+                .attr("height", theBarHeight)
+                .attr('class', function (d) {
+                    var res = 'task ';
+                    
+                    
+                    var secNum = 0;
+                    for (var i = 0; i < categories.length; i++) {
+                        if (d.type === categories[i]) {
+                            secNum = (i % conf.numberSectionStyles);
+                        }
                     }
-                }
-            });
+                    
+                    if(d.active){
+                        if (d.crit) {
+                            return res + ' activeCrit'+secNum;
+                        }else{
+                            return res + ' active'+secNum;
+                        }
+                    }
+
+                    if (d.done) {
+                        if (d.crit) {
+                            return res + ' doneCrit'+secNum;
+                        }else{
+                            return res + ' done'+secNum;
+                        }
+                    }
+
+                    if (d.crit) {
+                        return res + ' crit'+secNum;
+                    }
+
+
+                    return res + ' task'+secNum;
+                })
+            ;
 
 
         var rectText = rectangles.append("text")
             .text(function (d) {
                 return d.task;
             })
-            .attr("font-size", 11)
             .attr("x", function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
                     textWidth = this.getBBox().width;
-                
+
                 // Check id text width > width of rectangle
-                if(textWidth>(endX-startX)){
-                    if (endX + textWidth > w){
+                if (textWidth > (endX - startX)) {
+                    if (endX + textWidth > w) {
                         return startX + theSidePad;
-                    }else {
+                    } else {
                         return endX + theSidePad;
                     }
-                }else{
+                } else {
                     return (endX - startX) / 2 + startX + theSidePad;
                 }
             })
             .attr("y", function (d, i) {
-                return i * theGap + 14 + theTopPad;
+                return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad;
             })
             //.attr("text-anchor", "middle")
             .attr("text-height", theBarHeight)
-            .attr("class",function (d) {
+            .attr("class", function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
                     textWidth = this.getBBox().width;
-                
-                // Check id text width > width of rectangle
-                if(textWidth>(endX-startX)) {
-                    if (endX + textWidth > w){
-                        return 'taskTextOutsideLeft';
-                    }else {
-                        return 'taskTextOutsideRight';
+                var secNum = 0;
+                for (var i = 0; i < categories.length; i++) {
+                    if (d.type === categories[i]) {
+                        secNum = (i % conf.numberSectionStyles);
                     }
-                }else{
-                    return 'taskText';
+                }
+
+                // Check id text width > width of rectangle
+                if (textWidth > (endX - startX)) {
+                    if (endX + textWidth > w) {
+                        return 'taskTextOutsideLeft taskTextOutside' + secNum;
+                    } else {
+                        return 'taskTextOutsideRight taskTextOutsideRight' + secNum;
+                    }
+                } else {
+                    return 'taskText taskText' + secNum;
                 }
             });
 
@@ -28315,8 +28375,8 @@ module.exports.draw = function (text, id) {
             .scale(timeScale)
             .orient('bottom')
             //.ticks(d3.time.days, 5)
-            .tickSize(-h + theTopPad + 20, 0, 0)
-            .tickFormat(d3.time.format('%d %b'));
+            .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0);
+        //.tickFormat(d3.time.format('%d %b'));
 
         var grid = svg.append('g')
             .attr('class', 'grid')
@@ -28358,16 +28418,13 @@ module.exports.draw = function (text, id) {
                     return d[1] * theGap / 2 + theTopPad;
                 }
             })
-            .attr("font-size", 11)
-            .attr("text-anchor", "start")
-            .attr("text-height", 14)
-            .attr("fill", function (d) {
+            .attr('class', function (d) {
                 for (var i = 0; i < categories.length; i++) {
                     if (d[0] === categories[i]) {
-                        //  console.log("true!");
-                        return d3.rgb(theColorScale(i)).darker();
+                        return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles);
                     }
                 }
+                return 'sectionTitle';
             });
 
     }
@@ -28388,9 +28445,9 @@ module.exports.draw = function (text, id) {
     function getCounts(arr) {
         var i = arr.length, // var to loop over
             obj = {}; // obj to store results
-        while (i){
+        while (i) {
             obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
-        } 
+        }
         return obj;
     }
 
@@ -30608,7 +30665,7 @@ var parse = function(text){
 var init = function (sequenceConfig) {
     var arr = document.querySelectorAll('.mermaid');
     var i;
-
+    
     if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
         if(typeof sequenceConfig === 'object'){
             seq.setConf(sequenceConfig);
@@ -30662,6 +30719,10 @@ var init = function (sequenceConfig) {
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
             case 'gantt':
+                if(typeof mermaid.ganttConfig === 'object'){
+                    gantt.setConf(mermaid.ganttConfig);
+                    
+                }
                 gantt.draw(txt,id);
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
