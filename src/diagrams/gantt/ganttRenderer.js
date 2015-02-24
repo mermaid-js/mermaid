@@ -9,7 +9,8 @@ var conf = {
     topPadding: 50,
     sidePadding: 75,
     gridLineStartPadding: 35,
-    fontSize: 11
+    fontSize: 11,
+    fontFamily: '"Open-Sans", "sans-serif"'
 };
 module.exports.setConf = function (cnf) {
     var keys = Object.keys(cnf);
@@ -176,6 +177,8 @@ module.exports.draw = function (text, id) {
             .text(function (d) {
                 return d.task;
             })
+            .attr("font-size",conf.fontSize)
+            //.attr("font-family",conf.fontFamily)
             .attr("x", function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
@@ -183,10 +186,10 @@ module.exports.draw = function (text, id) {
 
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
-                    if (endX + textWidth > w) {
-                        return startX + theSidePad;
+                    if (endX + textWidth  + 1.5*conf.sidePadding> w) {
+                        return startX + theSidePad - 5;
                     } else {
-                        return endX + theSidePad;
+                        return endX + theSidePad + 5;
                     }
                 } else {
                     return (endX - startX) / 2 + startX + theSidePad;
@@ -210,10 +213,10 @@ module.exports.draw = function (text, id) {
 
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
-                    if (endX + textWidth > w) {
+                    if (endX + textWidth + 1.5*conf.sidePadding > w) {
                         return 'taskTextOutsideLeft taskTextOutside' + secNum;
                     } else {
-                        return 'taskTextOutsideRight taskTextOutsideRight' + secNum;
+                        return 'taskTextOutsideRight taskTextOutside' + secNum;
                     }
                 } else {
                     return 'taskText taskText' + secNum;
