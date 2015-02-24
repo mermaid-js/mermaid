@@ -5,7 +5,6 @@ var moment = require('moment');
 
 var dateFormat = '';
 var title = '';
-var info = false;
 var sections = [];
 var tasks = [];
 var currentSection = '';
@@ -176,7 +175,7 @@ var compileData = function(prevTask, dataStr){
             matchFound = true;
         }
     }
-    
+    var i;
     for(i=0;i<data.length;i++){
         data[i] = data[i].trim();
     }
