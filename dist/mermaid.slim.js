@@ -27888,7 +27888,6 @@ var moment = require('moment');
 
 var dateFormat = '';
 var title = '';
-var info = false;
 var sections = [];
 var tasks = [];
 var currentSection = '';
@@ -28059,7 +28058,7 @@ var compileData = function(prevTask, dataStr){
             matchFound = true;
         }
     }
-    
+    var i;
     for(i=0;i<data.length;i++){
         data[i] = data[i].trim();
     }
@@ -28123,7 +28122,8 @@ var conf = {
     topPadding: 50,
     sidePadding: 75,
     gridLineStartPadding: 35,
-    fontSize: 11
+    fontSize: 11,
+    fontFamily: '"Open-Sans", "sans-serif"'
 };
 module.exports.setConf = function (cnf) {
     var keys = Object.keys(cnf);
@@ -28164,7 +28164,8 @@ module.exports.draw = function (text, id) {
             d3.max(taskArray, function (d) {
                 return d.endTime;
             })])
-        .range([0, w - 150]);
+        .rangeRound([0, w - 150])
+        .nice(d3.time.monday);
 
     var categories = [];
 
@@ -28201,6 +28202,7 @@ module.exports.draw = function (text, id) {
         makeGrid(sidePadding, topPadding, pageWidth, pageHeight);
         drawRects(tasks, gap, topPadding, sidePadding, barHeight, colorScale, pageWidth, pageHeight);
         vertLabels(gap, topPadding, sidePadding, barHeight, colorScale);
+        drawToday(sidePadding, topPadding, pageWidth, pageHeight);
 
     }
 
@@ -28290,6 +28292,8 @@ module.exports.draw = function (text, id) {
             .text(function (d) {
                 return d.task;
             })
+            .attr("font-size",conf.fontSize)
+            //.attr("font-family",conf.fontFamily)
             .attr("x", function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
@@ -28297,10 +28301,10 @@ module.exports.draw = function (text, id) {
 
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
-                    if (endX + textWidth > w) {
-                        return startX + theSidePad;
+                    if (endX + textWidth  + 1.5*conf.sidePadding> w) {
+                        return startX + theSidePad - 5;
                     } else {
-                        return endX + theSidePad;
+                        return endX + theSidePad + 5;
                     }
                 } else {
                     return (endX - startX) / 2 + startX + theSidePad;
@@ -28324,10 +28328,10 @@ module.exports.draw = function (text, id) {
 
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
-                    if (endX + textWidth > w) {
+                    if (endX + textWidth + 1.5*conf.sidePadding > w) {
                         return 'taskTextOutsideLeft taskTextOutside' + secNum;
                     } else {
-                        return 'taskTextOutsideRight taskTextOutsideRight' + secNum;
+                        return 'taskTextOutsideRight taskTextOutside' + secNum;
                     }
                 } else {
                     return 'taskText taskText' + secNum;
@@ -28340,11 +28344,37 @@ module.exports.draw = function (text, id) {
     function makeGrid(theSidePad, theTopPad, w, h) {
 
         var xAxis = d3.svg.axis()
-            .scale(timeScale)
-            .orient('bottom')
-            //.ticks(d3.time.days, 5)
-            .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0);
-        //.tickFormat(d3.time.format('%d %b'));
+                .scale(timeScale)
+                .orient('bottom')
+                .ticks(d3.time.weeks, 1)
+                .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
+                .tickFormat(d3.time.format.multi([
+                    [".%L", function (d) {
+                        return d.getMilliseconds();
+                    }],
+                    [":%S", function (d) {
+                        return d.getSeconds();
+                    }],
+                    ["%I:%M", function (d) {
+                        return d.getMinutes();
+                    }],
+                    ["%I %p", function (d) {
+                        return d.getHours();
+                    }],
+                    ["%a %d", function (d) {
+                        return d.getDay() && d.getDate() != 2;
+                    }],
+                    ["%b %d", function (d) {
+                        return d.getDate() != 2;
+                    }],
+                    ["%B", function (d) {
+                        return d.getMonth();
+                    }],
+                    ["%Y", function () {
+                        return true;
+                    }]
+                ]))
+            ;
 
         var grid = svg.append('g')
             .attr('class', 'grid')
@@ -28395,6 +28425,20 @@ module.exports.draw = function (text, id) {
                 return 'sectionTitle';
             });
 
+    }
+
+    function drawToday(theSidePad, theTopPad, w, h) {
+        var todayG = svg.append('g')
+            .attr('class', 'today')
+
+
+        var todayLine = todayG.append("line")
+                .attr("x1", timeScale(new Date('2014-01-13')) + theSidePad)
+                .attr("x2", timeScale(new Date('2014-01-13')) + theSidePad)
+                .attr("y1", conf.titleTopMargin)
+                .attr("y2", h-conf.titleTopMargin)
+                .attr('class', 'today')
+            ;
     }
 
 //from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
