@@ -121,7 +121,7 @@
                       return 'ALPHA';
 "|"                   return 'PIPE';
 "("                   return 'PS';
-")"                return 'PE';
+")"                   return 'PE';
 "["                   return 'SQS';
 "]"                   return 'SQE';
 "{"                   return 'DIAMOND_START'
@@ -229,31 +229,31 @@ verticeStatement:
 
 vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    |  alphaNum SQS text SQE SPACE
+    |  alphaNum SQS text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'square');}
     | alphaNum PS PS text PE PE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum PS PS text PE PE SPACE
+    | alphaNum PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
     | alphaNum PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum PS text PE SPACE
+    | alphaNum PS text PE spaceList
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | alphaNum DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP SPACE
+    | alphaNum DIAMOND_START text DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | alphaNum TAGEND text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TAGEND text SQE SPACE
+    | alphaNum TAGEND text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd');}
 /*  | alphaNum SQS text TAGSTART
         {$$ = $1;yy.addVertex($1,$3,'odd_right');}
-    | alphaNum SQS text TAGSTART SPACE
+    | alphaNum SQS text TAGSTART spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
     | alphaNum
         {$$ = $1;yy.addVertex($1);}
-    | alphaNum SPACE
+    | alphaNum spaceList
         {$$ = $1;yy.addVertex($1);}
     ;
 

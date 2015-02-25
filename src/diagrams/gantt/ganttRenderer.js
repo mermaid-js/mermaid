@@ -316,12 +316,13 @@ module.exports.draw = function (text, id) {
 
     function drawToday(theSidePad, theTopPad, w, h) {
         var todayG = svg.append('g')
-            .attr('class', 'today')
+            .attr('class', 'today');
 
+        var today = new Date();
 
         var todayLine = todayG.append("line")
-                .attr("x1", timeScale(new Date('2014-01-13')) + theSidePad)
-                .attr("x2", timeScale(new Date('2014-01-13')) + theSidePad)
+                .attr("x1", timeScale(today) + theSidePad)
+                .attr("x2", timeScale(today) + theSidePad)
                 .attr("y1", conf.titleTopMargin)
                 .attr("y2", h-conf.titleTopMargin)
                 .attr('class', 'today')
