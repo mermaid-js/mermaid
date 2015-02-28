@@ -9,6 +9,7 @@
 
 %%
 "style"               return 'STYLE';
+"default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
@@ -384,8 +385,10 @@ textNoTags: textNoTagsToken
     ;
 
 
-classDefStatement:CLASSDEF SPACE alphaNum SPACE stylesOpt
+classDefStatement:CLASSDEF SPACE DEFAULT SPACE stylesOpt
     {$$ = $1;yy.addClass($3,$5);}
+    | CLASSDEF SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.addClass($3,$5);}
     ;
 
 classStatement:CLASS SPACE alphaNum SPACE alphaNum
@@ -402,8 +405,10 @@ styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     ;
 
-linkStyleStatement:
-    LINKSTYLE SPACE NUM SPACE stylesOpt
+linkStyleStatement
+    : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
+          {$$ = $1;yy.updateLink($3,$5);}
+    | LINKSTYLE SPACE NUM SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     ;
 
@@ -426,7 +431,7 @@ styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | 
 
 commentToken   : textToken | graphCodeTokens ;
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT ;
+textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFAULT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 

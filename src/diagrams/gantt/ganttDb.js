@@ -50,8 +50,8 @@ exports.findTaskById = function(id) {
 exports.getTasks=function(){
     var i;
     for(i=10000;i<tasks.length;i++){
-        tasks[i].startTime = moment(tasks[i].startTime).format('YYYY-MM-DD');
-        tasks[i].endTime = moment(tasks[i].endTime).format('YYYY-MM-DD');
+        tasks[i].startTime = moment(tasks[i].startTime).format(dateFormat);
+        tasks[i].endTime = moment(tasks[i].endTime).format(dateFormat);
     }
 
     return tasks;
@@ -78,11 +78,12 @@ var getStartDate = function(prevTime, dateFormat, str){
     }
     
     // Check for actual date set
-    if(moment(str,dateFormat,true).isValid()){
-        return moment(str,dateFormat).toDate();
+    if(moment(str,dateFormat.trim(),true).isValid()){
+        return moment(str,dateFormat.trim(),true).toDate();
     }else{
         console.log('Invalid date:'+str);
-        console.log('With date format:'+dateFormat);
+        console.log('With date format:'+dateFormat.trim());
+        console.log('----');
     }
     
     // Default date - now
@@ -96,12 +97,12 @@ var getEndDate = function(prevTime, dateFormat, str){
     if(moment(str,dateFormat,true).isValid()){
         return moment(str,dateFormat).toDate();
     }
-    
+
     var d = moment(prevTime);
     // Check for length
     var re = /^([\d]+)([wdh])/;
     var durationStatement = re.exec(str.trim());
-
+    
     if(durationStatement!== null){
         switch(durationStatement[2]){
             case 'h':
@@ -155,6 +156,8 @@ var compileData = function(prevTask, dataStr){
     var task = {};
     var df = exports.getDateFormat();
     
+    
+    // Get tags like active, done cand crit
     var matchFound = true;
     while(matchFound){
         matchFound = false;
@@ -179,6 +182,7 @@ var compileData = function(prevTask, dataStr){
     for(i=0;i<data.length;i++){
         data[i] = data[i].trim();
     }
+    
     
     switch(data.length){
         case 1:

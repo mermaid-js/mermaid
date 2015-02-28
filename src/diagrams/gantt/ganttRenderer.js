@@ -1,7 +1,9 @@
 var gantt = require('./parser/gantt').parser;
 gantt.yy = require('./ganttDb');
 var d3 = require('./d3');
+var moment = require('moment');
 
+var daysInChart;
 var conf = {
     titleTopMargin: 25,
     barHeight: 20,
@@ -42,7 +44,14 @@ module.exports.draw = function (text, id) {
 
 
     var dateFormat = d3.time.format("%Y-%m-%d");
-
+    
+    var startDate = d3.min(taskArray, function (d) {
+        return d.startTime;
+    });
+    var endDate = d3.max(taskArray, function (d) {
+        return d.endTime;
+    });
+    
     // Set timescale
     var timeScale = d3.time.scale()
         .domain([d3.min(taskArray, function (d) {
@@ -51,10 +60,15 @@ module.exports.draw = function (text, id) {
             d3.max(taskArray, function (d) {
                 return d.endTime;
             })])
-        .rangeRound([0, w - 150])
-        .nice(d3.time.monday);
+        .rangeRound([0, w - 150]);
+        //.nice(d3.time.monday);
 
     var categories = [];
+    
+    daysInChart = moment.duration(endDate-startDate).asDays();
+    console.log('startDate',startDate);
+    console.log('endDate',endDate);
+    console.log('daysInChart',daysInChart);
 
     for (var i = 0; i < taskArray.length; i++) {
         categories.push(taskArray[i].type);
@@ -230,38 +244,63 @@ module.exports.draw = function (text, id) {
 
     function makeGrid(theSidePad, theTopPad, w, h) {
 
+        var pre = [
+            [".%L", function (d) {
+                return d.getMilliseconds();
+            }],
+            [":%S", function (d) {
+                return d.getSeconds();
+            }],
+            // Within a hour
+            ["h1 %I:%M", function (d) {
+                return d.getMinutes();
+            }]];
+        var post = [
+            ["%Y", function () {
+                return true;
+            }]];
+        
+        var mid = [                    
+            // Within a day
+            ["%I:%M", function (d) {
+                return d.getHours();
+            }],
+            // Day within a week (not monday)
+            ["%a %d", function (d) {
+                //return d.getDay() ==1;
+                return d.getDay() && d.getDate() != 1;
+            }],
+            // within a month
+            ["%b %d", function (d) {
+                return d.getDate() != 1;
+            }],
+            // Month
+            ["%B", function (d) {
+                return d.getMonth();
+            }]
+        ];
+        var formatter;
+        if(typeof conf.axisFormatter !== 'undefined'){
+            mid = [];
+            conf.axisFormatter.forEach(function(item){
+                var n = [];
+                n[0] = item[0];
+                n[1] = item[1];
+                mid.push(n);
+            });
+        }
+        formatter = pre.concat(mid).concat(post);
+
         var xAxis = d3.svg.axis()
                 .scale(timeScale)
                 .orient('bottom')
-                .ticks(d3.time.weeks, 1)
                 .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-                .tickFormat(d3.time.format.multi([
-                    [".%L", function (d) {
-                        return d.getMilliseconds();
-                    }],
-                    [":%S", function (d) {
-                        return d.getSeconds();
-                    }],
-                    ["%I:%M", function (d) {
-                        return d.getMinutes();
-                    }],
-                    ["%I %p", function (d) {
-                        return d.getHours();
-                    }],
-                    ["%a %d", function (d) {
-                        return d.getDay() && d.getDate() != 2;
-                    }],
-                    ["%b %d", function (d) {
-                        return d.getDate() != 2;
-                    }],
-                    ["%B", function (d) {
-                        return d.getMonth();
-                    }],
-                    ["%Y", function () {
-                        return true;
-                    }]
-                ]))
+                .tickFormat(d3.time.format.multi(formatter))
             ;
+
+        if(daysInChart >7 && daysInChart<60){
+            xAxis = xAxis.ticks(d3.time.monday.range);
+        }
 
         var grid = svg.append('g')
             .attr('class', 'grid')

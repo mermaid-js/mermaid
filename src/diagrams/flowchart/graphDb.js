@@ -75,7 +75,12 @@ exports.addLink = function (start, end, type, linktext) {
  */
 exports.updateLink = function (pos, style) {
     var position = pos.substr(1);
-    edges[pos].style = style;
+
+    if(pos === 'default'){
+        edges.defaultStyle = style;
+    }else{
+        edges[pos].style = style;
+    }
 };
 
 exports.addClass = function (id, style) {

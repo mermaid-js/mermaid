@@ -18,25 +18,25 @@ describe('when parsing a gantt diagram it',function() {
         gantt.parse(str);
     });
     it('should handle an dateFormat definition', function () {
-        var str = 'gantt\ntitle Adding gantt diagram functionality to mermaid';
+        var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
 
         gantt.parse(str);
     });
     it('should handle an dateFormat definition', function () {
-        var str = 'gantt\ntitle Adding gantt diagram functionality to mermaid';
+        var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
 
         gantt.parse(str);
     });
-    it('should handle an dateFormat definition', function () {
-        var str = 'gantt\nsection Documentation';
+    it('should handle an section definition', function () {
+        var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid';
 
         gantt.parse(str);
     });
-    it('should handle an dateFormat definition', function () {
+    it('should handle a task definition', function () {
         var str = 'gantt\n' +
+            'dateFormat yyyy-mm-dd\n' +
+            'title Adding gantt diagram functionality to mermaid\n' +
             'section Documentation\n' +
-            //'section Documentation2\n';
-            //'Design jison grammar :';
             'Design jison grammar:des1, 2014-01-01, 2014-01-04';
 
         gantt.parse(str);

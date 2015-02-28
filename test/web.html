@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
 
-    <script src="mermaid.full.js"></script>
+    <script src="../dist/mermaid.full.js"></script>
     <script>
         var mermaid_config = {
             startOnLoad:true,
-            htmlLabels:false
+            htmlLabels:true
         }
         mermaid.startOnLoad=true;
     </script>
@@ -26,6 +26,17 @@
     <link rel="stylesheet" href="seq.css"/>
 </head>
     <body>
+    <div  class="mermaid">
+        graph LR;
+        A[Now with default style on links]-->B{a = '1,2'}
+        B-->|True|C[test = 1]
+        B-- ... default style on links -->Z[My default thing this]
+        C-->D{condition};
+
+        linkStyle 0 stroke-width:2px,fill:none,stroke:blue;
+        linkStyle default stroke-width:2px,fill:none,stroke:red;
+
+    </div>
     <h1>Issue 2</h1>
     <div class="mermaid">
         graph LR
@@ -45,12 +56,12 @@
     <h1>Shapes</h1>
     <div class="mermaid">
     graph TD;
-        A-->B;
+        A[Default style on nodes]-->B;
         A-->C;
         A-->D;
         B-->D;
         A-->|Link text|B
-        classDef default fill:#696,stroke:#333,stroke-width:2px;
+        classDef default fill:#f96,stroke:#333,stroke-width:2px;
         classDef green fill:#9f6,stroke:#333,stroke-width:2px;
         class B green;
     </div>

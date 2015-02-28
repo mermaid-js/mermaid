@@ -18,7 +18,29 @@
             sidePadding:75,
             gridLineStartPadding:35,
             fontSize:11,
-            numberSectionStyles:3
+            numberSectionStyles:3,
+            axisFormatter: [
+                // Within a day
+                ["%I:%M", function (d) {
+                    return d.getHours();
+                }],
+                // Monday a week
+                ["w. %U", function (d) {
+                    return d.getDay() == 1;
+                }],
+                // Day within a week (not monday)
+                ["%a %d", function (d) {
+                    return d.getDay() && d.getDate() != 1;
+                }],
+                // within a month
+                ["%b %d", function (d) {
+                    return d.getDate() != 1;
+                }],
+                // Month
+                ["%m-%y", function (d) {
+                    return d.getMonth();
+                }]
+            ]
         };
     </script>
     <script>
@@ -160,10 +182,47 @@
     </style>
 </head>
     <body>
-    <filter id="blur-effect-1">
-        <feGaussianBlur stdDeviation="2" />
-    </filter>
-    <h1>Gantt tests</h1>
+    <h1>scale tests</h1>
+    <h2>less then a day</h2>    
+        <div class="mermaid">
+            gantt
+            dateFormat  YYYY-MM-DD H:mm
+            title Adding GANTT diagram functionality to mermaid
+
+            section Design
+            Design jison grammar            :done, crit, des1, 2014-01-06 1:30,4h
+            Create example text             :done, after des1,6h
+        </div>
+    <h2>less then a week</h2>
+    <div class="mermaid">
+        gantt
+        dateFormat  YYYY-MM-DD
+        title Adding GANTT diagram functionality to mermaid2
+        section Design
+        Design jison grammar            :done, crit, des1, 2014-01-06,2d
+        Create example text             :done, after des1,3d
+    </div>
+    <h2>less then a month</h2>
+    <div class="mermaid">
+        gantt
+        dateFormat  YYYY-MM-DD
+        title Adding GANTT diagram functionality to mermaid
+
+        section Design
+        Design jison grammar            :done, crit, des1, 2015-01-05,2d
+        Create example text             :done, after des1, 2w
+    </div>
+    <h2>less then a year</h2>
+    <div class="mermaid">
+        gantt
+        dateFormat  YYYY-MM-DD
+        title Adding GANTT diagram functionality to mermaid
+
+        section Design
+        Design jison grammar            :done, crit, des1, 2014-01-06,8w
+        Create example text             :done, after des1, 16w
+    </div>
+    <h1>Other tests</h1>
     <div class="mermaid">
         gantt
         dateFormat  YYYY-MM-DD

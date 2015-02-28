@@ -108,6 +108,15 @@ exports.addVertices = function (vert, g) {
 exports.addEdges = function (edges, g) {
     var cnt=0;
     var aHead;
+    
+    var defaultStyle;
+    if(typeof edges.defaultStyle !== 'undefined'){
+        defaultStyle = edges.defaultStyle.toString().replace(/,/g , ';');
+
+        console.log('edges def: '+defaultStyle);
+        //console.log('edges def:'+defaultStyle.replace(',' , ';','g'));
+    }
+
     edges.forEach(function (edge) {
         cnt++;
 
@@ -122,7 +131,6 @@ exports.addEdges = function (edges, g) {
         var style = '';
 
 
-
         if(typeof edge.style !== 'undefined'){
             edge.style.forEach(function(s){
                 style = style + s +';';
@@ -132,6 +140,9 @@ exports.addEdges = function (edges, g) {
             switch(edge.stroke){
                 case 'normal':
                     style = 'stroke: #333; stroke-width: 1.5px;fill:none';
+                    if(typeof defaultStyle !== 'undefined'){
+                        style = defaultStyle;
+                    }
                     break;
                 case 'dotted':
                     style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
@@ -140,8 +151,6 @@ exports.addEdges = function (edges, g) {
                     style = 'stroke: #333; stroke-width: 3.5px;fill:none';
                     break;
             }
-
-
         }
 
         // Add the edge to the graph
