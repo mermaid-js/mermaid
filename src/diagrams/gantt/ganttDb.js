@@ -94,8 +94,9 @@ var getEndDate = function(prevTime, dateFormat, str){
     str = str.trim();
     
     // Check for actual date 
-    if(moment(str,dateFormat,true).isValid()){
-        return moment(str,dateFormat).toDate();
+    if(moment(str,dateFormat.trim(),true).isValid()){
+        
+        return moment(str,dateFormat.trim()).toDate();
     }
 
     var d = moment(prevTime);

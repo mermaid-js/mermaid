@@ -28,8 +28,8 @@
     <body>
     <div  class="mermaid">
         graph LR;
-        A[Now with default style on links]-->B{a = '1,2'}
-        B-->|True|C[test = 1]
+        A[Now with default style on links]--v-->B{a = '1,2'}
+        B-->|v|C[v]
         B-- ... default style on links -->Z[My default thing this]
         C-->D{condition};
 
@@ -41,7 +41,7 @@
     <div class="mermaid">
         graph LR
         A[Square Rect]  --      Link text      -->       B((Circle))
-        A[Square Rect]--Link text2-->D((Circle))
+        A[Square Rect]--v-->D((Circle))
         A --> C(Round Rect)
         B    ==  testing ==>     D{Rhombus}
         C-.->D

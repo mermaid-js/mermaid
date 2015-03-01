@@ -1,0 +1,75 @@
+
+
+.actor {
+  stroke: @actorBorder;
+  fill: @actorBkg;
+}
+text.actor {
+  fill:@actorTextColor;
+  stroke:none;
+}
+
+.actor-line {
+  stroke:@actorLineColor;
+}
+
+.messageLine0 {
+  stroke-width:1.5;
+  stroke-dasharray: "2 2";
+  marker-end:"url(#arrowhead)";
+  stroke:@signalColor;
+}
+
+.messageLine1 {
+  stroke-width:1.5;
+  stroke-dasharray: "2 2";
+  stroke:@signalColor;
+}
+
+#arrowhead {
+  fill:@signalColor;
+}
+#crosshead path {
+  fill:@signalColor !important;
+  stroke: @signalColor !important;
+
+}
+.messageText {
+  fill:@signalTextColor;
+  stroke:none;
+}
+
+.labelBox {
+  stroke: @labelBoxBorderColor;
+  fill: @labelBoxBkgColor;
+}
+
+.labelText {
+  fill:@labelTextColor;
+  stroke:none;
+}
+
+.loopText {
+  fill:@labelTextColor;
+  stroke:none;
+}
+
+.loopLine {
+  stroke-width:2;
+  stroke-dasharray: "2 2";
+  marker-end:"url(#arrowhead)";
+  stroke: @labelBoxBorderColor;
+}
+
+.note {
+  //stroke: #decc93;
+  stroke: @noteBorderColor;
+  fill: @noteBkgColor;
+}
+
+.noteText {
+  fill:black;
+  stroke:none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size:14px;
+}

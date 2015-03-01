@@ -183,3 +183,20 @@ gulp.task('lint', function() {
 });
 
 gulp.task('test',['coverage','tape']);
+
+gulp.task('mermaid-less', function () {
+    gulp.src(['./src/less/*/mermaid.less'])
+        .pipe(less({
+            generateSourceMap: false, // default true
+            paths: [ path.join(__dirname, 'less', 'includes') ]
+        }))
+        .pipe(rename(function (path) {
+            if(path.dirname === 'default'){
+                path.basename = 'mermaid';
+            }else{
+                path.basename = 'mermaid.' + path.dirname;
+            }
+            path.dirname = '';
+        }))
+        .pipe(gulp.dest('./dist/'));
+});

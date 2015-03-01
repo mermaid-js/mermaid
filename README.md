@@ -62,7 +62,7 @@ sequenceDiagram
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
 the graphical layout and drawing libraries! Thanks also to the
 [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the
-sequence diagrams.
+sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering.
 
 *Mermaid was created by Knut Sveidqvist for easier documentation.*
 

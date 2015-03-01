@@ -24811,7 +24811,7 @@ module.exports={
     "gulp-jasmine": "~1.0.1",
     "gulp-jison": "~1.0.0",
     "gulp-jshint": "^1.9.0",
-    "gulp-less": "^1.3.6",
+    "gulp-less": "^3.0.1",
     "gulp-rename": "~1.2.0",
     "gulp-shell": "^0.2.10",
     "gulp-tag-version": "^1.2.1",
@@ -28025,8 +28025,9 @@ var getEndDate = function(prevTime, dateFormat, str){
     str = str.trim();
     
     // Check for actual date 
-    if(moment(str,dateFormat,true).isValid()){
-        return moment(str,dateFormat).toDate();
+    if(moment(str,dateFormat.trim(),true).isValid()){
+        
+        return moment(str,dateFormat.trim()).toDate();
     }
 
     var d = moment(prevTime);
@@ -28392,15 +28393,36 @@ module.exports.draw = function (text, id) {
                     }
                 }
 
+                var taskType = '';
+                if(d.active){
+                    if (d.crit) {
+                        taskType = 'activeCritText'+secNum;
+                    }else{
+                        taskType = 'activeText'+secNum;
+                    }
+                }
+
+                if (d.done) {
+                    if (d.crit) {
+                        taskType = taskType + ' doneCritText'+secNum;
+                    }else{
+                        taskType = taskType + ' doneText'+secNum;
+                    }
+                }else{
+                    if (d.crit) {
+                        taskType = taskType + ' critText'+secNum;
+                    }
+                }
+
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
                     if (endX + textWidth + 1.5*conf.sidePadding > w) {
-                        return 'taskTextOutsideLeft taskTextOutside' + secNum;
+                        return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
                     } else {
-                        return 'taskTextOutsideRight taskTextOutside' + secNum;
+                        return 'taskTextOutsideRight taskTextOutside' + secNum+ ' ' + taskType;
                     }
                 } else {
-                    return 'taskText taskText' + secNum;
+                    return 'taskText taskText' + secNum+ ' ' + taskType;
                 }
             });
 

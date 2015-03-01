@@ -227,15 +227,36 @@ module.exports.draw = function (text, id) {
                     }
                 }
 
+                var taskType = '';
+                if(d.active){
+                    if (d.crit) {
+                        taskType = 'activeCritText'+secNum;
+                    }else{
+                        taskType = 'activeText'+secNum;
+                    }
+                }
+
+                if (d.done) {
+                    if (d.crit) {
+                        taskType = taskType + ' doneCritText'+secNum;
+                    }else{
+                        taskType = taskType + ' doneText'+secNum;
+                    }
+                }else{
+                    if (d.crit) {
+                        taskType = taskType + ' critText'+secNum;
+                    }
+                }
+
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
                     if (endX + textWidth + 1.5*conf.sidePadding > w) {
-                        return 'taskTextOutsideLeft taskTextOutside' + secNum;
+                        return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
                     } else {
-                        return 'taskTextOutsideRight taskTextOutside' + secNum;
+                        return 'taskTextOutsideRight taskTextOutside' + secNum+ ' ' + taskType;
                     }
                 } else {
-                    return 'taskText taskText' + secNum;
+                    return 'taskText taskText' + secNum+ ' ' + taskType;
                 }
             });
 
