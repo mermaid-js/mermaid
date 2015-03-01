@@ -66,9 +66,6 @@ module.exports.draw = function (text, id) {
     var categories = [];
     
     daysInChart = moment.duration(endDate-startDate).asDays();
-    console.log('startDate',startDate);
-    console.log('endDate',endDate);
-    console.log('daysInChart',daysInChart);
 
     for (var i = 0; i < taskArray.length; i++) {
         categories.push(taskArray[i].type);

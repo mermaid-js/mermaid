@@ -1,8 +1,15 @@
 {
   "name": "mermaid",
-  "version": "0.3.5",
-  "description": "Markdownish syntax for generating flowcharts",
+  "version": "0.4.0",
+  "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/main.js",
+  "keywords": [
+    "diagram",
+    "markdown",
+    "flowchart",
+    "sequence diagram",
+    "gantt"
+  ],
   "bin": {
     "mermaid": "./bin/mermaid.js"
   },
@@ -13,7 +20,7 @@
     "type": "git",
     "url": "https://github.com/knsv/mermaid"
   },
-  "author": "",
+  "author": "Knut Sveidqvist",
   "license": "MIT",
   "dependencies": {
     "chalk": "^0.5.1",

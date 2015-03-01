@@ -24732,9 +24732,16 @@ process.chdir = function (dir) {
 },{}],84:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.3.5",
-  "description": "Markdownish syntax for generating flowcharts",
+  "version": "0.4.0",
+  "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/main.js",
+  "keywords": [
+    "diagram",
+    "markdown",
+    "flowchart",
+    "sequence diagram",
+    "gantt"
+  ],
   "bin": {
     "mermaid": "./bin/mermaid.js"
   },
@@ -24745,7 +24752,7 @@ module.exports={
     "type": "git",
     "url": "https://github.com/knsv/mermaid"
   },
-  "author": "",
+  "author": "Knut Sveidqvist",
   "license": "MIT",
   "dependencies": {
     "chalk": "^0.5.1",
@@ -25644,9 +25651,6 @@ exports.addEdges = function (edges, g) {
     var defaultStyle;
     if(typeof edges.defaultStyle !== 'undefined'){
         defaultStyle = edges.defaultStyle.toString().replace(/,/g , ';');
-
-        console.log('edges def: '+defaultStyle);
-        //console.log('edges def:'+defaultStyle.replace(',' , ';','g'));
     }
 
     edges.forEach(function (edge) {
@@ -28200,9 +28204,6 @@ module.exports.draw = function (text, id) {
     var categories = [];
     
     daysInChart = moment.duration(endDate-startDate).asDays();
-    console.log('startDate',startDate);
-    console.log('endDate',endDate);
-    console.log('daysInChart',daysInChart);
 
     for (var i = 0; i < taskArray.length; i++) {
         categories.push(taskArray[i].type);

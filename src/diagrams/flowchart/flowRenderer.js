@@ -112,9 +112,6 @@ exports.addEdges = function (edges, g) {
     var defaultStyle;
     if(typeof edges.defaultStyle !== 'undefined'){
         defaultStyle = edges.defaultStyle.toString().replace(/,/g , ';');
-
-        console.log('edges def: '+defaultStyle);
-        //console.log('edges def:'+defaultStyle.replace(',' , ';','g'));
     }
 
     edges.forEach(function (edge) {
