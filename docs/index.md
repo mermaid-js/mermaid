@@ -23,7 +23,7 @@ graph TD;
     B-->D;
     C-->D;
 ```
-xxx
+
 ```
 %% An example of a sequence diagram
 sequenceDiagram
@@ -38,7 +38,7 @@ sequenceDiagram
     John->Bob: How about you?
     Bob-->John: Jolly good!
 ```
-xxx
+
 
 ```
 %% Example of a Gannt diagram
@@ -57,7 +57,7 @@ xxx
         Future task in critical line        :crit, 5d
         Create tests for renderer           :2d
         Add to mermaid                      :1d
-``
+```
 
 Play with mermaid using this [editor](http://danielmschmidt.github.io/mermaid-demo/) or this [live editor](live_editor). You can also look at mermaid in action using [jsbin](http://jsbin.com/faxunexeku/1/edit?html,output).
 

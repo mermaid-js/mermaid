@@ -6,7 +6,7 @@ order: 4
 
 > A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule. Gantt charts illustrate the start and finish dates of the terminal elements and summary elements of a project.
 
-Mermaid can render gantt diagrams. The code snippet below:
+Mermaid can render Gantt diagrams. The code snippet below:
 ```
 %% Example of sequence diagram
 gantt
