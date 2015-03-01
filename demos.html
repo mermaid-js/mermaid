@@ -25,6 +25,7 @@
               media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
         <!-- load Ink's css from the cdn -->
         <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="css/mermaid.css">
         <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
         <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
         <!-- load Ink's css for IE8 -->
@@ -47,8 +48,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.5/dist/mermaid.full.js"></script>
-        <scrpt type="text/javascript" src="/dist/mermaid.full.js"></scrpt>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.4.0/dist/mermaid.full.js"></script>
+        <scrpt type="text/javascript" src="/js/mermaid.full.js"></scrpt>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -100,6 +101,54 @@
             svg {
                 padding-left:2px;
             }
+            /* Gantt styles */
+            .grid .tick {
+                stroke: lightgrey;
+                opacity: 0.3;
+                shape-rendering: crispEdges;
+            }
+            .grid path {
+                stroke-width: 0;
+            }
+
+
+            #tag {
+                color: white;
+                background: #FA283D;
+                width: 150px;
+                position: absolute;
+                display: none;
+                padding:3px 6px;
+                margin-left: -80px;
+                font-size: 11px;
+            }
+
+
+
+            #tag:before {
+                border: solid transparent;
+                content: ' ';
+                height: 0;
+                left: 50%;
+                margin-left: -5px;
+                position: absolute;
+                width: 0;
+                border-width: 10px;
+                border-bottom-color: #FA283D;
+                top: -20px;
+            }
+            .taskText {
+                fill:white;
+                text-anchor:middle;
+            }
+            .taskTextOutsideRight {
+                fill:black;
+                text-anchor:start;
+            }
+            .taskTextOutsideLeft {
+                fill:black;
+                text-anchor:end;
+            }
         </style>
         <script>
             var g = function (hljs) {
@@ -148,6 +197,53 @@
                     console.log('Registering new lang');
                 });
             });
+            var mermaid_config = {
+                startOnLoad:true,
+                htmlLabels:true
+            }
+            mermaid.sequenceConfig = {
+                diagramMarginX:50,
+                diagramMarginY:10,
+                boxTextMargin:5,
+                noteMargin:10,
+                messageMargin:35,
+                mirrorActors:true,
+                width:150,
+                // Height of actor boxes
+                height:30
+            };
+            mermaid.ganttConfig = {
+                titleTopMargin:25,
+                barHeight:20,
+                barGap:4,
+                topPadding:50,
+                sidePadding:100,
+                gridLineStartPadding:35,
+                fontSize:11,
+                numberSectionStyles:4,
+                axisFormatter: [
+                    // Within a day
+                    ["%I:%M", function (d) {
+                        return d.getHours();
+                    }],
+                    // Monday a week
+                    ["w. %U", function (d) {
+                        return d.getDay() == 1;
+                    }],
+                    // Day within a week (not monday)
+                    ["%a %d", function (d) {
+                        return d.getDay() && d.getDate() != 1;
+                    }],
+                    // within a month
+                    ["%b %d", function (d) {
+                        return d.getDate() != 1;
+                    }],
+                    // Month
+                    ["%m-%y", function (d) {
+                        return d.getMonth();
+                    }]
+                ]
+            };
         </script>
 </head>
 <body>
@@ -157,6 +253,7 @@
         <li><a href="usage.html">Usage</a></li>
         <li><a href="flowchart.html">Flowchart</a></li>
         <li><a href="sequenceDiagram.html">Sequence Diagram</a></li>
+        <li><a href="gantt.html">Gantt Diagram</a></li>
         <li><a href="mermaidCLI.html">mermaid CLI</a></li>
         <li class="active"><a href="demos.html">Demos</a></li>
         <li><a href="development.html">Development</a></li>

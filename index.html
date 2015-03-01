@@ -25,6 +25,7 @@
               media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
         <!-- load Ink's css from the cdn -->
         <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="css/mermaid.css">
         <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
         <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
         <!-- load Ink's css for IE8 -->
@@ -47,8 +48,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.3.5/dist/mermaid.full.js"></script>
-        <scrpt type="text/javascript" src="/dist/mermaid.full.js"></scrpt>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.4.0/dist/mermaid.full.js"></script>
+        <scrpt type="text/javascript" src="/js/mermaid.full.js"></scrpt>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -100,6 +101,54 @@
             svg {
                 padding-left:2px;
             }
+            /* Gantt styles */
+            .grid .tick {
+                stroke: lightgrey;
+                opacity: 0.3;
+                shape-rendering: crispEdges;
+            }
+            .grid path {
+                stroke-width: 0;
+            }
+
+
+            #tag {
+                color: white;
+                background: #FA283D;
+                width: 150px;
+                position: absolute;
+                display: none;
+                padding:3px 6px;
+                margin-left: -80px;
+                font-size: 11px;
+            }
+
+
+
+            #tag:before {
+                border: solid transparent;
+                content: ' ';
+                height: 0;
+                left: 50%;
+                margin-left: -5px;
+                position: absolute;
+                width: 0;
+                border-width: 10px;
+                border-bottom-color: #FA283D;
+                top: -20px;
+            }
+            .taskText {
+                fill:white;
+                text-anchor:middle;
+            }
+            .taskTextOutsideRight {
+                fill:black;
+                text-anchor:start;
+            }
+            .taskTextOutsideLeft {
+                fill:black;
+                text-anchor:end;
+            }
         </style>
         <script>
             var g = function (hljs) {
@@ -148,6 +197,53 @@
                     console.log('Registering new lang');
                 });
             });
+            var mermaid_config = {
+                startOnLoad:true,
+                htmlLabels:true
+            }
+            mermaid.sequenceConfig = {
+                diagramMarginX:50,
+                diagramMarginY:10,
+                boxTextMargin:5,
+                noteMargin:10,
+                messageMargin:35,
+                mirrorActors:true,
+                width:150,
+                // Height of actor boxes
+                height:30
+            };
+            mermaid.ganttConfig = {
+                titleTopMargin:25,
+                barHeight:20,
+                barGap:4,
+                topPadding:50,
+                sidePadding:100,
+                gridLineStartPadding:35,
+                fontSize:11,
+                numberSectionStyles:4,
+                axisFormatter: [
+                    // Within a day
+                    ["%I:%M", function (d) {
+                        return d.getHours();
+                    }],
+                    // Monday a week
+                    ["w. %U", function (d) {
+                        return d.getDay() == 1;
+                    }],
+                    // Day within a week (not monday)
+                    ["%a %d", function (d) {
+                        return d.getDay() && d.getDate() != 1;
+                    }],
+                    // within a month
+                    ["%b %d", function (d) {
+                        return d.getDate() != 1;
+                    }],
+                    // Month
+                    ["%m-%y", function (d) {
+                        return d.getMonth();
+                    }]
+                ]
+            };
         </script>
 </head>
 <body>
@@ -157,6 +253,7 @@
         <li><a href="usage.html">Usage</a></li>
         <li><a href="flowchart.html">Flowchart</a></li>
         <li><a href="sequenceDiagram.html">Sequence Diagram</a></li>
+        <li><a href="gantt.html">Gantt Diagram</a></li>
         <li><a href="mermaidCLI.html">mermaid CLI</a></li>
         <li><a href="demos.html">Demos</a></li>
         <li><a href="development.html">Development</a></li>
@@ -184,58 +281,55 @@
         <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
             <article id="main">
                 <h1 id="mermaid">mermaid</h1>
+<p><img src="img/header.png" alt="Alt text"></p>
 <p>Generation of diagrams and flowcharts from text in a similar manner as markdown.</p>
 <p>Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?</p>
 <p>This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. <a href="http://knsv.github.io/mermaid/live_editor">Try it using our editor</a>.</p>
-<p>The code below would render the following image</p>
-<table>
-<tr><th>Code</th><th>Rendered diagram</th></tr>
-<tr><td>
-<pre>
-<code>
+<p>Code examples below: </p>
+<pre><code>%% An example of a flowchart
 graph TD;
-    A--&gt;B;
-    A--&gt;C;
-    B--&gt;D;
-    C--&gt;D;
-<code>
-</pre>
-</td>
-<td>
-<img src='http://www.sveido.com/mermaid/img/ex1.png' alt='Example 1'>
-</td>
-</tr>
-<tr>
-<td>
-<pre>
-<code>
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;</code></pre><p>xxx</p>
+<pre><code>%% An example of a sequence diagram
 sequenceDiagram
     participant Alice
     participant Bob
-    Alice-&gt;John: Hello John, how are you?
+    Alice->John: Hello John, how are you?
     loop Healthcheck
-        John-&gt;John: Fight against hypochondria
+        John->John: Fight against hypochondria
     end
-    Note right of John: Rational thoughts &lt;br/&gt;prevail...
-    John--&gt;Alice: Great!
-    John-&gt;Bob: How about you?
-    Bob--&gt;John: Jolly good!
-</code>
-</pre>
-</td>
-<td>
-<img src='http://www.sveido.com/mermaid/img/seq1.png' alt='Example 2'>
-</td>
-</tr>
-</table>
-
+    Note right of John: Rational thoughts &lt;br/>prevail...
+    John-->Alice: Great!
+    John->Bob: How about you?
+    Bob-->John: Jolly good!</code></pre><p>xxx</p>
+<p><code>`
+%% Example of a Gannt diagram
+        gantt
+        dateFormat  YYYY-MM-DD
+        title Adding GANTT diagram functionality to mermaid
+        section A section
+        Completed task            :done,    des1, 2014-01-06,2014-01-08
+        Active task               :active,  des2, 2014-01-09, 3d
+        Future task               :         des3, after des2, 5d
+        Future task2               :         des4, after des3, 5d
+        section Critical tasks
+        Completed task in the critical line :crit, done, 2014-01-06,24h
+        Implement parser and jison          :crit, done, after des1, 2d
+        Create tests for parser             :crit, active, 3d
+        Future task in critical line        :crit, 5d
+        Create tests for renderer           :2d
+        Add to mermaid                      :1d</code></p>
 <p>Play with mermaid using this <a href="http://danielmschmidt.github.io/mermaid-demo/">editor</a> or this <a href="live_editor">live editor</a>. You can also look at mermaid in action using <a href="http://jsbin.com/faxunexeku/1/edit?html,output">jsbin</a>.</p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
 <li><a href="http://knsv.github.io/mermaid/usage.html">Usage</a></li>
 <li><a href="http://knsv.github.io/mermaid/flowchart.html">Flowchart syntax</a></li>
 <li><a href="http://knsv.github.io/mermaid/sequenceDiagram.html">Sequence diagram syntax</a></li>
+<li><a href="http://knsv.github.io/mermaid/gantt.html">Gantt chart syntax</a></li>
 <li><a href="http://knsv.github.io/mermaid/mermaidCLI.html">Mermaid client</a></li>
+<li><a href="http://knsv.github.io/mermaid/live_editor">Editor</a></li>
 </ul>
 <h1 id="credits">Credits</h1>
 <p>Many thanks to the <a href="http://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing

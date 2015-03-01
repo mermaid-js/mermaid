@@ -44,7 +44,7 @@ gulp.task('site',['indexSite'], function() {
         return "<table class=\"ink-table bordered hover alternating\">" +header + body+ "</table>";
     };
     renderer.code = function (code, language) {
-        if(code.match(/^sequenceDiagram/)||code.match(/^graph/)||code.match(/^info/)){
+        if(code.match(/^sequenceDiagram/)||code.match(/^graph/)||code.match(/^info/)||code.match(/^gantt/)){
 
             return '<div class="mermaid">'+code+'</div>';
         }
