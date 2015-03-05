@@ -316,7 +316,7 @@ module.exports.draw = function (text, id) {
                 .tickFormat(d3.time.format.multi(formatter))
             ;
 
-        if(daysInChart >7 && daysInChart<60){
+        if(daysInChart >7 && daysInChart<230){
             xAxis = xAxis.ticks(d3.time.monday.range);
         }
 
