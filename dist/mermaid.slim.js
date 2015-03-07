@@ -25702,6 +25702,7 @@ exports.addEdges = function (edges, g) {
     var defaultStyle;
     if(typeof edges.defaultStyle !== 'undefined'){
         defaultStyle = edges.defaultStyle.toString().replace(/,/g , ';');
+
     }
 
     edges.forEach(function (edge) {
@@ -25726,7 +25727,7 @@ exports.addEdges = function (edges, g) {
         else{
             switch(edge.stroke){
                 case 'normal':
-                    style = 'stroke: #333; stroke-width: 1.5px;fill:none';
+                    style = 'fill:none';
                     if(typeof defaultStyle !== 'undefined'){
                         style = defaultStyle;
                     }
