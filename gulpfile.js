@@ -12,6 +12,7 @@ var bump = require('gulp-bump');
 var tag_version = require('gulp-tag-version');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
+var insert = require('gulp-insert');
 
 var paths = {
   scripts: ['./src/**/*.js', '!**/parser/*.js']
@@ -91,6 +92,8 @@ gulp.task('slimDist', function() {
                 });
             })*/
         .pipe(rename('mermaid.slim.js'))
+        .pipe(insert.prepend('(function () { var define = undefined; '))
+        .pipe(insert.append(' })();'))
         .pipe(gulp.dest('./dist/'))
         .pipe(uglify())
         .pipe(extReplace('.min.js'))
