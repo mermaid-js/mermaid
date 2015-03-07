@@ -31042,15 +31042,26 @@ module.exports.cloneCssStyles = function(svg, classes){
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
         if (sheets[i].title !== 'mermaid-svg-internal-css') {
-            var rules = sheets[i].cssRules;
-            if(rules !== null) {
-                for (var j = 0; j < rules.length; j++) {
-                    var rule = rules[j];
-                    if (typeof(rule.style) !== 'undefined') {
-                        var elems = svg.querySelectorAll(rule.selectorText);
-                        if (elems.length > 0) {
-                            usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+            try {
+
+                var rules = sheets[i].cssRules;
+                if (rules !== null) {
+                    for (var j = 0; j < rules.length; j++) {
+                        var rule = rules[j];
+                        if (typeof(rule.style) !== 'undefined') {
+                            var elems;
+                            elems = svg.querySelectorAll(rule.selectorText);
+                            if (elems.length > 0) {
+                                usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                            }
                         }
+                    }
+                }
+            }
+            catch(err) {
+                if(typeof console !== 'undefined'){
+                    if(console.warn !== 'undefined'){
+                        console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
                     }
                 }
             }
