@@ -111,6 +111,10 @@ var init = function (sequenceConfig) {
         switch(graphType){
             case 'graph':
                 classes = flowRenderer.getClasses(txt, false);
+
+                if(typeof mermaid.flowchartConfig === 'object'){
+                    flowRenderer.setConf(mermaid.flowchartConfig);
+                }
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();

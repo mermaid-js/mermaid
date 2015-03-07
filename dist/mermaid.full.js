@@ -25627,6 +25627,16 @@ var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
 var dagreD3 = require('./dagre-d3');
+var conf = {
+};
+module.exports.setConf = function(cnf){
+    var keys = Object.keys(cnf);
+    var i;
+    for(i=0;i<keys.length;i++){
+        conf[keys[i]] = cnf[keys[i]];
+    }
+};
+
 /**
  * Function that adds the vertices found in the graph definition to the graph to be rendered.
  * @param vert Object containing the vertices.
@@ -26023,8 +26033,15 @@ exports.draw = function (text, id,isDot) {
 */
     // Center the graph
     svg.attr("height", g.graph().height );
-    svg.attr("width", g.graph().width );
-    svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+    if(typeof conf.width === 'undefined'){
+        console.log('Undefined it is');
+        svg.attr("width", g.graph().width );
+    }else{
+        console.log('Defined it is'+conf.width);
+        svg.attr("width", conf.width );
+    }
+    //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+    svg.attr("viewBox",  '0 0 '+ g.graph().width+' '+ g.graph().height);
 
 
     setTimeout(function(){
@@ -30882,6 +30899,10 @@ var init = function (sequenceConfig) {
         switch(graphType){
             case 'graph':
                 classes = flowRenderer.getClasses(txt, false);
+
+                if(typeof mermaid.flowchartConfig === 'object'){
+                    flowRenderer.setConf(mermaid.flowchartConfig);
+                }
                 flowRenderer.draw(txt, id, false);
                 utils.cloneCssStyles(element.firstChild, classes);
                 graph.bindFunctions();
