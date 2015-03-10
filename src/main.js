@@ -15,6 +15,8 @@ var gantt       = require('./diagrams/gantt/ganttRenderer');
 var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 
+var nextId = 0;
+
 /**
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
  * thrown and
@@ -80,7 +82,6 @@ var init = function (sequenceConfig) {
         }
     }
 
-    var cnt = 0;
     for (i = 0; i < arr.length; i++) {
         var element = arr[i];
 
@@ -91,10 +92,7 @@ var init = function (sequenceConfig) {
             continue;
         }
 
-        var id;
-
-        id = 'mermaidChart' + cnt;
-        cnt++;
+        id = 'mermaidChart' + nextId++;
 
         var txt = element.innerHTML;
         txt = txt.replace(/>/g,'&gt;');
