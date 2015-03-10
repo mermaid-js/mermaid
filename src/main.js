@@ -176,9 +176,8 @@ var equals = function (val, variable){
 global.mermaid = {
     startOnLoad:true,
     htmlLabels:true,
-    init:function(sequenceConfig){
-
-        init(sequenceConfig);
+    init:function(sequenceConfig, nodes){
+        init.apply(null, arguments);
     },
     version:function(){
         return exports.version();
