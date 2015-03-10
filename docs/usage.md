@@ -62,6 +62,26 @@ Would end up like this:
 ```
 An id is also added to mermaid tags without id.
 
+## Calling `mermaid.init`
+By default, `mermaid.init` will be called when the document is ready, finding all elements with
+`class="mermaid"`. If you are adding content after mermaid is loaded, or otherwise need
+finer-grained control of this behavior, you can call `init` yourself with:
+- a configuration object
+- some nodes, as
+  - a node
+  - an a array-like of nodes
+  - or W3C selector that will find your nodes
+
+Example:
+```
+mermaid.init({noteMargin: 10}, ".someOtherClass");
+```
+Or with no config object, and a jQuery selection:
+```
+mermaid.init(undefined, $("#someId .yetAnotherClass"));
+```
+
+
 # Example of marked renderer
 
 This is the renderer used for transforming the documentation from markdown to html with mermaid diagrams in the html.
