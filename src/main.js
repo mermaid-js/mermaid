@@ -62,7 +62,12 @@ var parse = function(text){
  *
  * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
  * attribute already set. This way the init function can be triggered several times.
- *
+ * 
+ * Optionally, `init` can accept in the second argument one of the following:
+ * - a DOM Node
+ * - an array of DOM nodes (as would come from a jQuery selector)
+ * - a W3C selector, a la `.mermaid`
+ * 
  * ```
  * graph LR;
  *  a(Find elements)-->b{Processed};
@@ -70,7 +75,12 @@ var parse = function(text){
  *  c-->|No |d(Transform);
  * ```
  */
-var init = function (sequenceConfig) {
+var init = function (sequenceConfig, arr) {
+    arr = arr == null ? document.querySelectorAll('.mermaid')
+      : typeof arr === "string" ? document.querySelectorAll(arr)
+      : arr instanceof Node ? [arr]
+      : arr;
+
     var arr = document.querySelectorAll('.mermaid');
     var i;
     
