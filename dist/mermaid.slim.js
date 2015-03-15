@@ -24822,6 +24822,7 @@ module.exports={
     "codeclimate-test-reporter": "0.0.4",
     "d3": "~3.4.13",
     "dagre-d3": "~0.3.3",
+    "dateformat": "^1.0.11",
     "event-stream": "^3.2.0",
     "foundation": "^4.2.1-1",
     "front-matter": "^0.2.0",
@@ -30771,6 +30772,8 @@ var gantt       = require('./diagrams/gantt/ganttRenderer');
 var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 
+var nextId = 0;
+
 /**
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
  * thrown and
@@ -30816,7 +30819,12 @@ var parse = function(text){
  *
  * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
  * attribute already set. This way the init function can be triggered several times.
- *
+ * 
+ * Optionally, `init` can accept in the second argument one of the following:
+ * - a DOM Node
+ * - an array of DOM nodes (as would come from a jQuery selector)
+ * - a W3C selector, a la `.mermaid`
+ * 
  * ```
  * graph LR;
  *  a(Find elements)-->b{Processed};
@@ -30824,7 +30832,12 @@ var parse = function(text){
  *  c-->|No |d(Transform);
  * ```
  */
-var init = function (sequenceConfig) {
+var init = function (sequenceConfig, arr) {
+    arr = arr == null ? document.querySelectorAll('.mermaid')
+      : typeof arr === "string" ? document.querySelectorAll(arr)
+      : arr instanceof Node ? [arr]
+      : arr;
+
     var arr = document.querySelectorAll('.mermaid');
     var i;
     
@@ -30836,7 +30849,6 @@ var init = function (sequenceConfig) {
         }
     }
 
-    var cnt = 0;
     for (i = 0; i < arr.length; i++) {
         var element = arr[i];
 
@@ -30847,10 +30859,7 @@ var init = function (sequenceConfig) {
             continue;
         }
 
-        var id;
-
-        id = 'mermaidChart' + cnt;
-        cnt++;
+        id = 'mermaidChart' + nextId++;
 
         var txt = element.innerHTML;
         txt = txt.replace(/>/g,'&gt;');
@@ -30924,9 +30933,8 @@ var equals = function (val, variable){
 global.mermaid = {
     startOnLoad:true,
     htmlLabels:true,
-    init:function(sequenceConfig){
-
-        init(sequenceConfig);
+    init:function(sequenceConfig, nodes){
+        init.apply(null, arguments);
     },
     version:function(){
         return exports.version();

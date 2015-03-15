@@ -611,6 +611,15 @@ describe('when parsing ',function(){
             expect(edges[0].text).toBe('text including graph space and v');
 
         });
+        it('should handle keywords',function(){
+            var res = flow.parser.parse('graph TD;A-- text including graph space and v --xB[blav]');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(edges[0].text).toBe('text including graph space and v');
+
+        });
         xit('should handle text on open links',function(){
             var res = flow.parser.parse('graph TD;A-- text including graph space --B');
 
