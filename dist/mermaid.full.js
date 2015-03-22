@@ -26317,6 +26317,9 @@ exports.addSubGraph = function (list, title) {
 
         return a.filter(function(item) {
             var type = typeof item;
+            if(item===' '){
+                return false;
+            }
             if(type in prims)
                 return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
             else
@@ -26327,7 +26330,6 @@ exports.addSubGraph = function (list, title) {
     var subG = [];
 
     subG = uniq(subG.concat.apply(subG,list));
-    //console.log(subG);
 
     subGraphs.push({nodes:subG,title:title});
 };

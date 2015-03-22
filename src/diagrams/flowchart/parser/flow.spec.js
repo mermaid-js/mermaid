@@ -348,7 +348,7 @@ describe('when parsing ',function(){
     });
 
     it('should handle subgraphs',function(){
-        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend\n');
+        var res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\n\n c-->d \nend\n');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
