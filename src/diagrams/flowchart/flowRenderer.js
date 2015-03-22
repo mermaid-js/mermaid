@@ -5,6 +5,7 @@ var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
 var dagreD3 = require('./dagre-d3');
+var d3 = require('./d3');
 var conf = {
 };
 module.exports.setConf = function(cnf){
@@ -419,8 +420,7 @@ exports.draw = function (text, id,isDot) {
         svg.attr("width", conf.width );
     }
     //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-    svg.attr("viewBox",  '0 0 '+ g.graph().width+' '+ g.graph().height);
-
+    svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));
 
     setTimeout(function(){
         var i = 0;

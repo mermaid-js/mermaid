@@ -170,9 +170,98 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
         expect(edges[0].text).toBe('');
     });
+    it('should handle comments a at the start',function(){
+        var res = flow.parser.parse('%% Comment\ngraph TD;\n A-->B;');
 
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+    it('should handle comments at the end',function(){
+        var res = flow.parser.parse('graph TD;\n A-->B\n %% Comment at the find\n');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+    it('should handle comments at the end no trailing newline',function(){
+        var res = flow.parser.parse('graph TD;\n A-->B\n%% Commento');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+    it('should handle comments at the end many trailing newlines',function(){
+        var res = flow.parser.parse('graph TD;\n A-->B\n%% Commento\n\n\n');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+    it('should handle no trailing newlines',function(){
+        var res = flow.parser.parse('graph TD;\n A-->B');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
+    it('should handle many trailing newlines',function(){
+        var res = flow.parser.parse('graph TD;\n A-->B\n\n');
+
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].id).toBe('A');
+        expect(vert['B'].id).toBe('B');
+        expect(edges.length).toBe(1);
+        expect(edges[0].start).toBe('A');
+        expect(edges[0].end).toBe('B');
+        expect(edges[0].type).toBe('arrow');
+        expect(edges[0].text).toBe('');
+    });
     it('should handle a comments with blank rows in-between',function(){
-        var res = flow.parser.parse('graph TD;\n\n\n %% CComment\n A-->B;');
+        var res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B;');
 
 
         var vert = flow.parser.yy.getVertices();
@@ -204,7 +293,7 @@ describe('when parsing ',function(){
     });
 
     it('it should handle a trailing whitespaces after statememnts',function(){
-        var res = flow.parser.parse('graph TD;\n\n\n %% CComment\n A-->B; \n B-->C;');
+        var res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B; \n B-->C;');
 
 
         var vert = flow.parser.yy.getVertices();

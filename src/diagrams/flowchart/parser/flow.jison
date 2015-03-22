@@ -8,7 +8,7 @@
 %lex
 
 %%
-\%\%[^\n]*            {console.log('comment: '+yytext)}
+\%\%[^\n]*            /* do nothing */
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
@@ -157,11 +157,11 @@ document
 	;
 
 line
-	: spaceListNewline statement
-	{$$=$2;}
-	| statement
+	: statement
 	{$$=$1;}
 	| SEMI
+	| NEWLINE
+	| SPACE
 	| EOF
 	;
 
@@ -216,21 +216,17 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph  text separator document endStatement separator
+    | subgraph  text separator document end separator
     {yy.addSubGraph($4,$2);}
-    | subgraph separator document endStatement separator
+    | subgraph separator document end separator
     {yy.addSubGraph($3,undefined);}
     ;
 
-endStatement: end
-    | SPACE endStatement
-    ;
-
-separator: NEWLINE {console.log('nl sep')} | SEMI {console.log('semi sep')}| EOF {console.log('eof sep')};
+separator: NEWLINE | SEMI | EOF ;
 
 verticeStatement:
      vertex link vertex
-        { console.log($3);yy.addLink($1,$3,$2);$$ = [$1,$3];}
+        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
      | vertex
         {$$ = [$1];}
     ;

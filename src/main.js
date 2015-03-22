@@ -81,7 +81,7 @@ var init = function (sequenceConfig, arr) {
       : arr instanceof Node ? [arr]
       : arr;
 
-    var arr = document.querySelectorAll('.mermaid');
+    //arr = document.querySelectorAll('.mermaid');
     var i;
     
     if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
@@ -195,7 +195,7 @@ global.mermaid = {
 };
 
 exports.contentLoaded = function(){
-    // Check state of start config mermaid namespece
+    // Check state of start config mermaid namespace
     //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
     //console.log('mermaid_config',mermaid_config);
     if (typeof mermaid_config !== 'undefined') {

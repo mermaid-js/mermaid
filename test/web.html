@@ -29,7 +29,28 @@
     <link rel="stylesheet" href="../dist/mermaid.css"/>
 </head>
     <body>
-    <div  class="mermaid">
+    <h1>Issue 141</h1>
+    <div  class="mermaid" id="i141">
+
+        graph LR
+        
+        %% Example diagram
+        A[Square Rect] -- Link text --> B((Circle))
+        A --> C(Round Rect)
+        B --> D{Rhombus}
+        C --> D
+
+    </div>
+    <h1>Issue 140</h1>
+    <div  class="mermaid" id="i140">
+        graph LR
+        A-->B
+        B-->C
+        C-->A
+        D-->C
+
+    </div>
+    <div  class="mermaid" id="ettan">
         graph LR;
         A[Now with default style on links]--v-->B{a = '1,2'}
         B-->|v|C[v]
@@ -104,7 +125,7 @@
         c1-->a2
 
     </div>
-    <div class="mermaid">graph TB
+    <div class="mermaid" >graph TB
         subgraph
             sq[Square shape] -.-> ci((Circle shape))
             od>Odd shape]-. Two line<br>edge comment .-> ro
