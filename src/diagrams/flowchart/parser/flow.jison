@@ -8,6 +8,7 @@
 %lex
 
 %%
+\%\%[^\n]*            {console.log('comment: '+yytext)}
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
@@ -128,7 +129,7 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-\n                    return 'NEWLINE';
+\n+                   return 'NEWLINE';
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
@@ -142,7 +143,7 @@
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig document ;
+mermaidDoc: graphConfig document;
 
 document
 	: /* empty */
@@ -165,7 +166,9 @@ line
 	;
 
 graphConfig
-    : GRAPH SPACE DIR FirstStmtSeperator
+    : SPACE graphConfig
+    | NEWLINE graphConfig
+    | GRAPH SPACE DIR FirstStmtSeperator
         { yy.setDirection($3);$$ = $3;}
     | GRAPH SPACE TAGEND FirstStmtSeperator
         { yy.setDirection("LR");$$ = $3;}
@@ -177,6 +180,12 @@ graphConfig
         { yy.setDirection("TB");$$ = $3;}
     ;
 
+ending: endToken ending
+      | endToken
+      ;
+      
+endToken: NEWLINE | SPACE | EOF;
+      
 FirstStmtSeperator 
     : SEMI | NEWLINE | spaceList NEWLINE ;
 
@@ -195,9 +204,7 @@ spaceList
     ;
 
 statement
-    : commentStatement NEWLINE
-    {$$=[];}
-    | verticeStatement separator
+    : verticeStatement separator
     {$$=$1}
     | styleStatement separator
     {$$=[];}
@@ -219,11 +226,11 @@ endStatement: end
     | SPACE endStatement
     ;
 
-separator: NEWLINE | SEMI | EOF ;
+separator: NEWLINE {console.log('nl sep')} | SEMI {console.log('semi sep')}| EOF {console.log('eof sep')};
 
 verticeStatement:
      vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
+        { console.log($3);yy.addLink($1,$3,$2);$$ = [$1,$3];}
      | vertex
         {$$ = [$1];}
     ;
@@ -272,28 +279,6 @@ alphaNumStatement
         {$$=$1;}
     | alphaNumToken MINUS alphaNumToken
         {$$=$1+'-'+$3;}
-    ;
-
-linkOld: linkStatement arrowText
-    {$1.text = $2;$$ = $1;}
-    | linkStatement arrowText SPACE
-    {$1.text = $2;$$ = $1;}
-    | linkStatement
-    {$$ = $1;}
-    | linkStatement SPACE
-    {$$ = $1;}
-    | '--' text linkStatement
-    {$5.text = $3;$$ = $5;}
-    | '--' SPACE text SPACE linkStatement SPACE
-    {$5.text = $3;$$ = $5;}
-    | '-.' SPACE text SPACE linkStatement
-    {$5.text = $3;$$ = $5;}
-    | '-.' SPACE text SPACE linkStatement SPACE
-    {$5.text = $3;$$ = $5;}
-    | '==' SPACE text SPACE linkStatement
-    {$5.text = $3;$$ = $5;}
-    | '==' SPACE text SPACE linkStatement SPACE
-    {$5.text = $3;$$ = $5;}
     ;
 
 link: linkStatement arrowText
