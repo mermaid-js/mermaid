@@ -30829,25 +30829,34 @@ var parse = function(text){
  *  c-->|No |d(Transform);
  * ```
  */
-var init = function (sequenceConfig, arr) {
-    arr = arr == null ? document.querySelectorAll('.mermaid')
-      : typeof arr === "string" ? document.querySelectorAll(arr)
-      : arr instanceof Node ? [arr]
-      : arr;
 
-    //arr = document.querySelectorAll('.mermaid');
-    var i;
-    
-    if (sequenceConfig !== 'undefined' && (typeof sequenceConfig !== 'undefined')) {
-        if(typeof sequenceConfig === 'object'){
-            seq.setConf(sequenceConfig);
-        } else{
-            seq.setConf(JSON.parse(sequenceConfig));
+/**
+ * Renders the mermaid diagrams
+ * @* param nodes- a css selector or an array of nodes
+ */
+var init = function () {
+    var nodes;
+    if(arguments.length === 2){
+        // sequence config was passed as #1
+        if(typeof arguments[0] !== 'undefined'){
+            mermaid.sequenceConfig = arguments[0];      
         }
-    }
 
-    for (i = 0; i < arr.length; i++) {
-        var element = arr[i];
+        nodes = arguments[1];
+    }
+    else{
+        nodes = arguments[0];
+    }
+    
+    nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
+        : typeof nodes === "string" ? document.querySelectorAll(nodes)
+        : nodes instanceof Node ? [nodes]
+        // Last case  - sequence config was passed pick next 
+        : nodes;
+    
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+        var element = nodes[i];
 
         // Check if previously processed
         if(!element.getAttribute("data-processed")) {
@@ -30856,7 +30865,7 @@ var init = function (sequenceConfig, arr) {
             continue;
         }
 
-        id = 'mermaidChart' + nextId++;
+        var id = 'mermaidChart' + nextId++;
 
         var txt = element.innerHTML;
         txt = txt.replace(/>/g,'&gt;');
@@ -30887,6 +30896,9 @@ var init = function (sequenceConfig, arr) {
                 utils.cloneCssStyles(element.firstChild, classes);
                 break;
             case 'sequenceDiagram':
+                if(typeof mermaid.sequenceConfig === 'object'){
+                    seq.setConf(mermaid.sequenceConfig);
+                }
                 seq.draw(txt,id);
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
@@ -30983,8 +30995,6 @@ if(typeof document !== 'undefined'){
         exports.contentLoaded();
     }, false);
 }
-
-
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":84,"./diagrams/example/exampleDb":85,"./diagrams/example/exampleRenderer":86,"./diagrams/example/parser/example":87,"./diagrams/flowchart/flowRenderer":90,"./diagrams/flowchart/graphDb":91,"./diagrams/flowchart/parser/dot":92,"./diagrams/flowchart/parser/flow":93,"./diagrams/gantt/ganttDb":95,"./diagrams/gantt/ganttRenderer":96,"./diagrams/gantt/parser/gantt":97,"./diagrams/sequenceDiagram/parser/sequenceDiagram":99,"./diagrams/sequenceDiagram/sequenceDb":100,"./diagrams/sequenceDiagram/sequenceRenderer":101,"./utils":104,"he":81}],104:[function(require,module,exports){
