@@ -26053,10 +26053,8 @@ exports.draw = function (text, id,isDot) {
     // Center the graph
     svg.attr("height", g.graph().height );
     if(typeof conf.width === 'undefined'){
-        console.log('Undefined it is');
         svg.attr("width", g.graph().width );
     }else{
-        console.log('Defined it is'+conf.width);
         svg.attr("width", conf.width );
     }
     //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
