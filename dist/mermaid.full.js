@@ -25,11 +25,11 @@ var t=x.length;if(t){x.sort(c);for(var e,r=1,u=x[0],i=[u];t>r;++r)e=x[r],l(e[0],
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-module.exports={graphlib:require("./lib/graphlib"),dagre:require("./lib/dagre"),intersect:require("./lib/intersect"),render:require("./lib/render"),util:require("./lib/util"),version:require("./lib/version")}},{"./lib/dagre":8,"./lib/graphlib":9,"./lib/intersect":10,"./lib/render":23,"./lib/util":25,"./lib/version":26}],2:[function(require,module,exports){var util=require("./util");module.exports={"default":normal,normal:normal,vee:vee,undirected:undirected};function normal(parent,id,edge,type){var marker=parent.append("marker").attr("id",id).attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5).attr("markerUnits","strokeWidth").attr("markerWidth",8).attr("markerHeight",6).attr("orient","auto");var path=marker.append("path").attr("d","M 0 0 L 10 5 L 0 10 z").style("stroke-width",1).style("stroke-dasharray","1,0");util.applyStyle(path,edge[type+"Style"])}function vee(parent,id,edge,type){var marker=parent.append("marker").attr("id",id).attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5).attr("markerUnits","strokeWidth").attr("markerWidth",8).attr("markerHeight",6).attr("orient","auto");var path=marker.append("path").attr("d","M 0 0 L 10 5 L 0 10 L 4 5 z").style("stroke-width",1).style("stroke-dasharray","1,0");util.applyStyle(path,edge[type+"Style"])}function undirected(parent,id,edge,type){var marker=parent.append("marker").attr("id",id).attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5).attr("markerUnits","strokeWidth").attr("markerWidth",8).attr("markerHeight",6).attr("orient","auto");var path=marker.append("path").attr("d","M 0 5 L 10 5").style("stroke-width",1).style("stroke-dasharray","1,0");util.applyStyle(path,edge[type+"Style"])}},{"./util":25}],3:[function(require,module,exports){var util=require("./util");module.exports=createClusters;function createClusters(selection,g){var clusters=g.nodes().filter(function(v){return util.isSubgraph(g,v)}),svgClusters=selection.selectAll("g.cluster").data(clusters,function(v){return v});svgClusters.enter().append("g").attr("class","cluster").style("opacity",0).append("rect");util.applyTransition(svgClusters.exit(),g).style("opacity",0).remove();util.applyTransition(svgClusters,g).style("opacity",1);util.applyTransition(svgClusters.selectAll("rect"),g).attr("width",function(v){return g.node(v).width}).attr("height",function(v){return g.node(v).height}).attr("x",function(v){var node=g.node(v);return node.x-node.width/2}).attr("y",function(v){var node=g.node(v);return node.y-node.height/2})}},{"./util":25}],4:[function(require,module,exports){"use strict";var _=require("./lodash"),addLabel=require("./label/add-label"),util=require("./util"),d3=require("./d3");module.exports=createEdgeLabels;function createEdgeLabels(selection,g){var svgEdgeLabels=selection.selectAll("g.edgeLabel").data(g.edges(),function(e){return util.edgeToId(e)}).classed("update",true);svgEdgeLabels.selectAll("*").remove();svgEdgeLabels.enter().append("g").classed("edgeLabel",true).style("opacity",0);svgEdgeLabels.each(function(e){var edge=g.edge(e),label=addLabel(d3.select(this),g.edge(e),0,0).classed("label",true),bbox=label.node().getBBox();if(edge.labelId){label.attr("id",edge.labelId)}if(!_.has(edge,"width")){edge.width=bbox.width}if(!_.has(edge,"height")){edge.height=bbox.height}});util.applyTransition(svgEdgeLabels.exit(),g).style("opacity",0).remove();return svgEdgeLabels}},{"./d3":7,"./label/add-label":18,"./lodash":20,"./util":25}],5:[function(require,module,exports){"use strict";var _=require("./lodash"),intersectNode=require("./intersect/intersect-node"),util=require("./util"),d3=require("./d3");module.exports=createEdgePaths;function createEdgePaths(selection,g,arrows){var svgPaths=selection.selectAll("g.edgePath").data(g.edges(),function(e){return util.edgeToId(e)}).classed("update",true);enter(svgPaths,g);exit(svgPaths,g);util.applyTransition(svgPaths,g).style("opacity",1);svgPaths.each(function(e){var edge=g.edge(e);edge.elem=this;if(edge.id){d3.select(this).attr("id",edge.id)}});svgPaths.selectAll("path.path").each(function(e){var edge=g.edge(e);edge.arrowheadId=_.uniqueId("arrowhead");var domEdge=d3.select(this).attr("marker-end",function(){return"url(#"+edge.arrowheadId+")"}).style("fill","none");util.applyTransition(domEdge,g).attr("d",function(e){return calcPoints(g,e)});util.applyStyle(domEdge,edge.style)});svgPaths.selectAll("defs *").remove();svgPaths.selectAll("defs").each(function(e){var edge=g.edge(e),arrowhead=arrows[edge.arrowhead];arrowhead(d3.select(this),edge.arrowheadId,edge,"arrowhead")});return svgPaths}function calcPoints(g,e){var edge=g.edge(e),tail=g.node(e.v),head=g.node(e.w),points=edge.points.slice(1,edge.points.length-1);points.unshift(intersectNode(tail,points[0]));points.push(intersectNode(head,points[points.length-1]));return createLine(edge,points)}function createLine(edge,points){var line=d3.svg.line().x(function(d){return d.x}).y(function(d){return d.y});if(_.has(edge,"lineInterpolate")){line.interpolate(edge.lineInterpolate)}if(_.has(edge,"lineTension")){line.tension(Number(edge.lineTension))}return line(points)}function getCoords(elem){var bbox=elem.getBBox(),matrix=elem.getTransformToElement(elem.ownerSVGElement).translate(bbox.width/2,bbox.height/2);return{x:matrix.e,y:matrix.f}}function enter(svgPaths,g){var svgPathsEnter=svgPaths.enter().append("g").attr("class","edgePath").style("opacity",0);svgPathsEnter.append("path").attr("class","path").attr("d",function(e){var edge=g.edge(e),sourceElem=g.node(e.v).elem,points=_.range(edge.points.length).map(function(){return getCoords(sourceElem)});return createLine(edge,points)});svgPathsEnter.append("defs")}function exit(svgPaths,g){var svgPathExit=svgPaths.exit();util.applyTransition(svgPathExit,g).style("opacity",0).remove();util.applyTransition(svgPathExit.select("path.path"),g).attr("d",function(e){var source=g.node(e.v);if(source){var points=_.range(this.pathSegList.length).map(function(){return source});return createLine({},points)}else{return d3.select(this).attr("d")}})}},{"./d3":7,"./intersect/intersect-node":14,"./lodash":20,"./util":25}],6:[function(require,module,exports){"use strict";var _=require("./lodash"),addLabel=require("./label/add-label"),util=require("./util"),d3=require("./d3");module.exports=createNodes;function createNodes(selection,g,shapes){var simpleNodes=g.nodes().filter(function(v){return!util.isSubgraph(g,v)});var svgNodes=selection.selectAll("g.node").data(simpleNodes,function(v){return v}).classed("update",true);svgNodes.selectAll("*").remove();svgNodes.enter().append("g").attr("class","node").style("opacity",0);svgNodes.each(function(v){var node=g.node(v),thisGroup=d3.select(this),labelGroup=thisGroup.append("g").attr("class","label"),labelDom=addLabel(labelGroup,node),shape=shapes[node.shape],bbox=_.pick(labelDom.node().getBBox(),"width","height");node.elem=this;if(node.id){thisGroup.attr("id",node.id)}if(node.labelId){labelGroup.attr("id",node.labelId)}util.applyClass(thisGroup,node["class"],(thisGroup.classed("update")?"update ":"")+"node");if(_.has(node,"width")){bbox.width=node.width}if(_.has(node,"height")){bbox.height=node.height}bbox.width+=node.paddingLeft+node.paddingRight;bbox.height+=node.paddingTop+node.paddingBottom;labelGroup.attr("transform","translate("+(node.paddingLeft-node.paddingRight)/2+","+(node.paddingTop-node.paddingBottom)/2+")");var shapeSvg=shape(d3.select(this),bbox,node);util.applyStyle(shapeSvg,node.style);var shapeBBox=shapeSvg.node().getBBox();node.width=shapeBBox.width;node.height=shapeBBox.height});util.applyTransition(svgNodes.exit(),g).style("opacity",0).remove();return svgNodes}},{"./d3":7,"./label/add-label":18,"./lodash":20,"./util":25}],7:[function(require,module,exports){module.exports=window.d3},{}],8:[function(require,module,exports){var dagre;if(require){try{dagre=require("dagre")}catch(e){}}if(!dagre){dagre=window.dagre}module.exports=dagre},{dagre:27}],9:[function(require,module,exports){var graphlib;if(require){try{graphlib=require("graphlib")}catch(e){}}if(!graphlib){graphlib=window.graphlib}module.exports=graphlib},{graphlib:57}],10:[function(require,module,exports){module.exports={node:require("./intersect-node"),circle:require("./intersect-circle"),ellipse:require("./intersect-ellipse"),polygon:require("./intersect-polygon"),rect:require("./intersect-rect")}},{"./intersect-circle":11,"./intersect-ellipse":12,"./intersect-node":14,"./intersect-polygon":15,"./intersect-rect":16}],11:[function(require,module,exports){var intersectEllipse=require("./intersect-ellipse");module.exports=intersectCircle;function intersectCircle(node,rx,point){return intersectEllipse(node,rx,rx,point)}},{"./intersect-ellipse":12}],12:[function(require,module,exports){module.exports=intersectEllipse;function intersectEllipse(node,rx,ry,point){var cx=node.x;var cy=node.y;var px=cx-point.x;var py=cy-point.y;var det=Math.sqrt(rx*rx*py*py+ry*ry*px*px);var dx=Math.abs(rx*ry*px/det);if(point.x<cx){dx=-dx}var dy=Math.abs(rx*ry*py/det);if(point.y<cy){dy=-dy}return{x:cx+dx,y:cy+dy}}},{}],13:[function(require,module,exports){module.exports=intersectLine;function intersectLine(p1,p2,q1,q2){var a1,a2,b1,b2,c1,c2;var r1,r2,r3,r4;var denom,offset,num;var x,y;a1=p2.y-p1.y;b1=p1.x-p2.x;c1=p2.x*p1.y-p1.x*p2.y;r3=a1*q1.x+b1*q1.y+c1;r4=a1*q2.x+b1*q2.y+c1;if(r3!==0&&r4!==0&&sameSign(r3,r4)){return}a2=q2.y-q1.y;b2=q1.x-q2.x;c2=q2.x*q1.y-q1.x*q2.y;r1=a2*p1.x+b2*p1.yy+c2;r2=a2*p2.x+b2*p2.y+c2;if(r1!==0&&r2!==0&&sameSign(r1,r2)){return}denom=a1*b2-a2*b1;if(denom===0){return}offset=Math.abs(denom/2);num=b1*c2-b2*c1;x=num<0?(num-offset)/denom:(num+offset)/denom;num=a2*c1-a1*c2;y=num<0?(num-offset)/denom:(num+offset)/denom;return{x:x,y:y}}function sameSign(r1,r2){return r1*r2>0}},{}],14:[function(require,module,exports){module.exports=intersectNode;function intersectNode(node,point){return node.intersect(point)}},{}],15:[function(require,module,exports){var intersectLine=require("./intersect-line");module.exports=intersectPolygon;function intersectPolygon(node,polyPoints,point){var x1=node.x;var y1=node.y;var intersections=[];var minX=Number.POSITIVE_INFINITY,minY=Number.POSITIVE_INFINITY;polyPoints.forEach(function(entry){minX=Math.min(minX,entry.x);minY=Math.min(minY,entry.y)});var left=x1-node.width/2-minX;var top=y1-node.height/2-minY;for(var i=0;i<polyPoints.length;i++){var p1=polyPoints[i];var p2=polyPoints[i<polyPoints.length-1?i+1:0];var intersect=intersectLine(node,point,{x:left+p1.x,y:top+p1.y},{x:left+p2.x,y:top+p2.y});if(intersect){intersections.push(intersect)}}if(!intersections.length){console.log("NO INTERSECTION FOUND, RETURN NODE CENTER",node);return node}if(intersections.length>1){intersections.sort(function(p,q){var pdx=p.x-point.x,pdy=p.y-point.y,distp=Math.sqrt(pdx*pdx+pdy*pdy),qdx=q.x-point.x,qdy=q.y-point.y,distq=Math.sqrt(qdx*qdx+qdy*qdy);return distp<distq?-1:distp===distq?0:1})}return intersections[0]}},{"./intersect-line":13}],16:[function(require,module,exports){module.exports=intersectRect;function intersectRect(node,point){var x=node.x;var y=node.y;var dx=point.x-x;var dy=point.y-y;var w=node.width/2;var h=node.height/2;var sx,sy;if(Math.abs(dy)*w>Math.abs(dx)*h){if(dy<0){h=-h}sx=dy===0?0:h*dx/dy;sy=h}else{if(dx<0){w=-w}sx=w;sy=dx===0?0:w*dy/dx}return{x:x+sx,y:y+sy}}},{}],17:[function(require,module,exports){var util=require("../util");module.exports=addHtmlLabel;function addHtmlLabel(root,node){var fo=root.append("foreignObject").attr("width","100000");var div=fo.append("xhtml:div");var label=node.label;switch(typeof label){case"function":div.insert(label);break;case"object":div.insert(function(){return label});break;default:div.html(label)}util.applyStyle(div,node.labelStyle);div.style("display","inline-block");div.style("white-space","nowrap");var w,h;div.each(function(){w=this.clientWidth;h=this.clientHeight});fo.attr("width",w).attr("height",h);return fo}},{"../util":25}],18:[function(require,module,exports){var addTextLabel=require("./add-text-label"),addHtmlLabel=require("./add-html-label");module.exports=addLabel;function addLabel(root,node){var label=node.label;var labelSvg=root.append("g");if(typeof label!=="string"||node.labelType==="html"){addHtmlLabel(labelSvg,node)}else{addTextLabel(labelSvg,node)}var labelBBox=labelSvg.node().getBBox();labelSvg.attr("transform","translate("+-labelBBox.width/2+","+-labelBBox.height/2+")");return labelSvg}},{"./add-html-label":17,"./add-text-label":19}],19:[function(require,module,exports){var util=require("../util");module.exports=addTextLabel;function addTextLabel(root,node){var domNode=root.append("text");var lines=processEscapeSequences(node.label).split("\n");for(var i=0;i<lines.length;i++){domNode.append("tspan").attr("xml:space","preserve").attr("dy","1em").attr("x","1").text(lines[i])}util.applyStyle(domNode,node.labelStyle);return domNode}function processEscapeSequences(text){var newText="",escaped=false,ch;for(var i=0;i<text.length;++i){ch=text[i];if(escaped){switch(ch){case"n":newText+="\n";break;default:newText+=ch}escaped=false}else if(ch==="\\"){escaped=true}else{newText+=ch}}return newText}},{"../util":25}],20:[function(require,module,exports){var lodash;if(require){try{lodash=require("lodash")}catch(e){}}if(!lodash){lodash=window._}module.exports=lodash},{lodash:77}],21:[function(require,module,exports){"use strict";var util=require("./util"),d3=require("./d3"),_=require("./lodash");module.exports=positionEdgeLabels;function positionEdgeLabels(selection,g){var created=selection.filter(function(){return!d3.select(this).classed("update")});function translate(e){var edge=g.edge(e);return _.has(edge,"x")?"translate("+edge.x+","+edge.y+")":""}created.attr("transform",translate);util.applyTransition(selection,g).style("opacity",1).attr("transform",translate)}},{"./d3":7,"./lodash":20,"./util":25}],22:[function(require,module,exports){"use strict";var util=require("./util"),d3=require("./d3");module.exports=positionNodes;function positionNodes(selection,g){var created=selection.filter(function(){return!d3.select(this).classed("update")});function translate(v){var node=g.node(v);return"translate("+node.x+","+node.y+")"}created.attr("transform",translate);util.applyTransition(selection,g).style("opacity",1).attr("transform",translate)}},{"./d3":7,"./util":25}],23:[function(require,module,exports){var _=require("./lodash"),layout=require("./dagre").layout;module.exports=render;function render(){var createNodes=require("./create-nodes"),createClusters=require("./create-clusters"),createEdgeLabels=require("./create-edge-labels"),createEdgePaths=require("./create-edge-paths"),positionNodes=require("./position-nodes"),positionEdgeLabels=require("./position-edge-labels"),shapes=require("./shapes"),arrows=require("./arrows");var fn=function(svg,g){preProcessGraph(g);var outputGroup=createOrSelectGroup(svg,"output"),clustersGroup=createOrSelectGroup(outputGroup,"clusters"),edgePathsGroup=createOrSelectGroup(outputGroup,"edgePaths"),edgeLabels=createEdgeLabels(createOrSelectGroup(outputGroup,"edgeLabels"),g),nodes=createNodes(createOrSelectGroup(outputGroup,"nodes"),g,shapes);layout(g);positionNodes(nodes,g);positionEdgeLabels(edgeLabels,g);createEdgePaths(edgePathsGroup,g,arrows);createClusters(clustersGroup,g);postProcessGraph(g)};fn.createNodes=function(value){if(!arguments.length)return createNodes;createNodes=value;return fn};fn.createClusters=function(value){if(!arguments.length)return createClusters;createClusters=value;return fn};fn.createEdgeLabels=function(value){if(!arguments.length)return createEdgeLabels;createEdgeLabels=value;return fn};fn.createEdgePaths=function(value){if(!arguments.length)return createEdgePaths;createEdgePaths=value;return fn};fn.shapes=function(value){if(!arguments.length)return shapes;shapes=value;return fn};fn.arrows=function(value){if(!arguments.length)return arrows;arrows=value;return fn};return fn}var NODE_DEFAULT_ATTRS={paddingLeft:10,paddingRight:10,paddingTop:10,paddingBottom:10,rx:0,ry:0,shape:"rect"};var EDGE_DEFAULT_ATTRS={arrowhead:"normal",lineInterpolate:"linear"};function preProcessGraph(g){g.nodes().forEach(function(v){var node=g.node(v);if(!_.has(node,"label")){node.label=v}if(_.has(node,"paddingX")){_.defaults(node,{paddingLeft:node.paddingX,paddingRight:node.paddingX})}if(_.has(node,"paddingY")){_.defaults(node,{paddingTop:node.paddingY,paddingBottom:node.paddingY})}if(_.has(node,"padding")){_.defaults(node,{paddingLeft:node.padding,paddingRight:node.padding,paddingTop:node.padding,paddingBottom:node.padding})}_.defaults(node,NODE_DEFAULT_ATTRS);_.each(["paddingLeft","paddingRight","paddingTop","paddingBottom"],function(k){node[k]=Number(node[k])});if(_.has(node,"width")){node._prevWidth=node.width}if(_.has(node,"height")){node._prevHeight=node.height}});g.edges().forEach(function(e){var edge=g.edge(e);if(!_.has(edge,"label")){edge.label=""}_.defaults(edge,EDGE_DEFAULT_ATTRS)})}function postProcessGraph(g){_.each(g.nodes(),function(v){var node=g.node(v);if(_.has(node,"_prevWidth")){node.width=node._prevWidth}else{delete node.width}if(_.has(node,"_prevHeight")){node.height=node._prevHeight}else{delete node.height}delete node._prevWidth;delete node._prevHeight})}function createOrSelectGroup(root,name){var selection=root.select("g."+name);if(selection.empty()){selection=root.append("g").attr("class",name)}return selection}},{"./arrows":2,"./create-clusters":3,"./create-edge-labels":4,"./create-edge-paths":5,"./create-nodes":6,"./dagre":8,"./lodash":20,"./position-edge-labels":21,"./position-nodes":22,"./shapes":24}],24:[function(require,module,exports){"use strict";var intersectRect=require("./intersect/intersect-rect"),intersectEllipse=require("./intersect/intersect-ellipse"),intersectCircle=require("./intersect/intersect-circle"),intersectPolygon=require("./intersect/intersect-polygon");module.exports={rect:rect,ellipse:ellipse,circle:circle,diamond:diamond};function rect(parent,bbox,node){var shapeSvg=parent.insert("rect",":first-child").attr("rx",node.rx).attr("ry",node.ry).attr("x",-bbox.width/2).attr("y",-bbox.height/2).attr("width",bbox.width).attr("height",bbox.height);node.intersect=function(point){return intersectRect(node,point)};return shapeSvg}function ellipse(parent,bbox,node){var rx=bbox.width/2,ry=bbox.height/2,shapeSvg=parent.insert("ellipse",":first-child").attr("x",-bbox.width/2).attr("y",-bbox.height/2).attr("rx",rx).attr("ry",ry);node.intersect=function(point){return intersectEllipse(node,rx,ry,point)};return shapeSvg}function circle(parent,bbox,node){var r=Math.max(bbox.width,bbox.height)/2,shapeSvg=parent.insert("circle",":first-child").attr("x",-bbox.width/2).attr("y",-bbox.height/2).attr("r",r);node.intersect=function(point){return intersectCircle(node,r,point)};return shapeSvg}function diamond(parent,bbox,node){var w=bbox.width*Math.SQRT2/2,h=bbox.height*Math.SQRT2/2,points=[{x:0,y:-h},{x:-w,y:0},{x:0,y:h},{x:w,y:0}],shapeSvg=parent.insert("polygon",":first-child").attr("points",points.map(function(p){return p.x+","+p.y}).join(" "));node.intersect=function(p){return intersectPolygon(node,points,p)};return shapeSvg}},{"./intersect/intersect-circle":11,"./intersect/intersect-ellipse":12,"./intersect/intersect-polygon":15,"./intersect/intersect-rect":16}],25:[function(require,module,exports){var _=require("./lodash");module.exports={isSubgraph:isSubgraph,edgeToId:edgeToId,applyStyle:applyStyle,applyClass:applyClass,applyTransition:applyTransition};function isSubgraph(g,v){return!!g.children(v).length}function edgeToId(e){return escapeId(e.v)+":"+escapeId(e.w)+":"+escapeId(e.name)}var ID_DELIM=/:/g;function escapeId(str){return str?String(str).replace(ID_DELIM,"\\:"):""}function applyStyle(dom,styleFn){if(styleFn){dom.attr("style",styleFn)}}function applyClass(dom,classFn,otherClasses){if(classFn){dom.attr("class",classFn).attr("class",otherClasses+" "+dom.attr("class"))}}function applyTransition(selection,g){var graph=g.graph();if(_.isPlainObject(graph)){var transition=graph.transition;if(_.isFunction(transition)){return transition(selection)}}return selection}},{"./lodash":20}],26:[function(require,module,exports){module.exports="0.4.2"},{}],27:[function(require,module,exports){module.exports={graphlib:require("./lib/graphlib"),layout:require("./lib/layout"),debug:require("./lib/debug"),util:{time:require("./lib/util").time,notime:require("./lib/util").notime},version:require("./lib/version")}},{"./lib/debug":32,"./lib/graphlib":33,"./lib/layout":35,"./lib/util":55,"./lib/version":56}],28:[function(require,module,exports){"use strict";var _=require("./lodash"),greedyFAS=require("./greedy-fas");module.exports={run:run,undo:undo};function run(g){var fas=g.graph().acyclicer==="greedy"?greedyFAS(g,weightFn(g)):dfsFAS(g);_.each(fas,function(e){var label=g.edge(e);g.removeEdge(e);label.forwardName=e.name;label.reversed=true;g.setEdge(e.w,e.v,label,_.uniqueId("rev"))});function weightFn(g){return function(e){return g.edge(e).weight}}}function dfsFAS(g){var fas=[],stack={},visited={};function dfs(v){if(_.has(visited,v)){return}visited[v]=true;stack[v]=true;_.each(g.outEdges(v),function(e){if(_.has(stack,e.w)){fas.push(e)}else{dfs(e.w)}});delete stack[v]}_.each(g.nodes(),dfs);return fas}function undo(g){_.each(g.edges(),function(e){var label=g.edge(e);if(label.reversed){g.removeEdge(e);var forwardName=label.forwardName;delete label.reversed;delete label.forwardName;g.setEdge(e.w,e.v,label,forwardName)}})}},{"./greedy-fas":34,"./lodash":36}],29:[function(require,module,exports){var _=require("./lodash"),util=require("./util");module.exports=addBorderSegments;function addBorderSegments(g){function dfs(v){var children=g.children(v),node=g.node(v);if(children.length){_.each(children,dfs)}if(_.has(node,"minRank")){node.borderLeft=[];node.borderRight=[];for(var rank=node.minRank,maxRank=node.maxRank+1;rank<maxRank;++rank){addBorderNode(g,"borderLeft","_bl",v,node,rank);addBorderNode(g,"borderRight","_br",v,node,rank)}}}_.each(g.children(),dfs)}function addBorderNode(g,prop,prefix,sg,sgNode,rank){var label={width:0,height:0,rank:rank},prev=sgNode[prop][rank-1],curr=util.addDummyNode(g,"border",label,prefix);sgNode[prop][rank]=curr;g.setParent(curr,sg);if(prev){g.setEdge(prev,curr,{weight:1})}}},{"./lodash":36,"./util":55}],30:[function(require,module,exports){"use strict";var _=require("./lodash");module.exports={adjust:adjust,undo:undo};function adjust(g){var rankDir=g.graph().rankdir.toLowerCase();if(rankDir==="lr"||rankDir==="rl"){swapWidthHeight(g)}}function undo(g){var rankDir=g.graph().rankdir.toLowerCase();if(rankDir==="bt"||rankDir==="rl"){reverseY(g)}if(rankDir==="lr"||rankDir==="rl"){swapXY(g);swapWidthHeight(g)}}function swapWidthHeight(g){_.each(g.nodes(),function(v){swapWidthHeightOne(g.node(v))});_.each(g.edges(),function(e){swapWidthHeightOne(g.edge(e))})}function swapWidthHeightOne(attrs){var w=attrs.width;attrs.width=attrs.height;attrs.height=w}function reverseY(g){_.each(g.nodes(),function(v){reverseYOne(g.node(v))});_.each(g.edges(),function(e){var edge=g.edge(e);_.each(edge.points,reverseYOne);if(_.has(edge,"y")){reverseYOne(edge)}})}function reverseYOne(attrs){attrs.y=-attrs.y}function swapXY(g){_.each(g.nodes(),function(v){swapXYOne(g.node(v))});_.each(g.edges(),function(e){var edge=g.edge(e);_.each(edge.points,swapXYOne);if(_.has(edge,"x")){swapXYOne(edge)}})}function swapXYOne(attrs){var x=attrs.x;attrs.x=attrs.y;attrs.y=x}},{"./lodash":36}],31:[function(require,module,exports){module.exports=List;function List(){var sentinel={};sentinel._next=sentinel._prev=sentinel;this._sentinel=sentinel}List.prototype.dequeue=function(){var sentinel=this._sentinel,entry=sentinel._prev;if(entry!==sentinel){unlink(entry);return entry}};List.prototype.enqueue=function(entry){var sentinel=this._sentinel;if(entry._prev&&entry._next){unlink(entry)}entry._next=sentinel._next;sentinel._next._prev=entry;sentinel._next=entry;entry._prev=sentinel};List.prototype.toString=function(){var strs=[],sentinel=this._sentinel,curr=sentinel._prev;while(curr!==sentinel){strs.push(JSON.stringify(curr,filterOutLinks));curr=curr._prev}return"["+strs.join(", ")+"]"};function unlink(entry){entry._prev._next=entry._next;entry._next._prev=entry._prev;delete entry._next;delete entry._prev}function filterOutLinks(k,v){if(k!=="_next"&&k!=="_prev"){return v}}},{}],32:[function(require,module,exports){var _=require("./lodash"),util=require("./util"),Graph=require("./graphlib").Graph;module.exports={debugOrdering:debugOrdering};function debugOrdering(g){var layerMatrix=util.buildLayerMatrix(g);var h=new Graph({compound:true,multigraph:true}).setGraph({});_.each(g.nodes(),function(v){h.setNode(v,{label:v});h.setParent(v,"layer"+g.node(v).rank)});_.each(g.edges(),function(e){h.setEdge(e.v,e.w,{},e.name)});_.each(layerMatrix,function(layer,i){var layerV="layer"+i;h.setNode(layerV,{rank:"same"});_.reduce(layer,function(u,v){h.setEdge(u,v,{style:"invis"});return v})});return h}},{"./graphlib":33,"./lodash":36,"./util":55}],33:[function(require,module,exports){module.exports=require(9)},{"/Users/cpettitt/projects/dagre-d3/lib/graphlib.js":9,graphlib:57}],34:[function(require,module,exports){var _=require("./lodash"),Graph=require("./graphlib").Graph,List=require("./data/list");module.exports=greedyFAS;var DEFAULT_WEIGHT_FN=_.constant(1);function greedyFAS(g,weightFn){if(g.nodeCount()<=1){return[]}var state=buildState(g,weightFn||DEFAULT_WEIGHT_FN);var results=doGreedyFAS(state.graph,state.buckets,state.zeroIdx);return _.flatten(_.map(results,function(e){return g.outEdges(e.v,e.w)}),true)}function doGreedyFAS(g,buckets,zeroIdx){var results=[],sources=buckets[buckets.length-1],sinks=buckets[0];var entry;while(g.nodeCount()){while(entry=sinks.dequeue()){removeNode(g,buckets,zeroIdx,entry)}while(entry=sources.dequeue()){removeNode(g,buckets,zeroIdx,entry)}if(g.nodeCount()){for(var i=buckets.length-2;i>0;--i){entry=buckets[i].dequeue();if(entry){results=results.concat(removeNode(g,buckets,zeroIdx,entry,true));break}}}}return results}function removeNode(g,buckets,zeroIdx,entry,collectPredecessors){var results=collectPredecessors?[]:undefined;_.each(g.inEdges(entry.v),function(edge){var weight=g.edge(edge),uEntry=g.node(edge.v);if(collectPredecessors){results.push({v:edge.v,w:edge.w})}uEntry.out-=weight;assignBucket(buckets,zeroIdx,uEntry)});_.each(g.outEdges(entry.v),function(edge){var weight=g.edge(edge),w=edge.w,wEntry=g.node(w);wEntry["in"]-=weight;assignBucket(buckets,zeroIdx,wEntry)});g.removeNode(entry.v);return results}function buildState(g,weightFn){var fasGraph=new Graph,maxIn=0,maxOut=0;_.each(g.nodes(),function(v){fasGraph.setNode(v,{v:v,"in":0,out:0})});_.each(g.edges(),function(e){var prevWeight=fasGraph.edge(e.v,e.w)||0,weight=weightFn(e),edgeWeight=prevWeight+weight;fasGraph.setEdge(e.v,e.w,edgeWeight);maxOut=Math.max(maxOut,fasGraph.node(e.v).out+=weight);maxIn=Math.max(maxIn,fasGraph.node(e.w)["in"]+=weight)});var buckets=_.range(maxOut+maxIn+3).map(function(){return new List});var zeroIdx=maxIn+1;_.each(fasGraph.nodes(),function(v){assignBucket(buckets,zeroIdx,fasGraph.node(v))});return{graph:fasGraph,buckets:buckets,zeroIdx:zeroIdx}}function assignBucket(buckets,zeroIdx,entry){if(!entry.out){buckets[0].enqueue(entry)}else if(!entry["in"]){buckets[buckets.length-1].enqueue(entry)}else{buckets[entry.out-entry["in"]+zeroIdx].enqueue(entry)}}},{"./data/list":31,"./graphlib":33,"./lodash":36}],35:[function(require,module,exports){"use strict";var _=require("./lodash"),acyclic=require("./acyclic"),normalize=require("./normalize"),rank=require("./rank"),normalizeRanks=require("./util").normalizeRanks,parentDummyChains=require("./parent-dummy-chains"),removeEmptyRanks=require("./util").removeEmptyRanks,nestingGraph=require("./nesting-graph"),addBorderSegments=require("./add-border-segments"),coordinateSystem=require("./coordinate-system"),order=require("./order"),position=require("./position"),util=require("./util"),Graph=require("./graphlib").Graph;module.exports=layout;function layout(g,opts){var time=opts&&opts.debugTiming?util.time:util.notime;time("layout",function(){var layoutGraph=time("  buildLayoutGraph",function(){return buildLayoutGraph(g)});time("  runLayout",function(){runLayout(layoutGraph,time)});time("  updateInputGraph",function(){updateInputGraph(g,layoutGraph)})})}function runLayout(g,time){time("    makeSpaceForEdgeLabels",function(){makeSpaceForEdgeLabels(g)});time("    removeSelfEdges",function(){removeSelfEdges(g)});time("    acyclic",function(){acyclic.run(g)});time("    nestingGraph.run",function(){nestingGraph.run(g)});time("    rank",function(){rank(util.asNonCompoundGraph(g))});time("    injectEdgeLabelProxies",function(){injectEdgeLabelProxies(g)});time("    removeEmptyRanks",function(){removeEmptyRanks(g)});time("    nestingGraph.cleanup",function(){nestingGraph.cleanup(g)});time("    normalizeRanks",function(){normalizeRanks(g)});time("    assignRankMinMax",function(){assignRankMinMax(g)});time("    removeEdgeLabelProxies",function(){removeEdgeLabelProxies(g)});time("    normalize.run",function(){normalize.run(g)});time("    parentDummyChains",function(){parentDummyChains(g)});time("    addBorderSegments",function(){addBorderSegments(g)});time("    order",function(){order(g)});time("    insertSelfEdges",function(){insertSelfEdges(g)});time("    adjustCoordinateSystem",function(){coordinateSystem.adjust(g)});time("    position",function(){position(g)});time("    positionSelfEdges",function(){positionSelfEdges(g)});time("    removeBorderNodes",function(){removeBorderNodes(g)});time("    normalize.undo",function(){normalize.undo(g)});time("    fixupEdgeLabelCoords",function(){fixupEdgeLabelCoords(g)});time("    undoCoordinateSystem",function(){coordinateSystem.undo(g)});time("    translateGraph",function(){translateGraph(g)});time("    assignNodeIntersects",function(){assignNodeIntersects(g)});time("    reversePoints",function(){reversePointsForReversedEdges(g)});time("    acyclic.undo",function(){acyclic.undo(g)})}function updateInputGraph(inputGraph,layoutGraph){_.each(inputGraph.nodes(),function(v){var inputLabel=inputGraph.node(v),layoutLabel=layoutGraph.node(v);if(inputLabel){inputLabel.x=layoutLabel.x;inputLabel.y=layoutLabel.y;if(layoutGraph.children(v).length){inputLabel.width=layoutLabel.width;inputLabel.height=layoutLabel.height}}});_.each(inputGraph.edges(),function(e){var inputLabel=inputGraph.edge(e),layoutLabel=layoutGraph.edge(e);inputLabel.points=layoutLabel.points;if(_.has(layoutLabel,"x")){inputLabel.x=layoutLabel.x;inputLabel.y=layoutLabel.y}});inputGraph.graph().width=layoutGraph.graph().width;inputGraph.graph().height=layoutGraph.graph().height}var graphNumAttrs=["nodesep","edgesep","ranksep","marginx","marginy"],graphDefaults={ranksep:50,edgesep:20,nodesep:50,rankdir:"tb"},graphAttrs=["acyclicer","ranker","rankdir","align"],nodeNumAttrs=["width","height"],nodeDefaults={width:0,height:0},edgeNumAttrs=["minlen","weight","width","height","labeloffset"],edgeDefaults={minlen:1,weight:1,width:0,height:0,labeloffset:10,labelpos:"r"},edgeAttrs=["labelpos"];function buildLayoutGraph(inputGraph){var g=new Graph({multigraph:true,compound:true}),graph=canonicalize(inputGraph.graph());g.setGraph(_.merge({},graphDefaults,selectNumberAttrs(graph,graphNumAttrs),_.pick(graph,graphAttrs)));_.each(inputGraph.nodes(),function(v){var node=canonicalize(inputGraph.node(v));g.setNode(v,_.defaults(selectNumberAttrs(node,nodeNumAttrs),nodeDefaults));g.setParent(v,inputGraph.parent(v))});_.each(inputGraph.edges(),function(e){var edge=canonicalize(inputGraph.edge(e));g.setEdge(e,_.merge({},edgeDefaults,selectNumberAttrs(edge,edgeNumAttrs),_.pick(edge,edgeAttrs)))});return g}function makeSpaceForEdgeLabels(g){var graph=g.graph();graph.ranksep/=2;_.each(g.edges(),function(e){var edge=g.edge(e);edge.minlen*=2;if(edge.labelpos.toLowerCase()!=="c"){if(graph.rankdir==="TB"||graph.rankdir==="BT"){edge.width+=edge.labeloffset}else{edge.height+=edge.labeloffset}}})}function injectEdgeLabelProxies(g){_.each(g.edges(),function(e){var edge=g.edge(e);
-if(edge.width&&edge.height){var v=g.node(e.v),w=g.node(e.w),label={rank:(w.rank-v.rank)/2+v.rank,e:e};util.addDummyNode(g,"edge-proxy",label,"_ep")}})}function assignRankMinMax(g){var maxRank=0;_.each(g.nodes(),function(v){var node=g.node(v);if(node.borderTop){node.minRank=g.node(node.borderTop).rank;node.maxRank=g.node(node.borderBottom).rank;maxRank=_.max(maxRank,node.maxRank)}});g.graph().maxRank=maxRank}function removeEdgeLabelProxies(g){_.each(g.nodes(),function(v){var node=g.node(v);if(node.dummy==="edge-proxy"){g.edge(node.e).labelRank=node.rank;g.removeNode(v)}})}function translateGraph(g){var minX=Number.POSITIVE_INFINITY,maxX=0,minY=Number.POSITIVE_INFINITY,maxY=0,graphLabel=g.graph(),marginX=graphLabel.marginx||0,marginY=graphLabel.marginy||0;function getExtremes(attrs){var x=attrs.x,y=attrs.y,w=attrs.width,h=attrs.height;minX=Math.min(minX,x-w/2);maxX=Math.max(maxX,x+w/2);minY=Math.min(minY,y-h/2);maxY=Math.max(maxY,y+h/2)}_.each(g.nodes(),function(v){getExtremes(g.node(v))});_.each(g.edges(),function(e){var edge=g.edge(e);if(_.has(edge,"x")){getExtremes(edge)}});minX-=marginX;minY-=marginY;_.each(g.nodes(),function(v){var node=g.node(v);node.x-=minX;node.y-=minY});_.each(g.edges(),function(e){var edge=g.edge(e);_.each(edge.points,function(p){p.x-=minX;p.y-=minY});if(_.has(edge,"x")){edge.x-=minX}if(_.has(edge,"y")){edge.y-=minY}});graphLabel.width=maxX-minX+marginX;graphLabel.height=maxY-minY+marginY}function assignNodeIntersects(g){_.each(g.edges(),function(e){var edge=g.edge(e),nodeV=g.node(e.v),nodeW=g.node(e.w),p1,p2;if(!edge.points){edge.points=[];p1=nodeW;p2=nodeV}else{p1=edge.points[0];p2=edge.points[edge.points.length-1]}edge.points.unshift(util.intersectRect(nodeV,p1));edge.points.push(util.intersectRect(nodeW,p2))})}function fixupEdgeLabelCoords(g){_.each(g.edges(),function(e){var edge=g.edge(e);if(_.has(edge,"x")){if(edge.labelpos==="l"||edge.labelpos==="r"){edge.width-=edge.labeloffset}switch(edge.labelpos){case"l":edge.x-=edge.width/2+edge.labeloffset;break;case"r":edge.x+=edge.width/2+edge.labeloffset;break}}})}function reversePointsForReversedEdges(g){_.each(g.edges(),function(e){var edge=g.edge(e);if(edge.reversed){edge.points.reverse()}})}function removeBorderNodes(g){_.each(g.nodes(),function(v){if(g.children(v).length){var node=g.node(v),t=g.node(node.borderTop),b=g.node(node.borderBottom),l=g.node(_.last(node.borderLeft)),r=g.node(_.last(node.borderRight));node.width=Math.abs(r.x-l.x);node.height=Math.abs(b.y-t.y);node.x=l.x+node.width/2;node.y=t.y+node.height/2}});_.each(g.nodes(),function(v){if(g.node(v).dummy==="border"){g.removeNode(v)}})}function removeSelfEdges(g){_.each(g.edges(),function(e){if(e.v===e.w){var node=g.node(e.v);if(!node.selfEdges){node.selfEdges=[]}node.selfEdges.push({e:e,label:g.edge(e)});g.removeEdge(e)}})}function insertSelfEdges(g){var layers=util.buildLayerMatrix(g);_.each(layers,function(layer){var orderShift=0;_.each(layer,function(v,i){var node=g.node(v);node.order=i+orderShift;_.each(node.selfEdges,function(selfEdge){util.addDummyNode(g,"selfedge",{width:selfEdge.label.width,height:selfEdge.label.height,rank:node.rank,order:i+ ++orderShift,e:selfEdge.e,label:selfEdge.label},"_se")});delete node.selfEdges})})}function positionSelfEdges(g){_.each(g.nodes(),function(v){var node=g.node(v);if(node.dummy==="selfedge"){var selfNode=g.node(node.e.v),x=selfNode.x+selfNode.width/2,y=selfNode.y,dx=node.x-x,dy=selfNode.height/2;g.setEdge(node.e,node.label);g.removeNode(v);node.label.points=[{x:x+2*dx/3,y:y-dy},{x:x+5*dx/6,y:y-dy},{x:x+dx,y:y},{x:x+5*dx/6,y:y+dy},{x:x+2*dx/3,y:y+dy}];node.label.x=node.x;node.label.y=node.y}})}function selectNumberAttrs(obj,attrs){return _.mapValues(_.pick(obj,attrs),Number)}function canonicalize(attrs){var newAttrs={};_.each(attrs,function(v,k){newAttrs[k.toLowerCase()]=v});return newAttrs}},{"./acyclic":28,"./add-border-segments":29,"./coordinate-system":30,"./graphlib":33,"./lodash":36,"./nesting-graph":37,"./normalize":38,"./order":43,"./parent-dummy-chains":48,"./position":50,"./rank":52,"./util":55}],36:[function(require,module,exports){module.exports=require(20)},{"/Users/cpettitt/projects/dagre-d3/lib/lodash.js":20,lodash:77}],37:[function(require,module,exports){var _=require("./lodash"),util=require("./util");module.exports={run:run,cleanup:cleanup};function run(g){var root=util.addDummyNode(g,"root",{},"_root"),depths=treeDepths(g),height=_.max(depths)-1,nodeSep=2*height+1;g.graph().nestingRoot=root;_.each(g.edges(),function(e){g.edge(e).minlen*=nodeSep});var weight=sumWeights(g)+1;_.each(g.children(),function(child){dfs(g,root,nodeSep,weight,height,depths,child)});g.graph().nodeRankFactor=nodeSep}function dfs(g,root,nodeSep,weight,height,depths,v){var children=g.children(v);if(!children.length){if(v!==root){g.setEdge(root,v,{weight:0,minlen:nodeSep})}return}var top=util.addBorderNode(g,"_bt"),bottom=util.addBorderNode(g,"_bb"),label=g.node(v);g.setParent(top,v);label.borderTop=top;g.setParent(bottom,v);label.borderBottom=bottom;_.each(children,function(child){dfs(g,root,nodeSep,weight,height,depths,child);var childNode=g.node(child),childTop=childNode.borderTop?childNode.borderTop:child,childBottom=childNode.borderBottom?childNode.borderBottom:child,thisWeight=childNode.borderTop?weight:2*weight,minlen=childTop!==childBottom?1:height-depths[v]+1;g.setEdge(top,childTop,{weight:thisWeight,minlen:minlen,nestingEdge:true});g.setEdge(childBottom,bottom,{weight:thisWeight,minlen:minlen,nestingEdge:true})});if(!g.parent(v)){g.setEdge(root,top,{weight:0,minlen:height+depths[v]})}}function treeDepths(g){var depths={};function dfs(v,depth){var children=g.children(v);if(children&&children.length){_.each(children,function(child){dfs(child,depth+1)})}depths[v]=depth}_.each(g.children(),function(v){dfs(v,1)});return depths}function sumWeights(g){return _.reduce(g.edges(),function(acc,e){return acc+g.edge(e).weight},0)}function cleanup(g){var graphLabel=g.graph();g.removeNode(graphLabel.nestingRoot);delete graphLabel.nestingRoot;_.each(g.edges(),function(e){var edge=g.edge(e);if(edge.nestingEdge){g.removeEdge(e)}})}},{"./lodash":36,"./util":55}],38:[function(require,module,exports){"use strict";var _=require("./lodash"),util=require("./util");module.exports={run:run,undo:undo};function run(g){g.graph().dummyChains=[];_.each(g.edges(),function(edge){normalizeEdge(g,edge)})}function normalizeEdge(g,e){var v=e.v,vRank=g.node(v).rank,w=e.w,wRank=g.node(w).rank,name=e.name,edgeLabel=g.edge(e),labelRank=edgeLabel.labelRank;if(wRank===vRank+1)return;g.removeEdge(e);var dummy,attrs,i;for(i=0,++vRank;vRank<wRank;++i,++vRank){edgeLabel.points=[];attrs={width:0,height:0,edgeLabel:edgeLabel,edgeObj:e,rank:vRank};dummy=util.addDummyNode(g,"edge",attrs,"_d");if(vRank===labelRank){attrs.width=edgeLabel.width;attrs.height=edgeLabel.height;attrs.dummy="edge-label";attrs.labelpos=edgeLabel.labelpos}g.setEdge(v,dummy,{weight:edgeLabel.weight},name);if(i===0){g.graph().dummyChains.push(dummy)}v=dummy}g.setEdge(v,w,{weight:edgeLabel.weight},name)}function undo(g){_.each(g.graph().dummyChains,function(v){var node=g.node(v),origLabel=node.edgeLabel,w;g.setEdge(node.edgeObj,origLabel);while(node.dummy){w=g.successors(v)[0];g.removeNode(v);origLabel.points.push({x:node.x,y:node.y});if(node.dummy==="edge-label"){origLabel.x=node.x;origLabel.y=node.y;origLabel.width=node.width;origLabel.height=node.height}v=w;node=g.node(v)}})}},{"./lodash":36,"./util":55}],39:[function(require,module,exports){var _=require("../lodash");module.exports=addSubgraphConstraints;function addSubgraphConstraints(g,cg,vs){var prev={},rootPrev;_.each(vs,function(v){var child=g.parent(v),parent,prevChild;while(child){parent=g.parent(child);if(parent){prevChild=prev[parent];prev[parent]=child}else{prevChild=rootPrev;rootPrev=child}if(prevChild&&prevChild!==child){cg.setEdge(prevChild,child);return}child=parent}})}},{"../lodash":36}],40:[function(require,module,exports){var _=require("../lodash");module.exports=barycenter;function barycenter(g,movable){return _.map(movable,function(v){var inV=g.inEdges(v);if(!inV.length){return{v:v}}else{var result=_.reduce(inV,function(acc,e){var edge=g.edge(e),nodeU=g.node(e.v);return{sum:acc.sum+edge.weight*nodeU.order,weight:acc.weight+edge.weight}},{sum:0,weight:0});return{v:v,barycenter:result.sum/result.weight,weight:result.weight}}})}},{"../lodash":36}],41:[function(require,module,exports){var _=require("../lodash"),Graph=require("../graphlib").Graph;module.exports=buildLayerGraph;function buildLayerGraph(g,rank,relationship){var root=createRootNode(g),result=new Graph({compound:true}).setGraph({root:root}).setDefaultNodeLabel(function(v){return g.node(v)});_.each(g.nodes(),function(v){var node=g.node(v),parent=g.parent(v);if(node.rank===rank||node.minRank<=rank&&rank<=node.maxRank){result.setNode(v);result.setParent(v,parent||root);_.each(g[relationship](v),function(e){var u=e.v===v?e.w:e.v,edge=result.edge(u,v),weight=!_.isUndefined(edge)?edge.weight:0;result.setEdge(u,v,{weight:g.edge(e).weight+weight})});if(_.has(node,"minRank")){result.setNode(v,{borderLeft:node.borderLeft[rank],borderRight:node.borderRight[rank]})}}});return result}function createRootNode(g){var v;while(g.hasNode(v=_.uniqueId("_root")));return v}},{"../graphlib":33,"../lodash":36}],42:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports=crossCount;function crossCount(g,layering){var cc=0;for(var i=1;i<layering.length;++i){cc+=twoLayerCrossCount(g,layering[i-1],layering[i])}return cc}function twoLayerCrossCount(g,northLayer,southLayer){var southPos=_.zipObject(southLayer,_.map(southLayer,function(v,i){return i}));var southEntries=_.flatten(_.map(northLayer,function(v){return _.chain(g.outEdges(v)).map(function(e){return{pos:southPos[e.w],weight:g.edge(e).weight}}).sortBy("pos").value()}),true);var firstIndex=1;while(firstIndex<southLayer.length)firstIndex<<=1;var treeSize=2*firstIndex-1;firstIndex-=1;var tree=_.map(new Array(treeSize),function(){return 0});var cc=0;_.each(southEntries.forEach(function(entry){var index=entry.pos+firstIndex;tree[index]+=entry.weight;var weightSum=0;while(index>0){if(index%2){weightSum+=tree[index+1]}index=index-1>>1;tree[index]+=entry.weight}cc+=entry.weight*weightSum}));return cc}},{"../lodash":36}],43:[function(require,module,exports){"use strict";var _=require("../lodash"),initOrder=require("./init-order"),crossCount=require("./cross-count"),sortSubgraph=require("./sort-subgraph"),buildLayerGraph=require("./build-layer-graph"),addSubgraphConstraints=require("./add-subgraph-constraints"),Graph=require("../graphlib").Graph,util=require("../util");module.exports=order;function order(g){var maxRank=util.maxRank(g),downLayerGraphs=buildLayerGraphs(g,_.range(1,maxRank+1),"inEdges"),upLayerGraphs=buildLayerGraphs(g,_.range(maxRank-1,-1,-1),"outEdges");var layering=initOrder(g);assignOrder(g,layering);var bestCC=Number.POSITIVE_INFINITY,best;for(var i=0,lastBest=0;lastBest<4;++i,++lastBest){sweepLayerGraphs(i%2?downLayerGraphs:upLayerGraphs,i%4>=2);layering=util.buildLayerMatrix(g);var cc=crossCount(g,layering);if(cc<bestCC){lastBest=0;best=_.cloneDeep(layering);bestCC=cc}}assignOrder(g,best)}function buildLayerGraphs(g,ranks,relationship){return _.map(ranks,function(rank){return buildLayerGraph(g,rank,relationship)})}function sweepLayerGraphs(layerGraphs,biasRight){var cg=new Graph;_.each(layerGraphs,function(lg){var root=lg.graph().root;var sorted=sortSubgraph(lg,root,cg,biasRight);_.each(sorted.vs,function(v,i){lg.node(v).order=i});addSubgraphConstraints(lg,cg,sorted.vs)})}function assignOrder(g,layering){_.each(layering,function(layer){_.each(layer,function(v,i){g.node(v).order=i})})}},{"../graphlib":33,"../lodash":36,"../util":55,"./add-subgraph-constraints":39,"./build-layer-graph":41,"./cross-count":42,"./init-order":44,"./sort-subgraph":46}],44:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports=initOrder;function initOrder(g){var visited={},simpleNodes=_.filter(g.nodes(),function(v){return!g.children(v).length}),maxRank=_.max(_.map(simpleNodes,function(v){return g.node(v).rank})),layers=_.map(_.range(maxRank+1),function(){return[]});function dfs(v){if(_.has(visited,v))return;visited[v]=true;var node=g.node(v);layers[node.rank].push(v);_.each(g.successors(v),dfs)}var orderedVs=_.sortBy(simpleNodes,function(v){return g.node(v).rank});_.each(orderedVs,dfs);return layers}},{"../lodash":36}],45:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports=resolveConflicts;function resolveConflicts(entries,cg){var mappedEntries={};_.each(entries,function(entry,i){var tmp=mappedEntries[entry.v]={indegree:0,"in":[],out:[],vs:[entry.v],i:i};if(!_.isUndefined(entry.barycenter)){tmp.barycenter=entry.barycenter;tmp.weight=entry.weight}});_.each(cg.edges(),function(e){var entryV=mappedEntries[e.v],entryW=mappedEntries[e.w];if(!_.isUndefined(entryV)&&!_.isUndefined(entryW)){entryW.indegree++;entryV.out.push(mappedEntries[e.w])}});var sourceSet=_.filter(mappedEntries,function(entry){return!entry.indegree});return doResolveConflicts(sourceSet)}function doResolveConflicts(sourceSet){var entries=[];function handleIn(vEntry){return function(uEntry){if(uEntry.merged){return}if(_.isUndefined(uEntry.barycenter)||_.isUndefined(vEntry.barycenter)||uEntry.barycenter>=vEntry.barycenter){mergeEntries(vEntry,uEntry)}}}function handleOut(vEntry){return function(wEntry){wEntry["in"].push(vEntry);if(--wEntry.indegree===0){sourceSet.push(wEntry)}}}while(sourceSet.length){var entry=sourceSet.pop();entries.push(entry);_.each(entry["in"].reverse(),handleIn(entry));_.each(entry.out,handleOut(entry))}return _.chain(entries).filter(function(entry){return!entry.merged}).map(function(entry){return _.pick(entry,["vs","i","barycenter","weight"])}).value()}function mergeEntries(target,source){var sum=0,weight=0;if(target.weight){sum+=target.barycenter*target.weight;weight+=target.weight}if(source.weight){sum+=source.barycenter*source.weight;weight+=source.weight}target.vs=source.vs.concat(target.vs);target.barycenter=sum/weight;target.weight=weight;target.i=Math.min(source.i,target.i);source.merged=true}},{"../lodash":36}],46:[function(require,module,exports){var _=require("../lodash"),barycenter=require("./barycenter"),resolveConflicts=require("./resolve-conflicts"),sort=require("./sort");module.exports=sortSubgraph;function sortSubgraph(g,v,cg,biasRight){var movable=g.children(v),node=g.node(v),bl=node?node.borderLeft:undefined,br=node?node.borderRight:undefined,subgraphs={};if(bl){movable=_.filter(movable,function(w){return w!==bl&&w!==br})}var barycenters=barycenter(g,movable);_.each(barycenters,function(entry){if(g.children(entry.v).length){var subgraphResult=sortSubgraph(g,entry.v,cg,biasRight);subgraphs[entry.v]=subgraphResult;if(_.has(subgraphResult,"barycenter")){mergeBarycenters(entry,subgraphResult)}}});var entries=resolveConflicts(barycenters,cg);expandSubgraphs(entries,subgraphs);var result=sort(entries,biasRight);if(bl){result.vs=_.flatten([bl,result.vs,br],true);if(g.predecessors(bl).length){var blPred=g.node(g.predecessors(bl)[0]),brPred=g.node(g.predecessors(br)[0]);if(!_.has(result,"barycenter")){result.barycenter=0;result.weight=0}result.barycenter=(result.barycenter*result.weight+blPred.order+brPred.order)/(result.weight+2);result.weight+=2}}return result}function expandSubgraphs(entries,subgraphs){_.each(entries,function(entry){entry.vs=_.flatten(entry.vs.map(function(v){if(subgraphs[v]){return subgraphs[v].vs}return v}),true)})}function mergeBarycenters(target,other){if(!_.isUndefined(target.barycenter)){target.barycenter=(target.barycenter*target.weight+other.barycenter*other.weight)/(target.weight+other.weight);target.weight+=other.weight}else{target.barycenter=other.barycenter;target.weight=other.weight}}},{"../lodash":36,"./barycenter":40,"./resolve-conflicts":45,"./sort":47}],47:[function(require,module,exports){var _=require("../lodash"),util=require("../util");module.exports=sort;function sort(entries,biasRight){var parts=util.partition(entries,function(entry){return _.has(entry,"barycenter")});var sortable=parts.lhs,unsortable=_.sortBy(parts.rhs,function(entry){return-entry.i}),vs=[],sum=0,weight=0,vsIndex=0;sortable.sort(compareWithBias(!!biasRight));vsIndex=consumeUnsortable(vs,unsortable,vsIndex);_.each(sortable,function(entry){vsIndex+=entry.vs.length;vs.push(entry.vs);sum+=entry.barycenter*entry.weight;weight+=entry.weight;vsIndex=consumeUnsortable(vs,unsortable,vsIndex)});var result={vs:_.flatten(vs,true)};if(weight){result.barycenter=sum/weight;result.weight=weight}return result}function consumeUnsortable(vs,unsortable,index){var last;while(unsortable.length&&(last=_.last(unsortable)).i<=index){unsortable.pop();vs.push(last.vs);index++}return index}function compareWithBias(bias){return function(entryV,entryW){if(entryV.barycenter<entryW.barycenter){return-1}else if(entryV.barycenter>entryW.barycenter){return 1}return!bias?entryV.i-entryW.i:entryW.i-entryV.i}}},{"../lodash":36,"../util":55}],48:[function(require,module,exports){var _=require("./lodash");module.exports=parentDummyChains;function parentDummyChains(g){var postorderNums=postorder(g);_.each(g.graph().dummyChains,function(v){var node=g.node(v),edgeObj=node.edgeObj,pathData=findPath(g,postorderNums,edgeObj.v,edgeObj.w),path=pathData.path,lca=pathData.lca,pathIdx=0,pathV=path[pathIdx],ascending=true;while(v!==edgeObj.w){node=g.node(v);if(ascending){while((pathV=path[pathIdx])!==lca&&g.node(pathV).maxRank<node.rank){pathIdx++}if(pathV===lca){ascending=false}}if(!ascending){while(pathIdx<path.length-1&&g.node(pathV=path[pathIdx+1]).minRank<=node.rank){pathIdx++}pathV=path[pathIdx]}g.setParent(v,pathV);v=g.successors(v)[0]}})}function findPath(g,postorderNums,v,w){var vPath=[],wPath=[],low=Math.min(postorderNums[v].low,postorderNums[w].low),lim=Math.max(postorderNums[v].lim,postorderNums[w].lim),parent,lca;parent=v;do{parent=g.parent(parent);vPath.push(parent)}while(parent&&(postorderNums[parent].low>low||lim>postorderNums[parent].lim));lca=parent;parent=w;while((parent=g.parent(parent))!==lca){wPath.push(parent)}return{path:vPath.concat(wPath.reverse()),lca:lca}}function postorder(g){var result={},lim=0;function dfs(v){var low=lim;_.each(g.children(v),dfs);result[v]={low:low,lim:lim++}}_.each(g.children(),dfs);return result}},{"./lodash":36}],49:[function(require,module,exports){"use strict";var _=require("../lodash"),Graph=require("../graphlib").Graph,util=require("../util");module.exports={positionX:positionX,findType1Conflicts:findType1Conflicts,findType2Conflicts:findType2Conflicts,addConflict:addConflict,hasConflict:hasConflict,verticalAlignment:verticalAlignment,horizontalCompaction:horizontalCompaction,alignCoordinates:alignCoordinates,findSmallestWidthAlignment:findSmallestWidthAlignment,balance:balance};function findType1Conflicts(g,layering){var conflicts={};function visitLayer(prevLayer,layer){var k0=0,scanPos=0,prevLayerLength=prevLayer.length,lastNode=_.last(layer);_.each(layer,function(v,i){var w=findOtherInnerSegmentNode(g,v),k1=w?g.node(w).order:prevLayerLength;if(w||v===lastNode){_.each(layer.slice(scanPos,i+1),function(scanNode){_.each(g.predecessors(scanNode),function(u){var uLabel=g.node(u),uPos=uLabel.order;if((uPos<k0||k1<uPos)&&!(uLabel.dummy&&g.node(scanNode).dummy)){addConflict(conflicts,u,scanNode)}})});scanPos=i+1;k0=k1}});return layer}_.reduce(layering,visitLayer);return conflicts}function findType2Conflicts(g,layering){var conflicts={};function scan(south,southPos,southEnd,prevNorthBorder,nextNorthBorder){var v;_.each(_.range(southPos,southEnd),function(i){v=south[i];if(g.node(v).dummy){_.each(g.predecessors(v),function(u){var uNode=g.node(u);if(uNode.dummy&&(uNode.order<prevNorthBorder||uNode.order>nextNorthBorder)){addConflict(conflicts,u,v)}})}})}function visitLayer(north,south){var prevNorthPos=-1,nextNorthPos,southPos=0;_.each(south,function(v,southLookahead){if(g.node(v).dummy==="border"){var predecessors=g.predecessors(v);if(predecessors.length){nextNorthPos=g.node(predecessors[0]).order;scan(south,southPos,southLookahead,prevNorthPos,nextNorthPos);southPos=southLookahead;prevNorthPos=nextNorthPos}}scan(south,southPos,south.length,nextNorthPos,north.length)});return south}_.reduce(layering,visitLayer);return conflicts}function findOtherInnerSegmentNode(g,v){if(g.node(v).dummy){return _.find(g.predecessors(v),function(u){return g.node(u).dummy})}}function addConflict(conflicts,v,w){if(v>w){var tmp=v;v=w;w=tmp}var conflictsV=conflicts[v];if(!conflictsV){conflicts[v]=conflictsV={}}conflictsV[w]=true}function hasConflict(conflicts,v,w){if(v>w){var tmp=v;v=w;w=tmp}return _.has(conflicts[v],w)}function verticalAlignment(g,layering,conflicts,neighborFn){var root={},align={},pos={};_.each(layering,function(layer){_.each(layer,function(v,order){root[v]=v;align[v]=v;pos[v]=order})});_.each(layering,function(layer){var prevIdx=-1;_.each(layer,function(v){var ws=neighborFn(v);if(ws.length){ws=_.sortBy(ws,function(w){return pos[w]});var mp=(ws.length-1)/2;for(var i=Math.floor(mp),il=Math.ceil(mp);i<=il;++i){var w=ws[i];if(align[v]===v&&prevIdx<pos[w]&&!hasConflict(conflicts,v,w)){align[w]=v;align[v]=root[v]=root[w];prevIdx=pos[w]}}}})});return{root:root,align:align}}function horizontalCompaction(g,layering,root,align,reverseSep){var xs={},blockG=buildBlockGraph(g,layering,root,reverseSep);var visited={};function pass1(v){if(!_.has(visited,v)){visited[v]=true;xs[v]=_.reduce(blockG.inEdges(v),function(max,e){pass1(e.v);return Math.max(max,xs[e.v]+blockG.edge(e))},0)}}_.each(blockG.nodes(),pass1);function pass2(v){if(visited[v]!==2){visited[v]++;var min=_.reduce(blockG.outEdges(v),function(min,e){pass2(e.w);return Math.min(min,xs[e.w]-blockG.edge(e))},Number.POSITIVE_INFINITY);if(min!==Number.POSITIVE_INFINITY){xs[v]=Math.max(xs[v],min)}}}_.each(blockG.nodes(),pass2);_.each(align,function(v){xs[v]=xs[root[v]]});return xs}function buildBlockGraph(g,layering,root,reverseSep){var blockGraph=new Graph,graphLabel=g.graph(),sepFn=sep(graphLabel.nodesep,graphLabel.edgesep,reverseSep);_.each(layering,function(layer){var u;_.each(layer,function(v){var vRoot=root[v];blockGraph.setNode(vRoot);if(u){var uRoot=root[u],prevMax=blockGraph.edge(uRoot,vRoot);blockGraph.setEdge(uRoot,vRoot,Math.max(sepFn(g,v,u),prevMax||0))}u=v})});return blockGraph}function findSmallestWidthAlignment(g,xss){return _.min(xss,function(xs){var min=_.min(xs,function(x,v){return x-width(g,v)/2}),max=_.max(xs,function(x,v){return x+width(g,v)/2});return max-min})}function alignCoordinates(xss,alignTo){var alignToMin=_.min(alignTo),alignToMax=_.max(alignTo);_.each(["u","d"],function(vert){_.each(["l","r"],function(horiz){var alignment=vert+horiz,xs=xss[alignment],delta;if(xs===alignTo)return;delta=horiz==="l"?alignToMin-_.min(xs):alignToMax-_.max(xs);if(delta){xss[alignment]=_.mapValues(xs,function(x){return x+delta})}})})}function balance(xss,align){return _.mapValues(xss.ul,function(ignore,v){if(align){return xss[align.toLowerCase()][v]}else{var xs=_.sortBy(_.pluck(xss,v));return(xs[1]+xs[2])/2}})}function positionX(g){var layering=util.buildLayerMatrix(g),conflicts=_.merge(findType1Conflicts(g,layering),findType2Conflicts(g,layering));var xss={},adjustedLayering;_.each(["u","d"],function(vert){adjustedLayering=vert==="u"?layering:_.values(layering).reverse();_.each(["l","r"],function(horiz){if(horiz==="r"){adjustedLayering=_.map(adjustedLayering,function(inner){return _.values(inner).reverse()})}var neighborFn=_.bind(vert==="u"?g.predecessors:g.successors,g);var align=verticalAlignment(g,adjustedLayering,conflicts,neighborFn);var xs=horizontalCompaction(g,adjustedLayering,align.root,align.align,horiz==="r");if(horiz==="r"){xs=_.mapValues(xs,function(x){return-x})}xss[vert+horiz]=xs})});var smallestWidth=findSmallestWidthAlignment(g,xss);alignCoordinates(xss,smallestWidth);return balance(xss,g.graph().align)}function sep(nodeSep,edgeSep,reverseSep){return function(g,v,w){var vLabel=g.node(v),wLabel=g.node(w),sum=0,delta;sum+=vLabel.width/2;if(_.has(vLabel,"labelpos")){switch(vLabel.labelpos.toLowerCase()){case"l":delta=-vLabel.width/2;break;case"r":delta=vLabel.width/2;break}}if(delta){sum+=reverseSep?delta:-delta}delta=0;sum+=(vLabel.dummy?edgeSep:nodeSep)/2;sum+=(wLabel.dummy?edgeSep:nodeSep)/2;sum+=wLabel.width/2;if(_.has(wLabel,"labelpos")){switch(wLabel.labelpos.toLowerCase()){case"l":delta=wLabel.width/2;break;case"r":delta=-wLabel.width/2;break}}if(delta){sum+=reverseSep?delta:-delta}delta=0;return sum}}function width(g,v){return g.node(v).width}},{"../graphlib":33,"../lodash":36,"../util":55}],50:[function(require,module,exports){"use strict";var _=require("../lodash"),util=require("../util"),positionX=require("./bk").positionX;module.exports=position;function position(g){g=util.asNonCompoundGraph(g);positionY(g);_.each(positionX(g),function(x,v){g.node(v).x=x})}function positionY(g){var layering=util.buildLayerMatrix(g),rankSep=g.graph().ranksep,prevY=0;_.each(layering,function(layer){var maxHeight=_.max(_.map(layer,function(v){return g.node(v).height}));_.each(layer,function(v){g.node(v).y=prevY+maxHeight/2});prevY+=maxHeight+rankSep})}},{"../lodash":36,"../util":55,"./bk":49}],51:[function(require,module,exports){"use strict";var _=require("../lodash"),Graph=require("../graphlib").Graph,slack=require("./util").slack;module.exports=feasibleTree;function feasibleTree(g){var t=new Graph({directed:false});var start=g.nodes()[0],size=g.nodeCount();t.setNode(start,{});var edge,delta;while(tightTree(t,g)<size){edge=findMinSlackEdge(t,g);delta=t.hasNode(edge.v)?slack(g,edge):-slack(g,edge);shiftRanks(t,g,delta)}return t}function tightTree(t,g){function dfs(v){_.each(g.nodeEdges(v),function(e){var edgeV=e.v,w=v===edgeV?e.w:edgeV;if(!t.hasNode(w)&&!slack(g,e)){t.setNode(w,{});t.setEdge(v,w,{});dfs(w)}})}_.each(t.nodes(),dfs);return t.nodeCount()}function findMinSlackEdge(t,g){return _.min(g.edges(),function(e){if(t.hasNode(e.v)!==t.hasNode(e.w)){return slack(g,e)}})}function shiftRanks(t,g,delta){_.each(t.nodes(),function(v){g.node(v).rank+=delta})}},{"../graphlib":33,"../lodash":36,"./util":54}],52:[function(require,module,exports){"use strict";var rankUtil=require("./util"),longestPath=rankUtil.longestPath,feasibleTree=require("./feasible-tree"),networkSimplex=require("./network-simplex");module.exports=rank;function rank(g){switch(g.graph().ranker){case"network-simplex":networkSimplexRanker(g);break;case"tight-tree":tightTreeRanker(g);break;case"longest-path":longestPathRanker(g);break;default:networkSimplexRanker(g)}}var longestPathRanker=longestPath;function tightTreeRanker(g){longestPath(g);feasibleTree(g)}function networkSimplexRanker(g){networkSimplex(g)}},{"./feasible-tree":51,"./network-simplex":53,"./util":54}],53:[function(require,module,exports){"use strict";var _=require("../lodash"),feasibleTree=require("./feasible-tree"),slack=require("./util").slack,initRank=require("./util").longestPath,preorder=require("../graphlib").alg.preorder,postorder=require("../graphlib").alg.postorder,simplify=require("../util").simplify;module.exports=networkSimplex;networkSimplex.initLowLimValues=initLowLimValues;networkSimplex.initCutValues=initCutValues;networkSimplex.calcCutValue=calcCutValue;networkSimplex.leaveEdge=leaveEdge;networkSimplex.enterEdge=enterEdge;networkSimplex.exchangeEdges=exchangeEdges;function networkSimplex(g){g=simplify(g);initRank(g);var t=feasibleTree(g);initLowLimValues(t);initCutValues(t,g);var e,f;while(e=leaveEdge(t)){f=enterEdge(t,g,e);exchangeEdges(t,g,e,f)}}function initCutValues(t,g){var vs=postorder(t,t.nodes());vs=vs.slice(0,vs.length-1);_.each(vs,function(v){assignCutValue(t,g,v)})}function assignCutValue(t,g,child){var childLab=t.node(child),parent=childLab.parent;t.edge(child,parent).cutvalue=calcCutValue(t,g,child)}function calcCutValue(t,g,child){var childLab=t.node(child),parent=childLab.parent,childIsTail=true,graphEdge=g.edge(child,parent),cutValue=0;if(!graphEdge){childIsTail=false;graphEdge=g.edge(parent,child)}cutValue=graphEdge.weight;_.each(g.nodeEdges(child),function(e){var isOutEdge=e.v===child,other=isOutEdge?e.w:e.v;if(other!==parent){var pointsToHead=isOutEdge===childIsTail,otherWeight=g.edge(e).weight;cutValue+=pointsToHead?otherWeight:-otherWeight;if(isTreeEdge(t,child,other)){var otherCutValue=t.edge(child,other).cutvalue;cutValue+=pointsToHead?-otherCutValue:otherCutValue}}});return cutValue}function initLowLimValues(tree,root){if(arguments.length<2){root=tree.nodes()[0]}dfsAssignLowLim(tree,{},1,root)}function dfsAssignLowLim(tree,visited,nextLim,v,parent){var low=nextLim,label=tree.node(v);visited[v]=true;_.each(tree.neighbors(v),function(w){if(!_.has(visited,w)){nextLim=dfsAssignLowLim(tree,visited,nextLim,w,v)}});label.low=low;label.lim=nextLim++;if(parent){label.parent=parent}else{delete label.parent}return nextLim}function leaveEdge(tree){return _.find(tree.edges(),function(e){return tree.edge(e).cutvalue<0})}function enterEdge(t,g,edge){var v=edge.v,w=edge.w;if(!g.hasEdge(v,w)){v=edge.w;w=edge.v}var vLabel=t.node(v),wLabel=t.node(w),tailLabel=vLabel,flip=false;if(vLabel.lim>wLabel.lim){tailLabel=wLabel;flip=true}var candidates=_.filter(g.edges(),function(edge){return flip===isDescendant(t,t.node(edge.v),tailLabel)&&flip!==isDescendant(t,t.node(edge.w),tailLabel)});return _.min(candidates,function(edge){return slack(g,edge)})}function exchangeEdges(t,g,e,f){var v=e.v,w=e.w;t.removeEdge(v,w);t.setEdge(f.v,f.w,{});initLowLimValues(t);initCutValues(t,g);updateRanks(t,g)}function updateRanks(t,g){var root=_.find(t.nodes(),function(v){return!g.node(v).parent}),vs=preorder(t,root);vs=vs.slice(1);_.each(vs,function(v){var parent=t.node(v).parent,edge=g.edge(v,parent),flipped=false;if(!edge){edge=g.edge(parent,v);flipped=true}g.node(v).rank=g.node(parent).rank+(flipped?edge.minlen:-edge.minlen)})}function isTreeEdge(tree,u,v){return tree.hasEdge(u,v)}function isDescendant(tree,vLabel,rootLabel){return rootLabel.low<=vLabel.lim&&vLabel.lim<=rootLabel.lim}},{"../graphlib":33,"../lodash":36,"../util":55,"./feasible-tree":51,"./util":54}],54:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports={longestPath:longestPath,slack:slack};function longestPath(g){var visited={};function dfs(v){var label=g.node(v);if(_.has(visited,v)){return label.rank}visited[v]=true;var rank=_.min(_.map(g.outEdges(v),function(e){return dfs(e.w)-g.edge(e).minlen}));if(rank===Number.POSITIVE_INFINITY){rank=0}return label.rank=rank}_.each(g.sources(),dfs)}function slack(g,e){return g.node(e.w).rank-g.node(e.v).rank-g.edge(e).minlen}},{"../lodash":36}],55:[function(require,module,exports){"use strict";var _=require("./lodash"),Graph=require("./graphlib").Graph;module.exports={addDummyNode:addDummyNode,simplify:simplify,asNonCompoundGraph:asNonCompoundGraph,successorWeights:successorWeights,predecessorWeights:predecessorWeights,intersectRect:intersectRect,buildLayerMatrix:buildLayerMatrix,normalizeRanks:normalizeRanks,removeEmptyRanks:removeEmptyRanks,addBorderNode:addBorderNode,maxRank:maxRank,partition:partition,time:time,notime:notime};function addDummyNode(g,type,attrs,name){var v;do{v=_.uniqueId(name)}while(g.hasNode(v));attrs.dummy=type;g.setNode(v,attrs);return v}function simplify(g){var simplified=(new Graph).setGraph(g.graph());_.each(g.nodes(),function(v){simplified.setNode(v,g.node(v))});_.each(g.edges(),function(e){var simpleLabel=simplified.edge(e.v,e.w)||{weight:0,minlen:1},label=g.edge(e);simplified.setEdge(e.v,e.w,{weight:simpleLabel.weight+label.weight,minlen:Math.max(simpleLabel.minlen,label.minlen)})});return simplified}function asNonCompoundGraph(g){var simplified=new Graph({multigraph:g.isMultigraph()}).setGraph(g.graph());_.each(g.nodes(),function(v){if(!g.children(v).length){simplified.setNode(v,g.node(v))}});_.each(g.edges(),function(e){simplified.setEdge(e,g.edge(e))});return simplified}function successorWeights(g){var weightMap=_.map(g.nodes(),function(v){var sucs={};
-_.each(g.outEdges(v),function(e){sucs[e.w]=(sucs[e.w]||0)+g.edge(e).weight});return sucs});return _.zipObject(g.nodes(),weightMap)}function predecessorWeights(g){var weightMap=_.map(g.nodes(),function(v){var preds={};_.each(g.inEdges(v),function(e){preds[e.v]=(preds[e.v]||0)+g.edge(e).weight});return preds});return _.zipObject(g.nodes(),weightMap)}function intersectRect(rect,point){var x=rect.x;var y=rect.y;var dx=point.x-x;var dy=point.y-y;var w=rect.width/2;var h=rect.height/2;if(!dx&&!dy){throw new Error("Not possible to find intersection inside of the rectangle")}var sx,sy;if(Math.abs(dy)*w>Math.abs(dx)*h){if(dy<0){h=-h}sx=h*dx/dy;sy=h}else{if(dx<0){w=-w}sx=w;sy=w*dy/dx}return{x:x+sx,y:y+sy}}function buildLayerMatrix(g){var layering=_.map(_.range(maxRank(g)+1),function(){return[]});_.each(g.nodes(),function(v){var node=g.node(v),rank=node.rank;if(!_.isUndefined(rank)){layering[rank][node.order]=v}});return layering}function normalizeRanks(g){var min=_.min(_.map(g.nodes(),function(v){return g.node(v).rank}));_.each(g.nodes(),function(v){var node=g.node(v);if(_.has(node,"rank")){node.rank-=min}})}function removeEmptyRanks(g){var offset=_.min(_.map(g.nodes(),function(v){return g.node(v).rank}));var layers=[];_.each(g.nodes(),function(v){var rank=g.node(v).rank-offset;if(!_.has(layers,rank)){layers[rank]=[]}layers[rank].push(v)});var delta=0,nodeRankFactor=g.graph().nodeRankFactor;_.each(layers,function(vs,i){if(_.isUndefined(vs)&&i%nodeRankFactor!==0){--delta}else if(delta){_.each(vs,function(v){g.node(v).rank+=delta})}})}function addBorderNode(g,prefix,rank,order){var node={width:0,height:0};if(arguments.length>=4){node.rank=rank;node.order=order}return addDummyNode(g,"border",node,prefix)}function maxRank(g){return _.max(_.map(g.nodes(),function(v){var rank=g.node(v).rank;if(!_.isUndefined(rank)){return rank}}))}function partition(collection,fn){var result={lhs:[],rhs:[]};_.each(collection,function(value){if(fn(value)){result.lhs.push(value)}else{result.rhs.push(value)}});return result}function time(name,fn){var start=_.now();try{return fn()}finally{console.log(name+" time: "+(_.now()-start)+"ms")}}function notime(name,fn){return fn()}},{"./graphlib":33,"./lodash":36}],56:[function(require,module,exports){module.exports="0.7.1"},{}],57:[function(require,module,exports){var lib=require("./lib");module.exports={Graph:lib.Graph,json:require("./lib/json"),alg:require("./lib/alg"),version:lib.version}},{"./lib":73,"./lib/alg":64,"./lib/json":74}],58:[function(require,module,exports){var _=require("../lodash");module.exports=components;function components(g){var visited={},cmpts=[],cmpt;function dfs(v){if(_.has(visited,v))return;visited[v]=true;cmpt.push(v);_.each(g.successors(v),dfs);_.each(g.predecessors(v),dfs)}_.each(g.nodes(),function(v){cmpt=[];dfs(v);if(cmpt.length){cmpts.push(cmpt)}});return cmpts}},{"../lodash":75}],59:[function(require,module,exports){var _=require("../lodash");module.exports=dfs;function dfs(g,vs,order){if(!_.isArray(vs)){vs=[vs]}var acc=[],visited={};_.each(vs,function(v){if(!g.hasNode(v)){throw new Error("Graph does not have node: "+v)}doDfs(g,v,order==="post",visited,acc)});return acc}function doDfs(g,v,postorder,visited,acc){if(!_.has(visited,v)){visited[v]=true;if(!postorder){acc.push(v)}_.each(g.neighbors(v),function(w){doDfs(g,w,postorder,visited,acc)});if(postorder){acc.push(v)}}}},{"../lodash":75}],60:[function(require,module,exports){var dijkstra=require("./dijkstra"),_=require("../lodash");module.exports=dijkstraAll;function dijkstraAll(g,weightFunc,edgeFunc){return _.transform(g.nodes(),function(acc,v){acc[v]=dijkstra(g,v,weightFunc,edgeFunc)},{})}},{"../lodash":75,"./dijkstra":61}],61:[function(require,module,exports){var _=require("../lodash"),PriorityQueue=require("../data/priority-queue");module.exports=dijkstra;var DEFAULT_WEIGHT_FUNC=_.constant(1);function dijkstra(g,source,weightFn,edgeFn){return runDijkstra(g,String(source),weightFn||DEFAULT_WEIGHT_FUNC,edgeFn||function(v){return g.outEdges(v)})}function runDijkstra(g,source,weightFn,edgeFn){var results={},pq=new PriorityQueue,v,vEntry;var updateNeighbors=function(edge){var w=edge.v!==v?edge.v:edge.w,wEntry=results[w],weight=weightFn(edge),distance=vEntry.distance+weight;if(weight<0){throw new Error("dijkstra does not allow negative edge weights. "+"Bad edge: "+edge+" Weight: "+weight)}if(distance<wEntry.distance){wEntry.distance=distance;wEntry.predecessor=v;pq.decrease(w,distance)}};g.nodes().forEach(function(v){var distance=v===source?0:Number.POSITIVE_INFINITY;results[v]={distance:distance};pq.add(v,distance)});while(pq.size()>0){v=pq.removeMin();vEntry=results[v];if(vEntry.distance===Number.POSITIVE_INFINITY){break}edgeFn(v).forEach(updateNeighbors)}return results}},{"../data/priority-queue":71,"../lodash":75}],62:[function(require,module,exports){var _=require("../lodash"),tarjan=require("./tarjan");module.exports=findCycles;function findCycles(g){return _.filter(tarjan(g),function(cmpt){return cmpt.length>1})}},{"../lodash":75,"./tarjan":69}],63:[function(require,module,exports){var _=require("../lodash");module.exports=floydWarshall;var DEFAULT_WEIGHT_FUNC=_.constant(1);function floydWarshall(g,weightFn,edgeFn){return runFloydWarshall(g,weightFn||DEFAULT_WEIGHT_FUNC,edgeFn||function(v){return g.outEdges(v)})}function runFloydWarshall(g,weightFn,edgeFn){var results={},nodes=g.nodes();nodes.forEach(function(v){results[v]={};results[v][v]={distance:0};nodes.forEach(function(w){if(v!==w){results[v][w]={distance:Number.POSITIVE_INFINITY}}});edgeFn(v).forEach(function(edge){var w=edge.v===v?edge.w:edge.v,d=weightFn(edge);results[v][w]={distance:d,predecessor:v}})});nodes.forEach(function(k){var rowK=results[k];nodes.forEach(function(i){var rowI=results[i];nodes.forEach(function(j){var ik=rowI[k];var kj=rowK[j];var ij=rowI[j];var altDistance=ik.distance+kj.distance;if(altDistance<ij.distance){ij.distance=altDistance;ij.predecessor=kj.predecessor}})})});return results}},{"../lodash":75}],64:[function(require,module,exports){module.exports={components:require("./components"),dijkstra:require("./dijkstra"),dijkstraAll:require("./dijkstra-all"),findCycles:require("./find-cycles"),floydWarshall:require("./floyd-warshall"),isAcyclic:require("./is-acyclic"),postorder:require("./postorder"),preorder:require("./preorder"),prim:require("./prim"),tarjan:require("./tarjan"),topsort:require("./topsort")}},{"./components":58,"./dijkstra":61,"./dijkstra-all":60,"./find-cycles":62,"./floyd-warshall":63,"./is-acyclic":65,"./postorder":66,"./preorder":67,"./prim":68,"./tarjan":69,"./topsort":70}],65:[function(require,module,exports){var topsort=require("./topsort");module.exports=isAcyclic;function isAcyclic(g){try{topsort(g)}catch(e){if(e instanceof topsort.CycleException){return false}throw e}return true}},{"./topsort":70}],66:[function(require,module,exports){var dfs=require("./dfs");module.exports=postorder;function postorder(g,vs){return dfs(g,vs,"post")}},{"./dfs":59}],67:[function(require,module,exports){var dfs=require("./dfs");module.exports=preorder;function preorder(g,vs){return dfs(g,vs,"pre")}},{"./dfs":59}],68:[function(require,module,exports){var _=require("../lodash"),Graph=require("../graph"),PriorityQueue=require("../data/priority-queue");module.exports=prim;function prim(g,weightFunc){var result=new Graph,parents={},pq=new PriorityQueue,v;function updateNeighbors(edge){var w=edge.v===v?edge.w:edge.v,pri=pq.priority(w);if(pri!==undefined){var edgeWeight=weightFunc(edge);if(edgeWeight<pri){parents[w]=v;pq.decrease(w,edgeWeight)}}}if(g.nodeCount()===0){return result}_.each(g.nodes(),function(v){pq.add(v,Number.POSITIVE_INFINITY);result.setNode(v)});pq.decrease(g.nodes()[0],0);var init=false;while(pq.size()>0){v=pq.removeMin();if(_.has(parents,v)){result.setEdge(v,parents[v])}else if(init){throw new Error("Input graph is not connected: "+g)}else{init=true}g.nodeEdges(v).forEach(updateNeighbors)}return result}},{"../data/priority-queue":71,"../graph":72,"../lodash":75}],69:[function(require,module,exports){var _=require("../lodash");module.exports=tarjan;function tarjan(g){var index=0,stack=[],visited={},results=[];function dfs(v){var entry=visited[v]={onStack:true,lowlink:index,index:index++};stack.push(v);g.successors(v).forEach(function(w){if(!_.has(visited,w)){dfs(w);entry.lowlink=Math.min(entry.lowlink,visited[w].lowlink)}else if(visited[w].onStack){entry.lowlink=Math.min(entry.lowlink,visited[w].index)}});if(entry.lowlink===entry.index){var cmpt=[],w;do{w=stack.pop();visited[w].onStack=false;cmpt.push(w)}while(v!==w);results.push(cmpt)}}g.nodes().forEach(function(v){if(!_.has(visited,v)){dfs(v)}});return results}},{"../lodash":75}],70:[function(require,module,exports){var _=require("../lodash");module.exports=topsort;topsort.CycleException=CycleException;function topsort(g){var visited={},stack={},results=[];function visit(node){if(_.has(stack,node)){throw new CycleException}if(!_.has(visited,node)){stack[node]=true;visited[node]=true;_.each(g.predecessors(node),visit);delete stack[node];results.push(node)}}_.each(g.sinks(),visit);if(_.size(visited)!==g.nodeCount()){throw new CycleException}return results}function CycleException(){}},{"../lodash":75}],71:[function(require,module,exports){var _=require("../lodash");module.exports=PriorityQueue;function PriorityQueue(){this._arr=[];this._keyIndices={}}PriorityQueue.prototype.size=function(){return this._arr.length};PriorityQueue.prototype.keys=function(){return this._arr.map(function(x){return x.key})};PriorityQueue.prototype.has=function(key){return _.has(this._keyIndices,key)};PriorityQueue.prototype.priority=function(key){var index=this._keyIndices[key];if(index!==undefined){return this._arr[index].priority}};PriorityQueue.prototype.min=function(){if(this.size()===0){throw new Error("Queue underflow")}return this._arr[0].key};PriorityQueue.prototype.add=function(key,priority){var keyIndices=this._keyIndices;key=String(key);if(!_.has(keyIndices,key)){var arr=this._arr;var index=arr.length;keyIndices[key]=index;arr.push({key:key,priority:priority});this._decrease(index);return true}return false};PriorityQueue.prototype.removeMin=function(){this._swap(0,this._arr.length-1);var min=this._arr.pop();delete this._keyIndices[min.key];this._heapify(0);return min.key};PriorityQueue.prototype.decrease=function(key,priority){var index=this._keyIndices[key];if(priority>this._arr[index].priority){throw new Error("New priority is greater than current priority. "+"Key: "+key+" Old: "+this._arr[index].priority+" New: "+priority)}this._arr[index].priority=priority;this._decrease(index)};PriorityQueue.prototype._heapify=function(i){var arr=this._arr;var l=2*i,r=l+1,largest=i;if(l<arr.length){largest=arr[l].priority<arr[largest].priority?l:largest;if(r<arr.length){largest=arr[r].priority<arr[largest].priority?r:largest}if(largest!==i){this._swap(i,largest);this._heapify(largest)}}};PriorityQueue.prototype._decrease=function(index){var arr=this._arr;var priority=arr[index].priority;var parent;while(index!==0){parent=index>>1;if(arr[parent].priority<priority){break}this._swap(index,parent);index=parent}};PriorityQueue.prototype._swap=function(i,j){var arr=this._arr;var keyIndices=this._keyIndices;var origArrI=arr[i];var origArrJ=arr[j];arr[i]=origArrJ;arr[j]=origArrI;keyIndices[origArrJ.key]=i;keyIndices[origArrI.key]=j}},{"../lodash":75}],72:[function(require,module,exports){"use strict";var _=require("./lodash");module.exports=Graph;var DEFAULT_EDGE_NAME="\x00",GRAPH_NODE="\x00",EDGE_KEY_DELIM="";function Graph(opts){this._isDirected=_.has(opts,"directed")?opts.directed:true;this._isMultigraph=_.has(opts,"multigraph")?opts.multigraph:false;this._isCompound=_.has(opts,"compound")?opts.compound:false;this._label=undefined;this._defaultNodeLabelFn=_.constant(undefined);this._defaultEdgeLabelFn=_.constant(undefined);this._nodes={};if(this._isCompound){this._parent={};this._children={};this._children[GRAPH_NODE]={}}this._in={};this._preds={};this._out={};this._sucs={};this._edgeObjs={};this._edgeLabels={}}Graph.prototype._nodeCount=0;Graph.prototype._edgeCount=0;Graph.prototype.isDirected=function(){return this._isDirected};Graph.prototype.isMultigraph=function(){return this._isMultigraph};Graph.prototype.isCompound=function(){return this._isCompound};Graph.prototype.setGraph=function(label){this._label=label;return this};Graph.prototype.graph=function(){return this._label};Graph.prototype.setDefaultNodeLabel=function(newDefault){if(!_.isFunction(newDefault)){newDefault=_.constant(newDefault)}this._defaultNodeLabelFn=newDefault;return this};Graph.prototype.nodeCount=function(){return this._nodeCount};Graph.prototype.nodes=function(){return _.keys(this._nodes)};Graph.prototype.sources=function(){return _.filter(this.nodes(),function(v){return _.isEmpty(this._in[v])},this)};Graph.prototype.sinks=function(){return _.filter(this.nodes(),function(v){return _.isEmpty(this._out[v])},this)};Graph.prototype.setNodes=function(vs,value){var args=arguments;_.each(vs,function(v){if(args.length>1){this.setNode(v,value)}else{this.setNode(v)}},this);return this};Graph.prototype.setNode=function(v,value){if(_.has(this._nodes,v)){if(arguments.length>1){this._nodes[v]=value}return this}this._nodes[v]=arguments.length>1?value:this._defaultNodeLabelFn(v);if(this._isCompound){this._parent[v]=GRAPH_NODE;this._children[v]={};this._children[GRAPH_NODE][v]=true}this._in[v]={};this._preds[v]={};this._out[v]={};this._sucs[v]={};++this._nodeCount;return this};Graph.prototype.node=function(v){return this._nodes[v]};Graph.prototype.hasNode=function(v){return _.has(this._nodes,v)};Graph.prototype.removeNode=function(v){var self=this;if(_.has(this._nodes,v)){var removeEdge=function(e){self.removeEdge(self._edgeObjs[e])};delete this._nodes[v];if(this._isCompound){this._removeFromParentsChildList(v);delete this._parent[v];_.each(this.children(v),function(child){this.setParent(child)},this);delete this._children[v]}_.each(_.keys(this._in[v]),removeEdge);delete this._in[v];delete this._preds[v];_.each(_.keys(this._out[v]),removeEdge);delete this._out[v];delete this._sucs[v];--this._nodeCount}return this};Graph.prototype.setParent=function(v,parent){if(!this._isCompound){throw new Error("Cannot set parent in a non-compound graph")}if(_.isUndefined(parent)){parent=GRAPH_NODE}else{for(var ancestor=parent;!_.isUndefined(ancestor);ancestor=this.parent(ancestor)){if(ancestor===v){throw new Error("Setting "+parent+" as parent of "+v+" would create create a cycle")}}this.setNode(parent)}this.setNode(v);this._removeFromParentsChildList(v);this._parent[v]=parent;this._children[parent][v]=true;return this};Graph.prototype._removeFromParentsChildList=function(v){delete this._children[this._parent[v]][v]};Graph.prototype.parent=function(v){if(this._isCompound){var parent=this._parent[v];if(parent!==GRAPH_NODE){return parent}}};Graph.prototype.children=function(v){if(_.isUndefined(v)){v=GRAPH_NODE}if(this._isCompound){var children=this._children[v];if(children){return _.keys(children)}}else if(v===GRAPH_NODE){return this.nodes()}else if(this.hasNode(v)){return[]}};Graph.prototype.predecessors=function(v){var predsV=this._preds[v];if(predsV){return _.keys(predsV)}};Graph.prototype.successors=function(v){var sucsV=this._sucs[v];if(sucsV){return _.keys(sucsV)}};Graph.prototype.neighbors=function(v){var preds=this.predecessors(v);if(preds){return _.union(preds,this.successors(v))}};Graph.prototype.setDefaultEdgeLabel=function(newDefault){if(!_.isFunction(newDefault)){newDefault=_.constant(newDefault)}this._defaultEdgeLabelFn=newDefault;return this};Graph.prototype.edgeCount=function(){return this._edgeCount};Graph.prototype.edges=function(){return _.values(this._edgeObjs)};Graph.prototype.setPath=function(vs,value){var self=this,args=arguments;_.reduce(vs,function(v,w){if(args.length>1){self.setEdge(v,w,value)}else{self.setEdge(v,w)}return w});return this};Graph.prototype.setEdge=function(){var v,w,name,value,valueSpecified=false;if(_.isPlainObject(arguments[0])){v=arguments[0].v;w=arguments[0].w;name=arguments[0].name;if(arguments.length===2){value=arguments[1];valueSpecified=true}}else{v=arguments[0];w=arguments[1];name=arguments[3];if(arguments.length>2){value=arguments[2];valueSpecified=true}}v=""+v;w=""+w;if(!_.isUndefined(name)){name=""+name}var e=edgeArgsToId(this._isDirected,v,w,name);if(_.has(this._edgeLabels,e)){if(valueSpecified){this._edgeLabels[e]=value}return this}if(!_.isUndefined(name)&&!this._isMultigraph){throw new Error("Cannot set a named edge when isMultigraph = false")}this.setNode(v);this.setNode(w);this._edgeLabels[e]=valueSpecified?value:this._defaultEdgeLabelFn(v,w,name);var edgeObj=edgeArgsToObj(this._isDirected,v,w,name);v=edgeObj.v;w=edgeObj.w;Object.freeze(edgeObj);this._edgeObjs[e]=edgeObj;incrementOrInitEntry(this._preds[w],v);incrementOrInitEntry(this._sucs[v],w);this._in[w][e]=edgeObj;this._out[v][e]=edgeObj;this._edgeCount++;return this};Graph.prototype.edge=function(v,w,name){var e=arguments.length===1?edgeObjToId(this._isDirected,arguments[0]):edgeArgsToId(this._isDirected,v,w,name);return this._edgeLabels[e]};Graph.prototype.hasEdge=function(v,w,name){var e=arguments.length===1?edgeObjToId(this._isDirected,arguments[0]):edgeArgsToId(this._isDirected,v,w,name);return _.has(this._edgeLabels,e)};Graph.prototype.removeEdge=function(v,w,name){var e=arguments.length===1?edgeObjToId(this._isDirected,arguments[0]):edgeArgsToId(this._isDirected,v,w,name),edge=this._edgeObjs[e];if(edge){v=edge.v;w=edge.w;delete this._edgeLabels[e];delete this._edgeObjs[e];decrementOrRemoveEntry(this._preds[w],v);decrementOrRemoveEntry(this._sucs[v],w);delete this._in[w][e];delete this._out[v][e];this._edgeCount--}return this};Graph.prototype.inEdges=function(v,u){var inV=this._in[v];if(inV){var edges=_.values(inV);if(!u){return edges}return _.filter(edges,function(edge){return edge.v===u})}};Graph.prototype.outEdges=function(v,w){var outV=this._out[v];if(outV){var edges=_.values(outV);if(!w){return edges}return _.filter(edges,function(edge){return edge.w===w})}};Graph.prototype.nodeEdges=function(v,w){var inEdges=this.inEdges(v,w);if(inEdges){return inEdges.concat(this.outEdges(v,w))}};function incrementOrInitEntry(map,k){if(_.has(map,k)){map[k]++}else{map[k]=1}}function decrementOrRemoveEntry(map,k){if(!--map[k]){delete map[k]}}function edgeArgsToId(isDirected,v,w,name){if(!isDirected&&v>w){var tmp=v;v=w;w=tmp}return v+EDGE_KEY_DELIM+w+EDGE_KEY_DELIM+(_.isUndefined(name)?DEFAULT_EDGE_NAME:name)}function edgeArgsToObj(isDirected,v,w,name){if(!isDirected&&v>w){var tmp=v;v=w;w=tmp}var edgeObj={v:v,w:w};if(name){edgeObj.name=name}return edgeObj}function edgeObjToId(isDirected,edgeObj){return edgeArgsToId(isDirected,edgeObj.v,edgeObj.w,edgeObj.name)}},{"./lodash":75}],73:[function(require,module,exports){module.exports={Graph:require("./graph"),version:require("./version")}},{"./graph":72,"./version":76}],74:[function(require,module,exports){var _=require("./lodash"),Graph=require("./graph");module.exports={write:write,read:read};function write(g){var json={options:{directed:g.isDirected(),multigraph:g.isMultigraph(),compound:g.isCompound()},nodes:writeNodes(g),edges:writeEdges(g)};if(!_.isUndefined(g.graph())){json.value=_.clone(g.graph())}return json}function writeNodes(g){return _.map(g.nodes(),function(v){var nodeValue=g.node(v),parent=g.parent(v),node={v:v};if(!_.isUndefined(nodeValue)){node.value=nodeValue}if(!_.isUndefined(parent)){node.parent=parent}return node})}function writeEdges(g){return _.map(g.edges(),function(e){var edgeValue=g.edge(e),edge={v:e.v,w:e.w};if(!_.isUndefined(e.name)){edge.name=e.name}if(!_.isUndefined(edgeValue)){edge.value=edgeValue}return edge})}function read(json){var g=new Graph(json.options).setGraph(json.value);_.each(json.nodes,function(entry){g.setNode(entry.v,entry.value);if(entry.parent){g.setParent(entry.v,entry.parent)}});_.each(json.edges,function(entry){g.setEdge({v:entry.v,w:entry.w,name:entry.name},entry.value)});return g}},{"./graph":72,"./lodash":75}],75:[function(require,module,exports){module.exports=require(20)},{"/Users/cpettitt/projects/dagre-d3/lib/lodash.js":20,lodash:77}],76:[function(require,module,exports){module.exports="1.0.1"},{}],77:[function(require,module,exports){(function(global){(function(){var undefined;var arrayPool=[],objectPool=[];var idCounter=0;var keyPrefix=+new Date+"";var largeArraySize=75;var maxPoolSize=40;var whitespace=" 	\f ﻿"+"\n\r\u2028\u2029"+" ᠎             　";var reEmptyStringLeading=/\b__p \+= '';/g,reEmptyStringMiddle=/\b(__p \+=) '' \+/g,reEmptyStringTrailing=/(__e\(.*?\)|\b__t\)) \+\n'';/g;var reEsTemplate=/\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;var reFlags=/\w*$/;var reFuncName=/^\s*function[ \n\r\t]+\w/;var reInterpolate=/<%=([\s\S]+?)%>/g;var reLeadingSpacesAndZeros=RegExp("^["+whitespace+"]*0+(?=.$)");var reNoMatch=/($^)/;var reThis=/\bthis\b/;var reUnescapedString=/['\n\r\t\u2028\u2029\\]/g;var contextProps=["Array","Boolean","Date","Function","Math","Number","Object","RegExp","String","_","attachEvent","clearTimeout","isFinite","isNaN","parseInt","setTimeout"];var templateCounter=0;var argsClass="[object Arguments]",arrayClass="[object Array]",boolClass="[object Boolean]",dateClass="[object Date]",funcClass="[object Function]",numberClass="[object Number]",objectClass="[object Object]",regexpClass="[object RegExp]",stringClass="[object String]";var cloneableClasses={};cloneableClasses[funcClass]=false;cloneableClasses[argsClass]=cloneableClasses[arrayClass]=cloneableClasses[boolClass]=cloneableClasses[dateClass]=cloneableClasses[numberClass]=cloneableClasses[objectClass]=cloneableClasses[regexpClass]=cloneableClasses[stringClass]=true;var debounceOptions={leading:false,maxWait:0,trailing:false};var descriptor={configurable:false,enumerable:false,value:null,writable:false};var objectTypes={"boolean":false,"function":true,object:true,number:false,string:false,undefined:false};var stringEscapes={"\\":"\\","'":"'","\n":"n","\r":"r","	":"t","\u2028":"u2028","\u2029":"u2029"};var root=objectTypes[typeof window]&&window||this;var freeExports=objectTypes[typeof exports]&&exports&&!exports.nodeType&&exports;var freeModule=objectTypes[typeof module]&&module&&!module.nodeType&&module;var moduleExports=freeModule&&freeModule.exports===freeExports&&freeExports;var freeGlobal=objectTypes[typeof global]&&global;if(freeGlobal&&(freeGlobal.global===freeGlobal||freeGlobal.window===freeGlobal)){root=freeGlobal}function baseIndexOf(array,value,fromIndex){var index=(fromIndex||0)-1,length=array?array.length:0;while(++index<length){if(array[index]===value){return index}}return-1}function cacheIndexOf(cache,value){var type=typeof value;cache=cache.cache;if(type=="boolean"||value==null){return cache[value]?0:-1}if(type!="number"&&type!="string"){type="object"}var key=type=="number"?value:keyPrefix+value;cache=(cache=cache[type])&&cache[key];return type=="object"?cache&&baseIndexOf(cache,value)>-1?0:-1:cache?0:-1}function cachePush(value){var cache=this.cache,type=typeof value;if(type=="boolean"||value==null){cache[value]=true}else{if(type!="number"&&type!="string"){type="object"}var key=type=="number"?value:keyPrefix+value,typeCache=cache[type]||(cache[type]={});if(type=="object"){(typeCache[key]||(typeCache[key]=[])).push(value)}else{typeCache[key]=true}}}function charAtCallback(value){return value.charCodeAt(0)}function compareAscending(a,b){var ac=a.criteria,bc=b.criteria,index=-1,length=ac.length;while(++index<length){var value=ac[index],other=bc[index];if(value!==other){if(value>other||typeof value=="undefined"){return 1}if(value<other||typeof other=="undefined"){return-1}}}return a.index-b.index}function createCache(array){var index=-1,length=array.length,first=array[0],mid=array[length/2|0],last=array[length-1];if(first&&typeof first=="object"&&mid&&typeof mid=="object"&&last&&typeof last=="object"){return false}var cache=getObject();cache["false"]=cache["null"]=cache["true"]=cache["undefined"]=false;var result=getObject();result.array=array;result.cache=cache;result.push=cachePush;while(++index<length){result.push(array[index])}return result}function escapeStringChar(match){return"\\"+stringEscapes[match]}function getArray(){return arrayPool.pop()||[]}function getObject(){return objectPool.pop()||{array:null,cache:null,criteria:null,"false":false,index:0,"null":false,number:null,object:null,push:null,string:null,"true":false,undefined:false,value:null}}function releaseArray(array){array.length=0;if(arrayPool.length<maxPoolSize){arrayPool.push(array)}}function releaseObject(object){var cache=object.cache;if(cache){releaseObject(cache)}object.array=object.cache=object.criteria=object.object=object.number=object.string=object.value=null;if(objectPool.length<maxPoolSize){objectPool.push(object)}}function slice(array,start,end){start||(start=0);if(typeof end=="undefined"){end=array?array.length:0}var index=-1,length=end-start||0,result=Array(length<0?0:length);while(++index<length){result[index]=array[start+index]}return result}function runInContext(context){context=context?_.defaults(root.Object(),context,_.pick(root,contextProps)):root;var Array=context.Array,Boolean=context.Boolean,Date=context.Date,Function=context.Function,Math=context.Math,Number=context.Number,Object=context.Object,RegExp=context.RegExp,String=context.String,TypeError=context.TypeError;var arrayRef=[];var objectProto=Object.prototype;var oldDash=context._;var toString=objectProto.toString;var reNative=RegExp("^"+String(toString).replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/toString| for [^\]]+/g,".*?")+"$");var ceil=Math.ceil,clearTimeout=context.clearTimeout,floor=Math.floor,fnToString=Function.prototype.toString,getPrototypeOf=isNative(getPrototypeOf=Object.getPrototypeOf)&&getPrototypeOf,hasOwnProperty=objectProto.hasOwnProperty,push=arrayRef.push,setTimeout=context.setTimeout,splice=arrayRef.splice,unshift=arrayRef.unshift;var defineProperty=function(){try{var o={},func=isNative(func=Object.defineProperty)&&func,result=func(o,o,o)&&func}catch(e){}return result}();var nativeCreate=isNative(nativeCreate=Object.create)&&nativeCreate,nativeIsArray=isNative(nativeIsArray=Array.isArray)&&nativeIsArray,nativeIsFinite=context.isFinite,nativeIsNaN=context.isNaN,nativeKeys=isNative(nativeKeys=Object.keys)&&nativeKeys,nativeMax=Math.max,nativeMin=Math.min,nativeParseInt=context.parseInt,nativeRandom=Math.random;var ctorByClass={};ctorByClass[arrayClass]=Array;ctorByClass[boolClass]=Boolean;ctorByClass[dateClass]=Date;ctorByClass[funcClass]=Function;ctorByClass[objectClass]=Object;ctorByClass[numberClass]=Number;ctorByClass[regexpClass]=RegExp;ctorByClass[stringClass]=String;function lodash(value){return value&&typeof value=="object"&&!isArray(value)&&hasOwnProperty.call(value,"__wrapped__")?value:new lodashWrapper(value)}function lodashWrapper(value,chainAll){this.__chain__=!!chainAll;this.__wrapped__=value}lodashWrapper.prototype=lodash.prototype;var support=lodash.support={};support.funcDecomp=!isNative(context.WinRTError)&&reThis.test(runInContext);support.funcNames=typeof Function.name=="string";lodash.templateSettings={escape:/<%-([\s\S]+?)%>/g,evaluate:/<%([\s\S]+?)%>/g,interpolate:reInterpolate,variable:"",imports:{_:lodash}};function baseBind(bindData){var func=bindData[0],partialArgs=bindData[2],thisArg=bindData[4];function bound(){if(partialArgs){var args=slice(partialArgs);push.apply(args,arguments)}if(this instanceof bound){var thisBinding=baseCreate(func.prototype),result=func.apply(thisBinding,args||arguments);return isObject(result)?result:thisBinding}return func.apply(thisArg,args||arguments)}setBindData(bound,bindData);return bound}function baseClone(value,isDeep,callback,stackA,stackB){if(callback){var result=callback(value);if(typeof result!="undefined"){return result}}var isObj=isObject(value);if(isObj){var className=toString.call(value);if(!cloneableClasses[className]){return value}var ctor=ctorByClass[className];switch(className){case boolClass:case dateClass:return new ctor(+value);case numberClass:case stringClass:return new ctor(value);case regexpClass:result=ctor(value.source,reFlags.exec(value));result.lastIndex=value.lastIndex;return result}}else{return value}var isArr=isArray(value);if(isDeep){var initedStack=!stackA;stackA||(stackA=getArray());stackB||(stackB=getArray());var length=stackA.length;while(length--){if(stackA[length]==value){return stackB[length]}}result=isArr?ctor(value.length):{}}else{result=isArr?slice(value):assign({},value)}if(isArr){if(hasOwnProperty.call(value,"index")){result.index=value.index}if(hasOwnProperty.call(value,"input")){result.input=value.input}}if(!isDeep){return result}stackA.push(value);stackB.push(result);(isArr?forEach:forOwn)(value,function(objValue,key){result[key]=baseClone(objValue,isDeep,callback,stackA,stackB)});if(initedStack){releaseArray(stackA);releaseArray(stackB)}return result}function baseCreate(prototype,properties){return isObject(prototype)?nativeCreate(prototype):{}}if(!nativeCreate){baseCreate=function(){function Object(){}return function(prototype){if(isObject(prototype)){Object.prototype=prototype;var result=new Object;Object.prototype=null}return result||context.Object()}}()}function baseCreateCallback(func,thisArg,argCount){if(typeof func!="function"){return identity}if(typeof thisArg=="undefined"||!("prototype"in func)){return func}var bindData=func.__bindData__;if(typeof bindData=="undefined"){if(support.funcNames){bindData=!func.name}bindData=bindData||!support.funcDecomp;if(!bindData){var source=fnToString.call(func);if(!support.funcNames){bindData=!reFuncName.test(source)}if(!bindData){bindData=reThis.test(source);setBindData(func,bindData)}}}if(bindData===false||bindData!==true&&bindData[1]&1){return func}switch(argCount){case 1:return function(value){return func.call(thisArg,value)};case 2:return function(a,b){return func.call(thisArg,a,b)};case 3:return function(value,index,collection){return func.call(thisArg,value,index,collection)};case 4:return function(accumulator,value,index,collection){return func.call(thisArg,accumulator,value,index,collection)}}return bind(func,thisArg)}function baseCreateWrapper(bindData){var func=bindData[0],bitmask=bindData[1],partialArgs=bindData[2],partialRightArgs=bindData[3],thisArg=bindData[4],arity=bindData[5];var isBind=bitmask&1,isBindKey=bitmask&2,isCurry=bitmask&4,isCurryBound=bitmask&8,key=func;function bound(){var thisBinding=isBind?thisArg:this;if(partialArgs){var args=slice(partialArgs);push.apply(args,arguments)}if(partialRightArgs||isCurry){args||(args=slice(arguments));if(partialRightArgs){push.apply(args,partialRightArgs)}if(isCurry&&args.length<arity){bitmask|=16&~32;return baseCreateWrapper([func,isCurryBound?bitmask:bitmask&~3,args,null,thisArg,arity])}}args||(args=arguments);if(isBindKey){func=thisBinding[key]}if(this instanceof bound){thisBinding=baseCreate(func.prototype);var result=func.apply(thisBinding,args);return isObject(result)?result:thisBinding}return func.apply(thisBinding,args)}setBindData(bound,bindData);return bound}function baseDifference(array,values){var index=-1,indexOf=getIndexOf(),length=array?array.length:0,isLarge=length>=largeArraySize&&indexOf===baseIndexOf,result=[];if(isLarge){var cache=createCache(values);if(cache){indexOf=cacheIndexOf;values=cache}else{isLarge=false}}while(++index<length){var value=array[index];if(indexOf(values,value)<0){result.push(value)}}if(isLarge){releaseObject(values)}return result}function baseFlatten(array,isShallow,isStrict,fromIndex){var index=(fromIndex||0)-1,length=array?array.length:0,result=[];while(++index<length){var value=array[index];if(value&&typeof value=="object"&&typeof value.length=="number"&&(isArray(value)||isArguments(value))){if(!isShallow){value=baseFlatten(value,isShallow,isStrict)}var valIndex=-1,valLength=value.length,resIndex=result.length;result.length+=valLength;while(++valIndex<valLength){result[resIndex++]=value[valIndex]}}else if(!isStrict){result.push(value)
-}}return result}function baseIsEqual(a,b,callback,isWhere,stackA,stackB){if(callback){var result=callback(a,b);if(typeof result!="undefined"){return!!result}}if(a===b){return a!==0||1/a==1/b}var type=typeof a,otherType=typeof b;if(a===a&&!(a&&objectTypes[type])&&!(b&&objectTypes[otherType])){return false}if(a==null||b==null){return a===b}var className=toString.call(a),otherClass=toString.call(b);if(className==argsClass){className=objectClass}if(otherClass==argsClass){otherClass=objectClass}if(className!=otherClass){return false}switch(className){case boolClass:case dateClass:return+a==+b;case numberClass:return a!=+a?b!=+b:a==0?1/a==1/b:a==+b;case regexpClass:case stringClass:return a==String(b)}var isArr=className==arrayClass;if(!isArr){var aWrapped=hasOwnProperty.call(a,"__wrapped__"),bWrapped=hasOwnProperty.call(b,"__wrapped__");if(aWrapped||bWrapped){return baseIsEqual(aWrapped?a.__wrapped__:a,bWrapped?b.__wrapped__:b,callback,isWhere,stackA,stackB)}if(className!=objectClass){return false}var ctorA=a.constructor,ctorB=b.constructor;if(ctorA!=ctorB&&!(isFunction(ctorA)&&ctorA instanceof ctorA&&isFunction(ctorB)&&ctorB instanceof ctorB)&&("constructor"in a&&"constructor"in b)){return false}}var initedStack=!stackA;stackA||(stackA=getArray());stackB||(stackB=getArray());var length=stackA.length;while(length--){if(stackA[length]==a){return stackB[length]==b}}var size=0;result=true;stackA.push(a);stackB.push(b);if(isArr){length=a.length;size=b.length;result=size==length;if(result||isWhere){while(size--){var index=length,value=b[size];if(isWhere){while(index--){if(result=baseIsEqual(a[index],value,callback,isWhere,stackA,stackB)){break}}}else if(!(result=baseIsEqual(a[size],value,callback,isWhere,stackA,stackB))){break}}}}else{forIn(b,function(value,key,b){if(hasOwnProperty.call(b,key)){size++;return result=hasOwnProperty.call(a,key)&&baseIsEqual(a[key],value,callback,isWhere,stackA,stackB)}});if(result&&!isWhere){forIn(a,function(value,key,a){if(hasOwnProperty.call(a,key)){return result=--size>-1}})}}stackA.pop();stackB.pop();if(initedStack){releaseArray(stackA);releaseArray(stackB)}return result}function baseMerge(object,source,callback,stackA,stackB){(isArray(source)?forEach:forOwn)(source,function(source,key){var found,isArr,result=source,value=object[key];if(source&&((isArr=isArray(source))||isPlainObject(source))){var stackLength=stackA.length;while(stackLength--){if(found=stackA[stackLength]==source){value=stackB[stackLength];break}}if(!found){var isShallow;if(callback){result=callback(value,source);if(isShallow=typeof result!="undefined"){value=result}}if(!isShallow){value=isArr?isArray(value)?value:[]:isPlainObject(value)?value:{}}stackA.push(source);stackB.push(value);if(!isShallow){baseMerge(value,source,callback,stackA,stackB)}}}else{if(callback){result=callback(value,source);if(typeof result=="undefined"){result=source}}if(typeof result!="undefined"){value=result}}object[key]=value})}function baseRandom(min,max){return min+floor(nativeRandom()*(max-min+1))}function baseUniq(array,isSorted,callback){var index=-1,indexOf=getIndexOf(),length=array?array.length:0,result=[];var isLarge=!isSorted&&length>=largeArraySize&&indexOf===baseIndexOf,seen=callback||isLarge?getArray():result;if(isLarge){var cache=createCache(seen);indexOf=cacheIndexOf;seen=cache}while(++index<length){var value=array[index],computed=callback?callback(value,index,array):value;if(isSorted?!index||seen[seen.length-1]!==computed:indexOf(seen,computed)<0){if(callback||isLarge){seen.push(computed)}result.push(value)}}if(isLarge){releaseArray(seen.array);releaseObject(seen)}else if(callback){releaseArray(seen)}return result}function createAggregator(setter){return function(collection,callback,thisArg){var result={};callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){var value=collection[index];setter(result,value,callback(value,index,collection),collection)}}else{forOwn(collection,function(value,key,collection){setter(result,value,callback(value,key,collection),collection)})}return result}}function createWrapper(func,bitmask,partialArgs,partialRightArgs,thisArg,arity){var isBind=bitmask&1,isBindKey=bitmask&2,isCurry=bitmask&4,isCurryBound=bitmask&8,isPartial=bitmask&16,isPartialRight=bitmask&32;if(!isBindKey&&!isFunction(func)){throw new TypeError}if(isPartial&&!partialArgs.length){bitmask&=~16;isPartial=partialArgs=false}if(isPartialRight&&!partialRightArgs.length){bitmask&=~32;isPartialRight=partialRightArgs=false}var bindData=func&&func.__bindData__;if(bindData&&bindData!==true){bindData=slice(bindData);if(bindData[2]){bindData[2]=slice(bindData[2])}if(bindData[3]){bindData[3]=slice(bindData[3])}if(isBind&&!(bindData[1]&1)){bindData[4]=thisArg}if(!isBind&&bindData[1]&1){bitmask|=8}if(isCurry&&!(bindData[1]&4)){bindData[5]=arity}if(isPartial){push.apply(bindData[2]||(bindData[2]=[]),partialArgs)}if(isPartialRight){unshift.apply(bindData[3]||(bindData[3]=[]),partialRightArgs)}bindData[1]|=bitmask;return createWrapper.apply(null,bindData)}var creater=bitmask==1||bitmask===17?baseBind:baseCreateWrapper;return creater([func,bitmask,partialArgs,partialRightArgs,thisArg,arity])}function escapeHtmlChar(match){return htmlEscapes[match]}function getIndexOf(){var result=(result=lodash.indexOf)===indexOf?baseIndexOf:result;return result}function isNative(value){return typeof value=="function"&&reNative.test(value)}var setBindData=!defineProperty?noop:function(func,value){descriptor.value=value;defineProperty(func,"__bindData__",descriptor)};function shimIsPlainObject(value){var ctor,result;if(!(value&&toString.call(value)==objectClass)||(ctor=value.constructor,isFunction(ctor)&&!(ctor instanceof ctor))){return false}forIn(value,function(value,key){result=key});return typeof result=="undefined"||hasOwnProperty.call(value,result)}function unescapeHtmlChar(match){return htmlUnescapes[match]}function isArguments(value){return value&&typeof value=="object"&&typeof value.length=="number"&&toString.call(value)==argsClass||false}var isArray=nativeIsArray||function(value){return value&&typeof value=="object"&&typeof value.length=="number"&&toString.call(value)==arrayClass||false};var shimKeys=function(object){var index,iterable=object,result=[];if(!iterable)return result;if(!objectTypes[typeof object])return result;for(index in iterable){if(hasOwnProperty.call(iterable,index)){result.push(index)}}return result};var keys=!nativeKeys?shimKeys:function(object){if(!isObject(object)){return[]}return nativeKeys(object)};var htmlEscapes={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};var htmlUnescapes=invert(htmlEscapes);var reEscapedHtml=RegExp("("+keys(htmlUnescapes).join("|")+")","g"),reUnescapedHtml=RegExp("["+keys(htmlEscapes).join("")+"]","g");var assign=function(object,source,guard){var index,iterable=object,result=iterable;if(!iterable)return result;var args=arguments,argsIndex=0,argsLength=typeof guard=="number"?2:args.length;if(argsLength>3&&typeof args[argsLength-2]=="function"){var callback=baseCreateCallback(args[--argsLength-1],args[argsLength--],2)}else if(argsLength>2&&typeof args[argsLength-1]=="function"){callback=args[--argsLength]}while(++argsIndex<argsLength){iterable=args[argsIndex];if(iterable&&objectTypes[typeof iterable]){var ownIndex=-1,ownProps=objectTypes[typeof iterable]&&keys(iterable),length=ownProps?ownProps.length:0;while(++ownIndex<length){index=ownProps[ownIndex];result[index]=callback?callback(result[index],iterable[index]):iterable[index]}}}return result};function clone(value,isDeep,callback,thisArg){if(typeof isDeep!="boolean"&&isDeep!=null){thisArg=callback;callback=isDeep;isDeep=false}return baseClone(value,isDeep,typeof callback=="function"&&baseCreateCallback(callback,thisArg,1))}function cloneDeep(value,callback,thisArg){return baseClone(value,true,typeof callback=="function"&&baseCreateCallback(callback,thisArg,1))}function create(prototype,properties){var result=baseCreate(prototype);return properties?assign(result,properties):result}var defaults=function(object,source,guard){var index,iterable=object,result=iterable;if(!iterable)return result;var args=arguments,argsIndex=0,argsLength=typeof guard=="number"?2:args.length;while(++argsIndex<argsLength){iterable=args[argsIndex];if(iterable&&objectTypes[typeof iterable]){var ownIndex=-1,ownProps=objectTypes[typeof iterable]&&keys(iterable),length=ownProps?ownProps.length:0;while(++ownIndex<length){index=ownProps[ownIndex];if(typeof result[index]=="undefined")result[index]=iterable[index]}}}return result};function findKey(object,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);forOwn(object,function(value,key,object){if(callback(value,key,object)){result=key;return false}});return result}function findLastKey(object,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);forOwnRight(object,function(value,key,object){if(callback(value,key,object)){result=key;return false}});return result}var forIn=function(collection,callback,thisArg){var index,iterable=collection,result=iterable;if(!iterable)return result;if(!objectTypes[typeof iterable])return result;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);for(index in iterable){if(callback(iterable[index],index,collection)===false)return result}return result};function forInRight(object,callback,thisArg){var pairs=[];forIn(object,function(value,key){pairs.push(key,value)});var length=pairs.length;callback=baseCreateCallback(callback,thisArg,3);while(length--){if(callback(pairs[length--],pairs[length],object)===false){break}}return object}var forOwn=function(collection,callback,thisArg){var index,iterable=collection,result=iterable;if(!iterable)return result;if(!objectTypes[typeof iterable])return result;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);var ownIndex=-1,ownProps=objectTypes[typeof iterable]&&keys(iterable),length=ownProps?ownProps.length:0;while(++ownIndex<length){index=ownProps[ownIndex];if(callback(iterable[index],index,collection)===false)return result}return result};function forOwnRight(object,callback,thisArg){var props=keys(object),length=props.length;callback=baseCreateCallback(callback,thisArg,3);while(length--){var key=props[length];if(callback(object[key],key,object)===false){break}}return object}function functions(object){var result=[];forIn(object,function(value,key){if(isFunction(value)){result.push(key)}});return result.sort()}function has(object,key){return object?hasOwnProperty.call(object,key):false}function invert(object){var index=-1,props=keys(object),length=props.length,result={};while(++index<length){var key=props[index];result[object[key]]=key}return result}function isBoolean(value){return value===true||value===false||value&&typeof value=="object"&&toString.call(value)==boolClass||false}function isDate(value){return value&&typeof value=="object"&&toString.call(value)==dateClass||false}function isElement(value){return value&&value.nodeType===1||false}function isEmpty(value){var result=true;if(!value){return result}var className=toString.call(value),length=value.length;if(className==arrayClass||className==stringClass||className==argsClass||className==objectClass&&typeof length=="number"&&isFunction(value.splice)){return!length}forOwn(value,function(){return result=false});return result}function isEqual(a,b,callback,thisArg){return baseIsEqual(a,b,typeof callback=="function"&&baseCreateCallback(callback,thisArg,2))}function isFinite(value){return nativeIsFinite(value)&&!nativeIsNaN(parseFloat(value))}function isFunction(value){return typeof value=="function"}function isObject(value){return!!(value&&objectTypes[typeof value])}function isNaN(value){return isNumber(value)&&value!=+value}function isNull(value){return value===null}function isNumber(value){return typeof value=="number"||value&&typeof value=="object"&&toString.call(value)==numberClass||false}var isPlainObject=!getPrototypeOf?shimIsPlainObject:function(value){if(!(value&&toString.call(value)==objectClass)){return false}var valueOf=value.valueOf,objProto=isNative(valueOf)&&(objProto=getPrototypeOf(valueOf))&&getPrototypeOf(objProto);return objProto?value==objProto||getPrototypeOf(value)==objProto:shimIsPlainObject(value)};function isRegExp(value){return value&&typeof value=="object"&&toString.call(value)==regexpClass||false}function isString(value){return typeof value=="string"||value&&typeof value=="object"&&toString.call(value)==stringClass||false}function isUndefined(value){return typeof value=="undefined"}function mapValues(object,callback,thisArg){var result={};callback=lodash.createCallback(callback,thisArg,3);forOwn(object,function(value,key,object){result[key]=callback(value,key,object)});return result}function merge(object){var args=arguments,length=2;if(!isObject(object)){return object}if(typeof args[2]!="number"){length=args.length}if(length>3&&typeof args[length-2]=="function"){var callback=baseCreateCallback(args[--length-1],args[length--],2)}else if(length>2&&typeof args[length-1]=="function"){callback=args[--length]}var sources=slice(arguments,1,length),index=-1,stackA=getArray(),stackB=getArray();while(++index<length){baseMerge(object,sources[index],callback,stackA,stackB)}releaseArray(stackA);releaseArray(stackB);return object}function omit(object,callback,thisArg){var result={};if(typeof callback!="function"){var props=[];forIn(object,function(value,key){props.push(key)});props=baseDifference(props,baseFlatten(arguments,true,false,1));var index=-1,length=props.length;while(++index<length){var key=props[index];result[key]=object[key]}}else{callback=lodash.createCallback(callback,thisArg,3);forIn(object,function(value,key,object){if(!callback(value,key,object)){result[key]=value}})}return result}function pairs(object){var index=-1,props=keys(object),length=props.length,result=Array(length);while(++index<length){var key=props[index];result[index]=[key,object[key]]}return result}function pick(object,callback,thisArg){var result={};if(typeof callback!="function"){var index=-1,props=baseFlatten(arguments,true,false,1),length=isObject(object)?props.length:0;while(++index<length){var key=props[index];if(key in object){result[key]=object[key]}}}else{callback=lodash.createCallback(callback,thisArg,3);forIn(object,function(value,key,object){if(callback(value,key,object)){result[key]=value}})}return result}function transform(object,callback,accumulator,thisArg){var isArr=isArray(object);if(accumulator==null){if(isArr){accumulator=[]}else{var ctor=object&&object.constructor,proto=ctor&&ctor.prototype;accumulator=baseCreate(proto)}}if(callback){callback=lodash.createCallback(callback,thisArg,4);(isArr?forEach:forOwn)(object,function(value,index,object){return callback(accumulator,value,index,object)})}return accumulator}function values(object){var index=-1,props=keys(object),length=props.length,result=Array(length);while(++index<length){result[index]=object[props[index]]}return result}function at(collection){var args=arguments,index=-1,props=baseFlatten(args,true,false,1),length=args[2]&&args[2][args[1]]===collection?1:props.length,result=Array(length);while(++index<length){result[index]=collection[props[index]]}return result}function contains(collection,target,fromIndex){var index=-1,indexOf=getIndexOf(),length=collection?collection.length:0,result=false;fromIndex=(fromIndex<0?nativeMax(0,length+fromIndex):fromIndex)||0;if(isArray(collection)){result=indexOf(collection,target,fromIndex)>-1}else if(typeof length=="number"){result=(isString(collection)?collection.indexOf(target,fromIndex):indexOf(collection,target,fromIndex))>-1}else{forOwn(collection,function(value){if(++index>=fromIndex){return!(result=value===target)}})}return result}var countBy=createAggregator(function(result,value,key){hasOwnProperty.call(result,key)?result[key]++:result[key]=1});function every(collection,callback,thisArg){var result=true;callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){if(!(result=!!callback(collection[index],index,collection))){break}}}else{forOwn(collection,function(value,index,collection){return result=!!callback(value,index,collection)})}return result}function filter(collection,callback,thisArg){var result=[];callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){var value=collection[index];if(callback(value,index,collection)){result.push(value)}}}else{forOwn(collection,function(value,index,collection){if(callback(value,index,collection)){result.push(value)}})}return result}function find(collection,callback,thisArg){callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){var value=collection[index];if(callback(value,index,collection)){return value}}}else{var result;forOwn(collection,function(value,index,collection){if(callback(value,index,collection)){result=value;return false}});return result}}function findLast(collection,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);forEachRight(collection,function(value,index,collection){if(callback(value,index,collection)){result=value;return false}});return result}function forEach(collection,callback,thisArg){var index=-1,length=collection?collection.length:0;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);if(typeof length=="number"){while(++index<length){if(callback(collection[index],index,collection)===false){break}}}else{forOwn(collection,callback)}return collection}function forEachRight(collection,callback,thisArg){var length=collection?collection.length:0;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);if(typeof length=="number"){while(length--){if(callback(collection[length],length,collection)===false){break}}}else{var props=keys(collection);length=props.length;forOwn(collection,function(value,key,collection){key=props?props[--length]:--length;return callback(collection[key],key,collection)})}return collection}var groupBy=createAggregator(function(result,value,key){(hasOwnProperty.call(result,key)?result[key]:result[key]=[]).push(value)});var indexBy=createAggregator(function(result,value,key){result[key]=value});function invoke(collection,methodName){var args=slice(arguments,2),index=-1,isFunc=typeof methodName=="function",length=collection?collection.length:0,result=Array(typeof length=="number"?length:0);forEach(collection,function(value){result[++index]=(isFunc?methodName:value[methodName]).apply(value,args)});return result}function map(collection,callback,thisArg){var index=-1,length=collection?collection.length:0;callback=lodash.createCallback(callback,thisArg,3);if(typeof length=="number"){var result=Array(length);while(++index<length){result[index]=callback(collection[index],index,collection)}}else{result=[];forOwn(collection,function(value,key,collection){result[++index]=callback(value,key,collection)})}return result}function max(collection,callback,thisArg){var computed=-Infinity,result=computed;if(typeof callback!="function"&&thisArg&&thisArg[callback]===collection){callback=null}if(callback==null&&isArray(collection)){var index=-1,length=collection.length;while(++index<length){var value=collection[index];if(value>result){result=value}}}else{callback=callback==null&&isString(collection)?charAtCallback:lodash.createCallback(callback,thisArg,3);forEach(collection,function(value,index,collection){var current=callback(value,index,collection);if(current>computed){computed=current;result=value}})}return result}function min(collection,callback,thisArg){var computed=Infinity,result=computed;if(typeof callback!="function"&&thisArg&&thisArg[callback]===collection){callback=null}if(callback==null&&isArray(collection)){var index=-1,length=collection.length;while(++index<length){var value=collection[index];if(value<result){result=value}}}else{callback=callback==null&&isString(collection)?charAtCallback:lodash.createCallback(callback,thisArg,3);forEach(collection,function(value,index,collection){var current=callback(value,index,collection);if(current<computed){computed=current;result=value}})}return result}var pluck=map;function reduce(collection,callback,accumulator,thisArg){if(!collection)return accumulator;var noaccum=arguments.length<3;callback=lodash.createCallback(callback,thisArg,4);var index=-1,length=collection.length;if(typeof length=="number"){if(noaccum){accumulator=collection[++index]}while(++index<length){accumulator=callback(accumulator,collection[index],index,collection)}}else{forOwn(collection,function(value,index,collection){accumulator=noaccum?(noaccum=false,value):callback(accumulator,value,index,collection)})}return accumulator}function reduceRight(collection,callback,accumulator,thisArg){var noaccum=arguments.length<3;callback=lodash.createCallback(callback,thisArg,4);forEachRight(collection,function(value,index,collection){accumulator=noaccum?(noaccum=false,value):callback(accumulator,value,index,collection)});return accumulator}function reject(collection,callback,thisArg){callback=lodash.createCallback(callback,thisArg,3);return filter(collection,function(value,index,collection){return!callback(value,index,collection)})}function sample(collection,n,guard){if(collection&&typeof collection.length!="number"){collection=values(collection)}if(n==null||guard){return collection?collection[baseRandom(0,collection.length-1)]:undefined}var result=shuffle(collection);result.length=nativeMin(nativeMax(0,n),result.length);return result}function shuffle(collection){var index=-1,length=collection?collection.length:0,result=Array(typeof length=="number"?length:0);forEach(collection,function(value){var rand=baseRandom(0,++index);result[index]=result[rand];result[rand]=value});return result}function size(collection){var length=collection?collection.length:0;return typeof length=="number"?length:keys(collection).length}function some(collection,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){if(result=callback(collection[index],index,collection)){break}}}else{forOwn(collection,function(value,index,collection){return!(result=callback(value,index,collection))})}return!!result}function sortBy(collection,callback,thisArg){var index=-1,isArr=isArray(callback),length=collection?collection.length:0,result=Array(typeof length=="number"?length:0);if(!isArr){callback=lodash.createCallback(callback,thisArg,3)}forEach(collection,function(value,key,collection){var object=result[++index]=getObject();if(isArr){object.criteria=map(callback,function(key){return value[key]})}else{(object.criteria=getArray())[0]=callback(value,key,collection)}object.index=index;object.value=value});length=result.length;result.sort(compareAscending);while(length--){var object=result[length];result[length]=object.value;if(!isArr){releaseArray(object.criteria)}releaseObject(object)}return result}function toArray(collection){if(collection&&typeof collection.length=="number"){return slice(collection)}return values(collection)}var where=filter;function compact(array){var index=-1,length=array?array.length:0,result=[];while(++index<length){var value=array[index];if(value){result.push(value)}}return result}function difference(array){return baseDifference(array,baseFlatten(arguments,true,true,1))}function findIndex(array,callback,thisArg){var index=-1,length=array?array.length:0;callback=lodash.createCallback(callback,thisArg,3);while(++index<length){if(callback(array[index],index,array)){return index}}return-1}function findLastIndex(array,callback,thisArg){var length=array?array.length:0;callback=lodash.createCallback(callback,thisArg,3);while(length--){if(callback(array[length],length,array)){return length}}return-1}function first(array,callback,thisArg){var n=0,length=array?array.length:0;if(typeof callback!="number"&&callback!=null){var index=-1;callback=lodash.createCallback(callback,thisArg,3);while(++index<length&&callback(array[index],index,array)){n++}}else{n=callback;if(n==null||thisArg){return array?array[0]:undefined}}return slice(array,0,nativeMin(nativeMax(0,n),length))}function flatten(array,isShallow,callback,thisArg){if(typeof isShallow!="boolean"&&isShallow!=null){thisArg=callback;callback=typeof isShallow!="function"&&thisArg&&thisArg[isShallow]===array?null:isShallow;isShallow=false}if(callback!=null){array=map(array,callback,thisArg)}return baseFlatten(array,isShallow)}function indexOf(array,value,fromIndex){if(typeof fromIndex=="number"){var length=array?array.length:0;fromIndex=fromIndex<0?nativeMax(0,length+fromIndex):fromIndex||0}else if(fromIndex){var index=sortedIndex(array,value);return array[index]===value?index:-1}return baseIndexOf(array,value,fromIndex)}function initial(array,callback,thisArg){var n=0,length=array?array.length:0;if(typeof callback!="number"&&callback!=null){var index=length;callback=lodash.createCallback(callback,thisArg,3);while(index--&&callback(array[index],index,array)){n++}}else{n=callback==null||thisArg?1:callback||n}return slice(array,0,nativeMin(nativeMax(0,length-n),length))}function intersection(){var args=[],argsIndex=-1,argsLength=arguments.length,caches=getArray(),indexOf=getIndexOf(),trustIndexOf=indexOf===baseIndexOf,seen=getArray();while(++argsIndex<argsLength){var value=arguments[argsIndex];if(isArray(value)||isArguments(value)){args.push(value);caches.push(trustIndexOf&&value.length>=largeArraySize&&createCache(argsIndex?args[argsIndex]:seen))}}var array=args[0],index=-1,length=array?array.length:0,result=[];outer:while(++index<length){var cache=caches[0];value=array[index];if((cache?cacheIndexOf(cache,value):indexOf(seen,value))<0){argsIndex=argsLength;(cache||seen).push(value);while(--argsIndex){cache=caches[argsIndex];if((cache?cacheIndexOf(cache,value):indexOf(args[argsIndex],value))<0){continue outer}}result.push(value)}}while(argsLength--){cache=caches[argsLength];if(cache){releaseObject(cache)}}releaseArray(caches);releaseArray(seen);return result}function last(array,callback,thisArg){var n=0,length=array?array.length:0;if(typeof callback!="number"&&callback!=null){var index=length;callback=lodash.createCallback(callback,thisArg,3);while(index--&&callback(array[index],index,array)){n++}}else{n=callback;if(n==null||thisArg){return array?array[length-1]:undefined}}return slice(array,nativeMax(0,length-n))}function lastIndexOf(array,value,fromIndex){var index=array?array.length:0;if(typeof fromIndex=="number"){index=(fromIndex<0?nativeMax(0,index+fromIndex):nativeMin(fromIndex,index-1))+1}while(index--){if(array[index]===value){return index}}return-1}function pull(array){var args=arguments,argsIndex=0,argsLength=args.length,length=array?array.length:0;while(++argsIndex<argsLength){var index=-1,value=args[argsIndex];while(++index<length){if(array[index]===value){splice.call(array,index--,1);length--}}}return array}function range(start,end,step){start=+start||0;step=typeof step=="number"?step:+step||1;if(end==null){end=start;start=0}var index=-1,length=nativeMax(0,ceil((end-start)/(step||1))),result=Array(length);while(++index<length){result[index]=start;start+=step}return result}function remove(array,callback,thisArg){var index=-1,length=array?array.length:0,result=[];callback=lodash.createCallback(callback,thisArg,3);while(++index<length){var value=array[index];if(callback(value,index,array)){result.push(value);splice.call(array,index--,1);length--}}return result}function rest(array,callback,thisArg){if(typeof callback!="number"&&callback!=null){var n=0,index=-1,length=array?array.length:0;callback=lodash.createCallback(callback,thisArg,3);while(++index<length&&callback(array[index],index,array)){n++}}else{n=callback==null||thisArg?1:nativeMax(0,callback)}return slice(array,n)}function sortedIndex(array,value,callback,thisArg){var low=0,high=array?array.length:low;callback=callback?lodash.createCallback(callback,thisArg,1):identity;value=callback(value);while(low<high){var mid=low+high>>>1;callback(array[mid])<value?low=mid+1:high=mid}return low}function union(){return baseUniq(baseFlatten(arguments,true,true))}function uniq(array,isSorted,callback,thisArg){if(typeof isSorted!="boolean"&&isSorted!=null){thisArg=callback;callback=typeof isSorted!="function"&&thisArg&&thisArg[isSorted]===array?null:isSorted;isSorted=false}if(callback!=null){callback=lodash.createCallback(callback,thisArg,3)}return baseUniq(array,isSorted,callback)}function without(array){return baseDifference(array,slice(arguments,1))}function xor(){var index=-1,length=arguments.length;while(++index<length){var array=arguments[index];if(isArray(array)||isArguments(array)){var result=result?baseUniq(baseDifference(result,array).concat(baseDifference(array,result))):array}}return result||[]}function zip(){var array=arguments.length>1?arguments:arguments[0],index=-1,length=array?max(pluck(array,"length")):0,result=Array(length<0?0:length);while(++index<length){result[index]=pluck(array,index)}return result}function zipObject(keys,values){var index=-1,length=keys?keys.length:0,result={};if(!values&&length&&!isArray(keys[0])){values=[]}while(++index<length){var key=keys[index];if(values){result[key]=values[index]}else if(key){result[key[0]]=key[1]}}return result}function after(n,func){if(!isFunction(func)){throw new TypeError}return function(){if(--n<1){return func.apply(this,arguments)}}}function bind(func,thisArg){return arguments.length>2?createWrapper(func,17,slice(arguments,2),null,thisArg):createWrapper(func,1,null,null,thisArg)}function bindAll(object){var funcs=arguments.length>1?baseFlatten(arguments,true,false,1):functions(object),index=-1,length=funcs.length;while(++index<length){var key=funcs[index];object[key]=createWrapper(object[key],1,null,null,object)}return object}function bindKey(object,key){return arguments.length>2?createWrapper(key,19,slice(arguments,2),null,object):createWrapper(key,3,null,null,object)}function compose(){var funcs=arguments,length=funcs.length;while(length--){if(!isFunction(funcs[length])){throw new TypeError}}return function(){var args=arguments,length=funcs.length;while(length--){args=[funcs[length].apply(this,args)]}return args[0]}}function curry(func,arity){arity=typeof arity=="number"?arity:+arity||func.length;return createWrapper(func,4,null,null,null,arity)}function debounce(func,wait,options){var args,maxTimeoutId,result,stamp,thisArg,timeoutId,trailingCall,lastCalled=0,maxWait=false,trailing=true;if(!isFunction(func)){throw new TypeError}wait=nativeMax(0,wait)||0;if(options===true){var leading=true;trailing=false}else if(isObject(options)){leading=options.leading;maxWait="maxWait"in options&&(nativeMax(wait,options.maxWait)||0);trailing="trailing"in options?options.trailing:trailing}var delayed=function(){var remaining=wait-(now()-stamp);if(remaining<=0){if(maxTimeoutId){clearTimeout(maxTimeoutId)}var isCalled=trailingCall;maxTimeoutId=timeoutId=trailingCall=undefined;if(isCalled){lastCalled=now();result=func.apply(thisArg,args);if(!timeoutId&&!maxTimeoutId){args=thisArg=null}}}else{timeoutId=setTimeout(delayed,remaining)}};var maxDelayed=function(){if(timeoutId){clearTimeout(timeoutId)}maxTimeoutId=timeoutId=trailingCall=undefined;if(trailing||maxWait!==wait){lastCalled=now();result=func.apply(thisArg,args);if(!timeoutId&&!maxTimeoutId){args=thisArg=null}}};return function(){args=arguments;stamp=now();thisArg=this;trailingCall=trailing&&(timeoutId||!leading);if(maxWait===false){var leadingCall=leading&&!timeoutId}else{if(!maxTimeoutId&&!leading){lastCalled=stamp}var remaining=maxWait-(stamp-lastCalled),isCalled=remaining<=0;if(isCalled){if(maxTimeoutId){maxTimeoutId=clearTimeout(maxTimeoutId)
-}lastCalled=stamp;result=func.apply(thisArg,args)}else if(!maxTimeoutId){maxTimeoutId=setTimeout(maxDelayed,remaining)}}if(isCalled&&timeoutId){timeoutId=clearTimeout(timeoutId)}else if(!timeoutId&&wait!==maxWait){timeoutId=setTimeout(delayed,wait)}if(leadingCall){isCalled=true;result=func.apply(thisArg,args)}if(isCalled&&!timeoutId&&!maxTimeoutId){args=thisArg=null}return result}}function defer(func){if(!isFunction(func)){throw new TypeError}var args=slice(arguments,1);return setTimeout(function(){func.apply(undefined,args)},1)}function delay(func,wait){if(!isFunction(func)){throw new TypeError}var args=slice(arguments,2);return setTimeout(function(){func.apply(undefined,args)},wait)}function memoize(func,resolver){if(!isFunction(func)){throw new TypeError}var memoized=function(){var cache=memoized.cache,key=resolver?resolver.apply(this,arguments):keyPrefix+arguments[0];return hasOwnProperty.call(cache,key)?cache[key]:cache[key]=func.apply(this,arguments)};memoized.cache={};return memoized}function once(func){var ran,result;if(!isFunction(func)){throw new TypeError}return function(){if(ran){return result}ran=true;result=func.apply(this,arguments);func=null;return result}}function partial(func){return createWrapper(func,16,slice(arguments,1))}function partialRight(func){return createWrapper(func,32,null,slice(arguments,1))}function throttle(func,wait,options){var leading=true,trailing=true;if(!isFunction(func)){throw new TypeError}if(options===false){leading=false}else if(isObject(options)){leading="leading"in options?options.leading:leading;trailing="trailing"in options?options.trailing:trailing}debounceOptions.leading=leading;debounceOptions.maxWait=wait;debounceOptions.trailing=trailing;return debounce(func,wait,debounceOptions)}function wrap(value,wrapper){return createWrapper(wrapper,16,[value])}function constant(value){return function(){return value}}function createCallback(func,thisArg,argCount){var type=typeof func;if(func==null||type=="function"){return baseCreateCallback(func,thisArg,argCount)}if(type!="object"){return property(func)}var props=keys(func),key=props[0],a=func[key];if(props.length==1&&a===a&&!isObject(a)){return function(object){var b=object[key];return a===b&&(a!==0||1/a==1/b)}}return function(object){var length=props.length,result=false;while(length--){if(!(result=baseIsEqual(object[props[length]],func[props[length]],null,true))){break}}return result}}function escape(string){return string==null?"":String(string).replace(reUnescapedHtml,escapeHtmlChar)}function identity(value){return value}function mixin(object,source,options){var chain=true,methodNames=source&&functions(source);if(!source||!options&&!methodNames.length){if(options==null){options=source}ctor=lodashWrapper;source=object;object=lodash;methodNames=functions(source)}if(options===false){chain=false}else if(isObject(options)&&"chain"in options){chain=options.chain}var ctor=object,isFunc=isFunction(ctor);forEach(methodNames,function(methodName){var func=object[methodName]=source[methodName];if(isFunc){ctor.prototype[methodName]=function(){var chainAll=this.__chain__,value=this.__wrapped__,args=[value];push.apply(args,arguments);var result=func.apply(object,args);if(chain||chainAll){if(value===result&&isObject(result)){return this}result=new ctor(result);result.__chain__=chainAll}return result}}})}function noConflict(){context._=oldDash;return this}function noop(){}var now=isNative(now=Date.now)&&now||function(){return(new Date).getTime()};var parseInt=nativeParseInt(whitespace+"08")==8?nativeParseInt:function(value,radix){return nativeParseInt(isString(value)?value.replace(reLeadingSpacesAndZeros,""):value,radix||0)};function property(key){return function(object){return object[key]}}function random(min,max,floating){var noMin=min==null,noMax=max==null;if(floating==null){if(typeof min=="boolean"&&noMax){floating=min;min=1}else if(!noMax&&typeof max=="boolean"){floating=max;noMax=true}}if(noMin&&noMax){max=1}min=+min||0;if(noMax){max=min;min=0}else{max=+max||0}if(floating||min%1||max%1){var rand=nativeRandom();return nativeMin(min+rand*(max-min+parseFloat("1e-"+((rand+"").length-1))),max)}return baseRandom(min,max)}function result(object,key){if(object){var value=object[key];return isFunction(value)?object[key]():value}}function template(text,data,options){var settings=lodash.templateSettings;text=String(text||"");options=defaults({},options,settings);var imports=defaults({},options.imports,settings.imports),importsKeys=keys(imports),importsValues=values(imports);var isEvaluating,index=0,interpolate=options.interpolate||reNoMatch,source="__p += '";var reDelimiters=RegExp((options.escape||reNoMatch).source+"|"+interpolate.source+"|"+(interpolate===reInterpolate?reEsTemplate:reNoMatch).source+"|"+(options.evaluate||reNoMatch).source+"|$","g");text.replace(reDelimiters,function(match,escapeValue,interpolateValue,esTemplateValue,evaluateValue,offset){interpolateValue||(interpolateValue=esTemplateValue);source+=text.slice(index,offset).replace(reUnescapedString,escapeStringChar);if(escapeValue){source+="' +\n__e("+escapeValue+") +\n'"}if(evaluateValue){isEvaluating=true;source+="';\n"+evaluateValue+";\n__p += '"}if(interpolateValue){source+="' +\n((__t = ("+interpolateValue+")) == null ? '' : __t) +\n'"}index=offset+match.length;return match});source+="';\n";var variable=options.variable,hasVariable=variable;if(!hasVariable){variable="obj";source="with ("+variable+") {\n"+source+"\n}\n"}source=(isEvaluating?source.replace(reEmptyStringLeading,""):source).replace(reEmptyStringMiddle,"$1").replace(reEmptyStringTrailing,"$1;");source="function("+variable+") {\n"+(hasVariable?"":variable+" || ("+variable+" = {});\n")+"var __t, __p = '', __e = _.escape"+(isEvaluating?", __j = Array.prototype.join;\n"+"function print() { __p += __j.call(arguments, '') }\n":";\n")+source+"return __p\n}";var sourceURL="\n/*\n//# sourceURL="+(options.sourceURL||"/lodash/template/source["+templateCounter++ +"]")+"\n*/";try{var result=Function(importsKeys,"return "+source+sourceURL).apply(undefined,importsValues)}catch(e){e.source=source;throw e}if(data){return result(data)}result.source=source;return result}function times(n,callback,thisArg){n=(n=+n)>-1?n:0;var index=-1,result=Array(n);callback=baseCreateCallback(callback,thisArg,1);while(++index<n){result[index]=callback(index)}return result}function unescape(string){return string==null?"":String(string).replace(reEscapedHtml,unescapeHtmlChar)}function uniqueId(prefix){var id=++idCounter;return String(prefix==null?"":prefix)+id}function chain(value){value=new lodashWrapper(value);value.__chain__=true;return value}function tap(value,interceptor){interceptor(value);return value}function wrapperChain(){this.__chain__=true;return this}function wrapperToString(){return String(this.__wrapped__)}function wrapperValueOf(){return this.__wrapped__}lodash.after=after;lodash.assign=assign;lodash.at=at;lodash.bind=bind;lodash.bindAll=bindAll;lodash.bindKey=bindKey;lodash.chain=chain;lodash.compact=compact;lodash.compose=compose;lodash.constant=constant;lodash.countBy=countBy;lodash.create=create;lodash.createCallback=createCallback;lodash.curry=curry;lodash.debounce=debounce;lodash.defaults=defaults;lodash.defer=defer;lodash.delay=delay;lodash.difference=difference;lodash.filter=filter;lodash.flatten=flatten;lodash.forEach=forEach;lodash.forEachRight=forEachRight;lodash.forIn=forIn;lodash.forInRight=forInRight;lodash.forOwn=forOwn;lodash.forOwnRight=forOwnRight;lodash.functions=functions;lodash.groupBy=groupBy;lodash.indexBy=indexBy;lodash.initial=initial;lodash.intersection=intersection;lodash.invert=invert;lodash.invoke=invoke;lodash.keys=keys;lodash.map=map;lodash.mapValues=mapValues;lodash.max=max;lodash.memoize=memoize;lodash.merge=merge;lodash.min=min;lodash.omit=omit;lodash.once=once;lodash.pairs=pairs;lodash.partial=partial;lodash.partialRight=partialRight;lodash.pick=pick;lodash.pluck=pluck;lodash.property=property;lodash.pull=pull;lodash.range=range;lodash.reject=reject;lodash.remove=remove;lodash.rest=rest;lodash.shuffle=shuffle;lodash.sortBy=sortBy;lodash.tap=tap;lodash.throttle=throttle;lodash.times=times;lodash.toArray=toArray;lodash.transform=transform;lodash.union=union;lodash.uniq=uniq;lodash.values=values;lodash.where=where;lodash.without=without;lodash.wrap=wrap;lodash.xor=xor;lodash.zip=zip;lodash.zipObject=zipObject;lodash.collect=map;lodash.drop=rest;lodash.each=forEach;lodash.eachRight=forEachRight;lodash.extend=assign;lodash.methods=functions;lodash.object=zipObject;lodash.select=filter;lodash.tail=rest;lodash.unique=uniq;lodash.unzip=zip;mixin(lodash);lodash.clone=clone;lodash.cloneDeep=cloneDeep;lodash.contains=contains;lodash.escape=escape;lodash.every=every;lodash.find=find;lodash.findIndex=findIndex;lodash.findKey=findKey;lodash.findLast=findLast;lodash.findLastIndex=findLastIndex;lodash.findLastKey=findLastKey;lodash.has=has;lodash.identity=identity;lodash.indexOf=indexOf;lodash.isArguments=isArguments;lodash.isArray=isArray;lodash.isBoolean=isBoolean;lodash.isDate=isDate;lodash.isElement=isElement;lodash.isEmpty=isEmpty;lodash.isEqual=isEqual;lodash.isFinite=isFinite;lodash.isFunction=isFunction;lodash.isNaN=isNaN;lodash.isNull=isNull;lodash.isNumber=isNumber;lodash.isObject=isObject;lodash.isPlainObject=isPlainObject;lodash.isRegExp=isRegExp;lodash.isString=isString;lodash.isUndefined=isUndefined;lodash.lastIndexOf=lastIndexOf;lodash.mixin=mixin;lodash.noConflict=noConflict;lodash.noop=noop;lodash.now=now;lodash.parseInt=parseInt;lodash.random=random;lodash.reduce=reduce;lodash.reduceRight=reduceRight;lodash.result=result;lodash.runInContext=runInContext;lodash.size=size;lodash.some=some;lodash.sortedIndex=sortedIndex;lodash.template=template;lodash.unescape=unescape;lodash.uniqueId=uniqueId;lodash.all=every;lodash.any=some;lodash.detect=find;lodash.findWhere=find;lodash.foldl=reduce;lodash.foldr=reduceRight;lodash.include=contains;lodash.inject=reduce;mixin(function(){var source={};forOwn(lodash,function(func,methodName){if(!lodash.prototype[methodName]){source[methodName]=func}});return source}(),false);lodash.first=first;lodash.last=last;lodash.sample=sample;lodash.take=first;lodash.head=first;forOwn(lodash,function(func,methodName){var callbackable=methodName!=="sample";if(!lodash.prototype[methodName]){lodash.prototype[methodName]=function(n,guard){var chainAll=this.__chain__,result=func(this.__wrapped__,n,guard);return!chainAll&&(n==null||guard&&!(callbackable&&typeof n=="function"))?result:new lodashWrapper(result,chainAll)}}});lodash.VERSION="2.4.1";lodash.prototype.chain=wrapperChain;lodash.prototype.toString=wrapperToString;lodash.prototype.value=wrapperValueOf;lodash.prototype.valueOf=wrapperValueOf;forEach(["join","pop","shift"],function(methodName){var func=arrayRef[methodName];lodash.prototype[methodName]=function(){var chainAll=this.__chain__,result=func.apply(this.__wrapped__,arguments);return chainAll?new lodashWrapper(result,chainAll):result}});forEach(["push","reverse","sort","unshift"],function(methodName){var func=arrayRef[methodName];lodash.prototype[methodName]=function(){func.apply(this.__wrapped__,arguments);return this}});forEach(["concat","slice","splice"],function(methodName){var func=arrayRef[methodName];lodash.prototype[methodName]=function(){return new lodashWrapper(func.apply(this.__wrapped__,arguments),this.__chain__)}});return lodash}var _=runInContext();if(typeof define=="function"&&typeof define.amd=="object"&&define.amd){root._=_;define(function(){return _})}else if(freeExports&&freeModule){if(moduleExports){(freeModule.exports=_)._=_}else{freeExports._=_}}else{root._=_}}).call(this)}).call(this,typeof global!=="undefined"?global:typeof self!=="undefined"?self:typeof window!=="undefined"?window:{})},{}]},{},[1])(1)});
+module.exports={graphlib:require("./lib/graphlib"),dagre:require("./lib/dagre"),intersect:require("./lib/intersect"),render:require("./lib/render"),util:require("./lib/util"),version:require("./lib/version")}},{"./lib/dagre":8,"./lib/graphlib":9,"./lib/intersect":10,"./lib/render":23,"./lib/util":25,"./lib/version":26}],2:[function(require,module,exports){var util=require("./util");module.exports={"default":normal,normal:normal,vee:vee,undirected:undirected};function normal(parent,id,edge,type){var marker=parent.append("marker").attr("id",id).attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5).attr("markerUnits","strokeWidth").attr("markerWidth",8).attr("markerHeight",6).attr("orient","auto");var path=marker.append("path").attr("d","M 0 0 L 10 5 L 0 10 z").style("stroke-width",1).style("stroke-dasharray","1,0");util.applyStyle(path,edge[type+"Style"])}function vee(parent,id,edge,type){var marker=parent.append("marker").attr("id",id).attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5).attr("markerUnits","strokeWidth").attr("markerWidth",8).attr("markerHeight",6).attr("orient","auto");var path=marker.append("path").attr("d","M 0 0 L 10 5 L 0 10 L 4 5 z").style("stroke-width",1).style("stroke-dasharray","1,0");util.applyStyle(path,edge[type+"Style"])}function undirected(parent,id,edge,type){var marker=parent.append("marker").attr("id",id).attr("viewBox","0 0 10 10").attr("refX",9).attr("refY",5).attr("markerUnits","strokeWidth").attr("markerWidth",8).attr("markerHeight",6).attr("orient","auto");var path=marker.append("path").attr("d","M 0 5 L 10 5").style("stroke-width",1).style("stroke-dasharray","1,0");util.applyStyle(path,edge[type+"Style"])}},{"./util":25}],3:[function(require,module,exports){var util=require("./util");module.exports=createClusters;function createClusters(selection,g){var clusters=g.nodes().filter(function(v){return util.isSubgraph(g,v)}),svgClusters=selection.selectAll("g.cluster").data(clusters,function(v){return v});svgClusters.enter().append("g").attr("class","cluster").style("opacity",0).append("rect");util.applyTransition(svgClusters.exit(),g).style("opacity",0).remove();util.applyTransition(svgClusters,g).style("opacity",1);util.applyTransition(svgClusters.selectAll("rect"),g).attr("width",function(v){return g.node(v).width}).attr("height",function(v){return g.node(v).height}).attr("x",function(v){var node=g.node(v);return node.x-node.width/2}).attr("y",function(v){var node=g.node(v);return node.y-node.height/2})}},{"./util":25}],4:[function(require,module,exports){"use strict";var _=require("./lodash"),addLabel=require("./label/add-label"),util=require("./util"),d3=require("./d3");module.exports=createEdgeLabels;function createEdgeLabels(selection,g){var svgEdgeLabels=selection.selectAll("g.edgeLabel").data(g.edges(),function(e){return util.edgeToId(e)}).classed("update",true);svgEdgeLabels.selectAll("*").remove();svgEdgeLabels.enter().append("g").classed("edgeLabel",true).style("opacity",0);svgEdgeLabels.each(function(e){var edge=g.edge(e),label=addLabel(d3.select(this),g.edge(e),0,0).classed("label",true),bbox=label.node().getBBox();if(edge.labelId){label.attr("id",edge.labelId)}if(!_.has(edge,"width")){edge.width=bbox.width}if(!_.has(edge,"height")){edge.height=bbox.height}});util.applyTransition(svgEdgeLabels.exit(),g).style("opacity",0).remove();return svgEdgeLabels}},{"./d3":7,"./label/add-label":18,"./lodash":20,"./util":25}],5:[function(require,module,exports){"use strict";var _=require("./lodash"),intersectNode=require("./intersect/intersect-node"),util=require("./util"),d3=require("./d3");module.exports=createEdgePaths;function createEdgePaths(selection,g,arrows){var svgPaths=selection.selectAll("g.edgePath").data(g.edges(),function(e){return util.edgeToId(e)}).classed("update",true);enter(svgPaths,g);exit(svgPaths,g);util.applyTransition(svgPaths,g).style("opacity",1);svgPaths.each(function(e){var domEdge=d3.select(this);var edge=g.edge(e);edge.elem=this;if(edge.id){domEdge.attr("id",edge.id)}util.applyClass(domEdge,edge["class"],(domEdge.classed("update")?"update ":"")+"edgePath")});svgPaths.selectAll("path.path").each(function(e){var edge=g.edge(e);edge.arrowheadId=_.uniqueId("arrowhead");var domEdge=d3.select(this).attr("marker-end",function(){return"url(#"+edge.arrowheadId+")"}).style("fill","none");util.applyTransition(domEdge,g).attr("d",function(e){return calcPoints(g,e)});util.applyStyle(domEdge,edge.style)});svgPaths.selectAll("defs *").remove();svgPaths.selectAll("defs").each(function(e){var edge=g.edge(e),arrowhead=arrows[edge.arrowhead];arrowhead(d3.select(this),edge.arrowheadId,edge,"arrowhead")});return svgPaths}function calcPoints(g,e){var edge=g.edge(e),tail=g.node(e.v),head=g.node(e.w),points=edge.points.slice(1,edge.points.length-1);points.unshift(intersectNode(tail,points[0]));points.push(intersectNode(head,points[points.length-1]));return createLine(edge,points)}function createLine(edge,points){var line=d3.svg.line().x(function(d){return d.x}).y(function(d){return d.y});if(_.has(edge,"lineInterpolate")){line.interpolate(edge.lineInterpolate)}if(_.has(edge,"lineTension")){line.tension(Number(edge.lineTension))}return line(points)}function getCoords(elem){var bbox=elem.getBBox(),matrix=elem.getTransformToElement(elem.ownerSVGElement).translate(bbox.width/2,bbox.height/2);return{x:matrix.e,y:matrix.f}}function enter(svgPaths,g){var svgPathsEnter=svgPaths.enter().append("g").attr("class","edgePath").style("opacity",0);svgPathsEnter.append("path").attr("class","path").attr("d",function(e){var edge=g.edge(e),sourceElem=g.node(e.v).elem,points=_.range(edge.points.length).map(function(){return getCoords(sourceElem)});return createLine(edge,points)});svgPathsEnter.append("defs")}function exit(svgPaths,g){var svgPathExit=svgPaths.exit();util.applyTransition(svgPathExit,g).style("opacity",0).remove();util.applyTransition(svgPathExit.select("path.path"),g).attr("d",function(e){var source=g.node(e.v);if(source){var points=_.range(this.pathSegList.length).map(function(){return source});return createLine({},points)}else{return d3.select(this).attr("d")}})}},{"./d3":7,"./intersect/intersect-node":14,"./lodash":20,"./util":25}],6:[function(require,module,exports){"use strict";var _=require("./lodash"),addLabel=require("./label/add-label"),util=require("./util"),d3=require("./d3");module.exports=createNodes;function createNodes(selection,g,shapes){var simpleNodes=g.nodes().filter(function(v){return!util.isSubgraph(g,v)});var svgNodes=selection.selectAll("g.node").data(simpleNodes,function(v){return v}).classed("update",true);svgNodes.selectAll("*").remove();svgNodes.enter().append("g").attr("class","node").style("opacity",0);svgNodes.each(function(v){var node=g.node(v),thisGroup=d3.select(this),labelGroup=thisGroup.append("g").attr("class","label"),labelDom=addLabel(labelGroup,node),shape=shapes[node.shape],bbox=_.pick(labelDom.node().getBBox(),"width","height");node.elem=this;if(node.id){thisGroup.attr("id",node.id)}if(node.labelId){labelGroup.attr("id",node.labelId)}util.applyClass(thisGroup,node["class"],(thisGroup.classed("update")?"update ":"")+"node");if(_.has(node,"width")){bbox.width=node.width}if(_.has(node,"height")){bbox.height=node.height}bbox.width+=node.paddingLeft+node.paddingRight;bbox.height+=node.paddingTop+node.paddingBottom;labelGroup.attr("transform","translate("+(node.paddingLeft-node.paddingRight)/2+","+(node.paddingTop-node.paddingBottom)/2+")");var shapeSvg=shape(d3.select(this),bbox,node);util.applyStyle(shapeSvg,node.style);var shapeBBox=shapeSvg.node().getBBox();node.width=shapeBBox.width;node.height=shapeBBox.height});util.applyTransition(svgNodes.exit(),g).style("opacity",0).remove();return svgNodes}},{"./d3":7,"./label/add-label":18,"./lodash":20,"./util":25}],7:[function(require,module,exports){module.exports=window.d3},{}],8:[function(require,module,exports){var dagre;if(require){try{dagre=require("dagre")}catch(e){}}if(!dagre){dagre=window.dagre}module.exports=dagre},{dagre:27}],9:[function(require,module,exports){var graphlib;if(require){try{graphlib=require("graphlib")}catch(e){}}if(!graphlib){graphlib=window.graphlib}module.exports=graphlib},{graphlib:57}],10:[function(require,module,exports){module.exports={node:require("./intersect-node"),circle:require("./intersect-circle"),ellipse:require("./intersect-ellipse"),polygon:require("./intersect-polygon"),rect:require("./intersect-rect")}},{"./intersect-circle":11,"./intersect-ellipse":12,"./intersect-node":14,"./intersect-polygon":15,"./intersect-rect":16}],11:[function(require,module,exports){var intersectEllipse=require("./intersect-ellipse");module.exports=intersectCircle;function intersectCircle(node,rx,point){return intersectEllipse(node,rx,rx,point)}},{"./intersect-ellipse":12}],12:[function(require,module,exports){module.exports=intersectEllipse;function intersectEllipse(node,rx,ry,point){var cx=node.x;var cy=node.y;var px=cx-point.x;var py=cy-point.y;var det=Math.sqrt(rx*rx*py*py+ry*ry*px*px);var dx=Math.abs(rx*ry*px/det);if(point.x<cx){dx=-dx}var dy=Math.abs(rx*ry*py/det);if(point.y<cy){dy=-dy}return{x:cx+dx,y:cy+dy}}},{}],13:[function(require,module,exports){module.exports=intersectLine;function intersectLine(p1,p2,q1,q2){var a1,a2,b1,b2,c1,c2;var r1,r2,r3,r4;var denom,offset,num;var x,y;a1=p2.y-p1.y;b1=p1.x-p2.x;c1=p2.x*p1.y-p1.x*p2.y;r3=a1*q1.x+b1*q1.y+c1;r4=a1*q2.x+b1*q2.y+c1;if(r3!==0&&r4!==0&&sameSign(r3,r4)){return}a2=q2.y-q1.y;b2=q1.x-q2.x;c2=q2.x*q1.y-q1.x*q2.y;r1=a2*p1.x+b2*p1.yy+c2;r2=a2*p2.x+b2*p2.y+c2;if(r1!==0&&r2!==0&&sameSign(r1,r2)){return}denom=a1*b2-a2*b1;if(denom===0){return}offset=Math.abs(denom/2);num=b1*c2-b2*c1;x=num<0?(num-offset)/denom:(num+offset)/denom;num=a2*c1-a1*c2;y=num<0?(num-offset)/denom:(num+offset)/denom;return{x:x,y:y}}function sameSign(r1,r2){return r1*r2>0}},{}],14:[function(require,module,exports){module.exports=intersectNode;function intersectNode(node,point){return node.intersect(point)}},{}],15:[function(require,module,exports){var intersectLine=require("./intersect-line");module.exports=intersectPolygon;function intersectPolygon(node,polyPoints,point){var x1=node.x;var y1=node.y;var intersections=[];var minX=Number.POSITIVE_INFINITY,minY=Number.POSITIVE_INFINITY;polyPoints.forEach(function(entry){minX=Math.min(minX,entry.x);minY=Math.min(minY,entry.y)});var left=x1-node.width/2-minX;var top=y1-node.height/2-minY;for(var i=0;i<polyPoints.length;i++){var p1=polyPoints[i];var p2=polyPoints[i<polyPoints.length-1?i+1:0];var intersect=intersectLine(node,point,{x:left+p1.x,y:top+p1.y},{x:left+p2.x,y:top+p2.y});if(intersect){intersections.push(intersect)}}if(!intersections.length){console.log("NO INTERSECTION FOUND, RETURN NODE CENTER",node);return node}if(intersections.length>1){intersections.sort(function(p,q){var pdx=p.x-point.x,pdy=p.y-point.y,distp=Math.sqrt(pdx*pdx+pdy*pdy),qdx=q.x-point.x,qdy=q.y-point.y,distq=Math.sqrt(qdx*qdx+qdy*qdy);return distp<distq?-1:distp===distq?0:1})}return intersections[0]}},{"./intersect-line":13}],16:[function(require,module,exports){module.exports=intersectRect;function intersectRect(node,point){var x=node.x;var y=node.y;var dx=point.x-x;var dy=point.y-y;var w=node.width/2;var h=node.height/2;var sx,sy;if(Math.abs(dy)*w>Math.abs(dx)*h){if(dy<0){h=-h}sx=dy===0?0:h*dx/dy;sy=h}else{if(dx<0){w=-w}sx=w;sy=dx===0?0:w*dy/dx}return{x:x+sx,y:y+sy}}},{}],17:[function(require,module,exports){var util=require("../util");module.exports=addHtmlLabel;function addHtmlLabel(root,node){var fo=root.append("foreignObject").attr("width","100000");var div=fo.append("xhtml:div");var label=node.label;switch(typeof label){case"function":div.insert(label);break;case"object":div.insert(function(){return label});break;default:div.html(label)}util.applyStyle(div,node.labelStyle);div.style("display","inline-block");div.style("white-space","nowrap");var w,h;div.each(function(){w=this.clientWidth;h=this.clientHeight});fo.attr("width",w).attr("height",h);return fo}},{"../util":25}],18:[function(require,module,exports){var addTextLabel=require("./add-text-label"),addHtmlLabel=require("./add-html-label");module.exports=addLabel;function addLabel(root,node){var label=node.label;var labelSvg=root.append("g");if(typeof label!=="string"||node.labelType==="html"){addHtmlLabel(labelSvg,node)}else{addTextLabel(labelSvg,node)}var labelBBox=labelSvg.node().getBBox();labelSvg.attr("transform","translate("+-labelBBox.width/2+","+-labelBBox.height/2+")");return labelSvg}},{"./add-html-label":17,"./add-text-label":19}],19:[function(require,module,exports){var util=require("../util");module.exports=addTextLabel;function addTextLabel(root,node){var domNode=root.append("text");var lines=processEscapeSequences(node.label).split("\n");for(var i=0;i<lines.length;i++){domNode.append("tspan").attr("xml:space","preserve").attr("dy","1em").attr("x","1").text(lines[i])}util.applyStyle(domNode,node.labelStyle);return domNode}function processEscapeSequences(text){var newText="",escaped=false,ch;for(var i=0;i<text.length;++i){ch=text[i];if(escaped){switch(ch){case"n":newText+="\n";break;default:newText+=ch}escaped=false}else if(ch==="\\"){escaped=true}else{newText+=ch}}return newText}},{"../util":25}],20:[function(require,module,exports){var lodash;if(require){try{lodash=require("lodash")}catch(e){}}if(!lodash){lodash=window._}module.exports=lodash},{lodash:77}],21:[function(require,module,exports){"use strict";var util=require("./util"),d3=require("./d3"),_=require("./lodash");module.exports=positionEdgeLabels;function positionEdgeLabels(selection,g){var created=selection.filter(function(){return!d3.select(this).classed("update")});function translate(e){var edge=g.edge(e);return _.has(edge,"x")?"translate("+edge.x+","+edge.y+")":""}created.attr("transform",translate);util.applyTransition(selection,g).style("opacity",1).attr("transform",translate)}},{"./d3":7,"./lodash":20,"./util":25}],22:[function(require,module,exports){"use strict";var util=require("./util"),d3=require("./d3");module.exports=positionNodes;function positionNodes(selection,g){var created=selection.filter(function(){return!d3.select(this).classed("update")});function translate(v){var node=g.node(v);return"translate("+node.x+","+node.y+")"}created.attr("transform",translate);util.applyTransition(selection,g).style("opacity",1).attr("transform",translate)}},{"./d3":7,"./util":25}],23:[function(require,module,exports){var _=require("./lodash"),layout=require("./dagre").layout;module.exports=render;function render(){var createNodes=require("./create-nodes"),createClusters=require("./create-clusters"),createEdgeLabels=require("./create-edge-labels"),createEdgePaths=require("./create-edge-paths"),positionNodes=require("./position-nodes"),positionEdgeLabels=require("./position-edge-labels"),shapes=require("./shapes"),arrows=require("./arrows");var fn=function(svg,g){preProcessGraph(g);var outputGroup=createOrSelectGroup(svg,"output"),clustersGroup=createOrSelectGroup(outputGroup,"clusters"),edgePathsGroup=createOrSelectGroup(outputGroup,"edgePaths"),edgeLabels=createEdgeLabels(createOrSelectGroup(outputGroup,"edgeLabels"),g),nodes=createNodes(createOrSelectGroup(outputGroup,"nodes"),g,shapes);layout(g);positionNodes(nodes,g);positionEdgeLabels(edgeLabels,g);createEdgePaths(edgePathsGroup,g,arrows);createClusters(clustersGroup,g);postProcessGraph(g)};fn.createNodes=function(value){if(!arguments.length)return createNodes;createNodes=value;return fn};fn.createClusters=function(value){if(!arguments.length)return createClusters;createClusters=value;return fn};fn.createEdgeLabels=function(value){if(!arguments.length)return createEdgeLabels;createEdgeLabels=value;return fn};fn.createEdgePaths=function(value){if(!arguments.length)return createEdgePaths;createEdgePaths=value;return fn};fn.shapes=function(value){if(!arguments.length)return shapes;shapes=value;return fn};fn.arrows=function(value){if(!arguments.length)return arrows;arrows=value;return fn};return fn}var NODE_DEFAULT_ATTRS={paddingLeft:10,paddingRight:10,paddingTop:10,paddingBottom:10,rx:0,ry:0,shape:"rect"};var EDGE_DEFAULT_ATTRS={arrowhead:"normal",lineInterpolate:"linear"};function preProcessGraph(g){g.nodes().forEach(function(v){var node=g.node(v);if(!_.has(node,"label")){node.label=v}if(_.has(node,"paddingX")){_.defaults(node,{paddingLeft:node.paddingX,paddingRight:node.paddingX})}if(_.has(node,"paddingY")){_.defaults(node,{paddingTop:node.paddingY,paddingBottom:node.paddingY})}if(_.has(node,"padding")){_.defaults(node,{paddingLeft:node.padding,paddingRight:node.padding,paddingTop:node.padding,paddingBottom:node.padding})}_.defaults(node,NODE_DEFAULT_ATTRS);_.each(["paddingLeft","paddingRight","paddingTop","paddingBottom"],function(k){node[k]=Number(node[k])});if(_.has(node,"width")){node._prevWidth=node.width}if(_.has(node,"height")){node._prevHeight=node.height}});g.edges().forEach(function(e){var edge=g.edge(e);if(!_.has(edge,"label")){edge.label=""}_.defaults(edge,EDGE_DEFAULT_ATTRS)})}function postProcessGraph(g){_.each(g.nodes(),function(v){var node=g.node(v);if(_.has(node,"_prevWidth")){node.width=node._prevWidth}else{delete node.width}if(_.has(node,"_prevHeight")){node.height=node._prevHeight}else{delete node.height}delete node._prevWidth;delete node._prevHeight})}function createOrSelectGroup(root,name){var selection=root.select("g."+name);if(selection.empty()){selection=root.append("g").attr("class",name)}return selection}},{"./arrows":2,"./create-clusters":3,"./create-edge-labels":4,"./create-edge-paths":5,"./create-nodes":6,"./dagre":8,"./lodash":20,"./position-edge-labels":21,"./position-nodes":22,"./shapes":24}],24:[function(require,module,exports){"use strict";var intersectRect=require("./intersect/intersect-rect"),intersectEllipse=require("./intersect/intersect-ellipse"),intersectCircle=require("./intersect/intersect-circle"),intersectPolygon=require("./intersect/intersect-polygon");module.exports={rect:rect,ellipse:ellipse,circle:circle,diamond:diamond};function rect(parent,bbox,node){var shapeSvg=parent.insert("rect",":first-child").attr("rx",node.rx).attr("ry",node.ry).attr("x",-bbox.width/2).attr("y",-bbox.height/2).attr("width",bbox.width).attr("height",bbox.height);node.intersect=function(point){return intersectRect(node,point)};return shapeSvg}function ellipse(parent,bbox,node){var rx=bbox.width/2,ry=bbox.height/2,shapeSvg=parent.insert("ellipse",":first-child").attr("x",-bbox.width/2).attr("y",-bbox.height/2).attr("rx",rx).attr("ry",ry);node.intersect=function(point){return intersectEllipse(node,rx,ry,point)};return shapeSvg}function circle(parent,bbox,node){var r=Math.max(bbox.width,bbox.height)/2,shapeSvg=parent.insert("circle",":first-child").attr("x",-bbox.width/2).attr("y",-bbox.height/2).attr("r",r);node.intersect=function(point){return intersectCircle(node,r,point)};return shapeSvg}function diamond(parent,bbox,node){var w=bbox.width*Math.SQRT2/2,h=bbox.height*Math.SQRT2/2,points=[{x:0,y:-h},{x:-w,y:0},{x:0,y:h},{x:w,y:0}],shapeSvg=parent.insert("polygon",":first-child").attr("points",points.map(function(p){return p.x+","+p.y}).join(" "));node.intersect=function(p){return intersectPolygon(node,points,p)};return shapeSvg}},{"./intersect/intersect-circle":11,"./intersect/intersect-ellipse":12,"./intersect/intersect-polygon":15,"./intersect/intersect-rect":16}],25:[function(require,module,exports){var _=require("./lodash");module.exports={isSubgraph:isSubgraph,edgeToId:edgeToId,applyStyle:applyStyle,applyClass:applyClass,applyTransition:applyTransition};function isSubgraph(g,v){return!!g.children(v).length}function edgeToId(e){return escapeId(e.v)+":"+escapeId(e.w)+":"+escapeId(e.name)}var ID_DELIM=/:/g;function escapeId(str){return str?String(str).replace(ID_DELIM,"\\:"):""}function applyStyle(dom,styleFn){if(styleFn){dom.attr("style",styleFn)}}function applyClass(dom,classFn,otherClasses){if(classFn){dom.attr("class",classFn).attr("class",otherClasses+" "+dom.attr("class"))}}function applyTransition(selection,g){var graph=g.graph();if(_.isPlainObject(graph)){var transition=graph.transition;if(_.isFunction(transition)){return transition(selection)}}return selection}},{"./lodash":20}],26:[function(require,module,exports){module.exports="0.4.3"},{}],27:[function(require,module,exports){module.exports={graphlib:require("./lib/graphlib"),layout:require("./lib/layout"),debug:require("./lib/debug"),util:{time:require("./lib/util").time,notime:require("./lib/util").notime},version:require("./lib/version")}},{"./lib/debug":32,"./lib/graphlib":33,"./lib/layout":35,"./lib/util":55,"./lib/version":56}],28:[function(require,module,exports){"use strict";var _=require("./lodash"),greedyFAS=require("./greedy-fas");module.exports={run:run,undo:undo};function run(g){var fas=g.graph().acyclicer==="greedy"?greedyFAS(g,weightFn(g)):dfsFAS(g);_.each(fas,function(e){var label=g.edge(e);g.removeEdge(e);label.forwardName=e.name;label.reversed=true;g.setEdge(e.w,e.v,label,_.uniqueId("rev"))});function weightFn(g){return function(e){return g.edge(e).weight}}}function dfsFAS(g){var fas=[],stack={},visited={};function dfs(v){if(_.has(visited,v)){return}visited[v]=true;stack[v]=true;_.each(g.outEdges(v),function(e){if(_.has(stack,e.w)){fas.push(e)}else{dfs(e.w)}});delete stack[v]}_.each(g.nodes(),dfs);return fas}function undo(g){_.each(g.edges(),function(e){var label=g.edge(e);if(label.reversed){g.removeEdge(e);var forwardName=label.forwardName;delete label.reversed;delete label.forwardName;g.setEdge(e.w,e.v,label,forwardName)}})}},{"./greedy-fas":34,"./lodash":36}],29:[function(require,module,exports){var _=require("./lodash"),util=require("./util");module.exports=addBorderSegments;function addBorderSegments(g){function dfs(v){var children=g.children(v),node=g.node(v);if(children.length){_.each(children,dfs)}if(_.has(node,"minRank")){node.borderLeft=[];node.borderRight=[];for(var rank=node.minRank,maxRank=node.maxRank+1;rank<maxRank;++rank){addBorderNode(g,"borderLeft","_bl",v,node,rank);addBorderNode(g,"borderRight","_br",v,node,rank)}}}_.each(g.children(),dfs)}function addBorderNode(g,prop,prefix,sg,sgNode,rank){var label={width:0,height:0,rank:rank},prev=sgNode[prop][rank-1],curr=util.addDummyNode(g,"border",label,prefix);sgNode[prop][rank]=curr;g.setParent(curr,sg);if(prev){g.setEdge(prev,curr,{weight:1})}}},{"./lodash":36,"./util":55}],30:[function(require,module,exports){"use strict";var _=require("./lodash");module.exports={adjust:adjust,undo:undo};function adjust(g){var rankDir=g.graph().rankdir.toLowerCase();if(rankDir==="lr"||rankDir==="rl"){swapWidthHeight(g)}}function undo(g){var rankDir=g.graph().rankdir.toLowerCase();if(rankDir==="bt"||rankDir==="rl"){reverseY(g)}if(rankDir==="lr"||rankDir==="rl"){swapXY(g);swapWidthHeight(g)}}function swapWidthHeight(g){_.each(g.nodes(),function(v){swapWidthHeightOne(g.node(v))});_.each(g.edges(),function(e){swapWidthHeightOne(g.edge(e))})}function swapWidthHeightOne(attrs){var w=attrs.width;attrs.width=attrs.height;attrs.height=w}function reverseY(g){_.each(g.nodes(),function(v){reverseYOne(g.node(v))});_.each(g.edges(),function(e){var edge=g.edge(e);_.each(edge.points,reverseYOne);if(_.has(edge,"y")){reverseYOne(edge)}})}function reverseYOne(attrs){attrs.y=-attrs.y}function swapXY(g){_.each(g.nodes(),function(v){swapXYOne(g.node(v))});_.each(g.edges(),function(e){var edge=g.edge(e);_.each(edge.points,swapXYOne);if(_.has(edge,"x")){swapXYOne(edge)}})}function swapXYOne(attrs){var x=attrs.x;attrs.x=attrs.y;attrs.y=x}},{"./lodash":36}],31:[function(require,module,exports){module.exports=List;function List(){var sentinel={};sentinel._next=sentinel._prev=sentinel;this._sentinel=sentinel}List.prototype.dequeue=function(){var sentinel=this._sentinel,entry=sentinel._prev;if(entry!==sentinel){unlink(entry);return entry}};List.prototype.enqueue=function(entry){var sentinel=this._sentinel;if(entry._prev&&entry._next){unlink(entry)}entry._next=sentinel._next;sentinel._next._prev=entry;sentinel._next=entry;entry._prev=sentinel};List.prototype.toString=function(){var strs=[],sentinel=this._sentinel,curr=sentinel._prev;while(curr!==sentinel){strs.push(JSON.stringify(curr,filterOutLinks));curr=curr._prev}return"["+strs.join(", ")+"]"};function unlink(entry){entry._prev._next=entry._next;entry._next._prev=entry._prev;delete entry._next;delete entry._prev}function filterOutLinks(k,v){if(k!=="_next"&&k!=="_prev"){return v}}},{}],32:[function(require,module,exports){var _=require("./lodash"),util=require("./util"),Graph=require("./graphlib").Graph;module.exports={debugOrdering:debugOrdering};function debugOrdering(g){var layerMatrix=util.buildLayerMatrix(g);var h=new Graph({compound:true,multigraph:true}).setGraph({});_.each(g.nodes(),function(v){h.setNode(v,{label:v});h.setParent(v,"layer"+g.node(v).rank)});_.each(g.edges(),function(e){h.setEdge(e.v,e.w,{},e.name)});_.each(layerMatrix,function(layer,i){var layerV="layer"+i;h.setNode(layerV,{rank:"same"});_.reduce(layer,function(u,v){h.setEdge(u,v,{style:"invis"});return v})});return h}},{"./graphlib":33,"./lodash":36,"./util":55}],33:[function(require,module,exports){module.exports=require(9)},{"/Users/cpettitt/projects/dagre-d3/lib/graphlib.js":9,graphlib:57}],34:[function(require,module,exports){var _=require("./lodash"),Graph=require("./graphlib").Graph,List=require("./data/list");module.exports=greedyFAS;var DEFAULT_WEIGHT_FN=_.constant(1);function greedyFAS(g,weightFn){if(g.nodeCount()<=1){return[]}var state=buildState(g,weightFn||DEFAULT_WEIGHT_FN);var results=doGreedyFAS(state.graph,state.buckets,state.zeroIdx);return _.flatten(_.map(results,function(e){return g.outEdges(e.v,e.w)}),true)}function doGreedyFAS(g,buckets,zeroIdx){var results=[],sources=buckets[buckets.length-1],sinks=buckets[0];var entry;while(g.nodeCount()){while(entry=sinks.dequeue()){removeNode(g,buckets,zeroIdx,entry)}while(entry=sources.dequeue()){removeNode(g,buckets,zeroIdx,entry)}if(g.nodeCount()){for(var i=buckets.length-2;i>0;--i){entry=buckets[i].dequeue();if(entry){results=results.concat(removeNode(g,buckets,zeroIdx,entry,true));break}}}}return results}function removeNode(g,buckets,zeroIdx,entry,collectPredecessors){var results=collectPredecessors?[]:undefined;_.each(g.inEdges(entry.v),function(edge){var weight=g.edge(edge),uEntry=g.node(edge.v);if(collectPredecessors){results.push({v:edge.v,w:edge.w})}uEntry.out-=weight;assignBucket(buckets,zeroIdx,uEntry)});_.each(g.outEdges(entry.v),function(edge){var weight=g.edge(edge),w=edge.w,wEntry=g.node(w);wEntry["in"]-=weight;assignBucket(buckets,zeroIdx,wEntry)});g.removeNode(entry.v);return results}function buildState(g,weightFn){var fasGraph=new Graph,maxIn=0,maxOut=0;_.each(g.nodes(),function(v){fasGraph.setNode(v,{v:v,"in":0,out:0})});_.each(g.edges(),function(e){var prevWeight=fasGraph.edge(e.v,e.w)||0,weight=weightFn(e),edgeWeight=prevWeight+weight;fasGraph.setEdge(e.v,e.w,edgeWeight);maxOut=Math.max(maxOut,fasGraph.node(e.v).out+=weight);maxIn=Math.max(maxIn,fasGraph.node(e.w)["in"]+=weight)});var buckets=_.range(maxOut+maxIn+3).map(function(){return new List});var zeroIdx=maxIn+1;_.each(fasGraph.nodes(),function(v){assignBucket(buckets,zeroIdx,fasGraph.node(v))});return{graph:fasGraph,buckets:buckets,zeroIdx:zeroIdx}}function assignBucket(buckets,zeroIdx,entry){if(!entry.out){buckets[0].enqueue(entry)}else if(!entry["in"]){buckets[buckets.length-1].enqueue(entry)}else{buckets[entry.out-entry["in"]+zeroIdx].enqueue(entry)}}},{"./data/list":31,"./graphlib":33,"./lodash":36}],35:[function(require,module,exports){"use strict";var _=require("./lodash"),acyclic=require("./acyclic"),normalize=require("./normalize"),rank=require("./rank"),normalizeRanks=require("./util").normalizeRanks,parentDummyChains=require("./parent-dummy-chains"),removeEmptyRanks=require("./util").removeEmptyRanks,nestingGraph=require("./nesting-graph"),addBorderSegments=require("./add-border-segments"),coordinateSystem=require("./coordinate-system"),order=require("./order"),position=require("./position"),util=require("./util"),Graph=require("./graphlib").Graph;module.exports=layout;function layout(g,opts){var time=opts&&opts.debugTiming?util.time:util.notime;time("layout",function(){var layoutGraph=time("  buildLayoutGraph",function(){return buildLayoutGraph(g)});time("  runLayout",function(){runLayout(layoutGraph,time)});time("  updateInputGraph",function(){updateInputGraph(g,layoutGraph)})})}function runLayout(g,time){time("    makeSpaceForEdgeLabels",function(){makeSpaceForEdgeLabels(g)});time("    removeSelfEdges",function(){removeSelfEdges(g)});time("    acyclic",function(){acyclic.run(g)});time("    nestingGraph.run",function(){nestingGraph.run(g)});time("    rank",function(){rank(util.asNonCompoundGraph(g))});time("    injectEdgeLabelProxies",function(){injectEdgeLabelProxies(g)});time("    removeEmptyRanks",function(){removeEmptyRanks(g)});time("    nestingGraph.cleanup",function(){nestingGraph.cleanup(g)});time("    normalizeRanks",function(){normalizeRanks(g)});time("    assignRankMinMax",function(){assignRankMinMax(g)});time("    removeEdgeLabelProxies",function(){removeEdgeLabelProxies(g)});time("    normalize.run",function(){normalize.run(g)});time("    parentDummyChains",function(){parentDummyChains(g)});time("    addBorderSegments",function(){addBorderSegments(g)});time("    order",function(){order(g)});time("    insertSelfEdges",function(){insertSelfEdges(g)});time("    adjustCoordinateSystem",function(){coordinateSystem.adjust(g)});time("    position",function(){position(g)});time("    positionSelfEdges",function(){positionSelfEdges(g)});time("    removeBorderNodes",function(){removeBorderNodes(g)});time("    normalize.undo",function(){normalize.undo(g)});time("    fixupEdgeLabelCoords",function(){fixupEdgeLabelCoords(g)});time("    undoCoordinateSystem",function(){coordinateSystem.undo(g)});time("    translateGraph",function(){translateGraph(g)});time("    assignNodeIntersects",function(){assignNodeIntersects(g)});time("    reversePoints",function(){reversePointsForReversedEdges(g)});time("    acyclic.undo",function(){acyclic.undo(g)})}function updateInputGraph(inputGraph,layoutGraph){_.each(inputGraph.nodes(),function(v){var inputLabel=inputGraph.node(v),layoutLabel=layoutGraph.node(v);if(inputLabel){inputLabel.x=layoutLabel.x;inputLabel.y=layoutLabel.y;if(layoutGraph.children(v).length){inputLabel.width=layoutLabel.width;inputLabel.height=layoutLabel.height}}});_.each(inputGraph.edges(),function(e){var inputLabel=inputGraph.edge(e),layoutLabel=layoutGraph.edge(e);inputLabel.points=layoutLabel.points;if(_.has(layoutLabel,"x")){inputLabel.x=layoutLabel.x;inputLabel.y=layoutLabel.y}});inputGraph.graph().width=layoutGraph.graph().width;inputGraph.graph().height=layoutGraph.graph().height}var graphNumAttrs=["nodesep","edgesep","ranksep","marginx","marginy"],graphDefaults={ranksep:50,edgesep:20,nodesep:50,rankdir:"tb"},graphAttrs=["acyclicer","ranker","rankdir","align"],nodeNumAttrs=["width","height"],nodeDefaults={width:0,height:0},edgeNumAttrs=["minlen","weight","width","height","labeloffset"],edgeDefaults={minlen:1,weight:1,width:0,height:0,labeloffset:10,labelpos:"r"},edgeAttrs=["labelpos"];function buildLayoutGraph(inputGraph){var g=new Graph({multigraph:true,compound:true}),graph=canonicalize(inputGraph.graph());g.setGraph(_.merge({},graphDefaults,selectNumberAttrs(graph,graphNumAttrs),_.pick(graph,graphAttrs)));_.each(inputGraph.nodes(),function(v){var node=canonicalize(inputGraph.node(v));g.setNode(v,_.defaults(selectNumberAttrs(node,nodeNumAttrs),nodeDefaults));g.setParent(v,inputGraph.parent(v))});_.each(inputGraph.edges(),function(e){var edge=canonicalize(inputGraph.edge(e));g.setEdge(e,_.merge({},edgeDefaults,selectNumberAttrs(edge,edgeNumAttrs),_.pick(edge,edgeAttrs)))});return g}function makeSpaceForEdgeLabels(g){var graph=g.graph();graph.ranksep/=2;_.each(g.edges(),function(e){var edge=g.edge(e);edge.minlen*=2;if(edge.labelpos.toLowerCase()!=="c"){if(graph.rankdir==="TB"||graph.rankdir==="BT"){edge.width+=edge.labeloffset
+}else{edge.height+=edge.labeloffset}}})}function injectEdgeLabelProxies(g){_.each(g.edges(),function(e){var edge=g.edge(e);if(edge.width&&edge.height){var v=g.node(e.v),w=g.node(e.w),label={rank:(w.rank-v.rank)/2+v.rank,e:e};util.addDummyNode(g,"edge-proxy",label,"_ep")}})}function assignRankMinMax(g){var maxRank=0;_.each(g.nodes(),function(v){var node=g.node(v);if(node.borderTop){node.minRank=g.node(node.borderTop).rank;node.maxRank=g.node(node.borderBottom).rank;maxRank=_.max(maxRank,node.maxRank)}});g.graph().maxRank=maxRank}function removeEdgeLabelProxies(g){_.each(g.nodes(),function(v){var node=g.node(v);if(node.dummy==="edge-proxy"){g.edge(node.e).labelRank=node.rank;g.removeNode(v)}})}function translateGraph(g){var minX=Number.POSITIVE_INFINITY,maxX=0,minY=Number.POSITIVE_INFINITY,maxY=0,graphLabel=g.graph(),marginX=graphLabel.marginx||0,marginY=graphLabel.marginy||0;function getExtremes(attrs){var x=attrs.x,y=attrs.y,w=attrs.width,h=attrs.height;minX=Math.min(minX,x-w/2);maxX=Math.max(maxX,x+w/2);minY=Math.min(minY,y-h/2);maxY=Math.max(maxY,y+h/2)}_.each(g.nodes(),function(v){getExtremes(g.node(v))});_.each(g.edges(),function(e){var edge=g.edge(e);if(_.has(edge,"x")){getExtremes(edge)}});minX-=marginX;minY-=marginY;_.each(g.nodes(),function(v){var node=g.node(v);node.x-=minX;node.y-=minY});_.each(g.edges(),function(e){var edge=g.edge(e);_.each(edge.points,function(p){p.x-=minX;p.y-=minY});if(_.has(edge,"x")){edge.x-=minX}if(_.has(edge,"y")){edge.y-=minY}});graphLabel.width=maxX-minX+marginX;graphLabel.height=maxY-minY+marginY}function assignNodeIntersects(g){_.each(g.edges(),function(e){var edge=g.edge(e),nodeV=g.node(e.v),nodeW=g.node(e.w),p1,p2;if(!edge.points){edge.points=[];p1=nodeW;p2=nodeV}else{p1=edge.points[0];p2=edge.points[edge.points.length-1]}edge.points.unshift(util.intersectRect(nodeV,p1));edge.points.push(util.intersectRect(nodeW,p2))})}function fixupEdgeLabelCoords(g){_.each(g.edges(),function(e){var edge=g.edge(e);if(_.has(edge,"x")){if(edge.labelpos==="l"||edge.labelpos==="r"){edge.width-=edge.labeloffset}switch(edge.labelpos){case"l":edge.x-=edge.width/2+edge.labeloffset;break;case"r":edge.x+=edge.width/2+edge.labeloffset;break}}})}function reversePointsForReversedEdges(g){_.each(g.edges(),function(e){var edge=g.edge(e);if(edge.reversed){edge.points.reverse()}})}function removeBorderNodes(g){_.each(g.nodes(),function(v){if(g.children(v).length){var node=g.node(v),t=g.node(node.borderTop),b=g.node(node.borderBottom),l=g.node(_.last(node.borderLeft)),r=g.node(_.last(node.borderRight));node.width=Math.abs(r.x-l.x);node.height=Math.abs(b.y-t.y);node.x=l.x+node.width/2;node.y=t.y+node.height/2}});_.each(g.nodes(),function(v){if(g.node(v).dummy==="border"){g.removeNode(v)}})}function removeSelfEdges(g){_.each(g.edges(),function(e){if(e.v===e.w){var node=g.node(e.v);if(!node.selfEdges){node.selfEdges=[]}node.selfEdges.push({e:e,label:g.edge(e)});g.removeEdge(e)}})}function insertSelfEdges(g){var layers=util.buildLayerMatrix(g);_.each(layers,function(layer){var orderShift=0;_.each(layer,function(v,i){var node=g.node(v);node.order=i+orderShift;_.each(node.selfEdges,function(selfEdge){util.addDummyNode(g,"selfedge",{width:selfEdge.label.width,height:selfEdge.label.height,rank:node.rank,order:i+ ++orderShift,e:selfEdge.e,label:selfEdge.label},"_se")});delete node.selfEdges})})}function positionSelfEdges(g){_.each(g.nodes(),function(v){var node=g.node(v);if(node.dummy==="selfedge"){var selfNode=g.node(node.e.v),x=selfNode.x+selfNode.width/2,y=selfNode.y,dx=node.x-x,dy=selfNode.height/2;g.setEdge(node.e,node.label);g.removeNode(v);node.label.points=[{x:x+2*dx/3,y:y-dy},{x:x+5*dx/6,y:y-dy},{x:x+dx,y:y},{x:x+5*dx/6,y:y+dy},{x:x+2*dx/3,y:y+dy}];node.label.x=node.x;node.label.y=node.y}})}function selectNumberAttrs(obj,attrs){return _.mapValues(_.pick(obj,attrs),Number)}function canonicalize(attrs){var newAttrs={};_.each(attrs,function(v,k){newAttrs[k.toLowerCase()]=v});return newAttrs}},{"./acyclic":28,"./add-border-segments":29,"./coordinate-system":30,"./graphlib":33,"./lodash":36,"./nesting-graph":37,"./normalize":38,"./order":43,"./parent-dummy-chains":48,"./position":50,"./rank":52,"./util":55}],36:[function(require,module,exports){module.exports=require(20)},{"/Users/cpettitt/projects/dagre-d3/lib/lodash.js":20,lodash:77}],37:[function(require,module,exports){var _=require("./lodash"),util=require("./util");module.exports={run:run,cleanup:cleanup};function run(g){var root=util.addDummyNode(g,"root",{},"_root"),depths=treeDepths(g),height=_.max(depths)-1,nodeSep=2*height+1;g.graph().nestingRoot=root;_.each(g.edges(),function(e){g.edge(e).minlen*=nodeSep});var weight=sumWeights(g)+1;_.each(g.children(),function(child){dfs(g,root,nodeSep,weight,height,depths,child)});g.graph().nodeRankFactor=nodeSep}function dfs(g,root,nodeSep,weight,height,depths,v){var children=g.children(v);if(!children.length){if(v!==root){g.setEdge(root,v,{weight:0,minlen:nodeSep})}return}var top=util.addBorderNode(g,"_bt"),bottom=util.addBorderNode(g,"_bb"),label=g.node(v);g.setParent(top,v);label.borderTop=top;g.setParent(bottom,v);label.borderBottom=bottom;_.each(children,function(child){dfs(g,root,nodeSep,weight,height,depths,child);var childNode=g.node(child),childTop=childNode.borderTop?childNode.borderTop:child,childBottom=childNode.borderBottom?childNode.borderBottom:child,thisWeight=childNode.borderTop?weight:2*weight,minlen=childTop!==childBottom?1:height-depths[v]+1;g.setEdge(top,childTop,{weight:thisWeight,minlen:minlen,nestingEdge:true});g.setEdge(childBottom,bottom,{weight:thisWeight,minlen:minlen,nestingEdge:true})});if(!g.parent(v)){g.setEdge(root,top,{weight:0,minlen:height+depths[v]})}}function treeDepths(g){var depths={};function dfs(v,depth){var children=g.children(v);if(children&&children.length){_.each(children,function(child){dfs(child,depth+1)})}depths[v]=depth}_.each(g.children(),function(v){dfs(v,1)});return depths}function sumWeights(g){return _.reduce(g.edges(),function(acc,e){return acc+g.edge(e).weight},0)}function cleanup(g){var graphLabel=g.graph();g.removeNode(graphLabel.nestingRoot);delete graphLabel.nestingRoot;_.each(g.edges(),function(e){var edge=g.edge(e);if(edge.nestingEdge){g.removeEdge(e)}})}},{"./lodash":36,"./util":55}],38:[function(require,module,exports){"use strict";var _=require("./lodash"),util=require("./util");module.exports={run:run,undo:undo};function run(g){g.graph().dummyChains=[];_.each(g.edges(),function(edge){normalizeEdge(g,edge)})}function normalizeEdge(g,e){var v=e.v,vRank=g.node(v).rank,w=e.w,wRank=g.node(w).rank,name=e.name,edgeLabel=g.edge(e),labelRank=edgeLabel.labelRank;if(wRank===vRank+1)return;g.removeEdge(e);var dummy,attrs,i;for(i=0,++vRank;vRank<wRank;++i,++vRank){edgeLabel.points=[];attrs={width:0,height:0,edgeLabel:edgeLabel,edgeObj:e,rank:vRank};dummy=util.addDummyNode(g,"edge",attrs,"_d");if(vRank===labelRank){attrs.width=edgeLabel.width;attrs.height=edgeLabel.height;attrs.dummy="edge-label";attrs.labelpos=edgeLabel.labelpos}g.setEdge(v,dummy,{weight:edgeLabel.weight},name);if(i===0){g.graph().dummyChains.push(dummy)}v=dummy}g.setEdge(v,w,{weight:edgeLabel.weight},name)}function undo(g){_.each(g.graph().dummyChains,function(v){var node=g.node(v),origLabel=node.edgeLabel,w;g.setEdge(node.edgeObj,origLabel);while(node.dummy){w=g.successors(v)[0];g.removeNode(v);origLabel.points.push({x:node.x,y:node.y});if(node.dummy==="edge-label"){origLabel.x=node.x;origLabel.y=node.y;origLabel.width=node.width;origLabel.height=node.height}v=w;node=g.node(v)}})}},{"./lodash":36,"./util":55}],39:[function(require,module,exports){var _=require("../lodash");module.exports=addSubgraphConstraints;function addSubgraphConstraints(g,cg,vs){var prev={},rootPrev;_.each(vs,function(v){var child=g.parent(v),parent,prevChild;while(child){parent=g.parent(child);if(parent){prevChild=prev[parent];prev[parent]=child}else{prevChild=rootPrev;rootPrev=child}if(prevChild&&prevChild!==child){cg.setEdge(prevChild,child);return}child=parent}})}},{"../lodash":36}],40:[function(require,module,exports){var _=require("../lodash");module.exports=barycenter;function barycenter(g,movable){return _.map(movable,function(v){var inV=g.inEdges(v);if(!inV.length){return{v:v}}else{var result=_.reduce(inV,function(acc,e){var edge=g.edge(e),nodeU=g.node(e.v);return{sum:acc.sum+edge.weight*nodeU.order,weight:acc.weight+edge.weight}},{sum:0,weight:0});return{v:v,barycenter:result.sum/result.weight,weight:result.weight}}})}},{"../lodash":36}],41:[function(require,module,exports){var _=require("../lodash"),Graph=require("../graphlib").Graph;module.exports=buildLayerGraph;function buildLayerGraph(g,rank,relationship){var root=createRootNode(g),result=new Graph({compound:true}).setGraph({root:root}).setDefaultNodeLabel(function(v){return g.node(v)});_.each(g.nodes(),function(v){var node=g.node(v),parent=g.parent(v);if(node.rank===rank||node.minRank<=rank&&rank<=node.maxRank){result.setNode(v);result.setParent(v,parent||root);_.each(g[relationship](v),function(e){var u=e.v===v?e.w:e.v,edge=result.edge(u,v),weight=!_.isUndefined(edge)?edge.weight:0;result.setEdge(u,v,{weight:g.edge(e).weight+weight})});if(_.has(node,"minRank")){result.setNode(v,{borderLeft:node.borderLeft[rank],borderRight:node.borderRight[rank]})}}});return result}function createRootNode(g){var v;while(g.hasNode(v=_.uniqueId("_root")));return v}},{"../graphlib":33,"../lodash":36}],42:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports=crossCount;function crossCount(g,layering){var cc=0;for(var i=1;i<layering.length;++i){cc+=twoLayerCrossCount(g,layering[i-1],layering[i])}return cc}function twoLayerCrossCount(g,northLayer,southLayer){var southPos=_.zipObject(southLayer,_.map(southLayer,function(v,i){return i}));var southEntries=_.flatten(_.map(northLayer,function(v){return _.chain(g.outEdges(v)).map(function(e){return{pos:southPos[e.w],weight:g.edge(e).weight}}).sortBy("pos").value()}),true);var firstIndex=1;while(firstIndex<southLayer.length)firstIndex<<=1;var treeSize=2*firstIndex-1;firstIndex-=1;var tree=_.map(new Array(treeSize),function(){return 0});var cc=0;_.each(southEntries.forEach(function(entry){var index=entry.pos+firstIndex;tree[index]+=entry.weight;var weightSum=0;while(index>0){if(index%2){weightSum+=tree[index+1]}index=index-1>>1;tree[index]+=entry.weight}cc+=entry.weight*weightSum}));return cc}},{"../lodash":36}],43:[function(require,module,exports){"use strict";var _=require("../lodash"),initOrder=require("./init-order"),crossCount=require("./cross-count"),sortSubgraph=require("./sort-subgraph"),buildLayerGraph=require("./build-layer-graph"),addSubgraphConstraints=require("./add-subgraph-constraints"),Graph=require("../graphlib").Graph,util=require("../util");module.exports=order;function order(g){var maxRank=util.maxRank(g),downLayerGraphs=buildLayerGraphs(g,_.range(1,maxRank+1),"inEdges"),upLayerGraphs=buildLayerGraphs(g,_.range(maxRank-1,-1,-1),"outEdges");var layering=initOrder(g);assignOrder(g,layering);var bestCC=Number.POSITIVE_INFINITY,best;for(var i=0,lastBest=0;lastBest<4;++i,++lastBest){sweepLayerGraphs(i%2?downLayerGraphs:upLayerGraphs,i%4>=2);layering=util.buildLayerMatrix(g);var cc=crossCount(g,layering);if(cc<bestCC){lastBest=0;best=_.cloneDeep(layering);bestCC=cc}}assignOrder(g,best)}function buildLayerGraphs(g,ranks,relationship){return _.map(ranks,function(rank){return buildLayerGraph(g,rank,relationship)})}function sweepLayerGraphs(layerGraphs,biasRight){var cg=new Graph;_.each(layerGraphs,function(lg){var root=lg.graph().root;var sorted=sortSubgraph(lg,root,cg,biasRight);_.each(sorted.vs,function(v,i){lg.node(v).order=i});addSubgraphConstraints(lg,cg,sorted.vs)})}function assignOrder(g,layering){_.each(layering,function(layer){_.each(layer,function(v,i){g.node(v).order=i})})}},{"../graphlib":33,"../lodash":36,"../util":55,"./add-subgraph-constraints":39,"./build-layer-graph":41,"./cross-count":42,"./init-order":44,"./sort-subgraph":46}],44:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports=initOrder;function initOrder(g){var visited={},simpleNodes=_.filter(g.nodes(),function(v){return!g.children(v).length}),maxRank=_.max(_.map(simpleNodes,function(v){return g.node(v).rank})),layers=_.map(_.range(maxRank+1),function(){return[]});function dfs(v){if(_.has(visited,v))return;visited[v]=true;var node=g.node(v);layers[node.rank].push(v);_.each(g.successors(v),dfs)}var orderedVs=_.sortBy(simpleNodes,function(v){return g.node(v).rank});_.each(orderedVs,dfs);return layers}},{"../lodash":36}],45:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports=resolveConflicts;function resolveConflicts(entries,cg){var mappedEntries={};_.each(entries,function(entry,i){var tmp=mappedEntries[entry.v]={indegree:0,"in":[],out:[],vs:[entry.v],i:i};if(!_.isUndefined(entry.barycenter)){tmp.barycenter=entry.barycenter;tmp.weight=entry.weight}});_.each(cg.edges(),function(e){var entryV=mappedEntries[e.v],entryW=mappedEntries[e.w];if(!_.isUndefined(entryV)&&!_.isUndefined(entryW)){entryW.indegree++;entryV.out.push(mappedEntries[e.w])}});var sourceSet=_.filter(mappedEntries,function(entry){return!entry.indegree});return doResolveConflicts(sourceSet)}function doResolveConflicts(sourceSet){var entries=[];function handleIn(vEntry){return function(uEntry){if(uEntry.merged){return}if(_.isUndefined(uEntry.barycenter)||_.isUndefined(vEntry.barycenter)||uEntry.barycenter>=vEntry.barycenter){mergeEntries(vEntry,uEntry)}}}function handleOut(vEntry){return function(wEntry){wEntry["in"].push(vEntry);if(--wEntry.indegree===0){sourceSet.push(wEntry)}}}while(sourceSet.length){var entry=sourceSet.pop();entries.push(entry);_.each(entry["in"].reverse(),handleIn(entry));_.each(entry.out,handleOut(entry))}return _.chain(entries).filter(function(entry){return!entry.merged}).map(function(entry){return _.pick(entry,["vs","i","barycenter","weight"])}).value()}function mergeEntries(target,source){var sum=0,weight=0;if(target.weight){sum+=target.barycenter*target.weight;weight+=target.weight}if(source.weight){sum+=source.barycenter*source.weight;weight+=source.weight}target.vs=source.vs.concat(target.vs);target.barycenter=sum/weight;target.weight=weight;target.i=Math.min(source.i,target.i);source.merged=true}},{"../lodash":36}],46:[function(require,module,exports){var _=require("../lodash"),barycenter=require("./barycenter"),resolveConflicts=require("./resolve-conflicts"),sort=require("./sort");module.exports=sortSubgraph;function sortSubgraph(g,v,cg,biasRight){var movable=g.children(v),node=g.node(v),bl=node?node.borderLeft:undefined,br=node?node.borderRight:undefined,subgraphs={};if(bl){movable=_.filter(movable,function(w){return w!==bl&&w!==br})}var barycenters=barycenter(g,movable);_.each(barycenters,function(entry){if(g.children(entry.v).length){var subgraphResult=sortSubgraph(g,entry.v,cg,biasRight);subgraphs[entry.v]=subgraphResult;if(_.has(subgraphResult,"barycenter")){mergeBarycenters(entry,subgraphResult)}}});var entries=resolveConflicts(barycenters,cg);expandSubgraphs(entries,subgraphs);var result=sort(entries,biasRight);if(bl){result.vs=_.flatten([bl,result.vs,br],true);if(g.predecessors(bl).length){var blPred=g.node(g.predecessors(bl)[0]),brPred=g.node(g.predecessors(br)[0]);if(!_.has(result,"barycenter")){result.barycenter=0;result.weight=0}result.barycenter=(result.barycenter*result.weight+blPred.order+brPred.order)/(result.weight+2);result.weight+=2}}return result}function expandSubgraphs(entries,subgraphs){_.each(entries,function(entry){entry.vs=_.flatten(entry.vs.map(function(v){if(subgraphs[v]){return subgraphs[v].vs}return v}),true)})}function mergeBarycenters(target,other){if(!_.isUndefined(target.barycenter)){target.barycenter=(target.barycenter*target.weight+other.barycenter*other.weight)/(target.weight+other.weight);target.weight+=other.weight}else{target.barycenter=other.barycenter;target.weight=other.weight}}},{"../lodash":36,"./barycenter":40,"./resolve-conflicts":45,"./sort":47}],47:[function(require,module,exports){var _=require("../lodash"),util=require("../util");module.exports=sort;function sort(entries,biasRight){var parts=util.partition(entries,function(entry){return _.has(entry,"barycenter")});var sortable=parts.lhs,unsortable=_.sortBy(parts.rhs,function(entry){return-entry.i}),vs=[],sum=0,weight=0,vsIndex=0;sortable.sort(compareWithBias(!!biasRight));vsIndex=consumeUnsortable(vs,unsortable,vsIndex);_.each(sortable,function(entry){vsIndex+=entry.vs.length;vs.push(entry.vs);sum+=entry.barycenter*entry.weight;weight+=entry.weight;vsIndex=consumeUnsortable(vs,unsortable,vsIndex)});var result={vs:_.flatten(vs,true)};if(weight){result.barycenter=sum/weight;result.weight=weight}return result}function consumeUnsortable(vs,unsortable,index){var last;while(unsortable.length&&(last=_.last(unsortable)).i<=index){unsortable.pop();vs.push(last.vs);index++}return index}function compareWithBias(bias){return function(entryV,entryW){if(entryV.barycenter<entryW.barycenter){return-1}else if(entryV.barycenter>entryW.barycenter){return 1}return!bias?entryV.i-entryW.i:entryW.i-entryV.i}}},{"../lodash":36,"../util":55}],48:[function(require,module,exports){var _=require("./lodash");module.exports=parentDummyChains;function parentDummyChains(g){var postorderNums=postorder(g);_.each(g.graph().dummyChains,function(v){var node=g.node(v),edgeObj=node.edgeObj,pathData=findPath(g,postorderNums,edgeObj.v,edgeObj.w),path=pathData.path,lca=pathData.lca,pathIdx=0,pathV=path[pathIdx],ascending=true;while(v!==edgeObj.w){node=g.node(v);if(ascending){while((pathV=path[pathIdx])!==lca&&g.node(pathV).maxRank<node.rank){pathIdx++}if(pathV===lca){ascending=false}}if(!ascending){while(pathIdx<path.length-1&&g.node(pathV=path[pathIdx+1]).minRank<=node.rank){pathIdx++}pathV=path[pathIdx]}g.setParent(v,pathV);v=g.successors(v)[0]}})}function findPath(g,postorderNums,v,w){var vPath=[],wPath=[],low=Math.min(postorderNums[v].low,postorderNums[w].low),lim=Math.max(postorderNums[v].lim,postorderNums[w].lim),parent,lca;parent=v;do{parent=g.parent(parent);vPath.push(parent)}while(parent&&(postorderNums[parent].low>low||lim>postorderNums[parent].lim));lca=parent;parent=w;while((parent=g.parent(parent))!==lca){wPath.push(parent)}return{path:vPath.concat(wPath.reverse()),lca:lca}}function postorder(g){var result={},lim=0;function dfs(v){var low=lim;_.each(g.children(v),dfs);result[v]={low:low,lim:lim++}}_.each(g.children(),dfs);return result}},{"./lodash":36}],49:[function(require,module,exports){"use strict";var _=require("../lodash"),Graph=require("../graphlib").Graph,util=require("../util");module.exports={positionX:positionX,findType1Conflicts:findType1Conflicts,findType2Conflicts:findType2Conflicts,addConflict:addConflict,hasConflict:hasConflict,verticalAlignment:verticalAlignment,horizontalCompaction:horizontalCompaction,alignCoordinates:alignCoordinates,findSmallestWidthAlignment:findSmallestWidthAlignment,balance:balance};function findType1Conflicts(g,layering){var conflicts={};function visitLayer(prevLayer,layer){var k0=0,scanPos=0,prevLayerLength=prevLayer.length,lastNode=_.last(layer);_.each(layer,function(v,i){var w=findOtherInnerSegmentNode(g,v),k1=w?g.node(w).order:prevLayerLength;if(w||v===lastNode){_.each(layer.slice(scanPos,i+1),function(scanNode){_.each(g.predecessors(scanNode),function(u){var uLabel=g.node(u),uPos=uLabel.order;if((uPos<k0||k1<uPos)&&!(uLabel.dummy&&g.node(scanNode).dummy)){addConflict(conflicts,u,scanNode)}})});scanPos=i+1;k0=k1}});return layer}_.reduce(layering,visitLayer);return conflicts}function findType2Conflicts(g,layering){var conflicts={};function scan(south,southPos,southEnd,prevNorthBorder,nextNorthBorder){var v;_.each(_.range(southPos,southEnd),function(i){v=south[i];if(g.node(v).dummy){_.each(g.predecessors(v),function(u){var uNode=g.node(u);if(uNode.dummy&&(uNode.order<prevNorthBorder||uNode.order>nextNorthBorder)){addConflict(conflicts,u,v)}})}})}function visitLayer(north,south){var prevNorthPos=-1,nextNorthPos,southPos=0;_.each(south,function(v,southLookahead){if(g.node(v).dummy==="border"){var predecessors=g.predecessors(v);if(predecessors.length){nextNorthPos=g.node(predecessors[0]).order;scan(south,southPos,southLookahead,prevNorthPos,nextNorthPos);southPos=southLookahead;prevNorthPos=nextNorthPos}}scan(south,southPos,south.length,nextNorthPos,north.length)});return south}_.reduce(layering,visitLayer);return conflicts}function findOtherInnerSegmentNode(g,v){if(g.node(v).dummy){return _.find(g.predecessors(v),function(u){return g.node(u).dummy})}}function addConflict(conflicts,v,w){if(v>w){var tmp=v;v=w;w=tmp}var conflictsV=conflicts[v];if(!conflictsV){conflicts[v]=conflictsV={}}conflictsV[w]=true}function hasConflict(conflicts,v,w){if(v>w){var tmp=v;v=w;w=tmp}return _.has(conflicts[v],w)}function verticalAlignment(g,layering,conflicts,neighborFn){var root={},align={},pos={};_.each(layering,function(layer){_.each(layer,function(v,order){root[v]=v;align[v]=v;pos[v]=order})});_.each(layering,function(layer){var prevIdx=-1;_.each(layer,function(v){var ws=neighborFn(v);if(ws.length){ws=_.sortBy(ws,function(w){return pos[w]});var mp=(ws.length-1)/2;for(var i=Math.floor(mp),il=Math.ceil(mp);i<=il;++i){var w=ws[i];if(align[v]===v&&prevIdx<pos[w]&&!hasConflict(conflicts,v,w)){align[w]=v;align[v]=root[v]=root[w];prevIdx=pos[w]}}}})});return{root:root,align:align}}function horizontalCompaction(g,layering,root,align,reverseSep){var xs={},blockG=buildBlockGraph(g,layering,root,reverseSep);var visited={};function pass1(v){if(!_.has(visited,v)){visited[v]=true;xs[v]=_.reduce(blockG.inEdges(v),function(max,e){pass1(e.v);return Math.max(max,xs[e.v]+blockG.edge(e))},0)}}_.each(blockG.nodes(),pass1);function pass2(v){if(visited[v]!==2){visited[v]++;var min=_.reduce(blockG.outEdges(v),function(min,e){pass2(e.w);return Math.min(min,xs[e.w]-blockG.edge(e))},Number.POSITIVE_INFINITY);if(min!==Number.POSITIVE_INFINITY){xs[v]=Math.max(xs[v],min)}}}_.each(blockG.nodes(),pass2);_.each(align,function(v){xs[v]=xs[root[v]]});return xs}function buildBlockGraph(g,layering,root,reverseSep){var blockGraph=new Graph,graphLabel=g.graph(),sepFn=sep(graphLabel.nodesep,graphLabel.edgesep,reverseSep);_.each(layering,function(layer){var u;_.each(layer,function(v){var vRoot=root[v];blockGraph.setNode(vRoot);if(u){var uRoot=root[u],prevMax=blockGraph.edge(uRoot,vRoot);blockGraph.setEdge(uRoot,vRoot,Math.max(sepFn(g,v,u),prevMax||0))}u=v})});return blockGraph}function findSmallestWidthAlignment(g,xss){return _.min(xss,function(xs){var min=_.min(xs,function(x,v){return x-width(g,v)/2}),max=_.max(xs,function(x,v){return x+width(g,v)/2});return max-min})}function alignCoordinates(xss,alignTo){var alignToMin=_.min(alignTo),alignToMax=_.max(alignTo);_.each(["u","d"],function(vert){_.each(["l","r"],function(horiz){var alignment=vert+horiz,xs=xss[alignment],delta;if(xs===alignTo)return;delta=horiz==="l"?alignToMin-_.min(xs):alignToMax-_.max(xs);if(delta){xss[alignment]=_.mapValues(xs,function(x){return x+delta})}})})}function balance(xss,align){return _.mapValues(xss.ul,function(ignore,v){if(align){return xss[align.toLowerCase()][v]}else{var xs=_.sortBy(_.pluck(xss,v));return(xs[1]+xs[2])/2}})}function positionX(g){var layering=util.buildLayerMatrix(g),conflicts=_.merge(findType1Conflicts(g,layering),findType2Conflicts(g,layering));var xss={},adjustedLayering;_.each(["u","d"],function(vert){adjustedLayering=vert==="u"?layering:_.values(layering).reverse();_.each(["l","r"],function(horiz){if(horiz==="r"){adjustedLayering=_.map(adjustedLayering,function(inner){return _.values(inner).reverse()})}var neighborFn=_.bind(vert==="u"?g.predecessors:g.successors,g);var align=verticalAlignment(g,adjustedLayering,conflicts,neighborFn);var xs=horizontalCompaction(g,adjustedLayering,align.root,align.align,horiz==="r");if(horiz==="r"){xs=_.mapValues(xs,function(x){return-x})}xss[vert+horiz]=xs})});var smallestWidth=findSmallestWidthAlignment(g,xss);alignCoordinates(xss,smallestWidth);return balance(xss,g.graph().align)}function sep(nodeSep,edgeSep,reverseSep){return function(g,v,w){var vLabel=g.node(v),wLabel=g.node(w),sum=0,delta;sum+=vLabel.width/2;if(_.has(vLabel,"labelpos")){switch(vLabel.labelpos.toLowerCase()){case"l":delta=-vLabel.width/2;break;case"r":delta=vLabel.width/2;break}}if(delta){sum+=reverseSep?delta:-delta}delta=0;sum+=(vLabel.dummy?edgeSep:nodeSep)/2;sum+=(wLabel.dummy?edgeSep:nodeSep)/2;sum+=wLabel.width/2;if(_.has(wLabel,"labelpos")){switch(wLabel.labelpos.toLowerCase()){case"l":delta=wLabel.width/2;break;case"r":delta=-wLabel.width/2;break}}if(delta){sum+=reverseSep?delta:-delta}delta=0;return sum}}function width(g,v){return g.node(v).width}},{"../graphlib":33,"../lodash":36,"../util":55}],50:[function(require,module,exports){"use strict";var _=require("../lodash"),util=require("../util"),positionX=require("./bk").positionX;module.exports=position;function position(g){g=util.asNonCompoundGraph(g);positionY(g);_.each(positionX(g),function(x,v){g.node(v).x=x})}function positionY(g){var layering=util.buildLayerMatrix(g),rankSep=g.graph().ranksep,prevY=0;_.each(layering,function(layer){var maxHeight=_.max(_.map(layer,function(v){return g.node(v).height}));_.each(layer,function(v){g.node(v).y=prevY+maxHeight/2});prevY+=maxHeight+rankSep})}},{"../lodash":36,"../util":55,"./bk":49}],51:[function(require,module,exports){"use strict";var _=require("../lodash"),Graph=require("../graphlib").Graph,slack=require("./util").slack;module.exports=feasibleTree;function feasibleTree(g){var t=new Graph({directed:false});var start=g.nodes()[0],size=g.nodeCount();t.setNode(start,{});var edge,delta;while(tightTree(t,g)<size){edge=findMinSlackEdge(t,g);delta=t.hasNode(edge.v)?slack(g,edge):-slack(g,edge);shiftRanks(t,g,delta)}return t}function tightTree(t,g){function dfs(v){_.each(g.nodeEdges(v),function(e){var edgeV=e.v,w=v===edgeV?e.w:edgeV;if(!t.hasNode(w)&&!slack(g,e)){t.setNode(w,{});t.setEdge(v,w,{});dfs(w)}})}_.each(t.nodes(),dfs);return t.nodeCount()}function findMinSlackEdge(t,g){return _.min(g.edges(),function(e){if(t.hasNode(e.v)!==t.hasNode(e.w)){return slack(g,e)}})}function shiftRanks(t,g,delta){_.each(t.nodes(),function(v){g.node(v).rank+=delta})}},{"../graphlib":33,"../lodash":36,"./util":54}],52:[function(require,module,exports){"use strict";var rankUtil=require("./util"),longestPath=rankUtil.longestPath,feasibleTree=require("./feasible-tree"),networkSimplex=require("./network-simplex");module.exports=rank;function rank(g){switch(g.graph().ranker){case"network-simplex":networkSimplexRanker(g);break;case"tight-tree":tightTreeRanker(g);break;case"longest-path":longestPathRanker(g);break;default:networkSimplexRanker(g)}}var longestPathRanker=longestPath;function tightTreeRanker(g){longestPath(g);feasibleTree(g)}function networkSimplexRanker(g){networkSimplex(g)}},{"./feasible-tree":51,"./network-simplex":53,"./util":54}],53:[function(require,module,exports){"use strict";var _=require("../lodash"),feasibleTree=require("./feasible-tree"),slack=require("./util").slack,initRank=require("./util").longestPath,preorder=require("../graphlib").alg.preorder,postorder=require("../graphlib").alg.postorder,simplify=require("../util").simplify;module.exports=networkSimplex;networkSimplex.initLowLimValues=initLowLimValues;networkSimplex.initCutValues=initCutValues;networkSimplex.calcCutValue=calcCutValue;networkSimplex.leaveEdge=leaveEdge;networkSimplex.enterEdge=enterEdge;networkSimplex.exchangeEdges=exchangeEdges;function networkSimplex(g){g=simplify(g);initRank(g);var t=feasibleTree(g);initLowLimValues(t);initCutValues(t,g);var e,f;while(e=leaveEdge(t)){f=enterEdge(t,g,e);exchangeEdges(t,g,e,f)}}function initCutValues(t,g){var vs=postorder(t,t.nodes());vs=vs.slice(0,vs.length-1);_.each(vs,function(v){assignCutValue(t,g,v)})}function assignCutValue(t,g,child){var childLab=t.node(child),parent=childLab.parent;t.edge(child,parent).cutvalue=calcCutValue(t,g,child)}function calcCutValue(t,g,child){var childLab=t.node(child),parent=childLab.parent,childIsTail=true,graphEdge=g.edge(child,parent),cutValue=0;if(!graphEdge){childIsTail=false;graphEdge=g.edge(parent,child)}cutValue=graphEdge.weight;_.each(g.nodeEdges(child),function(e){var isOutEdge=e.v===child,other=isOutEdge?e.w:e.v;if(other!==parent){var pointsToHead=isOutEdge===childIsTail,otherWeight=g.edge(e).weight;cutValue+=pointsToHead?otherWeight:-otherWeight;if(isTreeEdge(t,child,other)){var otherCutValue=t.edge(child,other).cutvalue;cutValue+=pointsToHead?-otherCutValue:otherCutValue}}});return cutValue}function initLowLimValues(tree,root){if(arguments.length<2){root=tree.nodes()[0]}dfsAssignLowLim(tree,{},1,root)}function dfsAssignLowLim(tree,visited,nextLim,v,parent){var low=nextLim,label=tree.node(v);visited[v]=true;_.each(tree.neighbors(v),function(w){if(!_.has(visited,w)){nextLim=dfsAssignLowLim(tree,visited,nextLim,w,v)}});label.low=low;label.lim=nextLim++;if(parent){label.parent=parent}else{delete label.parent}return nextLim}function leaveEdge(tree){return _.find(tree.edges(),function(e){return tree.edge(e).cutvalue<0})}function enterEdge(t,g,edge){var v=edge.v,w=edge.w;if(!g.hasEdge(v,w)){v=edge.w;w=edge.v}var vLabel=t.node(v),wLabel=t.node(w),tailLabel=vLabel,flip=false;if(vLabel.lim>wLabel.lim){tailLabel=wLabel;flip=true}var candidates=_.filter(g.edges(),function(edge){return flip===isDescendant(t,t.node(edge.v),tailLabel)&&flip!==isDescendant(t,t.node(edge.w),tailLabel)});return _.min(candidates,function(edge){return slack(g,edge)})}function exchangeEdges(t,g,e,f){var v=e.v,w=e.w;t.removeEdge(v,w);t.setEdge(f.v,f.w,{});initLowLimValues(t);initCutValues(t,g);updateRanks(t,g)}function updateRanks(t,g){var root=_.find(t.nodes(),function(v){return!g.node(v).parent}),vs=preorder(t,root);vs=vs.slice(1);_.each(vs,function(v){var parent=t.node(v).parent,edge=g.edge(v,parent),flipped=false;if(!edge){edge=g.edge(parent,v);flipped=true}g.node(v).rank=g.node(parent).rank+(flipped?edge.minlen:-edge.minlen)})}function isTreeEdge(tree,u,v){return tree.hasEdge(u,v)}function isDescendant(tree,vLabel,rootLabel){return rootLabel.low<=vLabel.lim&&vLabel.lim<=rootLabel.lim}},{"../graphlib":33,"../lodash":36,"../util":55,"./feasible-tree":51,"./util":54}],54:[function(require,module,exports){"use strict";var _=require("../lodash");module.exports={longestPath:longestPath,slack:slack};function longestPath(g){var visited={};function dfs(v){var label=g.node(v);if(_.has(visited,v)){return label.rank}visited[v]=true;var rank=_.min(_.map(g.outEdges(v),function(e){return dfs(e.w)-g.edge(e).minlen}));if(rank===Number.POSITIVE_INFINITY){rank=0}return label.rank=rank}_.each(g.sources(),dfs)}function slack(g,e){return g.node(e.w).rank-g.node(e.v).rank-g.edge(e).minlen}},{"../lodash":36}],55:[function(require,module,exports){"use strict";var _=require("./lodash"),Graph=require("./graphlib").Graph;module.exports={addDummyNode:addDummyNode,simplify:simplify,asNonCompoundGraph:asNonCompoundGraph,successorWeights:successorWeights,predecessorWeights:predecessorWeights,intersectRect:intersectRect,buildLayerMatrix:buildLayerMatrix,normalizeRanks:normalizeRanks,removeEmptyRanks:removeEmptyRanks,addBorderNode:addBorderNode,maxRank:maxRank,partition:partition,time:time,notime:notime};function addDummyNode(g,type,attrs,name){var v;do{v=_.uniqueId(name)}while(g.hasNode(v));attrs.dummy=type;g.setNode(v,attrs);return v}function simplify(g){var simplified=(new Graph).setGraph(g.graph());_.each(g.nodes(),function(v){simplified.setNode(v,g.node(v))});_.each(g.edges(),function(e){var simpleLabel=simplified.edge(e.v,e.w)||{weight:0,minlen:1},label=g.edge(e);simplified.setEdge(e.v,e.w,{weight:simpleLabel.weight+label.weight,minlen:Math.max(simpleLabel.minlen,label.minlen)})});return simplified}function asNonCompoundGraph(g){var simplified=new Graph({multigraph:g.isMultigraph()}).setGraph(g.graph());_.each(g.nodes(),function(v){if(!g.children(v).length){simplified.setNode(v,g.node(v))
+}});_.each(g.edges(),function(e){simplified.setEdge(e,g.edge(e))});return simplified}function successorWeights(g){var weightMap=_.map(g.nodes(),function(v){var sucs={};_.each(g.outEdges(v),function(e){sucs[e.w]=(sucs[e.w]||0)+g.edge(e).weight});return sucs});return _.zipObject(g.nodes(),weightMap)}function predecessorWeights(g){var weightMap=_.map(g.nodes(),function(v){var preds={};_.each(g.inEdges(v),function(e){preds[e.v]=(preds[e.v]||0)+g.edge(e).weight});return preds});return _.zipObject(g.nodes(),weightMap)}function intersectRect(rect,point){var x=rect.x;var y=rect.y;var dx=point.x-x;var dy=point.y-y;var w=rect.width/2;var h=rect.height/2;if(!dx&&!dy){throw new Error("Not possible to find intersection inside of the rectangle")}var sx,sy;if(Math.abs(dy)*w>Math.abs(dx)*h){if(dy<0){h=-h}sx=h*dx/dy;sy=h}else{if(dx<0){w=-w}sx=w;sy=w*dy/dx}return{x:x+sx,y:y+sy}}function buildLayerMatrix(g){var layering=_.map(_.range(maxRank(g)+1),function(){return[]});_.each(g.nodes(),function(v){var node=g.node(v),rank=node.rank;if(!_.isUndefined(rank)){layering[rank][node.order]=v}});return layering}function normalizeRanks(g){var min=_.min(_.map(g.nodes(),function(v){return g.node(v).rank}));_.each(g.nodes(),function(v){var node=g.node(v);if(_.has(node,"rank")){node.rank-=min}})}function removeEmptyRanks(g){var offset=_.min(_.map(g.nodes(),function(v){return g.node(v).rank}));var layers=[];_.each(g.nodes(),function(v){var rank=g.node(v).rank-offset;if(!_.has(layers,rank)){layers[rank]=[]}layers[rank].push(v)});var delta=0,nodeRankFactor=g.graph().nodeRankFactor;_.each(layers,function(vs,i){if(_.isUndefined(vs)&&i%nodeRankFactor!==0){--delta}else if(delta){_.each(vs,function(v){g.node(v).rank+=delta})}})}function addBorderNode(g,prefix,rank,order){var node={width:0,height:0};if(arguments.length>=4){node.rank=rank;node.order=order}return addDummyNode(g,"border",node,prefix)}function maxRank(g){return _.max(_.map(g.nodes(),function(v){var rank=g.node(v).rank;if(!_.isUndefined(rank)){return rank}}))}function partition(collection,fn){var result={lhs:[],rhs:[]};_.each(collection,function(value){if(fn(value)){result.lhs.push(value)}else{result.rhs.push(value)}});return result}function time(name,fn){var start=_.now();try{return fn()}finally{console.log(name+" time: "+(_.now()-start)+"ms")}}function notime(name,fn){return fn()}},{"./graphlib":33,"./lodash":36}],56:[function(require,module,exports){module.exports="0.7.1"},{}],57:[function(require,module,exports){var lib=require("./lib");module.exports={Graph:lib.Graph,json:require("./lib/json"),alg:require("./lib/alg"),version:lib.version}},{"./lib":73,"./lib/alg":64,"./lib/json":74}],58:[function(require,module,exports){var _=require("../lodash");module.exports=components;function components(g){var visited={},cmpts=[],cmpt;function dfs(v){if(_.has(visited,v))return;visited[v]=true;cmpt.push(v);_.each(g.successors(v),dfs);_.each(g.predecessors(v),dfs)}_.each(g.nodes(),function(v){cmpt=[];dfs(v);if(cmpt.length){cmpts.push(cmpt)}});return cmpts}},{"../lodash":75}],59:[function(require,module,exports){var _=require("../lodash");module.exports=dfs;function dfs(g,vs,order){if(!_.isArray(vs)){vs=[vs]}var acc=[],visited={};_.each(vs,function(v){if(!g.hasNode(v)){throw new Error("Graph does not have node: "+v)}doDfs(g,v,order==="post",visited,acc)});return acc}function doDfs(g,v,postorder,visited,acc){if(!_.has(visited,v)){visited[v]=true;if(!postorder){acc.push(v)}_.each(g.neighbors(v),function(w){doDfs(g,w,postorder,visited,acc)});if(postorder){acc.push(v)}}}},{"../lodash":75}],60:[function(require,module,exports){var dijkstra=require("./dijkstra"),_=require("../lodash");module.exports=dijkstraAll;function dijkstraAll(g,weightFunc,edgeFunc){return _.transform(g.nodes(),function(acc,v){acc[v]=dijkstra(g,v,weightFunc,edgeFunc)},{})}},{"../lodash":75,"./dijkstra":61}],61:[function(require,module,exports){var _=require("../lodash"),PriorityQueue=require("../data/priority-queue");module.exports=dijkstra;var DEFAULT_WEIGHT_FUNC=_.constant(1);function dijkstra(g,source,weightFn,edgeFn){return runDijkstra(g,String(source),weightFn||DEFAULT_WEIGHT_FUNC,edgeFn||function(v){return g.outEdges(v)})}function runDijkstra(g,source,weightFn,edgeFn){var results={},pq=new PriorityQueue,v,vEntry;var updateNeighbors=function(edge){var w=edge.v!==v?edge.v:edge.w,wEntry=results[w],weight=weightFn(edge),distance=vEntry.distance+weight;if(weight<0){throw new Error("dijkstra does not allow negative edge weights. "+"Bad edge: "+edge+" Weight: "+weight)}if(distance<wEntry.distance){wEntry.distance=distance;wEntry.predecessor=v;pq.decrease(w,distance)}};g.nodes().forEach(function(v){var distance=v===source?0:Number.POSITIVE_INFINITY;results[v]={distance:distance};pq.add(v,distance)});while(pq.size()>0){v=pq.removeMin();vEntry=results[v];if(vEntry.distance===Number.POSITIVE_INFINITY){break}edgeFn(v).forEach(updateNeighbors)}return results}},{"../data/priority-queue":71,"../lodash":75}],62:[function(require,module,exports){var _=require("../lodash"),tarjan=require("./tarjan");module.exports=findCycles;function findCycles(g){return _.filter(tarjan(g),function(cmpt){return cmpt.length>1})}},{"../lodash":75,"./tarjan":69}],63:[function(require,module,exports){var _=require("../lodash");module.exports=floydWarshall;var DEFAULT_WEIGHT_FUNC=_.constant(1);function floydWarshall(g,weightFn,edgeFn){return runFloydWarshall(g,weightFn||DEFAULT_WEIGHT_FUNC,edgeFn||function(v){return g.outEdges(v)})}function runFloydWarshall(g,weightFn,edgeFn){var results={},nodes=g.nodes();nodes.forEach(function(v){results[v]={};results[v][v]={distance:0};nodes.forEach(function(w){if(v!==w){results[v][w]={distance:Number.POSITIVE_INFINITY}}});edgeFn(v).forEach(function(edge){var w=edge.v===v?edge.w:edge.v,d=weightFn(edge);results[v][w]={distance:d,predecessor:v}})});nodes.forEach(function(k){var rowK=results[k];nodes.forEach(function(i){var rowI=results[i];nodes.forEach(function(j){var ik=rowI[k];var kj=rowK[j];var ij=rowI[j];var altDistance=ik.distance+kj.distance;if(altDistance<ij.distance){ij.distance=altDistance;ij.predecessor=kj.predecessor}})})});return results}},{"../lodash":75}],64:[function(require,module,exports){module.exports={components:require("./components"),dijkstra:require("./dijkstra"),dijkstraAll:require("./dijkstra-all"),findCycles:require("./find-cycles"),floydWarshall:require("./floyd-warshall"),isAcyclic:require("./is-acyclic"),postorder:require("./postorder"),preorder:require("./preorder"),prim:require("./prim"),tarjan:require("./tarjan"),topsort:require("./topsort")}},{"./components":58,"./dijkstra":61,"./dijkstra-all":60,"./find-cycles":62,"./floyd-warshall":63,"./is-acyclic":65,"./postorder":66,"./preorder":67,"./prim":68,"./tarjan":69,"./topsort":70}],65:[function(require,module,exports){var topsort=require("./topsort");module.exports=isAcyclic;function isAcyclic(g){try{topsort(g)}catch(e){if(e instanceof topsort.CycleException){return false}throw e}return true}},{"./topsort":70}],66:[function(require,module,exports){var dfs=require("./dfs");module.exports=postorder;function postorder(g,vs){return dfs(g,vs,"post")}},{"./dfs":59}],67:[function(require,module,exports){var dfs=require("./dfs");module.exports=preorder;function preorder(g,vs){return dfs(g,vs,"pre")}},{"./dfs":59}],68:[function(require,module,exports){var _=require("../lodash"),Graph=require("../graph"),PriorityQueue=require("../data/priority-queue");module.exports=prim;function prim(g,weightFunc){var result=new Graph,parents={},pq=new PriorityQueue,v;function updateNeighbors(edge){var w=edge.v===v?edge.w:edge.v,pri=pq.priority(w);if(pri!==undefined){var edgeWeight=weightFunc(edge);if(edgeWeight<pri){parents[w]=v;pq.decrease(w,edgeWeight)}}}if(g.nodeCount()===0){return result}_.each(g.nodes(),function(v){pq.add(v,Number.POSITIVE_INFINITY);result.setNode(v)});pq.decrease(g.nodes()[0],0);var init=false;while(pq.size()>0){v=pq.removeMin();if(_.has(parents,v)){result.setEdge(v,parents[v])}else if(init){throw new Error("Input graph is not connected: "+g)}else{init=true}g.nodeEdges(v).forEach(updateNeighbors)}return result}},{"../data/priority-queue":71,"../graph":72,"../lodash":75}],69:[function(require,module,exports){var _=require("../lodash");module.exports=tarjan;function tarjan(g){var index=0,stack=[],visited={},results=[];function dfs(v){var entry=visited[v]={onStack:true,lowlink:index,index:index++};stack.push(v);g.successors(v).forEach(function(w){if(!_.has(visited,w)){dfs(w);entry.lowlink=Math.min(entry.lowlink,visited[w].lowlink)}else if(visited[w].onStack){entry.lowlink=Math.min(entry.lowlink,visited[w].index)}});if(entry.lowlink===entry.index){var cmpt=[],w;do{w=stack.pop();visited[w].onStack=false;cmpt.push(w)}while(v!==w);results.push(cmpt)}}g.nodes().forEach(function(v){if(!_.has(visited,v)){dfs(v)}});return results}},{"../lodash":75}],70:[function(require,module,exports){var _=require("../lodash");module.exports=topsort;topsort.CycleException=CycleException;function topsort(g){var visited={},stack={},results=[];function visit(node){if(_.has(stack,node)){throw new CycleException}if(!_.has(visited,node)){stack[node]=true;visited[node]=true;_.each(g.predecessors(node),visit);delete stack[node];results.push(node)}}_.each(g.sinks(),visit);if(_.size(visited)!==g.nodeCount()){throw new CycleException}return results}function CycleException(){}},{"../lodash":75}],71:[function(require,module,exports){var _=require("../lodash");module.exports=PriorityQueue;function PriorityQueue(){this._arr=[];this._keyIndices={}}PriorityQueue.prototype.size=function(){return this._arr.length};PriorityQueue.prototype.keys=function(){return this._arr.map(function(x){return x.key})};PriorityQueue.prototype.has=function(key){return _.has(this._keyIndices,key)};PriorityQueue.prototype.priority=function(key){var index=this._keyIndices[key];if(index!==undefined){return this._arr[index].priority}};PriorityQueue.prototype.min=function(){if(this.size()===0){throw new Error("Queue underflow")}return this._arr[0].key};PriorityQueue.prototype.add=function(key,priority){var keyIndices=this._keyIndices;key=String(key);if(!_.has(keyIndices,key)){var arr=this._arr;var index=arr.length;keyIndices[key]=index;arr.push({key:key,priority:priority});this._decrease(index);return true}return false};PriorityQueue.prototype.removeMin=function(){this._swap(0,this._arr.length-1);var min=this._arr.pop();delete this._keyIndices[min.key];this._heapify(0);return min.key};PriorityQueue.prototype.decrease=function(key,priority){var index=this._keyIndices[key];if(priority>this._arr[index].priority){throw new Error("New priority is greater than current priority. "+"Key: "+key+" Old: "+this._arr[index].priority+" New: "+priority)}this._arr[index].priority=priority;this._decrease(index)};PriorityQueue.prototype._heapify=function(i){var arr=this._arr;var l=2*i,r=l+1,largest=i;if(l<arr.length){largest=arr[l].priority<arr[largest].priority?l:largest;if(r<arr.length){largest=arr[r].priority<arr[largest].priority?r:largest}if(largest!==i){this._swap(i,largest);this._heapify(largest)}}};PriorityQueue.prototype._decrease=function(index){var arr=this._arr;var priority=arr[index].priority;var parent;while(index!==0){parent=index>>1;if(arr[parent].priority<priority){break}this._swap(index,parent);index=parent}};PriorityQueue.prototype._swap=function(i,j){var arr=this._arr;var keyIndices=this._keyIndices;var origArrI=arr[i];var origArrJ=arr[j];arr[i]=origArrJ;arr[j]=origArrI;keyIndices[origArrJ.key]=i;keyIndices[origArrI.key]=j}},{"../lodash":75}],72:[function(require,module,exports){"use strict";var _=require("./lodash");module.exports=Graph;var DEFAULT_EDGE_NAME="\x00",GRAPH_NODE="\x00",EDGE_KEY_DELIM="";function Graph(opts){this._isDirected=_.has(opts,"directed")?opts.directed:true;this._isMultigraph=_.has(opts,"multigraph")?opts.multigraph:false;this._isCompound=_.has(opts,"compound")?opts.compound:false;this._label=undefined;this._defaultNodeLabelFn=_.constant(undefined);this._defaultEdgeLabelFn=_.constant(undefined);this._nodes={};if(this._isCompound){this._parent={};this._children={};this._children[GRAPH_NODE]={}}this._in={};this._preds={};this._out={};this._sucs={};this._edgeObjs={};this._edgeLabels={}}Graph.prototype._nodeCount=0;Graph.prototype._edgeCount=0;Graph.prototype.isDirected=function(){return this._isDirected};Graph.prototype.isMultigraph=function(){return this._isMultigraph};Graph.prototype.isCompound=function(){return this._isCompound};Graph.prototype.setGraph=function(label){this._label=label;return this};Graph.prototype.graph=function(){return this._label};Graph.prototype.setDefaultNodeLabel=function(newDefault){if(!_.isFunction(newDefault)){newDefault=_.constant(newDefault)}this._defaultNodeLabelFn=newDefault;return this};Graph.prototype.nodeCount=function(){return this._nodeCount};Graph.prototype.nodes=function(){return _.keys(this._nodes)};Graph.prototype.sources=function(){return _.filter(this.nodes(),function(v){return _.isEmpty(this._in[v])},this)};Graph.prototype.sinks=function(){return _.filter(this.nodes(),function(v){return _.isEmpty(this._out[v])},this)};Graph.prototype.setNodes=function(vs,value){var args=arguments;_.each(vs,function(v){if(args.length>1){this.setNode(v,value)}else{this.setNode(v)}},this);return this};Graph.prototype.setNode=function(v,value){if(_.has(this._nodes,v)){if(arguments.length>1){this._nodes[v]=value}return this}this._nodes[v]=arguments.length>1?value:this._defaultNodeLabelFn(v);if(this._isCompound){this._parent[v]=GRAPH_NODE;this._children[v]={};this._children[GRAPH_NODE][v]=true}this._in[v]={};this._preds[v]={};this._out[v]={};this._sucs[v]={};++this._nodeCount;return this};Graph.prototype.node=function(v){return this._nodes[v]};Graph.prototype.hasNode=function(v){return _.has(this._nodes,v)};Graph.prototype.removeNode=function(v){var self=this;if(_.has(this._nodes,v)){var removeEdge=function(e){self.removeEdge(self._edgeObjs[e])};delete this._nodes[v];if(this._isCompound){this._removeFromParentsChildList(v);delete this._parent[v];_.each(this.children(v),function(child){this.setParent(child)},this);delete this._children[v]}_.each(_.keys(this._in[v]),removeEdge);delete this._in[v];delete this._preds[v];_.each(_.keys(this._out[v]),removeEdge);delete this._out[v];delete this._sucs[v];--this._nodeCount}return this};Graph.prototype.setParent=function(v,parent){if(!this._isCompound){throw new Error("Cannot set parent in a non-compound graph")}if(_.isUndefined(parent)){parent=GRAPH_NODE}else{for(var ancestor=parent;!_.isUndefined(ancestor);ancestor=this.parent(ancestor)){if(ancestor===v){throw new Error("Setting "+parent+" as parent of "+v+" would create create a cycle")}}this.setNode(parent)}this.setNode(v);this._removeFromParentsChildList(v);this._parent[v]=parent;this._children[parent][v]=true;return this};Graph.prototype._removeFromParentsChildList=function(v){delete this._children[this._parent[v]][v]};Graph.prototype.parent=function(v){if(this._isCompound){var parent=this._parent[v];if(parent!==GRAPH_NODE){return parent}}};Graph.prototype.children=function(v){if(_.isUndefined(v)){v=GRAPH_NODE}if(this._isCompound){var children=this._children[v];if(children){return _.keys(children)}}else if(v===GRAPH_NODE){return this.nodes()}else if(this.hasNode(v)){return[]}};Graph.prototype.predecessors=function(v){var predsV=this._preds[v];if(predsV){return _.keys(predsV)}};Graph.prototype.successors=function(v){var sucsV=this._sucs[v];if(sucsV){return _.keys(sucsV)}};Graph.prototype.neighbors=function(v){var preds=this.predecessors(v);if(preds){return _.union(preds,this.successors(v))}};Graph.prototype.setDefaultEdgeLabel=function(newDefault){if(!_.isFunction(newDefault)){newDefault=_.constant(newDefault)}this._defaultEdgeLabelFn=newDefault;return this};Graph.prototype.edgeCount=function(){return this._edgeCount};Graph.prototype.edges=function(){return _.values(this._edgeObjs)};Graph.prototype.setPath=function(vs,value){var self=this,args=arguments;_.reduce(vs,function(v,w){if(args.length>1){self.setEdge(v,w,value)}else{self.setEdge(v,w)}return w});return this};Graph.prototype.setEdge=function(){var v,w,name,value,valueSpecified=false;if(_.isPlainObject(arguments[0])){v=arguments[0].v;w=arguments[0].w;name=arguments[0].name;if(arguments.length===2){value=arguments[1];valueSpecified=true}}else{v=arguments[0];w=arguments[1];name=arguments[3];if(arguments.length>2){value=arguments[2];valueSpecified=true}}v=""+v;w=""+w;if(!_.isUndefined(name)){name=""+name}var e=edgeArgsToId(this._isDirected,v,w,name);if(_.has(this._edgeLabels,e)){if(valueSpecified){this._edgeLabels[e]=value}return this}if(!_.isUndefined(name)&&!this._isMultigraph){throw new Error("Cannot set a named edge when isMultigraph = false")}this.setNode(v);this.setNode(w);this._edgeLabels[e]=valueSpecified?value:this._defaultEdgeLabelFn(v,w,name);var edgeObj=edgeArgsToObj(this._isDirected,v,w,name);v=edgeObj.v;w=edgeObj.w;Object.freeze(edgeObj);this._edgeObjs[e]=edgeObj;incrementOrInitEntry(this._preds[w],v);incrementOrInitEntry(this._sucs[v],w);this._in[w][e]=edgeObj;this._out[v][e]=edgeObj;this._edgeCount++;return this};Graph.prototype.edge=function(v,w,name){var e=arguments.length===1?edgeObjToId(this._isDirected,arguments[0]):edgeArgsToId(this._isDirected,v,w,name);return this._edgeLabels[e]};Graph.prototype.hasEdge=function(v,w,name){var e=arguments.length===1?edgeObjToId(this._isDirected,arguments[0]):edgeArgsToId(this._isDirected,v,w,name);return _.has(this._edgeLabels,e)};Graph.prototype.removeEdge=function(v,w,name){var e=arguments.length===1?edgeObjToId(this._isDirected,arguments[0]):edgeArgsToId(this._isDirected,v,w,name),edge=this._edgeObjs[e];if(edge){v=edge.v;w=edge.w;delete this._edgeLabels[e];delete this._edgeObjs[e];decrementOrRemoveEntry(this._preds[w],v);decrementOrRemoveEntry(this._sucs[v],w);delete this._in[w][e];delete this._out[v][e];this._edgeCount--}return this};Graph.prototype.inEdges=function(v,u){var inV=this._in[v];if(inV){var edges=_.values(inV);if(!u){return edges}return _.filter(edges,function(edge){return edge.v===u})}};Graph.prototype.outEdges=function(v,w){var outV=this._out[v];if(outV){var edges=_.values(outV);if(!w){return edges}return _.filter(edges,function(edge){return edge.w===w})}};Graph.prototype.nodeEdges=function(v,w){var inEdges=this.inEdges(v,w);if(inEdges){return inEdges.concat(this.outEdges(v,w))}};function incrementOrInitEntry(map,k){if(_.has(map,k)){map[k]++}else{map[k]=1}}function decrementOrRemoveEntry(map,k){if(!--map[k]){delete map[k]}}function edgeArgsToId(isDirected,v,w,name){if(!isDirected&&v>w){var tmp=v;v=w;w=tmp}return v+EDGE_KEY_DELIM+w+EDGE_KEY_DELIM+(_.isUndefined(name)?DEFAULT_EDGE_NAME:name)}function edgeArgsToObj(isDirected,v,w,name){if(!isDirected&&v>w){var tmp=v;v=w;w=tmp}var edgeObj={v:v,w:w};if(name){edgeObj.name=name}return edgeObj}function edgeObjToId(isDirected,edgeObj){return edgeArgsToId(isDirected,edgeObj.v,edgeObj.w,edgeObj.name)}},{"./lodash":75}],73:[function(require,module,exports){module.exports={Graph:require("./graph"),version:require("./version")}},{"./graph":72,"./version":76}],74:[function(require,module,exports){var _=require("./lodash"),Graph=require("./graph");module.exports={write:write,read:read};function write(g){var json={options:{directed:g.isDirected(),multigraph:g.isMultigraph(),compound:g.isCompound()},nodes:writeNodes(g),edges:writeEdges(g)};if(!_.isUndefined(g.graph())){json.value=_.clone(g.graph())}return json}function writeNodes(g){return _.map(g.nodes(),function(v){var nodeValue=g.node(v),parent=g.parent(v),node={v:v};if(!_.isUndefined(nodeValue)){node.value=nodeValue}if(!_.isUndefined(parent)){node.parent=parent}return node})}function writeEdges(g){return _.map(g.edges(),function(e){var edgeValue=g.edge(e),edge={v:e.v,w:e.w};if(!_.isUndefined(e.name)){edge.name=e.name}if(!_.isUndefined(edgeValue)){edge.value=edgeValue}return edge})}function read(json){var g=new Graph(json.options).setGraph(json.value);_.each(json.nodes,function(entry){g.setNode(entry.v,entry.value);if(entry.parent){g.setParent(entry.v,entry.parent)}});_.each(json.edges,function(entry){g.setEdge({v:entry.v,w:entry.w,name:entry.name},entry.value)});return g}},{"./graph":72,"./lodash":75}],75:[function(require,module,exports){module.exports=require(20)},{"/Users/cpettitt/projects/dagre-d3/lib/lodash.js":20,lodash:77}],76:[function(require,module,exports){module.exports="1.0.1"},{}],77:[function(require,module,exports){(function(global){(function(){var undefined;var arrayPool=[],objectPool=[];var idCounter=0;var keyPrefix=+new Date+"";var largeArraySize=75;var maxPoolSize=40;var whitespace=" 	\f ﻿"+"\n\r\u2028\u2029"+" ᠎             　";var reEmptyStringLeading=/\b__p \+= '';/g,reEmptyStringMiddle=/\b(__p \+=) '' \+/g,reEmptyStringTrailing=/(__e\(.*?\)|\b__t\)) \+\n'';/g;var reEsTemplate=/\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;var reFlags=/\w*$/;var reFuncName=/^\s*function[ \n\r\t]+\w/;var reInterpolate=/<%=([\s\S]+?)%>/g;var reLeadingSpacesAndZeros=RegExp("^["+whitespace+"]*0+(?=.$)");var reNoMatch=/($^)/;var reThis=/\bthis\b/;var reUnescapedString=/['\n\r\t\u2028\u2029\\]/g;var contextProps=["Array","Boolean","Date","Function","Math","Number","Object","RegExp","String","_","attachEvent","clearTimeout","isFinite","isNaN","parseInt","setTimeout"];var templateCounter=0;var argsClass="[object Arguments]",arrayClass="[object Array]",boolClass="[object Boolean]",dateClass="[object Date]",funcClass="[object Function]",numberClass="[object Number]",objectClass="[object Object]",regexpClass="[object RegExp]",stringClass="[object String]";var cloneableClasses={};cloneableClasses[funcClass]=false;cloneableClasses[argsClass]=cloneableClasses[arrayClass]=cloneableClasses[boolClass]=cloneableClasses[dateClass]=cloneableClasses[numberClass]=cloneableClasses[objectClass]=cloneableClasses[regexpClass]=cloneableClasses[stringClass]=true;var debounceOptions={leading:false,maxWait:0,trailing:false};var descriptor={configurable:false,enumerable:false,value:null,writable:false};var objectTypes={"boolean":false,"function":true,object:true,number:false,string:false,undefined:false};var stringEscapes={"\\":"\\","'":"'","\n":"n","\r":"r","	":"t","\u2028":"u2028","\u2029":"u2029"};var root=objectTypes[typeof window]&&window||this;var freeExports=objectTypes[typeof exports]&&exports&&!exports.nodeType&&exports;var freeModule=objectTypes[typeof module]&&module&&!module.nodeType&&module;var moduleExports=freeModule&&freeModule.exports===freeExports&&freeExports;var freeGlobal=objectTypes[typeof global]&&global;if(freeGlobal&&(freeGlobal.global===freeGlobal||freeGlobal.window===freeGlobal)){root=freeGlobal}function baseIndexOf(array,value,fromIndex){var index=(fromIndex||0)-1,length=array?array.length:0;while(++index<length){if(array[index]===value){return index}}return-1}function cacheIndexOf(cache,value){var type=typeof value;cache=cache.cache;if(type=="boolean"||value==null){return cache[value]?0:-1}if(type!="number"&&type!="string"){type="object"}var key=type=="number"?value:keyPrefix+value;cache=(cache=cache[type])&&cache[key];return type=="object"?cache&&baseIndexOf(cache,value)>-1?0:-1:cache?0:-1}function cachePush(value){var cache=this.cache,type=typeof value;if(type=="boolean"||value==null){cache[value]=true}else{if(type!="number"&&type!="string"){type="object"}var key=type=="number"?value:keyPrefix+value,typeCache=cache[type]||(cache[type]={});if(type=="object"){(typeCache[key]||(typeCache[key]=[])).push(value)}else{typeCache[key]=true}}}function charAtCallback(value){return value.charCodeAt(0)}function compareAscending(a,b){var ac=a.criteria,bc=b.criteria,index=-1,length=ac.length;while(++index<length){var value=ac[index],other=bc[index];if(value!==other){if(value>other||typeof value=="undefined"){return 1}if(value<other||typeof other=="undefined"){return-1}}}return a.index-b.index}function createCache(array){var index=-1,length=array.length,first=array[0],mid=array[length/2|0],last=array[length-1];if(first&&typeof first=="object"&&mid&&typeof mid=="object"&&last&&typeof last=="object"){return false}var cache=getObject();cache["false"]=cache["null"]=cache["true"]=cache["undefined"]=false;var result=getObject();result.array=array;result.cache=cache;result.push=cachePush;while(++index<length){result.push(array[index])}return result}function escapeStringChar(match){return"\\"+stringEscapes[match]}function getArray(){return arrayPool.pop()||[]}function getObject(){return objectPool.pop()||{array:null,cache:null,criteria:null,"false":false,index:0,"null":false,number:null,object:null,push:null,string:null,"true":false,undefined:false,value:null}}function releaseArray(array){array.length=0;if(arrayPool.length<maxPoolSize){arrayPool.push(array)}}function releaseObject(object){var cache=object.cache;if(cache){releaseObject(cache)}object.array=object.cache=object.criteria=object.object=object.number=object.string=object.value=null;if(objectPool.length<maxPoolSize){objectPool.push(object)}}function slice(array,start,end){start||(start=0);if(typeof end=="undefined"){end=array?array.length:0}var index=-1,length=end-start||0,result=Array(length<0?0:length);while(++index<length){result[index]=array[start+index]}return result}function runInContext(context){context=context?_.defaults(root.Object(),context,_.pick(root,contextProps)):root;var Array=context.Array,Boolean=context.Boolean,Date=context.Date,Function=context.Function,Math=context.Math,Number=context.Number,Object=context.Object,RegExp=context.RegExp,String=context.String,TypeError=context.TypeError;var arrayRef=[];var objectProto=Object.prototype;var oldDash=context._;var toString=objectProto.toString;var reNative=RegExp("^"+String(toString).replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/toString| for [^\]]+/g,".*?")+"$");var ceil=Math.ceil,clearTimeout=context.clearTimeout,floor=Math.floor,fnToString=Function.prototype.toString,getPrototypeOf=isNative(getPrototypeOf=Object.getPrototypeOf)&&getPrototypeOf,hasOwnProperty=objectProto.hasOwnProperty,push=arrayRef.push,setTimeout=context.setTimeout,splice=arrayRef.splice,unshift=arrayRef.unshift;var defineProperty=function(){try{var o={},func=isNative(func=Object.defineProperty)&&func,result=func(o,o,o)&&func}catch(e){}return result}();var nativeCreate=isNative(nativeCreate=Object.create)&&nativeCreate,nativeIsArray=isNative(nativeIsArray=Array.isArray)&&nativeIsArray,nativeIsFinite=context.isFinite,nativeIsNaN=context.isNaN,nativeKeys=isNative(nativeKeys=Object.keys)&&nativeKeys,nativeMax=Math.max,nativeMin=Math.min,nativeParseInt=context.parseInt,nativeRandom=Math.random;var ctorByClass={};ctorByClass[arrayClass]=Array;ctorByClass[boolClass]=Boolean;ctorByClass[dateClass]=Date;ctorByClass[funcClass]=Function;ctorByClass[objectClass]=Object;ctorByClass[numberClass]=Number;ctorByClass[regexpClass]=RegExp;ctorByClass[stringClass]=String;function lodash(value){return value&&typeof value=="object"&&!isArray(value)&&hasOwnProperty.call(value,"__wrapped__")?value:new lodashWrapper(value)}function lodashWrapper(value,chainAll){this.__chain__=!!chainAll;this.__wrapped__=value}lodashWrapper.prototype=lodash.prototype;var support=lodash.support={};support.funcDecomp=!isNative(context.WinRTError)&&reThis.test(runInContext);support.funcNames=typeof Function.name=="string";lodash.templateSettings={escape:/<%-([\s\S]+?)%>/g,evaluate:/<%([\s\S]+?)%>/g,interpolate:reInterpolate,variable:"",imports:{_:lodash}};function baseBind(bindData){var func=bindData[0],partialArgs=bindData[2],thisArg=bindData[4];function bound(){if(partialArgs){var args=slice(partialArgs);push.apply(args,arguments)}if(this instanceof bound){var thisBinding=baseCreate(func.prototype),result=func.apply(thisBinding,args||arguments);return isObject(result)?result:thisBinding}return func.apply(thisArg,args||arguments)}setBindData(bound,bindData);return bound}function baseClone(value,isDeep,callback,stackA,stackB){if(callback){var result=callback(value);if(typeof result!="undefined"){return result}}var isObj=isObject(value);if(isObj){var className=toString.call(value);if(!cloneableClasses[className]){return value}var ctor=ctorByClass[className];switch(className){case boolClass:case dateClass:return new ctor(+value);case numberClass:case stringClass:return new ctor(value);case regexpClass:result=ctor(value.source,reFlags.exec(value));result.lastIndex=value.lastIndex;return result}}else{return value}var isArr=isArray(value);if(isDeep){var initedStack=!stackA;stackA||(stackA=getArray());stackB||(stackB=getArray());var length=stackA.length;while(length--){if(stackA[length]==value){return stackB[length]}}result=isArr?ctor(value.length):{}}else{result=isArr?slice(value):assign({},value)}if(isArr){if(hasOwnProperty.call(value,"index")){result.index=value.index}if(hasOwnProperty.call(value,"input")){result.input=value.input}}if(!isDeep){return result}stackA.push(value);stackB.push(result);(isArr?forEach:forOwn)(value,function(objValue,key){result[key]=baseClone(objValue,isDeep,callback,stackA,stackB)});if(initedStack){releaseArray(stackA);releaseArray(stackB)}return result}function baseCreate(prototype,properties){return isObject(prototype)?nativeCreate(prototype):{}}if(!nativeCreate){baseCreate=function(){function Object(){}return function(prototype){if(isObject(prototype)){Object.prototype=prototype;var result=new Object;Object.prototype=null}return result||context.Object()}}()}function baseCreateCallback(func,thisArg,argCount){if(typeof func!="function"){return identity}if(typeof thisArg=="undefined"||!("prototype"in func)){return func}var bindData=func.__bindData__;if(typeof bindData=="undefined"){if(support.funcNames){bindData=!func.name}bindData=bindData||!support.funcDecomp;if(!bindData){var source=fnToString.call(func);if(!support.funcNames){bindData=!reFuncName.test(source)}if(!bindData){bindData=reThis.test(source);setBindData(func,bindData)}}}if(bindData===false||bindData!==true&&bindData[1]&1){return func}switch(argCount){case 1:return function(value){return func.call(thisArg,value)};case 2:return function(a,b){return func.call(thisArg,a,b)};case 3:return function(value,index,collection){return func.call(thisArg,value,index,collection)};case 4:return function(accumulator,value,index,collection){return func.call(thisArg,accumulator,value,index,collection)}}return bind(func,thisArg)}function baseCreateWrapper(bindData){var func=bindData[0],bitmask=bindData[1],partialArgs=bindData[2],partialRightArgs=bindData[3],thisArg=bindData[4],arity=bindData[5];var isBind=bitmask&1,isBindKey=bitmask&2,isCurry=bitmask&4,isCurryBound=bitmask&8,key=func;function bound(){var thisBinding=isBind?thisArg:this;if(partialArgs){var args=slice(partialArgs);push.apply(args,arguments)}if(partialRightArgs||isCurry){args||(args=slice(arguments));if(partialRightArgs){push.apply(args,partialRightArgs)}if(isCurry&&args.length<arity){bitmask|=16&~32;return baseCreateWrapper([func,isCurryBound?bitmask:bitmask&~3,args,null,thisArg,arity])}}args||(args=arguments);if(isBindKey){func=thisBinding[key]}if(this instanceof bound){thisBinding=baseCreate(func.prototype);var result=func.apply(thisBinding,args);return isObject(result)?result:thisBinding}return func.apply(thisBinding,args)}setBindData(bound,bindData);return bound}function baseDifference(array,values){var index=-1,indexOf=getIndexOf(),length=array?array.length:0,isLarge=length>=largeArraySize&&indexOf===baseIndexOf,result=[];if(isLarge){var cache=createCache(values);if(cache){indexOf=cacheIndexOf;values=cache}else{isLarge=false}}while(++index<length){var value=array[index];if(indexOf(values,value)<0){result.push(value)}}if(isLarge){releaseObject(values)}return result}function baseFlatten(array,isShallow,isStrict,fromIndex){var index=(fromIndex||0)-1,length=array?array.length:0,result=[];while(++index<length){var value=array[index];if(value&&typeof value=="object"&&typeof value.length=="number"&&(isArray(value)||isArguments(value))){if(!isShallow){value=baseFlatten(value,isShallow,isStrict)
+}var valIndex=-1,valLength=value.length,resIndex=result.length;result.length+=valLength;while(++valIndex<valLength){result[resIndex++]=value[valIndex]}}else if(!isStrict){result.push(value)}}return result}function baseIsEqual(a,b,callback,isWhere,stackA,stackB){if(callback){var result=callback(a,b);if(typeof result!="undefined"){return!!result}}if(a===b){return a!==0||1/a==1/b}var type=typeof a,otherType=typeof b;if(a===a&&!(a&&objectTypes[type])&&!(b&&objectTypes[otherType])){return false}if(a==null||b==null){return a===b}var className=toString.call(a),otherClass=toString.call(b);if(className==argsClass){className=objectClass}if(otherClass==argsClass){otherClass=objectClass}if(className!=otherClass){return false}switch(className){case boolClass:case dateClass:return+a==+b;case numberClass:return a!=+a?b!=+b:a==0?1/a==1/b:a==+b;case regexpClass:case stringClass:return a==String(b)}var isArr=className==arrayClass;if(!isArr){var aWrapped=hasOwnProperty.call(a,"__wrapped__"),bWrapped=hasOwnProperty.call(b,"__wrapped__");if(aWrapped||bWrapped){return baseIsEqual(aWrapped?a.__wrapped__:a,bWrapped?b.__wrapped__:b,callback,isWhere,stackA,stackB)}if(className!=objectClass){return false}var ctorA=a.constructor,ctorB=b.constructor;if(ctorA!=ctorB&&!(isFunction(ctorA)&&ctorA instanceof ctorA&&isFunction(ctorB)&&ctorB instanceof ctorB)&&("constructor"in a&&"constructor"in b)){return false}}var initedStack=!stackA;stackA||(stackA=getArray());stackB||(stackB=getArray());var length=stackA.length;while(length--){if(stackA[length]==a){return stackB[length]==b}}var size=0;result=true;stackA.push(a);stackB.push(b);if(isArr){length=a.length;size=b.length;result=size==length;if(result||isWhere){while(size--){var index=length,value=b[size];if(isWhere){while(index--){if(result=baseIsEqual(a[index],value,callback,isWhere,stackA,stackB)){break}}}else if(!(result=baseIsEqual(a[size],value,callback,isWhere,stackA,stackB))){break}}}}else{forIn(b,function(value,key,b){if(hasOwnProperty.call(b,key)){size++;return result=hasOwnProperty.call(a,key)&&baseIsEqual(a[key],value,callback,isWhere,stackA,stackB)}});if(result&&!isWhere){forIn(a,function(value,key,a){if(hasOwnProperty.call(a,key)){return result=--size>-1}})}}stackA.pop();stackB.pop();if(initedStack){releaseArray(stackA);releaseArray(stackB)}return result}function baseMerge(object,source,callback,stackA,stackB){(isArray(source)?forEach:forOwn)(source,function(source,key){var found,isArr,result=source,value=object[key];if(source&&((isArr=isArray(source))||isPlainObject(source))){var stackLength=stackA.length;while(stackLength--){if(found=stackA[stackLength]==source){value=stackB[stackLength];break}}if(!found){var isShallow;if(callback){result=callback(value,source);if(isShallow=typeof result!="undefined"){value=result}}if(!isShallow){value=isArr?isArray(value)?value:[]:isPlainObject(value)?value:{}}stackA.push(source);stackB.push(value);if(!isShallow){baseMerge(value,source,callback,stackA,stackB)}}}else{if(callback){result=callback(value,source);if(typeof result=="undefined"){result=source}}if(typeof result!="undefined"){value=result}}object[key]=value})}function baseRandom(min,max){return min+floor(nativeRandom()*(max-min+1))}function baseUniq(array,isSorted,callback){var index=-1,indexOf=getIndexOf(),length=array?array.length:0,result=[];var isLarge=!isSorted&&length>=largeArraySize&&indexOf===baseIndexOf,seen=callback||isLarge?getArray():result;if(isLarge){var cache=createCache(seen);indexOf=cacheIndexOf;seen=cache}while(++index<length){var value=array[index],computed=callback?callback(value,index,array):value;if(isSorted?!index||seen[seen.length-1]!==computed:indexOf(seen,computed)<0){if(callback||isLarge){seen.push(computed)}result.push(value)}}if(isLarge){releaseArray(seen.array);releaseObject(seen)}else if(callback){releaseArray(seen)}return result}function createAggregator(setter){return function(collection,callback,thisArg){var result={};callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){var value=collection[index];setter(result,value,callback(value,index,collection),collection)}}else{forOwn(collection,function(value,key,collection){setter(result,value,callback(value,key,collection),collection)})}return result}}function createWrapper(func,bitmask,partialArgs,partialRightArgs,thisArg,arity){var isBind=bitmask&1,isBindKey=bitmask&2,isCurry=bitmask&4,isCurryBound=bitmask&8,isPartial=bitmask&16,isPartialRight=bitmask&32;if(!isBindKey&&!isFunction(func)){throw new TypeError}if(isPartial&&!partialArgs.length){bitmask&=~16;isPartial=partialArgs=false}if(isPartialRight&&!partialRightArgs.length){bitmask&=~32;isPartialRight=partialRightArgs=false}var bindData=func&&func.__bindData__;if(bindData&&bindData!==true){bindData=slice(bindData);if(bindData[2]){bindData[2]=slice(bindData[2])}if(bindData[3]){bindData[3]=slice(bindData[3])}if(isBind&&!(bindData[1]&1)){bindData[4]=thisArg}if(!isBind&&bindData[1]&1){bitmask|=8}if(isCurry&&!(bindData[1]&4)){bindData[5]=arity}if(isPartial){push.apply(bindData[2]||(bindData[2]=[]),partialArgs)}if(isPartialRight){unshift.apply(bindData[3]||(bindData[3]=[]),partialRightArgs)}bindData[1]|=bitmask;return createWrapper.apply(null,bindData)}var creater=bitmask==1||bitmask===17?baseBind:baseCreateWrapper;return creater([func,bitmask,partialArgs,partialRightArgs,thisArg,arity])}function escapeHtmlChar(match){return htmlEscapes[match]}function getIndexOf(){var result=(result=lodash.indexOf)===indexOf?baseIndexOf:result;return result}function isNative(value){return typeof value=="function"&&reNative.test(value)}var setBindData=!defineProperty?noop:function(func,value){descriptor.value=value;defineProperty(func,"__bindData__",descriptor)};function shimIsPlainObject(value){var ctor,result;if(!(value&&toString.call(value)==objectClass)||(ctor=value.constructor,isFunction(ctor)&&!(ctor instanceof ctor))){return false}forIn(value,function(value,key){result=key});return typeof result=="undefined"||hasOwnProperty.call(value,result)}function unescapeHtmlChar(match){return htmlUnescapes[match]}function isArguments(value){return value&&typeof value=="object"&&typeof value.length=="number"&&toString.call(value)==argsClass||false}var isArray=nativeIsArray||function(value){return value&&typeof value=="object"&&typeof value.length=="number"&&toString.call(value)==arrayClass||false};var shimKeys=function(object){var index,iterable=object,result=[];if(!iterable)return result;if(!objectTypes[typeof object])return result;for(index in iterable){if(hasOwnProperty.call(iterable,index)){result.push(index)}}return result};var keys=!nativeKeys?shimKeys:function(object){if(!isObject(object)){return[]}return nativeKeys(object)};var htmlEscapes={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};var htmlUnescapes=invert(htmlEscapes);var reEscapedHtml=RegExp("("+keys(htmlUnescapes).join("|")+")","g"),reUnescapedHtml=RegExp("["+keys(htmlEscapes).join("")+"]","g");var assign=function(object,source,guard){var index,iterable=object,result=iterable;if(!iterable)return result;var args=arguments,argsIndex=0,argsLength=typeof guard=="number"?2:args.length;if(argsLength>3&&typeof args[argsLength-2]=="function"){var callback=baseCreateCallback(args[--argsLength-1],args[argsLength--],2)}else if(argsLength>2&&typeof args[argsLength-1]=="function"){callback=args[--argsLength]}while(++argsIndex<argsLength){iterable=args[argsIndex];if(iterable&&objectTypes[typeof iterable]){var ownIndex=-1,ownProps=objectTypes[typeof iterable]&&keys(iterable),length=ownProps?ownProps.length:0;while(++ownIndex<length){index=ownProps[ownIndex];result[index]=callback?callback(result[index],iterable[index]):iterable[index]}}}return result};function clone(value,isDeep,callback,thisArg){if(typeof isDeep!="boolean"&&isDeep!=null){thisArg=callback;callback=isDeep;isDeep=false}return baseClone(value,isDeep,typeof callback=="function"&&baseCreateCallback(callback,thisArg,1))}function cloneDeep(value,callback,thisArg){return baseClone(value,true,typeof callback=="function"&&baseCreateCallback(callback,thisArg,1))}function create(prototype,properties){var result=baseCreate(prototype);return properties?assign(result,properties):result}var defaults=function(object,source,guard){var index,iterable=object,result=iterable;if(!iterable)return result;var args=arguments,argsIndex=0,argsLength=typeof guard=="number"?2:args.length;while(++argsIndex<argsLength){iterable=args[argsIndex];if(iterable&&objectTypes[typeof iterable]){var ownIndex=-1,ownProps=objectTypes[typeof iterable]&&keys(iterable),length=ownProps?ownProps.length:0;while(++ownIndex<length){index=ownProps[ownIndex];if(typeof result[index]=="undefined")result[index]=iterable[index]}}}return result};function findKey(object,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);forOwn(object,function(value,key,object){if(callback(value,key,object)){result=key;return false}});return result}function findLastKey(object,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);forOwnRight(object,function(value,key,object){if(callback(value,key,object)){result=key;return false}});return result}var forIn=function(collection,callback,thisArg){var index,iterable=collection,result=iterable;if(!iterable)return result;if(!objectTypes[typeof iterable])return result;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);for(index in iterable){if(callback(iterable[index],index,collection)===false)return result}return result};function forInRight(object,callback,thisArg){var pairs=[];forIn(object,function(value,key){pairs.push(key,value)});var length=pairs.length;callback=baseCreateCallback(callback,thisArg,3);while(length--){if(callback(pairs[length--],pairs[length],object)===false){break}}return object}var forOwn=function(collection,callback,thisArg){var index,iterable=collection,result=iterable;if(!iterable)return result;if(!objectTypes[typeof iterable])return result;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);var ownIndex=-1,ownProps=objectTypes[typeof iterable]&&keys(iterable),length=ownProps?ownProps.length:0;while(++ownIndex<length){index=ownProps[ownIndex];if(callback(iterable[index],index,collection)===false)return result}return result};function forOwnRight(object,callback,thisArg){var props=keys(object),length=props.length;callback=baseCreateCallback(callback,thisArg,3);while(length--){var key=props[length];if(callback(object[key],key,object)===false){break}}return object}function functions(object){var result=[];forIn(object,function(value,key){if(isFunction(value)){result.push(key)}});return result.sort()}function has(object,key){return object?hasOwnProperty.call(object,key):false}function invert(object){var index=-1,props=keys(object),length=props.length,result={};while(++index<length){var key=props[index];result[object[key]]=key}return result}function isBoolean(value){return value===true||value===false||value&&typeof value=="object"&&toString.call(value)==boolClass||false}function isDate(value){return value&&typeof value=="object"&&toString.call(value)==dateClass||false}function isElement(value){return value&&value.nodeType===1||false}function isEmpty(value){var result=true;if(!value){return result}var className=toString.call(value),length=value.length;if(className==arrayClass||className==stringClass||className==argsClass||className==objectClass&&typeof length=="number"&&isFunction(value.splice)){return!length}forOwn(value,function(){return result=false});return result}function isEqual(a,b,callback,thisArg){return baseIsEqual(a,b,typeof callback=="function"&&baseCreateCallback(callback,thisArg,2))}function isFinite(value){return nativeIsFinite(value)&&!nativeIsNaN(parseFloat(value))}function isFunction(value){return typeof value=="function"}function isObject(value){return!!(value&&objectTypes[typeof value])}function isNaN(value){return isNumber(value)&&value!=+value}function isNull(value){return value===null}function isNumber(value){return typeof value=="number"||value&&typeof value=="object"&&toString.call(value)==numberClass||false}var isPlainObject=!getPrototypeOf?shimIsPlainObject:function(value){if(!(value&&toString.call(value)==objectClass)){return false}var valueOf=value.valueOf,objProto=isNative(valueOf)&&(objProto=getPrototypeOf(valueOf))&&getPrototypeOf(objProto);return objProto?value==objProto||getPrototypeOf(value)==objProto:shimIsPlainObject(value)};function isRegExp(value){return value&&typeof value=="object"&&toString.call(value)==regexpClass||false}function isString(value){return typeof value=="string"||value&&typeof value=="object"&&toString.call(value)==stringClass||false}function isUndefined(value){return typeof value=="undefined"}function mapValues(object,callback,thisArg){var result={};callback=lodash.createCallback(callback,thisArg,3);forOwn(object,function(value,key,object){result[key]=callback(value,key,object)});return result}function merge(object){var args=arguments,length=2;if(!isObject(object)){return object}if(typeof args[2]!="number"){length=args.length}if(length>3&&typeof args[length-2]=="function"){var callback=baseCreateCallback(args[--length-1],args[length--],2)}else if(length>2&&typeof args[length-1]=="function"){callback=args[--length]}var sources=slice(arguments,1,length),index=-1,stackA=getArray(),stackB=getArray();while(++index<length){baseMerge(object,sources[index],callback,stackA,stackB)}releaseArray(stackA);releaseArray(stackB);return object}function omit(object,callback,thisArg){var result={};if(typeof callback!="function"){var props=[];forIn(object,function(value,key){props.push(key)});props=baseDifference(props,baseFlatten(arguments,true,false,1));var index=-1,length=props.length;while(++index<length){var key=props[index];result[key]=object[key]}}else{callback=lodash.createCallback(callback,thisArg,3);forIn(object,function(value,key,object){if(!callback(value,key,object)){result[key]=value}})}return result}function pairs(object){var index=-1,props=keys(object),length=props.length,result=Array(length);while(++index<length){var key=props[index];result[index]=[key,object[key]]}return result}function pick(object,callback,thisArg){var result={};if(typeof callback!="function"){var index=-1,props=baseFlatten(arguments,true,false,1),length=isObject(object)?props.length:0;while(++index<length){var key=props[index];if(key in object){result[key]=object[key]}}}else{callback=lodash.createCallback(callback,thisArg,3);forIn(object,function(value,key,object){if(callback(value,key,object)){result[key]=value}})}return result}function transform(object,callback,accumulator,thisArg){var isArr=isArray(object);if(accumulator==null){if(isArr){accumulator=[]}else{var ctor=object&&object.constructor,proto=ctor&&ctor.prototype;accumulator=baseCreate(proto)}}if(callback){callback=lodash.createCallback(callback,thisArg,4);(isArr?forEach:forOwn)(object,function(value,index,object){return callback(accumulator,value,index,object)})}return accumulator}function values(object){var index=-1,props=keys(object),length=props.length,result=Array(length);while(++index<length){result[index]=object[props[index]]}return result}function at(collection){var args=arguments,index=-1,props=baseFlatten(args,true,false,1),length=args[2]&&args[2][args[1]]===collection?1:props.length,result=Array(length);while(++index<length){result[index]=collection[props[index]]}return result}function contains(collection,target,fromIndex){var index=-1,indexOf=getIndexOf(),length=collection?collection.length:0,result=false;fromIndex=(fromIndex<0?nativeMax(0,length+fromIndex):fromIndex)||0;if(isArray(collection)){result=indexOf(collection,target,fromIndex)>-1}else if(typeof length=="number"){result=(isString(collection)?collection.indexOf(target,fromIndex):indexOf(collection,target,fromIndex))>-1}else{forOwn(collection,function(value){if(++index>=fromIndex){return!(result=value===target)}})}return result}var countBy=createAggregator(function(result,value,key){hasOwnProperty.call(result,key)?result[key]++:result[key]=1});function every(collection,callback,thisArg){var result=true;callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){if(!(result=!!callback(collection[index],index,collection))){break}}}else{forOwn(collection,function(value,index,collection){return result=!!callback(value,index,collection)})}return result}function filter(collection,callback,thisArg){var result=[];callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){var value=collection[index];if(callback(value,index,collection)){result.push(value)}}}else{forOwn(collection,function(value,index,collection){if(callback(value,index,collection)){result.push(value)}})}return result}function find(collection,callback,thisArg){callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){var value=collection[index];if(callback(value,index,collection)){return value}}}else{var result;forOwn(collection,function(value,index,collection){if(callback(value,index,collection)){result=value;return false}});return result}}function findLast(collection,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);forEachRight(collection,function(value,index,collection){if(callback(value,index,collection)){result=value;return false}});return result}function forEach(collection,callback,thisArg){var index=-1,length=collection?collection.length:0;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);if(typeof length=="number"){while(++index<length){if(callback(collection[index],index,collection)===false){break}}}else{forOwn(collection,callback)}return collection}function forEachRight(collection,callback,thisArg){var length=collection?collection.length:0;callback=callback&&typeof thisArg=="undefined"?callback:baseCreateCallback(callback,thisArg,3);if(typeof length=="number"){while(length--){if(callback(collection[length],length,collection)===false){break}}}else{var props=keys(collection);length=props.length;forOwn(collection,function(value,key,collection){key=props?props[--length]:--length;return callback(collection[key],key,collection)})}return collection}var groupBy=createAggregator(function(result,value,key){(hasOwnProperty.call(result,key)?result[key]:result[key]=[]).push(value)});var indexBy=createAggregator(function(result,value,key){result[key]=value});function invoke(collection,methodName){var args=slice(arguments,2),index=-1,isFunc=typeof methodName=="function",length=collection?collection.length:0,result=Array(typeof length=="number"?length:0);forEach(collection,function(value){result[++index]=(isFunc?methodName:value[methodName]).apply(value,args)});return result}function map(collection,callback,thisArg){var index=-1,length=collection?collection.length:0;callback=lodash.createCallback(callback,thisArg,3);if(typeof length=="number"){var result=Array(length);while(++index<length){result[index]=callback(collection[index],index,collection)}}else{result=[];forOwn(collection,function(value,key,collection){result[++index]=callback(value,key,collection)})}return result}function max(collection,callback,thisArg){var computed=-Infinity,result=computed;if(typeof callback!="function"&&thisArg&&thisArg[callback]===collection){callback=null}if(callback==null&&isArray(collection)){var index=-1,length=collection.length;while(++index<length){var value=collection[index];if(value>result){result=value}}}else{callback=callback==null&&isString(collection)?charAtCallback:lodash.createCallback(callback,thisArg,3);forEach(collection,function(value,index,collection){var current=callback(value,index,collection);if(current>computed){computed=current;result=value}})}return result}function min(collection,callback,thisArg){var computed=Infinity,result=computed;if(typeof callback!="function"&&thisArg&&thisArg[callback]===collection){callback=null}if(callback==null&&isArray(collection)){var index=-1,length=collection.length;while(++index<length){var value=collection[index];if(value<result){result=value}}}else{callback=callback==null&&isString(collection)?charAtCallback:lodash.createCallback(callback,thisArg,3);forEach(collection,function(value,index,collection){var current=callback(value,index,collection);if(current<computed){computed=current;result=value}})}return result}var pluck=map;function reduce(collection,callback,accumulator,thisArg){if(!collection)return accumulator;var noaccum=arguments.length<3;callback=lodash.createCallback(callback,thisArg,4);var index=-1,length=collection.length;if(typeof length=="number"){if(noaccum){accumulator=collection[++index]}while(++index<length){accumulator=callback(accumulator,collection[index],index,collection)}}else{forOwn(collection,function(value,index,collection){accumulator=noaccum?(noaccum=false,value):callback(accumulator,value,index,collection)})}return accumulator}function reduceRight(collection,callback,accumulator,thisArg){var noaccum=arguments.length<3;callback=lodash.createCallback(callback,thisArg,4);forEachRight(collection,function(value,index,collection){accumulator=noaccum?(noaccum=false,value):callback(accumulator,value,index,collection)});return accumulator}function reject(collection,callback,thisArg){callback=lodash.createCallback(callback,thisArg,3);return filter(collection,function(value,index,collection){return!callback(value,index,collection)})}function sample(collection,n,guard){if(collection&&typeof collection.length!="number"){collection=values(collection)}if(n==null||guard){return collection?collection[baseRandom(0,collection.length-1)]:undefined}var result=shuffle(collection);result.length=nativeMin(nativeMax(0,n),result.length);return result}function shuffle(collection){var index=-1,length=collection?collection.length:0,result=Array(typeof length=="number"?length:0);forEach(collection,function(value){var rand=baseRandom(0,++index);result[index]=result[rand];result[rand]=value});return result}function size(collection){var length=collection?collection.length:0;return typeof length=="number"?length:keys(collection).length}function some(collection,callback,thisArg){var result;callback=lodash.createCallback(callback,thisArg,3);var index=-1,length=collection?collection.length:0;if(typeof length=="number"){while(++index<length){if(result=callback(collection[index],index,collection)){break}}}else{forOwn(collection,function(value,index,collection){return!(result=callback(value,index,collection))})}return!!result}function sortBy(collection,callback,thisArg){var index=-1,isArr=isArray(callback),length=collection?collection.length:0,result=Array(typeof length=="number"?length:0);if(!isArr){callback=lodash.createCallback(callback,thisArg,3)}forEach(collection,function(value,key,collection){var object=result[++index]=getObject();if(isArr){object.criteria=map(callback,function(key){return value[key]})}else{(object.criteria=getArray())[0]=callback(value,key,collection)}object.index=index;object.value=value});length=result.length;result.sort(compareAscending);while(length--){var object=result[length];result[length]=object.value;if(!isArr){releaseArray(object.criteria)}releaseObject(object)}return result}function toArray(collection){if(collection&&typeof collection.length=="number"){return slice(collection)}return values(collection)}var where=filter;function compact(array){var index=-1,length=array?array.length:0,result=[];while(++index<length){var value=array[index];if(value){result.push(value)}}return result}function difference(array){return baseDifference(array,baseFlatten(arguments,true,true,1))}function findIndex(array,callback,thisArg){var index=-1,length=array?array.length:0;callback=lodash.createCallback(callback,thisArg,3);while(++index<length){if(callback(array[index],index,array)){return index}}return-1}function findLastIndex(array,callback,thisArg){var length=array?array.length:0;callback=lodash.createCallback(callback,thisArg,3);while(length--){if(callback(array[length],length,array)){return length}}return-1}function first(array,callback,thisArg){var n=0,length=array?array.length:0;if(typeof callback!="number"&&callback!=null){var index=-1;callback=lodash.createCallback(callback,thisArg,3);while(++index<length&&callback(array[index],index,array)){n++}}else{n=callback;if(n==null||thisArg){return array?array[0]:undefined}}return slice(array,0,nativeMin(nativeMax(0,n),length))}function flatten(array,isShallow,callback,thisArg){if(typeof isShallow!="boolean"&&isShallow!=null){thisArg=callback;callback=typeof isShallow!="function"&&thisArg&&thisArg[isShallow]===array?null:isShallow;isShallow=false}if(callback!=null){array=map(array,callback,thisArg)}return baseFlatten(array,isShallow)}function indexOf(array,value,fromIndex){if(typeof fromIndex=="number"){var length=array?array.length:0;fromIndex=fromIndex<0?nativeMax(0,length+fromIndex):fromIndex||0}else if(fromIndex){var index=sortedIndex(array,value);return array[index]===value?index:-1}return baseIndexOf(array,value,fromIndex)}function initial(array,callback,thisArg){var n=0,length=array?array.length:0;if(typeof callback!="number"&&callback!=null){var index=length;callback=lodash.createCallback(callback,thisArg,3);while(index--&&callback(array[index],index,array)){n++}}else{n=callback==null||thisArg?1:callback||n}return slice(array,0,nativeMin(nativeMax(0,length-n),length))}function intersection(){var args=[],argsIndex=-1,argsLength=arguments.length,caches=getArray(),indexOf=getIndexOf(),trustIndexOf=indexOf===baseIndexOf,seen=getArray();while(++argsIndex<argsLength){var value=arguments[argsIndex];if(isArray(value)||isArguments(value)){args.push(value);caches.push(trustIndexOf&&value.length>=largeArraySize&&createCache(argsIndex?args[argsIndex]:seen))}}var array=args[0],index=-1,length=array?array.length:0,result=[];outer:while(++index<length){var cache=caches[0];value=array[index];if((cache?cacheIndexOf(cache,value):indexOf(seen,value))<0){argsIndex=argsLength;(cache||seen).push(value);while(--argsIndex){cache=caches[argsIndex];if((cache?cacheIndexOf(cache,value):indexOf(args[argsIndex],value))<0){continue outer}}result.push(value)}}while(argsLength--){cache=caches[argsLength];if(cache){releaseObject(cache)}}releaseArray(caches);releaseArray(seen);return result}function last(array,callback,thisArg){var n=0,length=array?array.length:0;if(typeof callback!="number"&&callback!=null){var index=length;callback=lodash.createCallback(callback,thisArg,3);while(index--&&callback(array[index],index,array)){n++}}else{n=callback;if(n==null||thisArg){return array?array[length-1]:undefined}}return slice(array,nativeMax(0,length-n))}function lastIndexOf(array,value,fromIndex){var index=array?array.length:0;if(typeof fromIndex=="number"){index=(fromIndex<0?nativeMax(0,index+fromIndex):nativeMin(fromIndex,index-1))+1}while(index--){if(array[index]===value){return index}}return-1}function pull(array){var args=arguments,argsIndex=0,argsLength=args.length,length=array?array.length:0;while(++argsIndex<argsLength){var index=-1,value=args[argsIndex];while(++index<length){if(array[index]===value){splice.call(array,index--,1);length--}}}return array}function range(start,end,step){start=+start||0;step=typeof step=="number"?step:+step||1;if(end==null){end=start;start=0}var index=-1,length=nativeMax(0,ceil((end-start)/(step||1))),result=Array(length);while(++index<length){result[index]=start;start+=step}return result}function remove(array,callback,thisArg){var index=-1,length=array?array.length:0,result=[];callback=lodash.createCallback(callback,thisArg,3);while(++index<length){var value=array[index];if(callback(value,index,array)){result.push(value);splice.call(array,index--,1);length--}}return result}function rest(array,callback,thisArg){if(typeof callback!="number"&&callback!=null){var n=0,index=-1,length=array?array.length:0;callback=lodash.createCallback(callback,thisArg,3);while(++index<length&&callback(array[index],index,array)){n++}}else{n=callback==null||thisArg?1:nativeMax(0,callback)}return slice(array,n)}function sortedIndex(array,value,callback,thisArg){var low=0,high=array?array.length:low;callback=callback?lodash.createCallback(callback,thisArg,1):identity;value=callback(value);while(low<high){var mid=low+high>>>1;callback(array[mid])<value?low=mid+1:high=mid}return low}function union(){return baseUniq(baseFlatten(arguments,true,true))}function uniq(array,isSorted,callback,thisArg){if(typeof isSorted!="boolean"&&isSorted!=null){thisArg=callback;callback=typeof isSorted!="function"&&thisArg&&thisArg[isSorted]===array?null:isSorted;isSorted=false}if(callback!=null){callback=lodash.createCallback(callback,thisArg,3)}return baseUniq(array,isSorted,callback)}function without(array){return baseDifference(array,slice(arguments,1))}function xor(){var index=-1,length=arguments.length;while(++index<length){var array=arguments[index];if(isArray(array)||isArguments(array)){var result=result?baseUniq(baseDifference(result,array).concat(baseDifference(array,result))):array}}return result||[]}function zip(){var array=arguments.length>1?arguments:arguments[0],index=-1,length=array?max(pluck(array,"length")):0,result=Array(length<0?0:length);while(++index<length){result[index]=pluck(array,index)}return result}function zipObject(keys,values){var index=-1,length=keys?keys.length:0,result={};if(!values&&length&&!isArray(keys[0])){values=[]}while(++index<length){var key=keys[index];if(values){result[key]=values[index]}else if(key){result[key[0]]=key[1]}}return result}function after(n,func){if(!isFunction(func)){throw new TypeError}return function(){if(--n<1){return func.apply(this,arguments)}}}function bind(func,thisArg){return arguments.length>2?createWrapper(func,17,slice(arguments,2),null,thisArg):createWrapper(func,1,null,null,thisArg)}function bindAll(object){var funcs=arguments.length>1?baseFlatten(arguments,true,false,1):functions(object),index=-1,length=funcs.length;while(++index<length){var key=funcs[index];object[key]=createWrapper(object[key],1,null,null,object)}return object}function bindKey(object,key){return arguments.length>2?createWrapper(key,19,slice(arguments,2),null,object):createWrapper(key,3,null,null,object)}function compose(){var funcs=arguments,length=funcs.length;while(length--){if(!isFunction(funcs[length])){throw new TypeError}}return function(){var args=arguments,length=funcs.length;while(length--){args=[funcs[length].apply(this,args)]}return args[0]}}function curry(func,arity){arity=typeof arity=="number"?arity:+arity||func.length;return createWrapper(func,4,null,null,null,arity)}function debounce(func,wait,options){var args,maxTimeoutId,result,stamp,thisArg,timeoutId,trailingCall,lastCalled=0,maxWait=false,trailing=true;if(!isFunction(func)){throw new TypeError}wait=nativeMax(0,wait)||0;if(options===true){var leading=true;trailing=false}else if(isObject(options)){leading=options.leading;maxWait="maxWait"in options&&(nativeMax(wait,options.maxWait)||0);trailing="trailing"in options?options.trailing:trailing}var delayed=function(){var remaining=wait-(now()-stamp);if(remaining<=0){if(maxTimeoutId){clearTimeout(maxTimeoutId)}var isCalled=trailingCall;maxTimeoutId=timeoutId=trailingCall=undefined;if(isCalled){lastCalled=now();result=func.apply(thisArg,args);if(!timeoutId&&!maxTimeoutId){args=thisArg=null}}}else{timeoutId=setTimeout(delayed,remaining)}};var maxDelayed=function(){if(timeoutId){clearTimeout(timeoutId)}maxTimeoutId=timeoutId=trailingCall=undefined;if(trailing||maxWait!==wait){lastCalled=now();result=func.apply(thisArg,args);if(!timeoutId&&!maxTimeoutId){args=thisArg=null}}};return function(){args=arguments;stamp=now();thisArg=this;trailingCall=trailing&&(timeoutId||!leading);
+if(maxWait===false){var leadingCall=leading&&!timeoutId}else{if(!maxTimeoutId&&!leading){lastCalled=stamp}var remaining=maxWait-(stamp-lastCalled),isCalled=remaining<=0;if(isCalled){if(maxTimeoutId){maxTimeoutId=clearTimeout(maxTimeoutId)}lastCalled=stamp;result=func.apply(thisArg,args)}else if(!maxTimeoutId){maxTimeoutId=setTimeout(maxDelayed,remaining)}}if(isCalled&&timeoutId){timeoutId=clearTimeout(timeoutId)}else if(!timeoutId&&wait!==maxWait){timeoutId=setTimeout(delayed,wait)}if(leadingCall){isCalled=true;result=func.apply(thisArg,args)}if(isCalled&&!timeoutId&&!maxTimeoutId){args=thisArg=null}return result}}function defer(func){if(!isFunction(func)){throw new TypeError}var args=slice(arguments,1);return setTimeout(function(){func.apply(undefined,args)},1)}function delay(func,wait){if(!isFunction(func)){throw new TypeError}var args=slice(arguments,2);return setTimeout(function(){func.apply(undefined,args)},wait)}function memoize(func,resolver){if(!isFunction(func)){throw new TypeError}var memoized=function(){var cache=memoized.cache,key=resolver?resolver.apply(this,arguments):keyPrefix+arguments[0];return hasOwnProperty.call(cache,key)?cache[key]:cache[key]=func.apply(this,arguments)};memoized.cache={};return memoized}function once(func){var ran,result;if(!isFunction(func)){throw new TypeError}return function(){if(ran){return result}ran=true;result=func.apply(this,arguments);func=null;return result}}function partial(func){return createWrapper(func,16,slice(arguments,1))}function partialRight(func){return createWrapper(func,32,null,slice(arguments,1))}function throttle(func,wait,options){var leading=true,trailing=true;if(!isFunction(func)){throw new TypeError}if(options===false){leading=false}else if(isObject(options)){leading="leading"in options?options.leading:leading;trailing="trailing"in options?options.trailing:trailing}debounceOptions.leading=leading;debounceOptions.maxWait=wait;debounceOptions.trailing=trailing;return debounce(func,wait,debounceOptions)}function wrap(value,wrapper){return createWrapper(wrapper,16,[value])}function constant(value){return function(){return value}}function createCallback(func,thisArg,argCount){var type=typeof func;if(func==null||type=="function"){return baseCreateCallback(func,thisArg,argCount)}if(type!="object"){return property(func)}var props=keys(func),key=props[0],a=func[key];if(props.length==1&&a===a&&!isObject(a)){return function(object){var b=object[key];return a===b&&(a!==0||1/a==1/b)}}return function(object){var length=props.length,result=false;while(length--){if(!(result=baseIsEqual(object[props[length]],func[props[length]],null,true))){break}}return result}}function escape(string){return string==null?"":String(string).replace(reUnescapedHtml,escapeHtmlChar)}function identity(value){return value}function mixin(object,source,options){var chain=true,methodNames=source&&functions(source);if(!source||!options&&!methodNames.length){if(options==null){options=source}ctor=lodashWrapper;source=object;object=lodash;methodNames=functions(source)}if(options===false){chain=false}else if(isObject(options)&&"chain"in options){chain=options.chain}var ctor=object,isFunc=isFunction(ctor);forEach(methodNames,function(methodName){var func=object[methodName]=source[methodName];if(isFunc){ctor.prototype[methodName]=function(){var chainAll=this.__chain__,value=this.__wrapped__,args=[value];push.apply(args,arguments);var result=func.apply(object,args);if(chain||chainAll){if(value===result&&isObject(result)){return this}result=new ctor(result);result.__chain__=chainAll}return result}}})}function noConflict(){context._=oldDash;return this}function noop(){}var now=isNative(now=Date.now)&&now||function(){return(new Date).getTime()};var parseInt=nativeParseInt(whitespace+"08")==8?nativeParseInt:function(value,radix){return nativeParseInt(isString(value)?value.replace(reLeadingSpacesAndZeros,""):value,radix||0)};function property(key){return function(object){return object[key]}}function random(min,max,floating){var noMin=min==null,noMax=max==null;if(floating==null){if(typeof min=="boolean"&&noMax){floating=min;min=1}else if(!noMax&&typeof max=="boolean"){floating=max;noMax=true}}if(noMin&&noMax){max=1}min=+min||0;if(noMax){max=min;min=0}else{max=+max||0}if(floating||min%1||max%1){var rand=nativeRandom();return nativeMin(min+rand*(max-min+parseFloat("1e-"+((rand+"").length-1))),max)}return baseRandom(min,max)}function result(object,key){if(object){var value=object[key];return isFunction(value)?object[key]():value}}function template(text,data,options){var settings=lodash.templateSettings;text=String(text||"");options=defaults({},options,settings);var imports=defaults({},options.imports,settings.imports),importsKeys=keys(imports),importsValues=values(imports);var isEvaluating,index=0,interpolate=options.interpolate||reNoMatch,source="__p += '";var reDelimiters=RegExp((options.escape||reNoMatch).source+"|"+interpolate.source+"|"+(interpolate===reInterpolate?reEsTemplate:reNoMatch).source+"|"+(options.evaluate||reNoMatch).source+"|$","g");text.replace(reDelimiters,function(match,escapeValue,interpolateValue,esTemplateValue,evaluateValue,offset){interpolateValue||(interpolateValue=esTemplateValue);source+=text.slice(index,offset).replace(reUnescapedString,escapeStringChar);if(escapeValue){source+="' +\n__e("+escapeValue+") +\n'"}if(evaluateValue){isEvaluating=true;source+="';\n"+evaluateValue+";\n__p += '"}if(interpolateValue){source+="' +\n((__t = ("+interpolateValue+")) == null ? '' : __t) +\n'"}index=offset+match.length;return match});source+="';\n";var variable=options.variable,hasVariable=variable;if(!hasVariable){variable="obj";source="with ("+variable+") {\n"+source+"\n}\n"}source=(isEvaluating?source.replace(reEmptyStringLeading,""):source).replace(reEmptyStringMiddle,"$1").replace(reEmptyStringTrailing,"$1;");source="function("+variable+") {\n"+(hasVariable?"":variable+" || ("+variable+" = {});\n")+"var __t, __p = '', __e = _.escape"+(isEvaluating?", __j = Array.prototype.join;\n"+"function print() { __p += __j.call(arguments, '') }\n":";\n")+source+"return __p\n}";var sourceURL="\n/*\n//# sourceURL="+(options.sourceURL||"/lodash/template/source["+templateCounter++ +"]")+"\n*/";try{var result=Function(importsKeys,"return "+source+sourceURL).apply(undefined,importsValues)}catch(e){e.source=source;throw e}if(data){return result(data)}result.source=source;return result}function times(n,callback,thisArg){n=(n=+n)>-1?n:0;var index=-1,result=Array(n);callback=baseCreateCallback(callback,thisArg,1);while(++index<n){result[index]=callback(index)}return result}function unescape(string){return string==null?"":String(string).replace(reEscapedHtml,unescapeHtmlChar)}function uniqueId(prefix){var id=++idCounter;return String(prefix==null?"":prefix)+id}function chain(value){value=new lodashWrapper(value);value.__chain__=true;return value}function tap(value,interceptor){interceptor(value);return value}function wrapperChain(){this.__chain__=true;return this}function wrapperToString(){return String(this.__wrapped__)}function wrapperValueOf(){return this.__wrapped__}lodash.after=after;lodash.assign=assign;lodash.at=at;lodash.bind=bind;lodash.bindAll=bindAll;lodash.bindKey=bindKey;lodash.chain=chain;lodash.compact=compact;lodash.compose=compose;lodash.constant=constant;lodash.countBy=countBy;lodash.create=create;lodash.createCallback=createCallback;lodash.curry=curry;lodash.debounce=debounce;lodash.defaults=defaults;lodash.defer=defer;lodash.delay=delay;lodash.difference=difference;lodash.filter=filter;lodash.flatten=flatten;lodash.forEach=forEach;lodash.forEachRight=forEachRight;lodash.forIn=forIn;lodash.forInRight=forInRight;lodash.forOwn=forOwn;lodash.forOwnRight=forOwnRight;lodash.functions=functions;lodash.groupBy=groupBy;lodash.indexBy=indexBy;lodash.initial=initial;lodash.intersection=intersection;lodash.invert=invert;lodash.invoke=invoke;lodash.keys=keys;lodash.map=map;lodash.mapValues=mapValues;lodash.max=max;lodash.memoize=memoize;lodash.merge=merge;lodash.min=min;lodash.omit=omit;lodash.once=once;lodash.pairs=pairs;lodash.partial=partial;lodash.partialRight=partialRight;lodash.pick=pick;lodash.pluck=pluck;lodash.property=property;lodash.pull=pull;lodash.range=range;lodash.reject=reject;lodash.remove=remove;lodash.rest=rest;lodash.shuffle=shuffle;lodash.sortBy=sortBy;lodash.tap=tap;lodash.throttle=throttle;lodash.times=times;lodash.toArray=toArray;lodash.transform=transform;lodash.union=union;lodash.uniq=uniq;lodash.values=values;lodash.where=where;lodash.without=without;lodash.wrap=wrap;lodash.xor=xor;lodash.zip=zip;lodash.zipObject=zipObject;lodash.collect=map;lodash.drop=rest;lodash.each=forEach;lodash.eachRight=forEachRight;lodash.extend=assign;lodash.methods=functions;lodash.object=zipObject;lodash.select=filter;lodash.tail=rest;lodash.unique=uniq;lodash.unzip=zip;mixin(lodash);lodash.clone=clone;lodash.cloneDeep=cloneDeep;lodash.contains=contains;lodash.escape=escape;lodash.every=every;lodash.find=find;lodash.findIndex=findIndex;lodash.findKey=findKey;lodash.findLast=findLast;lodash.findLastIndex=findLastIndex;lodash.findLastKey=findLastKey;lodash.has=has;lodash.identity=identity;lodash.indexOf=indexOf;lodash.isArguments=isArguments;lodash.isArray=isArray;lodash.isBoolean=isBoolean;lodash.isDate=isDate;lodash.isElement=isElement;lodash.isEmpty=isEmpty;lodash.isEqual=isEqual;lodash.isFinite=isFinite;lodash.isFunction=isFunction;lodash.isNaN=isNaN;lodash.isNull=isNull;lodash.isNumber=isNumber;lodash.isObject=isObject;lodash.isPlainObject=isPlainObject;lodash.isRegExp=isRegExp;lodash.isString=isString;lodash.isUndefined=isUndefined;lodash.lastIndexOf=lastIndexOf;lodash.mixin=mixin;lodash.noConflict=noConflict;lodash.noop=noop;lodash.now=now;lodash.parseInt=parseInt;lodash.random=random;lodash.reduce=reduce;lodash.reduceRight=reduceRight;lodash.result=result;lodash.runInContext=runInContext;lodash.size=size;lodash.some=some;lodash.sortedIndex=sortedIndex;lodash.template=template;lodash.unescape=unescape;lodash.uniqueId=uniqueId;lodash.all=every;lodash.any=some;lodash.detect=find;lodash.findWhere=find;lodash.foldl=reduce;lodash.foldr=reduceRight;lodash.include=contains;lodash.inject=reduce;mixin(function(){var source={};forOwn(lodash,function(func,methodName){if(!lodash.prototype[methodName]){source[methodName]=func}});return source}(),false);lodash.first=first;lodash.last=last;lodash.sample=sample;lodash.take=first;lodash.head=first;forOwn(lodash,function(func,methodName){var callbackable=methodName!=="sample";if(!lodash.prototype[methodName]){lodash.prototype[methodName]=function(n,guard){var chainAll=this.__chain__,result=func(this.__wrapped__,n,guard);return!chainAll&&(n==null||guard&&!(callbackable&&typeof n=="function"))?result:new lodashWrapper(result,chainAll)}}});lodash.VERSION="2.4.1";lodash.prototype.chain=wrapperChain;lodash.prototype.toString=wrapperToString;lodash.prototype.value=wrapperValueOf;lodash.prototype.valueOf=wrapperValueOf;forEach(["join","pop","shift"],function(methodName){var func=arrayRef[methodName];lodash.prototype[methodName]=function(){var chainAll=this.__chain__,result=func.apply(this.__wrapped__,arguments);return chainAll?new lodashWrapper(result,chainAll):result}});forEach(["push","reverse","sort","unshift"],function(methodName){var func=arrayRef[methodName];lodash.prototype[methodName]=function(){func.apply(this.__wrapped__,arguments);return this}});forEach(["concat","slice","splice"],function(methodName){var func=arrayRef[methodName];lodash.prototype[methodName]=function(){return new lodashWrapper(func.apply(this.__wrapped__,arguments),this.__chain__)}});return lodash}var _=runInContext();if(typeof define=="function"&&typeof define.amd=="object"&&define.amd){root._=_;define(function(){return _})}else if(freeExports&&freeModule){if(moduleExports){(freeModule.exports=_)._=_}else{freeExports._=_}}else{root._=_}}).call(this)}).call(this,typeof global!=="undefined"?global:typeof self!=="undefined"?self:typeof window!=="undefined"?window:{})},{}]},{},[1])(1)});
 (function () { var define = undefined; (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 !function() {
   var d3 = {
@@ -9435,13 +9435,18 @@ function createEdgePaths(selection, g, arrows) {
   util.applyTransition(svgPaths, g)
     .style("opacity", 1);
 
-  // Save DOM element in the path group, and set ID
+  // Save DOM element in the path group, and set ID and class
   svgPaths.each(function(e) {
+    var domEdge = d3.select(this);
     var edge = g.edge(e);
     edge.elem = this;
+
     if (edge.id) {
-      d3.select(this).attr("id", edge.id);
+      domEdge.attr("id", edge.id);
     }
+
+    util.applyClass(domEdge, edge["class"],
+      (domEdge.classed("update") ? "update " : "") + "edgePath");
   });
 
   svgPaths.selectAll("path.path")
@@ -10341,7 +10346,7 @@ function applyTransition(selection, g) {
 }
 
 },{"./lodash":21}],27:[function(require,module,exports){
-module.exports = "0.4.2";
+module.exports = "0.4.3";
 
 },{}],28:[function(require,module,exports){
 /*
@@ -21765,484 +21770,65 @@ process.chdir = function (dir) {
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],83:[function(require,module,exports){
-(function (global){
 //! moment.js
-//! version : 2.9.0
+//! version : 2.10.2
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
 
-(function (undefined) {
-    /************************************
-        Constants
-    ************************************/
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    global.moment = factory()
+}(this, function () { 'use strict';
 
-    var moment,
-        VERSION = '2.9.0',
-        // the global-scope this is NOT the global object in Node.js
-        globalScope = (typeof global !== 'undefined' && (typeof window === 'undefined' || window === global.window)) ? global : this,
-        oldGlobalMoment,
-        round = Math.round,
-        hasOwnProperty = Object.prototype.hasOwnProperty,
-        i,
+    var hookCallback;
 
-        YEAR = 0,
-        MONTH = 1,
-        DATE = 2,
-        HOUR = 3,
-        MINUTE = 4,
-        SECOND = 5,
-        MILLISECOND = 6,
-
-        // internal storage for locale config files
-        locales = {},
-
-        // extra moment internal properties (plugins register props here)
-        momentProperties = [],
-
-        // check for nodeJS
-        hasModule = (typeof module !== 'undefined' && module && module.exports),
-
-        // ASP.NET json date format regex
-        aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
-        aspNetTimeSpanJsonRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/,
-
-        // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
-        // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
-        isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
-
-        // format tokens
-        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g,
-        localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,
-
-        // parsing token regexes
-        parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
-        parseTokenOneToThreeDigits = /\d{1,3}/, // 0 - 999
-        parseTokenOneToFourDigits = /\d{1,4}/, // 0 - 9999
-        parseTokenOneToSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
-        parseTokenDigits = /\d+/, // nonzero number of digits
-        parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
-        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
-        parseTokenT = /T/i, // T (ISO separator)
-        parseTokenOffsetMs = /[\+\-]?\d+/, // 1234567890123
-        parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
-
-        //strict parsing regexes
-        parseTokenOneDigit = /\d/, // 0 - 9
-        parseTokenTwoDigits = /\d\d/, // 00 - 99
-        parseTokenThreeDigits = /\d{3}/, // 000 - 999
-        parseTokenFourDigits = /\d{4}/, // 0000 - 9999
-        parseTokenSixDigits = /[+-]?\d{6}/, // -999,999 - 999,999
-        parseTokenSignedNumber = /[+-]?\d+/, // -inf - inf
-
-        // iso 8601 regex
-        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
-        isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
-
-        isoFormat = 'YYYY-MM-DDTHH:mm:ssZ',
-
-        isoDates = [
-            ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
-            ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
-            ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
-            ['GGGG-[W]WW', /\d{4}-W\d{2}/],
-            ['YYYY-DDD', /\d{4}-\d{3}/]
-        ],
-
-        // iso time formats and regexes
-        isoTimes = [
-            ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
-            ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
-            ['HH:mm', /(T| )\d\d:\d\d/],
-            ['HH', /(T| )\d\d/]
-        ],
-
-        // timezone chunker '+10:00' > ['10', '00'] or '-1530' > ['-', '15', '30']
-        parseTimezoneChunker = /([\+\-]|\d\d)/gi,
-
-        // getter and setter names
-        proxyGettersAndSetters = 'Date|Hours|Minutes|Seconds|Milliseconds'.split('|'),
-        unitMillisecondFactors = {
-            'Milliseconds' : 1,
-            'Seconds' : 1e3,
-            'Minutes' : 6e4,
-            'Hours' : 36e5,
-            'Days' : 864e5,
-            'Months' : 2592e6,
-            'Years' : 31536e6
-        },
-
-        unitAliases = {
-            ms : 'millisecond',
-            s : 'second',
-            m : 'minute',
-            h : 'hour',
-            d : 'day',
-            D : 'date',
-            w : 'week',
-            W : 'isoWeek',
-            M : 'month',
-            Q : 'quarter',
-            y : 'year',
-            DDD : 'dayOfYear',
-            e : 'weekday',
-            E : 'isoWeekday',
-            gg: 'weekYear',
-            GG: 'isoWeekYear'
-        },
-
-        camelFunctions = {
-            dayofyear : 'dayOfYear',
-            isoweekday : 'isoWeekday',
-            isoweek : 'isoWeek',
-            weekyear : 'weekYear',
-            isoweekyear : 'isoWeekYear'
-        },
-
-        // format function strings
-        formatFunctions = {},
-
-        // default relative time thresholds
-        relativeTimeThresholds = {
-            s: 45,  // seconds to minute
-            m: 45,  // minutes to hour
-            h: 22,  // hours to day
-            d: 26,  // days to month
-            M: 11   // months to year
-        },
-
-        // tokens to ordinalize and pad
-        ordinalizeTokens = 'DDD w W M D d'.split(' '),
-        paddedTokens = 'M D H h m s w W'.split(' '),
-
-        formatTokenFunctions = {
-            M    : function () {
-                return this.month() + 1;
-            },
-            MMM  : function (format) {
-                return this.localeData().monthsShort(this, format);
-            },
-            MMMM : function (format) {
-                return this.localeData().months(this, format);
-            },
-            D    : function () {
-                return this.date();
-            },
-            DDD  : function () {
-                return this.dayOfYear();
-            },
-            d    : function () {
-                return this.day();
-            },
-            dd   : function (format) {
-                return this.localeData().weekdaysMin(this, format);
-            },
-            ddd  : function (format) {
-                return this.localeData().weekdaysShort(this, format);
-            },
-            dddd : function (format) {
-                return this.localeData().weekdays(this, format);
-            },
-            w    : function () {
-                return this.week();
-            },
-            W    : function () {
-                return this.isoWeek();
-            },
-            YY   : function () {
-                return leftZeroFill(this.year() % 100, 2);
-            },
-            YYYY : function () {
-                return leftZeroFill(this.year(), 4);
-            },
-            YYYYY : function () {
-                return leftZeroFill(this.year(), 5);
-            },
-            YYYYYY : function () {
-                var y = this.year(), sign = y >= 0 ? '+' : '-';
-                return sign + leftZeroFill(Math.abs(y), 6);
-            },
-            gg   : function () {
-                return leftZeroFill(this.weekYear() % 100, 2);
-            },
-            gggg : function () {
-                return leftZeroFill(this.weekYear(), 4);
-            },
-            ggggg : function () {
-                return leftZeroFill(this.weekYear(), 5);
-            },
-            GG   : function () {
-                return leftZeroFill(this.isoWeekYear() % 100, 2);
-            },
-            GGGG : function () {
-                return leftZeroFill(this.isoWeekYear(), 4);
-            },
-            GGGGG : function () {
-                return leftZeroFill(this.isoWeekYear(), 5);
-            },
-            e : function () {
-                return this.weekday();
-            },
-            E : function () {
-                return this.isoWeekday();
-            },
-            a    : function () {
-                return this.localeData().meridiem(this.hours(), this.minutes(), true);
-            },
-            A    : function () {
-                return this.localeData().meridiem(this.hours(), this.minutes(), false);
-            },
-            H    : function () {
-                return this.hours();
-            },
-            h    : function () {
-                return this.hours() % 12 || 12;
-            },
-            m    : function () {
-                return this.minutes();
-            },
-            s    : function () {
-                return this.seconds();
-            },
-            S    : function () {
-                return toInt(this.milliseconds() / 100);
-            },
-            SS   : function () {
-                return leftZeroFill(toInt(this.milliseconds() / 10), 2);
-            },
-            SSS  : function () {
-                return leftZeroFill(this.milliseconds(), 3);
-            },
-            SSSS : function () {
-                return leftZeroFill(this.milliseconds(), 3);
-            },
-            Z    : function () {
-                var a = this.utcOffset(),
-                    b = '+';
-                if (a < 0) {
-                    a = -a;
-                    b = '-';
-                }
-                return b + leftZeroFill(toInt(a / 60), 2) + ':' + leftZeroFill(toInt(a) % 60, 2);
-            },
-            ZZ   : function () {
-                var a = this.utcOffset(),
-                    b = '+';
-                if (a < 0) {
-                    a = -a;
-                    b = '-';
-                }
-                return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
-            },
-            z : function () {
-                return this.zoneAbbr();
-            },
-            zz : function () {
-                return this.zoneName();
-            },
-            x    : function () {
-                return this.valueOf();
-            },
-            X    : function () {
-                return this.unix();
-            },
-            Q : function () {
-                return this.quarter();
-            }
-        },
-
-        deprecations = {},
-
-        lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'],
-
-        updateInProgress = false;
-
-    // Pick the first defined of two or three arguments. dfl comes from
-    // default.
-    function dfl(a, b, c) {
-        switch (arguments.length) {
-            case 2: return a != null ? a : b;
-            case 3: return a != null ? a : b != null ? b : c;
-            default: throw new Error('Implement me');
-        }
+    function utils_hooks__hooks () {
+        return hookCallback.apply(null, arguments);
     }
 
-    function hasOwnProp(a, b) {
-        return hasOwnProperty.call(a, b);
+    // This is done to register the method called with moment()
+    // without creating circular dependencies.
+    function setHookCallback (callback) {
+        hookCallback = callback;
     }
 
     function defaultParsingFlags() {
-        // We need to deep clone this object, and es5 standard is not very
-        // helpful.
+        // We need to deep clone this object.
         return {
-            empty : false,
-            unusedTokens : [],
-            unusedInput : [],
-            overflow : -2,
-            charsLeftOver : 0,
-            nullInput : false,
-            invalidMonth : null,
-            invalidFormat : false,
+            empty           : false,
+            unusedTokens    : [],
+            unusedInput     : [],
+            overflow        : -2,
+            charsLeftOver   : 0,
+            nullInput       : false,
+            invalidMonth    : null,
+            invalidFormat   : false,
             userInvalidated : false,
-            iso: false
+            iso             : false
         };
     }
 
-    function printMsg(msg) {
-        if (moment.suppressDeprecationWarnings === false &&
-                typeof console !== 'undefined' && console.warn) {
-            console.warn('Deprecation warning: ' + msg);
+    function isArray(input) {
+        return Object.prototype.toString.call(input) === '[object Array]';
+    }
+
+    function isDate(input) {
+        return Object.prototype.toString.call(input) === '[object Date]' || input instanceof Date;
+    }
+
+    function map(arr, fn) {
+        var res = [], i;
+        for (i = 0; i < arr.length; ++i) {
+            res.push(fn(arr[i], i));
         }
+        return res;
     }
 
-    function deprecate(msg, fn) {
-        var firstTime = true;
-        return extend(function () {
-            if (firstTime) {
-                printMsg(msg);
-                firstTime = false;
-            }
-            return fn.apply(this, arguments);
-        }, fn);
+    function hasOwnProp(a, b) {
+        return Object.prototype.hasOwnProperty.call(a, b);
     }
-
-    function deprecateSimple(name, msg) {
-        if (!deprecations[name]) {
-            printMsg(msg);
-            deprecations[name] = true;
-        }
-    }
-
-    function padToken(func, count) {
-        return function (a) {
-            return leftZeroFill(func.call(this, a), count);
-        };
-    }
-    function ordinalizeToken(func, period) {
-        return function (a) {
-            return this.localeData().ordinal(func.call(this, a), period);
-        };
-    }
-
-    function monthDiff(a, b) {
-        // difference in months
-        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
-            // b is in (anchor - 1 month, anchor + 1 month)
-            anchor = a.clone().add(wholeMonthDiff, 'months'),
-            anchor2, adjust;
-
-        if (b - anchor < 0) {
-            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
-            // linear across the month
-            adjust = (b - anchor) / (anchor - anchor2);
-        } else {
-            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
-            // linear across the month
-            adjust = (b - anchor) / (anchor2 - anchor);
-        }
-
-        return -(wholeMonthDiff + adjust);
-    }
-
-    while (ordinalizeTokens.length) {
-        i = ordinalizeTokens.pop();
-        formatTokenFunctions[i + 'o'] = ordinalizeToken(formatTokenFunctions[i], i);
-    }
-    while (paddedTokens.length) {
-        i = paddedTokens.pop();
-        formatTokenFunctions[i + i] = padToken(formatTokenFunctions[i], 2);
-    }
-    formatTokenFunctions.DDDD = padToken(formatTokenFunctions.DDD, 3);
-
-
-    function meridiemFixWrap(locale, hour, meridiem) {
-        var isPm;
-
-        if (meridiem == null) {
-            // nothing to do
-            return hour;
-        }
-        if (locale.meridiemHour != null) {
-            return locale.meridiemHour(hour, meridiem);
-        } else if (locale.isPM != null) {
-            // Fallback
-            isPm = locale.isPM(meridiem);
-            if (isPm && hour < 12) {
-                hour += 12;
-            }
-            if (!isPm && hour === 12) {
-                hour = 0;
-            }
-            return hour;
-        } else {
-            // thie is not supposed to happen
-            return hour;
-        }
-    }
-
-    /************************************
-        Constructors
-    ************************************/
-
-    function Locale() {
-    }
-
-    // Moment prototype object
-    function Moment(config, skipOverflow) {
-        if (skipOverflow !== false) {
-            checkOverflow(config);
-        }
-        copyConfig(this, config);
-        this._d = new Date(+config._d);
-        // Prevent infinite loop in case updateOffset creates new moment
-        // objects.
-        if (updateInProgress === false) {
-            updateInProgress = true;
-            moment.updateOffset(this);
-            updateInProgress = false;
-        }
-    }
-
-    // Duration Constructor
-    function Duration(duration) {
-        var normalizedInput = normalizeObjectUnits(duration),
-            years = normalizedInput.year || 0,
-            quarters = normalizedInput.quarter || 0,
-            months = normalizedInput.month || 0,
-            weeks = normalizedInput.week || 0,
-            days = normalizedInput.day || 0,
-            hours = normalizedInput.hour || 0,
-            minutes = normalizedInput.minute || 0,
-            seconds = normalizedInput.second || 0,
-            milliseconds = normalizedInput.millisecond || 0;
-
-        // representation for dateAddRemove
-        this._milliseconds = +milliseconds +
-            seconds * 1e3 + // 1000
-            minutes * 6e4 + // 1000 * 60
-            hours * 36e5; // 1000 * 60 * 60
-        // Because of dateAddRemove treats 24 hours as different from a
-        // day when working around DST, we need to store them separately
-        this._days = +days +
-            weeks * 7;
-        // It is impossible translate months into days without knowing
-        // which months you are are talking about, so we have to store
-        // it separately.
-        this._months = +months +
-            quarters * 3 +
-            years * 12;
-
-        this._data = {};
-
-        this._locale = moment.localeData();
-
-        this._bubble();
-    }
-
-    /************************************
-        Helpers
-    ************************************/
-
 
     function extend(a, b) {
         for (var i in b) {
@@ -22261,6 +21847,44 @@ process.chdir = function (dir) {
 
         return a;
     }
+
+    function create_utc__createUTC (input, format, locale, strict) {
+        return createLocalOrUTC(input, format, locale, strict, true).utc();
+    }
+
+    function valid__isValid(m) {
+        if (m._isValid == null) {
+            m._isValid = !isNaN(m._d.getTime()) &&
+                m._pf.overflow < 0 &&
+                !m._pf.empty &&
+                !m._pf.invalidMonth &&
+                !m._pf.nullInput &&
+                !m._pf.invalidFormat &&
+                !m._pf.userInvalidated;
+
+            if (m._strict) {
+                m._isValid = m._isValid &&
+                    m._pf.charsLeftOver === 0 &&
+                    m._pf.unusedTokens.length === 0 &&
+                    m._pf.bigHour === undefined;
+            }
+        }
+        return m._isValid;
+    }
+
+    function valid__createInvalid (flags) {
+        var m = create_utc__createUTC(NaN);
+        if (flags != null) {
+            extend(m._pf, flags);
+        }
+        else {
+            m._pf.userInvalidated = true;
+        }
+
+        return m;
+    }
+
+    var momentProperties = utils_hooks__hooks.momentProperties = [];
 
     function copyConfig(to, from) {
         var i, prop, val;
@@ -22309,181 +21933,23 @@ process.chdir = function (dir) {
         return to;
     }
 
-    function absRound(number) {
-        if (number < 0) {
-            return Math.ceil(number);
-        } else {
-            return Math.floor(number);
+    var updateInProgress = false;
+
+    // Moment prototype object
+    function Moment(config) {
+        copyConfig(this, config);
+        this._d = new Date(+config._d);
+        // Prevent infinite loop in case updateOffset creates new moment
+        // objects.
+        if (updateInProgress === false) {
+            updateInProgress = true;
+            utils_hooks__hooks.updateOffset(this);
+            updateInProgress = false;
         }
     }
 
-    // left zero fill a number
-    // see http://jsperf.com/left-zero-filling for performance comparison
-    function leftZeroFill(number, targetLength, forceSign) {
-        var output = '' + Math.abs(number),
-            sign = number >= 0;
-
-        while (output.length < targetLength) {
-            output = '0' + output;
-        }
-        return (sign ? (forceSign ? '+' : '') : '-') + output;
-    }
-
-    function positiveMomentsDifference(base, other) {
-        var res = {milliseconds: 0, months: 0};
-
-        res.months = other.month() - base.month() +
-            (other.year() - base.year()) * 12;
-        if (base.clone().add(res.months, 'M').isAfter(other)) {
-            --res.months;
-        }
-
-        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
-
-        return res;
-    }
-
-    function momentsDifference(base, other) {
-        var res;
-        other = makeAs(other, base);
-        if (base.isBefore(other)) {
-            res = positiveMomentsDifference(base, other);
-        } else {
-            res = positiveMomentsDifference(other, base);
-            res.milliseconds = -res.milliseconds;
-            res.months = -res.months;
-        }
-
-        return res;
-    }
-
-    // TODO: remove 'name' arg after deprecation is removed
-    function createAdder(direction, name) {
-        return function (val, period) {
-            var dur, tmp;
-            //invert the arguments, but complain about it
-            if (period !== null && !isNaN(+period)) {
-                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period).');
-                tmp = val; val = period; period = tmp;
-            }
-
-            val = typeof val === 'string' ? +val : val;
-            dur = moment.duration(val, period);
-            addOrSubtractDurationFromMoment(this, dur, direction);
-            return this;
-        };
-    }
-
-    function addOrSubtractDurationFromMoment(mom, duration, isAdding, updateOffset) {
-        var milliseconds = duration._milliseconds,
-            days = duration._days,
-            months = duration._months;
-        updateOffset = updateOffset == null ? true : updateOffset;
-
-        if (milliseconds) {
-            mom._d.setTime(+mom._d + milliseconds * isAdding);
-        }
-        if (days) {
-            rawSetter(mom, 'Date', rawGetter(mom, 'Date') + days * isAdding);
-        }
-        if (months) {
-            rawMonthSetter(mom, rawGetter(mom, 'Month') + months * isAdding);
-        }
-        if (updateOffset) {
-            moment.updateOffset(mom, days || months);
-        }
-    }
-
-    // check if is an array
-    function isArray(input) {
-        return Object.prototype.toString.call(input) === '[object Array]';
-    }
-
-    function isDate(input) {
-        return Object.prototype.toString.call(input) === '[object Date]' ||
-            input instanceof Date;
-    }
-
-    // compare two arrays, return the number of differences
-    function compareArrays(array1, array2, dontConvert) {
-        var len = Math.min(array1.length, array2.length),
-            lengthDiff = Math.abs(array1.length - array2.length),
-            diffs = 0,
-            i;
-        for (i = 0; i < len; i++) {
-            if ((dontConvert && array1[i] !== array2[i]) ||
-                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
-                diffs++;
-            }
-        }
-        return diffs + lengthDiff;
-    }
-
-    function normalizeUnits(units) {
-        if (units) {
-            var lowered = units.toLowerCase().replace(/(.)s$/, '$1');
-            units = unitAliases[units] || camelFunctions[lowered] || lowered;
-        }
-        return units;
-    }
-
-    function normalizeObjectUnits(inputObject) {
-        var normalizedInput = {},
-            normalizedProp,
-            prop;
-
-        for (prop in inputObject) {
-            if (hasOwnProp(inputObject, prop)) {
-                normalizedProp = normalizeUnits(prop);
-                if (normalizedProp) {
-                    normalizedInput[normalizedProp] = inputObject[prop];
-                }
-            }
-        }
-
-        return normalizedInput;
-    }
-
-    function makeList(field) {
-        var count, setter;
-
-        if (field.indexOf('week') === 0) {
-            count = 7;
-            setter = 'day';
-        }
-        else if (field.indexOf('month') === 0) {
-            count = 12;
-            setter = 'month';
-        }
-        else {
-            return;
-        }
-
-        moment[field] = function (format, index) {
-            var i, getter,
-                method = moment._locale[field],
-                results = [];
-
-            if (typeof format === 'number') {
-                index = format;
-                format = undefined;
-            }
-
-            getter = function (i) {
-                var m = moment().utc().set(setter, i);
-                return method.call(moment._locale, m, format || '');
-            };
-
-            if (index != null) {
-                return getter(index);
-            }
-            else {
-                for (i = 0; i < count; i++) {
-                    results.push(getter(i));
-                }
-                return results;
-            }
-        };
+    function isMoment (obj) {
+        return obj instanceof Moment || (obj != null && hasOwnProp(obj, '_isAMomentObject'));
     }
 
     function toInt(argumentForCoercion) {
@@ -22501,64 +21967,25 @@ process.chdir = function (dir) {
         return value;
     }
 
-    function daysInMonth(year, month) {
-        return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-    }
-
-    function weeksInYear(year, dow, doy) {
-        return weekOfYear(moment([year, 11, 31 + dow - doy]), dow, doy).week;
-    }
-
-    function daysInYear(year) {
-        return isLeapYear(year) ? 366 : 365;
-    }
-
-    function isLeapYear(year) {
-        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-    }
-
-    function checkOverflow(m) {
-        var overflow;
-        if (m._a && m._pf.overflow === -2) {
-            overflow =
-                m._a[MONTH] < 0 || m._a[MONTH] > 11 ? MONTH :
-                m._a[DATE] < 1 || m._a[DATE] > daysInMonth(m._a[YEAR], m._a[MONTH]) ? DATE :
-                m._a[HOUR] < 0 || m._a[HOUR] > 24 ||
-                    (m._a[HOUR] === 24 && (m._a[MINUTE] !== 0 ||
-                                           m._a[SECOND] !== 0 ||
-                                           m._a[MILLISECOND] !== 0)) ? HOUR :
-                m._a[MINUTE] < 0 || m._a[MINUTE] > 59 ? MINUTE :
-                m._a[SECOND] < 0 || m._a[SECOND] > 59 ? SECOND :
-                m._a[MILLISECOND] < 0 || m._a[MILLISECOND] > 999 ? MILLISECOND :
-                -1;
-
-            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
-                overflow = DATE;
-            }
-
-            m._pf.overflow = overflow;
-        }
-    }
-
-    function isValid(m) {
-        if (m._isValid == null) {
-            m._isValid = !isNaN(m._d.getTime()) &&
-                m._pf.overflow < 0 &&
-                !m._pf.empty &&
-                !m._pf.invalidMonth &&
-                !m._pf.nullInput &&
-                !m._pf.invalidFormat &&
-                !m._pf.userInvalidated;
-
-            if (m._strict) {
-                m._isValid = m._isValid &&
-                    m._pf.charsLeftOver === 0 &&
-                    m._pf.unusedTokens.length === 0 &&
-                    m._pf.bigHour === undefined;
+    function compareArrays(array1, array2, dontConvert) {
+        var len = Math.min(array1.length, array2.length),
+            lengthDiff = Math.abs(array1.length - array2.length),
+            diffs = 0,
+            i;
+        for (i = 0; i < len; i++) {
+            if ((dontConvert && array1[i] !== array2[i]) ||
+                (!dontConvert && toInt(array1[i]) !== toInt(array2[i]))) {
+                diffs++;
             }
         }
-        return m._isValid;
+        return diffs + lengthDiff;
     }
+
+    function Locale() {
+    }
+
+    var locales = {};
+    var globalLocale;
 
     function normalizeLocale(key) {
         return key ? key.toLowerCase().replace('_', '-') : key;
@@ -22593,250 +22020,193 @@ process.chdir = function (dir) {
 
     function loadLocale(name) {
         var oldLocale = null;
-        if (!locales[name] && hasModule) {
+        // TODO: Find a better way to register and load all the locales in Node
+        if (!locales[name] && typeof module !== 'undefined' &&
+                module && module.exports) {
             try {
-                oldLocale = moment.locale();
+                oldLocale = globalLocale._abbr;
                 require('./locale/' + name);
-                // because defineLocale currently also sets the global locale, we want to undo that for lazy loaded locales
-                moment.locale(oldLocale);
+                // because defineLocale currently also sets the global locale, we
+                // want to undo that for lazy loaded locales
+                locale_locales__getSetGlobalLocale(oldLocale);
             } catch (e) { }
         }
         return locales[name];
     }
 
-    // Return a moment from input, that is local/utc/utcOffset equivalent to
-    // model.
-    function makeAs(input, model) {
-        var res, diff;
-        if (model._isUTC) {
-            res = model.clone();
-            diff = (moment.isMoment(input) || isDate(input) ?
-                    +input : +moment(input)) - (+res);
-            // Use low-level api, because this fn is low-level api.
-            res._d.setTime(+res._d + diff);
-            moment.updateOffset(res, false);
-            return res;
+    // This function will load locale and then set the global locale.  If
+    // no arguments are passed in, it will simply return the current global
+    // locale key.
+    function locale_locales__getSetGlobalLocale (key, values) {
+        var data;
+        if (key) {
+            if (typeof values === 'undefined') {
+                data = locale_locales__getLocale(key);
+            }
+            else {
+                data = defineLocale(key, values);
+            }
+
+            if (data) {
+                // moment.duration._locale = moment._locale = data;
+                globalLocale = data;
+            }
+        }
+
+        return globalLocale._abbr;
+    }
+
+    function defineLocale (name, values) {
+        if (values !== null) {
+            values.abbr = name;
+            if (!locales[name]) {
+                locales[name] = new Locale();
+            }
+            locales[name].set(values);
+
+            // backwards compat for now: also set the locale
+            locale_locales__getSetGlobalLocale(name);
+
+            return locales[name];
         } else {
-            return moment(input).local();
+            // useful for testing
+            delete locales[name];
+            return null;
         }
     }
 
-    /************************************
-        Locale
-    ************************************/
+    // returns locale data
+    function locale_locales__getLocale (key) {
+        var locale;
 
-
-    extend(Locale.prototype, {
-
-        set : function (config) {
-            var prop, i;
-            for (i in config) {
-                prop = config[i];
-                if (typeof prop === 'function') {
-                    this[i] = prop;
-                } else {
-                    this['_' + i] = prop;
-                }
-            }
-            // Lenient ordinal parsing accepts just a number in addition to
-            // number + (possibly) stuff coming from _ordinalParseLenient.
-            this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
-        },
-
-        _months : 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_'),
-        months : function (m) {
-            return this._months[m.month()];
-        },
-
-        _monthsShort : 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
-        monthsShort : function (m) {
-            return this._monthsShort[m.month()];
-        },
-
-        monthsParse : function (monthName, format, strict) {
-            var i, mom, regex;
-
-            if (!this._monthsParse) {
-                this._monthsParse = [];
-                this._longMonthsParse = [];
-                this._shortMonthsParse = [];
-            }
-
-            for (i = 0; i < 12; i++) {
-                // make the regex if we don't have it already
-                mom = moment.utc([2000, i]);
-                if (strict && !this._longMonthsParse[i]) {
-                    this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
-                    this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
-                }
-                if (!strict && !this._monthsParse[i]) {
-                    regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
-                    this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
-                }
-                // test the regex
-                if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
-                    return i;
-                } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
-                    return i;
-                } else if (!strict && this._monthsParse[i].test(monthName)) {
-                    return i;
-                }
-            }
-        },
-
-        _weekdays : 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
-        weekdays : function (m) {
-            return this._weekdays[m.day()];
-        },
-
-        _weekdaysShort : 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
-        weekdaysShort : function (m) {
-            return this._weekdaysShort[m.day()];
-        },
-
-        _weekdaysMin : 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_'),
-        weekdaysMin : function (m) {
-            return this._weekdaysMin[m.day()];
-        },
-
-        weekdaysParse : function (weekdayName) {
-            var i, mom, regex;
-
-            if (!this._weekdaysParse) {
-                this._weekdaysParse = [];
-            }
-
-            for (i = 0; i < 7; i++) {
-                // make the regex if we don't have it already
-                if (!this._weekdaysParse[i]) {
-                    mom = moment([2000, 1]).day(i);
-                    regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
-                    this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
-                }
-                // test the regex
-                if (this._weekdaysParse[i].test(weekdayName)) {
-                    return i;
-                }
-            }
-        },
-
-        _longDateFormat : {
-            LTS : 'h:mm:ss A',
-            LT : 'h:mm A',
-            L : 'MM/DD/YYYY',
-            LL : 'MMMM D, YYYY',
-            LLL : 'MMMM D, YYYY LT',
-            LLLL : 'dddd, MMMM D, YYYY LT'
-        },
-        longDateFormat : function (key) {
-            var output = this._longDateFormat[key];
-            if (!output && this._longDateFormat[key.toUpperCase()]) {
-                output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
-                    return val.slice(1);
-                });
-                this._longDateFormat[key] = output;
-            }
-            return output;
-        },
-
-        isPM : function (input) {
-            // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
-            // Using charAt should be more compatible.
-            return ((input + '').toLowerCase().charAt(0) === 'p');
-        },
-
-        _meridiemParse : /[ap]\.?m?\.?/i,
-        meridiem : function (hours, minutes, isLower) {
-            if (hours > 11) {
-                return isLower ? 'pm' : 'PM';
-            } else {
-                return isLower ? 'am' : 'AM';
-            }
-        },
-
-
-        _calendar : {
-            sameDay : '[Today at] LT',
-            nextDay : '[Tomorrow at] LT',
-            nextWeek : 'dddd [at] LT',
-            lastDay : '[Yesterday at] LT',
-            lastWeek : '[Last] dddd [at] LT',
-            sameElse : 'L'
-        },
-        calendar : function (key, mom, now) {
-            var output = this._calendar[key];
-            return typeof output === 'function' ? output.apply(mom, [now]) : output;
-        },
-
-        _relativeTime : {
-            future : 'in %s',
-            past : '%s ago',
-            s : 'a few seconds',
-            m : 'a minute',
-            mm : '%d minutes',
-            h : 'an hour',
-            hh : '%d hours',
-            d : 'a day',
-            dd : '%d days',
-            M : 'a month',
-            MM : '%d months',
-            y : 'a year',
-            yy : '%d years'
-        },
-
-        relativeTime : function (number, withoutSuffix, string, isFuture) {
-            var output = this._relativeTime[string];
-            return (typeof output === 'function') ?
-                output(number, withoutSuffix, string, isFuture) :
-                output.replace(/%d/i, number);
-        },
-
-        pastFuture : function (diff, output) {
-            var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
-            return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
-        },
-
-        ordinal : function (number) {
-            return this._ordinal.replace('%d', number);
-        },
-        _ordinal : '%d',
-        _ordinalParse : /\d{1,2}/,
-
-        preparse : function (string) {
-            return string;
-        },
-
-        postformat : function (string) {
-            return string;
-        },
-
-        week : function (mom) {
-            return weekOfYear(mom, this._week.dow, this._week.doy).week;
-        },
-
-        _week : {
-            dow : 0, // Sunday is the first day of the week.
-            doy : 6  // The week that contains Jan 1st is the first week of the year.
-        },
-
-        firstDayOfWeek : function () {
-            return this._week.dow;
-        },
-
-        firstDayOfYear : function () {
-            return this._week.doy;
-        },
-
-        _invalidDate: 'Invalid date',
-        invalidDate: function () {
-            return this._invalidDate;
+        if (key && key._locale && key._locale._abbr) {
+            key = key._locale._abbr;
         }
-    });
 
-    /************************************
-        Formatting
-    ************************************/
+        if (!key) {
+            return globalLocale;
+        }
 
+        if (!isArray(key)) {
+            //short-circuit everything else
+            locale = loadLocale(key);
+            if (locale) {
+                return locale;
+            }
+            key = [key];
+        }
+
+        return chooseLocale(key);
+    }
+
+    var aliases = {};
+
+    function addUnitAlias (unit, shorthand) {
+        var lowerCase = unit.toLowerCase();
+        aliases[lowerCase] = aliases[lowerCase + 's'] = aliases[shorthand] = unit;
+    }
+
+    function normalizeUnits(units) {
+        return typeof units === 'string' ? aliases[units] || aliases[units.toLowerCase()] : undefined;
+    }
+
+    function normalizeObjectUnits(inputObject) {
+        var normalizedInput = {},
+            normalizedProp,
+            prop;
+
+        for (prop in inputObject) {
+            if (hasOwnProp(inputObject, prop)) {
+                normalizedProp = normalizeUnits(prop);
+                if (normalizedProp) {
+                    normalizedInput[normalizedProp] = inputObject[prop];
+                }
+            }
+        }
+
+        return normalizedInput;
+    }
+
+    function makeGetSet (unit, keepTime) {
+        return function (value) {
+            if (value != null) {
+                get_set__set(this, unit, value);
+                utils_hooks__hooks.updateOffset(this, keepTime);
+                return this;
+            } else {
+                return get_set__get(this, unit);
+            }
+        };
+    }
+
+    function get_set__get (mom, unit) {
+        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
+    }
+
+    function get_set__set (mom, unit, value) {
+        return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+    }
+
+    // MOMENTS
+
+    function getSet (units, value) {
+        var unit;
+        if (typeof units === 'object') {
+            for (unit in units) {
+                this.set(unit, units[unit]);
+            }
+        } else {
+            units = normalizeUnits(units);
+            if (typeof this[units] === 'function') {
+                return this[units](value);
+            }
+        }
+        return this;
+    }
+
+    function zeroFill(number, targetLength, forceSign) {
+        var output = '' + Math.abs(number),
+            sign = number >= 0;
+
+        while (output.length < targetLength) {
+            output = '0' + output;
+        }
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
+    }
+
+    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|x|X|zz?|ZZ?|.)/g;
+
+    var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
+
+    var formatFunctions = {};
+
+    var formatTokenFunctions = {};
+
+    // token:    'M'
+    // padded:   ['MM', 2]
+    // ordinal:  'Mo'
+    // callback: function () { this.month() + 1 }
+    function addFormatToken (token, padded, ordinal, callback) {
+        var func = callback;
+        if (typeof callback === 'string') {
+            func = function () {
+                return this[callback]();
+            };
+        }
+        if (token) {
+            formatTokenFunctions[token] = func;
+        }
+        if (padded) {
+            formatTokenFunctions[padded[0]] = function () {
+                return zeroFill(func.apply(this, arguments), padded[1], padded[2]);
+            };
+        }
+        if (ordinal) {
+            formatTokenFunctions[ordinal] = function () {
+                return this.localeData().ordinal(func.apply(this, arguments), token);
+            };
+        }
+    }
 
     function removeFormattingTokens(input) {
         if (input.match(/\[[\s\S]/)) {
@@ -22897,302 +22267,547 @@ process.chdir = function (dir) {
         return format;
     }
 
+    var match1         = /\d/;            //       0 - 9
+    var match2         = /\d\d/;          //      00 - 99
+    var match3         = /\d{3}/;         //     000 - 999
+    var match4         = /\d{4}/;         //    0000 - 9999
+    var match6         = /[+-]?\d{6}/;    // -999999 - 999999
+    var match1to2      = /\d\d?/;         //       0 - 99
+    var match1to3      = /\d{1,3}/;       //       0 - 999
+    var match1to4      = /\d{1,4}/;       //       0 - 9999
+    var match1to6      = /[+-]?\d{1,6}/;  // -999999 - 999999
 
-    /************************************
-        Parsing
-    ************************************/
+    var matchUnsigned  = /\d+/;           //       0 - inf
+    var matchSigned    = /[+-]?\d+/;      //    -inf - inf
+
+    var matchOffset    = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
+
+    var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
+
+    // any word (or two) characters or numbers including two/three word month in arabic.
+    var matchWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i;
+
+    var regexes = {};
+
+    function addRegexToken (token, regex, strictRegex) {
+        regexes[token] = typeof regex === 'function' ? regex : function (isStrict) {
+            return (isStrict && strictRegex) ? strictRegex : regex;
+        };
+    }
+
+    function getParseRegexForToken (token, config) {
+        if (!hasOwnProp(regexes, token)) {
+            return new RegExp(unescapeFormat(token));
+        }
+
+        return regexes[token](config._strict, config._locale);
+    }
+
+    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
+    function unescapeFormat(s) {
+        return s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+            return p1 || p2 || p3 || p4;
+        }).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    var tokens = {};
+
+    function addParseToken (token, callback) {
+        var i, func = callback;
+        if (typeof token === 'string') {
+            token = [token];
+        }
+        if (typeof callback === 'number') {
+            func = function (input, array) {
+                array[callback] = toInt(input);
+            };
+        }
+        for (i = 0; i < token.length; i++) {
+            tokens[token[i]] = func;
+        }
+    }
+
+    function addWeekParseToken (token, callback) {
+        addParseToken(token, function (input, array, config, token) {
+            config._w = config._w || {};
+            callback(input, config._w, config, token);
+        });
+    }
+
+    function addTimeToArrayFromToken(token, input, config) {
+        if (input != null && hasOwnProp(tokens, token)) {
+            tokens[token](input, config._a, config, token);
+        }
+    }
+
+    var YEAR = 0;
+    var MONTH = 1;
+    var DATE = 2;
+    var HOUR = 3;
+    var MINUTE = 4;
+    var SECOND = 5;
+    var MILLISECOND = 6;
+
+    function daysInMonth(year, month) {
+        return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    }
+
+    // FORMATTING
+
+    addFormatToken('M', ['MM', 2], 'Mo', function () {
+        return this.month() + 1;
+    });
+
+    addFormatToken('MMM', 0, 0, function (format) {
+        return this.localeData().monthsShort(this, format);
+    });
+
+    addFormatToken('MMMM', 0, 0, function (format) {
+        return this.localeData().months(this, format);
+    });
+
+    // ALIASES
+
+    addUnitAlias('month', 'M');
+
+    // PARSING
+
+    addRegexToken('M',    match1to2);
+    addRegexToken('MM',   match1to2, match2);
+    addRegexToken('MMM',  matchWord);
+    addRegexToken('MMMM', matchWord);
+
+    addParseToken(['M', 'MM'], function (input, array) {
+        array[MONTH] = toInt(input) - 1;
+    });
+
+    addParseToken(['MMM', 'MMMM'], function (input, array, config, token) {
+        var month = config._locale.monthsParse(input, token, config._strict);
+        // if we didn't find a month name, mark the date as invalid.
+        if (month != null) {
+            array[MONTH] = month;
+        } else {
+            config._pf.invalidMonth = input;
+        }
+    });
+
+    // LOCALES
+
+    var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
+    function localeMonths (m) {
+        return this._months[m.month()];
+    }
+
+    var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
+    function localeMonthsShort (m) {
+        return this._monthsShort[m.month()];
+    }
+
+    function localeMonthsParse (monthName, format, strict) {
+        var i, mom, regex;
+
+        if (!this._monthsParse) {
+            this._monthsParse = [];
+            this._longMonthsParse = [];
+            this._shortMonthsParse = [];
+        }
+
+        for (i = 0; i < 12; i++) {
+            // make the regex if we don't have it already
+            mom = create_utc__createUTC([2000, i]);
+            if (strict && !this._longMonthsParse[i]) {
+                this._longMonthsParse[i] = new RegExp('^' + this.months(mom, '').replace('.', '') + '$', 'i');
+                this._shortMonthsParse[i] = new RegExp('^' + this.monthsShort(mom, '').replace('.', '') + '$', 'i');
+            }
+            if (!strict && !this._monthsParse[i]) {
+                regex = '^' + this.months(mom, '') + '|^' + this.monthsShort(mom, '');
+                this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
+            }
+            // test the regex
+            if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+                return i;
+            } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+                return i;
+            } else if (!strict && this._monthsParse[i].test(monthName)) {
+                return i;
+            }
+        }
+    }
+
+    // MOMENTS
+
+    function setMonth (mom, value) {
+        var dayOfMonth;
+
+        // TODO: Move this out of here!
+        if (typeof value === 'string') {
+            value = mom.localeData().monthsParse(value);
+            // TODO: Another silent failure?
+            if (typeof value !== 'number') {
+                return mom;
+            }
+        }
+
+        dayOfMonth = Math.min(mom.date(), daysInMonth(mom.year(), value));
+        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
+        return mom;
+    }
+
+    function getSetMonth (value) {
+        if (value != null) {
+            setMonth(this, value);
+            utils_hooks__hooks.updateOffset(this, true);
+            return this;
+        } else {
+            return get_set__get(this, 'Month');
+        }
+    }
+
+    function getDaysInMonth () {
+        return daysInMonth(this.year(), this.month());
+    }
+
+    function checkOverflow (m) {
+        var overflow;
+        var a = m._a;
+
+        if (a && m._pf.overflow === -2) {
+            overflow =
+                a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
+                a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
+                a[HOUR]        < 0 || a[HOUR]        > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
+                a[MINUTE]      < 0 || a[MINUTE]      > 59  ? MINUTE :
+                a[SECOND]      < 0 || a[SECOND]      > 59  ? SECOND :
+                a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
+                -1;
+
+            if (m._pf._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
+                overflow = DATE;
+            }
+
+            m._pf.overflow = overflow;
+        }
+
+        return m;
+    }
+
+    function warn(msg) {
+        if (utils_hooks__hooks.suppressDeprecationWarnings === false && typeof console !== 'undefined' && console.warn) {
+            console.warn('Deprecation warning: ' + msg);
+        }
+    }
+
+    function deprecate(msg, fn) {
+        var firstTime = true;
+        return extend(function () {
+            if (firstTime) {
+                warn(msg);
+                firstTime = false;
+            }
+            return fn.apply(this, arguments);
+        }, fn);
+    }
+
+    var deprecations = {};
+
+    function deprecateSimple(name, msg) {
+        if (!deprecations[name]) {
+            warn(msg);
+            deprecations[name] = true;
+        }
+    }
+
+    utils_hooks__hooks.suppressDeprecationWarnings = false;
+
+    var from_string__isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+
+    var isoDates = [
+        ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
+        ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
+        ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
+        ['GGGG-[W]WW', /\d{4}-W\d{2}/],
+        ['YYYY-DDD', /\d{4}-\d{3}/]
+    ];
+
+    // iso time formats and regexes
+    var isoTimes = [
+        ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
+        ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
+        ['HH:mm', /(T| )\d\d:\d\d/],
+        ['HH', /(T| )\d\d/]
+    ];
+
+    var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
+
+    // date from iso format
+    function configFromISO(config) {
+        var i, l,
+            string = config._i,
+            match = from_string__isoRegex.exec(string);
+
+        if (match) {
+            config._pf.iso = true;
+            for (i = 0, l = isoDates.length; i < l; i++) {
+                if (isoDates[i][1].exec(string)) {
+                    // match[5] should be 'T' or undefined
+                    config._f = isoDates[i][0] + (match[6] || ' ');
+                    break;
+                }
+            }
+            for (i = 0, l = isoTimes.length; i < l; i++) {
+                if (isoTimes[i][1].exec(string)) {
+                    config._f += isoTimes[i][0];
+                    break;
+                }
+            }
+            if (string.match(matchOffset)) {
+                config._f += 'Z';
+            }
+            configFromStringAndFormat(config);
+        } else {
+            config._isValid = false;
+        }
+    }
+
+    // date from iso format or fallback
+    function configFromString(config) {
+        var matched = aspNetJsonRegex.exec(config._i);
+
+        if (matched !== null) {
+            config._d = new Date(+matched[1]);
+            return;
+        }
+
+        configFromISO(config);
+        if (config._isValid === false) {
+            delete config._isValid;
+            utils_hooks__hooks.createFromInputFallback(config);
+        }
+    }
+
+    utils_hooks__hooks.createFromInputFallback = deprecate(
+        'moment construction falls back to js Date. This is ' +
+        'discouraged and will be removed in upcoming major ' +
+        'release. Please refer to ' +
+        'https://github.com/moment/moment/issues/1407 for more info.',
+        function (config) {
+            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
+        }
+    );
+
+    function createDate (y, m, d, h, M, s, ms) {
+        //can't just apply() to create a date:
+        //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
+        var date = new Date(y, m, d, h, M, s, ms);
+
+        //the date constructor doesn't accept years < 1970
+        if (y < 1970) {
+            date.setFullYear(y);
+        }
+        return date;
+    }
+
+    function createUTCDate (y) {
+        var date = new Date(Date.UTC.apply(null, arguments));
+        if (y < 1970) {
+            date.setUTCFullYear(y);
+        }
+        return date;
+    }
+
+    addFormatToken(0, ['YY', 2], 0, function () {
+        return this.year() % 100;
+    });
+
+    addFormatToken(0, ['YYYY',   4],       0, 'year');
+    addFormatToken(0, ['YYYYY',  5],       0, 'year');
+    addFormatToken(0, ['YYYYYY', 6, true], 0, 'year');
+
+    // ALIASES
+
+    addUnitAlias('year', 'y');
+
+    // PARSING
+
+    addRegexToken('Y',      matchSigned);
+    addRegexToken('YY',     match1to2, match2);
+    addRegexToken('YYYY',   match1to4, match4);
+    addRegexToken('YYYYY',  match1to6, match6);
+    addRegexToken('YYYYYY', match1to6, match6);
+
+    addParseToken(['YYYY', 'YYYYY', 'YYYYYY'], YEAR);
+    addParseToken('YY', function (input, array) {
+        array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
+    });
+
+    // HELPERS
+
+    function daysInYear(year) {
+        return isLeapYear(year) ? 366 : 365;
+    }
+
+    function isLeapYear(year) {
+        return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    }
+
+    // HOOKS
+
+    utils_hooks__hooks.parseTwoDigitYear = function (input) {
+        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
+    };
+
+    // MOMENTS
+
+    var getSetYear = makeGetSet('FullYear', false);
+
+    function getIsLeapYear () {
+        return isLeapYear(this.year());
+    }
+
+    addFormatToken('w', ['ww', 2], 'wo', 'week');
+    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+
+    // ALIASES
+
+    addUnitAlias('week', 'w');
+    addUnitAlias('isoWeek', 'W');
+
+    // PARSING
+
+    addRegexToken('w',  match1to2);
+    addRegexToken('ww', match1to2, match2);
+    addRegexToken('W',  match1to2);
+    addRegexToken('WW', match1to2, match2);
+
+    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
+        week[token.substr(0, 1)] = toInt(input);
+    });
+
+    // HELPERS
+
+    // firstDayOfWeek       0 = sun, 6 = sat
+    //                      the day of the week that starts the week
+    //                      (usually sunday or monday)
+    // firstDayOfWeekOfYear 0 = sun, 6 = sat
+    //                      the first week is the week that contains the first
+    //                      of this day of the week
+    //                      (eg. ISO weeks use thursday (4))
+    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
+        var end = firstDayOfWeekOfYear - firstDayOfWeek,
+            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
+            adjustedMoment;
 
 
-    // get the regex to find the next token
-    function getParseRegexForToken(token, config) {
-        var a, strict = config._strict;
-        switch (token) {
-        case 'Q':
-            return parseTokenOneDigit;
-        case 'DDDD':
-            return parseTokenThreeDigits;
-        case 'YYYY':
-        case 'GGGG':
-        case 'gggg':
-            return strict ? parseTokenFourDigits : parseTokenOneToFourDigits;
-        case 'Y':
-        case 'G':
-        case 'g':
-            return parseTokenSignedNumber;
-        case 'YYYYYY':
-        case 'YYYYY':
-        case 'GGGGG':
-        case 'ggggg':
-            return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
-        case 'S':
-            if (strict) {
-                return parseTokenOneDigit;
-            }
-            /* falls through */
-        case 'SS':
-            if (strict) {
-                return parseTokenTwoDigits;
-            }
-            /* falls through */
-        case 'SSS':
-            if (strict) {
-                return parseTokenThreeDigits;
-            }
-            /* falls through */
-        case 'DDD':
-            return parseTokenOneToThreeDigits;
-        case 'MMM':
-        case 'MMMM':
-        case 'dd':
-        case 'ddd':
-        case 'dddd':
-            return parseTokenWord;
-        case 'a':
-        case 'A':
-            return config._locale._meridiemParse;
-        case 'x':
-            return parseTokenOffsetMs;
-        case 'X':
-            return parseTokenTimestampMs;
-        case 'Z':
-        case 'ZZ':
-            return parseTokenTimezone;
-        case 'T':
-            return parseTokenT;
-        case 'SSSS':
-            return parseTokenDigits;
-        case 'MM':
-        case 'DD':
-        case 'YY':
-        case 'GG':
-        case 'gg':
-        case 'HH':
-        case 'hh':
-        case 'mm':
-        case 'ss':
-        case 'ww':
-        case 'WW':
-            return strict ? parseTokenTwoDigits : parseTokenOneOrTwoDigits;
-        case 'M':
-        case 'D':
-        case 'd':
-        case 'H':
-        case 'h':
-        case 'm':
-        case 's':
-        case 'w':
-        case 'W':
-        case 'e':
-        case 'E':
-            return parseTokenOneOrTwoDigits;
-        case 'Do':
-            return strict ? config._locale._ordinalParse : config._locale._ordinalParseLenient;
-        default :
-            a = new RegExp(regexpEscape(unescapeFormat(token.replace('\\', '')), 'i'));
+        if (daysToDayOfWeek > end) {
+            daysToDayOfWeek -= 7;
+        }
+
+        if (daysToDayOfWeek < end - 7) {
+            daysToDayOfWeek += 7;
+        }
+
+        adjustedMoment = local__createLocal(mom).add(daysToDayOfWeek, 'd');
+        return {
+            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
+            year: adjustedMoment.year()
+        };
+    }
+
+    // LOCALES
+
+    function localeWeek (mom) {
+        return weekOfYear(mom, this._week.dow, this._week.doy).week;
+    }
+
+    var defaultLocaleWeek = {
+        dow : 0, // Sunday is the first day of the week.
+        doy : 6  // The week that contains Jan 1st is the first week of the year.
+    };
+
+    function localeFirstDayOfWeek () {
+        return this._week.dow;
+    }
+
+    function localeFirstDayOfYear () {
+        return this._week.doy;
+    }
+
+    // MOMENTS
+
+    function getSetWeek (input) {
+        var week = this.localeData().week(this);
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    function getSetISOWeek (input) {
+        var week = weekOfYear(this, 1, 4).week;
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
+
+    // ALIASES
+
+    addUnitAlias('dayOfYear', 'DDD');
+
+    // PARSING
+
+    addRegexToken('DDD',  match1to3);
+    addRegexToken('DDDD', match3);
+    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
+        config._dayOfYear = toInt(input);
+    });
+
+    // HELPERS
+
+    //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
+    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
+        var d = createUTCDate(year, 0, 1).getUTCDay();
+        var daysToAdd;
+        var dayOfYear;
+
+        d = d === 0 ? 7 : d;
+        weekday = weekday != null ? weekday : firstDayOfWeek;
+        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
+        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
+
+        return {
+            year      : dayOfYear > 0 ? year      : year - 1,
+            dayOfYear : dayOfYear > 0 ? dayOfYear : daysInYear(year - 1) + dayOfYear
+        };
+    }
+
+    // MOMENTS
+
+    function getSetDayOfYear (input) {
+        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
+        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+    }
+
+    // Pick the first defined of two or three arguments.
+    function defaults(a, b, c) {
+        if (a != null) {
             return a;
         }
-    }
-
-    function utcOffsetFromString(string) {
-        string = string || '';
-        var possibleTzMatches = (string.match(parseTokenTimezone) || []),
-            tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
-            parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
-            minutes = +(parts[1] * 60) + toInt(parts[2]);
-
-        return parts[0] === '+' ? minutes : -minutes;
-    }
-
-    // function to convert string input to date
-    function addTimeToArrayFromToken(token, input, config) {
-        var a, datePartArray = config._a;
-
-        switch (token) {
-        // QUARTER
-        case 'Q':
-            if (input != null) {
-                datePartArray[MONTH] = (toInt(input) - 1) * 3;
-            }
-            break;
-        // MONTH
-        case 'M' : // fall through to MM
-        case 'MM' :
-            if (input != null) {
-                datePartArray[MONTH] = toInt(input) - 1;
-            }
-            break;
-        case 'MMM' : // fall through to MMMM
-        case 'MMMM' :
-            a = config._locale.monthsParse(input, token, config._strict);
-            // if we didn't find a month name, mark the date as invalid.
-            if (a != null) {
-                datePartArray[MONTH] = a;
-            } else {
-                config._pf.invalidMonth = input;
-            }
-            break;
-        // DAY OF MONTH
-        case 'D' : // fall through to DD
-        case 'DD' :
-            if (input != null) {
-                datePartArray[DATE] = toInt(input);
-            }
-            break;
-        case 'Do' :
-            if (input != null) {
-                datePartArray[DATE] = toInt(parseInt(
-                            input.match(/\d{1,2}/)[0], 10));
-            }
-            break;
-        // DAY OF YEAR
-        case 'DDD' : // fall through to DDDD
-        case 'DDDD' :
-            if (input != null) {
-                config._dayOfYear = toInt(input);
-            }
-
-            break;
-        // YEAR
-        case 'YY' :
-            datePartArray[YEAR] = moment.parseTwoDigitYear(input);
-            break;
-        case 'YYYY' :
-        case 'YYYYY' :
-        case 'YYYYYY' :
-            datePartArray[YEAR] = toInt(input);
-            break;
-        // AM / PM
-        case 'a' : // fall through to A
-        case 'A' :
-            config._meridiem = input;
-            // config._isPm = config._locale.isPM(input);
-            break;
-        // HOUR
-        case 'h' : // fall through to hh
-        case 'hh' :
-            config._pf.bigHour = true;
-            /* falls through */
-        case 'H' : // fall through to HH
-        case 'HH' :
-            datePartArray[HOUR] = toInt(input);
-            break;
-        // MINUTE
-        case 'm' : // fall through to mm
-        case 'mm' :
-            datePartArray[MINUTE] = toInt(input);
-            break;
-        // SECOND
-        case 's' : // fall through to ss
-        case 'ss' :
-            datePartArray[SECOND] = toInt(input);
-            break;
-        // MILLISECOND
-        case 'S' :
-        case 'SS' :
-        case 'SSS' :
-        case 'SSSS' :
-            datePartArray[MILLISECOND] = toInt(('0.' + input) * 1000);
-            break;
-        // UNIX OFFSET (MILLISECONDS)
-        case 'x':
-            config._d = new Date(toInt(input));
-            break;
-        // UNIX TIMESTAMP WITH MS
-        case 'X':
-            config._d = new Date(parseFloat(input) * 1000);
-            break;
-        // TIMEZONE
-        case 'Z' : // fall through to ZZ
-        case 'ZZ' :
-            config._useUTC = true;
-            config._tzm = utcOffsetFromString(input);
-            break;
-        // WEEKDAY - human
-        case 'dd':
-        case 'ddd':
-        case 'dddd':
-            a = config._locale.weekdaysParse(input);
-            // if we didn't get a weekday name, mark the date as invalid
-            if (a != null) {
-                config._w = config._w || {};
-                config._w['d'] = a;
-            } else {
-                config._pf.invalidWeekday = input;
-            }
-            break;
-        // WEEK, WEEK DAY - numeric
-        case 'w':
-        case 'ww':
-        case 'W':
-        case 'WW':
-        case 'd':
-        case 'e':
-        case 'E':
-            token = token.substr(0, 1);
-            /* falls through */
-        case 'gggg':
-        case 'GGGG':
-        case 'GGGGG':
-            token = token.substr(0, 2);
-            if (input) {
-                config._w = config._w || {};
-                config._w[token] = toInt(input);
-            }
-            break;
-        case 'gg':
-        case 'GG':
-            config._w = config._w || {};
-            config._w[token] = moment.parseTwoDigitYear(input);
+        if (b != null) {
+            return b;
         }
+        return c;
     }
 
-    function dayOfYearFromWeekInfo(config) {
-        var w, weekYear, week, weekday, dow, doy, temp;
-
-        w = config._w;
-        if (w.GG != null || w.W != null || w.E != null) {
-            dow = 1;
-            doy = 4;
-
-            // TODO: We need to take the current isoWeekYear, but that depends on
-            // how we interpret now (local, utc, fixed offset). So create
-            // a now version of current config (take local/utc/offset flags, and
-            // create now).
-            weekYear = dfl(w.GG, config._a[YEAR], weekOfYear(moment(), 1, 4).year);
-            week = dfl(w.W, 1);
-            weekday = dfl(w.E, 1);
-        } else {
-            dow = config._locale._week.dow;
-            doy = config._locale._week.doy;
-
-            weekYear = dfl(w.gg, config._a[YEAR], weekOfYear(moment(), dow, doy).year);
-            week = dfl(w.w, 1);
-
-            if (w.d != null) {
-                // weekday -- low day numbers are considered next week
-                weekday = w.d;
-                if (weekday < dow) {
-                    ++week;
-                }
-            } else if (w.e != null) {
-                // local weekday -- counting starts from begining of week
-                weekday = w.e + dow;
-            } else {
-                // default to begining of week
-                weekday = dow;
-            }
+    function currentDateArray(config) {
+        var now = new Date();
+        if (config._useUTC) {
+            return [now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()];
         }
-        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
-
-        config._a[YEAR] = temp.year;
-        config._dayOfYear = temp.dayOfYear;
+        return [now.getFullYear(), now.getMonth(), now.getDate()];
     }
 
     // convert an array to a date.
     // the array should mirror the parameters below
     // note: all values past the year are optional and will default to the lowest possible value.
     // [year, month, day , hour, minute, second, millisecond]
-    function dateFromConfig(config) {
+    function configFromArray (config) {
         var i, date, input = [], currentDate, yearToUse;
 
         if (config._d) {
@@ -23208,13 +22823,13 @@ process.chdir = function (dir) {
 
         //if the day of the year is set, figure out what it is
         if (config._dayOfYear) {
-            yearToUse = dfl(config._a[YEAR], currentDate[YEAR]);
+            yearToUse = defaults(config._a[YEAR], currentDate[YEAR]);
 
             if (config._dayOfYear > daysInYear(yearToUse)) {
                 config._pf._overflowDayOfYear = true;
             }
 
-            date = makeUTCDate(yearToUse, 0, config._dayOfYear);
+            date = createUTCDate(yearToUse, 0, config._dayOfYear);
             config._a[MONTH] = date.getUTCMonth();
             config._a[DATE] = date.getUTCDate();
         }
@@ -23242,7 +22857,7 @@ process.chdir = function (dir) {
             config._a[HOUR] = 0;
         }
 
-        config._d = (config._useUTC ? makeUTCDate : makeDate).apply(null, input);
+        config._d = (config._useUTC ? createUTCDate : createDate).apply(null, input);
         // Apply timezone offset from input. The actual utcOffset can be changed
         // with parseZone.
         if (config._tzm != null) {
@@ -23254,44 +22869,55 @@ process.chdir = function (dir) {
         }
     }
 
-    function dateFromObject(config) {
-        var normalizedInput;
+    function dayOfYearFromWeekInfo(config) {
+        var w, weekYear, week, weekday, dow, doy, temp;
 
-        if (config._d) {
-            return;
-        }
+        w = config._w;
+        if (w.GG != null || w.W != null || w.E != null) {
+            dow = 1;
+            doy = 4;
 
-        normalizedInput = normalizeObjectUnits(config._i);
-        config._a = [
-            normalizedInput.year,
-            normalizedInput.month,
-            normalizedInput.day || normalizedInput.date,
-            normalizedInput.hour,
-            normalizedInput.minute,
-            normalizedInput.second,
-            normalizedInput.millisecond
-        ];
-
-        dateFromConfig(config);
-    }
-
-    function currentDateArray(config) {
-        var now = new Date();
-        if (config._useUTC) {
-            return [
-                now.getUTCFullYear(),
-                now.getUTCMonth(),
-                now.getUTCDate()
-            ];
+            // TODO: We need to take the current isoWeekYear, but that depends on
+            // how we interpret now (local, utc, fixed offset). So create
+            // a now version of current config (take local/utc/offset flags, and
+            // create now).
+            weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(local__createLocal(), 1, 4).year);
+            week = defaults(w.W, 1);
+            weekday = defaults(w.E, 1);
         } else {
-            return [now.getFullYear(), now.getMonth(), now.getDate()];
+            dow = config._locale._week.dow;
+            doy = config._locale._week.doy;
+
+            weekYear = defaults(w.gg, config._a[YEAR], weekOfYear(local__createLocal(), dow, doy).year);
+            week = defaults(w.w, 1);
+
+            if (w.d != null) {
+                // weekday -- low day numbers are considered next week
+                weekday = w.d;
+                if (weekday < dow) {
+                    ++week;
+                }
+            } else if (w.e != null) {
+                // local weekday -- counting starts from begining of week
+                weekday = w.e + dow;
+            } else {
+                // default to begining of week
+                weekday = dow;
+            }
         }
+        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
+
+        config._a[YEAR] = temp.year;
+        config._dayOfYear = temp.dayOfYear;
     }
+
+    utils_hooks__hooks.ISO_8601 = function () {};
 
     // date from string and format string
-    function makeDateFromStringAndFormat(config) {
-        if (config._f === moment.ISO_8601) {
-            parseISO(config);
+    function configFromStringAndFormat(config) {
+        // TODO: Move this to another part of the creation flow to prevent circular deps
+        if (config._f === utils_hooks__hooks.ISO_8601) {
+            configFromISO(config);
             return;
         }
 
@@ -23343,25 +22969,39 @@ process.chdir = function (dir) {
             config._pf.bigHour = undefined;
         }
         // handle meridiem
-        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR],
-                config._meridiem);
-        dateFromConfig(config);
+        config._a[HOUR] = meridiemFixWrap(config._locale, config._a[HOUR], config._meridiem);
+
+        configFromArray(config);
         checkOverflow(config);
     }
 
-    function unescapeFormat(s) {
-        return s.replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
-            return p1 || p2 || p3 || p4;
-        });
+
+    function meridiemFixWrap (locale, hour, meridiem) {
+        var isPm;
+
+        if (meridiem == null) {
+            // nothing to do
+            return hour;
+        }
+        if (locale.meridiemHour != null) {
+            return locale.meridiemHour(hour, meridiem);
+        } else if (locale.isPM != null) {
+            // Fallback
+            isPm = locale.isPM(meridiem);
+            if (isPm && hour < 12) {
+                hour += 12;
+            }
+            if (!isPm && hour === 12) {
+                hour = 0;
+            }
+            return hour;
+        } else {
+            // this is not supposed to happen
+            return hour;
+        }
     }
 
-    // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
-    function regexpEscape(s) {
-        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-    }
-
-    // date from string and array of format strings
-    function makeDateFromStringAndArray(config) {
+    function configFromStringAndArray(config) {
         var tempConfig,
             bestMoment,
 
@@ -23383,9 +23023,9 @@ process.chdir = function (dir) {
             }
             tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
-            makeDateFromStringAndFormat(tempConfig);
+            configFromStringAndFormat(tempConfig);
 
-            if (!isValid(tempConfig)) {
+            if (!valid__isValid(tempConfig)) {
                 continue;
             }
 
@@ -23406,97 +23046,937 @@ process.chdir = function (dir) {
         extend(config, bestMoment || tempConfig);
     }
 
-    // date from iso format
-    function parseISO(config) {
-        var i, l,
-            string = config._i,
-            match = isoRegex.exec(string);
+    function configFromObject(config) {
+        if (config._d) {
+            return;
+        }
 
-        if (match) {
-            config._pf.iso = true;
-            for (i = 0, l = isoDates.length; i < l; i++) {
-                if (isoDates[i][1].exec(string)) {
-                    // match[5] should be 'T' or undefined
-                    config._f = isoDates[i][0] + (match[6] || ' ');
-                    break;
-                }
-            }
-            for (i = 0, l = isoTimes.length; i < l; i++) {
-                if (isoTimes[i][1].exec(string)) {
-                    config._f += isoTimes[i][0];
-                    break;
-                }
-            }
-            if (string.match(parseTokenTimezone)) {
-                config._f += 'Z';
-            }
-            makeDateFromStringAndFormat(config);
+        var i = normalizeObjectUnits(config._i);
+        config._a = [i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond];
+
+        configFromArray(config);
+    }
+
+    function createFromConfig (config) {
+        var input = config._i,
+            format = config._f,
+            res;
+
+        config._locale = config._locale || locale_locales__getLocale(config._l);
+
+        if (input === null || (format === undefined && input === '')) {
+            return valid__createInvalid({nullInput: true});
+        }
+
+        if (typeof input === 'string') {
+            config._i = input = config._locale.preparse(input);
+        }
+
+        if (isMoment(input)) {
+            return new Moment(checkOverflow(input));
+        } else if (isArray(format)) {
+            configFromStringAndArray(config);
+        } else if (format) {
+            configFromStringAndFormat(config);
         } else {
-            config._isValid = false;
+            configFromInput(config);
         }
-    }
 
-    // date from iso format or fallback
-    function makeDateFromString(config) {
-        parseISO(config);
-        if (config._isValid === false) {
-            delete config._isValid;
-            moment.createFromInputFallback(config);
+        res = new Moment(checkOverflow(config));
+        if (res._nextDay) {
+            // Adding is smart enough around DST
+            res.add(1, 'd');
+            res._nextDay = undefined;
         }
-    }
 
-    function map(arr, fn) {
-        var res = [], i;
-        for (i = 0; i < arr.length; ++i) {
-            res.push(fn(arr[i], i));
-        }
         return res;
     }
 
-    function makeDateFromInput(config) {
-        var input = config._i, matched;
+    function configFromInput(config) {
+        var input = config._i;
         if (input === undefined) {
             config._d = new Date();
         } else if (isDate(input)) {
             config._d = new Date(+input);
-        } else if ((matched = aspNetJsonRegex.exec(input)) !== null) {
-            config._d = new Date(+matched[1]);
         } else if (typeof input === 'string') {
-            makeDateFromString(config);
+            configFromString(config);
         } else if (isArray(input)) {
             config._a = map(input.slice(0), function (obj) {
                 return parseInt(obj, 10);
             });
-            dateFromConfig(config);
+            configFromArray(config);
         } else if (typeof(input) === 'object') {
-            dateFromObject(config);
+            configFromObject(config);
         } else if (typeof(input) === 'number') {
             // from milliseconds
             config._d = new Date(input);
         } else {
-            moment.createFromInputFallback(config);
+            utils_hooks__hooks.createFromInputFallback(config);
         }
     }
 
-    function makeDate(y, m, d, h, M, s, ms) {
-        //can't just apply() to create a date:
-        //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
-        var date = new Date(y, m, d, h, M, s, ms);
+    function createLocalOrUTC (input, format, locale, strict, isUTC) {
+        var c = {};
 
-        //the date constructor doesn't accept years < 1970
-        if (y < 1970) {
-            date.setFullYear(y);
+        if (typeof(locale) === 'boolean') {
+            strict = locale;
+            locale = undefined;
         }
-        return date;
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c._isAMomentObject = true;
+        c._useUTC = c._isUTC = isUTC;
+        c._l = locale;
+        c._i = input;
+        c._f = format;
+        c._strict = strict;
+        c._pf = defaultParsingFlags();
+
+        return createFromConfig(c);
     }
 
-    function makeUTCDate(y) {
-        var date = new Date(Date.UTC.apply(null, arguments));
-        if (y < 1970) {
-            date.setUTCFullYear(y);
-        }
-        return date;
+    function local__createLocal (input, format, locale, strict) {
+        return createLocalOrUTC(input, format, locale, strict, false);
     }
+
+    var prototypeMin = deprecate(
+         'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
+         function () {
+             var other = local__createLocal.apply(null, arguments);
+             return other < this ? this : other;
+         }
+     );
+
+    var prototypeMax = deprecate(
+        'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
+        function () {
+            var other = local__createLocal.apply(null, arguments);
+            return other > this ? this : other;
+        }
+    );
+
+    // Pick a moment m from moments so that m[fn](other) is true for all
+    // other. This relies on the function fn to be transitive.
+    //
+    // moments should either be an array of moment objects or an array, whose
+    // first element is an array of moment objects.
+    function pickBy(fn, moments) {
+        var res, i;
+        if (moments.length === 1 && isArray(moments[0])) {
+            moments = moments[0];
+        }
+        if (!moments.length) {
+            return local__createLocal();
+        }
+        res = moments[0];
+        for (i = 1; i < moments.length; ++i) {
+            if (moments[i][fn](res)) {
+                res = moments[i];
+            }
+        }
+        return res;
+    }
+
+    // TODO: Use [].sort instead?
+    function min () {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isBefore', args);
+    }
+
+    function max () {
+        var args = [].slice.call(arguments, 0);
+
+        return pickBy('isAfter', args);
+    }
+
+    function Duration (duration) {
+        var normalizedInput = normalizeObjectUnits(duration),
+            years = normalizedInput.year || 0,
+            quarters = normalizedInput.quarter || 0,
+            months = normalizedInput.month || 0,
+            weeks = normalizedInput.week || 0,
+            days = normalizedInput.day || 0,
+            hours = normalizedInput.hour || 0,
+            minutes = normalizedInput.minute || 0,
+            seconds = normalizedInput.second || 0,
+            milliseconds = normalizedInput.millisecond || 0;
+
+        // representation for dateAddRemove
+        this._milliseconds = +milliseconds +
+            seconds * 1e3 + // 1000
+            minutes * 6e4 + // 1000 * 60
+            hours * 36e5; // 1000 * 60 * 60
+        // Because of dateAddRemove treats 24 hours as different from a
+        // day when working around DST, we need to store them separately
+        this._days = +days +
+            weeks * 7;
+        // It is impossible translate months into days without knowing
+        // which months you are are talking about, so we have to store
+        // it separately.
+        this._months = +months +
+            quarters * 3 +
+            years * 12;
+
+        this._data = {};
+
+        this._locale = locale_locales__getLocale();
+
+        this._bubble();
+    }
+
+    function isDuration (obj) {
+        return obj instanceof Duration;
+    }
+
+    function offset (token, separator) {
+        addFormatToken(token, 0, 0, function () {
+            var offset = this.utcOffset();
+            var sign = '+';
+            if (offset < 0) {
+                offset = -offset;
+                sign = '-';
+            }
+            return sign + zeroFill(~~(offset / 60), 2) + separator + zeroFill(~~(offset) % 60, 2);
+        });
+    }
+
+    offset('Z', ':');
+    offset('ZZ', '');
+
+    // PARSING
+
+    addRegexToken('Z',  matchOffset);
+    addRegexToken('ZZ', matchOffset);
+    addParseToken(['Z', 'ZZ'], function (input, array, config) {
+        config._useUTC = true;
+        config._tzm = offsetFromString(input);
+    });
+
+    // HELPERS
+
+    // timezone chunker
+    // '+10:00' > ['10',  '00']
+    // '-1530'  > ['-15', '30']
+    var chunkOffset = /([\+\-]|\d\d)/gi;
+
+    function offsetFromString(string) {
+        var matches = ((string || '').match(matchOffset) || []);
+        var chunk   = matches[matches.length - 1] || [];
+        var parts   = (chunk + '').match(chunkOffset) || ['-', 0, 0];
+        var minutes = +(parts[1] * 60) + toInt(parts[2]);
+
+        return parts[0] === '+' ? minutes : -minutes;
+    }
+
+    // Return a moment from input, that is local/utc/zone equivalent to model.
+    function cloneWithOffset(input, model) {
+        var res, diff;
+        if (model._isUTC) {
+            res = model.clone();
+            diff = (isMoment(input) || isDate(input) ? +input : +local__createLocal(input)) - (+res);
+            // Use low-level api, because this fn is low-level api.
+            res._d.setTime(+res._d + diff);
+            utils_hooks__hooks.updateOffset(res, false);
+            return res;
+        } else {
+            return local__createLocal(input).local();
+        }
+        return model._isUTC ? local__createLocal(input).zone(model._offset || 0) : local__createLocal(input).local();
+    }
+
+    function getDateOffset (m) {
+        // On Firefox.24 Date#getTimezoneOffset returns a floating point.
+        // https://github.com/moment/moment/pull/1871
+        return -Math.round(m._d.getTimezoneOffset() / 15) * 15;
+    }
+
+    // HOOKS
+
+    // This function will be called whenever a moment is mutated.
+    // It is intended to keep the offset in sync with the timezone.
+    utils_hooks__hooks.updateOffset = function () {};
+
+    // MOMENTS
+
+    // keepLocalTime = true means only change the timezone, without
+    // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
+    // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
+    // +0200, so we adjust the time as needed, to be valid.
+    //
+    // Keeping the time actually adds/subtracts (one hour)
+    // from the actual represented time. That is why we call updateOffset
+    // a second time. In case it wants us to change the offset again
+    // _changeInProgress == true case, then we have to adjust, because
+    // there is no such time in the given timezone.
+    function getSetOffset (input, keepLocalTime) {
+        var offset = this._offset || 0,
+            localAdjust;
+        if (input != null) {
+            if (typeof input === 'string') {
+                input = offsetFromString(input);
+            }
+            if (Math.abs(input) < 16) {
+                input = input * 60;
+            }
+            if (!this._isUTC && keepLocalTime) {
+                localAdjust = getDateOffset(this);
+            }
+            this._offset = input;
+            this._isUTC = true;
+            if (localAdjust != null) {
+                this.add(localAdjust, 'm');
+            }
+            if (offset !== input) {
+                if (!keepLocalTime || this._changeInProgress) {
+                    add_subtract__addSubtract(this, create__createDuration(input - offset, 'm'), 1, false);
+                } else if (!this._changeInProgress) {
+                    this._changeInProgress = true;
+                    utils_hooks__hooks.updateOffset(this, true);
+                    this._changeInProgress = null;
+                }
+            }
+            return this;
+        } else {
+            return this._isUTC ? offset : getDateOffset(this);
+        }
+    }
+
+    function getSetZone (input, keepLocalTime) {
+        if (input != null) {
+            if (typeof input !== 'string') {
+                input = -input;
+            }
+
+            this.utcOffset(input, keepLocalTime);
+
+            return this;
+        } else {
+            return -this.utcOffset();
+        }
+    }
+
+    function setOffsetToUTC (keepLocalTime) {
+        return this.utcOffset(0, keepLocalTime);
+    }
+
+    function setOffsetToLocal (keepLocalTime) {
+        if (this._isUTC) {
+            this.utcOffset(0, keepLocalTime);
+            this._isUTC = false;
+
+            if (keepLocalTime) {
+                this.subtract(getDateOffset(this), 'm');
+            }
+        }
+        return this;
+    }
+
+    function setOffsetToParsedOffset () {
+        if (this._tzm) {
+            this.utcOffset(this._tzm);
+        } else if (typeof this._i === 'string') {
+            this.utcOffset(offsetFromString(this._i));
+        }
+        return this;
+    }
+
+    function hasAlignedHourOffset (input) {
+        if (!input) {
+            input = 0;
+        }
+        else {
+            input = local__createLocal(input).utcOffset();
+        }
+
+        return (this.utcOffset() - input) % 60 === 0;
+    }
+
+    function isDaylightSavingTime () {
+        return (
+            this.utcOffset() > this.clone().month(0).utcOffset() ||
+            this.utcOffset() > this.clone().month(5).utcOffset()
+        );
+    }
+
+    function isDaylightSavingTimeShifted () {
+        if (this._a) {
+            var other = this._isUTC ? create_utc__createUTC(this._a) : local__createLocal(this._a);
+            return this.isValid() && compareArrays(this._a, other.toArray()) > 0;
+        }
+
+        return false;
+    }
+
+    function isLocal () {
+        return !this._isUTC;
+    }
+
+    function isUtcOffset () {
+        return this._isUTC;
+    }
+
+    function isUtc () {
+        return this._isUTC && this._offset === 0;
+    }
+
+    var aspNetRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/;
+
+    // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
+    // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
+    var create__isoRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/;
+
+    function create__createDuration (input, key) {
+        var duration = input,
+            // matching against regexp is expensive, do it on demand
+            match = null,
+            sign,
+            ret,
+            diffRes;
+
+        if (isDuration(input)) {
+            duration = {
+                ms : input._milliseconds,
+                d  : input._days,
+                M  : input._months
+            };
+        } else if (typeof input === 'number') {
+            duration = {};
+            if (key) {
+                duration[key] = input;
+            } else {
+                duration.milliseconds = input;
+            }
+        } else if (!!(match = aspNetRegex.exec(input))) {
+            sign = (match[1] === '-') ? -1 : 1;
+            duration = {
+                y  : 0,
+                d  : toInt(match[DATE])        * sign,
+                h  : toInt(match[HOUR])        * sign,
+                m  : toInt(match[MINUTE])      * sign,
+                s  : toInt(match[SECOND])      * sign,
+                ms : toInt(match[MILLISECOND]) * sign
+            };
+        } else if (!!(match = create__isoRegex.exec(input))) {
+            sign = (match[1] === '-') ? -1 : 1;
+            duration = {
+                y : parseIso(match[2], sign),
+                M : parseIso(match[3], sign),
+                d : parseIso(match[4], sign),
+                h : parseIso(match[5], sign),
+                m : parseIso(match[6], sign),
+                s : parseIso(match[7], sign),
+                w : parseIso(match[8], sign)
+            };
+        } else if (duration == null) {// checks for null or undefined
+            duration = {};
+        } else if (typeof duration === 'object' && ('from' in duration || 'to' in duration)) {
+            diffRes = momentsDifference(local__createLocal(duration.from), local__createLocal(duration.to));
+
+            duration = {};
+            duration.ms = diffRes.milliseconds;
+            duration.M = diffRes.months;
+        }
+
+        ret = new Duration(duration);
+
+        if (isDuration(input) && hasOwnProp(input, '_locale')) {
+            ret._locale = input._locale;
+        }
+
+        return ret;
+    }
+
+    create__createDuration.fn = Duration.prototype;
+
+    function parseIso (inp, sign) {
+        // We'd normally use ~~inp for this, but unfortunately it also
+        // converts floats to ints.
+        // inp may be undefined, so careful calling replace on it.
+        var res = inp && parseFloat(inp.replace(',', '.'));
+        // apply sign while we're at it
+        return (isNaN(res) ? 0 : res) * sign;
+    }
+
+    function positiveMomentsDifference(base, other) {
+        var res = {milliseconds: 0, months: 0};
+
+        res.months = other.month() - base.month() +
+            (other.year() - base.year()) * 12;
+        if (base.clone().add(res.months, 'M').isAfter(other)) {
+            --res.months;
+        }
+
+        res.milliseconds = +other - +(base.clone().add(res.months, 'M'));
+
+        return res;
+    }
+
+    function momentsDifference(base, other) {
+        var res;
+        other = cloneWithOffset(other, base);
+        if (base.isBefore(other)) {
+            res = positiveMomentsDifference(base, other);
+        } else {
+            res = positiveMomentsDifference(other, base);
+            res.milliseconds = -res.milliseconds;
+            res.months = -res.months;
+        }
+
+        return res;
+    }
+
+    function createAdder(direction, name) {
+        return function (val, period) {
+            var dur, tmp;
+            //invert the arguments, but complain about it
+            if (period !== null && !isNaN(+period)) {
+                deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period).');
+                tmp = val; val = period; period = tmp;
+            }
+
+            val = typeof val === 'string' ? +val : val;
+            dur = create__createDuration(val, period);
+            add_subtract__addSubtract(this, dur, direction);
+            return this;
+        };
+    }
+
+    function add_subtract__addSubtract (mom, duration, isAdding, updateOffset) {
+        var milliseconds = duration._milliseconds,
+            days = duration._days,
+            months = duration._months;
+        updateOffset = updateOffset == null ? true : updateOffset;
+
+        if (milliseconds) {
+            mom._d.setTime(+mom._d + milliseconds * isAdding);
+        }
+        if (days) {
+            get_set__set(mom, 'Date', get_set__get(mom, 'Date') + days * isAdding);
+        }
+        if (months) {
+            setMonth(mom, get_set__get(mom, 'Month') + months * isAdding);
+        }
+        if (updateOffset) {
+            utils_hooks__hooks.updateOffset(mom, days || months);
+        }
+    }
+
+    var add_subtract__add      = createAdder(1, 'add');
+    var add_subtract__subtract = createAdder(-1, 'subtract');
+
+    function moment_calendar__calendar (time) {
+        // We want to compare the start of today, vs this.
+        // Getting start-of-today depends on whether we're local/utc/offset or not.
+        var now = time || local__createLocal(),
+            sod = cloneWithOffset(now, this).startOf('day'),
+            diff = this.diff(sod, 'days', true),
+            format = diff < -6 ? 'sameElse' :
+                diff < -1 ? 'lastWeek' :
+                diff < 0 ? 'lastDay' :
+                diff < 1 ? 'sameDay' :
+                diff < 2 ? 'nextDay' :
+                diff < 7 ? 'nextWeek' : 'sameElse';
+        return this.format(this.localeData().calendar(format, this, local__createLocal(now)));
+    }
+
+    function clone () {
+        return new Moment(this);
+    }
+
+    function isAfter (input, units) {
+        var inputMs;
+        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+        if (units === 'millisecond') {
+            input = isMoment(input) ? input : local__createLocal(input);
+            return +this > +input;
+        } else {
+            inputMs = isMoment(input) ? +input : +local__createLocal(input);
+            return inputMs < +this.clone().startOf(units);
+        }
+    }
+
+    function isBefore (input, units) {
+        var inputMs;
+        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+        if (units === 'millisecond') {
+            input = isMoment(input) ? input : local__createLocal(input);
+            return +this < +input;
+        } else {
+            inputMs = isMoment(input) ? +input : +local__createLocal(input);
+            return +this.clone().endOf(units) < inputMs;
+        }
+    }
+
+    function isBetween (from, to, units) {
+        return this.isAfter(from, units) && this.isBefore(to, units);
+    }
+
+    function isSame (input, units) {
+        var inputMs;
+        units = normalizeUnits(units || 'millisecond');
+        if (units === 'millisecond') {
+            input = isMoment(input) ? input : local__createLocal(input);
+            return +this === +input;
+        } else {
+            inputMs = +local__createLocal(input);
+            return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
+        }
+    }
+
+    function absFloor (number) {
+        if (number < 0) {
+            return Math.ceil(number);
+        } else {
+            return Math.floor(number);
+        }
+    }
+
+    function diff (input, units, asFloat) {
+        var that = cloneWithOffset(input, this),
+            zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4,
+            delta, output;
+
+        units = normalizeUnits(units);
+
+        if (units === 'year' || units === 'month' || units === 'quarter') {
+            output = monthDiff(this, that);
+            if (units === 'quarter') {
+                output = output / 3;
+            } else if (units === 'year') {
+                output = output / 12;
+            }
+        } else {
+            delta = this - that;
+            output = units === 'second' ? delta / 1e3 : // 1000
+                units === 'minute' ? delta / 6e4 : // 1000 * 60
+                units === 'hour' ? delta / 36e5 : // 1000 * 60 * 60
+                units === 'day' ? (delta - zoneDelta) / 864e5 : // 1000 * 60 * 60 * 24, negate dst
+                units === 'week' ? (delta - zoneDelta) / 6048e5 : // 1000 * 60 * 60 * 24 * 7, negate dst
+                delta;
+        }
+        return asFloat ? output : absFloor(output);
+    }
+
+    function monthDiff (a, b) {
+        // difference in months
+        var wholeMonthDiff = ((b.year() - a.year()) * 12) + (b.month() - a.month()),
+            // b is in (anchor - 1 month, anchor + 1 month)
+            anchor = a.clone().add(wholeMonthDiff, 'months'),
+            anchor2, adjust;
+
+        if (b - anchor < 0) {
+            anchor2 = a.clone().add(wholeMonthDiff - 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor - anchor2);
+        } else {
+            anchor2 = a.clone().add(wholeMonthDiff + 1, 'months');
+            // linear across the month
+            adjust = (b - anchor) / (anchor2 - anchor);
+        }
+
+        return -(wholeMonthDiff + adjust);
+    }
+
+    utils_hooks__hooks.defaultFormat = 'YYYY-MM-DDTHH:mm:ssZ';
+
+    function toString () {
+        return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
+    }
+
+    function moment_format__toISOString () {
+        var m = this.clone().utc();
+        if (0 < m.year() && m.year() <= 9999) {
+            if ('function' === typeof Date.prototype.toISOString) {
+                // native implementation is ~50x faster, use it when we can
+                return this.toDate().toISOString();
+            } else {
+                return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            }
+        } else {
+            return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+        }
+    }
+
+    function format (inputString) {
+        var output = formatMoment(this, inputString || utils_hooks__hooks.defaultFormat);
+        return this.localeData().postformat(output);
+    }
+
+    function from (time, withoutSuffix) {
+        return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+    }
+
+    function fromNow (withoutSuffix) {
+        return this.from(local__createLocal(), withoutSuffix);
+    }
+
+    function locale (key) {
+        var newLocaleData;
+
+        if (key === undefined) {
+            return this._locale._abbr;
+        } else {
+            newLocaleData = locale_locales__getLocale(key);
+            if (newLocaleData != null) {
+                this._locale = newLocaleData;
+            }
+            return this;
+        }
+    }
+
+    var lang = deprecate(
+        'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
+        function (key) {
+            if (key === undefined) {
+                return this.localeData();
+            } else {
+                return this.locale(key);
+            }
+        }
+    );
+
+    function localeData () {
+        return this._locale;
+    }
+
+    function startOf (units) {
+        units = normalizeUnits(units);
+        // the following switch intentionally omits break keywords
+        // to utilize falling through the cases.
+        switch (units) {
+        case 'year':
+            this.month(0);
+            /* falls through */
+        case 'quarter':
+        case 'month':
+            this.date(1);
+            /* falls through */
+        case 'week':
+        case 'isoWeek':
+        case 'day':
+            this.hours(0);
+            /* falls through */
+        case 'hour':
+            this.minutes(0);
+            /* falls through */
+        case 'minute':
+            this.seconds(0);
+            /* falls through */
+        case 'second':
+            this.milliseconds(0);
+        }
+
+        // weeks are a special case
+        if (units === 'week') {
+            this.weekday(0);
+        }
+        if (units === 'isoWeek') {
+            this.isoWeekday(1);
+        }
+
+        // quarters are also special
+        if (units === 'quarter') {
+            this.month(Math.floor(this.month() / 3) * 3);
+        }
+
+        return this;
+    }
+
+    function endOf (units) {
+        units = normalizeUnits(units);
+        if (units === undefined || units === 'millisecond') {
+            return this;
+        }
+        return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
+    }
+
+    function to_type__valueOf () {
+        return +this._d - ((this._offset || 0) * 60000);
+    }
+
+    function unix () {
+        return Math.floor(+this / 1000);
+    }
+
+    function toDate () {
+        return this._offset ? new Date(+this) : this._d;
+    }
+
+    function toArray () {
+        var m = this;
+        return [m.year(), m.month(), m.date(), m.hour(), m.minute(), m.second(), m.millisecond()];
+    }
+
+    function moment_valid__isValid () {
+        return valid__isValid(this);
+    }
+
+    function parsingFlags () {
+        return extend({}, this._pf);
+    }
+
+    function invalidAt () {
+        return this._pf.overflow;
+    }
+
+    addFormatToken(0, ['gg', 2], 0, function () {
+        return this.weekYear() % 100;
+    });
+
+    addFormatToken(0, ['GG', 2], 0, function () {
+        return this.isoWeekYear() % 100;
+    });
+
+    function addWeekYearFormatToken (token, getter) {
+        addFormatToken(0, [token, token.length], 0, getter);
+    }
+
+    addWeekYearFormatToken('gggg',     'weekYear');
+    addWeekYearFormatToken('ggggg',    'weekYear');
+    addWeekYearFormatToken('GGGG',  'isoWeekYear');
+    addWeekYearFormatToken('GGGGG', 'isoWeekYear');
+
+    // ALIASES
+
+    addUnitAlias('weekYear', 'gg');
+    addUnitAlias('isoWeekYear', 'GG');
+
+    // PARSING
+
+    addRegexToken('G',      matchSigned);
+    addRegexToken('g',      matchSigned);
+    addRegexToken('GG',     match1to2, match2);
+    addRegexToken('gg',     match1to2, match2);
+    addRegexToken('GGGG',   match1to4, match4);
+    addRegexToken('gggg',   match1to4, match4);
+    addRegexToken('GGGGG',  match1to6, match6);
+    addRegexToken('ggggg',  match1to6, match6);
+
+    addWeekParseToken(['gggg', 'ggggg', 'GGGG', 'GGGGG'], function (input, week, config, token) {
+        week[token.substr(0, 2)] = toInt(input);
+    });
+
+    addWeekParseToken(['gg', 'GG'], function (input, week, config, token) {
+        week[token] = utils_hooks__hooks.parseTwoDigitYear(input);
+    });
+
+    // HELPERS
+
+    function weeksInYear(year, dow, doy) {
+        return weekOfYear(local__createLocal([year, 11, 31 + dow - doy]), dow, doy).week;
+    }
+
+    // MOMENTS
+
+    function getSetWeekYear (input) {
+        var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
+        return input == null ? year : this.add((input - year), 'y');
+    }
+
+    function getSetISOWeekYear (input) {
+        var year = weekOfYear(this, 1, 4).year;
+        return input == null ? year : this.add((input - year), 'y');
+    }
+
+    function getISOWeeksInYear () {
+        return weeksInYear(this.year(), 1, 4);
+    }
+
+    function getWeeksInYear () {
+        var weekInfo = this.localeData()._week;
+        return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
+    }
+
+    addFormatToken('Q', 0, 0, 'quarter');
+
+    // ALIASES
+
+    addUnitAlias('quarter', 'Q');
+
+    // PARSING
+
+    addRegexToken('Q', match1);
+    addParseToken('Q', function (input, array) {
+        array[MONTH] = (toInt(input) - 1) * 3;
+    });
+
+    // MOMENTS
+
+    function getSetQuarter (input) {
+        return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
+    }
+
+    addFormatToken('D', ['DD', 2], 'Do', 'date');
+
+    // ALIASES
+
+    addUnitAlias('date', 'D');
+
+    // PARSING
+
+    addRegexToken('D',  match1to2);
+    addRegexToken('DD', match1to2, match2);
+    addRegexToken('Do', function (isStrict, locale) {
+        return isStrict ? locale._ordinalParse : locale._ordinalParseLenient;
+    });
+
+    addParseToken(['D', 'DD'], DATE);
+    addParseToken('Do', function (input, array) {
+        array[DATE] = toInt(input.match(match1to2)[0], 10);
+    });
+
+    // MOMENTS
+
+    var getSetDayOfMonth = makeGetSet('Date', true);
+
+    addFormatToken('d', 0, 'do', 'day');
+
+    addFormatToken('dd', 0, 0, function (format) {
+        return this.localeData().weekdaysMin(this, format);
+    });
+
+    addFormatToken('ddd', 0, 0, function (format) {
+        return this.localeData().weekdaysShort(this, format);
+    });
+
+    addFormatToken('dddd', 0, 0, function (format) {
+        return this.localeData().weekdays(this, format);
+    });
+
+    addFormatToken('e', 0, 0, 'weekday');
+    addFormatToken('E', 0, 0, 'isoWeekday');
+
+    // ALIASES
+
+    addUnitAlias('day', 'd');
+    addUnitAlias('weekday', 'e');
+    addUnitAlias('isoWeekday', 'E');
+
+    // PARSING
+
+    addRegexToken('d',    match1to2);
+    addRegexToken('e',    match1to2);
+    addRegexToken('E',    match1to2);
+    addRegexToken('dd',   matchWord);
+    addRegexToken('ddd',  matchWord);
+    addRegexToken('dddd', matchWord);
+
+    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config) {
+        var weekday = config._locale.weekdaysParse(input);
+        // if we didn't get a weekday name, mark the date as invalid
+        if (weekday != null) {
+            week.d = weekday;
+        } else {
+            config._pf.invalidWeekday = input;
+        }
+    });
+
+    addWeekParseToken(['d', 'e', 'E'], function (input, week, config, token) {
+        week[token] = toInt(input);
+    });
+
+    // HELPERS
 
     function parseWeekday(input, locale) {
         if (typeof input === 'string') {
@@ -23513,1251 +23993,506 @@ process.chdir = function (dir) {
         return input;
     }
 
-    /************************************
-        Relative Time
-    ************************************/
+    // LOCALES
 
-
-    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
-    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
-        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+    var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
+    function localeWeekdays (m) {
+        return this._weekdays[m.day()];
     }
 
-    function relativeTime(posNegDuration, withoutSuffix, locale) {
-        var duration = moment.duration(posNegDuration).abs(),
-            seconds = round(duration.as('s')),
-            minutes = round(duration.as('m')),
-            hours = round(duration.as('h')),
-            days = round(duration.as('d')),
-            months = round(duration.as('M')),
-            years = round(duration.as('y')),
-
-            args = seconds < relativeTimeThresholds.s && ['s', seconds] ||
-                minutes === 1 && ['m'] ||
-                minutes < relativeTimeThresholds.m && ['mm', minutes] ||
-                hours === 1 && ['h'] ||
-                hours < relativeTimeThresholds.h && ['hh', hours] ||
-                days === 1 && ['d'] ||
-                days < relativeTimeThresholds.d && ['dd', days] ||
-                months === 1 && ['M'] ||
-                months < relativeTimeThresholds.M && ['MM', months] ||
-                years === 1 && ['y'] || ['yy', years];
-
-        args[2] = withoutSuffix;
-        args[3] = +posNegDuration > 0;
-        args[4] = locale;
-        return substituteTimeAgo.apply({}, args);
+    var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
+    function localeWeekdaysShort (m) {
+        return this._weekdaysShort[m.day()];
     }
 
-
-    /************************************
-        Week of Year
-    ************************************/
-
-
-    // firstDayOfWeek       0 = sun, 6 = sat
-    //                      the day of the week that starts the week
-    //                      (usually sunday or monday)
-    // firstDayOfWeekOfYear 0 = sun, 6 = sat
-    //                      the first week is the week that contains the first
-    //                      of this day of the week
-    //                      (eg. ISO weeks use thursday (4))
-    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
-        var end = firstDayOfWeekOfYear - firstDayOfWeek,
-            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
-            adjustedMoment;
-
-
-        if (daysToDayOfWeek > end) {
-            daysToDayOfWeek -= 7;
-        }
-
-        if (daysToDayOfWeek < end - 7) {
-            daysToDayOfWeek += 7;
-        }
-
-        adjustedMoment = moment(mom).add(daysToDayOfWeek, 'd');
-        return {
-            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
-            year: adjustedMoment.year()
-        };
+    var defaultLocaleWeekdaysMin = 'Su_Mo_Tu_We_Th_Fr_Sa'.split('_');
+    function localeWeekdaysMin (m) {
+        return this._weekdaysMin[m.day()];
     }
 
-    //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
-    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var d = makeUTCDate(year, 0, 1).getUTCDay(), daysToAdd, dayOfYear;
+    function localeWeekdaysParse (weekdayName) {
+        var i, mom, regex;
 
-        d = d === 0 ? 7 : d;
-        weekday = weekday != null ? weekday : firstDayOfWeek;
-        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
-        dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
-
-        return {
-            year: dayOfYear > 0 ? year : year - 1,
-            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
-        };
-    }
-
-    /************************************
-        Top Level Functions
-    ************************************/
-
-    function makeMoment(config) {
-        var input = config._i,
-            format = config._f,
-            res;
-
-        config._locale = config._locale || moment.localeData(config._l);
-
-        if (input === null || (format === undefined && input === '')) {
-            return moment.invalid({nullInput: true});
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
         }
 
-        if (typeof input === 'string') {
-            config._i = input = config._locale.preparse(input);
-        }
-
-        if (moment.isMoment(input)) {
-            return new Moment(input, true);
-        } else if (format) {
-            if (isArray(format)) {
-                makeDateFromStringAndArray(config);
-            } else {
-                makeDateFromStringAndFormat(config);
+        for (i = 0; i < 7; i++) {
+            // make the regex if we don't have it already
+            if (!this._weekdaysParse[i]) {
+                mom = local__createLocal([2000, 1]).day(i);
+                regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
+                this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
             }
+            // test the regex
+            if (this._weekdaysParse[i].test(weekdayName)) {
+                return i;
+            }
+        }
+    }
+
+    // MOMENTS
+
+    function getSetDayOfWeek (input) {
+        var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
+        if (input != null) {
+            input = parseWeekday(input, this.localeData());
+            return this.add(input - day, 'd');
         } else {
-            makeDateFromInput(config);
+            return day;
         }
-
-        res = new Moment(config);
-        if (res._nextDay) {
-            // Adding is smart enough around DST
-            res.add(1, 'd');
-            res._nextDay = undefined;
-        }
-
-        return res;
     }
 
-    moment = function (input, format, locale, strict) {
-        var c;
-
-        if (typeof(locale) === 'boolean') {
-            strict = locale;
-            locale = undefined;
-        }
-        // object construction must be done this way.
-        // https://github.com/moment/moment/issues/1423
-        c = {};
-        c._isAMomentObject = true;
-        c._i = input;
-        c._f = format;
-        c._l = locale;
-        c._strict = strict;
-        c._isUTC = false;
-        c._pf = defaultParsingFlags();
-
-        return makeMoment(c);
-    };
-
-    moment.suppressDeprecationWarnings = false;
-
-    moment.createFromInputFallback = deprecate(
-        'moment construction falls back to js Date. This is ' +
-        'discouraged and will be removed in upcoming major ' +
-        'release. Please refer to ' +
-        'https://github.com/moment/moment/issues/1407 for more info.',
-        function (config) {
-            config._d = new Date(config._i + (config._useUTC ? ' UTC' : ''));
-        }
-    );
-
-    // Pick a moment m from moments so that m[fn](other) is true for all
-    // other. This relies on the function fn to be transitive.
-    //
-    // moments should either be an array of moment objects or an array, whose
-    // first element is an array of moment objects.
-    function pickBy(fn, moments) {
-        var res, i;
-        if (moments.length === 1 && isArray(moments[0])) {
-            moments = moments[0];
-        }
-        if (!moments.length) {
-            return moment();
-        }
-        res = moments[0];
-        for (i = 1; i < moments.length; ++i) {
-            if (moments[i][fn](res)) {
-                res = moments[i];
-            }
-        }
-        return res;
+    function getSetLocaleDayOfWeek (input) {
+        var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
+        return input == null ? weekday : this.add(input - weekday, 'd');
     }
 
-    moment.min = function () {
-        var args = [].slice.call(arguments, 0);
-
-        return pickBy('isBefore', args);
-    };
-
-    moment.max = function () {
-        var args = [].slice.call(arguments, 0);
-
-        return pickBy('isAfter', args);
-    };
-
-    // creating with utc
-    moment.utc = function (input, format, locale, strict) {
-        var c;
-
-        if (typeof(locale) === 'boolean') {
-            strict = locale;
-            locale = undefined;
-        }
-        // object construction must be done this way.
-        // https://github.com/moment/moment/issues/1423
-        c = {};
-        c._isAMomentObject = true;
-        c._useUTC = true;
-        c._isUTC = true;
-        c._l = locale;
-        c._i = input;
-        c._f = format;
-        c._strict = strict;
-        c._pf = defaultParsingFlags();
-
-        return makeMoment(c).utc();
-    };
-
-    // creating with unix timestamp (in seconds)
-    moment.unix = function (input) {
-        return moment(input * 1000);
-    };
-
-    // duration
-    moment.duration = function (input, key) {
-        var duration = input,
-            // matching against regexp is expensive, do it on demand
-            match = null,
-            sign,
-            ret,
-            parseIso,
-            diffRes;
-
-        if (moment.isDuration(input)) {
-            duration = {
-                ms: input._milliseconds,
-                d: input._days,
-                M: input._months
-            };
-        } else if (typeof input === 'number') {
-            duration = {};
-            if (key) {
-                duration[key] = input;
-            } else {
-                duration.milliseconds = input;
-            }
-        } else if (!!(match = aspNetTimeSpanJsonRegex.exec(input))) {
-            sign = (match[1] === '-') ? -1 : 1;
-            duration = {
-                y: 0,
-                d: toInt(match[DATE]) * sign,
-                h: toInt(match[HOUR]) * sign,
-                m: toInt(match[MINUTE]) * sign,
-                s: toInt(match[SECOND]) * sign,
-                ms: toInt(match[MILLISECOND]) * sign
-            };
-        } else if (!!(match = isoDurationRegex.exec(input))) {
-            sign = (match[1] === '-') ? -1 : 1;
-            parseIso = function (inp) {
-                // We'd normally use ~~inp for this, but unfortunately it also
-                // converts floats to ints.
-                // inp may be undefined, so careful calling replace on it.
-                var res = inp && parseFloat(inp.replace(',', '.'));
-                // apply sign while we're at it
-                return (isNaN(res) ? 0 : res) * sign;
-            };
-            duration = {
-                y: parseIso(match[2]),
-                M: parseIso(match[3]),
-                d: parseIso(match[4]),
-                h: parseIso(match[5]),
-                m: parseIso(match[6]),
-                s: parseIso(match[7]),
-                w: parseIso(match[8])
-            };
-        } else if (duration == null) {// checks for null or undefined
-            duration = {};
-        } else if (typeof duration === 'object' &&
-                ('from' in duration || 'to' in duration)) {
-            diffRes = momentsDifference(moment(duration.from), moment(duration.to));
-
-            duration = {};
-            duration.ms = diffRes.milliseconds;
-            duration.M = diffRes.months;
-        }
-
-        ret = new Duration(duration);
-
-        if (moment.isDuration(input) && hasOwnProp(input, '_locale')) {
-            ret._locale = input._locale;
-        }
-
-        return ret;
-    };
-
-    // version number
-    moment.version = VERSION;
-
-    // default format
-    moment.defaultFormat = isoFormat;
-
-    // constant that refers to the ISO standard
-    moment.ISO_8601 = function () {};
-
-    // Plugins that add properties should also add the key here (null value),
-    // so we can properly clone ourselves.
-    moment.momentProperties = momentProperties;
-
-    // This function will be called whenever a moment is mutated.
-    // It is intended to keep the offset in sync with the timezone.
-    moment.updateOffset = function () {};
-
-    // This function allows you to set a threshold for relative time strings
-    moment.relativeTimeThreshold = function (threshold, limit) {
-        if (relativeTimeThresholds[threshold] === undefined) {
-            return false;
-        }
-        if (limit === undefined) {
-            return relativeTimeThresholds[threshold];
-        }
-        relativeTimeThresholds[threshold] = limit;
-        return true;
-    };
-
-    moment.lang = deprecate(
-        'moment.lang is deprecated. Use moment.locale instead.',
-        function (key, value) {
-            return moment.locale(key, value);
-        }
-    );
-
-    // This function will load locale and then set the global locale.  If
-    // no arguments are passed in, it will simply return the current global
-    // locale key.
-    moment.locale = function (key, values) {
-        var data;
-        if (key) {
-            if (typeof(values) !== 'undefined') {
-                data = moment.defineLocale(key, values);
-            }
-            else {
-                data = moment.localeData(key);
-            }
-
-            if (data) {
-                moment.duration._locale = moment._locale = data;
-            }
-        }
-
-        return moment._locale._abbr;
-    };
-
-    moment.defineLocale = function (name, values) {
-        if (values !== null) {
-            values.abbr = name;
-            if (!locales[name]) {
-                locales[name] = new Locale();
-            }
-            locales[name].set(values);
-
-            // backwards compat for now: also set the locale
-            moment.locale(name);
-
-            return locales[name];
-        } else {
-            // useful for testing
-            delete locales[name];
-            return null;
-        }
-    };
-
-    moment.langData = deprecate(
-        'moment.langData is deprecated. Use moment.localeData instead.',
-        function (key) {
-            return moment.localeData(key);
-        }
-    );
-
-    // returns locale data
-    moment.localeData = function (key) {
-        var locale;
-
-        if (key && key._locale && key._locale._abbr) {
-            key = key._locale._abbr;
-        }
-
-        if (!key) {
-            return moment._locale;
-        }
-
-        if (!isArray(key)) {
-            //short-circuit everything else
-            locale = loadLocale(key);
-            if (locale) {
-                return locale;
-            }
-            key = [key];
-        }
-
-        return chooseLocale(key);
-    };
-
-    // compare moment object
-    moment.isMoment = function (obj) {
-        return obj instanceof Moment ||
-            (obj != null && hasOwnProp(obj, '_isAMomentObject'));
-    };
-
-    // for typechecking Duration objects
-    moment.isDuration = function (obj) {
-        return obj instanceof Duration;
-    };
-
-    for (i = lists.length - 1; i >= 0; --i) {
-        makeList(lists[i]);
+    function getSetISODayOfWeek (input) {
+        // behaves the same as moment#day except
+        // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
+        // as a setter, sunday should belong to the previous week.
+        return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
     }
 
-    moment.normalizeUnits = function (units) {
-        return normalizeUnits(units);
-    };
-
-    moment.invalid = function (flags) {
-        var m = moment.utc(NaN);
-        if (flags != null) {
-            extend(m._pf, flags);
-        }
-        else {
-            m._pf.userInvalidated = true;
-        }
-
-        return m;
-    };
-
-    moment.parseZone = function () {
-        return moment.apply(null, arguments).parseZone();
-    };
-
-    moment.parseTwoDigitYear = function (input) {
-        return toInt(input) + (toInt(input) > 68 ? 1900 : 2000);
-    };
-
-    moment.isDate = isDate;
-
-    /************************************
-        Moment Prototype
-    ************************************/
-
-
-    extend(moment.fn = Moment.prototype, {
-
-        clone : function () {
-            return moment(this);
-        },
-
-        valueOf : function () {
-            return +this._d - ((this._offset || 0) * 60000);
-        },
-
-        unix : function () {
-            return Math.floor(+this / 1000);
-        },
-
-        toString : function () {
-            return this.clone().locale('en').format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ');
-        },
-
-        toDate : function () {
-            return this._offset ? new Date(+this) : this._d;
-        },
-
-        toISOString : function () {
-            var m = moment(this).utc();
-            if (0 < m.year() && m.year() <= 9999) {
-                if ('function' === typeof Date.prototype.toISOString) {
-                    // native implementation is ~50x faster, use it when we can
-                    return this.toDate().toISOString();
-                } else {
-                    return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
-                }
-            } else {
-                return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
-            }
-        },
-
-        toArray : function () {
-            var m = this;
-            return [
-                m.year(),
-                m.month(),
-                m.date(),
-                m.hours(),
-                m.minutes(),
-                m.seconds(),
-                m.milliseconds()
-            ];
-        },
-
-        isValid : function () {
-            return isValid(this);
-        },
-
-        isDSTShifted : function () {
-            if (this._a) {
-                return this.isValid() && compareArrays(this._a, (this._isUTC ? moment.utc(this._a) : moment(this._a)).toArray()) > 0;
-            }
-
-            return false;
-        },
-
-        parsingFlags : function () {
-            return extend({}, this._pf);
-        },
-
-        invalidAt: function () {
-            return this._pf.overflow;
-        },
-
-        utc : function (keepLocalTime) {
-            return this.utcOffset(0, keepLocalTime);
-        },
-
-        local : function (keepLocalTime) {
-            if (this._isUTC) {
-                this.utcOffset(0, keepLocalTime);
-                this._isUTC = false;
-
-                if (keepLocalTime) {
-                    this.subtract(this._dateUtcOffset(), 'm');
-                }
-            }
-            return this;
-        },
-
-        format : function (inputString) {
-            var output = formatMoment(this, inputString || moment.defaultFormat);
-            return this.localeData().postformat(output);
-        },
-
-        add : createAdder(1, 'add'),
-
-        subtract : createAdder(-1, 'subtract'),
-
-        diff : function (input, units, asFloat) {
-            var that = makeAs(input, this),
-                zoneDiff = (that.utcOffset() - this.utcOffset()) * 6e4,
-                anchor, diff, output, daysAdjust;
-
-            units = normalizeUnits(units);
-
-            if (units === 'year' || units === 'month' || units === 'quarter') {
-                output = monthDiff(this, that);
-                if (units === 'quarter') {
-                    output = output / 3;
-                } else if (units === 'year') {
-                    output = output / 12;
-                }
-            } else {
-                diff = this - that;
-                output = units === 'second' ? diff / 1e3 : // 1000
-                    units === 'minute' ? diff / 6e4 : // 1000 * 60
-                    units === 'hour' ? diff / 36e5 : // 1000 * 60 * 60
-                    units === 'day' ? (diff - zoneDiff) / 864e5 : // 1000 * 60 * 60 * 24, negate dst
-                    units === 'week' ? (diff - zoneDiff) / 6048e5 : // 1000 * 60 * 60 * 24 * 7, negate dst
-                    diff;
-            }
-            return asFloat ? output : absRound(output);
-        },
-
-        from : function (time, withoutSuffix) {
-            return moment.duration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
-        },
-
-        fromNow : function (withoutSuffix) {
-            return this.from(moment(), withoutSuffix);
-        },
-
-        calendar : function (time) {
-            // We want to compare the start of today, vs this.
-            // Getting start-of-today depends on whether we're locat/utc/offset
-            // or not.
-            var now = time || moment(),
-                sod = makeAs(now, this).startOf('day'),
-                diff = this.diff(sod, 'days', true),
-                format = diff < -6 ? 'sameElse' :
-                    diff < -1 ? 'lastWeek' :
-                    diff < 0 ? 'lastDay' :
-                    diff < 1 ? 'sameDay' :
-                    diff < 2 ? 'nextDay' :
-                    diff < 7 ? 'nextWeek' : 'sameElse';
-            return this.format(this.localeData().calendar(format, this, moment(now)));
-        },
-
-        isLeapYear : function () {
-            return isLeapYear(this.year());
-        },
-
-        isDST : function () {
-            return (this.utcOffset() > this.clone().month(0).utcOffset() ||
-                this.utcOffset() > this.clone().month(5).utcOffset());
-        },
-
-        day : function (input) {
-            var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
-            if (input != null) {
-                input = parseWeekday(input, this.localeData());
-                return this.add(input - day, 'd');
-            } else {
-                return day;
-            }
-        },
-
-        month : makeAccessor('Month', true),
-
-        startOf : function (units) {
-            units = normalizeUnits(units);
-            // the following switch intentionally omits break keywords
-            // to utilize falling through the cases.
-            switch (units) {
-            case 'year':
-                this.month(0);
-                /* falls through */
-            case 'quarter':
-            case 'month':
-                this.date(1);
-                /* falls through */
-            case 'week':
-            case 'isoWeek':
-            case 'day':
-                this.hours(0);
-                /* falls through */
-            case 'hour':
-                this.minutes(0);
-                /* falls through */
-            case 'minute':
-                this.seconds(0);
-                /* falls through */
-            case 'second':
-                this.milliseconds(0);
-                /* falls through */
-            }
-
-            // weeks are a special case
-            if (units === 'week') {
-                this.weekday(0);
-            } else if (units === 'isoWeek') {
-                this.isoWeekday(1);
-            }
-
-            // quarters are also special
-            if (units === 'quarter') {
-                this.month(Math.floor(this.month() / 3) * 3);
-            }
-
-            return this;
-        },
-
-        endOf: function (units) {
-            units = normalizeUnits(units);
-            if (units === undefined || units === 'millisecond') {
-                return this;
-            }
-            return this.startOf(units).add(1, (units === 'isoWeek' ? 'week' : units)).subtract(1, 'ms');
-        },
-
-        isAfter: function (input, units) {
-            var inputMs;
-            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
-            if (units === 'millisecond') {
-                input = moment.isMoment(input) ? input : moment(input);
-                return +this > +input;
-            } else {
-                inputMs = moment.isMoment(input) ? +input : +moment(input);
-                return inputMs < +this.clone().startOf(units);
-            }
-        },
-
-        isBefore: function (input, units) {
-            var inputMs;
-            units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
-            if (units === 'millisecond') {
-                input = moment.isMoment(input) ? input : moment(input);
-                return +this < +input;
-            } else {
-                inputMs = moment.isMoment(input) ? +input : +moment(input);
-                return +this.clone().endOf(units) < inputMs;
-            }
-        },
-
-        isBetween: function (from, to, units) {
-            return this.isAfter(from, units) && this.isBefore(to, units);
-        },
-
-        isSame: function (input, units) {
-            var inputMs;
-            units = normalizeUnits(units || 'millisecond');
-            if (units === 'millisecond') {
-                input = moment.isMoment(input) ? input : moment(input);
-                return +this === +input;
-            } else {
-                inputMs = +moment(input);
-                return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
-            }
-        },
-
-        min: deprecate(
-                 'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
-                 function (other) {
-                     other = moment.apply(null, arguments);
-                     return other < this ? this : other;
-                 }
-         ),
-
-        max: deprecate(
-                'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
-                function (other) {
-                    other = moment.apply(null, arguments);
-                    return other > this ? this : other;
-                }
-        ),
-
-        zone : deprecate(
-                'moment().zone is deprecated, use moment().utcOffset instead. ' +
-                'https://github.com/moment/moment/issues/1779',
-                function (input, keepLocalTime) {
-                    if (input != null) {
-                        if (typeof input !== 'string') {
-                            input = -input;
-                        }
-
-                        this.utcOffset(input, keepLocalTime);
-
-                        return this;
-                    } else {
-                        return -this.utcOffset();
-                    }
-                }
-        ),
-
-        // keepLocalTime = true means only change the timezone, without
-        // affecting the local hour. So 5:31:26 +0300 --[utcOffset(2, true)]-->
-        // 5:31:26 +0200 It is possible that 5:31:26 doesn't exist with offset
-        // +0200, so we adjust the time as needed, to be valid.
-        //
-        // Keeping the time actually adds/subtracts (one hour)
-        // from the actual represented time. That is why we call updateOffset
-        // a second time. In case it wants us to change the offset again
-        // _changeInProgress == true case, then we have to adjust, because
-        // there is no such time in the given timezone.
-        utcOffset : function (input, keepLocalTime) {
-            var offset = this._offset || 0,
-                localAdjust;
-            if (input != null) {
-                if (typeof input === 'string') {
-                    input = utcOffsetFromString(input);
-                }
-                if (Math.abs(input) < 16) {
-                    input = input * 60;
-                }
-                if (!this._isUTC && keepLocalTime) {
-                    localAdjust = this._dateUtcOffset();
-                }
-                this._offset = input;
-                this._isUTC = true;
-                if (localAdjust != null) {
-                    this.add(localAdjust, 'm');
-                }
-                if (offset !== input) {
-                    if (!keepLocalTime || this._changeInProgress) {
-                        addOrSubtractDurationFromMoment(this,
-                                moment.duration(input - offset, 'm'), 1, false);
-                    } else if (!this._changeInProgress) {
-                        this._changeInProgress = true;
-                        moment.updateOffset(this, true);
-                        this._changeInProgress = null;
-                    }
-                }
-
-                return this;
-            } else {
-                return this._isUTC ? offset : this._dateUtcOffset();
-            }
-        },
-
-        isLocal : function () {
-            return !this._isUTC;
-        },
-
-        isUtcOffset : function () {
-            return this._isUTC;
-        },
-
-        isUtc : function () {
-            return this._isUTC && this._offset === 0;
-        },
-
-        zoneAbbr : function () {
-            return this._isUTC ? 'UTC' : '';
-        },
-
-        zoneName : function () {
-            return this._isUTC ? 'Coordinated Universal Time' : '';
-        },
-
-        parseZone : function () {
-            if (this._tzm) {
-                this.utcOffset(this._tzm);
-            } else if (typeof this._i === 'string') {
-                this.utcOffset(utcOffsetFromString(this._i));
-            }
-            return this;
-        },
-
-        hasAlignedHourOffset : function (input) {
-            if (!input) {
-                input = 0;
-            }
-            else {
-                input = moment(input).utcOffset();
-            }
-
-            return (this.utcOffset() - input) % 60 === 0;
-        },
-
-        daysInMonth : function () {
-            return daysInMonth(this.year(), this.month());
-        },
-
-        dayOfYear : function (input) {
-            var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 864e5) + 1;
-            return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
-        },
-
-        quarter : function (input) {
-            return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
-        },
-
-        weekYear : function (input) {
-            var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
-            return input == null ? year : this.add((input - year), 'y');
-        },
-
-        isoWeekYear : function (input) {
-            var year = weekOfYear(this, 1, 4).year;
-            return input == null ? year : this.add((input - year), 'y');
-        },
-
-        week : function (input) {
-            var week = this.localeData().week(this);
-            return input == null ? week : this.add((input - week) * 7, 'd');
-        },
-
-        isoWeek : function (input) {
-            var week = weekOfYear(this, 1, 4).week;
-            return input == null ? week : this.add((input - week) * 7, 'd');
-        },
-
-        weekday : function (input) {
-            var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
-            return input == null ? weekday : this.add(input - weekday, 'd');
-        },
-
-        isoWeekday : function (input) {
-            // behaves the same as moment#day except
-            // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
-            // as a setter, sunday should belong to the previous week.
-            return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
-        },
-
-        isoWeeksInYear : function () {
-            return weeksInYear(this.year(), 1, 4);
-        },
-
-        weeksInYear : function () {
-            var weekInfo = this.localeData()._week;
-            return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
-        },
-
-        get : function (units) {
-            units = normalizeUnits(units);
-            return this[units]();
-        },
-
-        set : function (units, value) {
-            var unit;
-            if (typeof units === 'object') {
-                for (unit in units) {
-                    this.set(unit, units[unit]);
-                }
-            }
-            else {
-                units = normalizeUnits(units);
-                if (typeof this[units] === 'function') {
-                    this[units](value);
-                }
-            }
-            return this;
-        },
-
-        // If passed a locale key, it will set the locale for this
-        // instance.  Otherwise, it will return the locale configuration
-        // variables for this instance.
-        locale : function (key) {
-            var newLocaleData;
-
-            if (key === undefined) {
-                return this._locale._abbr;
-            } else {
-                newLocaleData = moment.localeData(key);
-                if (newLocaleData != null) {
-                    this._locale = newLocaleData;
-                }
-                return this;
-            }
-        },
-
-        lang : deprecate(
-            'moment().lang() is deprecated. Instead, use moment().localeData() to get the language configuration. Use moment().locale() to change languages.',
-            function (key) {
-                if (key === undefined) {
-                    return this.localeData();
-                } else {
-                    return this.locale(key);
-                }
-            }
-        ),
-
-        localeData : function () {
-            return this._locale;
-        },
-
-        _dateUtcOffset : function () {
-            // On Firefox.24 Date#getTimezoneOffset returns a floating point.
-            // https://github.com/moment/moment/pull/1871
-            return -Math.round(this._d.getTimezoneOffset() / 15) * 15;
-        }
-
+    addFormatToken('H', ['HH', 2], 0, 'hour');
+    addFormatToken('h', ['hh', 2], 0, function () {
+        return this.hours() % 12 || 12;
     });
 
-    function rawMonthSetter(mom, value) {
-        var dayOfMonth;
-
-        // TODO: Move this out of here!
-        if (typeof value === 'string') {
-            value = mom.localeData().monthsParse(value);
-            // TODO: Another silent failure?
-            if (typeof value !== 'number') {
-                return mom;
-            }
-        }
-
-        dayOfMonth = Math.min(mom.date(),
-                daysInMonth(mom.year(), value));
-        mom._d['set' + (mom._isUTC ? 'UTC' : '') + 'Month'](value, dayOfMonth);
-        return mom;
+    function meridiem (token, lowercase) {
+        addFormatToken(token, 0, 0, function () {
+            return this.localeData().meridiem(this.hours(), this.minutes(), lowercase);
+        });
     }
 
-    function rawGetter(mom, unit) {
-        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
+    meridiem('a', true);
+    meridiem('A', false);
+
+    // ALIASES
+
+    addUnitAlias('hour', 'h');
+
+    // PARSING
+
+    function matchMeridiem (isStrict, locale) {
+        return locale._meridiemParse;
     }
 
-    function rawSetter(mom, unit, value) {
-        if (unit === 'Month') {
-            return rawMonthSetter(mom, value);
+    addRegexToken('a',  matchMeridiem);
+    addRegexToken('A',  matchMeridiem);
+    addRegexToken('H',  match1to2);
+    addRegexToken('h',  match1to2);
+    addRegexToken('HH', match1to2, match2);
+    addRegexToken('hh', match1to2, match2);
+
+    addParseToken(['H', 'HH'], HOUR);
+    addParseToken(['a', 'A'], function (input, array, config) {
+        config._isPm = config._locale.isPM(input);
+        config._meridiem = input;
+    });
+    addParseToken(['h', 'hh'], function (input, array, config) {
+        array[HOUR] = toInt(input);
+        config._pf.bigHour = true;
+    });
+
+    // LOCALES
+
+    function localeIsPM (input) {
+        // IE8 Quirks Mode & IE7 Standards Mode do not allow accessing strings like arrays
+        // Using charAt should be more compatible.
+        return ((input + '').toLowerCase().charAt(0) === 'p');
+    }
+
+    var defaultLocaleMeridiemParse = /[ap]\.?m?\.?/i;
+    function localeMeridiem (hours, minutes, isLower) {
+        if (hours > 11) {
+            return isLower ? 'pm' : 'PM';
         } else {
-            return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+            return isLower ? 'am' : 'AM';
         }
     }
 
-    function makeAccessor(unit, keepTime) {
-        return function (value) {
-            if (value != null) {
-                rawSetter(this, unit, value);
-                moment.updateOffset(this, keepTime);
-                return this;
-            } else {
-                return rawGetter(this, unit);
-            }
-        };
-    }
 
-    moment.fn.millisecond = moment.fn.milliseconds = makeAccessor('Milliseconds', false);
-    moment.fn.second = moment.fn.seconds = makeAccessor('Seconds', false);
-    moment.fn.minute = moment.fn.minutes = makeAccessor('Minutes', false);
+    // MOMENTS
+
     // Setting the hour should keep the time, because the user explicitly
     // specified which hour he wants. So trying to maintain the same hour (in
     // a new timezone) makes sense. Adding/subtracting hours does not follow
     // this rule.
-    moment.fn.hour = moment.fn.hours = makeAccessor('Hours', true);
-    // moment.fn.month is defined separately
-    moment.fn.date = makeAccessor('Date', true);
-    moment.fn.dates = deprecate('dates accessor is deprecated. Use date instead.', makeAccessor('Date', true));
-    moment.fn.year = makeAccessor('FullYear', true);
-    moment.fn.years = deprecate('years accessor is deprecated. Use year instead.', makeAccessor('FullYear', true));
+    var getSetHour = makeGetSet('Hours', true);
 
-    // add plural methods
-    moment.fn.days = moment.fn.day;
-    moment.fn.months = moment.fn.month;
-    moment.fn.weeks = moment.fn.week;
-    moment.fn.isoWeeks = moment.fn.isoWeek;
-    moment.fn.quarters = moment.fn.quarter;
+    addFormatToken('m', ['mm', 2], 0, 'minute');
 
-    // add aliased format methods
-    moment.fn.toJSON = moment.fn.toISOString;
+    // ALIASES
 
-    // alias isUtc for dev-friendliness
-    moment.fn.isUTC = moment.fn.isUtc;
+    addUnitAlias('minute', 'm');
 
-    /************************************
-        Duration Prototype
-    ************************************/
+    // PARSING
 
+    addRegexToken('m',  match1to2);
+    addRegexToken('mm', match1to2, match2);
+    addParseToken(['m', 'mm'], MINUTE);
 
-    function daysToYears (days) {
-        // 400 years have 146097 days (taking into account leap year rules)
-        return days * 400 / 146097;
-    }
+    // MOMENTS
 
-    function yearsToDays (years) {
-        // years * 365 + absRound(years / 4) -
-        //     absRound(years / 100) + absRound(years / 400);
-        return years * 146097 / 400;
-    }
+    var getSetMinute = makeGetSet('Minutes', false);
 
-    extend(moment.duration.fn = Duration.prototype, {
+    addFormatToken('s', ['ss', 2], 0, 'second');
 
-        _bubble : function () {
-            var milliseconds = this._milliseconds,
-                days = this._days,
-                months = this._months,
-                data = this._data,
-                seconds, minutes, hours, years = 0;
+    // ALIASES
 
-            // The following code bubbles up values, see the tests for
-            // examples of what that means.
-            data.milliseconds = milliseconds % 1000;
+    addUnitAlias('second', 's');
 
-            seconds = absRound(milliseconds / 1000);
-            data.seconds = seconds % 60;
+    // PARSING
 
-            minutes = absRound(seconds / 60);
-            data.minutes = minutes % 60;
+    addRegexToken('s',  match1to2);
+    addRegexToken('ss', match1to2, match2);
+    addParseToken(['s', 'ss'], SECOND);
 
-            hours = absRound(minutes / 60);
-            data.hours = hours % 24;
+    // MOMENTS
 
-            days += absRound(hours / 24);
+    var getSetSecond = makeGetSet('Seconds', false);
 
-            // Accurately convert days to years, assume start from year 0.
-            years = absRound(daysToYears(days));
-            days -= absRound(yearsToDays(years));
-
-            // 30 days to a month
-            // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
-            months += absRound(days / 30);
-            days %= 30;
-
-            // 12 months -> 1 year
-            years += absRound(months / 12);
-            months %= 12;
-
-            data.days = days;
-            data.months = months;
-            data.years = years;
-        },
-
-        abs : function () {
-            this._milliseconds = Math.abs(this._milliseconds);
-            this._days = Math.abs(this._days);
-            this._months = Math.abs(this._months);
-
-            this._data.milliseconds = Math.abs(this._data.milliseconds);
-            this._data.seconds = Math.abs(this._data.seconds);
-            this._data.minutes = Math.abs(this._data.minutes);
-            this._data.hours = Math.abs(this._data.hours);
-            this._data.months = Math.abs(this._data.months);
-            this._data.years = Math.abs(this._data.years);
-
-            return this;
-        },
-
-        weeks : function () {
-            return absRound(this.days() / 7);
-        },
-
-        valueOf : function () {
-            return this._milliseconds +
-              this._days * 864e5 +
-              (this._months % 12) * 2592e6 +
-              toInt(this._months / 12) * 31536e6;
-        },
-
-        humanize : function (withSuffix) {
-            var output = relativeTime(this, !withSuffix, this.localeData());
-
-            if (withSuffix) {
-                output = this.localeData().pastFuture(+this, output);
-            }
-
-            return this.localeData().postformat(output);
-        },
-
-        add : function (input, val) {
-            // supports only 2.0-style add(1, 's') or add(moment)
-            var dur = moment.duration(input, val);
-
-            this._milliseconds += dur._milliseconds;
-            this._days += dur._days;
-            this._months += dur._months;
-
-            this._bubble();
-
-            return this;
-        },
-
-        subtract : function (input, val) {
-            var dur = moment.duration(input, val);
-
-            this._milliseconds -= dur._milliseconds;
-            this._days -= dur._days;
-            this._months -= dur._months;
-
-            this._bubble();
-
-            return this;
-        },
-
-        get : function (units) {
-            units = normalizeUnits(units);
-            return this[units.toLowerCase() + 's']();
-        },
-
-        as : function (units) {
-            var days, months;
-            units = normalizeUnits(units);
-
-            if (units === 'month' || units === 'year') {
-                days = this._days + this._milliseconds / 864e5;
-                months = this._months + daysToYears(days) * 12;
-                return units === 'month' ? months : months / 12;
-            } else {
-                // handle milliseconds separately because of floating point math errors (issue #1867)
-                days = this._days + Math.round(yearsToDays(this._months / 12));
-                switch (units) {
-                    case 'week': return days / 7 + this._milliseconds / 6048e5;
-                    case 'day': return days + this._milliseconds / 864e5;
-                    case 'hour': return days * 24 + this._milliseconds / 36e5;
-                    case 'minute': return days * 24 * 60 + this._milliseconds / 6e4;
-                    case 'second': return days * 24 * 60 * 60 + this._milliseconds / 1000;
-                    // Math.floor prevents floating point math errors here
-                    case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + this._milliseconds;
-                    default: throw new Error('Unknown unit ' + units);
-                }
-            }
-        },
-
-        lang : moment.fn.lang,
-        locale : moment.fn.locale,
-
-        toIsoString : deprecate(
-            'toIsoString() is deprecated. Please use toISOString() instead ' +
-            '(notice the capitals)',
-            function () {
-                return this.toISOString();
-            }
-        ),
-
-        toISOString : function () {
-            // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
-            var years = Math.abs(this.years()),
-                months = Math.abs(this.months()),
-                days = Math.abs(this.days()),
-                hours = Math.abs(this.hours()),
-                minutes = Math.abs(this.minutes()),
-                seconds = Math.abs(this.seconds() + this.milliseconds() / 1000);
-
-            if (!this.asSeconds()) {
-                // this is the same as C#'s (Noda) and python (isodate)...
-                // but not other JS (goog.date)
-                return 'P0D';
-            }
-
-            return (this.asSeconds() < 0 ? '-' : '') +
-                'P' +
-                (years ? years + 'Y' : '') +
-                (months ? months + 'M' : '') +
-                (days ? days + 'D' : '') +
-                ((hours || minutes || seconds) ? 'T' : '') +
-                (hours ? hours + 'H' : '') +
-                (minutes ? minutes + 'M' : '') +
-                (seconds ? seconds + 'S' : '');
-        },
-
-        localeData : function () {
-            return this._locale;
-        },
-
-        toJSON : function () {
-            return this.toISOString();
-        }
+    addFormatToken('S', 0, 0, function () {
+        return ~~(this.millisecond() / 100);
     });
 
-    moment.duration.fn.toString = moment.duration.fn.toISOString;
+    addFormatToken(0, ['SS', 2], 0, function () {
+        return ~~(this.millisecond() / 10);
+    });
 
-    function makeDurationGetter(name) {
-        moment.duration.fn[name] = function () {
-            return this._data[name];
-        };
+    function millisecond__milliseconds (token) {
+        addFormatToken(0, [token, 3], 0, 'millisecond');
     }
 
-    for (i in unitMillisecondFactors) {
-        if (hasOwnProp(unitMillisecondFactors, i)) {
-            makeDurationGetter(i.toLowerCase());
+    millisecond__milliseconds('SSS');
+    millisecond__milliseconds('SSSS');
+
+    // ALIASES
+
+    addUnitAlias('millisecond', 'ms');
+
+    // PARSING
+
+    addRegexToken('S',    match1to3, match1);
+    addRegexToken('SS',   match1to3, match2);
+    addRegexToken('SSS',  match1to3, match3);
+    addRegexToken('SSSS', matchUnsigned);
+    addParseToken(['S', 'SS', 'SSS', 'SSSS'], function (input, array) {
+        array[MILLISECOND] = toInt(('0.' + input) * 1000);
+    });
+
+    // MOMENTS
+
+    var getSetMillisecond = makeGetSet('Milliseconds', false);
+
+    addFormatToken('z',  0, 0, 'zoneAbbr');
+    addFormatToken('zz', 0, 0, 'zoneName');
+
+    // MOMENTS
+
+    function getZoneAbbr () {
+        return this._isUTC ? 'UTC' : '';
+    }
+
+    function getZoneName () {
+        return this._isUTC ? 'Coordinated Universal Time' : '';
+    }
+
+    var momentPrototype__proto = Moment.prototype;
+
+    momentPrototype__proto.add          = add_subtract__add;
+    momentPrototype__proto.calendar     = moment_calendar__calendar;
+    momentPrototype__proto.clone        = clone;
+    momentPrototype__proto.diff         = diff;
+    momentPrototype__proto.endOf        = endOf;
+    momentPrototype__proto.format       = format;
+    momentPrototype__proto.from         = from;
+    momentPrototype__proto.fromNow      = fromNow;
+    momentPrototype__proto.get          = getSet;
+    momentPrototype__proto.invalidAt    = invalidAt;
+    momentPrototype__proto.isAfter      = isAfter;
+    momentPrototype__proto.isBefore     = isBefore;
+    momentPrototype__proto.isBetween    = isBetween;
+    momentPrototype__proto.isSame       = isSame;
+    momentPrototype__proto.isValid      = moment_valid__isValid;
+    momentPrototype__proto.lang         = lang;
+    momentPrototype__proto.locale       = locale;
+    momentPrototype__proto.localeData   = localeData;
+    momentPrototype__proto.max          = prototypeMax;
+    momentPrototype__proto.min          = prototypeMin;
+    momentPrototype__proto.parsingFlags = parsingFlags;
+    momentPrototype__proto.set          = getSet;
+    momentPrototype__proto.startOf      = startOf;
+    momentPrototype__proto.subtract     = add_subtract__subtract;
+    momentPrototype__proto.toArray      = toArray;
+    momentPrototype__proto.toDate       = toDate;
+    momentPrototype__proto.toISOString  = moment_format__toISOString;
+    momentPrototype__proto.toJSON       = moment_format__toISOString;
+    momentPrototype__proto.toString     = toString;
+    momentPrototype__proto.unix         = unix;
+    momentPrototype__proto.valueOf      = to_type__valueOf;
+
+    // Year
+    momentPrototype__proto.year       = getSetYear;
+    momentPrototype__proto.isLeapYear = getIsLeapYear;
+
+    // Week Year
+    momentPrototype__proto.weekYear    = getSetWeekYear;
+    momentPrototype__proto.isoWeekYear = getSetISOWeekYear;
+
+    // Quarter
+    momentPrototype__proto.quarter = momentPrototype__proto.quarters = getSetQuarter;
+
+    // Month
+    momentPrototype__proto.month       = getSetMonth;
+    momentPrototype__proto.daysInMonth = getDaysInMonth;
+
+    // Week
+    momentPrototype__proto.week           = momentPrototype__proto.weeks        = getSetWeek;
+    momentPrototype__proto.isoWeek        = momentPrototype__proto.isoWeeks     = getSetISOWeek;
+    momentPrototype__proto.weeksInYear    = getWeeksInYear;
+    momentPrototype__proto.isoWeeksInYear = getISOWeeksInYear;
+
+    // Day
+    momentPrototype__proto.date       = getSetDayOfMonth;
+    momentPrototype__proto.day        = momentPrototype__proto.days             = getSetDayOfWeek;
+    momentPrototype__proto.weekday    = getSetLocaleDayOfWeek;
+    momentPrototype__proto.isoWeekday = getSetISODayOfWeek;
+    momentPrototype__proto.dayOfYear  = getSetDayOfYear;
+
+    // Hour
+    momentPrototype__proto.hour = momentPrototype__proto.hours = getSetHour;
+
+    // Minute
+    momentPrototype__proto.minute = momentPrototype__proto.minutes = getSetMinute;
+
+    // Second
+    momentPrototype__proto.second = momentPrototype__proto.seconds = getSetSecond;
+
+    // Millisecond
+    momentPrototype__proto.millisecond = momentPrototype__proto.milliseconds = getSetMillisecond;
+
+    // Offset
+    momentPrototype__proto.utcOffset            = getSetOffset;
+    momentPrototype__proto.utc                  = setOffsetToUTC;
+    momentPrototype__proto.local                = setOffsetToLocal;
+    momentPrototype__proto.parseZone            = setOffsetToParsedOffset;
+    momentPrototype__proto.hasAlignedHourOffset = hasAlignedHourOffset;
+    momentPrototype__proto.isDST                = isDaylightSavingTime;
+    momentPrototype__proto.isDSTShifted         = isDaylightSavingTimeShifted;
+    momentPrototype__proto.isLocal              = isLocal;
+    momentPrototype__proto.isUtcOffset          = isUtcOffset;
+    momentPrototype__proto.isUtc                = isUtc;
+    momentPrototype__proto.isUTC                = isUtc;
+
+    // Timezone
+    momentPrototype__proto.zoneAbbr = getZoneAbbr;
+    momentPrototype__proto.zoneName = getZoneName;
+
+    // Deprecations
+    momentPrototype__proto.dates  = deprecate('dates accessor is deprecated. Use date instead.', getSetDayOfMonth);
+    momentPrototype__proto.months = deprecate('months accessor is deprecated. Use month instead', getSetMonth);
+    momentPrototype__proto.years  = deprecate('years accessor is deprecated. Use year instead', getSetYear);
+    momentPrototype__proto.zone   = deprecate('moment().zone is deprecated, use moment().utcOffset instead. https://github.com/moment/moment/issues/1779', getSetZone);
+
+    var momentPrototype = momentPrototype__proto;
+
+    function moment__createUnix (input) {
+        return local__createLocal(input * 1000);
+    }
+
+    function moment__createInZone () {
+        return local__createLocal.apply(null, arguments).parseZone();
+    }
+
+    var defaultCalendar = {
+        sameDay : '[Today at] LT',
+        nextDay : '[Tomorrow at] LT',
+        nextWeek : 'dddd [at] LT',
+        lastDay : '[Yesterday at] LT',
+        lastWeek : '[Last] dddd [at] LT',
+        sameElse : 'L'
+    };
+
+    function locale_calendar__calendar (key, mom, now) {
+        var output = this._calendar[key];
+        return typeof output === 'function' ? output.call(mom, now) : output;
+    }
+
+    var defaultLongDateFormat = {
+        LTS  : 'h:mm:ss A',
+        LT   : 'h:mm A',
+        L    : 'MM/DD/YYYY',
+        LL   : 'MMMM D, YYYY',
+        LLL  : 'MMMM D, YYYY LT',
+        LLLL : 'dddd, MMMM D, YYYY LT'
+    };
+
+    function longDateFormat (key) {
+        var output = this._longDateFormat[key];
+        if (!output && this._longDateFormat[key.toUpperCase()]) {
+            output = this._longDateFormat[key.toUpperCase()].replace(/MMMM|MM|DD|dddd/g, function (val) {
+                return val.slice(1);
+            });
+            this._longDateFormat[key] = output;
         }
+        return output;
     }
 
-    moment.duration.fn.asMilliseconds = function () {
-        return this.as('ms');
-    };
-    moment.duration.fn.asSeconds = function () {
-        return this.as('s');
-    };
-    moment.duration.fn.asMinutes = function () {
-        return this.as('m');
-    };
-    moment.duration.fn.asHours = function () {
-        return this.as('h');
-    };
-    moment.duration.fn.asDays = function () {
-        return this.as('d');
-    };
-    moment.duration.fn.asWeeks = function () {
-        return this.as('weeks');
-    };
-    moment.duration.fn.asMonths = function () {
-        return this.as('M');
-    };
-    moment.duration.fn.asYears = function () {
-        return this.as('y');
+    var defaultInvalidDate = 'Invalid date';
+
+    function invalidDate () {
+        return this._invalidDate;
+    }
+
+    var defaultOrdinal = '%d';
+    var defaultOrdinalParse = /\d{1,2}/;
+
+    function ordinal (number) {
+        return this._ordinal.replace('%d', number);
+    }
+
+    function preParsePostFormat (string) {
+        return string;
+    }
+
+    var defaultRelativeTime = {
+        future : 'in %s',
+        past   : '%s ago',
+        s  : 'a few seconds',
+        m  : 'a minute',
+        mm : '%d minutes',
+        h  : 'an hour',
+        hh : '%d hours',
+        d  : 'a day',
+        dd : '%d days',
+        M  : 'a month',
+        MM : '%d months',
+        y  : 'a year',
+        yy : '%d years'
     };
 
-    /************************************
-        Default Locale
-    ************************************/
+    function relative__relativeTime (number, withoutSuffix, string, isFuture) {
+        var output = this._relativeTime[string];
+        return (typeof output === 'function') ?
+            output(number, withoutSuffix, string, isFuture) :
+            output.replace(/%d/i, number);
+    }
 
+    function pastFuture (diff, output) {
+        var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
+        return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
+    }
 
-    // Set default locale, other locale will inherit from English.
-    moment.locale('en', {
+    function locale_set__set (config) {
+        var prop, i;
+        for (i in config) {
+            prop = config[i];
+            if (typeof prop === 'function') {
+                this[i] = prop;
+            } else {
+                this['_' + i] = prop;
+            }
+        }
+        // Lenient ordinal parsing accepts just a number in addition to
+        // number + (possibly) stuff coming from _ordinalParseLenient.
+        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + /\d{1,2}/.source);
+    }
+
+    var prototype__proto = Locale.prototype;
+
+    prototype__proto._calendar       = defaultCalendar;
+    prototype__proto.calendar        = locale_calendar__calendar;
+    prototype__proto._longDateFormat = defaultLongDateFormat;
+    prototype__proto.longDateFormat  = longDateFormat;
+    prototype__proto._invalidDate    = defaultInvalidDate;
+    prototype__proto.invalidDate     = invalidDate;
+    prototype__proto._ordinal        = defaultOrdinal;
+    prototype__proto.ordinal         = ordinal;
+    prototype__proto._ordinalParse   = defaultOrdinalParse;
+    prototype__proto.preparse        = preParsePostFormat;
+    prototype__proto.postformat      = preParsePostFormat;
+    prototype__proto._relativeTime   = defaultRelativeTime;
+    prototype__proto.relativeTime    = relative__relativeTime;
+    prototype__proto.pastFuture      = pastFuture;
+    prototype__proto.set             = locale_set__set;
+
+    // Month
+    prototype__proto.months       =        localeMonths;
+    prototype__proto._months      = defaultLocaleMonths;
+    prototype__proto.monthsShort  =        localeMonthsShort;
+    prototype__proto._monthsShort = defaultLocaleMonthsShort;
+    prototype__proto.monthsParse  =        localeMonthsParse;
+
+    // Week
+    prototype__proto.week = localeWeek;
+    prototype__proto._week = defaultLocaleWeek;
+    prototype__proto.firstDayOfYear = localeFirstDayOfYear;
+    prototype__proto.firstDayOfWeek = localeFirstDayOfWeek;
+
+    // Day of Week
+    prototype__proto.weekdays       =        localeWeekdays;
+    prototype__proto._weekdays      = defaultLocaleWeekdays;
+    prototype__proto.weekdaysMin    =        localeWeekdaysMin;
+    prototype__proto._weekdaysMin   = defaultLocaleWeekdaysMin;
+    prototype__proto.weekdaysShort  =        localeWeekdaysShort;
+    prototype__proto._weekdaysShort = defaultLocaleWeekdaysShort;
+    prototype__proto.weekdaysParse  =        localeWeekdaysParse;
+
+    // Hours
+    prototype__proto.isPM = localeIsPM;
+    prototype__proto._meridiemParse = defaultLocaleMeridiemParse;
+    prototype__proto.meridiem = localeMeridiem;
+
+    function lists__get (format, index, field, setter) {
+        var locale = locale_locales__getLocale();
+        var utc = create_utc__createUTC().set(setter, index);
+        return locale[field](utc, format);
+    }
+
+    function list (format, index, field, count, setter) {
+        if (typeof format === 'number') {
+            index = format;
+            format = undefined;
+        }
+
+        format = format || '';
+
+        if (index != null) {
+            return lists__get(format, index, field, setter);
+        }
+
+        var i;
+        var out = [];
+        for (i = 0; i < count; i++) {
+            out[i] = lists__get(format, i, field, setter);
+        }
+        return out;
+    }
+
+    function lists__listMonths (format, index) {
+        return list(format, index, 'months', 12, 'month');
+    }
+
+    function lists__listMonthsShort (format, index) {
+        return list(format, index, 'monthsShort', 12, 'month');
+    }
+
+    function lists__listWeekdays (format, index) {
+        return list(format, index, 'weekdays', 7, 'day');
+    }
+
+    function lists__listWeekdaysShort (format, index) {
+        return list(format, index, 'weekdaysShort', 7, 'day');
+    }
+
+    function lists__listWeekdaysMin (format, index) {
+        return list(format, index, 'weekdaysMin', 7, 'day');
+    }
+
+    locale_locales__getSetGlobalLocale('en', {
         ordinalParse: /\d{1,2}(th|st|nd|rd)/,
         ordinal : function (number) {
             var b = number % 10,
@@ -24769,48 +24504,355 @@ process.chdir = function (dir) {
         }
     });
 
-    /* EMBED_LOCALES */
+    // Side effect imports
+    utils_hooks__hooks.lang = deprecate('moment.lang is deprecated. Use moment.locale instead.', locale_locales__getSetGlobalLocale);
+    utils_hooks__hooks.langData = deprecate('moment.langData is deprecated. Use moment.localeData instead.', locale_locales__getLocale);
 
-    /************************************
-        Exposing Moment
-    ************************************/
+    var mathAbs = Math.abs;
 
-    function makeGlobal(shouldDeprecate) {
-        /*global ender:false */
-        if (typeof ender !== 'undefined') {
-            return;
-        }
-        oldGlobalMoment = globalScope.moment;
-        if (shouldDeprecate) {
-            globalScope.moment = deprecate(
-                    'Accessing Moment through the global scope is ' +
-                    'deprecated, and will be removed in an upcoming ' +
-                    'release.',
-                    moment);
+    function duration_abs__abs () {
+        var data           = this._data;
+
+        this._milliseconds = mathAbs(this._milliseconds);
+        this._days         = mathAbs(this._days);
+        this._months       = mathAbs(this._months);
+
+        data.milliseconds  = mathAbs(data.milliseconds);
+        data.seconds       = mathAbs(data.seconds);
+        data.minutes       = mathAbs(data.minutes);
+        data.hours         = mathAbs(data.hours);
+        data.months        = mathAbs(data.months);
+        data.years         = mathAbs(data.years);
+
+        return this;
+    }
+
+    function duration_add_subtract__addSubtract (duration, input, value, direction) {
+        var other = create__createDuration(input, value);
+
+        duration._milliseconds += direction * other._milliseconds;
+        duration._days         += direction * other._days;
+        duration._months       += direction * other._months;
+
+        return duration._bubble();
+    }
+
+    // supports only 2.0-style add(1, 's') or add(duration)
+    function duration_add_subtract__add (input, value) {
+        return duration_add_subtract__addSubtract(this, input, value, 1);
+    }
+
+    // supports only 2.0-style subtract(1, 's') or subtract(duration)
+    function duration_add_subtract__subtract (input, value) {
+        return duration_add_subtract__addSubtract(this, input, value, -1);
+    }
+
+    function bubble () {
+        var milliseconds = this._milliseconds;
+        var days         = this._days;
+        var months       = this._months;
+        var data         = this._data;
+        var seconds, minutes, hours, years = 0;
+
+        // The following code bubbles up values, see the tests for
+        // examples of what that means.
+        data.milliseconds = milliseconds % 1000;
+
+        seconds           = absFloor(milliseconds / 1000);
+        data.seconds      = seconds % 60;
+
+        minutes           = absFloor(seconds / 60);
+        data.minutes      = minutes % 60;
+
+        hours             = absFloor(minutes / 60);
+        data.hours        = hours % 24;
+
+        days += absFloor(hours / 24);
+
+        // Accurately convert days to years, assume start from year 0.
+        years = absFloor(daysToYears(days));
+        days -= absFloor(yearsToDays(years));
+
+        // 30 days to a month
+        // TODO (iskren): Use anchor date (like 1st Jan) to compute this.
+        months += absFloor(days / 30);
+        days   %= 30;
+
+        // 12 months -> 1 year
+        years  += absFloor(months / 12);
+        months %= 12;
+
+        data.days   = days;
+        data.months = months;
+        data.years  = years;
+
+        return this;
+    }
+
+    function daysToYears (days) {
+        // 400 years have 146097 days (taking into account leap year rules)
+        return days * 400 / 146097;
+    }
+
+    function yearsToDays (years) {
+        // years * 365 + absFloor(years / 4) -
+        //     absFloor(years / 100) + absFloor(years / 400);
+        return years * 146097 / 400;
+    }
+
+    function as (units) {
+        var days;
+        var months;
+        var milliseconds = this._milliseconds;
+
+        units = normalizeUnits(units);
+
+        if (units === 'month' || units === 'year') {
+            days   = this._days   + milliseconds / 864e5;
+            months = this._months + daysToYears(days) * 12;
+            return units === 'month' ? months : months / 12;
         } else {
-            globalScope.moment = moment;
+            // handle milliseconds separately because of floating point math errors (issue #1867)
+            days = this._days + Math.round(yearsToDays(this._months / 12));
+            switch (units) {
+                case 'week'   : return days / 7            + milliseconds / 6048e5;
+                case 'day'    : return days                + milliseconds / 864e5;
+                case 'hour'   : return days * 24           + milliseconds / 36e5;
+                case 'minute' : return days * 24 * 60      + milliseconds / 6e4;
+                case 'second' : return days * 24 * 60 * 60 + milliseconds / 1000;
+                // Math.floor prevents floating point math errors here
+                case 'millisecond': return Math.floor(days * 24 * 60 * 60 * 1000) + milliseconds;
+                default: throw new Error('Unknown unit ' + units);
+            }
         }
     }
 
-    // CommonJS module is defined
-    if (hasModule) {
-        module.exports = moment;
-    } else if (typeof define === 'function' && define.amd) {
-        define(function (require, exports, module) {
-            if (module.config && module.config() && module.config().noGlobal === true) {
-                // release the global variable
-                globalScope.moment = oldGlobalMoment;
-            }
-
-            return moment;
-        });
-        makeGlobal(true);
-    } else {
-        makeGlobal();
+    // TODO: Use this.as('ms')?
+    function duration_as__valueOf () {
+        return (
+            this._milliseconds +
+            this._days * 864e5 +
+            (this._months % 12) * 2592e6 +
+            toInt(this._months / 12) * 31536e6
+        );
     }
-}).call(this);
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+    function makeAs (alias) {
+        return function () {
+            return this.as(alias);
+        };
+    }
+
+    var asMilliseconds = makeAs('ms');
+    var asSeconds      = makeAs('s');
+    var asMinutes      = makeAs('m');
+    var asHours        = makeAs('h');
+    var asDays         = makeAs('d');
+    var asWeeks        = makeAs('w');
+    var asMonths       = makeAs('M');
+    var asYears        = makeAs('y');
+
+    function duration_get__get (units) {
+        units = normalizeUnits(units);
+        return this[units + 's']();
+    }
+
+    function makeGetter(name) {
+        return function () {
+            return this._data[name];
+        };
+    }
+
+    var duration_get__milliseconds = makeGetter('milliseconds');
+    var seconds      = makeGetter('seconds');
+    var minutes      = makeGetter('minutes');
+    var hours        = makeGetter('hours');
+    var days         = makeGetter('days');
+    var months       = makeGetter('months');
+    var years        = makeGetter('years');
+
+    function weeks () {
+        return absFloor(this.days() / 7);
+    }
+
+    var round = Math.round;
+    var thresholds = {
+        s: 45,  // seconds to minute
+        m: 45,  // minutes to hour
+        h: 22,  // hours to day
+        d: 26,  // days to month
+        M: 11   // months to year
+    };
+
+    // helper function for moment.fn.from, moment.fn.fromNow, and moment.duration.fn.humanize
+    function substituteTimeAgo(string, number, withoutSuffix, isFuture, locale) {
+        return locale.relativeTime(number || 1, !!withoutSuffix, string, isFuture);
+    }
+
+    function duration_humanize__relativeTime (posNegDuration, withoutSuffix, locale) {
+        var duration = create__createDuration(posNegDuration).abs();
+        var seconds  = round(duration.as('s'));
+        var minutes  = round(duration.as('m'));
+        var hours    = round(duration.as('h'));
+        var days     = round(duration.as('d'));
+        var months   = round(duration.as('M'));
+        var years    = round(duration.as('y'));
+
+        var a = seconds < thresholds.s && ['s', seconds]  ||
+                minutes === 1          && ['m']           ||
+                minutes < thresholds.m && ['mm', minutes] ||
+                hours   === 1          && ['h']           ||
+                hours   < thresholds.h && ['hh', hours]   ||
+                days    === 1          && ['d']           ||
+                days    < thresholds.d && ['dd', days]    ||
+                months  === 1          && ['M']           ||
+                months  < thresholds.M && ['MM', months]  ||
+                years   === 1          && ['y']           || ['yy', years];
+
+        a[2] = withoutSuffix;
+        a[3] = +posNegDuration > 0;
+        a[4] = locale;
+        return substituteTimeAgo.apply(null, a);
+    }
+
+    // This function allows you to set a threshold for relative time strings
+    function duration_humanize__getSetRelativeTimeThreshold (threshold, limit) {
+        if (thresholds[threshold] === undefined) {
+            return false;
+        }
+        if (limit === undefined) {
+            return thresholds[threshold];
+        }
+        thresholds[threshold] = limit;
+        return true;
+    }
+
+    function humanize (withSuffix) {
+        var locale = this.localeData();
+        var output = duration_humanize__relativeTime(this, !withSuffix, locale);
+
+        if (withSuffix) {
+            output = locale.pastFuture(+this, output);
+        }
+
+        return locale.postformat(output);
+    }
+
+    var iso_string__abs = Math.abs;
+
+    function iso_string__toISOString() {
+        // inspired by https://github.com/dordille/moment-isoduration/blob/master/moment.isoduration.js
+        var Y = iso_string__abs(this.years());
+        var M = iso_string__abs(this.months());
+        var D = iso_string__abs(this.days());
+        var h = iso_string__abs(this.hours());
+        var m = iso_string__abs(this.minutes());
+        var s = iso_string__abs(this.seconds() + this.milliseconds() / 1000);
+        var total = this.asSeconds();
+
+        if (!total) {
+            // this is the same as C#'s (Noda) and python (isodate)...
+            // but not other JS (goog.date)
+            return 'P0D';
+        }
+
+        return (total < 0 ? '-' : '') +
+            'P' +
+            (Y ? Y + 'Y' : '') +
+            (M ? M + 'M' : '') +
+            (D ? D + 'D' : '') +
+            ((h || m || s) ? 'T' : '') +
+            (h ? h + 'H' : '') +
+            (m ? m + 'M' : '') +
+            (s ? s + 'S' : '');
+    }
+
+    var duration_prototype__proto = Duration.prototype;
+
+    duration_prototype__proto.abs            = duration_abs__abs;
+    duration_prototype__proto.add            = duration_add_subtract__add;
+    duration_prototype__proto.subtract       = duration_add_subtract__subtract;
+    duration_prototype__proto.as             = as;
+    duration_prototype__proto.asMilliseconds = asMilliseconds;
+    duration_prototype__proto.asSeconds      = asSeconds;
+    duration_prototype__proto.asMinutes      = asMinutes;
+    duration_prototype__proto.asHours        = asHours;
+    duration_prototype__proto.asDays         = asDays;
+    duration_prototype__proto.asWeeks        = asWeeks;
+    duration_prototype__proto.asMonths       = asMonths;
+    duration_prototype__proto.asYears        = asYears;
+    duration_prototype__proto.valueOf        = duration_as__valueOf;
+    duration_prototype__proto._bubble        = bubble;
+    duration_prototype__proto.get            = duration_get__get;
+    duration_prototype__proto.milliseconds   = duration_get__milliseconds;
+    duration_prototype__proto.seconds        = seconds;
+    duration_prototype__proto.minutes        = minutes;
+    duration_prototype__proto.hours          = hours;
+    duration_prototype__proto.days           = days;
+    duration_prototype__proto.weeks          = weeks;
+    duration_prototype__proto.months         = months;
+    duration_prototype__proto.years          = years;
+    duration_prototype__proto.humanize       = humanize;
+    duration_prototype__proto.toISOString    = iso_string__toISOString;
+    duration_prototype__proto.toString       = iso_string__toISOString;
+    duration_prototype__proto.toJSON         = iso_string__toISOString;
+    duration_prototype__proto.locale         = locale;
+    duration_prototype__proto.localeData     = localeData;
+
+    // Deprecations
+    duration_prototype__proto.toIsoString = deprecate('toIsoString() is deprecated. Please use toISOString() instead (notice the capitals)', iso_string__toISOString);
+    duration_prototype__proto.lang = lang;
+
+    // Side effect imports
+
+    addFormatToken('X', 0, 0, 'unix');
+    addFormatToken('x', 0, 0, 'valueOf');
+
+    // PARSING
+
+    addRegexToken('x', matchSigned);
+    addRegexToken('X', matchTimestamp);
+    addParseToken('X', function (input, array, config) {
+        config._d = new Date(parseFloat(input, 10) * 1000);
+    });
+    addParseToken('x', function (input, array, config) {
+        config._d = new Date(toInt(input));
+    });
+
+    // Side effect imports
+
+
+    utils_hooks__hooks.version = '2.10.2';
+
+    setHookCallback(local__createLocal);
+
+    utils_hooks__hooks.fn                    = momentPrototype;
+    utils_hooks__hooks.min                   = min;
+    utils_hooks__hooks.max                   = max;
+    utils_hooks__hooks.utc                   = create_utc__createUTC;
+    utils_hooks__hooks.unix                  = moment__createUnix;
+    utils_hooks__hooks.months                = lists__listMonths;
+    utils_hooks__hooks.isDate                = isDate;
+    utils_hooks__hooks.locale                = locale_locales__getSetGlobalLocale;
+    utils_hooks__hooks.invalid               = valid__createInvalid;
+    utils_hooks__hooks.duration              = create__createDuration;
+    utils_hooks__hooks.isMoment              = isMoment;
+    utils_hooks__hooks.weekdays              = lists__listWeekdays;
+    utils_hooks__hooks.parseZone             = moment__createInZone;
+    utils_hooks__hooks.localeData            = locale_locales__getLocale;
+    utils_hooks__hooks.isDuration            = isDuration;
+    utils_hooks__hooks.monthsShort           = lists__listMonthsShort;
+    utils_hooks__hooks.weekdaysMin           = lists__listWeekdaysMin;
+    utils_hooks__hooks.defineLocale          = defineLocale;
+    utils_hooks__hooks.weekdaysShort         = lists__listWeekdaysShort;
+    utils_hooks__hooks.normalizeUnits        = normalizeUnits;
+    utils_hooks__hooks.relativeTimeThreshold = duration_humanize__getSetRelativeTimeThreshold;
+
+    var _moment = utils_hooks__hooks;
+
+    return _moment;
+
+}));
 },{}],84:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
@@ -31006,12 +31048,12 @@ exports.contentLoaded = function(){
         if (typeof mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
             if (equals(true, mermaid_config.startOnLoad)) {
-                global.mermaid.init(mermaid.sequenceConfig);
+                global.mermaid.init();
             }
         }
         else {
             // No config found, do autostart in this simple case
-            global.mermaid.init(mermaid.sequenceConfig);
+            global.mermaid.init();
         }
     }
 
