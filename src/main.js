@@ -222,12 +222,12 @@ exports.contentLoaded = function(){
         if (typeof mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
             if (equals(true, mermaid_config.startOnLoad)) {
-                global.mermaid.init(mermaid.sequenceConfig);
+                global.mermaid.init();
             }
         }
         else {
             // No config found, do autostart in this simple case
-            global.mermaid.init(mermaid.sequenceConfig);
+            global.mermaid.init();
         }
     }
 
