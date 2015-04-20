@@ -5,8 +5,6 @@
   color: #333333;
 }
 
-body {width:800px;}
-
 .node rect,
 .node circle,
 .node polygon {
