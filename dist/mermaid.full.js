@@ -28315,6 +28315,7 @@ module.exports.draw = function (text, id) {
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
     elem.style.height = h + 'px';
+    elem.setAttribute('height', h);
     var svg = d3.select('#' + id);
 
 // http://codepen.io/anon/pen/azLvWR
@@ -30093,10 +30094,11 @@ if (typeof module !== 'undefined' && require.main === module) {
 /**
  * Created by knut on 14-11-19.
  */
-var actors = {};
+var actors    = {};
 var actorKeys = [];
-var messages = [];
-var notes = [];
+var messages  = [];
+var notes     = [];
+
 exports.addActor = function(id,name,description){
     //console.log('Adding actor: '+id);
     actors[id] = {name:name, description:description};
@@ -30108,6 +30110,9 @@ exports.addMessage = function(idFrom, idTo, message,  answer){
     messages.push({from:idFrom, to:idTo, message:message, answer:answer});
 };
 
+/**
+ *
+ */
 exports.addSignal = function(idFrom, idTo, message,  messageType){
     //console.log('Adding message from='+idFrom+' to='+idTo+' message='+message+' answer='+answer);
     messages.push({from:idFrom, to:idTo, message:message, type:messageType});
@@ -30128,37 +30133,36 @@ exports.getActorKeys = function(){
 };
 
 exports.clear = function(){
-    actors = {};
+    actors   = {};
     messages = [];
 };
 
 exports.LINETYPE = {
-    SOLID       : 0,
-    DOTTED      : 1,
-    NOTE        : 2,
-    SOLID_CROSS : 3,
-    DOTTED_CROSS: 4,
-    SOLID_OPEN  : 5,
-    DOTTED_OPEN : 6,
-    LOOP_START  : 10,
-    LOOP_END    : 11,
-    ALT_START   : 12,
-    ALT_ELSE    : 13,
-    ALT_END     : 14,
-    OPT_START   : 15,
-    OPT_END     : 16
-
+    SOLID        : 0  ,
+    DOTTED       : 1  ,
+    NOTE         : 2  ,
+    SOLID_CROSS  : 3  ,
+    DOTTED_CROSS : 4  ,
+    SOLID_OPEN   : 5  ,
+    DOTTED_OPEN  : 6  ,
+    LOOP_START   : 10 ,
+    LOOP_END     : 11 ,
+    ALT_START    : 12 ,
+    ALT_ELSE     : 13 ,
+    ALT_END      : 14 ,
+    OPT_START    : 15 ,
+    OPT_END      : 16
 };
 
 exports.ARROWTYPE = {
-    FILLED  : 0,
-    OPEN    : 1
+    FILLED       : 0,
+    OPEN         : 1
 };
 
 exports.PLACEMENT = {
-    LEFTOF  : 0,
-    RIGHTOF : 1,
-    OVER    : 2
+    LEFTOF       : 0,
+    RIGHTOF      : 1,
+    OVER         : 2
 };
 
 exports.addNote = function (actor, placement, message){
@@ -30809,15 +30813,15 @@ exports.getTextObj = function(){
 
 exports.getNoteRect = function(){
     var rect = {
-        x: 0,
-        y: 0,
-        fill: '#EDF2AE',
-        stroke: '#666',
-        width: 100,
-        anchor:'start',
-        height: 100,
-        rx: 0,
-        ry: 0
+        x      : 0,
+        y      : 0,
+        fill   : '#EDF2AE',
+        stroke : '#666',
+        width  : 100,
+        anchor : 'start',
+        height : 100,
+        rx     : 0,
+        ry     : 0
     };
     return rect;
 };
@@ -31012,21 +31016,22 @@ var equals = function (val, variable){
 };
 
 global.mermaid = {
-    startOnLoad:true,
-    htmlLabels:true,
-    init:function(sequenceConfig, nodes){
+    startOnLoad:    true,
+    htmlLabels:     true,
+    
+    init: function(sequenceConfig, nodes) {
         init.apply(null, arguments);
     },
-    version:function(){
+    version: function() {
         return exports.version();
     },
-    getParser:function(){
+    getParser: function() {
         return flow.parser;
     },
-    parse:function(text){
+    parse: function(text) {
         return parse(text);
     },
-    parseError:function(err,hash){
+    parseError: function(err, hash) {
         console.log('Mermaid Syntax error:');
         console.log(err);
     }
@@ -31067,6 +31072,9 @@ if(typeof document !== 'undefined'){
         exports.contentLoaded();
     }, false);
 }
+
+var apa         = 1;
+var bapselsin   = 2;
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":84,"./diagrams/example/exampleDb":85,"./diagrams/example/exampleRenderer":86,"./diagrams/example/parser/example":87,"./diagrams/flowchart/flowRenderer":90,"./diagrams/flowchart/graphDb":91,"./diagrams/flowchart/parser/dot":92,"./diagrams/flowchart/parser/flow":93,"./diagrams/gantt/ganttDb":95,"./diagrams/gantt/ganttRenderer":96,"./diagrams/gantt/parser/gantt":97,"./diagrams/sequenceDiagram/parser/sequenceDiagram":99,"./diagrams/sequenceDiagram/sequenceDb":100,"./diagrams/sequenceDiagram/sequenceRenderer":101,"./utils":104,"he":81}],104:[function(require,module,exports){

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
 
     <script src="../dist/mermaid.full.js"></script>
-    <link rel="stylesheet" href="seq.css"/>
+    <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
     <script>
         var mermaid_config = {
             startOnLoad:true
@@ -44,143 +44,7 @@
             ]
         };
     </script>
-    <script>
-        function apa(){
-            console.log('CLICKED');
-        }
-    </script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background: #fff;
-            font-family: 'Open-Sans',sans-serif;
-
-        }
-
-        .grid .tick {
-            stroke: lightgrey;
-            opacity: 0.3;
-            shape-rendering: crispEdges;
-        }
-        .grid path {
-            stroke-width: 0;
-        }
-
-        .taskText {
-            text-anchor:middle;
-            font-size:11px;
-        }
-        .taskText0, .taskText3 {
-            fill:black;
-        }
-        .taskText1, .taskText2 {
-            fill:white;
-        }
-        .taskTextOutsideRight {
-            fill:black;
-            text-anchor:start;
-            font-size:11px;
-        }
-        .taskTextOutsideLeft {
-            fill:black;
-            text-anchor:end;
-            font-size:11px;
-        }
-        .taskTextOutside0,.taskTextOutside2, {
-            fill:black;
-        }
-        .taskTextOutside1, .taskTextOutside3 {
-            fill:darkblue;
-        }
-        .titleText {
-        text-anchor:middle;
-        font-size:18px;
-        fill:#633;
-        }
-        .section {
-            stroke:none;
-            opacity:0.2;
-        }
-        .section0 {
-            fill:#6666FF;
-        }
-        .section1 {
-            fill:white;
-            opacity:0.2;
-        }
-        .section2 {
-            fill:orange;
-            opacity:0.2;
-        }
-
-        .task {
-            /*stroke:none;*/
-        }
-        .task0 {
-            fill: #ffffdd;
-        }
-        .task1 {
-            fill: #8a90dd;
-        }
-        .task2 {
-            fill: #8a90dd;
-        }
-
-        .sectionTitle {
-            text-anchor:start;
-            font-size:11px;
-            text-height:14px;
-        }
-        .sectionTitle0 { fill:#454545;}
-        .sectionTitle1 { fill:#454545;}
-        .sectionTitle2 { fill:#454545;}
-        .sectionTitle3 { fill:#b23473;}
-        .done0, .done1, .done2, .done3 {
-            stroke:grey;
-            fill: lightgrey;
-            stroke-width:2;
-        }
-        .crit0, .crit1, .crit2, .crit3 {
-            stroke:#ff8888;
-            fill: red;
-            stroke-width:2;
-        }
-        .activeCrit0, .activeCrit1, .activeCrit2, .activeCrit3 {
-            stroke:#ff8888;
-            fill: #ffffc0;
-            stroke-width:2;
-        }
-        .doneCrit0, .doneCrit1, .doneCrit2, .doneCrit3 {
-            stroke:#ff8888;
-            fill: lightgrey;
-            stroke-width:2;
-            cursor: pointer;
-            shape-rendering: crispEdges;
-        }
-        .active0 {
-            stroke:black;
-            fill: #ffffdd;
-            stroke-width:2;
-        }
-        .active1 {
-            stroke:black;
-            fill: #8a90dd;
-            stroke-width:2;
-        }
-        .active2 {
-            stroke:black;
-            fill: #8a90dd;
-            stroke-width:2;
-        }
-        .today {
-            fill:none;
-            stroke:red;
-            stroke-width:2px;
-        }
-    </style>
+   
 </head>
     <body>
     <h1>scale tests</h1>

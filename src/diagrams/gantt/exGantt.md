@@ -21,4 +21,3 @@ gantt
         Add gantt diagram to demo page      :after a1  , 2h
         Add gantt to diagram to demo page   :after a1  , 2h
 ```
-testa

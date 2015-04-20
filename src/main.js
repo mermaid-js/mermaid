@@ -186,21 +186,22 @@ var equals = function (val, variable){
 };
 
 global.mermaid = {
-    startOnLoad:true,
-    htmlLabels:true,
-    init:function(sequenceConfig, nodes){
+    startOnLoad:    true,
+    htmlLabels:     true,
+    
+    init: function(sequenceConfig, nodes) {
         init.apply(null, arguments);
     },
-    version:function(){
+    version: function() {
         return exports.version();
     },
-    getParser:function(){
+    getParser: function() {
         return flow.parser;
     },
-    parse:function(text){
+    parse: function(text) {
         return parse(text);
     },
-    parseError:function(err,hash){
+    parseError: function(err, hash) {
         console.log('Mermaid Syntax error:');
         console.log(err);
     }
@@ -241,3 +242,6 @@ if(typeof document !== 'undefined'){
         exports.contentLoaded();
     }, false);
 }
+
+var apa         = 1;
+var bapselsin   = 2;

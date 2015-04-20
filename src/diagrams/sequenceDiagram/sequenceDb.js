@@ -1,10 +1,11 @@
 /**
  * Created by knut on 14-11-19.
  */
-var actors = {};
+var actors    = {};
 var actorKeys = [];
-var messages = [];
-var notes = [];
+var messages  = [];
+var notes     = [];
+
 exports.addActor = function(id,name,description){
     //console.log('Adding actor: '+id);
     actors[id] = {name:name, description:description};
@@ -16,6 +17,9 @@ exports.addMessage = function(idFrom, idTo, message,  answer){
     messages.push({from:idFrom, to:idTo, message:message, answer:answer});
 };
 
+/**
+ *
+ */
 exports.addSignal = function(idFrom, idTo, message,  messageType){
     //console.log('Adding message from='+idFrom+' to='+idTo+' message='+message+' answer='+answer);
     messages.push({from:idFrom, to:idTo, message:message, type:messageType});
@@ -36,37 +40,36 @@ exports.getActorKeys = function(){
 };
 
 exports.clear = function(){
-    actors = {};
+    actors   = {};
     messages = [];
 };
 
 exports.LINETYPE = {
-    SOLID       : 0,
-    DOTTED      : 1,
-    NOTE        : 2,
-    SOLID_CROSS : 3,
-    DOTTED_CROSS: 4,
-    SOLID_OPEN  : 5,
-    DOTTED_OPEN : 6,
-    LOOP_START  : 10,
-    LOOP_END    : 11,
-    ALT_START   : 12,
-    ALT_ELSE    : 13,
-    ALT_END     : 14,
-    OPT_START   : 15,
-    OPT_END     : 16
-
+    SOLID        : 0  ,
+    DOTTED       : 1  ,
+    NOTE         : 2  ,
+    SOLID_CROSS  : 3  ,
+    DOTTED_CROSS : 4  ,
+    SOLID_OPEN   : 5  ,
+    DOTTED_OPEN  : 6  ,
+    LOOP_START   : 10 ,
+    LOOP_END     : 11 ,
+    ALT_START    : 12 ,
+    ALT_ELSE     : 13 ,
+    ALT_END      : 14 ,
+    OPT_START    : 15 ,
+    OPT_END      : 16
 };
 
 exports.ARROWTYPE = {
-    FILLED  : 0,
-    OPEN    : 1
+    FILLED       : 0,
+    OPEN         : 1
 };
 
 exports.PLACEMENT = {
-    LEFTOF  : 0,
-    RIGHTOF : 1,
-    OVER    : 2
+    LEFTOF       : 0,
+    RIGHTOF      : 1,
+    OVER         : 2
 };
 
 exports.addNote = function (actor, placement, message){
