@@ -31146,7 +31146,9 @@ module.exports.cloneCssStyles = function(svg, classes){
             catch(err) {
                 if(typeof console !== 'undefined'){
                     if(console.warn !== 'undefined'){
-                        console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
+                        if(rule !== 'undefined'){
+                            console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
+                        }
                     }
                 }
             }
