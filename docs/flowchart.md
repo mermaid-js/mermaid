@@ -158,7 +158,7 @@ graph LR;
 graph LR;
    A ==> B
 ```
-### Think link with text
+### Thick link with text
 == text ==>
 ```
 graph LR;
