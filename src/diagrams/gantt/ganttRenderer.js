@@ -38,7 +38,7 @@ module.exports.draw = function (text, id) {
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
     elem.style.height = h + 'px';
-    elem.height = h;
+    elem.setAttribute('height', h);
     var svg = d3.select('#' + id);
 
 // http://codepen.io/anon/pen/azLvWR

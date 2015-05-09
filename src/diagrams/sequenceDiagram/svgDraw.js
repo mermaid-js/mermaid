@@ -217,15 +217,15 @@ exports.getTextObj = function(){
 
 exports.getNoteRect = function(){
     var rect = {
-        x: 0,
-        y: 0,
-        fill: '#EDF2AE',
-        stroke: '#666',
-        width: 100,
-        anchor:'start',
-        height: 100,
-        rx: 0,
-        ry: 0
+        x      : 0,
+        y      : 0,
+        fill   : '#EDF2AE',
+        stroke : '#666',
+        width  : 100,
+        anchor : 'start',
+        height : 100,
+        rx     : 0,
+        ry     : 0
     };
     return rect;
 };
