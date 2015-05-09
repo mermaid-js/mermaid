@@ -357,6 +357,17 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
     });
 
+    it('should handle nested subgraphs',function(){
+        var str = 'graph TD\n' +
+            'A-->B\n' +
+            'subgraph myTitle\n\n' +
+            ' c-->d \n\n' +
+            ' subgraph inner\n\n   e-->f \n end \n\n' +
+            'end\n';
+        var res = flow.parser.parse(str);
+
+    });
+
     it('should handle subgraphs',function(){
         var res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend;');
 

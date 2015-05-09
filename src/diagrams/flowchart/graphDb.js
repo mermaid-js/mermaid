@@ -29,7 +29,7 @@ exports.addVertex = function (id, text, type, style) {
         vertices[id] = {id: id, styles: [], classes:[]};
     }
     if (typeof text !== 'undefined') {
-        vertices[id].text = text;
+        vertices[id].text = text.trim();
     }
     if (typeof type !== 'undefined') {
         vertices[id].type = type;
@@ -59,7 +59,7 @@ exports.addLink = function (start, end, type, linktext) {
     linktext = type.text;
 
     if (typeof linktext !== 'undefined') {
-        edge.text = linktext;
+        edge.text = linktext.trim();
     }
 
     if (typeof type !== 'undefined') {

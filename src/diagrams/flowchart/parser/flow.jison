@@ -17,7 +17,7 @@
 "click"               return 'CLICK';
 "graph"               return 'GRAPH';
 "subgraph"            return 'subgraph';
-"end"                 return 'end';
+"end"\s*              return 'end';
 "LR"                  return 'DIR';
 "RL"                  return 'DIR';
 "TB"                  return 'DIR';
@@ -216,9 +216,9 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph  text separator document end separator
+    | subgraph  text separator document end
     {yy.addSubGraph($4,$2);}
-    | subgraph separator document end separator
+    | subgraph separator document end
     {yy.addSubGraph($3,undefined);}
     ;
 
