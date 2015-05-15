@@ -124,7 +124,6 @@ var init = function () {
 
         var graphType = utils.detectType(txt);
         var classes = {};
-
         switch(graphType){
             case 'graph':
                 classes = flowRenderer.getClasses(txt, false);

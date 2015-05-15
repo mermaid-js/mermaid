@@ -363,6 +363,7 @@ describe('when parsing ',function(){
             'subgraph myTitle\n\n' +
             ' c-->d \n\n' +
             ' subgraph inner\n\n   e-->f \n end \n\n' +
+            ' subgraph inner\n\n   h-->i \n end \n\n' +
             'end\n';
         var res = flow.parser.parse(str);
 

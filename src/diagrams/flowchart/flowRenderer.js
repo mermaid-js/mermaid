@@ -229,6 +229,7 @@ exports.getClasses = function (text, isDot) {
  * @param id
  */
 exports.draw = function (text, id,isDot) {
+    
     var parser;
     graph.clear();
     if(isDot){
@@ -270,35 +271,32 @@ exports.draw = function (text, id,isDot) {
             return {};
         });
 
+    var subG;
     var subGraphs = graph.getSubGraphs();
     var i = 0;
-    subGraphs.forEach(function(subG){
-        i = i + 1;
-        var id = 'subG'+i;
-        graph.addVertex(id,undefined,undefined,undefined);
-    });
+    for(i=subGraphs.length-1;i>=0;i--){
+        subG = subGraphs[i];
+        graph.addVertex(subG.id,undefined,undefined,undefined);
+    }
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
 
     //console.log(vert);
     var edges = graph.getEdges();
-    //g.setParent("A", "p");
-    //g.setParent("B", "p");
 
-    //console.log(subGraphs);
     i = 0;
-    subGraphs.forEach(function(subG){
-        i = i + 1;
-        var id = 'subG'+i;
+    var j;
+    for(i=subGraphs.length-1;i>=0;i--){
+        subG = subGraphs[i];
 
         d3.selectAll('cluster').append('text');
 
-        subG.nodes.forEach(function(node){
-            //console.log('Setting node',node,' to subgraph '+id);
-            g.setParent(node,id);
-        });
-    });
+        for(j=0;j<subG.nodes.length;j++){
+            //console.log('Setting node',subG.nodes[j],' to subgraph '+id);
+            g.setParent(subG.nodes[j],subG.id);
+        }
+    }
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 
@@ -422,28 +420,35 @@ exports.draw = function (text, id,isDot) {
 
     setTimeout(function(){
         var i = 0;
-        subGraphs.forEach(function(subG){
+        //subGraphs.forEach(function(subG) {
+        for(i=0;i<subGraphs.length;i++){
+            subG = subGraphs[i];
 
             var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
-            var clusters     = document.querySelectorAll('#' + id + ' .cluster');
+            var clusters = document.querySelectorAll('#' + id + ' .cluster');
 
 
-            if(subG.title !== 'undefined'){
+            if (subG.title !== 'undefined') {
                 var xPos = clusterRects[i].x.baseVal.value;
                 var yPos = clusterRects[i].y.baseVal.value;
                 var width = clusterRects[i].width.baseVal.value;
                 var cluster = d3.select(clusters[i]);
                 var te = cluster.append('text');
-                te.attr('x', xPos+width/2);
-                te.attr('y', yPos +14);
+                te.attr('x', xPos + width / 2);
+                te.attr('y', yPos + 14);
                 te.attr('fill', 'black');
-                te.attr('stroke','none');
-                te.attr('id', id+'Text');
+                te.attr('stroke', 'none');
+                te.attr('id', id + 'Text');
                 te.style('text-anchor', 'middle');
-                te.text(subG.title);
+                if(typeof subGraphs[subGraphs.length-i-1] === 'undefined'){
+                    te.text('Undef');
+                }else{
+                    te.text(subGraphs[subGraphs.length-i-1].title);
+                }
             }
-            i = i + 1;
-        });
+        }
+        //    i = i + 1;
+        //});
     },20);
 };
 

@@ -217,9 +217,9 @@ statement
     | clickStatement separator
     {$$=[];}
     | subgraph  text separator document end
-    {yy.addSubGraph($4,$2);}
+    {$$=yy.addSubGraph($4,$2);}
     | subgraph separator document end
-    {yy.addSubGraph($3,undefined);}
+    {$$=yy.addSubGraph($3,undefined);}
     ;
 
 separator: NEWLINE | SEMI | EOF ;

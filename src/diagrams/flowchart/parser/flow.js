@@ -118,10 +118,10 @@ case 31: case 32: case 33: case 34: case 35:
 this.$=[];
 break;
 case 36:
-yy.addSubGraph($$[$0-1],$$[$0-3]);
+this.$=yy.addSubGraph($$[$0-1],$$[$0-3]);
 break;
 case 37:
-yy.addSubGraph($$[$0-1],undefined);
+this.$=yy.addSubGraph($$[$0-1],undefined);
 break;
 case 41:
  yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = [$$[$0-2],$$[$0]];

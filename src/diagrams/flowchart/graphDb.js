@@ -6,6 +6,7 @@ var vertices = {};
 var edges = [];
 var classes = [];
 var subGraphs = [];
+var subCount=0;
 var direction;
 // Functions to be run after graph rendering
 var funs = [];
@@ -205,6 +206,7 @@ exports.clear = function () {
     edges = [];
     funs = [];
     subGraphs = [];
+    subCount = 0;
 };
 /**
  *
@@ -233,11 +235,16 @@ exports.addSubGraph = function (list, title) {
         });
     }
 
-    var subG = [];
+    var nodeList = [];
 
-    subG = uniq(subG.concat.apply(subG,list));
+    nodeList = uniq(nodeList.concat.apply(nodeList,list));
 
-    subGraphs.push({nodes:subG,title:title});
+
+    var subGraph = {id:'subGraph'+subCount, nodes:nodeList,title:title};
+
+    subGraphs.push(subGraph);
+    subCount = subCount + 1;
+    return subGraph.id;
 };
 exports.getSubGraphs = function (list) {
     return subGraphs;

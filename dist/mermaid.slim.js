@@ -25837,6 +25837,7 @@ exports.getClasses = function (text, isDot) {
  * @param id
  */
 exports.draw = function (text, id,isDot) {
+    
     var parser;
     graph.clear();
     if(isDot){
@@ -25878,35 +25879,32 @@ exports.draw = function (text, id,isDot) {
             return {};
         });
 
+    var subG;
     var subGraphs = graph.getSubGraphs();
     var i = 0;
-    subGraphs.forEach(function(subG){
-        i = i + 1;
-        var id = 'subG'+i;
-        graph.addVertex(id,undefined,undefined,undefined);
-    });
+    for(i=subGraphs.length-1;i>=0;i--){
+        subG = subGraphs[i];
+        graph.addVertex(subG.id,undefined,undefined,undefined);
+    }
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
 
     //console.log(vert);
     var edges = graph.getEdges();
-    //g.setParent("A", "p");
-    //g.setParent("B", "p");
 
-    //console.log(subGraphs);
     i = 0;
-    subGraphs.forEach(function(subG){
-        i = i + 1;
-        var id = 'subG'+i;
+    var j;
+    for(i=subGraphs.length-1;i>=0;i--){
+        subG = subGraphs[i];
 
         d3.selectAll('cluster').append('text');
 
-        subG.nodes.forEach(function(node){
-            //console.log('Setting node',node,' to subgraph '+id);
-            g.setParent(node,id);
-        });
-    });
+        for(j=0;j<subG.nodes.length;j++){
+            //console.log('Setting node',subG.nodes[j],' to subgraph '+id);
+            g.setParent(subG.nodes[j],subG.id);
+        }
+    }
     exports.addVertices(vert, g);
     exports.addEdges(edges, g);
 
@@ -26030,28 +26028,35 @@ exports.draw = function (text, id,isDot) {
 
     setTimeout(function(){
         var i = 0;
-        subGraphs.forEach(function(subG){
+        //subGraphs.forEach(function(subG) {
+        for(i=0;i<subGraphs.length;i++){
+            subG = subGraphs[i];
 
             var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
-            var clusters     = document.querySelectorAll('#' + id + ' .cluster');
+            var clusters = document.querySelectorAll('#' + id + ' .cluster');
 
 
-            if(subG.title !== 'undefined'){
+            if (subG.title !== 'undefined') {
                 var xPos = clusterRects[i].x.baseVal.value;
                 var yPos = clusterRects[i].y.baseVal.value;
                 var width = clusterRects[i].width.baseVal.value;
                 var cluster = d3.select(clusters[i]);
                 var te = cluster.append('text');
-                te.attr('x', xPos+width/2);
-                te.attr('y', yPos +14);
+                te.attr('x', xPos + width / 2);
+                te.attr('y', yPos + 14);
                 te.attr('fill', 'black');
-                te.attr('stroke','none');
-                te.attr('id', id+'Text');
+                te.attr('stroke', 'none');
+                te.attr('id', id + 'Text');
                 te.style('text-anchor', 'middle');
-                te.text(subG.title);
+                if(typeof subGraphs[subGraphs.length-i-1] === 'undefined'){
+                    te.text('Undef');
+                }else{
+                    te.text(subGraphs[subGraphs.length-i-1].title);
+                }
             }
-            i = i + 1;
-        });
+        }
+        //    i = i + 1;
+        //});
     },20);
 };
 
@@ -26066,6 +26071,7 @@ var vertices = {};
 var edges = [];
 var classes = [];
 var subGraphs = [];
+var subCount=0;
 var direction;
 // Functions to be run after graph rendering
 var funs = [];
@@ -26265,6 +26271,7 @@ exports.clear = function () {
     edges = [];
     funs = [];
     subGraphs = [];
+    subCount = 0;
 };
 /**
  *
@@ -26293,11 +26300,16 @@ exports.addSubGraph = function (list, title) {
         });
     }
 
-    var subG = [];
+    var nodeList = [];
 
-    subG = uniq(subG.concat.apply(subG,list));
+    nodeList = uniq(nodeList.concat.apply(nodeList,list));
 
-    subGraphs.push({nodes:subG,title:title});
+
+    var subGraph = {id:'subGraph'+subCount, nodes:nodeList,title:title};
+
+    subGraphs.push(subGraph);
+    subCount = subCount + 1;
+    return subGraph.id;
 };
 exports.getSubGraphs = function (list) {
     return subGraphs;
@@ -27166,10 +27178,10 @@ case 31: case 32: case 33: case 34: case 35:
 this.$=[];
 break;
 case 36:
-yy.addSubGraph($$[$0-1],$$[$0-3]);
+this.$=yy.addSubGraph($$[$0-1],$$[$0-3]);
 break;
 case 37:
-yy.addSubGraph($$[$0-1],undefined);
+this.$=yy.addSubGraph($$[$0-1],undefined);
 break;
 case 41:
  yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = [$$[$0-2],$$[$0]];
@@ -28241,7 +28253,7 @@ module.exports.draw = function (text, id) {
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
     elem.style.height = h + 'px';
-    elem.height = h;
+    elem.setAttribute('height', h);
     var svg = d3.select('#' + id);
 
 // http://codepen.io/anon/pen/azLvWR
@@ -30020,10 +30032,11 @@ if (typeof module !== 'undefined' && require.main === module) {
 /**
  * Created by knut on 14-11-19.
  */
-var actors = {};
+var actors    = {};
 var actorKeys = [];
-var messages = [];
-var notes = [];
+var messages  = [];
+var notes     = [];
+
 exports.addActor = function(id,name,description){
     //console.log('Adding actor: '+id);
     actors[id] = {name:name, description:description};
@@ -30035,6 +30048,9 @@ exports.addMessage = function(idFrom, idTo, message,  answer){
     messages.push({from:idFrom, to:idTo, message:message, answer:answer});
 };
 
+/**
+ *
+ */
 exports.addSignal = function(idFrom, idTo, message,  messageType){
     //console.log('Adding message from='+idFrom+' to='+idTo+' message='+message+' answer='+answer);
     messages.push({from:idFrom, to:idTo, message:message, type:messageType});
@@ -30055,37 +30071,36 @@ exports.getActorKeys = function(){
 };
 
 exports.clear = function(){
-    actors = {};
+    actors   = {};
     messages = [];
 };
 
 exports.LINETYPE = {
-    SOLID       : 0,
-    DOTTED      : 1,
-    NOTE        : 2,
-    SOLID_CROSS : 3,
-    DOTTED_CROSS: 4,
-    SOLID_OPEN  : 5,
-    DOTTED_OPEN : 6,
-    LOOP_START  : 10,
-    LOOP_END    : 11,
-    ALT_START   : 12,
-    ALT_ELSE    : 13,
-    ALT_END     : 14,
-    OPT_START   : 15,
-    OPT_END     : 16
-
+    SOLID        : 0  ,
+    DOTTED       : 1  ,
+    NOTE         : 2  ,
+    SOLID_CROSS  : 3  ,
+    DOTTED_CROSS : 4  ,
+    SOLID_OPEN   : 5  ,
+    DOTTED_OPEN  : 6  ,
+    LOOP_START   : 10 ,
+    LOOP_END     : 11 ,
+    ALT_START    : 12 ,
+    ALT_ELSE     : 13 ,
+    ALT_END      : 14 ,
+    OPT_START    : 15 ,
+    OPT_END      : 16
 };
 
 exports.ARROWTYPE = {
-    FILLED  : 0,
-    OPEN    : 1
+    FILLED       : 0,
+    OPEN         : 1
 };
 
 exports.PLACEMENT = {
-    LEFTOF  : 0,
-    RIGHTOF : 1,
-    OVER    : 2
+    LEFTOF       : 0,
+    RIGHTOF      : 1,
+    OVER         : 2
 };
 
 exports.addNote = function (actor, placement, message){
@@ -30736,15 +30751,15 @@ exports.getTextObj = function(){
 
 exports.getNoteRect = function(){
     var rect = {
-        x: 0,
-        y: 0,
-        fill: '#EDF2AE',
-        stroke: '#666',
-        width: 100,
-        anchor:'start',
-        height: 100,
-        rx: 0,
-        ry: 0
+        x      : 0,
+        y      : 0,
+        fill   : '#EDF2AE',
+        stroke : '#666',
+        width  : 100,
+        anchor : 'start',
+        height : 100,
+        rx     : 0,
+        ry     : 0
     };
     return rect;
 };
@@ -30877,7 +30892,6 @@ var init = function () {
 
         var graphType = utils.detectType(txt);
         var classes = {};
-
         switch(graphType){
             case 'graph':
                 classes = flowRenderer.getClasses(txt, false);
@@ -30939,21 +30953,22 @@ var equals = function (val, variable){
 };
 
 global.mermaid = {
-    startOnLoad:true,
-    htmlLabels:true,
-    init:function(sequenceConfig, nodes){
+    startOnLoad:    true,
+    htmlLabels:     true,
+    
+    init: function(sequenceConfig, nodes) {
         init.apply(null, arguments);
     },
-    version:function(){
+    version: function() {
         return exports.version();
     },
-    getParser:function(){
+    getParser: function() {
         return flow.parser;
     },
-    parse:function(text){
+    parse: function(text) {
         return parse(text);
     },
-    parseError:function(err,hash){
+    parseError: function(err, hash) {
         console.log('Mermaid Syntax error:');
         console.log(err);
     }
@@ -30975,12 +30990,12 @@ exports.contentLoaded = function(){
         if (typeof mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
             if (equals(true, mermaid_config.startOnLoad)) {
-                global.mermaid.init(mermaid.sequenceConfig);
+                global.mermaid.init();
             }
         }
         else {
             // No config found, do autostart in this simple case
-            global.mermaid.init(mermaid.sequenceConfig);
+            global.mermaid.init();
         }
     }
 
@@ -30994,6 +31009,9 @@ if(typeof document !== 'undefined'){
         exports.contentLoaded();
     }, false);
 }
+
+var apa         = 1;
+var bapselsin   = 2;
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":84,"./diagrams/example/exampleDb":85,"./diagrams/example/exampleRenderer":86,"./diagrams/example/parser/example":87,"./diagrams/flowchart/flowRenderer":90,"./diagrams/flowchart/graphDb":91,"./diagrams/flowchart/parser/dot":92,"./diagrams/flowchart/parser/flow":93,"./diagrams/gantt/ganttDb":95,"./diagrams/gantt/ganttRenderer":96,"./diagrams/gantt/parser/gantt":97,"./diagrams/sequenceDiagram/parser/sequenceDiagram":99,"./diagrams/sequenceDiagram/sequenceDb":100,"./diagrams/sequenceDiagram/sequenceRenderer":101,"./utils":104,"he":81}],104:[function(require,module,exports){
@@ -31065,7 +31083,9 @@ module.exports.cloneCssStyles = function(svg, classes){
             catch(err) {
                 if(typeof console !== 'undefined'){
                     if(console.warn !== 'undefined'){
-                        console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
+                        if(rule !== 'undefined'){
+                            console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
+                        }
                     }
                 }
             }
