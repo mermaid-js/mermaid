@@ -4,8 +4,8 @@
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
+var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
-var d3 = require('./d3');
 var conf = {
 };
 module.exports.setConf = function(cnf){
@@ -418,10 +418,14 @@ exports.draw = function (text, id,isDot) {
     //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
     svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));
 
+    // Index nodes
+    graph.indexNodes('sunGraph'+i);
+    
     setTimeout(function(){
         var i = 0;
         //subGraphs.forEach(function(subG) {
         for(i=0;i<subGraphs.length;i++){
+            var pos = graph.getDepthFirstPos(i);
             subG = subGraphs[i];
 
             var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
@@ -440,15 +444,20 @@ exports.draw = function (text, id,isDot) {
                 te.attr('stroke', 'none');
                 te.attr('id', id + 'Text');
                 te.style('text-anchor', 'middle');
-                if(typeof subGraphs[subGraphs.length-i-1] === 'undefined'){
+
+                if(typeof subGraphs[graph.getDepthFirstPos(i)] === 'undefined'){
                     te.text('Undef');
                 }else{
-                    te.text(subGraphs[subGraphs.length-i-1].title);
+                    //te.text(subGraphs[subGraphs.length-i-1].title);
+                    te.text(subGraphs[pos].title);
+                    
+                    console.log('Setting subg - '+i+' to title '+subGraphs[pos].title);
                 }
             }
         }
         //    i = i + 1;
         //});
     },20);
+    //console.log('GTPOD:'+graph.getDepthFirstPos('subGraph0'));
 };
 

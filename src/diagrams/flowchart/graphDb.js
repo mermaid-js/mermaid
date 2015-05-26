@@ -241,11 +241,83 @@ exports.addSubGraph = function (list, title) {
 
 
     var subGraph = {id:'subGraph'+subCount, nodes:nodeList,title:title};
-
+//console.log('subGraph:' + subGraph.title + subGraph.id);
+//console.log(subGraph.nodes);
     subGraphs.push(subGraph);
     subCount = subCount + 1;
     return subGraph.id;
 };
+
+var getPosForId = function(id){
+    var i;
+    for(i=0;i<subGraphs.length;i++){
+        if(subGraphs[i].id===id){
+            //console.log('Found pos for ',id,' ',i);
+            return i;
+        }
+    }
+    //console.log('No pos found for ',id,' ',i);
+    return -1;
+};
+var secCount = -1;
+var posCrossRef = [];
+var indexNodes = function (id, pos) {
+    var nodes = subGraphs[pos].nodes;
+    secCount = secCount + 1;
+    if(secCount>2000){
+        return;
+        
+    }
+    //var nPos = getPosForId(subGraphs[pos].id);
+    posCrossRef[secCount]=pos;
+    console.log('Setting ',' ',secCount,' to ',pos);
+    // Check if match
+    if(subGraphs[pos].id === id){
+        return {
+            result:true,
+            count:0
+        };
+    }
+    
+
+    var count = 0;
+    var posCount = 1;
+    while(count<nodes.length){
+        var childPos = getPosForId(nodes[count]);
+        // Ignore regular nodes (pos will be -1)
+        if(childPos>=0){
+            var res = indexNodes(id,childPos);
+            if(res.result){
+                return {
+                    result:true,
+                    count:posCount+res.count
+                };
+            }else{
+                posCount = posCount + res.count;
+            }
+        }
+        count = count +1;
+    }
+    
+    return {
+        result:false,
+        count:posCount
+    };
+
+};
+
+
+
+exports.getDepthFirstPos = function (pos) {
+    return posCrossRef[pos];
+};
+exports.indexNodes = function (id) {
+    secCount = -1;
+    if(subGraphs.length>0){
+        indexNodes('none',subGraphs.length-1,0);
+    }
+};
+
 exports.getSubGraphs = function (list) {
     return subGraphs;
 };

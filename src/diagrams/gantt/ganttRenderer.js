@@ -1,7 +1,8 @@
 var gantt = require('./parser/gantt').parser;
 gantt.yy = require('./ganttDb');
-var d3 = require('./d3');
+var d3 = require('../../d3');
 var moment = require('moment');
+
 
 var daysInChart;
 var conf = {
@@ -40,8 +41,6 @@ module.exports.draw = function (text, id) {
     elem.style.height = h + 'px';
     elem.setAttribute('height', h);
     var svg = d3.select('#' + id);
-
-// http://codepen.io/anon/pen/azLvWR
 
 
     var dateFormat = d3.time.format("%Y-%m-%d");

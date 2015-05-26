@@ -3,7 +3,7 @@
  */
 var db = require('./exampleDb');
 var exampleParser = require('./parser/example.js');
-
+var d3 = require('../../d3');
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
