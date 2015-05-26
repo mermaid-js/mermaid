@@ -1,7 +1,7 @@
 
 mermaid [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid) [![Code Climate](https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg)](https://codeclimate.com/github/knsv/mermaid)
 =======
->Development work currently ongoing in branch dev-0.5.0. Please submit pullrequest based on that branch if possible.
+>Development work currently ongoing in branch dev-0.5.0. Please submit any pull requests based on that branch if possible. Thanks.
 Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
 Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
