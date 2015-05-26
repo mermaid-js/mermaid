@@ -88,7 +88,6 @@ gulp.task('mermaid',['mermaidAPI','mermaidAPI.slim'],function() {
 
     return gulp.src('src/mermaid.js')
         .pipe(browserify({
-            external: ['d3'],
             entry:'src/mermaid.js'
         }))
         .pipe(rename('mermaid.js'))
