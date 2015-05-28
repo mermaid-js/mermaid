@@ -25,7 +25,7 @@
   "dependencies": {
     "chalk": "^0.5.1",
     "d3": "~3.4.13",
-    "dagre-d3": "~0.4.2",
+    "dagre-d3": "~0.4.8",
     "he": "^0.5.0",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
@@ -39,7 +39,6 @@
     "clone": "^0.2.0",
     "codeclimate-test-reporter": "0.0.4",
     "d3": "~3.4.13",
-    "dagre-d3": "~0.3.3",
     "dateformat": "^1.0.11",
     "event-stream": "^3.2.0",
     "foundation": "^4.2.1-1",
