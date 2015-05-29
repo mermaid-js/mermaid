@@ -421,7 +421,6 @@ exports.draw = function (text, id,isDot) {
     // Index nodes
     graph.indexNodes('sunGraph'+i);
     
-    var i = 0;
     for(i=0;i<subGraphs.length;i++){
         var pos = graph.getDepthFirstPos(i);
         subG = subGraphs[i];

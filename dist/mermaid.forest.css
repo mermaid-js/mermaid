@@ -2,9 +2,9 @@
 /* Sequence Diagram variables */
 /* Gantt chart variables */
 .mermaid .label {
+  font-family: 'trebuchet ms', verdana, arial;
   color: #333333;
 }
-
 .node rect,
 .node circle,
 .node polygon {
@@ -18,7 +18,7 @@
 }
 .cluster rect {
   fill: #cdffb2;
-  rx: 40;
+  rx: 4;
   stroke: #6eaa49;
   stroke-width: 1px;
 }

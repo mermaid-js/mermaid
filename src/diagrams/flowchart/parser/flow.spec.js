@@ -560,6 +560,12 @@ describe('when parsing ',function(){
             var edges = flow.parser.yy.getEdges();
             expect(vert['a'].text).toBe('v');
         });
+        it('should handle quoted text',function(){
+            var res = flow.parser.parse('graph TD;V-- "test string" -->a[v]');
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+            expect(edges[0].text).toBe('test string');
+        });
     });
 
     describe("it should handle new line type notation",function() {
@@ -792,6 +798,15 @@ describe('when parsing ',function(){
         expect(vert['A'].text).toBe('chimpansen hoppar');
     });
 
+    it('should handle quoted text in vertices ',function(){
+        var res = flow.parser.parse('graph TD;A["chimpansen hoppar"] --> C;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].type).toBe('square');
+        expect(vert['A'].text).toBe('chimpansen hoppar');
+    });
     it('should handle text in circle vertices with space',function(){
         var res = flow.parser.parse('graph TD;A((chimpansen hoppar))-->C;');
 

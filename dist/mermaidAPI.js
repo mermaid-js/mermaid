@@ -24642,7 +24642,7 @@ module.exports={
   "dependencies": {
     "chalk": "^0.5.1",
     "d3": "~3.4.13",
-    "dagre-d3": "~0.4.2",
+    "dagre-d3": "~0.4.8",
     "he": "^0.5.0",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
@@ -24656,7 +24656,6 @@ module.exports={
     "clone": "^0.2.0",
     "codeclimate-test-reporter": "0.0.4",
     "d3": "~3.4.13",
-    "dagre-d3": "~0.3.3",
     "dateformat": "^1.0.11",
     "event-stream": "^3.2.0",
     "foundation": "^4.2.1-1",
@@ -25878,44 +25877,37 @@ exports.draw = function (text, id,isDot) {
     // Index nodes
     graph.indexNodes('sunGraph'+i);
     
-    setTimeout(function(){
-        var i = 0;
-        //subGraphs.forEach(function(subG) {
-        for(i=0;i<subGraphs.length;i++){
-            var pos = graph.getDepthFirstPos(i);
-            subG = subGraphs[i];
+    for(i=0;i<subGraphs.length;i++){
+        var pos = graph.getDepthFirstPos(i);
+        subG = subGraphs[i];
 
-            var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
-            var clusters = document.querySelectorAll('#' + id + ' .cluster');
+        if (subG.title !== 'undefined') {
+            var clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect');
+            //console.log('looking up: #' + id + ' #' + subG.id)
+            var clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id);
 
+            var xPos = clusterRects[0].x.baseVal.value;
+            var yPos = clusterRects[0].y.baseVal.value;
+            var width = clusterRects[0].width.baseVal.value;
+            var cluster = d3.select(clusterEl[0]);
+            var te = cluster.append('text');
+            te.attr('x', xPos + width / 2);
+            te.attr('y', yPos + 14);
+            te.attr('fill', 'black');
+            te.attr('stroke', 'none');
+            te.attr('id', id + 'Text');
+            te.style('text-anchor', 'middle');
 
-            if (subG.title !== 'undefined') {
-                var xPos = clusterRects[i].x.baseVal.value;
-                var yPos = clusterRects[i].y.baseVal.value;
-                var width = clusterRects[i].width.baseVal.value;
-                var cluster = d3.select(clusters[i]);
-                var te = cluster.append('text');
-                te.attr('x', xPos + width / 2);
-                te.attr('y', yPos + 14);
-                te.attr('fill', 'black');
-                te.attr('stroke', 'none');
-                te.attr('id', id + 'Text');
-                te.style('text-anchor', 'middle');
+            if(typeof subG.title === 'undefined'){
+                te.text('Undef');
+            }else{
+                //te.text(subGraphs[subGraphs.length-i-1].title);
+                te.text(subG.title);
 
-                if(typeof subGraphs[graph.getDepthFirstPos(i)] === 'undefined'){
-                    te.text('Undef');
-                }else{
-                    //te.text(subGraphs[subGraphs.length-i-1].title);
-                    te.text(subGraphs[pos].title);
-                    
-                    console.log('Setting subg - '+i+' to title '+subGraphs[pos].title);
-                }
+                console.log('Setting subg - '+i+' to title '+subGraphs[pos].title);
             }
         }
-        //    i = i + 1;
-        //});
-    },20);
-    //console.log('GTPOD:'+graph.getDepthFirstPos('subGraph0'));
+    }
 };
 
 
@@ -25941,7 +25933,8 @@ var funs = [];
  * @param style
  */
 exports.addVertex = function (id, text, type, style) {
-
+    var txt;
+    
     if(typeof id === 'undefined'){
         return;
     }
@@ -25953,7 +25946,14 @@ exports.addVertex = function (id, text, type, style) {
         vertices[id] = {id: id, styles: [], classes:[]};
     }
     if (typeof text !== 'undefined') {
-        vertices[id].text = text.trim();
+        txt = text.trim();
+        
+        // strip quotes if string starts and exnds with a quote
+        if(txt[0] === '"' && txt[txt.length-1] === '"'){
+            txt = txt.substring(1,txt.length-1);
+        }
+
+        vertices[id].text = txt;
     }
     if (typeof type !== 'undefined') {
         vertices[id].type = type;
@@ -25984,6 +25984,11 @@ exports.addLink = function (start, end, type, linktext) {
 
     if (typeof linktext !== 'undefined') {
         edge.text = linktext.trim();
+        
+        // strip quotes if string starts and exnds with a quote
+        if(edge.text[0] === '"' && edge.text[edge.text.length-1] === '"'){
+            edge.text = edge.text.substring(1,edge.text.length-1);
+        }
     }
 
     if (typeof type !== 'undefined') {
