@@ -21877,6 +21877,8 @@ var init = function () {
     var i;
     
     console.log('Found ',nodes.length,' nodes');
+    console.log('Hooo hooo');
+    mermaidAPI.initialize(mermaid_config);
     var insertSvg = function(svgCode){
         element.innerHTML = svgCode;
     };
@@ -21897,6 +21899,7 @@ var init = function () {
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
+
 
         mermaidAPI.render(id,txt,insertSvg);
     }
@@ -22004,6 +22007,71 @@ var ganttDb = require('./diagrams/gantt/ganttDb');
 var d3 = require('./d3');
 var nextId = 0;
 
+// Default options, can be overridden at initialization time
+var config = {
+    mermaid:{
+        cloneCssStyles: true
+    },
+    flowchart:{
+        // Default is to not set width
+        //        width: 1200
+    },
+    sequenceDiagram:{
+        diagramMarginX:50,
+        diagramMarginY:10,
+        // Margin between actors
+        actorMargin:50,
+        // Width of actor moxes
+        width:150,
+        // Height of actor boxes
+        height:65,
+        // Margin around loop boxes
+        boxMargin:10,
+        boxTextMargin:5,
+
+        noteMargin:10,
+        // Space between messages
+        messageMargin:35,
+        //mirror actors under diagram
+        mirrorActors:true,
+        // Depending on css styling this might need adjustment
+        // Prolongs the edge of the diagram downwards
+        bottomMarginAdj:1
+    },
+    gantt:{
+        titleTopMargin: 25,
+        barHeight: 20,
+        barGap: 4,
+        topPadding: 50,
+        sidePadding: 75,
+        gridLineStartPadding: 35,
+        fontSize: 11,
+        fontFamily: '"Open-Sans", "sans-serif"',
+        numberSectionStyles:3,
+        axisFormatter: [
+            // Within a day
+            ["%I:%M", function (d) {
+                return d.getHours();
+            }],
+            // Monday a week
+            ["w. %U", function (d) {
+                return d.getDay() == 1;
+            }],
+            // Day within a week (not monday)
+            ["%a %d", function (d) {
+                return d.getDay() && d.getDate() != 1;
+            }],
+            // within a month
+            ["%b %d", function (d) {
+                return d.getDate() != 1;
+            }],
+            // Month
+            ["%m-%y", function (d) {
+                return d.getMonth();
+            }]
+        ]    }
+}
+
 /**
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
  * thrown and
@@ -22071,38 +22139,43 @@ var render = function(id, txt,cb){
     var classes = {};
     switch(graphType){
         case 'graph':
-            classes = flowRenderer.getClasses(txt, false);
-
-            if(typeof mermaid.flowchartConfig === 'object'){
-                flowRenderer.setConf(mermaid.flowchartConfig);
-            }
+            flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
-            utils.cloneCssStyles(element.firstChild, classes);
+            if(config.mermaid.cloneCssStyles){
+                classes = flowRenderer.getClasses(txt, false);
+                utils.cloneCssStyles(element.firstChild, classes);
+            }
             graph.bindFunctions();
             break;
         case 'dotGraph':
-            classes = flowRenderer.getClasses(txt, true);
+            flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, true);
-            utils.cloneCssStyles(element.firstChild, classes);
+            if(config.mermaid.cloneCssStyles) {
+                classes = flowRenderer.getClasses(txt, true);
+                utils.cloneCssStyles(element.firstChild, classes);
+            }
             break;
         case 'sequenceDiagram':
-            if(typeof mermaid.sequenceConfig === 'object'){
-                seq.setConf(mermaid.sequenceConfig);
-            }
+            //if(typeof mermaid.sequenceConfig === 'object'){
+            seq.setConf(config.sequenceDiagram);
+            //}
             seq.draw(txt,id);
-            utils.cloneCssStyles(element.firstChild, []);
+            if(config.mermaid.cloneCssStyles) {
+                utils.cloneCssStyles(element.firstChild, []);
+            }
             break;
         case 'gantt':
-            if(typeof mermaid.ganttConfig === 'object'){
-                gantt.setConf(mermaid.ganttConfig);
-
-            }
+            gantt.setConf(config.gantt);
             gantt.draw(txt,id);
-            utils.cloneCssStyles(element.firstChild, []);
+            if(config.mermaid.cloneCssStyles) {
+                utils.cloneCssStyles(element.firstChild, []);
+            }
             break;
         case 'info':
             info.draw(txt,id,exports.version());
-            utils.cloneCssStyles(element.firstChild, []);
+            if(config.mermaid.cloneCssStyles) {
+                utils.cloneCssStyles(element.firstChild, []);
+            }
             break;
     }
     //console.log(document.body.innerHTML);
@@ -22161,12 +22234,36 @@ if(typeof document === 'undefined'){
     }
 };
 
-global.api = {
-    render : exports.render,
-    detectType: utils.detectType
+
+var setConf = function(cnf){
+    // Top level initially mermaid, gflow, sequenceDiagram and gantt
+    var lvl1Keys = Object.keys(cnf);
+    var i;
+    for(i=0;i<lvl1Keys.length;i++){
+        var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
+        
+        var j;
+        for(j=0;j<lvl2Keys.length;j++) {
+            console.log('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j])
+            config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
+        }
+    }
+};
+exports.initialize = function(options){
+    // Update default config with options supplied at initialization
+    console.log('In init:'+typeof options,JSON.stringify(options))
+    if(typeof options === 'object'){
+        setConf(options);
+    }
+    console.log('Done init:'+typeof options,JSON.stringify(config))
+
 };
 
-console.log('APA');
+global.mermaidAPI = {
+    render : exports.render,
+    initialize : exports.initialize,
+    detectType: utils.detectType
+};
 
 //var getBBox = function(selector){
 //    var xmin, xmax, ymin, ymax,p;

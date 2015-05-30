@@ -48,6 +48,8 @@ var init = function () {
     var i;
     
     console.log('Found ',nodes.length,' nodes');
+    console.log('Hooo hooo');
+    mermaidAPI.initialize(mermaid_config);
     var insertSvg = function(svgCode){
         element.innerHTML = svgCode;
     };
@@ -68,6 +70,7 @@ var init = function () {
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
+
 
         mermaidAPI.render(id,txt,insertSvg);
     }

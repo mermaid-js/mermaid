@@ -3,13 +3,20 @@
 <head>
     <meta charset="UTF-8">
 
-    <script src="../dist/mermaid.full.js"></script>
+    <script src="../dist/mermaid.js"></script>
     <link rel="stylesheet" href="seq.css"/>
     <script>
         var mermaid_config = {
-            startOnLoad:true
+            startOnLoad:true,
+            mermaid:{
+                cloneCssStyles: false
+            },
+            sequenceDiagram:{
+                mirrorActors:true
+                
+            }
         }
-        mermaid.sequenceConfig = '{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":45,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35, "mirrorActors":true}';
+        //mermaid.sequenceConfig = '{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":45,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35, "mirrorActors":true}';
         //mermaid.sequenceConfig = JSON.parse('{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":165,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35}');
 
     </script>
