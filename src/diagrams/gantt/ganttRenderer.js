@@ -30,7 +30,7 @@ module.exports.draw = function (text, id) {
     w = elem.offsetWidth;
 
     if (typeof w === 'undefined') {
-        w = 800;
+        w = 1200;
     }
 
     var taskArray = gantt.yy.getTasks();
@@ -38,11 +38,14 @@ module.exports.draw = function (text, id) {
     // Set height based on number of tasks
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
-    elem.style.height = h + 'px';
-    elem.setAttribute('height', h);
+    elem.setAttribute('height', "100%");
+    // Set viewBox
+    elem.setAttribute('viewBox','0 0 '+w+' '+h);
     var svg = d3.select('#' + id);
 
-
+    
+    
+    
     var dateFormat = d3.time.format("%Y-%m-%d");
     
     var startDate = d3.min(taskArray, function (d) {
