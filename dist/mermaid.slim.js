@@ -21878,7 +21878,10 @@ var init = function () {
     
     console.log('Found ',nodes.length,' nodes');
     console.log('Hooo hooo');
-    mermaidAPI.initialize(mermaid_config);
+    if(typeof mermaid_config !== 'undefined'){
+        mermaidAPI.initialize(mermaid_config);
+    }
+    
     var insertSvg = function(svgCode){
         element.innerHTML = svgCode;
     };

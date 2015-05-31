@@ -21503,7 +21503,6 @@ module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
 
 
 module.exports.setConf = function(cnf){
-    console.log('Got conf:',JSON.stringify(cnf));
     var keys = Object.keys(cnf);
 
     keys.forEach(function(key){
@@ -22174,9 +22173,7 @@ var render = function(id, txt,cb){
     var classes = {};
     switch(graphType){
         case 'graph':
-            if(typeof mermaid.flowchartConfig === 'object'){
-                flowRenderer.setConf(config.flowchart);
-            }
+            flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
             if(config.mermaid.cloneCssStyles){
                 classes = flowRenderer.getClasses(txt, false);
@@ -22185,6 +22182,7 @@ var render = function(id, txt,cb){
             graph.bindFunctions();
             break;
         case 'dotGraph':
+            flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, true);
             if(config.mermaid.cloneCssStyles) {
                 classes = flowRenderer.getClasses(txt, true);
@@ -22193,7 +22191,7 @@ var render = function(id, txt,cb){
             break;
         case 'sequenceDiagram':
             //if(typeof mermaid.sequenceConfig === 'object'){
-                seq.setConf(config.sequenceDiagram);
+            seq.setConf(config.sequenceDiagram);
             //}
             seq.draw(txt,id);
             if(config.mermaid.cloneCssStyles) {
@@ -22201,10 +22199,7 @@ var render = function(id, txt,cb){
             }
             break;
         case 'gantt':
-            if(typeof mermaid.ganttConfig === 'object'){
-                gantt.setConf(config.gantt);
-
-            }
+            gantt.setConf(config.gantt);
             gantt.draw(txt,id);
             if(config.mermaid.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
