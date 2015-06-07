@@ -26,7 +26,6 @@ module.exports.mermaidAPI = mermaidAPI;
  * @* param nodes- a css selector or an array of nodes
  */
 var init = function () {
-    console.log('In mermaid.init');
     var nodes;
     if(arguments.length === 2){
         // sequence config was passed as #1
@@ -93,7 +92,7 @@ exports.version = function(){
 
 exports.initialize = function(config){
     mermaidAPI.initialize(config);
-}
+};
 
 var equals = function (val, variable){
     if(typeof variable === 'undefined'){
@@ -130,7 +129,7 @@ global.mermaid = {
 };
 
 exports.contentLoaded = function(){
-    console.log('Content loaded');
+    var config;
     // Check state of start config mermaid namespace
     if (typeof mermaid_config !== 'undefined') {
         if (equals(false, mermaid_config.htmlLabels)) {
@@ -149,13 +148,13 @@ exports.contentLoaded = function(){
         }
         else {
             // No config found, do check API config
-            var config = mermaidAPI.getConfig();
+            config = mermaidAPI.getConfig();
             if(config.startOnLoad){
                 global.mermaid.init();
             }
         }
     }else{
-        var config = mermaidAPI.getConfig();
+        config = mermaidAPI.getConfig();
         if(config.startOnLoad){
             global.mermaid.init();
         }

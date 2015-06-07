@@ -15768,7 +15768,7 @@ process.chdir = function (dir) {
 },{}],85:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.0",
+  "version": "0.4.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -15859,7 +15859,7 @@ module.exports={
 
 },{}],86:[function(require,module,exports){
 /* global window */
-console.log('Setting up d3');
+//console.log('Setting up d3');
 var d3;
 
 if (require) {
@@ -21886,7 +21886,6 @@ module.exports.mermaidAPI = mermaidAPI;
  * @* param nodes- a css selector or an array of nodes
  */
 var init = function () {
-    console.log('In mermaid.init');
     var nodes;
     if(arguments.length === 2){
         // sequence config was passed as #1
@@ -22014,6 +22013,12 @@ exports.contentLoaded = function(){
                 global.mermaid.init();
             }
         }
+    }else{
+        var config = mermaidAPI.getConfig();
+        if(config.startOnLoad){
+            global.mermaid.init();
+        }
+        
     }
 
 };

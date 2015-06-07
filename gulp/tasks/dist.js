@@ -61,7 +61,7 @@ gulp.task('fullDist', ['slimDist'], function() {
 //]));
 
 // Basic usage
-gulp.task('mermaid',['mermaidAPI','mermaidAPI.slim'],function() {
+gulp.task('mermaid',function() {
     // Single entry point to browserify
     var EXTERNALS = ['d3'];
 
@@ -135,4 +135,4 @@ gulp.task('editor', function() {
 //gulp.task('dist', ['slimDist', 'fullDist','jasmine']);
 gulp.task('legacy', ['slimDist', 'fullDist']);
 
-gulp.task('dist', ['mermaidAPI', 'mermaidAPI.slim','legacy','mermaid']);
+gulp.task('dist', ['mermaidAPI', 'mermaidAPI.slim','mermaid']);

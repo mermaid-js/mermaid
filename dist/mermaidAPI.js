@@ -24708,7 +24708,7 @@ module.exports={
 
 },{}],86:[function(require,module,exports){
 /* global window */
-console.log('Setting up d3');
+//console.log('Setting up d3');
 var d3;
 
 if (require) {

@@ -1,5 +1,5 @@
 /* global window */
-console.log('Setting up d3');
+//console.log('Setting up d3');
 var d3;
 
 if (require) {
