@@ -16,13 +16,14 @@ npm install mermaid --save-dev
 
 Or download javascript files:
 
-* [mermaid including dependencies](https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js)
+* [mermaid including dependencies](https://cdn.rawgit.com/knsv/mermaid/0.d.0/dist/mermaid.min.js)
 
-This file bundles mermaid with d3 and dagre-d3.
 
-* [mermaid without dependencies](https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.slim.js)
+There are some bundles to choose from:
+* mermaid.js, mermaid.min.js This bundle contains everything you need to run mermaid
+* mermaid.slim.js, mermaid.slim.min.js This bundle does not contain d3 which is usefull for sites that already have d3 in place
+* mermaidAPI.js, mermaidAPI.min.js, This bundle does not contain the web integration provided in the other packages but has a render function instead returns svg code.
 
-With this file you will need to include d3 and dagre-d3 yourself.
 
 ** Important: **
 > It's best to use a specific tag or commit hash in the URL (not a branch). Files are cached permanently after the first request.
@@ -34,7 +35,7 @@ Read more about that at [https://rawgit.com/](https://rawgit.com/)
 Include mermaid on your web page:
 
 ```
-&lt;script src=&quot;mermaid.full.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
 
 ```
 
@@ -81,6 +82,46 @@ Or with no config object, and a jQuery selection:
 mermaid.init(undefined, $("#someId .yetAnotherClass"));
 ```
 
+#Usage with browserify
+Minimalistic javascript:
+```
+
+mermaid = require('mermaid');
+```
+
+#API usage
+Include mermaid on your web page:
+
+```
+&lt;script src=&quot;mermaidAPI.js&quot;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    mermaidAPI.initialize({
+        startOnLoad:false
+        });
+    $(function(){
+        var graphDefinition = 'graph TB\na-->b';
+        var graph = mermaidAPI.render(graphDefinition);
+        $("#graphDiv").html(graph);
+    });
+&lt;/script&gt;
+```
+#Sample API usage with browserify
+```
+$ = require('jquery');
+mermaidAPI = require('mermaid').mermaidAPI;
+mermaidAPI.initialize({
+    startOnLoad:false
+    });
+
+$(function(){
+    var graphDefinition = 'graph TB\na-->b';
+    var cb = function(html){
+	    console.log(html);
+    }
+    mermaidAPI.render('id1',graphDefinition,cb);
+});
+```
 
 # Example of marked renderer
 

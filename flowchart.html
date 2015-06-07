@@ -11,7 +11,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
-    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
+    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico"></lnk>
         <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
         <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
         <link rel="apple-touch-icon" sizes="120x120"
@@ -24,9 +24,9 @@
         <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
               media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
         <!-- load Ink's css from the cdn -->
-        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css"></lnk>
         <link rel="stylesheet" type="text/css" href="css/mermaid.css">
-        <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
+        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
         <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
         <!-- load Ink's css for IE8 -->
         <!--[if lt IE 9 ]>
@@ -48,8 +48,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.4.0/dist/mermaid.full.js"></script>
-        <scrpt type="text/javascript" src="/js/mermaid.full.js"></scrpt>
+        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></scrpt>
+        <script type="text/javascript" src="/js/mermaid.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -293,14 +293,16 @@ graph LR</code></pre><p>This declares a graph oriented from left to right.</p>
 <li>TB - top bottom</li>
 <li>BT - bottom top</li>
 <li>RL - right left</li>
-<li>LR - left right</li>
-<li>TD - same as TB</li>
+<li><p>LR - left right</p>
+</li>
+<li><p>TD - same as TB</p>
+</li>
 </ul>
 <p><img src="http://www.sveido.com/mermaid/img/ex4.png" alt="Example 4"></p>
 <h2 id="nodes-shapes">Nodes &amp; shapes</h2>
 <h3 id="a-node-default-">A node (default)</h3>
 <pre><code>id1</code></pre><div class="mermaid">graph LR
-    id1</div><p>Note that the id is what is displayed in the box.</p>
+    id</div><p>Note that the id is what is displayed in the box.</p>
 <h3 id="a-node-with-text">A node with text</h3>
 <p>It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
 found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
@@ -333,7 +335,7 @@ one previously defined will be used when rendering the box.</p>
    A-. text .-> B</div><h3 id="thick-link">Thick link</h3>
 <p>==&gt;</p>
 <div class="mermaid">graph LR;
-   A ==> B</div><h3 id="think-link-with-text">Think link with text</h3>
+   A ==> B</div><h3 id="thick-link-with-text">Thick link with text</h3>
 <p>== text ==&gt;</p>
 <div class="mermaid">graph LR;
    A == text ==> B</div><h2 id="subgraphs">Subgraphs</h2>
@@ -352,6 +354,7 @@ end</code></pre><p>An example below:</p>
          c1-->c2
          end
          c1-->a2</code></pre><div class="mermaid">graph TB
+    c1-->a2
     subgraph one
     a1-->a2
     end
@@ -360,8 +363,7 @@ end</code></pre><p>An example below:</p>
     end
     subgraph three
     c1-->c2
-    end
-    c1-->a2</div><h2 id="interaction">Interaction</h2>
+    end</div><h2 id="interaction">Interaction</h2>
 <p>It is possible to bind a click event to a node:</p>
 <pre><code>click nodeId callback</code></pre><ul>
 <li>nodeId is the id of the node</li>
@@ -405,7 +407,14 @@ should have a different look.</p>
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}
     C -->|One| D[Result one]
-    C -->|Two| E[Result two]</div>
+    C -->|Two| E[Result two]</div><h2 id="configuration-">Configuration...</h2>
+<p>Is it possible to adjust the width of the rendered flowchart.</p>
+<p>This is done by defining <strong>mermaid.flowchartConfig</strong> or by the CLI to use a json file with the configuration. How to use
+the CLI is described in the mermaidCLI page.
+mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.</p>
+<pre><code>mermaid.flowchartConfig = {
+        width:100%;
+    };</code></pre>
             </article>
         </div>
         <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">

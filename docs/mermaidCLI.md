@@ -28,6 +28,10 @@ Options:
   --version            Print version and quit
 ```
 
+```
+mermaid testGraph.mmd 
+```
+
 ## Sequence diagram configuration
 
 The --sequenceConfig option allows overriding the sequence diagram configuration. It could be useful to increase the width between actors, the notes width or the margin to fit some large texts that are not well rendered with the default configuration, for example.

@@ -11,7 +11,6 @@ This statement declares a new graph and the direction of the graph layout.
 %% Example code
 graph TD
 ```
-
 This declares a graph oriented from top to bottom.
 
 ![Example 3](http://www.sveido.com/mermaid/img/ex3.png)
@@ -29,6 +28,7 @@ Possible directions are:
 * BT - bottom top
 * RL - right left
 * LR - left right
+
 * TD - same as TB
 
 ![Example 4](http://www.sveido.com/mermaid/img/ex4.png)
@@ -41,7 +41,7 @@ id1
 ```
 ```
 graph LR
-    id1
+    id
 ```
 Note that the id is what is displayed in the box.
 
@@ -137,7 +137,7 @@ A---|This is the text|B;
 ```
 graph LR;
    A-- This is the text ---B
-   
+
 ```
 
 ### Dotted link
@@ -191,6 +191,7 @@ An example below:
 
  ```
 graph TB
+    c1-->a2
     subgraph one
     a1-->a2
     end
@@ -200,7 +201,7 @@ graph TB
     subgraph three
     c1-->c2
     end
-    c1-->a2
+
  ```
 
 
@@ -296,4 +297,17 @@ graph LR
     B --> C{Decision}
     C -->|One| D[Result one]
     C -->|Two| E[Result two]
+```
+## Configuration...
+
+Is it possible to adjust the width of the rendered flowchart.
+
+This is done by defining **mermaid.flowchartConfig** or by the CLI to use a json file with the configuration. How to use
+the CLI is described in the mermaidCLI page.
+mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.
+
+```
+mermaid.flowchartConfig = {
+        width:100%;
+    };
 ```

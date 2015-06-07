@@ -11,7 +11,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
-    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico">
+    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico"></lnk>
         <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
         <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
         <link rel="apple-touch-icon" sizes="120x120"
@@ -24,7 +24,7 @@
         <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
               media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
         <!-- load Ink's css from the cdn -->
-        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css">
+        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css"></lnk>
         <link rel="stylesheet" type="text/css" href="css/mermaid.css">
         <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
         <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
@@ -48,8 +48,8 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.4.0/dist/mermaid.full.js"></script>
-        <scrpt type="text/javascript" src="/js/mermaid.full.js"></scrpt>
+        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></scrpt>
+        <script type="text/javascript" src="/js/mermaid.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -284,13 +284,14 @@
 <p>Either use the npm or bower package managers as per below:</p>
 <pre><code>bower install mermaid --save-dev</code></pre><pre><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files:</p>
 <ul>
-<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.full.js">mermaid including dependencies</a></li>
+<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.d.0/dist/mermaid.min.js">mermaid including dependencies</a></li>
 </ul>
-<p>This file bundles mermaid with d3 and dagre-d3.</p>
+<p>There are some bundles to choose from:</p>
 <ul>
-<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.3.0/dist/mermaid.slim.js">mermaid without dependencies</a></li>
+<li>mermaid.js, mermaid.min.js This bundle contains everything you need to run mermaid</li>
+<li>mermaid.slim.js, mermaid.slim.min.js This bundle does not contain d3 which is usefull for sites that already have d3 in place</li>
+<li>mermaidAPI.js, mermaidAPI.min.js, This bundle does not contain the web integration provided in the other packages but has a render function instead returns svg code.</li>
 </ul>
-<p>With this file you will need to include d3 and dagre-d3 yourself.</p>
 <p><strong> Important: </strong></p>
 <blockquote>
 <p>It&#39;s best to use a specific tag or commit hash in the URL (not a branch). Files are cached permanently after the first request.</p>
@@ -298,7 +299,7 @@
 <p>Read more about that at <a href="https://rawgit.com/">https://rawgit.com/</a></p>
 <h1 id="usage">Usage</h1>
 <p>Include mermaid on your web page:</p>
-<pre><code>&lt;script src=&quot;mermaid.full.min.js&quot;&gt;&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
+<pre><code>&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
 read the chart definiton which will be replaced with the svg chart.</p>
 <p>A chart defined like this:</p>
 <pre><code>&lt;div class=&quot;mermaid&quot;&gt;
@@ -309,7 +310,51 @@ read the chart definiton which will be replaced with the svg chart.</p>
         Chart ends up here
     &lt;/svg&gt;
 &lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
-<h1 id="example-of-marked-renderer">Example of marked renderer</h1>
+<h2 id="calling-mermaid-init-">Calling <code>mermaid.init</code></h2>
+<p>By default, <code>mermaid.init</code> will be called when the document is ready, finding all elements with
+<code>class=&quot;mermaid&quot;</code>. If you are adding content after mermaid is loaded, or otherwise need
+finer-grained control of this behavior, you can call <code>init</code> yourself with:</p>
+<ul>
+<li>a configuration object</li>
+<li>some nodes, as<ul>
+<li>a node</li>
+<li>an a array-like of nodes</li>
+<li>or W3C selector that will find your nodes</li>
+</ul>
+</li>
+</ul>
+<p>Example:</p>
+<pre><code>mermaid.init({noteMargin: 10}, ".someOtherClass");</code></pre><p>Or with no config object, and a jQuery selection:</p>
+<pre><code>mermaid.init(undefined, $("#someId .yetAnotherClass"));</code></pre><h1 id="usage-with-browserify">Usage with browserify</h1>
+<p>Minimalistic javascript:</p>
+<pre><code>
+mermaid = require('mermaid');</code></pre><h1 id="api-usage">API usage</h1>
+<p>Include mermaid on your web page:</p>
+<pre><code>&lt;script src=&quot;mermaidAPI.js&quot;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    mermaidAPI.initialize({
+        startOnLoad:false
+        });
+    $(function(){
+        var graphDefinition = 'graph TB\na-->b';
+        var graph = mermaidAPI.render(graphDefinition);
+        $("#graphDiv").html(graph);
+    });
+&lt;/script&gt;</code></pre><h1 id="sample-api-usage-with-browserify">Sample API usage with browserify</h1>
+<pre><code>$ = require('jquery');
+mermaidAPI = require('mermaid').mermaidAPI;
+mermaidAPI.initialize({
+    startOnLoad:false
+    });
+
+$(function(){
+    var graphDefinition = 'graph TB\na-->b';
+    var cb = function(html){
+        console.log(html);
+    }
+    mermaidAPI.render('id1',graphDefinition,cb);
+});</code></pre><h1 id="example-of-marked-renderer">Example of marked renderer</h1>
 <p>This is the renderer used for transforming the documentation from markdown to html with mermaid diagrams in the html.</p>
 <pre><code>    var renderer = new marked.Renderer();
     renderer.code = function (code, language) {
