@@ -24950,9 +24950,9 @@ process.chdir = function (dir) {
 },{}],86:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
-  "main": "src/main.js",
+  "main": "src/mermaid.js",
   "keywords": [
     "diagram",
     "markdown",
@@ -25786,7 +25786,6 @@ if (!dagreD3) {
 module.exports = dagreD3;
 
 },{"dagre-d3":2}],92:[function(require,module,exports){
-(function (global){
 /**
  * Created by knut on 14-12-11.
  */
@@ -25861,7 +25860,7 @@ exports.addVertices = function (vert, g) {
         }
 
         var labelTypeStr = '';
-        if(global.mermaid.htmlLabels) {
+        if(conf.htmlLabels) {
             labelTypeStr = 'html';
         } else {
             verticeText = verticeText.replace(/<br>/g, "\n");
@@ -25965,7 +25964,7 @@ exports.addEdges = function (edges, g) {
         else {
             var edgeText = edge.text.replace(/<br>/g, "\n");
             if(typeof edge.style === 'undefined'){
-                if (global.mermaid.htmlLabels){
+                if (conf.htmlLabels){
                     g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
                 }else{
                     g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
@@ -26237,14 +26236,12 @@ exports.draw = function (text, id,isDot) {
                 //te.text(subGraphs[subGraphs.length-i-1].title);
                 te.text(subG.title);
 
-                console.log('Setting subg - '+i+' to title '+subGraphs[pos].title);
             }
         }
     }
 };
 
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../../d3":87,"./dagre-d3":91,"./graphDb":93,"./parser/dot":94,"./parser/flow":95}],93:[function(require,module,exports){
 /**
  * Created by knut on 14-11-03.

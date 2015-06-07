@@ -72,7 +72,7 @@ exports.addVertices = function (vert, g) {
         }
 
         var labelTypeStr = '';
-        if(global.mermaid.htmlLabels) {
+        if(conf.htmlLabels) {
             labelTypeStr = 'html';
         } else {
             verticeText = verticeText.replace(/<br>/g, "\n");
@@ -176,7 +176,7 @@ exports.addEdges = function (edges, g) {
         else {
             var edgeText = edge.text.replace(/<br>/g, "\n");
             if(typeof edge.style === 'undefined'){
-                if (global.mermaid.htmlLabels){
+                if (conf.htmlLabels){
                     g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
                 }else{
                     g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
@@ -448,7 +448,6 @@ exports.draw = function (text, id,isDot) {
                 //te.text(subGraphs[subGraphs.length-i-1].title);
                 te.text(subG.title);
 
-                console.log('Setting subg - '+i+' to title '+subGraphs[pos].title);
             }
         }
     }

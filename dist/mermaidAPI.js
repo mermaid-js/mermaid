@@ -24617,9 +24617,9 @@ process.chdir = function (dir) {
 },{}],85:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
-  "main": "src/main.js",
+  "main": "src/mermaid.js",
   "keywords": [
     "diagram",
     "markdown",
@@ -25453,7 +25453,6 @@ if (!dagreD3) {
 module.exports = dagreD3;
 
 },{"dagre-d3":2}],91:[function(require,module,exports){
-(function (global){
 /**
  * Created by knut on 14-12-11.
  */
@@ -25528,7 +25527,7 @@ exports.addVertices = function (vert, g) {
         }
 
         var labelTypeStr = '';
-        if(global.mermaid.htmlLabels) {
+        if(conf.htmlLabels) {
             labelTypeStr = 'html';
         } else {
             verticeText = verticeText.replace(/<br>/g, "\n");
@@ -25632,7 +25631,7 @@ exports.addEdges = function (edges, g) {
         else {
             var edgeText = edge.text.replace(/<br>/g, "\n");
             if(typeof edge.style === 'undefined'){
-                if (global.mermaid.htmlLabels){
+                if (conf.htmlLabels){
                     g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
                 }else{
                     g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
@@ -25904,14 +25903,12 @@ exports.draw = function (text, id,isDot) {
                 //te.text(subGraphs[subGraphs.length-i-1].title);
                 te.text(subG.title);
 
-                console.log('Setting subg - '+i+' to title '+subGraphs[pos].title);
             }
         }
     }
 };
 
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../../d3":86,"./dagre-d3":90,"./graphDb":92,"./parser/dot":93,"./parser/flow":94}],92:[function(require,module,exports){
 /**
  * Created by knut on 14-11-03.
@@ -30730,12 +30727,11 @@ var nextId = 0;
 
 // Default options, can be overridden at initialization time
 var config = {
-    mermaid:{
-        cloneCssStyles: true
-    },
+    cloneCssStyles: true,
     flowchart:{
         // Default is to not set width
         //        width: 1200
+        htmlLabels:true
     },
     sequenceDiagram:{
         diagramMarginX:50,
@@ -30791,7 +30787,7 @@ var config = {
                 return d.getMonth();
             }]
         ]    }
-}
+};
 
 /**
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
@@ -30833,6 +30829,7 @@ var parse = function(text){
         return false;
     }
 };
+exports.parse = parse;
 
 /**
  * Function returning version information
@@ -30862,7 +30859,7 @@ var render = function(id, txt,cb){
         case 'graph':
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
-            if(config.mermaid.cloneCssStyles){
+            if(config.cloneCssStyles){
                 classes = flowRenderer.getClasses(txt, false);
                 utils.cloneCssStyles(element.firstChild, classes);
             }
@@ -30871,7 +30868,7 @@ var render = function(id, txt,cb){
         case 'dotGraph':
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, true);
-            if(config.mermaid.cloneCssStyles) {
+            if(config.cloneCssStyles) {
                 classes = flowRenderer.getClasses(txt, true);
                 utils.cloneCssStyles(element.firstChild, classes);
             }
@@ -30881,20 +30878,20 @@ var render = function(id, txt,cb){
             seq.setConf(config.sequenceDiagram);
             //}
             seq.draw(txt,id);
-            if(config.mermaid.cloneCssStyles) {
+            if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
         case 'gantt':
             gantt.setConf(config.gantt);
             gantt.draw(txt,id);
-            if(config.mermaid.cloneCssStyles) {
+            if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
         case 'info':
             info.draw(txt,id,exports.version());
-            if(config.mermaid.cloneCssStyles) {
+            if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
@@ -30909,45 +30906,7 @@ var render = function(id, txt,cb){
 
 exports.render = function(id, text,cb){
 if(typeof document === 'undefined'){
-        //jsdom = require('jsdom').jsdom;
-        //console.log(jsdom);
-        
-            //htmlStub = '<html><head></head><body><div class="mermaid">'+text+'</div><script src="dist/mermaid.full.js"></script><script>var mermaid_config = {startOnLoad:true}</script></body></html>';
-            htmlStub = '<html><head></head><body></body></html>';
-    //        // html file skull with a container div for the d3 dataviz
-    //
-    // pass the html stub to jsDom
-       /* jsdom.env({ 
-            features : { QuerySelectorAll : true },
-            html : htmlStub,
-            done : function(errors, win) {
-                // process the html document, like if we were at client side
-                // code to generate the dataviz and process the resulting html file to be added here
-                //var d3 = require('d3');
-                //console.log('Here we go: '+JSON.stringify(d3));
-                
-                global.document = win.document;
-                global.window = win;
-
-                var element = win.document.createElement('div');
-                element.setAttribute('id','did');
-                //document.
-                console.log(document.body.innerHTML);
-                //console.log('Element:',element);
-                //console.log(win);
-                //mermaid.init();
-                //render(win.document, 'myId', text, callback);
-                
-            }
-        });*/
-        //var jsdom = require('jsdom').jsdom;
-        //global.document = jsdom(htmlStub);
-        //global.window = document.parentWindow;
-        //
-        //render(id, text, cb);
-                //var element = win.document.createElement('div');
-                //element.setAttribute('id','did');
-                //document.
+        // Todo handle rendering serverside using phantomjs
     }
     else{
         // In browser
@@ -30961,55 +30920,41 @@ var setConf = function(cnf){
     var lvl1Keys = Object.keys(cnf);
     var i;
     for(i=0;i<lvl1Keys.length;i++){
-        var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
-        
-        var j;
-        for(j=0;j<lvl2Keys.length;j++) {
-            console.log('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j])
-            config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
+
+        if(typeof cnf[lvl1Keys[i]] === 'object' ){
+            var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
+
+            var j;
+            for(j=0;j<lvl2Keys.length;j++) {
+                //console.log('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
+                if(typeof config[lvl1Keys[i]] === 'undefined'){
+                    
+                    config[lvl1Keys[i]] = {};
+                }
+                config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
+            }
+        }else{
+            config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
         }
     }
 };
 exports.initialize = function(options){
     // Update default config with options supplied at initialization
-    console.log('In init:'+typeof options,JSON.stringify(options))
     if(typeof options === 'object'){
         setConf(options);
     }
-    console.log('Done init:'+typeof options,JSON.stringify(config))
 
 };
-
+exports.getConfig = function(){
+    return config;
+};
 global.mermaidAPI = {
-    render : exports.render,
+    render     : exports.render,
+    parse      : exports.parse,
     initialize : exports.initialize,
-    detectType: utils.detectType
+    detectType : utils.detectType
 };
 
-//var getBBox = function(selector){
-//    var xmin, xmax, ymin, ymax,p;
-//    // clean up path
-//    var t = d3.select(selector).attr("d");  // get svg line's code
-//    console.log(t)
-//    t = t.replace(/[a-z].*/g," ") // remove relative coords, could rather tag it for later processing to absolute!
-//        .replace(/[\sA-Z]+/gi," ").trim().split(" ");  // remove letters and simplify spaces.
-//    console.log(t)
-//
-//    for(var i in t){    // set valid initial values
-//        if(t[i].length>1){
-//            p = t[i].split(",");
-//            xmin = xmax = p[0]; ymin = ymax = p[1]; }
-//    }
-//    for(var i in t){ // update xmin,xmax,ymin,ymax
-//        p = t[i].split(",");
-//        if(!p[1]){ p[0]=xmin; p[1] = ymin;} // ignore relative jumps such h20 v-10
-//        xmin = Math.min(xmin, p[0]);
-//        xmax = Math.max(xmax, p[0]);
-//        ymin = Math.min(ymin, p[1]);
-//        ymax = Math.max(ymax, p[1]);
-//    } return [[xmin,ymax],[xmax,ymin]]; //  [[left, bottom], [right, top]] as for https://github.com/mbostock/d3/wiki/Geo-Paths#bounds
-//}
-//var bb = getBBox("path");
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../package.json":85,"./d3":86,"./diagrams/example/exampleDb":87,"./diagrams/example/exampleRenderer":88,"./diagrams/example/parser/example":89,"./diagrams/flowchart/flowRenderer":91,"./diagrams/flowchart/graphDb":92,"./diagrams/flowchart/parser/dot":93,"./diagrams/flowchart/parser/flow":94,"./diagrams/gantt/ganttDb":95,"./diagrams/gantt/ganttRenderer":96,"./diagrams/gantt/parser/gantt":97,"./diagrams/sequenceDiagram/parser/sequenceDiagram":98,"./diagrams/sequenceDiagram/sequenceDb":99,"./diagrams/sequenceDiagram/sequenceRenderer":100,"./utils":103}],103:[function(require,module,exports){
 /**

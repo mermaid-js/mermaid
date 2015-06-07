@@ -2,6 +2,7 @@ var he = require('he');
 var mermaidAPI = require('./mermaidAPI');
 var nextId = 0;
 
+module.exports.mermaidAPI = mermaidAPI;
 /**
  * Function that goes through the document to find the chart definitions in there and render them.
  *
@@ -20,12 +21,12 @@ var nextId = 0;
  *  c-->|No |d(Transform);
  * ```
  */
-
 /**
  * Renders the mermaid diagrams
  * @* param nodes- a css selector or an array of nodes
  */
 var init = function () {
+    console.log('In mermaid.init');
     var nodes;
     if(arguments.length === 2){
         // sequence config was passed as #1
@@ -46,9 +47,7 @@ var init = function () {
         : nodes;
     
     var i;
-    
-    console.log('Found ',nodes.length,' nodes');
-    console.log('Hooo hooo');
+
     if(typeof mermaid_config !== 'undefined'){
         mermaidAPI.initialize(mermaid_config);
     }
@@ -82,13 +81,19 @@ var init = function () {
 
 exports.tester = function(){};
 
+exports.init = init;
+
 /**
  * Function returning version information
  * @returns {string} A string containing the version info
  */
 exports.version = function(){
-    return require('../package.json').version;
+    return 'v'+require('../package.json').version;
 };
+
+exports.initialize = function(config){
+    mermaidAPI.initialize(config);
+}
 
 var equals = function (val, variable){
     if(typeof variable === 'undefined'){
@@ -106,6 +111,9 @@ global.mermaid = {
     init: function(sequenceConfig, nodes) {
         init.apply(null, arguments);
     },
+    initialize: function(config) {
+        mermaidAPI.initialize(config);
+    },
     version: function() {
         return mermaidAPI.version();
     },
@@ -122,10 +130,8 @@ global.mermaid = {
 };
 
 exports.contentLoaded = function(){
+    console.log('Content loaded');
     // Check state of start config mermaid namespace
-    console.log('Starting mermaid');
-    console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
-    console.log('mermaid_config',mermaid_config);
     if (typeof mermaid_config !== 'undefined') {
         if (equals(false, mermaid_config.htmlLabels)) {
             global.mermaid.htmlLabels = false;
@@ -142,9 +148,18 @@ exports.contentLoaded = function(){
             }
         }
         else {
-            // No config found, do autostart in this simple case
+            // No config found, do check API config
+            var config = mermaidAPI.getConfig();
+            if(config.startOnLoad){
+                global.mermaid.init();
+            }
+        }
+    }else{
+        var config = mermaidAPI.getConfig();
+        if(config.startOnLoad){
             global.mermaid.init();
         }
+        
     }
 
 };

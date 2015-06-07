@@ -5,8 +5,8 @@
 
     <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
 
-<script src="../node_modules/d3/d3.js"></script>
-  <script src="../dist/mermaid.slim.js"></script>
+<scrpt src="../node_modules/d3/d3.js"></scrpt>
+  <script src="../dist/mermaid.js"></script>
   <scrpt src="../dist/mermaid.full.js"></scrpt>
   <style type="text/css">
 html {
@@ -72,6 +72,17 @@ html {
                 end
             end
     </div>
+    <div class="mermaid">graph TB
+        c1-->a2
+        subgraph one
+        a1-->a2
+        end
+        subgraph two
+        b1-->b2
+        end
+        subgraph three
+        c1-->c2
+        end</div>
     <div class="mermaid">
         graph TB
         subgraph A
