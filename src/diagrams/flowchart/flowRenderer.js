@@ -4,8 +4,8 @@
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
+var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
-var d3 = require('./d3');
 var conf = {
 };
 module.exports.setConf = function(cnf){
@@ -72,7 +72,7 @@ exports.addVertices = function (vert, g) {
         }
 
         var labelTypeStr = '';
-        if(global.mermaid.htmlLabels) {
+        if(conf.htmlLabels) {
             labelTypeStr = 'html';
         } else {
             verticeText = verticeText.replace(/<br>/g, "\n");
@@ -176,7 +176,7 @@ exports.addEdges = function (edges, g) {
         else {
             var edgeText = edge.text.replace(/<br>/g, "\n");
             if(typeof edge.style === 'undefined'){
-                if (global.mermaid.htmlLabels){
+                if (conf.htmlLabels){
                     g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
                 }else{
                     g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
@@ -418,37 +418,38 @@ exports.draw = function (text, id,isDot) {
     //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
     svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));
 
-    setTimeout(function(){
-        var i = 0;
-        //subGraphs.forEach(function(subG) {
-        for(i=0;i<subGraphs.length;i++){
-            subG = subGraphs[i];
+    // Index nodes
+    graph.indexNodes('sunGraph'+i);
+    
+    for(i=0;i<subGraphs.length;i++){
+        var pos = graph.getDepthFirstPos(i);
+        subG = subGraphs[i];
 
-            var clusterRects = document.querySelectorAll('#' + id + ' .clusters rect');
-            var clusters = document.querySelectorAll('#' + id + ' .cluster');
+        if (subG.title !== 'undefined') {
+            var clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect');
+            //console.log('looking up: #' + id + ' #' + subG.id)
+            var clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id);
 
+            var xPos = clusterRects[0].x.baseVal.value;
+            var yPos = clusterRects[0].y.baseVal.value;
+            var width = clusterRects[0].width.baseVal.value;
+            var cluster = d3.select(clusterEl[0]);
+            var te = cluster.append('text');
+            te.attr('x', xPos + width / 2);
+            te.attr('y', yPos + 14);
+            te.attr('fill', 'black');
+            te.attr('stroke', 'none');
+            te.attr('id', id + 'Text');
+            te.style('text-anchor', 'middle');
 
-            if (subG.title !== 'undefined') {
-                var xPos = clusterRects[i].x.baseVal.value;
-                var yPos = clusterRects[i].y.baseVal.value;
-                var width = clusterRects[i].width.baseVal.value;
-                var cluster = d3.select(clusters[i]);
-                var te = cluster.append('text');
-                te.attr('x', xPos + width / 2);
-                te.attr('y', yPos + 14);
-                te.attr('fill', 'black');
-                te.attr('stroke', 'none');
-                te.attr('id', id + 'Text');
-                te.style('text-anchor', 'middle');
-                if(typeof subGraphs[subGraphs.length-i-1] === 'undefined'){
-                    te.text('Undef');
-                }else{
-                    te.text(subGraphs[subGraphs.length-i-1].title);
-                }
+            if(typeof subG.title === 'undefined'){
+                te.text('Undef');
+            }else{
+                //te.text(subGraphs[subGraphs.length-i-1].title);
+                te.text(subG.title);
+
             }
         }
-        //    i = i + 1;
-        //});
-    },20);
+    }
 };
 

@@ -9,6 +9,7 @@
 
 %%
 \%\%[^\n]*            /* do nothing */
+\"[^\n]*\"            return TESTSTR;
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
@@ -279,6 +280,8 @@ alphaNumStatement
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
+    | linkStatement TESTSTR SPACE
+    {$1.text = $2;$$ = $1;}
     | linkStatement arrowText SPACE
     {$1.text = $2;$$ = $1;}
     | linkStatement
@@ -344,6 +347,8 @@ text: textToken
     {$$=$1;}
     | text textToken
     {$$=$1+''+$2;}
+    | TESTSTR
+    {$$=$1;}
     ;
 
 

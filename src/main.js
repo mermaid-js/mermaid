@@ -14,7 +14,7 @@ var infoDb = require('./diagrams/example/exampleDb');
 var gantt       = require('./diagrams/gantt/ganttRenderer');
 var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
-
+var d3 = require('./d3');
 var nextId = 0;
 
 /**
@@ -101,6 +101,8 @@ var init = function () {
         : nodes;
     
     var i;
+    
+    console.log('Found ',nodes.length,' nodes');
     for (i = 0; i < nodes.length; i++) {
         var element = nodes[i];
 
@@ -184,6 +186,133 @@ var equals = function (val, variable){
     }
 };
 
+var render = function(id, txt,cb){
+//        var element = doc.createElement('svg');
+//        element.setAttribute('id',id);
+//        element.setAttribute('width','100%');
+//        element.setAttribute('xmlns','http://www.w3.org/2000/svg');
+//        element.innerHTML = '<g />';
+
+        //var element = doc.createElement('div');
+        //element.setAttribute('id','d'+id);
+        //
+        //element.innerHTML = '<svg id="' + id + '" width="100%" xmlns="http://www.w3.org/2000/svg">' +
+        //    '<g />' +
+        //    '</svg>';
+        //document.body.appendChild(element);
+    d3.select('body').append('div')
+        .attr('id', 'd'+id)
+        .append('svg')
+        .attr('id', id)
+        .attr('width','100%')
+        .attr('xmlns','http://www.w3.org/2000/svg')
+        .append('g');
+
+
+
+        console.log(d3.select('#d'+id).node().innerHTML);
+        var element = d3.select('#d'+id).node();
+        var graphType = utils.detectType(txt);
+        var classes = {};
+        switch(graphType){
+            case 'graph':
+                classes = flowRenderer.getClasses(txt, false);
+
+                if(typeof mermaid.flowchartConfig === 'object'){
+                    flowRenderer.setConf(mermaid.flowchartConfig);
+                }
+                flowRenderer.draw(txt, id, false);
+                utils.cloneCssStyles(element.firstChild, classes);
+                graph.bindFunctions();
+                break;
+            case 'dotGraph':
+                classes = flowRenderer.getClasses(txt, true);
+                flowRenderer.draw(txt, id, true);
+                utils.cloneCssStyles(element.firstChild, classes);
+                break;
+            case 'sequenceDiagram':
+                if(typeof mermaid.sequenceConfig === 'object'){
+                    seq.setConf(mermaid.sequenceConfig);
+                }
+                seq.draw(txt,id);
+                utils.cloneCssStyles(element.firstChild, []);
+                break;
+            case 'gantt':
+                if(typeof mermaid.ganttConfig === 'object'){
+                    gantt.setConf(mermaid.ganttConfig);
+                    
+                }
+                gantt.draw(txt,id);
+                utils.cloneCssStyles(element.firstChild, []);
+                break;
+            case 'info':
+                info.draw(txt,id,exports.version());
+                utils.cloneCssStyles(element.firstChild, []);
+                break;
+        }
+        //console.log(document.body.innerHTML);
+        cb(d3.select('#d'+id).node().innerHTML);
+
+    d3.select('#d'+id).node().remove();
+    };
+
+
+exports.render = function(id, text){
+
+    var callback = function(svgText){
+        console.log(svgText);
+    };
+    
+    if(typeof document === 'undefined'){
+        //jsdom = require('jsdom').jsdom;
+        //console.log(jsdom);
+        
+            //htmlStub = '<html><head></head><body><div class="mermaid">'+text+'</div><script src="dist/mermaid.full.js"></script><script>var mermaid_config = {startOnLoad:true}</script></body></html>';
+            htmlStub = '<html><head></head><body></body></html>';
+    //        // html file skull with a container div for the d3 dataviz
+    //
+    // pass the html stub to jsDom
+       /* jsdom.env({ 
+            features : { QuerySelectorAll : true },
+            html : htmlStub,
+            done : function(errors, win) {
+                // process the html document, like if we were at client side
+                // code to generate the dataviz and process the resulting html file to be added here
+                //var d3 = require('d3');
+                //console.log('Here we go: '+JSON.stringify(d3));
+                
+                global.document = win.document;
+                global.window = win;
+
+                var element = win.document.createElement('div');
+                element.setAttribute('id','did');
+                //document.
+                console.log(document.body.innerHTML);
+                //console.log('Element:',element);
+                //console.log(win);
+                //mermaid.init();
+                //render(win.document, 'myId', text, callback);
+                
+            }
+        });*/
+        //var jsdom = require('jsdom').jsdom;
+        //global.document = jsdom(htmlStub);
+        //global.window = document.parentWindow;
+        
+        render(id, text, callback);
+                //var element = win.document.createElement('div');
+                //element.setAttribute('id','did');
+                //document.
+    }
+    else{
+        // In browser
+        render( id, text, callback);
+    }
+    
+    
+    
+};
+
 global.mermaid = {
     startOnLoad:    true,
     htmlLabels:     true,
@@ -203,6 +332,9 @@ global.mermaid = {
     parseError: function(err, hash) {
         console.log('Mermaid Syntax error:');
         console.log(err);
+    },
+    render:function(id, text){
+        return exports.render(id, text);
     }
 };
 
@@ -233,6 +365,8 @@ exports.contentLoaded = function(){
 
 };
 
+
+
 if(typeof document !== 'undefined'){
     /**
      * Wait for document loaded before starting the execution
@@ -241,6 +375,3 @@ if(typeof document !== 'undefined'){
         exports.contentLoaded();
     }, false);
 }
-
-var apa         = 1;
-var bapselsin   = 2;

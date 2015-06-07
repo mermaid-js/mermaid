@@ -5,7 +5,7 @@
 var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
-var d3 = require('./d3');
+var d3 = require('../../d3');
 var conf = {
 
     diagramMarginX:50,
@@ -30,6 +30,7 @@ var conf = {
     bottomMarginAdj:1
 };
 
+//var bb = getBBox("path");
 exports.bounds = {
     data:{
         startx:undefined,
@@ -173,7 +174,17 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         .attr("class", "messageText")
         .text(msg.message);
 
-    var textWidth = textElem[0][0].getBBox().width;
+    var textWidth;
+
+    if(typeof textElem[0][0].getBBox !== 'undefined'){
+        textWidth = textElem[0][0].getBBox().width;
+    }
+    else{
+        console.log(textElem[0][0].getBoundingClientRect());
+        //textWidth = getBBox(textElem).width; //.getComputedTextLength()
+        textWidth = textElem[0][0].getBoundingClientRect();  
+        //textWidth = textElem[0][0].getComputedTextLength();  
+    }
 
     var line;
 

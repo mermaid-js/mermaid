@@ -3,14 +3,17 @@
  */
 var proxyquire = require('proxyquire');
 
+
+var sq = require('./parser/sequenceDiagram').parser;
 var newD3;
+
 var d3 = {
     select:function(){
         return new newD3();
     }
 };
-var sq = require('./parser/sequenceDiagram').parser;
 var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
+var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 });
 
 var str;
 describe('when parsing a sequenceDiagram',function() {
