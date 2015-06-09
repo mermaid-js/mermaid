@@ -48,8 +48,7 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></scrpt>
-        <script type="text/javascript" src="/js/mermaid.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
@@ -299,7 +298,8 @@
 <p>Read more about that at <a href="https://rawgit.com/">https://rawgit.com/</a></p>
 <h1 id="usage">Usage</h1>
 <p>Include mermaid on your web page:</p>
-<pre><code>&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
+<pre><code>&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to
 read the chart definiton which will be replaced with the svg chart.</p>
 <p>A chart defined like this:</p>
 <pre><code>&lt;div class=&quot;mermaid&quot;&gt;

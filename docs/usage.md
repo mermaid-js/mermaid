@@ -36,6 +36,7 @@ Include mermaid on your web page:
 
 ```
 &lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;
 
 ```
 
