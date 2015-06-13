@@ -15,10 +15,10 @@
 
 %%
 
-\%\%[^\n]*            /* do nothing */
+\%\%[^\n]*            return 'COMMENT';
 
-/*[>][;]                  return 'TAGEND';
-[>][\n]                 return 'TAGEND';*/
+[>][;]                  return 'TAGEND';
+[>][\n]                 return 'TAGEND';
 
 ["]                     this.begin("string");
 <string>["]             this.popState();
@@ -65,15 +65,16 @@
 <roundVertex>[^\)]*     {return "ROUND";}
 
 \n+                   return 'NEWLINE';
-\s+                     /* do nothing */
-"style"                 return 'STYLE';
+
+"style"[\s]+.*          return 'STYLE';
+
 "default"               return 'DEFAULT';
 "linkStyle"             return 'LINKSTYLE';
 "classDef"              return 'CLASSDEF';
 "class"                 return 'CLASS';
 "click"                 return 'CLICK';
-"graph"                 return 'GRAPH';
-"subgraph"              return 'subgraph';
+"graph"\s+                 return 'GRAPH';
+"subgraph"\s+             return 'subgraph';
 "end"\s*                return 'end';
 "LR"                    return 'DIR';
 "RL"                    return 'DIR';
@@ -188,6 +189,7 @@
 "\""                  return 'QUOTE';
 "say"                   return 'say';
 <<EOF>>                 return 'EOF';
+\s+                     {console.log('S');return 'SP';}
 .                       return 'INVALID';
 
 /lex
@@ -201,19 +203,24 @@
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig lineEnd document
+mermaidDoc: initialComment
 ;
 
+initialComment
+    : COMMENT lineEnd initialComment
+    | graphConfig document
+    ;
+
 graphConfig
-    : GRAPH DIR
+    : GRAPH DIR lineEnd
         { console.log('Got GCONF DIR');yy.setDirection($2);$$ = $2;}
     | GRAPH TAGEND
         { yy.setDirection("LR");$$ = $2;}
-    | GRAPH TAGSTART
+    | GRAPH TAGSTART lineEnd
         { yy.setDirection("RL");$$ = $2;}
-    | GRAPH UP
+    | GRAPH UP lineEnd
         { yy.setDirection("BT");$$ = $2;}
-    | GRAPH DOWN
+    | GRAPH DOWN lineEnd
         { console.log('Got TB');yy.setDirection("TB");$$ = $2;}
     ;
 
@@ -226,11 +233,16 @@ line
 	: statement lineEnd {console.log('Got statement');}
 	;
 lineEnd: lineEnd2|lineEnd2 lineEnd;
-lineEnd2:'NEWLINE'{console.log('Got line end');}| EOF| 'SEMI' {console.log('Got semi');};
+lineEnd2:'NEWLINE'{console.log('Got line end');}| EOF| 'SP'|'SEMI' {console.log('Got semi');};
 
 statement
 	: verticeStatement
-	
+	| STYLE { ;yy.handleStyleStatement($1);$$ = [$1];}
+	| COMMENT
+    | subgraph  text lineEnd document end
+    {$$=yy.addSubGraph($4,$2);}
+    | subgraph lineEnd document end
+    {$$=yy.addSubGraph($3,undefined);}
 	;
 
 verticeStatement:
@@ -257,10 +269,6 @@ vertex:  alphaNum vertexType
         {$$ = {text:$1,type:'odd'};}
     ;
 link: linkStatement arrowText
-    {$1.text = $2;$$ = $1;}
-    | linkStatement TESTSTR SPACE
-    {$1.text = $2;$$ = $1;}
-    | linkStatement arrowText SPACE
     {$1.text = $2;$$ = $1;}
     | linkStatement
     {$$ = $1;}
@@ -352,7 +360,7 @@ commentText: commentToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
+    : LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken
@@ -376,9 +384,9 @@ clickStatement:CLICK SPACE alphaNum SPACE alphaNum
     {$$ = $1;yy.setClickEvent($3, $5);}
     ;
 
-styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
+styleStatement:STYLE alphaNum stylesOpt
     {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
-    | STYLE SPACE HEX SPACE stylesOpt
+    | STYLE HEX stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     ;
 
