@@ -16,6 +16,10 @@
 %%
 
 \%\%[^\n]*            /* do nothing */
+
+/*[>][;]                  return 'TAGEND';
+[>][\n]                 return 'TAGEND';*/
+
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "TEXT";
@@ -60,6 +64,7 @@
 <roundVertex>[\)]      this.popState();
 <roundVertex>[^\)]*     {return "ROUND";}
 
+\n+                   return 'NEWLINE';
 \s+                     /* do nothing */
 "style"                 return 'STYLE';
 "default"               return 'DEFAULT';
@@ -182,22 +187,26 @@
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
 "say"                   return 'say';
-\n+                   return 'NEWLINE';
 <<EOF>>                 return 'EOF';
 .                       return 'INVALID';
 
 /lex
+
+/* operator associations and precedence */
+
+%left '^'
 
 
 %start mermaidDoc
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig document;
+mermaidDoc: graphConfig lineEnd document
+;
 
 graphConfig
     : GRAPH DIR
-        { yy.setDirection($2);$$ = $2;}
+        { console.log('Got GCONF DIR');yy.setDirection($2);$$ = $2;}
     | GRAPH TAGEND
         { yy.setDirection("LR");$$ = $2;}
     | GRAPH TAGSTART
@@ -205,7 +214,7 @@ graphConfig
     | GRAPH UP
         { yy.setDirection("BT");$$ = $2;}
     | GRAPH DOWN
-        { yy.setDirection("TB");$$ = $2;}
+        { console.log('Got TB');yy.setDirection("TB");$$ = $2;}
     ;
 
 document
@@ -214,40 +223,104 @@ document
 	;
 
 line
-	: statement { }
-	| 'NEWLINE'
-	| EOF
+	: statement lineEnd {console.log('Got statement');}
 	;
+lineEnd: lineEnd2|lineEnd2 lineEnd;
+lineEnd2:'NEWLINE'{console.log('Got line end');}| EOF| 'SEMI' {console.log('Got semi');};
 
 statement
 	: verticeStatement
+	
 	;
 
 verticeStatement:
-     vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
+     vertex linkStatement vertex
+        { console.log('Got vtx stat: ');yy.addLink($1,$3,$2);$$ = [$1,$3];}
      | vertex
-        {$$ = [$1];}
+        {console.log('Got vtx stat (single): '+$1);$$ = [$1];}
     ;
-vertex:  alphaNum SQUARE
-        {$$ = $1;yy.addVertex($1,$2,'square');}
-     | alphaNum ROUND
-        {$$ = $1;yy.addVertex($1,$2,'round');}
-     | alphaNum CIRCLE
-        {$$ = $1;yy.addVertex($1,$2,'circle');}
-     | alphaNum DIAMOND
-        {$$ = $1;yy.addVertex($1,$2,'diamond');}
-     | alphaNum ODD
-        {$$ = $1;yy.addVertex($1,$2,'diamond');}
+vertex:  alphaNum vertexType
+        {$$ = $1;yy.addVertex($1,$2.text,$2.type);}
+      |    alphaNum
+        {console.log('Got vtx: '+$1);$$ = $1;yy.addVertex($1,$1,'square');}
     ;
-alphaNum
-    : alphaNumStatement
-    {$$=$1;}
-    | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
+    
+ vertexType: SQUARE
+        {$$ = {text:$1,type:'square'};}
+    | ROUND
+        {$$ = {text:$1,type:'round'};}
+    | CIRCLE
+        {$$ = {text:$1,type:'circle'};}
+    | DIAMOND
+        {$$ = {text:$1,type:'diamond'};}
+    | ODD
+        {$$ = {text:$1,type:'odd'};}
+    ;
+link: linkStatement arrowText
+    {$1.text = $2;$$ = $1;}
+    | linkStatement TESTSTR SPACE
+    {$1.text = $2;$$ = $1;}
+    | linkStatement arrowText SPACE
+    {$1.text = $2;$$ = $1;}
+    | linkStatement
+    {$$ = $1;}
+    | '--' text ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"normal","text":$2};}
+    | '--' text ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"normal","text":$2};}
+    | '--' text ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"normal","text":$2};}
+    | '--' text ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"normal","text":$2};}
+    | '-.' text DOTTED_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"dotted","text":$2};}
+    | '-.' text DOTTED_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"dotted","text":$2};}
+    | '-.' text DOTTED_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"dotted","text":$2};}
+    | '-.' text DOTTED_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"dotted","text":$2};}
+    | '==' text THICK_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"thick","text":$2};}
+    | '==' text THICK_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"thick","text":$2};}
+    | '==' text THICK_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"thick","text":$2};}
+    | '==' text THICK_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"thick","text":$2};}
     ;
 
-alphaNumStatement
+linkStatement: ARROW_POINT
+        {console.log('Got linkStatement');$$ = {"type":"arrow","stroke":"normal"};}
+    | ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"normal"};}
+    | ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"normal"};}
+    | ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"normal"};}
+    | DOTTED_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"dotted"};}
+    | DOTTED_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"dotted"};}
+    | DOTTED_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"dotted"};}
+    | DOTTED_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"dotted"};}
+    | THICK_ARROW_POINT
+        {$$ = {"type":"arrow","stroke":"thick"};}
+    | THICK_ARROW_CIRCLE
+        {$$ = {"type":"arrow_circle","stroke":"thick"};}
+    | THICK_ARROW_CROSS
+        {$$ = {"type":"arrow_cross","stroke":"thick"};}
+    | THICK_ARROW_OPEN
+        {$$ = {"type":"arrow_open","stroke":"thick"};}
+        ;
+            
+alphaNum
+    : alphaNumToken |alphaNum alphaNumToken
+    ;
+
+alphaNum2
     : DIR
         {$$=$1;}
     | alphaNumToken
@@ -255,11 +328,91 @@ alphaNumStatement
     | alphaNumToken MINUS alphaNumToken
         {$$=$1+'-'+$3;}
     ;
-
-alphaNumToken  : ALPHA | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;    
     
-message
-	: 'say' TEXT { console.log('Saying: '+2);return $2; }
-	;
+arrowText:
+    PIPE text PIPE
+    {$$ = $2;}
+    ;
 
+text: textToken
+    {$$=$1;}
+    | text textToken
+    {$$=$1+''+$2;}
+    | TESTSTR
+    {$$=$1;}
+    ;
+
+
+
+commentText: commentToken
+    {$$=$1;}
+    | commentText commentToken
+    {$$=$1+''+$2;}
+    ;
+
+
+keywords
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
+
+
+textNoTags: textNoTagsToken
+    {$$=$1;}
+    | textNoTags textNoTagsToken
+    {$$=$1+''+$2;}
+    ;
+
+
+classDefStatement:CLASSDEF SPACE DEFAULT SPACE stylesOpt
+    {$$ = $1;yy.addClass($3,$5);}
+    | CLASSDEF SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.addClass($3,$5);}
+    ;
+
+classStatement:CLASS SPACE alphaNum SPACE alphaNum
+    {$$ = $1;yy.setClass($3, $5);}
+    ;
+
+clickStatement:CLICK SPACE alphaNum SPACE alphaNum
+    {$$ = $1;yy.setClickEvent($3, $5);}
+    ;
+
+styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
+    {$$ = $1;yy.addVertex($3,undefined,undefined,$5);}
+    | STYLE SPACE HEX SPACE stylesOpt
+          {$$ = $1;yy.updateLink($3,$5);}
+    ;
+
+linkStyleStatement
+    : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
+          {$$ = $1;yy.updateLink($3,$5);}
+    | LINKSTYLE SPACE NUM SPACE stylesOpt
+          {$$ = $1;yy.updateLink($3,$5);}
+    ;
+
+commentStatement: PCT PCT commentText;
+
+stylesOpt: style
+        {$$ = [$1]}
+    | stylesOpt COMMA style
+        {$1.push($3);$$ = $1;}
+    ;
+
+style: styleComponent
+    |style styleComponent
+    {$$ = $1 + $2;}
+    ;
+
+styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
+
+/* Token lists */
+
+commentToken   : textToken | graphCodeTokens ;
+
+textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFAULT;
+
+textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
+
+alphaNumToken  : ALPHA | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT;
+
+graphCodeTokens:  PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAG_START | TAG_END | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%
