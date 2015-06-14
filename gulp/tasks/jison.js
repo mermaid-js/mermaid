@@ -3,9 +3,9 @@ var shell = require('gulp-shell');
 var jison = require('gulp-jison');
 
 gulp.task('jison', function() {
-    return gulp.src('./src/*.jison')
+    return gulp.src('./src/**/*.jison')
         .pipe(jison({ moduleType: 'commonjs' }))
-        .pipe(gulp.dest('./src/parser'));
+        .pipe(gulp.dest('./src/'));
 });
 
 gulp.task('jison_legacy', shell.task([
