@@ -13,8 +13,8 @@
         mermaid.flowchartConfig = {width:'100%'};
     </script>
     <script>
-        function apa(){
-            console.log('CLICKED');
+        function coolAction(){
+            console.log('Got callback in user defiend function');
         }
     </script>
     <style>
@@ -37,11 +37,12 @@
         %% Example diagram
         A[Square Rect] -- Link text --> B((Circle))
         A --> C(Round Rect)
+        click A coolAction
         B --> D{Rhombus}
         C --> D
         A("test(vcc) a a ") --> B;
 
-
+        
     </div>
     <h1>Issue 140</h1>
     <div  class="mermaid" id="i140">

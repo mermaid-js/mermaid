@@ -136,6 +136,7 @@ exports.setClass = function (id,className) {
         }
     }
 };
+var clickEvents = [];
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
@@ -162,7 +163,6 @@ exports.setClickEvent = function (id,functionName) {
                 funs.push(function(){
                     var elem = document.getElementById(id);
                     if(elem !== null){
-                        //console.log('id was NOT null: '+id);
                         elem.onclick = function(){eval(functionName+'(\'' + id + '\')');}; // jshint ignore:line
                     }
                     else{
@@ -176,12 +176,9 @@ exports.setClickEvent = function (id,functionName) {
 };
 
 exports.bindFunctions = function(){
-    //setTimeout(function(){
-        funs.forEach(function(fun){
-            fun();
-        });
-    //},1000);
-
+    funs.forEach(function(fun){
+        fun();
+    });
 };
 exports.getDirection = function () {
     return direction;
@@ -217,7 +214,7 @@ exports.clear = function () {
     vertices = {};
     classes = {};
     edges = [];
-    funs = [];
+    //funs = [];
     subGraphs = [];
     subCount = 0;
 };
@@ -283,7 +280,6 @@ var indexNodes = function (id, pos) {
     }
     //var nPos = getPosForId(subGraphs[pos].id);
     posCrossRef[secCount]=pos;
-    console.log('Setting ',' ',secCount,' to ',pos);
     // Check if match
     if(subGraphs[pos].id === id){
         return {
