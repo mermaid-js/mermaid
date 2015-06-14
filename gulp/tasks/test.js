@@ -28,6 +28,11 @@ gulp.task('jasmine',['jison','lint'], function () {
         .pipe(jasmine({includeStackTrace:true}));
 });
 
+gulp.task('jas', function () {
+    return gulp.src(['src/**/*.spec.js'])
+        .pipe(jasmine({includeStackTrace:true}));
+});
+
 gulp.task('tape', shell.task(['./node_modules/.bin/tape ./test/cli_test-*.js']));
 
 gulp.task('coverage', function (cb) {

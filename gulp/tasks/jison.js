@@ -1,9 +1,11 @@
 var gulp = require('gulp');
 var shell = require('gulp-shell');
 var jison = require('gulp-jison');
+var filelog = require('gulp-filelog');
 
 gulp.task('jison', function() {
     return gulp.src('./src/**/*.jison')
+        .pipe(filelog('Jison file:'))
         .pipe(jison({ moduleType: 'commonjs' }))
         .pipe(gulp.dest('./src/'));
 });

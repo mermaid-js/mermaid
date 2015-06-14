@@ -5,7 +5,7 @@
 var graph = require('../graphDb');
 var flow = require('./flow');
 
-ddescribe('when parsing ',function(){
+describe('when parsing ',function(){
     beforeEach(function(){
         flow.parser.yy = require('../graphDb');
         flow.parser.yy.clear();
