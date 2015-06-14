@@ -5,7 +5,7 @@
 var graph = require('../graphDb');
 var flow = require('./flow');
 
-describe('when parsing ',function(){
+ddescribe('when parsing ',function(){
     beforeEach(function(){
         flow.parser.yy = require('../graphDb');
         flow.parser.yy.clear();
@@ -561,10 +561,10 @@ describe('when parsing ',function(){
             expect(vert['a'].text).toBe('v');
         });
         it('should handle quoted text',function(){
-            var res = flow.parser.parse('graph TD;V-- "test string" -->a[v]');
+            var res = flow.parser.parse('graph TD;V-- "test string()" -->a[v]');
             var vert = flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
-            expect(edges[0].text).toBe('test string');
+            expect(edges[0].text).toBe('test string()');
         });
     });
 
@@ -799,13 +799,13 @@ describe('when parsing ',function(){
     });
 
     it('should handle quoted text in vertices ',function(){
-        var res = flow.parser.parse('graph TD;A["chimpansen hoppar"] --> C;');
+        var res = flow.parser.parse('graph TD;A["chimpansen hoppar ()[]"] --> C;');
 
         var vert = flow.parser.yy.getVertices();
         var edges = flow.parser.yy.getEdges();
 
         expect(vert['A'].type).toBe('square');
-        expect(vert['A'].text).toBe('chimpansen hoppar');
+        expect(vert['A'].text).toBe('chimpansen hoppar ()[]');
     });
     it('should handle text in circle vertices with space',function(){
         var res = flow.parser.parse('graph TD;A((chimpansen hoppar))-->C;');

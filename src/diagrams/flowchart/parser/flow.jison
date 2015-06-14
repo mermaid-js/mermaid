@@ -6,10 +6,13 @@
 
 /* lexical grammar */
 %lex
+%x string
 
 %%
 \%\%[^\n]*            /* do nothing */
-\"[^\n]*\"            return TESTSTR;
+["]                     this.begin("string");
+<string>["]             this.popState();
+<string>[^"]*           return "STR";
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
@@ -347,7 +350,7 @@ text: textToken
     {$$=$1;}
     | text textToken
     {$$=$1+''+$2;}
-    | TESTSTR
+    | STR
     {$$=$1;}
     ;
 
