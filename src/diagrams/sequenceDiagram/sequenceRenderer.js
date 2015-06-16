@@ -369,8 +369,13 @@ module.exports.draw = function (text, id) {
     }
 
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;
-
-    diagram.attr("height",height);
-    diagram.attr("width", width );
+    if(conf.useMaxWidth) {
+        diagram.attr("height", '100%');
+        diagram.attr("width", '100%');
+        diagram.attr('style', 'max-width:' + (width) + 'px;')
+    }else{
+        diagram.attr("height",height);
+        diagram.attr("width", width );
+    }
     diagram.attr("viewBox", (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };

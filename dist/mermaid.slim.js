@@ -16981,15 +16981,25 @@ exports.draw = function (text, id,isDot) {
     te.style('text-anchor', 'middle');
     te.text('Title for cluster');
 */
-    // Center the graph
-    svg.attr("height", g.graph().height );
-    if(typeof conf.width === 'undefined'){
-        svg.attr("width", g.graph().width );
-    }else{
-        svg.attr("width", conf.width );
+    if(conf.useMaxWidth) {
+        // Center the graph
+        svg.attr("height", '100%');
+        svg.attr("width", '100%');
+        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+        svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
     }
-    //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-    svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));
+    else{
+        // Center the graph
+        svg.attr("height", g.graph().height );
+        if(typeof conf.width === 'undefined'){
+            svg.attr("width", g.graph().width );
+        }else{
+            svg.attr("width", conf.width );
+        }
+        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
+
 
     // Index nodes
     graph.indexNodes('sunGraph'+i);
@@ -19292,7 +19302,10 @@ module.exports.draw = function (text, id) {
     gantt.yy.clear();
     gantt.parse(text);
     var elem = document.getElementById(id);
-    w = elem.offsetWidth;
+    w = elem.parentElement.offsetWidth;
+
+    console.log('id='+id,' w='+w);
+    console.log(elem.parentElement);
 
     if (typeof w === 'undefined') {
         w = 1200;
@@ -21586,9 +21599,14 @@ module.exports.draw = function (text, id) {
     }
 
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;
-
-    diagram.attr("height",height);
-    diagram.attr("width", width );
+    if(conf.useMaxWidth) {
+        diagram.attr("height", '100%');
+        diagram.attr("width", '100%');
+        diagram.attr('style', 'max-width:' + (width) + 'px;')
+    }else{
+        diagram.attr("height",height);
+        diagram.attr("width", width );
+    }
     diagram.attr("viewBox", (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
@@ -21902,7 +21920,7 @@ var init = function () {
         txt = he.decode(txt).trim();
 
 
-        mermaidAPI.render(id,txt,insertSvg);
+        mermaidAPI.render(id,txt,insertSvg, element);
     }
 
 };
@@ -22030,7 +22048,8 @@ var config = {
     flowchart:{
         // Default is to not set width
         //        width: 1200
-        htmlLabels:true
+        htmlLabels:true,
+        useMaxWidth:true
     },
     sequenceDiagram:{
         diagramMarginX:50,
@@ -22052,7 +22071,8 @@ var config = {
         mirrorActors:true,
         // Depending on css styling this might need adjustment
         // Prolongs the edge of the diagram downwards
-        bottomMarginAdj:1
+        bottomMarginAdj:1,
+        useMaxWidth:true
     },
     gantt:{
         titleTopMargin: 25,
@@ -22138,19 +22158,27 @@ exports.version = function(){
     return require('../package.json').version;
 };
 
-var render = function(id, txt,cb){
+var render = function(id, txt, cb, container){
 
-    d3.select('body').append('div')
-        .attr('id', 'd'+id)
-        .append('svg')
-        .attr('id', id)
-        .attr('width','100%')
-        .attr('xmlns','http://www.w3.org/2000/svg')
-        .append('g');
+    if(typeof container !== 'undefined'){
+        d3.select(container).append('div')
+            .attr('id', 'd'+id)
+            .append('svg')
+            .attr('id', id)
+            .attr('width','100%')
+            .attr('xmlns','http://www.w3.org/2000/svg')
+            .append('g');
+    }
+    else{
+        d3.select('body').append('div')
+            .attr('id', 'd'+id)
+            .append('svg')
+            .attr('id', id)
+            .attr('width','100%')
+            .attr('xmlns','http://www.w3.org/2000/svg')
+            .append('g');
+    }
 
-
-
-    //console.log(d3.select('#d'+id).node().innerHTML);
     var element = d3.select('#d'+id).node();
     var graphType = utils.detectType(txt);
     var classes = {};
@@ -22195,21 +22223,24 @@ var render = function(id, txt,cb){
             }
             break;
     }
-    //console.log(document.body.innerHTML);
-    cb(d3.select('#d'+id).node().innerHTML);
 
-    if(typeof d3.select('#d'+id).node().remove === 'function'){    
+    if(typeof cb !== 'undefined'){
+        cb(d3.select('#d'+id).node().innerHTML);
+    }
+
+    var node = d3.select('#d'+id).node();
+    if(node !== null && typeof node.remove === 'function'){
         d3.select('#d'+id).node().remove();
     }
 };
 
-exports.render = function(id, text,cb){
+exports.render = function(id, text, cb, containerElement){
 if(typeof document === 'undefined'){
         // Todo handle rendering serverside using phantomjs
     }
     else{
         // In browser
-        render( id, text, cb);
+        render( id, text, cb, containerElement);
     }
 };
 

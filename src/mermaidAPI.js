@@ -22,7 +22,8 @@ var config = {
     flowchart:{
         // Default is to not set width
         //        width: 1200
-        htmlLabels:true
+        htmlLabels:true,
+        useMaxWidth:true
     },
     sequenceDiagram:{
         diagramMarginX:50,
@@ -44,7 +45,8 @@ var config = {
         mirrorActors:true,
         // Depending on css styling this might need adjustment
         // Prolongs the edge of the diagram downwards
-        bottomMarginAdj:1
+        bottomMarginAdj:1,
+        useMaxWidth:true
     },
     gantt:{
         titleTopMargin: 25,
@@ -130,19 +132,27 @@ exports.version = function(){
     return require('../package.json').version;
 };
 
-var render = function(id, txt,cb){
+var render = function(id, txt, cb, container){
 
-    d3.select('body').append('div')
-        .attr('id', 'd'+id)
-        .append('svg')
-        .attr('id', id)
-        .attr('width','100%')
-        .attr('xmlns','http://www.w3.org/2000/svg')
-        .append('g');
+    if(typeof container !== 'undefined'){
+        d3.select(container).append('div')
+            .attr('id', 'd'+id)
+            .append('svg')
+            .attr('id', id)
+            .attr('width','100%')
+            .attr('xmlns','http://www.w3.org/2000/svg')
+            .append('g');
+    }
+    else{
+        d3.select('body').append('div')
+            .attr('id', 'd'+id)
+            .append('svg')
+            .attr('id', id)
+            .attr('width','100%')
+            .attr('xmlns','http://www.w3.org/2000/svg')
+            .append('g');
+    }
 
-
-
-    //console.log(d3.select('#d'+id).node().innerHTML);
     var element = d3.select('#d'+id).node();
     var graphType = utils.detectType(txt);
     var classes = {};
@@ -187,21 +197,24 @@ var render = function(id, txt,cb){
             }
             break;
     }
-    //console.log(document.body.innerHTML);
-    cb(d3.select('#d'+id).node().innerHTML);
 
-    if(typeof d3.select('#d'+id).node().remove === 'function'){    
+    if(typeof cb !== 'undefined'){
+        cb(d3.select('#d'+id).node().innerHTML);
+    }
+
+    var node = d3.select('#d'+id).node();
+    if(node !== null && typeof node.remove === 'function'){
         d3.select('#d'+id).node().remove();
     }
 };
 
-exports.render = function(id, text,cb){
+exports.render = function(id, text, cb, containerElement){
 if(typeof document === 'undefined'){
         // Todo handle rendering serverside using phantomjs
     }
     else{
         // In browser
-        render( id, text, cb);
+        render( id, text, cb, containerElement);
     }
 };
 

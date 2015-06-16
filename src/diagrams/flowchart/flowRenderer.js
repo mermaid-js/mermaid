@@ -408,15 +408,25 @@ exports.draw = function (text, id,isDot) {
     te.style('text-anchor', 'middle');
     te.text('Title for cluster');
 */
-    // Center the graph
-    svg.attr("height", g.graph().height );
-    if(typeof conf.width === 'undefined'){
-        svg.attr("width", g.graph().width );
-    }else{
-        svg.attr("width", conf.width );
+    if(conf.useMaxWidth) {
+        // Center the graph
+        svg.attr("height", '100%');
+        svg.attr("width", '100%');
+        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+        svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
     }
-    //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-    svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));
+    else{
+        // Center the graph
+        svg.attr("height", g.graph().height );
+        if(typeof conf.width === 'undefined'){
+            svg.attr("width", g.graph().width );
+        }else{
+            svg.attr("width", conf.width );
+        }
+        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
+
 
     // Index nodes
     graph.indexNodes('sunGraph'+i);

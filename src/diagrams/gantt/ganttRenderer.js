@@ -27,7 +27,10 @@ module.exports.draw = function (text, id) {
     gantt.yy.clear();
     gantt.parse(text);
     var elem = document.getElementById(id);
-    w = elem.offsetWidth;
+    w = elem.parentElement.offsetWidth;
+
+    console.log('id='+id,' w='+w);
+    console.log(elem.parentElement);
 
     if (typeof w === 'undefined') {
         w = 1200;

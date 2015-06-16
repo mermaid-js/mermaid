@@ -73,7 +73,7 @@ var init = function () {
         txt = he.decode(txt).trim();
 
 
-        mermaidAPI.render(id,txt,insertSvg);
+        mermaidAPI.render(id,txt,insertSvg, element);
     }
 
 };
