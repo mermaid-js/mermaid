@@ -123,8 +123,8 @@ global.mermaid = {
         console.log('Mermaid Syntax error:');
         console.log(err);
     },
-    render:function(id, text){
-        return mermaidAPI.render(id, text);
+    render:function(id, text,callback, element){
+        return mermaidAPI.render(id, text,callback, element);
     }
 };
 

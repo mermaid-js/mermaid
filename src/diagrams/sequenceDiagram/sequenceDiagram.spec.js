@@ -12,7 +12,7 @@ var d3 = {
         return new newD3();
     }
 };
-var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
+//var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
 var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 });
 
 var str;

@@ -17,6 +17,10 @@ var d3 = require('./d3');
 var nextId = 0;
 
 // Default options, can be overridden at initialization time
+/**
+ * Object with the co0nfigurations
+ * @type {Object}
+ */
 var config = {
     cloneCssStyles: true,
     flowchart:{

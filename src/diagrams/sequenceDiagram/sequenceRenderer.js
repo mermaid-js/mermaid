@@ -19,7 +19,6 @@ var conf = {
     // Margin around loop boxes
     boxMargin:10,
     boxTextMargin:5,
-
     noteMargin:10,
     // Space between messages
     messageMargin:35,
@@ -133,21 +132,31 @@ var drawNote = function(elem, startx, verticalPos, msg){
     rect.width = conf.width;
     rect.class = 'note';
 
-    var g = elem.append("g");
+    var g = elem.append('g');
     var rectElem = svgDraw.drawRect(g, rect);
 
     var textObj = svgDraw.getTextObj();
     textObj.x = startx;
-    textObj.y = verticalPos+conf.noteMargin;
+    textObj.y = verticalPos;
     textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = msg.message;
     textObj.class = 'noteText';
 
-    var textElem = svgDraw.drawText(g,textObj);
+    var textElem = svgDraw.drawText(g,textObj, conf.width);
 
     var textHeight = textElem[0][0].getBBox().height;
-    exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+    if(textHeight > conf.width){
+        textElem.remove();
+        g = elem.append("g");
+        
+        textElem = svgDraw.drawText(g,textObj, 2*conf.width);
+        textHeight = textElem[0][0].getBBox().height;
+        rectElem.attr('width',2*conf.width);
+        exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+    }else{
+        exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+    }
 
     rectElem.attr('height',textHeight+ 2*conf.noteMargin);
     exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);

@@ -61,11 +61,11 @@ gulp.task('fullDist', ['slimDist'], function() {
 //]));
 
 // Basic usage
-gulp.task('mermaid',function() {
+gulp.task('mermaid.slim',function() {
     // Single entry point to browserify
     var EXTERNALS = ['d3'];
 
-    gulp.src('src/mermaid.js')
+    return gulp.src('src/mermaid.js')
         .pipe(browserify({
             external: ['d3'],
             entry:'src/mermaid.js'
@@ -85,6 +85,10 @@ gulp.task('mermaid',function() {
         .pipe(uglify())
         .pipe(extReplace('.min.js'))
         .pipe(gulp.dest('./dist/'));
+});
+
+// Basic usage
+gulp.task('mermaid',function() {
 
     return gulp.src('src/mermaid.js')
         .pipe(browserify({
@@ -96,12 +100,13 @@ gulp.task('mermaid',function() {
         .pipe(extReplace('.min.js'))
         .pipe(gulp.dest('./dist/'));
 });
+
 // Basic usage
 gulp.task('mermaidAPI',function() {
     return gulp.src('src/mermaidAPI.js')
         .pipe(browserify({
         }))
-        .pipe(gulp.dest('./dist/'))
+        .pipe(gulp.dest('./dist/'));
         //.pipe(uglify())
         //.pipe(extReplace('.min.js'))
         //.pipe(gulp.dest('./dist/'));
@@ -135,4 +140,4 @@ gulp.task('editor', function() {
 //gulp.task('dist', ['slimDist', 'fullDist','jasmine']);
 gulp.task('legacy', ['slimDist', 'fullDist']);
 
-gulp.task('dist', ['mermaidAPI', 'mermaidAPI.slim','mermaid']);
+gulp.task('dist', ['mermaidAPI', 'mermaidAPI.slim','mermaid.slim','mermaid']);
