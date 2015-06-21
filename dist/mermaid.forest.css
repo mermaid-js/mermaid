@@ -17,10 +17,10 @@
   stroke-width: 1.5px;
 }
 .cluster rect {
-  fill: #cdffb2;
-  rx: 4;
-  stroke: #6eaa49;
-  stroke-width: 1px;
+  fill: #cdffb2 !important;
+  rx: 4  !important;
+  stroke: #6eaa49 !important;
+  stroke-width: 1px !important;
 }
 .cluster text {
   fill: #333333;

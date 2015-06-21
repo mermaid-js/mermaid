@@ -24950,7 +24950,7 @@ process.chdir = function (dir) {
 },{}],86:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -25035,7 +25035,7 @@ module.exports={
     "marked": "^0.3.2",
     "mock-browser": "^0.90.27",
     "path": "^0.4.9",
-    "phantomjs": "^1.9.12",
+    "phantomjs": "^1.9.17",
     "proxyquire": "^1.3.1",
     "require-dir": "^0.3.0",
     "rewire": "^2.1.3",
@@ -26467,6 +26467,7 @@ exports.getClasses = function (text, isDot) {
     if(typeof(classes.default) === 'undefined') {
         classes.default = {id:'default'};
         classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        classes.default.clusterStyles = ['rx:4px','fill: rgb(255, 255, 222)','rx: 4px','stroke: rgb(170, 170, 51)','stroke-width: 1px'];
         classes.default.nodeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
         classes.default.edgeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
     }
@@ -28800,7 +28801,7 @@ var getStartDate = function(prevTime, dateFormat, str){
     }else{
         console.log('Invalid date:'+str);
         console.log('With date format:'+dateFormat.trim());
-        console.log('----');
+        //console.log('----');
     }
     
     // Default date - now
@@ -28978,14 +28979,16 @@ var w;
 module.exports.draw = function (text, id) {
     gantt.yy.clear();
     gantt.parse(text);
+
     var elem = document.getElementById(id);
     w = elem.parentElement.offsetWidth;
 
-    console.log('id='+id,' w='+w);
-    console.log(elem.parentElement);
-
     if (typeof w === 'undefined') {
         w = 1200;
+    }
+
+    if(typeof conf.useWidth !== 'undefined'){
+        w = conf.useWidth;
     }
 
     var taskArray = gantt.yy.getTasks();
@@ -29035,6 +29038,10 @@ module.exports.draw = function (text, id) {
 
 
     makeGant(taskArray, w, h);
+    if(typeof conf.useWidth !== 'undefined'){
+        elem.setAttribute('width', w);
+
+    }
 
     var title = svg.append("text")
         .text(gantt.yy.getTitle())
@@ -31096,7 +31103,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         textWidth = textElem[0][0].getBBox().width;
     }
     else{
-        console.log(textElem[0][0].getBoundingClientRect());
         //textWidth = getBBox(textElem).width; //.getComputedTextLength()
         textWidth = textElem[0][0].getBoundingClientRect();  
         //textWidth = textElem[0][0].getComputedTextLength();  
@@ -31597,8 +31603,13 @@ var init = function () {
 
     if(typeof mermaid_config !== 'undefined'){
         mermaidAPI.initialize(mermaid_config);
+        
     }
     
+    if(typeof mermaid.ganttConfig !== 'undefined'){
+        mermaidAPI.initialize({gantt:mermaid.ganttConfig});
+    }
+
     var insertSvg = function(svgCode){
         element.innerHTML = svgCode;
     };
@@ -32083,6 +32094,9 @@ module.exports.cloneCssStyles = function(svg, classes){
                 }
                 if (classes.default.edgeLabelStyles instanceof Array) {
                     defaultStyles += "#" + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
+                }
+                if (classes.default.clusterStyles instanceof Array) {
+                    defaultStyles += "#" + svg.id.trim() + ' .cluster rect ' + ' { ' + classes[className].clusterStyles.join("; ") + '; }\n';
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
