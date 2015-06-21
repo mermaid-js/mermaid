@@ -26,14 +26,16 @@ var w;
 module.exports.draw = function (text, id) {
     gantt.yy.clear();
     gantt.parse(text);
+
     var elem = document.getElementById(id);
     w = elem.parentElement.offsetWidth;
 
-    console.log('id='+id,' w='+w);
-    console.log(elem.parentElement);
-
     if (typeof w === 'undefined') {
         w = 1200;
+    }
+
+    if(typeof conf.useWidth !== 'undefined'){
+        w = conf.useWidth;
     }
 
     var taskArray = gantt.yy.getTasks();
@@ -83,6 +85,10 @@ module.exports.draw = function (text, id) {
 
 
     makeGant(taskArray, w, h);
+    if(typeof conf.useWidth !== 'undefined'){
+        elem.setAttribute('width', w);
+
+    }
 
     var title = svg.append("text")
         .text(gantt.yy.getTitle())

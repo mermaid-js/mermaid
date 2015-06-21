@@ -90,6 +90,9 @@ module.exports.cloneCssStyles = function(svg, classes){
                 if (classes.default.edgeLabelStyles instanceof Array) {
                     defaultStyles += "#" + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
                 }
+                if (classes.default.clusterStyles instanceof Array) {
+                    defaultStyles += "#" + svg.id.trim() + ' .cluster rect ' + ' { ' + classes[className].clusterStyles.join("; ") + '; }\n';
+                }
             } else {
                 if (classes[className].styles instanceof Array) {
                     embeddedStyles += "#" + svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            

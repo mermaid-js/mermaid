@@ -83,7 +83,7 @@ var getStartDate = function(prevTime, dateFormat, str){
     }else{
         console.log('Invalid date:'+str);
         console.log('With date format:'+dateFormat.trim());
-        console.log('----');
+        //console.log('----');
     }
     
     // Default date - now

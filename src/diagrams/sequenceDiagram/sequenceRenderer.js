@@ -189,7 +189,6 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         textWidth = textElem[0][0].getBBox().width;
     }
     else{
-        console.log(textElem[0][0].getBoundingClientRect());
         //textWidth = getBBox(textElem).width; //.getComputedTextLength()
         textWidth = textElem[0][0].getBoundingClientRect();  
         //textWidth = textElem[0][0].getComputedTextLength();  

@@ -49,8 +49,13 @@ var init = function () {
 
     if(typeof mermaid_config !== 'undefined'){
         mermaidAPI.initialize(mermaid_config);
+        
     }
     
+    if(typeof mermaid.ganttConfig !== 'undefined'){
+        mermaidAPI.initialize({gantt:mermaid.ganttConfig});
+    }
+
     var insertSvg = function(svgCode){
         element.innerHTML = svgCode;
     };
