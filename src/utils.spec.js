@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-11-23.
  */
-
+var log = require('./logger').create();
 describe('when detecting chart type ',function() {
     var utils = require('./utils');
     beforeEach(function () {

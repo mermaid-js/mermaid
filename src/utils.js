@@ -1,8 +1,21 @@
 /**
  * Created by knut on 14-11-23.
  */
+var log = require('./logger').create();
 /**
+ * @function detectType
  * Detects the type of the graph text.
+ * ```mermaid
+ * graph LR
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ *
  * @param {string} text The text defining the graph
  * @param {string} text The second text defining the graph
  * @returns {string} A graph definition key
@@ -13,22 +26,27 @@ module.exports.detectType = function(text,a){
     }
 
     if(text.match(/^\s*sequence/)){
-        //console.log('Detected sequence syntax');
+    /* ```mermaid
+     graph TB
+        a-->b
+        b-->c
+        ``` 
+     */
         return "sequence";
     }
 
     if(text.match(/^\s*digraph/)) {
-        //console.log('Detected dot syntax');
+        //log.debug('Detected dot syntax');
         return "dotGraph";
     }
 
     if(text.match(/^\s*info/)) {
-        //console.log('Detected info syntax');
+        //log.debug('Detected info syntax');
         return "info";
     }
 
     if(text.match(/^\s*gantt/)) {
-        //console.log('Detected info syntax');
+        //log.debug('Detected info syntax');
         return "gantt";
     }
 

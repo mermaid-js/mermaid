@@ -15,6 +15,7 @@ var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 var d3 = require('./d3');
 var nextId = 0;
+var log = require('./logger').create();
 
 // Default options, can be overridden at initialization time
 /**
@@ -234,7 +235,7 @@ var setConf = function(cnf){
 
             var j;
             for(j=0;j<lvl2Keys.length;j++) {
-                //console.log('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
+                //log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
                 if(typeof config[lvl1Keys[i]] === 'undefined'){
                     
                     config[lvl1Keys[i]] = {};
@@ -256,9 +257,19 @@ exports.initialize = function(options){
 exports.getConfig = function(){
     return config;
 };
+
+exports.parseError = function(err, hash) {
+    if(typeof mermaid !== 'undefined') {
+        mermaid.parseError(err,hash);
+    }else{
+        log.debug('Mermaid Syntax error:');
+        log.debug(err);
+    }
+};
 global.mermaidAPI = {
     render     : exports.render,
     parse      : exports.parse,
     initialize : exports.initialize,
-    detectType : utils.detectType
+    detectType : utils.detectType,
+    parseError : exports.parseError
 };

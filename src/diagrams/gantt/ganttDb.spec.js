@@ -1,6 +1,7 @@
 /**
  * Created by knut on 14-11-18.
  */
+var log = require('../../logger').create();
 describe('when using the ganttDb',function() {
     var parseError, gantt;
     var moment = require('moment');
@@ -11,7 +12,7 @@ describe('when using the ganttDb',function() {
         gDb = require('./ganttDb');
         gDb.clear();
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
+            log.debug('Syntax error:' + err);
         };
         //ex.yy.parseError = parseError;
     });

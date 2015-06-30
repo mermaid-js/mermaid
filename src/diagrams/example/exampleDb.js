@@ -1,7 +1,7 @@
 /**
  * Created by knut on 15-01-14.
  */
-
+var log = require('../../logger').create();
 var message = '';
 var info = false;
 
@@ -22,5 +22,5 @@ exports.getInfo = function(){
 };
 
 exports.parseError = function(err,hash){
-    mermaid.parseError(err,hash);
+    mermaidAPI.parseError(err,hash);
 };

@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-11-03.
  */
-
+var log = require('../../logger').create();
 var vertices = {};
 var edges = [];
 var classes = [];
@@ -63,7 +63,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-    //console.log('Got edge', start, end);
+    //log.debug('Got edge', start, end);
     var edge = {start: start, end: end, type: undefined, text: ''};
     linktext = type.text;
 
@@ -158,7 +158,7 @@ exports.setClickEvent = function (id,functionName) {
                 }
             });
         }else{
-            //console.log('Checking now for ::'+id);
+            //log.debug('Checking now for ::'+id);
             if(typeof vertices[id] !== 'undefined'){
                 funs.push(function(){
                     var elem = document.getElementById(id);
@@ -166,7 +166,7 @@ exports.setClickEvent = function (id,functionName) {
                         elem.onclick = function(){eval(functionName+'(\'' + id + '\')');}; // jshint ignore:line
                     }
                     else{
-                        //console.log('id was null: '+id);
+                        //log.debug('id was null: '+id);
                     }
                 });
             }
@@ -251,8 +251,8 @@ exports.addSubGraph = function (list, title) {
 
 
     var subGraph = {id:'subGraph'+subCount, nodes:nodeList,title:title};
-//console.log('subGraph:' + subGraph.title + subGraph.id);
-//console.log(subGraph.nodes);
+//log.debug('subGraph:' + subGraph.title + subGraph.id);
+//log.debug(subGraph.nodes);
     subGraphs.push(subGraph);
     subCount = subCount + 1;
     return subGraph.id;
@@ -262,11 +262,11 @@ var getPosForId = function(id){
     var i;
     for(i=0;i<subGraphs.length;i++){
         if(subGraphs[i].id===id){
-            //console.log('Found pos for ',id,' ',i);
+            //log.debug('Found pos for ',id,' ',i);
             return i;
         }
     }
-    //console.log('No pos found for ',id,' ',i);
+    //log.debug('No pos found for ',id,' ',i);
     return -1;
 };
 var secCount = -1;
@@ -332,5 +332,5 @@ exports.getSubGraphs = function (list) {
 };
 
 exports.parseError = function(err,hash){
-    mermaid.parseError(err,hash);
+    mermaidAPI.parseError(err,hash);
 };

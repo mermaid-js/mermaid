@@ -5,15 +5,15 @@ var actors    = {};
 var actorKeys = [];
 var messages  = [];
 var notes     = [];
+var log = require('../../logger').create();
+
 
 exports.addActor = function(id,name,description){
-    //console.log('Adding actor: '+id);
     actors[id] = {name:name, description:description};
     actorKeys.push(id);
 };
 
 exports.addMessage = function(idFrom, idTo, message,  answer){
-    //console.log('Adding message from='+idFrom+' to='+idTo+' message='+message+' answer='+answer);
     messages.push({from:idFrom, to:idTo, message:message, answer:answer});
 };
 
@@ -21,7 +21,7 @@ exports.addMessage = function(idFrom, idTo, message,  answer){
  *
  */
 exports.addSignal = function(idFrom, idTo, message,  messageType){
-    //console.log('Adding message from='+idFrom+' to='+idTo+' message='+message+' answer='+answer);
+    log.debug('Adding message from='+idFrom+' to='+idTo+' message='+message+' type='+messageType);
     messages.push({from:idFrom, to:idTo, message:message, type:messageType});
 };
 
@@ -81,7 +81,7 @@ exports.addNote = function (actor, placement, message){
 
 
 exports.parseError = function(err,hash){
-    mermaid.parseError(err,hash);
+    mermaidAPI.parseError(err,hash);
 };
 
 exports.apply = function(param){
@@ -90,7 +90,7 @@ exports.apply = function(param){
             exports.apply(item);
         });
     } else {
-        // console.log(param);
+        // log.debug(param);
         switch(param.type){
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.actor);
@@ -102,7 +102,7 @@ exports.apply = function(param){
                 exports.addSignal(param.from, param.to, param.msg, param.signalType);
                 break;
             case 'loopStart':
-                //console.log('Loop text: ',param.loopText);
+                //log.debug('Loop text: ',param.loopText);
                 exports.addSignal(undefined, undefined, param.loopText, param.signalType);
                 //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
                 break;
@@ -110,7 +110,7 @@ exports.apply = function(param){
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
             case 'optStart':
-                //console.log('Loop text: ',param.loopText);
+                //log.debug('Loop text: ',param.loopText);
                 exports.addSignal(undefined, undefined, param.optText, param.signalType);
                 //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
                 break;
@@ -118,7 +118,7 @@ exports.apply = function(param){
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
             case 'altStart':
-                //console.log('Loop text: ',param.loopText);
+                //log.debug('Loop text: ',param.loopText);
                 exports.addSignal(undefined, undefined, param.altText, param.signalType);
                 //yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
                 break;
@@ -129,7 +129,5 @@ exports.apply = function(param){
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
         }
-
-        // console.log('xxx',param);
     }
 };

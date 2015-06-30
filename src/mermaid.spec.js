@@ -6,11 +6,12 @@
  */
 var rewire = require("rewire");
 var utils = require("./utils");
-var main = require("./main");
+var mermaid = require("./mermaid");
+var log = require('./logger').create();
 
-describe('when using main and ',function() {
+describe('when using mermaid and ',function() {
     describe('when detecting chart type ',function() {
-        //var main;
+        //var mermaid;
         //var document;
         //var window;
         beforeEach(function () {
@@ -25,58 +26,58 @@ describe('when using main and ',function() {
         });
 
         it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
-            main = rewire('./main');
+            mermaid = rewire('./mermaid');
             mermaid_config ={startOnLoad : false};
 
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
-            //console.log(main);
-            main.contentLoaded();
+            //log.debug(mermaid);
+            mermaid.contentLoaded();
             expect(global.mermaid.init).not.toHaveBeenCalled();
         });
 
         it('should not start rendering with mermaid.startOnLoad set to false', function () {
-            main = rewire('./main');
-            mermaid.startOnLoad =  false;
+            mermaid = rewire('./mermaid');
+            global.mermaid.startOnLoad =  false;
             mermaid_config ={startOnLoad : true};
 
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
-            main.contentLoaded();
+            mermaid.contentLoaded();
             expect(global.mermaid.init).not.toHaveBeenCalled();
         });
 
         it('should start rendering with both startOnLoad set', function () {
-            main = rewire('./main');
-            mermaid.startOnLoad =  true;
+            mermaid = rewire('./mermaid');
+            global.mermaid.startOnLoad =  true;
             mermaid_config ={startOnLoad : true};
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
-            main.contentLoaded();
+            mermaid.contentLoaded();
             expect(global.mermaid.init).toHaveBeenCalled();
         });
 
         it('should start rendering with mermaid.startOnLoad set and no mermaid_config defined', function () {
-            main = rewire('./main');
-            mermaid.startOnLoad =  true;
+            mermaid = rewire('./mermaid');
+            global.mermaid.startOnLoad =  true;
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
-            main.contentLoaded();
+            mermaid.contentLoaded();
             expect(global.mermaid.init).toHaveBeenCalled();
         });
 
         it('should start rendering as a default with no changes performed', function () {
-            main = rewire('./main');
+            mermaid = rewire('./mermaid');
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
-            main.contentLoaded();
+            mermaid.contentLoaded();
             expect(global.mermaid.init).toHaveBeenCalled();
         });
 
     });
 
     describe('when calling addEdges ',function() {
-        var main;
+        var mermaid;
         var graph = require('./diagrams/flowchart/graphDb');
         var flow = require('./diagrams/flowchart/parser/flow');
         var flowRend = require('./diagrams/flowchart/flowRenderer');
@@ -88,7 +89,7 @@ describe('when using main and ',function() {
             flow.parser.yy =graph;
             graph.clear();
             document = mock.getDocument();
-            main = rewire('./main');
+            mermaid = rewire('./mermaid');
         });
         it('it should handle edges with text', function () {
             var res = flow.parser.parse('graph TD;A-->|text ex|B;');
@@ -177,30 +178,30 @@ describe('when using main and ',function() {
 
     describe('checking validity of input ', function(){
         it('it should return false for an invalid definiton',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var res = mermaid.parse('this is not a mermaid diagram definition');
 
             expect(res).toBe(false);
-            expect(mermaid.parseError).toHaveBeenCalled();
+            expect(global.mermaid.parseError).toHaveBeenCalled();
         });
 
         it('it should return true for a valid flow definition',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var res = mermaid.parse('graph TD;A--x|text including URL space|B;');
 
             expect(res).toBe(true);
-            expect(mermaid.parseError).not.toHaveBeenCalled();
+            expect(global.mermaid.parseError).not.toHaveBeenCalled();
         });
         it('it should return false for an invalid flow definition',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var res = mermaid.parse('graph TQ;A--x|text including URL space|B;');
 
             expect(res).toBe(false);
-            expect(mermaid.parseError).toHaveBeenCalled();
+            expect(global.mermaid.parseError).toHaveBeenCalled();
         });
 
         it('it should return true for a valid sequenceDiagram definition',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var str = 'sequenceDiagram\n' +
                 'Alice->Bob: Hello Bob, how are you?\n\n' +
                 '%% Comment\n' +
@@ -213,11 +214,11 @@ describe('when using main and ',function() {
             var res = mermaid.parse(str);
 
             expect(res).toBe(true);
-            expect(mermaid.parseError).not.toHaveBeenCalled();
+            expect(global.mermaid.parseError).not.toHaveBeenCalled();
         });
 
         it('it should return false for an invalid sequenceDiagram definition',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var str = 'sequenceDiagram\n' +
                 'Alice:->Bob: Hello Bob, how are you?\n\n' +
                 '%% Comment\n' +
@@ -230,11 +231,11 @@ describe('when using main and ',function() {
             var res = mermaid.parse(str);
 
             expect(res).toBe(false);
-            expect(mermaid.parseError).toHaveBeenCalled();
+            expect(global.mermaid.parseError).toHaveBeenCalled();
         });
 
         it('it should return true for a valid dot definition',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var res = mermaid.parse('digraph\n' +
             '{\n' +
             ' a -> b -> c -- d -> e;\n' +
@@ -242,10 +243,10 @@ describe('when using main and ',function() {
             '}');
 
             expect(res).toBe(true);
-            expect(mermaid.parseError).not.toHaveBeenCalled();
+            expect(global.mermaid.parseError).not.toHaveBeenCalled();
         });
         it('it should return false for an invalid dot definition',function(){
-            spyOn(mermaid,'parseError');
+            spyOn(global.mermaid,'parseError');
             var res = mermaid.parse('digraph\n' +
             '{\n' +
             'a -:> b -> c -- d -> e;\n' +
@@ -253,7 +254,7 @@ describe('when using main and ',function() {
             '}');
 
             expect(res).toBe(false);
-            expect(mermaid.parseError).toHaveBeenCalled();
+            expect(global.mermaid.parseError).toHaveBeenCalled();
         });
     });
 

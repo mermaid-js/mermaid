@@ -2,7 +2,7 @@ var gantt = require('./parser/gantt').parser;
 gantt.yy = require('./ganttDb');
 var d3 = require('../../d3');
 var moment = require('moment');
-
+var log = require('../../logger').create();
 
 var daysInChart;
 var conf = {
@@ -365,7 +365,7 @@ module.exports.draw = function (text, id) {
                 if (i > 0) {
                     for (var j = 0; j < i; j++) {
                         prevGap += numOccurances[i - 1][1];
-                        // console.log(prevGap);
+                        // log.debug(prevGap);
                         return d[1] * theGap / 2 + prevGap * theGap + theTopPad;
                     }
                 } else {

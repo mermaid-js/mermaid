@@ -6,6 +6,8 @@ var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
 var d3 = require('../../d3');
+var log = require('../../logger').create();
+
 var conf = {
 
     diagramMarginX:50,
@@ -380,7 +382,7 @@ module.exports.draw = function (text, id) {
     if(conf.useMaxWidth) {
         diagram.attr("height", '100%');
         diagram.attr("width", '100%');
-        diagram.attr('style', 'max-width:' + (width) + 'px;')
+        diagram.attr('style', 'max-width:' + (width) + 'px;');
     }else{
         diagram.attr("height",height);
         diagram.attr("width", width );

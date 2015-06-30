@@ -7,7 +7,7 @@ describe('when parsing a gantt diagram it',function() {
         gantt = require('./parser/gantt').parser;
         gantt.yy = require('./ganttDb');
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
+            log.debug('Syntax error:' + err);
         };
         //ex.yy.parseError = parseError;
     });
@@ -32,6 +32,17 @@ describe('when parsing a gantt diagram it',function() {
 
         gantt.parse(str);
     });
+    /**
+     * Beslutsflöde inligt nedan. Obs bla bla bla 
+     * ```
+     * graph TD
+     * A[Hard pledge] -- text on link -->B(Round edge)
+     * B --> C{to do or not to do}
+     * C -->|Too| D[Result one]
+     * C -->|Doo| E[Result two]
+     ``` 
+     * params bapa - a unique bapap
+     */
     it('should handle a task definition', function () {
         var str = 'gantt\n' +
             'dateFormat yyyy-mm-dd\n' +

@@ -1,17 +1,17 @@
 /* global window */
-//console.log('Setting up d3');
+//log.debug('Setting up d3');
 var d3;
 
 if (require) {
   try {
     d3 = require("d3");
   } catch (e) {
-  	console.log('Exception ... but ok');
-  	//console.log(e);
+  	//log.debug('Exception ... but ok');
+  	//log.debug(e);
   }
 }
 
-//console.log(d3);
+//log.debug(d3);
 
 if (!d3) {
   //if(typeof window !== 'undefined')
@@ -22,10 +22,10 @@ if (!d3) {
 //    window = {};
 //    window.d3 = d3;
 //}
-//console.log('window');
-//console.log(window);
+//log.debug('window');
+//log.debug(window);
 module.exports = d3;
-
+/* jshint ignore:start */
 /*
 
 D3 Text Wrap
@@ -480,3 +480,4 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
     }
 
 })();
+/* jshint ignore:end */

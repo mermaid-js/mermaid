@@ -1,9 +1,15 @@
+/**
+ * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
+ * the diagrams to svg code.
+ */
 var he = require('he');
 var mermaidAPI = require('./mermaidAPI');
 var nextId = 0;
+var log = require('./logger').create();
 
 module.exports.mermaidAPI = mermaidAPI;
 /**
+ * ## init
  * Function that goes through the document to find the chart definitions in there and render them.
  *
  * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
@@ -14,21 +20,19 @@ module.exports.mermaidAPI = mermaidAPI;
  * - an array of DOM nodes (as would come from a jQuery selector)
  * - a W3C selector, a la `.mermaid`
  * 
- * ```
+ * ```mermaid
  * graph LR;
- *  a(Find elements)-->b{Processed};
- *  b-->|Yes|c(Leave element);
- *  c-->|No |d(Transform);
+ *  a(Find elements)-->b{Processed}
+ *  b-->|Yes|c(Leave element)
+ *  b-->|No |d(Transform)
  * ```
- */
-/**
  * Renders the mermaid diagrams
- * @* param nodes- a css selector or an array of nodes
+ * @param nodes a css selector or an array of nodes
  */
 var init = function () {
     var nodes;
     if(arguments.length === 2){
-        // sequence config was passed as #1
+        /*! sequence config was passed as #1 */
         if(typeof arguments[0] !== 'undefined'){
             mermaid.sequenceConfig = arguments[0];      
         }
@@ -42,7 +46,7 @@ var init = function () {
     nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
         : typeof nodes === "string" ? document.querySelectorAll(nodes)
         : nodes instanceof Node ? [nodes]
-        // Last case  - sequence config was passed pick next 
+        /*! Last case  - sequence config was passed pick next */
         : nodes;
     
     var i;
@@ -51,7 +55,15 @@ var init = function () {
         mermaidAPI.initialize(mermaid_config);
         
     }
-    
+
+    log.debug('STar On Load (0): '+mermaid.startOnLoad);
+    if(typeof mermaid.startOnLoad !== 'undefined'){
+        log.debug('STar On Load: '+mermaid.startOnLoad);
+        mermaidAPI.initialize({startOnLoad:mermaid.startOnLoad});
+
+    }
+
+
     if(typeof mermaid.ganttConfig !== 'undefined'){
         mermaidAPI.initialize({gantt:mermaid.ganttConfig});
     }
@@ -63,7 +75,7 @@ var init = function () {
     for (i = 0; i < nodes.length; i++) {
         var element = nodes[i];
 
-        // Check if previously processed
+        /*! Check if previously processed */
         if(!element.getAttribute("data-processed")) {
             element.setAttribute("data-processed", true);
         } else {
@@ -83,11 +95,10 @@ var init = function () {
 
 };
 
-exports.tester = function(){};
-
 exports.init = init;
-
+exports.parse = mermaidAPI.parse;
 /**
+ * ## version
  * Function returning version information
  * @returns {string} A string containing the version info
  */
@@ -95,9 +106,15 @@ exports.version = function(){
     return 'v'+require('../package.json').version;
 };
 
+/**
+ * ## initialize
+ * This function overrides the default configuration.
+ * @param config
+ */
 exports.initialize = function(config){
     mermaidAPI.initialize(config);
 };
+
 
 var equals = function (val, variable){
     if(typeof variable === 'undefined'){
@@ -108,6 +125,15 @@ var equals = function (val, variable){
     }
 };
 
+/**
+ * Global mermaid object. Contains the functions:
+ * * init
+ * * initialize
+ * * version
+ * * parse
+ * * parseError
+ * * render
+ */
 global.mermaid = {
     startOnLoad:    true,
     htmlLabels:     true,
@@ -125,14 +151,26 @@ global.mermaid = {
         return mermaidAPI.parse(text);
     },
     parseError: function(err, hash) {
-        console.log('Mermaid Syntax error:');
-        console.log(err);
+        log.debug('Mermaid Syntax error:');
+        log.debug(err);
     },
     render:function(id, text,callback, element){
         return mermaidAPI.render(id, text,callback, element);
     }
 };
 
+/**
+ * ## parseError
+ * This function overrides the default configuration.
+ * @param config
+ */
+exports.parseError = global.mermaid.parseError;
+
+/**
+ * ##contentLoaded
+ * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
+ * calls init for rendering the mermaid diagrams on the page.
+ */
 exports.contentLoaded = function(){
     var config;
     // Check state of start config mermaid namespace
@@ -143,7 +181,6 @@ exports.contentLoaded = function(){
     }
 
     if(global.mermaid.startOnLoad) {
-
         // For backwards compatability reasons also check mermaid_config variable
         if (typeof mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
@@ -152,6 +189,7 @@ exports.contentLoaded = function(){
             }
         }
         else {
+            mermaidAPI.initialize({startOnLoad:global.mermaid.startOnLoad});
             // No config found, do check API config
             config = mermaidAPI.getConfig();
             if(config.startOnLoad){
@@ -171,7 +209,7 @@ exports.contentLoaded = function(){
 
 
 if(typeof document !== 'undefined'){
-    /**
+    /*!
      * Wait for document loaded before starting the execution
      */
     document.addEventListener('DOMContentLoaded', function(){

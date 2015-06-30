@@ -1,12 +1,12 @@
 /* global window */
-
+var log = require('../../logger').create();
 var dagreD3;
-//console.log('setting up dagre-d3');
+//log.debug('setting up dagre-d3');
 if (require) {
   try {
     dagreD3 = require("dagre-d3");
-      //console.log('Got it (dagre-d3)');
-  } catch (e) {console.log('Could not load dagre-d3');}
+      //log.debug('Got it (dagre-d3)');
+  } catch (e) {log.debug('Could not load dagre-d3');}
 }
 
 if (!dagreD3) {

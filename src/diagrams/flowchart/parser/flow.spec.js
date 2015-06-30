@@ -10,7 +10,7 @@ describe('when parsing ',function(){
         flow.parser.yy = require('../graphDb');
         flow.parser.yy.clear();
         /*flow.parser.parse.parseError= function parseError(str, hash) {
-            console.logconsole.log(str);
+            log.debugconsole.log(str);
         }*/
     });
 
@@ -1054,7 +1054,7 @@ describe('when parsing ',function(){
         expect(edges.length).toBe(0);
         expect(vert['i-d'].styles.length).toBe(0);
     });
-    //console.log(flow.parser.parse('graph TD;style Q background:#fff;'));
+    //log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
     it('should handle styles for vertices',function(){
         var res = flow.parser.parse('graph TD;style Q background:#fff;');
 
@@ -1067,7 +1067,7 @@ describe('when parsing ',function(){
         expect(vert['Q'].styles[0]).toBe('background:#fff');
     });
 
-    //console.log(flow.parser.parse('graph TD;style Q background:#fff;'));
+    //log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
     it('should handle styles for edges',function(){
         var res = flow.parser.parse('graph TD;a-->b;\nstyle #0 stroke: #f66;');
 

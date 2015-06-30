@@ -2,7 +2,7 @@
  * Created by knut on 14-11-18.
  */
 var proxyquire = require('proxyquire');
-
+var log = require('../../logger').create();
 
 var sq = require('./parser/sequenceDiagram').parser;
 var newD3;
@@ -22,8 +22,8 @@ describe('when parsing a sequenceDiagram',function() {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
-            console.log(hash);
+            log.debug('Syntax error:' + err);
+            log.debug(hash);
         };
         sq.yy.parseError = parseError;
     });
@@ -69,7 +69,7 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //console.log(actors);
+        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         expect(actors.Bob.description).toBe('Bob');
 
@@ -86,7 +86,7 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //console.log(actors);
+        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         expect(actors.Bob.description).toBe('Bob');
 
@@ -107,7 +107,7 @@ describe('when parsing a sequenceDiagram',function() {
         expect(actors.Bob.description).toBe('Bob');
 
         var messages = sq.yy.getMessages();
-        //console.log(messages);
+        //log.debug(messages);
 
 
         expect(messages.length).toBe(1);
@@ -124,7 +124,7 @@ describe('when parsing a sequenceDiagram',function() {
         expect(actors.Bob.description).toBe('Bob');
 
         var messages = sq.yy.getMessages();
-        //console.log(messages);
+        //log.debug(messages);
 
 
         expect(messages.length).toBe(1);
@@ -246,12 +246,12 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //console.log(actors);
+        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //console.log(messages);
+        //log.debug(messages);
 
         expect(messages.length).toBe(5);
         expect(messages[0].from).toBe('Alice');
@@ -271,12 +271,12 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //console.log(actors);
+        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //console.log(messages);
+        //log.debug(messages);
 
         expect(messages.length).toBe(5);
         expect(messages[0].from).toBe('Alice');
@@ -289,12 +289,12 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //console.log(actors);
+        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //console.log(messages);
+        //log.debug(messages);
 
         expect(messages.length).toBe(4);
         expect(messages[0].from).toBe('Alice');
@@ -322,7 +322,7 @@ describe('when parsing a sequenceDiagram',function() {
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //console.log(messages);
+        //log.debug(messages);
 
         expect(messages.length).toBe(7);
         expect(messages[0].from).toBe('Alice');
@@ -337,8 +337,8 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
-            console.log(hash);
+            log.debug('Syntax error:' + err);
+            log.debug(hash);
         };
         sq.yy.parseError = parseError;
 
@@ -487,8 +487,8 @@ describe('when rendering a sequenceDiagram',function() {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
-            console.log(hash);
+            log.debug('Syntax error:' + err);
+            log.debug(hash);
         };
         sq.yy.parseError = parseError;
 
@@ -682,8 +682,8 @@ describe('when rendering a sequenceDiagram with actor mirror activated',function
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
-            console.log(hash);
+            log.debug('Syntax error:' + err);
+            log.debug(hash);
         };
         sq.yy.parseError = parseError;
 

@@ -16,6 +16,7 @@ var ganttParser    = require('./diagrams/gantt/parser/gantt');
 var ganttDb        = require('./diagrams/gantt/ganttDb');
 var d3             = require('./d3');
 var nextId         = 0;
+var log = require('./logger').create();
 
 /**
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
@@ -102,7 +103,7 @@ var init = function () {
     
     var i;
     
-    console.log('Found ',nodes.length,' nodes');
+    log.debug('Found ',nodes.length,' nodes');
     for (i = 0; i < nodes.length; i++) {
         var element = nodes[i];
 
@@ -210,7 +211,7 @@ var render = function(id, txt,cb){
 
 
 
-        console.log(d3.select('#d'+id).node().innerHTML);
+        log.debug(d3.select('#d'+id).node().innerHTML);
         var element = d3.select('#d'+id).node();
         var graphType = utils.detectType(txt);
         var classes = {};
@@ -250,7 +251,7 @@ var render = function(id, txt,cb){
                 utils.cloneCssStyles(element.firstChild, []);
                 break;
         }
-        //console.log(document.body.innerHTML);
+        //log.debug(document.body.innerHTML);
         cb(d3.select('#d'+id).node().innerHTML);
 
     d3.select('#d'+id).node().remove();
@@ -260,12 +261,12 @@ var render = function(id, txt,cb){
 exports.render = function(id, text){
 
     var callback = function(svgText){
-        console.log(svgText);
+        log.debug(svgText);
     };
     
     if(typeof document === 'undefined'){
         //jsdom = require('jsdom').jsdom;
-        //console.log(jsdom);
+        //log.debug(jsdom);
         
             //htmlStub = '<html><head></head><body><div class="mermaid">'+text+'</div><script src="dist/mermaid.full.js"></script><script>var mermaid_config = {startOnLoad:true}</script></body></html>';
             htmlStub = '<html><head></head><body></body></html>';
@@ -279,7 +280,7 @@ exports.render = function(id, text){
                 // process the html document, like if we were at client side
                 // code to generate the dataviz and process the resulting html file to be added here
                 //var d3 = require('d3');
-                //console.log('Here we go: '+JSON.stringify(d3));
+                //log.debug('Here we go: '+JSON.stringify(d3));
                 
                 global.document = win.document;
                 global.window = win;
@@ -287,9 +288,9 @@ exports.render = function(id, text){
                 var element = win.document.createElement('div');
                 element.setAttribute('id','did');
                 //document.
-                console.log(document.body.innerHTML);
-                //console.log('Element:',element);
-                //console.log(win);
+                log.debug(document.body.innerHTML);
+                //log.debug('Element:',element);
+                //log.debug(win);
                 //mermaid.init();
                 //render(win.document, 'myId', text, callback);
                 
@@ -330,8 +331,8 @@ global.mermaid = {
         return parse(text);
     },
     parseError: function(err, hash) {
-        console.log('Mermaid Syntax error:');
-        console.log(err);
+        log.debug('Mermaid Syntax error:');
+        log.debug(err);
     },
     render:function(id, text){
         return exports.render(id, text);
@@ -340,8 +341,8 @@ global.mermaid = {
 
 exports.contentLoaded = function(){
     // Check state of start config mermaid namespace
-    //console.log('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
-    //console.log('mermaid_config',mermaid_config);
+    //log.debug('global.mermaid.startOnLoad',global.mermaid.startOnLoad);
+    //log.debug('mermaid_config',mermaid_config);
     if (typeof mermaid_config !== 'undefined') {
         if (equals(false, mermaid_config.htmlLabels)) {
             global.mermaid.htmlLabels = false;

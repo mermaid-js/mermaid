@@ -2,6 +2,7 @@
  * Created by knut on 15-01-14.
  */
 var moment = require('moment');
+var log = require('../../logger').create();
 
 var dateFormat = '';
 var title = '';
@@ -59,8 +60,8 @@ exports.getTasks=function(){
 
 
 var getStartDate = function(prevTime, dateFormat, str){
-    //console.log('Deciding start date:'+str);
-    //console.log('with dateformat:'+dateFormat);
+    //log.debug('Deciding start date:'+str);
+    //log.debug('with dateformat:'+dateFormat);
 
     str = str.trim();
 
@@ -81,9 +82,9 @@ var getStartDate = function(prevTime, dateFormat, str){
     if(moment(str,dateFormat.trim(),true).isValid()){
         return moment(str,dateFormat.trim(),true).toDate();
     }else{
-        console.log('Invalid date:'+str);
-        console.log('With date format:'+dateFormat.trim());
-        //console.log('----');
+        log.debug('Invalid date:'+str);
+        log.debug('With date format:'+dateFormat.trim());
+        //log.debug('----');
     }
     
     // Default date - now
@@ -230,5 +231,5 @@ exports.addTask = function(descr,data){
 };
 
 exports.parseError = function(err,hash){
-    mermaid.parseError(err,hash);
+    mermaidAPI.parseError(err,hash);
 };

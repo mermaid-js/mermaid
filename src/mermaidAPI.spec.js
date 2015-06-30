@@ -5,6 +5,7 @@
  * Created by knut on 14-11-23.
  */
 var api = require('./mermaidAPI.js');
+var log = require('./logger').create();
 
 describe('when using mermaidAPI and ',function() {
     describe('doing initialize ',function() {
@@ -51,5 +52,21 @@ describe('when using mermaidAPI and ',function() {
             expect(config.cloneCssStyles).toBe(orgConfig.cloneCssStyles);
         });
 
+    });
+    describe('checking validity of input ', function(){
+        it('it should return false for an invalid definiton',function(){
+            spyOn(global.mermaidAPI,'parseError');
+            var res = api.parse('this is not a mermaid diagram definition');
+
+            expect(res).toBe(false);
+            expect(global.mermaidAPI.parseError).toHaveBeenCalled();
+        });
+        it('it should return true for a valid definiton',function(){
+            spyOn(global.mermaidAPI,'parseError');
+            var res = mermaid.parse('graph TD;A--x|text including URL space|B;');
+
+            expect(res).toBe(true);
+            expect(global.mermaidAPI.parseError).not.toHaveBeenCalled();
+        });
     });
 });

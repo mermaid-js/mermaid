@@ -6,6 +6,8 @@ var flow = require('./parser/flow');
 var dot = require('./parser/dot');
 var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
+var log = require('../../logger').create();
+
 var conf = {
 };
 module.exports.setConf = function(cnf){
@@ -49,7 +51,7 @@ exports.addVertices = function (vert, g) {
          */
         var classStr = '';
 
-        //console.log(vertice.classes);
+        //log.debug(vertice.classes);
 
         if(vertice.classes.length >0){
             classStr = vertice.classes.join(" ");
@@ -230,7 +232,7 @@ exports.getClasses = function (text, isDot) {
  * @param id
  */
 exports.draw = function (text, id,isDot) {
-    
+    log.debug('Drawing flowchart');
     var parser;
     graph.clear();
     if(isDot){
@@ -283,7 +285,7 @@ exports.draw = function (text, id,isDot) {
     // Fetch the verices/nodes and edges/links from the parsed graph definition
     var vert = graph.getVertices();
 
-    //console.log(vert);
+    //log.debug(vert);
     var edges = graph.getEdges();
 
     i = 0;
@@ -294,7 +296,7 @@ exports.draw = function (text, id,isDot) {
         d3.selectAll('cluster').append('text');
 
         for(j=0;j<subG.nodes.length;j++){
-            //console.log('Setting node',subG.nodes[j],' to subgraph '+id);
+            //log.debug('Setting node',subG.nodes[j],' to subgraph '+id);
             g.setParent(subG.nodes[j],subG.id);
         }
     }
@@ -438,7 +440,7 @@ exports.draw = function (text, id,isDot) {
 
         if (subG.title !== 'undefined') {
             var clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect');
-            //console.log('looking up: #' + id + ' #' + subG.id)
+            //log.debug('looking up: #' + id + ' #' + subG.id)
             var clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id);
 
             var xPos = clusterRects[0].x.baseVal.value;

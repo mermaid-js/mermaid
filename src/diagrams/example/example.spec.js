@@ -7,7 +7,7 @@ describe('when parsing an info graph it',function() {
         ex = require('./parser/example').parser;
         ex.yy = require('./exampleDb');
         parseError = function(err, hash) {
-            console.log('Syntax error:' + err);
+            log.debug('Syntax error:' + err);
         };
         //ex.yy.parseError = parseError;
     });
