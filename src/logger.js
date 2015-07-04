@@ -60,8 +60,8 @@ Logger = (function() {
 
     Logger.prototype.write = function(options) {
         if(typeof console !== 'undefined'){
-            if(typeof log.debug  !== 'undefined'){
-                return log.debug(this.build_message(options));
+            if(typeof console.log  !== 'undefined'){
+                return console.log(this.build_message(options));
             }
         }
     };
@@ -86,7 +86,7 @@ Logger.levels = {
     warn: 3,
     error: 4,
     fatal: 5,
-    default:3
+    default:2
 };
 
 exports.create = function(type, options) {
