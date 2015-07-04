@@ -21987,7 +21987,6 @@ module.exports.draw = function (text, id) {
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
-
     module.exports.drawActors(diagram, actors, actorKeys, 0);
 
     // The arrow head definition is attached to the svg once
@@ -22071,6 +22070,12 @@ module.exports.draw = function (text, id) {
     }
 
     var box = exports.bounds.getBounds();
+
+    // Adjust line height of actor lines now that the height of the diagram is known
+    log.info('Querying: #' + id + ' .actor-line')
+    var actorLines = d3.selectAll('#' + id + ' .actor-line');
+    actorLines.attr('y2',box.stopy)
+
 
     var height = box.stopy - box.starty + 2*conf.diagramMarginY;
 
@@ -22169,7 +22174,7 @@ exports.drawLabel = function(elem , txtObject){
 
     //return textElem;
 };
-
+var actorCnt  = -1;
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -22180,7 +22185,9 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     var center = left + (conf.width/2);
     var g = elem.append("g");
     if(verticalPos === 0) {
+        actorCnt++;
         g.append("line")
+            .attr("id", 'actor'+actorCnt)
             .attr("x1", center)
             .attr("y1", 5)
             .attr("x2", center)
@@ -22625,8 +22632,8 @@ Logger = (function() {
 
     Logger.prototype.write = function(options) {
         if(typeof console !== 'undefined'){
-            if(typeof log.debug  !== 'undefined'){
-                return log.debug(this.build_message(options));
+            if(typeof console.log  !== 'undefined'){
+                return console.log(this.build_message(options));
             }
         }
     };
@@ -22651,7 +22658,7 @@ Logger.levels = {
     warn: 3,
     error: 4,
     fatal: 5,
-    default:3
+    default:2
 };
 
 exports.create = function(type, options) {

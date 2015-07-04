@@ -76,7 +76,7 @@ exports.drawLabel = function(elem , txtObject){
 
     //return textElem;
 };
-
+var actorCnt  = -1;
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -87,7 +87,9 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     var center = left + (conf.width/2);
     var g = elem.append("g");
     if(verticalPos === 0) {
+        actorCnt++;
         g.append("line")
+            .attr("id", 'actor'+actorCnt)
             .attr("x1", center)
             .attr("y1", 5)
             .attr("x2", center)

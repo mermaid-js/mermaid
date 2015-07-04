@@ -287,7 +287,6 @@ module.exports.draw = function (text, id) {
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
-
     module.exports.drawActors(diagram, actors, actorKeys, 0);
 
     // The arrow head definition is attached to the svg once
@@ -371,6 +370,12 @@ module.exports.draw = function (text, id) {
     }
 
     var box = exports.bounds.getBounds();
+
+    // Adjust line height of actor lines now that the height of the diagram is known
+    log.debug('For line height fix Querying: #' + id + ' .actor-line')
+    var actorLines = d3.selectAll('#' + id + ' .actor-line');
+    actorLines.attr('y2',box.stopy)
+
 
     var height = box.stopy - box.starty + 2*conf.diagramMarginY;
 
