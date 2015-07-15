@@ -31616,11 +31616,14 @@ var init = function () {
         callback = arguments[arguments.length-1];
         log.debug('Callback function found');
     }else{
-        if(typeof mermaidAPI.getConfig().mermaid.callback === 'function'){
-            callback = mermaidAPI.getConfig().mermaid.callback;
-            log.debug('Callback function found');
-        }else{
-            log.debug('No Callback function found');
+        var conf= mermaidAPI.getConfig();
+        if(typeof conf.mermaid !== 'undefined'){
+            if(typeof conf.mermaid.callback === 'function'){
+                callback = conf.mermaid.callback;
+                log.debug('Callback function found');
+            }else{
+                log.debug('No Callback function found');
+            }
         }
     }
     nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
@@ -31695,11 +31698,13 @@ exports.version = function(){
  */
 exports.initialize = function(config){
     log.debug('Initializing mermaid');
-    if(typeof config.mermaid.startOnLoad !== 'undefined'){
-        global.mermaid.startOnLoad = config.mermaid.startOnLoad;
-    }
-    if(typeof config.mermaid.htmlLabels !== 'undefined'){
-        global.mermaid.htmlLabels = config.mermaid.htmlLabels;
+    if(typeof config.mermaid !== 'undefined') {
+        if (typeof config.mermaid.startOnLoad !== 'undefined') {
+            global.mermaid.startOnLoad = config.mermaid.startOnLoad;
+        }
+        if (typeof config.mermaid.htmlLabels !== 'undefined') {
+            global.mermaid.htmlLabels = config.mermaid.htmlLabels;
+        }
     }
     mermaidAPI.initialize(config);
 };
