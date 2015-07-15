@@ -5,12 +5,17 @@
 
     <script src="../dist/mermaid.js"></script>
     <script>
-        var mermaid_config = {
-            startOnLoad:true,
-            htmlLabels:true
-        }
-        mermaid.startOnLoad=true;
-        mermaid.flowchartConfig = {width:'100%'};
+        var config = {
+            mermaid:{
+                startOnLoad:true,
+                htmlLabels:true,
+                callback:function(id){
+                    console.log(id,' rendered');
+                },
+                flowChart:{width:'100%'}
+            }
+        };
+        mermaid.initialize(config);
     </script>
     <script>
         function coolAction(){
@@ -29,7 +34,7 @@
     <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
 </head>
     <body>
-    <h1>Issue 141</h1>
+    <h1>Issue 141!!!</h1>
     <div  class="mermaid" id="i141">
 
         graph LR

@@ -30,8 +30,9 @@ module.exports.mermaidAPI = mermaidAPI;
  * @param nodes a css selector or an array of nodes
  */
 var init = function () {
+    log.debug('Starting rendering diagrams');
     var nodes;
-    if(arguments.length === 2){
+    if(arguments.length >= 2){
         /*! sequence config was passed as #1 */
         if(typeof arguments[0] !== 'undefined'){
             mermaid.sequenceConfig = arguments[0];      
@@ -42,7 +43,20 @@ var init = function () {
     else{
         nodes = arguments[0];
     }
-    
+
+    // if last argument is a function this is the callback function
+    var callback;
+    if(typeof arguments[arguments.length-1] === 'function'){
+        callback = arguments[arguments.length-1];
+        log.debug('Callback function found');
+    }else{
+        if(typeof mermaidAPI.getConfig().mermaid.callback === 'function'){
+            callback = mermaidAPI.getConfig().mermaid.callback;
+            log.debug('Callback function found');
+        }else{
+            log.debug('No Callback function found');
+        }
+    }
     nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
         : typeof nodes === "string" ? document.querySelectorAll(nodes)
         : nodes instanceof Node ? [nodes]
@@ -56,9 +70,9 @@ var init = function () {
         
     }
 
-    log.debug('STar On Load (0): '+mermaid.startOnLoad);
+    log.debug('Start On Load before: '+mermaid.startOnLoad);
     if(typeof mermaid.startOnLoad !== 'undefined'){
-        log.debug('STar On Load: '+mermaid.startOnLoad);
+        log.debug('Start On Load inner: '+mermaid.startOnLoad);
         mermaidAPI.initialize({startOnLoad:mermaid.startOnLoad});
 
     }
@@ -70,6 +84,9 @@ var init = function () {
 
     var insertSvg = function(svgCode){
         element.innerHTML = svgCode;
+        if(typeof callback !== 'undefined'){
+            callback(id);
+        }
     };
     
     for (i = 0; i < nodes.length; i++) {
@@ -88,7 +105,6 @@ var init = function () {
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
-
 
         mermaidAPI.render(id,txt,insertSvg, element);
     }
@@ -112,6 +128,13 @@ exports.version = function(){
  * @param config
  */
 exports.initialize = function(config){
+    log.debug('Initializing mermaid');
+    if(typeof config.mermaid.startOnLoad !== 'undefined'){
+        global.mermaid.startOnLoad = config.mermaid.startOnLoad;
+    }
+    if(typeof config.mermaid.htmlLabels !== 'undefined'){
+        global.mermaid.htmlLabels = config.mermaid.htmlLabels;
+    }
     mermaidAPI.initialize(config);
 };
 
@@ -142,7 +165,7 @@ global.mermaid = {
         init.apply(null, arguments);
     },
     initialize: function(config) {
-        mermaidAPI.initialize(config);
+        exports.initialize(config);
     },
     version: function() {
         return mermaidAPI.version();

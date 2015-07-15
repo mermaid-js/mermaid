@@ -30955,9 +30955,9 @@ module.exports.draw = function (text, id) {
     var box = exports.bounds.getBounds();
 
     // Adjust line height of actor lines now that the height of the diagram is known
-    log.info('Querying: #' + id + ' .actor-line')
+    log.debug('For line height fix Querying: #' + id + ' .actor-line');
     var actorLines = d3.selectAll('#' + id + ' .actor-line');
-    actorLines.attr('y2',box.stopy)
+    actorLines.attr('y2',box.stopy);
 
 
     var height = box.stopy - box.starty + 2*conf.diagramMarginY;
@@ -31370,6 +31370,13 @@ exports.version = function(){
     return require('../package.json').version;
 };
 
+/**
+ * Function that renders an svg with a graph from a chart definition.
+ * @param id
+ * @param txt
+ * @param cb
+ * @param container
+ */
 var render = function(id, txt, cb, container){
 
     if(typeof container !== 'undefined'){
@@ -31438,6 +31445,9 @@ var render = function(id, txt, cb, container){
 
     if(typeof cb !== 'undefined'){
         cb(d3.select('#d'+id).node().innerHTML);
+    }else{
+
+        log.warn('CB = undefined');
     }
 
     var node = d3.select('#d'+id).node();
@@ -31473,6 +31483,7 @@ var setConf = function(cnf){
                     
                     config[lvl1Keys[i]] = {};
                 }
+                log.debug('Setting config: '+lvl1Keys[i]+' '+lvl2Keys[j]+' to '+cnf[lvl1Keys[i]][lvl2Keys[j]]);
                 config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
             }
         }else{

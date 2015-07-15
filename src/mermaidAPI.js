@@ -137,6 +137,13 @@ exports.version = function(){
     return require('../package.json').version;
 };
 
+/**
+ * Function that renders an svg with a graph from a chart definition.
+ * @param id
+ * @param txt
+ * @param cb
+ * @param container
+ */
 var render = function(id, txt, cb, container){
 
     if(typeof container !== 'undefined'){
@@ -205,6 +212,9 @@ var render = function(id, txt, cb, container){
 
     if(typeof cb !== 'undefined'){
         cb(d3.select('#d'+id).node().innerHTML);
+    }else{
+
+        log.warn('CB = undefined');
     }
 
     var node = d3.select('#d'+id).node();
@@ -240,6 +250,7 @@ var setConf = function(cnf){
                     
                     config[lvl1Keys[i]] = {};
                 }
+                log.debug('Setting config: '+lvl1Keys[i]+' '+lvl2Keys[j]+' to '+cnf[lvl1Keys[i]][lvl2Keys[j]]);
                 config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
             }
         }else{
