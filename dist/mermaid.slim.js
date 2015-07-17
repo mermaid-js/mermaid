@@ -22987,7 +22987,7 @@ var render = function(id, txt, cb, container){
     }
 
     if(typeof cb !== 'undefined'){
-        cb(d3.select('#d'+id).node().innerHTML);
+        cb(d3.select('#d'+id).node().innerHTML,graph.bindFunctions);
     }else{
 
         log.warn('CB = undefined');
