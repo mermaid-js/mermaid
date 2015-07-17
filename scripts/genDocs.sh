@@ -1,3 +1,4 @@
+#sudo ulimit -S -n 4096
 rm -r htmlDocs
 mkdir htmlDocs
 cp -r ./docs/img htmlDocs

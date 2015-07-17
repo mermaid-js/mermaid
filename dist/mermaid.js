@@ -31911,6 +31911,14 @@ exports.create = function(type, options) {
 }).call(this,require("1YiZ5S"))
 },{"1YiZ5S":82}],105:[function(require,module,exports){
 (function (global){
+/**
+ * This is the api to be used when handling the integration with the web page instead of using the default integration
+ * (mermaid.js).
+ *
+ * The core of this api is the **render** function that given a graph definitionas text renders the graph/diagram and
+ * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
+ * somewhere in the page or something completely different.
+ */
 var graph = require('./diagrams/flowchart/graphDb');
 var flow = require('./diagrams/flowchart/parser/flow');
 var utils = require('./utils');
@@ -31930,77 +31938,133 @@ var d3 = require('./d3');
 var nextId = 0;
 var log = require('./logger').create();
 
-// Default options, can be overridden at initialization time
 /**
- * Object with the co0nfigurations
- * @type {Object}
+ * ## Configurations for diagram generation
+ * These are the default options which can be overridden with the initialization call as in the example below:
+ * ```
+ * mermaid.initialize({
+ *   flowchart:{
+ *      htmlLabels: false
+ *   }
+ * });
+ * ```
  */
 var config = {
+    // **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
     cloneCssStyles: true,
+
+    // ## flowchart
+    // *The object containing configurations specific for flowcharts*
     flowchart:{
-        // Default is to not set width
-        //        width: 1200
+        // **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
+        // on the edges
         htmlLabels:true,
+        // **useMaxWidth** - Flag for setting whether or not a all available width should be used for
+        // the diagram.
         useMaxWidth:true
     },
+
+    // ## sequenceDiagram
+    // *The object containing configurations specific for sequence diagrams*
     sequenceDiagram:{
+
+        // **diagramMarginX** - margin to the right and left of the sequence diagram
         diagramMarginX:50,
+
+        // **diagramMarginY** - margin to the over and under the sequence diagram
         diagramMarginY:10,
-        // Margin between actors
+
+        // **actorMargin** - Margin between actors
         actorMargin:50,
-        // Width of actor moxes
+
+        // **width** - Width of actor moxes
         width:150,
-        // Height of actor boxes
+
+        // **height** - Height of actor boxes
         height:65,
-        // Margin around loop boxes
+
+        // **boxMargin** - Margin around loop boxes
         boxMargin:10,
+
+        // **boxTextMargin** - margin around the text in loop/alt/opt boxes
         boxTextMargin:5,
 
+        // **noteMargin** - margin around notes
         noteMargin:10,
-        // Space between messages
+
+        // **messageMargin** - Space between messages
         messageMargin:35,
-        //mirror actors under diagram
+
+        // **mirrorActors** - mirror actors under diagram
         mirrorActors:true,
-        // Depending on css styling this might need adjustment
+
+        // **bottomMarginAdj** - Depending on css styling this might need adjustment
         // Prolongs the edge of the diagram downwards
         bottomMarginAdj:1,
+
+        // **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
+        // available space if not the absolute space required is used
         useMaxWidth:true
     },
+
+    // ## gantt
+    // *The object containing configurations specific for gantt diagrams*
     gantt:{
+        // **titleTopMargin** - margin top for the text over the gantt diagram
         titleTopMargin: 25,
+
+        // **barHeight** - the height of the bars in the graph
         barHeight: 20,
+
+        // **barGap** - the margin between the different activities in the gantt diagram
         barGap: 4,
+
+        // **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
         topPadding: 50,
+
+        // **sidePadding** - the space allocated for the section name to the left of the activities.
         sidePadding: 75,
+
+        // **gridLineStartPadding** - Vertical starting position of the grid lines
         gridLineStartPadding: 35,
+
+        // **fontSize** - font size ...
         fontSize: 11,
+
+        // **fontFamily** - font family ...
         fontFamily: '"Open-Sans", "sans-serif"',
+
+        // **numberSectionStyles** - the number of alternating section styles
         numberSectionStyles:3,
+
+        // **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
         axisFormatter: [
-            // Within a day
+            /*! Within a day*/
             ["%I:%M", function (d) {
                 return d.getHours();
             }],
-            // Monday a week
+            /*! Monday a week*/
             ["w. %U", function (d) {
                 return d.getDay() == 1;
             }],
-            // Day within a week (not monday)
+            /*! Day within a week (not monday) */
             ["%a %d", function (d) {
                 return d.getDay() && d.getDate() != 1;
             }],
-            // within a month
+            /*! within a month */
             ["%b %d", function (d) {
                 return d.getDate() != 1;
             }],
-            // Month
+            /*! Month */
             ["%m-%y", function (d) {
                 return d.getMonth();
             }]
-        ]    }
+        ]
+    }
 };
 
 /**
+ * # parse
  * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
  * thrown and
  * @param text
@@ -32043,6 +32107,7 @@ var parse = function(text){
 exports.parse = parse;
 
 /**
+ * # version
  * Function returning version information
  * @returns {string} A string containing the version info
  */
@@ -32051,11 +32116,27 @@ exports.version = function(){
 };
 
 /**
- * Function that renders an svg with a graph from a chart definition.
- * @param id
- * @param txt
- * @param cb
- * @param container
+ * #render
+ * Function that renders an svg with a graph from a chart definition. Usage example below.
+ *
+ * ```
+ * mermaidAPI.initialize({
+ *      startOnLoad:true
+ *  });
+ *  $(function(){
+ *      var graphDefinition = 'graph TB\na-->b';
+ *      var cb = function(svgGraph){
+ *          console.log(svgGraph);
+ *      };
+ *      mermaidAPI.render('id1',graphDefinition,cb);
+ *  });
+ *```
+ * @param id the id of the element to be rendered
+ * @param txt the graph definition
+ * @param cb callback which is called after rendering is finished with the svg code as inparam.
+ * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
+ * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
+ * completed.
  */
 var render = function(id, txt, cb, container){
 
@@ -32100,9 +32181,7 @@ var render = function(id, txt, cb, container){
             }
             break;
         case 'sequenceDiagram':
-            //if(typeof mermaid.sequenceConfig === 'object'){
             seq.setConf(config.sequenceDiagram);
-            //}
             seq.draw(txt,id);
             if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
