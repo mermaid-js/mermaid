@@ -24,7 +24,7 @@ gulp.task('slimDist', function() {
     // Single entry point to browserify
     return gulp.src('src/main.js')
         .pipe(browserify())
-        /*.pipe(browserify({standalone: 'mermaid'})) 
+        /*.pipe(browserify({standalone: 'mermaid'}))
          .on('prebundle', function(bundle) {
          // Keep these external for the slim version.
          slim_ext_libs.forEach(function(lib) {
@@ -68,13 +68,14 @@ gulp.task('mermaid.slim',function() {
     return gulp.src('src/mermaid.js')
         .pipe(browserify({
             external: ['d3'],
-            entry:'src/mermaid.js'
+            entry:'src/mermaid.js',
+            standalone: 'mermaid'
         }))
         .pipe(rename('mermaid.slim.js'))
         // .on('prebundle', function(bundle){
         //     EXTERNALS.forEach(function(external){
         //       if(external.expose){
-        //         bundle.require(external.require, {expose: external.expose} ) 
+        //         bundle.require(external.require, {expose: external.expose} )
         //       }
         //       else{
         //         bundle.require(external.require)
@@ -92,7 +93,8 @@ gulp.task('mermaid',function() {
 
     return gulp.src('src/mermaid.js')
         .pipe(browserify({
-            entry:'src/mermaid.js'
+            entry:'src/mermaid.js',
+            standalone: 'mermaid'
         }))
         .pipe(rename('mermaid.js'))
         .pipe(gulp.dest('./dist/'))
