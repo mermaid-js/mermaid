@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "requirejs": "~2.1.16",
-    "mermaid": "~0.4.0"
+    "mermaid": "~0.4.0",
+    "qunit": "~1.18.0"
   }
 }
