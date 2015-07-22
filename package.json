@@ -14,7 +14,7 @@
     "mermaid": "./bin/mermaid.js"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
   },
   "repository": {
     "type": "git",
