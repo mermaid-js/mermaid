@@ -277,8 +277,10 @@ alphaNumStatement
         {$$=$1;}
     | alphaNumToken
         {$$=$1;}
-    | alphaNumToken MINUS alphaNumToken
-        {$$=$1+'-'+$3;}
+    | DOWN
+        {$$='v';}
+    | MINUS
+        {$$='-';}
     ;
 
 link: linkStatement arrowText

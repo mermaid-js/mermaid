@@ -539,6 +539,54 @@ describe('when parsing ',function(){
             expect(edges[0].text).toBe('text including `');
 
         });
+        it('should handle v in node ids only v',function(){
+            // only v
+            var res = flow.parser.parse('graph TD;A--xv(my text);');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow_cross');
+            expect(vert['v'].text).toBe('my text');
+
+        });
+        it('should handle v in node ids v at end',function(){
+            // v at end
+            var res = flow.parser.parse('graph TD;A--xcsv(my text);');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow_cross');
+            expect(vert['csv'].text).toBe('my text');
+
+        });
+        it('should handle v in node ids v in middle',function(){
+            // v in middle
+            var res = flow.parser.parse('graph TD;A--xava(my text);');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow_cross');
+            expect(vert['ava'].text).toBe('my text');
+
+        });
+        it('should handle v in node ids, v at start',function(){
+            // v at start
+            var res = flow.parser.parse('graph TD;A--xva(my text);');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+
+            expect(edges[0].type).toBe('arrow_cross');
+            expect(vert['va'].text).toBe('my text');
+
+        });
         it('should handle keywords',function(){
             var res = flow.parser.parse('graph TD;A--x|text including graph space|B;');
 
