@@ -77,7 +77,7 @@ var getStartDate = function(prevTime, dateFormat, str){
         }
         return task.endTime;
     }
-    
+
     // Check for actual date set
     if(moment(str,dateFormat.trim(),true).isValid()){
         return moment(str,dateFormat.trim(),true).toDate();
@@ -86,27 +86,33 @@ var getStartDate = function(prevTime, dateFormat, str){
         log.debug('With date format:'+dateFormat.trim());
         //log.debug('----');
     }
-    
+
     // Default date - now
     return new Date();
 };
 
 var getEndDate = function(prevTime, dateFormat, str){
     str = str.trim();
-    
-    // Check for actual date 
+
+    // Check for actual date
     if(moment(str,dateFormat.trim(),true).isValid()){
-        
+
         return moment(str,dateFormat.trim()).toDate();
     }
 
     var d = moment(prevTime);
     // Check for length
-    var re = /^([\d]+)([wdh])/;
+    var re = /^([\d]+)([wdhms])/;
     var durationStatement = re.exec(str.trim());
-    
+
     if(durationStatement!== null){
         switch(durationStatement[2]){
+            case 's':
+                d.add(durationStatement[1], 'seconds');
+                break;
+            case 'm':
+                d.add(durationStatement[1], 'minutes');
+                break;
             case 'h':
                 d.add(durationStatement[1], 'hours');
                 break;
@@ -144,21 +150,21 @@ var parseId = function(idStr){
 
 var compileData = function(prevTask, dataStr){
     var ds;
-    
+
     if(dataStr.substr(0,1) === ':'){
         ds = dataStr.substr(1,dataStr.length);
     }
     else{
         ds=dataStr;
     }
-    
+
     var data = ds.split(',');
-    
-    
+
+
     var task = {};
     var df = exports.getDateFormat();
-    
-    
+
+
     // Get tags like active, done cand crit
     var matchFound = true;
     while(matchFound){
@@ -167,7 +173,7 @@ var compileData = function(prevTask, dataStr){
             task.active = true;
             data.shift(1);
             matchFound = true;
-            
+
         }
         if(data[0].match(/^\s*done\s*$/)){
             task.done = true;
@@ -184,8 +190,8 @@ var compileData = function(prevTask, dataStr){
     for(i=0;i<data.length;i++){
         data[i] = data[i].trim();
     }
-    
-    
+
+
     switch(data.length){
         case 1:
             task.id = parseId();
@@ -203,7 +209,7 @@ var compileData = function(prevTask, dataStr){
             task.endTime   = getEndDate(task.startTime, df, data[2]);
             break;
         default:
-            
+
     }
 
     return task;
