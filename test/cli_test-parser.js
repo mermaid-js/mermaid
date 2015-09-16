@@ -71,6 +71,17 @@ test('setting an output directory succeeds', function(t) {
   })
 })
 
+test('not setting a css source file uses a default style', function(t) {
+  t.plan(1)
+
+  var cli = require(cliPath)
+
+  cli.parse([], function(err, msg, opt) {
+    t.ok(opt.css, 'css file is populated')
+    t.end()
+  })
+})
+
 test('setting a css source file succeeds', function(t) {
   t.plan(1)
 
