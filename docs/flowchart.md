@@ -113,6 +113,15 @@ graph LR;
     A-->B
 ```
 
+### A link with arrow head and text
+```
+A-->|text|B
+```
+```
+graph LR;
+    A-->|text|B
+```
+
 ### An open link
 
 ```
