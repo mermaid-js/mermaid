@@ -1,3 +1,7 @@
+---
+title: Demos
+order: 5
+---
 # Demos
 ## Basic flowchart
 ```
