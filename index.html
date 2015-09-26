@@ -90,12 +90,12 @@
 <p>Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?</p>
 <p>This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. <a href="http://knsv.github.io/mermaid/live_editor">Try it using our editor</a>.</p>
 <p>Code examples below:</p>
-<p>###An example of a flowchart</p>
+<h3 id="an-example-of-a-flowchart">An example of a flowchart</h3>
 <pre class="css"><code>graph TD;
     A-->B;
     A-->C;
     B-->D;
-    C-->D;</code></pre><p>###An example of a sequence diagram</p>
+    C-->D;</code></pre><h3 id="an-example-of-a-sequence-diagram">An example of a sequence diagram</h3>
 <pre class="css"><code>sequenceDiagram
     participant Alice
     participant Bob
@@ -106,7 +106,7 @@
     Note right of John: Rational thoughts &lt;br/>prevail...
     John-->Alice: Great!
     John->Bob: How about you?
-    Bob-->John: Jolly good!</code></pre><p>###Example code for a gantt diagram</p>
+    Bob-->John: Jolly good!</code></pre><h3 id="example-code-for-a-gantt-diagram">Example code for a gantt diagram</h3>
 <pre class="css"><code>gantt
         dateFormat  YYYY-MM-DD
         title Adding GANTT diagram functionality to mermaid
@@ -136,8 +136,8 @@
 <p><em>Mermaid was created by Knut Sveidqvist for easier documentation.</em></p>
 <p>Knut has not done all work by himself, here is the full list of the projects <a href="https://github.com/knsv/mermaid/graphs/contributors">contributors</a>.</p>
 
-<p>#Usage</p>
-<p>##Installation</p>
+<h1 id="usage">Usage</h1>
+<h2 id="installation">Installation</h2>
 <p>Either use the npm or bower package managers as per below:</p>
 <pre class="css"><code>bower install mermaid --save-dev</code></pre><pre class="css"><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files as per the url below, note that #version# should be replaced with version of choice:</p>
 <pre class="css"><code>https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p>Ex:</p>
@@ -155,17 +155,17 @@
 <p>It&#39;s best to use a specific tag or commit hash in the URL (not a branch). Files are cached permanently after the first request.</p>
 </blockquote>
 <p>Read more about that at <a href="https://rawgit.com/">https://rawgit.com/</a></p>
-<p>##Simple usage on a web page</p>
+<h2 id="simple-usage-on-a-web-page">Simple usage on a web page</h2>
 <p>The easiest way to integrate mermaid on a web page requires two elements:</p>
 <ol>
 <li>Inclusion of the mermaid framework in the html page using a script tag</li>
 <li>A graph definition on the web page</li>
 </ol>
 <p>If these things are in place mermaid listens to the page load event and when fires, when the page has loaded, it will<br>locate the graphs n the page and transform them to svg files.</p>
-<p>###Include mermaid on your web page:</p>
+<h3 id="include-mermaid-on-your-web-page-">Include mermaid on your web page:</h3>
 <pre class="css"><code>&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
 &lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to<br>read the chart definiton which will be replaced with the svg chart.</p>
-<p>###Define a chart like this:</p>
+<h3 id="define-a-chart-like-this-">Define a chart like this:</h3>
 <pre class="css"><code>&lt;div class=&quot;mermaid&quot;&gt;
     CHART DEFINITION GOES HERE
 &lt;/div&gt;</code></pre><p>Would end up like this:</p>
@@ -189,7 +189,8 @@
 <pre class="css"><code>mermaid.init({noteMargin: 10}, ".someOtherClass");</code></pre><p>Or with no config object, and a jQuery selection:</p>
 <pre class="css"><code>mermaid.init(undefined, $("#someId .yetAnotherClass"));</code></pre><aside class="warning">This type of integration is deprecated instead the preferred way of handling more complex integration is to us the mermaidAPI instead.</aside>
 
-<p>##Usage with browserify<br>The reader is assumed to know about CommonJS style of module handling and how to use browserify. If not a good place<br>to start would be <a href="http://browserify.org/">http://browserify.org/</a> website.</p>
+<h2 id="usage-with-browserify">Usage with browserify</h2>
+<p>The reader is assumed to know about CommonJS style of module handling and how to use browserify. If not a good place<br>to start would be <a href="http://browserify.org/">http://browserify.org/</a> website.</p>
 <p>Minimalistic javascript:</p>
 <pre class="css"><code>mermaid = require('mermaid');
 console.log('Test page! mermaid version'+mermaid.version());</code></pre><p>Bundle the javascript with browserify.</p>
@@ -210,7 +211,8 @@ console.log('Test page! mermaid version'+mermaid.version());</code></pre><p>Bund
             D--&gt;C
     &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;</code></pre><p>##API usage<br>The main idea with the API is to be able to call a render function with graph defintion as a string. The render function<br>will render the graph and call a callback with the resulting svg code. With this approach it is up to the site creator to<br>fetch the graph definition from the site, perhaps from a textarea, render it and place the graph somewhere in the site.</p>
+&lt;/html&gt;</code></pre><h2 id="api-usage">API usage</h2>
+<p>The main idea with the API is to be able to call a render function with graph defintion as a string. The render function<br>will render the graph and call a callback with the resulting svg code. With this approach it is up to the site creator to<br>fetch the graph definition from the site, perhaps from a textarea, render it and place the graph somewhere in the site.</p>
 <p>To do this, include mermaidAPI on your web website instead of mermaid.js. The example below show an outline of how this<br>could be used. The example just logs the resulting svg to the javascript console.</p>
 <pre class="css"><code>&lt;script src=&quot;mermaidAPI.js&quot;&gt;&lt;/script&gt;
 
@@ -283,7 +285,8 @@ var textFieldUpdated = function(){
     }
 };
 
-bindEventHandler('change', 'code', textFieldUpdated);</code></pre><p>#Configuration<br>Mermaid takes a number of options which lets you tweak the rendering of the diagrams. Currently there are three ways of<br>setting the options in mermaid.</p>
+bindEventHandler('change', 'code', textFieldUpdated);</code></pre><h1 id="configuration">Configuration</h1>
+<p>Mermaid takes a number of options which lets you tweak the rendering of the diagrams. Currently there are three ways of<br>setting the options in mermaid.</p>
 <ol>
 <li>Instantiation of the configuration using the initialize call</li>
 <li><em>Using the global mermaid object</em> - deprecated</li>
@@ -291,7 +294,7 @@ bindEventHandler('change', 'code', textFieldUpdated);</code></pre><p>#Configurat
 <li>Instantiation of the configuration using the <strong>mermaid.init</strong> call</li>
 </ol>
 <p>The list above has two ways to many of doing this. Three are deprecated and will eventually be removed. The list of<br>configuration objects are described <a href="http://knsv.github.io/mermaid/index.html#configuration28">in the mermaidAPI documentation</a>.</p>
-<p>##Using the mermaidAPI.initialize/mermaid.initialize call</p>
+<h2 id="using-the-mermaidapi-initialize-mermaid-initialize-call">Using the mermaidAPI.initialize/mermaid.initialize call</h2>
 <p>The future proof way of setting the configuration is by using the initialization call to mermaid or mermaidAPi depending<br>on what kind of integration you use.</p>
 <pre class="css"><code>    &lt;script src=&quot;../dist/mermaid.js&quot;&gt;&lt;/script&gt;
     &lt;script&gt;
@@ -306,7 +309,7 @@ bindEventHandler('change', 'code', textFieldUpdated);</code></pre><p>#Configurat
     &lt;/script&gt;</code></pre><aside class="success">This is the preferred way of configuring mermaid.</aside>
 
 
-<p>##Using the mermaid object</p>
+<h2 id="using-the-mermaid-object">Using the mermaid object</h2>
 <p>Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this<br>approach are:</p>
 <ul>
 <li>mermaid.startOnLoad</li>
@@ -314,7 +317,7 @@ bindEventHandler('change', 'code', textFieldUpdated);</code></pre><p>#Configurat
 </ul>
 <pre class="css"><code>mermaid.startOnLoad = true;</code></pre><aside class="info">This way of setting the configuration is deprecated instead the preferred way of is to use the initialize method. This functionality is only kept for not breaking existing integrations</aside>
 
-<p>##Using the mermaid_config</p>
+<h2 id="using-the-mermaid_config">Using the mermaid_config</h2>
 <p>Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this<br>approach are:</p>
 <ul>
 <li>mermaid_config.startOnLoad</li>
@@ -322,7 +325,7 @@ bindEventHandler('change', 'code', textFieldUpdated);</code></pre><p>#Configurat
 </ul>
 <pre class="css"><code>mermaid_config.startOnLoad = true;</code></pre><aside class="info">This way of setting the configuration is deprecated instead the preferred way of is to use the initialize method. This functionality is only kept for not breaking existing integrations</aside>
 
-<p>##Using the mermaid.init call</p>
+<h2 id="using-the-mermaid-init-call">Using the mermaid.init call</h2>
 <p>Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this<br>approach are:</p>
 <ul>
 <li>mermaid_config.startOnLoad</li>
@@ -330,7 +333,7 @@ bindEventHandler('change', 'code', textFieldUpdated);</code></pre><p>#Configurat
 </ul>
 <pre class="css"><code>mermaid_config.startOnLoad = true;</code></pre><aside class="info">This way of setting the configuration is deprecated instead the preferred way of is to use the initialize method. This functionality is only kept for not breaking existing integrations</aside>
 
-<p>#Flowcharts - Basic Syntax</p>
+<h1 id="flowcharts-basic-syntax">Flowcharts - Basic Syntax</h1>
 <h2 id="graph">Graph</h2>
 <p>This statement declares a new graph and the direction of the graph layout.</p>
 <pre class="css"><code>%% Example code
@@ -1178,7 +1181,7 @@ sequenceDiagram
      mermaidAPI.render('id1',graphDefinition,cb);
  });</code></pre>
 <h1 id="development">Development</h1>
-<p>##Updating the documentation</p>
+<h2 id="updating-the-documentation">Updating the documentation</h2>
 <h2 id="getting-the-development-environment-up">Getting the development environment up</h2>
 <ol>
 <li>Fork the gh-pages branch in the the mermaid repository</li>
@@ -1234,9 +1237,9 @@ graph.getEdges();</code></pre><p>The parser is also exposed in the mermaid api b
 <pre class="css"><code>var parser = mermaid.getParser();</code></pre><p>Note that the parse needs a graph object to store the data as per:</p>
 <pre class="css"><code>flow.parser.yy = graph;</code></pre><p>Look at graphDb.js for more details on that object.</p>
 
-<p>#Upgrading to from version -0.4.0</p>
+<h1 id="upgrading-to-from-version-0-4-0">Upgrading to from version -0.4.0</h1>
 <p>Some of the interfaces has been upgraded.</p>
-<p>##Initialization</p>
+<h2 id="initialization">Initialization</h2>
 <p>mermaid_config is no longer used. Instead a call to mermaid initialize is done as in the example below:</p>
 <h3 id="version-0-4-0">version 0.4.0</h3>
 <pre class="css"><code>mermaid_config = {
