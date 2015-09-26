@@ -153,8 +153,8 @@ module.exports = (options) ->
       html = ''
       if not hasMermaid
         hasMermaid = true
-        html += '<script src="'+options.mermaidPath+'"></script>'
-      html + '<div class="mermaid">'+code+'</div>'
+        html += '&ltscript src="'+options.mermaidPath+'"></script>'
+      html + '&ltdiv class="mermaid">'+code+'</div>'
     else
       @defaultCode(code, language)
 

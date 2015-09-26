@@ -1,297 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Home</title>
-    <meta name="description" content="">
-    <meta name="author" content="ink, cookbook, recipes">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
-    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico"></lnk>
-        <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
-        <link rel="apple-touch-icon" sizes="120x120"
-              href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
-        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png"
-              media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
-        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png"
-              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
-        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
-              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
-        <!-- load Ink's css from the cdn -->
-        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css"></lnk>
-        <link rel="stylesheet" type="text/css" href="css/mermaid.css">
-        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
-        <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
-        <!-- load Ink's css for IE8 -->
-        <!--[if lt IE 9 ]>
-        <link rel="stylesheet" title="mermaid-svg-internal-css" href="css/ink-ie.min.css" type="text/css" media="screen"
-              title="no title" charset="utf-8">
-        <![endif]-->
-        <link rel="stylesheet" href="css/monokai_sublime.css">
-        <script src="js/highlight.pack.js"></script>
-        <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
-        <!-- test browser flexbox support and load legacy grid if unsupported -->
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
-        <script type="text/javascript">
-            Modernizr.load({
-                test: Modernizr.flexbox,
-                nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
-            });
-        </script>
-        <!-- load Ink's javascript files from the cdn -->
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></script>
-        <style type="text/css">
-            body {
-                background: #ffffff;
-                font-family: sans-serif;
-                font-size: 90%;
-            }
-            header h1 small:before {
-                content: "|";
-                margin: 0 0.5em;
-                font-size: 1.5em;
-            }
-            h1 {
-                color: #104e8b
-            }
-            article header {
-                padding: 0;
-                overflow: hidden;
-            }
-            article footer {
-                background: none;
-            }
-            article {
-                padding-bottom: 2em;
-                border-bottom: 1px solid #ccc;
-            }
-            table, th, td {
-                border: 1px solid #8b8989;
-            }
-            .date {
-                float: right;
-            }
-            summary {
-                font-weight: 700;
-                line-height: 1.5;
-            }
-            .push, footer {
-                height: 120px;
-                margin-top: 0;
-                margin-bottom: 10;
-            }
-            footer {
-                background: #a9a9a9;
-            }
-            .cluster {
-                fill: #fcac93;
-                rx:4px;
-                stroke: grey;
-            }
-            svg {
-                padding-left:2px;
-            }
-            /* Gantt styles */
-            .grid .tick {
-                stroke: lightgrey;
-                opacity: 0.3;
-                shape-rendering: crispEdges;
-            }
-            .grid path {
-                stroke-width: 0;
-            }
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>mermaid - Generation of diagrams and flowcharts from text in a similar manner as markdown.</title>
 
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="stylesheets/mermaid.forest.css" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/solarized_light.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="javascripts/lib/mermaid.js"></script>
+    <script src="javascripts/all.js" type="text/javascript"></script>
+    <script src="javascripts/highlight.pack.js" type="text/javascript"></script>
 
-            #tag {
-                color: white;
-                background: #FA283D;
-                width: 150px;
-                position: absolute;
-                display: none;
-                padding:3px 6px;
-                margin-left: -80px;
-                font-size: 11px;
-            }
-
-
-
-            #tag:before {
-                border: solid transparent;
-                content: ' ';
-                height: 0;
-                left: 50%;
-                margin-left: -5px;
-                position: absolute;
-                width: 0;
-                border-width: 10px;
-                border-bottom-color: #FA283D;
-                top: -20px;
-            }
-            .taskText {
-                fill:white;
-                text-anchor:middle;
-            }
-            .taskTextOutsideRight {
-                fill:black;
-                text-anchor:start;
-            }
-            .taskTextOutsideLeft {
-                fill:black;
-                text-anchor:end;
-            }
-        </style>
-        <script>
-            var g = function (hljs) {
-                var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
-                var keyw = {
-                    keyword: 'graph sequenceDiagram participant loop end',
-                    typename: 'Note',
-                    literal: "false true left right"
-                };
-                return {
-                    case_insensitive: false,
-                    aliases: ["mermaid"],
-                    k: keyw,
-                    i: 'for',
-                    c: [{
-                        cN: "function",
-                        b: "^" + r + "\\s*\\(",
-                        e: "->",
-                        rB: !0,
-                        i: "\\(|#|//|/\\*|\\\\|:|;",
-                        starts: {
-                            e: ";|\\.", k: keyw, c: [
-                                {cN: "comment", b: "%", e: "$"}
-                            ]
-                        }
-                    },
-                        {cN: "comment", b: "%", e: "$"}
-                    ]
-                };
+    <script>
+        var g = function (hljs) {
+            var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+            var keyw = {
+                keyword: 'graph sequenceDiagram participant loop end',
+                typename: 'Note',
+                literal: "false true left right"
             };
-            hljs.registerLanguage('mm', g);
-            hljs.initHighlightingOnLoad();
-            Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
-                DomLoaded.run(function () {
-                    var elements = document.querySelectorAll('article h1,h2');
-                    var i;
-                    var sections = document.getElementById('sections');
-                    for (i = 0; i < elements.length; i++) {
-                        var e = elements[i];
-                        sections.innerHTML = sections.innerHTML + '<li><a href="#' + e.id + '">' + e.innerHTML + '</a></li>';
-//$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
+            return {
+                case_insensitive: false,
+                aliases: ["mermaid"],
+                k: keyw,
+                i: 'for',
+                c: [{
+                    cN: "function",
+                    b: "^" + r + "\\s*\\(",
+                    e: "->",
+                    rB: !0,
+                    i: "\\(|#|//|/\\*|\\\\|:|;",
+                    starts: {
+                        e: ";|\\.", k: keyw, c: [
+                            {cN: "comment", b: "%", e: "$"}
+                        ]
                     }
-                    Ink.requireModules(['Ink.UI.Sticky_1'], function (Sticky) {
-                        new Sticky('#sidenav')
-                    });
-                    console.log('Registering new lang');
-                });
-            });
-            var mermaid_config = {
-                startOnLoad:true,
-                htmlLabels:true
-            }
-            mermaid.sequenceConfig = {
-                diagramMarginX:50,
-                diagramMarginY:10,
-                boxTextMargin:5,
-                noteMargin:10,
-                messageMargin:35,
-                mirrorActors:true,
-                width:150,
-                // Height of actor boxes
-                height:30
-            };
-            mermaid.ganttConfig = {
-                titleTopMargin:25,
-                barHeight:20,
-                barGap:4,
-                topPadding:50,
-                sidePadding:100,
-                gridLineStartPadding:35,
-                fontSize:11,
-                numberSectionStyles:4,
-                axisFormatter: [
-                    // Within a day
-                    ["%I:%M", function (d) {
-                        return d.getHours();
-                    }],
-                    // Monday a week
-                    ["w. %U", function (d) {
-                        return d.getDay() == 1;
-                    }],
-                    // Day within a week (not monday)
-                    ["%a %d", function (d) {
-                        return d.getDay() && d.getDate() != 1;
-                    }],
-                    // within a month
-                    ["%b %d", function (d) {
-                        return d.getDate() != 1;
-                    }],
-                    // Month
-                    ["%m-%y", function (d) {
-                        return d.getMonth();
-                    }]
+                },
+                    {cN: "comment", b: "%", e: "$"}
                 ]
             };
-        </script>
+        };
+        hljs.registerLanguage('mermaid', g);
+        hljs.initHighlightingOnLoad();
+        $(function () {
+            setupLanguages(["shell", "javascript", "html", "css","mermaid"]);
+        });
+    </script>
 </head>
-<body>
-<nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-    <ul class="menu horizontal blue">
-        <li class="active"><a href="index.html">Home</a></li>
-        <li><a href="usage.html">Usage</a></li>
-        <li><a href="flowchart.html">Flowchart</a></li>
-        <li><a href="sequenceDiagram.html">Sequence Diagram</a></li>
-        <li><a href="gantt.html">Gantt Diagram</a></li>
-        <li><a href="mermaidCLI.html">mermaid CLI</a></li>
-        <li><a href="demos.html">Demos</a></li>
-        <li><a href="development.html">Development</a></li>
-    </ul>
-</nav>
-<div class="ink-grid">
-    <!--[if lte IE 9 ]>
-    <div class="ink-alert basic" role="alert">
-    <button class="ink-dismiss">&times;</button>
-    <p>
-    <strong>You are using an outdated Internet Explorer version.</strong>
-    Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
-    </p>
-    </div>
-    -->
-    <!-- Add your site or application content here -->
-    <header class="clearfix vertical-padding">
-        <h1 class="logo xlarge-push-left large-push-left">
-            <a href="https://github.com/knsv/mermaid" >mermaid</a>
-            <small>Diagrams and flowcharts from textsimilar to markdown</small>
-        </h1>
 
-    </header>
-    <section class="column-group gutters article">
-        <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
-            <article id="main">
-                <h1 id="mermaid">mermaid</h1>
-<p><img src="img/header.png" alt="Alt text"></p>
+<body class="index">
+<a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png"/>
+      </span>
+</a>
+
+<div class="tocify-wrapper">
+    <img src="images/logo.png"/>
+
+    <div class="lang-selector" style="display:none">
+        <a href="#" data-language-name="shell">shell</a>
+        <a href="#" data-language-name="javascript">javascript</a>
+        <a href="#" data-language-name="html">html</a>
+        <a href="#" data-language-name="css">css</a>
+    </div>
+    <div class="search">
+        <input type="text" class="search" id="input-search" placeholder="Search">
+    </div>
+    <ul class="search-results"></ul>
+    <div id="toc">
+    </div>
+    <ul class="toc-footer">
+        <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+    </ul>
+</div>
+<div class="page-wrapper">
+    <div class="dark-box"></div>
+    <div class="content">
+        <h1 id="mermaid">mermaid</h1>
+<p><img src="images/header.png" alt="Alt text"></p>
+<blockquote>
 <p>Generation of diagrams and flowcharts from text in a similar manner as markdown.</p>
+</blockquote>
 <p>Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?</p>
 <p>This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. <a href="http://knsv.github.io/mermaid/live_editor">Try it using our editor</a>.</p>
-<p>Code examples below: </p>
-<pre><code>%% An example of a flowchart
-graph TD;
+<p>Code examples below:</p>
+<p>###An example of a flowchart</p>
+<pre class="css"><code>graph TD;
     A-->B;
     A-->C;
     B-->D;
-    C-->D;</code></pre><pre><code>%% An example of a sequence diagram
-sequenceDiagram
+    C-->D;</code></pre><p>###An example of a sequence diagram</p>
+<pre class="css"><code>sequenceDiagram
     participant Alice
     participant Bob
     Alice->John: Hello John, how are you?
@@ -301,8 +106,8 @@ sequenceDiagram
     Note right of John: Rational thoughts &lt;br/>prevail...
     John-->Alice: Great!
     John->Bob: How about you?
-    Bob-->John: Jolly good!</code></pre><pre><code>%% Example of a Gannt diagram
-        gantt
+    Bob-->John: Jolly good!</code></pre><p>###Example code for a gantt diagram</p>
+<pre class="css"><code>gantt
         dateFormat  YYYY-MM-DD
         title Adding GANTT diagram functionality to mermaid
         section A section
@@ -316,50 +121,30 @@ sequenceDiagram
         Create tests for parser             :crit, active, 3d
         Future task in critical line        :crit, 5d
         Create tests for renderer           :2d
-        Add to mermaid                      :1d</code></pre><p>Play with mermaid using this <a href="http://danielmschmidt.github.io/mermaid-demo/">editor</a> or this <a href="live_editor">live editor</a>. You can also look at mermaid in action using <a href="http://jsbin.com/faxunexeku/1/edit?html,output">jsbin</a>.</p>
+        Add to mermaid                      :1d</code></pre><p>Play with mermaid using this <a href="http://danielmschmidt.github.io/mermaid-demo/">editor</a> or this <a href="live_editor">live editor</a>.</p>
 <h2 id="further-reading">Further reading</h2>
 <ul>
-<li><a href="http://knsv.github.io/mermaid/usage.html">Usage</a></li>
-<li><a href="http://knsv.github.io/mermaid/flowchart.html">Flowchart syntax</a></li>
-<li><a href="http://knsv.github.io/mermaid/sequenceDiagram.html">Sequence diagram syntax</a></li>
-<li><a href="http://knsv.github.io/mermaid/gantt.html">Gantt chart syntax</a></li>
-<li><a href="http://knsv.github.io/mermaid/mermaidCLI.html">Mermaid client</a></li>
+<li><a href="http://knsv.github.io/mermaid/index.html#usage">Usage</a></li>
+<li><a href="http://knsv.github.io/mermaid/index.html#flowcharts-basic-syntax">Flowchart syntax</a></li>
+<li><a href="http://knsv.github.io/mermaid/index.html#sequence-diagrams">Sequence diagram syntax</a></li>
+<li><a href="http://knsv.github.io/mermaid/index.html#gant-diagrams">Gantt chart syntax</a></li>
+<li><a href="http://knsv.github.io/mermaid/index.html#flowcharts-basic-syntax">Mermaid client</a></li>
 <li><a href="http://knsv.github.io/mermaid/live_editor">Editor</a></li>
 </ul>
-<h1 id="credits">Credits</h1>
-<p>Many thanks to the <a href="http://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing
-the graphical layout and drawing libraries! Thanks also to the
-<a href="http://bramp.github.io/js-sequence-diagrams">js-sequence-diagram</a> project for usage of the grammar for the
-sequence diagrams.</p>
+<h2 id="credits">Credits</h2>
+<p>Many thanks to the <a href="http://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing<br>the graphical layout and drawing libraries! Thanks also to the<br><a href="http://bramp.github.io/js-sequence-diagrams">js-sequence-diagram</a> project for usage of the grammar for the<br>sequence diagrams.</p>
 <p><em>Mermaid was created by Knut Sveidqvist for easier documentation.</em></p>
 <p>Knut has not done all work by himself, here is the full list of the projects <a href="https://github.com/knsv/mermaid/graphs/contributors">contributors</a>.</p>
 
-            </article>
-        </div>
-        <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
 
-            <a href="https://github.com/knsv/mermaid" class="github-button">Star</a>
-            <a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
-            <a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
-            <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
-            <a href="https://travis-ci.org/knsv/mermaid"><img src="https://travis-ci.org/knsv/mermaid.svg?branch=master" alt="Build Status"></a>
-            <a href="https://codeclimate.com/github/knsv/mermaid"><img src="https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg" alt="Code Climate"></a>
-            <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
-                 data-bottom-element="#sticky-stop">
-                <ul class="menu vertical grey" id="sections">
-                    <li class="heading active"><a href="#">Index:</a></li>
-                </ul>
-            </nav>
-        </section>
-    </section>
-    <div id="sticky-stop">&nbsp;</div>
-</div>
-<footer class="clearfix">
-    <div class="ink-grid">
-        <p class="note"><br/>These pages are generated from markdown source files. <a href="https://raw.githubusercontent.com/knsv/mermaid/gh-pages/docs/flowchart.md">flowchart.md</a> is an example of a markdown file which includes mermaid source.</p>
     </div>
-</footer>
+    <div class="dark-box">
+        <div class="lang-selector">
+            <a href="#" data-language-name="shell">shell</a>
+            <a href="#" data-language-name="ruby">ruby</a>
+            <a href="#" data-language-name="python">python</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
-

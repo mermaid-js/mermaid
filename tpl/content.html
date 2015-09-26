@@ -48,12 +48,14 @@
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
         <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></script>
+        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></scrpt>
+        <script type="text/javascript" src="js/mermaid.js"></script>
         <style type="text/css">
             body {
                 background: #ffffff;
                 font-family: sans-serif;
                 font-size: 90%;
+                
             }
             header h1 small:before {
                 content: "|";
@@ -147,6 +149,10 @@
             .taskTextOutsideLeft {
                 fill:black;
                 text-anchor:end;
+            }
+            .mermaid {
+                width:100%;
+                
             }
         </style>
         <script>
@@ -278,7 +284,7 @@
     </header>
     <section class="column-group gutters article">
         <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
-            <article id="main">
+            <article id="main" width="1096">
                 {{{contents}}}
             </article>
         </div>
