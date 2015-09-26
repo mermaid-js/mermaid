@@ -2,11 +2,11 @@
 order: 10
 ---
 
-#Upgrading to from version -0.4.0
+# Upgrading to from version -0.4.0
 
 Some of the interfaces has been upgraded.
 
-##Initialization
+## Initialization
 
 mermaid_config is no longer used. Instead a call to mermaid initialize is done as in the example below:
 

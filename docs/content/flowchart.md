@@ -2,7 +2,7 @@
 order: 3
 ---
 
-#Flowcharts - Basic Syntax
+# Flowcharts - Basic Syntax
 ## Graph
 This statement declares a new graph and the direction of the graph layout.
 
@@ -198,6 +198,19 @@ graph LR;
    A == text ==> B
 ```
 
+## Special characters that break syntax
+
+It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
+
+```
+graph LR
+    d1["This is the (text) in the box"]
+```
+
+```mermaid
+graph LR
+    id1["This is the (text) in the box"]
+```
 ## Subgraphs
 
 ```
@@ -279,7 +292,7 @@ graph LR
 ```
 
 #### Classes
-More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
+More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
 a class definition looks like the example below:
@@ -299,9 +312,33 @@ It is also possible to attach a class to a list of nodes in one statement:
 ```
     class nodeId1,nodeId2 className;
 ```
+### Css classes
+
+It is also possible to pre dine classes in css styles that can be applied from the graph definition as in the example
+below:
+**Example style**
+```
+<style>
+    .cssClass > rect{
+        fill:#FF0000;
+        stroke:#FFFF00;
+        stroke-width:4px;
+    }
+</style>
+```
+**Example definition**
+```
+graph LR;
+    A-->B[AAA<span>BBB</span>];
+    B-->D;
+    class A cssClass;
+```
+
+<aside class="warning">Class definitions in the graph defnition is broken in version 0.5.1 but has been fixed in the master branch of mermaid. This fix will be included in 0.5.2</aside>
 
 
-#### Default class
+
+### Default class
 
 If a class is named default it will be assigned to all classes without specific class definitions.
 

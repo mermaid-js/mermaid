@@ -3,7 +3,7 @@ order: 9
 ---
 # Development
 
-##Updating the documentation
+## Updating the documentation
 
 ## Getting the development environment up
 1. Fork the gh-pages branch in the the mermaid repository

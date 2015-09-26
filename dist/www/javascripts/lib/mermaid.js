@@ -32197,9 +32197,6 @@ exports.getClasses = function (text, isDot) {
     // Parse the graph definition
     parser.parse(text);
 
-    var classDefStylesObj = {};
-    var classDefStyleStr = '';
-
     var classes = graph.getClasses();
 
     // Add default class if undefined
@@ -38236,7 +38233,7 @@ module.exports.cloneCssStyles = function(svg, classes){
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
                 }
             }
         }

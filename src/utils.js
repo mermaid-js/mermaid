@@ -100,7 +100,7 @@ module.exports.cloneCssStyles = function(svg, classes){
         if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
             if (className === 'default') {
                 if (classes.default.styles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                    defaultStyles += "#" + svg.id.trim() + ' .node' + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
                 }
                 if (classes.default.nodeLabelStyles instanceof Array) {
                     defaultStyles += "#" + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
@@ -113,7 +113,7 @@ module.exports.cloneCssStyles = function(svg, classes){
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
                 }
             }
         }

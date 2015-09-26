@@ -32197,15 +32197,13 @@ exports.getClasses = function (text, isDot) {
     // Parse the graph definition
     parser.parse(text);
 
-    var classDefStylesObj = {};
-    var classDefStyleStr = '';
-
     var classes = graph.getClasses();
 
     // Add default class if undefined
     if(typeof(classes.default) === 'undefined') {
         classes.default = {id:'default'};
-        classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        //classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        classes.default.styles = [];
         classes.default.clusterStyles = ['rx:4px','fill: rgb(255, 255, 222)','rx: 4px','stroke: rgb(170, 170, 51)','stroke-width: 1px'];
         classes.default.nodeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
         classes.default.edgeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
@@ -38223,7 +38221,7 @@ module.exports.cloneCssStyles = function(svg, classes){
         if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
             if (className === 'default') {
                 if (classes.default.styles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .node' + ' { ' + classes[className].styles.join("; ") + '; }\n';
+                    defaultStyles += "#" + svg.id.trim() + ' .node' + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
                 }
                 if (classes.default.nodeLabelStyles instanceof Array) {
                     defaultStyles += "#" + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
@@ -38236,7 +38234,7 @@ module.exports.cloneCssStyles = function(svg, classes){
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + ' { ' + classes[className].styles.join("; ") + '; }\n';            
+                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
                 }
             }
         }

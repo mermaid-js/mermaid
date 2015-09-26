@@ -2,8 +2,8 @@
 title: Usage
 order: 1
 ---
-#Usage
-##Installation
+# Usage
+## Installation
 
 Either use the npm or bower package managers as per below:
 
@@ -36,7 +36,7 @@ There are some bundles to choose from:
 
 Read more about that at [https://rawgit.com/](https://rawgit.com/)
 
-##Simple usage on a web page
+## Simple usage on a web page
 
 The easiest way to integrate mermaid on a web page requires two elements:
 1. Inclusion of the mermaid framework in the html page using a script tag
@@ -45,7 +45,7 @@ The easiest way to integrate mermaid on a web page requires two elements:
 If these things are in place mermaid listens to the page load event and when fires, when the page has loaded, it will
 locate the graphs n the page and transform them to svg files.
 
-###Include mermaid on your web page:
+### Include mermaid on your web page:
 
 ```
 &lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
@@ -57,7 +57,7 @@ Further down on your page mermaid will look for tags with ```class="mermaid"```.
 read the chart definiton which will be replaced with the svg chart.
 
 
-###Define a chart like this:
+### Define a chart like this:
 
 ```
 &lt;div class=&quot;mermaid&quot;&gt;
@@ -98,7 +98,7 @@ mermaid.init(undefined, $("#someId .yetAnotherClass"));
 
 <aside class="warning">This type of integration is deprecated instead the preferred way of handling more complex integration is to us the mermaidAPI instead.</aside>
 
-##Usage with browserify
+## Usage with browserify
 The reader is assumed to know about CommonJS style of module handling and how to use browserify. If not a good place
 to start would be http://browserify.org/ website.
 
@@ -130,7 +130,7 @@ Us the created bundle on a web page as per example below:
 &lt;/html&gt;
 ```
 
-##API usage
+## API usage
 The main idea with the API is to be able to call a render function with graph defintion as a string. The render function
 will render the graph and call a callback with the resulting svg code. With this approach it is up to the site creator to
 fetch the graph definition from the site, perhaps from a textarea, render it and place the graph somewhere in the site.
@@ -239,7 +239,7 @@ var textFieldUpdated = function(){
 bindEventHandler('change', 'code', textFieldUpdated);
 ```
 
-#Configuration
+# Configuration
 Mermaid takes a number of options which lets you tweak the rendering of the diagrams. Currently there are three ways of
 setting the options in mermaid.
 
@@ -251,7 +251,7 @@ setting the options in mermaid.
 The list above has two ways to many of doing this. Three are deprecated and will eventually be removed. The list of
 configuration objects are described [in the mermaidAPI documentation](http://knsv.github.io/mermaid/index.html#configuration28).
 
-##Using the mermaidAPI.initialize/mermaid.initialize call
+## Using the mermaidAPI.initialize/mermaid.initialize call
 
 The future proof way of setting the configuration is by using the initialization call to mermaid or mermaidAPi depending
 on what kind of integration you use.
@@ -273,7 +273,7 @@ on what kind of integration you use.
 <aside class="success">This is the preferred way of configuring mermaid.</aside>
 
 
-##Using the mermaid object
+## Using the mermaid object
 
 Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
@@ -287,7 +287,7 @@ mermaid.startOnLoad = true;
 
 <aside class="info">This way of setting the configuration is deprecated instead the preferred way of is to use the initialize method. This functionality is only kept for not breaking existing integrations</aside>
 
-##Using the mermaid_config
+## Using the mermaid_config
 
 Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
@@ -301,7 +301,7 @@ mermaid_config.startOnLoad = true;
 
 <aside class="info">This way of setting the configuration is deprecated instead the preferred way of is to use the initialize method. This functionality is only kept for not breaking existing integrations</aside>
 
-##Using the mermaid.init call
+## Using the mermaid.init call
 
 Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:

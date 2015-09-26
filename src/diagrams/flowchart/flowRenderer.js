@@ -210,15 +210,13 @@ exports.getClasses = function (text, isDot) {
     // Parse the graph definition
     parser.parse(text);
 
-    var classDefStylesObj = {};
-    var classDefStyleStr = '';
-
     var classes = graph.getClasses();
 
     // Add default class if undefined
     if(typeof(classes.default) === 'undefined') {
         classes.default = {id:'default'};
-        classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        //classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        classes.default.styles = [];
         classes.default.clusterStyles = ['rx:4px','fill: rgb(255, 255, 222)','rx: 4px','stroke: rgb(170, 170, 51)','stroke-width: 1px'];
         classes.default.nodeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
         classes.default.edgeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
