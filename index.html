@@ -449,11 +449,27 @@ graph LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5</div><h4 id="classes">Classes</h4>
-<p>More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that<br>should have a different look.</p>
+<p>More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that<br>should have a different look.</p>
 <p>a class definition looks like the example below:</p>
 <pre class="css"><code>    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><p>Attachment of a class to a node is done as per below:</p>
 <pre class="css"><code>    class nodeId1 className;</code></pre><p>It is also possible to attach a class to a list of nodes in one statement:</p>
-<pre class="css"><code>    class nodeId1,nodeId2 className;</code></pre><h4 id="default-class">Default class</h4>
+<pre class="css"><code>    class nodeId1,nodeId2 className;</code></pre><h3 id="css-classes">Css classes</h3>
+<p>It is also possible to pre dine classes in css styles that can be applied from the graph definition as in the example<br>below:<br><strong>Example style</strong></p>
+<pre class="css"><code><style>
+    .cssClass > rect{
+        fill:#FF0000;
+        stroke:#FFFF00;
+        stroke-width:4px;
+    }
+</style></code></pre><p><strong>Example definition</strong></p>
+<pre class="css"><code>graph LR;
+    A-->B[AAA<span>BBB</span>];
+    B-->D;
+    class A cssClass;</code></pre><aside class="warning">Class definitions in the graph defnition is broken in version 0.5.1 but has been fixed in the master branch of mermaid. This fix will be included in 0.5.2</aside>
+
+
+
+<h3 id="default-class">Default class</h3>
 <p>If a class is named default it will be assigned to all classes without specific class definitions.</p>
 <pre class="css"><code>    classDef default fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><h2 id="graph-declarations-with-spaces-between-vertices-and-link-and-without-semicolon">Graph declarations with spaces between vertices and link and without semicolon</h2>
 <ul>
