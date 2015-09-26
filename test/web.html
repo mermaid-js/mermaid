@@ -6,14 +6,14 @@
     <script src="../dist/mermaid.js"></script>
     <script>
         var config = {
-            mermaid:{
-                startOnLoad:true,
-                htmlLabels:true,
-                callback:function(id){
-                    console.log(id,' rendered');
-                },
-                flowChart:{width:'100%'}
-            }
+            startOnLoad:true,
+            callback:function(id){
+                console.log(id,' rendered');
+            },
+            flowchart:{
+                    useMaxWidth:false,
+                    htmlLabels:true
+                }
         };
         mermaid.initialize(config);
     </script>
@@ -35,7 +35,8 @@
 </head>
     <body>
     <h1>Issue 141!!!</h1>
-    <div  class="mermaid" id="i141">
+    <div style="width:200px">
+    <div class="mermaid" id="i141">
 
         graph LR
         
@@ -46,8 +47,9 @@
         B --> D{Rhombus}
         C --> D
         A("test(vcc) a a ") --> B;
-
+        snda
         
+    </div>
     </div>
     <h1>Issue 140</h1>
     <div  class="mermaid" id="i140">
@@ -57,6 +59,7 @@
         C-->A
         D-->C
 
+    </div>
     </div>
     <div  class="mermaid" id="ettan">
         graph LR;

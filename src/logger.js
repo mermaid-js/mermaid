@@ -86,7 +86,7 @@ Logger.levels = {
     warn: 3,
     error: 4,
     fatal: 5,
-    default:2
+    default:1
 };
 
 exports.create = function(type, options) {

@@ -230,7 +230,6 @@ exports.contentLoaded = function(){
             }
         }
         else {
-            mermaidAPI.initialize({startOnLoad:global.mermaid.startOnLoad});
             // No config found, do check API config
             config = mermaidAPI.getConfig();
             if(config.startOnLoad){
@@ -238,15 +237,17 @@ exports.contentLoaded = function(){
             }
         }
     }else{
-        if(typeof global.mermaid === 'undefined' ){
+        //if(typeof global.mermaid === 'undefined' ){
             if(typeof global.mermaid.startOnLoad === 'undefined' ){
+                log.debug('In start, no config');
+                config = mermaidAPI.getConfig();
+                if(config.startOnLoad){
+                    global.mermaid.init();
+                }
+            //}else{
+            //
+            //}
 
-            }
-            log.debug('In start, no config');
-            config = mermaidAPI.getConfig();
-            if(config.startOnLoad){
-                global.mermaid.init();
-            }
         }
 
     }

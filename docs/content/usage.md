@@ -144,7 +144,7 @@ could be used. The example just logs the resulting svg to the javascript console
 &lt;script&gt;
     mermaidAPI.initialize({
         startOnLoad:false
-        });
+    });
         // Example of using the API
     $(function(){
         var graphDefinition = 'graph TB\na-->b';
@@ -158,7 +158,7 @@ could be used. The example just logs the resulting svg to the javascript console
 $ = require('jquery');
 mermaidAPI = require('mermaid').mermaidAPI;
 mermaidAPI.initialize({
-    startOnLoad:false
+        startOnLoad:false
     });
 
 $(function(){

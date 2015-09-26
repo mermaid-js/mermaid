@@ -16,6 +16,7 @@ require([], function (){
         var done = assert.async();
         require(['mermaid'], function (mermaid) {
             assert.ok(mermaid, 'mermaid is not null');
+            console.log(mermaid);
             mermaid.init();
             assert.equal(window.d3.selectAll('path')[0].length, 8,
                 'drew 8 paths');

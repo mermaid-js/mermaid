@@ -23,5 +23,5 @@ mermaid_config = {
 ```
 mermaid.initialize({
     startOnLoad:true
-    });
+});
 ```

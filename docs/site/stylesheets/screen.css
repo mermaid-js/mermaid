@@ -385,7 +385,8 @@ html, body {
     left: 0;
     bottom: 0;
     width: 230px;
-    background-color: #525151;
+    background-color: #FEFFE0;
+    border-right: 2px solid #EFEFEF;
     font-size: 13px;
     font-weight: bold
 }
@@ -408,7 +409,7 @@ html, body {
 }
 
 .tocify-wrapper > .search input {
-    background: #393939;
+    background: #e7e7e7;
     border-width: 0 0 1px 0;
     border-color: #666;
     padding: 6px 0 6px 20px;
@@ -416,7 +417,7 @@ html, body {
     margin: 10px 15px;
     width: 200px;
     outline: none;
-    color: #fff;
+    color: #000;
     border-radius: 0
 }
 
@@ -424,7 +425,7 @@ html, body {
     position: absolute;
     top: 17px;
     left: 15px;
-    color: #fff
+    color: #444
 }
 
 .tocify-wrapper img + .tocify {
@@ -440,7 +441,7 @@ html, body {
     transition-property: height, margin;
     transition-duration: 180ms;
     transition-timing-function: ease-in-out;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to bottom, #000, transparent 1.5px), linear-gradient(to top, #939393, rgba(147, 147, 147, 0) 1.5px), #262626
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to bottom, #000, transparent 1.5px), linear-gradient(to top, #939393, rgba(147, 147, 147, 0) 1.5px), #FEFFE0
 }
 
 .tocify-wrapper .search-results.visible {
@@ -454,7 +455,7 @@ html, body {
 }
 
 .tocify-wrapper .search-results a {
-    color: #fff;
+    color: #000;
     text-decoration: none
 }
 
@@ -478,7 +479,7 @@ html, body {
 }
 
 .tocify-wrapper li {
-    color: #fff;
+    color: #383838;
     transition-property: background;
     transition-timing-function: linear;
     transition-duration: 230ms
@@ -492,9 +493,9 @@ html, body {
 
 .tocify-wrapper .tocify-subheader {
     display: none;
-    background-color: #262626;
+    background-color: #FFFFF7;
     font-weight: 500;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to bottom, #000, transparent 1.5px), linear-gradient(to top, #939393, rgba(147, 147, 147, 0) 1.5px), #262626
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent 8px), linear-gradient(to bottom, #000, transparent 1.5px), linear-gradient(to top, #939393, rgba(147, 147, 147, 0) 1.5px), #FEFFE0
 }
 
 .tocify-wrapper .tocify-subheader .tocify-item > a {

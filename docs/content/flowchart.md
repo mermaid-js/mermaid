@@ -153,6 +153,26 @@ graph LR;
 
 ```
 
+### A link with arrow head and text
+```
+A-->|text|B
+```
+```mermaid
+graph LR;
+    A-->|text|B
+```
+
+or
+```
+A-- text -->B
+```
+```mermaid
+graph LR;
+    A-- text -->B
+```
+
+
+
 ### Dotted link
 -.->
 ```mermaid
