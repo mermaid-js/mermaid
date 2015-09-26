@@ -401,7 +401,11 @@ graph LR</code></pre><p>This declares a graph oriented from left to right.</p>
    A ==> B</div><h3 id="thick-link-with-text">Thick link with text</h3>
 <p>== text ==&gt;</p>
 <div class="mermaid">graph LR;
-   A == text ==> B</div><h2 id="subgraphs">Subgraphs</h2>
+   A == text ==> B</div><h2 id="special-characters-that-break-syntax">Special characters that break syntax</h2>
+<p>It is possible to put text within quotes in order to render more troublesome characters. As in the example below:</p>
+<pre class="css"><code>graph LR
+    d1["This is the (text) in the box"]</code></pre><div class="mermaid">graph LR
+    id1["This is the (text) in the box"]</div><h2 id="subgraphs">Subgraphs</h2>
 <pre class="css"><code>subgraph title
     graph definition
 end</code></pre><p>An example below:</p>
