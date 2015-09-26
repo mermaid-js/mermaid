@@ -1,4 +1,9 @@
 /**
+ * ---
+ * title: mermaidAPI
+ * order: 5
+ * ---
+ * #mermaidAPI
  * This is the api to be used when handling the integration with the web page instead of using the default integration
  * (mermaid.js).
  *
@@ -26,7 +31,7 @@ var nextId = 0;
 var log = require('./logger').create();
 
 /**
- * ## Configurations for diagram generation
+ * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:
  * ```
  * mermaid.initialize({
@@ -37,112 +42,173 @@ var log = require('./logger').create();
  * ```
  */
 var config = {
-    // **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
+    /**
+     * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
+     */
     cloneCssStyles: true,
 
-    // ## flowchart
-    // *The object containing configurations specific for flowcharts*
+    /**
+     * **startOnLoad** - This options controls whether or mermaid starts when the page loads
+     */
+    startOnLoad: true,
+
+    /**
+     * ### flowchart
+     * *The object containing configurations specific for flowcharts*
+     */
     flowchart:{
-        // **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
-        // on the edges
+        /**
+         * **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
+         * on the edges
+         */
         htmlLabels:true,
-        // **useMaxWidth** - Flag for setting whether or not a all available width should be used for
-        // the diagram.
+        /**
+         * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
+         * the diagram.
+         */
         useMaxWidth:true
     },
 
-    // ## sequenceDiagram
-    // *The object containing configurations specific for sequence diagrams*
+    /**
+     * ###  sequenceDiagram
+     * The object containing configurations specific for sequence diagrams
+     */
     sequenceDiagram:{
 
-        // **diagramMarginX** - margin to the right and left of the sequence diagram
+        /**
+         * **diagramMarginX** - margin to the right and left of the sequence diagram
+         */
         diagramMarginX:50,
 
-        // **diagramMarginY** - margin to the over and under the sequence diagram
+        /**
+         * **diagramMarginY** - margin to the over and under the sequence diagram
+         */
         diagramMarginY:10,
 
-        // **actorMargin** - Margin between actors
+    /**
+     * **actorMargin** - Margin between actors
+     */
         actorMargin:50,
 
-        // **width** - Width of actor moxes
+    /**
+     * **width** - Width of actor boxes
+     */
         width:150,
 
-        // **height** - Height of actor boxes
+    /**
+     * **height** - Height of actor boxes
+     */
         height:65,
 
-        // **boxMargin** - Margin around loop boxes
+    /**
+     * **boxMargin** - Margin around loop boxes
+     */
         boxMargin:10,
 
-        // **boxTextMargin** - margin around the text in loop/alt/opt boxes
+     /**
+      * **boxTextMargin** - margin around the text in loop/alt/opt boxes
+      */
         boxTextMargin:5,
 
-        // **noteMargin** - margin around notes
+     /**
+     * **noteMargin** - margin around notes
+      */
         noteMargin:10,
 
-        // **messageMargin** - Space between messages
+        /**
+     * **messageMargin** - Space between messages
+         */
         messageMargin:35,
 
-        // **mirrorActors** - mirror actors under diagram
+    /**
+     * **mirrorActors** - mirror actors under diagram
+     */
         mirrorActors:true,
 
-        // **bottomMarginAdj** - Depending on css styling this might need adjustment
-        // Prolongs the edge of the diagram downwards
+    /**
+     * **bottomMarginAdj** - Depending on css styling this might need adjustment.
+     * Prolongs the edge of the diagram downwards
+     */
         bottomMarginAdj:1,
 
-        // **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
-        // available space if not the absolute space required is used
+    /**
+     * **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used
+     */
         useMaxWidth:true
     },
 
-    // ## gantt
-    // *The object containing configurations specific for gantt diagrams*
+    /** ### gantt
+     * The object containing configurations specific for gantt diagrams*
+     */ 
     gantt:{
-        // **titleTopMargin** - margin top for the text over the gantt diagram
+        /**
+         * **titleTopMargin** - margin top for the text over the gantt diagram
+         */ 
         titleTopMargin: 25,
 
-        // **barHeight** - the height of the bars in the graph
+        /** 
+         * **barHeight** - the height of the bars in the graph
+         */ 
         barHeight: 20,
 
-        // **barGap** - the margin between the different activities in the gantt diagram
+        /** 
+         * **barGap** - the margin between the different activities in the gantt diagram
+         */ 
         barGap: 4,
 
-        // **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
+        /** 
+         *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
+         */  
         topPadding: 50,
 
-        // **sidePadding** - the space allocated for the section name to the left of the activities.
+        /** 
+         *  **sidePadding** - the space allocated for the section name to the left of the activities.
+         */  
         sidePadding: 75,
 
-        // **gridLineStartPadding** - Vertical starting position of the grid lines
+        /** 
+         *  **gridLineStartPadding** - Vertical starting position of the grid lines
+         */
         gridLineStartPadding: 35,
 
-        // **fontSize** - font size ...
+        /** 
+         *  **fontSize** - font size ...
+         */
         fontSize: 11,
 
-        // **fontFamily** - font family ...
+        /** 
+         * **fontFamily** - font family ...
+         */
         fontFamily: '"Open-Sans", "sans-serif"',
 
-        // **numberSectionStyles** - the number of alternating section styles
+        /** 
+         * **numberSectionStyles** - the number of alternating section styles
+         */
         numberSectionStyles:3,
 
-        // **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
+        /** 
+         * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
+         */  
         axisFormatter: [
-            /*! Within a day*/
+
+            // Within a day
             ["%I:%M", function (d) {
                 return d.getHours();
             }],
-            /*! Monday a week*/
+            // Monday a week
             ["w. %U", function (d) {
                 return d.getDay() == 1;
             }],
-            /*! Day within a week (not monday) */
+            // Day within a week (not monday)
             ["%a %d", function (d) {
                 return d.getDay() && d.getDate() != 1;
             }],
-            /*! within a month */
+            // within a month
             ["%b %d", function (d) {
                 return d.getDate() != 1;
             }],
-            /*! Month */
+            // Month
             ["%m-%y", function (d) {
                 return d.getMonth();
             }]
@@ -151,8 +217,8 @@ var config = {
 };
 
 /**
- * # parse
- * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
+ * ## parse
+ * Function that parses a mermaid diagram definition. If parsing fails the parseError callback is called and an error is
  * thrown and
  * @param text
  */
@@ -194,7 +260,7 @@ var parse = function(text){
 exports.parse = parse;
 
 /**
- * # version
+ * ## version
  * Function returning version information
  * @returns {string} A string containing the version info
  */
@@ -203,7 +269,7 @@ exports.version = function(){
 };
 
 /**
- * #render
+ * ##render
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
  * ```
@@ -289,10 +355,12 @@ var render = function(id, txt, cb, container){
             break;
     }
 
-    if(typeof cb !== 'undefined'){
-        cb(d3.select('#d'+id).node().innerHTML,graph.bindFunctions);
-    }else{
+    // Fix for when the base tag is used
+    var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
 
+    if(typeof cb !== 'undefined'){
+        cb(svgCode,graph.bindFunctions);
+    }else{
         log.warn('CB = undefined');
     }
 
@@ -361,5 +429,6 @@ global.mermaidAPI = {
     parse      : exports.parse,
     initialize : exports.initialize,
     detectType : utils.detectType,
-    parseError : exports.parseError
+    parseError : exports.parseError,
+    getConfig  : exports.getConfig
 };

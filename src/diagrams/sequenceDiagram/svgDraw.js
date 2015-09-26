@@ -41,13 +41,14 @@ exports.drawText = function(elem, textData, width) {
 
 
     var span = textElem.append('tspan');
-    span.attr('x', textData.x);
-    span.attr('dy', textData.dy);
+    //span.attr('x', textData.x);
+    span.attr('x', textData.x+textData.textMargin*2);
+    //span.attr('dy', textData.dy);
     span.text(nText);
     if(typeof textElem.textwrap !== 'undefined'){
         textElem.textwrap({
-            x: textData.x+4, // bounding box is 300 pixels from the left
-            y: textData.y-2, // bounding box is 400 pixels from the top
+            x: textData.x, // bounding box is 300 pixels from the left
+            y: textData.y, // bounding box is 400 pixels from the top
             width: width, // bounding box is 500 pixels across
             height: 1800 // bounding box is 600 pixels tall
         }, textData.textMargin);

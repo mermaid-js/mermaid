@@ -1,8 +1,22 @@
+//(function (root, factory) {
+//    if (typeof exports === 'object') {
+//        // CommonJS
+//        module.exports = factory(require('b'));
+//    } else if (typeof define === 'function' && define.amd) {
+//        // AMD
+//        define(['b'], function (b) {
+//            return (root.returnExportsGlobal = factory(b));
+//        });
+//    } else {
+//        // Global Variables
+//        root.returnExportsGlobal = factory(root.b);
+//    }
+//}(this, function (b) {
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
-var he = require('he');
+
 var mermaidAPI = require('./mermaidAPI');
 var nextId = 0;
 var log = require('./logger').create();
@@ -14,12 +28,12 @@ module.exports.mermaidAPI = mermaidAPI;
  *
  * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
  * attribute already set. This way the init function can be triggered several times.
- * 
+ *
  * Optionally, `init` can accept in the second argument one of the following:
  * - a DOM Node
  * - an array of DOM nodes (as would come from a jQuery selector)
  * - a W3C selector, a la `.mermaid`
- * 
+ *
  * ```mermaid
  * graph LR;
  *  a(Find elements)-->b{Processed}
@@ -35,7 +49,7 @@ var init = function () {
     if(arguments.length >= 2){
         /*! sequence config was passed as #1 */
         if(typeof arguments[0] !== 'undefined'){
-            mermaid.sequenceConfig = arguments[0];      
+            mermaid.sequenceConfig = arguments[0];
         }
 
         nodes = arguments[1];
@@ -65,14 +79,12 @@ var init = function () {
         : nodes instanceof Node ? [nodes]
         /*! Last case  - sequence config was passed pick next */
         : nodes;
-    
+
     var i;
 
     if(typeof mermaid_config !== 'undefined'){
         mermaidAPI.initialize(mermaid_config);
-        
     }
-
     log.debug('Start On Load before: '+mermaid.startOnLoad);
     if(typeof mermaid.startOnLoad !== 'undefined'){
         log.debug('Start On Load inner: '+mermaid.startOnLoad);
@@ -91,7 +103,7 @@ var init = function () {
             callback(id);
         }
     };
-    
+
     for (i = 0; i < nodes.length; i++) {
         var element = nodes[i];
 
@@ -104,6 +116,7 @@ var init = function () {
 
         var id = 'mermaidChart' + nextId++;
 
+        var he = require('he');
         var txt = element.innerHTML;
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
@@ -165,7 +178,7 @@ var equals = function (val, variable){
 global.mermaid = {
     startOnLoad:    true,
     htmlLabels:     true,
-    
+
     init: function(sequenceConfig, nodes) {
         init.apply(null, arguments);
     },
@@ -225,11 +238,17 @@ exports.contentLoaded = function(){
             }
         }
     }else{
-        config = mermaidAPI.getConfig();
-        if(config.startOnLoad){
-            global.mermaid.init();
+        if(typeof global.mermaid === 'undefined' ){
+            if(typeof global.mermaid.startOnLoad === 'undefined' ){
+
+            }
+            log.debug('In start, no config');
+            config = mermaidAPI.getConfig();
+            if(config.startOnLoad){
+                global.mermaid.init();
+            }
         }
-        
+
     }
 
 };
@@ -244,3 +263,7 @@ if(typeof document !== 'undefined'){
         exports.contentLoaded();
     }, false);
 }
+
+//    // Your actual module
+//    return module.exports;
+//}));

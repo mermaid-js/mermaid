@@ -414,7 +414,7 @@ exports.draw = function (text, id,isDot) {
     if(conf.useMaxWidth) {
         // Center the graph
         svg.attr("height", '100%');
-        svg.attr("width", '100%');
+        svg.attr("width", conf.width);
         //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
         svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
         svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
