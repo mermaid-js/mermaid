@@ -431,6 +431,49 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
     });
 
+    ddescribe("it should handle interaction, ",function(){
+
+        it('it should be possible to use click to a callback',function(){
+            spyOn(graph,'setClickEvent');
+            var res = flow.parser.parse('graph TD\nA-->B\nclick A callback');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(graph.setClickEvent).toHaveBeenCalledWith('A','callback',undefined,undefined);
+        });
+
+        it('it should be possible to use click to a callback with toolip',function(){
+            spyOn(graph,'setClickEvent');
+            var res = flow.parser.parse('graph TD\nA-->B\nclick A callback "tooltip"');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(graph.setClickEvent).toHaveBeenCalledWith('A','callback',undefined,'tooltip');
+        });
+
+        it('should handle interaction - click to a link',function(){
+            spyOn(graph,'setClickEvent');
+            var res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html"');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(graph.setClickEvent).toHaveBeenCalledWith('A',undefined,'click.html',undefined);
+        });
+        it('should handle interaction - click to a link with tooltip',function(){
+            spyOn(graph,'setClickEvent');
+            var res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip"');
+
+            var vert = flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            expect(graph.setClickEvent).toHaveBeenCalledWith('A',undefined,'click.html','tooltip');
+        });
+    });
+
+
     describe("it should handle text on edges",function(){
         it('it should handle text without space',function(){
             var res = flow.parser.parse('graph TD;A--x|textNoSpace|B;');

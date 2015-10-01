@@ -97,11 +97,12 @@ var init = function () {
         mermaidAPI.initialize({gantt:mermaid.ganttConfig});
     }
 
-    var insertSvg = function(svgCode){
+    var insertSvg = function(svgCode, bindFunctions){
         element.innerHTML = svgCode;
         if(typeof callback !== 'undefined'){
             callback(id);
         }
+        bindFunctions(element);
     };
 
     for (i = 0; i < nodes.length; i++) {

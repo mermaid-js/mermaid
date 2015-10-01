@@ -105,6 +105,10 @@ exports.addVertices = function (vert, g) {
             case 'circle':
                 _shape = 'circle';
                 break;
+            case 'group':
+                _shape = 'rect';
+                verticeText = '';
+                break;
             default:
                 _shape = 'rect';
         }
@@ -277,7 +281,7 @@ exports.draw = function (text, id,isDot) {
     var i = 0;
     for(i=subGraphs.length-1;i>=0;i--){
         subG = subGraphs[i];
-        graph.addVertex(subG.id,undefined,undefined,undefined);
+        graph.addVertex(subG.id,subG.title,'group',undefined);
     }
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
@@ -394,7 +398,19 @@ exports.draw = function (text, id,isDot) {
     svgGroup = d3.select("#" + id + " g");
 
     // Run the renderer. This is what draws the final graph.
-    render(d3.select("#" + id + " g"), g);
+    var element = d3.select("#" + id + " g");
+    render(element, g);
+
+    //var tip = d3.tip().html(function(d) { return d; });
+    element.selectAll("g.node")
+                .attr("title", function(){
+            return graph.getTooltip(this.id);
+        });
+
+    //
+    //element.selectAll("g.node")
+    //    .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
+    //    .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
     var svgb = document.querySelector("#" + id);
 
 /*
@@ -430,7 +446,7 @@ exports.draw = function (text, id,isDot) {
 
 
     // Index nodes
-    graph.indexNodes('sunGraph'+i);
+    graph.indexNodes('subGraph'+i);
     
     for(i=0;i<subGraphs.length;i++){
         var pos = graph.getDepthFirstPos(i);

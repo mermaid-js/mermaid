@@ -323,7 +323,6 @@ var render = function(id, txt, cb, container){
                 classes = flowRenderer.getClasses(txt, false);
                 utils.cloneCssStyles(element.firstChild, classes);
             }
-            graph.bindFunctions();
             break;
         case 'dotGraph':
             flowRenderer.setConf(config.flowchart);

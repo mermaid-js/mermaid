@@ -6,6 +6,7 @@ var vertices = {};
 var edges = [];
 var classes = [];
 var subGraphs = [];
+var tooltips = {};
 var subCount=0;
 var direction;
 // Functions to be run after graph rendering
@@ -136,48 +137,69 @@ exports.setClass = function (id,className) {
         }
     }
 };
+
+var setTooltip = function(id,tooltip){
+    if(typeof  tooltip !== 'undefined'){
+        tooltips[id]=tooltip;
+    }
+};
+
+var setClickFun = function(id, functionName){
+    if(typeof functionName === 'undefined'){
+        return;
+    }
+    if (typeof vertices[id] !== 'undefined') {
+        funs.push(function (element) {
+            var elem = d3.select(element).select('#'+id);
+            if (elem !== null) {
+                elem.on('click', function () {
+                    eval(functionName + '(\'' + id + '\')'); // jshint ignore:line
+                });
+            }
+        });
+    }
+};
+
+var setLink = function(id, linkStr){
+    if(typeof linkStr === 'undefined'){
+        return;
+    }
+    if (typeof vertices[id] !== 'undefined') {
+        funs.push(function (element) {
+            var elem = d3.select(element).select('#'+id);
+            if (elem !== null) {
+                elem.on('click', function () {
+                    window.open(linkStr,'newTab'); // jshint ignore:line
+                });
+            }
+        });
+    }
+};
+exports.getTooltip = function(id){
+    return tooltips[id];
+};
 var clickEvents = [];
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-exports.setClickEvent = function (id,functionName) {
-
-
+exports.setClickEvent = function (id,functionName, link,tooltip) {
         if(id.indexOf(',')>0){
             id.split(',').forEach(function(id2) {
-                if (typeof vertices[id2] !== 'undefined') {
-                    funs.push(function () {
-                        var elem = document.getElementById(id2);
-                        if (elem !== null) {
-                            elem.onclick = function () {
-                                eval(functionName + '(\'' + id2 + '\')'); // jshint ignore:line
-                            };
-                        }
-                    });
-                }
+                setTooltip(id2,tooltip);
+                setClickFun(id2, functionName);
+                setLink(id2, link);
             });
         }else{
-            //log.debug('Checking now for ::'+id);
-            if(typeof vertices[id] !== 'undefined'){
-                funs.push(function(){
-                    var elem = document.getElementById(id);
-                    if(elem !== null){
-                        elem.onclick = function(){eval(functionName+'(\'' + id + '\')');}; // jshint ignore:line
-                    }
-                    else{
-                        //log.debug('id was null: '+id);
-                    }
-                });
-            }
+            setTooltip(id,tooltip);
+            setClickFun(id, functionName);
+            setLink(id, link);
         }
-
-
 };
 
-exports.bindFunctions = function(){
+exports.bindFunctions = function(element){
     funs.forEach(function(fun){
-        fun();
+        fun(element);
     });
 };
 exports.getDirection = function () {
@@ -207,6 +229,49 @@ exports.getClasses = function () {
     return classes;
 };
 
+var setupToolTips = function(element){
+
+    var tooltipElem = d3.select('.mermaidTooltip');
+    if(tooltipElem[0][0] === null){
+        tooltipElem = d3.select("body")
+            .append("div")
+            .attr("class", "mermaidTooltip")
+            .style("opacity", 0);
+    }
+
+    var svg = d3.select(element).select('svg');
+
+    var nodes = svg.selectAll("g.node");
+    nodes
+        .on("mouseover", function(d) {
+            var el = d3.select(this);
+            var title = el.attr('title');
+            // Dont try to draw a tooltip if no data is provided
+            if(title === null){
+                return;
+            }
+            var rect = this.getBoundingClientRect();
+
+            tooltipElem.transition()
+                .duration(200)
+                .style("opacity", .9);
+            tooltipElem.html(el.attr('title'))
+                .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
+                .style("top", (rect.top-28) + "px");
+            var el = d3.select(this);
+            el.classed('hover',true);
+
+        })
+        .on("mouseout", function(d) {
+            tooltipElem.transition()
+                .duration(500)
+                .style("opacity", 0);
+            var el = d3.select(this);
+            el.classed('hover',false);
+        });
+};
+funs.push(setupToolTips);
+
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
@@ -214,9 +279,11 @@ exports.clear = function () {
     vertices = {};
     classes = {};
     edges = [];
-    //funs = [];
+    funs = [];
+    funs.push(setupToolTips);
     subGraphs = [];
     subCount = 0;
+    tooltips = [];
 };
 /**
  *
