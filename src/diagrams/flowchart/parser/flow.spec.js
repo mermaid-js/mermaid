@@ -431,7 +431,7 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
     });
 
-    ddescribe("it should handle interaction, ",function(){
+    describe("it should handle interaction, ",function(){
 
         it('it should be possible to use click to a callback',function(){
             spyOn(graph,'setClickEvent');
