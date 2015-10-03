@@ -49,6 +49,9 @@
         $(function () {
             setupLanguages(["shell", "javascript", "html", "css","mermaid"]);
         });
+        var callback = function(){
+            alert('A callback was triggered');
+        }
     </script>
 </head>
 
@@ -226,7 +229,7 @@ console.log('Test page! mermaid version'+mermaid.version());</code></pre><p>Bund
         var graph = mermaidAPI.render(graphDefinition);
         $("#graphDiv").html(graph);
     });
-&lt;/script&gt;</code></pre><p>##Sample of API usage together with browserify</p>
+&lt;/script&gt;</code></pre><h2 id="sample-of-api-usage-together-with-browserify">Sample of API usage together with browserify</h2>
 <pre class="css"><code>$ = require('jquery');
 mermaidAPI = require('mermaid').mermaidAPI;
 mermaidAPI.initialize({
@@ -239,7 +242,28 @@ $(function(){
         console.log(html);
     }
     mermaidAPI.render('id1',graphDefinition,cb);
-});</code></pre><h2 id="example-of-a-marked-renderer">Example of a marked renderer</h2>
+});</code></pre><h3 id="binding-events">Binding events</h3>
+<p>Sometimes the generated graph also has defined interactions like tooltip and click events. When using the API one must<br>add those events after the graph has been inserted into the DOM.</p>
+<p>The example code below is an extract of wheat mermaid does when using the API. The example show how it is possible to<br>bind events to a svg when using the API for rendering.</p>
+<pre class="css"><code>     var insertSvg = function(svgCode, bindFunctions){
+         element.innerHTML = svgCode;
+         if(typeof callback !== 'undefined'){
+             callback(id);
+         }
+         bindFunctions(element);
+     };
+
+     var id = 'theGraph';
+
+
+     mermaidAPI.render(id,txt,insertSvg, element);</code></pre><ol>
+<li>The graph is generated using the render call. </li>
+<li>After generation the render function calls the provided callback function, in this case its called insertSvg.</li>
+<li>The callback function is called with two parameters, the svg code of the generated graph and a function. This<br>function binds events to the svg <strong>after</strong> it is inserted into the DOM.</li>
+<li>Insert the svg code into the DOM for presentation</li>
+<li>Call the binding function that bainds the events</li>
+</ol>
+<h2 id="example-of-a-marked-renderer">Example of a marked renderer</h2>
 <p>This is the renderer used for transforming the documentation from markdown to html with mermaid diagrams in the html.</p>
 <pre class="css"><code>    var renderer = new marked.Renderer();
     renderer.code = function (code, language) {
@@ -431,11 +455,26 @@ end</code></pre><p>An example below:</p>
     subgraph three
     c1-->c2
     end</div><h2 id="interaction">Interaction</h2>
-<p>It is possible to bind a click event to a node:</p>
+<p>It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.</p>
 <pre class="css"><code>click nodeId callback</code></pre><ul>
 <li>nodeId is the id of the node</li>
 <li>callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.</li>
 </ul>
+<p>Examples of tooltip usage below:</p>
+<pre class="css"><code>&lt;script&gt;
+    var callback = function(){
+        alert(&#39;A callback was triggered&#39;);
+    }
+&lt;script&gt;</code></pre><pre class="css"><code>graph LR;
+    A-->B;
+    click A callback "Tooltip for a callback"
+    click B "http://www.github.com" "This is a tooltip for a link"</code></pre><p>The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.</p>
+<div class="mermaid">graph LR;
+    A-->B;
+    click A callback "Tooltip"
+    click B "http://www.github.com" "This is a link"</div><aside class="success">The tooltip functionality and the ability to link to urls are available from version 0.5.2.</aside>
+
+<p>When integration mermaid using the mermaidAPI #mermaidapi the function that binds the events need to be run when the finished graph has been added to the page. This is described in the <a href="#api-usage">API usage</a> section.</p>
 <h2 id="styling-and-classes">Styling and classes</h2>
 <h3 id="styling-links">Styling links</h3>
 <p>It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links<br>have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.<br>Instead of ids, the order number of when the link was defined in the graph is used. In the example below the style<br>defined in the linkStyle statement will belong to the fourth link in the graph:</p>
@@ -1170,7 +1209,8 @@ sequenceDiagram
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!</div>
-<p>#mermaidAPI<br>This is the api to be used when handling the integration with the web page instead of using the default integration<br>(mermaid.js).</p>
+<h1 id="mermaidapi">mermaidAPI</h1>
+<p>This is the api to be used when handling the integration with the web page instead of using the default integration<br>(mermaid.js).</p>
 <p>The core of this api is the <strong>render</strong> function that given a graph definitionas text renders the graph/diagram and<br>returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it<br>somewhere in the page or something completely different.</p>
 <h2 id="configuration">Configuration</h2>
 <p>These are the default options which can be overridden with the initialization call as in the example below:</p>
