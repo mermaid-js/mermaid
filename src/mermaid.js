@@ -20,6 +20,7 @@
 var mermaidAPI = require('./mermaidAPI');
 var nextId = 0;
 var log = require('./logger').create();
+var utils = require('./utils');
 
 module.exports.mermaidAPI = mermaidAPI;
 /**
@@ -122,10 +123,31 @@ var init = function () {
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
-
+        txt = exports.encodeEntities(txt);
+        if( utils.detectType(txt) === 'sequenceDiagram'){
+            txt = he.decode(txt).trim();
+        }
         mermaidAPI.render(id,txt,insertSvg, element);
     }
 
+};
+
+exports.encodeEntities = function(text){
+    var txt = text;
+
+    txt = txt.replace(/#\w*;?/g,function(s,t,u){
+        var innerTxt = s.substring(1,s.length-1);
+
+        var isInt = /^\+?\d+$/.test(innerTxt);
+        if(isInt){
+            return '&#'+innerTxt+';';
+        }else{
+            return '&'+innerTxt+';';
+        }
+
+    });
+
+    return txt;
 };
 
 exports.init = init;

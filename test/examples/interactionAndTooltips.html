@@ -23,7 +23,9 @@
 </head>
     <body>
     <h1>Links to callbacks</h1>
-    A has a tooltip
+    A has a tooltip and a callback <br/>
+    B has a link and a tooltip <br/>
+    C has a long tooltip <br/>
     <div class="mermaid" id="i211">
     graph LR;
         A-->B;
@@ -34,23 +36,12 @@
     </div>
 
     <h1>Links to urls</h1>
+    A second diagram that should have its own callback on A even though the node has the same id.
     <div class="mermaid" id="i213">
         graph LR;
             A-->B
             B-->C
             click A callback2 "Tooltip3"
     </div>
-    <div class="mermaid" id="i213">
-        graph LR;
-        subgraph S1
-            a-->b
-        end
-        subgraph S2
-            c-->d
-            c-->d
-        end
-
-    </div>
-
     </body>
 </html>

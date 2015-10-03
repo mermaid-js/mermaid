@@ -23511,11 +23511,10 @@ var setupToolTips = function(element){
 
             tooltipElem.transition()
                 .duration(200)
-                .style("opacity", .9);
+                .style("opacity", '.9');
             tooltipElem.html(el.attr('title'))
                 .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
                 .style("top", (rect.top-14+document.body.scrollTop) + "px");
-            var el = d3.select(this);
             el.classed('hover',true);
 
         })
@@ -28211,6 +28210,7 @@ exports.getNoteRect = function(){
 var mermaidAPI = _dereq_('./mermaidAPI');
 var nextId = 0;
 var log = _dereq_('./logger').create();
+var utils = _dereq_('./utils');
 
 module.exports.mermaidAPI = mermaidAPI;
 /**
@@ -28313,10 +28313,31 @@ var init = function () {
         txt = txt.replace(/>/g,'&gt;');
         txt = txt.replace(/</g,'&lt;');
         txt = he.decode(txt).trim();
-
+        txt = exports.encodeEntities(txt);
+        if( utils.detectType(txt) === 'sequenceDiagram'){
+            txt = he.decode(txt).trim();
+        }
         mermaidAPI.render(id,txt,insertSvg, element);
     }
 
+};
+
+exports.encodeEntities = function(text){
+    var txt = text;
+
+    txt = txt.replace(/#\w*;?/g,function(s,t,u){
+        var innerTxt = s.substring(1,s.length-1);
+
+        var isInt = /^\+?\d+$/.test(innerTxt);
+        if(isInt){
+            return '&#'+innerTxt+';';
+        }else{
+            return '&'+innerTxt+';';
+        }
+
+    });
+
+    return txt;
 };
 
 exports.init = init;
@@ -28462,7 +28483,7 @@ if(typeof document !== 'undefined'){
 //}));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":85,"./logger":103,"./mermaidAPI":104,"he":83}],103:[function(_dereq_,module,exports){
+},{"../package.json":85,"./logger":103,"./mermaidAPI":104,"./utils":105,"he":83}],103:[function(_dereq_,module,exports){
 (function (process){
 /**
  * #logger

@@ -211,6 +211,8 @@ graph LR
 graph LR
     id1["This is the (text) in the box"]
 ```
+
+### Another possibility is to use the entity codes
 ## Subgraphs
 
 ```
