@@ -153,7 +153,7 @@ could be used. The example just logs the resulting svg to the javascript console
     });
 &lt;/script&gt;
 ```
-##Sample of API usage together with browserify
+## Sample of API usage together with browserify
 ```
 $ = require('jquery');
 mermaidAPI = require('mermaid').mermaidAPI;
@@ -169,6 +169,36 @@ $(function(){
     mermaidAPI.render('id1',graphDefinition,cb);
 });
 ```
+
+### Binding events
+
+Sometimes the generated graph also has defined interactions like tooltip and click events. When using the API one must 
+add those events after the graph has been inserted into the DOM.
+ 
+The example code below is an extract of wheat mermaid does when using the API. The example show how it is possible to 
+bind events to a svg when using the API for rendering.
+ 
+```
+     var insertSvg = function(svgCode, bindFunctions){
+         element.innerHTML = svgCode;
+         if(typeof callback !== 'undefined'){
+             callback(id);
+         }
+         bindFunctions(element);
+     };
+
+     var id = 'theGraph';
+
+
+     mermaidAPI.render(id,txt,insertSvg, element);
+```
+
+1. The graph is generated using the render call. 
+2. After generation the render function calls the provided callback function, in this case its called insertSvg.
+3. The callback function is called with two parameters, the svg code of the generated graph and a function. This 
+function binds events to the svg **after** it is inserted into the DOM.
+4. Insert the svg code into the DOM for presentation
+5. Call the binding function that bainds the events
 
 ## Example of a marked renderer
 

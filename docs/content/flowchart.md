@@ -290,6 +290,8 @@ graph LR;
 ```
 <aside class="success">The tooltip functionality and the ability to link to urls are available from version 0.5.2.</aside>
 
+When integration mermaid using the mermaidAPI #mermaidapi the function that binds the events need to be run when the finished graph has been added to the page. This is described in the [API usage](#api-usage) section.
+
 ## Styling and classes
 
 ### Styling links
