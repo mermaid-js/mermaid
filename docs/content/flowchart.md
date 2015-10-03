@@ -253,7 +253,7 @@ graph TB
 
 ## Interaction
 
-It is possible to bind a click event to a node:
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
 
 ```
 click nodeId callback
@@ -261,6 +261,34 @@ click nodeId callback
 
 * nodeId is the id of the node
 * callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+
+Examples of tooltip usage below:
+
+```
+&lt;script&gt;
+    var callback = function(){
+        alert(&#39;A callback was triggered&#39;);
+    }
+&lt;script&gt;
+```
+
+```
+graph LR;
+    A-->B;
+    click A callback "Tooltip for a callback"
+    click B "http://www.github.com" "This is a tooltip for a link"
+```
+
+
+The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
+
+```mermaid
+graph LR;
+    A-->B;
+    click A callback "Tooltip"
+    click B "http://www.github.com" "This is a link"
+```
+<aside class="success">The tooltip functionality and the ability to link to urls are available from version 0.5.2.</aside>
 
 ## Styling and classes
 

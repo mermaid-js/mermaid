@@ -5,39 +5,14 @@
 
     <link rel="stylesheet" href="../../dist/mermaid.css"/>
     <script src="../../dist/mermaid.js"></script>
-    <link rel="stylesheet" href="../../dist/mermaid.css"/>
     <style>
         body{
-            background-color: #2d2d22;
+            background-color: #89896f;
         }
-        div.mermaidTooltip {
-            position: absolute;
-            text-align: center;
-            width: 60px;
-            height: 28px;
-            padding: 2px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 1px solid black;
-            border-radius: 3px;
-            pointer-events: none;
-        }
+
     </style>
     <script>
-        function itsTime(){
 
-            function getScreenCoords(x, y, ctm) {
-                var xn = ctm.e + x*ctm.a;
-                var yn = ctm.f + y*ctm.d;
-                return { x: xn, y: yn };
-            }
-
-
-            setTimeout(function(){
-
-            },250);
-
-        }
         function callback(id){
             alert(id);
         }
@@ -46,7 +21,7 @@
         }
     </script>
 </head>
-    <body onload="itsTime()">
+    <body>
     <h1>Links to callbacks</h1>
     A has a tooltip
     <div class="mermaid" id="i211">
@@ -55,7 +30,7 @@
         B-->C;
         click A callback "Tooltip"
         click B "http://www.github.com" "This is a link"
-        click C callback "Tooltip C1"
+        click C callback "Tooltip quite long tooltip. So long that several rows are required... Not just two rows..."
     </div>
 
     <h1>Links to urls</h1>

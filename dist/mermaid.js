@@ -30678,7 +30678,9 @@ module.exports={
     "mermaid": "./bin/mermaid.js"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
+    "watch": "watchify src/mermaid.js -o dist/mermaid.js",
+    "doc"  : "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
+    "test" : "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
   },
   "repository": {
     "type": "git",
@@ -32728,7 +32730,7 @@ var setupToolTips = function(element){
                 .style("opacity", .9);
             tooltipElem.html(el.attr('title'))
                 .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
-                .style("top", (rect.top-28) + "px");
+                .style("top", (rect.top-14+document.body.scrollTop) + "px");
             var el = d3.select(this);
             el.classed('hover',true);
 
@@ -37780,7 +37782,7 @@ exports.create = function(type, options) {
  * title: mermaidAPI
  * order: 5
  * ---
- * #mermaidAPI
+ * # mermaidAPI
  * This is the api to be used when handling the integration with the web page instead of using the default integration
  * (mermaid.js).
  *

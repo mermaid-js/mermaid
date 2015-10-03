@@ -257,7 +257,7 @@ var setupToolTips = function(element){
                 .style("opacity", .9);
             tooltipElem.html(el.attr('title'))
                 .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
-                .style("top", (rect.top-28) + "px");
+                .style("top", (rect.top-14+document.body.scrollTop) + "px");
             var el = d3.select(this);
             el.classed('hover',true);
 

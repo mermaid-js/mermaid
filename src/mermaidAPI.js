@@ -3,7 +3,7 @@
  * title: mermaidAPI
  * order: 5
  * ---
- * #mermaidAPI
+ * # mermaidAPI
  * This is the api to be used when handling the integration with the web page instead of using the default integration
  * (mermaid.js).
  *
