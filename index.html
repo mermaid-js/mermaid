@@ -429,7 +429,13 @@ graph LR</code></pre><p>This declares a graph oriented from left to right.</p>
 <p>It is possible to put text within quotes in order to render more troublesome characters. As in the example below:</p>
 <pre class="css"><code>graph LR
     d1["This is the (text) in the box"]</code></pre><div class="mermaid">graph LR
-    id1["This is the (text) in the box"]</div><h2 id="subgraphs">Subgraphs</h2>
+    id1["This is the (text) in the box"]</div><h3 id="entity-codes-to-escape-characters">Entity codes to escape characters</h3>
+<p>It is possible to escape characters using the syntax examplified here.</p>
+<p>The flowchart defined by the following code:</p>
+<pre class="css"><code>    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]</code></pre><p>This would render to the diagram below:</p>
+<div class="mermaid">    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]</div><h2 id="subgraphs">Subgraphs</h2>
 <pre class="css"><code>subgraph title
     graph definition
 end</code></pre><p>An example below:</p>
