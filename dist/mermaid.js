@@ -30664,7 +30664,7 @@ process.chdir = function (dir) {
 },{}],86:[function(_dereq_,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -30679,8 +30679,8 @@ module.exports={
   },
   "scripts": {
     "watch": "watchify src/mermaid.js -o dist/mermaid.js",
-    "doc"  : "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "test" : "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
+    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
+    "test": "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
   },
   "repository": {
     "type": "git",
