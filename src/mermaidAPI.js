@@ -282,7 +282,7 @@ exports.version = function(){
 exports.encodeEntities = function(text){
     var txt = text;
 
-    txt = txt.replace(/#\w*;?/g,function(s,t,u){
+    txt = txt.replace(/#\w+\;/g,function(s,t,u){
         var innerTxt = s.substring(1,s.length-1);
 
         var isInt = /^\+?\d+$/.test(innerTxt);
@@ -408,6 +408,10 @@ var render = function(id, txt, cb, container){
             }
             break;
     }
+
+    d3.select('#d'+id).selectAll('foreignobject div').attr('xmlns','http://www.w3.org/1999/xhtml');
+
+
 
     // Fix for when the base tag is used
     var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
