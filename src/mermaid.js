@@ -98,6 +98,7 @@ var init = function () {
         mermaidAPI.initialize({gantt:mermaid.ganttConfig});
     }
 
+    var txt;
     var insertSvg = function(svgCode, bindFunctions){
         element.innerHTML = svgCode;
         if(typeof callback !== 'undefined'){
@@ -119,35 +120,20 @@ var init = function () {
         var id = 'mermaidChart' + nextId++;
 
         var he = require('he');
-        var txt = element.innerHTML;
-        txt = txt.replace(/>/g,'&gt;');
-        txt = txt.replace(/</g,'&lt;');
+        // Fetch the graph definition including tags
+        txt = element.innerHTML;
+
+        //console.warn('delivererd from the browser: ');
+        //console.warn(txt);
+
+        // transforms the html to pure text
         txt = he.decode(txt).trim();
-        txt = exports.encodeEntities(txt);
-        if( utils.detectType(txt) === 'sequenceDiagram'){
-            txt = he.decode(txt).trim();
-        }
+        //console.warn('he decode: ');
+        //console.warn(txt);
+
         mermaidAPI.render(id,txt,insertSvg, element);
     }
 
-};
-
-exports.encodeEntities = function(text){
-    var txt = text;
-
-    txt = txt.replace(/#\w*;?/g,function(s,t,u){
-        var innerTxt = s.substring(1,s.length-1);
-
-        var isInt = /^\+?\d+$/.test(innerTxt);
-        if(isInt){
-            return '&#'+innerTxt+';';
-        }else{
-            return '&'+innerTxt+';';
-        }
-
-    });
-
-    return txt;
 };
 
 exports.init = init;

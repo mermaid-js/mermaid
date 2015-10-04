@@ -32727,11 +32727,10 @@ var setupToolTips = function(element){
 
             tooltipElem.transition()
                 .duration(200)
-                .style("opacity", .9);
+                .style("opacity", '.9');
             tooltipElem.html(el.attr('title'))
                 .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
                 .style("top", (rect.top-14+document.body.scrollTop) + "px");
-            var el = d3.select(this);
             el.classed('hover',true);
 
         })
@@ -37427,6 +37426,7 @@ exports.getNoteRect = function(){
 var mermaidAPI = _dereq_('./mermaidAPI');
 var nextId = 0;
 var log = _dereq_('./logger').create();
+var utils = _dereq_('./utils');
 
 module.exports.mermaidAPI = mermaidAPI;
 /**
@@ -37504,6 +37504,7 @@ var init = function () {
         mermaidAPI.initialize({gantt:mermaid.ganttConfig});
     }
 
+    var txt;
     var insertSvg = function(svgCode, bindFunctions){
         element.innerHTML = svgCode;
         if(typeof callback !== 'undefined'){
@@ -37525,10 +37526,16 @@ var init = function () {
         var id = 'mermaidChart' + nextId++;
 
         var he = _dereq_('he');
-        var txt = element.innerHTML;
-        txt = txt.replace(/>/g,'&gt;');
-        txt = txt.replace(/</g,'&lt;');
+        // Fetch the graph definition including tags
+        txt = element.innerHTML;
+
+        //console.warn('delivererd from the browser: ');
+        //console.warn(txt);
+
+        // transforms the html to pure text
         txt = he.decode(txt).trim();
+        //console.warn('he decode: ');
+        //console.warn(txt);
 
         mermaidAPI.render(id,txt,insertSvg, element);
     }
@@ -37678,7 +37685,7 @@ if(typeof document !== 'undefined'){
 //}));
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":86,"./logger":104,"./mermaidAPI":105,"he":84}],104:[function(_dereq_,module,exports){
+},{"../package.json":86,"./logger":104,"./mermaidAPI":105,"./utils":106,"he":84}],104:[function(_dereq_,module,exports){
 (function (process){
 /**
  * #logger
@@ -38047,6 +38054,39 @@ exports.version = function(){
     return _dereq_('../package.json').version;
 };
 
+exports.encodeEntities = function(text){
+    var txt = text;
+
+    txt = txt.replace(/#\w*;?/g,function(s,t,u){
+        var innerTxt = s.substring(1,s.length-1);
+
+        var isInt = /^\+?\d+$/.test(innerTxt);
+        if(isInt){
+            return 'ﬂ°°'+innerTxt+'¶ß';
+        }else{
+            return 'ﬂ°'+innerTxt+'¶ß';
+        }
+
+    });
+
+    return txt;
+};
+
+exports.decodeEntities = function(text){
+    var txt = text;
+
+    txt = txt.replace(/\ﬂ\°\°/g,function(s,t,u){
+        return '&#';
+    });
+    txt = txt.replace(/\ﬂ\°/g,function(s,t,u){
+        return '&';
+    });
+    txt = txt.replace(/¶ß/g,function(s,t,u){
+        return ';';
+    });
+
+    return txt;
+};
 /**
  * ##render
  * Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -38090,6 +38130,11 @@ var render = function(id, txt, cb, container){
             .attr('xmlns','http://www.w3.org/2000/svg')
             .append('g');
     }
+
+
+    txt = exports.encodeEntities(txt);
+    //console.warn('mermaid encode: ');
+    //console.warn(txt);
 
     var element = d3.select('#d'+id).node();
     var graphType = utils.detectType(txt);
@@ -38136,6 +38181,11 @@ var render = function(id, txt, cb, container){
     // Fix for when the base tag is used
     var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
 
+    svgCode = exports.decodeEntities(svgCode);
+    //console.warn('mermaid decode: ');
+    //console.warn(svgCode);
+    //var he = require('he');
+    //svgCode = he.decode(svgCode);
     if(typeof cb !== 'undefined'){
         cb(svgCode,graph.bindFunctions);
     }else{
