@@ -37451,6 +37451,7 @@ module.exports.mermaidAPI = mermaidAPI;
  * @param nodes a css selector or an array of nodes
  */
 var init = function () {
+    var conf= mermaidAPI.getConfig();
     log.debug('Starting rendering diagrams');
     var nodes;
     if(arguments.length >= 2){
@@ -37471,7 +37472,6 @@ var init = function () {
         callback = arguments[arguments.length-1];
         log.debug('Callback function found');
     }else{
-        var conf= mermaidAPI.getConfig();
         if(typeof conf.mermaid !== 'undefined'){
             if(typeof conf.mermaid.callback === 'function'){
                 callback = conf.mermaid.callback;
@@ -37775,10 +37775,12 @@ Logger.levels = {
     warn: 3,
     error: 4,
     fatal: 5,
-    default:1
+    default:5
 };
-
-exports.create = function(type, options) {
+exports.setLogLevel = function(level){
+    Logger.levels.default = level;
+}
+exports.create = function(options) {
     return new Logger(options);
 };
 }).call(this,_dereq_("1YiZ5S"))
@@ -37814,7 +37816,7 @@ var ganttParser = _dereq_('./diagrams/gantt/parser/gantt');
 var ganttDb = _dereq_('./diagrams/gantt/ganttDb');
 var d3 = _dereq_('./d3');
 var nextId = 0;
-var log = _dereq_('./logger').create();
+
 
 /**
  * ## Configuration
@@ -37828,6 +37830,15 @@ var log = _dereq_('./logger').create();
  * ```
  */
 var config = {
+    /**
+     * logLevel , decides the amount of logging to be used.
+     *    * debug: 1
+     *    * info: 2
+     *    * warn: 3
+     *    * error: 4
+     *    * fatal: 5
+     */
+    logLevel: 3,
     /**
      * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
      */
@@ -38002,6 +38013,8 @@ var config = {
     }
 };
 
+var log = _dereq_('./logger').create({level:config.logLevel});
+
 /**
  * ## parse
  * Function that parses a mermaid diagram definition. If parsing fails the parseError callback is called and an error is
@@ -38057,7 +38070,14 @@ exports.version = function(){
 exports.encodeEntities = function(text){
     var txt = text;
 
-    txt = txt.replace(/#\w*;?/g,function(s,t,u){
+    txt = txt.replace(/[style|classDef].*:\S*#.*;/g,function(s,t,u){
+
+        var innerTxt = s.substring(0,s.length-1);
+        return innerTxt;
+
+    });
+
+    txt = txt.replace(/#\w+\;/g,function(s,t,u){
         var innerTxt = s.substring(1,s.length-1);
 
         var isInt = /^\+?\d+$/.test(innerTxt);
@@ -38137,7 +38157,7 @@ var render = function(id, txt, cb, container){
             .append('g');
     }
 
-
+    window.txt = txt;
     txt = exports.encodeEntities(txt);
     //console.warn('mermaid encode: ');
     //console.warn(txt);
@@ -38147,6 +38167,7 @@ var render = function(id, txt, cb, container){
     var classes = {};
     switch(graphType){
         case 'graph':
+
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
             if(config.cloneCssStyles){
@@ -38183,6 +38204,10 @@ var render = function(id, txt, cb, container){
             }
             break;
     }
+
+    d3.select('#d'+id).selectAll('foreignobject div').attr('xmlns','http://www.w3.org/1999/xhtml');
+
+
 
     // Fix for when the base tag is used
     var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
@@ -38226,7 +38251,7 @@ var setConf = function(cnf){
 
             var j;
             for(j=0;j<lvl2Keys.length;j++) {
-                //log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
+                log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
                 if(typeof config[lvl1Keys[i]] === 'undefined'){
                     
                     config[lvl1Keys[i]] = {};
@@ -38240,6 +38265,7 @@ var setConf = function(cnf){
     }
 };
 exports.initialize = function(options){
+    log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization
     if(typeof options === 'object'){
         setConf(options);
@@ -38292,18 +38318,9 @@ var log = _dereq_('./logger').create();
  * @returns {string} A graph definition key
  */
 module.exports.detectType = function(text,a){
+    text = text.replace(/^\s*%%.*\n/g,'\n');
     if(text.match(/^\s*sequenceDiagram/)){
         return "sequenceDiagram";
-    }
-
-    if(text.match(/^\s*sequence/)){
-    /* ```mermaid
-     graph TB
-        a-->b
-        b-->c
-        ``` 
-     */
-        return "sequence";
     }
 
     if(text.match(/^\s*digraph/)) {

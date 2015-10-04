@@ -3,9 +3,10 @@
   "diagramMarginY": 10,
   "actorMargin": 50,
   "width": 150,
-  "height": 165,
+  "height": 15,
   "boxMargin": 10,
   "boxTextMargin": 5,
   "noteMargin": 10,
-  "messageMargin": 35
+  "messageMargin": 35,
+  "mirrorActors":false
 }

@@ -38070,6 +38070,15 @@ exports.version = function(){
 exports.encodeEntities = function(text){
     var txt = text;
 
+    txt = txt.replace(/style.*:\S*#.*;/g,function(s,t,u){
+        var innerTxt = s.substring(0,s.length-1);
+        return innerTxt;
+    });
+    txt = txt.replace(/classDef.*:\S*#.*;/g,function(s,t,u){
+        var innerTxt = s.substring(0,s.length-1);
+        return innerTxt;
+    });
+
     txt = txt.replace(/#\w+\;/g,function(s,t,u){
         var innerTxt = s.substring(1,s.length-1);
 
@@ -38150,7 +38159,7 @@ var render = function(id, txt, cb, container){
             .append('g');
     }
 
-
+    window.txt = txt;
     txt = exports.encodeEntities(txt);
     //console.warn('mermaid encode: ');
     //console.warn(txt);
@@ -38160,6 +38169,7 @@ var render = function(id, txt, cb, container){
     var classes = {};
     switch(graphType){
         case 'graph':
+
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
             if(config.cloneCssStyles){
