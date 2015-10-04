@@ -28,7 +28,7 @@ var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 var d3 = require('./d3');
 var nextId = 0;
-var log = require('./logger').create();
+
 
 /**
  * ## Configuration
@@ -42,6 +42,15 @@ var log = require('./logger').create();
  * ```
  */
 var config = {
+    /**
+     * logLevel , decides the amount of logging to be used.
+     *    * debug: 1
+     *    * info: 2
+     *    * warn: 3
+     *    * error: 4
+     *    * fatal: 5
+     */
+    logLevel: 3,
     /**
      * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
      */
@@ -215,6 +224,8 @@ var config = {
         ]
     }
 };
+
+var log = require('./logger').create({level:config.logLevel});
 
 /**
  * ## parse
@@ -440,7 +451,7 @@ var setConf = function(cnf){
 
             var j;
             for(j=0;j<lvl2Keys.length;j++) {
-                //log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
+                log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
                 if(typeof config[lvl1Keys[i]] === 'undefined'){
                     
                     config[lvl1Keys[i]] = {};
@@ -454,6 +465,7 @@ var setConf = function(cnf){
     }
 };
 exports.initialize = function(options){
+    log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization
     if(typeof options === 'object'){
         setConf(options);

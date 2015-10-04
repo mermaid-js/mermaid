@@ -21,18 +21,9 @@ var log = require('./logger').create();
  * @returns {string} A graph definition key
  */
 module.exports.detectType = function(text,a){
+    text = text.replace(/^\s*%%.*\n/g,'\n');
     if(text.match(/^\s*sequenceDiagram/)){
         return "sequenceDiagram";
-    }
-
-    if(text.match(/^\s*sequence/)){
-    /* ```mermaid
-     graph TB
-        a-->b
-        b-->c
-        ``` 
-     */
-        return "sequence";
     }
 
     if(text.match(/^\s*digraph/)) {

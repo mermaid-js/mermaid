@@ -45,6 +45,7 @@ module.exports.mermaidAPI = mermaidAPI;
  * @param nodes a css selector or an array of nodes
  */
 var init = function () {
+    var conf= mermaidAPI.getConfig();
     log.debug('Starting rendering diagrams');
     var nodes;
     if(arguments.length >= 2){
@@ -65,7 +66,6 @@ var init = function () {
         callback = arguments[arguments.length-1];
         log.debug('Callback function found');
     }else{
-        var conf= mermaidAPI.getConfig();
         if(typeof conf.mermaid !== 'undefined'){
             if(typeof conf.mermaid.callback === 'function'){
                 callback = conf.mermaid.callback;

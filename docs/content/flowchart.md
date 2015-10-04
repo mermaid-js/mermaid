@@ -212,7 +212,23 @@ graph LR
     id1["This is the (text) in the box"]
 ```
 
-### Another possibility is to use the entity codes
+### Entity codes to escape characters
+
+It is possible to escape characters using the syntax examplified here.
+
+The flowchart defined by the following code:
+```
+    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+```
+
+This would render to the diagram below:
+
+```mermaid
+    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+```
+
 ## Subgraphs
 
 ```

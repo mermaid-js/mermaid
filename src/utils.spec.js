@@ -8,19 +8,6 @@ describe('when detecting chart type ',function() {
 
     });
 
-    it('should handle a sequence defintion', function () {
-        str = 'sequence TB\nbfs1:queue';
-
-        var type = utils.detectType(str);
-        expect(type).toBe('sequence');
-    });
-    it('should handle a sequence defintion with leading spaces', function () {
-        str = '    sequence TB\nbfs1:queue';
-
-        var type = utils.detectType(str);
-        expect(type).toBe('sequence');
-    });
-
     it('should handle a graph defintion', function () {
         str = 'graph TB\nbfs1:queue';
 
@@ -39,12 +26,6 @@ describe('when detecting chart type ',function() {
 
         var type = utils.detectType(str);
         expect(type).toBe('graph');
-    });
-    it('should handle a sequence defintion with leading spaces and newline', function () {
-        str = '  \n  sequence TB\nbfs1:queue';
-
-        var type = utils.detectType(str);
-        expect(type).toBe('sequence');
     });
 });
 
