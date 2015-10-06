@@ -277,8 +277,10 @@ alphaNumStatement
         {$$=$1;}
     | alphaNumToken
         {$$=$1;}
-    | alphaNumToken MINUS alphaNumToken
-        {$$=$1+'-'+$3;}
+    | DOWN
+        {$$='v';}
+    | MINUS
+        {$$='-';}
     ;
 
 link: linkStatement arrowText
@@ -384,8 +386,11 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
     {$$ = $1;yy.setClass($3, $5);}
     ;
 
-clickStatement:CLICK SPACE alphaNum SPACE alphaNum
-    {$$ = $1;yy.setClickEvent($3, $5);}
+clickStatement
+    : CLICK SPACE alphaNum SPACE alphaNum           {$$ = $1;yy.setClickEvent($3,        $5, undefined, undefined);}
+    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR {$$ = $1;yy.setClickEvent($3,        $5, undefined, $7)       ;}
+    | CLICK SPACE alphaNum SPACE STR                {$$ = $1;yy.setClickEvent($3, undefined,        $5, undefined);}
+    | CLICK SPACE alphaNum SPACE STR SPACE STR      {$$ = $1;yy.setClickEvent($3, undefined,        $5, $7       );}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt

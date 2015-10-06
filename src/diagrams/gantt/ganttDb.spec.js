@@ -27,7 +27,7 @@ describe('when using the ganttDb',function() {
         expect(tasks[0].id       ).toEqual('id1');
         expect(tasks[0].description).toEqual('test1');
     });
-    it('should handle duration instead of fixed date to determine end date', function () {
+    it('should handle duration (days) instead of fixed date to determine end date', function () {
         gDb.setDateFormat('YYYY-MM-DD');
         gDb.addSection('testa1');
         gDb.addTask('test1','id1,2013-01-01,2d');
@@ -37,7 +37,7 @@ describe('when using the ganttDb',function() {
         expect(tasks[0].id       ).toEqual('id1');
         expect(tasks[0].description).toEqual('test1');
     });
-    it('should handle duration instead of fixed date to determine end date', function () {
+    it('should handle duration (hours) instead of fixed date to determine end date', function () {
         gDb.setDateFormat('YYYY-MM-DD');
         gDb.addSection('testa1');
         gDb.addTask('test1','id1,2013-01-01,2h');
@@ -47,7 +47,27 @@ describe('when using the ganttDb',function() {
         expect(tasks[0].id       ).toEqual('id1');
         expect(tasks[0].description).toEqual('test1');
     });
-    it('should handle ', function () {
+    it('should handle duration (minutes) instead of fixed date to determine end date', function () {
+        gDb.setDateFormat('YYYY-MM-DD');
+        gDb.addSection('testa1');
+        gDb.addTask('test1','id1,2013-01-01,2m');
+        var tasks = gDb.getTasks();
+        expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate());
+        expect(tasks[0].endTime  ).toEqual(moment('2013-01-01 00:02', 'YYYY-MM-DD hh:mm').toDate());
+        expect(tasks[0].id       ).toEqual('id1');
+        expect(tasks[0].description).toEqual('test1');
+    });
+    it('should handle duration (seconds) instead of fixed date to determine end date', function () {
+        gDb.setDateFormat('YYYY-MM-DD');
+        gDb.addSection('testa1');
+        gDb.addTask('test1','id1,2013-01-01,2s');
+        var tasks = gDb.getTasks();
+        expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate());
+        expect(tasks[0].endTime  ).toEqual(moment('2013-01-01 00:00:02', 'YYYY-MM-DD hh:mm:ss').toDate());
+        expect(tasks[0].id       ).toEqual('id1');
+        expect(tasks[0].description).toEqual('test1');
+    });
+    it('should handle duration (weeks) instead of fixed date to determine end date', function () {
         gDb.setDateFormat('YYYY-MM-DD');
         gDb.addSection('testa1');
         gDb.addTask('test1','id1,2013-01-01,2w');

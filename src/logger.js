@@ -86,9 +86,11 @@ Logger.levels = {
     warn: 3,
     error: 4,
     fatal: 5,
-    default:2
+    default:5
 };
-
-exports.create = function(type, options) {
+exports.setLogLevel = function(level){
+    Logger.levels.default = level;
+}
+exports.create = function(options) {
     return new Logger(options);
 };

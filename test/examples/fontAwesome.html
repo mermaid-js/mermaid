@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../dist/mermaid.css"/>
+
+    <script src="../../dist/mermaid.js"></script>
+    <style>
+        body{
+            background-color: #89896f;
+        }
+
+    </style>
+
+</head>
+    <body>
+        <h1><i class="fa fa-camera-retro"></i> Font awesome support</h1>
+        <div class="mermaid" id="i211">
+        graph LR
+            A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+            B                          -->C["#9829; ;^; #60;"]
+            C-->                          D(fa:fa-camera-retro);
+            D-->                          E(tjo);
+        </div>
+        <div class="mermaid" id="i211">
+            sequenceDiagram
+            Ali#45;ce->>John: Hello John, how are you? #60;
+            John-->>Alice: Great!#quot;
+        </div>
+    </body>
+</html>

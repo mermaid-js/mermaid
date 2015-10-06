@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
 
-    <script src="../dist/mermaid.js"></script>
+    <script src="../dist/mermaid.051.js"></script>
     <script>
         var config = {
-            mermaid:{
-                startOnLoad:true,
-                htmlLabels:true,
-                callback:function(id){
-                    console.log(id,' rendered');
-                },
-                flowChart:{width:'100%'}
-            }
+            startOnLoad:true,
+            callback:function(id){
+                console.log(id,' rendered');
+            },
+            flowchart:{
+                    useMaxWidth:false,
+                    htmlLabels:true
+                }
         };
         mermaid.initialize(config);
     </script>
@@ -35,19 +35,21 @@
 </head>
     <body>
     <h1>Issue 141!!!</h1>
-    <div  class="mermaid" id="i141">
+    <div style="width:200px">
+    <div class="mermaid" id="i141">
 
         graph LR
         
         %% Example diagram
-        A[Square Rect] -- Link text --> B((Circle))
+        A[Square Rect] -- Link text --> B((Circle));
         A --> C(Round Rect)
         click A coolAction
         B --> D{Rhombus}
         C --> D
         A("test(vcc) a a ") --> B;
-
+        snda
         
+    </div>
     </div>
     <h1>Issue 140</h1>
     <div  class="mermaid" id="i140">
@@ -57,6 +59,7 @@
         C-->A
         D-->C
 
+    </div>
     </div>
     <div  class="mermaid" id="ettan">
         graph LR;
@@ -159,28 +162,20 @@
         class sq,e green
         class di orange
     </div>
-    <div class="mermaid2">
+    <div class="mermaid">
         graph TB
-        subgraph
+        subgraph f
             sq[Square shape]-->ci((Circle shape))
             od>Odd shape]---|Two line<br>edge comment|ro
         end
         subgraph
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
-            di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
+            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape]
+            di{Diamond is broken}-->ro(Rounded squar shape);
             di-->ro2(Rounded square shape)
         end
-        %% Comments after double percent signs
-        subgraph
-            e((Inner / circle))-->f(,.?!+-*ز);
-            cyr[Cyrillic]-->cyr2((Circle shape Начало));
-            A[Object foo,bar]-->B(Thing)
-        end
-        style e red;
-        classDef green fill:#9f6,stroke:#333,stroke-width:2px;
-        class green sq
+
     </div>
-    <div class="mermaid2">
+    <div class="mermaid">
         graph LR;
         A(Central Message Router);
         B(R TD);

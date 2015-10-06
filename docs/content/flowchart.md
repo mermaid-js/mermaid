@@ -1,4 +1,8 @@
-#Flowcharts - Basic Syntax
+---
+order: 3
+---
+
+# Flowcharts - Basic Syntax
 ## Graph
 This statement declares a new graph and the direction of the graph layout.
 
@@ -149,6 +153,26 @@ graph LR;
 
 ```
 
+### A link with arrow head and text
+```
+A-->|text|B
+```
+```mermaid
+graph LR;
+    A-->|text|B
+```
+
+or
+```
+A-- text -->B
+```
+```mermaid
+graph LR;
+    A-- text -->B
+```
+
+
+
 ### Dotted link
 -.->
 ```mermaid
@@ -172,6 +196,37 @@ graph LR;
 ```mermaid
 graph LR;
    A == text ==> B
+```
+
+## Special characters that break syntax
+
+It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
+
+```
+graph LR
+    d1["This is the (text) in the box"]
+```
+
+```mermaid
+graph LR
+    id1["This is the (text) in the box"]
+```
+
+### Entity codes to escape characters
+
+It is possible to escape characters using the syntax examplified here.
+
+The flowchart defined by the following code:
+```
+    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+```
+
+This would render to the diagram below:
+
+```mermaid
+    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
 
 ## Subgraphs
@@ -216,7 +271,7 @@ graph TB
 
 ## Interaction
 
-It is possible to bind a click event to a node:
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
 
 ```
 click nodeId callback
@@ -224,6 +279,36 @@ click nodeId callback
 
 * nodeId is the id of the node
 * callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.
+
+Examples of tooltip usage below:
+
+```
+&lt;script&gt;
+    var callback = function(){
+        alert(&#39;A callback was triggered&#39;);
+    }
+&lt;script&gt;
+```
+
+```
+graph LR;
+    A-->B;
+    click A callback "Tooltip for a callback"
+    click B "http://www.github.com" "This is a tooltip for a link"
+```
+
+
+The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
+
+```mermaid
+graph LR;
+    A-->B;
+    click A callback "Tooltip"
+    click B "http://www.github.com" "This is a link"
+```
+<aside class="success">The tooltip functionality and the ability to link to urls are available from version 0.5.2.</aside>
+
+When integration mermaid using the mermaidAPI #mermaidapi the function that binds the events need to be run when the finished graph has been added to the page. This is described in the [API usage](#api-usage) section.
 
 ## Styling and classes
 
@@ -255,7 +340,7 @@ graph LR
 ```
 
 #### Classes
-More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
+More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that
 should have a different look.
 
 a class definition looks like the example below:
@@ -275,9 +360,33 @@ It is also possible to attach a class to a list of nodes in one statement:
 ```
     class nodeId1,nodeId2 className;
 ```
+### Css classes
+
+It is also possible to pre dine classes in css styles that can be applied from the graph definition as in the example
+below:
+**Example style**
+```
+<style>
+    .cssClass > rect{
+        fill:#FF0000;
+        stroke:#FFFF00;
+        stroke-width:4px;
+    }
+</style>
+```
+**Example definition**
+```
+graph LR;
+    A-->B[AAA<span>BBB</span>];
+    B-->D;
+    class A cssClass;
+```
+
+<aside class="warning">Class definitions in the graph defnition is broken in version 0.5.1 but has been fixed in the master branch of mermaid. This fix will be included in 0.5.2</aside>
 
 
-#### Default class
+
+### Default class
 
 If a class is named default it will be assigned to all classes without specific class definitions.
 
@@ -307,17 +416,4 @@ graph LR
     B --> C{Decision}
     C -->|One| D[Result one]
     C -->|Two| E[Result two]
-```
-## Configuration...
-
-Is it possible to adjust the width of the rendered flowchart.
-
-This is done by defining **mermaid.flowchartConfig** or by the CLI to use a json file with the configuration. How to use
-the CLI is described in the mermaidCLI page.
-mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.
-
-```
-mermaid.flowchartConfig = {
-        width:100%;
-    };
 ```

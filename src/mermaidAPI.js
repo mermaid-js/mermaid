@@ -1,3 +1,16 @@
+/**
+ * ---
+ * title: mermaidAPI
+ * order: 5
+ * ---
+ * # mermaidAPI
+ * This is the api to be used when handling the integration with the web page instead of using the default integration
+ * (mermaid.js).
+ *
+ * The core of this api is the **render** function that given a graph definitionas text renders the graph/diagram and
+ * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
+ * somewhere in the page or something completely different.
+ */
 var graph = require('./diagrams/flowchart/graphDb');
 var flow = require('./diagrams/flowchart/parser/flow');
 var utils = require('./utils');
@@ -15,55 +28,179 @@ var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 var d3 = require('./d3');
 var nextId = 0;
-var log = require('./logger').create();
 
-// Default options, can be overridden at initialization time
+
 /**
- * Object with the co0nfigurations
- * @type {Object}
+ * ## Configuration
+ * These are the default options which can be overridden with the initialization call as in the example below:
+ * ```
+ * mermaid.initialize({
+ *   flowchart:{
+ *      htmlLabels: false
+ *   }
+ * });
+ * ```
  */
 var config = {
+    /**
+     * logLevel , decides the amount of logging to be used.
+     *    * debug: 1
+     *    * info: 2
+     *    * warn: 3
+     *    * error: 4
+     *    * fatal: 5
+     */
+    logLevel: 3,
+    /**
+     * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
+     */
     cloneCssStyles: true,
+
+    /**
+     * **startOnLoad** - This options controls whether or mermaid starts when the page loads
+     */
+    startOnLoad: true,
+
+    /**
+     * ### flowchart
+     * *The object containing configurations specific for flowcharts*
+     */
     flowchart:{
-        // Default is to not set width
-        //        width: 1200
+        /**
+         * **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
+         * on the edges
+         */
         htmlLabels:true,
+        /**
+         * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
+         * the diagram.
+         */
         useMaxWidth:true
     },
+
+    /**
+     * ###  sequenceDiagram
+     * The object containing configurations specific for sequence diagrams
+     */
     sequenceDiagram:{
+
+        /**
+         * **diagramMarginX** - margin to the right and left of the sequence diagram
+         */
         diagramMarginX:50,
+
+        /**
+         * **diagramMarginY** - margin to the over and under the sequence diagram
+         */
         diagramMarginY:10,
-        // Margin between actors
+
+    /**
+     * **actorMargin** - Margin between actors
+     */
         actorMargin:50,
-        // Width of actor moxes
+
+    /**
+     * **width** - Width of actor boxes
+     */
         width:150,
-        // Height of actor boxes
+
+    /**
+     * **height** - Height of actor boxes
+     */
         height:65,
-        // Margin around loop boxes
+
+    /**
+     * **boxMargin** - Margin around loop boxes
+     */
         boxMargin:10,
+
+     /**
+      * **boxTextMargin** - margin around the text in loop/alt/opt boxes
+      */
         boxTextMargin:5,
 
+     /**
+     * **noteMargin** - margin around notes
+      */
         noteMargin:10,
-        // Space between messages
+
+        /**
+     * **messageMargin** - Space between messages
+         */
         messageMargin:35,
-        //mirror actors under diagram
+
+    /**
+     * **mirrorActors** - mirror actors under diagram
+     */
         mirrorActors:true,
-        // Depending on css styling this might need adjustment
-        // Prolongs the edge of the diagram downwards
+
+    /**
+     * **bottomMarginAdj** - Depending on css styling this might need adjustment.
+     * Prolongs the edge of the diagram downwards
+     */
         bottomMarginAdj:1,
+
+    /**
+     * **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used
+     */
         useMaxWidth:true
     },
+
+    /** ### gantt
+     * The object containing configurations specific for gantt diagrams*
+     */ 
     gantt:{
+        /**
+         * **titleTopMargin** - margin top for the text over the gantt diagram
+         */ 
         titleTopMargin: 25,
+
+        /** 
+         * **barHeight** - the height of the bars in the graph
+         */ 
         barHeight: 20,
+
+        /** 
+         * **barGap** - the margin between the different activities in the gantt diagram
+         */ 
         barGap: 4,
+
+        /** 
+         *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
+         */  
         topPadding: 50,
+
+        /** 
+         *  **sidePadding** - the space allocated for the section name to the left of the activities.
+         */  
         sidePadding: 75,
+
+        /** 
+         *  **gridLineStartPadding** - Vertical starting position of the grid lines
+         */
         gridLineStartPadding: 35,
+
+        /** 
+         *  **fontSize** - font size ...
+         */
         fontSize: 11,
+
+        /** 
+         * **fontFamily** - font family ...
+         */
         fontFamily: '"Open-Sans", "sans-serif"',
+
+        /** 
+         * **numberSectionStyles** - the number of alternating section styles
+         */
         numberSectionStyles:3,
+
+        /** 
+         * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
+         */  
         axisFormatter: [
+
             // Within a day
             ["%I:%M", function (d) {
                 return d.getHours();
@@ -84,11 +221,15 @@ var config = {
             ["%m-%y", function (d) {
                 return d.getMonth();
             }]
-        ]    }
+        ]
+    }
 };
 
+var log = require('./logger').create({level:config.logLevel});
+
 /**
- * Function that parses a mermaid diagram defintion. If parsing fails the parseError callback is called and an error is
+ * ## parse
+ * Function that parses a mermaid diagram definition. If parsing fails the parseError callback is called and an error is
  * thrown and
  * @param text
  */
@@ -130,6 +271,7 @@ var parse = function(text){
 exports.parse = parse;
 
 /**
+ * ## version
  * Function returning version information
  * @returns {string} A string containing the version info
  */
@@ -137,12 +279,76 @@ exports.version = function(){
     return require('../package.json').version;
 };
 
+exports.encodeEntities = function(text){
+    var txt = text;
+
+    txt = txt.replace(/style.*:\S*#.*;/g,function(s,t,u){
+        var innerTxt = s.substring(0,s.length-1);
+        return innerTxt;
+    });
+    txt = txt.replace(/classDef.*:\S*#.*;/g,function(s,t,u){
+        var innerTxt = s.substring(0,s.length-1);
+        return innerTxt;
+    });
+
+    txt = txt.replace(/#\w+\;/g,function(s,t,u){
+        var innerTxt = s.substring(1,s.length-1);
+
+        var isInt = /^\+?\d+$/.test(innerTxt);
+        if(isInt){
+            return 'ﬂ°°'+innerTxt+'¶ß';
+        }else{
+            return 'ﬂ°'+innerTxt+'¶ß';
+        }
+
+    });
+
+    //txt = txt.replace(/fa:fa[\w\-]+/g,function(s,t,u){
+    //    return 'fa:¢';
+    //});
+
+    return txt;
+};
+
+exports.decodeEntities = function(text){
+    var txt = text;
+
+    txt = txt.replace(/\ﬂ\°\°/g,function(s,t,u){
+        return '&#';
+    });
+    txt = txt.replace(/\ﬂ\°/g,function(s,t,u){
+        return '&';
+    });
+    txt = txt.replace(/¶ß/g,function(s,t,u){
+        return ';';
+    });
+
+
+
+    return txt;
+};
 /**
- * Function that renders an svg with a graph from a chart definition.
- * @param id
- * @param txt
- * @param cb
- * @param container
+ * ##render
+ * Function that renders an svg with a graph from a chart definition. Usage example below.
+ *
+ * ```
+ * mermaidAPI.initialize({
+ *      startOnLoad:true
+ *  });
+ *  $(function(){
+ *      var graphDefinition = 'graph TB\na-->b';
+ *      var cb = function(svgGraph){
+ *          console.log(svgGraph);
+ *      };
+ *      mermaidAPI.render('id1',graphDefinition,cb);
+ *  });
+ *```
+ * @param id the id of the element to be rendered
+ * @param txt the graph definition
+ * @param cb callback which is called after rendering is finished with the svg code as inparam.
+ * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
+ * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
+ * completed.
  */
 var render = function(id, txt, cb, container){
 
@@ -165,18 +371,23 @@ var render = function(id, txt, cb, container){
             .append('g');
     }
 
+    window.txt = txt;
+    txt = exports.encodeEntities(txt);
+    //console.warn('mermaid encode: ');
+    //console.warn(txt);
+
     var element = d3.select('#d'+id).node();
     var graphType = utils.detectType(txt);
     var classes = {};
     switch(graphType){
         case 'graph':
+
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
             if(config.cloneCssStyles){
                 classes = flowRenderer.getClasses(txt, false);
                 utils.cloneCssStyles(element.firstChild, classes);
             }
-            graph.bindFunctions();
             break;
         case 'dotGraph':
             flowRenderer.setConf(config.flowchart);
@@ -187,9 +398,7 @@ var render = function(id, txt, cb, container){
             }
             break;
         case 'sequenceDiagram':
-            //if(typeof mermaid.sequenceConfig === 'object'){
             seq.setConf(config.sequenceDiagram);
-            //}
             seq.draw(txt,id);
             if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
@@ -210,10 +419,21 @@ var render = function(id, txt, cb, container){
             break;
     }
 
-    if(typeof cb !== 'undefined'){
-        cb(d3.select('#d'+id).node().innerHTML);
-    }else{
+    d3.select('#d'+id).selectAll('foreignobject div').attr('xmlns','http://www.w3.org/1999/xhtml');
 
+
+
+    // Fix for when the base tag is used
+    var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
+
+    svgCode = exports.decodeEntities(svgCode);
+    //console.warn('mermaid decode: ');
+    //console.warn(svgCode);
+    //var he = require('he');
+    //svgCode = he.decode(svgCode);
+    if(typeof cb !== 'undefined'){
+        cb(svgCode,graph.bindFunctions);
+    }else{
         log.warn('CB = undefined');
     }
 
@@ -245,7 +465,7 @@ var setConf = function(cnf){
 
             var j;
             for(j=0;j<lvl2Keys.length;j++) {
-                //log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
+                log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
                 if(typeof config[lvl1Keys[i]] === 'undefined'){
                     
                     config[lvl1Keys[i]] = {};
@@ -259,6 +479,7 @@ var setConf = function(cnf){
     }
 };
 exports.initialize = function(options){
+    log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization
     if(typeof options === 'object'){
         setConf(options);
@@ -282,5 +503,6 @@ global.mermaidAPI = {
     parse      : exports.parse,
     initialize : exports.initialize,
     detectType : utils.detectType,
-    parseError : exports.parseError
+    parseError : exports.parseError,
+    getConfig  : exports.getConfig
 };

@@ -1,3 +1,4 @@
+ulimit -n 1200
 rm -r htmlDocs
 mkdir htmlDocs
 cp -r ./docs/img htmlDocs

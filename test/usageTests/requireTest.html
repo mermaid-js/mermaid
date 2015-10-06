@@ -2,41 +2,26 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="bower_components/qunit/qunit/qunit.css" />
+    <link rel="stylesheet" href="../../dist/mermaid.forest.css"/>
+
+    <script src="bower_components/qunit/qunit/qunit.js"></script>
+    <script>
+        QUnit.config.autostart = false;
+    </script>
 
     <script data-main="reqJsApp.js" src="bower_components/requirejs/require.js"></script>
-    <script>
-        var mermaid_config = {
-            startOnLoad:true
-        }
-    </script>
 </head>
-    <body>
-        TEST 0.4.1
-    <div class="mermaid">
-        graph TD;
-        sq[Square shape2] --> ci((Circle shape // Начало)) 
-    </div>
-    <h1>Shapes</h1>
-        <div class="mermaid">
-            info
-        </div>
-    <div class="mermaid">
-graph LR
-    A[Square Rect] -- Link text --> B((Circle))
-    A --> C(Round Rect)
-    B --> D{Rhombus}
-    C --> D 
-        </div>
-    <div class="mermaid">
-        graph TD;
-            sq[Square shape]-->ci((Circle shape)); 
-            od>Odd shape]---|Two line<br>edge comment|ro;
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape];
-            di{Diamond is <br/> broken}-->ro(Rounded<br>square<br>shape);
-            di-->ro2(Rounded square shape);
-            e((Inner circle URL))-->f(,.?!+-*ز);
-            style e red;
-    </div>
 
-    </body>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <div class="mermaid">
+        graph LR
+            A-->B
+            B-->C
+            C-->A
+            D-->C
+    </div>
+</body>
 </html>

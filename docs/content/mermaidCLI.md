@@ -1,3 +1,7 @@
+---
+order: 4
+---
+
 # mermaid CLI
 
 Installing mermaid globally (`npm install -g mermaid`) will expose the `mermaid` command to your environment, allowing you to generate PNGs from any file containing mermaid markup via the command line.

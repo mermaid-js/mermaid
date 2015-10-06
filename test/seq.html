@@ -6,17 +6,15 @@
     <script src="../dist/mermaid.js"></script>
     <link rel="stylesheet" href="seq.css"/>
     <script>
-        var mermaid_config = {
-            startOnLoad:true,
-            mermaid:{
-                cloneCssStyles: false
-            },
-            sequenceDiagram:{
-                mirrorActors:true,
-                height:35
-                
-            }
-        };
+        mermaid.initialize({
+                sequenceDiagram:{
+                    mirrorActors:true,
+                    height:35,
+                    topPadding:125
+
+                }
+
+        });
         //mermaid.sequenceConfig = '{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":45,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35, "mirrorActors":true}';
         //mermaid.sequenceConfig = JSON.parse('{"diagramMarginX":50,"diagramMarginY":10,"actorMargin":50,"width":150,"height":165,"boxMargin":10,"boxTextMargin":5,"noteMargin":10,"messageMargin":35}');
 
@@ -31,6 +29,16 @@
     <body>
         <h1>Autowrap</h1>
 
+    <div class="mermaid">
+        sequenceDiagram
+        Merchant->>Customer: foo
+        Note left of Person:One row for the a
+        Note right of Person: Bob thinks a long long time, so long that the text does not fit In a row. Bob thinks a long long time, so long that the text does not fit In a row. Bob thinks a long long time, so long that the text does not fit In a row. Bob thinks a long long time, so long that the text does not fit In a row.
+
+        Person-->>Customer: bar
+
+        Note left of Person: Foo checks up on him
+    </div>
     <div class="mermaid">
         sequenceDiagram
         Alice->>Bob: Hello Bob, how are you?

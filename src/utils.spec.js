@@ -8,19 +8,6 @@ describe('when detecting chart type ',function() {
 
     });
 
-    it('should handle a sequence defintion', function () {
-        str = 'sequence TB\nbfs1:queue';
-
-        var type = utils.detectType(str);
-        expect(type).toBe('sequence');
-    });
-    it('should handle a sequence defintion with leading spaces', function () {
-        str = '    sequence TB\nbfs1:queue';
-
-        var type = utils.detectType(str);
-        expect(type).toBe('sequence');
-    });
-
     it('should handle a graph defintion', function () {
         str = 'graph TB\nbfs1:queue';
 
@@ -39,12 +26,6 @@ describe('when detecting chart type ',function() {
 
         var type = utils.detectType(str);
         expect(type).toBe('graph');
-    });
-    it('should handle a sequence defintion with leading spaces and newline', function () {
-        str = '  \n  sequence TB\nbfs1:queue';
-
-        var type = utils.detectType(str);
-        expect(type).toBe('sequence');
     });
 });
 
@@ -137,9 +118,9 @@ describe('when cloning CSS ',function() {
         svg.setAttribute('id', 'mermaid-01');
 
         utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] } });
-        expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node { stroke:#fff; stroke-width:1.5px; }' ]);
+        expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }' ]);
         // Also verify the elements around the styling
-        expect(svg.innerHTML).toBe('<style type="text/css" title="mermaid-svg-internal-css">/* <![CDATA[ */\n#mermaid-01 .node { stroke:#fff; stroke-width:1.5px; }\n/* ]]> */\n</style>');
+        expect(svg.innerHTML).toBe('<style type="text/css" title="mermaid-svg-internal-css">/* <![CDATA[ */\n#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }\n/* ]]> */\n</style>');
     });
 
     it('should handle stylesheet in document with no classes in SVG', function () {
@@ -180,7 +161,7 @@ describe('when cloning CSS ',function() {
         var svg = generateSVG();
         addStyleToDocument();
         utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] } });
-        expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node { stroke:#fff; stroke-width:1.5px; }', '.node { stroke: #eee; }', '.node-square { stroke: #bbb; }']);
+        expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }', '.node { stroke: #eee; }', '.node-square { stroke: #bbb; }']);
     });
 
     it('should handle a default class together with stylesheet in document and classDefs', function () {
@@ -189,11 +170,11 @@ describe('when cloning CSS ',function() {
         utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] }, 
                                     "node-square": { "styles": ["fill:#eee", "stroke:#aaa"] },
                                     "node-circle": { "styles": ["fill:#444", "stroke:#111"] } });
-        expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node { stroke:#fff; stroke-width:1.5px; }', 
+        expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }',
                                              '.node { stroke: #eee; }', 
                                              '.node-square { stroke: #bbb; }',
-                                             '#mermaid-01 .node-square { fill:#eee; stroke:#aaa; }',
-                                             '#mermaid-01 .node-circle { fill:#444; stroke:#111; }'
+                                             '#mermaid-01 .node-square>rect { fill:#eee; stroke:#aaa; }',
+                                             '#mermaid-01 .node-circle>rect { fill:#444; stroke:#111; }'
                                              ]);
     });
 });

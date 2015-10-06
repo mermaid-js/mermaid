@@ -1,3 +1,7 @@
+---
+order: 4
+---
+
 # Gant diagrams
 
 > A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule. Gantt charts illustrate the start and finish dates of the terminal elements and summary elements of a project.
@@ -30,7 +34,7 @@ gantt
     anther task      : 24d
 ```
 
-# Syntax
+## Syntax
 ```
 %% Example with slection of syntaxes
         gantt
@@ -192,7 +196,7 @@ noteText     | Styles for the text on in the note boxes.
 ### Sample stylesheet
 
 
-```
+```css
 
             .grid .tick {
                 stroke: lightgrey;
@@ -247,23 +251,5 @@ noteText     | Styles for the text on in the note boxes.
 
 Is it possible to adjust the margins for rendering the sequence diagram.
 
-This is done by defining **mermaid.sequenceConfig** or by the CLI to use a json file with the configuration. How to use
-the CLI is described in the mermaidCLI page.
-mermaid.sequenceConfig can be set to a JSON string with config parameters or the corresponding object.
-
-```
-mermaid.ganttConfig = {
-    titleTopMargin:25,
-    barHeight:20,
-    barGap:4,
-    topPadding:75,
-    sidePadding:75
-    };
-```
-
-### Possible configration params:
-
-Param | Descriotion | Default value
---- | --- | ---
-mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
-bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists.|1
+This is done by defining the **sequenceConfig** part of the configuration object. Read more about it [here](http://knsv.github.io/mermaid/index.html#configuration28). How to use
+the CLI is described in the [mermaidCLI]((http://knsv.github.io/mermaid/index.html#mermaidCLI) page.

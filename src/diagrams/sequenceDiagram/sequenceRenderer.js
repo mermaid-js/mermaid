@@ -138,21 +138,23 @@ var drawNote = function(elem, startx, verticalPos, msg){
     var rectElem = svgDraw.drawRect(g, rect);
 
     var textObj = svgDraw.getTextObj();
-    textObj.x = startx;
-    textObj.y = verticalPos;
+    textObj.x = startx-4;
+    textObj.y = verticalPos-13;
     textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = msg.message;
     textObj.class = 'noteText';
 
-    var textElem = svgDraw.drawText(g,textObj, conf.width);
+    var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
 
     var textHeight = textElem[0][0].getBBox().height;
     if(textHeight > conf.width){
         textElem.remove();
         g = elem.append("g");
-        
-        textElem = svgDraw.drawText(g,textObj, 2*conf.width);
+
+        //textObj.x = textObj.x - conf.width;
+        //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
+        textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
         textHeight = textElem[0][0].getBBox().height;
         rectElem.attr('width',2*conf.width);
         exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
@@ -228,11 +230,11 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     line.attr("stroke", "black");
     line.style("fill", "none");     // remove any fill colour
     if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
-        line.attr("marker-end", "url(#arrowhead)");
+        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#arrowhead)");
     }
 
     if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
-        line.attr("marker-end", "url(#crosshead)");
+        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#crosshead)");
     }
 
 };

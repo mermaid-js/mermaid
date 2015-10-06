@@ -22,7 +22,7 @@ sequenceDiagram
     John-->>Alice: Great!
 ```
 
-# Syntax
+## Syntax
 
 ### Participants
 
@@ -202,7 +202,7 @@ noteText     | Styles for the text on in the note boxes.
 ### Sample stylesheet
 
 
-```
+```css
 
 body {
     background: white;

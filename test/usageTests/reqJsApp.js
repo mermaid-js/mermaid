@@ -1,22 +1,29 @@
 require.config({
-    baseUrl: '.',
     paths: {
-        // the left side is the module ID,
-        // the right side is the path to
-        // the jQuery file, relative to baseUrl.
-        // Also, the path should NOT include
-        // the '.js' file extension. This example
-        // is using jQuery 1.9.0 located at
-        // js/lib/jquery-1.9.0.js, relative to
-        // the HTML page.
-        mermaid: 'bower_components/mermaid/dist/mermaid.full'
+        mermaid: '../../dist/mermaid'
+    },
+    shim: {
+        mermaid: {
+            exports: 'mermaid'
+        }
     }
 });
 
-// Start the main app logic.
-requirejs(['simple','mermaid'],
-    function   (simple) {
-        //jQuery, canvas and the app/sub module are all
-        //loaded and can be used here now.
-        mermaid.init();
+require([], function (){
+    QUnit.module('requireTest.html');
+
+    QUnit.test('using mermaid in requirejs', function (assert){
+        var done = assert.async();
+        require(['mermaid'], function (mermaid) {
+            assert.ok(mermaid, 'mermaid is not null');
+            console.log(mermaid);
+            mermaid.init();
+            assert.equal(window.d3.selectAll('path')[0].length, 8,
+                'drew 8 paths');
+            done();
+        });
     });
+
+    QUnit.load();
+    QUnit.start();
+});

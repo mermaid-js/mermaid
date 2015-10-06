@@ -105,6 +105,10 @@ exports.addVertices = function (vert, g) {
             case 'circle':
                 _shape = 'circle';
                 break;
+            case 'group':
+                _shape = 'rect';
+                verticeText = '';
+                break;
             default:
                 _shape = 'rect';
         }
@@ -210,15 +214,13 @@ exports.getClasses = function (text, isDot) {
     // Parse the graph definition
     parser.parse(text);
 
-    var classDefStylesObj = {};
-    var classDefStyleStr = '';
-
     var classes = graph.getClasses();
 
     // Add default class if undefined
     if(typeof(classes.default) === 'undefined') {
         classes.default = {id:'default'};
-        classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        //classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
+        classes.default.styles = [];
         classes.default.clusterStyles = ['rx:4px','fill: rgb(255, 255, 222)','rx: 4px','stroke: rgb(170, 170, 51)','stroke-width: 1px'];
         classes.default.nodeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
         classes.default.edgeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
@@ -279,7 +281,7 @@ exports.draw = function (text, id,isDot) {
     var i = 0;
     for(i=subGraphs.length-1;i>=0;i--){
         subG = subGraphs[i];
-        graph.addVertex(subG.id,undefined,undefined,undefined);
+        graph.addVertex(subG.id,subG.title,'group',undefined);
     }
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
@@ -396,7 +398,19 @@ exports.draw = function (text, id,isDot) {
     svgGroup = d3.select("#" + id + " g");
 
     // Run the renderer. This is what draws the final graph.
-    render(d3.select("#" + id + " g"), g);
+    var element = d3.select("#" + id + " g");
+    render(element, g);
+
+    //var tip = d3.tip().html(function(d) { return d; });
+    element.selectAll("g.node")
+                .attr("title", function(){
+            return graph.getTooltip(this.id);
+        });
+
+    //
+    //element.selectAll("g.node")
+    //    .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
+    //    .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
     var svgb = document.querySelector("#" + id);
 
 /*
@@ -414,7 +428,7 @@ exports.draw = function (text, id,isDot) {
     if(conf.useMaxWidth) {
         // Center the graph
         svg.attr("height", '100%');
-        svg.attr("width", '100%');
+        svg.attr("width", conf.width);
         //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
         svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
         svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
@@ -432,7 +446,7 @@ exports.draw = function (text, id,isDot) {
 
 
     // Index nodes
-    graph.indexNodes('sunGraph'+i);
+    graph.indexNodes('subGraph'+i);
     
     for(i=0;i<subGraphs.length;i++){
         var pos = graph.getDepthFirstPos(i);

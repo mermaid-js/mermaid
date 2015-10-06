@@ -28,15 +28,15 @@ module.exports = d3;
 /* jshint ignore:start */
 /*
 
-D3 Text Wrap
-By Vijith Assar
-http://www.vijithassar.com
-http://www.github.com/vijithassar
-@vijithassar
+ D3 Text Wrap
+ By Vijith Assar
+ http://www.vijithassar.com
+ http://www.github.com/vijithassar
+ @vijithassar
 
-Detailed instructions at http://www.github.com/vijithassar/d3textwrap
+ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
 
-*/
+ */
 
 (function() {
 
@@ -86,7 +86,7 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
             // if it's not a rect, exit
             if(element_type !== 'rect') {
                 return false;
-            // if it's a rect, proceed to extracting the position attributes
+                // if it's a rect, proceed to extracting the position attributes
             } else {
                 var bounds_extracted = {};
                 bounds_extracted.x = d3.select(bounding_rect).attr('x') || 0;
@@ -122,30 +122,30 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
                 (typeof bounds.y !== 'undefined') &&
                 (typeof bounds.width !== 'undefined') &&
                 (typeof bounds.height !== 'undefined')
-                // if that's the case, then the bounds are fine
+            // if that's the case, then the bounds are fine
             ) {
                 // return the lightly modified bounds
                 return bounds;
-            // if it's a numerically indexed array, assume it's a
-            // d3-selected rect and try to extract the positions
+                // if it's a numerically indexed array, assume it's a
+                // d3-selected rect and try to extract the positions
             } else if (
-                    // first try to make sure it's an array using Array.isArray
-                    (
-                        (typeof Array.isArray == 'function') &&
-                        (Array.isArray(bounds))
-                    ) ||
-                    // but since Array.isArray isn't always supported, fall
-                    // back to casting to the object to string when it's not
-                    (Object.prototype.toString.call(bounds) === '[object Array]')
+                // first try to make sure it's an array using Array.isArray
+            (
+            (typeof Array.isArray == 'function') &&
+            (Array.isArray(bounds))
+            ) ||
+                // but since Array.isArray isn't always supported, fall
+                // back to casting to the object to string when it's not
+            (Object.prototype.toString.call(bounds) === '[object Array]')
             ) {
                 // once you're sure it's an array, extract the boundaries
                 // from the rect
                 var extracted_bounds = extract_bounds(bounds);
                 return extracted_bounds;
             } else {
-            // but if the bounds are neither an object nor a numerical
-            // array, then the bounds argument is invalid and you'll
-            // need to fix it
+                // but if the bounds are neither an object nor a numerical
+                // array, then the bounds argument is invalid and you'll
+                // need to fix it
                 return false;
             }
         }
@@ -172,27 +172,27 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
         // check that we have the necessary conditions for this function to operate properly
         if(
             // selection it's operating on cannot be not empty
-            (selection.length == 0) ||
+        (selection.length == 0) ||
             // d3 must be available
-            (!d3) ||
+        (!d3) ||
             // desired wrapping bounds must be provided as an input argument
-            (!bounds) ||
+        (!bounds) ||
             // input bounds must validate
-            (!verified_bounds)
+        (!verified_bounds)
         ) {
             // try to return the calling selection if possible
             // so as not to interfere with methods downstream in the
             // chain
             if(selection) {
                 return selection;
-            // if all else fails, just return false. if you hit this point then you're
-            // almost certainly trying to call the textwrap() method on something that
-            // doesn't make sense!
+                // if all else fails, just return false. if you hit this point then you're
+                // almost certainly trying to call the textwrap() method on something that
+                // doesn't make sense!
             } else {
                 return false;
             }
-        // if we've validated everything then we can finally proceed
-        // to the meat of this operation
+            // if we've validated everything then we can finally proceed
+            // to the meat of this operation
         } else {
 
             // reassign the verified bounds as the set we want
@@ -240,6 +240,7 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
                 }
                 return_value = parent.select('foreignObject');
             }
+
 
             // wrap with tspans if foreignObject is undefined
             var wrap_with_tspans = function(item) {
@@ -355,12 +356,18 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
                                     substrings.push(temp);
                                     text_node_selected.text('');
                                     text_node_selected.text(word);
+                                    // Handle case where there is just one more word to be wrapped
+                                    if(i == text_to_wrap_array.length - 1) {
+                                        new_string = word;
+                                        text_node_selected.text(new_string);
+                                        new_width = text_node.getComputedTextLength();
+                                    }
                                 }
                             }
                             // if we're up to the last word in the array,
                             // get the computed length as is without
                             // appending anything further to it
-                            else if(i == text_to_wrap_array.length - 1) {
+                            if(i == text_to_wrap_array.length - 1) {
                                 text_node_selected.text('');
                                 var final_string = new_string;
                                 if(
@@ -372,22 +379,6 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
                                     substrings.push(temp);
                                 }
                             }
-                        }
-
-                        // position the overall text node
-                        text_node_selected.attr('y', function() {
-                            var y_offset = bounds.y;
-                            // shift by line-height to move the baseline into
-                            // the bounds – otherwise the text baseline would be
-                            // at the top of the bounds
-                            if(line_height) {y_offset += line_height;}
-                            return y_offset;
-                        });
-                        // shift to the right by the padding value
-                        if(padding) {
-                            text_node_selected
-                                .attr('x', bounds.x)
-                            ;
                         }
 
                         // append each substring as a tspan
@@ -417,23 +408,43 @@ Detailed instructions at http://www.github.com/vijithassar/d3textwrap
                                 // is probably based on the full length of the
                                 // text string until we make this adjustment
                                 current_tspan
-                                    // .attr('dx', function() {
-                                    //     if(i == 0) {
-                                    //         var render_offset = 0;
-                                    //     } else if(i > 0) {
-                                    //         render_offset = substrings[i - 1].width;
-                                    //         render_offset = render_offset * -1;
-                                    //     }
-                                    //     return render_offset;
-                                    // })
                                     .attr('x', function() {
-
-                                        return bounds.x;
+                                        var x_offset = bounds.x;
+                                        if(padding) {x_offset += padding;}
+                                        return x_offset;
                                     });
+//                                    .attr('dx', function() {
+//                                        if(i == 0) {
+//                                            var render_offset = 0;
+//                                        } else if(i > 0) {
+//                                            render_offset = substrings[i - 1].width;
+//                                            render_offset = render_offset * -1;
+//                                        }
+//                                        return render_offset;
+//                                    });
                             }
                         }
                     }
                 }
+                // position the overall text node, whether wrapped or not
+                text_node_selected.attr('y', function() {
+                    var y_offset = bounds.y;
+                    // shift by line-height to move the baseline into
+                    // the bounds – otherwise the text baseline would be
+                    // at the top of the bounds
+                    if(line_height) {y_offset += line_height;}
+                    // shift by padding, if it's there
+                    if(padding) {y_offset += padding;}
+                    return y_offset;
+                });
+                // shift to the right by the padding value
+                text_node_selected.attr('x', function() {
+                    var x_offset = bounds.x;
+                    if(padding) {x_offset += padding;}
+                    return x_offset;
+                });
+
+
                 // assign our modified text node with tspans
                 // to the return value
                 return_value = d3.select(parent).selectAll('text');
