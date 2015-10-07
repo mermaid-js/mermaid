@@ -303,10 +303,6 @@ exports.encodeEntities = function(text){
 
     });
 
-    //txt = txt.replace(/fa:fa[\w\-]+/g,function(s,t,u){
-    //    return 'fa:¢';
-    //});
-
     return txt;
 };
 
