@@ -5,6 +5,7 @@
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>mermaid - Generation of diagrams and flowcharts from text in a similar manner as markdown.</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
     <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen"/>
     <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
@@ -522,7 +523,22 @@ graph LR
 
 <h3 id="default-class">Default class</h3>
 <p>If a class is named default it will be assigned to all classes without specific class definitions.</p>
-<pre class="css"><code>    classDef default fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><h2 id="graph-declarations-with-spaces-between-vertices-and-link-and-without-semicolon">Graph declarations with spaces between vertices and link and without semicolon</h2>
+<pre class="css"><code>    classDef default fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><h2 id="basic-support-for-fontawesome">Basic support for fontawesome</h2>
+<p>It is possible to add icons from fontawesome. In order to do so, you need to add the fontwesome as described in the instructions at<br><a href="https://fortawesome.github.io/Font-Awesome/">the fontawesome web site</a>.</p>
+<p>The icons are acessed via the syntax fa:#icon class name#.</p>
+<p>The example code below</p>
+<pre class="css"><code>graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);</code></pre><p>Would render the graph below:</p>
+<div class="mermaid">graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);</div><aside class="success">Support for fontawesome has been comitted to the  master branch and will be included in 0.5.3</aside>
+
+<h2 id="graph-declarations-with-spaces-between-vertices-and-link-and-without-semicolon">Graph declarations with spaces between vertices and link and without semicolon</h2>
 <ul>
 <li><p>In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.</p>
 </li>
