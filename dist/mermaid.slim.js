@@ -21448,7 +21448,7 @@ process.chdir = function (dir) {
 },{}],85:[function(_dereq_,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.3",
+  "version": "0.5.3-1",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -21462,9 +21462,16 @@ module.exports={
     "mermaid": "./bin/mermaid.js"
   },
   "scripts": {
-    "watch": "watchify src/mermaid.js -o dist/mermaid.js",
+    "live": "live-server ./test/examples",
+    "lint": "node node_modules/eslint/bin/eslint.js src",
+    "watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "test": "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
+    "test": "npm run dist && ./node_modules/.bin/gulp test",
+    "dist-slim-mermaid": "browserify src/mermaid.js    -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | uglifyjs -mc > dist/mermaid.slim.min.js",
+    "dist-slim-mermaidAPI": "browserify src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | uglifyjs -mc > dist/mermaidAPI.slim.min.js",
+    "dist-mermaid": "browserify src/mermaid.js    -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | uglifyjs -mc > dist/mermaid.min.js",
+    "dist-mermaidAPI": "browserify src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | uglifyjs -mc > dist/mermaidAPI.min.js",
+    "dist": "npm run dist-slim-mermaid;npm run dist-slim-mermaidAPI; npm run dist-mermaid;npm run dist-mermaidAPI"
   },
   "repository": {
     "type": "git",
@@ -21474,7 +21481,7 @@ module.exports={
   "license": "MIT",
   "dependencies": {
     "chalk": "^0.5.1",
-    "d3": "~3.4.13",
+    "d3": "~3.5.6",
     "dagre-d3": "~0.4.8",
     "he": "^0.5.0",
     "minimist": "^1.1.0",
@@ -21484,19 +21491,17 @@ module.exports={
     "which": "^1.0.8"
   },
   "devDependencies": {
-    "async": "^0.9.0",
+    "babel-eslint": "^4.1.3",
+    "babelify": "^6.3.0",
     "browserify": "~6.2.0",
-    "clone": "^0.2.0",
     "codeclimate-test-reporter": "0.0.4",
-    "connect-livereload": "^0.5.3",
-    "d3": "~3.4.13",
     "dateformat": "^1.0.11",
     "dox": "^0.8.0",
+    "eslint": "^1.6.0",
     "event-stream": "^3.2.0",
-    "express": "^4.12.4",
     "foundation": "^4.2.1-1",
     "front-matter": "^0.2.0",
-    "gulp": "~3.8.9",
+    "gulp": "~3.9.0",
     "gulp-bower": "0.0.10",
     "gulp-browserify": "^0.5.0",
     "gulp-bump": "^0.1.11",
@@ -21510,7 +21515,7 @@ module.exports={
     "gulp-if": "^1.2.5",
     "gulp-insert": "^0.4.0",
     "gulp-istanbul": "^0.4.0",
-    "gulp-jasmine": "~1.0.1",
+    "gulp-jasmine": "~2.1.0",
     "gulp-jison": "~1.2.0",
     "gulp-jshint": "^1.9.0",
     "gulp-less": "^3.0.1",
@@ -21523,36 +21528,21 @@ module.exports={
     "gulp-tag-version": "^1.2.1",
     "gulp-uglify": "~1.0.1",
     "gulp-vartree": "^2.0.1",
-    "he": "^0.5.0",
     "hogan.js": "^3.0.2",
-    "jasmine": "~2.0.1",
+    "jasmine": "2.3.2",
+    "jasmine-es6": "0.0.18",
     "jison": "~0.4.15",
-    "jshint-stylish": "^1.0.0",
-    "karma": "~0.12.20",
-    "karma-chrome-launcher": "~0.1.5",
-    "karma-jasmine": "~0.2.1",
-    "karma-requirejs": "~0.2.2",
-    "lodash": "^2.4.1",
-    "lodash._escapestringchar": "^2.4.1",
-    "lodash._objecttypes": "^2.4.1",
-    "lodash._reinterpolate": "^2.4.1",
-    "lodash._reunescapedhtml": "^2.4.1",
-    "lodash.defaults": "^2.4.1",
-    "lodash.templatesettings": "^2.4.1",
-    "lodash.values": "^2.4.1",
+    "jsdom": "^6.5.1",
+    "jshint-stylish": "^2.0.1",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
-    "mock-browser": "^0.90.27",
+    "mock-browser": "^0.91.34",
     "path": "^0.4.9",
-    "phantomjs": "^1.9.17",
+    "phantomjs": "^1.9.18",
     "proxyquire": "^1.3.1",
-    "readable-stream": "^2.0.2",
-    "replacestream": "^4.0.0",
     "require-dir": "^0.3.0",
-    "rewire": "^2.1.3",
-    "rimraf": "^2.2.8",
+    "rewire": "^2.3.4",
     "tape": "^3.0.3",
-    "tiny-lr": "^0.1.6",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.2"
   }
@@ -21565,7 +21555,7 @@ var d3;
 
 if (_dereq_) {
   try {
-    d3 = _dereq_("d3");
+    d3 = _dereq_('d3');
   } catch (e) {
   	//log.debug('Exception ... but ok');
   	//log.debug(e);
@@ -21776,7 +21766,7 @@ module.exports = d3;
                 var foreign_object = parent.append('foreignObject');
                 // add foreign object and set dimensions, position, etc
                 foreign_object
-                    .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
+                    .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
                     .attr('x', bounds.x)
                     .attr('y', bounds.y)
                     .attr('width', bounds.width)
@@ -22104,15 +22094,15 @@ exports.draw = function (txt, id, ver) {
     // Fetch the default direction, use TD if none was found
     var svg = d3.select('#'+id);
 
-    var textstring = "mermaid!";
-    var g = svg.append("g");
+    var textstring = 'mermaid!';
+    var g = svg.append('g');
 
-    g.append("text")      // text label for the x axis
-        .attr("x", 100)
-        .attr("y", 40)
+    g.append('text')      // text label for the x axis
+        .attr('x', 100)
+        .attr('y', 40)
         .attr('class','version')
         .attr('font-size','32px')
-        .style("text-anchor", "middle")
+        .style('text-anchor', 'middle')
         .text('mermaid '+ ver);
 
     /*
@@ -22121,9 +22111,9 @@ exports.draw = function (txt, id, ver) {
     var height = box.stopy-box.starty+2*conf.diagramMarginY;
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;*/
 
-    svg.attr("height",100);
-    svg.attr("width", 400 );
-    //svg.attr("viewBox", '0 0 300 150');
+    svg.attr('height',100);
+    svg.attr('width', 400 );
+    //svg.attr('viewBox', '0 0 300 150');
 };
 },{"../../d3":86,"../../logger":103,"./exampleDb":87,"./parser/example.js":89}],89:[function(_dereq_,module,exports){
 (function (process){
@@ -22759,7 +22749,7 @@ var dagreD3;
 //log.debug('setting up dagre-d3');
 if (_dereq_) {
   try {
-    dagreD3 = _dereq_("dagre-d3");
+    dagreD3 = _dereq_('dagre-d3');
       //log.debug('Got it (dagre-d3)');
   } catch (e) {log.debug('Could not load dagre-d3');}
 }
@@ -22827,7 +22817,7 @@ exports.addVertices = function (vert, g) {
         //log.debug(vertice.classes);
 
         if(vertice.classes.length >0){
-            classStr = vertice.classes.join(" ");
+            classStr = vertice.classes.join(' ');
         }
 
         /**
@@ -22846,11 +22836,17 @@ exports.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
+
+
         var labelTypeStr = '';
         if(conf.htmlLabels) {
             labelTypeStr = 'html';
+            verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s,t,u){
+                return '<i class="fa '+ s.substring(3)+'">';
+            });
+
         } else {
-            verticeText = verticeText.replace(/<br>/g, "\n");
+            verticeText = verticeText.replace(/<br>/g, '\n');
             labelTypeStr = 'text';
         }
 
@@ -22947,22 +22943,22 @@ exports.addEdges = function (edges, g) {
                 g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
-                    style: style, arrowheadStyle: "fill: #333", arrowhead: aHead
+                    style: style, arrowheadStyle: 'fill: #333', arrowhead: aHead
                 },cnt);
             }
         }
         // Edge with text
         else {
-            var edgeText = edge.text.replace(/<br>/g, "\n");
+            var edgeText = edge.text.replace(/<br>/g, '\n');
             if(typeof edge.style === 'undefined'){
                 if (conf.htmlLabels){
-                    g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                    g.setEdge(edge.start, edge.end,{labelType: 'html',style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
                 }else{
-                    g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                    g.setEdge(edge.start, edge.end,{labelType: 'text', style: 'stroke: #333; stroke-width: 1.5px;fill:none', labelpos:'c', label: edgeText, arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
                 }
              }else{
                 g.setEdge(edge.start, edge.end, {
-                    labelType: "text", style: style, arrowheadStyle: "fill: #333", label: edgeText, arrowhead: aHead
+                    labelType: 'text', style: style, arrowheadStyle: 'fill: #333', label: edgeText, arrowhead: aHead
                 },cnt);
             }
         }
@@ -23092,13 +23088,13 @@ exports.draw = function (text, id,isDot) {
                 {x: s / 2, y: -s},
                 {x: 0, y: -s / 2}
             ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("transform", "translate(" + (-s / 2) + "," + (s * 2 / 4) + ")");
+        var shapeSvg = parent.insert('polygon', ':first-child')
+            .attr('points', points.map(function (d) {
+                return d.x + ',' + d.y;
+            }).join(' '))
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('transform', 'translate(' + (-s / 2) + ',' + (s * 2 / 4) + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -23116,11 +23112,11 @@ exports.draw = function (text, id,isDot) {
                 {x: -h/2, y: -h},
                 {x: 0, y: -h/2},
             ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+        var shapeSvg = parent.insert('polygon', ':first-child')
+            .attr('points', points.map(function (d) {
+                return d.x + ',' + d.y;
+            }).join(' '))
+            .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -23138,11 +23134,11 @@ exports.draw = function (text, id,isDot) {
                 {x: w+h/2, y: -h},
                 {x: 0, y: -h},
             ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+        var shapeSvg = parent.insert('polygon', ':first-child')
+            .attr('points', points.map(function (d) {
+                return d.x + ',' + d.y;
+            }).join(' '))
+            .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -23151,40 +23147,40 @@ exports.draw = function (text, id,isDot) {
 
     // Add our custom arrow - an empty arrowhead
     render.arrows().none = function normal(parent, id, edge, type) {
-        var marker = parent.append("marker")
-            .attr("id", id)
-            .attr("viewBox", "0 0 10 10")
-            .attr("refX", 9)
-            .attr("refY", 5)
-            .attr("markerUnits", "strokeWidth")
-            .attr("markerWidth", 8)
-            .attr("markerHeight", 6)
-            .attr("orient", "auto");
+        var marker = parent.append('marker')
+            .attr('id', id)
+            .attr('viewBox', '0 0 10 10')
+            .attr('refX', 9)
+            .attr('refY', 5)
+            .attr('markerUnits', 'strokeWidth')
+            .attr('markerWidth', 8)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto');
 
-        var path = marker.append("path")
-            .attr("d", "M 0 0 L 0 0 L 0 0 z");
-        dagreD3.util.applyStyle(path, edge[type + "Style"]);
+        var path = marker.append('path')
+            .attr('d', 'M 0 0 L 0 0 L 0 0 z');
+        dagreD3.util.applyStyle(path, edge[type + 'Style']);
     };
 
     // Set up an SVG group so that we can translate the final graph.
-    var svg = d3.select("#" + id);
-    svgGroup = d3.select("#" + id + " g");
+    var svg = d3.select('#' + id);
+    svgGroup = d3.select('#' + id + ' g');
 
     // Run the renderer. This is what draws the final graph.
-    var element = d3.select("#" + id + " g");
+    var element = d3.select('#' + id + ' g');
     render(element, g);
 
     //var tip = d3.tip().html(function(d) { return d; });
-    element.selectAll("g.node")
-                .attr("title", function(){
+    element.selectAll('g.node')
+                .attr('title', function(){
             return graph.getTooltip(this.id);
         });
 
     //
-    //element.selectAll("g.node")
-    //    .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
-    //    .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
-    var svgb = document.querySelector("#" + id);
+    //element.selectAll('g.node')
+    //    .attr('title', function(v) { return styleTooltip(v, g.node(v).description) })
+    //    .each(function(v) { $(this).tipsy({ gravity: 'w', opacity: 1, html: true }); });
+    var svgb = document.querySelector('#' + id);
 
 /*
  var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
@@ -23200,22 +23196,22 @@ exports.draw = function (text, id,isDot) {
 */
     if(conf.useMaxWidth) {
         // Center the graph
-        svg.attr("height", '100%');
-        svg.attr("width", conf.width);
-        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-        svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+        svg.attr('height', '100%');
+        svg.attr('width', conf.width);
+        //svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
         svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
     }
     else{
         // Center the graph
-        svg.attr("height", g.graph().height );
+        svg.attr('height', g.graph().height );
         if(typeof conf.width === 'undefined'){
-            svg.attr("width", g.graph().width );
+            svg.attr('width', g.graph().width );
         }else{
-            svg.attr("width", conf.width );
+            svg.attr('width', conf.width );
         }
-        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-        svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
+        //svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr('viewBox',  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
 
 
     // Index nodes
@@ -23490,17 +23486,17 @@ var setupToolTips = function(element){
 
     var tooltipElem = d3.select('.mermaidTooltip');
     if(tooltipElem[0][0] === null){
-        tooltipElem = d3.select("body")
-            .append("div")
-            .attr("class", "mermaidTooltip")
-            .style("opacity", 0);
+        tooltipElem = d3.select('body')
+            .append('div')
+            .attr('class', 'mermaidTooltip')
+            .style('opacity', 0);
     }
 
     var svg = d3.select(element).select('svg');
 
-    var nodes = svg.selectAll("g.node");
+    var nodes = svg.selectAll('g.node');
     nodes
-        .on("mouseover", function(d) {
+        .on('mouseover', function(d) {
             var el = d3.select(this);
             var title = el.attr('title');
             // Dont try to draw a tooltip if no data is provided
@@ -23511,17 +23507,17 @@ var setupToolTips = function(element){
 
             tooltipElem.transition()
                 .duration(200)
-                .style("opacity", '.9');
+                .style('opacity', '.9');
             tooltipElem.html(el.attr('title'))
-                .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
-                .style("top", (rect.top-14+document.body.scrollTop) + "px");
+                .style('left', (rect.left+(rect.right-rect.left)/2) + 'px')
+                .style('top', (rect.top-14+document.body.scrollTop) + 'px');
             el.classed('hover',true);
 
         })
-        .on("mouseout", function(d) {
+        .on('mouseout', function(d) {
             tooltipElem.transition()
                 .duration(500)
-                .style("opacity", 0);
+                .style('opacity', 0);
             var el = d3.select(this);
             el.classed('hover',false);
         });
@@ -23546,7 +23542,7 @@ exports.clear = function () {
  * @returns {string}
  */
 exports.defaultStyle = function () {
-    return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
+    return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 
 /**
@@ -23554,7 +23550,7 @@ exports.defaultStyle = function () {
  */
 exports.addSubGraph = function (list, title) {
     function uniq(a) {
-        var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+        var prims = {'boolean':{}, 'number':{}, 'string':{}}, objs = [];
 
         return a.filter(function(item) {
             var type = typeof item;
@@ -25621,7 +25617,7 @@ module.exports.draw = function (text, id) {
     // Set height based on number of tasks
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
-    elem.setAttribute('height', "100%");
+    elem.setAttribute('height', '100%');
     // Set viewBox
     elem.setAttribute('viewBox','0 0 '+w+' '+h);
     var svg = d3.select('#' + id);
@@ -25629,7 +25625,7 @@ module.exports.draw = function (text, id) {
     
     
     
-    var dateFormat = d3.time.format("%Y-%m-%d");
+    var dateFormat = d3.time.format('%Y-%m-%d');
     
     var startDate = d3.min(taskArray, function (d) {
         return d.startTime;
@@ -25668,10 +25664,10 @@ module.exports.draw = function (text, id) {
 
     }
 
-    var title = svg.append("text")
+    var title = svg.append('text')
         .text(gantt.yy.getTitle())
-        .attr("x", w / 2)
-        .attr("y", conf.titleTopMargin)
+        .attr('x', w / 2)
+        .attr('y', conf.titleTopMargin)
         .attr('class', 'titleText');
 
 
@@ -25684,7 +25680,7 @@ module.exports.draw = function (text, id) {
 
         var colorScale = d3.scale.linear()
             .domain([0, categories.length])
-            .range(["#00B9FA", "#F95002"])
+            .range(['#00B9FA', '#F95002'])
             .interpolate(d3.interpolateHcl);
 
         makeGrid(sidePadding, topPadding, pageWidth, pageHeight);
@@ -25697,19 +25693,19 @@ module.exports.draw = function (text, id) {
 
     function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
 
-        var bigRects = svg.append("g")
-            .selectAll("rect")
+        var bigRects = svg.append('g')
+            .selectAll('rect')
             .data(theArray)
             .enter()
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", function (d, i) {
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', function (d, i) {
                 return i * theGap + theTopPad - 2;
             })
-            .attr("width", function (d) {
+            .attr('width', function (d) {
                 return w - theSidePad / 2;
             })
-            .attr("height", theGap)
+            .attr('height', theGap)
             .attr('class', function (d) {
                 for (var i = 0; i < categories.length; i++) {
                     if (d.type === categories[i]) {
@@ -25721,24 +25717,24 @@ module.exports.draw = function (text, id) {
 
 
         var rectangles = svg.append('g')
-            .selectAll("rect")
+            .selectAll('rect')
             .data(theArray)
             .enter();
 
 
-        var innerRects = rectangles.append("rect")
-                .attr("rx", 3)
-                .attr("ry", 3)
-                .attr("x", function (d) {
+        var innerRects = rectangles.append('rect')
+                .attr('rx', 3)
+                .attr('ry', 3)
+                .attr('x', function (d) {
                     return timeScale(d.startTime) + theSidePad;
                 })
-                .attr("y", function (d, i) {
+                .attr('y', function (d, i) {
                     return i * theGap + theTopPad;
                 })
-                .attr("width", function (d) {
+                .attr('width', function (d) {
                     return (timeScale(d.endTime) - timeScale(d.startTime));
                 })
-                .attr("height", theBarHeight)
+                .attr('height', theBarHeight)
                 .attr('class', function (d) {
                     var res = 'task ';
                     
@@ -25776,13 +25772,13 @@ module.exports.draw = function (text, id) {
             ;
 
 
-        var rectText = rectangles.append("text")
+        var rectText = rectangles.append('text')
             .text(function (d) {
                 return d.task;
             })
-            .attr("font-size",conf.fontSize)
-            //.attr("font-family",conf.fontFamily)
-            .attr("x", function (d) {
+            .attr('font-size',conf.fontSize)
+            //.attr('font-family',conf.fontFamily)
+            .attr('x', function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
                     textWidth = this.getBBox().width;
@@ -25798,12 +25794,12 @@ module.exports.draw = function (text, id) {
                     return (endX - startX) / 2 + startX + theSidePad;
                 }
             })
-            .attr("y", function (d, i) {
+            .attr('y', function (d, i) {
                 return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad;
             })
-            //.attr("text-anchor", "middle")
-            .attr("text-height", theBarHeight)
-            .attr("class", function (d) {
+            //.attr('text-anchor', 'middle')
+            .attr('text-height', theBarHeight)
+            .attr('class', function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
                     textWidth = this.getBBox().width;
@@ -25853,37 +25849,37 @@ module.exports.draw = function (text, id) {
     function makeGrid(theSidePad, theTopPad, w, h) {
 
         var pre = [
-            [".%L", function (d) {
+            ['.%L', function (d) {
                 return d.getMilliseconds();
             }],
-            [":%S", function (d) {
+            [':%S', function (d) {
                 return d.getSeconds();
             }],
             // Within a hour
-            ["h1 %I:%M", function (d) {
+            ['h1 %I:%M', function (d) {
                 return d.getMinutes();
             }]];
         var post = [
-            ["%Y", function () {
+            ['%Y', function () {
                 return true;
             }]];
         
         var mid = [                    
             // Within a day
-            ["%I:%M", function (d) {
+            ['%I:%M', function (d) {
                 return d.getHours();
             }],
             // Day within a week (not monday)
-            ["%a %d", function (d) {
+            ['%a %d', function (d) {
                 //return d.getDay() ==1;
                 return d.getDay() && d.getDate() != 1;
             }],
             // within a month
-            ["%b %d", function (d) {
+            ['%b %d', function (d) {
                 return d.getDate() != 1;
             }],
             // Month
-            ["%B", function (d) {
+            ['%B', function (d) {
                 return d.getMonth();
             }]
         ];
@@ -25914,12 +25910,12 @@ module.exports.draw = function (text, id) {
             .attr('class', 'grid')
             .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
             .call(xAxis)
-            .selectAll("text")
-            .style("text-anchor", "middle")
-            .attr("fill", "#000")
-            .attr("stroke", "none")
-            .attr("font-size", 10)
-            .attr("dy", "1em");
+            .selectAll('text')
+            .style('text-anchor', 'middle')
+            .attr('fill', '#000')
+            .attr('stroke', 'none')
+            .attr('font-size', 10)
+            .attr('dy', '1em');
     }
 
     function vertLabels(theGap, theTopPad, theSidePad, theBarHeight, theColorScale) {
@@ -25930,16 +25926,16 @@ module.exports.draw = function (text, id) {
             numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
         }
 
-        var axisText = svg.append("g") //without doing this, impossible to put grid lines behind text
-            .selectAll("text")
+        var axisText = svg.append('g') //without doing this, impossible to put grid lines behind text
+            .selectAll('text')
             .data(numOccurances)
             .enter()
-            .append("text")
+            .append('text')
             .text(function (d) {
                 return d[0];
             })
-            .attr("x", 10)
-            .attr("y", function (d, i) {
+            .attr('x', 10)
+            .attr('y', function (d, i) {
                 if (i > 0) {
                     for (var j = 0; j < i; j++) {
                         prevGap += numOccurances[i - 1][1];
@@ -25967,11 +25963,11 @@ module.exports.draw = function (text, id) {
 
         var today = new Date();
 
-        var todayLine = todayG.append("line")
-                .attr("x1", timeScale(today) + theSidePad)
-                .attr("x2", timeScale(today) + theSidePad)
-                .attr("y1", conf.titleTopMargin)
-                .attr("y2", h-conf.titleTopMargin)
+        var todayLine = todayG.append('line')
+                .attr('x1', timeScale(today) + theSidePad)
+                .attr('x2', timeScale(today) + theSidePad)
+                .attr('y1', conf.titleTopMargin)
+                .attr('y2', h-conf.titleTopMargin)
                 .attr('class', 'today')
             ;
     }
@@ -27568,7 +27564,7 @@ var conf = {
     bottomMarginAdj:1
 };
 
-//var bb = getBBox("path");
+//var bb = getBBox('path');
 exports.bounds = {
     data:{
         startx:undefined,
@@ -27687,7 +27683,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     var textHeight = textElem[0][0].getBBox().height;
     if(textHeight > conf.width){
         textElem.remove();
-        g = elem.append("g");
+        g = elem.append('g');
 
         //textObj.x = textObj.x - conf.width;
         //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
@@ -27714,14 +27710,14 @@ var drawNote = function(elem, startx, verticalPos, msg){
  * @param msg
  */
 var drawMessage = function(elem, startx, stopx, verticalPos, msg){
-    var g = elem.append("g");
+    var g = elem.append('g');
     var txtCenter = startx + (stopx-startx)/2;
 
-    var textElem = g.append("text")      // text label for the x axis
-        .attr("x", txtCenter)
-        .attr("y", verticalPos - 7)
-        .style("text-anchor", "middle")
-        .attr("class", "messageText")
+    var textElem = g.append('text')      // text label for the x axis
+        .attr('x', txtCenter)
+        .attr('y', verticalPos - 7)
+        .style('text-anchor', 'middle')
+        .attr('class', 'messageText')
         .text(msg.message);
 
     var textWidth;
@@ -27738,7 +27734,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var line;
 
     if(startx===stopx){
-        line  = g.append("path")
+        line  = g.append('path')
             .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ',' +
             (verticalPos+30)+' ' +startx+ ','+(verticalPos+20));
 
@@ -27746,32 +27742,32 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         var dx = Math.max(textWidth/2,100);
         exports.bounds.insert(startx-dx, exports.bounds.getVerticalPos() -10, stopx+dx,  exports.bounds.getVerticalPos());
     }else{
-        line = g.append("line");
-        line.attr("x1", startx);
-        line.attr("y1", verticalPos);
-        line.attr("x2", stopx);
-        line.attr("y2", verticalPos);
+        line = g.append('line');
+        line.attr('x1', startx);
+        line.attr('y1', verticalPos);
+        line.attr('x2', stopx);
+        line.attr('y2', verticalPos);
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     //Make an SVG Container
     //Draw the line
     if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
-        line.style("stroke-dasharray", ("3, 3"));
-        line.attr("class", "messageLine1");
+        line.style('stroke-dasharray', ('3, 3'));
+        line.attr('class', 'messageLine1');
     }
     else {
-        line.attr("class", "messageLine0");
+        line.attr('class', 'messageLine0');
     }
 
-    line.attr("stroke-width", 2);
-    line.attr("stroke", "black");
-    line.style("fill", "none");     // remove any fill colour
+    line.attr('stroke-width', 2);
+    line.attr('stroke', 'black');
+    line.style('fill', 'none');     // remove any fill colour
     if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
-        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#arrowhead)");
+        line.attr('marker-end', 'url(' + window.location.protocol+'//'+window.location.host+window.location.pathname + '#arrowhead)');
     }
 
     if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
-        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#crosshead)");
+        line.attr('marker-end', 'url(' + window.location.protocol+'//'+window.location.host+window.location.pathname + '#crosshead)');
     }
 
 };
@@ -27924,14 +27920,14 @@ module.exports.draw = function (text, id) {
 
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;
     if(conf.useMaxWidth) {
-        diagram.attr("height", '100%');
-        diagram.attr("width", '100%');
+        diagram.attr('height', '100%');
+        diagram.attr('width', '100%');
         diagram.attr('style', 'max-width:' + (width) + 'px;');
     }else{
-        diagram.attr("height",height);
-        diagram.attr("width", width );
+        diagram.attr('height',height);
+        diagram.attr('width', width );
     }
-    diagram.attr("viewBox", (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
+    diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
 },{"../../d3":86,"../../logger":103,"./parser/sequenceDiagram":98,"./sequenceDb":99,"./svgDraw":101}],101:[function(_dereq_,module,exports){
@@ -27940,18 +27936,18 @@ module.exports.draw = function (text, id) {
  */
 var log = _dereq_('../../logger').create();
 exports.drawRect = function(elem , rectData){
-    var rectElem = elem.append("rect");
-    rectElem.attr("x", rectData.x);
-    rectElem.attr("y", rectData.y);
-    rectElem.attr("fill", rectData.fill);
-    rectElem.attr("stroke", rectData.stroke);
-    rectElem.attr("width", rectData.width);
-    rectElem.attr("height", rectData.height);
-    rectElem.attr("rx", rectData.rx);
-    rectElem.attr("ry", rectData.ry);
+    var rectElem = elem.append('rect');
+    rectElem.attr('x', rectData.x);
+    rectElem.attr('y', rectData.y);
+    rectElem.attr('fill', rectData.fill);
+    rectElem.attr('stroke', rectData.stroke);
+    rectElem.attr('width', rectData.width);
+    rectElem.attr('height', rectData.height);
+    rectElem.attr('rx', rectData.rx);
+    rectElem.attr('ry', rectData.ry);
 
     if(typeof rectData.class !== 'undefined'){
-        rectElem.attr("class", rectData.class);
+        rectElem.attr('class', rectData.class);
     }
 
     return rectElem;
@@ -27967,7 +27963,7 @@ exports.drawText = function(elem, textData, width) {
     textElem.style('text-anchor', textData.anchor);
     textElem.attr('fill', textData.fill);
     if (typeof textData.class !== 'undefined') {
-        textElem.attr("class", textData.class);
+        textElem.attr('class', textData.class);
     }
     /*    textData.text.split(/<br\/?>/ig).forEach(function(rowText){
             var span = textElem.append('tspan');
@@ -28023,18 +28019,18 @@ var actorCnt  = -1;
  */
 exports.drawActor = function(elem, left, verticalPos, description,conf){
     var center = left + (conf.width/2);
-    var g = elem.append("g");
+    var g = elem.append('g');
     if(verticalPos === 0) {
         actorCnt++;
-        g.append("line")
-            .attr("id", 'actor'+actorCnt)
-            .attr("x1", center)
-            .attr("y1", 5)
-            .attr("x2", center)
-            .attr("y2", 2000)
-            .attr("class", 'actor-line')
-            .attr("stroke-width", '0.5px')
-            .attr("stroke", '#999');
+        g.append('line')
+            .attr('id', 'actor'+actorCnt)
+            .attr('x1', center)
+            .attr('y1', 5)
+            .attr('x2', center)
+            .attr('y2', 2000)
+            .attr('class', 'actor-line')
+            .attr('stroke-width', '0.5px')
+            .attr('stroke', '#999');
     }
 
     var rect = exports.getNoteRect();
@@ -28048,11 +28044,11 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", verticalPos + (conf.height/2)+5)
+    g.append('text')      // text label for the x axis
+        .attr('x', center)
+        .attr('y', verticalPos + (conf.height/2)+5)
         .attr('class','actor')
-        .style("text-anchor", "middle")
+        .style('text-anchor', 'middle')
         .text(description)
     ;
 };
@@ -28064,15 +28060,15 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
  * @param description The text in the box
  */
 exports.drawLoop = function(elem,bounds,labelText, conf){
-    var g = elem.append("g");
+    var g = elem.append('g');
     var drawLoopLine = function(startx,starty,stopx,stopy){
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", starty)
-            .attr("x2", stopx )
-            .attr("y2", stopy )
-            .attr("stroke-width", 2)
-            .attr("stroke", "#526e52")
+        g.append('line')
+            .attr('x1', startx)
+            .attr('y1', starty)
+            .attr('x2', stopx )
+            .attr('y2', stopy )
+            .attr('stroke-width', 2)
+            .attr('stroke', '#526e52')
             .attr('class','loopLine');
     };
     drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
@@ -28113,44 +28109,44 @@ exports.drawLoop = function(elem,bounds,labelText, conf){
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 exports.insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5)
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
+    elem.append('defs').append('marker')
+        .attr('id', 'arrowhead')
+        .attr('refX', 5)
+        .attr('refY', 2)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 0,0 V 4 L6,2 Z'); //this is actual shape for arrowhead
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 exports.insertArrowCrossHead = function(elem){
-    var defs = elem.append("defs");
-    var marker = defs.append("marker")
-        .attr("id", "crosshead")
-        .attr("markerWidth", 15)
-        .attr("markerHeight", 8)
-        .attr("orient", "auto")
-        .attr("refX", 16)
-        .attr("refY", 4);
+    var defs = elem.append('defs');
+    var marker = defs.append('marker')
+        .attr('id', 'crosshead')
+        .attr('markerWidth', 15)
+        .attr('markerHeight', 8)
+        .attr('orient', 'auto')
+        .attr('refX', 16)
+        .attr('refY', 4);
 
     // The arrow
-    marker.append("path")
-            .attr("fill",'black')
-            .attr("stroke",'#000000')
-            .style("stroke-dasharray", ("0, 0"))
-            .attr("stroke-width",'1px')
-            .attr("d", "M 9,2 V 6 L16,4 Z");
+    marker.append('path')
+            .attr('fill','black')
+            .attr('stroke','#000000')
+            .style('stroke-dasharray', ('0, 0'))
+            .attr('stroke-width','1px')
+            .attr('d', 'M 9,2 V 6 L16,4 Z');
 
     // The cross
-    marker.append("path")
-            .attr("fill",'none')
-            .attr("stroke",'#000000')
-            .style("stroke-dasharray", ("0, 0"))
-            .attr("stroke-width",'1px')
-            .attr("d", "M 0,1 L 6,7 M 6,1 L 0,7")
+    marker.append('path')
+            .attr('fill','none')
+            .attr('stroke','#000000')
+            .style('stroke-dasharray', ('0, 0'))
+            .attr('stroke-width','1px')
+            .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7')
         ; //this is actual shape for arrowhead
 
 };
@@ -28266,7 +28262,7 @@ var init = function () {
         }
     }
     nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
-        : typeof nodes === "string" ? document.querySelectorAll(nodes)
+        : typeof nodes === 'string' ? document.querySelectorAll(nodes)
         : nodes instanceof Node ? [nodes]
         /*! Last case  - sequence config was passed pick next */
         : nodes;
@@ -28301,8 +28297,8 @@ var init = function () {
         var element = nodes[i];
 
         /*! Check if previously processed */
-        if(!element.getAttribute("data-processed")) {
-            element.setAttribute("data-processed", true);
+        if(!element.getAttribute('data-processed')) {
+            element.setAttribute('data-processed', true);
         } else {
             continue;
         }
@@ -28521,13 +28517,13 @@ Logger = (function() {
         // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
         // if (hh > 12) {hh = hh % 12;}
         // These lines ensure you have two-digits
-        if (hh < 10) {hh = "0"+hh;}
-        if (mm < 10) {mm = "0"+mm;}
-        if (ss < 10) {ss = "0"+ss;}
-        if (ms < 100){ms = "0"+ms;}
-        if (ms < 10) {ms = "00"+ms;}
+        if (hh < 10) {hh = '0'+hh;}
+        if (mm < 10) {mm = '0'+mm;}
+        if (ss < 10) {ss = '0'+ss;}
+        if (ms < 100){ms = '0'+ms;}
+        if (ms < 10) {ms = '00'+ms;}
         // This formats your string to HH:MM:SS
-        var t = hh+":"+mm+":"+ss +' ('+ms+')';
+        var t = hh+':'+mm+':'+ss +' ('+ms+')';
         return t;
     }
 
@@ -28540,7 +28536,7 @@ Logger = (function() {
     };
 
     Logger.prototype.build_message = function(options) {
-        return "[" + formatTime(options.timestamp) + "] " + options.message;
+        return '[' + formatTime(options.timestamp) + '] ' + options.message;
     };
 
     return Logger;
@@ -28774,23 +28770,23 @@ var config = {
         axisFormatter: [
 
             // Within a day
-            ["%I:%M", function (d) {
+            ['%I:%M', function (d) {
                 return d.getHours();
             }],
             // Monday a week
-            ["w. %U", function (d) {
+            ['w. %U', function (d) {
                 return d.getDay() == 1;
             }],
             // Day within a week (not monday)
-            ["%a %d", function (d) {
+            ['%a %d', function (d) {
                 return d.getDay() && d.getDate() != 1;
             }],
             // within a month
-            ["%b %d", function (d) {
+            ['%b %d', function (d) {
                 return d.getDate() != 1;
             }],
             // Month
-            ["%m-%y", function (d) {
+            ['%m-%y', function (d) {
                 return d.getMonth();
             }]
         ]
@@ -28874,10 +28870,6 @@ exports.encodeEntities = function(text){
         }
 
     });
-
-    //txt = txt.replace(/fa:fa[\w\-]+/g,function(s,t,u){
-    //    return 'fa:¢';
-    //});
 
     return txt;
 };
@@ -29106,25 +29098,25 @@ var log = _dereq_('./logger').create();
 module.exports.detectType = function(text,a){
     text = text.replace(/^\s*%%.*\n/g,'\n');
     if(text.match(/^\s*sequenceDiagram/)){
-        return "sequenceDiagram";
+        return 'sequenceDiagram';
     }
 
     if(text.match(/^\s*digraph/)) {
         //log.debug('Detected dot syntax');
-        return "dotGraph";
+        return 'dotGraph';
     }
 
     if(text.match(/^\s*info/)) {
         //log.debug('Detected info syntax');
-        return "info";
+        return 'info';
     }
 
     if(text.match(/^\s*gantt/)) {
         //log.debug('Detected info syntax');
-        return "gantt";
+        return 'gantt';
     }
 
-    return "graph";
+    return 'graph';
 };
 
 /**
@@ -29134,7 +29126,7 @@ module.exports.detectType = function(text,a){
  * @param {object} Hash table of class definitions from the graph definition
  */
 module.exports.cloneCssStyles = function(svg, classes){
-    var usedStyles = "";
+    var usedStyles = '';
     var sheets = document.styleSheets;
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
@@ -29149,7 +29141,7 @@ module.exports.cloneCssStyles = function(svg, classes){
                             var elems;
                             elems = svg.querySelectorAll(rule.selectorText);
                             if (elems.length > 0) {
-                                usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                                usedStyles += rule.selectorText + ' { ' + rule.style.cssText + ' }\n';
                             }
                         }
                     }
@@ -29167,48 +29159,48 @@ module.exports.cloneCssStyles = function(svg, classes){
         } 
     }
 
-    var defaultStyles = "";
-    var embeddedStyles = "";
+    var defaultStyles = '';
+    var embeddedStyles = '';
 
     for (var className in classes) {
-        if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
+        if (classes.hasOwnProperty(className) && typeof(className) != 'undefined') {
             if (className === 'default') {
                 if (classes.default.styles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .node' + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
+                    defaultStyles += '#' + svg.id.trim() + ' .node' + '>rect { ' + classes[className].styles.join('; ') + '; }\n';
                 }
                 if (classes.default.nodeLabelStyles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
+                    defaultStyles += '#' + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join('; ') + '; }\n';
                 }
                 if (classes.default.edgeLabelStyles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
+                    defaultStyles += '#' + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join('; ') + '; }\n';
                 }
                 if (classes.default.clusterStyles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .cluster rect ' + ' { ' + classes[className].clusterStyles.join("; ") + '; }\n';
+                    defaultStyles += '#' + svg.id.trim() + ' .cluster rect ' + ' { ' + classes[className].clusterStyles.join('; ') + '; }\n';
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
+                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join('; ') + '; }\n';
                 }
             }
         }
     }
 
-    if (usedStyles !== "" || defaultStyles !== "" || embeddedStyles !== "") {
+    if (usedStyles !== '' || defaultStyles !== '' || embeddedStyles !== '') {
         var s = document.createElement('style');
         s.setAttribute('type', 'text/css');
         s.setAttribute('title', 'mermaid-svg-internal-css');
-        s.innerHTML = "/* <![CDATA[ */\n";
+        s.innerHTML = '/* <![CDATA[ */\n';
         // Make this CSS local to this SVG
-        if (defaultStyles !== "") {
+        if (defaultStyles !== '') {
             s.innerHTML += defaultStyles;
         }
-        if (usedStyles !== "") {
+        if (usedStyles !== '') {
             s.innerHTML += usedStyles;
         }
-        if (embeddedStyles !== "") {
+        if (embeddedStyles !== '') {
             s.innerHTML += embeddedStyles;
         }
-        s.innerHTML += "/* ]]> */\n";
+        s.innerHTML += '/* ]]> */\n';
         svg.insertBefore(s, svg.firstChild);
     }
 };

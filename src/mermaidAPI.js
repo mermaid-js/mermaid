@@ -12,6 +12,7 @@
  * somewhere in the page or something completely different.
  */
 var graph = require('./diagrams/flowchart/graphDb');
+
 var flow = require('./diagrams/flowchart/parser/flow');
 var utils = require('./utils');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
@@ -28,7 +29,6 @@ var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 var d3 = require('./d3');
 var nextId = 0;
-
 
 /**
  * ## Configuration
@@ -202,23 +202,23 @@ var config = {
         axisFormatter: [
 
             // Within a day
-            ["%I:%M", function (d) {
+            ['%I:%M', function (d) {
                 return d.getHours();
             }],
             // Monday a week
-            ["w. %U", function (d) {
+            ['w. %U', function (d) {
                 return d.getDay() == 1;
             }],
             // Day within a week (not monday)
-            ["%a %d", function (d) {
+            ['%a %d', function (d) {
                 return d.getDay() && d.getDate() != 1;
             }],
             // within a month
-            ["%b %d", function (d) {
+            ['%b %d', function (d) {
                 return d.getDate() != 1;
             }],
             // Month
-            ["%m-%y", function (d) {
+            ['%m-%y', function (d) {
                 return d.getMonth();
             }]
         ]

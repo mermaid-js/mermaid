@@ -10,6 +10,9 @@ var newD3;
 var d3 = {
     select:function(){
         return new newD3();
+    },
+    selectAll:function(){
+        return new newD3();
     }
 };
 //var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
@@ -21,11 +24,11 @@ describe('when parsing a sequenceDiagram',function() {
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
-        parseError = function(err, hash) {
-            log.debug('Syntax error:' + err);
-            log.debug(hash);
-        };
-        sq.yy.parseError = parseError;
+        //parseError = function(err, hash) {
+        //    log.debug('Syntax error:' + err);
+        //    log.debug(hash);
+        //};
+        //sq.yy.parseError = parseError;
     });
 
     it('it should handle a sequenceDiagram defintion', function () {
@@ -336,11 +339,11 @@ describe('when checking the bounds in a sequenceDiagram',function() {
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
-        parseError = function(err, hash) {
-            log.debug('Syntax error:' + err);
-            log.debug(hash);
-        };
-        sq.yy.parseError = parseError;
+        //parseError = function(err, hash) {
+        //    log.debug('Syntax error:' + err);
+        //    log.debug(hash);
+        //};
+        //sq.yy.parseError = parseError;
 
 
         conf = {
@@ -486,11 +489,13 @@ describe('when rendering a sequenceDiagram',function() {
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
-        parseError = function(err, hash) {
-            log.debug('Syntax error:' + err);
-            log.debug(hash);
-        };
-        sq.yy.parseError = parseError;
+
+
+        //parseError = function(err, hash) {
+        //    log.debug('Syntax error:' + err);
+        //    log.debug(hash);
+        //};
+        //sq.yy.parseError = parseError;
 
         newD3 = function() {
             var o = {
@@ -681,11 +686,11 @@ describe('when rendering a sequenceDiagram with actor mirror activated',function
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
-        parseError = function(err, hash) {
-            log.debug('Syntax error:' + err);
-            log.debug(hash);
-        };
-        sq.yy.parseError = parseError;
+        //parseError = function(err, hash) {
+        //    log.debug('Syntax error:' + err);
+        //    log.debug(hash);
+        //};
+        //sq.yy.parseError = parseError;
 
         newD3 = function() {
             var o = {

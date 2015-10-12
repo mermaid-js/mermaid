@@ -3,18 +3,18 @@
  */
 var log = require('../../logger').create();
 exports.drawRect = function(elem , rectData){
-    var rectElem = elem.append("rect");
-    rectElem.attr("x", rectData.x);
-    rectElem.attr("y", rectData.y);
-    rectElem.attr("fill", rectData.fill);
-    rectElem.attr("stroke", rectData.stroke);
-    rectElem.attr("width", rectData.width);
-    rectElem.attr("height", rectData.height);
-    rectElem.attr("rx", rectData.rx);
-    rectElem.attr("ry", rectData.ry);
+    var rectElem = elem.append('rect');
+    rectElem.attr('x', rectData.x);
+    rectElem.attr('y', rectData.y);
+    rectElem.attr('fill', rectData.fill);
+    rectElem.attr('stroke', rectData.stroke);
+    rectElem.attr('width', rectData.width);
+    rectElem.attr('height', rectData.height);
+    rectElem.attr('rx', rectData.rx);
+    rectElem.attr('ry', rectData.ry);
 
     if(typeof rectData.class !== 'undefined'){
-        rectElem.attr("class", rectData.class);
+        rectElem.attr('class', rectData.class);
     }
 
     return rectElem;
@@ -30,7 +30,7 @@ exports.drawText = function(elem, textData, width) {
     textElem.style('text-anchor', textData.anchor);
     textElem.attr('fill', textData.fill);
     if (typeof textData.class !== 'undefined') {
-        textElem.attr("class", textData.class);
+        textElem.attr('class', textData.class);
     }
     /*    textData.text.split(/<br\/?>/ig).forEach(function(rowText){
             var span = textElem.append('tspan');
@@ -86,18 +86,18 @@ var actorCnt  = -1;
  */
 exports.drawActor = function(elem, left, verticalPos, description,conf){
     var center = left + (conf.width/2);
-    var g = elem.append("g");
+    var g = elem.append('g');
     if(verticalPos === 0) {
         actorCnt++;
-        g.append("line")
-            .attr("id", 'actor'+actorCnt)
-            .attr("x1", center)
-            .attr("y1", 5)
-            .attr("x2", center)
-            .attr("y2", 2000)
-            .attr("class", 'actor-line')
-            .attr("stroke-width", '0.5px')
-            .attr("stroke", '#999');
+        g.append('line')
+            .attr('id', 'actor'+actorCnt)
+            .attr('x1', center)
+            .attr('y1', 5)
+            .attr('x2', center)
+            .attr('y2', 2000)
+            .attr('class', 'actor-line')
+            .attr('stroke-width', '0.5px')
+            .attr('stroke', '#999');
     }
 
     var rect = exports.getNoteRect();
@@ -111,11 +111,11 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", verticalPos + (conf.height/2)+5)
+    g.append('text')      // text label for the x axis
+        .attr('x', center)
+        .attr('y', verticalPos + (conf.height/2)+5)
         .attr('class','actor')
-        .style("text-anchor", "middle")
+        .style('text-anchor', 'middle')
         .text(description)
     ;
 };
@@ -127,15 +127,15 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
  * @param description The text in the box
  */
 exports.drawLoop = function(elem,bounds,labelText, conf){
-    var g = elem.append("g");
+    var g = elem.append('g');
     var drawLoopLine = function(startx,starty,stopx,stopy){
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", starty)
-            .attr("x2", stopx )
-            .attr("y2", stopy )
-            .attr("stroke-width", 2)
-            .attr("stroke", "#526e52")
+        g.append('line')
+            .attr('x1', startx)
+            .attr('y1', starty)
+            .attr('x2', stopx )
+            .attr('y2', stopy )
+            .attr('stroke-width', 2)
+            .attr('stroke', '#526e52')
             .attr('class','loopLine');
     };
     drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
@@ -176,44 +176,44 @@ exports.drawLoop = function(elem,bounds,labelText, conf){
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 exports.insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5)
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
+    elem.append('defs').append('marker')
+        .attr('id', 'arrowhead')
+        .attr('refX', 5)
+        .attr('refY', 2)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 4)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 0,0 V 4 L6,2 Z'); //this is actual shape for arrowhead
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 exports.insertArrowCrossHead = function(elem){
-    var defs = elem.append("defs");
-    var marker = defs.append("marker")
-        .attr("id", "crosshead")
-        .attr("markerWidth", 15)
-        .attr("markerHeight", 8)
-        .attr("orient", "auto")
-        .attr("refX", 16)
-        .attr("refY", 4);
+    var defs = elem.append('defs');
+    var marker = defs.append('marker')
+        .attr('id', 'crosshead')
+        .attr('markerWidth', 15)
+        .attr('markerHeight', 8)
+        .attr('orient', 'auto')
+        .attr('refX', 16)
+        .attr('refY', 4);
 
     // The arrow
-    marker.append("path")
-            .attr("fill",'black')
-            .attr("stroke",'#000000')
-            .style("stroke-dasharray", ("0, 0"))
-            .attr("stroke-width",'1px')
-            .attr("d", "M 9,2 V 6 L16,4 Z");
+    marker.append('path')
+            .attr('fill','black')
+            .attr('stroke','#000000')
+            .style('stroke-dasharray', ('0, 0'))
+            .attr('stroke-width','1px')
+            .attr('d', 'M 9,2 V 6 L16,4 Z');
 
     // The cross
-    marker.append("path")
-            .attr("fill",'none')
-            .attr("stroke",'#000000')
-            .style("stroke-dasharray", ("0, 0"))
-            .attr("stroke-width",'1px')
-            .attr("d", "M 0,1 L 6,7 M 6,1 L 0,7")
+    marker.append('path')
+            .attr('fill','none')
+            .attr('stroke','#000000')
+            .style('stroke-dasharray', ('0, 0'))
+            .attr('stroke-width','1px')
+            .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7')
         ; //this is actual shape for arrowhead
 
 };

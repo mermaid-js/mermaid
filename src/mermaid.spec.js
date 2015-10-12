@@ -4,10 +4,11 @@
 /**
  * Created by knut on 14-11-23.
  */
-var rewire = require("rewire");
-var utils = require("./utils");
-var mermaid = require("./mermaid");
+var rewire = require('rewire');
+var utils = require('./utils');
+var mermaid = require('./mermaid');
 var log = require('./logger').create();
+console.log('here');
 
 describe('when using mermaid and ',function() {
     describe('when detecting chart type ',function() {
@@ -21,8 +22,9 @@ describe('when using mermaid and ',function() {
             delete global.mermaid_config;
 
             // and in the run-code inside some object
-            document = mock.getDocument();
+            global.document = mock.getDocument();
             window = mock.getWindow();
+
         });
 
         it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
@@ -88,7 +90,7 @@ describe('when using mermaid and ',function() {
             var mock = new MockBrowser();
             flow.parser.yy =graph;
             graph.clear();
-            document = mock.getDocument();
+            global.document = mock.getDocument();
             mermaid = rewire('./mermaid');
         });
         it('it should handle edges with text', function () {

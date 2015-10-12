@@ -43,7 +43,7 @@ module.exports.draw = function (text, id) {
     // Set height based on number of tasks
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
-    elem.setAttribute('height', "100%");
+    elem.setAttribute('height', '100%');
     // Set viewBox
     elem.setAttribute('viewBox','0 0 '+w+' '+h);
     var svg = d3.select('#' + id);
@@ -51,7 +51,7 @@ module.exports.draw = function (text, id) {
     
     
     
-    var dateFormat = d3.time.format("%Y-%m-%d");
+    var dateFormat = d3.time.format('%Y-%m-%d');
     
     var startDate = d3.min(taskArray, function (d) {
         return d.startTime;
@@ -90,10 +90,10 @@ module.exports.draw = function (text, id) {
 
     }
 
-    var title = svg.append("text")
+    var title = svg.append('text')
         .text(gantt.yy.getTitle())
-        .attr("x", w / 2)
-        .attr("y", conf.titleTopMargin)
+        .attr('x', w / 2)
+        .attr('y', conf.titleTopMargin)
         .attr('class', 'titleText');
 
 
@@ -106,7 +106,7 @@ module.exports.draw = function (text, id) {
 
         var colorScale = d3.scale.linear()
             .domain([0, categories.length])
-            .range(["#00B9FA", "#F95002"])
+            .range(['#00B9FA', '#F95002'])
             .interpolate(d3.interpolateHcl);
 
         makeGrid(sidePadding, topPadding, pageWidth, pageHeight);
@@ -119,19 +119,19 @@ module.exports.draw = function (text, id) {
 
     function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
 
-        var bigRects = svg.append("g")
-            .selectAll("rect")
+        var bigRects = svg.append('g')
+            .selectAll('rect')
             .data(theArray)
             .enter()
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", function (d, i) {
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', function (d, i) {
                 return i * theGap + theTopPad - 2;
             })
-            .attr("width", function (d) {
+            .attr('width', function (d) {
                 return w - theSidePad / 2;
             })
-            .attr("height", theGap)
+            .attr('height', theGap)
             .attr('class', function (d) {
                 for (var i = 0; i < categories.length; i++) {
                     if (d.type === categories[i]) {
@@ -143,24 +143,24 @@ module.exports.draw = function (text, id) {
 
 
         var rectangles = svg.append('g')
-            .selectAll("rect")
+            .selectAll('rect')
             .data(theArray)
             .enter();
 
 
-        var innerRects = rectangles.append("rect")
-                .attr("rx", 3)
-                .attr("ry", 3)
-                .attr("x", function (d) {
+        var innerRects = rectangles.append('rect')
+                .attr('rx', 3)
+                .attr('ry', 3)
+                .attr('x', function (d) {
                     return timeScale(d.startTime) + theSidePad;
                 })
-                .attr("y", function (d, i) {
+                .attr('y', function (d, i) {
                     return i * theGap + theTopPad;
                 })
-                .attr("width", function (d) {
+                .attr('width', function (d) {
                     return (timeScale(d.endTime) - timeScale(d.startTime));
                 })
-                .attr("height", theBarHeight)
+                .attr('height', theBarHeight)
                 .attr('class', function (d) {
                     var res = 'task ';
                     
@@ -198,13 +198,13 @@ module.exports.draw = function (text, id) {
             ;
 
 
-        var rectText = rectangles.append("text")
+        var rectText = rectangles.append('text')
             .text(function (d) {
                 return d.task;
             })
-            .attr("font-size",conf.fontSize)
-            //.attr("font-family",conf.fontFamily)
-            .attr("x", function (d) {
+            .attr('font-size',conf.fontSize)
+            //.attr('font-family',conf.fontFamily)
+            .attr('x', function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
                     textWidth = this.getBBox().width;
@@ -220,12 +220,12 @@ module.exports.draw = function (text, id) {
                     return (endX - startX) / 2 + startX + theSidePad;
                 }
             })
-            .attr("y", function (d, i) {
+            .attr('y', function (d, i) {
                 return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad;
             })
-            //.attr("text-anchor", "middle")
-            .attr("text-height", theBarHeight)
-            .attr("class", function (d) {
+            //.attr('text-anchor', 'middle')
+            .attr('text-height', theBarHeight)
+            .attr('class', function (d) {
                 var startX = timeScale(d.startTime),
                     endX = timeScale(d.endTime),
                     textWidth = this.getBBox().width;
@@ -275,37 +275,37 @@ module.exports.draw = function (text, id) {
     function makeGrid(theSidePad, theTopPad, w, h) {
 
         var pre = [
-            [".%L", function (d) {
+            ['.%L', function (d) {
                 return d.getMilliseconds();
             }],
-            [":%S", function (d) {
+            [':%S', function (d) {
                 return d.getSeconds();
             }],
             // Within a hour
-            ["h1 %I:%M", function (d) {
+            ['h1 %I:%M', function (d) {
                 return d.getMinutes();
             }]];
         var post = [
-            ["%Y", function () {
+            ['%Y', function () {
                 return true;
             }]];
         
         var mid = [                    
             // Within a day
-            ["%I:%M", function (d) {
+            ['%I:%M', function (d) {
                 return d.getHours();
             }],
             // Day within a week (not monday)
-            ["%a %d", function (d) {
+            ['%a %d', function (d) {
                 //return d.getDay() ==1;
                 return d.getDay() && d.getDate() != 1;
             }],
             // within a month
-            ["%b %d", function (d) {
+            ['%b %d', function (d) {
                 return d.getDate() != 1;
             }],
             // Month
-            ["%B", function (d) {
+            ['%B', function (d) {
                 return d.getMonth();
             }]
         ];
@@ -336,12 +336,12 @@ module.exports.draw = function (text, id) {
             .attr('class', 'grid')
             .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
             .call(xAxis)
-            .selectAll("text")
-            .style("text-anchor", "middle")
-            .attr("fill", "#000")
-            .attr("stroke", "none")
-            .attr("font-size", 10)
-            .attr("dy", "1em");
+            .selectAll('text')
+            .style('text-anchor', 'middle')
+            .attr('fill', '#000')
+            .attr('stroke', 'none')
+            .attr('font-size', 10)
+            .attr('dy', '1em');
     }
 
     function vertLabels(theGap, theTopPad, theSidePad, theBarHeight, theColorScale) {
@@ -352,16 +352,16 @@ module.exports.draw = function (text, id) {
             numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
         }
 
-        var axisText = svg.append("g") //without doing this, impossible to put grid lines behind text
-            .selectAll("text")
+        var axisText = svg.append('g') //without doing this, impossible to put grid lines behind text
+            .selectAll('text')
             .data(numOccurances)
             .enter()
-            .append("text")
+            .append('text')
             .text(function (d) {
                 return d[0];
             })
-            .attr("x", 10)
-            .attr("y", function (d, i) {
+            .attr('x', 10)
+            .attr('y', function (d, i) {
                 if (i > 0) {
                     for (var j = 0; j < i; j++) {
                         prevGap += numOccurances[i - 1][1];
@@ -389,11 +389,11 @@ module.exports.draw = function (text, id) {
 
         var today = new Date();
 
-        var todayLine = todayG.append("line")
-                .attr("x1", timeScale(today) + theSidePad)
-                .attr("x2", timeScale(today) + theSidePad)
-                .attr("y1", conf.titleTopMargin)
-                .attr("y2", h-conf.titleTopMargin)
+        var todayLine = todayG.append('line')
+                .attr('x1', timeScale(today) + theSidePad)
+                .attr('x2', timeScale(today) + theSidePad)
+                .attr('y1', conf.titleTopMargin)
+                .attr('y2', h-conf.titleTopMargin)
                 .attr('class', 'today')
             ;
     }

@@ -30664,7 +30664,7 @@ process.chdir = function (dir) {
 },{}],86:[function(_dereq_,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -30679,8 +30679,8 @@ module.exports={
   },
   "scripts": {
     "watch": "watchify src/mermaid.js -o dist/mermaid.js",
-    "doc"  : "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "test" : "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
+    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
+    "test": "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
   },
   "repository": {
     "type": "git",
@@ -32062,9 +32062,15 @@ exports.addVertices = function (vert, g) {
             verticeText = vertice.text;
         }
 
+
+
         var labelTypeStr = '';
         if(conf.htmlLabels) {
             labelTypeStr = 'html';
+            verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s,t,u){
+                return '<i class="fa '+ s.substring(3)+'">';
+            });
+
         } else {
             verticeText = verticeText.replace(/<br>/g, "\n");
             labelTypeStr = 'text';
@@ -38070,11 +38076,13 @@ exports.version = function(){
 exports.encodeEntities = function(text){
     var txt = text;
 
-    txt = txt.replace(/[style|classDef].*:\S*#.*;/g,function(s,t,u){
-
+    txt = txt.replace(/style.*:\S*#.*;/g,function(s,t,u){
         var innerTxt = s.substring(0,s.length-1);
         return innerTxt;
-
+    });
+    txt = txt.replace(/classDef.*:\S*#.*;/g,function(s,t,u){
+        var innerTxt = s.substring(0,s.length-1);
+        return innerTxt;
     });
 
     txt = txt.replace(/#\w+\;/g,function(s,t,u){
@@ -38088,10 +38096,6 @@ exports.encodeEntities = function(text){
         }
 
     });
-
-    //txt = txt.replace(/fa:fa[\w\-]+/g,function(s,t,u){
-    //    return 'fa:¢';
-    //});
 
     return txt;
 };

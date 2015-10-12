@@ -4,7 +4,7 @@
 
 if (require) {
   try {
-    d3 = require("d3");
+    d3 = require('d3');
   } catch (e) {}
 }
 

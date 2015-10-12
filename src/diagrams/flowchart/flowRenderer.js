@@ -54,7 +54,7 @@ exports.addVertices = function (vert, g) {
         //log.debug(vertice.classes);
 
         if(vertice.classes.length >0){
-            classStr = vertice.classes.join(" ");
+            classStr = vertice.classes.join(' ');
         }
 
         /**
@@ -79,11 +79,11 @@ exports.addVertices = function (vert, g) {
         if(conf.htmlLabels) {
             labelTypeStr = 'html';
             verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s,t,u){
-                return '<i class="fa '+ s.substring(3)+'">&nbsp';
+                return '<i class="fa '+ s.substring(3)+'">';
             });
 
         } else {
-            verticeText = verticeText.replace(/<br>/g, "\n");
+            verticeText = verticeText.replace(/<br>/g, '\n');
             labelTypeStr = 'text';
         }
 
@@ -180,22 +180,22 @@ exports.addEdges = function (edges, g) {
                 g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
             }else{
                 g.setEdge(edge.start, edge.end, {
-                    style: style, arrowheadStyle: "fill: #333", arrowhead: aHead
+                    style: style, arrowheadStyle: 'fill: #333', arrowhead: aHead
                 },cnt);
             }
         }
         // Edge with text
         else {
-            var edgeText = edge.text.replace(/<br>/g, "\n");
+            var edgeText = edge.text.replace(/<br>/g, '\n');
             if(typeof edge.style === 'undefined'){
                 if (conf.htmlLabels){
-                    g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                    g.setEdge(edge.start, edge.end,{labelType: 'html',style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
                 }else{
-                    g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                    g.setEdge(edge.start, edge.end,{labelType: 'text', style: 'stroke: #333; stroke-width: 1.5px;fill:none', labelpos:'c', label: edgeText, arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
                 }
              }else{
                 g.setEdge(edge.start, edge.end, {
-                    labelType: "text", style: style, arrowheadStyle: "fill: #333", label: edgeText, arrowhead: aHead
+                    labelType: 'text', style: style, arrowheadStyle: 'fill: #333', label: edgeText, arrowhead: aHead
                 },cnt);
             }
         }
@@ -325,13 +325,13 @@ exports.draw = function (text, id,isDot) {
                 {x: s / 2, y: -s},
                 {x: 0, y: -s / 2}
             ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("transform", "translate(" + (-s / 2) + "," + (s * 2 / 4) + ")");
+        var shapeSvg = parent.insert('polygon', ':first-child')
+            .attr('points', points.map(function (d) {
+                return d.x + ',' + d.y;
+            }).join(' '))
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('transform', 'translate(' + (-s / 2) + ',' + (s * 2 / 4) + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -349,11 +349,11 @@ exports.draw = function (text, id,isDot) {
                 {x: -h/2, y: -h},
                 {x: 0, y: -h/2},
             ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+        var shapeSvg = parent.insert('polygon', ':first-child')
+            .attr('points', points.map(function (d) {
+                return d.x + ',' + d.y;
+            }).join(' '))
+            .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -371,11 +371,11 @@ exports.draw = function (text, id,isDot) {
                 {x: w+h/2, y: -h},
                 {x: 0, y: -h},
             ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+        var shapeSvg = parent.insert('polygon', ':first-child')
+            .attr('points', points.map(function (d) {
+                return d.x + ',' + d.y;
+            }).join(' '))
+            .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -384,40 +384,40 @@ exports.draw = function (text, id,isDot) {
 
     // Add our custom arrow - an empty arrowhead
     render.arrows().none = function normal(parent, id, edge, type) {
-        var marker = parent.append("marker")
-            .attr("id", id)
-            .attr("viewBox", "0 0 10 10")
-            .attr("refX", 9)
-            .attr("refY", 5)
-            .attr("markerUnits", "strokeWidth")
-            .attr("markerWidth", 8)
-            .attr("markerHeight", 6)
-            .attr("orient", "auto");
+        var marker = parent.append('marker')
+            .attr('id', id)
+            .attr('viewBox', '0 0 10 10')
+            .attr('refX', 9)
+            .attr('refY', 5)
+            .attr('markerUnits', 'strokeWidth')
+            .attr('markerWidth', 8)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto');
 
-        var path = marker.append("path")
-            .attr("d", "M 0 0 L 0 0 L 0 0 z");
-        dagreD3.util.applyStyle(path, edge[type + "Style"]);
+        var path = marker.append('path')
+            .attr('d', 'M 0 0 L 0 0 L 0 0 z');
+        dagreD3.util.applyStyle(path, edge[type + 'Style']);
     };
 
     // Set up an SVG group so that we can translate the final graph.
-    var svg = d3.select("#" + id);
-    svgGroup = d3.select("#" + id + " g");
+    var svg = d3.select('#' + id);
+    svgGroup = d3.select('#' + id + ' g');
 
     // Run the renderer. This is what draws the final graph.
-    var element = d3.select("#" + id + " g");
+    var element = d3.select('#' + id + ' g');
     render(element, g);
 
     //var tip = d3.tip().html(function(d) { return d; });
-    element.selectAll("g.node")
-                .attr("title", function(){
+    element.selectAll('g.node')
+                .attr('title', function(){
             return graph.getTooltip(this.id);
         });
 
     //
-    //element.selectAll("g.node")
-    //    .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
-    //    .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
-    var svgb = document.querySelector("#" + id);
+    //element.selectAll('g.node')
+    //    .attr('title', function(v) { return styleTooltip(v, g.node(v).description) })
+    //    .each(function(v) { $(this).tipsy({ gravity: 'w', opacity: 1, html: true }); });
+    var svgb = document.querySelector('#' + id);
 
 /*
  var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
@@ -433,22 +433,22 @@ exports.draw = function (text, id,isDot) {
 */
     if(conf.useMaxWidth) {
         // Center the graph
-        svg.attr("height", '100%');
-        svg.attr("width", conf.width);
-        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-        svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+        svg.attr('height', '100%');
+        svg.attr('width', conf.width);
+        //svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
         svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
     }
     else{
         // Center the graph
-        svg.attr("height", g.graph().height );
+        svg.attr('height', g.graph().height );
         if(typeof conf.width === 'undefined'){
-            svg.attr("width", g.graph().width );
+            svg.attr('width', g.graph().width );
         }else{
-            svg.attr("width", conf.width );
+            svg.attr('width', conf.width );
         }
-        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-        svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
+        //svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr('viewBox',  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
 
 
     // Index nodes

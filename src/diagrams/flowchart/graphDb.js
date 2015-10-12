@@ -233,17 +233,17 @@ var setupToolTips = function(element){
 
     var tooltipElem = d3.select('.mermaidTooltip');
     if(tooltipElem[0][0] === null){
-        tooltipElem = d3.select("body")
-            .append("div")
-            .attr("class", "mermaidTooltip")
-            .style("opacity", 0);
+        tooltipElem = d3.select('body')
+            .append('div')
+            .attr('class', 'mermaidTooltip')
+            .style('opacity', 0);
     }
 
     var svg = d3.select(element).select('svg');
 
-    var nodes = svg.selectAll("g.node");
+    var nodes = svg.selectAll('g.node');
     nodes
-        .on("mouseover", function(d) {
+        .on('mouseover', function(d) {
             var el = d3.select(this);
             var title = el.attr('title');
             // Dont try to draw a tooltip if no data is provided
@@ -254,17 +254,17 @@ var setupToolTips = function(element){
 
             tooltipElem.transition()
                 .duration(200)
-                .style("opacity", '.9');
+                .style('opacity', '.9');
             tooltipElem.html(el.attr('title'))
-                .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
-                .style("top", (rect.top-14+document.body.scrollTop) + "px");
+                .style('left', (rect.left+(rect.right-rect.left)/2) + 'px')
+                .style('top', (rect.top-14+document.body.scrollTop) + 'px');
             el.classed('hover',true);
 
         })
-        .on("mouseout", function(d) {
+        .on('mouseout', function(d) {
             tooltipElem.transition()
                 .duration(500)
-                .style("opacity", 0);
+                .style('opacity', 0);
             var el = d3.select(this);
             el.classed('hover',false);
         });
@@ -289,7 +289,7 @@ exports.clear = function () {
  * @returns {string}
  */
 exports.defaultStyle = function () {
-    return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
+    return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 
 /**
@@ -297,7 +297,7 @@ exports.defaultStyle = function () {
  */
 exports.addSubGraph = function (list, title) {
     function uniq(a) {
-        var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+        var prims = {'boolean':{}, 'number':{}, 'string':{}}, objs = [];
 
         return a.filter(function(item) {
             var type = typeof item;

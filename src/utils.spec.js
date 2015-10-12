@@ -43,12 +43,12 @@ describe('when cloning CSS ',function() {
     });
 
     function stylesToArray(svg) {
-        var styleSheets = svg.getElementsByTagName("style");
+        var styleSheets = svg.getElementsByTagName('style');
         expect(styleSheets.length).toBe(1);
         var styleSheet = styleSheets[0];
 
         var innerStyle = styleSheet.innerHTML;
-        var styleArr = innerStyle.split("\n");
+        var styleArr = innerStyle.split('\n');
 
         // Remove first and last two lines to remove the CDATA
         expect(styleArr.length).toBeGreaterThan(2);
@@ -117,7 +117,7 @@ describe('when cloning CSS ',function() {
         var svg = document.createElement('svg');
         svg.setAttribute('id', 'mermaid-01');
 
-        utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] } });
+        utils.cloneCssStyles(svg, { 'default': { 'styles': ['stroke:#fff','stroke-width:1.5px'] } });
         expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }' ]);
         // Also verify the elements around the styling
         expect(svg.innerHTML).toBe('<style type="text/css" title="mermaid-svg-internal-css">/* <![CDATA[ */\n#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }\n/* ]]> */\n</style>');
@@ -160,16 +160,16 @@ describe('when cloning CSS ',function() {
     it('should handle a default class together with stylesheet in document with classes in SVG', function () {
         var svg = generateSVG();
         addStyleToDocument();
-        utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] } });
+        utils.cloneCssStyles(svg, { 'default': { 'styles': ['stroke:#fff','stroke-width:1.5px'] } });
         expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }', '.node { stroke: #eee; }', '.node-square { stroke: #bbb; }']);
     });
 
     it('should handle a default class together with stylesheet in document and classDefs', function () {
         var svg = generateSVG();
         addStyleToDocument();
-        utils.cloneCssStyles(svg, { "default": { "styles": ["stroke:#fff","stroke-width:1.5px"] }, 
-                                    "node-square": { "styles": ["fill:#eee", "stroke:#aaa"] },
-                                    "node-circle": { "styles": ["fill:#444", "stroke:#111"] } });
+        utils.cloneCssStyles(svg, { 'default': { 'styles': ['stroke:#fff','stroke-width:1.5px'] },
+                                    'node-square': { 'styles': ['fill:#eee', 'stroke:#aaa'] },
+                                    'node-circle': { 'styles': ['fill:#444', 'stroke:#111'] } });
         expect(stylesToArray(svg)).toEqual([ '#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }',
                                              '.node { stroke: #eee; }', 
                                              '.node-square { stroke: #bbb; }',

@@ -4,7 +4,7 @@ var d3;
 
 if (require) {
   try {
-    d3 = require("d3");
+    d3 = require('d3');
   } catch (e) {
   	//log.debug('Exception ... but ok');
   	//log.debug(e);
@@ -215,7 +215,7 @@ module.exports = d3;
                 var foreign_object = parent.append('foreignObject');
                 // add foreign object and set dimensions, position, etc
                 foreign_object
-                    .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
+                    .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
                     .attr('x', bounds.x)
                     .attr('y', bounds.y)
                     .attr('width', bounds.width)

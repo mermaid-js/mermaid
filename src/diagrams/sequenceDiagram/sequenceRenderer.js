@@ -31,7 +31,7 @@ var conf = {
     bottomMarginAdj:1
 };
 
-//var bb = getBBox("path");
+//var bb = getBBox('path');
 exports.bounds = {
     data:{
         startx:undefined,
@@ -150,7 +150,7 @@ var drawNote = function(elem, startx, verticalPos, msg){
     var textHeight = textElem[0][0].getBBox().height;
     if(textHeight > conf.width){
         textElem.remove();
-        g = elem.append("g");
+        g = elem.append('g');
 
         //textObj.x = textObj.x - conf.width;
         //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
@@ -177,14 +177,14 @@ var drawNote = function(elem, startx, verticalPos, msg){
  * @param msg
  */
 var drawMessage = function(elem, startx, stopx, verticalPos, msg){
-    var g = elem.append("g");
+    var g = elem.append('g');
     var txtCenter = startx + (stopx-startx)/2;
 
-    var textElem = g.append("text")      // text label for the x axis
-        .attr("x", txtCenter)
-        .attr("y", verticalPos - 7)
-        .style("text-anchor", "middle")
-        .attr("class", "messageText")
+    var textElem = g.append('text')      // text label for the x axis
+        .attr('x', txtCenter)
+        .attr('y', verticalPos - 7)
+        .style('text-anchor', 'middle')
+        .attr('class', 'messageText')
         .text(msg.message);
 
     var textWidth;
@@ -201,7 +201,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     var line;
 
     if(startx===stopx){
-        line  = g.append("path")
+        line  = g.append('path')
             .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ',' +
             (verticalPos+30)+' ' +startx+ ','+(verticalPos+20));
 
@@ -209,32 +209,32 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         var dx = Math.max(textWidth/2,100);
         exports.bounds.insert(startx-dx, exports.bounds.getVerticalPos() -10, stopx+dx,  exports.bounds.getVerticalPos());
     }else{
-        line = g.append("line");
-        line.attr("x1", startx);
-        line.attr("y1", verticalPos);
-        line.attr("x2", stopx);
-        line.attr("y2", verticalPos);
+        line = g.append('line');
+        line.attr('x1', startx);
+        line.attr('y1', verticalPos);
+        line.attr('x2', stopx);
+        line.attr('y2', verticalPos);
         exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
     }
     //Make an SVG Container
     //Draw the line
     if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
-        line.style("stroke-dasharray", ("3, 3"));
-        line.attr("class", "messageLine1");
+        line.style('stroke-dasharray', ('3, 3'));
+        line.attr('class', 'messageLine1');
     }
     else {
-        line.attr("class", "messageLine0");
+        line.attr('class', 'messageLine0');
     }
 
-    line.attr("stroke-width", 2);
-    line.attr("stroke", "black");
-    line.style("fill", "none");     // remove any fill colour
+    line.attr('stroke-width', 2);
+    line.attr('stroke', 'black');
+    line.style('fill', 'none');     // remove any fill colour
     if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
-        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#arrowhead)");
+        line.attr('marker-end', 'url(' + window.location.protocol+'//'+window.location.host+window.location.pathname + '#arrowhead)');
     }
 
     if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
-        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#crosshead)");
+        line.attr('marker-end', 'url(' + window.location.protocol+'//'+window.location.host+window.location.pathname + '#crosshead)');
     }
 
 };
@@ -387,12 +387,12 @@ module.exports.draw = function (text, id) {
 
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;
     if(conf.useMaxWidth) {
-        diagram.attr("height", '100%');
-        diagram.attr("width", '100%');
+        diagram.attr('height', '100%');
+        diagram.attr('width', '100%');
         diagram.attr('style', 'max-width:' + (width) + 'px;');
     }else{
-        diagram.attr("height",height);
-        diagram.attr("width", width );
+        diagram.attr('height',height);
+        diagram.attr('width', width );
     }
-    diagram.attr("viewBox", (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
+    diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };

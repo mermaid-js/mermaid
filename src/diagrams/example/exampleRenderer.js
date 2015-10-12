@@ -21,15 +21,15 @@ exports.draw = function (txt, id, ver) {
     // Fetch the default direction, use TD if none was found
     var svg = d3.select('#'+id);
 
-    var textstring = "mermaid!";
-    var g = svg.append("g");
+    var textstring = 'mermaid!';
+    var g = svg.append('g');
 
-    g.append("text")      // text label for the x axis
-        .attr("x", 100)
-        .attr("y", 40)
+    g.append('text')      // text label for the x axis
+        .attr('x', 100)
+        .attr('y', 40)
         .attr('class','version')
         .attr('font-size','32px')
-        .style("text-anchor", "middle")
+        .style('text-anchor', 'middle')
         .text('mermaid '+ ver);
 
     /*
@@ -38,7 +38,7 @@ exports.draw = function (txt, id, ver) {
     var height = box.stopy-box.starty+2*conf.diagramMarginY;
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;*/
 
-    svg.attr("height",100);
-    svg.attr("width", 400 );
-    //svg.attr("viewBox", '0 0 300 150');
+    svg.attr('height',100);
+    svg.attr('width', 400 );
+    //svg.attr('viewBox', '0 0 300 150');
 };

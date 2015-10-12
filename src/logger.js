@@ -48,13 +48,13 @@ Logger = (function() {
         // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
         // if (hh > 12) {hh = hh % 12;}
         // These lines ensure you have two-digits
-        if (hh < 10) {hh = "0"+hh;}
-        if (mm < 10) {mm = "0"+mm;}
-        if (ss < 10) {ss = "0"+ss;}
-        if (ms < 100){ms = "0"+ms;}
-        if (ms < 10) {ms = "00"+ms;}
+        if (hh < 10) {hh = '0'+hh;}
+        if (mm < 10) {mm = '0'+mm;}
+        if (ss < 10) {ss = '0'+ss;}
+        if (ms < 100){ms = '0'+ms;}
+        if (ms < 10) {ms = '00'+ms;}
         // This formats your string to HH:MM:SS
-        var t = hh+":"+mm+":"+ss +' ('+ms+')';
+        var t = hh+':'+mm+':'+ss +' ('+ms+')';
         return t;
     }
 
@@ -67,7 +67,7 @@ Logger = (function() {
     };
 
     Logger.prototype.build_message = function(options) {
-        return "[" + formatTime(options.timestamp) + "] " + options.message;
+        return '[' + formatTime(options.timestamp) + '] ' + options.message;
     };
 
     return Logger;

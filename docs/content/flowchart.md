@@ -394,6 +394,34 @@ If a class is named default it will be assigned to all classes without specific 
     classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 ```
 
+## Basic support for fontawesome
+
+It is possible to add icons from fontawesome. In order to do so, you need to add the fontwesome as described in the instructions at 
+[the fontawesome web site](https://fortawesome.github.io/Font-Awesome/).
+
+The icons are acessed via the syntax fa:#icon class name#.
+
+The example code below
+```
+graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);
+```
+
+Would render the graph below:
+
+```mermaid
+graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);
+```
+
+<aside class="success">Support for fontawesome has been comitted to the  master branch and will be included in 0.5.3</aside>
+
 ## Graph declarations with spaces between vertices and link and without semicolon
 
 * In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.
