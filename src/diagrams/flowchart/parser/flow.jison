@@ -21,7 +21,7 @@
 "click"               return 'CLICK';
 "graph"               return 'GRAPH';
 "subgraph"            return 'subgraph';
-"end"\s*              return 'end';
+"end"\b\s*            return 'end';
 "LR"                  return 'DIR';
 "RL"                  return 'DIR';
 "TB"                  return 'DIR';
