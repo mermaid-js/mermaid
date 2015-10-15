@@ -308,6 +308,18 @@ describe('when parsing ',function(){
         expect(edges[0].text).toBe('');
     });
 
+    it('should handle node names with "end" substring',function(){
+        var res = flow.parser.parse('graph TD\nendpoint --> sender');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['endpoint'].id).toBe('endpoint');
+        expect(vert['sender'].id).toBe('sender');
+        expect(edges[0].start).toBe('endpoint');
+        expect(edges[0].end).toBe('sender');
+    });
+
     it('should handle open ended edges',function(){
         var res = flow.parser.parse('graph TD;A---B;');
 
