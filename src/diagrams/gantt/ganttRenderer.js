@@ -2,7 +2,7 @@ var gantt = require('./parser/gantt').parser;
 gantt.yy = require('./ganttDb');
 var d3 = require('../../d3');
 var moment = require('moment');
-var log = require('../../logger').create();
+//var log = require('../../logger').create();
 
 var daysInChart;
 var conf = {
@@ -51,7 +51,7 @@ module.exports.draw = function (text, id) {
     
     
     
-    var dateFormat = d3.time.format('%Y-%m-%d');
+    //var dateFormat = d3.time.format('%Y-%m-%d');
     
     var startDate = d3.min(taskArray, function (d) {
         return d.startTime;
@@ -90,7 +90,7 @@ module.exports.draw = function (text, id) {
 
     }
 
-    var title = svg.append('text')
+    svg.append('text')
         .text(gantt.yy.getTitle())
         .attr('x', w / 2)
         .attr('y', conf.titleTopMargin)
@@ -117,9 +117,9 @@ module.exports.draw = function (text, id) {
     }
 
 
-    function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
+    function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) { //eslint-disable-line no-unused-vars
 
-        var bigRects = svg.append('g')
+        svg.append('g')
             .selectAll('rect')
             .data(theArray)
             .enter()
@@ -128,11 +128,11 @@ module.exports.draw = function (text, id) {
             .attr('y', function (d, i) {
                 return i * theGap + theTopPad - 2;
             })
-            .attr('width', function (d) {
+            .attr('width', function () {
                 return w - theSidePad / 2;
             })
             .attr('height', theGap)
-            .attr('class', function (d) {
+            .attr('class', function (d) { //eslint-disable-line no-unused-vars
                 for (var i = 0; i < categories.length; i++) {
                     if (d.type === categories[i]) {
                         return 'section section' + (i % conf.numberSectionStyles);
@@ -148,7 +148,7 @@ module.exports.draw = function (text, id) {
             .enter();
 
 
-        var innerRects = rectangles.append('rect')
+        rectangles.append('rect')
                 .attr('rx', 3)
                 .attr('ry', 3)
                 .attr('x', function (d) {
@@ -198,7 +198,7 @@ module.exports.draw = function (text, id) {
             ;
 
 
-        var rectText = rectangles.append('text')
+        rectangles.append('text')
             .text(function (d) {
                 return d.task;
             })
@@ -332,7 +332,7 @@ module.exports.draw = function (text, id) {
             xAxis = xAxis.ticks(d3.time.monday.range);
         }
 
-        var grid = svg.append('g')
+        svg.append('g')
             .attr('class', 'grid')
             .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
             .call(xAxis)
@@ -344,7 +344,7 @@ module.exports.draw = function (text, id) {
             .attr('dy', '1em');
     }
 
-    function vertLabels(theGap, theTopPad, theSidePad, theBarHeight, theColorScale) {
+    function vertLabels(theGap, theTopPad) {
         var numOccurances = [];
         var prevGap = 0;
 
@@ -352,7 +352,7 @@ module.exports.draw = function (text, id) {
             numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
         }
 
-        var axisText = svg.append('g') //without doing this, impossible to put grid lines behind text
+        svg.append('g') //without doing this, impossible to put grid lines behind text
             .selectAll('text')
             .data(numOccurances)
             .enter()
@@ -389,7 +389,7 @@ module.exports.draw = function (text, id) {
 
         var today = new Date();
 
-        var todayLine = todayG.append('line')
+        todayG.append('line')
                 .attr('x1', timeScale(today) + theSidePad)
                 .attr('x2', timeScale(today) + theSidePad)
                 .attr('y1', conf.titleTopMargin)

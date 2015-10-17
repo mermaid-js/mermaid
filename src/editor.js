@@ -1,7 +1,7 @@
 function decodeHTMLEntities (str) {
     if(str && typeof str === 'string') {
       // strip script/html tags
-      element = document.querySelector('.editor');
+      var element = document.querySelector('.editor');
         
       str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
       str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
@@ -33,7 +33,7 @@ var mermaidEditor =  {
         txt = decodeHTMLEntities(txt).trim();
 
         document.querySelector('.mermaid').innerHTML = txt;
-        mermaid.init();
+        global.mermaid.init();
         document.querySelector('.editor').value = txt;
     }
 };

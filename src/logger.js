@@ -13,12 +13,12 @@ var Logger;
 
 Logger = (function() {
     function Logger(options) {
-        var level, num, ref;
+        var level, ref;
+
         this.options = options || {};
         this.level = this.options.level || Logger.levels.default;
         ref = Logger.levels;
         for (level in ref) {
-            num = ref[level];
             Logger.define(this, level);
         }
     }
@@ -59,9 +59,9 @@ Logger = (function() {
     }
 
     Logger.prototype.write = function(options) {
-        if(typeof console !== 'undefined'){
-            if(typeof console.log  !== 'undefined'){
-                return console.log(this.build_message(options));
+        if(typeof console !== 'undefined'){ //eslint-disable-line no-console
+            if(typeof console.log  !== 'undefined'){ //eslint-disable-line no-console
+                return console.log(this.build_message(options)); //eslint-disable-line no-console
             }
         }
     };

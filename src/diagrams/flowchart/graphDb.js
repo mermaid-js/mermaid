@@ -2,6 +2,7 @@
  * Created by knut on 14-11-03.
  */
 var log = require('../../logger').create();
+var d3 = require('../../d3');
 var vertices = {};
 var edges = [];
 var classes = [];
@@ -64,7 +65,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-    //log.debug('Got edge', start, end);
+    log.debug('Got edge', start, end);
     var edge = {start: start, end: end, type: undefined, text: ''};
     linktext = type.text;
 
@@ -89,8 +90,6 @@ exports.addLink = function (start, end, type, linktext) {
  * @param style
  */
 exports.updateLink = function (pos, style) {
-    var position = pos.substr(1);
-
     if(pos === 'default'){
         edges.defaultStyle = style;
     }else{
@@ -178,7 +177,7 @@ var setLink = function(id, linkStr){
 exports.getTooltip = function(id){
     return tooltips[id];
 };
-var clickEvents = [];
+
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
@@ -243,7 +242,7 @@ var setupToolTips = function(element){
 
     var nodes = svg.selectAll('g.node');
     nodes
-        .on('mouseover', function(d) {
+        .on('mouseover', function() {
             var el = d3.select(this);
             var title = el.attr('title');
             // Dont try to draw a tooltip if no data is provided
@@ -261,7 +260,7 @@ var setupToolTips = function(element){
             el.classed('hover',true);
 
         })
-        .on('mouseout', function(d) {
+        .on('mouseout', function() {
             tooltipElem.transition()
                 .duration(500)
                 .style('opacity', 0);
@@ -386,17 +385,17 @@ var indexNodes = function (id, pos) {
 exports.getDepthFirstPos = function (pos) {
     return posCrossRef[pos];
 };
-exports.indexNodes = function (id) {
+exports.indexNodes = function () {
     secCount = -1;
     if(subGraphs.length>0){
         indexNodes('none',subGraphs.length-1,0);
     }
 };
 
-exports.getSubGraphs = function (list) {
+exports.getSubGraphs = function () {
     return subGraphs;
 };
 
 exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+    global.mermaidAPI.parseError(err,hash);
 };

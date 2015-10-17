@@ -37,7 +37,7 @@ exports.bounds = {
         startx:undefined,
         stopx :undefined,
         starty:undefined,
-        stopy :undefined,
+        stopy :undefined
     },
     verticalPos:0,
 
@@ -48,7 +48,7 @@ exports.bounds = {
             startx:undefined,
                 stopx :undefined,
                 starty:undefined,
-                stopy :undefined,
+                stopy :undefined
         };
         this.verticalPos =0;
     },

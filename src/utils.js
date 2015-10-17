@@ -19,10 +19,9 @@ var log = Log.create();
  * ```
  *
  * @param {string} text The text defining the graph
- * @param {string} text The second text defining the graph
  * @returns {string} A graph definition key
  */
-var detectType = function(text,a){
+var detectType = function(text){
     text = text.replace(/^\s*%%.*\n/g,'\n');
     if(text.match(/^\s*sequenceDiagram/)){
         return 'sequenceDiagram';
@@ -43,8 +42,6 @@ var detectType = function(text,a){
         return 'gantt';
     }
 
-    console.warn('detecting type!');
-
     return 'graph';
 };
 export {detectType};
@@ -56,9 +53,9 @@ export {detectType};
  * @param {object} Hash table of class definitions from the graph definition
  */
 var cloneCssStyles = function(svg, classes){
-    console.warn('cloneCssStyles ----');
     var usedStyles = '';
     var sheets = document.styleSheets;
+    var rule;
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
         if (sheets[i].title !== 'mermaid-svg-internal-css') {
@@ -67,7 +64,7 @@ var cloneCssStyles = function(svg, classes){
                 var rules = sheets[i].cssRules;
                 if (rules !== null) {
                     for (var j = 0; j < rules.length; j++) {
-                        var rule = rules[j];
+                        rule = rules[j];
                         if (typeof(rule.style) !== 'undefined') {
                             var elems;
                             elems = svg.querySelectorAll(rule.selectorText);
@@ -79,12 +76,8 @@ var cloneCssStyles = function(svg, classes){
                 }
             }
             catch(err) {
-                if(typeof console !== 'undefined'){
-                    if(console.warn !== 'undefined'){
-                        if(rule !== 'undefined'){
-                            console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
-                        }
-                    }
+                if(rule !== 'undefined'){
+                    log.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
                 }
             }
         } 

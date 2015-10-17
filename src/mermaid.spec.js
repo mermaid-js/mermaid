@@ -5,10 +5,8 @@
  * Created by knut on 14-11-23.
  */
 var rewire = require('rewire');
-var utils = require('./utils');
 var mermaid = require('./mermaid');
-var log = require('./logger').create();
-console.log('here');
+//var log = require('./logger').create();
 
 describe('when using mermaid and ',function() {
     describe('when detecting chart type ',function() {
@@ -79,7 +77,6 @@ describe('when using mermaid and ',function() {
     });
 
     describe('when calling addEdges ',function() {
-        var mermaid;
         var graph = require('./diagrams/flowchart/graphDb');
         var flow = require('./diagrams/flowchart/parser/flow');
         var flowRend = require('./diagrams/flowchart/flowRenderer');
@@ -94,12 +91,12 @@ describe('when using mermaid and ',function() {
             mermaid = rewire('./mermaid');
         });
         it('it should handle edges with text', function () {
-            var res = flow.parser.parse('graph TD;A-->|text ex|B;');
-            var vert = flow.parser.yy.getVertices();
+            flow.parser.parse('graph TD;A-->|text ex|B;');
+            flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
 
             var mockG = {
-                setEdge:function(start, end,options,name){
+                setEdge:function(start, end,options){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('normal');
@@ -111,12 +108,12 @@ describe('when using mermaid and ',function() {
         });
 
         it('should handle edges without text', function () {
-            var res = flow.parser.parse('graph TD;A-->B;');
-            var vert = flow.parser.yy.getVertices();
+            flow.parser.parse('graph TD;A-->B;');
+            flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
 
             var mockG = {
-                setEdge:function(start, end,options,name){
+                setEdge:function(start, end,options){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('normal');
@@ -128,12 +125,12 @@ describe('when using mermaid and ',function() {
 
 
         it('should handle open-ended edges', function () {
-            var res = flow.parser.parse('graph TD;A---B;');
-            var vert = flow.parser.yy.getVertices();
+            flow.parser.parse('graph TD;A---B;');
+            flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
 
             var mockG = {
-                setEdge:function(start, end,options,name){
+                setEdge:function(start, end,options){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('none');
@@ -144,12 +141,12 @@ describe('when using mermaid and ',function() {
         });
 
         it('should handle edges with styles defined', function () {
-            var res = flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
-            var vert = flow.parser.yy.getVertices();
+            flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
+            flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
 
             var mockG = {
-                setEdge:function(start, end,options,name){
+                setEdge:function(start, end,options){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('none');
@@ -160,12 +157,12 @@ describe('when using mermaid and ',function() {
             flowRend.addEdges(edges,mockG);
         });
         it('should handle edges with text and styles defined', function () {
-            var res = flow.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;');
-            var vert = flow.parser.yy.getVertices();
+            flow.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;');
+            flow.parser.yy.getVertices();
             var edges = flow.parser.yy.getEdges();
 
             var mockG = {
-                setEdge:function(start, end,options,name){
+                setEdge:function(start, end,options){
                     expect(start).toBe('A');
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('none');

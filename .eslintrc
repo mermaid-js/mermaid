@@ -225,7 +225,8 @@
     "expect": true,
     "fit": true,
     "beforeEach": true,
-    "fdescribe": true
+    "spyOn": true,
+    "fdescribe": true,
   }
 }
 

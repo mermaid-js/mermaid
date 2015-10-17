@@ -2,13 +2,11 @@
  * Created by knut on 14-11-18.
  */
 describe('when parsing a gantt diagram it',function() {
-    var parseError, gantt;
+    var gantt;
     beforeEach(function () {
         gantt = require('./parser/gantt').parser;
         gantt.yy = require('./ganttDb');
-        parseError = function(err, hash) {
-            log.debug('Syntax error:' + err);
-        };
+
         //ex.yy.parseError = parseError;
     });
 

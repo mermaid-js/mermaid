@@ -12,8 +12,6 @@
  * somewhere in the page or something completely different.
  */
 var graph = require('./diagrams/flowchart/graphDb');
-
-var flow = require('./diagrams/flowchart/parser/flow');
 var utils = require('./utils');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
 var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
@@ -28,7 +26,6 @@ var gantt       = require('./diagrams/gantt/ganttRenderer');
 var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
 var d3 = require('./d3');
-var nextId = 0;
 
 /**
  * ## Configuration
@@ -282,16 +279,16 @@ exports.version = function(){
 exports.encodeEntities = function(text){
     var txt = text;
 
-    txt = txt.replace(/style.*:\S*#.*;/g,function(s,t,u){
+    txt = txt.replace(/style.*:\S*#.*;/g,function(s){
         var innerTxt = s.substring(0,s.length-1);
         return innerTxt;
     });
-    txt = txt.replace(/classDef.*:\S*#.*;/g,function(s,t,u){
+    txt = txt.replace(/classDef.*:\S*#.*;/g,function(s){
         var innerTxt = s.substring(0,s.length-1);
         return innerTxt;
     });
 
-    txt = txt.replace(/#\w+\;/g,function(s,t,u){
+    txt = txt.replace(/#\w+\;/g,function(s){
         var innerTxt = s.substring(1,s.length-1);
 
         var isInt = /^\+?\d+$/.test(innerTxt);
@@ -309,13 +306,13 @@ exports.encodeEntities = function(text){
 exports.decodeEntities = function(text){
     var txt = text;
 
-    txt = txt.replace(/\ﬂ\°\°/g,function(s,t,u){
+    txt = txt.replace(/\ﬂ\°\°/g,function(){
         return '&#';
     });
-    txt = txt.replace(/\ﬂ\°/g,function(s,t,u){
+    txt = txt.replace(/\ﬂ\°/g,function(){
         return '&';
     });
-    txt = txt.replace(/¶ß/g,function(s,t,u){
+    txt = txt.replace(/¶ß/g,function(){
         return ';';
     });
 
@@ -490,7 +487,7 @@ exports.getConfig = function(){
 
 exports.parseError = function(err, hash) {
     if(typeof mermaid !== 'undefined') {
-        mermaid.parseError(err,hash);
+        global.mermaid.parseError(err,hash);
     }else{
         log.debug('Mermaid Syntax error:');
         log.debug(err);

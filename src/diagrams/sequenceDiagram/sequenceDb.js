@@ -81,7 +81,7 @@ exports.addNote = function (actor, placement, message){
 
 
 exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+    global.mermaidAPI.parseError(err,hash);
 };
 
 exports.apply = function(param){

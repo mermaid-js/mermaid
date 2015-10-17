@@ -237,5 +237,5 @@ exports.addTask = function(descr,data){
 };
 
 exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+    global.mermaidAPI.parseError(err,hash);
 };

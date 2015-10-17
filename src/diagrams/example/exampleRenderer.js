@@ -14,14 +14,13 @@ exports.draw = function (txt, id, ver) {
     var parser;
     parser = exampleParser.parser;
     parser.yy = db;
-
+    log.debug('Renering example diagram');
     // Parse the graph definition
     parser.parse(txt);
 
     // Fetch the default direction, use TD if none was found
     var svg = d3.select('#'+id);
 
-    var textstring = 'mermaid!';
     var g = svg.append('g');
 
     g.append('text')      // text label for the x axis

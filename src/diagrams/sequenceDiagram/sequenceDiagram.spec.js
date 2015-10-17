@@ -2,7 +2,7 @@
  * Created by knut on 14-11-18.
  */
 var proxyquire = require('proxyquire');
-var log = require('../../logger').create();
+//var log = require('../../logger').create();
 
 var sq = require('./parser/sequenceDiagram').parser;
 var newD3;
@@ -20,7 +20,6 @@ var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 });
 
 var str;
 describe('when parsing a sequenceDiagram',function() {
-    var parseError;
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
@@ -335,7 +334,7 @@ describe('when parsing a sequenceDiagram',function() {
     });});
 
 describe('when checking the bounds in a sequenceDiagram',function() {
-    var parseError, _d3, conf;
+    var conf;
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
@@ -485,11 +484,19 @@ describe('when checking the bounds in a sequenceDiagram',function() {
 });
 
 describe('when rendering a sequenceDiagram',function() {
-    var parseError, _d3, conf;
+    var conf;
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
 
+        var MockBrowser = require('mock-browser').mocks.MockBrowser;
+        var mock = new MockBrowser();
+
+        delete global.mermaid_config;
+
+        // and in the run-code inside some object
+        global.document = mock.getDocument();
+        global.window = mock.getWindow();
 
         //parseError = function(err, hash) {
         //    log.debug('Syntax error:' + err);
@@ -499,16 +506,16 @@ describe('when rendering a sequenceDiagram',function() {
 
         newD3 = function() {
             var o = {
-                append: function (type) {
+                append: function () {
                     return newD3();
                 },
-                attr: function (key, val) {
+                attr: function () {
                     return this;
                 },
-                style: function (key, val) {
+                style: function () {
                     return this;
                 },
-                text: function (txt) {
+                text: function () {
                     return this;
                 },
                 0:{
@@ -682,7 +689,7 @@ describe('when rendering a sequenceDiagram',function() {
 });
 
 describe('when rendering a sequenceDiagram with actor mirror activated',function() {
-    var parseError, _d3, conf;
+    var conf;
     beforeEach(function () {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
@@ -694,16 +701,16 @@ describe('when rendering a sequenceDiagram with actor mirror activated',function
 
         newD3 = function() {
             var o = {
-                append: function (type) {
+                append: function () {
                     return newD3();
                 },
-                attr: function (key, val) {
+                attr: function () {
                     return this;
                 },
-                style: function (key, val) {
+                style: function () {
                     return this;
                 },
-                text: function (txt) {
+                text: function () {
                     return this;
                 },
                 0:{
