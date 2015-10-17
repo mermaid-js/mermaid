@@ -14,7 +14,7 @@
 var graph = require('./diagrams/flowchart/graphDb');
 
 var flow = require('./diagrams/flowchart/parser/flow');
-var utils = require('./utils-es6');
+var utils = require('./utils');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
 var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
 var info = require('./diagrams/example/exampleRenderer');
