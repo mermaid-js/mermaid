@@ -23,13 +23,13 @@ describe('when using mermaid and ',function() {
 
             // and in the run-code inside some object
             global.document = mock.getDocument();
-            window = mock.getWindow();
+            global.window = mock.getWindow();
 
         });
 
         it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
             mermaid = rewire('./mermaid');
-            mermaid_config ={startOnLoad : false};
+            global.mermaid_config ={startOnLoad : false};
 
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
@@ -41,7 +41,7 @@ describe('when using mermaid and ',function() {
         it('should not start rendering with mermaid.startOnLoad set to false', function () {
             mermaid = rewire('./mermaid');
             global.mermaid.startOnLoad =  false;
-            mermaid_config ={startOnLoad : true};
+            global.mermaid_config ={startOnLoad : true};
 
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
@@ -52,7 +52,7 @@ describe('when using mermaid and ',function() {
         it('should start rendering with both startOnLoad set', function () {
             mermaid = rewire('./mermaid');
             global.mermaid.startOnLoad =  true;
-            mermaid_config ={startOnLoad : true};
+            global.mermaid_config ={startOnLoad : true};
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
             mermaid.contentLoaded();
@@ -85,7 +85,7 @@ describe('when using mermaid and ',function() {
         var flowRend = require('./diagrams/flowchart/flowRenderer');
 
         beforeEach(function () {
-            mermaid_config ={startOnLoad : false};
+            global.mermaid_config ={startOnLoad : false};
             var MockBrowser = require('mock-browser').mocks.MockBrowser;
             var mock = new MockBrowser();
             flow.parser.yy =graph;

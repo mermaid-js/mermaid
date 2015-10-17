@@ -43,8 +43,6 @@ exports.addVertices = function (vert, g) {
         var vertice = vert[id];
         var verticeText;
 
-        var i;
-
         /**
          * Variable for storing the classes for the vertice
          * @type {string}
@@ -78,7 +76,7 @@ exports.addVertices = function (vert, g) {
         var labelTypeStr = '';
         if(conf.htmlLabels) {
             labelTypeStr = 'html';
-            verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s,t,u){
+            verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s){
                 return '<i class="fa '+ s.substring(3)+'">';
             });
 
@@ -119,7 +117,7 @@ exports.addVertices = function (vert, g) {
                 _shape = 'rect';
         }
         // Add the node
-        g.setNode(vertice.id, {labelType: labelTypeStr, shape:_shape, label: verticeText, rx: radious, ry: radious, class: classStr, style: style, id:vertice.id});
+        g.setNode(vertice.id, {labelType: labelTypeStr, shape:_shape, label: verticeText, rx: radious, ry: radious, 'class': classStr, style: style, id:vertice.id});
     });
 };
 
@@ -257,7 +255,7 @@ exports.draw = function (text, id,isDot) {
         parser.parse(text);
     }
     catch(err){
-
+        log.debug('Parsing failed');
     }
 
     // Fetch the default direction, use TD if none was found
@@ -347,7 +345,7 @@ exports.draw = function (text, id,isDot) {
                 {x: w, y: 0},
                 {x: w, y: -h},
                 {x: -h/2, y: -h},
-                {x: 0, y: -h/2},
+                {x: 0, y: -h/2}
             ];
         var shapeSvg = parent.insert('polygon', ':first-child')
             .attr('points', points.map(function (d) {
@@ -369,7 +367,7 @@ exports.draw = function (text, id,isDot) {
                 {x: w+h/2, y: 0},
                 {x: w, y: -h/2},
                 {x: w+h/2, y: -h},
-                {x: 0, y: -h},
+                {x: 0, y: -h}
             ];
         var shapeSvg = parent.insert('polygon', ':first-child')
             .attr('points', points.map(function (d) {
@@ -401,7 +399,7 @@ exports.draw = function (text, id,isDot) {
 
     // Set up an SVG group so that we can translate the final graph.
     var svg = d3.select('#' + id);
-    svgGroup = d3.select('#' + id + ' g');
+    //svgGroup = d3.select('#' + id + ' g');
 
     // Run the renderer. This is what draws the final graph.
     var element = d3.select('#' + id + ' g');
@@ -412,12 +410,6 @@ exports.draw = function (text, id,isDot) {
                 .attr('title', function(){
             return graph.getTooltip(this.id);
         });
-
-    //
-    //element.selectAll('g.node')
-    //    .attr('title', function(v) { return styleTooltip(v, g.node(v).description) })
-    //    .each(function(v) { $(this).tipsy({ gravity: 'w', opacity: 1, html: true }); });
-    var svgb = document.querySelector('#' + id);
 
 /*
  var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
@@ -455,7 +447,6 @@ exports.draw = function (text, id,isDot) {
     graph.indexNodes('subGraph'+i);
     
     for(i=0;i<subGraphs.length;i++){
-        var pos = graph.getDepthFirstPos(i);
         subG = subGraphs[i];
 
         if (subG.title !== 'undefined') {

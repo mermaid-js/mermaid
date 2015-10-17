@@ -3,6 +3,7 @@
  */
 describe('when parsing an info graph it',function() {
     var parseError;
+    var ex;
     beforeEach(function () {
         ex = require('./parser/example').parser;
         ex.yy = require('./exampleDb');

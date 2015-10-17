@@ -20,7 +20,7 @@
 var mermaidAPI = require('./mermaidAPI');
 var nextId = 0;
 var log = require('./logger').create();
-var utils = require('./utils');
+var he = require('he');
 
 module.exports.mermaidAPI = mermaidAPI;
 /**
@@ -51,7 +51,7 @@ var init = function () {
     if(arguments.length >= 2){
         /*! sequence config was passed as #1 */
         if(typeof arguments[0] !== 'undefined'){
-            mermaid.sequenceConfig = arguments[0];
+            global.mermaid.sequenceConfig = arguments[0];
         }
 
         nodes = arguments[1];
@@ -84,18 +84,18 @@ var init = function () {
     var i;
 
     if(typeof mermaid_config !== 'undefined'){
-        mermaidAPI.initialize(mermaid_config);
+        mermaidAPI.initialize(global.mermaid_config);
     }
-    log.debug('Start On Load before: '+mermaid.startOnLoad);
-    if(typeof mermaid.startOnLoad !== 'undefined'){
-        log.debug('Start On Load inner: '+mermaid.startOnLoad);
-        mermaidAPI.initialize({startOnLoad:mermaid.startOnLoad});
+    log.debug('Start On Load before: '+global.mermaid.startOnLoad);
+    if(typeof global.mermaid.startOnLoad !== 'undefined'){
+        log.debug('Start On Load inner: '+global.mermaid.startOnLoad);
+        mermaidAPI.initialize({startOnLoad:global.mermaid.startOnLoad});
 
     }
 
 
-    if(typeof mermaid.ganttConfig !== 'undefined'){
-        mermaidAPI.initialize({gantt:mermaid.ganttConfig});
+    if(typeof global.mermaid.ganttConfig !== 'undefined'){
+        mermaidAPI.initialize({gantt:global.mermaid.ganttConfig});
     }
 
     var txt;
@@ -119,7 +119,6 @@ var init = function () {
 
         var id = 'mermaidChart' + nextId++;
 
-        var he = require('he');
         // Fetch the graph definition including tags
         txt = element.innerHTML;
 
@@ -133,7 +132,6 @@ var init = function () {
 
         mermaidAPI.render(id,txt,insertSvg, element);
     }
-
 };
 
 exports.init = init;
@@ -188,7 +186,7 @@ global.mermaid = {
     startOnLoad:    true,
     htmlLabels:     true,
 
-    init: function(sequenceConfig, nodes) {
+    init: function() {
         init.apply(null, arguments);
     },
     initialize: function(config) {
@@ -200,7 +198,7 @@ global.mermaid = {
     parse: function(text) {
         return mermaidAPI.parse(text);
     },
-    parseError: function(err, hash) {
+    parseError: function(err) {
         log.debug('Mermaid Syntax error:');
         log.debug(err);
     },
@@ -225,16 +223,16 @@ exports.contentLoaded = function(){
     var config;
     // Check state of start config mermaid namespace
     if (typeof mermaid_config !== 'undefined') {
-        if (equals(false, mermaid_config.htmlLabels)) {
+        if (equals(false, global.mermaid_config.htmlLabels)) {
             global.mermaid.htmlLabels = false;
         }
     }
 
     if(global.mermaid.startOnLoad) {
         // For backwards compatability reasons also check mermaid_config variable
-        if (typeof mermaid_config !== 'undefined') {
+        if (typeof global.mermaid_config !== 'undefined') {
             // Check if property startOnLoad is set
-            if (equals(true, mermaid_config.startOnLoad)) {
+            if (equals(true, global.mermaid_config.startOnLoad)) {
                 global.mermaid.init();
             }
         }

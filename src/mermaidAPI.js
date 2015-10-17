@@ -14,7 +14,7 @@
 var graph = require('./diagrams/flowchart/graphDb');
 
 var flow = require('./diagrams/flowchart/parser/flow');
-var utils = require('./utils');
+var utils = require('./utils-es6');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
 var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
 var info = require('./diagrams/example/exampleRenderer');
@@ -418,9 +418,11 @@ var render = function(id, txt, cb, container){
     d3.select('#d'+id).selectAll('foreignobject div').attr('xmlns','http://www.w3.org/1999/xhtml');
 
 
-
+    var url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
+    url = url.replace(/\(/g,'\\(');
+    url = url.replace(/\)/g,'\\)');
     // Fix for when the base tag is used
-    var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
+    var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+url +'#arrowhead','g');
 
     svgCode = exports.decodeEntities(svgCode);
     //console.warn('mermaid decode: ');

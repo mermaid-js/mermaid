@@ -226,15 +226,19 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         line.attr('class', 'messageLine0');
     }
 
+    var url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
+    url = url.replace(/\(/g,'\\(');
+    url = url.replace(/\)/g,'\\)');
+
     line.attr('stroke-width', 2);
     line.attr('stroke', 'black');
     line.style('fill', 'none');     // remove any fill colour
     if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
-        line.attr('marker-end', 'url(' + window.location.protocol+'//'+window.location.host+window.location.pathname + '#arrowhead)');
+        line.attr('marker-end', 'url(' + url + '#crosshead)');
     }
 
     if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
-        line.attr('marker-end', 'url(' + window.location.protocol+'//'+window.location.host+window.location.pathname + '#crosshead)');
+        line.attr('marker-end', 'url(' + url + '#crosshead)');
     }
 
 };

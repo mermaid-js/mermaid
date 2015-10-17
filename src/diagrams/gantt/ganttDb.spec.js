@@ -3,7 +3,7 @@
  */
 var log = require('../../logger').create();
 describe('when using the ganttDb',function() {
-    var parseError, gantt;
+    var parseError, gantt, gDb;
     var moment = require('moment');
     
     beforeEach(function () {
