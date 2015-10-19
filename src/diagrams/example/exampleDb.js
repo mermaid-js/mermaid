@@ -1,7 +1,9 @@
 /**
  * Created by knut on 15-01-14.
  */
-var log = require('../../logger').create();
+import * as Logger from '../../logger';
+var log = new Logger.Log();
+
 var message = '';
 var info = false;
 

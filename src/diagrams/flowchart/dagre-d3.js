@@ -1,5 +1,7 @@
 /* global window */
-var log = require('../../logger').create();
+import * as Logger from '../../logger';
+var log = new Logger.Log();
+
 var dagreD3;
 //log.debug('setting up dagre-d3');
 if (require) {

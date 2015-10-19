@@ -6,7 +6,9 @@ var flow = require('./parser/flow');
 var dot = require('./parser/dot');
 var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
-var log = require('../../logger').create();
+import * as Logger from '../../logger';
+var log = new Logger.Log();
+
 
 var conf = {
 };

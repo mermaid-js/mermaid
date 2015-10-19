@@ -21492,10 +21492,10 @@ module.exports={
     "tape": "node node_modules/.bin/tape test/cli_test-*.js",
     "jasmine": "node node_modules/jasmine-es6/bin/jasmine.js",
     "test": "npm run dist && npm run jasmine && npm run tape",
-    "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | uglifyjs -mc > dist/mermaid.slim.min.js",
-    "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | uglifyjs -mc > dist/mermaidAPI.slim.min.js",
-    "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | uglifyjs -mc > dist/mermaid.min.js",
-    "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | uglifyjs -mc > dist/mermaidAPI.min.js",
+    "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
+    "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
+    "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
+    "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
     "dist": "npm run dist-slim-mermaid;npm run dist-slim-mermaidAPI; npm run dist-mermaid;npm run dist-mermaidAPI"
   },
   "repository": {
@@ -21517,6 +21517,7 @@ module.exports={
   },
   "devDependencies": {
     "async": "^0.9.0",
+    "babel-eslint": "^4.1.3",
     "babelify": "^6.3.0",
     "browserify": "~6.2.0",
     "clone": "^0.2.0",
@@ -21524,6 +21525,7 @@ module.exports={
     "dateformat": "^1.0.11",
     "dox": "^0.8.0",
     "eslint": "^1.6.0",
+    "eslint-watch": "^2.1.2",
     "event-stream": "^3.2.0",
     "foundation": "^4.2.1-1",
     "front-matter": "^0.2.0",
@@ -21570,6 +21572,7 @@ module.exports={
     "rewire": "^2.1.3",
     "rimraf": "^2.2.8",
     "tape": "^3.0.3",
+    "uglifyjs": "^2.4.10",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.2"
   }
@@ -22053,7 +22056,14 @@ module.exports = d3;
  */
 'use strict';
 
-var log = require('../../logger').create();
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 var message = '';
 var info = false;
 
@@ -22085,10 +22095,18 @@ exports.parseError = function (err, hash) {
  */
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
 var db = require('./exampleDb');
 var exampleParser = require('./parser/example.js');
 var d3 = require('../../d3');
-var log = require('../../logger').create();
+
+var log = new Logger.Log();
+
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  * @param text
@@ -22763,7 +22781,14 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 /* global window */
 'use strict';
 
-var log = require('../../logger').create();
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 var dagreD3;
 //log.debug('setting up dagre-d3');
 if (require) {
@@ -22787,12 +22812,19 @@ module.exports = dagreD3;
  */
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
 var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
-var log = require('../../logger').create();
+
+var log = new Logger.Log();
 
 var conf = {};
 module.exports.setConf = function (cnf) {
@@ -23219,7 +23251,14 @@ exports.draw = function (text, id, isDot) {
  */
 'use strict';
 
-var log = require('../../logger').create();
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 var d3 = require('../../d3');
 var vertices = {};
 var edges = [];
@@ -25513,8 +25552,15 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
  */
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
 var moment = require('moment');
-var log = require('../../logger').create();
+
+var log = new Logger.Log();
 
 var dateFormat = '';
 var title = '';
@@ -27578,11 +27624,18 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
  */
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
 var actors = {};
 var actorKeys = [];
 var messages = [];
 var notes = [];
-var log = require('../../logger').create();
+
+var log = new Logger.Log();
 
 exports.addActor = function (id, name, description) {
     actors[id] = { name: name, description: description };
@@ -27715,11 +27768,18 @@ exports.apply = function (param) {
 
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
 var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
 var d3 = require('../../d3');
-var log = require('../../logger').create();
+
+var log = new Logger.Log();
 
 var conf = {
 
@@ -28307,7 +28367,6 @@ exports.getNoteRect = function () {
 };
 
 },{}],102:[function(require,module,exports){
-(function (process){
 /**
  * #logger
  * logger = require('logger').create()
@@ -28319,91 +28378,14 @@ exports.getNoteRect = function () {
  * logger.debug(function() { return "booom" })
  * => [2011-3-3T20:24:4.810 error (5021)] booom
  */
+
 'use strict';
 
-var Logger;
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-Logger = (function () {
-    function Logger(options) {
-        var level, ref;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-        this.options = options || {};
-        this.level = this.options.level || Logger.levels['default'];
-        ref = Logger.levels;
-        for (level in ref) {
-            Logger.define(this, level);
-        }
-    }
-
-    Logger.prototype.add = function (level, message, callback) {
-        if (this.level > (Logger.levels[level] || 5)) {
-            return;
-        }
-        if (callback) {
-            message = callback();
-        } else if (typeof message === 'function') {
-            message = message();
-        }
-        return this.write({
-            timestamp: new Date(),
-            severity: level,
-            message: message,
-            pid: process.pid
-        });
-    };
-
-    function formatTime(timestamp) {
-        var hh = timestamp.getUTCHours();
-        var mm = timestamp.getUTCMinutes();
-        var ss = timestamp.getSeconds();
-        var ms = timestamp.getMilliseconds();
-        // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
-        // if (hh > 12) {hh = hh % 12;}
-        // These lines ensure you have two-digits
-        if (hh < 10) {
-            hh = '0' + hh;
-        }
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
-        if (ss < 10) {
-            ss = '0' + ss;
-        }
-        if (ms < 100) {
-            ms = '0' + ms;
-        }
-        if (ms < 10) {
-            ms = '00' + ms;
-        }
-        // This formats your string to HH:MM:SS
-        var t = hh + ':' + mm + ':' + ss + ' (' + ms + ')';
-        return t;
-    }
-
-    Logger.prototype.write = function (options) {
-        if (typeof console !== 'undefined') {
-            //eslint-disable-line no-console
-            if (typeof console.log !== 'undefined') {
-                //eslint-disable-line no-console
-                return console.log(this.build_message(options)); //eslint-disable-line no-console
-            }
-        }
-    };
-
-    Logger.prototype.build_message = function (options) {
-        return '[' + formatTime(options.timestamp) + '] ' + options.message;
-    };
-
-    return Logger;
-})();
-
-Logger.define = function (logger, level) {
-    return logger[level] = function (message, callback) {
-        return this.add(level, message, callback);
-    };
-};
-
-Logger.levels = {
+var LEVELS = {
     debug: 1,
     info: 2,
     warn: 3,
@@ -28411,15 +28393,98 @@ Logger.levels = {
     fatal: 5,
     'default': 5
 };
+
+var defaultLevel = LEVELS.error;
+
 exports.setLogLevel = function (level) {
-    Logger.levels['default'] = level;
-};
-exports.create = function (options) {
-    return new Logger(options);
+    defaultLevel = level;
 };
 
-}).call(this,require('_process'))
-},{"_process":3}],103:[function(require,module,exports){
+function formatTime(timestamp) {
+    var hh = timestamp.getUTCHours();
+    var mm = timestamp.getUTCMinutes();
+    var ss = timestamp.getSeconds();
+    var ms = timestamp.getMilliseconds();
+    // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
+    // if (hh > 12) {hh = hh % 12;}
+    // These lines ensure you have two-digits
+    if (hh < 10) {
+        hh = '0' + hh;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    if (ss < 10) {
+        ss = '0' + ss;
+    }
+    if (ms < 100) {
+        ms = '0' + ms;
+    }
+    if (ms < 10) {
+        ms = '00' + ms;
+    }
+    // This formats your string to HH:MM:SS
+    var t = hh + ':' + mm + ':' + ss + ' (' + ms + ')';
+    return t;
+}
+
+var Log = (function () {
+    function Log(level) {
+        _classCallCheck(this, Log);
+
+        this.level = level;
+    }
+
+    _createClass(Log, [{
+        key: 'log',
+        value: function log(str, level) {
+            var logLevel = this.level;
+            if (typeof logLevel === 'undefined') {
+                logLevel = defaultLevel;
+            }
+            if (logLevel <= level) {
+                if (typeof console !== 'undefined') {
+                    //eslint-disable-line no-console
+                    if (typeof console.log !== 'undefined') {
+                        //eslint-disable-line no-console
+                        return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'trace',
+        value: function trace(str) {
+            this.log(str, LEVELS.trace);
+        }
+    }, {
+        key: 'debug',
+        value: function debug(str) {
+            this.log(str, LEVELS.debug);
+        }
+    }, {
+        key: 'info',
+        value: function info(str) {
+            this.log(str, LEVELS.info);
+        }
+    }, {
+        key: 'warn',
+        value: function warn(str) {
+            this.log(str, LEVELS.warn);
+        }
+    }, {
+        key: 'error',
+        value: function error(str) {
+            this.log(str, LEVELS.error);
+        }
+    }]);
+
+    return Log;
+})();
+
+exports.Log = Log;
+
+},{}],103:[function(require,module,exports){
 (function (global){
 //(function (root, factory) {
 //    if (typeof exports === 'object') {
@@ -28439,12 +28504,18 @@ exports.create = function (options) {
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
-
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('./logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
 var mermaidAPI = require('./mermaidAPI');
 var nextId = 0;
-var log = require('./logger').create();
+
 var he = require('he');
 
 module.exports.mermaidAPI = mermaidAPI;
@@ -28706,6 +28777,14 @@ if (typeof document !== 'undefined') {
  */
 'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('./logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 var graph = require('./diagrams/flowchart/graphDb');
 var utils = require('./utils');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
@@ -28742,7 +28821,7 @@ var config = {
      *    * error: 4
      *    * fatal: 5
      */
-    logLevel: 3,
+    logLevel: 5,
     /**
      * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
      */
@@ -28916,7 +28995,7 @@ var config = {
     }
 };
 
-var log = require('./logger').create({ level: config.logLevel });
+Logger.setLogLevel(config.logLevel);
 
 /**
  * ## parse
@@ -29153,6 +29232,7 @@ exports.initialize = function (options) {
     if (typeof options === 'object') {
         setConf(options);
     }
+    Logger.setLogLevel(config.logLevel);
 };
 exports.getConfig = function () {
     return config;
@@ -29190,9 +29270,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var _logger = require('./logger');
 
-var Log = _interopRequireWildcard(_logger);
+var Logger = _interopRequireWildcard(_logger);
 
-var log = Log.create();
+var log = new Logger.Log();
 
 /**
  * @function detectType

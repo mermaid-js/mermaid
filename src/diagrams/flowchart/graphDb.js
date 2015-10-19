@@ -1,7 +1,9 @@
 /**
  * Created by knut on 14-11-03.
  */
-var log = require('../../logger').create();
+import * as Logger from '../../logger';
+var log = new Logger.Log();
+
 var d3 = require('../../d3');
 var vertices = {};
 var edges = [];

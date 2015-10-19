@@ -1,8 +1,8 @@
 /**
  * Created by knut on 14-11-23.
  */
-import * as Log from './logger';
-var log = Log.create();
+import * as Logger from './logger';
+var log = new Logger.Log();
 
 /**
  * @function detectType

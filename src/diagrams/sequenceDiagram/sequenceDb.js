@@ -5,7 +5,9 @@ var actors    = {};
 var actorKeys = [];
 var messages  = [];
 var notes     = [];
-var log = require('../../logger').create();
+import * as Logger from '../../logger';
+var log = new Logger.Log();
+
 
 
 exports.addActor = function(id,name,description){

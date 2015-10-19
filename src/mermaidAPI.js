@@ -11,6 +11,9 @@
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
  */
+import * as Logger from './logger';
+var log = new Logger.Log();
+
 var graph = require('./diagrams/flowchart/graphDb');
 var utils = require('./utils');
 var flowRenderer = require('./diagrams/flowchart/flowRenderer');
@@ -47,7 +50,7 @@ var config = {
      *    * error: 4
      *    * fatal: 5
      */
-    logLevel: 3,
+    logLevel: 5,
     /**
      * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
      */
@@ -222,7 +225,8 @@ var config = {
     }
 };
 
-var log = require('./logger').create({level:config.logLevel});
+Logger.setLogLevel(config.logLevel);
+
 
 /**
  * ## parse
@@ -479,6 +483,7 @@ exports.initialize = function(options){
     if(typeof options === 'object'){
         setConf(options);
     }
+    Logger.setLogLevel(config.logLevel);
 
 };
 exports.getConfig = function(){
