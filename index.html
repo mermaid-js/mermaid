@@ -1084,7 +1084,9 @@ Options:
   -c --sequenceConfig  Specify the path to the file with the configuration to be applied in the sequence diagram
   -h --help            Show this message
   -v --verbose         Show logging
-  --version            Print version and quit</code></pre><pre class="css"><code>mermaid testGraph.mmd</code></pre><h2 id="sequence-diagram-configuration">Sequence diagram configuration</h2>
+  -w --width           width of the generated png (number)
+  --version            Print version and quit</code></pre><pre class="css"><code>mermaid testGraph.mmd
+mermaid testGraph.mmd -w 980</code></pre><h2 id="sequence-diagram-configuration">Sequence diagram configuration</h2>
 <p>The --sequenceConfig option allows overriding the sequence diagram configuration. It could be useful to increase the width between actors, the notes width or the margin to fit some large texts that are not well rendered with the default configuration, for example.</p>
 <p>The content of the file must be a JSON like this:</p>
 <pre class="css"><code>
