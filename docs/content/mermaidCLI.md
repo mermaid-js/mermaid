@@ -25,11 +25,13 @@ Options:
   -c --sequenceConfig  Specify the path to the file with the configuration to be applied in the sequence diagram
   -h --help            Show this message
   -v --verbose         Show logging
+  -w --width           width of the generated png (number)
   --version            Print version and quit
 ```
 
 ```
-mermaid testGraph.mmd 
+mermaid testGraph.mmd
+mermaid testGraph.mmd -w 980
 ```
 
 ## Sequence diagram configuration

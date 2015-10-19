@@ -1,37 +1,47 @@
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaid=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.mermaid = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 !function() {
   var d3 = {
-    version: "3.4.13"
-  };
-  if (!Date.now) Date.now = function() {
-    return +new Date();
+    version: "3.5.6"
   };
   var d3_arraySlice = [].slice, d3_array = function(list) {
     return d3_arraySlice.call(list);
   };
-  var d3_document = document, d3_documentElement = d3_document.documentElement, d3_window = window;
-  try {
-    d3_array(d3_documentElement.childNodes)[0].nodeType;
-  } catch (e) {
-    d3_array = function(list) {
-      var i = list.length, array = new Array(i);
-      while (i--) array[i] = list[i];
-      return array;
-    };
+  var d3_document = this.document;
+  function d3_documentElement(node) {
+    return node && (node.ownerDocument || node.document || node).documentElement;
   }
-  try {
-    d3_document.createElement("div").style.setProperty("opacity", 0, "");
-  } catch (error) {
-    var d3_element_prototype = d3_window.Element.prototype, d3_element_setAttribute = d3_element_prototype.setAttribute, d3_element_setAttributeNS = d3_element_prototype.setAttributeNS, d3_style_prototype = d3_window.CSSStyleDeclaration.prototype, d3_style_setProperty = d3_style_prototype.setProperty;
-    d3_element_prototype.setAttribute = function(name, value) {
-      d3_element_setAttribute.call(this, name, value + "");
-    };
-    d3_element_prototype.setAttributeNS = function(space, local, value) {
-      d3_element_setAttributeNS.call(this, space, local, value + "");
-    };
-    d3_style_prototype.setProperty = function(name, value, priority) {
-      d3_style_setProperty.call(this, name, value + "", priority);
-    };
+  function d3_window(node) {
+    return node && (node.ownerDocument && node.ownerDocument.defaultView || node.document && node || node.defaultView);
+  }
+  if (d3_document) {
+    try {
+      d3_array(d3_document.documentElement.childNodes)[0].nodeType;
+    } catch (e) {
+      d3_array = function(list) {
+        var i = list.length, array = new Array(i);
+        while (i--) array[i] = list[i];
+        return array;
+      };
+    }
+  }
+  if (!Date.now) Date.now = function() {
+    return +new Date();
+  };
+  if (d3_document) {
+    try {
+      d3_document.createElement("DIV").style.setProperty("opacity", 0, "");
+    } catch (error) {
+      var d3_element_prototype = this.Element.prototype, d3_element_setAttribute = d3_element_prototype.setAttribute, d3_element_setAttributeNS = d3_element_prototype.setAttributeNS, d3_style_prototype = this.CSSStyleDeclaration.prototype, d3_style_setProperty = d3_style_prototype.setProperty;
+      d3_element_prototype.setAttribute = function(name, value) {
+        d3_element_setAttribute.call(this, name, value + "");
+      };
+      d3_element_prototype.setAttributeNS = function(space, local, value) {
+        d3_element_setAttributeNS.call(this, space, local, value + "");
+      };
+      d3_style_prototype.setProperty = function(name, value, priority) {
+        d3_style_setProperty.call(this, name, value + "", priority);
+      };
+    }
   }
   d3.ascending = d3_ascending;
   function d3_ascending(a, b) {
@@ -43,10 +53,16 @@
   d3.min = function(array, f) {
     var i = -1, n = array.length, a, b;
     if (arguments.length === 1) {
-      while (++i < n && !((a = array[i]) != null && a <= a)) a = undefined;
+      while (++i < n) if ((b = array[i]) != null && b >= b) {
+        a = b;
+        break;
+      }
       while (++i < n) if ((b = array[i]) != null && a > b) a = b;
     } else {
-      while (++i < n && !((a = f.call(array, array[i], i)) != null && a <= a)) a = undefined;
+      while (++i < n) if ((b = f.call(array, array[i], i)) != null && b >= b) {
+        a = b;
+        break;
+      }
       while (++i < n) if ((b = f.call(array, array[i], i)) != null && a > b) a = b;
     }
     return a;
@@ -54,10 +70,16 @@
   d3.max = function(array, f) {
     var i = -1, n = array.length, a, b;
     if (arguments.length === 1) {
-      while (++i < n && !((a = array[i]) != null && a <= a)) a = undefined;
+      while (++i < n) if ((b = array[i]) != null && b >= b) {
+        a = b;
+        break;
+      }
       while (++i < n) if ((b = array[i]) != null && b > a) a = b;
     } else {
-      while (++i < n && !((a = f.call(array, array[i], i)) != null && a <= a)) a = undefined;
+      while (++i < n) if ((b = f.call(array, array[i], i)) != null && b >= b) {
+        a = b;
+        break;
+      }
       while (++i < n) if ((b = f.call(array, array[i], i)) != null && b > a) a = b;
     }
     return a;
@@ -65,13 +87,19 @@
   d3.extent = function(array, f) {
     var i = -1, n = array.length, a, b, c;
     if (arguments.length === 1) {
-      while (++i < n && !((a = c = array[i]) != null && a <= a)) a = c = undefined;
+      while (++i < n) if ((b = array[i]) != null && b >= b) {
+        a = c = b;
+        break;
+      }
       while (++i < n) if ((b = array[i]) != null) {
         if (a > b) a = b;
         if (c < b) c = b;
       }
     } else {
-      while (++i < n && !((a = c = f.call(array, array[i], i)) != null && a <= a)) a = undefined;
+      while (++i < n) if ((b = f.call(array, array[i], i)) != null && b >= b) {
+        a = c = b;
+        break;
+      }
       while (++i < n) if ((b = f.call(array, array[i], i)) != null) {
         if (a > b) a = b;
         if (c < b) c = b;
@@ -101,7 +129,7 @@
     } else {
       while (++i < n) if (d3_numeric(a = d3_number(f.call(array, array[i], i)))) s += a; else --j;
     }
-    return j ? s / j : undefined;
+    if (j) return s / j;
   };
   d3.quantile = function(values, p) {
     var H = (values.length - 1) * p + 1, h = Math.floor(H), v = +values[h - 1], e = H - h;
@@ -114,7 +142,32 @@
     } else {
       while (++i < n) if (d3_numeric(a = d3_number(f.call(array, array[i], i)))) numbers.push(a);
     }
-    return numbers.length ? d3.quantile(numbers.sort(d3_ascending), .5) : undefined;
+    if (numbers.length) return d3.quantile(numbers.sort(d3_ascending), .5);
+  };
+  d3.variance = function(array, f) {
+    var n = array.length, m = 0, a, d, s = 0, i = -1, j = 0;
+    if (arguments.length === 1) {
+      while (++i < n) {
+        if (d3_numeric(a = d3_number(array[i]))) {
+          d = a - m;
+          m += d / ++j;
+          s += d * (a - m);
+        }
+      }
+    } else {
+      while (++i < n) {
+        if (d3_numeric(a = d3_number(f.call(array, array[i], i)))) {
+          d = a - m;
+          m += d / ++j;
+          s += d * (a - m);
+        }
+      }
+    }
+    if (j > 1) return s / (j - 1);
+  };
+  d3.deviation = function() {
+    var v = d3.variance.apply(this, arguments);
+    return v ? Math.sqrt(v) : v;
   };
   function d3_bisector(compare) {
     return {
@@ -146,11 +199,15 @@
       return d3_ascending(f(d), x);
     } : f);
   };
-  d3.shuffle = function(array) {
-    var m = array.length, t, i;
+  d3.shuffle = function(array, i0, i1) {
+    if ((m = arguments.length) < 3) {
+      i1 = array.length;
+      if (m < 2) i0 = 0;
+    }
+    var m = i1 - i0, t, i;
     while (m) {
       i = Math.random() * m-- | 0;
-      t = array[m], array[m] = array[i], array[i] = t;
+      t = array[m + i0], array[m + i0] = array[i + i0], array[i + i0] = t;
     }
     return array;
   };
@@ -238,11 +295,18 @@
       });
     }
   }
-  d3.map = function(object) {
+  d3.map = function(object, f) {
     var map = new d3_Map();
-    if (object instanceof d3_Map) object.forEach(function(key, value) {
-      map.set(key, value);
-    }); else for (var key in object) map.set(key, object[key]);
+    if (object instanceof d3_Map) {
+      object.forEach(function(key, value) {
+        map.set(key, value);
+      });
+    } else if (Array.isArray(object)) {
+      var i = -1, n = object.length, o;
+      if (arguments.length === 1) while (++i < n) map.set(i, object[i]); else while (++i < n) map.set(f.call(object, o = object[i], i), o);
+    } else {
+      for (var key in object) map.set(key, object[key]);
+    }
     return map;
   };
   function d3_Map() {
@@ -390,6 +454,9 @@
     }
   });
   d3.behavior = {};
+  function d3_identity(d) {
+    return d;
+  }
   d3.rebind = function(target, source) {
     var i = 1, n = arguments.length, method;
     while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);
@@ -496,8 +563,12 @@
     return n.querySelector(s);
   }, d3_selectAll = function(s, n) {
     return n.querySelectorAll(s);
-  }, d3_selectMatcher = d3_documentElement.matches || d3_documentElement[d3_vendorSymbol(d3_documentElement, "matchesSelector")], d3_selectMatches = function(n, s) {
-    return d3_selectMatcher.call(n, s);
+  }, d3_selectMatches = function(n, s) {
+    var d3_selectMatcher = n.matches || n[d3_vendorSymbol(n, "matchesSelector")];
+    d3_selectMatches = function(n, s) {
+      return d3_selectMatcher.call(n, s);
+    };
+    return d3_selectMatches(n, s);
   };
   if (typeof Sizzle === "function") {
     d3_select = function(s, n) {
@@ -507,7 +578,7 @@
     d3_selectMatches = Sizzle.matchesSelector;
   }
   d3.selection = function() {
-    return d3_selectionRoot;
+    return d3.select(d3_document.documentElement);
   };
   var d3_selectionPrototype = d3.selection.prototype = [];
   d3_selectionPrototype.select = function(selector) {
@@ -667,7 +738,10 @@
         for (priority in name) this.each(d3_selection_style(priority, name[priority], value));
         return this;
       }
-      if (n < 2) return d3_window.getComputedStyle(this.node(), null).getPropertyValue(name);
+      if (n < 2) {
+        var node = this.node();
+        return d3_window(node).getComputedStyle(node, null).getPropertyValue(name);
+      }
       priority = "";
     }
     return this.each(d3_selection_style(name, value, priority));
@@ -733,11 +807,14 @@
     });
   };
   function d3_selection_creator(name) {
-    return typeof name === "function" ? name : (name = d3.ns.qualify(name)).local ? function() {
+    function create() {
+      var document = this.ownerDocument, namespace = this.namespaceURI;
+      return namespace ? document.createElementNS(namespace, name) : document.createElement(name);
+    }
+    function createNS() {
       return this.ownerDocument.createElementNS(name.space, name.local);
-    } : function() {
-      return this.ownerDocument.createElementNS(this.namespaceURI, name);
-    };
+    }
+    return typeof name === "function" ? name : (name = d3.ns.qualify(name)).local ? createNS : create;
   }
   d3_selectionPrototype.insert = function(name, before) {
     name = d3_selection_creator(name);
@@ -747,11 +824,12 @@
     });
   };
   d3_selectionPrototype.remove = function() {
-    return this.each(function() {
-      var parent = this.parentNode;
-      if (parent) parent.removeChild(this);
-    });
+    return this.each(d3_selectionRemove);
   };
+  function d3_selectionRemove() {
+    var parent = this.parentNode;
+    if (parent) parent.removeChild(this);
+  }
   d3_selectionPrototype.data = function(value, key) {
     var i = -1, n = this.length, group, node;
     if (!arguments.length) {
@@ -960,40 +1038,28 @@
       return node;
     };
   }
-  d3_selectionPrototype.transition = function() {
-    var id = d3_transitionInheritId || ++d3_transitionId, subgroups = [], subgroup, node, transition = d3_transitionInherit || {
-      time: Date.now(),
-      ease: d3_ease_cubicInOut,
-      delay: 0,
-      duration: 250
-    };
-    for (var j = -1, m = this.length; ++j < m; ) {
-      subgroups.push(subgroup = []);
-      for (var group = this[j], i = -1, n = group.length; ++i < n; ) {
-        if (node = group[i]) d3_transitionNode(node, i, id, transition);
-        subgroup.push(node);
-      }
-    }
-    return d3_transition(subgroups, id);
-  };
-  d3_selectionPrototype.interrupt = function() {
-    return this.each(d3_selection_interrupt);
-  };
-  function d3_selection_interrupt() {
-    var lock = this.__transition__;
-    if (lock) ++lock.active;
-  }
   d3.select = function(node) {
-    var group = [ typeof node === "string" ? d3_select(node, d3_document) : node ];
-    group.parentNode = d3_documentElement;
+    var group;
+    if (typeof node === "string") {
+      group = [ d3_select(node, d3_document) ];
+      group.parentNode = d3_document.documentElement;
+    } else {
+      group = [ node ];
+      group.parentNode = d3_documentElement(node);
+    }
     return d3_selection([ group ]);
   };
   d3.selectAll = function(nodes) {
-    var group = d3_array(typeof nodes === "string" ? d3_selectAll(nodes, d3_document) : nodes);
-    group.parentNode = d3_documentElement;
+    var group;
+    if (typeof nodes === "string") {
+      group = d3_array(d3_selectAll(nodes, d3_document));
+      group.parentNode = d3_document.documentElement;
+    } else {
+      group = nodes;
+      group.parentNode = null;
+    }
     return d3_selection([ group ]);
   };
-  var d3_selectionRoot = d3.select(d3_documentElement);
   d3_selectionPrototype.on = function(type, listener, capture) {
     var n = arguments.length;
     if (n < 3) {
@@ -1041,9 +1107,11 @@
     mouseenter: "mouseover",
     mouseleave: "mouseout"
   });
-  d3_selection_onFilters.forEach(function(k) {
-    if ("on" + k in d3_document) d3_selection_onFilters.remove(k);
-  });
+  if (d3_document) {
+    d3_selection_onFilters.forEach(function(k) {
+      if ("on" + k in d3_document) d3_selection_onFilters.remove(k);
+    });
+  }
   function d3_selection_onListener(listener, argumentz) {
     return function(e) {
       var o = d3.event;
@@ -1065,20 +1133,23 @@
       }
     };
   }
-  var d3_event_dragSelect = "onselectstart" in d3_document ? null : d3_vendorSymbol(d3_documentElement.style, "userSelect"), d3_event_dragId = 0;
-  function d3_event_dragSuppress() {
-    var name = ".dragsuppress-" + ++d3_event_dragId, click = "click" + name, w = d3.select(d3_window).on("touchmove" + name, d3_eventPreventDefault).on("dragstart" + name, d3_eventPreventDefault).on("selectstart" + name, d3_eventPreventDefault);
+  var d3_event_dragSelect, d3_event_dragId = 0;
+  function d3_event_dragSuppress(node) {
+    var name = ".dragsuppress-" + ++d3_event_dragId, click = "click" + name, w = d3.select(d3_window(node)).on("touchmove" + name, d3_eventPreventDefault).on("dragstart" + name, d3_eventPreventDefault).on("selectstart" + name, d3_eventPreventDefault);
+    if (d3_event_dragSelect == null) {
+      d3_event_dragSelect = "onselectstart" in node ? false : d3_vendorSymbol(node.style, "userSelect");
+    }
     if (d3_event_dragSelect) {
-      var style = d3_documentElement.style, select = style[d3_event_dragSelect];
+      var style = d3_documentElement(node).style, select = style[d3_event_dragSelect];
       style[d3_event_dragSelect] = "none";
     }
     return function(suppressClick) {
       w.on(name, null);
       if (d3_event_dragSelect) style[d3_event_dragSelect] = select;
       if (suppressClick) {
-        function off() {
+        var off = function() {
           w.on(click, null);
-        }
+        };
         w.on(click, function() {
           d3_eventPreventDefault();
           off();
@@ -1090,24 +1161,27 @@
   d3.mouse = function(container) {
     return d3_mousePoint(container, d3_eventSource());
   };
-  var d3_mouse_bug44083 = /WebKit/.test(d3_window.navigator.userAgent) ? -1 : 0;
+  var d3_mouse_bug44083 = this.navigator && /WebKit/.test(this.navigator.userAgent) ? -1 : 0;
   function d3_mousePoint(container, e) {
     if (e.changedTouches) e = e.changedTouches[0];
     var svg = container.ownerSVGElement || container;
     if (svg.createSVGPoint) {
       var point = svg.createSVGPoint();
-      if (d3_mouse_bug44083 < 0 && (d3_window.scrollX || d3_window.scrollY)) {
-        svg = d3.select("body").append("svg").style({
-          position: "absolute",
-          top: 0,
-          left: 0,
-          margin: 0,
-          padding: 0,
-          border: "none"
-        }, "important");
-        var ctm = svg[0][0].getScreenCTM();
-        d3_mouse_bug44083 = !(ctm.f || ctm.e);
-        svg.remove();
+      if (d3_mouse_bug44083 < 0) {
+        var window = d3_window(container);
+        if (window.scrollX || window.scrollY) {
+          svg = d3.select("body").append("svg").style({
+            position: "absolute",
+            top: 0,
+            left: 0,
+            margin: 0,
+            padding: 0,
+            border: "none"
+          }, "important");
+          var ctm = svg[0][0].getScreenCTM();
+          d3_mouse_bug44083 = !(ctm.f || ctm.e);
+          svg.remove();
+        }
       }
       if (d3_mouse_bug44083) point.x = e.pageX, point.y = e.pageY; else point.x = e.clientX, 
       point.y = e.clientY;
@@ -1126,13 +1200,13 @@
     }
   };
   d3.behavior.drag = function() {
-    var event = d3_eventDispatch(drag, "drag", "dragstart", "dragend"), origin = null, mousedown = dragstart(d3_noop, d3.mouse, d3_behavior_dragMouseSubject, "mousemove", "mouseup"), touchstart = dragstart(d3_behavior_dragTouchId, d3.touch, d3_behavior_dragTouchSubject, "touchmove", "touchend");
+    var event = d3_eventDispatch(drag, "drag", "dragstart", "dragend"), origin = null, mousedown = dragstart(d3_noop, d3.mouse, d3_window, "mousemove", "mouseup"), touchstart = dragstart(d3_behavior_dragTouchId, d3.touch, d3_identity, "touchmove", "touchend");
     function drag() {
       this.on("mousedown.drag", mousedown).on("touchstart.drag", touchstart);
     }
     function dragstart(id, position, subject, move, end) {
       return function() {
-        var that = this, target = d3.event.target, parent = that.parentNode, dispatch = event.of(that, arguments), dragged = 0, dragId = id(), dragName = ".drag" + (dragId == null ? "" : "-" + dragId), dragOffset, dragSubject = d3.select(subject()).on(move + dragName, moved).on(end + dragName, ended), dragRestore = d3_event_dragSuppress(), position0 = position(parent, dragId);
+        var that = this, target = d3.event.target, parent = that.parentNode, dispatch = event.of(that, arguments), dragged = 0, dragId = id(), dragName = ".drag" + (dragId == null ? "" : "-" + dragId), dragOffset, dragSubject = d3.select(subject(target)).on(move + dragName, moved).on(end + dragName, ended), dragRestore = d3_event_dragSuppress(target), position0 = position(parent, dragId);
         if (origin) {
           dragOffset = origin.apply(that, arguments);
           dragOffset = [ dragOffset.x - position0[0], dragOffset.y - position0[1] ];
@@ -1177,12 +1251,6 @@
   function d3_behavior_dragTouchId() {
     return d3.event.changedTouches[0].identifier;
   }
-  function d3_behavior_dragTouchSubject() {
-    return d3.event.target;
-  }
-  function d3_behavior_dragMouseSubject() {
-    return d3_window;
-  }
   d3.touches = function(container, touches) {
     if (arguments.length < 2) touches = d3_eventSource().touches;
     return touches ? d3_array(touches).map(function(touch) {
@@ -1191,7 +1259,7 @@
       return point;
     }) : [];
   };
-  var π = Math.PI, τ = 2 * π, halfπ = π / 2, ε = 1e-6, ε2 = ε * ε, d3_radians = π / 180, d3_degrees = 180 / π;
+  var ε = 1e-6, ε2 = ε * ε, π = Math.PI, τ = 2 * π, τε = τ - ε, halfπ = π / 2, d3_radians = π / 180, d3_degrees = 180 / π;
   function d3_sgn(x) {
     return x > 0 ? 1 : x < 0 ? -1 : 0;
   }
@@ -1236,7 +1304,16 @@
       x: 0,
       y: 0,
       k: 1
-    }, translate0, center0, center, size = [ 960, 500 ], scaleExtent = d3_behavior_zoomInfinity, mousedown = "mousedown.zoom", mousemove = "mousemove.zoom", mouseup = "mouseup.zoom", mousewheelTimer, touchstart = "touchstart.zoom", touchtime, event = d3_eventDispatch(zoom, "zoomstart", "zoom", "zoomend"), x0, x1, y0, y1;
+    }, translate0, center0, center, size = [ 960, 500 ], scaleExtent = d3_behavior_zoomInfinity, duration = 250, zooming = 0, mousedown = "mousedown.zoom", mousemove = "mousemove.zoom", mouseup = "mouseup.zoom", mousewheelTimer, touchstart = "touchstart.zoom", touchtime, event = d3_eventDispatch(zoom, "zoomstart", "zoom", "zoomend"), x0, x1, y0, y1;
+    if (!d3_behavior_zoomWheel) {
+      d3_behavior_zoomWheel = "onwheel" in d3_document ? (d3_behavior_zoomDelta = function() {
+        return -d3.event.deltaY * (d3.event.deltaMode ? 120 : 1);
+      }, "wheel") : "onmousewheel" in d3_document ? (d3_behavior_zoomDelta = function() {
+        return d3.event.wheelDelta;
+      }, "mousewheel") : (d3_behavior_zoomDelta = function() {
+        return -d3.event.detail;
+      }, "MozMousePixelScroll");
+    }
     function zoom(g) {
       g.on(mousedown, mousedowned).on(d3_behavior_zoomWheel + ".zoom", mousewheeled).on("dblclick.zoom", dblclicked).on(touchstart, touchstarted);
     }
@@ -1252,7 +1329,7 @@
             };
             zoomstarted(dispatch);
           }).tween("zoom:zoom", function() {
-            var dx = size[0], dy = size[1], cx = dx / 2, cy = dy / 2, i = d3.interpolateZoom([ (cx - view.x) / view.k, (cy - view.y) / view.k, dx / view.k ], [ (cx - view1.x) / view1.k, (cy - view1.y) / view1.k, dx / view1.k ]);
+            var dx = size[0], dy = size[1], cx = center0 ? center0[0] : dx / 2, cy = center0 ? center0[1] : dy / 2, i = d3.interpolateZoom([ (cx - view.x) / view.k, (cy - view.y) / view.k, dx / view.k ], [ (cx - view1.x) / view1.k, (cy - view1.y) / view1.k, dx / view1.k ]);
             return function(t) {
               var l = i(t), k = dx / l[2];
               this.__chart__ = view = {
@@ -1262,6 +1339,8 @@
               };
               zoomed(dispatch);
             };
+          }).each("interrupt.zoom", function() {
+            zoomended(dispatch);
           }).each("end.zoom", function() {
             zoomended(dispatch);
           });
@@ -1308,6 +1387,11 @@
       size = _ && [ +_[0], +_[1] ];
       return zoom;
     };
+    zoom.duration = function(_) {
+      if (!arguments.length) return duration;
+      duration = +_;
+      return zoom;
+    };
     zoom.x = function(z) {
       if (!arguments.length) return x1;
       x1 = z;
@@ -1344,6 +1428,18 @@
       view.x += p[0] - l[0];
       view.y += p[1] - l[1];
     }
+    function zoomTo(that, p, l, k) {
+      that.__chart__ = {
+        x: view.x,
+        y: view.y,
+        k: view.k
+      };
+      scaleTo(Math.pow(2, k));
+      translateTo(center0 = p, l);
+      that = d3.select(that);
+      if (duration > 0) that = that.transition().duration(duration);
+      that.call(zoom.event);
+    }
     function rescale() {
       if (x1) x1.domain(x0.range().map(function(x) {
         return (x - view.x) / view.k;
@@ -1353,7 +1449,7 @@
       }).map(y0.invert));
     }
     function zoomstarted(dispatch) {
-      dispatch({
+      if (!zooming++) dispatch({
         type: "zoomstart"
       });
     }
@@ -1366,12 +1462,12 @@
       });
     }
     function zoomended(dispatch) {
-      dispatch({
+      if (!--zooming) dispatch({
         type: "zoomend"
-      });
+      }), center0 = null;
     }
     function mousedowned() {
-      var that = this, target = d3.event.target, dispatch = event.of(that, arguments), dragged = 0, subject = d3.select(d3_window).on(mousemove, moved).on(mouseup, ended), location0 = location(d3.mouse(that)), dragRestore = d3_event_dragSuppress();
+      var that = this, target = d3.event.target, dispatch = event.of(that, arguments), dragged = 0, subject = d3.select(d3_window(that)).on(mousemove, moved).on(mouseup, ended), location0 = location(d3.mouse(that)), dragRestore = d3_event_dragSuppress(that);
       d3_selection_interrupt.call(that);
       zoomstarted(dispatch);
       function moved() {
@@ -1386,8 +1482,7 @@
       }
     }
     function touchstarted() {
-      var that = this, dispatch = event.of(that, arguments), locations0 = {}, distance0 = 0, scale0, zoomName = ".zoom-" + d3.event.changedTouches[0].identifier, touchmove = "touchmove" + zoomName, touchend = "touchend" + zoomName, targets = [], subject = d3.select(that), dragRestore = d3_event_dragSuppress();
-      d3_selection_interrupt.call(that);
+      var that = this, dispatch = event.of(that, arguments), locations0 = {}, distance0 = 0, scale0, zoomName = ".zoom-" + d3.event.changedTouches[0].identifier, touchmove = "touchmove" + zoomName, touchend = "touchend" + zoomName, targets = [], subject = d3.select(that), dragRestore = d3_event_dragSuppress(that);
       started();
       zoomstarted(dispatch);
       subject.on(mousedown, null).on(touchstart, started);
@@ -1410,11 +1505,9 @@
         var touches = relocate(), now = Date.now();
         if (touches.length === 1) {
           if (now - touchtime < 500) {
-            var p = touches[0], l = locations0[p.identifier];
-            scaleTo(view.k * 2);
-            translateTo(p, l);
+            var p = touches[0];
+            zoomTo(that, p, locations0[p.identifier], Math.floor(Math.log(view.k) / Math.LN2) + 1);
             d3_eventPreventDefault();
-            zoomed(dispatch);
           }
           touchtime = now;
         } else if (touches.length > 1) {
@@ -1424,6 +1517,7 @@
       }
       function moved() {
         var touches = d3.touches(that), p0, l0, p1, l1;
+        d3_selection_interrupt.call(that);
         for (var i = 0, n = touches.length; i < n; ++i, l1 = null) {
           p1 = touches[i];
           if (l1 = locations0[p1.identifier]) {
@@ -1459,8 +1553,8 @@
     }
     function mousewheeled() {
       var dispatch = event.of(this, arguments);
-      if (mousewheelTimer) clearTimeout(mousewheelTimer); else translate0 = location(center0 = center || d3.mouse(this)), 
-      d3_selection_interrupt.call(this), zoomstarted(dispatch);
+      if (mousewheelTimer) clearTimeout(mousewheelTimer); else d3_selection_interrupt.call(this), 
+      translate0 = location(center0 = center || d3.mouse(this)), zoomstarted(dispatch);
       mousewheelTimer = setTimeout(function() {
         mousewheelTimer = null;
         zoomended(dispatch);
@@ -1471,23 +1565,12 @@
       zoomed(dispatch);
     }
     function dblclicked() {
-      var dispatch = event.of(this, arguments), p = d3.mouse(this), l = location(p), k = Math.log(view.k) / Math.LN2;
-      zoomstarted(dispatch);
-      scaleTo(Math.pow(2, d3.event.shiftKey ? Math.ceil(k) - 1 : Math.floor(k) + 1));
-      translateTo(p, l);
-      zoomed(dispatch);
-      zoomended(dispatch);
+      var p = d3.mouse(this), k = Math.log(view.k) / Math.LN2;
+      zoomTo(this, p, location(p), d3.event.shiftKey ? Math.ceil(k) - 1 : Math.floor(k) + 1);
     }
     return d3.rebind(zoom, event, "on");
   };
-  var d3_behavior_zoomInfinity = [ 0, Infinity ];
-  var d3_behavior_zoomDelta, d3_behavior_zoomWheel = "onwheel" in d3_document ? (d3_behavior_zoomDelta = function() {
-    return -d3.event.deltaY * (d3.event.deltaMode ? 120 : 1);
-  }, "wheel") : "onmousewheel" in d3_document ? (d3_behavior_zoomDelta = function() {
-    return d3.event.wheelDelta;
-  }, "mousewheel") : (d3_behavior_zoomDelta = function() {
-    return -d3.event.detail;
-  }, "MozMousePixelScroll");
+  var d3_behavior_zoomInfinity = [ 0, Infinity ], d3_behavior_zoomDelta, d3_behavior_zoomWheel;
   d3.color = d3_color;
   function d3_color() {}
   d3_color.prototype.toString = function() {
@@ -1616,8 +1699,9 @@
     return v < 16 ? "0" + Math.max(0, v).toString(16) : Math.min(255, v).toString(16);
   }
   function d3_rgb_parse(format, rgb, hsl) {
+    format = format.toLowerCase();
     var r = 0, g = 0, b = 0, m1, m2, color;
-    m1 = /([a-z]+)\((.*)\)/i.exec(format);
+    m1 = /([a-z]+)\((.*)\)/.exec(format);
     if (m1) {
       m2 = m1[2].split(",");
       switch (m1[1]) {
@@ -1632,7 +1716,9 @@
         }
       }
     }
-    if (color = d3_rgb_names.get(format)) return rgb(color.r, color.g, color.b);
+    if (color = d3_rgb_names.get(format)) {
+      return rgb(color.r, color.g, color.b);
+    }
     if (format != null && format.charAt(0) === "#" && !isNaN(color = parseInt(format.slice(1), 16))) {
       if (format.length === 4) {
         r = (color & 3840) >> 4;
@@ -1795,6 +1881,7 @@
     plum: 14524637,
     powderblue: 11591910,
     purple: 8388736,
+    rebeccapurple: 6697881,
     red: 16711680,
     rosybrown: 12357519,
     royalblue: 4286945,
@@ -1833,9 +1920,6 @@
     };
   }
   d3.functor = d3_functor;
-  function d3_identity(d) {
-    return d;
-  }
   d3.xhr = d3_xhrType(d3_identity);
   function d3_xhrType(response) {
     return function(url, mimeType, callback) {
@@ -1846,7 +1930,7 @@
   }
   function d3_xhr(url, mimeType, response, callback) {
     var xhr = {}, dispatch = d3.dispatch("beforesend", "progress", "load", "error"), headers = {}, request = new XMLHttpRequest(), responseType = null;
-    if (d3_window.XDomainRequest && !("withCredentials" in request) && /^(http(s)?:)?\/\//.test(url)) request = new XDomainRequest();
+    if (this.XDomainRequest && !("withCredentials" in request) && /^(http(s)?:)?\/\//.test(url)) request = new XDomainRequest();
     "onload" in request ? request.onload = request.onerror = respond : request.onreadystatechange = function() {
       request.readyState > 3 && respond();
     };
@@ -2032,7 +2116,7 @@
   };
   d3.csv = d3.dsv(",", "text/csv");
   d3.tsv = d3.dsv("	", "text/tab-separated-values");
-  var d3_timer_queueHead, d3_timer_queueTail, d3_timer_interval, d3_timer_timeout, d3_timer_active, d3_timer_frame = d3_window[d3_vendorSymbol(d3_window, "requestAnimationFrame")] || function(callback) {
+  var d3_timer_queueHead, d3_timer_queueTail, d3_timer_interval, d3_timer_timeout, d3_timer_active, d3_timer_frame = this[d3_vendorSymbol(this, "requestAnimationFrame")] || function(callback) {
     setTimeout(callback, 17);
   };
   d3.timer = function(callback, delay, then) {
@@ -3132,6 +3216,15 @@
       d3_geo_centroidPointXYZ(x0, y0, z0);
     }
   }
+  function d3_geo_compose(a, b) {
+    function compose(x, y) {
+      return x = a(x, y), b(x[0], x[1]);
+    }
+    if (a.invert && b.invert) compose.invert = function(x, y) {
+      return x = b.invert(x, y), x && a.invert(x[0], x[1]);
+    };
+    return compose;
+  }
   function d3_true() {
     return true;
   }
@@ -3730,15 +3823,6 @@
       return ca !== cb ? ca - cb : ca === 0 ? b[1] - a[1] : ca === 1 ? a[0] - b[0] : ca === 2 ? a[1] - b[1] : b[0] - a[0];
     }
   }
-  function d3_geo_compose(a, b) {
-    function compose(x, y) {
-      return x = a(x, y), b(x[0], x[1]);
-    }
-    if (a.invert && b.invert) compose.invert = function(x, y) {
-      return x = b.invert(x, y), x && a.invert(x[0], x[1]);
-    };
-    return compose;
-  }
   function d3_geo_conic(projectAt) {
     var φ0 = 0, φ1 = π / 3, m = d3_geo_projectionMutator(projectAt), p = m(φ0, φ1);
     p.parallels = function(_) {
@@ -4010,7 +4094,7 @@
       result: d3_noop
     };
     function point(x, y) {
-      context.moveTo(x, y);
+      context.moveTo(x + pointRadius, y);
       context.arc(x, y, pointRadius, 0, τ);
     }
     function pointLineStart(x, y) {
@@ -5518,11 +5602,11 @@
         }
       }
       function insertChild(n, d, x, y, x1, y1, x2, y2) {
-        var sx = (x1 + x2) * .5, sy = (y1 + y2) * .5, right = x >= sx, bottom = y >= sy, i = (bottom << 1) + right;
+        var xm = (x1 + x2) * .5, ym = (y1 + y2) * .5, right = x >= xm, below = y >= ym, i = below << 1 | right;
         n.leaf = false;
         n = n.nodes[i] || (n.nodes[i] = d3_geom_quadtreeNode());
-        if (right) x1 = sx; else x2 = sx;
-        if (bottom) y1 = sy; else y2 = sy;
+        if (right) x1 = xm; else x2 = xm;
+        if (below) y1 = ym; else y2 = ym;
         insert(n, d, x, y, x1, y1, x2, y2);
       }
       var root = d3_geom_quadtreeNode();
@@ -5531,6 +5615,9 @@
       };
       root.visit = function(f) {
         d3_geom_quadtreeVisit(f, root, x1_, y1_, x2_, y2_);
+      };
+      root.find = function(point) {
+        return d3_geom_quadtreeFind(root, point[0], point[1], x1_, y1_, x2_, y2_);
       };
       i = -1;
       if (x1 == null) {
@@ -5584,6 +5671,42 @@
       if (children[2]) d3_geom_quadtreeVisit(f, children[2], x1, sy, sx, y2);
       if (children[3]) d3_geom_quadtreeVisit(f, children[3], sx, sy, x2, y2);
     }
+  }
+  function d3_geom_quadtreeFind(root, x, y, x0, y0, x3, y3) {
+    var minDistance2 = Infinity, closestPoint;
+    (function find(node, x1, y1, x2, y2) {
+      if (x1 > x3 || y1 > y3 || x2 < x0 || y2 < y0) return;
+      if (point = node.point) {
+        var point, dx = x - node.x, dy = y - node.y, distance2 = dx * dx + dy * dy;
+        if (distance2 < minDistance2) {
+          var distance = Math.sqrt(minDistance2 = distance2);
+          x0 = x - distance, y0 = y - distance;
+          x3 = x + distance, y3 = y + distance;
+          closestPoint = point;
+        }
+      }
+      var children = node.nodes, xm = (x1 + x2) * .5, ym = (y1 + y2) * .5, right = x >= xm, below = y >= ym;
+      for (var i = below << 1 | right, j = i + 4; i < j; ++i) {
+        if (node = children[i & 3]) switch (i & 3) {
+         case 0:
+          find(node, x1, y1, xm, ym);
+          break;
+
+         case 1:
+          find(node, xm, y1, x2, ym);
+          break;
+
+         case 2:
+          find(node, x1, ym, xm, y2);
+          break;
+
+         case 3:
+          find(node, xm, ym, x2, y2);
+          break;
+        }
+      }
+    })(root, x0, y0, x3, y3);
+    return closestPoint;
   }
   d3.interpolateRgb = d3_interpolateRgb;
   function d3_interpolateRgb(a, b) {
@@ -5663,7 +5786,7 @@
   }
   d3.interpolators = [ function(a, b) {
     var t = typeof b;
-    return (t === "string" ? d3_rgb_names.has(b) || /^(#|rgb\(|hsl\()/.test(b) ? d3_interpolateRgb : d3_interpolateString : b instanceof d3_color ? d3_interpolateRgb : Array.isArray(b) ? d3_interpolateArray : t === "object" && isNaN(b) ? d3_interpolateObject : d3_interpolateNumber)(a, b);
+    return (t === "string" ? d3_rgb_names.has(b.toLowerCase()) || /^(#|rgb\(|hsl\()/i.test(b) ? d3_interpolateRgb : d3_interpolateString : b instanceof d3_color ? d3_interpolateRgb : Array.isArray(b) ? d3_interpolateArray : t === "object" && isNaN(b) ? d3_interpolateObject : d3_interpolateNumber)(a, b);
   } ];
   d3.interpolateArray = d3_interpolateArray;
   function d3_interpolateArray(a, b) {
@@ -6268,8 +6391,8 @@
             neighbors[o.target.index].push(o.source);
           }
         }
-        var candidates = neighbors[i], j = -1, m = candidates.length, x;
-        while (++j < m) if (!isNaN(x = candidates[j][dimension])) return x;
+        var candidates = neighbors[i], j = -1, l = candidates.length, x;
+        while (++j < l) if (!isNaN(x = candidates[j][dimension])) return x;
         return Math.random() * size;
       }
       return force.resume();
@@ -6476,49 +6599,50 @@
     return d3_layout_hierarchyRebind(partition, hierarchy);
   };
   d3.layout.pie = function() {
-    var value = Number, sort = d3_layout_pieSortByValue, startAngle = 0, endAngle = τ;
+    var value = Number, sort = d3_layout_pieSortByValue, startAngle = 0, endAngle = τ, padAngle = 0;
     function pie(data) {
-      var values = data.map(function(d, i) {
+      var n = data.length, values = data.map(function(d, i) {
         return +value.call(pie, d, i);
-      });
-      var a = +(typeof startAngle === "function" ? startAngle.apply(this, arguments) : startAngle);
-      var k = ((typeof endAngle === "function" ? endAngle.apply(this, arguments) : endAngle) - a) / d3.sum(values);
-      var index = d3.range(data.length);
+      }), a = +(typeof startAngle === "function" ? startAngle.apply(this, arguments) : startAngle), da = (typeof endAngle === "function" ? endAngle.apply(this, arguments) : endAngle) - a, p = Math.min(Math.abs(da) / n, +(typeof padAngle === "function" ? padAngle.apply(this, arguments) : padAngle)), pa = p * (da < 0 ? -1 : 1), k = (da - n * pa) / d3.sum(values), index = d3.range(n), arcs = [], v;
       if (sort != null) index.sort(sort === d3_layout_pieSortByValue ? function(i, j) {
         return values[j] - values[i];
       } : function(i, j) {
         return sort(data[i], data[j]);
       });
-      var arcs = [];
       index.forEach(function(i) {
-        var d;
         arcs[i] = {
           data: data[i],
-          value: d = values[i],
+          value: v = values[i],
           startAngle: a,
-          endAngle: a += d * k
+          endAngle: a += v * k + pa,
+          padAngle: p
         };
       });
       return arcs;
     }
-    pie.value = function(x) {
+    pie.value = function(_) {
       if (!arguments.length) return value;
-      value = x;
+      value = _;
       return pie;
     };
-    pie.sort = function(x) {
+    pie.sort = function(_) {
       if (!arguments.length) return sort;
-      sort = x;
+      sort = _;
       return pie;
     };
-    pie.startAngle = function(x) {
+    pie.startAngle = function(_) {
       if (!arguments.length) return startAngle;
-      startAngle = x;
+      startAngle = _;
       return pie;
     };
-    pie.endAngle = function(x) {
+    pie.endAngle = function(_) {
       if (!arguments.length) return endAngle;
-      endAngle = x;
+      endAngle = _;
+      return pie;
+    };
+    pie.padAngle = function(_) {
+      if (!arguments.length) return padAngle;
+      padAngle = _;
       return pie;
     };
     return pie;
@@ -7617,11 +7741,24 @@
     };
     scale.rangePoints = function(x, padding) {
       if (arguments.length < 2) padding = 0;
-      var start = x[0], stop = x[1], step = (stop - start) / (Math.max(1, domain.length - 1) + padding);
-      range = steps(domain.length < 2 ? (start + stop) / 2 : start + step * padding / 2, step);
+      var start = x[0], stop = x[1], step = domain.length < 2 ? (start = (start + stop) / 2, 
+      0) : (stop - start) / (domain.length - 1 + padding);
+      range = steps(start + step * padding / 2, step);
       rangeBand = 0;
       ranger = {
         t: "rangePoints",
+        a: arguments
+      };
+      return scale;
+    };
+    scale.rangeRoundPoints = function(x, padding) {
+      if (arguments.length < 2) padding = 0;
+      var start = x[0], stop = x[1], step = domain.length < 2 ? (start = stop = Math.round((start + stop) / 2), 
+      0) : (stop - start) / (domain.length - 1 + padding) | 0;
+      range = steps(start + Math.round(step * padding / 2 + (stop - start - (domain.length - 1 + padding) * step) / 2), step);
+      rangeBand = 0;
+      ranger = {
+        t: "rangeRoundPoints",
         a: arguments
       };
       return scale;
@@ -7642,8 +7779,8 @@
     scale.rangeRoundBands = function(x, padding, outerPadding) {
       if (arguments.length < 2) padding = 0;
       if (arguments.length < 3) outerPadding = padding;
-      var reverse = x[1] < x[0], start = x[reverse - 0], stop = x[1 - reverse], step = Math.floor((stop - start) / (domain.length - padding + 2 * outerPadding)), error = stop - start - (domain.length - padding) * step;
-      range = steps(start + Math.round(error / 2), step);
+      var reverse = x[1] < x[0], start = x[reverse - 0], stop = x[1 - reverse], step = Math.floor((stop - start) / (domain.length - padding + 2 * outerPadding));
+      range = steps(start + Math.round((stop - start - (domain.length - padding) * step) / 2), step);
       if (reverse) range.reverse();
       rangeBand = Math.round(step * (1 - padding));
       ranger = {
@@ -7800,12 +7937,86 @@
     return identity;
   }
   d3.svg = {};
+  function d3_zero() {
+    return 0;
+  }
   d3.svg.arc = function() {
-    var innerRadius = d3_svg_arcInnerRadius, outerRadius = d3_svg_arcOuterRadius, startAngle = d3_svg_arcStartAngle, endAngle = d3_svg_arcEndAngle;
+    var innerRadius = d3_svg_arcInnerRadius, outerRadius = d3_svg_arcOuterRadius, cornerRadius = d3_zero, padRadius = d3_svg_arcAuto, startAngle = d3_svg_arcStartAngle, endAngle = d3_svg_arcEndAngle, padAngle = d3_svg_arcPadAngle;
     function arc() {
-      var r0 = innerRadius.apply(this, arguments), r1 = outerRadius.apply(this, arguments), a0 = startAngle.apply(this, arguments) + d3_svg_arcOffset, a1 = endAngle.apply(this, arguments) + d3_svg_arcOffset, da = (a1 < a0 && (da = a0, 
-      a0 = a1, a1 = da), a1 - a0), df = da < π ? "0" : "1", c0 = Math.cos(a0), s0 = Math.sin(a0), c1 = Math.cos(a1), s1 = Math.sin(a1);
-      return da >= d3_svg_arcMax ? r0 ? "M0," + r1 + "A" + r1 + "," + r1 + " 0 1,1 0," + -r1 + "A" + r1 + "," + r1 + " 0 1,1 0," + r1 + "M0," + r0 + "A" + r0 + "," + r0 + " 0 1,0 0," + -r0 + "A" + r0 + "," + r0 + " 0 1,0 0," + r0 + "Z" : "M0," + r1 + "A" + r1 + "," + r1 + " 0 1,1 0," + -r1 + "A" + r1 + "," + r1 + " 0 1,1 0," + r1 + "Z" : r0 ? "M" + r1 * c0 + "," + r1 * s0 + "A" + r1 + "," + r1 + " 0 " + df + ",1 " + r1 * c1 + "," + r1 * s1 + "L" + r0 * c1 + "," + r0 * s1 + "A" + r0 + "," + r0 + " 0 " + df + ",0 " + r0 * c0 + "," + r0 * s0 + "Z" : "M" + r1 * c0 + "," + r1 * s0 + "A" + r1 + "," + r1 + " 0 " + df + ",1 " + r1 * c1 + "," + r1 * s1 + "L0,0" + "Z";
+      var r0 = Math.max(0, +innerRadius.apply(this, arguments)), r1 = Math.max(0, +outerRadius.apply(this, arguments)), a0 = startAngle.apply(this, arguments) - halfπ, a1 = endAngle.apply(this, arguments) - halfπ, da = Math.abs(a1 - a0), cw = a0 > a1 ? 0 : 1;
+      if (r1 < r0) rc = r1, r1 = r0, r0 = rc;
+      if (da >= τε) return circleSegment(r1, cw) + (r0 ? circleSegment(r0, 1 - cw) : "") + "Z";
+      var rc, cr, rp, ap, p0 = 0, p1 = 0, x0, y0, x1, y1, x2, y2, x3, y3, path = [];
+      if (ap = (+padAngle.apply(this, arguments) || 0) / 2) {
+        rp = padRadius === d3_svg_arcAuto ? Math.sqrt(r0 * r0 + r1 * r1) : +padRadius.apply(this, arguments);
+        if (!cw) p1 *= -1;
+        if (r1) p1 = d3_asin(rp / r1 * Math.sin(ap));
+        if (r0) p0 = d3_asin(rp / r0 * Math.sin(ap));
+      }
+      if (r1) {
+        x0 = r1 * Math.cos(a0 + p1);
+        y0 = r1 * Math.sin(a0 + p1);
+        x1 = r1 * Math.cos(a1 - p1);
+        y1 = r1 * Math.sin(a1 - p1);
+        var l1 = Math.abs(a1 - a0 - 2 * p1) <= π ? 0 : 1;
+        if (p1 && d3_svg_arcSweep(x0, y0, x1, y1) === cw ^ l1) {
+          var h1 = (a0 + a1) / 2;
+          x0 = r1 * Math.cos(h1);
+          y0 = r1 * Math.sin(h1);
+          x1 = y1 = null;
+        }
+      } else {
+        x0 = y0 = 0;
+      }
+      if (r0) {
+        x2 = r0 * Math.cos(a1 - p0);
+        y2 = r0 * Math.sin(a1 - p0);
+        x3 = r0 * Math.cos(a0 + p0);
+        y3 = r0 * Math.sin(a0 + p0);
+        var l0 = Math.abs(a0 - a1 + 2 * p0) <= π ? 0 : 1;
+        if (p0 && d3_svg_arcSweep(x2, y2, x3, y3) === 1 - cw ^ l0) {
+          var h0 = (a0 + a1) / 2;
+          x2 = r0 * Math.cos(h0);
+          y2 = r0 * Math.sin(h0);
+          x3 = y3 = null;
+        }
+      } else {
+        x2 = y2 = 0;
+      }
+      if ((rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments))) > .001) {
+        cr = r0 < r1 ^ cw ? 0 : 1;
+        var oc = x3 == null ? [ x2, y2 ] : x1 == null ? [ x0, y0 ] : d3_geom_polygonIntersect([ x0, y0 ], [ x3, y3 ], [ x1, y1 ], [ x2, y2 ]), ax = x0 - oc[0], ay = y0 - oc[1], bx = x1 - oc[0], by = y1 - oc[1], kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2), lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+        if (x1 != null) {
+          var rc1 = Math.min(rc, (r1 - lc) / (kc + 1)), t30 = d3_svg_arcCornerTangents(x3 == null ? [ x2, y2 ] : [ x3, y3 ], [ x0, y0 ], r1, rc1, cw), t12 = d3_svg_arcCornerTangents([ x1, y1 ], [ x2, y2 ], r1, rc1, cw);
+          if (rc === rc1) {
+            path.push("M", t30[0], "A", rc1, ",", rc1, " 0 0,", cr, " ", t30[1], "A", r1, ",", r1, " 0 ", 1 - cw ^ d3_svg_arcSweep(t30[1][0], t30[1][1], t12[1][0], t12[1][1]), ",", cw, " ", t12[1], "A", rc1, ",", rc1, " 0 0,", cr, " ", t12[0]);
+          } else {
+            path.push("M", t30[0], "A", rc1, ",", rc1, " 0 1,", cr, " ", t12[0]);
+          }
+        } else {
+          path.push("M", x0, ",", y0);
+        }
+        if (x3 != null) {
+          var rc0 = Math.min(rc, (r0 - lc) / (kc - 1)), t03 = d3_svg_arcCornerTangents([ x0, y0 ], [ x3, y3 ], r0, -rc0, cw), t21 = d3_svg_arcCornerTangents([ x2, y2 ], x1 == null ? [ x0, y0 ] : [ x1, y1 ], r0, -rc0, cw);
+          if (rc === rc0) {
+            path.push("L", t21[0], "A", rc0, ",", rc0, " 0 0,", cr, " ", t21[1], "A", r0, ",", r0, " 0 ", cw ^ d3_svg_arcSweep(t21[1][0], t21[1][1], t03[1][0], t03[1][1]), ",", 1 - cw, " ", t03[1], "A", rc0, ",", rc0, " 0 0,", cr, " ", t03[0]);
+          } else {
+            path.push("L", t21[0], "A", rc0, ",", rc0, " 0 0,", cr, " ", t03[0]);
+          }
+        } else {
+          path.push("L", x2, ",", y2);
+        }
+      } else {
+        path.push("M", x0, ",", y0);
+        if (x1 != null) path.push("A", r1, ",", r1, " 0 ", l1, ",", cw, " ", x1, ",", y1);
+        path.push("L", x2, ",", y2);
+        if (x3 != null) path.push("A", r0, ",", r0, " 0 ", l0, ",", 1 - cw, " ", x3, ",", y3);
+      }
+      path.push("Z");
+      return path.join("");
+    }
+    function circleSegment(r1, cw) {
+      return "M0," + r1 + "A" + r1 + "," + r1 + " 0 1," + cw + " 0," + -r1 + "A" + r1 + "," + r1 + " 0 1," + cw + " 0," + r1;
     }
     arc.innerRadius = function(v) {
       if (!arguments.length) return innerRadius;
@@ -7815,6 +8026,16 @@
     arc.outerRadius = function(v) {
       if (!arguments.length) return outerRadius;
       outerRadius = d3_functor(v);
+      return arc;
+    };
+    arc.cornerRadius = function(v) {
+      if (!arguments.length) return cornerRadius;
+      cornerRadius = d3_functor(v);
+      return arc;
+    };
+    arc.padRadius = function(v) {
+      if (!arguments.length) return padRadius;
+      padRadius = v == d3_svg_arcAuto ? d3_svg_arcAuto : d3_functor(v);
       return arc;
     };
     arc.startAngle = function(v) {
@@ -7827,13 +8048,18 @@
       endAngle = d3_functor(v);
       return arc;
     };
+    arc.padAngle = function(v) {
+      if (!arguments.length) return padAngle;
+      padAngle = d3_functor(v);
+      return arc;
+    };
     arc.centroid = function() {
-      var r = (innerRadius.apply(this, arguments) + outerRadius.apply(this, arguments)) / 2, a = (startAngle.apply(this, arguments) + endAngle.apply(this, arguments)) / 2 + d3_svg_arcOffset;
+      var r = (+innerRadius.apply(this, arguments) + +outerRadius.apply(this, arguments)) / 2, a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - halfπ;
       return [ Math.cos(a) * r, Math.sin(a) * r ];
     };
     return arc;
   };
-  var d3_svg_arcOffset = -halfπ, d3_svg_arcMax = τ - ε;
+  var d3_svg_arcAuto = "auto";
   function d3_svg_arcInnerRadius(d) {
     return d.innerRadius;
   }
@@ -7845,6 +8071,17 @@
   }
   function d3_svg_arcEndAngle(d) {
     return d.endAngle;
+  }
+  function d3_svg_arcPadAngle(d) {
+    return d && d.padAngle;
+  }
+  function d3_svg_arcSweep(x0, y0, x1, y1) {
+    return (x0 - x1) * y0 - (y0 - y1) * x0 > 0 ? 0 : 1;
+  }
+  function d3_svg_arcCornerTangents(p0, p1, r1, rc, cw) {
+    var x01 = p0[0] - p1[0], y01 = p0[1] - p1[1], lo = (cw ? rc : -rc) / Math.sqrt(x01 * x01 + y01 * y01), ox = lo * y01, oy = -lo * x01, x1 = p0[0] + ox, y1 = p0[1] + oy, x2 = p1[0] + ox, y2 = p1[1] + oy, x3 = (x1 + x2) / 2, y3 = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, d2 = dx * dx + dy * dy, r = r1 - rc, D = x1 * y2 - x2 * y1, d = (dy < 0 ? -1 : 1) * Math.sqrt(r * r * d2 - D * D), cx0 = (D * dy - dx * d) / d2, cy0 = (-D * dx - dy * d) / d2, cx1 = (D * dy + dx * d) / d2, cy1 = (-D * dx + dy * d) / d2, dx0 = cx0 - x3, dy0 = cy0 - y3, dx1 = cx1 - x3, dy1 = cy1 - y3;
+    if (dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1) cx0 = cx1, cy0 = cy1;
+    return [ [ cx0 - ox, cy0 - oy ], [ cx0 * r1 / r, cy0 * r1 / r ] ];
   }
   function d3_svg_line(projection) {
     var x = d3_geom_pointX, y = d3_geom_pointY, defined = d3_true, interpolate = d3_svg_lineLinear, interpolateKey = interpolate.key, tension = .7;
@@ -7936,7 +8173,7 @@
     return path.join("");
   }
   function d3_svg_lineCardinalOpen(points, tension) {
-    return points.length < 4 ? d3_svg_lineLinear(points) : points[1] + d3_svg_lineHermite(points.slice(1, points.length - 1), d3_svg_lineCardinalTangents(points, tension));
+    return points.length < 4 ? d3_svg_lineLinear(points) : points[1] + d3_svg_lineHermite(points.slice(1, -1), d3_svg_lineCardinalTangents(points, tension));
   }
   function d3_svg_lineCardinalClosed(points, tension) {
     return points.length < 3 ? d3_svg_lineLinear(points) : points[0] + d3_svg_lineHermite((points.push(points[0]), 
@@ -8106,7 +8343,7 @@
     while (++i < n) {
       point = points[i];
       r = point[0];
-      a = point[1] + d3_svg_arcOffset;
+      a = point[1] - halfπ;
       point[0] = r * Math.cos(a);
       point[1] = r * Math.sin(a);
     }
@@ -8207,7 +8444,7 @@
       return "M" + s.p0 + arc(s.r, s.p1, s.a1 - s.a0) + (equals(s, t) ? curve(s.r, s.p1, s.r, s.p0) : curve(s.r, s.p1, t.r, t.p0) + arc(t.r, t.p1, t.a1 - t.a0) + curve(t.r, t.p1, s.r, s.p0)) + "Z";
     }
     function subgroup(self, f, d, i) {
-      var subgroup = f.call(self, d, i), r = radius.call(self, subgroup, i), a0 = startAngle.call(self, subgroup, i) + d3_svg_arcOffset, a1 = endAngle.call(self, subgroup, i) + d3_svg_arcOffset;
+      var subgroup = f.call(self, d, i), r = radius.call(self, subgroup, i), a0 = startAngle.call(self, subgroup, i) - halfπ, a1 = endAngle.call(self, subgroup, i) - halfπ;
       return {
         r: r,
         a0: a0,
@@ -8297,7 +8534,7 @@
   };
   function d3_svg_diagonalRadialProjection(projection) {
     return function() {
-      var d = projection.apply(this, arguments), r = d[0], a = d[1] + d3_svg_arcOffset;
+      var d = projection.apply(this, arguments), r = d[0], a = d[1] - halfπ;
       return [ r * Math.cos(a), r * Math.sin(a) ];
     };
   }
@@ -8353,8 +8590,39 @@
   });
   d3.svg.symbolTypes = d3_svg_symbols.keys();
   var d3_svg_symbolSqrt3 = Math.sqrt(3), d3_svg_symbolTan30 = Math.tan(30 * d3_radians);
-  function d3_transition(groups, id) {
+  d3_selectionPrototype.transition = function(name) {
+    var id = d3_transitionInheritId || ++d3_transitionId, ns = d3_transitionNamespace(name), subgroups = [], subgroup, node, transition = d3_transitionInherit || {
+      time: Date.now(),
+      ease: d3_ease_cubicInOut,
+      delay: 0,
+      duration: 250
+    };
+    for (var j = -1, m = this.length; ++j < m; ) {
+      subgroups.push(subgroup = []);
+      for (var group = this[j], i = -1, n = group.length; ++i < n; ) {
+        if (node = group[i]) d3_transitionNode(node, i, ns, id, transition);
+        subgroup.push(node);
+      }
+    }
+    return d3_transition(subgroups, ns, id);
+  };
+  d3_selectionPrototype.interrupt = function(name) {
+    return this.each(name == null ? d3_selection_interrupt : d3_selection_interruptNS(d3_transitionNamespace(name)));
+  };
+  var d3_selection_interrupt = d3_selection_interruptNS(d3_transitionNamespace());
+  function d3_selection_interruptNS(ns) {
+    return function() {
+      var lock, active;
+      if ((lock = this[ns]) && (active = lock[lock.active])) {
+        if (--lock.count) delete lock[lock.active]; else delete this[ns];
+        lock.active += .5;
+        active.event && active.event.interrupt.call(this, this.__data__, active.index);
+      }
+    };
+  }
+  function d3_transition(groups, ns, id) {
     d3_subclass(groups, d3_transitionPrototype);
+    groups.namespace = ns;
     groups.id = id;
     return groups;
   }
@@ -8363,44 +8631,44 @@
   d3_transitionPrototype.empty = d3_selectionPrototype.empty;
   d3_transitionPrototype.node = d3_selectionPrototype.node;
   d3_transitionPrototype.size = d3_selectionPrototype.size;
-  d3.transition = function(selection) {
-    return arguments.length ? d3_transitionInheritId ? selection.transition() : selection : d3_selectionRoot.transition();
+  d3.transition = function(selection, name) {
+    return selection && selection.transition ? d3_transitionInheritId ? selection.transition(name) : selection : d3.selection().transition(selection);
   };
   d3.transition.prototype = d3_transitionPrototype;
   d3_transitionPrototype.select = function(selector) {
-    var id = this.id, subgroups = [], subgroup, subnode, node;
+    var id = this.id, ns = this.namespace, subgroups = [], subgroup, subnode, node;
     selector = d3_selection_selector(selector);
     for (var j = -1, m = this.length; ++j < m; ) {
       subgroups.push(subgroup = []);
       for (var group = this[j], i = -1, n = group.length; ++i < n; ) {
         if ((node = group[i]) && (subnode = selector.call(node, node.__data__, i, j))) {
           if ("__data__" in node) subnode.__data__ = node.__data__;
-          d3_transitionNode(subnode, i, id, node.__transition__[id]);
+          d3_transitionNode(subnode, i, ns, id, node[ns][id]);
           subgroup.push(subnode);
         } else {
           subgroup.push(null);
         }
       }
     }
-    return d3_transition(subgroups, id);
+    return d3_transition(subgroups, ns, id);
   };
   d3_transitionPrototype.selectAll = function(selector) {
-    var id = this.id, subgroups = [], subgroup, subnodes, node, subnode, transition;
+    var id = this.id, ns = this.namespace, subgroups = [], subgroup, subnodes, node, subnode, transition;
     selector = d3_selection_selectorAll(selector);
     for (var j = -1, m = this.length; ++j < m; ) {
       for (var group = this[j], i = -1, n = group.length; ++i < n; ) {
         if (node = group[i]) {
-          transition = node.__transition__[id];
+          transition = node[ns][id];
           subnodes = selector.call(node, node.__data__, i, j);
           subgroups.push(subgroup = []);
           for (var k = -1, o = subnodes.length; ++k < o; ) {
-            if (subnode = subnodes[k]) d3_transitionNode(subnode, k, id, transition);
+            if (subnode = subnodes[k]) d3_transitionNode(subnode, k, ns, id, transition);
             subgroup.push(subnode);
           }
         }
       }
     }
-    return d3_transition(subgroups, id);
+    return d3_transition(subgroups, ns, id);
   };
   d3_transitionPrototype.filter = function(filter) {
     var subgroups = [], subgroup, group, node;
@@ -8413,23 +8681,23 @@
         }
       }
     }
-    return d3_transition(subgroups, this.id);
+    return d3_transition(subgroups, this.namespace, this.id);
   };
   d3_transitionPrototype.tween = function(name, tween) {
-    var id = this.id;
-    if (arguments.length < 2) return this.node().__transition__[id].tween.get(name);
+    var id = this.id, ns = this.namespace;
+    if (arguments.length < 2) return this.node()[ns][id].tween.get(name);
     return d3_selection_each(this, tween == null ? function(node) {
-      node.__transition__[id].tween.remove(name);
+      node[ns][id].tween.remove(name);
     } : function(node) {
-      node.__transition__[id].tween.set(name, tween);
+      node[ns][id].tween.set(name, tween);
     });
   };
   function d3_transition_tween(groups, name, value, tween) {
-    var id = groups.id;
+    var id = groups.id, ns = groups.namespace;
     return d3_selection_each(groups, typeof value === "function" ? function(node, i, j) {
-      node.__transition__[id].tween.set(name, tween(value.call(node, node.__data__, i, j)));
+      node[ns][id].tween.set(name, tween(value.call(node, node.__data__, i, j)));
     } : (value = tween(value), function(node) {
-      node.__transition__[id].tween.set(name, value);
+      node[ns][id].tween.set(name, value);
     }));
   }
   d3_transitionPrototype.attr = function(nameNS, value) {
@@ -8493,7 +8761,7 @@
     }
     function styleString(b) {
       return b == null ? styleNull : (b += "", function() {
-        var a = d3_window.getComputedStyle(this, null).getPropertyValue(name), i;
+        var a = d3_window(this).getComputedStyle(this, null).getPropertyValue(name), i;
         return a !== b && (i = d3_interpolate(a, b), function(t) {
           this.style.setProperty(name, i(t), priority);
         });
@@ -8504,7 +8772,7 @@
   d3_transitionPrototype.styleTween = function(name, tween, priority) {
     if (arguments.length < 3) priority = "";
     function styleTween(d, i) {
-      var f = tween.call(this, d, i, d3_window.getComputedStyle(this, null).getPropertyValue(name));
+      var f = tween.call(this, d, i, d3_window(this).getComputedStyle(this, null).getPropertyValue(name));
       return f && function(t) {
         this.style.setProperty(name, f(t), priority);
       };
@@ -8521,73 +8789,84 @@
     };
   }
   d3_transitionPrototype.remove = function() {
+    var ns = this.namespace;
     return this.each("end.transition", function() {
       var p;
-      if (this.__transition__.count < 2 && (p = this.parentNode)) p.removeChild(this);
+      if (this[ns].count < 2 && (p = this.parentNode)) p.removeChild(this);
     });
   };
   d3_transitionPrototype.ease = function(value) {
-    var id = this.id;
-    if (arguments.length < 1) return this.node().__transition__[id].ease;
+    var id = this.id, ns = this.namespace;
+    if (arguments.length < 1) return this.node()[ns][id].ease;
     if (typeof value !== "function") value = d3.ease.apply(d3, arguments);
     return d3_selection_each(this, function(node) {
-      node.__transition__[id].ease = value;
+      node[ns][id].ease = value;
     });
   };
   d3_transitionPrototype.delay = function(value) {
-    var id = this.id;
-    if (arguments.length < 1) return this.node().__transition__[id].delay;
+    var id = this.id, ns = this.namespace;
+    if (arguments.length < 1) return this.node()[ns][id].delay;
     return d3_selection_each(this, typeof value === "function" ? function(node, i, j) {
-      node.__transition__[id].delay = +value.call(node, node.__data__, i, j);
+      node[ns][id].delay = +value.call(node, node.__data__, i, j);
     } : (value = +value, function(node) {
-      node.__transition__[id].delay = value;
+      node[ns][id].delay = value;
     }));
   };
   d3_transitionPrototype.duration = function(value) {
-    var id = this.id;
-    if (arguments.length < 1) return this.node().__transition__[id].duration;
+    var id = this.id, ns = this.namespace;
+    if (arguments.length < 1) return this.node()[ns][id].duration;
     return d3_selection_each(this, typeof value === "function" ? function(node, i, j) {
-      node.__transition__[id].duration = Math.max(1, value.call(node, node.__data__, i, j));
+      node[ns][id].duration = Math.max(1, value.call(node, node.__data__, i, j));
     } : (value = Math.max(1, value), function(node) {
-      node.__transition__[id].duration = value;
+      node[ns][id].duration = value;
     }));
   };
   d3_transitionPrototype.each = function(type, listener) {
-    var id = this.id;
+    var id = this.id, ns = this.namespace;
     if (arguments.length < 2) {
       var inherit = d3_transitionInherit, inheritId = d3_transitionInheritId;
-      d3_transitionInheritId = id;
-      d3_selection_each(this, function(node, i, j) {
-        d3_transitionInherit = node.__transition__[id];
-        type.call(node, node.__data__, i, j);
-      });
-      d3_transitionInherit = inherit;
-      d3_transitionInheritId = inheritId;
+      try {
+        d3_transitionInheritId = id;
+        d3_selection_each(this, function(node, i, j) {
+          d3_transitionInherit = node[ns][id];
+          type.call(node, node.__data__, i, j);
+        });
+      } finally {
+        d3_transitionInherit = inherit;
+        d3_transitionInheritId = inheritId;
+      }
     } else {
       d3_selection_each(this, function(node) {
-        var transition = node.__transition__[id];
-        (transition.event || (transition.event = d3.dispatch("start", "end"))).on(type, listener);
+        var transition = node[ns][id];
+        (transition.event || (transition.event = d3.dispatch("start", "end", "interrupt"))).on(type, listener);
       });
     }
     return this;
   };
   d3_transitionPrototype.transition = function() {
-    var id0 = this.id, id1 = ++d3_transitionId, subgroups = [], subgroup, group, node, transition;
+    var id0 = this.id, id1 = ++d3_transitionId, ns = this.namespace, subgroups = [], subgroup, group, node, transition;
     for (var j = 0, m = this.length; j < m; j++) {
       subgroups.push(subgroup = []);
       for (var group = this[j], i = 0, n = group.length; i < n; i++) {
         if (node = group[i]) {
-          transition = Object.create(node.__transition__[id0]);
-          transition.delay += transition.duration;
-          d3_transitionNode(node, i, id1, transition);
+          transition = node[ns][id0];
+          d3_transitionNode(node, i, ns, id1, {
+            time: transition.time,
+            ease: transition.ease,
+            delay: transition.delay + transition.duration,
+            duration: transition.duration
+          });
         }
         subgroup.push(node);
       }
     }
-    return d3_transition(subgroups, id1);
+    return d3_transition(subgroups, ns, id1);
   };
-  function d3_transitionNode(node, i, id, inherit) {
-    var lock = node.__transition__ || (node.__transition__ = {
+  function d3_transitionNamespace(name) {
+    return name == null ? "__transition__" : "__transition_" + name + "__";
+  }
+  function d3_transitionNode(node, i, ns, id, inherit) {
+    var lock = node[ns] || (node[ns] = {
       active: 0,
       count: 0
     }), transition = lock[id];
@@ -8596,43 +8875,53 @@
       transition = lock[id] = {
         tween: new d3_Map(),
         time: time,
-        ease: inherit.ease,
         delay: inherit.delay,
-        duration: inherit.duration
+        duration: inherit.duration,
+        ease: inherit.ease,
+        index: i
       };
+      inherit = null;
       ++lock.count;
       d3.timer(function(elapsed) {
-        var d = node.__data__, ease = transition.ease, delay = transition.delay, duration = transition.duration, timer = d3_timer_active, tweened = [];
+        var delay = transition.delay, duration, ease, timer = d3_timer_active, tweened = [];
         timer.t = delay + time;
         if (delay <= elapsed) return start(elapsed - delay);
         timer.c = start;
         function start(elapsed) {
           if (lock.active > id) return stop();
+          var active = lock[lock.active];
+          if (active) {
+            --lock.count;
+            delete lock[lock.active];
+            active.event && active.event.interrupt.call(node, node.__data__, active.index);
+          }
           lock.active = id;
-          transition.event && transition.event.start.call(node, d, i);
+          transition.event && transition.event.start.call(node, node.__data__, i);
           transition.tween.forEach(function(key, value) {
-            if (value = value.call(node, d, i)) {
+            if (value = value.call(node, node.__data__, i)) {
               tweened.push(value);
             }
           });
+          ease = transition.ease;
+          duration = transition.duration;
           d3.timer(function() {
             timer.c = tick(elapsed || 1) ? d3_true : tick;
             return 1;
           }, 0, time);
         }
         function tick(elapsed) {
-          if (lock.active !== id) return stop();
+          if (lock.active !== id) return 1;
           var t = elapsed / duration, e = ease(t), n = tweened.length;
           while (n > 0) {
             tweened[--n].call(node, e);
           }
           if (t >= 1) {
-            transition.event && transition.event.end.call(node, d, i);
+            transition.event && transition.event.end.call(node, node.__data__, i);
             return stop();
           }
         }
         function stop() {
-          if (--lock.count) delete lock[id]; else delete node.__transition__;
+          if (--lock.count) delete lock[id]; else delete node[ns];
           return 1;
         }
       }, 0, time);
@@ -8849,8 +9138,8 @@
       g.selectAll(".extent,.e>rect,.w>rect").attr("height", yExtent[1] - yExtent[0]);
     }
     function brushstart() {
-      var target = this, eventTarget = d3.select(d3.event.target), event_ = event.of(target, arguments), g = d3.select(target), resizing = eventTarget.datum(), resizingX = !/^(n|s)$/.test(resizing) && x, resizingY = !/^(e|w)$/.test(resizing) && y, dragging = eventTarget.classed("extent"), dragRestore = d3_event_dragSuppress(), center, origin = d3.mouse(target), offset;
-      var w = d3.select(d3_window).on("keydown.brush", keydown).on("keyup.brush", keyup);
+      var target = this, eventTarget = d3.select(d3.event.target), event_ = event.of(target, arguments), g = d3.select(target), resizing = eventTarget.datum(), resizingX = !/^(n|s)$/.test(resizing) && x, resizingY = !/^(e|w)$/.test(resizing) && y, dragging = eventTarget.classed("extent"), dragRestore = d3_event_dragSuppress(target), center, origin = d3.mouse(target), offset;
+      var w = d3.select(d3_window(target)).on("keydown.brush", keydown).on("keyup.brush", keyup);
       if (d3.event.changedTouches) {
         w.on("touchmove.brush", brushmove).on("touchend.brush", brushend);
       } else {
@@ -9214,7 +9503,7 @@
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],2:[function(_dereq_,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -9238,16 +9527,16 @@
  * THE SOFTWARE.
  */
 module.exports =  {
-  graphlib: _dereq_("./lib/graphlib"),
-  dagre: _dereq_("./lib/dagre"),
-  intersect: _dereq_("./lib/intersect"),
-  render: _dereq_("./lib/render"),
-  util: _dereq_("./lib/util"),
-  version: _dereq_("./lib/version")
+  graphlib: require("./lib/graphlib"),
+  dagre: require("./lib/dagre"),
+  intersect: require("./lib/intersect"),
+  render: require("./lib/render"),
+  util: require("./lib/util"),
+  version: require("./lib/version")
 };
 
-},{"./lib/dagre":9,"./lib/graphlib":10,"./lib/intersect":11,"./lib/render":26,"./lib/util":28,"./lib/version":29}],3:[function(_dereq_,module,exports){
-var util = _dereq_("./util");
+},{"./lib/dagre":9,"./lib/graphlib":10,"./lib/intersect":11,"./lib/render":26,"./lib/util":28,"./lib/version":29}],3:[function(require,module,exports){
+var util = require("./util");
 
 module.exports = {
   "default": normal,
@@ -9310,9 +9599,9 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":28}],4:[function(_dereq_,module,exports){
-var util = _dereq_("./util"),
-    addLabel = _dereq_("./label/add-label");
+},{"./util":28}],4:[function(require,module,exports){
+var util = require("./util"),
+    addLabel = require("./label/add-label");
 
 module.exports = createClusters;
 
@@ -9355,13 +9644,13 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":19,"./util":28}],5:[function(_dereq_,module,exports){
+},{"./label/add-label":19,"./util":28}],5:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    addLabel = _dereq_("./label/add-label"),
-    util = _dereq_("./util"),
-    d3 = _dereq_("./d3");
+var _ = require("./lodash"),
+    addLabel = require("./label/add-label"),
+    util = require("./util"),
+    d3 = require("./d3");
 
 module.exports = createEdgeLabels;
 
@@ -9392,13 +9681,13 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],6:[function(_dereq_,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],6:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    intersectNode = _dereq_("./intersect/intersect-node"),
-    util = _dereq_("./util"),
-    d3 = _dereq_("./d3");
+var _ = require("./lodash"),
+    intersectNode = require("./intersect/intersect-node"),
+    util = require("./util"),
+    d3 = require("./d3");
 
 module.exports = createEdgePaths;
 
@@ -9524,13 +9813,13 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":8,"./intersect/intersect-node":15,"./lodash":22,"./util":28}],7:[function(_dereq_,module,exports){
+},{"./d3":8,"./intersect/intersect-node":15,"./lodash":22,"./util":28}],7:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    addLabel = _dereq_("./label/add-label"),
-    util = _dereq_("./util"),
-    d3 = _dereq_("./d3");
+var _ = require("./lodash"),
+    addLabel = require("./label/add-label"),
+    util = require("./util"),
+    d3 = require("./d3");
 
 module.exports = createNodes;
 
@@ -9584,18 +9873,18 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],8:[function(_dereq_,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],8:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],9:[function(require,module,exports){
 /* global window */
 
 var dagre;
 
-if (_dereq_) {
+if (require) {
   try {
-    dagre = _dereq_("dagre");
+    dagre = require("dagre");
   } catch (e) {}
 }
 
@@ -9605,14 +9894,14 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":30}],10:[function(_dereq_,module,exports){
+},{"dagre":30}],10:[function(require,module,exports){
 /* global window */
 
 var graphlib;
 
-if (_dereq_) {
+if (require) {
   try {
-    graphlib = _dereq_("graphlib");
+    graphlib = require("graphlib");
   } catch (e) {}
 }
 
@@ -9622,17 +9911,17 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":60}],11:[function(_dereq_,module,exports){
+},{"graphlib":60}],11:[function(require,module,exports){
 module.exports = {
-  node: _dereq_("./intersect-node"),
-  circle: _dereq_("./intersect-circle"),
-  ellipse: _dereq_("./intersect-ellipse"),
-  polygon: _dereq_("./intersect-polygon"),
-  rect: _dereq_("./intersect-rect")
+  node: require("./intersect-node"),
+  circle: require("./intersect-circle"),
+  ellipse: require("./intersect-ellipse"),
+  polygon: require("./intersect-polygon"),
+  rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":12,"./intersect-ellipse":13,"./intersect-node":15,"./intersect-polygon":16,"./intersect-rect":17}],12:[function(_dereq_,module,exports){
-var intersectEllipse = _dereq_("./intersect-ellipse");
+},{"./intersect-circle":12,"./intersect-ellipse":13,"./intersect-node":15,"./intersect-polygon":16,"./intersect-rect":17}],12:[function(require,module,exports){
+var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
 
@@ -9640,7 +9929,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":13}],13:[function(_dereq_,module,exports){
+},{"./intersect-ellipse":13}],13:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -9667,7 +9956,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -9739,15 +10028,15 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],15:[function(_dereq_,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],16:[function(_dereq_,module,exports){
-var intersectLine = _dereq_("./intersect-line");
+},{}],16:[function(require,module,exports){
+var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
 
@@ -9803,7 +10092,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":14}],17:[function(_dereq_,module,exports){
+},{"./intersect-line":14}],17:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -9837,8 +10126,8 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],18:[function(_dereq_,module,exports){
-var util = _dereq_("../util");
+},{}],18:[function(require,module,exports){
+var util = require("../util");
 
 module.exports = addHtmlLabel;
 
@@ -9882,10 +10171,10 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":28}],19:[function(_dereq_,module,exports){
-var addTextLabel = _dereq_("./add-text-label"),
-    addHtmlLabel = _dereq_("./add-html-label"),
-    addSVGLabel  = _dereq_("./add-svg-label");
+},{"../util":28}],19:[function(require,module,exports){
+var addTextLabel = require("./add-text-label"),
+    addHtmlLabel = require("./add-html-label"),
+    addSVGLabel  = require("./add-svg-label");
 
 module.exports = addLabel;
 
@@ -9921,8 +10210,8 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":18,"./add-svg-label":20,"./add-text-label":21}],20:[function(_dereq_,module,exports){
-var util = _dereq_("../util");
+},{"./add-html-label":18,"./add-svg-label":20,"./add-text-label":21}],20:[function(require,module,exports){
+var util = require("../util");
 
 module.exports = addSVGLabel;
 
@@ -9936,8 +10225,8 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":28}],21:[function(_dereq_,module,exports){
-var util = _dereq_("../util");
+},{"../util":28}],21:[function(require,module,exports){
+var util = require("../util");
 
 module.exports = addTextLabel;
 
@@ -9983,14 +10272,14 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":28}],22:[function(_dereq_,module,exports){
+},{"../util":28}],22:[function(require,module,exports){
 /* global window */
 
 var lodash;
 
-if (_dereq_) {
+if (require) {
   try {
-    lodash = _dereq_("lodash");
+    lodash = require("lodash");
   } catch (e) {}
 }
 
@@ -10000,11 +10289,11 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":80}],23:[function(_dereq_,module,exports){
+},{"lodash":80}],23:[function(require,module,exports){
 "use strict";
 
-var util = _dereq_("./util"),
-    d3 = _dereq_("./d3");
+var util = require("./util"),
+    d3 = require("./d3");
 
 module.exports = positionClusters;
 
@@ -10036,12 +10325,12 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":8,"./util":28}],24:[function(_dereq_,module,exports){
+},{"./d3":8,"./util":28}],24:[function(require,module,exports){
 "use strict";
 
-var util = _dereq_("./util"),
-    d3 = _dereq_("./d3"),
-    _ = _dereq_("./lodash");
+var util = require("./util"),
+    d3 = require("./d3"),
+    _ = require("./lodash");
 
 module.exports = positionEdgeLabels;
 
@@ -10060,11 +10349,11 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":8,"./lodash":22,"./util":28}],25:[function(_dereq_,module,exports){
+},{"./d3":8,"./lodash":22,"./util":28}],25:[function(require,module,exports){
 "use strict";
 
-var util = _dereq_("./util"),
-    d3 = _dereq_("./d3");
+var util = require("./util"),
+    d3 = require("./d3");
 
 module.exports = positionNodes;
 
@@ -10083,23 +10372,23 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":8,"./util":28}],26:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash"),
-    layout = _dereq_("./dagre").layout;
+},{"./d3":8,"./util":28}],26:[function(require,module,exports){
+var _ = require("./lodash"),
+    layout = require("./dagre").layout;
 
 module.exports = render;
 
 // This design is based on http://bost.ocks.org/mike/chart/.
 function render() {
-  var createNodes = _dereq_("./create-nodes"),
-      createClusters = _dereq_("./create-clusters"),
-      createEdgeLabels = _dereq_("./create-edge-labels"),
-      createEdgePaths = _dereq_("./create-edge-paths"),
-      positionNodes = _dereq_("./position-nodes"),
-      positionEdgeLabels = _dereq_("./position-edge-labels"),
-      positionClusters = _dereq_("./position-clusters"),
-      shapes = _dereq_("./shapes"),
-      arrows = _dereq_("./arrows");
+  var createNodes = require("./create-nodes"),
+      createClusters = require("./create-clusters"),
+      createEdgeLabels = require("./create-edge-labels"),
+      createEdgePaths = require("./create-edge-paths"),
+      positionNodes = require("./position-nodes"),
+      positionEdgeLabels = require("./position-edge-labels"),
+      positionClusters = require("./position-clusters"),
+      shapes = require("./shapes"),
+      arrows = require("./arrows");
 
   var fn = function(svg, g) {
     preProcessGraph(g);
@@ -10252,13 +10541,13 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":3,"./create-clusters":4,"./create-edge-labels":5,"./create-edge-paths":6,"./create-nodes":7,"./dagre":9,"./lodash":22,"./position-clusters":23,"./position-edge-labels":24,"./position-nodes":25,"./shapes":27}],27:[function(_dereq_,module,exports){
+},{"./arrows":3,"./create-clusters":4,"./create-edge-labels":5,"./create-edge-paths":6,"./create-nodes":7,"./dagre":9,"./lodash":22,"./position-clusters":23,"./position-edge-labels":24,"./position-nodes":25,"./shapes":27}],27:[function(require,module,exports){
 "use strict";
 
-var intersectRect = _dereq_("./intersect/intersect-rect"),
-    intersectEllipse = _dereq_("./intersect/intersect-ellipse"),
-    intersectCircle = _dereq_("./intersect/intersect-circle"),
-    intersectPolygon = _dereq_("./intersect/intersect-polygon");
+var intersectRect = require("./intersect/intersect-rect"),
+    intersectEllipse = require("./intersect/intersect-ellipse"),
+    intersectCircle = require("./intersect/intersect-circle"),
+    intersectPolygon = require("./intersect/intersect-polygon");
 
 module.exports = {
   rect: rect,
@@ -10335,8 +10624,8 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":12,"./intersect/intersect-ellipse":13,"./intersect/intersect-polygon":16,"./intersect/intersect-rect":17}],28:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash");
+},{"./intersect/intersect-circle":12,"./intersect/intersect-ellipse":13,"./intersect/intersect-polygon":16,"./intersect/intersect-rect":17}],28:[function(require,module,exports){
+var _ = require("./lodash");
 
 // Public utility functions
 module.exports = {
@@ -10391,10 +10680,10 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":22}],29:[function(_dereq_,module,exports){
+},{"./lodash":22}],29:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],30:[function(_dereq_,module,exports){
+},{}],30:[function(require,module,exports){
 /*
 Copyright (c) 2012-2014 Chris Pettitt
 
@@ -10418,22 +10707,22 @@ THE SOFTWARE.
 */
 
 module.exports = {
-  graphlib: _dereq_("./lib/graphlib"),
+  graphlib: require("./lib/graphlib"),
 
-  layout: _dereq_("./lib/layout"),
-  debug: _dereq_("./lib/debug"),
+  layout: require("./lib/layout"),
+  debug: require("./lib/debug"),
   util: {
-    time: _dereq_("./lib/util").time,
-    notime: _dereq_("./lib/util").notime
+    time: require("./lib/util").time,
+    notime: require("./lib/util").notime
   },
-  version: _dereq_("./lib/version")
+  version: require("./lib/version")
 };
 
-},{"./lib/debug":35,"./lib/graphlib":36,"./lib/layout":38,"./lib/util":58,"./lib/version":59}],31:[function(_dereq_,module,exports){
+},{"./lib/debug":35,"./lib/graphlib":36,"./lib/layout":38,"./lib/util":58,"./lib/version":59}],31:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    greedyFAS = _dereq_("./greedy-fas");
+var _ = require("./lodash"),
+    greedyFAS = require("./greedy-fas");
 
 module.exports = {
   run: run,
@@ -10498,9 +10787,9 @@ function undo(g) {
   });
 }
 
-},{"./greedy-fas":37,"./lodash":39}],32:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash"),
-    util = _dereq_("./util");
+},{"./greedy-fas":37,"./lodash":39}],32:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util");
 
 module.exports = addBorderSegments;
 
@@ -10538,10 +10827,10 @@ function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
   }
 }
 
-},{"./lodash":39,"./util":58}],33:[function(_dereq_,module,exports){
+},{"./lodash":39,"./util":58}],33:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash");
+var _ = require("./lodash");
 
 module.exports = {
   adjust: adjust,
@@ -10612,7 +10901,7 @@ function swapXYOne(attrs) {
   attrs.y = x;
 }
 
-},{"./lodash":39}],34:[function(_dereq_,module,exports){
+},{"./lodash":39}],34:[function(require,module,exports){
 /*
  * Simple doubly linked list implementation derived from Cormen, et al.,
  * "Introduction to Algorithms".
@@ -10670,10 +10959,10 @@ function filterOutLinks(k, v) {
   }
 }
 
-},{}],35:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash"),
-    util = _dereq_("./util"),
-    Graph = _dereq_("./graphlib").Graph;
+},{}],35:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util"),
+    Graph = require("./graphlib").Graph;
 
 module.exports = {
   debugOrdering: debugOrdering
@@ -10706,14 +10995,14 @@ function debugOrdering(g) {
   return h;
 }
 
-},{"./graphlib":36,"./lodash":39,"./util":58}],36:[function(_dereq_,module,exports){
+},{"./graphlib":36,"./lodash":39,"./util":58}],36:[function(require,module,exports){
 /* global window */
 
 var graphlib;
 
-if (typeof _dereq_ === "function") {
+if (typeof require === "function") {
   try {
-    graphlib = _dereq_("graphlib");
+    graphlib = require("graphlib");
   } catch (e) {}
 }
 
@@ -10723,10 +11012,10 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":60}],37:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash"),
-    Graph = _dereq_("./graphlib").Graph,
-    List = _dereq_("./data/list");
+},{"graphlib":60}],37:[function(require,module,exports){
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph,
+    List = require("./data/list");
 
 /*
  * A greedy heuristic for finding a feedback arc set for a graph. A feedback
@@ -10843,23 +11132,23 @@ function assignBucket(buckets, zeroIdx, entry) {
   }
 }
 
-},{"./data/list":34,"./graphlib":36,"./lodash":39}],38:[function(_dereq_,module,exports){
+},{"./data/list":34,"./graphlib":36,"./lodash":39}],38:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    acyclic = _dereq_("./acyclic"),
-    normalize = _dereq_("./normalize"),
-    rank = _dereq_("./rank"),
-    normalizeRanks = _dereq_("./util").normalizeRanks,
-    parentDummyChains = _dereq_("./parent-dummy-chains"),
-    removeEmptyRanks = _dereq_("./util").removeEmptyRanks,
-    nestingGraph = _dereq_("./nesting-graph"),
-    addBorderSegments = _dereq_("./add-border-segments"),
-    coordinateSystem = _dereq_("./coordinate-system"),
-    order = _dereq_("./order"),
-    position = _dereq_("./position"),
-    util = _dereq_("./util"),
-    Graph = _dereq_("./graphlib").Graph;
+var _ = require("./lodash"),
+    acyclic = require("./acyclic"),
+    normalize = require("./normalize"),
+    rank = require("./rank"),
+    normalizeRanks = require("./util").normalizeRanks,
+    parentDummyChains = require("./parent-dummy-chains"),
+    removeEmptyRanks = require("./util").removeEmptyRanks,
+    nestingGraph = require("./nesting-graph"),
+    addBorderSegments = require("./add-border-segments"),
+    coordinateSystem = require("./coordinate-system"),
+    order = require("./order"),
+    position = require("./position"),
+    util = require("./util"),
+    Graph = require("./graphlib").Graph;
 
 module.exports = layout;
 
@@ -11237,14 +11526,14 @@ function canonicalize(attrs) {
   return newAttrs;
 }
 
-},{"./acyclic":31,"./add-border-segments":32,"./coordinate-system":33,"./graphlib":36,"./lodash":39,"./nesting-graph":40,"./normalize":41,"./order":46,"./parent-dummy-chains":51,"./position":53,"./rank":55,"./util":58}],39:[function(_dereq_,module,exports){
+},{"./acyclic":31,"./add-border-segments":32,"./coordinate-system":33,"./graphlib":36,"./lodash":39,"./nesting-graph":40,"./normalize":41,"./order":46,"./parent-dummy-chains":51,"./position":53,"./rank":55,"./util":58}],39:[function(require,module,exports){
 /* global window */
 
 var lodash;
 
-if (typeof _dereq_ === "function") {
+if (typeof require === "function") {
   try {
-    lodash = _dereq_("lodash");
+    lodash = require("lodash");
   } catch (e) {}
 }
 
@@ -11254,9 +11543,9 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":80}],40:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash"),
-    util = _dereq_("./util");
+},{"lodash":80}],40:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util");
 
 module.exports = {
   run: run,
@@ -11388,11 +11677,11 @@ function cleanup(g) {
   });
 }
 
-},{"./lodash":39,"./util":58}],41:[function(_dereq_,module,exports){
+},{"./lodash":39,"./util":58}],41:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    util = _dereq_("./util");
+var _ = require("./lodash"),
+    util = require("./util");
 
 module.exports = {
   run: run,
@@ -11480,8 +11769,8 @@ function undo(g) {
   });
 }
 
-},{"./lodash":39,"./util":58}],42:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"./lodash":39,"./util":58}],42:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = addSubgraphConstraints;
 
@@ -11535,8 +11824,8 @@ function addSubgraphConstraints(g, cg, vs) {
   */
 }
 
-},{"../lodash":39}],43:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"../lodash":39}],43:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = barycenter;
 
@@ -11565,9 +11854,9 @@ function barycenter(g, movable) {
 }
 
 
-},{"../lodash":39}],44:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash"),
-    Graph = _dereq_("../graphlib").Graph;
+},{"../lodash":39}],44:[function(require,module,exports){
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph;
 
 module.exports = buildLayerGraph;
 
@@ -11640,10 +11929,10 @@ function createRootNode(g) {
   return v;
 }
 
-},{"../graphlib":36,"../lodash":39}],45:[function(_dereq_,module,exports){
+},{"../graphlib":36,"../lodash":39}],45:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash");
+var _ = require("../lodash");
 
 module.exports = crossCount;
 
@@ -11712,17 +12001,17 @@ function twoLayerCrossCount(g, northLayer, southLayer) {
   return cc;
 }
 
-},{"../lodash":39}],46:[function(_dereq_,module,exports){
+},{"../lodash":39}],46:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash"),
-    initOrder = _dereq_("./init-order"),
-    crossCount = _dereq_("./cross-count"),
-    sortSubgraph = _dereq_("./sort-subgraph"),
-    buildLayerGraph = _dereq_("./build-layer-graph"),
-    addSubgraphConstraints = _dereq_("./add-subgraph-constraints"),
-    Graph = _dereq_("../graphlib").Graph,
-    util = _dereq_("../util");
+var _ = require("../lodash"),
+    initOrder = require("./init-order"),
+    crossCount = require("./cross-count"),
+    sortSubgraph = require("./sort-subgraph"),
+    buildLayerGraph = require("./build-layer-graph"),
+    addSubgraphConstraints = require("./add-subgraph-constraints"),
+    Graph = require("../graphlib").Graph,
+    util = require("../util");
 
 module.exports = order;
 
@@ -11793,10 +12082,10 @@ function assignOrder(g, layering) {
   });
 }
 
-},{"../graphlib":36,"../lodash":39,"../util":58,"./add-subgraph-constraints":42,"./build-layer-graph":44,"./cross-count":45,"./init-order":47,"./sort-subgraph":49}],47:[function(_dereq_,module,exports){
+},{"../graphlib":36,"../lodash":39,"../util":58,"./add-subgraph-constraints":42,"./build-layer-graph":44,"./cross-count":45,"./init-order":47,"./sort-subgraph":49}],47:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash");
+var _ = require("../lodash");
 
 module.exports = initOrder;
 
@@ -11833,10 +12122,10 @@ function initOrder(g) {
   return layers;
 }
 
-},{"../lodash":39}],48:[function(_dereq_,module,exports){
+},{"../lodash":39}],48:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash");
+var _ = require("../lodash");
 
 module.exports = resolveConflicts;
 
@@ -11958,11 +12247,11 @@ function mergeEntries(target, source) {
   source.merged = true;
 }
 
-},{"../lodash":39}],49:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash"),
-    barycenter = _dereq_("./barycenter"),
-    resolveConflicts = _dereq_("./resolve-conflicts"),
-    sort = _dereq_("./sort");
+},{"../lodash":39}],49:[function(require,module,exports){
+var _ = require("../lodash"),
+    barycenter = require("./barycenter"),
+    resolveConflicts = require("./resolve-conflicts"),
+    sort = require("./sort");
 
 module.exports = sortSubgraph;
 
@@ -12036,9 +12325,9 @@ function mergeBarycenters(target, other) {
   }
 }
 
-},{"../lodash":39,"./barycenter":43,"./resolve-conflicts":48,"./sort":50}],50:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash"),
-    util = _dereq_("../util");
+},{"../lodash":39,"./barycenter":43,"./resolve-conflicts":48,"./sort":50}],50:[function(require,module,exports){
+var _ = require("../lodash"),
+    util = require("../util");
 
 module.exports = sort;
 
@@ -12095,8 +12384,8 @@ function compareWithBias(bias) {
   };
 }
 
-},{"../lodash":39,"../util":58}],51:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash");
+},{"../lodash":39,"../util":58}],51:[function(require,module,exports){
+var _ = require("./lodash");
 
 module.exports = parentDummyChains;
 
@@ -12183,12 +12472,12 @@ function postorder(g) {
   return result;
 }
 
-},{"./lodash":39}],52:[function(_dereq_,module,exports){
+},{"./lodash":39}],52:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash"),
-    Graph = _dereq_("../graphlib").Graph,
-    util = _dereq_("../util");
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph,
+    util = require("../util");
 
 /*
  * This module provides coordinate assignment based on Brandes and Köpf, "Fast
@@ -12583,12 +12872,12 @@ function width(g, v) {
   return g.node(v).width;
 }
 
-},{"../graphlib":36,"../lodash":39,"../util":58}],53:[function(_dereq_,module,exports){
+},{"../graphlib":36,"../lodash":39,"../util":58}],53:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash"),
-    util = _dereq_("../util"),
-    positionX = _dereq_("./bk").positionX;
+var _ = require("../lodash"),
+    util = require("../util"),
+    positionX = require("./bk").positionX;
 
 module.exports = position;
 
@@ -12615,12 +12904,12 @@ function positionY(g) {
 }
 
 
-},{"../lodash":39,"../util":58,"./bk":52}],54:[function(_dereq_,module,exports){
+},{"../lodash":39,"../util":58,"./bk":52}],54:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash"),
-    Graph = _dereq_("../graphlib").Graph,
-    slack = _dereq_("./util").slack;
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph,
+    slack = require("./util").slack;
 
 module.exports = feasibleTree;
 
@@ -12706,13 +12995,13 @@ function shiftRanks(t, g, delta) {
   });
 }
 
-},{"../graphlib":36,"../lodash":39,"./util":57}],55:[function(_dereq_,module,exports){
+},{"../graphlib":36,"../lodash":39,"./util":57}],55:[function(require,module,exports){
 "use strict";
 
-var rankUtil = _dereq_("./util"),
+var rankUtil = require("./util"),
     longestPath = rankUtil.longestPath,
-    feasibleTree = _dereq_("./feasible-tree"),
-    networkSimplex = _dereq_("./network-simplex");
+    feasibleTree = require("./feasible-tree"),
+    networkSimplex = require("./network-simplex");
 
 module.exports = rank;
 
@@ -12756,16 +13045,16 @@ function networkSimplexRanker(g) {
   networkSimplex(g);
 }
 
-},{"./feasible-tree":54,"./network-simplex":56,"./util":57}],56:[function(_dereq_,module,exports){
+},{"./feasible-tree":54,"./network-simplex":56,"./util":57}],56:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash"),
-    feasibleTree = _dereq_("./feasible-tree"),
-    slack = _dereq_("./util").slack,
-    initRank = _dereq_("./util").longestPath,
-    preorder = _dereq_("../graphlib").alg.preorder,
-    postorder = _dereq_("../graphlib").alg.postorder,
-    simplify = _dereq_("../util").simplify;
+var _ = require("../lodash"),
+    feasibleTree = require("./feasible-tree"),
+    slack = require("./util").slack,
+    initRank = require("./util").longestPath,
+    preorder = require("../graphlib").alg.preorder,
+    postorder = require("../graphlib").alg.postorder,
+    simplify = require("../util").simplify;
 
 module.exports = networkSimplex;
 
@@ -12992,10 +13281,10 @@ function isDescendant(tree, vLabel, rootLabel) {
   return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
 }
 
-},{"../graphlib":36,"../lodash":39,"../util":58,"./feasible-tree":54,"./util":57}],57:[function(_dereq_,module,exports){
+},{"../graphlib":36,"../lodash":39,"../util":58,"./feasible-tree":54,"./util":57}],57:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("../lodash");
+var _ = require("../lodash");
 
 module.exports = {
   longestPath: longestPath,
@@ -13055,11 +13344,11 @@ function slack(g, e) {
   return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
 }
 
-},{"../lodash":39}],58:[function(_dereq_,module,exports){
+},{"../lodash":39}],58:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash"),
-    Graph = _dereq_("./graphlib").Graph;
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph;
 
 module.exports = {
   addDummyNode: addDummyNode,
@@ -13293,10 +13582,10 @@ function notime(name, fn) {
   return fn();
 }
 
-},{"./graphlib":36,"./lodash":39}],59:[function(_dereq_,module,exports){
+},{"./graphlib":36,"./lodash":39}],59:[function(require,module,exports){
 module.exports = "0.7.4";
 
-},{}],60:[function(_dereq_,module,exports){
+},{}],60:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -13327,17 +13616,17 @@ module.exports = "0.7.4";
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var lib = _dereq_("./lib");
+var lib = require("./lib");
 
 module.exports = {
   Graph: lib.Graph,
-  json: _dereq_("./lib/json"),
-  alg: _dereq_("./lib/alg"),
+  json: require("./lib/json"),
+  alg: require("./lib/alg"),
   version: lib.version
 };
 
-},{"./lib":76,"./lib/alg":67,"./lib/json":77}],61:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"./lib":76,"./lib/alg":67,"./lib/json":77}],61:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = components;
 
@@ -13365,8 +13654,8 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":78}],62:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"../lodash":78}],62:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = dfs;
 
@@ -13406,9 +13695,9 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":78}],63:[function(_dereq_,module,exports){
-var dijkstra = _dereq_("./dijkstra"),
-    _ = _dereq_("../lodash");
+},{"../lodash":78}],63:[function(require,module,exports){
+var dijkstra = require("./dijkstra"),
+    _ = require("../lodash");
 
 module.exports = dijkstraAll;
 
@@ -13418,9 +13707,9 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":78,"./dijkstra":64}],64:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash"),
-    PriorityQueue = _dereq_("../data/priority-queue");
+},{"../lodash":78,"./dijkstra":64}],64:[function(require,module,exports){
+var _ = require("../lodash"),
+    PriorityQueue = require("../data/priority-queue");
 
 module.exports = dijkstra;
 
@@ -13474,9 +13763,9 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":74,"../lodash":78}],65:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash"),
-    tarjan = _dereq_("./tarjan");
+},{"../data/priority-queue":74,"../lodash":78}],65:[function(require,module,exports){
+var _ = require("../lodash"),
+    tarjan = require("./tarjan");
 
 module.exports = findCycles;
 
@@ -13486,8 +13775,8 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":78,"./tarjan":72}],66:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"../lodash":78,"./tarjan":72}],66:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = floydWarshall;
 
@@ -13538,23 +13827,23 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":78}],67:[function(_dereq_,module,exports){
+},{"../lodash":78}],67:[function(require,module,exports){
 module.exports = {
-  components: _dereq_("./components"),
-  dijkstra: _dereq_("./dijkstra"),
-  dijkstraAll: _dereq_("./dijkstra-all"),
-  findCycles: _dereq_("./find-cycles"),
-  floydWarshall: _dereq_("./floyd-warshall"),
-  isAcyclic: _dereq_("./is-acyclic"),
-  postorder: _dereq_("./postorder"),
-  preorder: _dereq_("./preorder"),
-  prim: _dereq_("./prim"),
-  tarjan: _dereq_("./tarjan"),
-  topsort: _dereq_("./topsort")
+  components: require("./components"),
+  dijkstra: require("./dijkstra"),
+  dijkstraAll: require("./dijkstra-all"),
+  findCycles: require("./find-cycles"),
+  floydWarshall: require("./floyd-warshall"),
+  isAcyclic: require("./is-acyclic"),
+  postorder: require("./postorder"),
+  preorder: require("./preorder"),
+  prim: require("./prim"),
+  tarjan: require("./tarjan"),
+  topsort: require("./topsort")
 };
 
-},{"./components":61,"./dijkstra":64,"./dijkstra-all":63,"./find-cycles":65,"./floyd-warshall":66,"./is-acyclic":68,"./postorder":69,"./preorder":70,"./prim":71,"./tarjan":72,"./topsort":73}],68:[function(_dereq_,module,exports){
-var topsort = _dereq_("./topsort");
+},{"./components":61,"./dijkstra":64,"./dijkstra-all":63,"./find-cycles":65,"./floyd-warshall":66,"./is-acyclic":68,"./postorder":69,"./preorder":70,"./prim":71,"./tarjan":72,"./topsort":73}],68:[function(require,module,exports){
+var topsort = require("./topsort");
 
 module.exports = isAcyclic;
 
@@ -13570,8 +13859,8 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":73}],69:[function(_dereq_,module,exports){
-var dfs = _dereq_("./dfs");
+},{"./topsort":73}],69:[function(require,module,exports){
+var dfs = require("./dfs");
 
 module.exports = postorder;
 
@@ -13579,8 +13868,8 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":62}],70:[function(_dereq_,module,exports){
-var dfs = _dereq_("./dfs");
+},{"./dfs":62}],70:[function(require,module,exports){
+var dfs = require("./dfs");
 
 module.exports = preorder;
 
@@ -13588,10 +13877,10 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":62}],71:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash"),
-    Graph = _dereq_("../graph"),
-    PriorityQueue = _dereq_("../data/priority-queue");
+},{"./dfs":62}],71:[function(require,module,exports){
+var _ = require("../lodash"),
+    Graph = require("../graph"),
+    PriorityQueue = require("../data/priority-queue");
 
 module.exports = prim;
 
@@ -13642,8 +13931,8 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":74,"../graph":75,"../lodash":78}],72:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"../data/priority-queue":74,"../graph":75,"../lodash":78}],72:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = tarjan;
 
@@ -13691,8 +13980,8 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":78}],73:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"../lodash":78}],73:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = topsort;
 topsort.CycleException = CycleException;
@@ -13727,8 +14016,8 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":78}],74:[function(_dereq_,module,exports){
-var _ = _dereq_("../lodash");
+},{"../lodash":78}],74:[function(require,module,exports){
+var _ = require("../lodash");
 
 module.exports = PriorityQueue;
 
@@ -13881,10 +14170,10 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":78}],75:[function(_dereq_,module,exports){
+},{"../lodash":78}],75:[function(require,module,exports){
 "use strict";
 
-var _ = _dereq_("./lodash");
+var _ = require("./lodash");
 
 module.exports = Graph;
 
@@ -14402,16 +14691,16 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":78}],76:[function(_dereq_,module,exports){
+},{"./lodash":78}],76:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
-  Graph: _dereq_("./graph"),
-  version: _dereq_("./version")
+  Graph: require("./graph"),
+  version: require("./version")
 };
 
-},{"./graph":75,"./version":79}],77:[function(_dereq_,module,exports){
-var _ = _dereq_("./lodash"),
-    Graph = _dereq_("./graph");
+},{"./graph":75,"./version":79}],77:[function(require,module,exports){
+var _ = require("./lodash"),
+    Graph = require("./graph");
 
 module.exports = {
   write: write,
@@ -14477,12 +14766,12 @@ function read(json) {
   return g;
 }
 
-},{"./graph":75,"./lodash":78}],78:[function(_dereq_,module,exports){
-module.exports=_dereq_(39)
-},{"lodash":80}],79:[function(_dereq_,module,exports){
+},{"./graph":75,"./lodash":78}],78:[function(require,module,exports){
+arguments[4][39][0].apply(exports,arguments)
+},{"dup":39,"lodash":80}],79:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],80:[function(_dereq_,module,exports){
+},{}],80:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -26836,303 +27125,8 @@ module.exports = '1.0.7';
   }
 }.call(this));
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],81:[function(_dereq_,module,exports){
-
-},{}],82:[function(_dereq_,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83}],83:[function(_dereq_,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-}
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],84:[function(_dereq_,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],81:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -27464,8 +27458,8 @@ process.chdir = function (dir) {
 
 }(this));
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],85:[function(_dereq_,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],82:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -27734,7 +27728,7 @@ process.chdir = function (dir) {
                 module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
-                _dereq_('./locale/' + name);
+                require('./locale/' + name);
                 // because defineLocale currently also sets the global locale, we
                 // want to undo that for lazy loaded locales
                 locale_locales__getSetGlobalLocale(oldLocale);
@@ -30661,10 +30655,10 @@ process.chdir = function (dir) {
     return _moment;
 
 }));
-},{}],86:[function(_dereq_,module,exports){
+},{}],83:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -30678,9 +30672,18 @@ module.exports={
     "mermaid": "./bin/mermaid.js"
   },
   "scripts": {
-    "watch": "watchify src/mermaid.js -o dist/mermaid.js",
+    "live": "live-server ./test/examples",
+    "lint": "node node_modules/eslint/bin/eslint.js src",
+    "watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "test": "./node_modules/.bin/gulp dist && ./node_modules/.bin/gulp test"
+    "tape": "node node_modules/.bin/tape test/cli_test-*.js",
+    "jasmine": "node node_modules/jasmine-es6/bin/jasmine.js",
+    "test": "npm run dist && npm run jasmine && npm run tape",
+    "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
+    "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
+    "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
+    "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
+    "dist": "npm run dist-slim-mermaid;npm run dist-slim-mermaidAPI; npm run dist-mermaid;npm run dist-mermaidAPI"
   },
   "repository": {
     "type": "git",
@@ -30690,7 +30693,7 @@ module.exports={
   "license": "MIT",
   "dependencies": {
     "chalk": "^0.5.1",
-    "d3": "~3.4.13",
+    "d3": "~3.5.6",
     "dagre-d3": "~0.4.8",
     "he": "^0.5.0",
     "minimist": "^1.1.0",
@@ -30701,18 +30704,19 @@ module.exports={
   },
   "devDependencies": {
     "async": "^0.9.0",
+    "babel-eslint": "^4.1.3",
+    "babelify": "^6.3.0",
     "browserify": "~6.2.0",
     "clone": "^0.2.0",
     "codeclimate-test-reporter": "0.0.4",
-    "connect-livereload": "^0.5.3",
-    "d3": "~3.4.13",
     "dateformat": "^1.0.11",
     "dox": "^0.8.0",
+    "eslint": "^1.6.0",
+    "eslint-watch": "^2.1.2",
     "event-stream": "^3.2.0",
-    "express": "^4.12.4",
     "foundation": "^4.2.1-1",
     "front-matter": "^0.2.0",
-    "gulp": "~3.8.9",
+    "gulp": "~3.9.0",
     "gulp-bower": "0.0.10",
     "gulp-browserify": "^0.5.0",
     "gulp-bump": "^0.1.11",
@@ -30726,7 +30730,7 @@ module.exports={
     "gulp-if": "^1.2.5",
     "gulp-insert": "^0.4.0",
     "gulp-istanbul": "^0.4.0",
-    "gulp-jasmine": "~1.0.1",
+    "gulp-jasmine": "~2.1.0",
     "gulp-jison": "~1.2.0",
     "gulp-jshint": "^1.9.0",
     "gulp-less": "^3.0.1",
@@ -30739,59 +30743,48 @@ module.exports={
     "gulp-tag-version": "^1.2.1",
     "gulp-uglify": "~1.0.1",
     "gulp-vartree": "^2.0.1",
-    "he": "^0.5.0",
     "hogan.js": "^3.0.2",
-    "jasmine": "~2.0.1",
+    "jasmine": "2.3.2",
+    "jasmine-es6": "0.0.18",
     "jison": "~0.4.15",
-    "jshint-stylish": "^1.0.0",
-    "karma": "~0.12.20",
-    "karma-chrome-launcher": "~0.1.5",
-    "karma-jasmine": "~0.2.1",
-    "karma-requirejs": "~0.2.2",
-    "lodash": "^2.4.1",
-    "lodash._escapestringchar": "^2.4.1",
-    "lodash._objecttypes": "^2.4.1",
-    "lodash._reinterpolate": "^2.4.1",
-    "lodash._reunescapedhtml": "^2.4.1",
-    "lodash.defaults": "^2.4.1",
-    "lodash.templatesettings": "^2.4.1",
-    "lodash.values": "^2.4.1",
+    "jsdom": "^6.5.1",
+    "jshint-stylish": "^2.0.1",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
-    "mock-browser": "^0.90.27",
+    "mock-browser": "^0.91.34",
     "path": "^0.4.9",
-    "phantomjs": "^1.9.17",
+    "phantomjs": "^1.9.18",
     "proxyquire": "^1.3.1",
-    "readable-stream": "^2.0.2",
-    "replacestream": "^4.0.0",
     "require-dir": "^0.3.0",
     "rewire": "^2.1.3",
     "rimraf": "^2.2.8",
     "tape": "^3.0.3",
-    "tiny-lr": "^0.1.6",
+    "uglifyjs": "^2.4.10",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.2"
   }
 }
 
-},{}],87:[function(_dereq_,module,exports){
+},{}],84:[function(require,module,exports){
 /* global window */
 //log.debug('Setting up d3');
+'use strict';
+
 var d3;
 
-if (_dereq_) {
-  try {
-    d3 = _dereq_("d3");
-  } catch (e) {
-  	//log.debug('Exception ... but ok');
-  	//log.debug(e);
-  }
+if (require) {
+    try {
+        d3 = require('d3');
+    } catch (e) {
+        //log.debug('Exception ... but ok');
+        //log.debug(e);
+    }
 }
 
 //log.debug(d3);
 
 if (!d3) {
-  //if(typeof window !== 'undefined')
+    //if(typeof window !== 'undefined')
     d3 = window.d3;
 }
 
@@ -30815,7 +30808,7 @@ module.exports = d3;
 
  */
 
-(function() {
+(function () {
 
     // set this variable to a string value to always force a particular
     // wrap method for development purposes, for example to check tspan
@@ -30828,20 +30821,20 @@ module.exports = d3;
     // exit immediately if something in this location
     // has already been defined; the plugin will defer to whatever
     // else you're doing in your code
-    if(d3.selection.prototype.textwrap) {
+    if (d3.selection.prototype.textwrap) {
         return false;
     }
 
     // double check the force_wrap_method flag
     // and reset if someone screwed up the above
     // settings
-    if(typeof force_wrap_method == 'undefined') {
+    if (typeof force_wrap_method == 'undefined') {
         var force_wrap_method = false;
     }
 
     // create the plugin method twice, both for regular use
     // and again for use inside the enter() selection
-    d3.selection.prototype.textwrap = d3.selection.enter.prototype.textwrap = function(bounds, padding) {
+    d3.selection.prototype.textwrap = d3.selection.enter.prototype.textwrap = function (bounds, padding) {
 
         // default value of padding is zero if it's undefined
         var padding = parseInt(padding) || 0;
@@ -30855,455 +30848,452 @@ module.exports = d3;
 
         // extract wrap boundaries from any d3-selected rect and return them
         // in a format that matches the simpler object argument option
-        var extract_bounds = function(bounds) {
+        var extract_bounds = function extract_bounds(bounds) {
             // discard the nested array wrappers added by d3
             var bounding_rect = bounds[0][0];
             // sanitize the svg element name so we can test against it
             var element_type = bounding_rect.tagName.toString();
             // if it's not a rect, exit
-            if(element_type !== 'rect') {
+            if (element_type !== 'rect') {
                 return false;
                 // if it's a rect, proceed to extracting the position attributes
             } else {
-                var bounds_extracted = {};
-                bounds_extracted.x = d3.select(bounding_rect).attr('x') || 0;
-                bounds_extracted.y = d3.select(bounding_rect).attr('y') || 0;
-                bounds_extracted.width = d3.select(bounding_rect).attr('width') || 0;
-                bounds_extracted.height = d3.select(bounding_rect).attr('height') || 0;
-                // also pass along the getter function
-                bounds_extracted.attr = bounds.attr;
-            }
+                    var bounds_extracted = {};
+                    bounds_extracted.x = d3.select(bounding_rect).attr('x') || 0;
+                    bounds_extracted.y = d3.select(bounding_rect).attr('y') || 0;
+                    bounds_extracted.width = d3.select(bounding_rect).attr('width') || 0;
+                    bounds_extracted.height = d3.select(bounding_rect).attr('height') || 0;
+                    // also pass along the getter function
+                    bounds_extracted.attr = bounds.attr;
+                }
             return bounds_extracted;
-        }
+        };
 
         // double check the input argument for the wrapping
         // boundaries to make sure it actually contains all
         // the information we'll need in order to wrap successfully
-        var verify_bounds = function(bounds) {
+        var verify_bounds = function verify_bounds(bounds) {
             // quickly add a simple getter method so you can use either
             // bounds.x or bounds.attr('x') as your notation,
             // the latter being a common convention among D3
             // developers
-            if(!bounds.attr) {
-                bounds.attr = function(property) {
-                    if(this[property]) {
+            if (!bounds.attr) {
+                bounds.attr = function (property) {
+                    if (this[property]) {
                         return this[property];
                     }
-                }
+                };
             }
             // if it's an associative array, make sure it has all the
             // necessary properties represented directly
-            if(
-                (typeof bounds == 'object') &&
-                (typeof bounds.x !== 'undefined') &&
-                (typeof bounds.y !== 'undefined') &&
-                (typeof bounds.width !== 'undefined') &&
-                (typeof bounds.height !== 'undefined')
+            if (typeof bounds == 'object' && typeof bounds.x !== 'undefined' && typeof bounds.y !== 'undefined' && typeof bounds.width !== 'undefined' && typeof bounds.height !== 'undefined'
             // if that's the case, then the bounds are fine
             ) {
-                // return the lightly modified bounds
-                return bounds;
-                // if it's a numerically indexed array, assume it's a
-                // d3-selected rect and try to extract the positions
-            } else if (
+                    // return the lightly modified bounds
+                    return bounds;
+                    // if it's a numerically indexed array, assume it's a
+                    // d3-selected rect and try to extract the positions
+                } else if (
                 // first try to make sure it's an array using Array.isArray
-            (
-            (typeof Array.isArray == 'function') &&
-            (Array.isArray(bounds))
-            ) ||
+                typeof Array.isArray == 'function' && Array.isArray(bounds) ||
                 // but since Array.isArray isn't always supported, fall
                 // back to casting to the object to string when it's not
-            (Object.prototype.toString.call(bounds) === '[object Array]')
-            ) {
-                // once you're sure it's an array, extract the boundaries
-                // from the rect
-                var extracted_bounds = extract_bounds(bounds);
-                return extracted_bounds;
-            } else {
-                // but if the bounds are neither an object nor a numerical
-                // array, then the bounds argument is invalid and you'll
-                // need to fix it
-                return false;
-            }
-        }
+                Object.prototype.toString.call(bounds) === '[object Array]') {
+                    // once you're sure it's an array, extract the boundaries
+                    // from the rect
+                    var extracted_bounds = extract_bounds(bounds);
+                    return extracted_bounds;
+                } else {
+                    // but if the bounds are neither an object nor a numerical
+                    // array, then the bounds argument is invalid and you'll
+                    // need to fix it
+                    return false;
+                }
+        };
 
-        var apply_padding = function(bounds, padding) {
+        var apply_padding = function apply_padding(bounds, padding) {
             var padded_bounds = bounds;
-            if(padding !== 0) {
+            if (padding !== 0) {
                 padded_bounds.x = parseInt(padded_bounds.x) + padding;
                 padded_bounds.y = parseInt(padded_bounds.y) + padding;
                 padded_bounds.width -= padding * 2;
                 padded_bounds.height -= padding * 2;
             }
             return padded_bounds;
-        }
+        };
 
         // verify bounds
         var verified_bounds = verify_bounds(bounds);
 
         // modify bounds if a padding value is provided
-        if(padding) {
+        if (padding) {
             verified_bounds = apply_padding(verified_bounds, padding);
         }
 
         // check that we have the necessary conditions for this function to operate properly
-        if(
-            // selection it's operating on cannot be not empty
-        (selection.length == 0) ||
-            // d3 must be available
-        (!d3) ||
-            // desired wrapping bounds must be provided as an input argument
-        (!bounds) ||
-            // input bounds must validate
-        (!verified_bounds)
-        ) {
+        if (
+        // selection it's operating on cannot be not empty
+        selection.length == 0 ||
+        // d3 must be available
+        !d3 ||
+        // desired wrapping bounds must be provided as an input argument
+        !bounds ||
+        // input bounds must validate
+        !verified_bounds) {
             // try to return the calling selection if possible
             // so as not to interfere with methods downstream in the
             // chain
-            if(selection) {
+            if (selection) {
                 return selection;
                 // if all else fails, just return false. if you hit this point then you're
                 // almost certainly trying to call the textwrap() method on something that
                 // doesn't make sense!
             } else {
-                return false;
-            }
+                    return false;
+                }
             // if we've validated everything then we can finally proceed
             // to the meat of this operation
         } else {
 
-            // reassign the verified bounds as the set we want
-            // to work with from here on; this ensures that we're
-            // using the same data structure for our bounds regardless
-            // of whether the input argument was a simple object or
-            // a d3 selection
-            bounds = verified_bounds;
+                // reassign the verified bounds as the set we want
+                // to work with from here on; this ensures that we're
+                // using the same data structure for our bounds regardless
+                // of whether the input argument was a simple object or
+                // a d3 selection
+                bounds = verified_bounds;
 
-            // wrap using html and foreignObjects if they are supported
-            var wrap_with_foreignobjects = function(item) {
-                // establish variables to quickly reference target nodes later
-                var parent = d3.select(item[0].parentNode);
-                var text_node = parent.select('text');
-                var styled_line_height = text_node.style('line-height');
-                // extract our desired content from the single text element
-                var text_to_wrap = text_node.text();
-                // remove the text node and replace with a foreign object
-                text_node.remove();
-                var foreign_object = parent.append('foreignObject');
-                // add foreign object and set dimensions, position, etc
-                foreign_object
-                    .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
-                    .attr('x', bounds.x)
-                    .attr('y', bounds.y)
-                    .attr('width', bounds.width)
-                    .attr('height', bounds.height);
-                // insert an HTML div
-                var wrap_div = foreign_object
-                    .append('xhtml:div')
+                // wrap using html and foreignObjects if they are supported
+                var wrap_with_foreignobjects = function wrap_with_foreignobjects(item) {
+                    // establish variables to quickly reference target nodes later
+                    var parent = d3.select(item[0].parentNode);
+                    var text_node = parent.select('text');
+                    var styled_line_height = text_node.style('line-height');
+                    // extract our desired content from the single text element
+                    var text_to_wrap = text_node.text();
+                    // remove the text node and replace with a foreign object
+                    text_node.remove();
+                    var foreign_object = parent.append('foreignObject');
+                    // add foreign object and set dimensions, position, etc
+                    foreign_object.attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility').attr('x', bounds.x).attr('y', bounds.y).attr('width', bounds.width).attr('height', bounds.height);
+                    // insert an HTML div
+                    var wrap_div = foreign_object.append('xhtml:div')
                     // this class is currently hardcoded
                     // probably not necessary but easy to
                     // override using .classed() and for now
                     // it's nice to avoid a litany of input
                     // arguments
                     .attr('class', 'wrapped');
-                // set div to same dimensions as foreign object
-                wrap_div
-                    .style('height', bounds.height)
-                    .style('width', bounds.width)
+                    // set div to same dimensions as foreign object
+                    wrap_div.style('height', bounds.height).style('width', bounds.width)
                     // insert text content
                     .html(text_to_wrap);
-                if(styled_line_height) {
-                    wrap_div.style('line-height', styled_line_height);
-                }
-                return_value = parent.select('foreignObject');
-            }
+                    if (styled_line_height) {
+                        wrap_div.style('line-height', styled_line_height);
+                    }
+                    return_value = parent.select('foreignObject');
+                };
 
-
-            // wrap with tspans if foreignObject is undefined
-            var wrap_with_tspans = function(item) {
-                // operate on the first text item in the selection
-                var text_node = item[0];
-                var parent = text_node.parentNode;
-                var text_node_selected = d3.select(text_node);
-                // measure initial size of the text node as rendered
-                var text_node_height = text_node.getBBox().height;
-                var text_node_width = text_node.getBBox().width;
-                // figure out the line height, either from rendered height
-                // of the font or attached styling
-                var line_height;
-                var rendered_line_height = text_node_height;
-                var styled_line_height = text_node_selected.style('line-height');
-                if(
-                    (styled_line_height) &&
-                    (parseInt(styled_line_height))
-                ) {
-                    line_height = parseInt(styled_line_height.replace('px', ''));
-                } else {
-                    line_height = rendered_line_height;
-                }
-                // only fire the rest of this if the text content
-                // overflows the desired dimensions
-                if(text_node_width > bounds.width) {
-                    // store whatever is inside the text node
-                    // in a variable and then zero out the
-                    // initial content; we'll reinsert in a moment
-                    // using tspan elements.
-                    var text_to_wrap = text_node_selected.text();
-                    text_node_selected.text('');
-                    if(text_to_wrap) {
-                        // keep track of whether we are splitting by spaces
-                        // so we know whether to reinsert those spaces later
-                        var break_delimiter;
-                        // split at spaces to create an array of individual words
-                        var text_to_wrap_array;
-                        if(text_to_wrap.indexOf(' ') !== -1) {
-                            var break_delimiter = ' ';
-                            text_to_wrap_array = text_to_wrap.split(' ');
-                        } else {
-                            // if there are no spaces, figure out the split
-                            // points by comparing rendered text width against
-                            // bounds and translating that into character position
-                            // cuts
-                            break_delimiter = '';
-                            var string_length = text_to_wrap.length;
-                            var number_of_substrings = Math.ceil(text_node_width / bounds.width);
-                            var splice_interval = Math.floor(string_length / number_of_substrings);
-                            if(
-                                !(splice_interval * number_of_substrings >= string_length)
-                            ) {
-                                number_of_substrings++;
-                            }
-                            var text_to_wrap_array = [];
-                            var substring;
-                            var start_position;
-                            for(var i = 0; i < number_of_substrings; i++) {
-                                start_position = i * splice_interval;
-                                substring = text_to_wrap.substr(start_position, splice_interval);
-                                text_to_wrap_array.push(substring);
-                            }
-                        }
-
-                        // new array where we'll store the words re-assembled into
-                        // substrings that have been tested against the desired
-                        // maximum wrapping width
-                        var substrings = [];
-                        // computed text length is arguably incorrectly reported for
-                        // all tspans after the first one, in that they will include
-                        // the width of previous separate tspans. to compensate we need
-                        // to manually track the computed text length of all those
-                        // previous tspans and substrings, and then use that to offset
-                        // the miscalculation. this then gives us the actual correct
-                        // position we want to use in rendering the text in the SVG.
-                        var total_offset = 0;
-                        // object for storing the results of text length computations later
-                        var temp = {};
-                        // loop through the words and test the computed text length
-                        // of the string against the maximum desired wrapping width
-                        for(var i = 0; i < text_to_wrap_array.length; i++) {
-                            var word = text_to_wrap_array[i];
-                            var previous_string = text_node_selected.text();
-                            var previous_width = text_node.getComputedTextLength();
-                            // initialize the current word as the first word
-                            // or append to the previous string if one exists
-                            var new_string;
-                            if(previous_string) {
-                                new_string = previous_string + break_delimiter + word;
+                // wrap with tspans if foreignObject is undefined
+                var wrap_with_tspans = function wrap_with_tspans(item) {
+                    // operate on the first text item in the selection
+                    var text_node = item[0];
+                    var parent = text_node.parentNode;
+                    var text_node_selected = d3.select(text_node);
+                    // measure initial size of the text node as rendered
+                    var text_node_height = text_node.getBBox().height;
+                    var text_node_width = text_node.getBBox().width;
+                    // figure out the line height, either from rendered height
+                    // of the font or attached styling
+                    var line_height;
+                    var rendered_line_height = text_node_height;
+                    var styled_line_height = text_node_selected.style('line-height');
+                    if (styled_line_height && parseInt(styled_line_height)) {
+                        line_height = parseInt(styled_line_height.replace('px', ''));
+                    } else {
+                        line_height = rendered_line_height;
+                    }
+                    // only fire the rest of this if the text content
+                    // overflows the desired dimensions
+                    if (text_node_width > bounds.width) {
+                        // store whatever is inside the text node
+                        // in a variable and then zero out the
+                        // initial content; we'll reinsert in a moment
+                        // using tspan elements.
+                        var text_to_wrap = text_node_selected.text();
+                        text_node_selected.text('');
+                        if (text_to_wrap) {
+                            // keep track of whether we are splitting by spaces
+                            // so we know whether to reinsert those spaces later
+                            var break_delimiter;
+                            // split at spaces to create an array of individual words
+                            var text_to_wrap_array;
+                            if (text_to_wrap.indexOf(' ') !== -1) {
+                                var break_delimiter = ' ';
+                                text_to_wrap_array = text_to_wrap.split(' ');
                             } else {
-                                new_string = word;
+                                // if there are no spaces, figure out the split
+                                // points by comparing rendered text width against
+                                // bounds and translating that into character position
+                                // cuts
+                                break_delimiter = '';
+                                var string_length = text_to_wrap.length;
+                                var number_of_substrings = Math.ceil(text_node_width / bounds.width);
+                                var splice_interval = Math.floor(string_length / number_of_substrings);
+                                if (!(splice_interval * number_of_substrings >= string_length)) {
+                                    number_of_substrings++;
+                                }
+                                var text_to_wrap_array = [];
+                                var substring;
+                                var start_position;
+                                for (var i = 0; i < number_of_substrings; i++) {
+                                    start_position = i * splice_interval;
+                                    substring = text_to_wrap.substr(start_position, splice_interval);
+                                    text_to_wrap_array.push(substring);
+                                }
                             }
-                            // add the newest substring back to the text node and
-                            // measure the length
-                            text_node_selected.text(new_string);
-                            var new_width = text_node.getComputedTextLength();
-                            // adjust the length by the offset we've tracked
-                            // due to the misreported length discussed above
-                            var test_width = new_width - total_offset;
-                            // if our latest version of the string is too
-                            // big for the bounds, use the previous
-                            // version of the string (without the newest word
-                            // added) and use the latest word to restart the
-                            // process with a new tspan
-                            if(new_width > bounds.width) {
-                                if(
-                                    (previous_string) &&
-                                    (previous_string !== '')
-                                ) {
-                                    total_offset = total_offset + previous_width;
-                                    temp = {string: previous_string, width: previous_width, offset: total_offset};
-                                    substrings.push(temp);
+
+                            // new array where we'll store the words re-assembled into
+                            // substrings that have been tested against the desired
+                            // maximum wrapping width
+                            var substrings = [];
+                            // computed text length is arguably incorrectly reported for
+                            // all tspans after the first one, in that they will include
+                            // the width of previous separate tspans. to compensate we need
+                            // to manually track the computed text length of all those
+                            // previous tspans and substrings, and then use that to offset
+                            // the miscalculation. this then gives us the actual correct
+                            // position we want to use in rendering the text in the SVG.
+                            var total_offset = 0;
+                            // object for storing the results of text length computations later
+                            var temp = {};
+                            // loop through the words and test the computed text length
+                            // of the string against the maximum desired wrapping width
+                            for (var i = 0; i < text_to_wrap_array.length; i++) {
+                                var word = text_to_wrap_array[i];
+                                var previous_string = text_node_selected.text();
+                                var previous_width = text_node.getComputedTextLength();
+                                // initialize the current word as the first word
+                                // or append to the previous string if one exists
+                                var new_string;
+                                if (previous_string) {
+                                    new_string = previous_string + break_delimiter + word;
+                                } else {
+                                    new_string = word;
+                                }
+                                // add the newest substring back to the text node and
+                                // measure the length
+                                text_node_selected.text(new_string);
+                                var new_width = text_node.getComputedTextLength();
+                                // adjust the length by the offset we've tracked
+                                // due to the misreported length discussed above
+                                var test_width = new_width - total_offset;
+                                // if our latest version of the string is too
+                                // big for the bounds, use the previous
+                                // version of the string (without the newest word
+                                // added) and use the latest word to restart the
+                                // process with a new tspan
+                                if (new_width > bounds.width) {
+                                    if (previous_string && previous_string !== '') {
+                                        total_offset = total_offset + previous_width;
+                                        temp = { string: previous_string, width: previous_width, offset: total_offset };
+                                        substrings.push(temp);
+                                        text_node_selected.text('');
+                                        text_node_selected.text(word);
+                                        // Handle case where there is just one more word to be wrapped
+                                        if (i == text_to_wrap_array.length - 1) {
+                                            new_string = word;
+                                            text_node_selected.text(new_string);
+                                            new_width = text_node.getComputedTextLength();
+                                        }
+                                    }
+                                }
+                                // if we're up to the last word in the array,
+                                // get the computed length as is without
+                                // appending anything further to it
+                                if (i == text_to_wrap_array.length - 1) {
                                     text_node_selected.text('');
-                                    text_node_selected.text(word);
-                                    // Handle case where there is just one more word to be wrapped
-                                    if(i == text_to_wrap_array.length - 1) {
-                                        new_string = word;
-                                        text_node_selected.text(new_string);
-                                        new_width = text_node.getComputedTextLength();
+                                    var final_string = new_string;
+                                    if (final_string && final_string !== '') {
+                                        if (new_width - total_offset > 0) {
+                                            new_width = new_width - total_offset;
+                                        }
+                                        temp = { string: final_string, width: new_width, offset: total_offset };
+                                        substrings.push(temp);
                                     }
                                 }
                             }
-                            // if we're up to the last word in the array,
-                            // get the computed length as is without
-                            // appending anything further to it
-                            if(i == text_to_wrap_array.length - 1) {
-                                text_node_selected.text('');
-                                var final_string = new_string;
-                                if(
-                                    (final_string) &&
-                                    (final_string !== '')
-                                ) {
-                                    if((new_width - total_offset) > 0) {new_width = new_width - total_offset}
-                                    temp = {string: final_string, width: new_width, offset: total_offset};
-                                    substrings.push(temp);
-                                }
-                            }
-                        }
 
-                        // append each substring as a tspan
-                        var current_tspan;
-                        var tspan_count;
-                        // double check that the text content has been removed
-                        // before we start appending tspans
-                        text_node_selected.text('');
-                        for(var i = 0; i < substrings.length; i++) {
-                            var substring = substrings[i].string;
-                            if(i > 0) {
-                                var previous_substring = substrings[i - 1];
-                            }
-                            // only append if we're sure it won't make the tspans
-                            // overflow the bounds.
-                            if((i) * line_height < bounds.height - (line_height * 1.5)) {
-                                current_tspan = text_node_selected.append('tspan')
-                                    .text(substring);
-                                // vertical shift to all tspans after the first one
-                                current_tspan
-                                    .attr('dy', function(d) {
-                                        if(i > 0) {
+                            // append each substring as a tspan
+                            var current_tspan;
+                            var tspan_count;
+                            // double check that the text content has been removed
+                            // before we start appending tspans
+                            text_node_selected.text('');
+                            for (var i = 0; i < substrings.length; i++) {
+                                var substring = substrings[i].string;
+                                if (i > 0) {
+                                    var previous_substring = substrings[i - 1];
+                                }
+                                // only append if we're sure it won't make the tspans
+                                // overflow the bounds.
+                                if (i * line_height < bounds.height - line_height * 1.5) {
+                                    current_tspan = text_node_selected.append('tspan').text(substring);
+                                    // vertical shift to all tspans after the first one
+                                    current_tspan.attr('dy', function (d) {
+                                        if (i > 0) {
                                             return line_height;
                                         }
                                     });
-                                // shift left from default position, which
-                                // is probably based on the full length of the
-                                // text string until we make this adjustment
-                                current_tspan
-                                    .attr('x', function() {
+                                    // shift left from default position, which
+                                    // is probably based on the full length of the
+                                    // text string until we make this adjustment
+                                    current_tspan.attr('x', function () {
                                         var x_offset = bounds.x;
-                                        if(padding) {x_offset += padding;}
+                                        if (padding) {
+                                            x_offset += padding;
+                                        }
                                         return x_offset;
                                     });
-//                                    .attr('dx', function() {
-//                                        if(i == 0) {
-//                                            var render_offset = 0;
-//                                        } else if(i > 0) {
-//                                            render_offset = substrings[i - 1].width;
-//                                            render_offset = render_offset * -1;
-//                                        }
-//                                        return render_offset;
-//                                    });
+                                    //                                    .attr('dx', function() {
+                                    //                                        if(i == 0) {
+                                    //                                            var render_offset = 0;
+                                    //                                        } else if(i > 0) {
+                                    //                                            render_offset = substrings[i - 1].width;
+                                    //                                            render_offset = render_offset * -1;
+                                    //                                        }
+                                    //                                        return render_offset;
+                                    //                                    });
+                                }
                             }
                         }
                     }
+                    // position the overall text node, whether wrapped or not
+                    text_node_selected.attr('y', function () {
+                        var y_offset = bounds.y;
+                        // shift by line-height to move the baseline into
+                        // the bounds – otherwise the text baseline would be
+                        // at the top of the bounds
+                        if (line_height) {
+                            y_offset += line_height;
+                        }
+                        // shift by padding, if it's there
+                        if (padding) {
+                            y_offset += padding;
+                        }
+                        return y_offset;
+                    });
+                    // shift to the right by the padding value
+                    text_node_selected.attr('x', function () {
+                        var x_offset = bounds.x;
+                        if (padding) {
+                            x_offset += padding;
+                        }
+                        return x_offset;
+                    });
+
+                    // assign our modified text node with tspans
+                    // to the return value
+                    return_value = d3.select(parent).selectAll('text');
+                };
+
+                // variable used to hold the functions that let us
+                // switch between the wrap methods
+                var wrap_method;
+
+                // if a wrap method if being forced, assign that
+                // function
+                if (force_wrap_method) {
+                    if (force_wrap_method == 'foreignobjects') {
+                        wrap_method = wrap_with_foreignobjects;
+                    } else if (force_wrap_method == 'tspans') {
+                        wrap_method = wrap_with_tspans;
+                    }
                 }
-                // position the overall text node, whether wrapped or not
-                text_node_selected.attr('y', function() {
-                    var y_offset = bounds.y;
-                    // shift by line-height to move the baseline into
-                    // the bounds – otherwise the text baseline would be
-                    // at the top of the bounds
-                    if(line_height) {y_offset += line_height;}
-                    // shift by padding, if it's there
-                    if(padding) {y_offset += padding;}
-                    return y_offset;
-                });
-                // shift to the right by the padding value
-                text_node_selected.attr('x', function() {
-                    var x_offset = bounds.x;
-                    if(padding) {x_offset += padding;}
-                    return x_offset;
-                });
 
-
-                // assign our modified text node with tspans
-                // to the return value
-                return_value = d3.select(parent).selectAll('text');
-            }
-
-            // variable used to hold the functions that let us
-            // switch between the wrap methods
-            var wrap_method;
-
-            // if a wrap method if being forced, assign that
-            // function
-            if(force_wrap_method) {
-                if(force_wrap_method == 'foreignobjects') {
-                    wrap_method = wrap_with_foreignobjects;
-                } else if (force_wrap_method == 'tspans') {
-                    wrap_method = wrap_with_tspans;
+                // if no wrap method is being forced, then instead
+                // test for browser support of foreignobject and
+                // use whichever wrap method makes sense accordingly
+                if (!force_wrap_method) {
+                    if (typeof SVGForeignObjectElement !== 'undefined') {
+                        wrap_method = wrap_with_foreignobjects;
+                    } else {
+                        wrap_method = wrap_with_tspans;
+                    }
                 }
-            }
 
-            // if no wrap method is being forced, then instead
-            // test for browser support of foreignobject and
-            // use whichever wrap method makes sense accordingly
-            if(!force_wrap_method) {
-                if(typeof SVGForeignObjectElement !== 'undefined') {
-                    wrap_method = wrap_with_foreignobjects;
-                } else {
-                    wrap_method = wrap_with_tspans;
+                // run the desired wrap function for each item
+                // in the d3 selection that called .textwrap()
+                for (var i = 0; i < selection.length; i++) {
+                    var item = selection[i];
+                    wrap_method(item);
                 }
+
+                // return the modified nodes so we can chain other
+                // methods to them.
+                return return_value;
             }
-
-            // run the desired wrap function for each item
-            // in the d3 selection that called .textwrap()
-            for(var i = 0; i < selection.length; i++) {
-                var item = selection[i];
-                wrap_method(item);
-            }
-
-            // return the modified nodes so we can chain other
-            // methods to them.
-            return return_value;
-
-        }
-
-    }
-
+    };
 })();
 /* jshint ignore:end */
-},{"d3":1}],88:[function(_dereq_,module,exports){
+
+},{"d3":1}],85:[function(require,module,exports){
+(function (global){
 /**
  * Created by knut on 15-01-14.
  */
-var log = _dereq_('../../logger').create();
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 var message = '';
 var info = false;
 
-exports.setMessage = function(txt){
+exports.setMessage = function (txt) {
+    log.debug('Setting message to: ' + txt);
     message = txt;
 };
 
-exports.getMessage = function(){
+exports.getMessage = function () {
     return message;
 };
 
-exports.setInfo = function(inf){
+exports.setInfo = function (inf) {
     info = inf;
 };
 
-exports.getInfo = function(){
+exports.getInfo = function () {
     return info;
 };
 
-exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+exports.parseError = function (err, hash) {
+    global.mermaidAPI.parseError(err, hash);
 };
-},{"../../logger":104}],89:[function(_dereq_,module,exports){
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../../logger":100}],86:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
-var db = _dereq_('./exampleDb');
-var exampleParser = _dereq_('./parser/example.js');
-var d3 = _dereq_('../../d3');
-var log = _dereq_('../../logger').create();
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var db = require('./exampleDb');
+var exampleParser = require('./parser/example.js');
+var d3 = require('../../d3');
+
+var log = new Logger.Log();
+
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  * @param text
@@ -31313,35 +31303,29 @@ exports.draw = function (txt, id, ver) {
     var parser;
     parser = exampleParser.parser;
     parser.yy = db;
-
+    log.debug('Renering example diagram');
     // Parse the graph definition
     parser.parse(txt);
 
     // Fetch the default direction, use TD if none was found
-    var svg = d3.select('#'+id);
+    var svg = d3.select('#' + id);
 
-    var textstring = "mermaid!";
-    var g = svg.append("g");
+    var g = svg.append('g');
 
-    g.append("text")      // text label for the x axis
-        .attr("x", 100)
-        .attr("y", 40)
-        .attr('class','version')
-        .attr('font-size','32px')
-        .style("text-anchor", "middle")
-        .text('mermaid '+ ver);
+    g.append('text') // text label for the x axis
+    .attr('x', 100).attr('y', 40).attr('class', 'version').attr('font-size', '32px').style('text-anchor', 'middle').text('mermaid ' + ver);
 
     /*
     var box = exports.bounds.getBounds();
-
-    var height = box.stopy-box.starty+2*conf.diagramMarginY;
+     var height = box.stopy-box.starty+2*conf.diagramMarginY;
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;*/
 
-    svg.attr("height",100);
-    svg.attr("width", 400 );
-    //svg.attr("viewBox", '0 0 300 150');
+    svg.attr('height', 100);
+    svg.attr('width', 400);
+    //svg.attr('viewBox', '0 0 300 150');
 };
-},{"../../d3":87,"../../logger":104,"./exampleDb":88,"./parser/example.js":90}],90:[function(_dereq_,module,exports){
+
+},{"../../d3":84,"../../logger":100,"./exampleDb":85,"./parser/example.js":87}],87:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -31416,568 +31400,591 @@ exports.draw = function (txt, id, ver) {
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10,12];
-var parser = {trace: function trace() { },
-yy: {},
-symbols_: {"error":2,"start":3,"info":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"showInfo":10,"message":11,"say":12,"TXT":13,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"info",6:"EOF",9:"NL",10:"showInfo",12:"say",13:"TXT"},
-productions_: [0,[3,3],[5,0],[5,2],[7,1],[7,1],[8,1],[8,1],[11,2]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
-/* this == yyval */
+"use strict";
 
-var $0 = $$.length - 1;
-switch (yystate) {
-case 1:
- return yy; 
-break;
-case 4:
- 
-break;
-case 6:
- yy.setInfo(true);  
-break;
-case 7:
- yy.setMessage($$[$0]);  
-break;
-case 8:
- this.$ = $$[$0-1].substring(1).trim().replace(/\\n/gm, "\n"); 
-break;
-}
-},
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8],11:9,12:[1,10]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,7]),{13:[1,11]},o($V0,[2,8])],
-defaultActions: {4:[2,1]},
-parseError: function parseError(str, hash) {
-    if (hash.recoverable) {
-        this.trace(str);
-    } else {
-        throw new Error(str);
-    }
-},
-parse: function parse(input) {
-    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    var args = lstack.slice.call(arguments, 1);
-    var lexer = Object.create(this.lexer);
-    var sharedState = { yy: {} };
-    for (var k in this.yy) {
-        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
-            sharedState.yy[k] = this.yy[k];
-        }
-    }
-    lexer.setInput(input, sharedState.yy);
-    sharedState.yy.lexer = lexer;
-    sharedState.yy.parser = this;
-    if (typeof lexer.yylloc == 'undefined') {
-        lexer.yylloc = {};
-    }
-    var yyloc = lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = lexer.options && lexer.options.ranges;
-    if (typeof sharedState.yy.parseError === 'function') {
-        this.parseError = sharedState.yy.parseError;
-    } else {
-        this.parseError = Object.getPrototypeOf(this).parseError;
-    }
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    _token_stack:
-        function lex() {
-            var token;
-            token = lexer.lex() || EOF;
-            if (typeof token !== 'number') {
-                token = self.symbols_[token] || token;
+var parser = (function () {
+    var o = function o(k, v, _o, l) {
+        for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
+    },
+        $V0 = [6, 9, 10, 12];
+    var parser = { trace: function trace() {},
+        yy: {},
+        symbols_: { "error": 2, "start": 3, "info": 4, "document": 5, "EOF": 6, "line": 7, "statement": 8, "NL": 9, "showInfo": 10, "message": 11, "say": 12, "TXT": 13, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "info", 6: "EOF", 9: "NL", 10: "showInfo", 12: "say", 13: "TXT" },
+        productions_: [0, [3, 3], [5, 0], [5, 2], [7, 1], [7, 1], [8, 1], [8, 1], [11, 2]],
+        performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
+            /* this == yyval */
+
+            var $0 = $$.length - 1;
+            switch (yystate) {
+                case 1:
+                    return yy;
+                    break;
+                case 4:
+
+                    break;
+                case 6:
+                    yy.setInfo(true);
+                    break;
+                case 7:
+                    yy.setMessage($$[$0]);
+                    break;
+                case 8:
+                    this.$ = $$[$0 - 1].substring(1).trim().replace(/\\n/gm, "\n");
+                    break;
             }
-            return token;
-        }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == 'undefined') {
-                symbol = lex();
+        },
+        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o($V0, [2, 2], { 5: 3 }), { 6: [1, 4], 7: 5, 8: 6, 9: [1, 7], 10: [1, 8], 11: 9, 12: [1, 10] }, { 1: [2, 1] }, o($V0, [2, 3]), o($V0, [2, 4]), o($V0, [2, 5]), o($V0, [2, 6]), o($V0, [2, 7]), { 13: [1, 11] }, o($V0, [2, 8])],
+        defaultActions: { 4: [2, 1] },
+        parseError: function parseError(str, hash) {
+            if (hash.recoverable) {
+                this.trace(str);
+            } else {
+                throw new Error(str);
             }
-            action = table[state] && table[state][symbol];
-        }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
+        },
+        parse: function parse(input) {
+            var self = this,
+                stack = [0],
+                tstack = [],
+                vstack = [null],
+                lstack = [],
+                table = this.table,
+                yytext = '',
+                yylineno = 0,
+                yyleng = 0,
+                recovering = 0,
+                TERROR = 2,
+                EOF = 1;
+            var args = lstack.slice.call(arguments, 1);
+            var lexer = Object.create(this.lexer);
+            var sharedState = { yy: {} };
+            for (var k in this.yy) {
+                if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+                    sharedState.yy[k] = this.yy[k];
+                }
+            }
+            lexer.setInput(input, sharedState.yy);
+            sharedState.yy.lexer = lexer;
+            sharedState.yy.parser = this;
+            if (typeof lexer.yylloc == 'undefined') {
+                lexer.yylloc = {};
+            }
+            var yyloc = lexer.yylloc;
+            lstack.push(yyloc);
+            var ranges = lexer.options && lexer.options.ranges;
+            if (typeof sharedState.yy.parseError === 'function') {
+                this.parseError = sharedState.yy.parseError;
+            } else {
+                this.parseError = Object.getPrototypeOf(this).parseError;
+            }
+            function popStack(n) {
+                stack.length = stack.length - 2 * n;
+                vstack.length = vstack.length - n;
+                lstack.length = lstack.length - n;
+            }
+            _token_stack: var lex = function lex() {
+                var token;
+                token = lexer.lex() || EOF;
+                if (typeof token !== 'number') {
+                    token = self.symbols_[token] || token;
+                }
+                return token;
+            };
+            var symbol,
+                preErrorSymbol,
+                state,
+                action,
+                a,
+                r,
+                yyval = {},
+                p,
+                len,
+                newState,
+                expected;
+            while (true) {
+                state = stack[stack.length - 1];
+                if (this.defaultActions[state]) {
+                    action = this.defaultActions[state];
+                } else {
+                    if (symbol === null || typeof symbol == 'undefined') {
+                        symbol = lex();
+                    }
+                    action = table[state] && table[state][symbol];
+                }
+                if (typeof action === 'undefined' || !action.length || !action[0]) {
+                    var errStr = '';
+                    expected = [];
+                    for (p in table[state]) {
+                        if (this.terminals_[p] && p > TERROR) {
+                            expected.push('\'' + this.terminals_[p] + '\'');
+                        }
+                    }
+                    if (lexer.showPosition) {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                    } else {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                    }
+                    this.parseError(errStr, {
+                        text: lexer.match,
+                        token: this.terminals_[symbol] || symbol,
+                        line: lexer.yylineno,
+                        loc: yyloc,
+                        expected: expected
+                    });
+                }
+                if (action[0] instanceof Array && action.length > 1) {
+                    throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+                }
+                switch (action[0]) {
+                    case 1:
+                        stack.push(symbol);
+                        vstack.push(lexer.yytext);
+                        lstack.push(lexer.yylloc);
+                        stack.push(action[1]);
+                        symbol = null;
+                        if (!preErrorSymbol) {
+                            yyleng = lexer.yyleng;
+                            yytext = lexer.yytext;
+                            yylineno = lexer.yylineno;
+                            yyloc = lexer.yylloc;
+                            if (recovering > 0) {
+                                recovering--;
+                            }
+                        } else {
+                            symbol = preErrorSymbol;
+                            preErrorSymbol = null;
+                        }
+                        break;
+                    case 2:
+                        len = this.productions_[action[1]][1];
+                        yyval.$ = vstack[vstack.length - len];
+                        yyval._$ = {
+                            first_line: lstack[lstack.length - (len || 1)].first_line,
+                            last_line: lstack[lstack.length - 1].last_line,
+                            first_column: lstack[lstack.length - (len || 1)].first_column,
+                            last_column: lstack[lstack.length - 1].last_column
+                        };
+                        if (ranges) {
+                            yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
+                        }
+                        r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
+                        if (typeof r !== 'undefined') {
+                            return r;
+                        }
+                        if (len) {
+                            stack = stack.slice(0, -1 * len * 2);
+                            vstack = vstack.slice(0, -1 * len);
+                            lstack = lstack.slice(0, -1 * len);
+                        }
+                        stack.push(this.productions_[action[1]][0]);
+                        vstack.push(yyval.$);
+                        lstack.push(yyval._$);
+                        newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+                        stack.push(newState);
+                        break;
+                    case 3:
+                        return true;
+                }
+            }
+            return true;
+        } };
+    /* generated by jison-lex 0.3.4 */
+    var lexer = (function () {
+        var lexer = {
+
+            EOF: 1,
+
+            parseError: function parseError(str, hash) {
+                if (this.yy.parser) {
+                    this.yy.parser.parseError(str, hash);
+                } else {
+                    throw new Error(str);
+                }
+            },
+
+            // resets the lexer, sets new input
+            setInput: function setInput(input, yy) {
+                this.yy = yy || this.yy || {};
+                this._input = input;
+                this._more = this._backtrack = this.done = false;
+                this.yylineno = this.yyleng = 0;
+                this.yytext = this.matched = this.match = '';
+                this.conditionStack = ['INITIAL'];
+                this.yylloc = {
+                    first_line: 1,
+                    first_column: 0,
+                    last_line: 1,
+                    last_column: 0
+                };
+                if (this.options.ranges) {
+                    this.yylloc.range = [0, 0];
+                }
+                this.offset = 0;
+                return this;
+            },
+
+            // consumes and returns one char from the input
+            input: function input() {
+                var ch = this._input[0];
+                this.yytext += ch;
+                this.yyleng++;
+                this.offset++;
+                this.match += ch;
+                this.matched += ch;
+                var lines = ch.match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno++;
+                    this.yylloc.last_line++;
+                } else {
+                    this.yylloc.last_column++;
+                }
+                if (this.options.ranges) {
+                    this.yylloc.range[1]++;
+                }
+
+                this._input = this._input.slice(1);
+                return ch;
+            },
+
+            // unshifts one char (or a string) into the input
+            unput: function unput(ch) {
+                var len = ch.length;
+                var lines = ch.split(/(?:\r\n?|\n)/g);
+
+                this._input = ch + this._input;
+                this.yytext = this.yytext.substr(0, this.yytext.length - len);
+                //this.yyleng -= len;
+                this.offset -= len;
+                var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+                this.match = this.match.substr(0, this.match.length - 1);
+                this.matched = this.matched.substr(0, this.matched.length - 1);
+
+                if (lines.length - 1) {
+                    this.yylineno -= lines.length - 1;
+                }
+                var r = this.yylloc.range;
+
+                this.yylloc = {
+                    first_line: this.yylloc.first_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.first_column,
+                    last_column: lines ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length : this.yylloc.first_column - len
+                };
+
+                if (this.options.ranges) {
+                    this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+                }
+                this.yyleng = this.yytext.length;
+                return this;
+            },
+
+            // When called from action, caches matched text and appends it on next action
+            more: function more() {
+                this._more = true;
+                return this;
+            },
+
+            // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
+            reject: function reject() {
+                if (this.options.backtrack_lexer) {
+                    this._backtrack = true;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+                return this;
+            },
+
+            // retain first n characters of the match
+            less: function less(n) {
+                this.unput(this.match.slice(n));
+            },
+
+            // displays already matched input, i.e. for error messages
+            pastInput: function pastInput() {
+                var past = this.matched.substr(0, this.matched.length - this.match.length);
+                return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
+            },
+
+            // displays upcoming input, i.e. for error messages
+            upcomingInput: function upcomingInput() {
+                var next = this.match;
+                if (next.length < 20) {
+                    next += this._input.substr(0, 20 - next.length);
+                }
+                return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+            },
+
+            // displays the character position where the lexing error occurred, i.e. for error messages
+            showPosition: function showPosition() {
+                var pre = this.pastInput();
+                var c = new Array(pre.length + 1).join("-");
+                return pre + this.upcomingInput() + "\n" + c + "^";
+            },
+
+            // test the lexed token: return FALSE when not a match, otherwise return token
+            test_match: function test_match(match, indexed_rule) {
+                var token, lines, backup;
+
+                if (this.options.backtrack_lexer) {
+                    // save context
+                    backup = {
+                        yylineno: this.yylineno,
+                        yylloc: {
+                            first_line: this.yylloc.first_line,
+                            last_line: this.last_line,
+                            first_column: this.yylloc.first_column,
+                            last_column: this.yylloc.last_column
+                        },
+                        yytext: this.yytext,
+                        match: this.match,
+                        matches: this.matches,
+                        matched: this.matched,
+                        yyleng: this.yyleng,
+                        offset: this.offset,
+                        _more: this._more,
+                        _input: this._input,
+                        yy: this.yy,
+                        conditionStack: this.conditionStack.slice(0),
+                        done: this.done
+                    };
+                    if (this.options.ranges) {
+                        backup.yylloc.range = this.yylloc.range.slice(0);
                     }
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+
+                lines = match[0].match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno += lines.length;
                 }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
-            }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(lexer.yytext);
-            lstack.push(lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = lexer.yyleng;
-                yytext = lexer.yytext;
-                yylineno = lexer.yylineno;
-                yyloc = lexer.yylloc;
-                if (recovering > 0) {
-                    recovering--;
+                this.yylloc = {
+                    first_line: this.yylloc.last_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.last_column,
+                    last_column: lines ? lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length
+                };
+                this.yytext += match[0];
+                this.match += match[0];
+                this.matches = match;
+                this.yyleng = this.yytext.length;
+                if (this.options.ranges) {
+                    this.yylloc.range = [this.offset, this.offset += this.yyleng];
                 }
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
-            }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {
-                first_line: lstack[lstack.length - (len || 1)].first_line,
-                last_line: lstack[lstack.length - 1].last_line,
-                first_column: lstack[lstack.length - (len || 1)].first_column,
-                last_column: lstack[lstack.length - 1].last_column
-            };
-            if (ranges) {
-                yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                ];
-            }
-            r = this.performAction.apply(yyval, [
-                yytext,
-                yyleng,
-                yylineno,
-                sharedState.yy,
-                action[1],
-                vstack,
-                lstack
-            ].concat(args));
-            if (typeof r !== 'undefined') {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}};
-/* generated by jison-lex 0.3.4 */
-var lexer = (function(){
-var lexer = ({
+                this._more = false;
+                this._backtrack = false;
+                this._input = this._input.slice(match[0].length);
+                this.matched += match[0];
+                token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+                if (this.done && this._input) {
+                    this.done = false;
+                }
+                if (token) {
+                    return token;
+                } else if (this._backtrack) {
+                    // recover context
+                    for (var k in backup) {
+                        this[k] = backup[k];
+                    }
+                    return false; // rule action called reject() implying the next rule should be tested instead.
+                }
+                return false;
+            },
 
-EOF:1,
+            // return next match in input
+            next: function next() {
+                if (this.done) {
+                    return this.EOF;
+                }
+                if (!this._input) {
+                    this.done = true;
+                }
 
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
-
-// resets the lexer, sets new input
-setInput:function (input, yy) {
-        this.yy = yy || this.yy || {};
-        this._input = input;
-        this._more = this._backtrack = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {
-            first_line: 1,
-            first_column: 0,
-            last_line: 1,
-            last_column: 0
-        };
-        if (this.options.ranges) {
-            this.yylloc.range = [0,0];
-        }
-        this.offset = 0;
-        return this;
-    },
-
-// consumes and returns one char from the input
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) {
-            this.yylloc.range[1]++;
-        }
-
-        this._input = this._input.slice(1);
-        return ch;
-    },
-
-// unshifts one char (or a string) into the input
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
-
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length - len);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length - 1);
-        this.matched = this.matched.substr(0, this.matched.length - 1);
-
-        if (lines.length - 1) {
-            this.yylineno -= lines.length - 1;
-        }
-        var r = this.yylloc.range;
-
-        this.yylloc = {
-            first_line: this.yylloc.first_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
-                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
-              this.yylloc.first_column - len
-        };
-
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        this.yyleng = this.yytext.length;
-        return this;
-    },
-
-// When called from action, caches matched text and appends it on next action
-more:function () {
-        this._more = true;
-        return this;
-    },
-
-// When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-reject:function () {
-        if (this.options.backtrack_lexer) {
-            this._backtrack = true;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-
-        }
-        return this;
-    },
-
-// retain first n characters of the match
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
-
-// displays already matched input, i.e. for error messages
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
-
-// displays upcoming input, i.e. for error messages
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
-    },
-
-// displays the character position where the lexing error occurred, i.e. for error messages
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c + "^";
-    },
-
-// test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
-        var token,
-            lines,
-            backup;
-
-        if (this.options.backtrack_lexer) {
-            // save context
-            backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                    first_line: this.yylloc.first_line,
-                    last_line: this.last_line,
-                    first_column: this.yylloc.first_column,
-                    last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-            };
-            if (this.options.ranges) {
-                backup.yylloc.range = this.yylloc.range.slice(0);
-            }
-        }
-
-        lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno += lines.length;
-        }
-        this.yylloc = {
-            first_line: this.yylloc.last_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.last_column,
-            last_column: lines ?
-                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
-                         this.yylloc.last_column + match[0].length
-        };
-        this.yytext += match[0];
-        this.match += match[0];
-        this.matches = match;
-        this.yyleng = this.yytext.length;
-        if (this.options.ranges) {
-            this.yylloc.range = [this.offset, this.offset += this.yyleng];
-        }
-        this._more = false;
-        this._backtrack = false;
-        this._input = this._input.slice(match[0].length);
-        this.matched += match[0];
-        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
-        if (this.done && this._input) {
-            this.done = false;
-        }
-        if (token) {
-            return token;
-        } else if (this._backtrack) {
-            // recover context
-            for (var k in backup) {
-                this[k] = backup[k];
-            }
-            return false; // rule action called reject() implying the next rule should be tested instead.
-        }
-        return false;
-    },
-
-// return next match in input
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) {
-            this.done = true;
-        }
-
-        var token,
-            match,
-            tempMatch,
-            index;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i = 0; i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (this.options.backtrack_lexer) {
-                    token = this.test_match(tempMatch, rules[i]);
+                var token, match, tempMatch, index;
+                if (!this._more) {
+                    this.yytext = '';
+                    this.match = '';
+                }
+                var rules = this._currentRules();
+                for (var i = 0; i < rules.length; i++) {
+                    tempMatch = this._input.match(this.rules[rules[i]]);
+                    if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                        match = tempMatch;
+                        index = i;
+                        if (this.options.backtrack_lexer) {
+                            token = this.test_match(tempMatch, rules[i]);
+                            if (token !== false) {
+                                return token;
+                            } else if (this._backtrack) {
+                                match = false;
+                                continue; // rule action called reject() implying a rule MISmatch.
+                            } else {
+                                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                                    return false;
+                                }
+                        } else if (!this.options.flex) {
+                            break;
+                        }
+                    }
+                }
+                if (match) {
+                    token = this.test_match(match, rules[index]);
                     if (token !== false) {
                         return token;
-                    } else if (this._backtrack) {
-                        match = false;
-                        continue; // rule action called reject() implying a rule MISmatch.
-                    } else {
-                        // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-                        return false;
                     }
-                } else if (!this.options.flex) {
-                    break;
+                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                    return false;
                 }
-            }
-        }
-        if (match) {
-            token = this.test_match(match, rules[index]);
-            if (token !== false) {
-                return token;
-            }
-            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-            return false;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-        }
-    },
+                if (this._input === "") {
+                    return this.EOF;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+            },
 
-// return next match that has a token
-lex:function lex() {
-        var r = this.next();
-        if (r) {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
+            // return next match that has a token
+            lex: function lex() {
+                var r = this.next();
+                if (r) {
+                    return r;
+                } else {
+                    return this.lex();
+                }
+            },
 
-// activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
-        this.conditionStack.push(condition);
-    },
+            // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
+            begin: function begin(condition) {
+                this.conditionStack.push(condition);
+            },
 
-// pop the previously active lexer condition state off the condition stack
-popState:function popState() {
-        var n = this.conditionStack.length - 1;
-        if (n > 0) {
-            return this.conditionStack.pop();
-        } else {
-            return this.conditionStack[0];
-        }
-    },
+            // pop the previously active lexer condition state off the condition stack
+            popState: function popState() {
+                var n = this.conditionStack.length - 1;
+                if (n > 0) {
+                    return this.conditionStack.pop();
+                } else {
+                    return this.conditionStack[0];
+                }
+            },
 
-// produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
-        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
-            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
-        } else {
-            return this.conditions["INITIAL"].rules;
-        }
-    },
+            // produce the lexer rule set which is active for the currently active lexer condition state
+            _currentRules: function _currentRules() {
+                if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+                    return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+                } else {
+                    return this.conditions["INITIAL"].rules;
+                }
+            },
 
-// return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
-        n = this.conditionStack.length - 1 - Math.abs(n || 0);
-        if (n >= 0) {
-            return this.conditionStack[n];
-        } else {
-            return "INITIAL";
-        }
-    },
+            // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
+            topState: function topState(n) {
+                n = this.conditionStack.length - 1 - Math.abs(n || 0);
+                if (n >= 0) {
+                    return this.conditionStack[n];
+                } else {
+                    return "INITIAL";
+                }
+            },
 
-// alias for begin(condition)
-pushState:function pushState(condition) {
-        this.begin(condition);
-    },
+            // alias for begin(condition)
+            pushState: function pushState(condition) {
+                this.begin(condition);
+            },
 
-// return the number of states currently on the stack
-stateStackSize:function stateStackSize() {
-        return this.conditionStack.length;
-    },
-options: {"case-insensitive":true},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-	// Pre-lexer code can go here
+            // return the number of states currently on the stack
+            stateStackSize: function stateStackSize() {
+                return this.conditionStack.length;
+            },
+            options: { "case-insensitive": true },
+            performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
+                // Pre-lexer code can go here
 
-var YYSTATE=YY_START;
-switch($avoiding_name_collisions) {
-case 0:return 9;
-break;
-case 1:return 10;
-break;
-case 2:return 4;
-break;
-case 3:return 12;
-break;
-case 4:return 13;
-break;
-case 5:return 6;
-break;
-case 6:return 'INVALID';
-break;
-}
-},
-rules: [/^(?:[\n]+)/i,/^(?:showInfo\b)/i,/^(?:info\b)/i,/^(?:say\b)/i,/^(?::[^#\n;]+)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
-});
-return lexer;
-})();
-parser.lexer = lexer;
-function Parser () {
-  this.yy = {};
-}
-Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
-
-
-if (typeof _dereq_ !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
+                var YYSTATE = YY_START;
+                switch ($avoiding_name_collisions) {
+                    case 0:
+                        return 9;
+                        break;
+                    case 1:
+                        return 10;
+                        break;
+                    case 2:
+                        return 4;
+                        break;
+                    case 3:
+                        return 12;
+                        break;
+                    case 4:
+                        return 13;
+                        break;
+                    case 5:
+                        return 6;
+                        break;
+                    case 6:
+                        return 'INVALID';
+                        break;
+                }
+            },
+            rules: [/^(?:[\n]+)/i, /^(?:showInfo\b)/i, /^(?:info\b)/i, /^(?:say\b)/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "INITIAL": { "rules": [0, 1, 2, 3, 4, 5, 6], "inclusive": true } }
+        };
+        return lexer;
+    })();
+    parser.lexer = lexer;
+    function Parser() {
+        this.yy = {};
     }
-    var source = _dereq_('fs').readFileSync(_dereq_('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
-};
-if (typeof module !== 'undefined' && _dereq_.main === module) {
-  exports.main(process.argv.slice(1));
+    Parser.prototype = parser;parser.Parser = Parser;
+    return new Parser();
+})();
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parser = parser;
+    exports.Parser = parser.Parser;
+    exports.parse = function () {
+        return parser.parse.apply(parser, arguments);
+    };
+    exports.main = function commonjsMain(args) {
+        if (!args[1]) {
+            console.log('Usage: ' + args[0] + ' FILE');
+            process.exit(1);
+        }
+        var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+        return exports.parser.parse(source);
+    };
+    if (typeof module !== 'undefined' && require.main === module) {
+        exports.main(process.argv.slice(1));
+    }
 }
-}
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83,"fs":81,"path":82}],91:[function(_dereq_,module,exports){
+
+}).call(this,require('_process'))
+},{"_process":105,"fs":103,"path":104}],88:[function(require,module,exports){
 /* global window */
-var log = _dereq_('../../logger').create();
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 var dagreD3;
 //log.debug('setting up dagre-d3');
-if (_dereq_) {
+if (require) {
   try {
-    dagreD3 = _dereq_("dagre-d3");
-      //log.debug('Got it (dagre-d3)');
-  } catch (e) {log.debug('Could not load dagre-d3');}
+    dagreD3 = require('dagre-d3');
+    //log.debug('Got it (dagre-d3)');
+  } catch (e) {
+    log.debug('Could not load dagre-d3');
+  }
 }
 
 if (!dagreD3) {
@@ -31986,23 +31993,31 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":104,"dagre-d3":2}],92:[function(_dereq_,module,exports){
+},{"../../logger":100,"dagre-d3":2}],89:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
-var graph = _dereq_('./graphDb');
-var flow = _dereq_('./parser/flow');
-var dot = _dereq_('./parser/dot');
-var d3 = _dereq_('../../d3');
-var dagreD3 = _dereq_('./dagre-d3');
-var log = _dereq_('../../logger').create();
+'use strict';
 
-var conf = {
-};
-module.exports.setConf = function(cnf){
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var graph = require('./graphDb');
+var flow = require('./parser/flow');
+var dot = require('./parser/dot');
+var d3 = require('../../d3');
+var dagreD3 = require('./dagre-d3');
+
+var log = new Logger.Log();
+
+var conf = {};
+module.exports.setConf = function (cnf) {
     var keys = Object.keys(cnf);
     var i;
-    for(i=0;i<keys.length;i++){
+    for (i = 0; i < keys.length; i++) {
         conf[keys[i]] = cnf[keys[i]];
     }
 };
@@ -32015,7 +32030,7 @@ module.exports.setConf = function(cnf){
 exports.addVertices = function (vert, g) {
     var keys = Object.keys(vert);
 
-    var styleFromStyleArr = function(styleStr,arr){
+    var styleFromStyleArr = function styleFromStyleArr(styleStr, arr) {
         var i;
         // Create a compound style definition from the style definitions found for the node in the graph definition
         for (i = 0; i < arr.length; i++) {
@@ -32032,8 +32047,6 @@ exports.addVertices = function (vert, g) {
         var vertice = vert[id];
         var verticeText;
 
-        var i;
-
         /**
          * Variable for storing the classes for the vertice
          * @type {string}
@@ -32042,8 +32055,8 @@ exports.addVertices = function (vert, g) {
 
         //log.debug(vertice.classes);
 
-        if(vertice.classes.length >0){
-            classStr = vertice.classes.join(" ");
+        if (vertice.classes.length > 0) {
+            classStr = vertice.classes.join(' ');
         }
 
         /**
@@ -32057,22 +32070,18 @@ exports.addVertices = function (vert, g) {
         // Use vertice id as text in the box if no text is provided by the graph definition
         if (typeof vertice.text === 'undefined') {
             verticeText = vertice.id;
-        }
-        else {
+        } else {
             verticeText = vertice.text;
         }
 
-
-
         var labelTypeStr = '';
-        if(conf.htmlLabels) {
+        if (conf.htmlLabels) {
             labelTypeStr = 'html';
-            verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s,t,u){
-                return '<i class="fa '+ s.substring(3)+'">';
+            verticeText = verticeText.replace(/fa:fa[\w\-]+/g, function (s) {
+                return '<i class="fa ' + s.substring(3) + '">';
             });
-
         } else {
-            verticeText = verticeText.replace(/<br>/g, "\n");
+            verticeText = verticeText.replace(/<br>/g, '\n');
             labelTypeStr = 'text';
         }
 
@@ -32080,7 +32089,7 @@ exports.addVertices = function (vert, g) {
         var _shape = '';
 
         // Set the shape based parameters
-        switch(vertice.type){
+        switch (vertice.type) {
             case 'round':
                 radious = 5;
                 _shape = 'rect';
@@ -32108,7 +32117,7 @@ exports.addVertices = function (vert, g) {
                 _shape = 'rect';
         }
         // Add the node
-        g.setNode(vertice.id, {labelType: labelTypeStr, shape:_shape, label: verticeText, rx: radious, ry: radious, class: classStr, style: style, id:vertice.id});
+        g.setNode(vertice.id, { labelType: labelTypeStr, shape: _shape, label: verticeText, rx: radious, ry: radious, 'class': classStr, style: style, id: vertice.id });
     });
 };
 
@@ -32118,39 +32127,35 @@ exports.addVertices = function (vert, g) {
  * @param {Object} g The graph object
  */
 exports.addEdges = function (edges, g) {
-    var cnt=0;
+    var cnt = 0;
     var aHead;
-    
-    var defaultStyle;
-    if(typeof edges.defaultStyle !== 'undefined'){
-        defaultStyle = edges.defaultStyle.toString().replace(/,/g , ';');
 
+    var defaultStyle;
+    if (typeof edges.defaultStyle !== 'undefined') {
+        defaultStyle = edges.defaultStyle.toString().replace(/,/g, ';');
     }
 
     edges.forEach(function (edge) {
         cnt++;
 
         // Set link type for rendering
-        if(edge.type === 'arrow_open'){
+        if (edge.type === 'arrow_open') {
             aHead = 'none';
-        }
-        else{
+        } else {
             aHead = 'normal';
         }
 
         var style = '';
 
-
-        if(typeof edge.style !== 'undefined'){
-            edge.style.forEach(function(s){
-                style = style + s +';';
+        if (typeof edge.style !== 'undefined') {
+            edge.style.forEach(function (s) {
+                style = style + s + ';';
             });
-        }
-        else{
-            switch(edge.stroke){
+        } else {
+            switch (edge.stroke) {
                 case 'normal':
                     style = 'fill:none';
-                    if(typeof defaultStyle !== 'undefined'){
+                    if (typeof defaultStyle !== 'undefined') {
                         style = defaultStyle;
                     }
                     break;
@@ -32165,29 +32170,29 @@ exports.addEdges = function (edges, g) {
 
         // Add the edge to the graph
         if (typeof edge.text === 'undefined') {
-            if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
-            }else{
+            if (typeof edge.style === 'undefined') {
+                g.setEdge(edge.start, edge.end, { style: style, arrowhead: aHead }, cnt);
+            } else {
                 g.setEdge(edge.start, edge.end, {
-                    style: style, arrowheadStyle: "fill: #333", arrowhead: aHead
-                },cnt);
+                    style: style, arrowheadStyle: 'fill: #333', arrowhead: aHead
+                }, cnt);
             }
         }
         // Edge with text
         else {
-            var edgeText = edge.text.replace(/<br>/g, "\n");
-            if(typeof edge.style === 'undefined'){
-                if (conf.htmlLabels){
-                    g.setEdge(edge.start, edge.end,{labelType: "html",style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
-                }else{
-                    g.setEdge(edge.start, edge.end,{labelType: "text", style: "stroke: #333; stroke-width: 1.5px;fill:none", labelpos:'c', label: edgeText, arrowheadStyle: "fill: #333", arrowhead: aHead},cnt);
+                var edgeText = edge.text.replace(/<br>/g, '\n');
+                if (typeof edge.style === 'undefined') {
+                    if (conf.htmlLabels) {
+                        g.setEdge(edge.start, edge.end, { labelType: 'html', style: style, labelpos: 'c', label: '<span style="background:#e8e8e8">' + edge.text + '</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead }, cnt);
+                    } else {
+                        g.setEdge(edge.start, edge.end, { labelType: 'text', style: 'stroke: #333; stroke-width: 1.5px;fill:none', labelpos: 'c', label: edgeText, arrowheadStyle: 'fill: #333', arrowhead: aHead }, cnt);
+                    }
+                } else {
+                    g.setEdge(edge.start, edge.end, {
+                        labelType: 'text', style: style, arrowheadStyle: 'fill: #333', label: edgeText, arrowhead: aHead
+                    }, cnt);
                 }
-             }else{
-                g.setEdge(edge.start, edge.end, {
-                    labelType: "text", style: style, arrowheadStyle: "fill: #333", label: edgeText, arrowhead: aHead
-                },cnt);
             }
-        }
     });
 };
 
@@ -32198,10 +32203,9 @@ exports.addEdges = function (edges, g) {
 exports.getClasses = function (text, isDot) {
     var parser;
     graph.clear();
-    if(isDot){
+    if (isDot) {
         parser = dot.parser;
-
-    }else{
+    } else {
         parser = flow.parser;
     }
     parser.yy = graph;
@@ -32212,13 +32216,13 @@ exports.getClasses = function (text, isDot) {
     var classes = graph.getClasses();
 
     // Add default class if undefined
-    if(typeof(classes.default) === 'undefined') {
-        classes.default = {id:'default'};
+    if (typeof classes['default'] === 'undefined') {
+        classes['default'] = { id: 'default' };
         //classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
-        classes.default.styles = [];
-        classes.default.clusterStyles = ['rx:4px','fill: rgb(255, 255, 222)','rx: 4px','stroke: rgb(170, 170, 51)','stroke-width: 1px'];
-        classes.default.nodeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
-        classes.default.edgeLabelStyles = ['fill:#000','stroke:none','font-weight:300','font-family:"Helvetica Neue",Helvetica,Arial,sans-serf','font-size:14px'];
+        classes['default'].styles = [];
+        classes['default'].clusterStyles = ['rx:4px', 'fill: rgb(255, 255, 222)', 'rx: 4px', 'stroke: rgb(170, 170, 51)', 'stroke-width: 1px'];
+        classes['default'].nodeLabelStyles = ['fill:#000', 'stroke:none', 'font-weight:300', 'font-family:"Helvetica Neue",Helvetica,Arial,sans-serf', 'font-size:14px'];
+        classes['default'].edgeLabelStyles = ['fill:#000', 'stroke:none', 'font-weight:300', 'font-family:"Helvetica Neue",Helvetica,Arial,sans-serf', 'font-size:14px'];
     }
     return classes;
 };
@@ -32228,55 +32232,51 @@ exports.getClasses = function (text, isDot) {
  * @param text
  * @param id
  */
-exports.draw = function (text, id,isDot) {
+exports.draw = function (text, id, isDot) {
     log.debug('Drawing flowchart');
     var parser;
     graph.clear();
-    if(isDot){
+    if (isDot) {
         parser = dot.parser;
-
-    }else{
+    } else {
         parser = flow.parser;
     }
     parser.yy = graph;
 
     // Parse the graph definition
-    try{
+    try {
 
         parser.parse(text);
-    }
-    catch(err){
-
+    } catch (err) {
+        log.debug('Parsing failed');
     }
 
     // Fetch the default direction, use TD if none was found
     var dir;
     dir = graph.getDirection();
-    if(typeof dir === 'undefined'){
-        dir='TD';
+    if (typeof dir === 'undefined') {
+        dir = 'TD';
     }
 
     // Create the input mermaid.graph
     var g = new dagreD3.graphlib.Graph({
-        multigraph:true,
+        multigraph: true,
         compound: true
-    })
-        .setGraph({
-            rankdir: dir,
-            marginx: 20,
-            marginy: 20
+    }).setGraph({
+        rankdir: dir,
+        marginx: 20,
+        marginy: 20
 
-        })
-        .setDefaultEdgeLabel(function () {
-            return {};
-        });
+    }).setDefaultEdgeLabel(function () {
+        return {};
+    });
 
     var subG;
     var subGraphs = graph.getSubGraphs();
     var i = 0;
-    for(i=subGraphs.length-1;i>=0;i--){
+    for (i = subGraphs.length - 1; i >= 0; i--) {
         subG = subGraphs[i];
-        graph.addVertex(subG.id,subG.title,'group',undefined);
+        graph.addVertex(subG.id, subG.title, 'group', undefined);
     }
 
     // Fetch the verices/nodes and edges/links from the parsed graph definition
@@ -32287,14 +32287,14 @@ exports.draw = function (text, id,isDot) {
 
     i = 0;
     var j;
-    for(i=subGraphs.length-1;i>=0;i--){
+    for (i = subGraphs.length - 1; i >= 0; i--) {
         subG = subGraphs[i];
 
         d3.selectAll('cluster').append('text');
 
-        for(j=0;j<subG.nodes.length;j++){
+        for (j = 0; j < subG.nodes.length; j++) {
             //log.debug('Setting node',subG.nodes[j],' to subgraph '+id);
-            g.setParent(subG.nodes[j],subG.id);
+            g.setParent(subG.nodes[j], subG.id);
         }
     }
     exports.addVertices(vert, g);
@@ -32308,19 +32308,10 @@ exports.draw = function (text, id,isDot) {
         var w = bbox.width,
             h = bbox.height,
             s = (w + h) * 0.8,
-            points = [
-                {x: s / 2, y: 0},
-                {x: s, y: -s / 2},
-                {x: s / 2, y: -s},
-                {x: 0, y: -s / 2}
-            ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("transform", "translate(" + (-s / 2) + "," + (s * 2 / 4) + ")");
+            points = [{ x: s / 2, y: 0 }, { x: s, y: -s / 2 }, { x: s / 2, y: -s }, { x: 0, y: -s / 2 }];
+        var shapeSvg = parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
+            return d.x + ',' + d.y;
+        }).join(' ')).attr('rx', 5).attr('ry', 5).attr('transform', 'translate(' + -s / 2 + ',' + s * 2 / 4 + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -32331,18 +32322,10 @@ exports.draw = function (text, id,isDot) {
     render.shapes().rect_left_inv_arrow = function (parent, bbox, node) {
         var w = bbox.width,
             h = bbox.height,
-            points = [
-                {x: -h/2, y: 0},
-                {x: w, y: 0},
-                {x: w, y: -h},
-                {x: -h/2, y: -h},
-                {x: 0, y: -h/2},
-            ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+            points = [{ x: -h / 2, y: 0 }, { x: w, y: 0 }, { x: w, y: -h }, { x: -h / 2, y: -h }, { x: 0, y: -h / 2 }];
+        var shapeSvg = parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
+            return d.x + ',' + d.y;
+        }).join(' ')).attr('transform', 'translate(' + -w / 2 + ',' + h * 2 / 4 + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -32353,18 +32336,10 @@ exports.draw = function (text, id,isDot) {
     render.shapes().rect_right_inv_arrow = function (parent, bbox, node) {
         var w = bbox.width,
             h = bbox.height,
-            points = [
-                {x: 0, y: 0},
-                {x: w+h/2, y: 0},
-                {x: w, y: -h/2},
-                {x: w+h/2, y: -h},
-                {x: 0, y: -h},
-            ];
-        var shapeSvg = parent.insert("polygon", ":first-child")
-            .attr("points", points.map(function (d) {
-                return d.x + "," + d.y;
-            }).join(" "))
-            .attr("transform", "translate(" + (-w / 2) + "," + (h * 2 / 4) + ")");
+            points = [{ x: 0, y: 0 }, { x: w + h / 2, y: 0 }, { x: w, y: -h / 2 }, { x: w + h / 2, y: -h }, { x: 0, y: -h }];
+        var shapeSvg = parent.insert('polygon', ':first-child').attr('points', points.map(function (d) {
+            return d.x + ',' + d.y;
+        }).join(' ')).attr('transform', 'translate(' + -w / 2 + ',' + h * 2 / 4 + ')');
         node.intersect = function (point) {
             return dagreD3.intersect.polygon(node, points, point);
         };
@@ -32373,78 +32348,60 @@ exports.draw = function (text, id,isDot) {
 
     // Add our custom arrow - an empty arrowhead
     render.arrows().none = function normal(parent, id, edge, type) {
-        var marker = parent.append("marker")
-            .attr("id", id)
-            .attr("viewBox", "0 0 10 10")
-            .attr("refX", 9)
-            .attr("refY", 5)
-            .attr("markerUnits", "strokeWidth")
-            .attr("markerWidth", 8)
-            .attr("markerHeight", 6)
-            .attr("orient", "auto");
+        var marker = parent.append('marker').attr('id', id).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5).attr('markerUnits', 'strokeWidth').attr('markerWidth', 8).attr('markerHeight', 6).attr('orient', 'auto');
 
-        var path = marker.append("path")
-            .attr("d", "M 0 0 L 0 0 L 0 0 z");
-        dagreD3.util.applyStyle(path, edge[type + "Style"]);
+        var path = marker.append('path').attr('d', 'M 0 0 L 0 0 L 0 0 z');
+        dagreD3.util.applyStyle(path, edge[type + 'Style']);
     };
 
     // Set up an SVG group so that we can translate the final graph.
-    var svg = d3.select("#" + id);
-    svgGroup = d3.select("#" + id + " g");
+    var svg = d3.select('#' + id);
+    //svgGroup = d3.select('#' + id + ' g');
 
     // Run the renderer. This is what draws the final graph.
-    var element = d3.select("#" + id + " g");
+    var element = d3.select('#' + id + ' g');
     render(element, g);
 
     //var tip = d3.tip().html(function(d) { return d; });
-    element.selectAll("g.node")
-                .attr("title", function(){
-            return graph.getTooltip(this.id);
-        });
+    element.selectAll('g.node').attr('title', function () {
+        return graph.getTooltip(this.id);
+    });
 
-    //
-    //element.selectAll("g.node")
-    //    .attr("title", function(v) { return styleTooltip(v, g.node(v).description) })
-    //    .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
-    var svgb = document.querySelector("#" + id);
-
-/*
- var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
- var width = document.querySelectorAll('.clusters rect')[0].width.baseVal.value;
-    var cluster = d3.selectAll('.cluster');
-    var te = cluster.append('text');
-    te.attr('x', xPos+width/2);
-    te.attr('y', 12);
-    //te.stroke('black');
-    te.attr('id', 'apa12');
-    te.style('text-anchor', 'middle');
-    te.text('Title for cluster');
-*/
-    if(conf.useMaxWidth) {
+    /*
+     var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
+     var width = document.querySelectorAll('.clusters rect')[0].width.baseVal.value;
+        var cluster = d3.selectAll('.cluster');
+        var te = cluster.append('text');
+        te.attr('x', xPos+width/2);
+        te.attr('y', 12);
+        //te.stroke('black');
+        te.attr('id', 'apa12');
+        te.style('text-anchor', 'middle');
+        te.text('Title for cluster');
+    */
+    if (conf.useMaxWidth) {
         // Center the graph
-        svg.attr("height", '100%');
-        svg.attr("width", conf.width);
-        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-        svg.attr("viewBox", '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+        svg.attr('height', '100%');
+        svg.attr('width', conf.width);
+        //svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
         svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;');
-    }
-    else{
+    } else {
         // Center the graph
-        svg.attr("height", g.graph().height );
-        if(typeof conf.width === 'undefined'){
-            svg.attr("width", g.graph().width );
-        }else{
-            svg.attr("width", conf.width );
+        svg.attr('height', g.graph().height);
+        if (typeof conf.width === 'undefined') {
+            svg.attr('width', g.graph().width);
+        } else {
+            svg.attr('width', conf.width);
         }
-        //svg.attr("viewBox", svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
-        svg.attr("viewBox",  '0 0 ' + (g.graph().width+20) + ' ' + (g.graph().height+20));    }
-
+        //svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
+        svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+    }
 
     // Index nodes
-    graph.indexNodes('subGraph'+i);
-    
-    for(i=0;i<subGraphs.length;i++){
-        var pos = graph.getDepthFirstPos(i);
+    graph.indexNodes('subGraph' + i);
+
+    for (i = 0; i < subGraphs.length; i++) {
         subG = subGraphs[i];
 
         if (subG.title !== 'undefined') {
@@ -32464,29 +32421,38 @@ exports.draw = function (text, id,isDot) {
             te.attr('id', id + 'Text');
             te.style('text-anchor', 'middle');
 
-            if(typeof subG.title === 'undefined'){
+            if (typeof subG.title === 'undefined') {
                 te.text('Undef');
-            }else{
+            } else {
                 //te.text(subGraphs[subGraphs.length-i-1].title);
                 te.text(subG.title);
-
             }
         }
     }
 };
 
-
-},{"../../d3":87,"../../logger":104,"./dagre-d3":91,"./graphDb":93,"./parser/dot":94,"./parser/flow":95}],93:[function(_dereq_,module,exports){
+},{"../../d3":84,"../../logger":100,"./dagre-d3":88,"./graphDb":90,"./parser/dot":91,"./parser/flow":92}],90:[function(require,module,exports){
+(function (global){
 /**
  * Created by knut on 14-11-03.
  */
-var log = _dereq_('../../logger').create();
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
+var d3 = require('../../d3');
 var vertices = {};
 var edges = [];
 var classes = [];
 var subGraphs = [];
 var tooltips = {};
-var subCount=0;
+var subCount = 0;
 var direction;
 // Functions to be run after graph rendering
 var funs = [];
@@ -32499,23 +32465,23 @@ var funs = [];
  */
 exports.addVertex = function (id, text, type, style) {
     var txt;
-    
-    if(typeof id === 'undefined'){
+
+    if (typeof id === 'undefined') {
         return;
     }
-    if(id.trim().length === 0){
+    if (id.trim().length === 0) {
         return;
     }
 
     if (typeof vertices[id] === 'undefined') {
-        vertices[id] = {id: id, styles: [], classes:[]};
+        vertices[id] = { id: id, styles: [], classes: [] };
     }
     if (typeof text !== 'undefined') {
         txt = text.trim();
-        
+
         // strip quotes if string starts and exnds with a quote
-        if(txt[0] === '"' && txt[txt.length-1] === '"'){
-            txt = txt.substring(1,txt.length-1);
+        if (txt[0] === '"' && txt[txt.length - 1] === '"') {
+            txt = txt.substring(1, txt.length - 1);
         }
 
         vertices[id].text = txt;
@@ -32543,16 +32509,16 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-    //log.debug('Got edge', start, end);
-    var edge = {start: start, end: end, type: undefined, text: ''};
+    log.debug('Got edge', start, end);
+    var edge = { start: start, end: end, type: undefined, text: '' };
     linktext = type.text;
 
     if (typeof linktext !== 'undefined') {
         edge.text = linktext.trim();
-        
+
         // strip quotes if string starts and exnds with a quote
-        if(edge.text[0] === '"' && edge.text[edge.text.length-1] === '"'){
-            edge.text = edge.text.substring(1,edge.text.length-1);
+        if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
+            edge.text = edge.text.substring(1, edge.text.length - 1);
         }
     }
 
@@ -32568,18 +32534,16 @@ exports.addLink = function (start, end, type, linktext) {
  * @param style
  */
 exports.updateLink = function (pos, style) {
-    var position = pos.substr(1);
-
-    if(pos === 'default'){
+    if (pos === 'default') {
         edges.defaultStyle = style;
-    }else{
+    } else {
         edges[pos].style = style;
     }
 };
 
 exports.addClass = function (id, style) {
     if (typeof classes[id] === 'undefined') {
-        classes[id] = {id: id, styles: []};
+        classes[id] = { id: id, styles: [] };
     }
 
     if (typeof style !== 'undefined') {
@@ -32603,33 +32567,33 @@ exports.setDirection = function (dir) {
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-exports.setClass = function (id,className) {
-    if(id.indexOf(',')>0){
-        id.split(',').forEach(function(id2){
-            if(typeof vertices[id2] !== 'undefined'){
+exports.setClass = function (id, className) {
+    if (id.indexOf(',') > 0) {
+        id.split(',').forEach(function (id2) {
+            if (typeof vertices[id2] !== 'undefined') {
                 vertices[id2].classes.push(className);
             }
         });
-    }else{
-        if(typeof vertices[id] !== 'undefined'){
+    } else {
+        if (typeof vertices[id] !== 'undefined') {
             vertices[id].classes.push(className);
         }
     }
 };
 
-var setTooltip = function(id,tooltip){
-    if(typeof  tooltip !== 'undefined'){
-        tooltips[id]=tooltip;
+var setTooltip = function setTooltip(id, tooltip) {
+    if (typeof tooltip !== 'undefined') {
+        tooltips[id] = tooltip;
     }
 };
 
-var setClickFun = function(id, functionName){
-    if(typeof functionName === 'undefined'){
+var setClickFun = function setClickFun(id, functionName) {
+    if (typeof functionName === 'undefined') {
         return;
     }
     if (typeof vertices[id] !== 'undefined') {
         funs.push(function (element) {
-            var elem = d3.select(element).select('#'+id);
+            var elem = d3.select(element).select('#' + id);
             if (elem !== null) {
                 elem.on('click', function () {
                     eval(functionName + '(\'' + id + '\')'); // jshint ignore:line
@@ -32639,45 +32603,45 @@ var setClickFun = function(id, functionName){
     }
 };
 
-var setLink = function(id, linkStr){
-    if(typeof linkStr === 'undefined'){
+var setLink = function setLink(id, linkStr) {
+    if (typeof linkStr === 'undefined') {
         return;
     }
     if (typeof vertices[id] !== 'undefined') {
         funs.push(function (element) {
-            var elem = d3.select(element).select('#'+id);
+            var elem = d3.select(element).select('#' + id);
             if (elem !== null) {
                 elem.on('click', function () {
-                    window.open(linkStr,'newTab'); // jshint ignore:line
+                    window.open(linkStr, 'newTab'); // jshint ignore:line
                 });
             }
         });
     }
 };
-exports.getTooltip = function(id){
+exports.getTooltip = function (id) {
     return tooltips[id];
 };
-var clickEvents = [];
+
 /**
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-exports.setClickEvent = function (id,functionName, link,tooltip) {
-        if(id.indexOf(',')>0){
-            id.split(',').forEach(function(id2) {
-                setTooltip(id2,tooltip);
-                setClickFun(id2, functionName);
-                setLink(id2, link);
-            });
-        }else{
-            setTooltip(id,tooltip);
-            setClickFun(id, functionName);
-            setLink(id, link);
-        }
+exports.setClickEvent = function (id, functionName, link, tooltip) {
+    if (id.indexOf(',') > 0) {
+        id.split(',').forEach(function (id2) {
+            setTooltip(id2, tooltip);
+            setClickFun(id2, functionName);
+            setLink(id2, link);
+        });
+    } else {
+        setTooltip(id, tooltip);
+        setClickFun(id, functionName);
+        setLink(id, link);
+    }
 };
 
-exports.bindFunctions = function(element){
-    funs.forEach(function(fun){
+exports.bindFunctions = function (element) {
+    funs.forEach(function (fun) {
         fun(element);
     });
 };
@@ -32708,45 +32672,33 @@ exports.getClasses = function () {
     return classes;
 };
 
-var setupToolTips = function(element){
+var setupToolTips = function setupToolTips(element) {
 
     var tooltipElem = d3.select('.mermaidTooltip');
-    if(tooltipElem[0][0] === null){
-        tooltipElem = d3.select("body")
-            .append("div")
-            .attr("class", "mermaidTooltip")
-            .style("opacity", 0);
+    if (tooltipElem[0][0] === null) {
+        tooltipElem = d3.select('body').append('div').attr('class', 'mermaidTooltip').style('opacity', 0);
     }
 
     var svg = d3.select(element).select('svg');
 
-    var nodes = svg.selectAll("g.node");
-    nodes
-        .on("mouseover", function(d) {
-            var el = d3.select(this);
-            var title = el.attr('title');
-            // Dont try to draw a tooltip if no data is provided
-            if(title === null){
-                return;
-            }
-            var rect = this.getBoundingClientRect();
+    var nodes = svg.selectAll('g.node');
+    nodes.on('mouseover', function () {
+        var el = d3.select(this);
+        var title = el.attr('title');
+        // Dont try to draw a tooltip if no data is provided
+        if (title === null) {
+            return;
+        }
+        var rect = this.getBoundingClientRect();
 
-            tooltipElem.transition()
-                .duration(200)
-                .style("opacity", '.9');
-            tooltipElem.html(el.attr('title'))
-                .style("left", (rect.left+(rect.right-rect.left)/2) + "px")
-                .style("top", (rect.top-14+document.body.scrollTop) + "px");
-            el.classed('hover',true);
-
-        })
-        .on("mouseout", function(d) {
-            tooltipElem.transition()
-                .duration(500)
-                .style("opacity", 0);
-            var el = d3.select(this);
-            el.classed('hover',false);
-        });
+        tooltipElem.transition().duration(200).style('opacity', '.9');
+        tooltipElem.html(el.attr('title')).style('left', rect.left + (rect.right - rect.left) / 2 + 'px').style('top', rect.top - 14 + document.body.scrollTop + 'px');
+        el.classed('hover', true);
+    }).on('mouseout', function () {
+        tooltipElem.transition().duration(500).style('opacity', 0);
+        var el = d3.select(this);
+        el.classed('hover', false);
+    });
 };
 funs.push(setupToolTips);
 
@@ -32768,7 +32720,7 @@ exports.clear = function () {
  * @returns {string}
  */
 exports.defaultStyle = function () {
-    return "fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;";
+    return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;';
 };
 
 /**
@@ -32776,37 +32728,34 @@ exports.defaultStyle = function () {
  */
 exports.addSubGraph = function (list, title) {
     function uniq(a) {
-        var prims = {"boolean":{}, "number":{}, "string":{}}, objs = [];
+        var prims = { 'boolean': {}, 'number': {}, 'string': {} },
+            objs = [];
 
-        return a.filter(function(item) {
+        return a.filter(function (item) {
             var type = typeof item;
-            if(item===' '){
+            if (item === ' ') {
                 return false;
             }
-            if(type in prims)
-                return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
-            else
-                return objs.indexOf(item) >= 0 ? false : objs.push(item);
+            if (type in prims) return prims[type].hasOwnProperty(item) ? false : prims[type][item] = true;else return objs.indexOf(item) >= 0 ? false : objs.push(item);
         });
     }
 
     var nodeList = [];
 
-    nodeList = uniq(nodeList.concat.apply(nodeList,list));
+    nodeList = uniq(nodeList.concat.apply(nodeList, list));
 
-
-    var subGraph = {id:'subGraph'+subCount, nodes:nodeList,title:title};
-//log.debug('subGraph:' + subGraph.title + subGraph.id);
-//log.debug(subGraph.nodes);
+    var subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title };
+    //log.debug('subGraph:' + subGraph.title + subGraph.id);
+    //log.debug(subGraph.nodes);
     subGraphs.push(subGraph);
     subCount = subCount + 1;
     return subGraph.id;
 };
 
-var getPosForId = function(id){
+var getPosForId = function getPosForId(id) {
     var i;
-    for(i=0;i<subGraphs.length;i++){
-        if(subGraphs[i].id===id){
+    for (i = 0; i < subGraphs.length; i++) {
+        if (subGraphs[i].id === id) {
             //log.debug('Found pos for ',id,' ',i);
             return i;
         }
@@ -32816,70 +32765,67 @@ var getPosForId = function(id){
 };
 var secCount = -1;
 var posCrossRef = [];
-var indexNodes = function (id, pos) {
+var indexNodes = function indexNodes(id, pos) {
     var nodes = subGraphs[pos].nodes;
     secCount = secCount + 1;
-    if(secCount>2000){
+    if (secCount > 2000) {
         return;
-        
     }
     //var nPos = getPosForId(subGraphs[pos].id);
-    posCrossRef[secCount]=pos;
+    posCrossRef[secCount] = pos;
     // Check if match
-    if(subGraphs[pos].id === id){
+    if (subGraphs[pos].id === id) {
         return {
-            result:true,
-            count:0
+            result: true,
+            count: 0
         };
     }
-    
 
     var count = 0;
     var posCount = 1;
-    while(count<nodes.length){
+    while (count < nodes.length) {
         var childPos = getPosForId(nodes[count]);
         // Ignore regular nodes (pos will be -1)
-        if(childPos>=0){
-            var res = indexNodes(id,childPos);
-            if(res.result){
+        if (childPos >= 0) {
+            var res = indexNodes(id, childPos);
+            if (res.result) {
                 return {
-                    result:true,
-                    count:posCount+res.count
+                    result: true,
+                    count: posCount + res.count
                 };
-            }else{
+            } else {
                 posCount = posCount + res.count;
             }
         }
-        count = count +1;
+        count = count + 1;
     }
-    
+
     return {
-        result:false,
-        count:posCount
+        result: false,
+        count: posCount
     };
-
 };
-
-
 
 exports.getDepthFirstPos = function (pos) {
     return posCrossRef[pos];
 };
-exports.indexNodes = function (id) {
+exports.indexNodes = function () {
     secCount = -1;
-    if(subGraphs.length>0){
-        indexNodes('none',subGraphs.length-1,0);
+    if (subGraphs.length > 0) {
+        indexNodes('none', subGraphs.length - 1, 0);
     }
 };
 
-exports.getSubGraphs = function (list) {
+exports.getSubGraphs = function () {
     return subGraphs;
 };
 
-exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+exports.parseError = function (err, hash) {
+    global.mermaidAPI.parseError(err, hash);
 };
-},{"../../logger":104}],94:[function(_dereq_,module,exports){
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../../d3":84,"../../logger":100}],91:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -32954,670 +32900,756 @@ exports.parseError = function(err,hash){
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,6],$V2=[1,12],$V3=[1,13],$V4=[1,14],$V5=[1,15],$V6=[1,16],$V7=[1,17],$V8=[1,18],$V9=[1,19],$Va=[1,20],$Vb=[1,21],$Vc=[1,22],$Vd=[8,16,17,18,19,20,21,22,23,24,25,26],$Ve=[1,37],$Vf=[1,33],$Vg=[1,34],$Vh=[1,35],$Vi=[1,36],$Vj=[8,10,16,17,18,19,20,21,22,23,24,25,26,28,32,37,39,40,45,57,58],$Vk=[10,28],$Vl=[10,28,37,57,58],$Vm=[2,49],$Vn=[1,45],$Vo=[1,48],$Vp=[1,49],$Vq=[1,52],$Vr=[2,65],$Vs=[1,65],$Vt=[1,66],$Vu=[1,67],$Vv=[1,68],$Vw=[1,69],$Vx=[1,70],$Vy=[1,71],$Vz=[1,72],$VA=[1,73],$VB=[8,16,17,18,19,20,21,22,23,24,25,26,47],$VC=[10,28,37];
-var parser = {trace: function trace() { },
-yy: {},
-symbols_: {"error":2,"expressions":3,"graph":4,"EOF":5,"graphStatement":6,"idStatement":7,"{":8,"stmt_list":9,"}":10,"strict":11,"GRAPH":12,"DIGRAPH":13,"textNoTags":14,"textNoTagsToken":15,"ALPHA":16,"NUM":17,"COLON":18,"PLUS":19,"EQUALS":20,"MULT":21,"DOT":22,"BRKT":23,"SPACE":24,"MINUS":25,"keywords":26,"stmt":27,";":28,"node_stmt":29,"edge_stmt":30,"attr_stmt":31,"=":32,"subgraph":33,"attr_list":34,"NODE":35,"EDGE":36,"[":37,"a_list":38,"]":39,",":40,"edgeRHS":41,"node_id":42,"edgeop":43,"port":44,":":45,"compass_pt":46,"SUBGRAPH":47,"n":48,"ne":49,"e":50,"se":51,"s":52,"sw":53,"w":54,"nw":55,"c":56,"ARROW_POINT":57,"ARROW_OPEN":58,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",8:"{",10:"}",11:"strict",12:"GRAPH",13:"DIGRAPH",16:"ALPHA",17:"NUM",18:"COLON",19:"PLUS",20:"EQUALS",21:"MULT",22:"DOT",23:"BRKT",24:"SPACE",25:"MINUS",26:"keywords",28:";",32:"=",35:"NODE",36:"EDGE",37:"[",39:"]",40:",",45:":",47:"SUBGRAPH",48:"n",49:"ne",50:"e",51:"se",52:"s",53:"sw",54:"w",55:"nw",56:"c",57:"ARROW_POINT",58:"ARROW_OPEN"},
-productions_: [0,[3,2],[4,5],[4,6],[4,4],[6,1],[6,1],[7,1],[14,1],[14,2],[15,1],[15,1],[15,1],[15,1],[15,1],[15,1],[15,1],[15,1],[15,1],[15,1],[15,1],[9,1],[9,3],[27,1],[27,1],[27,1],[27,3],[27,1],[31,2],[31,2],[31,2],[34,4],[34,3],[34,3],[34,2],[38,5],[38,5],[38,3],[30,3],[30,3],[30,2],[30,2],[41,3],[41,3],[41,2],[41,2],[29,2],[29,1],[42,2],[42,1],[44,4],[44,2],[44,2],[33,5],[33,4],[33,3],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,1],[46,0],[43,1],[43,1]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
-/* this == yyval */
+"use strict";
 
-var $0 = $$.length - 1;
-switch (yystate) {
-case 1:
-this.$=$$[$0-1];
-break;
-case 2:
-this.$=$$[$0-4];
-break;
-case 3:
-this.$=$$[$0-5];
-break;
-case 4:
-this.$=$$[$0-3];
-break;
-case 8: case 10: case 11:
-this.$=$$[$0];
-break;
-case 9:
-this.$=$$[$0-1]+''+$$[$0];
-break;
-case 12: case 13: case 14: case 15: case 16: case 18: case 19: case 20:
-this.$ = $$[$0];
-break;
-case 17:
-this.$ = '<br>';
-break;
-case 39:
-this.$='oy';
-break;
-case 40:
+var parser = (function () {
+    var o = function o(k, v, _o, l) {
+        for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
+    },
+        $V0 = [1, 5],
+        $V1 = [1, 6],
+        $V2 = [1, 12],
+        $V3 = [1, 13],
+        $V4 = [1, 14],
+        $V5 = [1, 15],
+        $V6 = [1, 16],
+        $V7 = [1, 17],
+        $V8 = [1, 18],
+        $V9 = [1, 19],
+        $Va = [1, 20],
+        $Vb = [1, 21],
+        $Vc = [1, 22],
+        $Vd = [8, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+        $Ve = [1, 37],
+        $Vf = [1, 33],
+        $Vg = [1, 34],
+        $Vh = [1, 35],
+        $Vi = [1, 36],
+        $Vj = [8, 10, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 32, 37, 39, 40, 45, 57, 58],
+        $Vk = [10, 28],
+        $Vl = [10, 28, 37, 57, 58],
+        $Vm = [2, 49],
+        $Vn = [1, 45],
+        $Vo = [1, 48],
+        $Vp = [1, 49],
+        $Vq = [1, 52],
+        $Vr = [2, 65],
+        $Vs = [1, 65],
+        $Vt = [1, 66],
+        $Vu = [1, 67],
+        $Vv = [1, 68],
+        $Vw = [1, 69],
+        $Vx = [1, 70],
+        $Vy = [1, 71],
+        $Vz = [1, 72],
+        $VA = [1, 73],
+        $VB = [8, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 47],
+        $VC = [10, 28, 37];
+    var parser = { trace: function trace() {},
+        yy: {},
+        symbols_: { "error": 2, "expressions": 3, "graph": 4, "EOF": 5, "graphStatement": 6, "idStatement": 7, "{": 8, "stmt_list": 9, "}": 10, "strict": 11, "GRAPH": 12, "DIGRAPH": 13, "textNoTags": 14, "textNoTagsToken": 15, "ALPHA": 16, "NUM": 17, "COLON": 18, "PLUS": 19, "EQUALS": 20, "MULT": 21, "DOT": 22, "BRKT": 23, "SPACE": 24, "MINUS": 25, "keywords": 26, "stmt": 27, ";": 28, "node_stmt": 29, "edge_stmt": 30, "attr_stmt": 31, "=": 32, "subgraph": 33, "attr_list": 34, "NODE": 35, "EDGE": 36, "[": 37, "a_list": 38, "]": 39, ",": 40, "edgeRHS": 41, "node_id": 42, "edgeop": 43, "port": 44, ":": 45, "compass_pt": 46, "SUBGRAPH": 47, "n": 48, "ne": 49, "e": 50, "se": 51, "s": 52, "sw": 53, "w": 54, "nw": 55, "c": 56, "ARROW_POINT": 57, "ARROW_OPEN": 58, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 5: "EOF", 8: "{", 10: "}", 11: "strict", 12: "GRAPH", 13: "DIGRAPH", 16: "ALPHA", 17: "NUM", 18: "COLON", 19: "PLUS", 20: "EQUALS", 21: "MULT", 22: "DOT", 23: "BRKT", 24: "SPACE", 25: "MINUS", 26: "keywords", 28: ";", 32: "=", 35: "NODE", 36: "EDGE", 37: "[", 39: "]", 40: ",", 45: ":", 47: "SUBGRAPH", 48: "n", 49: "ne", 50: "e", 51: "se", 52: "s", 53: "sw", 54: "w", 55: "nw", 56: "c", 57: "ARROW_POINT", 58: "ARROW_OPEN" },
+        productions_: [0, [3, 2], [4, 5], [4, 6], [4, 4], [6, 1], [6, 1], [7, 1], [14, 1], [14, 2], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [15, 1], [9, 1], [9, 3], [27, 1], [27, 1], [27, 1], [27, 3], [27, 1], [31, 2], [31, 2], [31, 2], [34, 4], [34, 3], [34, 3], [34, 2], [38, 5], [38, 5], [38, 3], [30, 3], [30, 3], [30, 2], [30, 2], [41, 3], [41, 3], [41, 2], [41, 2], [29, 2], [29, 1], [42, 2], [42, 1], [44, 4], [44, 2], [44, 2], [33, 5], [33, 4], [33, 3], [46, 1], [46, 1], [46, 1], [46, 1], [46, 1], [46, 1], [46, 1], [46, 1], [46, 1], [46, 0], [43, 1], [43, 1]],
+        performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
+            /* this == yyval */
 
-        yy.addLink($$[$0-1],$$[$0].id,$$[$0].op);
-        this.$='oy';
-break;
-case 42:
+            var $0 = $$.length - 1;
+            switch (yystate) {
+                case 1:
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 2:
+                    this.$ = $$[$0 - 4];
+                    break;
+                case 3:
+                    this.$ = $$[$0 - 5];
+                    break;
+                case 4:
+                    this.$ = $$[$0 - 3];
+                    break;
+                case 8:case 10:case 11:
+                    this.$ = $$[$0];
+                    break;
+                case 9:
+                    this.$ = $$[$0 - 1] + '' + $$[$0];
+                    break;
+                case 12:case 13:case 14:case 15:case 16:case 18:case 19:case 20:
+                    this.$ = $$[$0];
+                    break;
+                case 17:
+                    this.$ = '<br>';
+                    break;
+                case 39:
+                    this.$ = 'oy';
+                    break;
+                case 40:
 
-        yy.addLink($$[$0-1],$$[$0].id,$$[$0].op);
-        this.$={op:$$[$0-2],id:$$[$0-1]};
-    
-break;
-case 44:
+                    yy.addLink($$[$0 - 1], $$[$0].id, $$[$0].op);
+                    this.$ = 'oy';
+                    break;
+                case 42:
 
-        this.$={op:$$[$0-1],id:$$[$0]};
-    
-break;
-case 48:
-yy.addVertex($$[$0-1]);this.$=$$[$0-1];
-break;
-case 49:
-yy.addVertex($$[$0]);this.$=$$[$0];
-break;
-case 66:
-this.$='arrow';
-break;
-case 67:
-this.$='arrow_open';
-break;
-}
-},
-table: [{3:1,4:2,6:3,11:[1,4],12:$V0,13:$V1},{1:[3]},{5:[1,7]},{7:8,8:[1,9],14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc},{6:23,12:$V0,13:$V1},o($Vd,[2,5]),o($Vd,[2,6]),{1:[2,1]},{8:[1,24]},{7:30,8:$Ve,9:25,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},o([8,10,28,32,37,39,40,45,57,58],[2,7],{15:38,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc}),o($Vj,[2,8]),o($Vj,[2,10]),o($Vj,[2,11]),o($Vj,[2,12]),o($Vj,[2,13]),o($Vj,[2,14]),o($Vj,[2,15]),o($Vj,[2,16]),o($Vj,[2,17]),o($Vj,[2,18]),o($Vj,[2,19]),o($Vj,[2,20]),{7:39,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc},{7:30,8:$Ve,9:40,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},{10:[1,41]},{10:[2,21],28:[1,42]},o($Vk,[2,23]),o($Vk,[2,24]),o($Vk,[2,25]),o($Vl,$Vm,{44:44,32:[1,43],45:$Vn}),o($Vk,[2,27],{41:46,43:47,57:$Vo,58:$Vp}),o($Vk,[2,47],{43:47,34:50,41:51,37:$Vq,57:$Vo,58:$Vp}),{34:53,37:$Vq},{34:54,37:$Vq},{34:55,37:$Vq},{7:56,8:[1,57],14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc},{7:30,8:$Ve,9:58,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},o($Vj,[2,9]),{8:[1,59]},{10:[1,60]},{5:[2,4]},{7:30,8:$Ve,9:61,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},{7:62,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc},o($Vl,[2,48]),o($Vl,$Vr,{14:10,15:11,7:63,46:64,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,48:$Vs,49:$Vt,50:$Vu,51:$Vv,52:$Vw,53:$Vx,54:$Vy,55:$Vz,56:$VA}),o($Vk,[2,41],{34:74,37:$Vq}),{7:77,8:$Ve,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,33:76,42:75,47:$Vi},o($VB,[2,66]),o($VB,[2,67]),o($Vk,[2,46]),o($Vk,[2,40],{34:78,37:$Vq}),{7:81,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,38:79,39:[1,80]},o($Vk,[2,28]),o($Vk,[2,29]),o($Vk,[2,30]),{8:[1,82]},{7:30,8:$Ve,9:83,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},{10:[1,84]},{7:30,8:$Ve,9:85,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},{5:[2,2]},{10:[2,22]},o($Vk,[2,26]),o($Vl,[2,51],{45:[1,86]}),o($Vl,[2,52]),o($Vl,[2,56]),o($Vl,[2,57]),o($Vl,[2,58]),o($Vl,[2,59]),o($Vl,[2,60]),o($Vl,[2,61]),o($Vl,[2,62]),o($Vl,[2,63]),o($Vl,[2,64]),o($Vk,[2,38]),o($VC,[2,44],{43:47,41:87,57:$Vo,58:$Vp}),o($VC,[2,45],{43:47,41:88,57:$Vo,58:$Vp}),o($Vl,$Vm,{44:44,45:$Vn}),o($Vk,[2,39]),{39:[1,89]},o($Vk,[2,34],{34:90,37:$Vq}),{32:[1,91]},{7:30,8:$Ve,9:92,12:$Vf,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,27:26,29:27,30:28,31:29,33:31,35:$Vg,36:$Vh,42:32,47:$Vi},{10:[1,93]},o($Vl,[2,55]),{10:[1,94]},o($Vl,$Vr,{46:95,48:$Vs,49:$Vt,50:$Vu,51:$Vv,52:$Vw,53:$Vx,54:$Vy,55:$Vz,56:$VA}),o($VC,[2,42]),o($VC,[2,43]),o($Vk,[2,33],{34:96,37:$Vq}),o($Vk,[2,32]),{7:97,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc},{10:[1,98]},o($Vl,[2,54]),{5:[2,3]},o($Vl,[2,50]),o($Vk,[2,31]),{28:[1,99],39:[2,37],40:[1,100]},o($Vl,[2,53]),{7:81,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,38:101},{7:81,14:10,15:11,16:$V2,17:$V3,18:$V4,19:$V5,20:$V6,21:$V7,22:$V8,23:$V9,24:$Va,25:$Vb,26:$Vc,38:102},{39:[2,35]},{39:[2,36]}],
-defaultActions: {7:[2,1],41:[2,4],60:[2,2],61:[2,22],94:[2,3],101:[2,35],102:[2,36]},
-parseError: function parseError(str, hash) {
-    if (hash.recoverable) {
-        this.trace(str);
-    } else {
-        throw new Error(str);
-    }
-},
-parse: function parse(input) {
-    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    var args = lstack.slice.call(arguments, 1);
-    var lexer = Object.create(this.lexer);
-    var sharedState = { yy: {} };
-    for (var k in this.yy) {
-        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
-            sharedState.yy[k] = this.yy[k];
-        }
-    }
-    lexer.setInput(input, sharedState.yy);
-    sharedState.yy.lexer = lexer;
-    sharedState.yy.parser = this;
-    if (typeof lexer.yylloc == 'undefined') {
-        lexer.yylloc = {};
-    }
-    var yyloc = lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = lexer.options && lexer.options.ranges;
-    if (typeof sharedState.yy.parseError === 'function') {
-        this.parseError = sharedState.yy.parseError;
-    } else {
-        this.parseError = Object.getPrototypeOf(this).parseError;
-    }
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    _token_stack:
-        function lex() {
-            var token;
-            token = lexer.lex() || EOF;
-            if (typeof token !== 'number') {
-                token = self.symbols_[token] || token;
+                    yy.addLink($$[$0 - 1], $$[$0].id, $$[$0].op);
+                    this.$ = { op: $$[$0 - 2], id: $$[$0 - 1] };
+
+                    break;
+                case 44:
+
+                    this.$ = { op: $$[$0 - 1], id: $$[$0] };
+
+                    break;
+                case 48:
+                    yy.addVertex($$[$0 - 1]);this.$ = $$[$0 - 1];
+                    break;
+                case 49:
+                    yy.addVertex($$[$0]);this.$ = $$[$0];
+                    break;
+                case 66:
+                    this.$ = 'arrow';
+                    break;
+                case 67:
+                    this.$ = 'arrow_open';
+                    break;
             }
-            return token;
-        }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == 'undefined') {
-                symbol = lex();
+        },
+        table: [{ 3: 1, 4: 2, 6: 3, 11: [1, 4], 12: $V0, 13: $V1 }, { 1: [3] }, { 5: [1, 7] }, { 7: 8, 8: [1, 9], 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc }, { 6: 23, 12: $V0, 13: $V1 }, o($Vd, [2, 5]), o($Vd, [2, 6]), { 1: [2, 1] }, { 8: [1, 24] }, { 7: 30, 8: $Ve, 9: 25, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, o([8, 10, 28, 32, 37, 39, 40, 45, 57, 58], [2, 7], { 15: 38, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc }), o($Vj, [2, 8]), o($Vj, [2, 10]), o($Vj, [2, 11]), o($Vj, [2, 12]), o($Vj, [2, 13]), o($Vj, [2, 14]), o($Vj, [2, 15]), o($Vj, [2, 16]), o($Vj, [2, 17]), o($Vj, [2, 18]), o($Vj, [2, 19]), o($Vj, [2, 20]), { 7: 39, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc }, { 7: 30, 8: $Ve, 9: 40, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, { 10: [1, 41] }, { 10: [2, 21], 28: [1, 42] }, o($Vk, [2, 23]), o($Vk, [2, 24]), o($Vk, [2, 25]), o($Vl, $Vm, { 44: 44, 32: [1, 43], 45: $Vn }), o($Vk, [2, 27], { 41: 46, 43: 47, 57: $Vo, 58: $Vp }), o($Vk, [2, 47], { 43: 47, 34: 50, 41: 51, 37: $Vq, 57: $Vo, 58: $Vp }), { 34: 53, 37: $Vq }, { 34: 54, 37: $Vq }, { 34: 55, 37: $Vq }, { 7: 56, 8: [1, 57], 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc }, { 7: 30, 8: $Ve, 9: 58, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, o($Vj, [2, 9]), { 8: [1, 59] }, { 10: [1, 60] }, { 5: [2, 4] }, { 7: 30, 8: $Ve, 9: 61, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, { 7: 62, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc }, o($Vl, [2, 48]), o($Vl, $Vr, { 14: 10, 15: 11, 7: 63, 46: 64, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 48: $Vs, 49: $Vt, 50: $Vu, 51: $Vv, 52: $Vw, 53: $Vx, 54: $Vy, 55: $Vz, 56: $VA }), o($Vk, [2, 41], { 34: 74, 37: $Vq }), { 7: 77, 8: $Ve, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 33: 76, 42: 75, 47: $Vi }, o($VB, [2, 66]), o($VB, [2, 67]), o($Vk, [2, 46]), o($Vk, [2, 40], { 34: 78, 37: $Vq }), { 7: 81, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 38: 79, 39: [1, 80] }, o($Vk, [2, 28]), o($Vk, [2, 29]), o($Vk, [2, 30]), { 8: [1, 82] }, { 7: 30, 8: $Ve, 9: 83, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, { 10: [1, 84] }, { 7: 30, 8: $Ve, 9: 85, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, { 5: [2, 2] }, { 10: [2, 22] }, o($Vk, [2, 26]), o($Vl, [2, 51], { 45: [1, 86] }), o($Vl, [2, 52]), o($Vl, [2, 56]), o($Vl, [2, 57]), o($Vl, [2, 58]), o($Vl, [2, 59]), o($Vl, [2, 60]), o($Vl, [2, 61]), o($Vl, [2, 62]), o($Vl, [2, 63]), o($Vl, [2, 64]), o($Vk, [2, 38]), o($VC, [2, 44], { 43: 47, 41: 87, 57: $Vo, 58: $Vp }), o($VC, [2, 45], { 43: 47, 41: 88, 57: $Vo, 58: $Vp }), o($Vl, $Vm, { 44: 44, 45: $Vn }), o($Vk, [2, 39]), { 39: [1, 89] }, o($Vk, [2, 34], { 34: 90, 37: $Vq }), { 32: [1, 91] }, { 7: 30, 8: $Ve, 9: 92, 12: $Vf, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 27: 26, 29: 27, 30: 28, 31: 29, 33: 31, 35: $Vg, 36: $Vh, 42: 32, 47: $Vi }, { 10: [1, 93] }, o($Vl, [2, 55]), { 10: [1, 94] }, o($Vl, $Vr, { 46: 95, 48: $Vs, 49: $Vt, 50: $Vu, 51: $Vv, 52: $Vw, 53: $Vx, 54: $Vy, 55: $Vz, 56: $VA }), o($VC, [2, 42]), o($VC, [2, 43]), o($Vk, [2, 33], { 34: 96, 37: $Vq }), o($Vk, [2, 32]), { 7: 97, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc }, { 10: [1, 98] }, o($Vl, [2, 54]), { 5: [2, 3] }, o($Vl, [2, 50]), o($Vk, [2, 31]), { 28: [1, 99], 39: [2, 37], 40: [1, 100] }, o($Vl, [2, 53]), { 7: 81, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 38: 101 }, { 7: 81, 14: 10, 15: 11, 16: $V2, 17: $V3, 18: $V4, 19: $V5, 20: $V6, 21: $V7, 22: $V8, 23: $V9, 24: $Va, 25: $Vb, 26: $Vc, 38: 102 }, { 39: [2, 35] }, { 39: [2, 36] }],
+        defaultActions: { 7: [2, 1], 41: [2, 4], 60: [2, 2], 61: [2, 22], 94: [2, 3], 101: [2, 35], 102: [2, 36] },
+        parseError: function parseError(str, hash) {
+            if (hash.recoverable) {
+                this.trace(str);
+            } else {
+                throw new Error(str);
             }
-            action = table[state] && table[state][symbol];
-        }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
+        },
+        parse: function parse(input) {
+            var self = this,
+                stack = [0],
+                tstack = [],
+                vstack = [null],
+                lstack = [],
+                table = this.table,
+                yytext = '',
+                yylineno = 0,
+                yyleng = 0,
+                recovering = 0,
+                TERROR = 2,
+                EOF = 1;
+            var args = lstack.slice.call(arguments, 1);
+            var lexer = Object.create(this.lexer);
+            var sharedState = { yy: {} };
+            for (var k in this.yy) {
+                if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+                    sharedState.yy[k] = this.yy[k];
+                }
+            }
+            lexer.setInput(input, sharedState.yy);
+            sharedState.yy.lexer = lexer;
+            sharedState.yy.parser = this;
+            if (typeof lexer.yylloc == 'undefined') {
+                lexer.yylloc = {};
+            }
+            var yyloc = lexer.yylloc;
+            lstack.push(yyloc);
+            var ranges = lexer.options && lexer.options.ranges;
+            if (typeof sharedState.yy.parseError === 'function') {
+                this.parseError = sharedState.yy.parseError;
+            } else {
+                this.parseError = Object.getPrototypeOf(this).parseError;
+            }
+            function popStack(n) {
+                stack.length = stack.length - 2 * n;
+                vstack.length = vstack.length - n;
+                lstack.length = lstack.length - n;
+            }
+            _token_stack: var lex = function lex() {
+                var token;
+                token = lexer.lex() || EOF;
+                if (typeof token !== 'number') {
+                    token = self.symbols_[token] || token;
+                }
+                return token;
+            };
+            var symbol,
+                preErrorSymbol,
+                state,
+                action,
+                a,
+                r,
+                yyval = {},
+                p,
+                len,
+                newState,
+                expected;
+            while (true) {
+                state = stack[stack.length - 1];
+                if (this.defaultActions[state]) {
+                    action = this.defaultActions[state];
+                } else {
+                    if (symbol === null || typeof symbol == 'undefined') {
+                        symbol = lex();
+                    }
+                    action = table[state] && table[state][symbol];
+                }
+                if (typeof action === 'undefined' || !action.length || !action[0]) {
+                    var errStr = '';
+                    expected = [];
+                    for (p in table[state]) {
+                        if (this.terminals_[p] && p > TERROR) {
+                            expected.push('\'' + this.terminals_[p] + '\'');
+                        }
+                    }
+                    if (lexer.showPosition) {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                    } else {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                    }
+                    this.parseError(errStr, {
+                        text: lexer.match,
+                        token: this.terminals_[symbol] || symbol,
+                        line: lexer.yylineno,
+                        loc: yyloc,
+                        expected: expected
+                    });
+                }
+                if (action[0] instanceof Array && action.length > 1) {
+                    throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+                }
+                switch (action[0]) {
+                    case 1:
+                        stack.push(symbol);
+                        vstack.push(lexer.yytext);
+                        lstack.push(lexer.yylloc);
+                        stack.push(action[1]);
+                        symbol = null;
+                        if (!preErrorSymbol) {
+                            yyleng = lexer.yyleng;
+                            yytext = lexer.yytext;
+                            yylineno = lexer.yylineno;
+                            yyloc = lexer.yylloc;
+                            if (recovering > 0) {
+                                recovering--;
+                            }
+                        } else {
+                            symbol = preErrorSymbol;
+                            preErrorSymbol = null;
+                        }
+                        break;
+                    case 2:
+                        len = this.productions_[action[1]][1];
+                        yyval.$ = vstack[vstack.length - len];
+                        yyval._$ = {
+                            first_line: lstack[lstack.length - (len || 1)].first_line,
+                            last_line: lstack[lstack.length - 1].last_line,
+                            first_column: lstack[lstack.length - (len || 1)].first_column,
+                            last_column: lstack[lstack.length - 1].last_column
+                        };
+                        if (ranges) {
+                            yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
+                        }
+                        r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
+                        if (typeof r !== 'undefined') {
+                            return r;
+                        }
+                        if (len) {
+                            stack = stack.slice(0, -1 * len * 2);
+                            vstack = vstack.slice(0, -1 * len);
+                            lstack = lstack.slice(0, -1 * len);
+                        }
+                        stack.push(this.productions_[action[1]][0]);
+                        vstack.push(yyval.$);
+                        lstack.push(yyval._$);
+                        newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+                        stack.push(newState);
+                        break;
+                    case 3:
+                        return true;
+                }
+            }
+            return true;
+        } };
+
+    /* generated by jison-lex 0.3.4 */
+    var lexer = (function () {
+        var lexer = {
+
+            EOF: 1,
+
+            parseError: function parseError(str, hash) {
+                if (this.yy.parser) {
+                    this.yy.parser.parseError(str, hash);
+                } else {
+                    throw new Error(str);
+                }
+            },
+
+            // resets the lexer, sets new input
+            setInput: function setInput(input, yy) {
+                this.yy = yy || this.yy || {};
+                this._input = input;
+                this._more = this._backtrack = this.done = false;
+                this.yylineno = this.yyleng = 0;
+                this.yytext = this.matched = this.match = '';
+                this.conditionStack = ['INITIAL'];
+                this.yylloc = {
+                    first_line: 1,
+                    first_column: 0,
+                    last_line: 1,
+                    last_column: 0
+                };
+                if (this.options.ranges) {
+                    this.yylloc.range = [0, 0];
+                }
+                this.offset = 0;
+                return this;
+            },
+
+            // consumes and returns one char from the input
+            input: function input() {
+                var ch = this._input[0];
+                this.yytext += ch;
+                this.yyleng++;
+                this.offset++;
+                this.match += ch;
+                this.matched += ch;
+                var lines = ch.match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno++;
+                    this.yylloc.last_line++;
+                } else {
+                    this.yylloc.last_column++;
+                }
+                if (this.options.ranges) {
+                    this.yylloc.range[1]++;
+                }
+
+                this._input = this._input.slice(1);
+                return ch;
+            },
+
+            // unshifts one char (or a string) into the input
+            unput: function unput(ch) {
+                var len = ch.length;
+                var lines = ch.split(/(?:\r\n?|\n)/g);
+
+                this._input = ch + this._input;
+                this.yytext = this.yytext.substr(0, this.yytext.length - len);
+                //this.yyleng -= len;
+                this.offset -= len;
+                var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+                this.match = this.match.substr(0, this.match.length - 1);
+                this.matched = this.matched.substr(0, this.matched.length - 1);
+
+                if (lines.length - 1) {
+                    this.yylineno -= lines.length - 1;
+                }
+                var r = this.yylloc.range;
+
+                this.yylloc = {
+                    first_line: this.yylloc.first_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.first_column,
+                    last_column: lines ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length : this.yylloc.first_column - len
+                };
+
+                if (this.options.ranges) {
+                    this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+                }
+                this.yyleng = this.yytext.length;
+                return this;
+            },
+
+            // When called from action, caches matched text and appends it on next action
+            more: function more() {
+                this._more = true;
+                return this;
+            },
+
+            // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
+            reject: function reject() {
+                if (this.options.backtrack_lexer) {
+                    this._backtrack = true;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+                return this;
+            },
+
+            // retain first n characters of the match
+            less: function less(n) {
+                this.unput(this.match.slice(n));
+            },
+
+            // displays already matched input, i.e. for error messages
+            pastInput: function pastInput() {
+                var past = this.matched.substr(0, this.matched.length - this.match.length);
+                return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
+            },
+
+            // displays upcoming input, i.e. for error messages
+            upcomingInput: function upcomingInput() {
+                var next = this.match;
+                if (next.length < 20) {
+                    next += this._input.substr(0, 20 - next.length);
+                }
+                return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+            },
+
+            // displays the character position where the lexing error occurred, i.e. for error messages
+            showPosition: function showPosition() {
+                var pre = this.pastInput();
+                var c = new Array(pre.length + 1).join("-");
+                return pre + this.upcomingInput() + "\n" + c + "^";
+            },
+
+            // test the lexed token: return FALSE when not a match, otherwise return token
+            test_match: function test_match(match, indexed_rule) {
+                var token, lines, backup;
+
+                if (this.options.backtrack_lexer) {
+                    // save context
+                    backup = {
+                        yylineno: this.yylineno,
+                        yylloc: {
+                            first_line: this.yylloc.first_line,
+                            last_line: this.last_line,
+                            first_column: this.yylloc.first_column,
+                            last_column: this.yylloc.last_column
+                        },
+                        yytext: this.yytext,
+                        match: this.match,
+                        matches: this.matches,
+                        matched: this.matched,
+                        yyleng: this.yyleng,
+                        offset: this.offset,
+                        _more: this._more,
+                        _input: this._input,
+                        yy: this.yy,
+                        conditionStack: this.conditionStack.slice(0),
+                        done: this.done
+                    };
+                    if (this.options.ranges) {
+                        backup.yylloc.range = this.yylloc.range.slice(0);
                     }
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+
+                lines = match[0].match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno += lines.length;
                 }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
-            }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(lexer.yytext);
-            lstack.push(lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = lexer.yyleng;
-                yytext = lexer.yytext;
-                yylineno = lexer.yylineno;
-                yyloc = lexer.yylloc;
-                if (recovering > 0) {
-                    recovering--;
+                this.yylloc = {
+                    first_line: this.yylloc.last_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.last_column,
+                    last_column: lines ? lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length
+                };
+                this.yytext += match[0];
+                this.match += match[0];
+                this.matches = match;
+                this.yyleng = this.yytext.length;
+                if (this.options.ranges) {
+                    this.yylloc.range = [this.offset, this.offset += this.yyleng];
                 }
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
-            }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {
-                first_line: lstack[lstack.length - (len || 1)].first_line,
-                last_line: lstack[lstack.length - 1].last_line,
-                first_column: lstack[lstack.length - (len || 1)].first_column,
-                last_column: lstack[lstack.length - 1].last_column
-            };
-            if (ranges) {
-                yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                ];
-            }
-            r = this.performAction.apply(yyval, [
-                yytext,
-                yyleng,
-                yylineno,
-                sharedState.yy,
-                action[1],
-                vstack,
-                lstack
-            ].concat(args));
-            if (typeof r !== 'undefined') {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}};
+                this._more = false;
+                this._backtrack = false;
+                this._input = this._input.slice(match[0].length);
+                this.matched += match[0];
+                token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+                if (this.done && this._input) {
+                    this.done = false;
+                }
+                if (token) {
+                    return token;
+                } else if (this._backtrack) {
+                    // recover context
+                    for (var k in backup) {
+                        this[k] = backup[k];
+                    }
+                    return false; // rule action called reject() implying the next rule should be tested instead.
+                }
+                return false;
+            },
 
-/* generated by jison-lex 0.3.4 */
-var lexer = (function(){
-var lexer = ({
+            // return next match in input
+            next: function next() {
+                if (this.done) {
+                    return this.EOF;
+                }
+                if (!this._input) {
+                    this.done = true;
+                }
 
-EOF:1,
-
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
-
-// resets the lexer, sets new input
-setInput:function (input, yy) {
-        this.yy = yy || this.yy || {};
-        this._input = input;
-        this._more = this._backtrack = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {
-            first_line: 1,
-            first_column: 0,
-            last_line: 1,
-            last_column: 0
-        };
-        if (this.options.ranges) {
-            this.yylloc.range = [0,0];
-        }
-        this.offset = 0;
-        return this;
-    },
-
-// consumes and returns one char from the input
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) {
-            this.yylloc.range[1]++;
-        }
-
-        this._input = this._input.slice(1);
-        return ch;
-    },
-
-// unshifts one char (or a string) into the input
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
-
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length - len);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length - 1);
-        this.matched = this.matched.substr(0, this.matched.length - 1);
-
-        if (lines.length - 1) {
-            this.yylineno -= lines.length - 1;
-        }
-        var r = this.yylloc.range;
-
-        this.yylloc = {
-            first_line: this.yylloc.first_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
-                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
-              this.yylloc.first_column - len
-        };
-
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        this.yyleng = this.yytext.length;
-        return this;
-    },
-
-// When called from action, caches matched text and appends it on next action
-more:function () {
-        this._more = true;
-        return this;
-    },
-
-// When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-reject:function () {
-        if (this.options.backtrack_lexer) {
-            this._backtrack = true;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-
-        }
-        return this;
-    },
-
-// retain first n characters of the match
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
-
-// displays already matched input, i.e. for error messages
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
-
-// displays upcoming input, i.e. for error messages
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
-    },
-
-// displays the character position where the lexing error occurred, i.e. for error messages
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c + "^";
-    },
-
-// test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
-        var token,
-            lines,
-            backup;
-
-        if (this.options.backtrack_lexer) {
-            // save context
-            backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                    first_line: this.yylloc.first_line,
-                    last_line: this.last_line,
-                    first_column: this.yylloc.first_column,
-                    last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-            };
-            if (this.options.ranges) {
-                backup.yylloc.range = this.yylloc.range.slice(0);
-            }
-        }
-
-        lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno += lines.length;
-        }
-        this.yylloc = {
-            first_line: this.yylloc.last_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.last_column,
-            last_column: lines ?
-                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
-                         this.yylloc.last_column + match[0].length
-        };
-        this.yytext += match[0];
-        this.match += match[0];
-        this.matches = match;
-        this.yyleng = this.yytext.length;
-        if (this.options.ranges) {
-            this.yylloc.range = [this.offset, this.offset += this.yyleng];
-        }
-        this._more = false;
-        this._backtrack = false;
-        this._input = this._input.slice(match[0].length);
-        this.matched += match[0];
-        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
-        if (this.done && this._input) {
-            this.done = false;
-        }
-        if (token) {
-            return token;
-        } else if (this._backtrack) {
-            // recover context
-            for (var k in backup) {
-                this[k] = backup[k];
-            }
-            return false; // rule action called reject() implying the next rule should be tested instead.
-        }
-        return false;
-    },
-
-// return next match in input
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) {
-            this.done = true;
-        }
-
-        var token,
-            match,
-            tempMatch,
-            index;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i = 0; i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (this.options.backtrack_lexer) {
-                    token = this.test_match(tempMatch, rules[i]);
+                var token, match, tempMatch, index;
+                if (!this._more) {
+                    this.yytext = '';
+                    this.match = '';
+                }
+                var rules = this._currentRules();
+                for (var i = 0; i < rules.length; i++) {
+                    tempMatch = this._input.match(this.rules[rules[i]]);
+                    if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                        match = tempMatch;
+                        index = i;
+                        if (this.options.backtrack_lexer) {
+                            token = this.test_match(tempMatch, rules[i]);
+                            if (token !== false) {
+                                return token;
+                            } else if (this._backtrack) {
+                                match = false;
+                                continue; // rule action called reject() implying a rule MISmatch.
+                            } else {
+                                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                                    return false;
+                                }
+                        } else if (!this.options.flex) {
+                            break;
+                        }
+                    }
+                }
+                if (match) {
+                    token = this.test_match(match, rules[index]);
                     if (token !== false) {
                         return token;
-                    } else if (this._backtrack) {
-                        match = false;
-                        continue; // rule action called reject() implying a rule MISmatch.
-                    } else {
-                        // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-                        return false;
                     }
-                } else if (!this.options.flex) {
-                    break;
+                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                    return false;
                 }
-            }
-        }
-        if (match) {
-            token = this.test_match(match, rules[index]);
-            if (token !== false) {
-                return token;
-            }
-            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-            return false;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-        }
-    },
+                if (this._input === "") {
+                    return this.EOF;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+            },
 
-// return next match that has a token
-lex:function lex() {
-        var r = this.next();
-        if (r) {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
+            // return next match that has a token
+            lex: function lex() {
+                var r = this.next();
+                if (r) {
+                    return r;
+                } else {
+                    return this.lex();
+                }
+            },
 
-// activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
-        this.conditionStack.push(condition);
-    },
+            // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
+            begin: function begin(condition) {
+                this.conditionStack.push(condition);
+            },
 
-// pop the previously active lexer condition state off the condition stack
-popState:function popState() {
-        var n = this.conditionStack.length - 1;
-        if (n > 0) {
-            return this.conditionStack.pop();
-        } else {
-            return this.conditionStack[0];
-        }
-    },
+            // pop the previously active lexer condition state off the condition stack
+            popState: function popState() {
+                var n = this.conditionStack.length - 1;
+                if (n > 0) {
+                    return this.conditionStack.pop();
+                } else {
+                    return this.conditionStack[0];
+                }
+            },
 
-// produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
-        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
-            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
-        } else {
-            return this.conditions["INITIAL"].rules;
-        }
-    },
+            // produce the lexer rule set which is active for the currently active lexer condition state
+            _currentRules: function _currentRules() {
+                if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+                    return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+                } else {
+                    return this.conditions["INITIAL"].rules;
+                }
+            },
 
-// return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
-        n = this.conditionStack.length - 1 - Math.abs(n || 0);
-        if (n >= 0) {
-            return this.conditionStack[n];
-        } else {
-            return "INITIAL";
-        }
-    },
+            // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
+            topState: function topState(n) {
+                n = this.conditionStack.length - 1 - Math.abs(n || 0);
+                if (n >= 0) {
+                    return this.conditionStack[n];
+                } else {
+                    return "INITIAL";
+                }
+            },
 
-// alias for begin(condition)
-pushState:function pushState(condition) {
-        this.begin(condition);
-    },
+            // alias for begin(condition)
+            pushState: function pushState(condition) {
+                this.begin(condition);
+            },
 
-// return the number of states currently on the stack
-stateStackSize:function stateStackSize() {
-        return this.conditionStack.length;
-    },
-options: {},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-var YYSTATE=YY_START;
-switch($avoiding_name_collisions) {
-case 0:return 'STYLE';
-break;
-case 1:return 'LINKSTYLE';
-break;
-case 2:return 'CLASSDEF';
-break;
-case 3:return 'CLASS';
-break;
-case 4:return 'CLICK';
-break;
-case 5:return 12;
-break;
-case 6:return 13;
-break;
-case 7:return 47;
-break;
-case 8:return 35;
-break;
-case 9:return 36;
-break;
-case 10:return 'DIR';
-break;
-case 11:return 'DIR';
-break;
-case 12:return 'DIR';
-break;
-case 13:return 'DIR';
-break;
-case 14:return 'DIR';
-break;
-case 15:return 'DIR';
-break;
-case 16:return 17;
-break;
-case 17:return 23;
-break;
-case 18:return 18;
-break;
-case 19:return 28;
-break;
-case 20:return 40;
-break;
-case 21:return 32;
-break;
-case 22:return 21;
-break;
-case 23:return 22;
-break;
-case 24:return 'ARROW_CROSS';
-break;
-case 25:return 57;
-break;
-case 26:return 'ARROW_CIRCLE';
-break;
-case 27:return 58;
-break;
-case 28:return 25;
-break;
-case 29:return 19;
-break;
-case 30:return 20;
-break;
-case 31:return 16;
-break;
-case 32:return 'PIPE';
-break;
-case 33:return 'PS';
-break;
-case 34:return 'PE';
-break;
-case 35:return 37;
-break;
-case 36:return 39;
-break;
-case 37:return 8
-break;
-case 38:return 10
-break;
-case 39:return 'QUOTE';
-break;
-case 40:return 24;
-break;
-case 41:return 'NEWLINE';
-break;
-case 42:return 5;
-break;
-}
-},
-rules: [/^(?:style\b)/,/^(?:linkStyle\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:digraph\b)/,/^(?:subgraph\b)/,/^(?:node\b)/,/^(?:edge\b)/,/^(?:LR\b)/,/^(?:RL\b)/,/^(?:TB\b)/,/^(?:BT\b)/,/^(?:TD\b)/,/^(?:BR\b)/,/^(?:[0-9])/,/^(?:#)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:=)/,/^(?:\*)/,/^(?:\.)/,/^(?:--[x])/,/^(?:->)/,/^(?:--[o])/,/^(?:--)/,/^(?:-)/,/^(?:\+)/,/^(?:=)/,/^(?:[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u0061-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC_])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:\s)/,/^(?:\n)/,/^(?:$)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42],"inclusive":true}}
-});
-return lexer;
-})();
-parser.lexer = lexer;
-function Parser () {
-  this.yy = {};
-}
-Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
-
-
-if (typeof _dereq_ !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
+            // return the number of states currently on the stack
+            stateStackSize: function stateStackSize() {
+                return this.conditionStack.length;
+            },
+            options: {},
+            performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
+                var YYSTATE = YY_START;
+                switch ($avoiding_name_collisions) {
+                    case 0:
+                        return 'STYLE';
+                        break;
+                    case 1:
+                        return 'LINKSTYLE';
+                        break;
+                    case 2:
+                        return 'CLASSDEF';
+                        break;
+                    case 3:
+                        return 'CLASS';
+                        break;
+                    case 4:
+                        return 'CLICK';
+                        break;
+                    case 5:
+                        return 12;
+                        break;
+                    case 6:
+                        return 13;
+                        break;
+                    case 7:
+                        return 47;
+                        break;
+                    case 8:
+                        return 35;
+                        break;
+                    case 9:
+                        return 36;
+                        break;
+                    case 10:
+                        return 'DIR';
+                        break;
+                    case 11:
+                        return 'DIR';
+                        break;
+                    case 12:
+                        return 'DIR';
+                        break;
+                    case 13:
+                        return 'DIR';
+                        break;
+                    case 14:
+                        return 'DIR';
+                        break;
+                    case 15:
+                        return 'DIR';
+                        break;
+                    case 16:
+                        return 17;
+                        break;
+                    case 17:
+                        return 23;
+                        break;
+                    case 18:
+                        return 18;
+                        break;
+                    case 19:
+                        return 28;
+                        break;
+                    case 20:
+                        return 40;
+                        break;
+                    case 21:
+                        return 32;
+                        break;
+                    case 22:
+                        return 21;
+                        break;
+                    case 23:
+                        return 22;
+                        break;
+                    case 24:
+                        return 'ARROW_CROSS';
+                        break;
+                    case 25:
+                        return 57;
+                        break;
+                    case 26:
+                        return 'ARROW_CIRCLE';
+                        break;
+                    case 27:
+                        return 58;
+                        break;
+                    case 28:
+                        return 25;
+                        break;
+                    case 29:
+                        return 19;
+                        break;
+                    case 30:
+                        return 20;
+                        break;
+                    case 31:
+                        return 16;
+                        break;
+                    case 32:
+                        return 'PIPE';
+                        break;
+                    case 33:
+                        return 'PS';
+                        break;
+                    case 34:
+                        return 'PE';
+                        break;
+                    case 35:
+                        return 37;
+                        break;
+                    case 36:
+                        return 39;
+                        break;
+                    case 37:
+                        return 8;
+                        break;
+                    case 38:
+                        return 10;
+                        break;
+                    case 39:
+                        return 'QUOTE';
+                        break;
+                    case 40:
+                        return 24;
+                        break;
+                    case 41:
+                        return 'NEWLINE';
+                        break;
+                    case 42:
+                        return 5;
+                        break;
+                }
+            },
+            rules: [/^(?:style\b)/, /^(?:linkStyle\b)/, /^(?:classDef\b)/, /^(?:class\b)/, /^(?:click\b)/, /^(?:graph\b)/, /^(?:digraph\b)/, /^(?:subgraph\b)/, /^(?:node\b)/, /^(?:edge\b)/, /^(?:LR\b)/, /^(?:RL\b)/, /^(?:TB\b)/, /^(?:BT\b)/, /^(?:TD\b)/, /^(?:BR\b)/, /^(?:[0-9])/, /^(?:#)/, /^(?::)/, /^(?:;)/, /^(?:,)/, /^(?:=)/, /^(?:\*)/, /^(?:\.)/, /^(?:--[x])/, /^(?:->)/, /^(?:--[o])/, /^(?:--)/, /^(?:-)/, /^(?:\+)/, /^(?:=)/, /^(?:[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u0061-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC_])/, /^(?:\|)/, /^(?:\()/, /^(?:\))/, /^(?:\[)/, /^(?:\])/, /^(?:\{)/, /^(?:\})/, /^(?:")/, /^(?:\s)/, /^(?:\n)/, /^(?:$)/],
+            conditions: { "INITIAL": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42], "inclusive": true } }
+        };
+        return lexer;
+    })();
+    parser.lexer = lexer;
+    function Parser() {
+        this.yy = {};
     }
-    var source = _dereq_('fs').readFileSync(_dereq_('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
-};
-if (typeof module !== 'undefined' && _dereq_.main === module) {
-  exports.main(process.argv.slice(1));
+    Parser.prototype = parser;parser.Parser = Parser;
+    return new Parser();
+})();
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parser = parser;
+    exports.Parser = parser.Parser;
+    exports.parse = function () {
+        return parser.parse.apply(parser, arguments);
+    };
+    exports.main = function commonjsMain(args) {
+        if (!args[1]) {
+            console.log('Usage: ' + args[0] + ' FILE');
+            process.exit(1);
+        }
+        var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+        return exports.parser.parse(source);
+    };
+    if (typeof module !== 'undefined' && require.main === module) {
+        exports.main(process.argv.slice(1));
+    }
 }
-}
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83,"fs":81,"path":82}],95:[function(_dereq_,module,exports){
+
+}).call(this,require('_process'))
+},{"_process":105,"fs":103,"path":104}],92:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -33692,874 +33724,1030 @@ if (typeof module !== 'undefined' && _dereq_.main === module) {
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,3],$V2=[1,5],$V3=[1,8,9,10,11,13,18,30,44,69,70,71,72,73,79,83,85,86,88,89,91,92,93],$V4=[2,2],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,31],$Va=[1,33],$Vb=[1,22],$Vc=[1,34],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,27],$Vh=[1,28],$Vi=[1,36],$Vj=[1,38],$Vk=[1,35],$Vl=[1,37],$Vm=[1,43],$Vn=[1,42],$Vo=[1,39],$Vp=[1,40],$Vq=[1,41],$Vr=[1,8,9,10,11,13,18,30,32,44,69,70,71,72,73,79,83,85,86,88,89,91,92,93],$Vs=[1,51],$Vt=[1,50],$Vu=[1,52],$Vv=[1,70],$Vw=[1,78],$Vx=[1,79],$Vy=[1,64],$Vz=[1,63],$VA=[1,83],$VB=[1,82],$VC=[1,80],$VD=[1,81],$VE=[1,71],$VF=[1,66],$VG=[1,65],$VH=[1,61],$VI=[1,73],$VJ=[1,74],$VK=[1,75],$VL=[1,76],$VM=[1,77],$VN=[1,68],$VO=[1,67],$VP=[8,9,11],$VQ=[8,9,11,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62],$VR=[1,112],$VS=[8,9,10,11,13,15,18,36,38,40,44,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,79,83,85,86,88,89,91,92,93],$VT=[8,9,10,11,12,13,15,16,17,18,30,32,36,37,38,39,40,41,44,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,69,70,71,72,73,76,79,81,83,85,86,88,89,91,92,93],$VU=[1,114],$VV=[1,115],$VW=[8,9,10,11,13,18,30,32,44,69,70,71,72,73,79,83,85,86,88,89,91,92,93],$VX=[8,9,10,11,12,13,15,16,17,18,30,32,37,39,41,44,48,49,50,51,52,54,55,56,57,58,59,60,61,62,63,69,70,71,72,73,76,79,81,83,85,86,88,89,91,92,93],$VY=[13,18,44,79,83,85,86,88,89,91,92,93],$VZ=[13,18,44,47,63,79,83,85,86,88,89,91,92,93],$V_=[1,186],$V$=[1,183],$V01=[1,190],$V11=[1,187],$V21=[1,184],$V31=[1,191],$V41=[1,181],$V51=[1,182],$V61=[1,185],$V71=[1,188],$V81=[1,189],$V91=[1,205],$Va1=[8,9,11,83],$Vb1=[8,9,10,11,44,69,78,79,81,83,85,86,87,88,89];
-var parser = {trace: function trace() { },
-yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"document":5,"line":6,"statement":7,"SEMI":8,"NEWLINE":9,"SPACE":10,"EOF":11,"GRAPH":12,"DIR":13,"FirstStmtSeperator":14,"TAGEND":15,"TAGSTART":16,"UP":17,"DOWN":18,"ending":19,"endToken":20,"spaceList":21,"spaceListNewline":22,"verticeStatement":23,"separator":24,"styleStatement":25,"linkStyleStatement":26,"classDefStatement":27,"classStatement":28,"clickStatement":29,"subgraph":30,"text":31,"end":32,"vertex":33,"link":34,"alphaNum":35,"SQS":36,"SQE":37,"PS":38,"PE":39,"DIAMOND_START":40,"DIAMOND_STOP":41,"alphaNumStatement":42,"alphaNumToken":43,"MINUS":44,"linkStatement":45,"arrowText":46,"TESTSTR":47,"--":48,"ARROW_POINT":49,"ARROW_CIRCLE":50,"ARROW_CROSS":51,"ARROW_OPEN":52,"-.":53,"DOTTED_ARROW_POINT":54,"DOTTED_ARROW_CIRCLE":55,"DOTTED_ARROW_CROSS":56,"DOTTED_ARROW_OPEN":57,"==":58,"THICK_ARROW_POINT":59,"THICK_ARROW_CIRCLE":60,"THICK_ARROW_CROSS":61,"THICK_ARROW_OPEN":62,"PIPE":63,"textToken":64,"STR":65,"commentText":66,"commentToken":67,"keywords":68,"STYLE":69,"LINKSTYLE":70,"CLASSDEF":71,"CLASS":72,"CLICK":73,"textNoTags":74,"textNoTagsToken":75,"DEFAULT":76,"stylesOpt":77,"HEX":78,"NUM":79,"commentStatement":80,"PCT":81,"style":82,"COMMA":83,"styleComponent":84,"ALPHA":85,"COLON":86,"UNIT":87,"BRKT":88,"DOT":89,"graphCodeTokens":90,"PLUS":91,"EQUALS":92,"MULT":93,"TAG_START":94,"TAG_END":95,"QUOTE":96,"$accept":0,"$end":1},
-terminals_: {2:"error",8:"SEMI",9:"NEWLINE",10:"SPACE",11:"EOF",12:"GRAPH",13:"DIR",15:"TAGEND",16:"TAGSTART",17:"UP",18:"DOWN",30:"subgraph",32:"end",36:"SQS",37:"SQE",38:"PS",39:"PE",40:"DIAMOND_START",41:"DIAMOND_STOP",44:"MINUS",47:"TESTSTR",48:"--",49:"ARROW_POINT",50:"ARROW_CIRCLE",51:"ARROW_CROSS",52:"ARROW_OPEN",53:"-.",54:"DOTTED_ARROW_POINT",55:"DOTTED_ARROW_CIRCLE",56:"DOTTED_ARROW_CROSS",57:"DOTTED_ARROW_OPEN",58:"==",59:"THICK_ARROW_POINT",60:"THICK_ARROW_CIRCLE",61:"THICK_ARROW_CROSS",62:"THICK_ARROW_OPEN",63:"PIPE",65:"STR",69:"STYLE",70:"LINKSTYLE",71:"CLASSDEF",72:"CLASS",73:"CLICK",76:"DEFAULT",78:"HEX",79:"NUM",81:"PCT",83:"COMMA",85:"ALPHA",86:"COLON",87:"UNIT",88:"BRKT",89:"DOT",91:"PLUS",92:"EQUALS",93:"MULT",94:"TAG_START",95:"TAG_END",96:"QUOTE"},
-productions_: [0,[3,2],[5,0],[5,2],[6,1],[6,1],[6,1],[6,1],[6,1],[4,2],[4,2],[4,4],[4,4],[4,4],[4,4],[4,4],[19,2],[19,1],[20,1],[20,1],[20,1],[14,1],[14,1],[14,2],[22,2],[22,2],[22,1],[22,1],[21,2],[21,1],[7,2],[7,2],[7,2],[7,2],[7,2],[7,2],[7,5],[7,4],[24,1],[24,1],[24,1],[23,3],[23,1],[33,4],[33,5],[33,6],[33,7],[33,4],[33,5],[33,4],[33,5],[33,4],[33,5],[33,1],[33,2],[35,1],[35,2],[42,1],[42,1],[42,1],[42,1],[34,2],[34,3],[34,3],[34,1],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[34,3],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[45,1],[46,3],[31,1],[31,2],[31,1],[66,1],[66,2],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[68,1],[74,1],[74,2],[27,5],[27,5],[28,5],[29,5],[29,7],[29,5],[29,7],[25,5],[25,5],[26,5],[26,5],[80,3],[77,1],[77,3],[82,1],[82,2],[84,1],[84,1],[84,1],[84,1],[84,1],[84,1],[84,1],[84,1],[84,1],[84,1],[84,1],[67,1],[67,1],[64,1],[64,1],[64,1],[64,1],[64,1],[64,1],[64,1],[75,1],[75,1],[75,1],[75,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1],[90,1]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
-/* this == yyval */
+"use strict";
 
-var $0 = $$.length - 1;
-switch (yystate) {
-case 2:
- this.$ = [];
-break;
-case 3:
+var parser = (function () {
+    var o = function o(k, v, _o, l) {
+        for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
+    },
+        $V0 = [1, 4],
+        $V1 = [1, 3],
+        $V2 = [1, 5],
+        $V3 = [1, 8, 9, 10, 11, 13, 18, 30, 44, 69, 70, 71, 72, 73, 79, 83, 85, 86, 88, 89, 91, 92, 93],
+        $V4 = [2, 2],
+        $V5 = [1, 12],
+        $V6 = [1, 13],
+        $V7 = [1, 14],
+        $V8 = [1, 15],
+        $V9 = [1, 31],
+        $Va = [1, 33],
+        $Vb = [1, 22],
+        $Vc = [1, 34],
+        $Vd = [1, 24],
+        $Ve = [1, 25],
+        $Vf = [1, 26],
+        $Vg = [1, 27],
+        $Vh = [1, 28],
+        $Vi = [1, 36],
+        $Vj = [1, 38],
+        $Vk = [1, 35],
+        $Vl = [1, 37],
+        $Vm = [1, 43],
+        $Vn = [1, 42],
+        $Vo = [1, 39],
+        $Vp = [1, 40],
+        $Vq = [1, 41],
+        $Vr = [1, 8, 9, 10, 11, 13, 18, 30, 32, 44, 69, 70, 71, 72, 73, 79, 83, 85, 86, 88, 89, 91, 92, 93],
+        $Vs = [1, 51],
+        $Vt = [1, 50],
+        $Vu = [1, 52],
+        $Vv = [1, 70],
+        $Vw = [1, 78],
+        $Vx = [1, 79],
+        $Vy = [1, 64],
+        $Vz = [1, 63],
+        $VA = [1, 83],
+        $VB = [1, 82],
+        $VC = [1, 80],
+        $VD = [1, 81],
+        $VE = [1, 71],
+        $VF = [1, 66],
+        $VG = [1, 65],
+        $VH = [1, 61],
+        $VI = [1, 73],
+        $VJ = [1, 74],
+        $VK = [1, 75],
+        $VL = [1, 76],
+        $VM = [1, 77],
+        $VN = [1, 68],
+        $VO = [1, 67],
+        $VP = [8, 9, 11],
+        $VQ = [8, 9, 11, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62],
+        $VR = [1, 112],
+        $VS = [8, 9, 10, 11, 13, 15, 18, 36, 38, 40, 44, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 79, 83, 85, 86, 88, 89, 91, 92, 93],
+        $VT = [8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 30, 32, 36, 37, 38, 39, 40, 41, 44, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 69, 70, 71, 72, 73, 76, 79, 81, 83, 85, 86, 88, 89, 91, 92, 93],
+        $VU = [1, 114],
+        $VV = [1, 115],
+        $VW = [8, 9, 10, 11, 13, 18, 30, 32, 44, 69, 70, 71, 72, 73, 79, 83, 85, 86, 88, 89, 91, 92, 93],
+        $VX = [8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 30, 32, 37, 39, 41, 44, 48, 49, 50, 51, 52, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 69, 70, 71, 72, 73, 76, 79, 81, 83, 85, 86, 88, 89, 91, 92, 93],
+        $VY = [13, 18, 44, 79, 83, 85, 86, 88, 89, 91, 92, 93],
+        $VZ = [13, 18, 44, 47, 63, 79, 83, 85, 86, 88, 89, 91, 92, 93],
+        $V_ = [1, 186],
+        $V$ = [1, 183],
+        $V01 = [1, 190],
+        $V11 = [1, 187],
+        $V21 = [1, 184],
+        $V31 = [1, 191],
+        $V41 = [1, 181],
+        $V51 = [1, 182],
+        $V61 = [1, 185],
+        $V71 = [1, 188],
+        $V81 = [1, 189],
+        $V91 = [1, 205],
+        $Va1 = [8, 9, 11, 83],
+        $Vb1 = [8, 9, 10, 11, 44, 69, 78, 79, 81, 83, 85, 86, 87, 88, 89];
+    var parser = { trace: function trace() {},
+        yy: {},
+        symbols_: { "error": 2, "mermaidDoc": 3, "graphConfig": 4, "document": 5, "line": 6, "statement": 7, "SEMI": 8, "NEWLINE": 9, "SPACE": 10, "EOF": 11, "GRAPH": 12, "DIR": 13, "FirstStmtSeperator": 14, "TAGEND": 15, "TAGSTART": 16, "UP": 17, "DOWN": 18, "ending": 19, "endToken": 20, "spaceList": 21, "spaceListNewline": 22, "verticeStatement": 23, "separator": 24, "styleStatement": 25, "linkStyleStatement": 26, "classDefStatement": 27, "classStatement": 28, "clickStatement": 29, "subgraph": 30, "text": 31, "end": 32, "vertex": 33, "link": 34, "alphaNum": 35, "SQS": 36, "SQE": 37, "PS": 38, "PE": 39, "DIAMOND_START": 40, "DIAMOND_STOP": 41, "alphaNumStatement": 42, "alphaNumToken": 43, "MINUS": 44, "linkStatement": 45, "arrowText": 46, "TESTSTR": 47, "--": 48, "ARROW_POINT": 49, "ARROW_CIRCLE": 50, "ARROW_CROSS": 51, "ARROW_OPEN": 52, "-.": 53, "DOTTED_ARROW_POINT": 54, "DOTTED_ARROW_CIRCLE": 55, "DOTTED_ARROW_CROSS": 56, "DOTTED_ARROW_OPEN": 57, "==": 58, "THICK_ARROW_POINT": 59, "THICK_ARROW_CIRCLE": 60, "THICK_ARROW_CROSS": 61, "THICK_ARROW_OPEN": 62, "PIPE": 63, "textToken": 64, "STR": 65, "commentText": 66, "commentToken": 67, "keywords": 68, "STYLE": 69, "LINKSTYLE": 70, "CLASSDEF": 71, "CLASS": 72, "CLICK": 73, "textNoTags": 74, "textNoTagsToken": 75, "DEFAULT": 76, "stylesOpt": 77, "HEX": 78, "NUM": 79, "commentStatement": 80, "PCT": 81, "style": 82, "COMMA": 83, "styleComponent": 84, "ALPHA": 85, "COLON": 86, "UNIT": 87, "BRKT": 88, "DOT": 89, "graphCodeTokens": 90, "PLUS": 91, "EQUALS": 92, "MULT": 93, "TAG_START": 94, "TAG_END": 95, "QUOTE": 96, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 8: "SEMI", 9: "NEWLINE", 10: "SPACE", 11: "EOF", 12: "GRAPH", 13: "DIR", 15: "TAGEND", 16: "TAGSTART", 17: "UP", 18: "DOWN", 30: "subgraph", 32: "end", 36: "SQS", 37: "SQE", 38: "PS", 39: "PE", 40: "DIAMOND_START", 41: "DIAMOND_STOP", 44: "MINUS", 47: "TESTSTR", 48: "--", 49: "ARROW_POINT", 50: "ARROW_CIRCLE", 51: "ARROW_CROSS", 52: "ARROW_OPEN", 53: "-.", 54: "DOTTED_ARROW_POINT", 55: "DOTTED_ARROW_CIRCLE", 56: "DOTTED_ARROW_CROSS", 57: "DOTTED_ARROW_OPEN", 58: "==", 59: "THICK_ARROW_POINT", 60: "THICK_ARROW_CIRCLE", 61: "THICK_ARROW_CROSS", 62: "THICK_ARROW_OPEN", 63: "PIPE", 65: "STR", 69: "STYLE", 70: "LINKSTYLE", 71: "CLASSDEF", 72: "CLASS", 73: "CLICK", 76: "DEFAULT", 78: "HEX", 79: "NUM", 81: "PCT", 83: "COMMA", 85: "ALPHA", 86: "COLON", 87: "UNIT", 88: "BRKT", 89: "DOT", 91: "PLUS", 92: "EQUALS", 93: "MULT", 94: "TAG_START", 95: "TAG_END", 96: "QUOTE" },
+        productions_: [0, [3, 2], [5, 0], [5, 2], [6, 1], [6, 1], [6, 1], [6, 1], [6, 1], [4, 2], [4, 2], [4, 4], [4, 4], [4, 4], [4, 4], [4, 4], [19, 2], [19, 1], [20, 1], [20, 1], [20, 1], [14, 1], [14, 1], [14, 2], [22, 2], [22, 2], [22, 1], [22, 1], [21, 2], [21, 1], [7, 2], [7, 2], [7, 2], [7, 2], [7, 2], [7, 2], [7, 5], [7, 4], [24, 1], [24, 1], [24, 1], [23, 3], [23, 1], [33, 4], [33, 5], [33, 6], [33, 7], [33, 4], [33, 5], [33, 4], [33, 5], [33, 4], [33, 5], [33, 1], [33, 2], [35, 1], [35, 2], [42, 1], [42, 1], [42, 1], [42, 1], [34, 2], [34, 3], [34, 3], [34, 1], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [34, 3], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [45, 1], [46, 3], [31, 1], [31, 2], [31, 1], [66, 1], [66, 2], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [68, 1], [74, 1], [74, 2], [27, 5], [27, 5], [28, 5], [29, 5], [29, 7], [29, 5], [29, 7], [25, 5], [25, 5], [26, 5], [26, 5], [80, 3], [77, 1], [77, 3], [82, 1], [82, 2], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [84, 1], [67, 1], [67, 1], [64, 1], [64, 1], [64, 1], [64, 1], [64, 1], [64, 1], [64, 1], [75, 1], [75, 1], [75, 1], [75, 1], [43, 1], [43, 1], [43, 1], [43, 1], [43, 1], [43, 1], [43, 1], [43, 1], [43, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1], [90, 1]],
+        performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
+            /* this == yyval */
 
-	    if($$[$0] !== []){
-	        $$[$0-1].push($$[$0]);
-	    }
-	    this.$=$$[$0-1];
-break;
-case 4: case 55: case 57: case 58: case 90: case 92: case 93: case 106:
-this.$=$$[$0];
-break;
-case 11:
- yy.setDirection($$[$0-1]);this.$ = $$[$0-1];
-break;
-case 12:
- yy.setDirection("LR");this.$ = $$[$0-1];
-break;
-case 13:
- yy.setDirection("RL");this.$ = $$[$0-1];
-break;
-case 14:
- yy.setDirection("BT");this.$ = $$[$0-1];
-break;
-case 15:
- yy.setDirection("TB");this.$ = $$[$0-1];
-break;
-case 30:
-this.$=$$[$0-1]
-break;
-case 31: case 32: case 33: case 34: case 35:
-this.$=[];
-break;
-case 36:
-this.$=yy.addSubGraph($$[$0-1],$$[$0-3]);
-break;
-case 37:
-this.$=yy.addSubGraph($$[$0-1],undefined);
-break;
-case 41:
- yy.addLink($$[$0-2],$$[$0],$$[$0-1]);this.$ = [$$[$0-2],$$[$0]];
-break;
-case 42:
-this.$ = [$$[$0]];
-break;
-case 43:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'square');
-break;
-case 44:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'square');
-break;
-case 45:
-this.$ = $$[$0-5];yy.addVertex($$[$0-5],$$[$0-2],'circle');
-break;
-case 46:
-this.$ = $$[$0-6];yy.addVertex($$[$0-6],$$[$0-3],'circle');
-break;
-case 47:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'round');
-break;
-case 48:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'round');
-break;
-case 49:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'diamond');
-break;
-case 50:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'diamond');
-break;
-case 51:
-this.$ = $$[$0-3];yy.addVertex($$[$0-3],$$[$0-1],'odd');
-break;
-case 52:
-this.$ = $$[$0-4];yy.addVertex($$[$0-4],$$[$0-2],'odd');
-break;
-case 53:
-this.$ = $$[$0];yy.addVertex($$[$0]);
-break;
-case 54:
-this.$ = $$[$0-1];yy.addVertex($$[$0-1]);
-break;
-case 56: case 91: case 94: case 107:
-this.$=$$[$0-1]+''+$$[$0];
-break;
-case 59:
-this.$='v';
-break;
-case 60:
-this.$='-';
-break;
-case 61:
-$$[$0-1].text = $$[$0];this.$ = $$[$0-1];
-break;
-case 62: case 63:
-$$[$0-2].text = $$[$0-1];this.$ = $$[$0-2];
-break;
-case 64:
-this.$ = $$[$0];
-break;
-case 65:
-this.$ = {"type":"arrow","stroke":"normal","text":$$[$0-1]};
-break;
-case 66:
-this.$ = {"type":"arrow_circle","stroke":"normal","text":$$[$0-1]};
-break;
-case 67:
-this.$ = {"type":"arrow_cross","stroke":"normal","text":$$[$0-1]};
-break;
-case 68:
-this.$ = {"type":"arrow_open","stroke":"normal","text":$$[$0-1]};
-break;
-case 69:
-this.$ = {"type":"arrow","stroke":"dotted","text":$$[$0-1]};
-break;
-case 70:
-this.$ = {"type":"arrow_circle","stroke":"dotted","text":$$[$0-1]};
-break;
-case 71:
-this.$ = {"type":"arrow_cross","stroke":"dotted","text":$$[$0-1]};
-break;
-case 72:
-this.$ = {"type":"arrow_open","stroke":"dotted","text":$$[$0-1]};
-break;
-case 73:
-this.$ = {"type":"arrow","stroke":"thick","text":$$[$0-1]};
-break;
-case 74:
-this.$ = {"type":"arrow_circle","stroke":"thick","text":$$[$0-1]};
-break;
-case 75:
-this.$ = {"type":"arrow_cross","stroke":"thick","text":$$[$0-1]};
-break;
-case 76:
-this.$ = {"type":"arrow_open","stroke":"thick","text":$$[$0-1]};
-break;
-case 77:
-this.$ = {"type":"arrow","stroke":"normal"};
-break;
-case 78:
-this.$ = {"type":"arrow_circle","stroke":"normal"};
-break;
-case 79:
-this.$ = {"type":"arrow_cross","stroke":"normal"};
-break;
-case 80:
-this.$ = {"type":"arrow_open","stroke":"normal"};
-break;
-case 81:
-this.$ = {"type":"arrow","stroke":"dotted"};
-break;
-case 82:
-this.$ = {"type":"arrow_circle","stroke":"dotted"};
-break;
-case 83:
-this.$ = {"type":"arrow_cross","stroke":"dotted"};
-break;
-case 84:
-this.$ = {"type":"arrow_open","stroke":"dotted"};
-break;
-case 85:
-this.$ = {"type":"arrow","stroke":"thick"};
-break;
-case 86:
-this.$ = {"type":"arrow_circle","stroke":"thick"};
-break;
-case 87:
-this.$ = {"type":"arrow_cross","stroke":"thick"};
-break;
-case 88:
-this.$ = {"type":"arrow_open","stroke":"thick"};
-break;
-case 89:
-this.$ = $$[$0-1];
-break;
-case 108: case 109:
-this.$ = $$[$0-4];yy.addClass($$[$0-2],$$[$0]);
-break;
-case 110:
-this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
-break;
-case 111:
-this.$ = $$[$0-4];yy.setClickEvent($$[$0-2],        $$[$0], undefined, undefined);
-break;
-case 112:
-this.$ = $$[$0-6];yy.setClickEvent($$[$0-4],        $$[$0-2], undefined, $$[$0])       ;
-break;
-case 113:
-this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], undefined,        $$[$0], undefined);
-break;
-case 114:
-this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], undefined,        $$[$0-2], $$[$0]       );
-break;
-case 115:
-this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);
-break;
-case 116: case 117: case 118:
-this.$ = $$[$0-4];yy.updateLink($$[$0-2],$$[$0]);
-break;
-case 120:
-this.$ = [$$[$0]]
-break;
-case 121:
-$$[$0-2].push($$[$0]);this.$ = $$[$0-2];
-break;
-case 123:
-this.$ = $$[$0-1] + $$[$0];
-break;
-}
-},
-table: [{3:1,4:2,9:$V0,10:$V1,12:$V2},{1:[3]},o($V3,$V4,{5:6}),{4:7,9:$V0,10:$V1,12:$V2},{4:8,9:$V0,10:$V1,12:$V2},{10:[1,9]},{1:[2,1],6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,13:$V9,18:$Va,23:16,25:17,26:18,27:19,28:20,29:21,30:$Vb,33:23,35:29,42:30,43:32,44:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($V3,[2,9]),o($V3,[2,10]),{13:[1,44],15:[1,45],16:[1,46],17:[1,47],18:[1,48]},o($Vr,[2,3]),o($Vr,[2,4]),o($Vr,[2,5]),o($Vr,[2,6]),o($Vr,[2,7]),o($Vr,[2,8]),{8:$Vs,9:$Vt,11:$Vu,24:49},{8:$Vs,9:$Vt,11:$Vu,24:53},{8:$Vs,9:$Vt,11:$Vu,24:54},{8:$Vs,9:$Vt,11:$Vu,24:55},{8:$Vs,9:$Vt,11:$Vu,24:56},{8:$Vs,9:$Vt,11:$Vu,24:57},{8:$Vs,9:$Vt,10:$Vv,11:$Vu,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,24:59,30:$VC,31:58,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VP,[2,42],{34:84,45:85,48:[1,86],49:[1,89],50:[1,90],51:[1,91],52:[1,92],53:[1,87],54:[1,93],55:[1,94],56:[1,95],57:[1,96],58:[1,88],59:[1,97],60:[1,98],61:[1,99],62:[1,100]}),{10:[1,101]},{10:[1,102]},{10:[1,103]},{10:[1,104]},{10:[1,105]},o($VQ,[2,53],{43:32,21:110,42:111,10:$VR,13:$V9,15:[1,109],18:$Va,36:[1,106],38:[1,107],40:[1,108],44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq}),o($VS,[2,55]),o($VS,[2,57]),o($VS,[2,58]),o($VS,[2,59]),o($VS,[2,60]),o($VT,[2,148]),o($VT,[2,149]),o($VT,[2,150]),o($VT,[2,151]),o($VT,[2,152]),o($VT,[2,153]),o($VT,[2,154]),o($VT,[2,155]),o($VT,[2,156]),{8:$VU,9:$VV,10:$VR,14:113,21:116},{8:$VU,9:$VV,10:$VR,14:117,21:116},{8:$VU,9:$VV,10:$VR,14:118,21:116},{8:$VU,9:$VV,10:$VR,14:119,21:116},{8:$VU,9:$VV,10:$VR,14:120,21:116},o($Vr,[2,30]),o($Vr,[2,38]),o($Vr,[2,39]),o($Vr,[2,40]),o($Vr,[2,31]),o($Vr,[2,32]),o($Vr,[2,33]),o($Vr,[2,34]),o($Vr,[2,35]),{8:$Vs,9:$Vt,10:$Vv,11:$Vu,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,24:121,30:$VC,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VW,$V4,{5:123}),o($VX,[2,90]),o($VX,[2,92]),o($VX,[2,137]),o($VX,[2,138]),o($VX,[2,139]),o($VX,[2,140]),o($VX,[2,141]),o($VX,[2,142]),o($VX,[2,143]),o($VX,[2,144]),o($VX,[2,145]),o($VX,[2,146]),o($VX,[2,147]),o($VX,[2,95]),o($VX,[2,96]),o($VX,[2,97]),o($VX,[2,98]),o($VX,[2,99]),o($VX,[2,100]),o($VX,[2,101]),o($VX,[2,102]),o($VX,[2,103]),o($VX,[2,104]),o($VX,[2,105]),{13:$V9,18:$Va,33:124,35:29,42:30,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VY,[2,64],{46:125,47:[1,126],63:[1,127]}),{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:128,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:129,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:130,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VZ,[2,77]),o($VZ,[2,78]),o($VZ,[2,79]),o($VZ,[2,80]),o($VZ,[2,81]),o($VZ,[2,82]),o($VZ,[2,83]),o($VZ,[2,84]),o($VZ,[2,85]),o($VZ,[2,86]),o($VZ,[2,87]),o($VZ,[2,88]),{13:$V9,18:$Va,35:131,42:30,43:32,44:$Vc,78:[1,132],79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{76:[1,133],79:[1,134]},{13:$V9,18:$Va,35:136,42:30,43:32,44:$Vc,76:[1,135],79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{13:$V9,18:$Va,35:137,42:30,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{13:$V9,18:$Va,35:138,42:30,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:139,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:141,32:$VD,38:[1,140],43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:142,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:143,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VQ,[2,54]),o($VS,[2,56]),o($VQ,[2,29],{21:144,10:$VR}),o($V3,[2,11]),o($V3,[2,21]),o($V3,[2,22]),{9:[1,145]},o($V3,[2,12]),o($V3,[2,13]),o($V3,[2,14]),o($V3,[2,15]),o($VW,$V4,{5:146}),o($VX,[2,91]),{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,13:$V9,18:$Va,23:16,25:17,26:18,27:19,28:20,29:21,30:$Vb,32:[1,147],33:23,35:29,42:30,43:32,44:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VP,[2,41]),o($VY,[2,61],{10:[1,148]}),{10:[1,149]},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:150,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,43:69,44:$VE,48:$VF,49:[1,151],50:[1,152],51:[1,153],52:[1,154],58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,43:69,44:$VE,48:$VF,54:[1,155],55:[1,156],56:[1,157],57:[1,158],58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,43:69,44:$VE,48:$VF,58:$VG,59:[1,159],60:[1,160],61:[1,161],62:[1,162],64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:[1,163],13:$V9,18:$Va,42:111,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:[1,164]},{10:[1,165]},{10:[1,166]},{10:[1,167]},{10:[1,168],13:$V9,18:$Va,42:111,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:[1,169],13:$V9,18:$Va,42:111,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:[1,170],13:$V9,18:$Va,42:111,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,37:[1,171],43:69,44:$VE,48:$VF,58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,31:172,32:$VD,43:69,44:$VE,48:$VF,58:$VG,64:60,65:$VH,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,39:[1,173],43:69,44:$VE,48:$VF,58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,41:[1,174],43:69,44:$VE,48:$VF,58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,37:[1,175],43:69,44:$VE,48:$VF,58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VQ,[2,28]),o($V3,[2,23]),{6:10,7:11,8:$V5,9:$V6,10:$V7,11:$V8,13:$V9,18:$Va,23:16,25:17,26:18,27:19,28:20,29:21,30:$Vb,32:[1,176],33:23,35:29,42:30,43:32,44:$Vc,69:$Vd,70:$Ve,71:$Vf,72:$Vg,73:$Vh,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($Vr,[2,37]),o($VY,[2,63]),o($VY,[2,62]),{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,43:69,44:$VE,48:$VF,58:$VG,63:[1,177],64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VY,[2,65]),o($VY,[2,66]),o($VY,[2,67]),o($VY,[2,68]),o($VY,[2,69]),o($VY,[2,70]),o($VY,[2,71]),o($VY,[2,72]),o($VY,[2,73]),o($VY,[2,74]),o($VY,[2,75]),o($VY,[2,76]),{10:$V_,44:$V$,69:$V01,77:178,78:$V11,79:$V21,81:$V31,82:179,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},{10:$V_,44:$V$,69:$V01,77:192,78:$V11,79:$V21,81:$V31,82:179,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},{10:$V_,44:$V$,69:$V01,77:193,78:$V11,79:$V21,81:$V31,82:179,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},{10:$V_,44:$V$,69:$V01,77:194,78:$V11,79:$V21,81:$V31,82:179,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},{10:$V_,44:$V$,69:$V01,77:195,78:$V11,79:$V21,81:$V31,82:179,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},{10:$V_,44:$V$,69:$V01,77:196,78:$V11,79:$V21,81:$V31,82:179,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},{13:$V9,18:$Va,35:197,42:30,43:32,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},{13:$V9,18:$Va,35:198,42:30,43:32,44:$Vc,65:[1,199],79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VQ,[2,43],{21:200,10:$VR}),{10:$Vv,12:$Vw,13:$Vx,15:$Vy,16:$Vz,17:$VA,18:$VB,30:$VC,32:$VD,39:[1,201],43:69,44:$VE,48:$VF,58:$VG,64:122,68:72,69:$VI,70:$VJ,71:$VK,72:$VL,73:$VM,75:62,76:$VN,79:$Vi,81:$VO,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq},o($VQ,[2,47],{21:202,10:$VR}),o($VQ,[2,49],{21:203,10:$VR}),o($VQ,[2,51],{21:204,10:$VR}),o($Vr,[2,36]),o([10,13,18,44,79,83,85,86,88,89,91,92,93],[2,89]),o($VP,[2,115],{83:$V91}),o($Va1,[2,120],{84:206,10:$V_,44:$V$,69:$V01,78:$V11,79:$V21,81:$V31,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81}),o($Vb1,[2,122]),o($Vb1,[2,124]),o($Vb1,[2,125]),o($Vb1,[2,126]),o($Vb1,[2,127]),o($Vb1,[2,128]),o($Vb1,[2,129]),o($Vb1,[2,130]),o($Vb1,[2,131]),o($Vb1,[2,132]),o($Vb1,[2,133]),o($Vb1,[2,134]),o($VP,[2,116],{83:$V91}),o($VP,[2,117],{83:$V91}),o($VP,[2,118],{83:$V91}),o($VP,[2,108],{83:$V91}),o($VP,[2,109],{83:$V91}),o($VP,[2,110],{43:32,42:111,13:$V9,18:$Va,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq}),o($VP,[2,111],{43:32,42:111,10:[1,207],13:$V9,18:$Va,44:$Vc,79:$Vi,83:$Vj,85:$Vk,86:$Vl,88:$Vm,89:$Vn,91:$Vo,92:$Vp,93:$Vq}),o($VP,[2,113],{10:[1,208]}),o($VQ,[2,44]),{39:[1,209]},o($VQ,[2,48]),o($VQ,[2,50]),o($VQ,[2,52]),{10:$V_,44:$V$,69:$V01,78:$V11,79:$V21,81:$V31,82:210,84:180,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81},o($Vb1,[2,123]),{65:[1,211]},{65:[1,212]},o($VQ,[2,45],{21:213,10:$VR}),o($Va1,[2,121],{84:206,10:$V_,44:$V$,69:$V01,78:$V11,79:$V21,81:$V31,85:$V41,86:$V51,87:$V61,88:$V71,89:$V81}),o($VP,[2,112]),o($VP,[2,114]),o($VQ,[2,46])],
-defaultActions: {},
-parseError: function parseError(str, hash) {
-    if (hash.recoverable) {
-        this.trace(str);
-    } else {
-        throw new Error(str);
-    }
-},
-parse: function parse(input) {
-    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    var args = lstack.slice.call(arguments, 1);
-    var lexer = Object.create(this.lexer);
-    var sharedState = { yy: {} };
-    for (var k in this.yy) {
-        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
-            sharedState.yy[k] = this.yy[k];
-        }
-    }
-    lexer.setInput(input, sharedState.yy);
-    sharedState.yy.lexer = lexer;
-    sharedState.yy.parser = this;
-    if (typeof lexer.yylloc == 'undefined') {
-        lexer.yylloc = {};
-    }
-    var yyloc = lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = lexer.options && lexer.options.ranges;
-    if (typeof sharedState.yy.parseError === 'function') {
-        this.parseError = sharedState.yy.parseError;
-    } else {
-        this.parseError = Object.getPrototypeOf(this).parseError;
-    }
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    _token_stack:
-        function lex() {
-            var token;
-            token = lexer.lex() || EOF;
-            if (typeof token !== 'number') {
-                token = self.symbols_[token] || token;
+            var $0 = $$.length - 1;
+            switch (yystate) {
+                case 2:
+                    this.$ = [];
+                    break;
+                case 3:
+
+                    if ($$[$0] !== []) {
+                        $$[$0 - 1].push($$[$0]);
+                    }
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 4:case 55:case 57:case 58:case 90:case 92:case 93:case 106:
+                    this.$ = $$[$0];
+                    break;
+                case 11:
+                    yy.setDirection($$[$0 - 1]);this.$ = $$[$0 - 1];
+                    break;
+                case 12:
+                    yy.setDirection("LR");this.$ = $$[$0 - 1];
+                    break;
+                case 13:
+                    yy.setDirection("RL");this.$ = $$[$0 - 1];
+                    break;
+                case 14:
+                    yy.setDirection("BT");this.$ = $$[$0 - 1];
+                    break;
+                case 15:
+                    yy.setDirection("TB");this.$ = $$[$0 - 1];
+                    break;
+                case 30:
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 31:case 32:case 33:case 34:case 35:
+                    this.$ = [];
+                    break;
+                case 36:
+                    this.$ = yy.addSubGraph($$[$0 - 1], $$[$0 - 3]);
+                    break;
+                case 37:
+                    this.$ = yy.addSubGraph($$[$0 - 1], undefined);
+                    break;
+                case 41:
+                    yy.addLink($$[$0 - 2], $$[$0], $$[$0 - 1]);this.$ = [$$[$0 - 2], $$[$0]];
+                    break;
+                case 42:
+                    this.$ = [$$[$0]];
+                    break;
+                case 43:
+                    this.$ = $$[$0 - 3];yy.addVertex($$[$0 - 3], $$[$0 - 1], 'square');
+                    break;
+                case 44:
+                    this.$ = $$[$0 - 4];yy.addVertex($$[$0 - 4], $$[$0 - 2], 'square');
+                    break;
+                case 45:
+                    this.$ = $$[$0 - 5];yy.addVertex($$[$0 - 5], $$[$0 - 2], 'circle');
+                    break;
+                case 46:
+                    this.$ = $$[$0 - 6];yy.addVertex($$[$0 - 6], $$[$0 - 3], 'circle');
+                    break;
+                case 47:
+                    this.$ = $$[$0 - 3];yy.addVertex($$[$0 - 3], $$[$0 - 1], 'round');
+                    break;
+                case 48:
+                    this.$ = $$[$0 - 4];yy.addVertex($$[$0 - 4], $$[$0 - 2], 'round');
+                    break;
+                case 49:
+                    this.$ = $$[$0 - 3];yy.addVertex($$[$0 - 3], $$[$0 - 1], 'diamond');
+                    break;
+                case 50:
+                    this.$ = $$[$0 - 4];yy.addVertex($$[$0 - 4], $$[$0 - 2], 'diamond');
+                    break;
+                case 51:
+                    this.$ = $$[$0 - 3];yy.addVertex($$[$0 - 3], $$[$0 - 1], 'odd');
+                    break;
+                case 52:
+                    this.$ = $$[$0 - 4];yy.addVertex($$[$0 - 4], $$[$0 - 2], 'odd');
+                    break;
+                case 53:
+                    this.$ = $$[$0];yy.addVertex($$[$0]);
+                    break;
+                case 54:
+                    this.$ = $$[$0 - 1];yy.addVertex($$[$0 - 1]);
+                    break;
+                case 56:case 91:case 94:case 107:
+                    this.$ = $$[$0 - 1] + '' + $$[$0];
+                    break;
+                case 59:
+                    this.$ = 'v';
+                    break;
+                case 60:
+                    this.$ = '-';
+                    break;
+                case 61:
+                    $$[$0 - 1].text = $$[$0];this.$ = $$[$0 - 1];
+                    break;
+                case 62:case 63:
+                    $$[$0 - 2].text = $$[$0 - 1];this.$ = $$[$0 - 2];
+                    break;
+                case 64:
+                    this.$ = $$[$0];
+                    break;
+                case 65:
+                    this.$ = { "type": "arrow", "stroke": "normal", "text": $$[$0 - 1] };
+                    break;
+                case 66:
+                    this.$ = { "type": "arrow_circle", "stroke": "normal", "text": $$[$0 - 1] };
+                    break;
+                case 67:
+                    this.$ = { "type": "arrow_cross", "stroke": "normal", "text": $$[$0 - 1] };
+                    break;
+                case 68:
+                    this.$ = { "type": "arrow_open", "stroke": "normal", "text": $$[$0 - 1] };
+                    break;
+                case 69:
+                    this.$ = { "type": "arrow", "stroke": "dotted", "text": $$[$0 - 1] };
+                    break;
+                case 70:
+                    this.$ = { "type": "arrow_circle", "stroke": "dotted", "text": $$[$0 - 1] };
+                    break;
+                case 71:
+                    this.$ = { "type": "arrow_cross", "stroke": "dotted", "text": $$[$0 - 1] };
+                    break;
+                case 72:
+                    this.$ = { "type": "arrow_open", "stroke": "dotted", "text": $$[$0 - 1] };
+                    break;
+                case 73:
+                    this.$ = { "type": "arrow", "stroke": "thick", "text": $$[$0 - 1] };
+                    break;
+                case 74:
+                    this.$ = { "type": "arrow_circle", "stroke": "thick", "text": $$[$0 - 1] };
+                    break;
+                case 75:
+                    this.$ = { "type": "arrow_cross", "stroke": "thick", "text": $$[$0 - 1] };
+                    break;
+                case 76:
+                    this.$ = { "type": "arrow_open", "stroke": "thick", "text": $$[$0 - 1] };
+                    break;
+                case 77:
+                    this.$ = { "type": "arrow", "stroke": "normal" };
+                    break;
+                case 78:
+                    this.$ = { "type": "arrow_circle", "stroke": "normal" };
+                    break;
+                case 79:
+                    this.$ = { "type": "arrow_cross", "stroke": "normal" };
+                    break;
+                case 80:
+                    this.$ = { "type": "arrow_open", "stroke": "normal" };
+                    break;
+                case 81:
+                    this.$ = { "type": "arrow", "stroke": "dotted" };
+                    break;
+                case 82:
+                    this.$ = { "type": "arrow_circle", "stroke": "dotted" };
+                    break;
+                case 83:
+                    this.$ = { "type": "arrow_cross", "stroke": "dotted" };
+                    break;
+                case 84:
+                    this.$ = { "type": "arrow_open", "stroke": "dotted" };
+                    break;
+                case 85:
+                    this.$ = { "type": "arrow", "stroke": "thick" };
+                    break;
+                case 86:
+                    this.$ = { "type": "arrow_circle", "stroke": "thick" };
+                    break;
+                case 87:
+                    this.$ = { "type": "arrow_cross", "stroke": "thick" };
+                    break;
+                case 88:
+                    this.$ = { "type": "arrow_open", "stroke": "thick" };
+                    break;
+                case 89:
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 108:case 109:
+                    this.$ = $$[$0 - 4];yy.addClass($$[$0 - 2], $$[$0]);
+                    break;
+                case 110:
+                    this.$ = $$[$0 - 4];yy.setClass($$[$0 - 2], $$[$0]);
+                    break;
+                case 111:
+                    this.$ = $$[$0 - 4];yy.setClickEvent($$[$0 - 2], $$[$0], undefined, undefined);
+                    break;
+                case 112:
+                    this.$ = $$[$0 - 6];yy.setClickEvent($$[$0 - 4], $$[$0 - 2], undefined, $$[$0]);
+                    break;
+                case 113:
+                    this.$ = $$[$0 - 4];yy.setClickEvent($$[$0 - 2], undefined, $$[$0], undefined);
+                    break;
+                case 114:
+                    this.$ = $$[$0 - 6];yy.setClickEvent($$[$0 - 4], undefined, $$[$0 - 2], $$[$0]);
+                    break;
+                case 115:
+                    this.$ = $$[$0 - 4];yy.addVertex($$[$0 - 2], undefined, undefined, $$[$0]);
+                    break;
+                case 116:case 117:case 118:
+                    this.$ = $$[$0 - 4];yy.updateLink($$[$0 - 2], $$[$0]);
+                    break;
+                case 120:
+                    this.$ = [$$[$0]];
+                    break;
+                case 121:
+                    $$[$0 - 2].push($$[$0]);this.$ = $$[$0 - 2];
+                    break;
+                case 123:
+                    this.$ = $$[$0 - 1] + $$[$0];
+                    break;
             }
-            return token;
-        }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == 'undefined') {
-                symbol = lex();
+        },
+        table: [{ 3: 1, 4: 2, 9: $V0, 10: $V1, 12: $V2 }, { 1: [3] }, o($V3, $V4, { 5: 6 }), { 4: 7, 9: $V0, 10: $V1, 12: $V2 }, { 4: 8, 9: $V0, 10: $V1, 12: $V2 }, { 10: [1, 9] }, { 1: [2, 1], 6: 10, 7: 11, 8: $V5, 9: $V6, 10: $V7, 11: $V8, 13: $V9, 18: $Va, 23: 16, 25: 17, 26: 18, 27: 19, 28: 20, 29: 21, 30: $Vb, 33: 23, 35: 29, 42: 30, 43: 32, 44: $Vc, 69: $Vd, 70: $Ve, 71: $Vf, 72: $Vg, 73: $Vh, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($V3, [2, 9]), o($V3, [2, 10]), { 13: [1, 44], 15: [1, 45], 16: [1, 46], 17: [1, 47], 18: [1, 48] }, o($Vr, [2, 3]), o($Vr, [2, 4]), o($Vr, [2, 5]), o($Vr, [2, 6]), o($Vr, [2, 7]), o($Vr, [2, 8]), { 8: $Vs, 9: $Vt, 11: $Vu, 24: 49 }, { 8: $Vs, 9: $Vt, 11: $Vu, 24: 53 }, { 8: $Vs, 9: $Vt, 11: $Vu, 24: 54 }, { 8: $Vs, 9: $Vt, 11: $Vu, 24: 55 }, { 8: $Vs, 9: $Vt, 11: $Vu, 24: 56 }, { 8: $Vs, 9: $Vt, 11: $Vu, 24: 57 }, { 8: $Vs, 9: $Vt, 10: $Vv, 11: $Vu, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 24: 59, 30: $VC, 31: 58, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VP, [2, 42], { 34: 84, 45: 85, 48: [1, 86], 49: [1, 89], 50: [1, 90], 51: [1, 91], 52: [1, 92], 53: [1, 87], 54: [1, 93], 55: [1, 94], 56: [1, 95], 57: [1, 96], 58: [1, 88], 59: [1, 97], 60: [1, 98], 61: [1, 99], 62: [1, 100] }), { 10: [1, 101] }, { 10: [1, 102] }, { 10: [1, 103] }, { 10: [1, 104] }, { 10: [1, 105] }, o($VQ, [2, 53], { 43: 32, 21: 110, 42: 111, 10: $VR, 13: $V9, 15: [1, 109], 18: $Va, 36: [1, 106], 38: [1, 107], 40: [1, 108], 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }), o($VS, [2, 55]), o($VS, [2, 57]), o($VS, [2, 58]), o($VS, [2, 59]), o($VS, [2, 60]), o($VT, [2, 148]), o($VT, [2, 149]), o($VT, [2, 150]), o($VT, [2, 151]), o($VT, [2, 152]), o($VT, [2, 153]), o($VT, [2, 154]), o($VT, [2, 155]), o($VT, [2, 156]), { 8: $VU, 9: $VV, 10: $VR, 14: 113, 21: 116 }, { 8: $VU, 9: $VV, 10: $VR, 14: 117, 21: 116 }, { 8: $VU, 9: $VV, 10: $VR, 14: 118, 21: 116 }, { 8: $VU, 9: $VV, 10: $VR, 14: 119, 21: 116 }, { 8: $VU, 9: $VV, 10: $VR, 14: 120, 21: 116 }, o($Vr, [2, 30]), o($Vr, [2, 38]), o($Vr, [2, 39]), o($Vr, [2, 40]), o($Vr, [2, 31]), o($Vr, [2, 32]), o($Vr, [2, 33]), o($Vr, [2, 34]), o($Vr, [2, 35]), { 8: $Vs, 9: $Vt, 10: $Vv, 11: $Vu, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 24: 121, 30: $VC, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VW, $V4, { 5: 123 }), o($VX, [2, 90]), o($VX, [2, 92]), o($VX, [2, 137]), o($VX, [2, 138]), o($VX, [2, 139]), o($VX, [2, 140]), o($VX, [2, 141]), o($VX, [2, 142]), o($VX, [2, 143]), o($VX, [2, 144]), o($VX, [2, 145]), o($VX, [2, 146]), o($VX, [2, 147]), o($VX, [2, 95]), o($VX, [2, 96]), o($VX, [2, 97]), o($VX, [2, 98]), o($VX, [2, 99]), o($VX, [2, 100]), o($VX, [2, 101]), o($VX, [2, 102]), o($VX, [2, 103]), o($VX, [2, 104]), o($VX, [2, 105]), { 13: $V9, 18: $Va, 33: 124, 35: 29, 42: 30, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VY, [2, 64], { 46: 125, 47: [1, 126], 63: [1, 127] }), { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 128, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 129, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 130, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VZ, [2, 77]), o($VZ, [2, 78]), o($VZ, [2, 79]), o($VZ, [2, 80]), o($VZ, [2, 81]), o($VZ, [2, 82]), o($VZ, [2, 83]), o($VZ, [2, 84]), o($VZ, [2, 85]), o($VZ, [2, 86]), o($VZ, [2, 87]), o($VZ, [2, 88]), { 13: $V9, 18: $Va, 35: 131, 42: 30, 43: 32, 44: $Vc, 78: [1, 132], 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 76: [1, 133], 79: [1, 134] }, { 13: $V9, 18: $Va, 35: 136, 42: 30, 43: 32, 44: $Vc, 76: [1, 135], 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 13: $V9, 18: $Va, 35: 137, 42: 30, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 13: $V9, 18: $Va, 35: 138, 42: 30, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 139, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 141, 32: $VD, 38: [1, 140], 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 142, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 143, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VQ, [2, 54]), o($VS, [2, 56]), o($VQ, [2, 29], { 21: 144, 10: $VR }), o($V3, [2, 11]), o($V3, [2, 21]), o($V3, [2, 22]), { 9: [1, 145] }, o($V3, [2, 12]), o($V3, [2, 13]), o($V3, [2, 14]), o($V3, [2, 15]), o($VW, $V4, { 5: 146 }), o($VX, [2, 91]), { 6: 10, 7: 11, 8: $V5, 9: $V6, 10: $V7, 11: $V8, 13: $V9, 18: $Va, 23: 16, 25: 17, 26: 18, 27: 19, 28: 20, 29: 21, 30: $Vb, 32: [1, 147], 33: 23, 35: 29, 42: 30, 43: 32, 44: $Vc, 69: $Vd, 70: $Ve, 71: $Vf, 72: $Vg, 73: $Vh, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VP, [2, 41]), o($VY, [2, 61], { 10: [1, 148] }), { 10: [1, 149] }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 150, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 43: 69, 44: $VE, 48: $VF, 49: [1, 151], 50: [1, 152], 51: [1, 153], 52: [1, 154], 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 43: 69, 44: $VE, 48: $VF, 54: [1, 155], 55: [1, 156], 56: [1, 157], 57: [1, 158], 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 59: [1, 159], 60: [1, 160], 61: [1, 161], 62: [1, 162], 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: [1, 163], 13: $V9, 18: $Va, 42: 111, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: [1, 164] }, { 10: [1, 165] }, { 10: [1, 166] }, { 10: [1, 167] }, { 10: [1, 168], 13: $V9, 18: $Va, 42: 111, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: [1, 169], 13: $V9, 18: $Va, 42: 111, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: [1, 170], 13: $V9, 18: $Va, 42: 111, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 37: [1, 171], 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 31: 172, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 60, 65: $VH, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 39: [1, 173], 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 41: [1, 174], 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 37: [1, 175], 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VQ, [2, 28]), o($V3, [2, 23]), { 6: 10, 7: 11, 8: $V5, 9: $V6, 10: $V7, 11: $V8, 13: $V9, 18: $Va, 23: 16, 25: 17, 26: 18, 27: 19, 28: 20, 29: 21, 30: $Vb, 32: [1, 176], 33: 23, 35: 29, 42: 30, 43: 32, 44: $Vc, 69: $Vd, 70: $Ve, 71: $Vf, 72: $Vg, 73: $Vh, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($Vr, [2, 37]), o($VY, [2, 63]), o($VY, [2, 62]), { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 43: 69, 44: $VE, 48: $VF, 58: $VG, 63: [1, 177], 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VY, [2, 65]), o($VY, [2, 66]), o($VY, [2, 67]), o($VY, [2, 68]), o($VY, [2, 69]), o($VY, [2, 70]), o($VY, [2, 71]), o($VY, [2, 72]), o($VY, [2, 73]), o($VY, [2, 74]), o($VY, [2, 75]), o($VY, [2, 76]), { 10: $V_, 44: $V$, 69: $V01, 77: 178, 78: $V11, 79: $V21, 81: $V31, 82: 179, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, { 10: $V_, 44: $V$, 69: $V01, 77: 192, 78: $V11, 79: $V21, 81: $V31, 82: 179, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, { 10: $V_, 44: $V$, 69: $V01, 77: 193, 78: $V11, 79: $V21, 81: $V31, 82: 179, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, { 10: $V_, 44: $V$, 69: $V01, 77: 194, 78: $V11, 79: $V21, 81: $V31, 82: 179, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, { 10: $V_, 44: $V$, 69: $V01, 77: 195, 78: $V11, 79: $V21, 81: $V31, 82: 179, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, { 10: $V_, 44: $V$, 69: $V01, 77: 196, 78: $V11, 79: $V21, 81: $V31, 82: 179, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, { 13: $V9, 18: $Va, 35: 197, 42: 30, 43: 32, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, { 13: $V9, 18: $Va, 35: 198, 42: 30, 43: 32, 44: $Vc, 65: [1, 199], 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VQ, [2, 43], { 21: 200, 10: $VR }), { 10: $Vv, 12: $Vw, 13: $Vx, 15: $Vy, 16: $Vz, 17: $VA, 18: $VB, 30: $VC, 32: $VD, 39: [1, 201], 43: 69, 44: $VE, 48: $VF, 58: $VG, 64: 122, 68: 72, 69: $VI, 70: $VJ, 71: $VK, 72: $VL, 73: $VM, 75: 62, 76: $VN, 79: $Vi, 81: $VO, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }, o($VQ, [2, 47], { 21: 202, 10: $VR }), o($VQ, [2, 49], { 21: 203, 10: $VR }), o($VQ, [2, 51], { 21: 204, 10: $VR }), o($Vr, [2, 36]), o([10, 13, 18, 44, 79, 83, 85, 86, 88, 89, 91, 92, 93], [2, 89]), o($VP, [2, 115], { 83: $V91 }), o($Va1, [2, 120], { 84: 206, 10: $V_, 44: $V$, 69: $V01, 78: $V11, 79: $V21, 81: $V31, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }), o($Vb1, [2, 122]), o($Vb1, [2, 124]), o($Vb1, [2, 125]), o($Vb1, [2, 126]), o($Vb1, [2, 127]), o($Vb1, [2, 128]), o($Vb1, [2, 129]), o($Vb1, [2, 130]), o($Vb1, [2, 131]), o($Vb1, [2, 132]), o($Vb1, [2, 133]), o($Vb1, [2, 134]), o($VP, [2, 116], { 83: $V91 }), o($VP, [2, 117], { 83: $V91 }), o($VP, [2, 118], { 83: $V91 }), o($VP, [2, 108], { 83: $V91 }), o($VP, [2, 109], { 83: $V91 }), o($VP, [2, 110], { 43: 32, 42: 111, 13: $V9, 18: $Va, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }), o($VP, [2, 111], { 43: 32, 42: 111, 10: [1, 207], 13: $V9, 18: $Va, 44: $Vc, 79: $Vi, 83: $Vj, 85: $Vk, 86: $Vl, 88: $Vm, 89: $Vn, 91: $Vo, 92: $Vp, 93: $Vq }), o($VP, [2, 113], { 10: [1, 208] }), o($VQ, [2, 44]), { 39: [1, 209] }, o($VQ, [2, 48]), o($VQ, [2, 50]), o($VQ, [2, 52]), { 10: $V_, 44: $V$, 69: $V01, 78: $V11, 79: $V21, 81: $V31, 82: 210, 84: 180, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }, o($Vb1, [2, 123]), { 65: [1, 211] }, { 65: [1, 212] }, o($VQ, [2, 45], { 21: 213, 10: $VR }), o($Va1, [2, 121], { 84: 206, 10: $V_, 44: $V$, 69: $V01, 78: $V11, 79: $V21, 81: $V31, 85: $V41, 86: $V51, 87: $V61, 88: $V71, 89: $V81 }), o($VP, [2, 112]), o($VP, [2, 114]), o($VQ, [2, 46])],
+        defaultActions: {},
+        parseError: function parseError(str, hash) {
+            if (hash.recoverable) {
+                this.trace(str);
+            } else {
+                throw new Error(str);
             }
-            action = table[state] && table[state][symbol];
-        }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
+        },
+        parse: function parse(input) {
+            var self = this,
+                stack = [0],
+                tstack = [],
+                vstack = [null],
+                lstack = [],
+                table = this.table,
+                yytext = '',
+                yylineno = 0,
+                yyleng = 0,
+                recovering = 0,
+                TERROR = 2,
+                EOF = 1;
+            var args = lstack.slice.call(arguments, 1);
+            var lexer = Object.create(this.lexer);
+            var sharedState = { yy: {} };
+            for (var k in this.yy) {
+                if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+                    sharedState.yy[k] = this.yy[k];
+                }
+            }
+            lexer.setInput(input, sharedState.yy);
+            sharedState.yy.lexer = lexer;
+            sharedState.yy.parser = this;
+            if (typeof lexer.yylloc == 'undefined') {
+                lexer.yylloc = {};
+            }
+            var yyloc = lexer.yylloc;
+            lstack.push(yyloc);
+            var ranges = lexer.options && lexer.options.ranges;
+            if (typeof sharedState.yy.parseError === 'function') {
+                this.parseError = sharedState.yy.parseError;
+            } else {
+                this.parseError = Object.getPrototypeOf(this).parseError;
+            }
+            function popStack(n) {
+                stack.length = stack.length - 2 * n;
+                vstack.length = vstack.length - n;
+                lstack.length = lstack.length - n;
+            }
+            _token_stack: var lex = function lex() {
+                var token;
+                token = lexer.lex() || EOF;
+                if (typeof token !== 'number') {
+                    token = self.symbols_[token] || token;
+                }
+                return token;
+            };
+            var symbol,
+                preErrorSymbol,
+                state,
+                action,
+                a,
+                r,
+                yyval = {},
+                p,
+                len,
+                newState,
+                expected;
+            while (true) {
+                state = stack[stack.length - 1];
+                if (this.defaultActions[state]) {
+                    action = this.defaultActions[state];
+                } else {
+                    if (symbol === null || typeof symbol == 'undefined') {
+                        symbol = lex();
+                    }
+                    action = table[state] && table[state][symbol];
+                }
+                if (typeof action === 'undefined' || !action.length || !action[0]) {
+                    var errStr = '';
+                    expected = [];
+                    for (p in table[state]) {
+                        if (this.terminals_[p] && p > TERROR) {
+                            expected.push('\'' + this.terminals_[p] + '\'');
+                        }
+                    }
+                    if (lexer.showPosition) {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                    } else {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                    }
+                    this.parseError(errStr, {
+                        text: lexer.match,
+                        token: this.terminals_[symbol] || symbol,
+                        line: lexer.yylineno,
+                        loc: yyloc,
+                        expected: expected
+                    });
+                }
+                if (action[0] instanceof Array && action.length > 1) {
+                    throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+                }
+                switch (action[0]) {
+                    case 1:
+                        stack.push(symbol);
+                        vstack.push(lexer.yytext);
+                        lstack.push(lexer.yylloc);
+                        stack.push(action[1]);
+                        symbol = null;
+                        if (!preErrorSymbol) {
+                            yyleng = lexer.yyleng;
+                            yytext = lexer.yytext;
+                            yylineno = lexer.yylineno;
+                            yyloc = lexer.yylloc;
+                            if (recovering > 0) {
+                                recovering--;
+                            }
+                        } else {
+                            symbol = preErrorSymbol;
+                            preErrorSymbol = null;
+                        }
+                        break;
+                    case 2:
+                        len = this.productions_[action[1]][1];
+                        yyval.$ = vstack[vstack.length - len];
+                        yyval._$ = {
+                            first_line: lstack[lstack.length - (len || 1)].first_line,
+                            last_line: lstack[lstack.length - 1].last_line,
+                            first_column: lstack[lstack.length - (len || 1)].first_column,
+                            last_column: lstack[lstack.length - 1].last_column
+                        };
+                        if (ranges) {
+                            yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
+                        }
+                        r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
+                        if (typeof r !== 'undefined') {
+                            return r;
+                        }
+                        if (len) {
+                            stack = stack.slice(0, -1 * len * 2);
+                            vstack = vstack.slice(0, -1 * len);
+                            lstack = lstack.slice(0, -1 * len);
+                        }
+                        stack.push(this.productions_[action[1]][0]);
+                        vstack.push(yyval.$);
+                        lstack.push(yyval._$);
+                        newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+                        stack.push(newState);
+                        break;
+                    case 3:
+                        return true;
+                }
+            }
+            return true;
+        } };
+
+    /* generated by jison-lex 0.3.4 */
+    var lexer = (function () {
+        var lexer = {
+
+            EOF: 1,
+
+            parseError: function parseError(str, hash) {
+                if (this.yy.parser) {
+                    this.yy.parser.parseError(str, hash);
+                } else {
+                    throw new Error(str);
+                }
+            },
+
+            // resets the lexer, sets new input
+            setInput: function setInput(input, yy) {
+                this.yy = yy || this.yy || {};
+                this._input = input;
+                this._more = this._backtrack = this.done = false;
+                this.yylineno = this.yyleng = 0;
+                this.yytext = this.matched = this.match = '';
+                this.conditionStack = ['INITIAL'];
+                this.yylloc = {
+                    first_line: 1,
+                    first_column: 0,
+                    last_line: 1,
+                    last_column: 0
+                };
+                if (this.options.ranges) {
+                    this.yylloc.range = [0, 0];
+                }
+                this.offset = 0;
+                return this;
+            },
+
+            // consumes and returns one char from the input
+            input: function input() {
+                var ch = this._input[0];
+                this.yytext += ch;
+                this.yyleng++;
+                this.offset++;
+                this.match += ch;
+                this.matched += ch;
+                var lines = ch.match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno++;
+                    this.yylloc.last_line++;
+                } else {
+                    this.yylloc.last_column++;
+                }
+                if (this.options.ranges) {
+                    this.yylloc.range[1]++;
+                }
+
+                this._input = this._input.slice(1);
+                return ch;
+            },
+
+            // unshifts one char (or a string) into the input
+            unput: function unput(ch) {
+                var len = ch.length;
+                var lines = ch.split(/(?:\r\n?|\n)/g);
+
+                this._input = ch + this._input;
+                this.yytext = this.yytext.substr(0, this.yytext.length - len);
+                //this.yyleng -= len;
+                this.offset -= len;
+                var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+                this.match = this.match.substr(0, this.match.length - 1);
+                this.matched = this.matched.substr(0, this.matched.length - 1);
+
+                if (lines.length - 1) {
+                    this.yylineno -= lines.length - 1;
+                }
+                var r = this.yylloc.range;
+
+                this.yylloc = {
+                    first_line: this.yylloc.first_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.first_column,
+                    last_column: lines ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length : this.yylloc.first_column - len
+                };
+
+                if (this.options.ranges) {
+                    this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+                }
+                this.yyleng = this.yytext.length;
+                return this;
+            },
+
+            // When called from action, caches matched text and appends it on next action
+            more: function more() {
+                this._more = true;
+                return this;
+            },
+
+            // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
+            reject: function reject() {
+                if (this.options.backtrack_lexer) {
+                    this._backtrack = true;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+                return this;
+            },
+
+            // retain first n characters of the match
+            less: function less(n) {
+                this.unput(this.match.slice(n));
+            },
+
+            // displays already matched input, i.e. for error messages
+            pastInput: function pastInput() {
+                var past = this.matched.substr(0, this.matched.length - this.match.length);
+                return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
+            },
+
+            // displays upcoming input, i.e. for error messages
+            upcomingInput: function upcomingInput() {
+                var next = this.match;
+                if (next.length < 20) {
+                    next += this._input.substr(0, 20 - next.length);
+                }
+                return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+            },
+
+            // displays the character position where the lexing error occurred, i.e. for error messages
+            showPosition: function showPosition() {
+                var pre = this.pastInput();
+                var c = new Array(pre.length + 1).join("-");
+                return pre + this.upcomingInput() + "\n" + c + "^";
+            },
+
+            // test the lexed token: return FALSE when not a match, otherwise return token
+            test_match: function test_match(match, indexed_rule) {
+                var token, lines, backup;
+
+                if (this.options.backtrack_lexer) {
+                    // save context
+                    backup = {
+                        yylineno: this.yylineno,
+                        yylloc: {
+                            first_line: this.yylloc.first_line,
+                            last_line: this.last_line,
+                            first_column: this.yylloc.first_column,
+                            last_column: this.yylloc.last_column
+                        },
+                        yytext: this.yytext,
+                        match: this.match,
+                        matches: this.matches,
+                        matched: this.matched,
+                        yyleng: this.yyleng,
+                        offset: this.offset,
+                        _more: this._more,
+                        _input: this._input,
+                        yy: this.yy,
+                        conditionStack: this.conditionStack.slice(0),
+                        done: this.done
+                    };
+                    if (this.options.ranges) {
+                        backup.yylloc.range = this.yylloc.range.slice(0);
                     }
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+
+                lines = match[0].match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno += lines.length;
                 }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
-            }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(lexer.yytext);
-            lstack.push(lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = lexer.yyleng;
-                yytext = lexer.yytext;
-                yylineno = lexer.yylineno;
-                yyloc = lexer.yylloc;
-                if (recovering > 0) {
-                    recovering--;
+                this.yylloc = {
+                    first_line: this.yylloc.last_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.last_column,
+                    last_column: lines ? lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length
+                };
+                this.yytext += match[0];
+                this.match += match[0];
+                this.matches = match;
+                this.yyleng = this.yytext.length;
+                if (this.options.ranges) {
+                    this.yylloc.range = [this.offset, this.offset += this.yyleng];
                 }
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
-            }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {
-                first_line: lstack[lstack.length - (len || 1)].first_line,
-                last_line: lstack[lstack.length - 1].last_line,
-                first_column: lstack[lstack.length - (len || 1)].first_column,
-                last_column: lstack[lstack.length - 1].last_column
-            };
-            if (ranges) {
-                yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                ];
-            }
-            r = this.performAction.apply(yyval, [
-                yytext,
-                yyleng,
-                yylineno,
-                sharedState.yy,
-                action[1],
-                vstack,
-                lstack
-            ].concat(args));
-            if (typeof r !== 'undefined') {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}};
+                this._more = false;
+                this._backtrack = false;
+                this._input = this._input.slice(match[0].length);
+                this.matched += match[0];
+                token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+                if (this.done && this._input) {
+                    this.done = false;
+                }
+                if (token) {
+                    return token;
+                } else if (this._backtrack) {
+                    // recover context
+                    for (var k in backup) {
+                        this[k] = backup[k];
+                    }
+                    return false; // rule action called reject() implying the next rule should be tested instead.
+                }
+                return false;
+            },
 
-/* generated by jison-lex 0.3.4 */
-var lexer = (function(){
-var lexer = ({
+            // return next match in input
+            next: function next() {
+                if (this.done) {
+                    return this.EOF;
+                }
+                if (!this._input) {
+                    this.done = true;
+                }
 
-EOF:1,
-
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
-
-// resets the lexer, sets new input
-setInput:function (input, yy) {
-        this.yy = yy || this.yy || {};
-        this._input = input;
-        this._more = this._backtrack = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {
-            first_line: 1,
-            first_column: 0,
-            last_line: 1,
-            last_column: 0
-        };
-        if (this.options.ranges) {
-            this.yylloc.range = [0,0];
-        }
-        this.offset = 0;
-        return this;
-    },
-
-// consumes and returns one char from the input
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) {
-            this.yylloc.range[1]++;
-        }
-
-        this._input = this._input.slice(1);
-        return ch;
-    },
-
-// unshifts one char (or a string) into the input
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
-
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length - len);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length - 1);
-        this.matched = this.matched.substr(0, this.matched.length - 1);
-
-        if (lines.length - 1) {
-            this.yylineno -= lines.length - 1;
-        }
-        var r = this.yylloc.range;
-
-        this.yylloc = {
-            first_line: this.yylloc.first_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
-                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
-              this.yylloc.first_column - len
-        };
-
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        this.yyleng = this.yytext.length;
-        return this;
-    },
-
-// When called from action, caches matched text and appends it on next action
-more:function () {
-        this._more = true;
-        return this;
-    },
-
-// When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-reject:function () {
-        if (this.options.backtrack_lexer) {
-            this._backtrack = true;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-
-        }
-        return this;
-    },
-
-// retain first n characters of the match
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
-
-// displays already matched input, i.e. for error messages
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
-
-// displays upcoming input, i.e. for error messages
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
-    },
-
-// displays the character position where the lexing error occurred, i.e. for error messages
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c + "^";
-    },
-
-// test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
-        var token,
-            lines,
-            backup;
-
-        if (this.options.backtrack_lexer) {
-            // save context
-            backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                    first_line: this.yylloc.first_line,
-                    last_line: this.last_line,
-                    first_column: this.yylloc.first_column,
-                    last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-            };
-            if (this.options.ranges) {
-                backup.yylloc.range = this.yylloc.range.slice(0);
-            }
-        }
-
-        lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno += lines.length;
-        }
-        this.yylloc = {
-            first_line: this.yylloc.last_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.last_column,
-            last_column: lines ?
-                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
-                         this.yylloc.last_column + match[0].length
-        };
-        this.yytext += match[0];
-        this.match += match[0];
-        this.matches = match;
-        this.yyleng = this.yytext.length;
-        if (this.options.ranges) {
-            this.yylloc.range = [this.offset, this.offset += this.yyleng];
-        }
-        this._more = false;
-        this._backtrack = false;
-        this._input = this._input.slice(match[0].length);
-        this.matched += match[0];
-        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
-        if (this.done && this._input) {
-            this.done = false;
-        }
-        if (token) {
-            return token;
-        } else if (this._backtrack) {
-            // recover context
-            for (var k in backup) {
-                this[k] = backup[k];
-            }
-            return false; // rule action called reject() implying the next rule should be tested instead.
-        }
-        return false;
-    },
-
-// return next match in input
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) {
-            this.done = true;
-        }
-
-        var token,
-            match,
-            tempMatch,
-            index;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i = 0; i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (this.options.backtrack_lexer) {
-                    token = this.test_match(tempMatch, rules[i]);
+                var token, match, tempMatch, index;
+                if (!this._more) {
+                    this.yytext = '';
+                    this.match = '';
+                }
+                var rules = this._currentRules();
+                for (var i = 0; i < rules.length; i++) {
+                    tempMatch = this._input.match(this.rules[rules[i]]);
+                    if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                        match = tempMatch;
+                        index = i;
+                        if (this.options.backtrack_lexer) {
+                            token = this.test_match(tempMatch, rules[i]);
+                            if (token !== false) {
+                                return token;
+                            } else if (this._backtrack) {
+                                match = false;
+                                continue; // rule action called reject() implying a rule MISmatch.
+                            } else {
+                                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                                    return false;
+                                }
+                        } else if (!this.options.flex) {
+                            break;
+                        }
+                    }
+                }
+                if (match) {
+                    token = this.test_match(match, rules[index]);
                     if (token !== false) {
                         return token;
-                    } else if (this._backtrack) {
-                        match = false;
-                        continue; // rule action called reject() implying a rule MISmatch.
-                    } else {
-                        // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-                        return false;
                     }
-                } else if (!this.options.flex) {
-                    break;
+                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                    return false;
                 }
-            }
-        }
-        if (match) {
-            token = this.test_match(match, rules[index]);
-            if (token !== false) {
-                return token;
-            }
-            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-            return false;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-        }
-    },
+                if (this._input === "") {
+                    return this.EOF;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+            },
 
-// return next match that has a token
-lex:function lex() {
-        var r = this.next();
-        if (r) {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
+            // return next match that has a token
+            lex: function lex() {
+                var r = this.next();
+                if (r) {
+                    return r;
+                } else {
+                    return this.lex();
+                }
+            },
 
-// activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
-        this.conditionStack.push(condition);
-    },
+            // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
+            begin: function begin(condition) {
+                this.conditionStack.push(condition);
+            },
 
-// pop the previously active lexer condition state off the condition stack
-popState:function popState() {
-        var n = this.conditionStack.length - 1;
-        if (n > 0) {
-            return this.conditionStack.pop();
-        } else {
-            return this.conditionStack[0];
-        }
-    },
+            // pop the previously active lexer condition state off the condition stack
+            popState: function popState() {
+                var n = this.conditionStack.length - 1;
+                if (n > 0) {
+                    return this.conditionStack.pop();
+                } else {
+                    return this.conditionStack[0];
+                }
+            },
 
-// produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
-        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
-            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
-        } else {
-            return this.conditions["INITIAL"].rules;
-        }
-    },
+            // produce the lexer rule set which is active for the currently active lexer condition state
+            _currentRules: function _currentRules() {
+                if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+                    return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+                } else {
+                    return this.conditions["INITIAL"].rules;
+                }
+            },
 
-// return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
-        n = this.conditionStack.length - 1 - Math.abs(n || 0);
-        if (n >= 0) {
-            return this.conditionStack[n];
-        } else {
-            return "INITIAL";
-        }
-    },
+            // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
+            topState: function topState(n) {
+                n = this.conditionStack.length - 1 - Math.abs(n || 0);
+                if (n >= 0) {
+                    return this.conditionStack[n];
+                } else {
+                    return "INITIAL";
+                }
+            },
 
-// alias for begin(condition)
-pushState:function pushState(condition) {
-        this.begin(condition);
-    },
+            // alias for begin(condition)
+            pushState: function pushState(condition) {
+                this.begin(condition);
+            },
 
-// return the number of states currently on the stack
-stateStackSize:function stateStackSize() {
-        return this.conditionStack.length;
-    },
-options: {},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-var YYSTATE=YY_START;
-switch($avoiding_name_collisions) {
-case 0:/* do nothing */
-break;
-case 1:this.begin("string");
-break;
-case 2:this.popState();
-break;
-case 3:return "STR";
-break;
-case 4:return 69;
-break;
-case 5:return 76;
-break;
-case 6:return 70;
-break;
-case 7:return 71;
-break;
-case 8:return 72;
-break;
-case 9:return 73;
-break;
-case 10:return 12;
-break;
-case 11:return 30;
-break;
-case 12:return 32;
-break;
-case 13:return 13;
-break;
-case 14:return 13;
-break;
-case 15:return 13;
-break;
-case 16:return 13;
-break;
-case 17:return 13;
-break;
-case 18:return 13;
-break;
-case 19:return 79;
-break;
-case 20:return 88;
-break;
-case 21:return 86;
-break;
-case 22:return 8;
-break;
-case 23:return 83;
-break;
-case 24:return 93;
-break;
-case 25:return 16;
-break;
-case 26:return 15;
-break;
-case 27:return 17;
-break;
-case 28:return 18;
-break;
-case 29:return 51;
-break;
-case 30:return 49;
-break;
-case 31:return 50;
-break;
-case 32:return 52;
-break;
-case 33:return 56;
-break;
-case 34:return 54;
-break;
-case 35:return 55;
-break;
-case 36:return 57;
-break;
-case 37:return 56;
-break;
-case 38:return 54;
-break;
-case 39:return 55;
-break;
-case 40:return 57;
-break;
-case 41:return 61;
-break;
-case 42:return 59;
-break;
-case 43:return 60;
-break;
-case 44:return 62;
-break;
-case 45:return 48;
-break;
-case 46:return 53;
-break;
-case 47:return 58;
-break;
-case 48:return 44;
-break;
-case 49:return 89;
-break;
-case 50:return 91;
-break;
-case 51:return 81;
-break;
-case 52:return 92;
-break;
-case 53:return 92;
-break;
-case 54:return 85;
-break;
-case 55:return 63;
-break;
-case 56:return 38;
-break;
-case 57:return 39;
-break;
-case 58:return 36;
-break;
-case 59:return 37;
-break;
-case 60:return 40
-break;
-case 61:return 41
-break;
-case 62:return 96;
-break;
-case 63:return 9;
-break;
-case 64:return 10;
-break;
-case 65:return 11;
-break;
-}
-},
-rules: [/^(?:%%[^\n]*)/,/^(?:["])/,/^(?:["])/,/^(?:[^"]*)/,/^(?:style\b)/,/^(?:default\b)/,/^(?:linkStyle\b)/,/^(?:classDef\b)/,/^(?:class\b)/,/^(?:click\b)/,/^(?:graph\b)/,/^(?:subgraph\b)/,/^(?:end\s*)/,/^(?:LR\b)/,/^(?:RL\b)/,/^(?:TB\b)/,/^(?:BT\b)/,/^(?:TD\b)/,/^(?:BR\b)/,/^(?:[0-9]+)/,/^(?:#)/,/^(?::)/,/^(?:;)/,/^(?:,)/,/^(?:\*)/,/^(?:<)/,/^(?:>)/,/^(?:\^)/,/^(?:v\b)/,/^(?:\s*--[x]\s*)/,/^(?:\s*-->\s*)/,/^(?:\s*--[o]\s*)/,/^(?:\s*---\s*)/,/^(?:\s*-\.-[x]\s*)/,/^(?:\s*-\.->\s*)/,/^(?:\s*-\.-[o]\s*)/,/^(?:\s*-\.-\s*)/,/^(?:\s*.-[x]\s*)/,/^(?:\s*\.->\s*)/,/^(?:\s*\.-[o]\s*)/,/^(?:\s*\.-\s*)/,/^(?:\s*==[x]\s*)/,/^(?:\s*==>\s*)/,/^(?:\s*==[o]\s*)/,/^(?:\s*==[\=]\s*)/,/^(?:\s*--\s*)/,/^(?:\s*-\.\s*)/,/^(?:\s*==\s*)/,/^(?:-)/,/^(?:\.)/,/^(?:\+)/,/^(?:%)/,/^(?:=)/,/^(?:=)/,/^(?:[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u005C\u005F-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC_\/])/,/^(?:\|)/,/^(?:\()/,/^(?:\))/,/^(?:\[)/,/^(?:\])/,/^(?:\{)/,/^(?:\})/,/^(?:")/,/^(?:\n+)/,/^(?:\s)/,/^(?:$)/],
-conditions: {"string":{"rules":[2,3],"inclusive":false},"INITIAL":{"rules":[0,1,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65],"inclusive":true}}
-});
-return lexer;
-})();
-parser.lexer = lexer;
-function Parser () {
-  this.yy = {};
-}
-Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
-
-
-if (typeof _dereq_ !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
+            // return the number of states currently on the stack
+            stateStackSize: function stateStackSize() {
+                return this.conditionStack.length;
+            },
+            options: {},
+            performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
+                var YYSTATE = YY_START;
+                switch ($avoiding_name_collisions) {
+                    case 0:
+                        /* do nothing */
+                        break;
+                    case 1:
+                        this.begin("string");
+                        break;
+                    case 2:
+                        this.popState();
+                        break;
+                    case 3:
+                        return "STR";
+                        break;
+                    case 4:
+                        return 69;
+                        break;
+                    case 5:
+                        return 76;
+                        break;
+                    case 6:
+                        return 70;
+                        break;
+                    case 7:
+                        return 71;
+                        break;
+                    case 8:
+                        return 72;
+                        break;
+                    case 9:
+                        return 73;
+                        break;
+                    case 10:
+                        return 12;
+                        break;
+                    case 11:
+                        return 30;
+                        break;
+                    case 12:
+                        return 32;
+                        break;
+                    case 13:
+                        return 13;
+                        break;
+                    case 14:
+                        return 13;
+                        break;
+                    case 15:
+                        return 13;
+                        break;
+                    case 16:
+                        return 13;
+                        break;
+                    case 17:
+                        return 13;
+                        break;
+                    case 18:
+                        return 13;
+                        break;
+                    case 19:
+                        return 79;
+                        break;
+                    case 20:
+                        return 88;
+                        break;
+                    case 21:
+                        return 86;
+                        break;
+                    case 22:
+                        return 8;
+                        break;
+                    case 23:
+                        return 83;
+                        break;
+                    case 24:
+                        return 93;
+                        break;
+                    case 25:
+                        return 16;
+                        break;
+                    case 26:
+                        return 15;
+                        break;
+                    case 27:
+                        return 17;
+                        break;
+                    case 28:
+                        return 18;
+                        break;
+                    case 29:
+                        return 51;
+                        break;
+                    case 30:
+                        return 49;
+                        break;
+                    case 31:
+                        return 50;
+                        break;
+                    case 32:
+                        return 52;
+                        break;
+                    case 33:
+                        return 56;
+                        break;
+                    case 34:
+                        return 54;
+                        break;
+                    case 35:
+                        return 55;
+                        break;
+                    case 36:
+                        return 57;
+                        break;
+                    case 37:
+                        return 56;
+                        break;
+                    case 38:
+                        return 54;
+                        break;
+                    case 39:
+                        return 55;
+                        break;
+                    case 40:
+                        return 57;
+                        break;
+                    case 41:
+                        return 61;
+                        break;
+                    case 42:
+                        return 59;
+                        break;
+                    case 43:
+                        return 60;
+                        break;
+                    case 44:
+                        return 62;
+                        break;
+                    case 45:
+                        return 48;
+                        break;
+                    case 46:
+                        return 53;
+                        break;
+                    case 47:
+                        return 58;
+                        break;
+                    case 48:
+                        return 44;
+                        break;
+                    case 49:
+                        return 89;
+                        break;
+                    case 50:
+                        return 91;
+                        break;
+                    case 51:
+                        return 81;
+                        break;
+                    case 52:
+                        return 92;
+                        break;
+                    case 53:
+                        return 92;
+                        break;
+                    case 54:
+                        return 85;
+                        break;
+                    case 55:
+                        return 63;
+                        break;
+                    case 56:
+                        return 38;
+                        break;
+                    case 57:
+                        return 39;
+                        break;
+                    case 58:
+                        return 36;
+                        break;
+                    case 59:
+                        return 37;
+                        break;
+                    case 60:
+                        return 40;
+                        break;
+                    case 61:
+                        return 41;
+                        break;
+                    case 62:
+                        return 96;
+                        break;
+                    case 63:
+                        return 9;
+                        break;
+                    case 64:
+                        return 10;
+                        break;
+                    case 65:
+                        return 11;
+                        break;
+                }
+            },
+            rules: [/^(?:%%[^\n]*)/, /^(?:["])/, /^(?:["])/, /^(?:[^"]*)/, /^(?:style\b)/, /^(?:default\b)/, /^(?:linkStyle\b)/, /^(?:classDef\b)/, /^(?:class\b)/, /^(?:click\b)/, /^(?:graph\b)/, /^(?:subgraph\b)/, /^(?:end\b\s*)/, /^(?:LR\b)/, /^(?:RL\b)/, /^(?:TB\b)/, /^(?:BT\b)/, /^(?:TD\b)/, /^(?:BR\b)/, /^(?:[0-9]+)/, /^(?:#)/, /^(?::)/, /^(?:;)/, /^(?:,)/, /^(?:\*)/, /^(?:<)/, /^(?:>)/, /^(?:\^)/, /^(?:v\b)/, /^(?:\s*--[x]\s*)/, /^(?:\s*-->\s*)/, /^(?:\s*--[o]\s*)/, /^(?:\s*---\s*)/, /^(?:\s*-\.-[x]\s*)/, /^(?:\s*-\.->\s*)/, /^(?:\s*-\.-[o]\s*)/, /^(?:\s*-\.-\s*)/, /^(?:\s*.-[x]\s*)/, /^(?:\s*\.->\s*)/, /^(?:\s*\.-[o]\s*)/, /^(?:\s*\.-\s*)/, /^(?:\s*==[x]\s*)/, /^(?:\s*==>\s*)/, /^(?:\s*==[o]\s*)/, /^(?:\s*==[\=]\s*)/, /^(?:\s*--\s*)/, /^(?:\s*-\.\s*)/, /^(?:\s*==\s*)/, /^(?:-)/, /^(?:\.)/, /^(?:\+)/, /^(?:%)/, /^(?:=)/, /^(?:=)/, /^(?:[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u005C\u005F-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|[\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|[\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|[\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|[\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE]|[\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA]|[\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0]|[\u08A2-\u08AC\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0977]|[\u0979-\u097F\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2]|[\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A]|[\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39]|[\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8]|[\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0B05-\u0B0C]|[\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C]|[\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99]|[\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0]|[\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C33\u0C35-\u0C39\u0C3D]|[\u0C58\u0C59\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3]|[\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10]|[\u0D12-\u0D3A\u0D3D\u0D4E\u0D60\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1]|[\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81]|[\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3]|[\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6]|[\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A]|[\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081]|[\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D]|[\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0]|[\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310]|[\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F4\u1401-\u166C]|[\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u1700-\u170C\u170E-\u1711]|[\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7]|[\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191C]|[\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19C1-\u19C7\u1A00-\u1A16]|[\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF]|[\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC]|[\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D]|[\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D]|[\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3]|[\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F]|[\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128]|[\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184]|[\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3]|[\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6]|[\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE]|[\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C]|[\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D]|[\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FCC]|[\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B]|[\uA640-\uA66E\uA67F-\uA697\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788]|[\uA78B-\uA78E\uA790-\uA793\uA7A0-\uA7AA\uA7F8-\uA801\uA803-\uA805]|[\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB]|[\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uAA00-\uAA28]|[\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA80-\uAAAF\uAAB1\uAAB5]|[\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4]|[\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E]|[\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|[\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|[\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|[\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|[\uFFD2-\uFFD7\uFFDA-\uFFDC_\/])/, /^(?:\|)/, /^(?:\()/, /^(?:\))/, /^(?:\[)/, /^(?:\])/, /^(?:\{)/, /^(?:\})/, /^(?:")/, /^(?:\n+)/, /^(?:\s)/, /^(?:$)/],
+            conditions: { "string": { "rules": [2, 3], "inclusive": false }, "INITIAL": { "rules": [0, 1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65], "inclusive": true } }
+        };
+        return lexer;
+    })();
+    parser.lexer = lexer;
+    function Parser() {
+        this.yy = {};
     }
-    var source = _dereq_('fs').readFileSync(_dereq_('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
-};
-if (typeof module !== 'undefined' && _dereq_.main === module) {
-  exports.main(process.argv.slice(1));
+    Parser.prototype = parser;parser.Parser = Parser;
+    return new Parser();
+})();
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parser = parser;
+    exports.Parser = parser.Parser;
+    exports.parse = function () {
+        return parser.parse.apply(parser, arguments);
+    };
+    exports.main = function commonjsMain(args) {
+        if (!args[1]) {
+            console.log('Usage: ' + args[0] + ' FILE');
+            process.exit(1);
+        }
+        var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+        return exports.parser.parse(source);
+    };
+    if (typeof module !== 'undefined' && require.main === module) {
+        exports.main(process.argv.slice(1));
+    }
 }
-}
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83,"fs":81,"path":82}],96:[function(_dereq_,module,exports){
+
+}).call(this,require('_process'))
+},{"_process":105,"fs":103,"path":104}],93:[function(require,module,exports){
+(function (global){
 /**
  * Created by knut on 15-01-14.
  */
-var moment = _dereq_('moment');
-var log = _dereq_('../../logger').create();
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var moment = require('moment');
+
+var log = new Logger.Log();
 
 var dateFormat = '';
 var title = '';
@@ -34567,7 +34755,7 @@ var sections = [];
 var tasks = [];
 var currentSection = '';
 
-exports.clear = function(){
+exports.clear = function () {
     sections = [];
     tasks = [];
     currentSection = '';
@@ -34576,38 +34764,38 @@ exports.clear = function(){
     lastTask = undefined;
 };
 
-exports.setDateFormat = function(txt){
+exports.setDateFormat = function (txt) {
     dateFormat = txt;
 };
 
-exports.getDateFormat = function(){
+exports.getDateFormat = function () {
     return dateFormat;
 };
-exports.setTitle = function(txt){
+exports.setTitle = function (txt) {
     title = txt;
 };
 
-exports.getTitle = function(){
+exports.getTitle = function () {
     return title;
 };
 
-exports.addSection = function(txt){
+exports.addSection = function (txt) {
     currentSection = txt;
     sections.push(txt);
 };
 
-exports.findTaskById = function(id) {
+exports.findTaskById = function (id) {
     var i;
-    for(i=0;i<tasks.length;i++){
-        if(tasks[i].id === id){
+    for (i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === id) {
             return tasks[i];
         }
     }
 };
 
-exports.getTasks=function(){
+exports.getTasks = function () {
     var i;
-    for(i=10000;i<tasks.length;i++){
+    for (i = 10000; i < tasks.length; i++) {
         tasks[i].startTime = moment(tasks[i].startTime).format(dateFormat);
         tasks[i].endTime = moment(tasks[i].endTime).format(dateFormat);
     }
@@ -34615,8 +34803,7 @@ exports.getTasks=function(){
     return tasks;
 };
 
-
-var getStartDate = function(prevTime, dateFormat, str){
+var getStartDate = function getStartDate(prevTime, dateFormat, str) {
     //log.debug('Deciding start date:'+str);
     //log.debug('with dateformat:'+dateFormat);
 
@@ -34625,22 +34812,22 @@ var getStartDate = function(prevTime, dateFormat, str){
     // Test for after
     var re = /^after\s+([\d\w\-]+)/;
     var afterStatement = re.exec(str.trim());
-    if(afterStatement!==null){
+    if (afterStatement !== null) {
         var task = exports.findTaskById(afterStatement[1]);
-        if(typeof task === 'undefined'){
+        if (typeof task === 'undefined') {
             var dt = new Date();
-            dt.setHours(0,0,0,0);
+            dt.setHours(0, 0, 0, 0);
             return dt;
         }
         return task.endTime;
     }
 
     // Check for actual date set
-    if(moment(str,dateFormat.trim(),true).isValid()){
-        return moment(str,dateFormat.trim(),true).toDate();
-    }else{
-        log.debug('Invalid date:'+str);
-        log.debug('With date format:'+dateFormat.trim());
+    if (moment(str, dateFormat.trim(), true).isValid()) {
+        return moment(str, dateFormat.trim(), true).toDate();
+    } else {
+        log.debug('Invalid date:' + str);
+        log.debug('With date format:' + dateFormat.trim());
         //log.debug('----');
     }
 
@@ -34648,13 +34835,13 @@ var getStartDate = function(prevTime, dateFormat, str){
     return new Date();
 };
 
-var getEndDate = function(prevTime, dateFormat, str){
+var getEndDate = function getEndDate(prevTime, dateFormat, str) {
     str = str.trim();
 
     // Check for actual date
-    if(moment(str,dateFormat.trim(),true).isValid()){
+    if (moment(str, dateFormat.trim(), true).isValid()) {
 
-        return moment(str,dateFormat.trim()).toDate();
+        return moment(str, dateFormat.trim()).toDate();
     }
 
     var d = moment(prevTime);
@@ -34662,8 +34849,8 @@ var getEndDate = function(prevTime, dateFormat, str){
     var re = /^([\d]+)([wdhms])/;
     var durationStatement = re.exec(str.trim());
 
-    if(durationStatement!== null){
-        switch(durationStatement[2]){
+    if (durationStatement !== null) {
+        switch (durationStatement[2]) {
             case 's':
                 d.add(durationStatement[1], 'seconds');
                 break;
@@ -34687,10 +34874,10 @@ var getEndDate = function(prevTime, dateFormat, str){
 };
 
 var taskCnt = 0;
-var parseId = function(idStr){
-    if(typeof idStr === 'undefined'){
+var parseId = function parseId(idStr) {
+    if (typeof idStr === 'undefined') {
         taskCnt = taskCnt + 1;
-        return 'task'+taskCnt;
+        return 'task' + taskCnt;
     }
     return idStr;
 };
@@ -34705,65 +34892,60 @@ var parseId = function(idStr){
 // endDate
 // length
 
-var compileData = function(prevTask, dataStr){
+var compileData = function compileData(prevTask, dataStr) {
     var ds;
 
-    if(dataStr.substr(0,1) === ':'){
-        ds = dataStr.substr(1,dataStr.length);
-    }
-    else{
-        ds=dataStr;
+    if (dataStr.substr(0, 1) === ':') {
+        ds = dataStr.substr(1, dataStr.length);
+    } else {
+        ds = dataStr;
     }
 
     var data = ds.split(',');
 
-
     var task = {};
     var df = exports.getDateFormat();
 
-
     // Get tags like active, done cand crit
     var matchFound = true;
-    while(matchFound){
+    while (matchFound) {
         matchFound = false;
-        if(data[0].match(/^\s*active\s*$/)){
+        if (data[0].match(/^\s*active\s*$/)) {
             task.active = true;
             data.shift(1);
             matchFound = true;
-
         }
-        if(data[0].match(/^\s*done\s*$/)){
+        if (data[0].match(/^\s*done\s*$/)) {
             task.done = true;
             data.shift(1);
             matchFound = true;
         }
-        if(data[0].match(/^\s*crit\s*$/)){
+        if (data[0].match(/^\s*crit\s*$/)) {
             task.crit = true;
             data.shift(1);
             matchFound = true;
         }
     }
     var i;
-    for(i=0;i<data.length;i++){
+    for (i = 0; i < data.length; i++) {
         data[i] = data[i].trim();
     }
 
-
-    switch(data.length){
+    switch (data.length) {
         case 1:
             task.id = parseId();
             task.startTime = prevTask.endTime;
-            task.endTime   = getEndDate(task.startTime, df, data[0]);
+            task.endTime = getEndDate(task.startTime, df, data[0]);
             break;
         case 2:
             task.id = parseId();
             task.startTime = getStartDate(undefined, df, data[0]);
-            task.endTime   = getEndDate(task.startTime, df, data[1]);
+            task.endTime = getEndDate(task.startTime, df, data[1]);
             break;
         case 3:
             task.id = parseId(data[0]);
             task.startTime = getStartDate(undefined, df, data[1]);
-            task.endTime   = getEndDate(task.startTime, df, data[2]);
+            task.endTime = getEndDate(task.startTime, df, data[2]);
             break;
         default:
 
@@ -34772,37 +34954,39 @@ var compileData = function(prevTask, dataStr){
     return task;
 };
 
-
 var lastTask;
-exports.addTask = function(descr,data){
+exports.addTask = function (descr, data) {
 
     var newTask = {
-        section:currentSection,
-        type:currentSection,
-        description:descr,
-        task:descr
+        section: currentSection,
+        type: currentSection,
+        description: descr,
+        task: descr
     };
     var taskInfo = compileData(lastTask, data);
     newTask.startTime = taskInfo.startTime;
-    newTask.endTime   = taskInfo.endTime;
-    newTask.id        = taskInfo.id;
-    newTask.active    = taskInfo.active;
-    newTask.done      = taskInfo.done;
-    newTask.crit      = taskInfo.crit;
+    newTask.endTime = taskInfo.endTime;
+    newTask.id = taskInfo.id;
+    newTask.active = taskInfo.active;
+    newTask.done = taskInfo.done;
+    newTask.crit = taskInfo.crit;
     lastTask = newTask;
     tasks.push(newTask);
 };
 
-exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+exports.parseError = function (err, hash) {
+    global.mermaidAPI.parseError(err, hash);
 };
 
-},{"../../logger":104,"moment":85}],97:[function(_dereq_,module,exports){
-var gantt = _dereq_('./parser/gantt').parser;
-gantt.yy = _dereq_('./ganttDb');
-var d3 = _dereq_('../../d3');
-var moment = _dereq_('moment');
-var log = _dereq_('../../logger').create();
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../../logger":100,"moment":82}],94:[function(require,module,exports){
+'use strict';
+
+var gantt = require('./parser/gantt').parser;
+gantt.yy = require('./ganttDb');
+var d3 = require('../../d3');
+var moment = require('moment');
+//var log = require('../../logger').create();
 
 var daysInChart;
 var conf = {
@@ -34834,7 +35018,7 @@ module.exports.draw = function (text, id) {
         w = 1200;
     }
 
-    if(typeof conf.useWidth !== 'undefined'){
+    if (typeof conf.useWidth !== 'undefined') {
         w = conf.useWidth;
     }
 
@@ -34843,37 +35027,31 @@ module.exports.draw = function (text, id) {
     // Set height based on number of tasks
     var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding;
 
-    elem.setAttribute('height', "100%");
+    elem.setAttribute('height', '100%');
     // Set viewBox
-    elem.setAttribute('viewBox','0 0 '+w+' '+h);
+    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
     var svg = d3.select('#' + id);
 
-    
-    
-    
-    var dateFormat = d3.time.format("%Y-%m-%d");
-    
+    //var dateFormat = d3.time.format('%Y-%m-%d');
+
     var startDate = d3.min(taskArray, function (d) {
         return d.startTime;
     });
     var endDate = d3.max(taskArray, function (d) {
         return d.endTime;
     });
-    
+
     // Set timescale
-    var timeScale = d3.time.scale()
-        .domain([d3.min(taskArray, function (d) {
-            return d.startTime;
-        }),
-            d3.max(taskArray, function (d) {
-                return d.endTime;
-            })])
-        .rangeRound([0, w - 150]);
-        //.nice(d3.time.monday);
+    var timeScale = d3.time.scale().domain([d3.min(taskArray, function (d) {
+        return d.startTime;
+    }), d3.max(taskArray, function (d) {
+        return d.endTime;
+    })]).rangeRound([0, w - 150]);
+    //.nice(d3.time.monday);
 
     var categories = [];
-    
-    daysInChart = moment.duration(endDate-startDate).asDays();
+
+    daysInChart = moment.duration(endDate - startDate).asDays();
 
     for (var i = 0; i < taskArray.length; i++) {
         categories.push(taskArray[i].type);
@@ -34883,19 +35061,12 @@ module.exports.draw = function (text, id) {
 
     categories = checkUnique(categories);
 
-
     makeGant(taskArray, w, h);
-    if(typeof conf.useWidth !== 'undefined'){
+    if (typeof conf.useWidth !== 'undefined') {
         elem.setAttribute('width', w);
-
     }
 
-    var title = svg.append("text")
-        .text(gantt.yy.getTitle())
-        .attr("x", w / 2)
-        .attr("y", conf.titleTopMargin)
-        .attr('class', 'titleText');
-
+    svg.append('text').text(gantt.yy.getTitle()).attr('x', w / 2).attr('y', conf.titleTopMargin).attr('class', 'titleText');
 
     function makeGant(tasks, pageWidth, pageHeight) {
 
@@ -34904,215 +35075,177 @@ module.exports.draw = function (text, id) {
         var topPadding = conf.topPadding;
         var sidePadding = conf.sidePadding;
 
-        var colorScale = d3.scale.linear()
-            .domain([0, categories.length])
-            .range(["#00B9FA", "#F95002"])
-            .interpolate(d3.interpolateHcl);
+        var colorScale = d3.scale.linear().domain([0, categories.length]).range(['#00B9FA', '#F95002']).interpolate(d3.interpolateHcl);
 
         makeGrid(sidePadding, topPadding, pageWidth, pageHeight);
         drawRects(tasks, gap, topPadding, sidePadding, barHeight, colorScale, pageWidth, pageHeight);
         vertLabels(gap, topPadding, sidePadding, barHeight, colorScale);
         drawToday(sidePadding, topPadding, pageWidth, pageHeight);
-
     }
-
 
     function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
+        //eslint-disable-line no-unused-vars
 
-        var bigRects = svg.append("g")
-            .selectAll("rect")
-            .data(theArray)
-            .enter()
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", function (d, i) {
-                return i * theGap + theTopPad - 2;
-            })
-            .attr("width", function (d) {
-                return w - theSidePad / 2;
-            })
-            .attr("height", theGap)
-            .attr('class', function (d) {
-                for (var i = 0; i < categories.length; i++) {
-                    if (d.type === categories[i]) {
-                        return 'section section' + (i % conf.numberSectionStyles);
-                    }
+        svg.append('g').selectAll('rect').data(theArray).enter().append('rect').attr('x', 0).attr('y', function (d, i) {
+            return i * theGap + theTopPad - 2;
+        }).attr('width', function () {
+            return w - theSidePad / 2;
+        }).attr('height', theGap).attr('class', function (d) {
+            //eslint-disable-line no-unused-vars
+            for (var i = 0; i < categories.length; i++) {
+                if (d.type === categories[i]) {
+                    return 'section section' + i % conf.numberSectionStyles;
                 }
-                return 'section section0';
-            });
+            }
+            return 'section section0';
+        });
 
+        var rectangles = svg.append('g').selectAll('rect').data(theArray).enter();
 
-        var rectangles = svg.append('g')
-            .selectAll("rect")
-            .data(theArray)
-            .enter();
+        rectangles.append('rect').attr('rx', 3).attr('ry', 3).attr('x', function (d) {
+            return timeScale(d.startTime) + theSidePad;
+        }).attr('y', function (d, i) {
+            return i * theGap + theTopPad;
+        }).attr('width', function (d) {
+            return timeScale(d.endTime) - timeScale(d.startTime);
+        }).attr('height', theBarHeight).attr('class', function (d) {
+            var res = 'task ';
 
+            var secNum = 0;
+            for (var i = 0; i < categories.length; i++) {
+                if (d.type === categories[i]) {
+                    secNum = i % conf.numberSectionStyles;
+                }
+            }
 
-        var innerRects = rectangles.append("rect")
-                .attr("rx", 3)
-                .attr("ry", 3)
-                .attr("x", function (d) {
-                    return timeScale(d.startTime) + theSidePad;
-                })
-                .attr("y", function (d, i) {
-                    return i * theGap + theTopPad;
-                })
-                .attr("width", function (d) {
-                    return (timeScale(d.endTime) - timeScale(d.startTime));
-                })
-                .attr("height", theBarHeight)
-                .attr('class', function (d) {
-                    var res = 'task ';
-                    
-                    
-                    var secNum = 0;
-                    for (var i = 0; i < categories.length; i++) {
-                        if (d.type === categories[i]) {
-                            secNum = (i % conf.numberSectionStyles);
-                        }
-                    }
-                    
-                    if(d.active){
-                        if (d.crit) {
-                            return res + ' activeCrit'+secNum;
-                        }else{
-                            return res + ' active'+secNum;
-                        }
-                    }
-
-                    if (d.done) {
-                        if (d.crit) {
-                            return res + ' doneCrit'+secNum;
-                        }else{
-                            return res + ' done'+secNum;
-                        }
-                    }
-
-                    if (d.crit) {
-                        return res + ' crit'+secNum;
-                    }
-
-
-                    return res + ' task'+secNum;
-                })
-            ;
-
-
-        var rectText = rectangles.append("text")
-            .text(function (d) {
-                return d.task;
-            })
-            .attr("font-size",conf.fontSize)
-            //.attr("font-family",conf.fontFamily)
-            .attr("x", function (d) {
-                var startX = timeScale(d.startTime),
-                    endX = timeScale(d.endTime),
-                    textWidth = this.getBBox().width;
-
-                // Check id text width > width of rectangle
-                if (textWidth > (endX - startX)) {
-                    if (endX + textWidth  + 1.5*conf.sidePadding> w) {
-                        return startX + theSidePad - 5;
-                    } else {
-                        return endX + theSidePad + 5;
-                    }
+            if (d.active) {
+                if (d.crit) {
+                    return res + ' activeCrit' + secNum;
                 } else {
-                    return (endX - startX) / 2 + startX + theSidePad;
+                    return res + ' active' + secNum;
                 }
-            })
-            .attr("y", function (d, i) {
-                return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad;
-            })
-            //.attr("text-anchor", "middle")
-            .attr("text-height", theBarHeight)
-            .attr("class", function (d) {
-                var startX = timeScale(d.startTime),
-                    endX = timeScale(d.endTime),
-                    textWidth = this.getBBox().width;
-                var secNum = 0;
-                for (var i = 0; i < categories.length; i++) {
-                    if (d.type === categories[i]) {
-                        secNum = (i % conf.numberSectionStyles);
-                    }
-                }
+            }
 
-                var taskType = '';
-                if(d.active){
-                    if (d.crit) {
-                        taskType = 'activeCritText'+secNum;
-                    }else{
-                        taskType = 'activeText'+secNum;
-                    }
-                }
-
-                if (d.done) {
-                    if (d.crit) {
-                        taskType = taskType + ' doneCritText'+secNum;
-                    }else{
-                        taskType = taskType + ' doneText'+secNum;
-                    }
-                }else{
-                    if (d.crit) {
-                        taskType = taskType + ' critText'+secNum;
-                    }
-                }
-
-                // Check id text width > width of rectangle
-                if (textWidth > (endX - startX)) {
-                    if (endX + textWidth + 1.5*conf.sidePadding > w) {
-                        return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
-                    } else {
-                        return 'taskTextOutsideRight taskTextOutside' + secNum+ ' ' + taskType;
-                    }
+            if (d.done) {
+                if (d.crit) {
+                    return res + ' doneCrit' + secNum;
                 } else {
-                    return 'taskText taskText' + secNum+ ' ' + taskType;
+                    return res + ' done' + secNum;
                 }
-            });
+            }
 
+            if (d.crit) {
+                return res + ' crit' + secNum;
+            }
+
+            return res + ' task' + secNum;
+        });
+
+        rectangles.append('text').text(function (d) {
+            return d.task;
+        }).attr('font-size', conf.fontSize)
+        //.attr('font-family',conf.fontFamily)
+        .attr('x', function (d) {
+            var startX = timeScale(d.startTime),
+                endX = timeScale(d.endTime),
+                textWidth = this.getBBox().width;
+
+            // Check id text width > width of rectangle
+            if (textWidth > endX - startX) {
+                if (endX + textWidth + 1.5 * conf.sidePadding > w) {
+                    return startX + theSidePad - 5;
+                } else {
+                    return endX + theSidePad + 5;
+                }
+            } else {
+                return (endX - startX) / 2 + startX + theSidePad;
+            }
+        }).attr('y', function (d, i) {
+            return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
+        })
+        //.attr('text-anchor', 'middle')
+        .attr('text-height', theBarHeight).attr('class', function (d) {
+            var startX = timeScale(d.startTime),
+                endX = timeScale(d.endTime),
+                textWidth = this.getBBox().width;
+            var secNum = 0;
+            for (var i = 0; i < categories.length; i++) {
+                if (d.type === categories[i]) {
+                    secNum = i % conf.numberSectionStyles;
+                }
+            }
+
+            var taskType = '';
+            if (d.active) {
+                if (d.crit) {
+                    taskType = 'activeCritText' + secNum;
+                } else {
+                    taskType = 'activeText' + secNum;
+                }
+            }
+
+            if (d.done) {
+                if (d.crit) {
+                    taskType = taskType + ' doneCritText' + secNum;
+                } else {
+                    taskType = taskType + ' doneText' + secNum;
+                }
+            } else {
+                if (d.crit) {
+                    taskType = taskType + ' critText' + secNum;
+                }
+            }
+
+            // Check id text width > width of rectangle
+            if (textWidth > endX - startX) {
+                if (endX + textWidth + 1.5 * conf.sidePadding > w) {
+                    return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
+                } else {
+                    return 'taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType;
+                }
+            } else {
+                return 'taskText taskText' + secNum + ' ' + taskType;
+            }
+        });
     }
-
 
     function makeGrid(theSidePad, theTopPad, w, h) {
 
-        var pre = [
-            [".%L", function (d) {
-                return d.getMilliseconds();
-            }],
-            [":%S", function (d) {
-                return d.getSeconds();
-            }],
-            // Within a hour
-            ["h1 %I:%M", function (d) {
-                return d.getMinutes();
-            }]];
-        var post = [
-            ["%Y", function () {
-                return true;
-            }]];
-        
-        var mid = [                    
-            // Within a day
-            ["%I:%M", function (d) {
-                return d.getHours();
-            }],
-            // Day within a week (not monday)
-            ["%a %d", function (d) {
-                //return d.getDay() ==1;
-                return d.getDay() && d.getDate() != 1;
-            }],
-            // within a month
-            ["%b %d", function (d) {
-                return d.getDate() != 1;
-            }],
-            // Month
-            ["%B", function (d) {
-                return d.getMonth();
-            }]
-        ];
+        var pre = [['.%L', function (d) {
+            return d.getMilliseconds();
+        }], [':%S', function (d) {
+            return d.getSeconds();
+        }],
+        // Within a hour
+        ['h1 %I:%M', function (d) {
+            return d.getMinutes();
+        }]];
+        var post = [['%Y', function () {
+            return true;
+        }]];
+
+        var mid = [
+        // Within a day
+        ['%I:%M', function (d) {
+            return d.getHours();
+        }],
+        // Day within a week (not monday)
+        ['%a %d', function (d) {
+            //return d.getDay() ==1;
+            return d.getDay() && d.getDate() != 1;
+        }],
+        // within a month
+        ['%b %d', function (d) {
+            return d.getDate() != 1;
+        }],
+        // Month
+        ['%B', function (d) {
+            return d.getMonth();
+        }]];
         var formatter;
-        if(typeof conf.axisFormatter !== 'undefined'){
+        if (typeof conf.axisFormatter !== 'undefined') {
             mid = [];
-            conf.axisFormatter.forEach(function(item){
+            conf.axisFormatter.forEach(function (item) {
                 var n = [];
                 n[0] = item[0];
                 n[1] = item[1];
@@ -35121,30 +35254,16 @@ module.exports.draw = function (text, id) {
         }
         formatter = pre.concat(mid).concat(post);
 
-        var xAxis = d3.svg.axis()
-                .scale(timeScale)
-                .orient('bottom')
-                .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-                .tickFormat(d3.time.format.multi(formatter))
-            ;
+        var xAxis = d3.svg.axis().scale(timeScale).orient('bottom').tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0).tickFormat(d3.time.format.multi(formatter));
 
-        if(daysInChart >7 && daysInChart<230){
+        if (daysInChart > 7 && daysInChart < 230) {
             xAxis = xAxis.ticks(d3.time.monday.range);
         }
 
-        var grid = svg.append('g')
-            .attr('class', 'grid')
-            .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-            .call(xAxis)
-            .selectAll("text")
-            .style("text-anchor", "middle")
-            .attr("fill", "#000")
-            .attr("stroke", "none")
-            .attr("font-size", 10)
-            .attr("dy", "1em");
+        svg.append('g').attr('class', 'grid').attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')').call(xAxis).selectAll('text').style('text-anchor', 'middle').attr('fill', '#000').attr('stroke', 'none').attr('font-size', 10).attr('dy', '1em');
     }
 
-    function vertLabels(theGap, theTopPad, theSidePad, theBarHeight, theColorScale) {
+    function vertLabels(theGap, theTopPad) {
         var numOccurances = [];
         var prevGap = 0;
 
@@ -35152,57 +35271,44 @@ module.exports.draw = function (text, id) {
             numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)];
         }
 
-        var axisText = svg.append("g") //without doing this, impossible to put grid lines behind text
-            .selectAll("text")
-            .data(numOccurances)
-            .enter()
-            .append("text")
-            .text(function (d) {
-                return d[0];
-            })
-            .attr("x", 10)
-            .attr("y", function (d, i) {
-                if (i > 0) {
-                    for (var j = 0; j < i; j++) {
-                        prevGap += numOccurances[i - 1][1];
-                        // log.debug(prevGap);
-                        return d[1] * theGap / 2 + prevGap * theGap + theTopPad;
-                    }
-                } else {
-                    return d[1] * theGap / 2 + theTopPad;
+        svg.append('g') //without doing this, impossible to put grid lines behind text
+        .selectAll('text').data(numOccurances).enter().append('text').text(function (d) {
+            return d[0];
+        }).attr('x', 10).attr('y', function (d, i) {
+            if (i > 0) {
+                for (var j = 0; j < i; j++) {
+                    prevGap += numOccurances[i - 1][1];
+                    // log.debug(prevGap);
+                    return d[1] * theGap / 2 + prevGap * theGap + theTopPad;
                 }
-            })
-            .attr('class', function (d) {
-                for (var i = 0; i < categories.length; i++) {
-                    if (d[0] === categories[i]) {
-                        return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles);
-                    }
+            } else {
+                return d[1] * theGap / 2 + theTopPad;
+            }
+        }).attr('class', function (d) {
+            for (var i = 0; i < categories.length; i++) {
+                if (d[0] === categories[i]) {
+                    return 'sectionTitle sectionTitle' + i % conf.numberSectionStyles;
                 }
-                return 'sectionTitle';
-            });
-
+            }
+            return 'sectionTitle';
+        });
     }
 
     function drawToday(theSidePad, theTopPad, w, h) {
-        var todayG = svg.append('g')
-            .attr('class', 'today');
+        var todayG = svg.append('g').attr('class', 'today');
 
         var today = new Date();
 
-        var todayLine = todayG.append("line")
-                .attr("x1", timeScale(today) + theSidePad)
-                .attr("x2", timeScale(today) + theSidePad)
-                .attr("y1", conf.titleTopMargin)
-                .attr("y2", h-conf.titleTopMargin)
-                .attr('class', 'today')
-            ;
+        todayG.append('line').attr('x1', timeScale(today) + theSidePad).attr('x2', timeScale(today) + theSidePad).attr('y1', conf.titleTopMargin).attr('y2', h - conf.titleTopMargin).attr('class', 'today');
     }
 
-//from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+    //from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
     function checkUnique(arr) {
-        var hash = {}, result = [];
+        var hash = {},
+            result = [];
         for (var i = 0, l = arr.length; i < l; ++i) {
-            if (!hash.hasOwnProperty(arr[i])) { //it works with objects! in FF, at least
+            if (!hash.hasOwnProperty(arr[i])) {
+                //it works with objects! in FF, at least
                 hash[arr[i]] = true;
                 result.push(arr[i]);
             }
@@ -35210,22 +35316,24 @@ module.exports.draw = function (text, id) {
         return result;
     }
 
-//from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+    //from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
     function getCounts(arr) {
-        var i = arr.length, // var to loop over
-            obj = {}; // obj to store results
+        var i = arr.length,
+            // var to loop over
+        obj = {}; // obj to store results
         while (i) {
             obj[arr[--i]] = (obj[arr[i]] || 0) + 1; // count occurrences
         }
         return obj;
     }
 
-// get specific from everything
+    // get specific from everything
     function getCount(word, arr) {
         return getCounts(arr)[word] || 0;
     }
 };
-},{"../../d3":87,"../../logger":104,"./ganttDb":96,"./parser/gantt":98,"moment":85}],98:[function(_dereq_,module,exports){
+
+},{"../../d3":84,"./ganttDb":93,"./parser/gantt":95,"moment":82}],95:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -35300,585 +35408,608 @@ module.exports.draw = function (text, id) {
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12];
-var parser = {trace: function trace() { },
-yy: {},
-symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"title":12,"section":13,"taskTxt":14,"taskData":15,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"title",13:"section",14:"taskTxt",15:"taskData"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,2]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
-/* this == yyval */
+"use strict";
 
-var $0 = $$.length - 1;
-switch (yystate) {
-case 1:
- return $$[$0-1]; 
-break;
-case 2:
- this.$ = [] 
-break;
-case 3:
-$$[$0-1].push($$[$0]);this.$ = $$[$0-1]
-break;
-case 4: case 5:
- this.$ = $$[$0] 
-break;
-case 6: case 7:
- this.$=[];
-break;
-case 8:
-yy.setDateFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
-break;
-case 9:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
-break;
-case 10:
-yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
-break;
-case 11:
-yy.addTask($$[$0-1],$$[$0]);this.$='task';
-break;
-}
-},
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:13,11:$V1,12:$V2,13:$V3,14:$V4},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),{15:[1,14]},o($V0,[2,4]),o($V0,[2,11])],
-defaultActions: {},
-parseError: function parseError(str, hash) {
-    if (hash.recoverable) {
-        this.trace(str);
-    } else {
-        throw new Error(str);
-    }
-},
-parse: function parse(input) {
-    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    var args = lstack.slice.call(arguments, 1);
-    var lexer = Object.create(this.lexer);
-    var sharedState = { yy: {} };
-    for (var k in this.yy) {
-        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
-            sharedState.yy[k] = this.yy[k];
-        }
-    }
-    lexer.setInput(input, sharedState.yy);
-    sharedState.yy.lexer = lexer;
-    sharedState.yy.parser = this;
-    if (typeof lexer.yylloc == 'undefined') {
-        lexer.yylloc = {};
-    }
-    var yyloc = lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = lexer.options && lexer.options.ranges;
-    if (typeof sharedState.yy.parseError === 'function') {
-        this.parseError = sharedState.yy.parseError;
-    } else {
-        this.parseError = Object.getPrototypeOf(this).parseError;
-    }
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    _token_stack:
-        function lex() {
-            var token;
-            token = lexer.lex() || EOF;
-            if (typeof token !== 'number') {
-                token = self.symbols_[token] || token;
+var parser = (function () {
+    var o = function o(k, v, _o, l) {
+        for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
+    },
+        $V0 = [6, 8, 10, 11, 12, 13, 14],
+        $V1 = [1, 9],
+        $V2 = [1, 10],
+        $V3 = [1, 11],
+        $V4 = [1, 12];
+    var parser = { trace: function trace() {},
+        yy: {},
+        symbols_: { "error": 2, "start": 3, "gantt": 4, "document": 5, "EOF": 6, "line": 7, "SPACE": 8, "statement": 9, "NL": 10, "dateFormat": 11, "title": 12, "section": 13, "taskTxt": 14, "taskData": 15, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "gantt", 6: "EOF", 8: "SPACE", 10: "NL", 11: "dateFormat", 12: "title", 13: "section", 14: "taskTxt", 15: "taskData" },
+        productions_: [0, [3, 3], [5, 0], [5, 2], [7, 2], [7, 1], [7, 1], [7, 1], [9, 1], [9, 1], [9, 1], [9, 2]],
+        performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
+            /* this == yyval */
+
+            var $0 = $$.length - 1;
+            switch (yystate) {
+                case 1:
+                    return $$[$0 - 1];
+                    break;
+                case 2:
+                    this.$ = [];
+                    break;
+                case 3:
+                    $$[$0 - 1].push($$[$0]);this.$ = $$[$0 - 1];
+                    break;
+                case 4:case 5:
+                    this.$ = $$[$0];
+                    break;
+                case 6:case 7:
+                    this.$ = [];
+                    break;
+                case 8:
+                    yy.setDateFormat($$[$0].substr(11));this.$ = $$[$0].substr(11);
+                    break;
+                case 9:
+                    yy.setTitle($$[$0].substr(6));this.$ = $$[$0].substr(6);
+                    break;
+                case 10:
+                    yy.addSection($$[$0].substr(8));this.$ = $$[$0].substr(8);
+                    break;
+                case 11:
+                    yy.addTask($$[$0 - 1], $$[$0]);this.$ = 'task';
+                    break;
             }
-            return token;
-        }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == 'undefined') {
-                symbol = lex();
+        },
+        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o($V0, [2, 2], { 5: 3 }), { 6: [1, 4], 7: 5, 8: [1, 6], 9: 7, 10: [1, 8], 11: $V1, 12: $V2, 13: $V3, 14: $V4 }, o($V0, [2, 7], { 1: [2, 1] }), o($V0, [2, 3]), { 9: 13, 11: $V1, 12: $V2, 13: $V3, 14: $V4 }, o($V0, [2, 5]), o($V0, [2, 6]), o($V0, [2, 8]), o($V0, [2, 9]), o($V0, [2, 10]), { 15: [1, 14] }, o($V0, [2, 4]), o($V0, [2, 11])],
+        defaultActions: {},
+        parseError: function parseError(str, hash) {
+            if (hash.recoverable) {
+                this.trace(str);
+            } else {
+                throw new Error(str);
             }
-            action = table[state] && table[state][symbol];
-        }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
+        },
+        parse: function parse(input) {
+            var self = this,
+                stack = [0],
+                tstack = [],
+                vstack = [null],
+                lstack = [],
+                table = this.table,
+                yytext = '',
+                yylineno = 0,
+                yyleng = 0,
+                recovering = 0,
+                TERROR = 2,
+                EOF = 1;
+            var args = lstack.slice.call(arguments, 1);
+            var lexer = Object.create(this.lexer);
+            var sharedState = { yy: {} };
+            for (var k in this.yy) {
+                if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+                    sharedState.yy[k] = this.yy[k];
+                }
+            }
+            lexer.setInput(input, sharedState.yy);
+            sharedState.yy.lexer = lexer;
+            sharedState.yy.parser = this;
+            if (typeof lexer.yylloc == 'undefined') {
+                lexer.yylloc = {};
+            }
+            var yyloc = lexer.yylloc;
+            lstack.push(yyloc);
+            var ranges = lexer.options && lexer.options.ranges;
+            if (typeof sharedState.yy.parseError === 'function') {
+                this.parseError = sharedState.yy.parseError;
+            } else {
+                this.parseError = Object.getPrototypeOf(this).parseError;
+            }
+            function popStack(n) {
+                stack.length = stack.length - 2 * n;
+                vstack.length = vstack.length - n;
+                lstack.length = lstack.length - n;
+            }
+            _token_stack: var lex = function lex() {
+                var token;
+                token = lexer.lex() || EOF;
+                if (typeof token !== 'number') {
+                    token = self.symbols_[token] || token;
+                }
+                return token;
+            };
+            var symbol,
+                preErrorSymbol,
+                state,
+                action,
+                a,
+                r,
+                yyval = {},
+                p,
+                len,
+                newState,
+                expected;
+            while (true) {
+                state = stack[stack.length - 1];
+                if (this.defaultActions[state]) {
+                    action = this.defaultActions[state];
+                } else {
+                    if (symbol === null || typeof symbol == 'undefined') {
+                        symbol = lex();
+                    }
+                    action = table[state] && table[state][symbol];
+                }
+                if (typeof action === 'undefined' || !action.length || !action[0]) {
+                    var errStr = '';
+                    expected = [];
+                    for (p in table[state]) {
+                        if (this.terminals_[p] && p > TERROR) {
+                            expected.push('\'' + this.terminals_[p] + '\'');
+                        }
+                    }
+                    if (lexer.showPosition) {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                    } else {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                    }
+                    this.parseError(errStr, {
+                        text: lexer.match,
+                        token: this.terminals_[symbol] || symbol,
+                        line: lexer.yylineno,
+                        loc: yyloc,
+                        expected: expected
+                    });
+                }
+                if (action[0] instanceof Array && action.length > 1) {
+                    throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+                }
+                switch (action[0]) {
+                    case 1:
+                        stack.push(symbol);
+                        vstack.push(lexer.yytext);
+                        lstack.push(lexer.yylloc);
+                        stack.push(action[1]);
+                        symbol = null;
+                        if (!preErrorSymbol) {
+                            yyleng = lexer.yyleng;
+                            yytext = lexer.yytext;
+                            yylineno = lexer.yylineno;
+                            yyloc = lexer.yylloc;
+                            if (recovering > 0) {
+                                recovering--;
+                            }
+                        } else {
+                            symbol = preErrorSymbol;
+                            preErrorSymbol = null;
+                        }
+                        break;
+                    case 2:
+                        len = this.productions_[action[1]][1];
+                        yyval.$ = vstack[vstack.length - len];
+                        yyval._$ = {
+                            first_line: lstack[lstack.length - (len || 1)].first_line,
+                            last_line: lstack[lstack.length - 1].last_line,
+                            first_column: lstack[lstack.length - (len || 1)].first_column,
+                            last_column: lstack[lstack.length - 1].last_column
+                        };
+                        if (ranges) {
+                            yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
+                        }
+                        r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
+                        if (typeof r !== 'undefined') {
+                            return r;
+                        }
+                        if (len) {
+                            stack = stack.slice(0, -1 * len * 2);
+                            vstack = vstack.slice(0, -1 * len);
+                            lstack = lstack.slice(0, -1 * len);
+                        }
+                        stack.push(this.productions_[action[1]][0]);
+                        vstack.push(yyval.$);
+                        lstack.push(yyval._$);
+                        newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+                        stack.push(newState);
+                        break;
+                    case 3:
+                        return true;
+                }
+            }
+            return true;
+        } };
+    /* generated by jison-lex 0.3.4 */
+    var lexer = (function () {
+        var lexer = {
+
+            EOF: 1,
+
+            parseError: function parseError(str, hash) {
+                if (this.yy.parser) {
+                    this.yy.parser.parseError(str, hash);
+                } else {
+                    throw new Error(str);
+                }
+            },
+
+            // resets the lexer, sets new input
+            setInput: function setInput(input, yy) {
+                this.yy = yy || this.yy || {};
+                this._input = input;
+                this._more = this._backtrack = this.done = false;
+                this.yylineno = this.yyleng = 0;
+                this.yytext = this.matched = this.match = '';
+                this.conditionStack = ['INITIAL'];
+                this.yylloc = {
+                    first_line: 1,
+                    first_column: 0,
+                    last_line: 1,
+                    last_column: 0
+                };
+                if (this.options.ranges) {
+                    this.yylloc.range = [0, 0];
+                }
+                this.offset = 0;
+                return this;
+            },
+
+            // consumes and returns one char from the input
+            input: function input() {
+                var ch = this._input[0];
+                this.yytext += ch;
+                this.yyleng++;
+                this.offset++;
+                this.match += ch;
+                this.matched += ch;
+                var lines = ch.match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno++;
+                    this.yylloc.last_line++;
+                } else {
+                    this.yylloc.last_column++;
+                }
+                if (this.options.ranges) {
+                    this.yylloc.range[1]++;
+                }
+
+                this._input = this._input.slice(1);
+                return ch;
+            },
+
+            // unshifts one char (or a string) into the input
+            unput: function unput(ch) {
+                var len = ch.length;
+                var lines = ch.split(/(?:\r\n?|\n)/g);
+
+                this._input = ch + this._input;
+                this.yytext = this.yytext.substr(0, this.yytext.length - len);
+                //this.yyleng -= len;
+                this.offset -= len;
+                var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+                this.match = this.match.substr(0, this.match.length - 1);
+                this.matched = this.matched.substr(0, this.matched.length - 1);
+
+                if (lines.length - 1) {
+                    this.yylineno -= lines.length - 1;
+                }
+                var r = this.yylloc.range;
+
+                this.yylloc = {
+                    first_line: this.yylloc.first_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.first_column,
+                    last_column: lines ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length : this.yylloc.first_column - len
+                };
+
+                if (this.options.ranges) {
+                    this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+                }
+                this.yyleng = this.yytext.length;
+                return this;
+            },
+
+            // When called from action, caches matched text and appends it on next action
+            more: function more() {
+                this._more = true;
+                return this;
+            },
+
+            // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
+            reject: function reject() {
+                if (this.options.backtrack_lexer) {
+                    this._backtrack = true;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+                return this;
+            },
+
+            // retain first n characters of the match
+            less: function less(n) {
+                this.unput(this.match.slice(n));
+            },
+
+            // displays already matched input, i.e. for error messages
+            pastInput: function pastInput() {
+                var past = this.matched.substr(0, this.matched.length - this.match.length);
+                return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
+            },
+
+            // displays upcoming input, i.e. for error messages
+            upcomingInput: function upcomingInput() {
+                var next = this.match;
+                if (next.length < 20) {
+                    next += this._input.substr(0, 20 - next.length);
+                }
+                return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+            },
+
+            // displays the character position where the lexing error occurred, i.e. for error messages
+            showPosition: function showPosition() {
+                var pre = this.pastInput();
+                var c = new Array(pre.length + 1).join("-");
+                return pre + this.upcomingInput() + "\n" + c + "^";
+            },
+
+            // test the lexed token: return FALSE when not a match, otherwise return token
+            test_match: function test_match(match, indexed_rule) {
+                var token, lines, backup;
+
+                if (this.options.backtrack_lexer) {
+                    // save context
+                    backup = {
+                        yylineno: this.yylineno,
+                        yylloc: {
+                            first_line: this.yylloc.first_line,
+                            last_line: this.last_line,
+                            first_column: this.yylloc.first_column,
+                            last_column: this.yylloc.last_column
+                        },
+                        yytext: this.yytext,
+                        match: this.match,
+                        matches: this.matches,
+                        matched: this.matched,
+                        yyleng: this.yyleng,
+                        offset: this.offset,
+                        _more: this._more,
+                        _input: this._input,
+                        yy: this.yy,
+                        conditionStack: this.conditionStack.slice(0),
+                        done: this.done
+                    };
+                    if (this.options.ranges) {
+                        backup.yylloc.range = this.yylloc.range.slice(0);
                     }
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+
+                lines = match[0].match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno += lines.length;
                 }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
-            }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(lexer.yytext);
-            lstack.push(lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = lexer.yyleng;
-                yytext = lexer.yytext;
-                yylineno = lexer.yylineno;
-                yyloc = lexer.yylloc;
-                if (recovering > 0) {
-                    recovering--;
+                this.yylloc = {
+                    first_line: this.yylloc.last_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.last_column,
+                    last_column: lines ? lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length
+                };
+                this.yytext += match[0];
+                this.match += match[0];
+                this.matches = match;
+                this.yyleng = this.yytext.length;
+                if (this.options.ranges) {
+                    this.yylloc.range = [this.offset, this.offset += this.yyleng];
                 }
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
-            }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {
-                first_line: lstack[lstack.length - (len || 1)].first_line,
-                last_line: lstack[lstack.length - 1].last_line,
-                first_column: lstack[lstack.length - (len || 1)].first_column,
-                last_column: lstack[lstack.length - 1].last_column
-            };
-            if (ranges) {
-                yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                ];
-            }
-            r = this.performAction.apply(yyval, [
-                yytext,
-                yyleng,
-                yylineno,
-                sharedState.yy,
-                action[1],
-                vstack,
-                lstack
-            ].concat(args));
-            if (typeof r !== 'undefined') {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}};
-/* generated by jison-lex 0.3.4 */
-var lexer = (function(){
-var lexer = ({
+                this._more = false;
+                this._backtrack = false;
+                this._input = this._input.slice(match[0].length);
+                this.matched += match[0];
+                token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+                if (this.done && this._input) {
+                    this.done = false;
+                }
+                if (token) {
+                    return token;
+                } else if (this._backtrack) {
+                    // recover context
+                    for (var k in backup) {
+                        this[k] = backup[k];
+                    }
+                    return false; // rule action called reject() implying the next rule should be tested instead.
+                }
+                return false;
+            },
 
-EOF:1,
+            // return next match in input
+            next: function next() {
+                if (this.done) {
+                    return this.EOF;
+                }
+                if (!this._input) {
+                    this.done = true;
+                }
 
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
-
-// resets the lexer, sets new input
-setInput:function (input, yy) {
-        this.yy = yy || this.yy || {};
-        this._input = input;
-        this._more = this._backtrack = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {
-            first_line: 1,
-            first_column: 0,
-            last_line: 1,
-            last_column: 0
-        };
-        if (this.options.ranges) {
-            this.yylloc.range = [0,0];
-        }
-        this.offset = 0;
-        return this;
-    },
-
-// consumes and returns one char from the input
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) {
-            this.yylloc.range[1]++;
-        }
-
-        this._input = this._input.slice(1);
-        return ch;
-    },
-
-// unshifts one char (or a string) into the input
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
-
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length - len);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length - 1);
-        this.matched = this.matched.substr(0, this.matched.length - 1);
-
-        if (lines.length - 1) {
-            this.yylineno -= lines.length - 1;
-        }
-        var r = this.yylloc.range;
-
-        this.yylloc = {
-            first_line: this.yylloc.first_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
-                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
-              this.yylloc.first_column - len
-        };
-
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        this.yyleng = this.yytext.length;
-        return this;
-    },
-
-// When called from action, caches matched text and appends it on next action
-more:function () {
-        this._more = true;
-        return this;
-    },
-
-// When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-reject:function () {
-        if (this.options.backtrack_lexer) {
-            this._backtrack = true;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-
-        }
-        return this;
-    },
-
-// retain first n characters of the match
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
-
-// displays already matched input, i.e. for error messages
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
-
-// displays upcoming input, i.e. for error messages
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
-    },
-
-// displays the character position where the lexing error occurred, i.e. for error messages
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c + "^";
-    },
-
-// test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
-        var token,
-            lines,
-            backup;
-
-        if (this.options.backtrack_lexer) {
-            // save context
-            backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                    first_line: this.yylloc.first_line,
-                    last_line: this.last_line,
-                    first_column: this.yylloc.first_column,
-                    last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-            };
-            if (this.options.ranges) {
-                backup.yylloc.range = this.yylloc.range.slice(0);
-            }
-        }
-
-        lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno += lines.length;
-        }
-        this.yylloc = {
-            first_line: this.yylloc.last_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.last_column,
-            last_column: lines ?
-                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
-                         this.yylloc.last_column + match[0].length
-        };
-        this.yytext += match[0];
-        this.match += match[0];
-        this.matches = match;
-        this.yyleng = this.yytext.length;
-        if (this.options.ranges) {
-            this.yylloc.range = [this.offset, this.offset += this.yyleng];
-        }
-        this._more = false;
-        this._backtrack = false;
-        this._input = this._input.slice(match[0].length);
-        this.matched += match[0];
-        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
-        if (this.done && this._input) {
-            this.done = false;
-        }
-        if (token) {
-            return token;
-        } else if (this._backtrack) {
-            // recover context
-            for (var k in backup) {
-                this[k] = backup[k];
-            }
-            return false; // rule action called reject() implying the next rule should be tested instead.
-        }
-        return false;
-    },
-
-// return next match in input
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) {
-            this.done = true;
-        }
-
-        var token,
-            match,
-            tempMatch,
-            index;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i = 0; i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (this.options.backtrack_lexer) {
-                    token = this.test_match(tempMatch, rules[i]);
+                var token, match, tempMatch, index;
+                if (!this._more) {
+                    this.yytext = '';
+                    this.match = '';
+                }
+                var rules = this._currentRules();
+                for (var i = 0; i < rules.length; i++) {
+                    tempMatch = this._input.match(this.rules[rules[i]]);
+                    if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                        match = tempMatch;
+                        index = i;
+                        if (this.options.backtrack_lexer) {
+                            token = this.test_match(tempMatch, rules[i]);
+                            if (token !== false) {
+                                return token;
+                            } else if (this._backtrack) {
+                                match = false;
+                                continue; // rule action called reject() implying a rule MISmatch.
+                            } else {
+                                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                                    return false;
+                                }
+                        } else if (!this.options.flex) {
+                            break;
+                        }
+                    }
+                }
+                if (match) {
+                    token = this.test_match(match, rules[index]);
                     if (token !== false) {
                         return token;
-                    } else if (this._backtrack) {
-                        match = false;
-                        continue; // rule action called reject() implying a rule MISmatch.
-                    } else {
-                        // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-                        return false;
                     }
-                } else if (!this.options.flex) {
-                    break;
+                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                    return false;
                 }
-            }
-        }
-        if (match) {
-            token = this.test_match(match, rules[index]);
-            if (token !== false) {
-                return token;
-            }
-            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-            return false;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-        }
-    },
+                if (this._input === "") {
+                    return this.EOF;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+            },
 
-// return next match that has a token
-lex:function lex() {
-        var r = this.next();
-        if (r) {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
+            // return next match that has a token
+            lex: function lex() {
+                var r = this.next();
+                if (r) {
+                    return r;
+                } else {
+                    return this.lex();
+                }
+            },
 
-// activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
-        this.conditionStack.push(condition);
-    },
+            // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
+            begin: function begin(condition) {
+                this.conditionStack.push(condition);
+            },
 
-// pop the previously active lexer condition state off the condition stack
-popState:function popState() {
-        var n = this.conditionStack.length - 1;
-        if (n > 0) {
-            return this.conditionStack.pop();
-        } else {
-            return this.conditionStack[0];
-        }
-    },
+            // pop the previously active lexer condition state off the condition stack
+            popState: function popState() {
+                var n = this.conditionStack.length - 1;
+                if (n > 0) {
+                    return this.conditionStack.pop();
+                } else {
+                    return this.conditionStack[0];
+                }
+            },
 
-// produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
-        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
-            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
-        } else {
-            return this.conditions["INITIAL"].rules;
-        }
-    },
+            // produce the lexer rule set which is active for the currently active lexer condition state
+            _currentRules: function _currentRules() {
+                if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+                    return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+                } else {
+                    return this.conditions["INITIAL"].rules;
+                }
+            },
 
-// return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
-        n = this.conditionStack.length - 1 - Math.abs(n || 0);
-        if (n >= 0) {
-            return this.conditionStack[n];
-        } else {
-            return "INITIAL";
-        }
-    },
+            // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
+            topState: function topState(n) {
+                n = this.conditionStack.length - 1 - Math.abs(n || 0);
+                if (n >= 0) {
+                    return this.conditionStack[n];
+                } else {
+                    return "INITIAL";
+                }
+            },
 
-// alias for begin(condition)
-pushState:function pushState(condition) {
-        this.begin(condition);
-    },
+            // alias for begin(condition)
+            pushState: function pushState(condition) {
+                this.begin(condition);
+            },
 
-// return the number of states currently on the stack
-stateStackSize:function stateStackSize() {
-        return this.conditionStack.length;
-    },
-options: {"case-insensitive":true},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-	// Pre-lexer code can go here
+            // return the number of states currently on the stack
+            stateStackSize: function stateStackSize() {
+                return this.conditionStack.length;
+            },
+            options: { "case-insensitive": true },
+            performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
+                // Pre-lexer code can go here
 
-var YYSTATE=YY_START;
-switch($avoiding_name_collisions) {
-case 0:return 10;
-break;
-case 1:/* skip whitespace */
-break;
-case 2:/* skip comments */
-break;
-case 3:/* skip comments */
-break;
-case 4:return 4;
-break;
-case 5:return 11;
-break;
-case 6:return 'date';
-break;
-case 7:return 12;
-break;
-case 8:return 13;
-break;
-case 9:return 14;
-break;
-case 10:return 15;
-break;
-case 11:return ':';
-break;
-case 12:return 6;
-break;
-case 13:return 'INVALID';
-break;
-}
-},
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13],"inclusive":true}}
-});
-return lexer;
-})();
-parser.lexer = lexer;
-function Parser () {
-  this.yy = {};
-}
-Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
-
-
-if (typeof _dereq_ !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
+                var YYSTATE = YY_START;
+                switch ($avoiding_name_collisions) {
+                    case 0:
+                        return 10;
+                        break;
+                    case 1:
+                        /* skip whitespace */
+                        break;
+                    case 2:
+                        /* skip comments */
+                        break;
+                    case 3:
+                        /* skip comments */
+                        break;
+                    case 4:
+                        return 4;
+                        break;
+                    case 5:
+                        return 11;
+                        break;
+                    case 6:
+                        return 'date';
+                        break;
+                    case 7:
+                        return 12;
+                        break;
+                    case 8:
+                        return 13;
+                        break;
+                    case 9:
+                        return 14;
+                        break;
+                    case 10:
+                        return 15;
+                        break;
+                    case 11:
+                        return ':';
+                        break;
+                    case 12:
+                        return 6;
+                        break;
+                    case 13:
+                        return 'INVALID';
+                        break;
+                }
+            },
+            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:gantt\b)/i, /^(?:dateFormat\s[^#\n;]+)/i, /^(?:\d\d\d\d-\d\d-\d\d\b)/i, /^(?:title\s[^#\n;]+)/i, /^(?:section\s[^#:\n;]+)/i, /^(?:[^#:\n;]+)/i, /^(?::[^#\n;]+)/i, /^(?::)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "INITIAL": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], "inclusive": true } }
+        };
+        return lexer;
+    })();
+    parser.lexer = lexer;
+    function Parser() {
+        this.yy = {};
     }
-    var source = _dereq_('fs').readFileSync(_dereq_('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
-};
-if (typeof module !== 'undefined' && _dereq_.main === module) {
-  exports.main(process.argv.slice(1));
+    Parser.prototype = parser;parser.Parser = Parser;
+    return new Parser();
+})();
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parser = parser;
+    exports.Parser = parser.Parser;
+    exports.parse = function () {
+        return parser.parse.apply(parser, arguments);
+    };
+    exports.main = function commonjsMain(args) {
+        if (!args[1]) {
+            console.log('Usage: ' + args[0] + ' FILE');
+            process.exit(1);
+        }
+        var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+        return exports.parser.parse(source);
+    };
+    if (typeof module !== 'undefined' && require.main === module) {
+        exports.main(process.argv.slice(1));
+    }
 }
-}
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83,"fs":81,"path":82}],99:[function(_dereq_,module,exports){
+
+}).call(this,require('_process'))
+},{"_process":105,"fs":103,"path":104}],96:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -35953,775 +36084,834 @@ if (typeof module !== 'undefined' && _dereq_.main === module) {
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,15,17,19,20,22,33],$V1=[2,2],$V2=[1,6],$V3=[1,8],$V4=[1,9],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[2,7],$Vc=[6,8,10,11,15,17,18,19,20,21,22,33],$Vd=[6,8,10,11,15,17,18,19,20,22,33],$Ve=[1,46],$Vf=[1,49],$Vg=[1,53];
-var parser = {trace: function trace() { },
-yy: {},
-symbols_: {"error":2,"start":3,"SD":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"participant":11,"actor":12,"signal":13,"note_statement":14,"title":15,"text":16,"loop":17,"end":18,"opt":19,"alt":20,"else":21,"note":22,"placement":23,"text2":24,"over":25,"spaceList":26,"actor_pair":27,",":28,"left_of":29,"right_of":30,"signaltype":31,"actors":32,"ACTOR":33,"SOLID_OPEN_ARROW":34,"DOTTED_OPEN_ARROW":35,"SOLID_ARROW":36,"DOTTED_ARROW":37,"SOLID_CROSS":38,"DOTTED_CROSS":39,"TXT":40,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SD",6:"EOF",8:"SPACE",10:"NL",11:"participant",15:"title",16:"text",17:"loop",18:"end",19:"opt",20:"alt",21:"else",22:"note",25:"over",28:",",29:"left_of",30:"right_of",33:"ACTOR",34:"SOLID_OPEN_ARROW",35:"DOTTED_OPEN_ARROW",36:"SOLID_ARROW",37:"DOTTED_ARROW",38:"SOLID_CROSS",39:"DOTTED_CROSS",40:"TXT"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,3],[9,2],[9,2],[9,4],[9,4],[9,4],[9,7],[14,4],[14,5],[26,2],[26,1],[27,1],[27,3],[23,1],[23,1],[13,4],[32,2],[32,1],[12,1],[31,1],[31,1],[31,1],[31,1],[31,1],[31,1],[24,1]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
-/* this == yyval */
+"use strict";
 
-var $0 = $$.length - 1;
-switch (yystate) {
-case 1:
- yy.apply($$[$0-1]);return $$[$0-1]; 
-break;
-case 2:
- this.$ = [] 
-break;
-case 3:
-$$[$0-1].push($$[$0]);this.$ = $$[$0-1]
-break;
-case 4: case 5:
- this.$ = $$[$0] 
-break;
-case 6: case 7:
- this.$=[];
-break;
-case 8:
-this.$=$$[$0-1];
-break;
-case 12:
+var parser = (function () {
+    var o = function o(k, v, _o, l) {
+        for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
+    },
+        $V0 = [6, 8, 10, 11, 15, 17, 19, 20, 22, 33],
+        $V1 = [2, 2],
+        $V2 = [1, 6],
+        $V3 = [1, 8],
+        $V4 = [1, 9],
+        $V5 = [1, 12],
+        $V6 = [1, 13],
+        $V7 = [1, 14],
+        $V8 = [1, 15],
+        $V9 = [1, 17],
+        $Va = [1, 18],
+        $Vb = [2, 7],
+        $Vc = [6, 8, 10, 11, 15, 17, 18, 19, 20, 21, 22, 33],
+        $Vd = [6, 8, 10, 11, 15, 17, 18, 19, 20, 22, 33],
+        $Ve = [1, 46],
+        $Vf = [1, 49],
+        $Vg = [1, 53];
+    var parser = { trace: function trace() {},
+        yy: {},
+        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "EOF": 6, "line": 7, "SPACE": 8, "statement": 9, "NL": 10, "participant": 11, "actor": 12, "signal": 13, "note_statement": 14, "title": 15, "text": 16, "loop": 17, "end": 18, "opt": 19, "alt": 20, "else": 21, "note": 22, "placement": 23, "text2": 24, "over": 25, "spaceList": 26, "actor_pair": 27, ",": 28, "left_of": 29, "right_of": 30, "signaltype": 31, "actors": 32, "ACTOR": 33, "SOLID_OPEN_ARROW": 34, "DOTTED_OPEN_ARROW": 35, "SOLID_ARROW": 36, "DOTTED_ARROW": 37, "SOLID_CROSS": 38, "DOTTED_CROSS": 39, "TXT": 40, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "SD", 6: "EOF", 8: "SPACE", 10: "NL", 11: "participant", 15: "title", 16: "text", 17: "loop", 18: "end", 19: "opt", 20: "alt", 21: "else", 22: "note", 25: "over", 28: ",", 29: "left_of", 30: "right_of", 33: "ACTOR", 34: "SOLID_OPEN_ARROW", 35: "DOTTED_OPEN_ARROW", 36: "SOLID_ARROW", 37: "DOTTED_ARROW", 38: "SOLID_CROSS", 39: "DOTTED_CROSS", 40: "TXT" },
+        productions_: [0, [3, 3], [5, 0], [5, 2], [7, 2], [7, 1], [7, 1], [7, 1], [9, 3], [9, 2], [9, 2], [9, 4], [9, 4], [9, 4], [9, 7], [14, 4], [14, 5], [26, 2], [26, 1], [27, 1], [27, 3], [23, 1], [23, 1], [13, 4], [32, 2], [32, 1], [12, 1], [31, 1], [31, 1], [31, 1], [31, 1], [31, 1], [31, 1], [24, 1]],
+        performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
+            /* this == yyval */
 
-		$$[$0-1].unshift({type: 'loopStart', loopText:$$[$0-2].actor, signalType: yy.LINETYPE.LOOP_START});
-		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
-		this.$=$$[$0-1];
-break;
-case 13:
+            var $0 = $$.length - 1;
+            switch (yystate) {
+                case 1:
+                    yy.apply($$[$0 - 1]);return $$[$0 - 1];
+                    break;
+                case 2:
+                    this.$ = [];
+                    break;
+                case 3:
+                    $$[$0 - 1].push($$[$0]);this.$ = $$[$0 - 1];
+                    break;
+                case 4:case 5:
+                    this.$ = $$[$0];
+                    break;
+                case 6:case 7:
+                    this.$ = [];
+                    break;
+                case 8:
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 12:
 
-		$$[$0-1].unshift({type: 'optStart', optText:$$[$0-2].actor, signalType: yy.LINETYPE.OPT_START});
-		$$[$0-1].push({type: 'optEnd', optText:$$[$0-2].actor, signalType: yy.LINETYPE.OPT_END});
-		this.$=$$[$0-1];
-break;
-case 14:
+                    $$[$0 - 1].unshift({ type: 'loopStart', loopText: $$[$0 - 2].actor, signalType: yy.LINETYPE.LOOP_START });
+                    $$[$0 - 1].push({ type: 'loopEnd', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_END });
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 13:
 
-		// Alt start
-		$$[$0-4].unshift({type: 'altStart', altText:$$[$0-5].actor, signalType: yy.LINETYPE.ALT_START});
-		// Content in alt is already in $$[$0-4]
-		// Else
-		$$[$0-4].push({type: 'else', altText:$$[$0-2].actor, signalType: yy.LINETYPE.ALT_ELSE});
-		// Content in other alt
-		$$[$0-4] = $$[$0-4].concat($$[$0-1]);
-		// End
-		$$[$0-4].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
+                    $$[$0 - 1].unshift({ type: 'optStart', optText: $$[$0 - 2].actor, signalType: yy.LINETYPE.OPT_START });
+                    $$[$0 - 1].push({ type: 'optEnd', optText: $$[$0 - 2].actor, signalType: yy.LINETYPE.OPT_END });
+                    this.$ = $$[$0 - 1];
+                    break;
+                case 14:
 
-		this.$=$$[$0-4];
-break;
-case 15:
-this.$=[$$[$0-1],{type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
-break;
-case 19:
- this.$ = $$[$0]; 
-break;
-case 20:
- this.$ = [$$[$0-2], $$[$0]]; 
-break;
-case 21:
- this.$ = yy.PLACEMENT.LEFTOF; 
-break;
-case 22:
- this.$ = yy.PLACEMENT.RIGHTOF; 
-break;
-case 23:
-this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
-break;
-case 26:
-this.$={type: 'addActor', actor:$$[$0]}
-break;
-case 27:
- this.$ = yy.LINETYPE.SOLID_OPEN; 
-break;
-case 28:
- this.$ = yy.LINETYPE.DOTTED_OPEN; 
-break;
-case 29:
- this.$ = yy.LINETYPE.SOLID; 
-break;
-case 30:
- this.$ = yy.LINETYPE.DOTTED; 
-break;
-case 31:
- this.$ = yy.LINETYPE.SOLID_CROSS; 
-break;
-case 32:
- this.$ = yy.LINETYPE.DOTTED_CROSS; 
-break;
-case 33:
-this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
-break;
-}
-},
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,$V1,{5:3}),{6:[1,4],7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,22:$V9,33:$Va},o($V0,$Vb,{1:[2,1]}),o($Vc,[2,3]),{9:19,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,22:$V9,33:$Va},o($Vc,[2,5]),o($Vc,[2,6]),{12:20,33:$Va},{10:[1,21]},{10:[1,22]},{8:[1,23]},{12:24,33:$Va},{12:25,33:$Va},{12:26,33:$Va},{31:27,34:[1,28],35:[1,29],36:[1,30],37:[1,31],38:[1,32],39:[1,33]},{23:34,25:[1,35],29:[1,36],30:[1,37]},o([6,8,10,11,15,17,18,19,20,21,22,28,33,34,35,36,37,38,39,40],[2,26]),o($Vc,[2,4]),{10:[1,38]},o($Vc,[2,9]),o($Vc,[2,10]),{16:[1,39]},o($Vd,$V1,{5:40}),o($Vd,$V1,{5:41}),o([6,8,10,11,15,17,19,20,21,22,33],$V1,{5:42}),{12:43,33:$Va},{33:[2,27]},{33:[2,28]},{33:[2,29]},{33:[2,30]},{33:[2,31]},{33:[2,32]},{12:44,33:$Va},{8:$Ve,26:45},{33:[2,21]},{33:[2,22]},o($Vc,[2,8]),{10:[1,47]},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,48],19:$V7,20:$V8,22:$V9,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,50],19:$V7,20:$V8,22:$V9,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,19:$V7,20:$V8,21:[1,51],22:$V9,33:$Va},{24:52,40:$Vg},{24:54,40:$Vg},{12:56,27:55,33:$Va},{8:$Ve,26:57,33:[2,18]},o($Vc,[2,11]),o($Vc,[2,12]),o($Vc,$Vb),o($Vc,[2,13]),{12:58,33:$Va},{10:[2,23]},{10:[2,33]},{10:[2,15]},{12:59,33:$Va},{28:[1,60],33:[2,19]},{33:[2,17]},o($Vd,$V1,{5:61}),{10:[2,16]},{12:62,33:$Va},{6:$Vf,7:5,8:$V2,9:7,10:$V3,11:$V4,12:16,13:10,14:11,15:$V5,17:$V6,18:[1,63],19:$V7,20:$V8,22:$V9,33:$Va},{33:[2,20]},o($Vc,[2,14])],
-defaultActions: {28:[2,27],29:[2,28],30:[2,29],31:[2,30],32:[2,31],33:[2,32],36:[2,21],37:[2,22],52:[2,23],53:[2,33],54:[2,15],57:[2,17],59:[2,16],62:[2,20]},
-parseError: function parseError(str, hash) {
-    if (hash.recoverable) {
-        this.trace(str);
-    } else {
-        throw new Error(str);
-    }
-},
-parse: function parse(input) {
-    var self = this, stack = [0], tstack = [], vstack = [null], lstack = [], table = this.table, yytext = '', yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    var args = lstack.slice.call(arguments, 1);
-    var lexer = Object.create(this.lexer);
-    var sharedState = { yy: {} };
-    for (var k in this.yy) {
-        if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
-            sharedState.yy[k] = this.yy[k];
-        }
-    }
-    lexer.setInput(input, sharedState.yy);
-    sharedState.yy.lexer = lexer;
-    sharedState.yy.parser = this;
-    if (typeof lexer.yylloc == 'undefined') {
-        lexer.yylloc = {};
-    }
-    var yyloc = lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = lexer.options && lexer.options.ranges;
-    if (typeof sharedState.yy.parseError === 'function') {
-        this.parseError = sharedState.yy.parseError;
-    } else {
-        this.parseError = Object.getPrototypeOf(this).parseError;
-    }
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    _token_stack:
-        function lex() {
-            var token;
-            token = lexer.lex() || EOF;
-            if (typeof token !== 'number') {
-                token = self.symbols_[token] || token;
+                    // Alt start
+                    $$[$0 - 4].unshift({ type: 'altStart', altText: $$[$0 - 5].actor, signalType: yy.LINETYPE.ALT_START });
+                    // Content in alt is already in $$[$0-4]
+                    // Else
+                    $$[$0 - 4].push({ type: 'else', altText: $$[$0 - 2].actor, signalType: yy.LINETYPE.ALT_ELSE });
+                    // Content in other alt
+                    $$[$0 - 4] = $$[$0 - 4].concat($$[$0 - 1]);
+                    // End
+                    $$[$0 - 4].push({ type: 'altEnd', signalType: yy.LINETYPE.ALT_END });
+
+                    this.$ = $$[$0 - 4];
+                    break;
+                case 15:
+                    this.$ = [$$[$0 - 1], { type: 'addNote', placement: $$[$0 - 2], actor: $$[$0 - 1].actor, text: $$[$0] }];
+                    break;
+                case 19:
+                    this.$ = $$[$0];
+                    break;
+                case 20:
+                    this.$ = [$$[$0 - 2], $$[$0]];
+                    break;
+                case 21:
+                    this.$ = yy.PLACEMENT.LEFTOF;
+                    break;
+                case 22:
+                    this.$ = yy.PLACEMENT.RIGHTOF;
+                    break;
+                case 23:
+                    this.$ = [$$[$0 - 3], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 3].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 2], msg: $$[$0] }];
+                    break;
+                case 26:
+                    this.$ = { type: 'addActor', actor: $$[$0] };
+                    break;
+                case 27:
+                    this.$ = yy.LINETYPE.SOLID_OPEN;
+                    break;
+                case 28:
+                    this.$ = yy.LINETYPE.DOTTED_OPEN;
+                    break;
+                case 29:
+                    this.$ = yy.LINETYPE.SOLID;
+                    break;
+                case 30:
+                    this.$ = yy.LINETYPE.DOTTED;
+                    break;
+                case 31:
+                    this.$ = yy.LINETYPE.SOLID_CROSS;
+                    break;
+                case 32:
+                    this.$ = yy.LINETYPE.DOTTED_CROSS;
+                    break;
+                case 33:
+                    this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
+                    break;
             }
-            return token;
-        }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == 'undefined') {
-                symbol = lex();
+        },
+        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o($V0, $V1, { 5: 3 }), { 6: [1, 4], 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: $V7, 20: $V8, 22: $V9, 33: $Va }, o($V0, $Vb, { 1: [2, 1] }), o($Vc, [2, 3]), { 9: 19, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: $V7, 20: $V8, 22: $V9, 33: $Va }, o($Vc, [2, 5]), o($Vc, [2, 6]), { 12: 20, 33: $Va }, { 10: [1, 21] }, { 10: [1, 22] }, { 8: [1, 23] }, { 12: 24, 33: $Va }, { 12: 25, 33: $Va }, { 12: 26, 33: $Va }, { 31: 27, 34: [1, 28], 35: [1, 29], 36: [1, 30], 37: [1, 31], 38: [1, 32], 39: [1, 33] }, { 23: 34, 25: [1, 35], 29: [1, 36], 30: [1, 37] }, o([6, 8, 10, 11, 15, 17, 18, 19, 20, 21, 22, 28, 33, 34, 35, 36, 37, 38, 39, 40], [2, 26]), o($Vc, [2, 4]), { 10: [1, 38] }, o($Vc, [2, 9]), o($Vc, [2, 10]), { 16: [1, 39] }, o($Vd, $V1, { 5: 40 }), o($Vd, $V1, { 5: 41 }), o([6, 8, 10, 11, 15, 17, 19, 20, 21, 22, 33], $V1, { 5: 42 }), { 12: 43, 33: $Va }, { 33: [2, 27] }, { 33: [2, 28] }, { 33: [2, 29] }, { 33: [2, 30] }, { 33: [2, 31] }, { 33: [2, 32] }, { 12: 44, 33: $Va }, { 8: $Ve, 26: 45 }, { 33: [2, 21] }, { 33: [2, 22] }, o($Vc, [2, 8]), { 10: [1, 47] }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 18: [1, 48], 19: $V7, 20: $V8, 22: $V9, 33: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 18: [1, 50], 19: $V7, 20: $V8, 22: $V9, 33: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: $V7, 20: $V8, 21: [1, 51], 22: $V9, 33: $Va }, { 24: 52, 40: $Vg }, { 24: 54, 40: $Vg }, { 12: 56, 27: 55, 33: $Va }, { 8: $Ve, 26: 57, 33: [2, 18] }, o($Vc, [2, 11]), o($Vc, [2, 12]), o($Vc, $Vb), o($Vc, [2, 13]), { 12: 58, 33: $Va }, { 10: [2, 23] }, { 10: [2, 33] }, { 10: [2, 15] }, { 12: 59, 33: $Va }, { 28: [1, 60], 33: [2, 19] }, { 33: [2, 17] }, o($Vd, $V1, { 5: 61 }), { 10: [2, 16] }, { 12: 62, 33: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 18: [1, 63], 19: $V7, 20: $V8, 22: $V9, 33: $Va }, { 33: [2, 20] }, o($Vc, [2, 14])],
+        defaultActions: { 28: [2, 27], 29: [2, 28], 30: [2, 29], 31: [2, 30], 32: [2, 31], 33: [2, 32], 36: [2, 21], 37: [2, 22], 52: [2, 23], 53: [2, 33], 54: [2, 15], 57: [2, 17], 59: [2, 16], 62: [2, 20] },
+        parseError: function parseError(str, hash) {
+            if (hash.recoverable) {
+                this.trace(str);
+            } else {
+                throw new Error(str);
             }
-            action = table[state] && table[state][symbol];
-        }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
+        },
+        parse: function parse(input) {
+            var self = this,
+                stack = [0],
+                tstack = [],
+                vstack = [null],
+                lstack = [],
+                table = this.table,
+                yytext = '',
+                yylineno = 0,
+                yyleng = 0,
+                recovering = 0,
+                TERROR = 2,
+                EOF = 1;
+            var args = lstack.slice.call(arguments, 1);
+            var lexer = Object.create(this.lexer);
+            var sharedState = { yy: {} };
+            for (var k in this.yy) {
+                if (Object.prototype.hasOwnProperty.call(this.yy, k)) {
+                    sharedState.yy[k] = this.yy[k];
+                }
+            }
+            lexer.setInput(input, sharedState.yy);
+            sharedState.yy.lexer = lexer;
+            sharedState.yy.parser = this;
+            if (typeof lexer.yylloc == 'undefined') {
+                lexer.yylloc = {};
+            }
+            var yyloc = lexer.yylloc;
+            lstack.push(yyloc);
+            var ranges = lexer.options && lexer.options.ranges;
+            if (typeof sharedState.yy.parseError === 'function') {
+                this.parseError = sharedState.yy.parseError;
+            } else {
+                this.parseError = Object.getPrototypeOf(this).parseError;
+            }
+            function popStack(n) {
+                stack.length = stack.length - 2 * n;
+                vstack.length = vstack.length - n;
+                lstack.length = lstack.length - n;
+            }
+            _token_stack: var lex = function lex() {
+                var token;
+                token = lexer.lex() || EOF;
+                if (typeof token !== 'number') {
+                    token = self.symbols_[token] || token;
+                }
+                return token;
+            };
+            var symbol,
+                preErrorSymbol,
+                state,
+                action,
+                a,
+                r,
+                yyval = {},
+                p,
+                len,
+                newState,
+                expected;
+            while (true) {
+                state = stack[stack.length - 1];
+                if (this.defaultActions[state]) {
+                    action = this.defaultActions[state];
+                } else {
+                    if (symbol === null || typeof symbol == 'undefined') {
+                        symbol = lex();
+                    }
+                    action = table[state] && table[state][symbol];
+                }
+                if (typeof action === 'undefined' || !action.length || !action[0]) {
+                    var errStr = '';
+                    expected = [];
+                    for (p in table[state]) {
+                        if (this.terminals_[p] && p > TERROR) {
+                            expected.push('\'' + this.terminals_[p] + '\'');
+                        }
+                    }
+                    if (lexer.showPosition) {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                    } else {
+                        errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                    }
+                    this.parseError(errStr, {
+                        text: lexer.match,
+                        token: this.terminals_[symbol] || symbol,
+                        line: lexer.yylineno,
+                        loc: yyloc,
+                        expected: expected
+                    });
+                }
+                if (action[0] instanceof Array && action.length > 1) {
+                    throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
+                }
+                switch (action[0]) {
+                    case 1:
+                        stack.push(symbol);
+                        vstack.push(lexer.yytext);
+                        lstack.push(lexer.yylloc);
+                        stack.push(action[1]);
+                        symbol = null;
+                        if (!preErrorSymbol) {
+                            yyleng = lexer.yyleng;
+                            yytext = lexer.yytext;
+                            yylineno = lexer.yylineno;
+                            yyloc = lexer.yylloc;
+                            if (recovering > 0) {
+                                recovering--;
+                            }
+                        } else {
+                            symbol = preErrorSymbol;
+                            preErrorSymbol = null;
+                        }
+                        break;
+                    case 2:
+                        len = this.productions_[action[1]][1];
+                        yyval.$ = vstack[vstack.length - len];
+                        yyval._$ = {
+                            first_line: lstack[lstack.length - (len || 1)].first_line,
+                            last_line: lstack[lstack.length - 1].last_line,
+                            first_column: lstack[lstack.length - (len || 1)].first_column,
+                            last_column: lstack[lstack.length - 1].last_column
+                        };
+                        if (ranges) {
+                            yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
+                        }
+                        r = this.performAction.apply(yyval, [yytext, yyleng, yylineno, sharedState.yy, action[1], vstack, lstack].concat(args));
+                        if (typeof r !== 'undefined') {
+                            return r;
+                        }
+                        if (len) {
+                            stack = stack.slice(0, -1 * len * 2);
+                            vstack = vstack.slice(0, -1 * len);
+                            lstack = lstack.slice(0, -1 * len);
+                        }
+                        stack.push(this.productions_[action[1]][0]);
+                        vstack.push(yyval.$);
+                        lstack.push(yyval._$);
+                        newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
+                        stack.push(newState);
+                        break;
+                    case 3:
+                        return true;
+                }
+            }
+            return true;
+        } };
+    /* generated by jison-lex 0.3.4 */
+    var lexer = (function () {
+        var lexer = {
+
+            EOF: 1,
+
+            parseError: function parseError(str, hash) {
+                if (this.yy.parser) {
+                    this.yy.parser.parseError(str, hash);
+                } else {
+                    throw new Error(str);
+                }
+            },
+
+            // resets the lexer, sets new input
+            setInput: function setInput(input, yy) {
+                this.yy = yy || this.yy || {};
+                this._input = input;
+                this._more = this._backtrack = this.done = false;
+                this.yylineno = this.yyleng = 0;
+                this.yytext = this.matched = this.match = '';
+                this.conditionStack = ['INITIAL'];
+                this.yylloc = {
+                    first_line: 1,
+                    first_column: 0,
+                    last_line: 1,
+                    last_column: 0
+                };
+                if (this.options.ranges) {
+                    this.yylloc.range = [0, 0];
+                }
+                this.offset = 0;
+                return this;
+            },
+
+            // consumes and returns one char from the input
+            input: function input() {
+                var ch = this._input[0];
+                this.yytext += ch;
+                this.yyleng++;
+                this.offset++;
+                this.match += ch;
+                this.matched += ch;
+                var lines = ch.match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno++;
+                    this.yylloc.last_line++;
+                } else {
+                    this.yylloc.last_column++;
+                }
+                if (this.options.ranges) {
+                    this.yylloc.range[1]++;
+                }
+
+                this._input = this._input.slice(1);
+                return ch;
+            },
+
+            // unshifts one char (or a string) into the input
+            unput: function unput(ch) {
+                var len = ch.length;
+                var lines = ch.split(/(?:\r\n?|\n)/g);
+
+                this._input = ch + this._input;
+                this.yytext = this.yytext.substr(0, this.yytext.length - len);
+                //this.yyleng -= len;
+                this.offset -= len;
+                var oldLines = this.match.split(/(?:\r\n?|\n)/g);
+                this.match = this.match.substr(0, this.match.length - 1);
+                this.matched = this.matched.substr(0, this.matched.length - 1);
+
+                if (lines.length - 1) {
+                    this.yylineno -= lines.length - 1;
+                }
+                var r = this.yylloc.range;
+
+                this.yylloc = {
+                    first_line: this.yylloc.first_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.first_column,
+                    last_column: lines ? (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length : this.yylloc.first_column - len
+                };
+
+                if (this.options.ranges) {
+                    this.yylloc.range = [r[0], r[0] + this.yyleng - len];
+                }
+                this.yyleng = this.yytext.length;
+                return this;
+            },
+
+            // When called from action, caches matched text and appends it on next action
+            more: function more() {
+                this._more = true;
+                return this;
+            },
+
+            // When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
+            reject: function reject() {
+                if (this.options.backtrack_lexer) {
+                    this._backtrack = true;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+                return this;
+            },
+
+            // retain first n characters of the match
+            less: function less(n) {
+                this.unput(this.match.slice(n));
+            },
+
+            // displays already matched input, i.e. for error messages
+            pastInput: function pastInput() {
+                var past = this.matched.substr(0, this.matched.length - this.match.length);
+                return (past.length > 20 ? '...' : '') + past.substr(-20).replace(/\n/g, "");
+            },
+
+            // displays upcoming input, i.e. for error messages
+            upcomingInput: function upcomingInput() {
+                var next = this.match;
+                if (next.length < 20) {
+                    next += this._input.substr(0, 20 - next.length);
+                }
+                return (next.substr(0, 20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
+            },
+
+            // displays the character position where the lexing error occurred, i.e. for error messages
+            showPosition: function showPosition() {
+                var pre = this.pastInput();
+                var c = new Array(pre.length + 1).join("-");
+                return pre + this.upcomingInput() + "\n" + c + "^";
+            },
+
+            // test the lexed token: return FALSE when not a match, otherwise return token
+            test_match: function test_match(match, indexed_rule) {
+                var token, lines, backup;
+
+                if (this.options.backtrack_lexer) {
+                    // save context
+                    backup = {
+                        yylineno: this.yylineno,
+                        yylloc: {
+                            first_line: this.yylloc.first_line,
+                            last_line: this.last_line,
+                            first_column: this.yylloc.first_column,
+                            last_column: this.yylloc.last_column
+                        },
+                        yytext: this.yytext,
+                        match: this.match,
+                        matches: this.matches,
+                        matched: this.matched,
+                        yyleng: this.yyleng,
+                        offset: this.offset,
+                        _more: this._more,
+                        _input: this._input,
+                        yy: this.yy,
+                        conditionStack: this.conditionStack.slice(0),
+                        done: this.done
+                    };
+                    if (this.options.ranges) {
+                        backup.yylloc.range = this.yylloc.range.slice(0);
                     }
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+
+                lines = match[0].match(/(?:\r\n?|\n).*/g);
+                if (lines) {
+                    this.yylineno += lines.length;
                 }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
-            }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(lexer.yytext);
-            lstack.push(lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = lexer.yyleng;
-                yytext = lexer.yytext;
-                yylineno = lexer.yylineno;
-                yyloc = lexer.yylloc;
-                if (recovering > 0) {
-                    recovering--;
+                this.yylloc = {
+                    first_line: this.yylloc.last_line,
+                    last_line: this.yylineno + 1,
+                    first_column: this.yylloc.last_column,
+                    last_column: lines ? lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length
+                };
+                this.yytext += match[0];
+                this.match += match[0];
+                this.matches = match;
+                this.yyleng = this.yytext.length;
+                if (this.options.ranges) {
+                    this.yylloc.range = [this.offset, this.offset += this.yyleng];
                 }
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
-            }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {
-                first_line: lstack[lstack.length - (len || 1)].first_line,
-                last_line: lstack[lstack.length - 1].last_line,
-                first_column: lstack[lstack.length - (len || 1)].first_column,
-                last_column: lstack[lstack.length - 1].last_column
-            };
-            if (ranges) {
-                yyval._$.range = [
-                    lstack[lstack.length - (len || 1)].range[0],
-                    lstack[lstack.length - 1].range[1]
-                ];
-            }
-            r = this.performAction.apply(yyval, [
-                yytext,
-                yyleng,
-                yylineno,
-                sharedState.yy,
-                action[1],
-                vstack,
-                lstack
-            ].concat(args));
-            if (typeof r !== 'undefined') {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}};
-/* generated by jison-lex 0.3.4 */
-var lexer = (function(){
-var lexer = ({
+                this._more = false;
+                this._backtrack = false;
+                this._input = this._input.slice(match[0].length);
+                this.matched += match[0];
+                token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
+                if (this.done && this._input) {
+                    this.done = false;
+                }
+                if (token) {
+                    return token;
+                } else if (this._backtrack) {
+                    // recover context
+                    for (var k in backup) {
+                        this[k] = backup[k];
+                    }
+                    return false; // rule action called reject() implying the next rule should be tested instead.
+                }
+                return false;
+            },
 
-EOF:1,
+            // return next match in input
+            next: function next() {
+                if (this.done) {
+                    return this.EOF;
+                }
+                if (!this._input) {
+                    this.done = true;
+                }
 
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
-
-// resets the lexer, sets new input
-setInput:function (input, yy) {
-        this.yy = yy || this.yy || {};
-        this._input = input;
-        this._more = this._backtrack = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {
-            first_line: 1,
-            first_column: 0,
-            last_line: 1,
-            last_column: 0
-        };
-        if (this.options.ranges) {
-            this.yylloc.range = [0,0];
-        }
-        this.offset = 0;
-        return this;
-    },
-
-// consumes and returns one char from the input
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) {
-            this.yylloc.range[1]++;
-        }
-
-        this._input = this._input.slice(1);
-        return ch;
-    },
-
-// unshifts one char (or a string) into the input
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
-
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length - len);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length - 1);
-        this.matched = this.matched.substr(0, this.matched.length - 1);
-
-        if (lines.length - 1) {
-            this.yylineno -= lines.length - 1;
-        }
-        var r = this.yylloc.range;
-
-        this.yylloc = {
-            first_line: this.yylloc.first_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.first_column,
-            last_column: lines ?
-                (lines.length === oldLines.length ? this.yylloc.first_column : 0)
-                 + oldLines[oldLines.length - lines.length].length - lines[0].length :
-              this.yylloc.first_column - len
-        };
-
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        this.yyleng = this.yytext.length;
-        return this;
-    },
-
-// When called from action, caches matched text and appends it on next action
-more:function () {
-        this._more = true;
-        return this;
-    },
-
-// When called from action, signals the lexer that this rule fails to match the input, so the next matching rule (regex) should be tested instead.
-reject:function () {
-        if (this.options.backtrack_lexer) {
-            this._backtrack = true;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. You can only invoke reject() in the lexer when the lexer is of the backtracking persuasion (options.backtrack_lexer = true).\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-
-        }
-        return this;
-    },
-
-// retain first n characters of the match
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
-
-// displays already matched input, i.e. for error messages
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
-
-// displays upcoming input, i.e. for error messages
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20) + (next.length > 20 ? '...' : '')).replace(/\n/g, "");
-    },
-
-// displays the character position where the lexing error occurred, i.e. for error messages
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c + "^";
-    },
-
-// test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
-        var token,
-            lines,
-            backup;
-
-        if (this.options.backtrack_lexer) {
-            // save context
-            backup = {
-                yylineno: this.yylineno,
-                yylloc: {
-                    first_line: this.yylloc.first_line,
-                    last_line: this.last_line,
-                    first_column: this.yylloc.first_column,
-                    last_column: this.yylloc.last_column
-                },
-                yytext: this.yytext,
-                match: this.match,
-                matches: this.matches,
-                matched: this.matched,
-                yyleng: this.yyleng,
-                offset: this.offset,
-                _more: this._more,
-                _input: this._input,
-                yy: this.yy,
-                conditionStack: this.conditionStack.slice(0),
-                done: this.done
-            };
-            if (this.options.ranges) {
-                backup.yylloc.range = this.yylloc.range.slice(0);
-            }
-        }
-
-        lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno += lines.length;
-        }
-        this.yylloc = {
-            first_line: this.yylloc.last_line,
-            last_line: this.yylineno + 1,
-            first_column: this.yylloc.last_column,
-            last_column: lines ?
-                         lines[lines.length - 1].length - lines[lines.length - 1].match(/\r?\n?/)[0].length :
-                         this.yylloc.last_column + match[0].length
-        };
-        this.yytext += match[0];
-        this.match += match[0];
-        this.matches = match;
-        this.yyleng = this.yytext.length;
-        if (this.options.ranges) {
-            this.yylloc.range = [this.offset, this.offset += this.yyleng];
-        }
-        this._more = false;
-        this._backtrack = false;
-        this._input = this._input.slice(match[0].length);
-        this.matched += match[0];
-        token = this.performAction.call(this, this.yy, this, indexed_rule, this.conditionStack[this.conditionStack.length - 1]);
-        if (this.done && this._input) {
-            this.done = false;
-        }
-        if (token) {
-            return token;
-        } else if (this._backtrack) {
-            // recover context
-            for (var k in backup) {
-                this[k] = backup[k];
-            }
-            return false; // rule action called reject() implying the next rule should be tested instead.
-        }
-        return false;
-    },
-
-// return next match in input
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) {
-            this.done = true;
-        }
-
-        var token,
-            match,
-            tempMatch,
-            index;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i = 0; i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (this.options.backtrack_lexer) {
-                    token = this.test_match(tempMatch, rules[i]);
+                var token, match, tempMatch, index;
+                if (!this._more) {
+                    this.yytext = '';
+                    this.match = '';
+                }
+                var rules = this._currentRules();
+                for (var i = 0; i < rules.length; i++) {
+                    tempMatch = this._input.match(this.rules[rules[i]]);
+                    if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+                        match = tempMatch;
+                        index = i;
+                        if (this.options.backtrack_lexer) {
+                            token = this.test_match(tempMatch, rules[i]);
+                            if (token !== false) {
+                                return token;
+                            } else if (this._backtrack) {
+                                match = false;
+                                continue; // rule action called reject() implying a rule MISmatch.
+                            } else {
+                                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                                    return false;
+                                }
+                        } else if (!this.options.flex) {
+                            break;
+                        }
+                    }
+                }
+                if (match) {
+                    token = this.test_match(match, rules[index]);
                     if (token !== false) {
                         return token;
-                    } else if (this._backtrack) {
-                        match = false;
-                        continue; // rule action called reject() implying a rule MISmatch.
-                    } else {
-                        // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-                        return false;
                     }
-                } else if (!this.options.flex) {
-                    break;
+                    // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
+                    return false;
                 }
-            }
-        }
-        if (match) {
-            token = this.test_match(match, rules[index]);
-            if (token !== false) {
-                return token;
-            }
-            // else: this is a lexer rule which consumes input without producing a token (e.g. whitespace)
-            return false;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
-                text: "",
-                token: null,
-                line: this.yylineno
-            });
-        }
-    },
+                if (this._input === "") {
+                    return this.EOF;
+                } else {
+                    return this.parseError('Lexical error on line ' + (this.yylineno + 1) + '. Unrecognized text.\n' + this.showPosition(), {
+                        text: "",
+                        token: null,
+                        line: this.yylineno
+                    });
+                }
+            },
 
-// return next match that has a token
-lex:function lex() {
-        var r = this.next();
-        if (r) {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
+            // return next match that has a token
+            lex: function lex() {
+                var r = this.next();
+                if (r) {
+                    return r;
+                } else {
+                    return this.lex();
+                }
+            },
 
-// activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
-        this.conditionStack.push(condition);
-    },
+            // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
+            begin: function begin(condition) {
+                this.conditionStack.push(condition);
+            },
 
-// pop the previously active lexer condition state off the condition stack
-popState:function popState() {
-        var n = this.conditionStack.length - 1;
-        if (n > 0) {
-            return this.conditionStack.pop();
-        } else {
-            return this.conditionStack[0];
-        }
-    },
+            // pop the previously active lexer condition state off the condition stack
+            popState: function popState() {
+                var n = this.conditionStack.length - 1;
+                if (n > 0) {
+                    return this.conditionStack.pop();
+                } else {
+                    return this.conditionStack[0];
+                }
+            },
 
-// produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
-        if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
-            return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
-        } else {
-            return this.conditions["INITIAL"].rules;
-        }
-    },
+            // produce the lexer rule set which is active for the currently active lexer condition state
+            _currentRules: function _currentRules() {
+                if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
+                    return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
+                } else {
+                    return this.conditions["INITIAL"].rules;
+                }
+            },
 
-// return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
-        n = this.conditionStack.length - 1 - Math.abs(n || 0);
-        if (n >= 0) {
-            return this.conditionStack[n];
-        } else {
-            return "INITIAL";
-        }
-    },
+            // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
+            topState: function topState(n) {
+                n = this.conditionStack.length - 1 - Math.abs(n || 0);
+                if (n >= 0) {
+                    return this.conditionStack[n];
+                } else {
+                    return "INITIAL";
+                }
+            },
 
-// alias for begin(condition)
-pushState:function pushState(condition) {
-        this.begin(condition);
-    },
+            // alias for begin(condition)
+            pushState: function pushState(condition) {
+                this.begin(condition);
+            },
 
-// return the number of states currently on the stack
-stateStackSize:function stateStackSize() {
-        return this.conditionStack.length;
-    },
-options: {"case-insensitive":true},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-	// Pre-lexer code can go here
+            // return the number of states currently on the stack
+            stateStackSize: function stateStackSize() {
+                return this.conditionStack.length;
+            },
+            options: { "case-insensitive": true },
+            performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
+                // Pre-lexer code can go here
 
-var YYSTATE=YY_START;
-switch($avoiding_name_collisions) {
-case 0:return 10;
-break;
-case 1: return 38;
-break;
-case 2: return 39;
-break;
-case 3: return 36;
-break;
-case 4: return 37;
-break;
-case 5:/* skip whitespace */
-break;
-case 6:/* skip comments */
-break;
-case 7:/* skip comments */
-break;
-case 8:return 11;
-break;
-case 9:return 19;
-break;
-case 10:return 17;
-break;
-case 11:return 20;
-break;
-case 12:return 21;
-break;
-case 13:return 18;
-break;
-case 14:return 29;
-break;
-case 15:return 30;
-break;
-case 16:return 25;
-break;
-case 17:return 22;
-break;
-case 18:return 15;
-break;
-case 19:return 4;
-break;
-case 20:return 28;
-break;
-case 21:return 10;
-break;
-case 22:return 33;
-break;
-case 23:return 34;
-break;
-case 24:return 35;
-break;
-case 25:return 36;
-break;
-case 26:return 37;
-break;
-case 27:return 40;
-break;
-case 28:return 6;
-break;
-case 29:return 'INVALID';
-break;
-}
-},
-rules: [/^(?:[\n]+)/i,/^(?:[\-][x])/i,/^(?:[\-][\-][x])/i,/^(?:[\-][>][>])/i,/^(?:[\-][\-][>][>])/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:opt\b)/i,/^(?:loop\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\->:\n,;]+)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?::[^#\n;]+)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"inclusive":true}}
-});
-return lexer;
-})();
-parser.lexer = lexer;
-function Parser () {
-  this.yy = {};
-}
-Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
-
-
-if (typeof _dereq_ !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
+                var YYSTATE = YY_START;
+                switch ($avoiding_name_collisions) {
+                    case 0:
+                        return 10;
+                        break;
+                    case 1:
+                        return 38;
+                        break;
+                    case 2:
+                        return 39;
+                        break;
+                    case 3:
+                        return 36;
+                        break;
+                    case 4:
+                        return 37;
+                        break;
+                    case 5:
+                        /* skip whitespace */
+                        break;
+                    case 6:
+                        /* skip comments */
+                        break;
+                    case 7:
+                        /* skip comments */
+                        break;
+                    case 8:
+                        return 11;
+                        break;
+                    case 9:
+                        return 19;
+                        break;
+                    case 10:
+                        return 17;
+                        break;
+                    case 11:
+                        return 20;
+                        break;
+                    case 12:
+                        return 21;
+                        break;
+                    case 13:
+                        return 18;
+                        break;
+                    case 14:
+                        return 29;
+                        break;
+                    case 15:
+                        return 30;
+                        break;
+                    case 16:
+                        return 25;
+                        break;
+                    case 17:
+                        return 22;
+                        break;
+                    case 18:
+                        return 15;
+                        break;
+                    case 19:
+                        return 4;
+                        break;
+                    case 20:
+                        return 28;
+                        break;
+                    case 21:
+                        return 10;
+                        break;
+                    case 22:
+                        return 33;
+                        break;
+                    case 23:
+                        return 34;
+                        break;
+                    case 24:
+                        return 35;
+                        break;
+                    case 25:
+                        return 36;
+                        break;
+                    case 26:
+                        return 37;
+                        break;
+                    case 27:
+                        return 40;
+                        break;
+                    case 28:
+                        return 6;
+                        break;
+                    case 29:
+                        return 'INVALID';
+                        break;
+                }
+            },
+            rules: [/^(?:[\n]+)/i, /^(?:[\-][x])/i, /^(?:[\-][\-][x])/i, /^(?:[\-][>][>])/i, /^(?:[\-][\-][>][>])/i, /^(?:\s+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:opt\b)/i, /^(?:loop\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "INITIAL": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "inclusive": true } }
+        };
+        return lexer;
+    })();
+    parser.lexer = lexer;
+    function Parser() {
+        this.yy = {};
     }
-    var source = _dereq_('fs').readFileSync(_dereq_('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
-};
-if (typeof module !== 'undefined' && _dereq_.main === module) {
-  exports.main(process.argv.slice(1));
+    Parser.prototype = parser;parser.Parser = Parser;
+    return new Parser();
+})();
+
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+    exports.parser = parser;
+    exports.Parser = parser.Parser;
+    exports.parse = function () {
+        return parser.parse.apply(parser, arguments);
+    };
+    exports.main = function commonjsMain(args) {
+        if (!args[1]) {
+            console.log('Usage: ' + args[0] + ' FILE');
+            process.exit(1);
+        }
+        var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+        return exports.parser.parse(source);
+    };
+    if (typeof module !== 'undefined' && require.main === module) {
+        exports.main(process.argv.slice(1));
+    }
 }
-}
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83,"fs":81,"path":82}],100:[function(_dereq_,module,exports){
+
+}).call(this,require('_process'))
+},{"_process":105,"fs":103,"path":104}],97:[function(require,module,exports){
+(function (global){
 /**
  * Created by knut on 14-11-19.
  */
-var actors    = {};
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var actors = {};
 var actorKeys = [];
-var messages  = [];
-var notes     = [];
-var log = _dereq_('../../logger').create();
+var messages = [];
+var notes = [];
 
+var log = new Logger.Log();
 
-exports.addActor = function(id,name,description){
-    actors[id] = {name:name, description:description};
+exports.addActor = function (id, name, description) {
+    actors[id] = { name: name, description: description };
     actorKeys.push(id);
 };
 
-exports.addMessage = function(idFrom, idTo, message,  answer){
-    messages.push({from:idFrom, to:idTo, message:message, answer:answer});
+exports.addMessage = function (idFrom, idTo, message, answer) {
+    messages.push({ from: idFrom, to: idTo, message: message, answer: answer });
 };
 
 /**
  *
  */
-exports.addSignal = function(idFrom, idTo, message,  messageType){
-    log.debug('Adding message from='+idFrom+' to='+idTo+' message='+message+' type='+messageType);
-    messages.push({from:idFrom, to:idTo, message:message, type:messageType});
+exports.addSignal = function (idFrom, idTo, message, messageType) {
+    log.debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType);
+    messages.push({ from: idFrom, to: idTo, message: message, type: messageType });
 };
 
-exports.getMessages = function(){
+exports.getMessages = function () {
     return messages;
 };
 
-exports.getActors = function(){
+exports.getActors = function () {
     return actors;
 };
-exports.getActor = function(id){
+exports.getActor = function (id) {
     return actors[id];
 };
-exports.getActorKeys = function(){
+exports.getActorKeys = function () {
     return Object.keys(actors);
 };
 
-exports.clear = function(){
-    actors   = {};
+exports.clear = function () {
+    actors = {};
     messages = [];
 };
 
 exports.LINETYPE = {
-    SOLID        : 0  ,
-    DOTTED       : 1  ,
-    NOTE         : 2  ,
-    SOLID_CROSS  : 3  ,
-    DOTTED_CROSS : 4  ,
-    SOLID_OPEN   : 5  ,
-    DOTTED_OPEN  : 6  ,
-    LOOP_START   : 10 ,
-    LOOP_END     : 11 ,
-    ALT_START    : 12 ,
-    ALT_ELSE     : 13 ,
-    ALT_END      : 14 ,
-    OPT_START    : 15 ,
-    OPT_END      : 16
+    SOLID: 0,
+    DOTTED: 1,
+    NOTE: 2,
+    SOLID_CROSS: 3,
+    DOTTED_CROSS: 4,
+    SOLID_OPEN: 5,
+    DOTTED_OPEN: 6,
+    LOOP_START: 10,
+    LOOP_END: 11,
+    ALT_START: 12,
+    ALT_ELSE: 13,
+    ALT_END: 14,
+    OPT_START: 15,
+    OPT_END: 16
 };
 
 exports.ARROWTYPE = {
-    FILLED       : 0,
-    OPEN         : 1
+    FILLED: 0,
+    OPEN: 1
 };
 
 exports.PLACEMENT = {
-    LEFTOF       : 0,
-    RIGHTOF      : 1,
-    OVER         : 2
+    LEFTOF: 0,
+    RIGHTOF: 1,
+    OVER: 2
 };
 
-exports.addNote = function (actor, placement, message){
-    var note = {actor:actor, placement: placement, message:message};
+exports.addNote = function (actor, placement, message) {
+    var note = { actor: actor, placement: placement, message: message };
 
     notes.push(note);
-    messages.push({from:actor, to:actor, message:message, type:exports.LINETYPE.NOTE, placement: placement});
+    messages.push({ from: actor, to: actor, message: message, type: exports.LINETYPE.NOTE, placement: placement });
 };
 
-
-exports.parseError = function(err,hash){
-    mermaidAPI.parseError(err,hash);
+exports.parseError = function (err, hash) {
+    global.mermaidAPI.parseError(err, hash);
 };
 
-exports.apply = function(param){
-    if(param instanceof Array ){
-        param.forEach(function(item){
+exports.apply = function (param) {
+    if (param instanceof Array) {
+        param.forEach(function (item) {
             exports.apply(item);
         });
     } else {
         // log.debug(param);
-        switch(param.type){
+        switch (param.type) {
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.actor);
                 break;
             case 'addNote':
-                exports.addNote(param.actor,param.placement, param.text);
+                exports.addNote(param.actor, param.placement, param.text);
                 break;
             case 'addMessage':
                 exports.addSignal(param.from, param.to, param.msg, param.signalType);
@@ -36756,126 +36946,136 @@ exports.apply = function(param){
         }
     }
 };
-},{"../../logger":104}],101:[function(_dereq_,module,exports){
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../../logger":100}],98:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
 
-var sq = _dereq_('./parser/sequenceDiagram').parser;
-sq.yy = _dereq_('./sequenceDb');
-var svgDraw = _dereq_('./svgDraw');
-var d3 = _dereq_('../../d3');
-var log = _dereq_('../../logger').create();
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('../../logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var sq = require('./parser/sequenceDiagram').parser;
+sq.yy = require('./sequenceDb');
+var svgDraw = require('./svgDraw');
+var d3 = require('../../d3');
+
+var log = new Logger.Log();
 
 var conf = {
 
-    diagramMarginX:50,
-    diagramMarginY:10,
+    diagramMarginX: 50,
+    diagramMarginY: 10,
     // Margin between actors
-    actorMargin:50,
+    actorMargin: 50,
     // Width of actor moxes
-    width:150,
+    width: 150,
     // Height of actor boxes
-    height:65,
+    height: 65,
     // Margin around loop boxes
-    boxMargin:10,
-    boxTextMargin:5,
-    noteMargin:10,
+    boxMargin: 10,
+    boxTextMargin: 5,
+    noteMargin: 10,
     // Space between messages
-    messageMargin:35,
+    messageMargin: 35,
     //mirror actors under diagram
-    mirrorActors:false,
+    mirrorActors: false,
     // Depending on css styling this might need adjustment
     // Prolongs the edge of the diagram downwards
-    bottomMarginAdj:1
+    bottomMarginAdj: 1
 };
 
-//var bb = getBBox("path");
+//var bb = getBBox('path');
 exports.bounds = {
-    data:{
-        startx:undefined,
-        stopx :undefined,
-        starty:undefined,
-        stopy :undefined,
+    data: {
+        startx: undefined,
+        stopx: undefined,
+        starty: undefined,
+        stopy: undefined
     },
-    verticalPos:0,
+    verticalPos: 0,
 
     list: [],
-    init    : function(){
+    init: function init() {
         this.list = [];
         this.data = {
-            startx:undefined,
-                stopx :undefined,
-                starty:undefined,
-                stopy :undefined,
+            startx: undefined,
+            stopx: undefined,
+            starty: undefined,
+            stopy: undefined
         };
-        this.verticalPos =0;
+        this.verticalPos = 0;
     },
-    updateVal : function (obj,key,val,fun){
-        if(typeof obj[key] === 'undefined'){
+    updateVal: function updateVal(obj, key, val, fun) {
+        if (typeof obj[key] === 'undefined') {
             obj[key] = val;
-        }else{
-            obj[key] = fun(val,obj[key]);
+        } else {
+            obj[key] = fun(val, obj[key]);
         }
     },
-    updateLoops:function(startx,starty,stopx,stopy){
+    updateLoops: function updateLoops(startx, starty, stopx, stopy) {
         var _self = this;
         var cnt = 0;
-        this.list.forEach(function(loop){
+        this.list.forEach(function (loop) {
             cnt++;
             // The loop list is a stack so the biggest margins in the beginning of the list
-            var n = _self.list.length-cnt+1;
+            var n = _self.list.length - cnt + 1;
 
-            _self.updateVal(loop, 'startx',startx - n*conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'starty',starty - n*conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'stopx' ,stopx  + n*conf.boxMargin, Math.max);
-            _self.updateVal(loop, 'stopy' ,stopy  + n*conf.boxMargin, Math.max);
+            _self.updateVal(loop, 'startx', startx - n * conf.boxMargin, Math.min);
+            _self.updateVal(loop, 'starty', starty - n * conf.boxMargin, Math.min);
+            _self.updateVal(loop, 'stopx', stopx + n * conf.boxMargin, Math.max);
+            _self.updateVal(loop, 'stopy', stopy + n * conf.boxMargin, Math.max);
 
-            _self.updateVal(exports.bounds.data,'startx',startx - n*conf.boxMargin ,Math.min);
-            _self.updateVal(exports.bounds.data,'starty',starty - n*conf.boxMargin ,Math.min);
-            _self.updateVal(exports.bounds.data,'stopx' ,stopx  + n*conf.boxMargin ,Math.max);
-            _self.updateVal(exports.bounds.data,'stopy' ,stopy  + n*conf.boxMargin ,Math.max);
+            _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min);
+            _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
+            _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max);
+            _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
         });
     },
-    insert:function(startx,starty,stopx,stopy){
+    insert: function insert(startx, starty, stopx, stopy) {
 
         var _startx, _starty, _stopx, _stopy;
 
-        _startx = Math.min(startx,stopx);
-        _stopx  = Math.max(startx,stopx);
-        _starty = Math.min(starty,stopy);
-        _stopy  = Math.max(starty,stopy);
+        _startx = Math.min(startx, stopx);
+        _stopx = Math.max(startx, stopx);
+        _starty = Math.min(starty, stopy);
+        _stopy = Math.max(starty, stopy);
 
-        this.updateVal(exports.bounds.data,'startx',_startx,Math.min);
-        this.updateVal(exports.bounds.data,'starty',_starty,Math.min);
-        this.updateVal(exports.bounds.data,'stopx' ,_stopx ,Math.max);
-        this.updateVal(exports.bounds.data,'stopy' ,_stopy ,Math.max);
+        this.updateVal(exports.bounds.data, 'startx', _startx, Math.min);
+        this.updateVal(exports.bounds.data, 'starty', _starty, Math.min);
+        this.updateVal(exports.bounds.data, 'stopx', _stopx, Math.max);
+        this.updateVal(exports.bounds.data, 'stopy', _stopy, Math.max);
 
-        this.updateLoops(_startx,_starty,_stopx,_stopy);
-
+        this.updateLoops(_startx, _starty, _stopx, _stopy);
     },
-    newLoop:function(title){
-        this.list.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
+    newLoop: function newLoop(title) {
+        this.list.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title });
     },
-    endLoop:function(){
+    endLoop: function endLoop() {
         var loop = this.list.pop();
         //loop.stopy =  exports.bounds.getVerticalPos();
         return loop;
     },
-    addElseToLoop:function(message){
+    addElseToLoop: function addElseToLoop(message) {
         var loop = this.list.pop();
-        loop.elsey =  exports.bounds.getVerticalPos();
+        loop.elsey = exports.bounds.getVerticalPos();
         loop.elseText = message;
         this.list.push(loop);
     },
-    bumpVerticalPos:function(bump){
+    bumpVerticalPos: function bumpVerticalPos(bump) {
         this.verticalPos = this.verticalPos + bump;
         this.data.stopy = this.verticalPos;
     },
-    getVerticalPos:function(){
+    getVerticalPos: function getVerticalPos() {
         return this.verticalPos;
     },
-    getBounds:function(){
+    getBounds: function getBounds() {
         return this.data;
     }
 };
@@ -36886,45 +37086,44 @@ exports.bounds = {
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-var drawNote = function(elem, startx, verticalPos, msg){
+var drawNote = function drawNote(elem, startx, verticalPos, msg) {
     var rect = svgDraw.getNoteRect();
     rect.x = startx;
     rect.y = verticalPos;
     rect.width = conf.width;
-    rect.class = 'note';
+    rect['class'] = 'note';
 
     var g = elem.append('g');
     var rectElem = svgDraw.drawRect(g, rect);
 
     var textObj = svgDraw.getTextObj();
-    textObj.x = startx-4;
-    textObj.y = verticalPos-13;
+    textObj.x = startx - 4;
+    textObj.y = verticalPos - 13;
     textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = msg.message;
-    textObj.class = 'noteText';
+    textObj['class'] = 'noteText';
 
-    var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
+    var textElem = svgDraw.drawText(g, textObj, conf.width - conf.noteMargin);
 
     var textHeight = textElem[0][0].getBBox().height;
-    if(textHeight > conf.width){
+    if (textHeight > conf.width) {
         textElem.remove();
-        g = elem.append("g");
+        g = elem.append('g');
 
         //textObj.x = textObj.x - conf.width;
         //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
-        textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
+        textElem = svgDraw.drawText(g, textObj, 2 * conf.width - conf.noteMargin);
         textHeight = textElem[0][0].getBBox().height;
-        rectElem.attr('width',2*conf.width);
-        exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    }else{
-        exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+        rectElem.attr('width', 2 * conf.width);
+        exports.bounds.insert(startx, verticalPos, startx + 2 * conf.width, verticalPos + 2 * conf.noteMargin + textHeight);
+    } else {
+        exports.bounds.insert(startx, verticalPos, startx + conf.width, verticalPos + 2 * conf.noteMargin + textHeight);
     }
 
-    rectElem.attr('height',textHeight+ 2*conf.noteMargin);
-    exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
+    rectElem.attr('height', textHeight + 2 * conf.noteMargin);
+    exports.bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin);
 };
-
 
 /**
  * Draws a message
@@ -36935,77 +37134,72 @@ var drawNote = function(elem, startx, verticalPos, msg){
  * @param txtCenter
  * @param msg
  */
-var drawMessage = function(elem, startx, stopx, verticalPos, msg){
-    var g = elem.append("g");
-    var txtCenter = startx + (stopx-startx)/2;
+var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg) {
+    var g = elem.append('g');
+    var txtCenter = startx + (stopx - startx) / 2;
 
-    var textElem = g.append("text")      // text label for the x axis
-        .attr("x", txtCenter)
-        .attr("y", verticalPos - 7)
-        .style("text-anchor", "middle")
-        .attr("class", "messageText")
-        .text(msg.message);
+    var textElem = g.append('text') // text label for the x axis
+    .attr('x', txtCenter).attr('y', verticalPos - 7).style('text-anchor', 'middle').attr('class', 'messageText').text(msg.message);
 
     var textWidth;
 
-    if(typeof textElem[0][0].getBBox !== 'undefined'){
+    if (typeof textElem[0][0].getBBox !== 'undefined') {
         textWidth = textElem[0][0].getBBox().width;
-    }
-    else{
+    } else {
         //textWidth = getBBox(textElem).width; //.getComputedTextLength()
-        textWidth = textElem[0][0].getBoundingClientRect();  
-        //textWidth = textElem[0][0].getComputedTextLength();  
+        textWidth = textElem[0][0].getBoundingClientRect();
+        //textWidth = textElem[0][0].getComputedTextLength();
     }
 
     var line;
 
-    if(startx===stopx){
-        line  = g.append("path")
-            .attr('d', 'M ' +startx+ ','+verticalPos+' C ' +(startx+60)+ ','+(verticalPos-10)+' ' +(startx+60)+ ',' +
-            (verticalPos+30)+' ' +startx+ ','+(verticalPos+20));
+    if (startx === stopx) {
+        line = g.append('path').attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' + (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20));
 
         exports.bounds.bumpVerticalPos(30);
-        var dx = Math.max(textWidth/2,100);
-        exports.bounds.insert(startx-dx, exports.bounds.getVerticalPos() -10, stopx+dx,  exports.bounds.getVerticalPos());
-    }else{
-        line = g.append("line");
-        line.attr("x1", startx);
-        line.attr("y1", verticalPos);
-        line.attr("x2", stopx);
-        line.attr("y2", verticalPos);
-        exports.bounds.insert(startx, exports.bounds.getVerticalPos() -10, stopx,  exports.bounds.getVerticalPos());
+        var dx = Math.max(textWidth / 2, 100);
+        exports.bounds.insert(startx - dx, exports.bounds.getVerticalPos() - 10, stopx + dx, exports.bounds.getVerticalPos());
+    } else {
+        line = g.append('line');
+        line.attr('x1', startx);
+        line.attr('y1', verticalPos);
+        line.attr('x2', stopx);
+        line.attr('y2', verticalPos);
+        exports.bounds.insert(startx, exports.bounds.getVerticalPos() - 10, stopx, exports.bounds.getVerticalPos());
     }
     //Make an SVG Container
     //Draw the line
     if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
-        line.style("stroke-dasharray", ("3, 3"));
-        line.attr("class", "messageLine1");
-    }
-    else {
-        line.attr("class", "messageLine0");
-    }
-
-    line.attr("stroke-width", 2);
-    line.attr("stroke", "black");
-    line.style("fill", "none");     // remove any fill colour
-    if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
-        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#arrowhead)");
+        line.style('stroke-dasharray', '3, 3');
+        line.attr('class', 'messageLine1');
+    } else {
+        line.attr('class', 'messageLine0');
     }
 
-    if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
-        line.attr("marker-end", "url(" + window.location.protocol+'//'+window.location.host+window.location.pathname + "#crosshead)");
+    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+
+    line.attr('stroke-width', 2);
+    line.attr('stroke', 'black');
+    line.style('fill', 'none'); // remove any fill colour
+    if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED) {
+        line.attr('marker-end', 'url(' + url + '#crosshead)');
     }
 
+    if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS) {
+        line.attr('marker-end', 'url(' + url + '#crosshead)');
+    }
 };
 
-module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
+module.exports.drawActors = function (diagram, actors, actorKeys, verticalPos) {
     var i;
     // Draw the actors
-    for(i=0;i<actorKeys.length;i++){
+    for (i = 0; i < actorKeys.length; i++) {
         var key = actorKeys[i];
 
         // Add some rendering data to the object
-        actors[key].x = i*conf.actorMargin +i*conf.width;
+        actors[key].x = i * conf.actorMargin + i * conf.width;
         actors[key].y = verticalPos;
         actors[key].width = conf.diagramMarginY;
         actors[key].height = conf.diagramMarginY;
@@ -37013,7 +37207,6 @@ module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
         // Draw the box with the attached line
         svgDraw.drawActor(diagram, actors[key].x, verticalPos, actors[key].description, conf);
         exports.bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height);
-
     }
 
     // Add a margin between the actor boxes and the first arrow
@@ -37021,11 +37214,10 @@ module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
     exports.bounds.bumpVerticalPos(conf.height);
 };
 
-
-module.exports.setConf = function(cnf){
+module.exports.setConf = function (cnf) {
     var keys = Object.keys(cnf);
 
-    keys.forEach(function(key){
+    keys.forEach(function (key) {
         conf[key] = cnf[key];
     });
 };
@@ -37036,10 +37228,10 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     sq.yy.clear();
-    sq.parse(text+'\n');
+    sq.parse(text + '\n');
 
     exports.bounds.init();
-    var diagram = d3.select('#'+id);
+    var diagram = d3.select('#' + id);
 
     var startx;
     var stopx;
@@ -37055,23 +37247,22 @@ module.exports.draw = function (text, id) {
     svgDraw.insertArrowCrossHead(diagram);
 
     // Draw the messages/signals
-    messages.forEach(function(msg){
+    messages.forEach(function (msg) {
         var loopData;
 
-        switch(msg.type){
+        switch (msg.type) {
             case sq.yy.LINETYPE.NOTE:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
 
                 startx = actors[msg.from].x;
                 stopx = actors[msg.to].x;
 
-                if(msg.placement !== 0){
+                if (msg.placement !== 0) {
                     // Right of
-                    drawNote(diagram, startx + (conf.width + conf.actorMargin)/2, exports.bounds.getVerticalPos(), msg);
-
-                }else{
+                    drawNote(diagram, startx + (conf.width + conf.actorMargin) / 2, exports.bounds.getVerticalPos(), msg);
+                } else {
                     // Left of
-                    drawNote(diagram, startx - (conf.width + conf.actorMargin)/2, exports.bounds.getVerticalPos(), msg);
+                    drawNote(diagram, startx - (conf.width + conf.actorMargin) / 2, exports.bounds.getVerticalPos(), msg);
                 }
                 break;
             case sq.yy.LINETYPE.LOOP_START:
@@ -37082,7 +37273,7 @@ module.exports.draw = function (text, id) {
             case sq.yy.LINETYPE.LOOP_END:
                 loopData = exports.bounds.endLoop();
 
-                svgDraw.drawLoop(diagram, loopData,'loop', conf);
+                svgDraw.drawLoop(diagram, loopData, 'loop', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             case sq.yy.LINETYPE.OPT_START:
@@ -37111,22 +37302,22 @@ module.exports.draw = function (text, id) {
             case sq.yy.LINETYPE.ALT_END:
                 loopData = exports.bounds.endLoop();
 
-                svgDraw.drawLoop(diagram, loopData,'alt', conf);
+                svgDraw.drawLoop(diagram, loopData, 'alt', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
-                startx = actors[msg.from].x + conf.width/2;
-                stopx = actors[msg.to].x + conf.width/2;
+                startx = actors[msg.from].x + conf.width / 2;
+                stopx = actors[msg.to].x + conf.width / 2;
 
                 drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
 
         }
     });
 
-    if(conf.mirrorActors){
+    if (conf.mirrorActors) {
         // Draw actors below diagram
-        exports.bounds.bumpVerticalPos(conf.boxMargin*2);
+        exports.bounds.bumpVerticalPos(conf.boxMargin * 2);
         module.exports.drawActors(diagram, actors, actorKeys, exports.bounds.getVerticalPos());
     }
 
@@ -37135,61 +37326,62 @@ module.exports.draw = function (text, id) {
     // Adjust line height of actor lines now that the height of the diagram is known
     log.debug('For line height fix Querying: #' + id + ' .actor-line');
     var actorLines = d3.selectAll('#' + id + ' .actor-line');
-    actorLines.attr('y2',box.stopy);
+    actorLines.attr('y2', box.stopy);
 
+    var height = box.stopy - box.starty + 2 * conf.diagramMarginY;
 
-    var height = box.stopy - box.starty + 2*conf.diagramMarginY;
-
-    if(conf.mirrorActors){
+    if (conf.mirrorActors) {
         height = height - conf.boxMargin + conf.bottomMarginAdj;
     }
 
-    var width  = box.stopx-box.startx+2*conf.diagramMarginX;
-    if(conf.useMaxWidth) {
-        diagram.attr("height", '100%');
-        diagram.attr("width", '100%');
-        diagram.attr('style', 'max-width:' + (width) + 'px;');
-    }else{
-        diagram.attr("height",height);
-        diagram.attr("width", width );
+    var width = box.stopx - box.startx + 2 * conf.diagramMarginX;
+    if (conf.useMaxWidth) {
+        diagram.attr('height', '100%');
+        diagram.attr('width', '100%');
+        diagram.attr('style', 'max-width:' + width + 'px;');
+    } else {
+        diagram.attr('height', height);
+        diagram.attr('width', width);
     }
-    diagram.attr("viewBox", (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
+    diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":87,"../../logger":104,"./parser/sequenceDiagram":99,"./sequenceDb":100,"./svgDraw":102}],102:[function(_dereq_,module,exports){
+},{"../../d3":84,"../../logger":100,"./parser/sequenceDiagram":96,"./sequenceDb":97,"./svgDraw":99}],99:[function(require,module,exports){
 /**
  * Created by knut on 14-12-20.
  */
-var log = _dereq_('../../logger').create();
-exports.drawRect = function(elem , rectData){
-    var rectElem = elem.append("rect");
-    rectElem.attr("x", rectData.x);
-    rectElem.attr("y", rectData.y);
-    rectElem.attr("fill", rectData.fill);
-    rectElem.attr("stroke", rectData.stroke);
-    rectElem.attr("width", rectData.width);
-    rectElem.attr("height", rectData.height);
-    rectElem.attr("rx", rectData.rx);
-    rectElem.attr("ry", rectData.ry);
+//var log = require('../../logger').create();
+'use strict';
 
-    if(typeof rectData.class !== 'undefined'){
-        rectElem.attr("class", rectData.class);
+exports.drawRect = function (elem, rectData) {
+    var rectElem = elem.append('rect');
+    rectElem.attr('x', rectData.x);
+    rectElem.attr('y', rectData.y);
+    rectElem.attr('fill', rectData.fill);
+    rectElem.attr('stroke', rectData.stroke);
+    rectElem.attr('width', rectData.width);
+    rectElem.attr('height', rectData.height);
+    rectElem.attr('rx', rectData.rx);
+    rectElem.attr('ry', rectData.ry);
+
+    if (typeof rectData['class'] !== 'undefined') {
+        rectElem.attr('class', rectData['class']);
     }
 
     return rectElem;
 };
 
-exports.drawText = function(elem, textData, width) {
+exports.drawText = function (elem, textData, width) {
     // Remove and ignore br:s
-    var nText = textData.text.replace(/<br\/?>/ig,' ');
+    var nText = textData.text.replace(/<br\/?>/ig, ' ');
 
     var textElem = elem.append('text');
     textElem.attr('x', textData.x);
     textElem.attr('y', textData.y);
     textElem.style('text-anchor', textData.anchor);
     textElem.attr('fill', textData.fill);
-    if (typeof textData.class !== 'undefined') {
-        textElem.attr("class", textData.class);
+    if (typeof textData['class'] !== 'undefined') {
+        textElem.attr('class', textData['class']);
     }
     /*    textData.text.split(/<br\/?>/ig).forEach(function(rowText){
             var span = textElem.append('tspan');
@@ -37198,13 +37390,12 @@ exports.drawText = function(elem, textData, width) {
             span.text(rowText);
         });*/
 
-
     var span = textElem.append('tspan');
     //span.attr('x', textData.x);
-    span.attr('x', textData.x+textData.textMargin*2);
+    span.attr('x', textData.x + textData.textMargin * 2);
     //span.attr('dy', textData.dy);
     span.text(nText);
-    if(typeof textElem.textwrap !== 'undefined'){
+    if (typeof textElem.textwrap !== 'undefined') {
         textElem.textwrap({
             x: textData.x, // bounding box is 300 pixels from the left
             y: textData.y, // bounding box is 400 pixels from the top
@@ -37216,7 +37407,7 @@ exports.drawText = function(elem, textData, width) {
     return textElem;
 };
 
-exports.drawLabel = function(elem , txtObject){
+exports.drawLabel = function (elem, txtObject) {
     var rectData = exports.getNoteRect();
     rectData.x = txtObject.x;
     rectData.y = txtObject.y;
@@ -37224,39 +37415,31 @@ exports.drawLabel = function(elem , txtObject){
     rectData.height = 20;
     rectData.fill = '#526e52';
     rectData.stroke = 'none';
-    rectData.class = 'labelBox';
+    rectData['class'] = 'labelBox';
     //rectData.color = 'white';
 
     exports.drawRect(elem, rectData);
 
     txtObject.y = txtObject.y + txtObject.labelMargin;
-    txtObject.x = txtObject.x + 0.5*txtObject.labelMargin;
+    txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
     txtObject.fill = 'white';
     exports.drawText(elem, txtObject);
 
     //return textElem;
 };
-var actorCnt  = -1;
+var actorCnt = -1;
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-exports.drawActor = function(elem, left, verticalPos, description,conf){
-    var center = left + (conf.width/2);
-    var g = elem.append("g");
-    if(verticalPos === 0) {
+exports.drawActor = function (elem, left, verticalPos, description, conf) {
+    var center = left + conf.width / 2;
+    var g = elem.append('g');
+    if (verticalPos === 0) {
         actorCnt++;
-        g.append("line")
-            .attr("id", 'actor'+actorCnt)
-            .attr("x1", center)
-            .attr("y1", 5)
-            .attr("x2", center)
-            .attr("y2", 2000)
-            .attr("class", 'actor-line')
-            .attr("stroke-width", '0.5px')
-            .attr("stroke", '#999');
+        g.append('line').attr('id', 'actor' + actorCnt).attr('x1', center).attr('y1', 5).attr('x2', center).attr('y2', 2000).attr('class', 'actor-line').attr('stroke-width', '0.5px').attr('stroke', '#999');
     }
 
     var rect = exports.getNoteRect();
@@ -37265,18 +37448,13 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     rect.fill = '#eaeaea';
     rect.width = conf.width;
     rect.height = conf.height;
-    rect.class = 'actor';
+    rect['class'] = 'actor';
     rect.rx = 3;
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    g.append("text")      // text label for the x axis
-        .attr("x", center)
-        .attr("y", verticalPos + (conf.height/2)+5)
-        .attr('class','actor')
-        .style("text-anchor", "middle")
-        .text(description)
-    ;
+    g.append('text') // text label for the x axis
+    .attr('x', center).attr('y', verticalPos + conf.height / 2 + 5).attr('class', 'actor').style('text-anchor', 'middle').text(description);
 };
 
 /**
@@ -37285,46 +37463,39 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
  * @param pos The position if the actor in the list of actors
  * @param description The text in the box
  */
-exports.drawLoop = function(elem,bounds,labelText, conf){
-    var g = elem.append("g");
-    var drawLoopLine = function(startx,starty,stopx,stopy){
-        g.append("line")
-            .attr("x1", startx)
-            .attr("y1", starty)
-            .attr("x2", stopx )
-            .attr("y2", stopy )
-            .attr("stroke-width", 2)
-            .attr("stroke", "#526e52")
-            .attr('class','loopLine');
+exports.drawLoop = function (elem, bounds, labelText, conf) {
+    var g = elem.append('g');
+    var drawLoopLine = function drawLoopLine(startx, starty, stopx, stopy) {
+        g.append('line').attr('x1', startx).attr('y1', starty).attr('x2', stopx).attr('y2', stopy).attr('stroke-width', 2).attr('stroke', '#526e52').attr('class', 'loopLine');
     };
-    drawLoopLine(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
-    drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
-    drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
-    drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
-    if(typeof bounds.elsey !== 'undefined'){
-        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey );
+    drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty);
+    drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy);
+    drawLoopLine(bounds.startx, bounds.stopy, bounds.stopx, bounds.stopy);
+    drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy);
+    if (typeof bounds.elsey !== 'undefined') {
+        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey);
     }
 
     var txt = exports.getTextObj();
     txt.text = labelText;
     txt.x = bounds.startx;
     txt.y = bounds.starty;
-    txt.labelMargin =  1.5 * conf.boxMargin;
-    txt.class =  'labelText';
-    txt.fill =  'white';
+    txt.labelMargin = 1.5 * conf.boxMargin;
+    txt['class'] = 'labelText';
+    txt.fill = 'white';
 
-    exports.drawLabel(g,txt);
+    exports.drawLabel(g, txt);
 
     txt = exports.getTextObj();
     txt.text = '[ ' + bounds.title + ' ]';
-    txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
+    txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
     txt.y = bounds.starty + 1.5 * conf.boxMargin;
     txt.anchor = 'middle';
-    txt.class = 'loopText';
+    txt['class'] = 'loopText';
 
-    exports.drawText(g,txt);
+    exports.drawText(g, txt);
 
-    if(typeof bounds.elseText !== 'undefined') {
+    if (typeof bounds.elseText !== 'undefined') {
         txt.text = '[ ' + bounds.elseText + ' ]';
         txt.y = bounds.elsey + 1.5 * conf.boxMargin;
         exports.drawText(g, txt);
@@ -37334,365 +37505,55 @@ exports.drawLoop = function(elem,bounds,labelText, conf){
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-exports.insertArrowHead = function(elem){
-    elem.append("defs").append("marker")
-        .attr("id", "arrowhead")
-        .attr("refX", 5)
-        .attr("refY", 2)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 4)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
+exports.insertArrowHead = function (elem) {
+    elem.append('defs').append('marker').attr('id', 'arrowhead').attr('refX', 5).attr('refY', 2).attr('markerWidth', 6).attr('markerHeight', 4).attr('orient', 'auto').append('path').attr('d', 'M 0,0 V 4 L6,2 Z'); //this is actual shape for arrowhead
 };
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-exports.insertArrowCrossHead = function(elem){
-    var defs = elem.append("defs");
-    var marker = defs.append("marker")
-        .attr("id", "crosshead")
-        .attr("markerWidth", 15)
-        .attr("markerHeight", 8)
-        .attr("orient", "auto")
-        .attr("refX", 16)
-        .attr("refY", 4);
+exports.insertArrowCrossHead = function (elem) {
+    var defs = elem.append('defs');
+    var marker = defs.append('marker').attr('id', 'crosshead').attr('markerWidth', 15).attr('markerHeight', 8).attr('orient', 'auto').attr('refX', 16).attr('refY', 4);
 
     // The arrow
-    marker.append("path")
-            .attr("fill",'black')
-            .attr("stroke",'#000000')
-            .style("stroke-dasharray", ("0, 0"))
-            .attr("stroke-width",'1px')
-            .attr("d", "M 9,2 V 6 L16,4 Z");
+    marker.append('path').attr('fill', 'black').attr('stroke', '#000000').style('stroke-dasharray', '0, 0').attr('stroke-width', '1px').attr('d', 'M 9,2 V 6 L16,4 Z');
 
     // The cross
-    marker.append("path")
-            .attr("fill",'none')
-            .attr("stroke",'#000000')
-            .style("stroke-dasharray", ("0, 0"))
-            .attr("stroke-width",'1px')
-            .attr("d", "M 0,1 L 6,7 M 6,1 L 0,7")
-        ; //this is actual shape for arrowhead
-
+    marker.append('path').attr('fill', 'none').attr('stroke', '#000000').style('stroke-dasharray', '0, 0').attr('stroke-width', '1px').attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7'); //this is actual shape for arrowhead
 };
 
-exports.getTextObj = function(){
+exports.getTextObj = function () {
     var txt = {
         x: 0,
         y: 0,
-        'fill':'black',
+        'fill': 'black',
         'text-anchor': 'start',
         style: '#666',
         width: 100,
         height: 100,
-        textMargin:0,
+        textMargin: 0,
         rx: 0,
         ry: 0
     };
     return txt;
 };
 
-exports.getNoteRect = function(){
+exports.getNoteRect = function () {
     var rect = {
-        x      : 0,
-        y      : 0,
-        fill   : '#EDF2AE',
-        stroke : '#666',
-        width  : 100,
-        anchor : 'start',
-        height : 100,
-        rx     : 0,
-        ry     : 0
+        x: 0,
+        y: 0,
+        fill: '#EDF2AE',
+        stroke: '#666',
+        width: 100,
+        anchor: 'start',
+        height: 100,
+        rx: 0,
+        ry: 0
     };
     return rect;
 };
 
-},{"../../logger":104}],103:[function(_dereq_,module,exports){
-(function (global){
-//(function (root, factory) {
-//    if (typeof exports === 'object') {
-//        // CommonJS
-//        module.exports = factory(require('b'));
-//    } else if (typeof define === 'function' && define.amd) {
-//        // AMD
-//        define(['b'], function (b) {
-//            return (root.returnExportsGlobal = factory(b));
-//        });
-//    } else {
-//        // Global Variables
-//        root.returnExportsGlobal = factory(root.b);
-//    }
-//}(this, function (b) {
-/**
- * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
- * the diagrams to svg code.
- */
-
-var mermaidAPI = _dereq_('./mermaidAPI');
-var nextId = 0;
-var log = _dereq_('./logger').create();
-var utils = _dereq_('./utils');
-
-module.exports.mermaidAPI = mermaidAPI;
-/**
- * ## init
- * Function that goes through the document to find the chart definitions in there and render them.
- *
- * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
- * attribute already set. This way the init function can be triggered several times.
- *
- * Optionally, `init` can accept in the second argument one of the following:
- * - a DOM Node
- * - an array of DOM nodes (as would come from a jQuery selector)
- * - a W3C selector, a la `.mermaid`
- *
- * ```mermaid
- * graph LR;
- *  a(Find elements)-->b{Processed}
- *  b-->|Yes|c(Leave element)
- *  b-->|No |d(Transform)
- * ```
- * Renders the mermaid diagrams
- * @param nodes a css selector or an array of nodes
- */
-var init = function () {
-    var conf= mermaidAPI.getConfig();
-    log.debug('Starting rendering diagrams');
-    var nodes;
-    if(arguments.length >= 2){
-        /*! sequence config was passed as #1 */
-        if(typeof arguments[0] !== 'undefined'){
-            mermaid.sequenceConfig = arguments[0];
-        }
-
-        nodes = arguments[1];
-    }
-    else{
-        nodes = arguments[0];
-    }
-
-    // if last argument is a function this is the callback function
-    var callback;
-    if(typeof arguments[arguments.length-1] === 'function'){
-        callback = arguments[arguments.length-1];
-        log.debug('Callback function found');
-    }else{
-        if(typeof conf.mermaid !== 'undefined'){
-            if(typeof conf.mermaid.callback === 'function'){
-                callback = conf.mermaid.callback;
-                log.debug('Callback function found');
-            }else{
-                log.debug('No Callback function found');
-            }
-        }
-    }
-    nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
-        : typeof nodes === "string" ? document.querySelectorAll(nodes)
-        : nodes instanceof Node ? [nodes]
-        /*! Last case  - sequence config was passed pick next */
-        : nodes;
-
-    var i;
-
-    if(typeof mermaid_config !== 'undefined'){
-        mermaidAPI.initialize(mermaid_config);
-    }
-    log.debug('Start On Load before: '+mermaid.startOnLoad);
-    if(typeof mermaid.startOnLoad !== 'undefined'){
-        log.debug('Start On Load inner: '+mermaid.startOnLoad);
-        mermaidAPI.initialize({startOnLoad:mermaid.startOnLoad});
-
-    }
-
-
-    if(typeof mermaid.ganttConfig !== 'undefined'){
-        mermaidAPI.initialize({gantt:mermaid.ganttConfig});
-    }
-
-    var txt;
-    var insertSvg = function(svgCode, bindFunctions){
-        element.innerHTML = svgCode;
-        if(typeof callback !== 'undefined'){
-            callback(id);
-        }
-        bindFunctions(element);
-    };
-
-    for (i = 0; i < nodes.length; i++) {
-        var element = nodes[i];
-
-        /*! Check if previously processed */
-        if(!element.getAttribute("data-processed")) {
-            element.setAttribute("data-processed", true);
-        } else {
-            continue;
-        }
-
-        var id = 'mermaidChart' + nextId++;
-
-        var he = _dereq_('he');
-        // Fetch the graph definition including tags
-        txt = element.innerHTML;
-
-        //console.warn('delivererd from the browser: ');
-        //console.warn(txt);
-
-        // transforms the html to pure text
-        txt = he.decode(txt).trim();
-        //console.warn('he decode: ');
-        //console.warn(txt);
-
-        mermaidAPI.render(id,txt,insertSvg, element);
-    }
-
-};
-
-exports.init = init;
-exports.parse = mermaidAPI.parse;
-/**
- * ## version
- * Function returning version information
- * @returns {string} A string containing the version info
- */
-exports.version = function(){
-    return 'v'+_dereq_('../package.json').version;
-};
-
-/**
- * ## initialize
- * This function overrides the default configuration.
- * @param config
- */
-exports.initialize = function(config){
-    log.debug('Initializing mermaid');
-    if(typeof config.mermaid !== 'undefined') {
-        if (typeof config.mermaid.startOnLoad !== 'undefined') {
-            global.mermaid.startOnLoad = config.mermaid.startOnLoad;
-        }
-        if (typeof config.mermaid.htmlLabels !== 'undefined') {
-            global.mermaid.htmlLabels = config.mermaid.htmlLabels;
-        }
-    }
-    mermaidAPI.initialize(config);
-};
-
-
-var equals = function (val, variable){
-    if(typeof variable === 'undefined'){
-        return false;
-    }
-    else{
-        return (val === variable);
-    }
-};
-
-/**
- * Global mermaid object. Contains the functions:
- * * init
- * * initialize
- * * version
- * * parse
- * * parseError
- * * render
- */
-global.mermaid = {
-    startOnLoad:    true,
-    htmlLabels:     true,
-
-    init: function(sequenceConfig, nodes) {
-        init.apply(null, arguments);
-    },
-    initialize: function(config) {
-        exports.initialize(config);
-    },
-    version: function() {
-        return mermaidAPI.version();
-    },
-    parse: function(text) {
-        return mermaidAPI.parse(text);
-    },
-    parseError: function(err, hash) {
-        log.debug('Mermaid Syntax error:');
-        log.debug(err);
-    },
-    render:function(id, text,callback, element){
-        return mermaidAPI.render(id, text,callback, element);
-    }
-};
-
-/**
- * ## parseError
- * This function overrides the default configuration.
- * @param config
- */
-exports.parseError = global.mermaid.parseError;
-
-/**
- * ##contentLoaded
- * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
- * calls init for rendering the mermaid diagrams on the page.
- */
-exports.contentLoaded = function(){
-    var config;
-    // Check state of start config mermaid namespace
-    if (typeof mermaid_config !== 'undefined') {
-        if (equals(false, mermaid_config.htmlLabels)) {
-            global.mermaid.htmlLabels = false;
-        }
-    }
-
-    if(global.mermaid.startOnLoad) {
-        // For backwards compatability reasons also check mermaid_config variable
-        if (typeof mermaid_config !== 'undefined') {
-            // Check if property startOnLoad is set
-            if (equals(true, mermaid_config.startOnLoad)) {
-                global.mermaid.init();
-            }
-        }
-        else {
-            // No config found, do check API config
-            config = mermaidAPI.getConfig();
-            if(config.startOnLoad){
-                global.mermaid.init();
-            }
-        }
-    }else{
-        //if(typeof global.mermaid === 'undefined' ){
-            if(typeof global.mermaid.startOnLoad === 'undefined' ){
-                log.debug('In start, no config');
-                config = mermaidAPI.getConfig();
-                if(config.startOnLoad){
-                    global.mermaid.init();
-                }
-            //}else{
-            //
-            //}
-
-        }
-
-    }
-
-};
-
-
-
-if(typeof document !== 'undefined'){
-    /*!
-     * Wait for document loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function(){
-        exports.contentLoaded();
-    }, false);
-}
-
-//    // Your actual module
-//    return module.exports;
-//}));
-
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":86,"./logger":104,"./mermaidAPI":105,"./utils":106,"he":84}],104:[function(_dereq_,module,exports){
-(function (process){
+},{}],100:[function(require,module,exports){
 /**
  * #logger
  * logger = require('logger').create()
@@ -37704,93 +37565,113 @@ if(typeof document !== 'undefined'){
  * logger.debug(function() { return "booom" })
  * => [2011-3-3T20:24:4.810 error (5021)] booom
  */
-var Logger;
 
-Logger = (function() {
-    function Logger(options) {
-        var level, num, ref;
-        this.options = options || {};
-        this.level = this.options.level || Logger.levels.default;
-        ref = Logger.levels;
-        for (level in ref) {
-            num = ref[level];
-            Logger.define(this, level);
-        }
-    }
+'use strict';
 
-    Logger.prototype.add = function(level, message, callback) {
-        if (this.level > (Logger.levels[level] || 5)) {
-            return;
-        }
-        if (callback) {
-            message = callback();
-        } else if (typeof message === 'function') {
-            message = message();
-        }
-        return this.write({
-            timestamp: new Date,
-            severity: level,
-            message: message,
-            pid: process.pid
-        });
-    };
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-    function formatTime(timestamp){
-        var hh = timestamp.getUTCHours();
-        var mm = timestamp.getUTCMinutes();
-        var ss = timestamp.getSeconds();
-        var ms = timestamp.getMilliseconds();
-        // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
-        // if (hh > 12) {hh = hh % 12;}
-        // These lines ensure you have two-digits
-        if (hh < 10) {hh = "0"+hh;}
-        if (mm < 10) {mm = "0"+mm;}
-        if (ss < 10) {ss = "0"+ss;}
-        if (ms < 100){ms = "0"+ms;}
-        if (ms < 10) {ms = "00"+ms;}
-        // This formats your string to HH:MM:SS
-        var t = hh+":"+mm+":"+ss +' ('+ms+')';
-        return t;
-    }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-    Logger.prototype.write = function(options) {
-        if(typeof console !== 'undefined'){
-            if(typeof console.log  !== 'undefined'){
-                return console.log(this.build_message(options));
-            }
-        }
-    };
-
-    Logger.prototype.build_message = function(options) {
-        return "[" + formatTime(options.timestamp) + "] " + options.message;
-    };
-
-    return Logger;
-
-})();
-
-Logger.define = function(logger, level) {
-    return logger[level] = function(message, callback) {
-        return this.add(level, message, callback);
-    };
-};
-
-Logger.levels = {
+var LEVELS = {
     debug: 1,
     info: 2,
     warn: 3,
     error: 4,
     fatal: 5,
-    default:5
+    'default': 5
 };
-exports.setLogLevel = function(level){
-    Logger.levels.default = level;
+
+var defaultLevel = LEVELS.error;
+
+exports.setLogLevel = function (level) {
+    defaultLevel = level;
+};
+
+function formatTime(timestamp) {
+    var hh = timestamp.getUTCHours();
+    var mm = timestamp.getUTCMinutes();
+    var ss = timestamp.getSeconds();
+    var ms = timestamp.getMilliseconds();
+    // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
+    // if (hh > 12) {hh = hh % 12;}
+    // These lines ensure you have two-digits
+    if (hh < 10) {
+        hh = '0' + hh;
+    }
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+    if (ss < 10) {
+        ss = '0' + ss;
+    }
+    if (ms < 100) {
+        ms = '0' + ms;
+    }
+    if (ms < 10) {
+        ms = '00' + ms;
+    }
+    // This formats your string to HH:MM:SS
+    var t = hh + ':' + mm + ':' + ss + ' (' + ms + ')';
+    return t;
 }
-exports.create = function(options) {
-    return new Logger(options);
-};
-}).call(this,_dereq_("1YiZ5S"))
-},{"1YiZ5S":83}],105:[function(_dereq_,module,exports){
+
+var Log = (function () {
+    function Log(level) {
+        _classCallCheck(this, Log);
+
+        this.level = level;
+    }
+
+    _createClass(Log, [{
+        key: 'log',
+        value: function log(str, level) {
+            var logLevel = this.level;
+            if (typeof logLevel === 'undefined') {
+                logLevel = defaultLevel;
+            }
+            if (logLevel <= level) {
+                if (typeof console !== 'undefined') {
+                    //eslint-disable-line no-console
+                    if (typeof console.log !== 'undefined') {
+                        //eslint-disable-line no-console
+                        return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'trace',
+        value: function trace(str) {
+            this.log(str, LEVELS.trace);
+        }
+    }, {
+        key: 'debug',
+        value: function debug(str) {
+            this.log(str, LEVELS.debug);
+        }
+    }, {
+        key: 'info',
+        value: function info(str) {
+            this.log(str, LEVELS.info);
+        }
+    }, {
+        key: 'warn',
+        value: function warn(str) {
+            this.log(str, LEVELS.warn);
+        }
+    }, {
+        key: 'error',
+        value: function error(str) {
+            this.log(str, LEVELS.error);
+        }
+    }]);
+
+    return Log;
+})();
+
+exports.Log = Log;
+
+},{}],101:[function(require,module,exports){
 (function (global){
 /**
  * ---
@@ -37805,24 +37686,31 @@ exports.create = function(options) {
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
  */
-var graph = _dereq_('./diagrams/flowchart/graphDb');
-var flow = _dereq_('./diagrams/flowchart/parser/flow');
-var utils = _dereq_('./utils');
-var flowRenderer = _dereq_('./diagrams/flowchart/flowRenderer');
-var seq = _dereq_('./diagrams/sequenceDiagram/sequenceRenderer');
-var info = _dereq_('./diagrams/example/exampleRenderer');
-var infoParser = _dereq_('./diagrams/example/parser/example');
-var flowParser = _dereq_('./diagrams/flowchart/parser/flow');
-var dotParser = _dereq_('./diagrams/flowchart/parser/dot');
-var sequenceParser = _dereq_('./diagrams/sequenceDiagram/parser/sequenceDiagram');
-var sequenceDb = _dereq_('./diagrams/sequenceDiagram/sequenceDb');
-var infoDb = _dereq_('./diagrams/example/exampleDb');
-var gantt       = _dereq_('./diagrams/gantt/ganttRenderer');
-var ganttParser = _dereq_('./diagrams/gantt/parser/gantt');
-var ganttDb = _dereq_('./diagrams/gantt/ganttDb');
-var d3 = _dereq_('./d3');
-var nextId = 0;
+'use strict';
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('./logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
+var graph = require('./diagrams/flowchart/graphDb');
+var utils = require('./utils');
+var flowRenderer = require('./diagrams/flowchart/flowRenderer');
+var seq = require('./diagrams/sequenceDiagram/sequenceRenderer');
+var info = require('./diagrams/example/exampleRenderer');
+var infoParser = require('./diagrams/example/parser/example');
+var flowParser = require('./diagrams/flowchart/parser/flow');
+var dotParser = require('./diagrams/flowchart/parser/dot');
+var sequenceParser = require('./diagrams/sequenceDiagram/parser/sequenceDiagram');
+var sequenceDb = require('./diagrams/sequenceDiagram/sequenceDb');
+var infoDb = require('./diagrams/example/exampleDb');
+var gantt = require('./diagrams/gantt/ganttRenderer');
+var ganttParser = require('./diagrams/gantt/parser/gantt');
+var ganttDb = require('./diagrams/gantt/ganttDb');
+var d3 = require('./d3');
 
 /**
  * ## Configuration
@@ -37844,7 +37732,7 @@ var config = {
      *    * error: 4
      *    * fatal: 5
      */
-    logLevel: 3,
+    logLevel: 5,
     /**
      * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
      */
@@ -37859,115 +37747,115 @@ var config = {
      * ### flowchart
      * *The object containing configurations specific for flowcharts*
      */
-    flowchart:{
+    flowchart: {
         /**
          * **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
          * on the edges
          */
-        htmlLabels:true,
+        htmlLabels: true,
         /**
          * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
          * the diagram.
          */
-        useMaxWidth:true
+        useMaxWidth: true
     },
 
     /**
      * ###  sequenceDiagram
      * The object containing configurations specific for sequence diagrams
      */
-    sequenceDiagram:{
+    sequenceDiagram: {
 
         /**
          * **diagramMarginX** - margin to the right and left of the sequence diagram
          */
-        diagramMarginX:50,
+        diagramMarginX: 50,
 
         /**
          * **diagramMarginY** - margin to the over and under the sequence diagram
          */
-        diagramMarginY:10,
-
-    /**
-     * **actorMargin** - Margin between actors
-     */
-        actorMargin:50,
-
-    /**
-     * **width** - Width of actor boxes
-     */
-        width:150,
-
-    /**
-     * **height** - Height of actor boxes
-     */
-        height:65,
-
-    /**
-     * **boxMargin** - Margin around loop boxes
-     */
-        boxMargin:10,
-
-     /**
-      * **boxTextMargin** - margin around the text in loop/alt/opt boxes
-      */
-        boxTextMargin:5,
-
-     /**
-     * **noteMargin** - margin around notes
-      */
-        noteMargin:10,
+        diagramMarginY: 10,
 
         /**
-     * **messageMargin** - Space between messages
+         * **actorMargin** - Margin between actors
          */
-        messageMargin:35,
+        actorMargin: 50,
 
-    /**
-     * **mirrorActors** - mirror actors under diagram
-     */
-        mirrorActors:true,
+        /**
+         * **width** - Width of actor boxes
+         */
+        width: 150,
 
-    /**
-     * **bottomMarginAdj** - Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards
-     */
-        bottomMarginAdj:1,
+        /**
+         * **height** - Height of actor boxes
+         */
+        height: 65,
 
-    /**
-     * **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used
-     */
-        useMaxWidth:true
+        /**
+         * **boxMargin** - Margin around loop boxes
+         */
+        boxMargin: 10,
+
+        /**
+         * **boxTextMargin** - margin around the text in loop/alt/opt boxes
+         */
+        boxTextMargin: 5,
+
+        /**
+        * **noteMargin** - margin around notes
+         */
+        noteMargin: 10,
+
+        /**
+        * **messageMargin** - Space between messages
+         */
+        messageMargin: 35,
+
+        /**
+         * **mirrorActors** - mirror actors under diagram
+         */
+        mirrorActors: true,
+
+        /**
+         * **bottomMarginAdj** - Depending on css styling this might need adjustment.
+         * Prolongs the edge of the diagram downwards
+         */
+        bottomMarginAdj: 1,
+
+        /**
+         * **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
+         * available space if not the absolute space required is used
+         */
+        useMaxWidth: true
     },
 
     /** ### gantt
      * The object containing configurations specific for gantt diagrams*
-     */ 
-    gantt:{
+     */
+    gantt: {
         /**
          * **titleTopMargin** - margin top for the text over the gantt diagram
-         */ 
+         */
         titleTopMargin: 25,
 
         /** 
          * **barHeight** - the height of the bars in the graph
-         */ 
+         */
         barHeight: 20,
 
         /** 
          * **barGap** - the margin between the different activities in the gantt diagram
-         */ 
+         */
         barGap: 4,
 
         /** 
          *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
-         */  
+         */
         topPadding: 50,
 
         /** 
          *  **sidePadding** - the space allocated for the section name to the left of the activities.
-         */  
+         */
         sidePadding: 75,
 
         /** 
@@ -37988,38 +37876,37 @@ var config = {
         /** 
          * **numberSectionStyles** - the number of alternating section styles
          */
-        numberSectionStyles:3,
+        numberSectionStyles: 3,
 
         /** 
          * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
-         */  
+         */
         axisFormatter: [
 
-            // Within a day
-            ["%I:%M", function (d) {
-                return d.getHours();
-            }],
-            // Monday a week
-            ["w. %U", function (d) {
-                return d.getDay() == 1;
-            }],
-            // Day within a week (not monday)
-            ["%a %d", function (d) {
-                return d.getDay() && d.getDate() != 1;
-            }],
-            // within a month
-            ["%b %d", function (d) {
-                return d.getDate() != 1;
-            }],
-            // Month
-            ["%m-%y", function (d) {
-                return d.getMonth();
-            }]
-        ]
+        // Within a day
+        ['%I:%M', function (d) {
+            return d.getHours();
+        }],
+        // Monday a week
+        ['w. %U', function (d) {
+            return d.getDay() == 1;
+        }],
+        // Day within a week (not monday)
+        ['%a %d', function (d) {
+            return d.getDay() && d.getDate() != 1;
+        }],
+        // within a month
+        ['%b %d', function (d) {
+            return d.getDate() != 1;
+        }],
+        // Month
+        ['%m-%y', function (d) {
+            return d.getMonth();
+        }]]
     }
 };
 
-var log = _dereq_('./logger').create({level:config.logLevel});
+Logger.setLogLevel(config.logLevel);
 
 /**
  * ## parse
@@ -38027,11 +37914,11 @@ var log = _dereq_('./logger').create({level:config.logLevel});
  * thrown and
  * @param text
  */
-var parse = function(text){
+var parse = function parse(text) {
     var graphType = utils.detectType(text);
     var parser;
 
-    switch(graphType){
+    switch (graphType) {
         case 'graph':
             parser = flowParser;
             parser.parser.yy = graph;
@@ -38054,11 +37941,10 @@ var parse = function(text){
             break;
     }
 
-    try{
+    try {
         parser.parse(text);
         return true;
-    }
-    catch(err){
+    } catch (err) {
         return false;
     }
 };
@@ -38069,51 +37955,48 @@ exports.parse = parse;
  * Function returning version information
  * @returns {string} A string containing the version info
  */
-exports.version = function(){
-    return _dereq_('../package.json').version;
+exports.version = function () {
+    return require('../package.json').version;
 };
 
-exports.encodeEntities = function(text){
+exports.encodeEntities = function (text) {
     var txt = text;
 
-    txt = txt.replace(/style.*:\S*#.*;/g,function(s,t,u){
-        var innerTxt = s.substring(0,s.length-1);
+    txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
+        var innerTxt = s.substring(0, s.length - 1);
         return innerTxt;
     });
-    txt = txt.replace(/classDef.*:\S*#.*;/g,function(s,t,u){
-        var innerTxt = s.substring(0,s.length-1);
+    txt = txt.replace(/classDef.*:\S*#.*;/g, function (s) {
+        var innerTxt = s.substring(0, s.length - 1);
         return innerTxt;
     });
 
-    txt = txt.replace(/#\w+\;/g,function(s,t,u){
-        var innerTxt = s.substring(1,s.length-1);
+    txt = txt.replace(/#\w+\;/g, function (s) {
+        var innerTxt = s.substring(1, s.length - 1);
 
         var isInt = /^\+?\d+$/.test(innerTxt);
-        if(isInt){
-            return 'ﬂ°°'+innerTxt+'¶ß';
-        }else{
-            return 'ﬂ°'+innerTxt+'¶ß';
+        if (isInt) {
+            return 'ﬂ°°' + innerTxt + '¶ß';
+        } else {
+            return 'ﬂ°' + innerTxt + '¶ß';
         }
-
     });
 
     return txt;
 };
 
-exports.decodeEntities = function(text){
+exports.decodeEntities = function (text) {
     var txt = text;
 
-    txt = txt.replace(/\ﬂ\°\°/g,function(s,t,u){
+    txt = txt.replace(/\ﬂ\°\°/g, function () {
         return '&#';
     });
-    txt = txt.replace(/\ﬂ\°/g,function(s,t,u){
+    txt = txt.replace(/\ﬂ\°/g, function () {
         return '&';
     });
-    txt = txt.replace(/¶ß/g,function(s,t,u){
+    txt = txt.replace(/¶ß/g, function () {
         return ';';
     });
-
-
 
     return txt;
 };
@@ -38140,25 +38023,12 @@ exports.decodeEntities = function(text){
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
-var render = function(id, txt, cb, container){
+var render = function render(id, txt, cb, container) {
 
-    if(typeof container !== 'undefined'){
-        d3.select(container).append('div')
-            .attr('id', 'd'+id)
-            .append('svg')
-            .attr('id', id)
-            .attr('width','100%')
-            .attr('xmlns','http://www.w3.org/2000/svg')
-            .append('g');
-    }
-    else{
-        d3.select('body').append('div')
-            .attr('id', 'd'+id)
-            .append('svg')
-            .attr('id', id)
-            .attr('width','100%')
-            .attr('xmlns','http://www.w3.org/2000/svg')
-            .append('g');
+    if (typeof container !== 'undefined') {
+        d3.select(container).append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    } else {
+        d3.select('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
     }
 
     window.txt = txt;
@@ -38166,15 +38036,15 @@ var render = function(id, txt, cb, container){
     //console.warn('mermaid encode: ');
     //console.warn(txt);
 
-    var element = d3.select('#d'+id).node();
+    var element = d3.select('#d' + id).node();
     var graphType = utils.detectType(txt);
     var classes = {};
-    switch(graphType){
+    switch (graphType) {
         case 'graph':
 
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
-            if(config.cloneCssStyles){
+            if (config.cloneCssStyles) {
                 classes = flowRenderer.getClasses(txt, false);
                 utils.cloneCssStyles(element.firstChild, classes);
             }
@@ -38182,127 +38052,139 @@ var render = function(id, txt, cb, container){
         case 'dotGraph':
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, true);
-            if(config.cloneCssStyles) {
+            if (config.cloneCssStyles) {
                 classes = flowRenderer.getClasses(txt, true);
                 utils.cloneCssStyles(element.firstChild, classes);
             }
             break;
         case 'sequenceDiagram':
             seq.setConf(config.sequenceDiagram);
-            seq.draw(txt,id);
-            if(config.cloneCssStyles) {
+            seq.draw(txt, id);
+            if (config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
         case 'gantt':
             gantt.setConf(config.gantt);
-            gantt.draw(txt,id);
-            if(config.cloneCssStyles) {
+            gantt.draw(txt, id);
+            if (config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
         case 'info':
-            info.draw(txt,id,exports.version());
-            if(config.cloneCssStyles) {
+            info.draw(txt, id, exports.version());
+            if (config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
     }
 
-    d3.select('#d'+id).selectAll('foreignobject div').attr('xmlns','http://www.w3.org/1999/xhtml');
+    d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-
-
+    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
     // Fix for when the base tag is used
-    var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+ window.location.protocol+'//'+location.host+location.pathname +'#arrowhead','g');
+    var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g');
 
     svgCode = exports.decodeEntities(svgCode);
     //console.warn('mermaid decode: ');
     //console.warn(svgCode);
     //var he = require('he');
     //svgCode = he.decode(svgCode);
-    if(typeof cb !== 'undefined'){
-        cb(svgCode,graph.bindFunctions);
-    }else{
+    if (typeof cb !== 'undefined') {
+        cb(svgCode, graph.bindFunctions);
+    } else {
         log.warn('CB = undefined');
     }
 
-    var node = d3.select('#d'+id).node();
-    if(node !== null && typeof node.remove === 'function'){
-        d3.select('#d'+id).node().remove();
+    var node = d3.select('#d' + id).node();
+    if (node !== null && typeof node.remove === 'function') {
+        d3.select('#d' + id).node().remove();
     }
 };
 
-exports.render = function(id, text, cb, containerElement){
-if(typeof document === 'undefined'){
+exports.render = function (id, text, cb, containerElement) {
+    if (typeof document === 'undefined') {
         // Todo handle rendering serverside using phantomjs
-    }
-    else{
-        // In browser
-        render( id, text, cb, containerElement);
-    }
+    } else {
+            // In browser
+            render(id, text, cb, containerElement);
+        }
 };
 
-
-var setConf = function(cnf){
+var setConf = function setConf(cnf) {
     // Top level initially mermaid, gflow, sequenceDiagram and gantt
     var lvl1Keys = Object.keys(cnf);
     var i;
-    for(i=0;i<lvl1Keys.length;i++){
+    for (i = 0; i < lvl1Keys.length; i++) {
 
-        if(typeof cnf[lvl1Keys[i]] === 'object' ){
+        if (typeof cnf[lvl1Keys[i]] === 'object') {
             var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
 
             var j;
-            for(j=0;j<lvl2Keys.length;j++) {
-                log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
-                if(typeof config[lvl1Keys[i]] === 'undefined'){
-                    
+            for (j = 0; j < lvl2Keys.length; j++) {
+                log.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j]);
+                if (typeof config[lvl1Keys[i]] === 'undefined') {
+
                     config[lvl1Keys[i]] = {};
                 }
-                log.debug('Setting config: '+lvl1Keys[i]+' '+lvl2Keys[j]+' to '+cnf[lvl1Keys[i]][lvl2Keys[j]]);
+                log.debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]]);
                 config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
             }
-        }else{
+        } else {
             config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
         }
     }
 };
-exports.initialize = function(options){
+exports.initialize = function (options) {
     log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization
-    if(typeof options === 'object'){
+    if (typeof options === 'object') {
         setConf(options);
     }
-
+    Logger.setLogLevel(config.logLevel);
 };
-exports.getConfig = function(){
+exports.getConfig = function () {
     return config;
 };
 
-exports.parseError = function(err, hash) {
-    if(typeof mermaid !== 'undefined') {
-        mermaid.parseError(err,hash);
-    }else{
+exports.parseError = function (err, hash) {
+    if (typeof mermaid !== 'undefined') {
+        global.mermaid.parseError(err, hash);
+    } else {
         log.debug('Mermaid Syntax error:');
         log.debug(err);
     }
 };
 global.mermaidAPI = {
-    render     : exports.render,
-    parse      : exports.parse,
-    initialize : exports.initialize,
-    detectType : utils.detectType,
-    parseError : exports.parseError,
-    getConfig  : exports.getConfig
+    render: exports.render,
+    parse: exports.parse,
+    initialize: exports.initialize,
+    detectType: utils.detectType,
+    parseError: exports.parseError,
+    getConfig: exports.getConfig
 };
 
-}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":86,"./d3":87,"./diagrams/example/exampleDb":88,"./diagrams/example/exampleRenderer":89,"./diagrams/example/parser/example":90,"./diagrams/flowchart/flowRenderer":92,"./diagrams/flowchart/graphDb":93,"./diagrams/flowchart/parser/dot":94,"./diagrams/flowchart/parser/flow":95,"./diagrams/gantt/ganttDb":96,"./diagrams/gantt/ganttRenderer":97,"./diagrams/gantt/parser/gantt":98,"./diagrams/sequenceDiagram/parser/sequenceDiagram":99,"./diagrams/sequenceDiagram/sequenceDb":100,"./diagrams/sequenceDiagram/sequenceRenderer":101,"./logger":104,"./utils":106}],106:[function(_dereq_,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../package.json":83,"./d3":84,"./diagrams/example/exampleDb":85,"./diagrams/example/exampleRenderer":86,"./diagrams/example/parser/example":87,"./diagrams/flowchart/flowRenderer":89,"./diagrams/flowchart/graphDb":90,"./diagrams/flowchart/parser/dot":91,"./diagrams/flowchart/parser/flow":92,"./diagrams/gantt/ganttDb":93,"./diagrams/gantt/ganttRenderer":94,"./diagrams/gantt/parser/gantt":95,"./diagrams/sequenceDiagram/parser/sequenceDiagram":96,"./diagrams/sequenceDiagram/sequenceDb":97,"./diagrams/sequenceDiagram/sequenceRenderer":98,"./logger":100,"./utils":102}],102:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
-var log = _dereq_('./logger').create();
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('./logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+
 /**
  * @function detectType
  * Detects the type of the graph text.
@@ -38318,32 +38200,32 @@ var log = _dereq_('./logger').create();
  * ```
  *
  * @param {string} text The text defining the graph
- * @param {string} text The second text defining the graph
  * @returns {string} A graph definition key
  */
-module.exports.detectType = function(text,a){
-    text = text.replace(/^\s*%%.*\n/g,'\n');
-    if(text.match(/^\s*sequenceDiagram/)){
-        return "sequenceDiagram";
+var detectType = function detectType(text) {
+    text = text.replace(/^\s*%%.*\n/g, '\n');
+    if (text.match(/^\s*sequenceDiagram/)) {
+        return 'sequenceDiagram';
     }
 
-    if(text.match(/^\s*digraph/)) {
+    if (text.match(/^\s*digraph/)) {
         //log.debug('Detected dot syntax');
-        return "dotGraph";
+        return 'dotGraph';
     }
 
-    if(text.match(/^\s*info/)) {
+    if (text.match(/^\s*info/)) {
         //log.debug('Detected info syntax');
-        return "info";
+        return 'info';
     }
 
-    if(text.match(/^\s*gantt/)) {
+    if (text.match(/^\s*gantt/)) {
         //log.debug('Detected info syntax');
-        return "gantt";
+        return 'gantt';
     }
 
-    return "graph";
+    return 'graph';
 };
+exports.detectType = detectType;
 
 /**
  * Copies all relevant CSS content into the graph SVG.
@@ -38351,9 +38233,10 @@ module.exports.detectType = function(text,a){
  * @param {element} svg The root element of the SVG
  * @param {object} Hash table of class definitions from the graph definition
  */
-module.exports.cloneCssStyles = function(svg, classes){
-    var usedStyles = "";
+var cloneCssStyles = function cloneCssStyles(svg, classes) {
+    var usedStyles = '';
     var sheets = document.styleSheets;
+    var rule;
     for (var i = 0; i < sheets.length; i++) {
         // Avoid multiple inclusion on pages with multiple graphs
         if (sheets[i].title !== 'mermaid-svg-internal-css') {
@@ -38362,75 +38245,669 @@ module.exports.cloneCssStyles = function(svg, classes){
                 var rules = sheets[i].cssRules;
                 if (rules !== null) {
                     for (var j = 0; j < rules.length; j++) {
-                        var rule = rules[j];
-                        if (typeof(rule.style) !== 'undefined') {
+                        rule = rules[j];
+                        if (typeof rule.style !== 'undefined') {
                             var elems;
                             elems = svg.querySelectorAll(rule.selectorText);
                             if (elems.length > 0) {
-                                usedStyles += rule.selectorText + " { " + rule.style.cssText + " }\n";
+                                usedStyles += rule.selectorText + ' { ' + rule.style.cssText + ' }\n';
                             }
                         }
                     }
                 }
-            }
-            catch(err) {
-                if(typeof console !== 'undefined'){
-                    if(console.warn !== 'undefined'){
-                        if(rule !== 'undefined'){
-                            console.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
-                        }
-                    }
+            } catch (err) {
+                if (rule !== 'undefined') {
+                    log.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
                 }
             }
-        } 
+        }
     }
 
-    var defaultStyles = "";
-    var embeddedStyles = "";
+    var defaultStyles = '';
+    var embeddedStyles = '';
 
     for (var className in classes) {
-        if (classes.hasOwnProperty(className) && typeof(className) != "undefined") {
+        if (classes.hasOwnProperty(className) && typeof className != 'undefined') {
             if (className === 'default') {
-                if (classes.default.styles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .node' + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
+                if (classes['default'].styles instanceof Array) {
+                    defaultStyles += '#' + svg.id.trim() + ' .node' + '>rect { ' + classes[className].styles.join('; ') + '; }\n';
                 }
-                if (classes.default.nodeLabelStyles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join("; ") + '; }\n';
+                if (classes['default'].nodeLabelStyles instanceof Array) {
+                    defaultStyles += '#' + svg.id.trim() + ' .node text ' + ' { ' + classes[className].nodeLabelStyles.join('; ') + '; }\n';
                 }
-                if (classes.default.edgeLabelStyles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join("; ") + '; }\n';
+                if (classes['default'].edgeLabelStyles instanceof Array) {
+                    defaultStyles += '#' + svg.id.trim() + ' .edgeLabel text ' + ' { ' + classes[className].edgeLabelStyles.join('; ') + '; }\n';
                 }
-                if (classes.default.clusterStyles instanceof Array) {
-                    defaultStyles += "#" + svg.id.trim() + ' .cluster rect ' + ' { ' + classes[className].clusterStyles.join("; ") + '; }\n';
+                if (classes['default'].clusterStyles instanceof Array) {
+                    defaultStyles += '#' + svg.id.trim() + ' .cluster rect ' + ' { ' + classes[className].clusterStyles.join('; ') + '; }\n';
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += "#" + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join("; ") + '; }\n';
+                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join('; ') + '; }\n';
                 }
             }
         }
     }
 
-    if (usedStyles !== "" || defaultStyles !== "" || embeddedStyles !== "") {
+    if (usedStyles !== '' || defaultStyles !== '' || embeddedStyles !== '') {
         var s = document.createElement('style');
         s.setAttribute('type', 'text/css');
         s.setAttribute('title', 'mermaid-svg-internal-css');
-        s.innerHTML = "/* <![CDATA[ */\n";
+        s.innerHTML = '/* <![CDATA[ */\n';
         // Make this CSS local to this SVG
-        if (defaultStyles !== "") {
+        if (defaultStyles !== '') {
             s.innerHTML += defaultStyles;
         }
-        if (usedStyles !== "") {
+        if (usedStyles !== '') {
             s.innerHTML += usedStyles;
         }
-        if (embeddedStyles !== "") {
+        if (embeddedStyles !== '') {
             s.innerHTML += embeddedStyles;
         }
-        s.innerHTML += "/* ]]> */\n";
+        s.innerHTML += '/* ]]> */\n';
         svg.insertBefore(s, svg.firstChild);
     }
 };
 
-},{"./logger":104}]},{},[103])
-(103)
+exports.cloneCssStyles = cloneCssStyles;
+
+},{"./logger":100}],103:[function(require,module,exports){
+
+},{}],104:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":105}],105:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            currentQueue[queueIndex].run();
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],106:[function(require,module,exports){
+(function (global){
+//(function (root, factory) {
+//    if (typeof exports === 'object') {
+//        // CommonJS
+//        module.exports = factory(require('b'));
+//    } else if (typeof define === 'function' && define.amd) {
+//        // AMD
+//        define(['b'], function (b) {
+//            return (root.returnExportsGlobal = factory(b));
+//        });
+//    } else {
+//        // Global Variables
+//        root.returnExportsGlobal = factory(root.b);
+//    }
+//}(this, function (b) {
+/**
+ * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
+ * the diagrams to svg code.
+ */
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('./logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+var mermaidAPI = require('./mermaidAPI');
+var nextId = 0;
+
+var he = require('he');
+
+module.exports.mermaidAPI = mermaidAPI;
+/**
+ * ## init
+ * Function that goes through the document to find the chart definitions in there and render them.
+ *
+ * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
+ * attribute already set. This way the init function can be triggered several times.
+ *
+ * Optionally, `init` can accept in the second argument one of the following:
+ * - a DOM Node
+ * - an array of DOM nodes (as would come from a jQuery selector)
+ * - a W3C selector, a la `.mermaid`
+ *
+ * ```mermaid
+ * graph LR;
+ *  a(Find elements)-->b{Processed}
+ *  b-->|Yes|c(Leave element)
+ *  b-->|No |d(Transform)
+ * ```
+ * Renders the mermaid diagrams
+ * @param nodes a css selector or an array of nodes
+ */
+var _init = function _init() {
+    var conf = mermaidAPI.getConfig();
+    log.debug('Starting rendering diagrams');
+    var nodes;
+    if (arguments.length >= 2) {
+        /*! sequence config was passed as #1 */
+        if (typeof arguments[0] !== 'undefined') {
+            global.mermaid.sequenceConfig = arguments[0];
+        }
+
+        nodes = arguments[1];
+    } else {
+        nodes = arguments[0];
+    }
+
+    // if last argument is a function this is the callback function
+    var callback;
+    if (typeof arguments[arguments.length - 1] === 'function') {
+        callback = arguments[arguments.length - 1];
+        log.debug('Callback function found');
+    } else {
+        if (typeof conf.mermaid !== 'undefined') {
+            if (typeof conf.mermaid.callback === 'function') {
+                callback = conf.mermaid.callback;
+                log.debug('Callback function found');
+            } else {
+                log.debug('No Callback function found');
+            }
+        }
+    }
+    nodes = nodes === undefined ? document.querySelectorAll('.mermaid') : typeof nodes === 'string' ? document.querySelectorAll(nodes) : nodes instanceof Node ? [nodes]
+    /*! Last case  - sequence config was passed pick next */
+    : nodes;
+
+    var i;
+
+    if (typeof mermaid_config !== 'undefined') {
+        mermaidAPI.initialize(global.mermaid_config);
+    }
+    log.debug('Start On Load before: ' + global.mermaid.startOnLoad);
+    if (typeof global.mermaid.startOnLoad !== 'undefined') {
+        log.debug('Start On Load inner: ' + global.mermaid.startOnLoad);
+        mermaidAPI.initialize({ startOnLoad: global.mermaid.startOnLoad });
+    }
+
+    if (typeof global.mermaid.ganttConfig !== 'undefined') {
+        mermaidAPI.initialize({ gantt: global.mermaid.ganttConfig });
+    }
+
+    var txt;
+    var insertSvg = function insertSvg(svgCode, bindFunctions) {
+        element.innerHTML = svgCode;
+        if (typeof callback !== 'undefined') {
+            callback(id);
+        }
+        bindFunctions(element);
+    };
+
+    for (i = 0; i < nodes.length; i++) {
+        var element = nodes[i];
+
+        /*! Check if previously processed */
+        if (!element.getAttribute('data-processed')) {
+            element.setAttribute('data-processed', true);
+        } else {
+            continue;
+        }
+
+        var id = 'mermaidChart' + nextId++;
+
+        // Fetch the graph definition including tags
+        txt = element.innerHTML;
+
+        //console.warn('delivererd from the browser: ');
+        //console.warn(txt);
+
+        // transforms the html to pure text
+        txt = he.decode(txt).trim();
+        //console.warn('he decode: ');
+        //console.warn(txt);
+
+        mermaidAPI.render(id, txt, insertSvg, element);
+    }
+};
+
+exports.init = _init;
+exports.parse = mermaidAPI.parse;
+/**
+ * ## version
+ * Function returning version information
+ * @returns {string} A string containing the version info
+ */
+exports.version = function () {
+    return 'v' + require('../package.json').version;
+};
+
+/**
+ * ## initialize
+ * This function overrides the default configuration.
+ * @param config
+ */
+exports.initialize = function (config) {
+    log.debug('Initializing mermaid');
+    if (typeof config.mermaid !== 'undefined') {
+        if (typeof config.mermaid.startOnLoad !== 'undefined') {
+            global.mermaid.startOnLoad = config.mermaid.startOnLoad;
+        }
+        if (typeof config.mermaid.htmlLabels !== 'undefined') {
+            global.mermaid.htmlLabels = config.mermaid.htmlLabels;
+        }
+    }
+    mermaidAPI.initialize(config);
+};
+
+var equals = function equals(val, variable) {
+    if (typeof variable === 'undefined') {
+        return false;
+    } else {
+        return val === variable;
+    }
+};
+
+/**
+ * Global mermaid object. Contains the functions:
+ * * init
+ * * initialize
+ * * version
+ * * parse
+ * * parseError
+ * * render
+ */
+global.mermaid = {
+    startOnLoad: true,
+    htmlLabels: true,
+
+    init: function init() {
+        _init.apply(null, arguments);
+    },
+    initialize: function initialize(config) {
+        exports.initialize(config);
+    },
+    version: function version() {
+        return mermaidAPI.version();
+    },
+    parse: function parse(text) {
+        return mermaidAPI.parse(text);
+    },
+    parseError: function parseError(err) {
+        log.debug('Mermaid Syntax error:');
+        log.debug(err);
+    },
+    render: function render(id, text, callback, element) {
+        return mermaidAPI.render(id, text, callback, element);
+    }
+};
+
+/**
+ * ## parseError
+ * This function overrides the default configuration.
+ * @param config
+ */
+exports.parseError = global.mermaid.parseError;
+
+/**
+ * ##contentLoaded
+ * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
+ * calls init for rendering the mermaid diagrams on the page.
+ */
+exports.contentLoaded = function () {
+    var config;
+    // Check state of start config mermaid namespace
+    if (typeof mermaid_config !== 'undefined') {
+        if (equals(false, global.mermaid_config.htmlLabels)) {
+            global.mermaid.htmlLabels = false;
+        }
+    }
+
+    if (global.mermaid.startOnLoad) {
+        // For backwards compatability reasons also check mermaid_config variable
+        if (typeof global.mermaid_config !== 'undefined') {
+            // Check if property startOnLoad is set
+            if (equals(true, global.mermaid_config.startOnLoad)) {
+                global.mermaid.init();
+            }
+        } else {
+            // No config found, do check API config
+            config = mermaidAPI.getConfig();
+            if (config.startOnLoad) {
+                global.mermaid.init();
+            }
+        }
+    } else {
+        //if(typeof global.mermaid === 'undefined' ){
+        if (typeof global.mermaid.startOnLoad === 'undefined') {
+            log.debug('In start, no config');
+            config = mermaidAPI.getConfig();
+            if (config.startOnLoad) {
+                global.mermaid.init();
+            }
+            //}else{
+            //
+            //}
+        }
+    }
+};
+
+if (typeof document !== 'undefined') {
+    /*!
+     * Wait for document loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function () {
+        exports.contentLoaded();
+    }, false);
+}
+
+//    // Your actual module
+//    return module.exports;
+//}));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../package.json":83,"./logger":100,"./mermaidAPI":101,"he":81}]},{},[106])(106)
 });

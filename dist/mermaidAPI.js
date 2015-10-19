@@ -30643,7 +30643,7 @@ module.exports = '1.0.7';
 },{}],85:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.3-2",
+  "version": "0.5.4",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
