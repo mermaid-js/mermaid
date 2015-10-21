@@ -1,14 +1,13 @@
 /**
  * Created by knut on 14-11-18.
  */
-//var log = require('../../logger').create();
 describe('when using the ganttDb',function() {
     var gDb;
     var moment = require('moment');
     
     beforeEach(function () {
         //gantt = require('./parser/gantt').parser;
-        
+
         gDb = require('./ganttDb');
         gDb.clear();
         //ex.yy.parseError = parseError;
@@ -158,6 +157,24 @@ describe('when using the ganttDb',function() {
         expect(tasks[1].endTime  ).toEqual(moment('2013-01-17', 'YYYY-MM-DD').toDate());
         expect(tasks[1].id       ).toEqual('task1');
         expect(tasks[1].description).toEqual('test2');
+    });
+    xit('should handle relative start date based on id regardless of sections', function () {
+        gDb.setDateFormat('YYYY-MM-DD');
+        gDb.addSection('testa1');
+        gDb.addTask('test1','id1,2013-01-01,2w');
+        gDb.addTask('test2','id2,after id3,1d');
+        gDb.addSection('testa2');
+        gDb.addTask('test3','id3,after id1,2d');
+
+        var tasks = gDb.getTasks();
+
+        expect(tasks[1].startTime  ).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate());
+        expect(tasks[1].id         ).toEqual('id2');
+        expect(tasks[1].description).toEqual('test2');
+
+        expect(tasks[2].id         ).toEqual('id3');
+        expect(tasks[2].description).toEqual('test3');
+        expect(tasks[2].startTime  ).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate());
     });
 
 });
