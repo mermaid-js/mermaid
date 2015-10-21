@@ -236,7 +236,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     line.attr('stroke', 'black');
     line.style('fill', 'none');     // remove any fill colour
     if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED){
-        line.attr('marker-end', 'url(' + url + '#crosshead)');
+        line.attr('marker-end', 'url(' + url + '#arrowhead)');
     }
 
     if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS){
