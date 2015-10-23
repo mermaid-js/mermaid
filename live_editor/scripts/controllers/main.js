@@ -9,12 +9,12 @@
  */
 angular.module('angularMermaidApp')
   .controller('MainCtrl', ['$scope', '$sce', '$location', function($scope, $sce, $location) {
-    $scope.absurl = '';
+    var absurl = window.location.href.split('#')[0];
     $scope.diaglink = '';
     $scope.showerror = false;
 
     $scope.checkUpdate = function() {
-      $scope.diaglink = $scope.absurl + '##' + encodeURIComponent($scope.mermaidsyntax);
+      $scope.diaglink = absurl + '##' + encodeURIComponent($scope.mermaidsyntax);
       setTimeout(function() {
         var syntax = $sce.trustAsHtml($scope.mermaidsyntax) + '\n';
         // Delete and re add the mermaid node from the DOM
@@ -46,9 +46,7 @@ angular.module('angularMermaidApp')
       $scope.showform = false;
       $scope.diagclass = 'col s12 m12 l12';
       $scope.cardclass = '';
-
     } else {
-      $scope.absurl = $location.absUrl();
       $scope.showform = true;
       $scope.diagclass = 'col s12 m12 l9';
       $scope.cardclass = 'card';
@@ -61,5 +59,4 @@ angular.module('angularMermaidApp')
     }
     document.getElementsByClassName('materialize-textarea')[0].focus();
     $scope.checkUpdate();
-
   }]);
