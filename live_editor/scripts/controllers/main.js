@@ -21,7 +21,8 @@ angular.module('angularMermaidApp')
     $scope.showerror = false;
 
     $scope.checkUpdate = function() {
-      $scope.diaglink = buildURL('view', $scope.mermaidsyntax);
+      $scope.viewlink = buildURL('view', $scope.mermaidsyntax);
+      $scope.editlink = buildURL('edit', $scope.mermaidsyntax);
       setTimeout(function() {
         var syntax = $sce.trustAsHtml($scope.mermaidsyntax) + '\n';
         // Delete and re add the mermaid node from the DOM
@@ -64,6 +65,12 @@ angular.module('angularMermaidApp')
       if ($location.path().match(/^\/view\//)) {
         code = base64.urldecode($location.path().split('/')[2]);
         return viewDiagram(code);
+      }
+
+      // #/edit/base64EncodedDiagramString
+      if ($location.path().match(/^\/edit\//)) {
+        code = base64.urldecode($location.path().split('/')[2]);
+        return editDiagram(code);
       }
 
       return editDiagram(exampleCode);
