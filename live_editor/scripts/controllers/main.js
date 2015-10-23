@@ -8,13 +8,20 @@
  * Controller of the angularMermaidApp
  */
 angular.module('angularMermaidApp')
-  .controller('MainCtrl', ['$scope', '$sce', '$location', function($scope, $sce, $location) {
+  .controller('MainCtrl', ['$scope', '$sce', '$location', 'base64', function($scope, $sce, $location, base64) {
     var absurl = window.location.href.split('#')[0];
+    var exampleCode = 'sequenceDiagram\n' +
+      'A->> B: Query\n' +
+      'B->> C: Forward query\n' +
+      'Note right of C: Thinking...\n' +
+      'C->> B: Response\n' +
+      'B->> A: Forward response\n';
+
     $scope.diaglink = '';
     $scope.showerror = false;
 
     $scope.checkUpdate = function() {
-      $scope.diaglink = absurl + '##' + encodeURIComponent($scope.mermaidsyntax);
+      $scope.diaglink = buildURL('view', $scope.mermaidsyntax);
       setTimeout(function() {
         var syntax = $sce.trustAsHtml($scope.mermaidsyntax) + '\n';
         // Delete and re add the mermaid node from the DOM
@@ -39,24 +46,45 @@ angular.module('angularMermaidApp')
       }, 1000);
     };
 
-    if ($location.hash()) {
-      $scope.mermaidsyntax = $location.hash();
-      console.log($location.hash());
-      //Delete the other elements and leave only the diagram
+    route();
+
+    document.getElementsByClassName('materialize-textarea')[0].focus();
+    $scope.checkUpdate();
+
+    function route() {
+      var code;
+
+      // ##uriEncodedDiagramString (for backwards compatibility)
+      if ($location.hash()) {
+        code = $location.hash();
+        return viewDiagram(code);
+      }
+
+      // #/view/base64EncodedDiagramString
+      if ($location.path().match(/^\/view\//)) {
+        code = base64.urldecode($location.path().split('/')[2]);
+        return viewDiagram(code);
+      }
+
+      return editDiagram(exampleCode);
+    }
+
+    function viewDiagram(code) {
+      $scope.mermaidsyntax = code;
+      // Delete the other elements and leave only the diagram
       $scope.showform = false;
       $scope.diagclass = 'col s12 m12 l12';
       $scope.cardclass = '';
-    } else {
+    }
+
+    function editDiagram(code) {
+      $scope.mermaidsyntax = code;
       $scope.showform = true;
       $scope.diagclass = 'col s12 m12 l9';
       $scope.cardclass = 'card';
-      $scope.mermaidsyntax = 'sequenceDiagram\n' +
-        'A->> B: Query\n' +
-        'B->> C: Forward query\n' +
-        'Note right of C: Thinking...\n' +
-        'C->> B: Response\n' +
-        'B->> A: Forward response\n';
     }
-    document.getElementsByClassName('materialize-textarea')[0].focus();
-    $scope.checkUpdate();
+
+    function buildURL(action, code) {
+      return absurl + '#/' + action + '/' + base64.urlencode(code);
+    }
   }]);
