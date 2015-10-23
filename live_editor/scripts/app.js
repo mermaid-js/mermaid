@@ -9,4 +9,4 @@
  * Main module of the application.
  */
 angular
-  .module('angularMermaidApp', ['ngSanitize']);
+  .module('angularMermaidApp', ['ngSanitize', 'ab-base64']);
