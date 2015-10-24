@@ -16,7 +16,7 @@
   "scripts": {
     "live": "live-server ./test/examples",
     "lint": "node node_modules/eslint/bin/eslint.js src",
-    "jison": "source  ./scripts/jison.sh",
+    "jison": "gulp jison_legacy",
     "watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
     "tape": "node node_modules/.bin/tape test/cli_test-*.js",

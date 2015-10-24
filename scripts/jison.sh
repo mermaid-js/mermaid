@@ -1,3 +1,4 @@
+node node_modules/jison/lib/cli.js src/diagrams/classDiagram/parser/classDiagram.jison       -o src/diagrams/classDiagram/parser/classDiagram.js
 node node_modules/jison/lib/cli.js src/diagrams/sequenceDiagram/parser/sequenceDiagram.jison -o src/diagrams/sequenceDiagram/parser/sequenceDiagram.js
 node node_modules/jison/lib/cli.js src/diagrams/example/parser/example.jison                 -o src/diagrams/example/parser/example.js
 node node_modules/jison/lib/cli.js src/diagrams/flowchart/parser/flow.jison                  -o src/diagrams/flowchart/parser/flow.js
