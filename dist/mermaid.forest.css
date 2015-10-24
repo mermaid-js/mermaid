@@ -3,10 +3,11 @@
 /* Gantt chart variables */
 .mermaid .label {
   font-family: 'trebuchet ms', verdana, arial;
-  color: #333333;
+  color: #333;
 }
 .node rect,
 .node circle,
+.node ellipse,
 .node polygon {
   fill: #cde498;
   stroke: #13540c;
@@ -23,7 +24,7 @@
   stroke-width: 1px !important;
 }
 .cluster text {
-  fill: #333333;
+  fill: #333;
 }
 .actor {
   stroke: #13540c;
@@ -40,22 +41,22 @@ text.actor {
   stroke-width: 1.5;
   stroke-dasharray: "2 2";
   marker-end: "url(#arrowhead)";
-  stroke: #333333;
+  stroke: #333;
 }
 .messageLine1 {
   stroke-width: 1.5;
   stroke-dasharray: "2 2";
-  stroke: #333333;
+  stroke: #333;
 }
 #arrowhead {
-  fill: #333333;
+  fill: #333;
 }
 #crosshead path {
-  fill: #333333 !important;
-  stroke: #333333 !important;
+  fill: #333 !important;
+  stroke: #333 !important;
 }
 .messageText {
-  fill: #333333;
+  fill: #333;
   stroke: none;
 }
 .labelBox {
@@ -103,16 +104,16 @@ text.actor {
   opacity: 0.2;
 }
 .sectionTitle0 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle1 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle2 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle3 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle {
   text-anchor: start;
