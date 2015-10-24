@@ -39,7 +39,6 @@ angular.module('angularMermaidApp')
           mermaidnode.className = 'mermaid';
           mermaidnode.appendChild(document.createTextNode($sce.trustAsHtml($scope.mermaidsyntax)));
           mermaidholder.appendChild(mermaidnode);
-          console.log($scope.diaglink);
           mermaid.init(); // jshint ignore:line
         } else {
           $scope.showerror = true;
@@ -47,10 +46,7 @@ angular.module('angularMermaidApp')
       }, 1000);
     };
 
-    route();
-
-    document.getElementsByClassName('materialize-textarea')[0].focus();
-    $scope.checkUpdate();
+    $scope.$watch(function() { return $location.url(); }, route);
 
     function route() {
       var code;
@@ -82,6 +78,7 @@ angular.module('angularMermaidApp')
       $scope.showform = false;
       $scope.diagclass = 'col s12 m12 l12';
       $scope.cardclass = '';
+      $scope.checkUpdate();
     }
 
     function editDiagram(code) {
@@ -89,6 +86,8 @@ angular.module('angularMermaidApp')
       $scope.showform = true;
       $scope.diagclass = 'col s12 m12 l9';
       $scope.cardclass = 'card';
+      document.getElementsByClassName('materialize-textarea')[0].focus();
+      $scope.checkUpdate();
     }
 
     function buildURL(action, code) {
