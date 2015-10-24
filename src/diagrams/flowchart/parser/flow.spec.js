@@ -320,6 +320,18 @@ describe('when parsing ',function(){
         expect(edges[0].end).toBe('sender');
     });
 
+    it('should handle node names ending with keywords',function(){
+        var res = flow.parser.parse('graph TD\nblend --> monograph');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['blend'].id).toBe('blend');
+        expect(vert['monograph'].id).toBe('monograph');
+        expect(edges[0].start).toBe('blend');
+        expect(edges[0].end).toBe('monograph');
+    });
+
     it('should handle open ended edges',function(){
         var res = flow.parser.parse('graph TD;A---B;');
 
