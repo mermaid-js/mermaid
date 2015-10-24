@@ -62,7 +62,10 @@
         <div class="card-content">
           <span class="card-title grey-text" ng-show="showform">Generated diagram</span><br/>
           <span id="mermaidholder"></span>
-          <span ng-show="showform"><a ng-href="{{diaglink}}">PERMALINK</a>
+          <span ng-show="showform">
+            <a ng-href="{{viewlink}}">LINK TO VIEW</a>
+            <a ng-href="{{editlink}}">LINK TO EDIT</a>
+            <a ng-href="{{svglink}}" download="diagram.svg">DOWNLOAD SVG</a>
           </span>
         </div>
       </div>
@@ -79,9 +82,10 @@
   <!-- bower:js -->
   <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/angular/angular.js"></script>
-  <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.1/dist/mermaid.js"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.5/dist/mermaid.js"></script>
   <script src="bower_components/materialize/bin/materialize.js"></script>
   <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+  <script src="bower_components/angular-utf8-base64/angular-utf8-base64.js"></script>
   <!-- endbower -->
   <!-- endbuild -->
 
