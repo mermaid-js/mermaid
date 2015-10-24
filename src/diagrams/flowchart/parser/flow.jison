@@ -57,6 +57,8 @@
 \s*\-\-\s*               return '--';
 \s*\-\.\s*               return '-.';
 \s*\=\=\s*               return '==';
+"(-"                  return '(-';
+"-)"                  return '-)';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';
@@ -245,6 +247,10 @@ vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
     | alphaNum PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
+    | alphaNum '(-' text '-)'
+        {$$ = $1;yy.addVertex($1,$3,'ellipse');}
+    | alphaNum '(-' text '-)' spaceList
+        {$$ = $1;yy.addVertex($1,$3,'ellipse');}
     | alphaNum PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | alphaNum PS text PE spaceList

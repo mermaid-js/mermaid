@@ -111,6 +111,9 @@ exports.addVertices = function (vert, g) {
             case 'circle':
                 _shape = 'circle';
                 break;
+            case 'ellipse':
+                _shape = 'ellipse';
+                break;
             case 'group':
                 _shape = 'rect';
                 verticeText = '';

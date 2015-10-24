@@ -922,6 +922,7 @@ describe('when parsing ',function(){
         expect(vert['A'].type).toBe('square');
         expect(vert['A'].text).toBe('chimpansen hoppar ()[]');
     });
+
     it('should handle text in circle vertices with space',function(){
         var res = flow.parser.parse('graph TD;A((chimpansen hoppar))-->C;');
 
@@ -930,6 +931,16 @@ describe('when parsing ',function(){
 
         expect(vert['A'].type).toBe('circle');
         expect(vert['A'].text).toBe('chimpansen hoppar');
+    });
+
+    it('should handle text in ellipse vertices', function(){
+        var res = flow.parser.parse('graph TD\nA(-this is an ellipse-)-->B');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(vert['A'].type).toBe('ellipse');
+        expect(vert['A'].text).toBe('this is an ellipse');
     });
 
     it('should handle text in diamond vertices with space',function(){
