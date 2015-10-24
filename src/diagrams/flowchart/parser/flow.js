@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
+var flow = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,3],$V2=[1,5],$V3=[1,8,9,10,11,13,18,30,44,69,70,71,72,73,79,83,85,86,88,89,91,92,93],$V4=[2,2],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,31],$Va=[1,33],$Vb=[1,22],$Vc=[1,34],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,27],$Vh=[1,28],$Vi=[1,36],$Vj=[1,38],$Vk=[1,35],$Vl=[1,37],$Vm=[1,43],$Vn=[1,42],$Vo=[1,39],$Vp=[1,40],$Vq=[1,41],$Vr=[1,8,9,10,11,13,18,30,32,44,69,70,71,72,73,79,83,85,86,88,89,91,92,93],$Vs=[1,51],$Vt=[1,50],$Vu=[1,52],$Vv=[1,70],$Vw=[1,78],$Vx=[1,79],$Vy=[1,64],$Vz=[1,63],$VA=[1,83],$VB=[1,82],$VC=[1,80],$VD=[1,81],$VE=[1,71],$VF=[1,66],$VG=[1,65],$VH=[1,61],$VI=[1,73],$VJ=[1,74],$VK=[1,75],$VL=[1,76],$VM=[1,77],$VN=[1,68],$VO=[1,67],$VP=[8,9,11],$VQ=[8,9,11,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62],$VR=[1,112],$VS=[8,9,10,11,13,15,18,36,38,40,44,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,79,83,85,86,88,89,91,92,93],$VT=[8,9,10,11,12,13,15,16,17,18,30,32,36,37,38,39,40,41,44,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,69,70,71,72,73,76,79,81,83,85,86,88,89,91,92,93],$VU=[1,114],$VV=[1,115],$VW=[8,9,10,11,13,18,30,32,44,69,70,71,72,73,79,83,85,86,88,89,91,92,93],$VX=[8,9,10,11,12,13,15,16,17,18,30,32,37,39,41,44,48,49,50,51,52,54,55,56,57,58,59,60,61,62,63,69,70,71,72,73,76,79,81,83,85,86,88,89,91,92,93],$VY=[13,18,44,79,83,85,86,88,89,91,92,93],$VZ=[13,18,44,47,63,79,83,85,86,88,89,91,92,93],$V_=[1,186],$V$=[1,183],$V01=[1,190],$V11=[1,187],$V21=[1,184],$V31=[1,191],$V41=[1,181],$V51=[1,182],$V61=[1,185],$V71=[1,188],$V81=[1,189],$V91=[1,205],$Va1=[8,9,11,83],$Vb1=[8,9,10,11,44,69,78,79,81,83,85,86,87,88,89];
 var parser = {trace: function trace() { },
 yy: {},
@@ -299,7 +299,13 @@ parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
-        throw new Error(str);
+        function _parseError (msg, hash) {
+            this.message = msg;
+            this.hash = hash;
+        }
+        _parseError.prototype = new Error();
+
+        throw new _parseError(str, hash);
     }
 },
 parse: function parse(input) {
@@ -917,9 +923,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
+exports.parser = flow;
+exports.Parser = flow.Parser;
+exports.parse = function () { return flow.parse.apply(flow, arguments); };
 exports.main = function commonjsMain(args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');

@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
+var sequenceDiagram = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,15,17,19,20,22,33],$V1=[2,2],$V2=[1,6],$V3=[1,8],$V4=[1,9],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[2,7],$Vc=[6,8,10,11,15,17,18,19,20,21,22,33],$Vd=[6,8,10,11,15,17,18,19,20,22,33],$Ve=[1,46],$Vf=[1,49],$Vg=[1,53];
 var parser = {trace: function trace() { },
 yy: {},
@@ -177,7 +177,13 @@ parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
-        throw new Error(str);
+        function _parseError (msg, hash) {
+            this.message = msg;
+            this.hash = hash;
+        }
+        _parseError.prototype = new Error();
+
+        throw new _parseError(str, hash);
     }
 },
 parse: function parse(input) {
@@ -724,9 +730,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
+exports.parser = sequenceDiagram;
+exports.Parser = sequenceDiagram.Parser;
+exports.parse = function () { return sequenceDiagram.parse.apply(sequenceDiagram, arguments); };
 exports.main = function commonjsMain(args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
