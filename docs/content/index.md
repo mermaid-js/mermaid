@@ -61,15 +61,6 @@ gantt
 
 Play with mermaid using this [editor](http://danielmschmidt.github.io/mermaid-demo/) or this [live editor](live_editor).
 
-## Further reading
-
-* [Usage](http://knsv.github.io/mermaid/index.html#usage)
-* [Flowchart syntax](http://knsv.github.io/mermaid/index.html#flowcharts-basic-syntax)
-* [Sequence diagram syntax](http://knsv.github.io/mermaid/index.html#sequence-diagrams)
-* [Gantt chart syntax](http://knsv.github.io/mermaid/index.html#gant-diagrams)
-* [Mermaid client](http://knsv.github.io/mermaid/index.html#flowcharts-basic-syntax)
-* [Editor](http://knsv.github.io/mermaid/live_editor)
-
 ## Credits
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
 the graphical layout and drawing libraries! Thanks also to the
@@ -79,3 +70,13 @@ sequence diagrams.
 *Mermaid was created by Knut Sveidqvist for easier documentation.*
 
 Knut has not done all work by himself, here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
+
+# Online live editor
+
+An editor is available for creating diagrams. With it you can quickly start writing mermaid diagrams. It is possible to:
+
+* save the result as a svg
+* get a link to a viewer of the diagram 
+* get a link to edit of the diagram to share a diagram so that someone else can tweak it and send a new link back
+ 
+* [Editor](http://knsv.github.io/mermaid/live_editor)

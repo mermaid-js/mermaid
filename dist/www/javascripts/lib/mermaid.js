@@ -30658,7 +30658,7 @@ module.exports = '1.0.7';
 },{}],83:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -34762,6 +34762,8 @@ exports.clear = function () {
     title = '';
     taskCnt = 0;
     lastTask = undefined;
+    lastTaskID = undefined;
+    rawTasks = [];
 };
 
 exports.setDateFormat = function (txt) {
@@ -34784,26 +34786,28 @@ exports.addSection = function (txt) {
     sections.push(txt);
 };
 
-exports.findTaskById = function (id) {
-    var i;
-    for (i = 0; i < tasks.length; i++) {
-        if (tasks[i].id === id) {
-            return tasks[i];
-        }
-    }
-};
-
 exports.getTasks = function () {
-    var i;
-    for (i = 10000; i < tasks.length; i++) {
-        tasks[i].startTime = moment(tasks[i].startTime).format(dateFormat);
-        tasks[i].endTime = moment(tasks[i].endTime).format(dateFormat);
+    var allItemsPricessed = compileTasks();
+    var maxDepth = 10;
+    var iterationCount = 0;
+    while (!allItemsPricessed && iterationCount < maxDepth) {
+        allItemsPricessed = compileTasks();
+        iterationCount++;
     }
+
+    tasks = rawTasks;
+
+    //var i;
+    //for(i=10000;i<tasks.length;i++){
+    //    tasks[i].startTime = moment(tasks[i].startTime).format(dateFormat);
+    //    tasks[i].endTime = moment(tasks[i].endTime).format(dateFormat);
+    //}
 
     return tasks;
 };
 
 var getStartDate = function getStartDate(prevTime, dateFormat, str) {
+    //console.log('Deciding start date:'+JSON.stringify(str));
     //log.debug('Deciding start date:'+str);
     //log.debug('with dateformat:'+dateFormat);
 
@@ -34812,12 +34816,15 @@ var getStartDate = function getStartDate(prevTime, dateFormat, str) {
     // Test for after
     var re = /^after\s+([\d\w\-]+)/;
     var afterStatement = re.exec(str.trim());
+
     if (afterStatement !== null) {
         var task = exports.findTaskById(afterStatement[1]);
+
         if (typeof task === 'undefined') {
             var dt = new Date();
             dt.setHours(0, 0, 0, 0);
             return dt;
+            //return undefined;
         }
         return task.endTime;
     }
@@ -34954,8 +34961,108 @@ var compileData = function compileData(prevTask, dataStr) {
     return task;
 };
 
+var parseData = function parseData(prevTaskId, dataStr) {
+    var ds;
+
+    if (dataStr.substr(0, 1) === ':') {
+        ds = dataStr.substr(1, dataStr.length);
+    } else {
+        ds = dataStr;
+    }
+
+    var data = ds.split(',');
+
+    var task = {};
+
+    // Get tags like active, done cand crit
+    var matchFound = true;
+    while (matchFound) {
+        matchFound = false;
+        if (data[0].match(/^\s*active\s*$/)) {
+            task.active = true;
+            data.shift(1);
+            matchFound = true;
+        }
+        if (data[0].match(/^\s*done\s*$/)) {
+            task.done = true;
+            data.shift(1);
+            matchFound = true;
+        }
+        if (data[0].match(/^\s*crit\s*$/)) {
+            task.crit = true;
+            data.shift(1);
+            matchFound = true;
+        }
+    }
+    var i;
+    for (i = 0; i < data.length; i++) {
+        data[i] = data[i].trim();
+    }
+
+    switch (data.length) {
+        case 1:
+            task.id = parseId();
+            task.startTime = { type: 'prevTaskEnd', id: prevTaskId };
+            task.endTime = { data: data[0] };
+            break;
+        case 2:
+            task.id = parseId();
+            task.startTime = { type: 'getStartDate', startData: data[0] };
+            task.endTime = { data: data[1] };
+            break;
+        case 3:
+            task.id = parseId(data[0]);
+            task.startTime = { type: 'getStartDate', startData: data[1] };
+            task.endTime = { data: data[2] };
+            break;
+        default:
+
+    }
+
+    return task;
+};
+
 var lastTask;
+var lastTaskID;
+var rawTasks = [];
+var taskDb = {};
 exports.addTask = function (descr, data) {
+    var rawTask = {
+        section: currentSection,
+        type: currentSection,
+        processed: false,
+        raw: { data: data },
+        task: descr
+    };
+    var taskInfo = parseData(lastTaskID, data);
+    rawTask.raw.startTime = taskInfo.startTime;
+    rawTask.raw.endTime = taskInfo.endTime;
+    rawTask.id = taskInfo.id;
+    rawTask.prevTaskId = lastTaskID;
+    rawTask.active = taskInfo.active;
+    rawTask.done = taskInfo.done;
+    rawTask.crit = taskInfo.crit;
+
+    var pos = rawTasks.push(rawTask);
+
+    lastTaskID = rawTask.id;
+    // Store cross ref
+    taskDb[rawTask.id] = pos - 1;
+};
+
+exports.findTaskById = function (id) {
+    //var i;
+    //for(i=0;i<tasks.length;i++){
+    //    if(tasks[i].id === id){
+    //        return tasks[i];
+    //    }
+    //}
+
+    var pos = taskDb[id];
+    return rawTasks[pos];
+};
+
+exports.addTaskOrg = function (descr, data) {
 
     var newTask = {
         section: currentSection,
@@ -34972,6 +35079,45 @@ exports.addTask = function (descr, data) {
     newTask.crit = taskInfo.crit;
     lastTask = newTask;
     tasks.push(newTask);
+};
+
+var compileTasks = function compileTasks() {
+    var df = exports.getDateFormat();
+
+    var compileTask = function compileTask(pos) {
+        var task = rawTasks[pos];
+        var startTime = '';
+        switch (rawTasks[pos].raw.startTime.type) {
+            case 'prevTaskEnd':
+                var prevTask = exports.findTaskById(task.prevTaskId);
+                task.startTime = prevTask.endTime;
+                break;
+            case 'getStartDate':
+                startTime = getStartDate(undefined, df, rawTasks[pos].raw.startTime.startData);
+                if (startTime) {
+                    rawTasks[pos].startTime = startTime;
+                }
+                break;
+        }
+
+        if (rawTasks[pos].startTime) {
+            rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, df, rawTasks[pos].raw.endTime.data);
+            if (rawTasks[pos].endTime) {
+                rawTasks[pos].processed = true;
+            }
+        }
+
+        return rawTasks[pos].processed;
+    };
+
+    var i;
+    var allProcessed = true;
+    for (i = 0; i < rawTasks.length; i++) {
+        compileTask(i);
+
+        allProcessed = allProcessed && rawTasks[i].processed;
+    }
+    return allProcessed;
 };
 
 exports.parseError = function (err, hash) {
@@ -37184,7 +37330,7 @@ var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg) {
     line.attr('stroke', 'black');
     line.style('fill', 'none'); // remove any fill colour
     if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED) {
-        line.attr('marker-end', 'url(' + url + '#crosshead)');
+        line.attr('marker-end', 'url(' + url + '#arrowhead)');
     }
 
     if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS) {
