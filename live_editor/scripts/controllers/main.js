@@ -17,7 +17,9 @@ angular.module('angularMermaidApp')
       'C->> B: Response\n' +
       'B->> A: Forward response\n';
 
-    $scope.diaglink = '';
+    $scope.viewlink = '';
+    $scope.editlink = '';
+    $scope.svglink = '';
     $scope.showerror = false;
 
     $scope.checkUpdate = function() {
@@ -40,9 +42,11 @@ angular.module('angularMermaidApp')
           mermaidnode.appendChild(document.createTextNode($sce.trustAsHtml($scope.mermaidsyntax)));
           mermaidholder.appendChild(mermaidnode);
           mermaid.init(); // jshint ignore:line
+          $scope.svglink = buildSVGURL();
         } else {
           $scope.showerror = true;
         }
+        $scope.$apply();
       }, 1000);
     };
 
@@ -92,5 +96,10 @@ angular.module('angularMermaidApp')
 
     function buildURL(action, code) {
       return absurl + '#/' + action + '/' + base64.urlencode(code);
+    }
+
+    function buildSVGURL() {
+      var svg = document.querySelector('svg').outerHTML;
+      return 'data:image/svg+xml;base64,' + base64.encode(svg);
     }
   }]);

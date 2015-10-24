@@ -62,8 +62,10 @@
         <div class="card-content">
           <span class="card-title grey-text" ng-show="showform">Generated diagram</span><br/>
           <span id="mermaidholder"></span>
-          <span ng-show="showform"><a ng-href="{{viewlink}}">LINK TO VIEW</a>
-          <span ng-show="showform"><a ng-href="{{editlink}}">LINK TO EDIT</a>
+          <span ng-show="showform">
+            <a ng-href="{{viewlink}}">LINK TO VIEW</a>
+            <a ng-href="{{editlink}}">LINK TO EDIT</a>
+            <a ng-href="{{svglink}}" download="diagram.svg">DOWNLOAD SVG</a>
           </span>
         </div>
       </div>
