@@ -63,7 +63,9 @@
 \%                    return 'PCT';
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
-[\u0021-\u0027\u002A-\u002E\u003F\u0041-\u005A\u005C\u005F-\u007A\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
+[A-Za-z]+             return 'ALPHA';
+[!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
+[\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
 [\u03F7-\u0481\u048A-\u0527\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA]|
@@ -121,10 +123,10 @@
 [\uABC0-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D]|
 [\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36]|
 [\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D]|
-[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]]|
+[\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC]|
 [\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF]|
-[\uFFD2-\uFFD7\uFFDA-\uFFDC_\/]
-                      return 'ALPHA';
+[\uFFD2-\uFFD7\uFFDA-\uFFDC]
+                      return 'UNICODE_TEXT';
 "|"                   return 'PIPE';
 "("                   return 'PS';
 ")"                   return 'PE';
@@ -429,7 +431,7 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : ALPHA | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+alphaNumToken  : ALPHA | PUNCTUATION | UNICODE_TEXT | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
 
 graphCodeTokens:  PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAG_START | TAG_END | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%
