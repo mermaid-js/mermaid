@@ -6,17 +6,26 @@
 
 /* lexical grammar */
 %lex
-%x string
+%x string struct
 
 %%
 \%\%[^\n]*            /* do nothing */
 \n+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram"          return 'CLASS_DIAGRAM';
-"class"              return 'CLASS';
-["]                     this.begin("string");
-<string>["]             this.popState();
-<string>[^"]*           return "STR";
+[\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
+<struct>\}           { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
+<struct>[\n]              /* nothing */
+<struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+
+
+
+"class"               return 'CLASS';
+["]                   this.begin("string");
+<string>["]           this.popState();
+<string>[^"]*         return "STR";
+
+
 \s*\<\|               return 'EXTENSION';
 \s*\|\>               return 'EXTENSION';
 \s*\>                 return 'DEPENDENCY';
@@ -129,25 +138,33 @@ className
 
 statement
     : relationStatement
-    | relationStatement LABEL {console.log('Label found',$2);}
+    | relationStatement LABEL {/*console.log('Label found',$2);*/}
     | classStatement
     | methodStatement
     ;
 
 classStatement
     : CLASS className
+    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2);*/}
+    ;
+
+members
+    : MEMBER { return $1; }
+    | MEMBER members { /*console.log('member: ',$1);*/}
     ;
 
 methodStatement
-    : className {console.log('Rel found',$1);}
+    : className {/*console.log('Rel found',$1);*/}
     | className LABEL
+    | MEMBER
+    | SEPARATOR {/*console.log('sep found',$1);*/}
     ;
 
 relationStatement
-    : className relation className {console.log('Rel found:',$1,' , ',$2,' , ',$3);}
-    | className STR relation className {console.log('Rel found:',$1,' , ',$2,' , ',$3);}
-    | className relation STR className {console.log('Rel found:',$1,' , ',$2,' , ',$3);}
-    | className STR relation STR className {console.log('Str rel found:',$1,' , ',$2,' , ',$3);}
+    : className relation className {/*console.log('Rel found:',$1,' , ',$2,' , ',$3);*/}
+    | className STR relation className {/*console.log('Rel found:',$1,' , ',$2,' , ',$3);*/}
+    | className relation STR className {/*console.log('Rel found:',$1,' , ',$2,' , ',$3);*/}
+    | className STR relation STR className {/*console.log('Str rel found:',$1,' , ',$2,' , ',$3);*/}
     ;
 
 relation
