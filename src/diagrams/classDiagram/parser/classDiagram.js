@@ -93,13 +93,13 @@ case 8:
 /*console.log('Label found',$$[$0]);*/
 break;
 case 12:
-/*console.log($$[$0-3]);*/
+console.log($$[$0-3],JSON.stringify($$[$0-1]));
 break;
 case 13:
- return $$[$0]; 
+ this.$ = [$$[$0]]; 
 break;
 case 14:
- /*console.log('member: ',$$[$0-1]);*/
+ $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
 case 15:
 /*console.log('Rel found',$$[$0]);*/

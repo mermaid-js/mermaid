@@ -145,12 +145,12 @@ statement
 
 classStatement
     : CLASS className
-    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2);*/}
+    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addMembers();}
     ;
 
 members
-    : MEMBER { return $1; }
-    | MEMBER members { /*console.log('member: ',$1);*/}
+    : MEMBER { $$ = [$1]; }
+    | MEMBER members { $2.push($1);$$=$2;}
     ;
 
 methodStatement
