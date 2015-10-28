@@ -6,7 +6,7 @@ describe('class diagram, ', function () {
         var ex, cd;
         beforeEach(function () {
             cd = require('./parser/classDiagram').parser;
-            //cd.yy = require('./classeDb');
+            cd.yy = require('./classDb');
         });
 
         it('should handle relation definitions', function () {
@@ -104,5 +104,22 @@ class User {
             cd.parse(str);
         });
 
+    });
+
+    describe('when fetchiing data an classDiagram graph it', function () {
+        var ex, cd;
+        beforeEach(function () {
+            cd = require('./parser/classDiagram').parser;
+            cd.yy = require('./classDb');
+            cd.yy.clear();
+        });
+        it('should handle relation definitions', function () {
+            var str = `classDiagram
+Class01 <|-- Class02`;
+
+            cd.parse(str);
+            expect(cd.yy.getClass('Class01').id).toBe('Class01');
+            expect(cd.yy.getClass('Class02').id).toBe('Class02');
+        });
     });
 });

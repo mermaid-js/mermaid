@@ -83,17 +83,20 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 5: case 24: case 25:
+case 5:
  this.$=$$[$0-1]+$$[$0]; 
 break;
-case 6: case 26:
+case 6:
  this.$=$$[$0]; 
 break;
+case 7:
+ yy.addRelation($$[$0]); 
+break;
 case 8:
-/*console.log('Label found',$$[$0]);*/
+ $$[$0-1].title = $$[$0]; yy.addRelation($$[$0-1]);        
 break;
 case 12:
-console.log($$[$0-3],JSON.stringify($$[$0-1]));
+/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addMembers($$[$0-3],$$[$0-1]);
 break;
 case 13:
  this.$ = [$$[$0]]; 
@@ -108,16 +111,46 @@ case 18:
 /*console.log('sep found',$$[$0]);*/
 break;
 case 19:
-/*console.log('Rel found:',$$[$0-2],' , ',$$[$0-1],' , ',$$[$0]);*/
+ this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
-case 20: case 21:
-/*console.log('Rel found:',$$[$0-3],' , ',$$[$0-2],' , ',$$[$0-1]);*/
+case 20:
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
+break;
+case 21:
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
 case 22:
-/*console.log('Str rel found:',$$[$0-4],' , ',$$[$0-3],' , ',$$[$0-2]);*/
+ this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
 case 23:
- this.$=$$[$0-2]+$$[$0-1]+$$[$0]; 
+ this.$={type1:$$[$0-2],type2:$$[$0-1],lineType:$$[$0]}; 
+break;
+case 24:
+ this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
+break;
+case 25:
+ this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
+break;
+case 26:
+ this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
+break;
+case 27:
+ this.$=yy.relationType.AGGREGATION;
+break;
+case 28:
+ this.$=yy.relationType.EXTENSION;
+break;
+case 29:
+ this.$=yy.relationType.COMPOSITION;
+break;
+case 30:
+ this.$=yy.relationType.DEPENDENCY;
+break;
+case 31:
+this.$=yy.lineType.LINE;
+break;
+case 32:
+this.$=yy.lineType.DOTTED_LINE;
 break;
 }
 },

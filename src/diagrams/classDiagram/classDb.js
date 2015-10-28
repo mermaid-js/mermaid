@@ -14,54 +14,62 @@ var funs = [];
  * @param type
  * @param style
  */
-exports.addClass = function (id, text, type, style) {
-    var txt;
-
-    if(typeof id === 'undefined'){
-        return;
-    }
-    if(id.trim().length === 0){
-        return;
-    }
-
-    if (typeof vertices[id] === 'undefined') {
-        vertices[id] = {id: id, styles: [], classes:[]};
-    }
-    if (typeof text !== 'undefined') {
-        txt = text.trim();
-
-        // strip quotes if string starts and exnds with a quote
-        if(txt[0] === '"' && txt[txt.length-1] === '"'){
-            txt = txt.substring(1,txt.length-1);
-        }
-
-        vertices[id].text = txt;
-    }
-    if (typeof type !== 'undefined') {
-        vertices[id].type = type;
-    }
-    if (typeof type !== 'undefined') {
-        vertices[id].type = type;
-    }
-    if (typeof style !== 'undefined') {
-        if (style !== null) {
-            style.forEach(function (s) {
-                vertices[id].styles.push(s);
-            });
-        }
+exports.addClass = function (id) {
+    console.log('Adding: '+id);
+    if(typeof classes.id === 'undefined'){
+        classes[id] = {
+            id:id,
+            methods:[]
+        };
     }
 };
 
-exports.addRelation = function (id1, id2, type1, type2, relationTitle1, relationTitle2, title) {
-    log.debug('Got edge', start, end);
-    var edge = {
-        id1: id1,
-        id2: id2,
-        type1: type1,
-        type2: type2,
-        relationTitle1:relationTitle1,
-        relationTitle2:relationTitle2,
-        title:title
-    };
-    relations.push(edge);
+exports.clear = function () {
+    relations = [];
+    classes = {};
+};
+
+module.exports.getClass = function (id) {
+    return classes[id];
+};
+
+exports.addRelation = function (relation) {
+    console.log('Adding relation: ' + JSON.stringify(relation));
+    exports.addClass(relation.id1);
+    exports.addClass(relation.id2);
+
+    //var id1, id2, type1, type2, relationTitle1, relationTitle2, title,label;
+    //id1=tuple.id1;
+    //id2=tuple.id2;
+    //type1=tuple.type1;
+    //type2=tuple.type2;
+    //relationTitle1=tuple.relationTitle1;
+    //relationTitle2=tuple.relationTitle1;
+    //
+    //log.debug('Got edge', start, end);
+    //var edge = {
+    //    id1: id1,
+    //    id2: id2,
+    //    type1: type1,
+    //    type2: type2,
+    //    relationTitle1:relationTitle1,
+    //    relationTitle2:relationTitle2,
+    //    title:title
+    //};
+    relations.push(relation);
+};
+
+exports.addMembers = function (className, MembersArr) {
+};
+
+exports.lineType = {
+    LINE:0,
+    DOTTED_LINE:1
+};
+
+exports.relationType = {
+    AGGREGATION:0,
+    EXTENSION:1,
+    COMPOSITION:2,
+    DEPENDENCY:3
 };

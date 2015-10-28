@@ -137,15 +137,15 @@ className
     ;
 
 statement
-    : relationStatement
-    | relationStatement LABEL {/*console.log('Label found',$2);*/}
+    : relationStatement       { yy.addRelation($1); }
+    | relationStatement LABEL { $1.title = $2; yy.addRelation($1);        }
     | classStatement
     | methodStatement
     ;
 
 classStatement
     : CLASS className
-    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addMembers();}
+    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addMembers($2,$4);}
     ;
 
 members
@@ -161,29 +161,29 @@ methodStatement
     ;
 
 relationStatement
-    : className relation className {/*console.log('Rel found:',$1,' , ',$2,' , ',$3);*/}
-    | className STR relation className {/*console.log('Rel found:',$1,' , ',$2,' , ',$3);*/}
-    | className relation STR className {/*console.log('Rel found:',$1,' , ',$2,' , ',$3);*/}
-    | className STR relation STR className {/*console.log('Str rel found:',$1,' , ',$2,' , ',$3);*/}
+    : className relation className          { $$ = {'id1':$1,'id2':$3, relation:$2, relationTitle1:'none', relationTitle2:'none'}; }
+    | className STR relation className      { $$ = {id1:$1, id2:$4, relation:$3, relationTitle1:$2, relationTitle2:'none'}}
+    | className relation STR className      { $$ = {id1:$1, id2:$4, relation:$2, relationTitle1:'none', relationTitle2:$3}; }
+    | className STR relation STR className  { $$ = {id1:$1, id2:$5, relation:$3, relationTitle1:$2, relationTitle2:$4} }
     ;
 
 relation
-    : relationType lineType relationType { $$=$1+$2+$3; }
-    | lineType relationType { $$=$1+$2; }
-    | relationType lineType { $$=$1+$2; }
-    | lineType { $$=$1; }
+    : relationType lineType relationType { $$={type1:$1,type2:$2,lineType:$3}; }
+    | lineType relationType { $$={type1:'none',type2:$2,lineType:$1}; }
+    | relationType lineType { $$={type1:$1,type2:'none',lineType:$2}; }
+    | lineType { $$={type1:'none',type2:'none',lineType:$1}; }
     ;
 
 relationType
-    : AGGREGATION
-    | EXTENSION
-    | COMPOSITION
-    | DEPENDENCY
+    : AGGREGATION { $$=yy.relationType.AGGREGATION;}
+    | EXTENSION   { $$=yy.relationType.EXTENSION;}
+    | COMPOSITION { $$=yy.relationType.COMPOSITION;}
+    | DEPENDENCY  { $$=yy.relationType.DEPENDENCY;}
     ;
 
 lineType
-    : LINE
-    | DOTTED_LINE
+    : LINE          {$$=yy.lineType.LINE;}
+    | DOTTED_LINE   {$$=yy.lineType.DOTTED_LINE;}
     ;
 
 commentToken   : textToken | graphCodeTokens ;
