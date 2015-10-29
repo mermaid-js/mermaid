@@ -123,7 +123,7 @@ case 22:
  this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
 case 23:
- this.$={type1:$$[$0-2],type2:$$[$0-1],lineType:$$[$0]}; 
+ this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 24:
  this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 

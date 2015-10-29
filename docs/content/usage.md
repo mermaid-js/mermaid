@@ -145,11 +145,16 @@ could be used. The example just logs the resulting svg to the javascript console
     mermaidAPI.initialize({
         startOnLoad:false
     });
-        // Example of using the API
     $(function(){
+    // Example of using the API
+        var element = document.querySelector("#graphDiv");
+
+        var insertSvg = function(svgCode, bindFunctions){
+            element.innerHTML = svgCode;
+        };
+
         var graphDefinition = 'graph TB\na-->b';
-        var graph = mermaidAPI.render(graphDefinition);
-        $("#graphDiv").html(graph);
+        var graph = mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
     });
 &lt;/script&gt;
 ```

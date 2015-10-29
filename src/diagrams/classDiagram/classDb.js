@@ -3,7 +3,7 @@ import * as Logger from '../../logger';
 var log = new Logger.Log();
 
 var relations = [];
-var classes = {};
+let classes = new Map();
 
 // Functions to be run after graph rendering
 var funs = [];
@@ -16,21 +16,28 @@ var funs = [];
  */
 exports.addClass = function (id) {
     console.log('Adding: '+id);
-    if(typeof classes.id === 'undefined'){
-        classes[id] = {
+    if(typeof classes.get(id) === 'undefined'){
+        classes.set(id, {
             id:id,
             methods:[]
-        };
+        });
     }
 };
 
 exports.clear = function () {
     relations = [];
-    classes = {};
+    classes.clear();
 };
 
 module.exports.getClass = function (id) {
-    return classes[id];
+    return classes.get(id);
+};
+module.exports.getClasses = function (id) {
+    return classes;
+};
+
+module.exports.getRelations = function (id) {
+    return relations;
 };
 
 exports.addRelation = function (relation) {
@@ -38,24 +45,6 @@ exports.addRelation = function (relation) {
     exports.addClass(relation.id1);
     exports.addClass(relation.id2);
 
-    //var id1, id2, type1, type2, relationTitle1, relationTitle2, title,label;
-    //id1=tuple.id1;
-    //id2=tuple.id2;
-    //type1=tuple.type1;
-    //type2=tuple.type2;
-    //relationTitle1=tuple.relationTitle1;
-    //relationTitle2=tuple.relationTitle1;
-    //
-    //log.debug('Got edge', start, end);
-    //var edge = {
-    //    id1: id1,
-    //    id2: id2,
-    //    type1: type1,
-    //    type2: type2,
-    //    relationTitle1:relationTitle1,
-    //    relationTitle2:relationTitle2,
-    //    title:title
-    //};
     relations.push(relation);
 };
 

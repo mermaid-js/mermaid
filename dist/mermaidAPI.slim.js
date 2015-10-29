@@ -5581,7 +5581,7 @@ function read(json) {
 
 },{"./graph":77,"./lodash":80}],80:[function(require,module,exports){
 module.exports=require(41)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":41,"lodash":82}],81:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":41,"lodash":82}],81:[function(require,module,exports){
 module.exports = '1.0.7';
 
 },{}],82:[function(require,module,exports){
@@ -21229,7 +21229,7 @@ module.exports={
     "jasmine": "2.3.2",
     "jasmine-es6": "0.0.18",
     "jison": "zaach/jison",
-    "jsdom": "^6.5.1",
+    "jsdom": "^7.0.2",
     "jshint-stylish": "^2.0.1",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
@@ -21241,6 +21241,7 @@ module.exports={
     "rewire": "^2.1.3",
     "rimraf": "^2.2.8",
     "tape": "^3.0.3",
+    "testdom": "^2.0.0",
     "uglifyjs": "^2.4.10",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.2"

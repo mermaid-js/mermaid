@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-
+    <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
     <script src="../dist/mermaid.min.js"></script>
     <script>
         var config = {
@@ -30,11 +30,10 @@
             stroke: grey;
         }
     </style>
-    <lnk rel="stylesheet" href="seq.css"/>
-    <lnk rel="stylesheet" href="https://raw.githubusercontent.com/knsv/mermaid/master/dist/mermaid.fores.css"/>
-    <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
+
 </head>
     <body>
+
     <h1>Issue 141!!!</h1>
     <div style="width:200px">
     <div class="mermaid" id="i141">
@@ -44,6 +43,7 @@
         %% Example diagram
         A[Square Rect] -- Link text --> B((Circle));
         A --> C(Round Rect)
+        A --> E(- Elipse -)
         click A coolAction
         B --> D{Rhombus}
         C --> D
@@ -53,6 +53,20 @@
     </div>
     </div>
     <h1>Issue 140</h1>
+    <div  class="mermaid" id="i140">
+        graph TB
+        subgraph old_sys_2
+        a2(new client)-->b2
+        oc2(Old client)-->b2
+        a3(test)-->b2
+        end
+
+        subgraph old_sys_1
+        a1(new client)-->b1(sys1 server)
+        oc1(Old client)-->b2(test)
+        end
+
+    </div>    <h1>Issue 140</h1>
     <div  class="mermaid" id="i140">
         graph LR
         A-->B

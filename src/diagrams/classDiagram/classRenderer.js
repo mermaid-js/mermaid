@@ -3,7 +3,8 @@
  */
 
 var cd = require('./parser/classDiagram').parser;
-sq.yy = require('./classDb');
+var cDDb = require('./classDb');
+cd.yy = cDDb;
 var d3 = require('../../d3');
 import * as Logger from '../../logger';
 var log = new Logger.Log();
@@ -21,43 +22,49 @@ var conf = {
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-var drawClass = function(elem, startx, verticalPos, msg){
-    var rect = svgDraw.getNoteRect();
-    rect.x = startx;
-    rect.y = verticalPos;
-    rect.width = conf.width;
-    rect.class = 'note';
-
+var drawClass = function(elem, classDef){
+    //var rect = svgDraw.getNoteRect();
+    //rect.x = startx;
+    //rect.y = verticalPos;
+    //rect.width = conf.width;
+    //rect.class = 'note';
+    //
+    //var g = elem.append('g');
+    //var rectElem = svgDraw.drawRect(g, rect);
+    //
+    //var textObj = svgDraw.getTextObj();
+    //textObj.x = startx-4;
+    //textObj.y = verticalPos-13;
+    //textObj.textMargin = conf.noteMargin;
+    //textObj.dy = '1em';
+    //textObj.text = msg.message;
+    //textObj.class = 'noteText';
+    //
+    //var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
+    //
+    //var textHeight = textElem[0][0].getBBox().height;
+    //if(textHeight > conf.width){
+    //    textElem.remove();
+    //    g = elem.append('g');
+    //
+    //    //textObj.x = textObj.x - conf.width;
+    //    //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
+    //    textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
+    //    textHeight = textElem[0][0].getBBox().height;
+    //    rectElem.attr('width',2*conf.width);
+    //    exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+    //}else{
+    //    exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+    //}
+    //
+    //rectElem.attr('height',textHeight+ 2*conf.noteMargin);
+    //exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
     var g = elem.append('g');
-    var rectElem = svgDraw.drawRect(g, rect);
+    var textElem = g.append('text')      // text label for the x axis
+        .style('text-anchor', 'middle')
+        .attr('class', 'classText')
+        .text(classDef.id);
 
-    var textObj = svgDraw.getTextObj();
-    textObj.x = startx-4;
-    textObj.y = verticalPos-13;
-    textObj.textMargin = conf.noteMargin;
-    textObj.dy = '1em';
-    textObj.text = msg.message;
-    textObj.class = 'noteText';
-
-    var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
-
-    var textHeight = textElem[0][0].getBBox().height;
-    if(textHeight > conf.width){
-        textElem.remove();
-        g = elem.append('g');
-
-        //textObj.x = textObj.x - conf.width;
-        //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
-        textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
-        textHeight = textElem[0][0].getBBox().height;
-        rectElem.attr('width',2*conf.width);
-        exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    }else{
-        exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    }
-
-    rectElem.attr('height',textHeight+ 2*conf.noteMargin);
-    exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
 };
 
 
@@ -76,16 +83,31 @@ module.exports.setConf = function(cnf){
  */
 module.exports.draw = function (text, id) {
     cd.yy.clear();
-    cd.parse(text+'\n');
+    cd.parse(text);
 
-    var width  = box.stopx-box.startx+2*conf.diagramMarginX;
-    if(conf.useMaxWidth) {
-        diagram.attr('height', '100%');
-        diagram.attr('width', '100%');
-        diagram.attr('style', 'max-width:' + (width) + 'px;');
-    }else{
-        diagram.attr('height',height);
-        diagram.attr('width', width );
+    //// Fetch the default direction, use TD if none was found
+    var diagram = d3.select('#'+id);
+    var svg = diagram.append('svg');
+
+
+    let classes = cDDb.getClasses();
+    for(let classDef of classes.values()){
+        drawClass(svg, classDef)
     }
-    diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
+
+    //
+
+    //
+    //
+    //
+    //
+    //if(conf.useMaxWidth) {
+    //    diagram.attr('height', '100%');
+    //    diagram.attr('width', '100%');
+    //    diagram.attr('style', 'max-width:' + (width) + 'px;');
+    //}else{
+    //    diagram.attr('height',height);
+    //    diagram.attr('width', width );
+    //}
+    //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };

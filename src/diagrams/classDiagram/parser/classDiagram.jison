@@ -168,7 +168,7 @@ relationStatement
     ;
 
 relation
-    : relationType lineType relationType { $$={type1:$1,type2:$2,lineType:$3}; }
+    : relationType lineType relationType { $$={type1:$1,type2:$3,lineType:$2}; }
     | lineType relationType { $$={type1:'none',type2:$2,lineType:$1}; }
     | relationType lineType { $$={type1:$1,type2:'none',lineType:$2}; }
     | lineType { $$={type1:'none',type2:'none',lineType:$1}; }

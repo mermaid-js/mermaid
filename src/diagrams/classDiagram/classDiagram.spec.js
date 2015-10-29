@@ -3,10 +3,11 @@
  */
 describe('class diagram, ', function () {
     describe('when parsing an info graph it', function () {
-        var ex, cd;
+        var cd, cDDb;
         beforeEach(function () {
             cd = require('./parser/classDiagram').parser;
-            cd.yy = require('./classDb');
+            cDDb = require('./classDb');
+            cd.yy = cDDb;
         });
 
         it('should handle relation definitions', function () {
@@ -106,20 +107,108 @@ class User {
 
     });
 
-    describe('when fetchiing data an classDiagram graph it', function () {
-        var ex, cd;
+    describe('when fetching data from an classDiagram graph it', function () {
+        var cd, cDDb;
         beforeEach(function () {
             cd = require('./parser/classDiagram').parser;
-            cd.yy = require('./classDb');
+            cDDb = require('./classDb');
+            cd.yy = cDDb;
             cd.yy.clear();
         });
-        it('should handle relation definitions', function () {
+        it('should handle relation definitions EXTENSION', function () {
             var str = `classDiagram
-Class01 <|-- Class02`;
+                       Class01 <|-- Class02`;
 
             cd.parse(str);
+
+            var relations = cd.yy.getRelations();
+
             expect(cd.yy.getClass('Class01').id).toBe('Class01');
             expect(cd.yy.getClass('Class02').id).toBe('Class02');
+            expect(relations[0].relation.type1).toBe(cDDb.relationType.EXTENSION);
+            expect(relations[0].relation.type2).toBe('none');
+            expect(relations[0].relation.lineType).toBe(cDDb.lineType.LINE);
+        });
+        it('should handle relation definitions AGGREGATION and dotted line', function () {
+            var str = `classDiagram
+                       Class01 o.. Class02`;
+
+            cd.parse(str);
+
+            var relations = cd.yy.getRelations();
+
+            expect(cd.yy.getClass('Class01').id).toBe('Class01');
+            expect(cd.yy.getClass('Class02').id).toBe('Class02');
+            expect(relations[0].relation.type1).toBe(cDDb.relationType.AGGREGATION);
+            expect(relations[0].relation.type2).toBe('none');
+            expect(relations[0].relation.lineType).toBe(cDDb.lineType.DOTTED_LINE);
+        });
+        it('should handle relation definitions COMPOSITION on both sides', function () {
+            var str = `classDiagram
+                       Class01 *--* Class02`;
+
+            cd.parse(str);
+
+            var relations = cd.yy.getRelations();
+
+            expect(cd.yy.getClass('Class01').id).toBe('Class01');
+            expect(cd.yy.getClass('Class02').id).toBe('Class02');
+            expect(relations[0].relation.type1).toBe(cDDb.relationType.COMPOSITION);
+            expect(relations[0].relation.type2).toBe(cDDb.relationType.COMPOSITION);
+            expect(relations[0].relation.lineType).toBe(cDDb.lineType.LINE);
+        });
+        it('should handle relation definitions no types', function () {
+            var str = `classDiagram
+                       Class01 -- Class02`;
+
+            cd.parse(str);
+
+            var relations = cd.yy.getRelations();
+
+            expect(cd.yy.getClass('Class01').id).toBe('Class01');
+            expect(cd.yy.getClass('Class02').id).toBe('Class02');
+            expect(relations[0].relation.type1).toBe('none');
+            expect(relations[0].relation.type2).toBe('none');
+            expect(relations[0].relation.lineType).toBe(cDDb.lineType.LINE);
+        });
+        it('should handle relation definitions with type only on right side', function () {
+            var str = `classDiagram
+                       Class01 --|> Class02`;
+
+            cd.parse(str);
+
+            var relations = cd.yy.getRelations();
+
+            expect(cd.yy.getClass('Class01').id).toBe('Class01');
+            expect(cd.yy.getClass('Class02').id).toBe('Class02');
+            expect(relations[0].relation.type1).toBe('none');
+            expect(relations[0].relation.type2).toBe(cDDb.relationType.EXTENSION);
+            expect(relations[0].relation.lineType).toBe(cDDb.lineType.LINE);
+        });
+
+        it('should handle multiple classes and relation definitions', function () {
+            var str = `classDiagram
+                        Class01 <|-- Class02
+                        Class03 *-- Class04
+                        Class05 o-- Class06
+                        Class07 .. Class08
+                        Class09 -- Class10`;
+
+            cd.parse(str);
+
+            var relations = cd.yy.getRelations();
+
+            expect(cd.yy.getClass('Class01').id).toBe('Class01');
+            expect(cd.yy.getClass('Class10').id).toBe('Class10');
+
+            expect(relations.length).toBe(5);
+
+            expect(relations[0].relation.type1).toBe(cDDb.relationType.EXTENSION);
+            expect(relations[0].relation.type2).toBe('none');
+            expect(relations[0].relation.lineType).toBe(cDDb.lineType.LINE);
+            expect(relations[3].relation.type1).toBe('none');
+            expect(relations[3].relation.type2).toBe('none');
+            expect(relations[3].relation.lineType).toBe(cDDb.lineType.DOTTED_LINE);
         });
     });
 });
