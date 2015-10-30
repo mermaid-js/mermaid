@@ -20,7 +20,7 @@ var classRenderer = require('./classRenderer');
 var parser = require('./parser/classDiagram').parser;
 
 
-fdescribe('class diagram, ', function () {
+describe('class diagram, ', function () {
     describe('when rendering a classDiagram',function() {
         var conf;
         beforeEach(function () {
@@ -104,9 +104,9 @@ fdescribe('class diagram, ', function () {
             var str = `classDiagram
                        Class01 --|> Class02`;
 
-            classRenderer.draw(str,'tst');
+            //classRenderer.draw(str,'tst');
 
-            console.log(document.body.innerHTML);
+            //console.log(document.body.innerHTML);
 
         });
     });

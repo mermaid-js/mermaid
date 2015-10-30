@@ -3,8 +3,12 @@ import * as Logger from '../../logger';
 var log = new Logger.Log();
 
 var relations = [];
-let classes = new Map();
 
+let classes;
+var idCache;
+if(typeof Map !== 'undefined'){
+    classes = new Map();
+}
 // Functions to be run after graph rendering
 var funs = [];
 /**

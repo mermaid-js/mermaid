@@ -1,4 +1,322 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.mermaid = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaid=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+},{}],2:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":3}],3:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],4:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.6"
@@ -9503,7 +9821,7 @@
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],2:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -9535,7 +9853,7 @@ module.exports =  {
   version: require("./lib/version")
 };
 
-},{"./lib/dagre":9,"./lib/graphlib":10,"./lib/intersect":11,"./lib/render":26,"./lib/util":28,"./lib/version":29}],3:[function(require,module,exports){
+},{"./lib/dagre":12,"./lib/graphlib":13,"./lib/intersect":14,"./lib/render":29,"./lib/util":31,"./lib/version":32}],6:[function(require,module,exports){
 var util = require("./util");
 
 module.exports = {
@@ -9599,7 +9917,7 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":28}],4:[function(require,module,exports){
+},{"./util":31}],7:[function(require,module,exports){
 var util = require("./util"),
     addLabel = require("./label/add-label");
 
@@ -9644,7 +9962,7 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":19,"./util":28}],5:[function(require,module,exports){
+},{"./label/add-label":22,"./util":31}],8:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -9681,7 +9999,7 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],6:[function(require,module,exports){
+},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],9:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -9813,7 +10131,7 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":8,"./intersect/intersect-node":15,"./lodash":22,"./util":28}],7:[function(require,module,exports){
+},{"./d3":11,"./intersect/intersect-node":18,"./lodash":25,"./util":31}],10:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -9873,11 +10191,11 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],8:[function(require,module,exports){
+},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],11:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /* global window */
 
 var dagre;
@@ -9894,7 +10212,7 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":30}],10:[function(require,module,exports){
+},{"dagre":33}],13:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -9911,7 +10229,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":60}],11:[function(require,module,exports){
+},{"graphlib":63}],14:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -9920,7 +10238,7 @@ module.exports = {
   rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":12,"./intersect-ellipse":13,"./intersect-node":15,"./intersect-polygon":16,"./intersect-rect":17}],12:[function(require,module,exports){
+},{"./intersect-circle":15,"./intersect-ellipse":16,"./intersect-node":18,"./intersect-polygon":19,"./intersect-rect":20}],15:[function(require,module,exports){
 var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
@@ -9929,7 +10247,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":13}],13:[function(require,module,exports){
+},{"./intersect-ellipse":16}],16:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -9956,7 +10274,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -10028,14 +10346,14 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
@@ -10092,7 +10410,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":14}],17:[function(require,module,exports){
+},{"./intersect-line":17}],20:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -10126,7 +10444,7 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addHtmlLabel;
@@ -10171,7 +10489,7 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":28}],19:[function(require,module,exports){
+},{"../util":31}],22:[function(require,module,exports){
 var addTextLabel = require("./add-text-label"),
     addHtmlLabel = require("./add-html-label"),
     addSVGLabel  = require("./add-svg-label");
@@ -10210,7 +10528,7 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":18,"./add-svg-label":20,"./add-text-label":21}],20:[function(require,module,exports){
+},{"./add-html-label":21,"./add-svg-label":23,"./add-text-label":24}],23:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addSVGLabel;
@@ -10225,7 +10543,7 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":28}],21:[function(require,module,exports){
+},{"../util":31}],24:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addTextLabel;
@@ -10272,7 +10590,7 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":28}],22:[function(require,module,exports){
+},{"../util":31}],25:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -10289,7 +10607,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":80}],23:[function(require,module,exports){
+},{"lodash":83}],26:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10325,7 +10643,7 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":8,"./util":28}],24:[function(require,module,exports){
+},{"./d3":11,"./util":31}],27:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10349,7 +10667,7 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":8,"./lodash":22,"./util":28}],25:[function(require,module,exports){
+},{"./d3":11,"./lodash":25,"./util":31}],28:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10372,7 +10690,7 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":8,"./util":28}],26:[function(require,module,exports){
+},{"./d3":11,"./util":31}],29:[function(require,module,exports){
 var _ = require("./lodash"),
     layout = require("./dagre").layout;
 
@@ -10541,7 +10859,7 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":3,"./create-clusters":4,"./create-edge-labels":5,"./create-edge-paths":6,"./create-nodes":7,"./dagre":9,"./lodash":22,"./position-clusters":23,"./position-edge-labels":24,"./position-nodes":25,"./shapes":27}],27:[function(require,module,exports){
+},{"./arrows":6,"./create-clusters":7,"./create-edge-labels":8,"./create-edge-paths":9,"./create-nodes":10,"./dagre":12,"./lodash":25,"./position-clusters":26,"./position-edge-labels":27,"./position-nodes":28,"./shapes":30}],30:[function(require,module,exports){
 "use strict";
 
 var intersectRect = require("./intersect/intersect-rect"),
@@ -10624,7 +10942,7 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":12,"./intersect/intersect-ellipse":13,"./intersect/intersect-polygon":16,"./intersect/intersect-rect":17}],28:[function(require,module,exports){
+},{"./intersect/intersect-circle":15,"./intersect/intersect-ellipse":16,"./intersect/intersect-polygon":19,"./intersect/intersect-rect":20}],31:[function(require,module,exports){
 var _ = require("./lodash");
 
 // Public utility functions
@@ -10680,10 +10998,10 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":22}],29:[function(require,module,exports){
+},{"./lodash":25}],32:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*
 Copyright (c) 2012-2014 Chris Pettitt
 
@@ -10718,7 +11036,7 @@ module.exports = {
   version: require("./lib/version")
 };
 
-},{"./lib/debug":35,"./lib/graphlib":36,"./lib/layout":38,"./lib/util":58,"./lib/version":59}],31:[function(require,module,exports){
+},{"./lib/debug":38,"./lib/graphlib":39,"./lib/layout":41,"./lib/util":61,"./lib/version":62}],34:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10787,7 +11105,7 @@ function undo(g) {
   });
 }
 
-},{"./greedy-fas":37,"./lodash":39}],32:[function(require,module,exports){
+},{"./greedy-fas":40,"./lodash":42}],35:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -10827,7 +11145,7 @@ function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
   }
 }
 
-},{"./lodash":39,"./util":58}],33:[function(require,module,exports){
+},{"./lodash":42,"./util":61}],36:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -10901,7 +11219,7 @@ function swapXYOne(attrs) {
   attrs.y = x;
 }
 
-},{"./lodash":39}],34:[function(require,module,exports){
+},{"./lodash":42}],37:[function(require,module,exports){
 /*
  * Simple doubly linked list implementation derived from Cormen, et al.,
  * "Introduction to Algorithms".
@@ -10959,7 +11277,7 @@ function filterOutLinks(k, v) {
   }
 }
 
-},{}],35:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util"),
     Graph = require("./graphlib").Graph;
@@ -10995,7 +11313,7 @@ function debugOrdering(g) {
   return h;
 }
 
-},{"./graphlib":36,"./lodash":39,"./util":58}],36:[function(require,module,exports){
+},{"./graphlib":39,"./lodash":42,"./util":61}],39:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -11012,7 +11330,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":60}],37:[function(require,module,exports){
+},{"graphlib":63}],40:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graphlib").Graph,
     List = require("./data/list");
@@ -11132,7 +11450,7 @@ function assignBucket(buckets, zeroIdx, entry) {
   }
 }
 
-},{"./data/list":34,"./graphlib":36,"./lodash":39}],38:[function(require,module,exports){
+},{"./data/list":37,"./graphlib":39,"./lodash":42}],41:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -11526,7 +11844,7 @@ function canonicalize(attrs) {
   return newAttrs;
 }
 
-},{"./acyclic":31,"./add-border-segments":32,"./coordinate-system":33,"./graphlib":36,"./lodash":39,"./nesting-graph":40,"./normalize":41,"./order":46,"./parent-dummy-chains":51,"./position":53,"./rank":55,"./util":58}],39:[function(require,module,exports){
+},{"./acyclic":34,"./add-border-segments":35,"./coordinate-system":36,"./graphlib":39,"./lodash":42,"./nesting-graph":43,"./normalize":44,"./order":49,"./parent-dummy-chains":54,"./position":56,"./rank":58,"./util":61}],42:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -11543,7 +11861,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":80}],40:[function(require,module,exports){
+},{"lodash":83}],43:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -11677,7 +11995,7 @@ function cleanup(g) {
   });
 }
 
-},{"./lodash":39,"./util":58}],41:[function(require,module,exports){
+},{"./lodash":42,"./util":61}],44:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -11769,7 +12087,7 @@ function undo(g) {
   });
 }
 
-},{"./lodash":39,"./util":58}],42:[function(require,module,exports){
+},{"./lodash":42,"./util":61}],45:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = addSubgraphConstraints;
@@ -11824,7 +12142,7 @@ function addSubgraphConstraints(g, cg, vs) {
   */
 }
 
-},{"../lodash":39}],43:[function(require,module,exports){
+},{"../lodash":42}],46:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = barycenter;
@@ -11854,7 +12172,7 @@ function barycenter(g, movable) {
 }
 
 
-},{"../lodash":39}],44:[function(require,module,exports){
+},{"../lodash":42}],47:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graphlib").Graph;
 
@@ -11929,7 +12247,7 @@ function createRootNode(g) {
   return v;
 }
 
-},{"../graphlib":36,"../lodash":39}],45:[function(require,module,exports){
+},{"../graphlib":39,"../lodash":42}],48:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -12001,7 +12319,7 @@ function twoLayerCrossCount(g, northLayer, southLayer) {
   return cc;
 }
 
-},{"../lodash":39}],46:[function(require,module,exports){
+},{"../lodash":42}],49:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -12082,7 +12400,7 @@ function assignOrder(g, layering) {
   });
 }
 
-},{"../graphlib":36,"../lodash":39,"../util":58,"./add-subgraph-constraints":42,"./build-layer-graph":44,"./cross-count":45,"./init-order":47,"./sort-subgraph":49}],47:[function(require,module,exports){
+},{"../graphlib":39,"../lodash":42,"../util":61,"./add-subgraph-constraints":45,"./build-layer-graph":47,"./cross-count":48,"./init-order":50,"./sort-subgraph":52}],50:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -12122,7 +12440,7 @@ function initOrder(g) {
   return layers;
 }
 
-},{"../lodash":39}],48:[function(require,module,exports){
+},{"../lodash":42}],51:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -12247,7 +12565,7 @@ function mergeEntries(target, source) {
   source.merged = true;
 }
 
-},{"../lodash":39}],49:[function(require,module,exports){
+},{"../lodash":42}],52:[function(require,module,exports){
 var _ = require("../lodash"),
     barycenter = require("./barycenter"),
     resolveConflicts = require("./resolve-conflicts"),
@@ -12325,7 +12643,7 @@ function mergeBarycenters(target, other) {
   }
 }
 
-},{"../lodash":39,"./barycenter":43,"./resolve-conflicts":48,"./sort":50}],50:[function(require,module,exports){
+},{"../lodash":42,"./barycenter":46,"./resolve-conflicts":51,"./sort":53}],53:[function(require,module,exports){
 var _ = require("../lodash"),
     util = require("../util");
 
@@ -12384,7 +12702,7 @@ function compareWithBias(bias) {
   };
 }
 
-},{"../lodash":39,"../util":58}],51:[function(require,module,exports){
+},{"../lodash":42,"../util":61}],54:[function(require,module,exports){
 var _ = require("./lodash");
 
 module.exports = parentDummyChains;
@@ -12472,7 +12790,7 @@ function postorder(g) {
   return result;
 }
 
-},{"./lodash":39}],52:[function(require,module,exports){
+},{"./lodash":42}],55:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -12872,7 +13190,7 @@ function width(g, v) {
   return g.node(v).width;
 }
 
-},{"../graphlib":36,"../lodash":39,"../util":58}],53:[function(require,module,exports){
+},{"../graphlib":39,"../lodash":42,"../util":61}],56:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -12904,7 +13222,7 @@ function positionY(g) {
 }
 
 
-},{"../lodash":39,"../util":58,"./bk":52}],54:[function(require,module,exports){
+},{"../lodash":42,"../util":61,"./bk":55}],57:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -12995,7 +13313,7 @@ function shiftRanks(t, g, delta) {
   });
 }
 
-},{"../graphlib":36,"../lodash":39,"./util":57}],55:[function(require,module,exports){
+},{"../graphlib":39,"../lodash":42,"./util":60}],58:[function(require,module,exports){
 "use strict";
 
 var rankUtil = require("./util"),
@@ -13045,7 +13363,7 @@ function networkSimplexRanker(g) {
   networkSimplex(g);
 }
 
-},{"./feasible-tree":54,"./network-simplex":56,"./util":57}],56:[function(require,module,exports){
+},{"./feasible-tree":57,"./network-simplex":59,"./util":60}],59:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -13281,7 +13599,7 @@ function isDescendant(tree, vLabel, rootLabel) {
   return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
 }
 
-},{"../graphlib":36,"../lodash":39,"../util":58,"./feasible-tree":54,"./util":57}],57:[function(require,module,exports){
+},{"../graphlib":39,"../lodash":42,"../util":61,"./feasible-tree":57,"./util":60}],60:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -13344,7 +13662,7 @@ function slack(g, e) {
   return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
 }
 
-},{"../lodash":39}],58:[function(require,module,exports){
+},{"../lodash":42}],61:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -13582,10 +13900,10 @@ function notime(name, fn) {
   return fn();
 }
 
-},{"./graphlib":36,"./lodash":39}],59:[function(require,module,exports){
+},{"./graphlib":39,"./lodash":42}],62:[function(require,module,exports){
 module.exports = "0.7.4";
 
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -13625,7 +13943,7 @@ module.exports = {
   version: lib.version
 };
 
-},{"./lib":76,"./lib/alg":67,"./lib/json":77}],61:[function(require,module,exports){
+},{"./lib":79,"./lib/alg":70,"./lib/json":80}],64:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = components;
@@ -13654,7 +13972,7 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":78}],62:[function(require,module,exports){
+},{"../lodash":81}],65:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = dfs;
@@ -13695,7 +14013,7 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":78}],63:[function(require,module,exports){
+},{"../lodash":81}],66:[function(require,module,exports){
 var dijkstra = require("./dijkstra"),
     _ = require("../lodash");
 
@@ -13707,7 +14025,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":78,"./dijkstra":64}],64:[function(require,module,exports){
+},{"../lodash":81,"./dijkstra":67}],67:[function(require,module,exports){
 var _ = require("../lodash"),
     PriorityQueue = require("../data/priority-queue");
 
@@ -13763,7 +14081,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":74,"../lodash":78}],65:[function(require,module,exports){
+},{"../data/priority-queue":77,"../lodash":81}],68:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -13775,7 +14093,7 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":78,"./tarjan":72}],66:[function(require,module,exports){
+},{"../lodash":81,"./tarjan":75}],69:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = floydWarshall;
@@ -13827,7 +14145,7 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":78}],67:[function(require,module,exports){
+},{"../lodash":81}],70:[function(require,module,exports){
 module.exports = {
   components: require("./components"),
   dijkstra: require("./dijkstra"),
@@ -13842,7 +14160,7 @@ module.exports = {
   topsort: require("./topsort")
 };
 
-},{"./components":61,"./dijkstra":64,"./dijkstra-all":63,"./find-cycles":65,"./floyd-warshall":66,"./is-acyclic":68,"./postorder":69,"./preorder":70,"./prim":71,"./tarjan":72,"./topsort":73}],68:[function(require,module,exports){
+},{"./components":64,"./dijkstra":67,"./dijkstra-all":66,"./find-cycles":68,"./floyd-warshall":69,"./is-acyclic":71,"./postorder":72,"./preorder":73,"./prim":74,"./tarjan":75,"./topsort":76}],71:[function(require,module,exports){
 var topsort = require("./topsort");
 
 module.exports = isAcyclic;
@@ -13859,7 +14177,7 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":73}],69:[function(require,module,exports){
+},{"./topsort":76}],72:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = postorder;
@@ -13868,7 +14186,7 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":62}],70:[function(require,module,exports){
+},{"./dfs":65}],73:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = preorder;
@@ -13877,7 +14195,7 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":62}],71:[function(require,module,exports){
+},{"./dfs":65}],74:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
     PriorityQueue = require("../data/priority-queue");
@@ -13931,7 +14249,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":74,"../graph":75,"../lodash":78}],72:[function(require,module,exports){
+},{"../data/priority-queue":77,"../graph":78,"../lodash":81}],75:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
@@ -13980,7 +14298,7 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":78}],73:[function(require,module,exports){
+},{"../lodash":81}],76:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = topsort;
@@ -14016,7 +14334,7 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":78}],74:[function(require,module,exports){
+},{"../lodash":81}],77:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = PriorityQueue;
@@ -14170,7 +14488,7 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":78}],75:[function(require,module,exports){
+},{"../lodash":81}],78:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -14691,14 +15009,14 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":78}],76:[function(require,module,exports){
+},{"./lodash":81}],79:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
   Graph: require("./graph"),
   version: require("./version")
 };
 
-},{"./graph":75,"./version":79}],77:[function(require,module,exports){
+},{"./graph":78,"./version":82}],80:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graph");
 
@@ -14766,12 +15084,12 @@ function read(json) {
   return g;
 }
 
-},{"./graph":75,"./lodash":78}],78:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"dup":39,"lodash":80}],79:[function(require,module,exports){
+},{"./graph":78,"./lodash":81}],81:[function(require,module,exports){
+module.exports=require(42)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":83}],82:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],80:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -27126,109 +27444,109 @@ module.exports = '1.0.7';
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],81:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"./lib/debug":86,"./lib/graphlib":87,"./lib/layout":89,"./lib/util":109,"./lib/version":110,"dup":30}],82:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"./greedy-fas":88,"./lodash":90,"dup":31}],83:[function(require,module,exports){
-arguments[4][32][0].apply(exports,arguments)
-},{"./lodash":90,"./util":109,"dup":32}],84:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"./lodash":90,"dup":33}],85:[function(require,module,exports){
-arguments[4][34][0].apply(exports,arguments)
-},{"dup":34}],86:[function(require,module,exports){
-arguments[4][35][0].apply(exports,arguments)
-},{"./graphlib":87,"./lodash":90,"./util":109,"dup":35}],87:[function(require,module,exports){
-arguments[4][36][0].apply(exports,arguments)
-},{"dup":36,"graphlib":111}],88:[function(require,module,exports){
-arguments[4][37][0].apply(exports,arguments)
-},{"./data/list":85,"./graphlib":87,"./lodash":90,"dup":37}],89:[function(require,module,exports){
-arguments[4][38][0].apply(exports,arguments)
-},{"./acyclic":82,"./add-border-segments":83,"./coordinate-system":84,"./graphlib":87,"./lodash":90,"./nesting-graph":91,"./normalize":92,"./order":97,"./parent-dummy-chains":102,"./position":104,"./rank":106,"./util":109,"dup":38}],90:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"dup":39,"lodash":131}],91:[function(require,module,exports){
-arguments[4][40][0].apply(exports,arguments)
-},{"./lodash":90,"./util":109,"dup":40}],92:[function(require,module,exports){
-arguments[4][41][0].apply(exports,arguments)
-},{"./lodash":90,"./util":109,"dup":41}],93:[function(require,module,exports){
-arguments[4][42][0].apply(exports,arguments)
-},{"../lodash":90,"dup":42}],94:[function(require,module,exports){
-arguments[4][43][0].apply(exports,arguments)
-},{"../lodash":90,"dup":43}],95:[function(require,module,exports){
-arguments[4][44][0].apply(exports,arguments)
-},{"../graphlib":87,"../lodash":90,"dup":44}],96:[function(require,module,exports){
-arguments[4][45][0].apply(exports,arguments)
-},{"../lodash":90,"dup":45}],97:[function(require,module,exports){
-arguments[4][46][0].apply(exports,arguments)
-},{"../graphlib":87,"../lodash":90,"../util":109,"./add-subgraph-constraints":93,"./build-layer-graph":95,"./cross-count":96,"./init-order":98,"./sort-subgraph":100,"dup":46}],98:[function(require,module,exports){
-arguments[4][47][0].apply(exports,arguments)
-},{"../lodash":90,"dup":47}],99:[function(require,module,exports){
-arguments[4][48][0].apply(exports,arguments)
-},{"../lodash":90,"dup":48}],100:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"../lodash":90,"./barycenter":94,"./resolve-conflicts":99,"./sort":101,"dup":49}],101:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"../lodash":90,"../util":109,"dup":50}],102:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"./lodash":90,"dup":51}],103:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"../graphlib":87,"../lodash":90,"../util":109,"dup":52}],104:[function(require,module,exports){
-arguments[4][53][0].apply(exports,arguments)
-},{"../lodash":90,"../util":109,"./bk":103,"dup":53}],105:[function(require,module,exports){
-arguments[4][54][0].apply(exports,arguments)
-},{"../graphlib":87,"../lodash":90,"./util":108,"dup":54}],106:[function(require,module,exports){
-arguments[4][55][0].apply(exports,arguments)
-},{"./feasible-tree":105,"./network-simplex":107,"./util":108,"dup":55}],107:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"../graphlib":87,"../lodash":90,"../util":109,"./feasible-tree":105,"./util":108,"dup":56}],108:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"../lodash":90,"dup":57}],109:[function(require,module,exports){
-arguments[4][58][0].apply(exports,arguments)
-},{"./graphlib":87,"./lodash":90,"dup":58}],110:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"dup":59}],111:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"./lib":127,"./lib/alg":118,"./lib/json":128,"dup":60}],112:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"../lodash":129,"dup":61}],113:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"../lodash":129,"dup":62}],114:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"../lodash":129,"./dijkstra":115,"dup":63}],115:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"../data/priority-queue":125,"../lodash":129,"dup":64}],116:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"../lodash":129,"./tarjan":123,"dup":65}],117:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"../lodash":129,"dup":66}],118:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"./components":112,"./dijkstra":115,"./dijkstra-all":114,"./find-cycles":116,"./floyd-warshall":117,"./is-acyclic":119,"./postorder":120,"./preorder":121,"./prim":122,"./tarjan":123,"./topsort":124,"dup":67}],119:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./topsort":124,"dup":68}],120:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"./dfs":113,"dup":69}],121:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./dfs":113,"dup":70}],122:[function(require,module,exports){
-arguments[4][71][0].apply(exports,arguments)
-},{"../data/priority-queue":125,"../graph":126,"../lodash":129,"dup":71}],123:[function(require,module,exports){
-arguments[4][72][0].apply(exports,arguments)
-},{"../lodash":129,"dup":72}],124:[function(require,module,exports){
-arguments[4][73][0].apply(exports,arguments)
-},{"../lodash":129,"dup":73}],125:[function(require,module,exports){
-arguments[4][74][0].apply(exports,arguments)
-},{"../lodash":129,"dup":74}],126:[function(require,module,exports){
-arguments[4][75][0].apply(exports,arguments)
-},{"./lodash":129,"dup":75}],127:[function(require,module,exports){
-arguments[4][76][0].apply(exports,arguments)
-},{"./graph":126,"./version":130,"dup":76}],128:[function(require,module,exports){
-arguments[4][77][0].apply(exports,arguments)
-},{"./graph":126,"./lodash":129,"dup":77}],129:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"dup":39,"lodash":131}],130:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"dup":79}],131:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"dup":80}],132:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
+module.exports=require(33)
+},{"./lib/debug":89,"./lib/graphlib":90,"./lib/layout":92,"./lib/util":112,"./lib/version":113,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/index.js":33}],85:[function(require,module,exports){
+module.exports=require(34)
+},{"./greedy-fas":91,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/acyclic.js":34}],86:[function(require,module,exports){
+module.exports=require(35)
+},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/add-border-segments.js":35}],87:[function(require,module,exports){
+module.exports=require(36)
+},{"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/coordinate-system.js":36}],88:[function(require,module,exports){
+module.exports=require(37)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/data/list.js":37}],89:[function(require,module,exports){
+module.exports=require(38)
+},{"./graphlib":90,"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/debug.js":38}],90:[function(require,module,exports){
+module.exports=require(39)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/graphlib.js":39,"graphlib":114}],91:[function(require,module,exports){
+module.exports=require(40)
+},{"./data/list":88,"./graphlib":90,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/greedy-fas.js":40}],92:[function(require,module,exports){
+module.exports=require(41)
+},{"./acyclic":85,"./add-border-segments":86,"./coordinate-system":87,"./graphlib":90,"./lodash":93,"./nesting-graph":94,"./normalize":95,"./order":100,"./parent-dummy-chains":105,"./position":107,"./rank":109,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/layout.js":41}],93:[function(require,module,exports){
+module.exports=require(42)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],94:[function(require,module,exports){
+module.exports=require(43)
+},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/nesting-graph.js":43}],95:[function(require,module,exports){
+module.exports=require(44)
+},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/normalize.js":44}],96:[function(require,module,exports){
+module.exports=require(45)
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/add-subgraph-constraints.js":45}],97:[function(require,module,exports){
+module.exports=require(46)
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/barycenter.js":46}],98:[function(require,module,exports){
+module.exports=require(47)
+},{"../graphlib":90,"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/build-layer-graph.js":47}],99:[function(require,module,exports){
+module.exports=require(48)
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/cross-count.js":48}],100:[function(require,module,exports){
+module.exports=require(49)
+},{"../graphlib":90,"../lodash":93,"../util":112,"./add-subgraph-constraints":96,"./build-layer-graph":98,"./cross-count":99,"./init-order":101,"./sort-subgraph":103,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/index.js":49}],101:[function(require,module,exports){
+module.exports=require(50)
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/init-order.js":50}],102:[function(require,module,exports){
+module.exports=require(51)
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/resolve-conflicts.js":51}],103:[function(require,module,exports){
+module.exports=require(52)
+},{"../lodash":93,"./barycenter":97,"./resolve-conflicts":102,"./sort":104,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort-subgraph.js":52}],104:[function(require,module,exports){
+module.exports=require(53)
+},{"../lodash":93,"../util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort.js":53}],105:[function(require,module,exports){
+module.exports=require(54)
+},{"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/parent-dummy-chains.js":54}],106:[function(require,module,exports){
+module.exports=require(55)
+},{"../graphlib":90,"../lodash":93,"../util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/bk.js":55}],107:[function(require,module,exports){
+module.exports=require(56)
+},{"../lodash":93,"../util":112,"./bk":106,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/index.js":56}],108:[function(require,module,exports){
+module.exports=require(57)
+},{"../graphlib":90,"../lodash":93,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/feasible-tree.js":57}],109:[function(require,module,exports){
+module.exports=require(58)
+},{"./feasible-tree":108,"./network-simplex":110,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/index.js":58}],110:[function(require,module,exports){
+module.exports=require(59)
+},{"../graphlib":90,"../lodash":93,"../util":112,"./feasible-tree":108,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/network-simplex.js":59}],111:[function(require,module,exports){
+module.exports=require(60)
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/util.js":60}],112:[function(require,module,exports){
+module.exports=require(61)
+},{"./graphlib":90,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/util.js":61}],113:[function(require,module,exports){
+module.exports=require(62)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/version.js":62}],114:[function(require,module,exports){
+module.exports=require(63)
+},{"./lib":130,"./lib/alg":121,"./lib/json":131,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":63}],115:[function(require,module,exports){
+module.exports=require(64)
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":64}],116:[function(require,module,exports){
+module.exports=require(65)
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":65}],117:[function(require,module,exports){
+module.exports=require(66)
+},{"../lodash":132,"./dijkstra":118,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":66}],118:[function(require,module,exports){
+module.exports=require(67)
+},{"../data/priority-queue":128,"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":67}],119:[function(require,module,exports){
+module.exports=require(68)
+},{"../lodash":132,"./tarjan":126,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":68}],120:[function(require,module,exports){
+module.exports=require(69)
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":69}],121:[function(require,module,exports){
+module.exports=require(70)
+},{"./components":115,"./dijkstra":118,"./dijkstra-all":117,"./find-cycles":119,"./floyd-warshall":120,"./is-acyclic":122,"./postorder":123,"./preorder":124,"./prim":125,"./tarjan":126,"./topsort":127,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":70}],122:[function(require,module,exports){
+module.exports=require(71)
+},{"./topsort":127,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":71}],123:[function(require,module,exports){
+module.exports=require(72)
+},{"./dfs":116,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":72}],124:[function(require,module,exports){
+module.exports=require(73)
+},{"./dfs":116,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":73}],125:[function(require,module,exports){
+module.exports=require(74)
+},{"../data/priority-queue":128,"../graph":129,"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":74}],126:[function(require,module,exports){
+module.exports=require(75)
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":75}],127:[function(require,module,exports){
+module.exports=require(76)
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":76}],128:[function(require,module,exports){
+module.exports=require(77)
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":77}],129:[function(require,module,exports){
+module.exports=require(78)
+},{"./lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":78}],130:[function(require,module,exports){
+module.exports=require(79)
+},{"./graph":129,"./version":133,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":79}],131:[function(require,module,exports){
+module.exports=require(80)
+},{"./graph":129,"./lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":80}],132:[function(require,module,exports){
+module.exports=require(42)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],133:[function(require,module,exports){
+module.exports=require(82)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":82}],134:[function(require,module,exports){
+module.exports=require(83)
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":83}],135:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -27561,7 +27879,7 @@ arguments[4][80][0].apply(exports,arguments)
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],133:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -30757,7 +31075,7 @@ arguments[4][80][0].apply(exports,arguments)
     return _moment;
 
 }));
-},{}],134:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
   "version": "0.5.5",
@@ -30871,7 +31189,7 @@ module.exports={
   }
 }
 
-},{}],135:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 /* global window */
 //log.debug('Setting up d3');
 'use strict';
@@ -31342,7 +31660,7 @@ module.exports = d3;
 })();
 /* jshint ignore:end */
 
-},{"d3":1}],136:[function(require,module,exports){
+},{"d3":4}],139:[function(require,module,exports){
 'use strict';
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
@@ -31354,8 +31672,12 @@ var Logger = _interopRequireWildcard(_logger);
 var log = new Logger.Log();
 
 var relations = [];
-var classes = new Map();
 
+var classes = undefined;
+var idCache;
+if (typeof Map !== 'undefined') {
+    classes = new Map();
+}
 // Functions to be run after graph rendering
 var funs = [];
 /**
@@ -31413,7 +31735,7 @@ exports.relationType = {
     DEPENDENCY: 3
 };
 
-},{"../../logger":154}],137:[function(require,module,exports){
+},{"../../logger":157}],140:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -31439,7 +31761,10 @@ var d3 = require('../../d3');
 
 var log = new Logger.Log();
 
-var idCache = new Map();
+var idCache;
+if (typeof Map !== 'undefined') {
+    idCache = new Map();
+}
 var classCnt = 0;
 var conf = {};
 
@@ -31487,7 +31812,7 @@ var drawEdge = function drawEdge(elem, path) {
         return d.x;
     }).y(function (d) {
         return d.y;
-    }).interpolate('linear');
+    }).interpolate('cardinal');
 
     elem.append('path').attr('d', lineFunction(lineData)).attr('stroke', 'black').attr('stroke-width', 1).attr('fill', 'none');
 };
@@ -31678,7 +32003,7 @@ module.exports.draw = function (text, id) {
     //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":135,"../../logger":154,"./classDb":136,"./parser/classDiagram":138,"dagre":81}],138:[function(require,module,exports){
+},{"../../d3":138,"../../logger":157,"./classDb":139,"./parser/classDiagram":141,"dagre":84}],141:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -32474,7 +32799,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":159,"fs":157,"path":158}],139:[function(require,module,exports){
+},{"_process":3,"fs":1,"path":2}],142:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -32514,7 +32839,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":154}],140:[function(require,module,exports){
+},{"../../logger":157}],143:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -32563,7 +32888,7 @@ exports.draw = function (txt, id, ver) {
     //svg.attr('viewBox', '0 0 300 150');
 };
 
-},{"../../d3":135,"../../logger":154,"./exampleDb":139,"./parser/example.js":141}],141:[function(require,module,exports){
+},{"../../d3":138,"../../logger":157,"./exampleDb":142,"./parser/example.js":144}],144:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -33209,7 +33534,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":159,"fs":157,"path":158}],142:[function(require,module,exports){
+},{"_process":3,"fs":1,"path":2}],145:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -33238,7 +33563,7 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":154,"dagre-d3":2}],143:[function(require,module,exports){
+},{"../../logger":157,"dagre-d3":5}],146:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -33679,7 +34004,7 @@ exports.draw = function (text, id, isDot) {
     }
 };
 
-},{"../../d3":135,"../../logger":154,"./dagre-d3":142,"./graphDb":144,"./parser/dot":145,"./parser/flow":146}],144:[function(require,module,exports){
+},{"../../d3":138,"../../logger":157,"./dagre-d3":145,"./graphDb":147,"./parser/dot":148,"./parser/flow":149}],147:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-03.
@@ -34073,7 +34398,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../d3":135,"../../logger":154}],145:[function(require,module,exports){
+},{"../../d3":138,"../../logger":157}],148:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -34904,7 +35229,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":159,"fs":157,"path":158}],146:[function(require,module,exports){
+},{"_process":3,"fs":1,"path":2}],149:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -36014,7 +36339,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":159,"fs":157,"path":158}],147:[function(require,module,exports){
+},{"_process":3,"fs":1,"path":2}],150:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -36407,7 +36732,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":154,"moment":133}],148:[function(require,module,exports){
+},{"../../logger":157,"moment":136}],151:[function(require,module,exports){
 'use strict';
 
 var gantt = require('./parser/gantt').parser;
@@ -36761,7 +37086,7 @@ module.exports.draw = function (text, id) {
     }
 };
 
-},{"../../d3":135,"./ganttDb":147,"./parser/gantt":149,"moment":133}],149:[function(require,module,exports){
+},{"../../d3":138,"./ganttDb":150,"./parser/gantt":152,"moment":136}],152:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -37444,7 +37769,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":159,"fs":157,"path":158}],150:[function(require,module,exports){
+},{"_process":3,"fs":1,"path":2}],153:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -38246,7 +38571,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":159,"fs":157,"path":158}],151:[function(require,module,exports){
+},{"_process":3,"fs":1,"path":2}],154:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-19.
@@ -38390,7 +38715,7 @@ exports.apply = function (param) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":154}],152:[function(require,module,exports){
+},{"../../logger":157}],155:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -38788,7 +39113,7 @@ module.exports.draw = function (text, id) {
     diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":135,"../../logger":154,"./parser/sequenceDiagram":150,"./sequenceDb":151,"./svgDraw":153}],153:[function(require,module,exports){
+},{"../../d3":138,"../../logger":157,"./parser/sequenceDiagram":153,"./sequenceDb":154,"./svgDraw":156}],156:[function(require,module,exports){
 /**
  * Created by knut on 14-12-20.
  */
@@ -38995,7 +39320,7 @@ exports.getNoteRect = function () {
     return rect;
 };
 
-},{}],154:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 /**
  * #logger
  * logger = require('logger').create()
@@ -39113,7 +39438,283 @@ var Log = (function () {
 
 exports.Log = Log;
 
-},{}],155:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
+(function (global){
+//(function (root, factory) {
+//    if (typeof exports === 'object') {
+//        // CommonJS
+//        module.exports = factory(require('b'));
+//    } else if (typeof define === 'function' && define.amd) {
+//        // AMD
+//        define(['b'], function (b) {
+//            return (root.returnExportsGlobal = factory(b));
+//        });
+//    } else {
+//        // Global Variables
+//        root.returnExportsGlobal = factory(root.b);
+//    }
+//}(this, function (b) {
+/**
+ * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
+ * the diagrams to svg code.
+ */
+'use strict';
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+var _logger = require('./logger');
+
+var Logger = _interopRequireWildcard(_logger);
+
+var log = new Logger.Log();
+var mermaidAPI = require('./mermaidAPI');
+var nextId = 0;
+
+var he = require('he');
+
+module.exports.mermaidAPI = mermaidAPI;
+/**
+ * ## init
+ * Function that goes through the document to find the chart definitions in there and render them.
+ *
+ * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
+ * attribute already set. This way the init function can be triggered several times.
+ *
+ * Optionally, `init` can accept in the second argument one of the following:
+ * - a DOM Node
+ * - an array of DOM nodes (as would come from a jQuery selector)
+ * - a W3C selector, a la `.mermaid`
+ *
+ * ```mermaid
+ * graph LR;
+ *  a(Find elements)-->b{Processed}
+ *  b-->|Yes|c(Leave element)
+ *  b-->|No |d(Transform)
+ * ```
+ * Renders the mermaid diagrams
+ * @param nodes a css selector or an array of nodes
+ */
+var _init = function _init() {
+    var conf = mermaidAPI.getConfig();
+    log.debug('Starting rendering diagrams');
+    var nodes;
+    if (arguments.length >= 2) {
+        /*! sequence config was passed as #1 */
+        if (typeof arguments[0] !== 'undefined') {
+            global.mermaid.sequenceConfig = arguments[0];
+        }
+
+        nodes = arguments[1];
+    } else {
+        nodes = arguments[0];
+    }
+
+    // if last argument is a function this is the callback function
+    var callback;
+    if (typeof arguments[arguments.length - 1] === 'function') {
+        callback = arguments[arguments.length - 1];
+        log.debug('Callback function found');
+    } else {
+        if (typeof conf.mermaid !== 'undefined') {
+            if (typeof conf.mermaid.callback === 'function') {
+                callback = conf.mermaid.callback;
+                log.debug('Callback function found');
+            } else {
+                log.debug('No Callback function found');
+            }
+        }
+    }
+    nodes = nodes === undefined ? document.querySelectorAll('.mermaid') : typeof nodes === 'string' ? document.querySelectorAll(nodes) : nodes instanceof Node ? [nodes]
+    /*! Last case  - sequence config was passed pick next */
+    : nodes;
+
+    var i;
+
+    if (typeof mermaid_config !== 'undefined') {
+        mermaidAPI.initialize(global.mermaid_config);
+    }
+    log.debug('Start On Load before: ' + global.mermaid.startOnLoad);
+    if (typeof global.mermaid.startOnLoad !== 'undefined') {
+        log.debug('Start On Load inner: ' + global.mermaid.startOnLoad);
+        mermaidAPI.initialize({ startOnLoad: global.mermaid.startOnLoad });
+    }
+
+    if (typeof global.mermaid.ganttConfig !== 'undefined') {
+        mermaidAPI.initialize({ gantt: global.mermaid.ganttConfig });
+    }
+
+    var txt;
+    var insertSvg = function insertSvg(svgCode, bindFunctions) {
+        element.innerHTML = svgCode;
+        if (typeof callback !== 'undefined') {
+            callback(id);
+        }
+        bindFunctions(element);
+    };
+
+    for (i = 0; i < nodes.length; i++) {
+        var element = nodes[i];
+
+        /*! Check if previously processed */
+        if (!element.getAttribute('data-processed')) {
+            element.setAttribute('data-processed', true);
+        } else {
+            continue;
+        }
+
+        var id = 'mermaidChart' + nextId++;
+
+        // Fetch the graph definition including tags
+        txt = element.innerHTML;
+
+        //console.warn('delivererd from the browser: ');
+        //console.warn(txt);
+
+        // transforms the html to pure text
+        txt = he.decode(txt).trim();
+        //console.warn('he decode: ');
+        //console.warn(txt);
+
+        mermaidAPI.render(id, txt, insertSvg, element);
+    }
+};
+
+exports.init = _init;
+exports.parse = mermaidAPI.parse;
+/**
+ * ## version
+ * Function returning version information
+ * @returns {string} A string containing the version info
+ */
+exports.version = function () {
+    return 'v' + require('../package.json').version;
+};
+
+/**
+ * ## initialize
+ * This function overrides the default configuration.
+ * @param config
+ */
+exports.initialize = function (config) {
+    log.debug('Initializing mermaid');
+    if (typeof config.mermaid !== 'undefined') {
+        if (typeof config.mermaid.startOnLoad !== 'undefined') {
+            global.mermaid.startOnLoad = config.mermaid.startOnLoad;
+        }
+        if (typeof config.mermaid.htmlLabels !== 'undefined') {
+            global.mermaid.htmlLabels = config.mermaid.htmlLabels;
+        }
+    }
+    mermaidAPI.initialize(config);
+};
+
+var equals = function equals(val, variable) {
+    if (typeof variable === 'undefined') {
+        return false;
+    } else {
+        return val === variable;
+    }
+};
+
+/**
+ * Global mermaid object. Contains the functions:
+ * * init
+ * * initialize
+ * * version
+ * * parse
+ * * parseError
+ * * render
+ */
+global.mermaid = {
+    startOnLoad: true,
+    htmlLabels: true,
+
+    init: function init() {
+        _init.apply(null, arguments);
+    },
+    initialize: function initialize(config) {
+        exports.initialize(config);
+    },
+    version: function version() {
+        return mermaidAPI.version();
+    },
+    parse: function parse(text) {
+        return mermaidAPI.parse(text);
+    },
+    parseError: function parseError(err) {
+        log.debug('Mermaid Syntax error:');
+        log.debug(err);
+    },
+    render: function render(id, text, callback, element) {
+        return mermaidAPI.render(id, text, callback, element);
+    }
+};
+
+/**
+ * ## parseError
+ * This function overrides the default configuration.
+ * @param config
+ */
+exports.parseError = global.mermaid.parseError;
+
+/**
+ * ##contentLoaded
+ * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
+ * calls init for rendering the mermaid diagrams on the page.
+ */
+exports.contentLoaded = function () {
+    var config;
+    // Check state of start config mermaid namespace
+    if (typeof mermaid_config !== 'undefined') {
+        if (equals(false, global.mermaid_config.htmlLabels)) {
+            global.mermaid.htmlLabels = false;
+        }
+    }
+
+    if (global.mermaid.startOnLoad) {
+        // For backwards compatability reasons also check mermaid_config variable
+        if (typeof global.mermaid_config !== 'undefined') {
+            // Check if property startOnLoad is set
+            if (equals(true, global.mermaid_config.startOnLoad)) {
+                global.mermaid.init();
+            }
+        } else {
+            // No config found, do check API config
+            config = mermaidAPI.getConfig();
+            if (config.startOnLoad) {
+                global.mermaid.init();
+            }
+        }
+    } else {
+        //if(typeof global.mermaid === 'undefined' ){
+        if (typeof global.mermaid.startOnLoad === 'undefined') {
+            log.debug('In start, no config');
+            config = mermaidAPI.getConfig();
+            if (config.startOnLoad) {
+                global.mermaid.init();
+            }
+            //}else{
+            //
+            //}
+        }
+    }
+};
+
+if (typeof document !== 'undefined') {
+    /*!
+     * Wait for document loaded before starting the execution
+     */
+    document.addEventListener('DOMContentLoaded', function () {
+        exports.contentLoaded();
+    }, false);
+}
+
+//    // Your actual module
+//    return module.exports;
+//}));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"../package.json":137,"./logger":157,"./mermaidAPI":159,"he":135}],159:[function(require,module,exports){
 (function (global){
 /**
  * ---
@@ -39623,7 +40224,7 @@ global.mermaidAPI = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":134,"./d3":135,"./diagrams/classDiagram/classDb":136,"./diagrams/classDiagram/classRenderer":137,"./diagrams/classDiagram/parser/classDiagram":138,"./diagrams/example/exampleDb":139,"./diagrams/example/exampleRenderer":140,"./diagrams/example/parser/example":141,"./diagrams/flowchart/flowRenderer":143,"./diagrams/flowchart/graphDb":144,"./diagrams/flowchart/parser/dot":145,"./diagrams/flowchart/parser/flow":146,"./diagrams/gantt/ganttDb":147,"./diagrams/gantt/ganttRenderer":148,"./diagrams/gantt/parser/gantt":149,"./diagrams/sequenceDiagram/parser/sequenceDiagram":150,"./diagrams/sequenceDiagram/sequenceDb":151,"./diagrams/sequenceDiagram/sequenceRenderer":152,"./logger":154,"./utils":156}],156:[function(require,module,exports){
+},{"../package.json":137,"./d3":138,"./diagrams/classDiagram/classDb":139,"./diagrams/classDiagram/classRenderer":140,"./diagrams/classDiagram/parser/classDiagram":141,"./diagrams/example/exampleDb":142,"./diagrams/example/exampleRenderer":143,"./diagrams/example/parser/example":144,"./diagrams/flowchart/flowRenderer":146,"./diagrams/flowchart/graphDb":147,"./diagrams/flowchart/parser/dot":148,"./diagrams/flowchart/parser/flow":149,"./diagrams/gantt/ganttDb":150,"./diagrams/gantt/ganttRenderer":151,"./diagrams/gantt/parser/gantt":152,"./diagrams/sequenceDiagram/parser/sequenceDiagram":153,"./diagrams/sequenceDiagram/sequenceDb":154,"./diagrams/sequenceDiagram/sequenceRenderer":155,"./logger":157,"./utils":160}],160:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -39772,603 +40373,5 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
 
 exports.cloneCssStyles = cloneCssStyles;
 
-},{"./logger":154}],157:[function(require,module,exports){
-
-},{}],158:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":159}],159:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = setTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            currentQueue[queueIndex].run();
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    clearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],160:[function(require,module,exports){
-(function (global){
-//(function (root, factory) {
-//    if (typeof exports === 'object') {
-//        // CommonJS
-//        module.exports = factory(require('b'));
-//    } else if (typeof define === 'function' && define.amd) {
-//        // AMD
-//        define(['b'], function (b) {
-//            return (root.returnExportsGlobal = factory(b));
-//        });
-//    } else {
-//        // Global Variables
-//        root.returnExportsGlobal = factory(root.b);
-//    }
-//}(this, function (b) {
-/**
- * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
- * the diagrams to svg code.
- */
-'use strict';
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('./logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
-var log = new Logger.Log();
-var mermaidAPI = require('./mermaidAPI');
-var nextId = 0;
-
-var he = require('he');
-
-module.exports.mermaidAPI = mermaidAPI;
-/**
- * ## init
- * Function that goes through the document to find the chart definitions in there and render them.
- *
- * The function tags the processed attributes with the attribute data-processed and ignores found elements with the
- * attribute already set. This way the init function can be triggered several times.
- *
- * Optionally, `init` can accept in the second argument one of the following:
- * - a DOM Node
- * - an array of DOM nodes (as would come from a jQuery selector)
- * - a W3C selector, a la `.mermaid`
- *
- * ```mermaid
- * graph LR;
- *  a(Find elements)-->b{Processed}
- *  b-->|Yes|c(Leave element)
- *  b-->|No |d(Transform)
- * ```
- * Renders the mermaid diagrams
- * @param nodes a css selector or an array of nodes
- */
-var _init = function _init() {
-    var conf = mermaidAPI.getConfig();
-    log.debug('Starting rendering diagrams');
-    var nodes;
-    if (arguments.length >= 2) {
-        /*! sequence config was passed as #1 */
-        if (typeof arguments[0] !== 'undefined') {
-            global.mermaid.sequenceConfig = arguments[0];
-        }
-
-        nodes = arguments[1];
-    } else {
-        nodes = arguments[0];
-    }
-
-    // if last argument is a function this is the callback function
-    var callback;
-    if (typeof arguments[arguments.length - 1] === 'function') {
-        callback = arguments[arguments.length - 1];
-        log.debug('Callback function found');
-    } else {
-        if (typeof conf.mermaid !== 'undefined') {
-            if (typeof conf.mermaid.callback === 'function') {
-                callback = conf.mermaid.callback;
-                log.debug('Callback function found');
-            } else {
-                log.debug('No Callback function found');
-            }
-        }
-    }
-    nodes = nodes === undefined ? document.querySelectorAll('.mermaid') : typeof nodes === 'string' ? document.querySelectorAll(nodes) : nodes instanceof Node ? [nodes]
-    /*! Last case  - sequence config was passed pick next */
-    : nodes;
-
-    var i;
-
-    if (typeof mermaid_config !== 'undefined') {
-        mermaidAPI.initialize(global.mermaid_config);
-    }
-    log.debug('Start On Load before: ' + global.mermaid.startOnLoad);
-    if (typeof global.mermaid.startOnLoad !== 'undefined') {
-        log.debug('Start On Load inner: ' + global.mermaid.startOnLoad);
-        mermaidAPI.initialize({ startOnLoad: global.mermaid.startOnLoad });
-    }
-
-    if (typeof global.mermaid.ganttConfig !== 'undefined') {
-        mermaidAPI.initialize({ gantt: global.mermaid.ganttConfig });
-    }
-
-    var txt;
-    var insertSvg = function insertSvg(svgCode, bindFunctions) {
-        element.innerHTML = svgCode;
-        if (typeof callback !== 'undefined') {
-            callback(id);
-        }
-        bindFunctions(element);
-    };
-
-    for (i = 0; i < nodes.length; i++) {
-        var element = nodes[i];
-
-        /*! Check if previously processed */
-        if (!element.getAttribute('data-processed')) {
-            element.setAttribute('data-processed', true);
-        } else {
-            continue;
-        }
-
-        var id = 'mermaidChart' + nextId++;
-
-        // Fetch the graph definition including tags
-        txt = element.innerHTML;
-
-        //console.warn('delivererd from the browser: ');
-        //console.warn(txt);
-
-        // transforms the html to pure text
-        txt = he.decode(txt).trim();
-        //console.warn('he decode: ');
-        //console.warn(txt);
-
-        mermaidAPI.render(id, txt, insertSvg, element);
-    }
-};
-
-exports.init = _init;
-exports.parse = mermaidAPI.parse;
-/**
- * ## version
- * Function returning version information
- * @returns {string} A string containing the version info
- */
-exports.version = function () {
-    return 'v' + require('../package.json').version;
-};
-
-/**
- * ## initialize
- * This function overrides the default configuration.
- * @param config
- */
-exports.initialize = function (config) {
-    log.debug('Initializing mermaid');
-    if (typeof config.mermaid !== 'undefined') {
-        if (typeof config.mermaid.startOnLoad !== 'undefined') {
-            global.mermaid.startOnLoad = config.mermaid.startOnLoad;
-        }
-        if (typeof config.mermaid.htmlLabels !== 'undefined') {
-            global.mermaid.htmlLabels = config.mermaid.htmlLabels;
-        }
-    }
-    mermaidAPI.initialize(config);
-};
-
-var equals = function equals(val, variable) {
-    if (typeof variable === 'undefined') {
-        return false;
-    } else {
-        return val === variable;
-    }
-};
-
-/**
- * Global mermaid object. Contains the functions:
- * * init
- * * initialize
- * * version
- * * parse
- * * parseError
- * * render
- */
-global.mermaid = {
-    startOnLoad: true,
-    htmlLabels: true,
-
-    init: function init() {
-        _init.apply(null, arguments);
-    },
-    initialize: function initialize(config) {
-        exports.initialize(config);
-    },
-    version: function version() {
-        return mermaidAPI.version();
-    },
-    parse: function parse(text) {
-        return mermaidAPI.parse(text);
-    },
-    parseError: function parseError(err) {
-        log.debug('Mermaid Syntax error:');
-        log.debug(err);
-    },
-    render: function render(id, text, callback, element) {
-        return mermaidAPI.render(id, text, callback, element);
-    }
-};
-
-/**
- * ## parseError
- * This function overrides the default configuration.
- * @param config
- */
-exports.parseError = global.mermaid.parseError;
-
-/**
- * ##contentLoaded
- * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
- * calls init for rendering the mermaid diagrams on the page.
- */
-exports.contentLoaded = function () {
-    var config;
-    // Check state of start config mermaid namespace
-    if (typeof mermaid_config !== 'undefined') {
-        if (equals(false, global.mermaid_config.htmlLabels)) {
-            global.mermaid.htmlLabels = false;
-        }
-    }
-
-    if (global.mermaid.startOnLoad) {
-        // For backwards compatability reasons also check mermaid_config variable
-        if (typeof global.mermaid_config !== 'undefined') {
-            // Check if property startOnLoad is set
-            if (equals(true, global.mermaid_config.startOnLoad)) {
-                global.mermaid.init();
-            }
-        } else {
-            // No config found, do check API config
-            config = mermaidAPI.getConfig();
-            if (config.startOnLoad) {
-                global.mermaid.init();
-            }
-        }
-    } else {
-        //if(typeof global.mermaid === 'undefined' ){
-        if (typeof global.mermaid.startOnLoad === 'undefined') {
-            log.debug('In start, no config');
-            config = mermaidAPI.getConfig();
-            if (config.startOnLoad) {
-                global.mermaid.init();
-            }
-            //}else{
-            //
-            //}
-        }
-    }
-};
-
-if (typeof document !== 'undefined') {
-    /*!
-     * Wait for document loaded before starting the execution
-     */
-    document.addEventListener('DOMContentLoaded', function () {
-        exports.contentLoaded();
-    }, false);
-}
-
-//    // Your actual module
-//    return module.exports;
-//}));
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":134,"./logger":154,"./mermaidAPI":155,"he":132}]},{},[160])(160)
+},{"./logger":157}]},{},[158])(158)
 });

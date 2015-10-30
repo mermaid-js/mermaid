@@ -10,7 +10,10 @@ import * as Logger from '../../logger';
 import * as dagre from 'dagre';
 var log = new Logger.Log();
 
-let idCache = new Map();
+var idCache;
+if(typeof Map !== 'undefined'){
+    idCache = new Map();
+}
 let classCnt = 0;
 var conf = {
 
@@ -34,7 +37,7 @@ var drawEdge = function(elem, path) {
     var lineFunction = d3.svg.line()
     .x(function(d) { return d.x; })
     .y(function(d) { return d.y; })
-    .interpolate('linear');
+    .interpolate('cardinal');
 
     elem.append('path')
     .attr('d', lineFunction(lineData))
