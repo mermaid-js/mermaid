@@ -42,6 +42,11 @@ var detectType = function(text){
         return 'gantt';
     }
 
+    if(text.match(/^\s*classDiagram/)) {
+        log.debug('Detected classDiagram syntax');
+        return 'classDiagram';
+    }
+
     return 'graph';
 };
 export {detectType};

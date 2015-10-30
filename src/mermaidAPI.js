@@ -28,6 +28,9 @@ var infoDb = require('./diagrams/example/exampleDb');
 var gantt       = require('./diagrams/gantt/ganttRenderer');
 var ganttParser = require('./diagrams/gantt/parser/gantt');
 var ganttDb = require('./diagrams/gantt/ganttDb');
+var classParser = require('./diagrams/classDiagram/parser/classDiagram');
+var classRenderer = require('./diagrams/classDiagram/classRenderer');
+var classDb = require('./diagrams/classDiagram/classDb');
 var d3 = require('./d3');
 
 /**
@@ -259,6 +262,10 @@ var parse = function(text){
             parser = ganttParser;
             parser.parser.yy = ganttDb;
             break;
+        case 'classDiagram':
+            parser = classParser;
+            parser.parser.yy = classDb;
+            break;
     }
 
     try{
@@ -404,6 +411,13 @@ var render = function(id, txt, cb, container){
         case 'gantt':
             gantt.setConf(config.gantt);
             gantt.draw(txt,id);
+            if(config.cloneCssStyles) {
+                utils.cloneCssStyles(element.firstChild, []);
+            }
+            break;
+        case 'classDiagram':
+            classRenderer.setConf(config.gantt);
+            classRenderer.draw(txt,id);
             if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }

@@ -36,7 +36,7 @@ module.exports.getClasses = function (id) {
     return classes;
 };
 
-module.exports.getRelations = function (id) {
+module.exports.getRelations = function () {
     return relations;
 };
 
