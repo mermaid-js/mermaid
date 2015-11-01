@@ -155,8 +155,8 @@ members
 
 methodStatement
     : className {/*console.log('Rel found',$1);*/}
-    | className LABEL
-    | MEMBER
+    | className LABEL {yy.addMembers($1,$2);}
+    | MEMBER {console.warn('Member',$1);}
     | SEPARATOR {/*console.log('sep found',$1);*/}
     ;
 

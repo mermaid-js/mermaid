@@ -107,6 +107,12 @@ break;
 case 15:
 /*console.log('Rel found',$$[$0]);*/
 break;
+case 16:
+yy.addMembers($$[$0-1],$$[$0]);
+break;
+case 17:
+console.warn('Member',$$[$0]);
+break;
 case 18:
 /*console.log('sep found',$$[$0]);*/
 break;

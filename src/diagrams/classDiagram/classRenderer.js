@@ -16,7 +16,9 @@ if(typeof Map !== 'undefined'){
 }
 let classCnt = 0;
 var conf = {
-
+    dividerMargin:10,
+    padding:5 ,
+    textHeight:15
 };
 
 // Todo optimize
@@ -37,7 +39,8 @@ var drawEdge = function(elem, path) {
     var lineFunction = d3.svg.line()
     .x(function(d) { return d.x; })
     .y(function(d) { return d.y; })
-    .interpolate('cardinal');
+    //.interpolate('cardinal');
+    .interpolate('basis');
 
     elem.append('path')
     .attr('d', lineFunction(lineData))
@@ -48,42 +51,16 @@ var drawEdge = function(elem, path) {
 
 var drawClass = function(elem, classDef){
     log.info('Rendering class '+classDef);
-    //var rect = svgDraw.getNoteRect();
-    //rect.x = startx;
-    //rect.y = verticalPos;
-    //rect.width = conf.width;
-    //rect.class = 'note';
-    //
-    //var g = elem.append('g');
-    //var rectElem = svgDraw.drawRect(g, rect);
-    //
-    //var textObj = svgDraw.getTextObj();
-    //textObj.x = startx-4;
-    //textObj.y = verticalPos-13;
-    //textObj.textMargin = conf.noteMargin;
-    //textObj.dy = '1em';
-    //textObj.text = msg.message;
-    //textObj.class = 'noteText';
-    //
-    //var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
-    //
-    //var textHeight = textElem[0][0].getBBox().height;
-    //if(textHeight > conf.width){
-    //    textElem.remove();
-    //    g = elem.append('g');
-    //
-    //    //textObj.x = textObj.x - conf.width;
-    //    //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
-    //    textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
-    //    textHeight = textElem[0][0].getBBox().height;
-    //    rectElem.attr('width',2*conf.width);
-    //    exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    //}else{
-    //    exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    //}
-    //
-    //rectElem.attr('height',textHeight+ 2*conf.noteMargin);
-    //exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
+
+    var addTspan = function(textEl, txt,isFirst){
+        var tSpan = textEl.append('tspan')
+            .attr('x',conf.padding)
+            .text(txt);
+        if(!isFirst){
+            tSpan.attr('dy',15);
+        }
+    };
+
     let id = 'classId'+classCnt;
     let classInfo = {
         id:id,
@@ -94,23 +71,75 @@ var drawClass = function(elem, classDef){
 
     var g = elem.append('g')
         .attr('id',id);
-    var textElem = g.append('text')      // text label for the x axis
-        .attr('x', '10')
-        .attr('y', '17')
+    var title = g.append('text')      // text label for the x axis
+        .attr('x', conf.padding)
+        .attr('y', conf.textHeight+conf.padding)
         .attr('fill', 'white')
         .attr('class', 'classText')
         .text(classDef.id);
-    var box = textElem.node().getBBox();
 
+    var titleHeight = title.node().getBBox().height;
+
+    var membersLine = g.append('line')      // text label for the x axis
+        .attr('x1',0)
+        .attr('y1',conf.padding+titleHeight + conf.dividerMargin/2)
+        .attr('y2',conf.padding+titleHeight + conf.dividerMargin/2)
+        .attr('fill', 'white')
+        .attr('class', 'classText')
+        .attr('style','stroke:rgb(255,255,255);stroke-width:1');
+
+    var members = g.append('text')      // text label for the x axis
+        .attr('x', conf.padding)
+        .attr('y', titleHeight+(conf.dividerMargin)+conf.textHeight)
+        .attr('fill', 'white')
+        .attr('class', 'classText');
+
+    let isFirst = true;
+    for(let member of classDef.members){
+        addTspan(members,member, isFirst);
+        isFirst = false;
+    }
+
+    //console.warn(JSON.stringify(classDef));
+
+    var membersBox = members.node().getBBox();
+
+    var methodsLine = g.append('line')      // text label for the x axis
+        .attr('x1',0)
+        .attr('y1',conf.padding + titleHeight + 3*conf.dividerMargin/2+membersBox.height)
+        .attr('y2',conf.padding + titleHeight + 3*conf.dividerMargin/2+membersBox.height)
+        .attr('fill', 'white')
+        .attr('class', 'classText')
+        .attr('style','stroke:rgb(255,255,255);stroke-width:1');
+
+
+    var methods = g.append('text')      // text label for the x axis
+        .attr('x', conf.padding)
+        .attr('y', titleHeight+2*conf.dividerMargin+membersBox.height + conf.textHeight)
+        .attr('fill', 'white')
+        .attr('class', 'classText');
+
+    isFirst = true;
+    for(let method of classDef.methods){
+        addTspan(methods,method,isFirst);
+        isFirst = false;
+    }
+
+    var classBox = g.node().getBBox();
     g.insert('rect',':first-child')
         .attr('x',0)
         .attr('y',0)
         .attr('fill','darkgrey')
-        .attr('width',box.width+20)
-        .attr('height',box.height+10);
+        .attr('width',  classBox.width+2*conf.padding)
+        .attr('height', classBox.height+conf.padding+0.5*conf.dividerMargin);
 
-    classInfo.width = box.width+20;
-    classInfo.height = box.height+10;
+
+    membersLine.attr('x2',classBox.width+2*conf.padding);
+    methodsLine.attr('x2',classBox.width+2*conf.padding);
+
+
+    classInfo.width = classBox.width+2*conf.padding;
+    classInfo.height = classBox.height+conf.padding+0.5*conf.dividerMargin;
 
     idCache.set(id,classInfo);
     classCnt++;
@@ -153,7 +182,7 @@ module.exports.draw = function (text, id) {
 
     let classes = cDDb.getClasses();
     for(let classDef of classes.values()){
-        let node = drawClass(diagram, classDef)
+        let node = drawClass(diagram, classDef);
         // Add nodes to the graph. The first argument is the node id. The second is
         // metadata about the node. In this case we're going to add labels to each of
         // our nodes.

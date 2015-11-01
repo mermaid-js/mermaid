@@ -23,7 +23,8 @@ exports.addClass = function (id) {
     if(typeof classes.get(id) === 'undefined'){
         classes.set(id, {
             id:id,
-            methods:[]
+            methods:[],
+            members:[]
         });
     }
 };
@@ -53,6 +54,16 @@ exports.addRelation = function (relation) {
 };
 
 exports.addMembers = function (className, MembersArr) {
+    var theClass = classes.get(className);
+    if(typeof MembersArr === 'string'){
+        if(MembersArr.substr(-1) === ')'){
+            theClass.methods.push(MembersArr.substr(2));
+        }
+        else{
+            theClass.members.push(MembersArr.substr(2));
+        }
+    }
+    //console.warn('MembersArr:'+MembersArr);
 };
 
 exports.lineType = {
