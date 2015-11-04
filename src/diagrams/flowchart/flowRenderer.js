@@ -79,7 +79,7 @@ exports.addVertices = function (vert, g) {
         if(conf.htmlLabels) {
             labelTypeStr = 'html';
             verticeText = verticeText.replace(/fa:fa[\w\-]+/g,function(s){
-                return '<i class="fa '+ s.substring(3)+'">';
+                return '<i class="fa '+ s.substring(3)+'"></i>';
             });
 
         } else {
