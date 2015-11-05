@@ -29,7 +29,6 @@ describe('when parsing a sequenceDiagram',function() {
         //};
         //sq.yy.parseError = parseError;
     });
-
     it('it should handle a sequenceDiagram defintion', function () {
         str = 'sequenceDiagram\n' +
         'Alice->Bob:Hello Bob, how are you?\n' +
@@ -44,7 +43,6 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
@@ -61,7 +59,6 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(2);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
     });
@@ -71,15 +68,12 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         expect(actors.Bob.description).toBe('Bob');
 
         var messages = sq.yy.getMessages();
 
-
         expect(messages.length).toBe(1);
-
         expect(messages[0].type).toBe(sq.yy.LINETYPE.SOLID_CROSS);
     });
     it('it should handle in async dotted messages', function () {
@@ -88,15 +82,12 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         expect(actors.Bob.description).toBe('Bob');
 
         var messages = sq.yy.getMessages();
 
-
         expect(messages.length).toBe(1);
-
         expect(messages[0].type).toBe(sq.yy.LINETYPE.DOTTED_CROSS);
     });
     it('it should handle in arrow messages', function () {
@@ -109,11 +100,8 @@ describe('when parsing a sequenceDiagram',function() {
         expect(actors.Bob.description).toBe('Bob');
 
         var messages = sq.yy.getMessages();
-        //log.debug(messages);
-
 
         expect(messages.length).toBe(1);
-
         expect(messages[0].type).toBe(sq.yy.LINETYPE.SOLID);
     });
     it('it should handle in arrow messages', function () {
@@ -126,11 +114,8 @@ describe('when parsing a sequenceDiagram',function() {
         expect(actors.Bob.description).toBe('Bob');
 
         var messages = sq.yy.getMessages();
-        //log.debug(messages);
-
 
         expect(messages.length).toBe(1);
-
         expect(messages[0].type).toBe(sq.yy.LINETYPE.DOTTED);
     });
     it('it should handle comments in a sequenceDiagram', function () {
@@ -148,11 +133,9 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
-
     it('it should handle new lines in a sequenceDiagram', function () {
         str = 'sequenceDiagram\n' +
         'Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -168,11 +151,9 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
-
     it('it should handle semicolons', function () {
         str = 'sequenceDiagram;' +
         'Alice->Bob: Hello Bob, how are you?;' +
@@ -187,11 +168,9 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
-
     it('it should handle one leading space in lines in a sequenceDiagram', function () {
         str = 'sequenceDiagram\n' +
         ' Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -207,7 +186,6 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
@@ -226,7 +204,6 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(3);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
@@ -251,11 +228,9 @@ describe('when parsing a sequenceDiagram',function() {
         var messages = sq.yy.getMessages();
 
         expect(messages.length).toBe(8);
-
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('John');
     });
-
     it('it should handle loop statements a sequenceDiagram', function () {
         var str = 'sequenceDiagram\n' +
             'Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -267,20 +242,15 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //log.debug(messages);
 
         expect(messages.length).toBe(5);
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
-
-
     });
-
     it('it should handle opt statements a sequenceDiagram', function () {
         var str = 'sequenceDiagram\n' +
             'Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -292,20 +262,15 @@ describe('when parsing a sequenceDiagram',function() {
 
         sq.parse(str);
         var actors = sq.yy.getActors();
-        //log.debug(actors);
         expect(actors.Alice.description).toBe('Alice');
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //log.debug(messages);
 
         expect(messages.length).toBe(5);
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
-
-
     });
-
     it('it should handle alt statements a sequenceDiagram', function () {
         var str = 'sequenceDiagram\n' +
             'Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -324,14 +289,12 @@ describe('when parsing a sequenceDiagram',function() {
         actors.Bob.description = 'Bob';
 
         var messages = sq.yy.getMessages();
-        //log.debug(messages);
 
         expect(messages.length).toBe(7);
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
-
-
-    });});
+    });
+});
 
 describe('when checking the bounds in a sequenceDiagram',function() {
     var conf;
@@ -398,7 +361,6 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         expect(bounds.stopy ).toBe(400);
 
     });
-
     it('it should handle a loop without expanding the area', function () {
         sd.bounds.init();
 
@@ -422,8 +384,6 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         expect(bounds.stopx ).toBe(300);
         expect(bounds.stopy ).toBe(400);
     });
-
-
     it('it should handle multiple loops withtout expanding the bounds', function () {
         sd.bounds.init();
 
@@ -457,7 +417,6 @@ describe('when checking the bounds in a sequenceDiagram',function() {
         expect(bounds.stopx ).toBe(1000);
         expect(bounds.stopy ).toBe(1000);
     });
-
     it('it should handle a loop that expands the area', function () {
         sd.bounds.init();
 
@@ -610,7 +569,6 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.stopy ).toBe(0 + conf.messageMargin + conf.height);
 
     });
-
     it('it should draw two actors and two messages', function () {
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
@@ -627,8 +585,6 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.stopy ).toBe(0 + 2*conf.messageMargin + conf.height);
 
     });
-
-
     it('it should draw two actors notes to the right', function () {
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
@@ -667,7 +623,6 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.stopy ).toBe( 2*conf.messageMargin + conf.height + conf.boxMargin +10+ 2*conf.noteMargin);
 
     });
-
     it('it should draw two loops', function () {
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
