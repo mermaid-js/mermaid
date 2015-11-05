@@ -173,6 +173,25 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[2].from).toBe('Bob');
     });
 
+    it('it should handle semicolons', function () {
+        str = 'sequenceDiagram;' +
+        'Alice->Bob: Hello Bob, how are you?;' +
+        'Note right of Bob: Bob thinks;' +
+        'Bob-->Alice: I am good thanks!;';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice.description).toBe('Alice');
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(3);
+
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[2].from).toBe('Bob');
+    });
+
     it('it should handle one leading space in lines in a sequenceDiagram', function () {
         str = 'sequenceDiagram\n' +
         ' Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -283,25 +302,6 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages.length).toBe(5);
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
-
-
-    });
-    it('it should handle opt statements a sequenceDiagram', function () {
-        var str = 'sequenceDiagram;Alice->Bob: Hello Bob, how are you?;opt Perhaps a happy response;Bob-->Alice: I am good thanks!;end;';
-
-        sq.parse(str);
-        var actors = sq.yy.getActors();
-        //log.debug(actors);
-        expect(actors.Alice.description).toBe('Alice');
-        actors.Bob.description = 'Bob';
-
-        var messages = sq.yy.getMessages();
-        //log.debug(messages);
-
-        expect(messages.length).toBe(4);
-        expect(messages[0].from).toBe('Alice');
-        expect(messages[1].type).toBe(sq.yy.LINETYPE.OPT_START);
-        expect(messages[2].from).toBe('Bob');
 
 
     });
