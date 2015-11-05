@@ -15086,7 +15086,7 @@ function read(json) {
 
 },{"./graph":78,"./lodash":81}],81:[function(require,module,exports){
 module.exports=require(42)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":83}],82:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":83}],82:[function(require,module,exports){
 module.exports = '1.0.7';
 
 },{}],83:[function(require,module,exports){
@@ -27446,107 +27446,107 @@ module.exports = '1.0.7';
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],84:[function(require,module,exports){
 module.exports=require(33)
-},{"./lib/debug":89,"./lib/graphlib":90,"./lib/layout":92,"./lib/util":112,"./lib/version":113,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/index.js":33}],85:[function(require,module,exports){
+},{"./lib/debug":89,"./lib/graphlib":90,"./lib/layout":92,"./lib/util":112,"./lib/version":113,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/index.js":33}],85:[function(require,module,exports){
 module.exports=require(34)
-},{"./greedy-fas":91,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/acyclic.js":34}],86:[function(require,module,exports){
+},{"./greedy-fas":91,"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/acyclic.js":34}],86:[function(require,module,exports){
 module.exports=require(35)
-},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/add-border-segments.js":35}],87:[function(require,module,exports){
+},{"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/add-border-segments.js":35}],87:[function(require,module,exports){
 module.exports=require(36)
-},{"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/coordinate-system.js":36}],88:[function(require,module,exports){
+},{"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/coordinate-system.js":36}],88:[function(require,module,exports){
 module.exports=require(37)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/data/list.js":37}],89:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/data/list.js":37}],89:[function(require,module,exports){
 module.exports=require(38)
-},{"./graphlib":90,"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/debug.js":38}],90:[function(require,module,exports){
+},{"./graphlib":90,"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/debug.js":38}],90:[function(require,module,exports){
 module.exports=require(39)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/graphlib.js":39,"graphlib":114}],91:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/graphlib.js":39,"graphlib":114}],91:[function(require,module,exports){
 module.exports=require(40)
-},{"./data/list":88,"./graphlib":90,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/greedy-fas.js":40}],92:[function(require,module,exports){
+},{"./data/list":88,"./graphlib":90,"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/greedy-fas.js":40}],92:[function(require,module,exports){
 module.exports=require(41)
-},{"./acyclic":85,"./add-border-segments":86,"./coordinate-system":87,"./graphlib":90,"./lodash":93,"./nesting-graph":94,"./normalize":95,"./order":100,"./parent-dummy-chains":105,"./position":107,"./rank":109,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/layout.js":41}],93:[function(require,module,exports){
+},{"./acyclic":85,"./add-border-segments":86,"./coordinate-system":87,"./graphlib":90,"./lodash":93,"./nesting-graph":94,"./normalize":95,"./order":100,"./parent-dummy-chains":105,"./position":107,"./rank":109,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/layout.js":41}],93:[function(require,module,exports){
 module.exports=require(42)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],94:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],94:[function(require,module,exports){
 module.exports=require(43)
-},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/nesting-graph.js":43}],95:[function(require,module,exports){
+},{"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/nesting-graph.js":43}],95:[function(require,module,exports){
 module.exports=require(44)
-},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/normalize.js":44}],96:[function(require,module,exports){
+},{"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/normalize.js":44}],96:[function(require,module,exports){
 module.exports=require(45)
-},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/add-subgraph-constraints.js":45}],97:[function(require,module,exports){
+},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/add-subgraph-constraints.js":45}],97:[function(require,module,exports){
 module.exports=require(46)
-},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/barycenter.js":46}],98:[function(require,module,exports){
+},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/barycenter.js":46}],98:[function(require,module,exports){
 module.exports=require(47)
-},{"../graphlib":90,"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/build-layer-graph.js":47}],99:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/build-layer-graph.js":47}],99:[function(require,module,exports){
 module.exports=require(48)
-},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/cross-count.js":48}],100:[function(require,module,exports){
+},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/cross-count.js":48}],100:[function(require,module,exports){
 module.exports=require(49)
-},{"../graphlib":90,"../lodash":93,"../util":112,"./add-subgraph-constraints":96,"./build-layer-graph":98,"./cross-count":99,"./init-order":101,"./sort-subgraph":103,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/index.js":49}],101:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"../util":112,"./add-subgraph-constraints":96,"./build-layer-graph":98,"./cross-count":99,"./init-order":101,"./sort-subgraph":103,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/index.js":49}],101:[function(require,module,exports){
 module.exports=require(50)
-},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/init-order.js":50}],102:[function(require,module,exports){
+},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/init-order.js":50}],102:[function(require,module,exports){
 module.exports=require(51)
-},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/resolve-conflicts.js":51}],103:[function(require,module,exports){
+},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/resolve-conflicts.js":51}],103:[function(require,module,exports){
 module.exports=require(52)
-},{"../lodash":93,"./barycenter":97,"./resolve-conflicts":102,"./sort":104,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort-subgraph.js":52}],104:[function(require,module,exports){
+},{"../lodash":93,"./barycenter":97,"./resolve-conflicts":102,"./sort":104,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort-subgraph.js":52}],104:[function(require,module,exports){
 module.exports=require(53)
-},{"../lodash":93,"../util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort.js":53}],105:[function(require,module,exports){
+},{"../lodash":93,"../util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort.js":53}],105:[function(require,module,exports){
 module.exports=require(54)
-},{"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/parent-dummy-chains.js":54}],106:[function(require,module,exports){
+},{"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/parent-dummy-chains.js":54}],106:[function(require,module,exports){
 module.exports=require(55)
-},{"../graphlib":90,"../lodash":93,"../util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/bk.js":55}],107:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"../util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/bk.js":55}],107:[function(require,module,exports){
 module.exports=require(56)
-},{"../lodash":93,"../util":112,"./bk":106,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/index.js":56}],108:[function(require,module,exports){
+},{"../lodash":93,"../util":112,"./bk":106,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/index.js":56}],108:[function(require,module,exports){
 module.exports=require(57)
-},{"../graphlib":90,"../lodash":93,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/feasible-tree.js":57}],109:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"./util":111,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/feasible-tree.js":57}],109:[function(require,module,exports){
 module.exports=require(58)
-},{"./feasible-tree":108,"./network-simplex":110,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/index.js":58}],110:[function(require,module,exports){
+},{"./feasible-tree":108,"./network-simplex":110,"./util":111,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/index.js":58}],110:[function(require,module,exports){
 module.exports=require(59)
-},{"../graphlib":90,"../lodash":93,"../util":112,"./feasible-tree":108,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/network-simplex.js":59}],111:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"../util":112,"./feasible-tree":108,"./util":111,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/network-simplex.js":59}],111:[function(require,module,exports){
 module.exports=require(60)
-},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/util.js":60}],112:[function(require,module,exports){
+},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/util.js":60}],112:[function(require,module,exports){
 module.exports=require(61)
-},{"./graphlib":90,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/util.js":61}],113:[function(require,module,exports){
+},{"./graphlib":90,"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/util.js":61}],113:[function(require,module,exports){
 module.exports=require(62)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/version.js":62}],114:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/version.js":62}],114:[function(require,module,exports){
 module.exports=require(63)
-},{"./lib":130,"./lib/alg":121,"./lib/json":131,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":63}],115:[function(require,module,exports){
+},{"./lib":130,"./lib/alg":121,"./lib/json":131,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":63}],115:[function(require,module,exports){
 module.exports=require(64)
-},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":64}],116:[function(require,module,exports){
+},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":64}],116:[function(require,module,exports){
 module.exports=require(65)
-},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":65}],117:[function(require,module,exports){
+},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":65}],117:[function(require,module,exports){
 module.exports=require(66)
-},{"../lodash":132,"./dijkstra":118,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":66}],118:[function(require,module,exports){
+},{"../lodash":132,"./dijkstra":118,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":66}],118:[function(require,module,exports){
 module.exports=require(67)
-},{"../data/priority-queue":128,"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":67}],119:[function(require,module,exports){
+},{"../data/priority-queue":128,"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":67}],119:[function(require,module,exports){
 module.exports=require(68)
-},{"../lodash":132,"./tarjan":126,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":68}],120:[function(require,module,exports){
+},{"../lodash":132,"./tarjan":126,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":68}],120:[function(require,module,exports){
 module.exports=require(69)
-},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":69}],121:[function(require,module,exports){
+},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":69}],121:[function(require,module,exports){
 module.exports=require(70)
-},{"./components":115,"./dijkstra":118,"./dijkstra-all":117,"./find-cycles":119,"./floyd-warshall":120,"./is-acyclic":122,"./postorder":123,"./preorder":124,"./prim":125,"./tarjan":126,"./topsort":127,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":70}],122:[function(require,module,exports){
+},{"./components":115,"./dijkstra":118,"./dijkstra-all":117,"./find-cycles":119,"./floyd-warshall":120,"./is-acyclic":122,"./postorder":123,"./preorder":124,"./prim":125,"./tarjan":126,"./topsort":127,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":70}],122:[function(require,module,exports){
 module.exports=require(71)
-},{"./topsort":127,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":71}],123:[function(require,module,exports){
+},{"./topsort":127,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":71}],123:[function(require,module,exports){
 module.exports=require(72)
-},{"./dfs":116,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":72}],124:[function(require,module,exports){
+},{"./dfs":116,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":72}],124:[function(require,module,exports){
 module.exports=require(73)
-},{"./dfs":116,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":73}],125:[function(require,module,exports){
+},{"./dfs":116,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":73}],125:[function(require,module,exports){
 module.exports=require(74)
-},{"../data/priority-queue":128,"../graph":129,"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":74}],126:[function(require,module,exports){
+},{"../data/priority-queue":128,"../graph":129,"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":74}],126:[function(require,module,exports){
 module.exports=require(75)
-},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":75}],127:[function(require,module,exports){
+},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":75}],127:[function(require,module,exports){
 module.exports=require(76)
-},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":76}],128:[function(require,module,exports){
+},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":76}],128:[function(require,module,exports){
 module.exports=require(77)
-},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":77}],129:[function(require,module,exports){
+},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":77}],129:[function(require,module,exports){
 module.exports=require(78)
-},{"./lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":78}],130:[function(require,module,exports){
+},{"./lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":78}],130:[function(require,module,exports){
 module.exports=require(79)
-},{"./graph":129,"./version":133,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":79}],131:[function(require,module,exports){
+},{"./graph":129,"./version":133,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":79}],131:[function(require,module,exports){
 module.exports=require(80)
-},{"./graph":129,"./lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":80}],132:[function(require,module,exports){
+},{"./graph":129,"./lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":80}],132:[function(require,module,exports){
 module.exports=require(42)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],133:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],133:[function(require,module,exports){
 module.exports=require(82)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":82}],134:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":82}],134:[function(require,module,exports){
 module.exports=require(83)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":83}],135:[function(require,module,exports){
+},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":83}],135:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -31359,7 +31359,8 @@ exports.addClass = function (id) {
     if (typeof classes.get(id) === 'undefined') {
         classes.set(id, {
             id: id,
-            methods: []
+            methods: [],
+            members: []
         });
     }
 };
@@ -31388,7 +31389,17 @@ exports.addRelation = function (relation) {
     relations.push(relation);
 };
 
-exports.addMembers = function (className, MembersArr) {};
+exports.addMembers = function (className, MembersArr) {
+    var theClass = classes.get(className);
+    if (typeof MembersArr === 'string') {
+        if (MembersArr.substr(-1) === ')') {
+            theClass.methods.push(MembersArr.substr(2));
+        } else {
+            theClass.members.push(MembersArr.substr(2));
+        }
+    }
+    //console.warn('MembersArr:'+MembersArr);
+};
 
 exports.lineType = {
     LINE: 0,
@@ -31433,7 +31444,11 @@ if (typeof Map !== 'undefined') {
     idCache = new Map();
 }
 var classCnt = 0;
-var conf = {};
+var conf = {
+    dividerMargin: 10,
+    padding: 5,
+    textHeight: 15
+};
 
 // Todo optimize
 var getGraphId = function getGraphId(label) {
@@ -31479,49 +31494,23 @@ var drawEdge = function drawEdge(elem, path) {
         return d.x;
     }).y(function (d) {
         return d.y;
-    }).interpolate('cardinal');
+    })
+    //.interpolate('cardinal');
+    .interpolate('basis');
 
     elem.append('path').attr('d', lineFunction(lineData)).attr('stroke', 'black').attr('stroke-width', 1).attr('fill', 'none');
 };
 
 var drawClass = function drawClass(elem, classDef) {
     log.info('Rendering class ' + classDef);
-    //var rect = svgDraw.getNoteRect();
-    //rect.x = startx;
-    //rect.y = verticalPos;
-    //rect.width = conf.width;
-    //rect.class = 'note';
-    //
-    //var g = elem.append('g');
-    //var rectElem = svgDraw.drawRect(g, rect);
-    //
-    //var textObj = svgDraw.getTextObj();
-    //textObj.x = startx-4;
-    //textObj.y = verticalPos-13;
-    //textObj.textMargin = conf.noteMargin;
-    //textObj.dy = '1em';
-    //textObj.text = msg.message;
-    //textObj.class = 'noteText';
-    //
-    //var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
-    //
-    //var textHeight = textElem[0][0].getBBox().height;
-    //if(textHeight > conf.width){
-    //    textElem.remove();
-    //    g = elem.append('g');
-    //
-    //    //textObj.x = textObj.x - conf.width;
-    //    //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
-    //    textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
-    //    textHeight = textElem[0][0].getBBox().height;
-    //    rectElem.attr('width',2*conf.width);
-    //    exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    //}else{
-    //    exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
-    //}
-    //
-    //rectElem.attr('height',textHeight+ 2*conf.noteMargin);
-    //exports.bounds.bumpVerticalPos(textHeight+ 2*conf.noteMargin);
+
+    var addTspan = function addTspan(textEl, txt, isFirst) {
+        var tSpan = textEl.append('tspan').attr('x', conf.padding).text(txt);
+        if (!isFirst) {
+            tSpan.attr('dy', 15);
+        }
+    };
+
     var id = 'classId' + classCnt;
     var classInfo = {
         id: id,
@@ -31531,14 +31520,89 @@ var drawClass = function drawClass(elem, classDef) {
     };
 
     var g = elem.append('g').attr('id', id);
-    var textElem = g.append('text') // text label for the x axis
-    .attr('x', '10').attr('y', '17').attr('fill', 'white').attr('class', 'classText').text(classDef.id);
-    var box = textElem.node().getBBox();
+    var title = g.append('text') // text label for the x axis
+    .attr('x', conf.padding).attr('y', conf.textHeight + conf.padding).attr('fill', 'white').attr('class', 'classText').text(classDef.id);
 
-    g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('fill', 'darkgrey').attr('width', box.width + 20).attr('height', box.height + 10);
+    var titleHeight = title.node().getBBox().height;
 
-    classInfo.width = box.width + 20;
-    classInfo.height = box.height + 10;
+    var membersLine = g.append('line') // text label for the x axis
+    .attr('x1', 0).attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2).attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2).attr('fill', 'white').attr('class', 'classText').attr('style', 'stroke:rgb(255,255,255);stroke-width:1');
+
+    var members = g.append('text') // text label for the x axis
+    .attr('x', conf.padding).attr('y', titleHeight + conf.dividerMargin + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
+
+    var isFirst = true;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+        for (var _iterator2 = classDef.members[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var member = _step2.value;
+
+            addTspan(members, member, isFirst);
+            isFirst = false;
+        }
+
+        //console.warn(JSON.stringify(classDef));
+    } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+                _iterator2['return']();
+            }
+        } finally {
+            if (_didIteratorError2) {
+                throw _iteratorError2;
+            }
+        }
+    }
+
+    var membersBox = members.node().getBBox();
+
+    var methodsLine = g.append('line') // text label for the x axis
+    .attr('x1', 0).attr('y1', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('y2', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('fill', 'white').attr('class', 'classText').attr('style', 'stroke:rgb(255,255,255);stroke-width:1');
+
+    var methods = g.append('text') // text label for the x axis
+    .attr('x', conf.padding).attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
+
+    isFirst = true;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+        for (var _iterator3 = classDef.methods[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var method = _step3.value;
+
+            addTspan(methods, method, isFirst);
+            isFirst = false;
+        }
+    } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+                _iterator3['return']();
+            }
+        } finally {
+            if (_didIteratorError3) {
+                throw _iteratorError3;
+            }
+        }
+    }
+
+    var classBox = g.node().getBBox();
+    g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('fill', 'darkgrey').attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
+
+    membersLine.attr('x2', classBox.width + 2 * conf.padding);
+    methodsLine.attr('x2', classBox.width + 2 * conf.padding);
+
+    classInfo.width = classBox.width + 2 * conf.padding;
+    classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
     idCache.set(id, classInfo);
     classCnt++;
@@ -31579,13 +31643,13 @@ module.exports.draw = function (text, id) {
     });
 
     var classes = cDDb.getClasses();
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-        for (var _iterator2 = classes.values()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var classDef = _step2.value;
+        for (var _iterator4 = classes.values()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var classDef = _step4.value;
 
             var node = drawClass(diagram, classDef);
             // Add nodes to the graph. The first argument is the node id. The second is
@@ -31600,42 +31664,42 @@ module.exports.draw = function (text, id) {
             //g.setNode("kbacon",     { label: "Kevin Bacon",   width: 121, height: 100 });
         }
     } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                _iterator2['return']();
+            if (!_iteratorNormalCompletion4 && _iterator4['return']) {
+                _iterator4['return']();
             }
         } finally {
-            if (_didIteratorError2) {
-                throw _iteratorError2;
+            if (_didIteratorError4) {
+                throw _iteratorError4;
             }
         }
     }
 
     var relations = cDDb.getRelations();
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
 
     try {
-        for (var _iterator3 = relations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var relation = _step3.value;
+        for (var _iterator5 = relations[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var relation = _step5.value;
 
             g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
         }
     } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-                _iterator3['return']();
+            if (!_iteratorNormalCompletion5 && _iterator5['return']) {
+                _iterator5['return']();
             }
         } finally {
-            if (_didIteratorError3) {
-                throw _iteratorError3;
+            if (_didIteratorError5) {
+                throw _iteratorError5;
             }
         }
     }
@@ -31804,6 +31868,12 @@ var classDiagram = (function () {
                     break;
                 case 15:
                     /*console.log('Rel found',$$[$0]);*/
+                    break;
+                case 16:
+                    yy.addMembers($$[$0 - 1], $$[$0]);
+                    break;
+                case 17:
+                    console.warn('Member', $$[$0]);
                     break;
                 case 18:
                     /*console.log('sep found',$$[$0]);*/
@@ -33315,7 +33385,7 @@ exports.addVertices = function (vert, g) {
         if (conf.htmlLabels) {
             labelTypeStr = 'html';
             verticeText = verticeText.replace(/fa:fa[\w\-]+/g, function (s) {
-                return '<i class="fa ' + s.substring(3) + '">';
+                return '<i class="fa ' + s.substring(3) + '"></i>';
             });
         } else {
             verticeText = verticeText.replace(/<br>/g, '\n');
@@ -39709,7 +39779,7 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
                     }
                 }
             } catch (err) {
-                if (rule !== 'undefined') {
+                if (typeof rule !== 'undefined') {
                     log.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
                 }
             }
