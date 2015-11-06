@@ -294,6 +294,64 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
     });
+    it('it should handle special characters in signals', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: -:<>,;# comment';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[0].message).toBe('-:<>,');
+    });
+    it('it should handle special characters in notes', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'Note right of Bob: -:<>,;# comment';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('-:<>,');
+    });
+    it('it should handle special characters in loop', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'loop -:<>,;# comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('-:<>,');
+    });
+    it('it should handle special characters in opt', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'opt -:<>,;# comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('-:<>,');
+    });
+    it('it should handle special characters in alt', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'alt -:<>,;# comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'else ,<>:-#; comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('-:<>,');
+        expect(messages[3].message).toBe(',<>:-');
+    });
 });
 
 describe('when checking the bounds in a sequenceDiagram',function() {
