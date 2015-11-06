@@ -103,8 +103,16 @@ statement
 	;
 
 note_statement
-	: 'note' placement actor text2 {$$=[$3,{type:'addNote', placement:$2, actor:$3.actor, text:$4}];}
-	| 'note' 'over' spaceList actor_pair actor
+	: 'note' placement actor text2
+	{
+		$$ = [$3, {type:'addNote', placement:$2, actor:$3.actor, text:$4}];}
+	| 'note' 'over' actor_pair text2
+	{
+		// Coerce actor_pair into a [to, from, ...] array
+		$2 = [].concat($3, $3).slice(0, 2);
+		$2[0] = $2[0].actor;
+		$2[1] = $2[1].actor;
+		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
 	;
 
 spaceList
@@ -112,8 +120,8 @@ spaceList
     | SPACE
     ;
 actor_pair
-	: actor             { $$ = $1; }
-	| actor ',' actor   { $$ = [$1, $3]; }
+	: actor ',' actor   { $$ = [$1, $3]; }
+	| actor             { $$ = $1; }
 	;
 
 placement
