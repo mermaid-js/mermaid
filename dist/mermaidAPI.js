@@ -15086,7 +15086,7 @@ function read(json) {
 
 },{"./graph":78,"./lodash":81}],81:[function(require,module,exports){
 module.exports=require(42)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":83}],82:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":83}],82:[function(require,module,exports){
 module.exports = '1.0.7';
 
 },{}],83:[function(require,module,exports){
@@ -27446,107 +27446,107 @@ module.exports = '1.0.7';
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],84:[function(require,module,exports){
 module.exports=require(33)
-},{"./lib/debug":89,"./lib/graphlib":90,"./lib/layout":92,"./lib/util":112,"./lib/version":113,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/index.js":33}],85:[function(require,module,exports){
+},{"./lib/debug":89,"./lib/graphlib":90,"./lib/layout":92,"./lib/util":112,"./lib/version":113,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/index.js":33}],85:[function(require,module,exports){
 module.exports=require(34)
-},{"./greedy-fas":91,"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/acyclic.js":34}],86:[function(require,module,exports){
+},{"./greedy-fas":91,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/acyclic.js":34}],86:[function(require,module,exports){
 module.exports=require(35)
-},{"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/add-border-segments.js":35}],87:[function(require,module,exports){
+},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/add-border-segments.js":35}],87:[function(require,module,exports){
 module.exports=require(36)
-},{"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/coordinate-system.js":36}],88:[function(require,module,exports){
+},{"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/coordinate-system.js":36}],88:[function(require,module,exports){
 module.exports=require(37)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/data/list.js":37}],89:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/data/list.js":37}],89:[function(require,module,exports){
 module.exports=require(38)
-},{"./graphlib":90,"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/debug.js":38}],90:[function(require,module,exports){
+},{"./graphlib":90,"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/debug.js":38}],90:[function(require,module,exports){
 module.exports=require(39)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/graphlib.js":39,"graphlib":114}],91:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/graphlib.js":39,"graphlib":114}],91:[function(require,module,exports){
 module.exports=require(40)
-},{"./data/list":88,"./graphlib":90,"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/greedy-fas.js":40}],92:[function(require,module,exports){
+},{"./data/list":88,"./graphlib":90,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/greedy-fas.js":40}],92:[function(require,module,exports){
 module.exports=require(41)
-},{"./acyclic":85,"./add-border-segments":86,"./coordinate-system":87,"./graphlib":90,"./lodash":93,"./nesting-graph":94,"./normalize":95,"./order":100,"./parent-dummy-chains":105,"./position":107,"./rank":109,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/layout.js":41}],93:[function(require,module,exports){
+},{"./acyclic":85,"./add-border-segments":86,"./coordinate-system":87,"./graphlib":90,"./lodash":93,"./nesting-graph":94,"./normalize":95,"./order":100,"./parent-dummy-chains":105,"./position":107,"./rank":109,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/layout.js":41}],93:[function(require,module,exports){
 module.exports=require(42)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],94:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],94:[function(require,module,exports){
 module.exports=require(43)
-},{"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/nesting-graph.js":43}],95:[function(require,module,exports){
+},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/nesting-graph.js":43}],95:[function(require,module,exports){
 module.exports=require(44)
-},{"./lodash":93,"./util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/normalize.js":44}],96:[function(require,module,exports){
+},{"./lodash":93,"./util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/normalize.js":44}],96:[function(require,module,exports){
 module.exports=require(45)
-},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/add-subgraph-constraints.js":45}],97:[function(require,module,exports){
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/add-subgraph-constraints.js":45}],97:[function(require,module,exports){
 module.exports=require(46)
-},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/barycenter.js":46}],98:[function(require,module,exports){
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/barycenter.js":46}],98:[function(require,module,exports){
 module.exports=require(47)
-},{"../graphlib":90,"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/build-layer-graph.js":47}],99:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/build-layer-graph.js":47}],99:[function(require,module,exports){
 module.exports=require(48)
-},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/cross-count.js":48}],100:[function(require,module,exports){
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/cross-count.js":48}],100:[function(require,module,exports){
 module.exports=require(49)
-},{"../graphlib":90,"../lodash":93,"../util":112,"./add-subgraph-constraints":96,"./build-layer-graph":98,"./cross-count":99,"./init-order":101,"./sort-subgraph":103,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/index.js":49}],101:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"../util":112,"./add-subgraph-constraints":96,"./build-layer-graph":98,"./cross-count":99,"./init-order":101,"./sort-subgraph":103,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/index.js":49}],101:[function(require,module,exports){
 module.exports=require(50)
-},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/init-order.js":50}],102:[function(require,module,exports){
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/init-order.js":50}],102:[function(require,module,exports){
 module.exports=require(51)
-},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/resolve-conflicts.js":51}],103:[function(require,module,exports){
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/resolve-conflicts.js":51}],103:[function(require,module,exports){
 module.exports=require(52)
-},{"../lodash":93,"./barycenter":97,"./resolve-conflicts":102,"./sort":104,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort-subgraph.js":52}],104:[function(require,module,exports){
+},{"../lodash":93,"./barycenter":97,"./resolve-conflicts":102,"./sort":104,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort-subgraph.js":52}],104:[function(require,module,exports){
 module.exports=require(53)
-},{"../lodash":93,"../util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort.js":53}],105:[function(require,module,exports){
+},{"../lodash":93,"../util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/order/sort.js":53}],105:[function(require,module,exports){
 module.exports=require(54)
-},{"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/parent-dummy-chains.js":54}],106:[function(require,module,exports){
+},{"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/parent-dummy-chains.js":54}],106:[function(require,module,exports){
 module.exports=require(55)
-},{"../graphlib":90,"../lodash":93,"../util":112,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/bk.js":55}],107:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"../util":112,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/bk.js":55}],107:[function(require,module,exports){
 module.exports=require(56)
-},{"../lodash":93,"../util":112,"./bk":106,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/index.js":56}],108:[function(require,module,exports){
+},{"../lodash":93,"../util":112,"./bk":106,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/position/index.js":56}],108:[function(require,module,exports){
 module.exports=require(57)
-},{"../graphlib":90,"../lodash":93,"./util":111,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/feasible-tree.js":57}],109:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/feasible-tree.js":57}],109:[function(require,module,exports){
 module.exports=require(58)
-},{"./feasible-tree":108,"./network-simplex":110,"./util":111,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/index.js":58}],110:[function(require,module,exports){
+},{"./feasible-tree":108,"./network-simplex":110,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/index.js":58}],110:[function(require,module,exports){
 module.exports=require(59)
-},{"../graphlib":90,"../lodash":93,"../util":112,"./feasible-tree":108,"./util":111,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/network-simplex.js":59}],111:[function(require,module,exports){
+},{"../graphlib":90,"../lodash":93,"../util":112,"./feasible-tree":108,"./util":111,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/network-simplex.js":59}],111:[function(require,module,exports){
 module.exports=require(60)
-},{"../lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/util.js":60}],112:[function(require,module,exports){
+},{"../lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/rank/util.js":60}],112:[function(require,module,exports){
 module.exports=require(61)
-},{"./graphlib":90,"./lodash":93,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/util.js":61}],113:[function(require,module,exports){
+},{"./graphlib":90,"./lodash":93,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/util.js":61}],113:[function(require,module,exports){
 module.exports=require(62)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/version.js":62}],114:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/version.js":62}],114:[function(require,module,exports){
 module.exports=require(63)
-},{"./lib":130,"./lib/alg":121,"./lib/json":131,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":63}],115:[function(require,module,exports){
+},{"./lib":130,"./lib/alg":121,"./lib/json":131,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":63}],115:[function(require,module,exports){
 module.exports=require(64)
-},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":64}],116:[function(require,module,exports){
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":64}],116:[function(require,module,exports){
 module.exports=require(65)
-},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":65}],117:[function(require,module,exports){
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":65}],117:[function(require,module,exports){
 module.exports=require(66)
-},{"../lodash":132,"./dijkstra":118,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":66}],118:[function(require,module,exports){
+},{"../lodash":132,"./dijkstra":118,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":66}],118:[function(require,module,exports){
 module.exports=require(67)
-},{"../data/priority-queue":128,"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":67}],119:[function(require,module,exports){
+},{"../data/priority-queue":128,"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":67}],119:[function(require,module,exports){
 module.exports=require(68)
-},{"../lodash":132,"./tarjan":126,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":68}],120:[function(require,module,exports){
+},{"../lodash":132,"./tarjan":126,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":68}],120:[function(require,module,exports){
 module.exports=require(69)
-},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":69}],121:[function(require,module,exports){
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":69}],121:[function(require,module,exports){
 module.exports=require(70)
-},{"./components":115,"./dijkstra":118,"./dijkstra-all":117,"./find-cycles":119,"./floyd-warshall":120,"./is-acyclic":122,"./postorder":123,"./preorder":124,"./prim":125,"./tarjan":126,"./topsort":127,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":70}],122:[function(require,module,exports){
+},{"./components":115,"./dijkstra":118,"./dijkstra-all":117,"./find-cycles":119,"./floyd-warshall":120,"./is-acyclic":122,"./postorder":123,"./preorder":124,"./prim":125,"./tarjan":126,"./topsort":127,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":70}],122:[function(require,module,exports){
 module.exports=require(71)
-},{"./topsort":127,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":71}],123:[function(require,module,exports){
+},{"./topsort":127,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":71}],123:[function(require,module,exports){
 module.exports=require(72)
-},{"./dfs":116,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":72}],124:[function(require,module,exports){
+},{"./dfs":116,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":72}],124:[function(require,module,exports){
 module.exports=require(73)
-},{"./dfs":116,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":73}],125:[function(require,module,exports){
+},{"./dfs":116,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":73}],125:[function(require,module,exports){
 module.exports=require(74)
-},{"../data/priority-queue":128,"../graph":129,"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":74}],126:[function(require,module,exports){
+},{"../data/priority-queue":128,"../graph":129,"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":74}],126:[function(require,module,exports){
 module.exports=require(75)
-},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":75}],127:[function(require,module,exports){
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":75}],127:[function(require,module,exports){
 module.exports=require(76)
-},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":76}],128:[function(require,module,exports){
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":76}],128:[function(require,module,exports){
 module.exports=require(77)
-},{"../lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":77}],129:[function(require,module,exports){
+},{"../lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":77}],129:[function(require,module,exports){
 module.exports=require(78)
-},{"./lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":78}],130:[function(require,module,exports){
+},{"./lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":78}],130:[function(require,module,exports){
 module.exports=require(79)
-},{"./graph":129,"./version":133,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":79}],131:[function(require,module,exports){
+},{"./graph":129,"./version":133,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":79}],131:[function(require,module,exports){
 module.exports=require(80)
-},{"./graph":129,"./lodash":132,"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":80}],132:[function(require,module,exports){
+},{"./graph":129,"./lodash":132,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":80}],132:[function(require,module,exports){
 module.exports=require(42)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],133:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/dagre/lib/lodash.js":42,"lodash":134}],133:[function(require,module,exports){
 module.exports=require(82)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":82}],134:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":82}],134:[function(require,module,exports){
 module.exports=require(83)
-},{"/Users/spect/git/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":83}],135:[function(require,module,exports){
+},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":83}],135:[function(require,module,exports){
 //! moment.js
 //! version : 2.10.6
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -31355,7 +31355,7 @@ var funs = [];
  * @param style
  */
 exports.addClass = function (id) {
-    console.log('Adding: ' + id);
+    log.log('Adding: ' + id);
     if (typeof classes.get(id) === 'undefined') {
         classes.set(id, {
             id: id,
@@ -31382,7 +31382,7 @@ module.exports.getRelations = function () {
 };
 
 exports.addRelation = function (relation) {
-    console.log('Adding relation: ' + JSON.stringify(relation));
+    log.log('Adding relation: ' + JSON.stringify(relation));
     exports.addClass(relation.id1);
     exports.addClass(relation.id2);
 
@@ -31447,7 +31447,7 @@ var classCnt = 0;
 var conf = {
     dividerMargin: 10,
     padding: 5,
-    textHeight: 15
+    textHeight: 14
 };
 
 // Todo optimize
@@ -31485,7 +31485,19 @@ var getGraphId = function getGraphId(label) {
     return undefined;
 };
 
-var drawEdge = function drawEdge(elem, path) {
+/**
+ * Setup arrow head and define the marker. The result is appended to the svg.
+ */
+var insertMarkers = function insertMarkers(elem) {
+    elem.append('defs').append('marker').attr('id', 'extensionStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,7 L18,13 V 1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'extensionEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,1 V 13 L18,7 Z'); //this is actual shape for arrowhead
+    elem.append('defs').append('marker').attr('id', 'compositionStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,7 L18,13 V 1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'compositionEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,1 V 13 L18,7 Z'); //this is actual shape for arrowhead
+};
+
+var drawEdge = function drawEdge(elem, path, relation) {
     //The data for our line
     var lineData = path.points;
 
@@ -31498,7 +31510,13 @@ var drawEdge = function drawEdge(elem, path) {
     //.interpolate('cardinal');
     .interpolate('basis');
 
-    elem.append('path').attr('d', lineFunction(lineData)).attr('stroke', 'black').attr('stroke-width', 1).attr('fill', 'none');
+    var path = elem.append('path').attr('d', lineFunction(lineData)).attr('class', 'relation');
+    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+
+    path.attr('marker-end', 'url(' + url + '#extensionEnd)');
+    path.attr('marker-start', 'url(' + url + '#extensionStart)');
 };
 
 var drawClass = function drawClass(elem, classDef) {
@@ -31507,7 +31525,7 @@ var drawClass = function drawClass(elem, classDef) {
     var addTspan = function addTspan(textEl, txt, isFirst) {
         var tSpan = textEl.append('tspan').attr('x', conf.padding).text(txt);
         if (!isFirst) {
-            tSpan.attr('dy', 15);
+            tSpan.attr('dy', conf.textHeight);
         }
     };
 
@@ -31519,14 +31537,13 @@ var drawClass = function drawClass(elem, classDef) {
         height: 0
     };
 
-    var g = elem.append('g').attr('id', id);
-    var title = g.append('text') // text label for the x axis
-    .attr('x', conf.padding).attr('y', conf.textHeight + conf.padding).attr('fill', 'white').attr('class', 'classText').text(classDef.id);
+    var g = elem.append('g').attr('id', id).attr('class', 'classGroup');
+    var title = g.append('text').attr('x', conf.padding).attr('y', conf.textHeight + conf.padding).text(classDef.id);
 
     var titleHeight = title.node().getBBox().height;
 
     var membersLine = g.append('line') // text label for the x axis
-    .attr('x1', 0).attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2).attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2).attr('fill', 'white').attr('class', 'classText').attr('style', 'stroke:rgb(255,255,255);stroke-width:1');
+    .attr('x1', 0).attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2).attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
 
     var members = g.append('text') // text label for the x axis
     .attr('x', conf.padding).attr('y', titleHeight + conf.dividerMargin + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
@@ -31563,7 +31580,7 @@ var drawClass = function drawClass(elem, classDef) {
     var membersBox = members.node().getBBox();
 
     var methodsLine = g.append('line') // text label for the x axis
-    .attr('x1', 0).attr('y1', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('y2', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('fill', 'white').attr('class', 'classText').attr('style', 'stroke:rgb(255,255,255);stroke-width:1');
+    .attr('x1', 0).attr('y1', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('y2', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height);
 
     var methods = g.append('text') // text label for the x axis
     .attr('x', conf.padding).attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
@@ -31596,7 +31613,7 @@ var drawClass = function drawClass(elem, classDef) {
     }
 
     var classBox = g.node().getBBox();
-    g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('fill', 'darkgrey').attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
+    g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
 
     membersLine.attr('x2', classBox.width + 2 * conf.padding);
     methodsLine.attr('x2', classBox.width + 2 * conf.padding);
@@ -31629,6 +31646,7 @@ module.exports.draw = function (text, id) {
 
     //// Fetch the default direction, use TD if none was found
     var diagram = d3.select('#' + id);
+    insertMarkers(diagram);
     //var svg = diagram.append('svg');
 
     // Layout graph, Create a new directed graph
@@ -31713,7 +31731,7 @@ module.exports.draw = function (text, id) {
     });
     g.edges().forEach(function (e) {
         log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
-        drawEdge(diagram, g.edge(e));
+        drawEdge(diagram, g.edge(e), e);
     });
 
     //
@@ -37587,7 +37605,7 @@ var sequenceDiagram = (function () {
     var o = function o(k, v, _o, l) {
         for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
     },
-        $V0 = [6, 8, 10, 11, 15, 17, 19, 20, 22, 33],
+        $V0 = [6, 8, 10, 11, 15, 17, 20, 21, 23, 34],
         $V1 = [2, 2],
         $V2 = [1, 6],
         $V3 = [1, 8],
@@ -37599,16 +37617,16 @@ var sequenceDiagram = (function () {
         $V9 = [1, 17],
         $Va = [1, 18],
         $Vb = [2, 7],
-        $Vc = [6, 8, 10, 11, 15, 17, 18, 19, 20, 21, 22, 33],
-        $Vd = [6, 8, 10, 11, 15, 17, 18, 19, 20, 22, 33],
+        $Vc = [6, 8, 10, 11, 15, 17, 19, 20, 21, 22, 23, 34],
+        $Vd = [6, 8, 10, 11, 15, 17, 19, 20, 21, 23, 34],
         $Ve = [1, 46],
         $Vf = [1, 49],
         $Vg = [1, 53];
     var parser = { trace: function trace() {},
         yy: {},
-        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "EOF": 6, "line": 7, "SPACE": 8, "statement": 9, "NL": 10, "participant": 11, "actor": 12, "signal": 13, "note_statement": 14, "title": 15, "text": 16, "loop": 17, "end": 18, "opt": 19, "alt": 20, "else": 21, "note": 22, "placement": 23, "text2": 24, "over": 25, "spaceList": 26, "actor_pair": 27, ",": 28, "left_of": 29, "right_of": 30, "signaltype": 31, "actors": 32, "ACTOR": 33, "SOLID_OPEN_ARROW": 34, "DOTTED_OPEN_ARROW": 35, "SOLID_ARROW": 36, "DOTTED_ARROW": 37, "SOLID_CROSS": 38, "DOTTED_CROSS": 39, "TXT": 40, "$accept": 0, "$end": 1 },
-        terminals_: { 2: "error", 4: "SD", 6: "EOF", 8: "SPACE", 10: "NL", 11: "participant", 15: "title", 16: "text", 17: "loop", 18: "end", 19: "opt", 20: "alt", 21: "else", 22: "note", 25: "over", 28: ",", 29: "left_of", 30: "right_of", 33: "ACTOR", 34: "SOLID_OPEN_ARROW", 35: "DOTTED_OPEN_ARROW", 36: "SOLID_ARROW", 37: "DOTTED_ARROW", 38: "SOLID_CROSS", 39: "DOTTED_CROSS", 40: "TXT" },
-        productions_: [0, [3, 3], [5, 0], [5, 2], [7, 2], [7, 1], [7, 1], [7, 1], [9, 3], [9, 2], [9, 2], [9, 4], [9, 4], [9, 4], [9, 7], [14, 4], [14, 5], [26, 2], [26, 1], [27, 1], [27, 3], [23, 1], [23, 1], [13, 4], [32, 2], [32, 1], [12, 1], [31, 1], [31, 1], [31, 1], [31, 1], [31, 1], [31, 1], [24, 1]],
+        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "EOF": 6, "line": 7, "SPACE": 8, "statement": 9, "NL": 10, "participant": 11, "actor": 12, "signal": 13, "note_statement": 14, "title": 15, "text": 16, "loop": 17, "restOfLine": 18, "end": 19, "opt": 20, "alt": 21, "else": 22, "note": 23, "placement": 24, "text2": 25, "over": 26, "spaceList": 27, "actor_pair": 28, ",": 29, "left_of": 30, "right_of": 31, "signaltype": 32, "actors": 33, "ACTOR": 34, "SOLID_OPEN_ARROW": 35, "DOTTED_OPEN_ARROW": 36, "SOLID_ARROW": 37, "DOTTED_ARROW": 38, "SOLID_CROSS": 39, "DOTTED_CROSS": 40, "TXT": 41, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "SD", 6: "EOF", 8: "SPACE", 10: "NL", 11: "participant", 15: "title", 16: "text", 17: "loop", 18: "restOfLine", 19: "end", 20: "opt", 21: "alt", 22: "else", 23: "note", 26: "over", 29: ",", 30: "left_of", 31: "right_of", 34: "ACTOR", 35: "SOLID_OPEN_ARROW", 36: "DOTTED_OPEN_ARROW", 37: "SOLID_ARROW", 38: "DOTTED_ARROW", 39: "SOLID_CROSS", 40: "DOTTED_CROSS", 41: "TXT" },
+        productions_: [0, [3, 3], [5, 0], [5, 2], [7, 2], [7, 1], [7, 1], [7, 1], [9, 3], [9, 2], [9, 2], [9, 4], [9, 4], [9, 4], [9, 7], [14, 4], [14, 5], [27, 2], [27, 1], [28, 1], [28, 3], [24, 1], [24, 1], [13, 4], [33, 2], [33, 1], [12, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [25, 1]],
         performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
             /* this == yyval */
 
@@ -37634,23 +37652,23 @@ var sequenceDiagram = (function () {
                     break;
                 case 12:
 
-                    $$[$0 - 1].unshift({ type: 'loopStart', loopText: $$[$0 - 2].actor, signalType: yy.LINETYPE.LOOP_START });
+                    $$[$0 - 1].unshift({ type: 'loopStart', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_START });
                     $$[$0 - 1].push({ type: 'loopEnd', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_END });
                     this.$ = $$[$0 - 1];
                     break;
                 case 13:
 
-                    $$[$0 - 1].unshift({ type: 'optStart', optText: $$[$0 - 2].actor, signalType: yy.LINETYPE.OPT_START });
-                    $$[$0 - 1].push({ type: 'optEnd', optText: $$[$0 - 2].actor, signalType: yy.LINETYPE.OPT_END });
+                    $$[$0 - 1].unshift({ type: 'optStart', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_START });
+                    $$[$0 - 1].push({ type: 'optEnd', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_END });
                     this.$ = $$[$0 - 1];
                     break;
                 case 14:
 
                     // Alt start
-                    $$[$0 - 4].unshift({ type: 'altStart', altText: $$[$0 - 5].actor, signalType: yy.LINETYPE.ALT_START });
+                    $$[$0 - 4].unshift({ type: 'altStart', altText: $$[$0 - 5], signalType: yy.LINETYPE.ALT_START });
                     // Content in alt is already in $$[$0-4]
                     // Else
-                    $$[$0 - 4].push({ type: 'else', altText: $$[$0 - 2].actor, signalType: yy.LINETYPE.ALT_ELSE });
+                    $$[$0 - 4].push({ type: 'else', altText: $$[$0 - 2], signalType: yy.LINETYPE.ALT_ELSE });
                     // Content in other alt
                     $$[$0 - 4] = $$[$0 - 4].concat($$[$0 - 1]);
                     // End
@@ -37702,7 +37720,7 @@ var sequenceDiagram = (function () {
                     break;
             }
         },
-        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o($V0, $V1, { 5: 3 }), { 6: [1, 4], 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: $V7, 20: $V8, 22: $V9, 33: $Va }, o($V0, $Vb, { 1: [2, 1] }), o($Vc, [2, 3]), { 9: 19, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: $V7, 20: $V8, 22: $V9, 33: $Va }, o($Vc, [2, 5]), o($Vc, [2, 6]), { 12: 20, 33: $Va }, { 10: [1, 21] }, { 10: [1, 22] }, { 8: [1, 23] }, { 12: 24, 33: $Va }, { 12: 25, 33: $Va }, { 12: 26, 33: $Va }, { 31: 27, 34: [1, 28], 35: [1, 29], 36: [1, 30], 37: [1, 31], 38: [1, 32], 39: [1, 33] }, { 23: 34, 25: [1, 35], 29: [1, 36], 30: [1, 37] }, o([6, 8, 10, 11, 15, 17, 18, 19, 20, 21, 22, 28, 33, 34, 35, 36, 37, 38, 39, 40], [2, 26]), o($Vc, [2, 4]), { 10: [1, 38] }, o($Vc, [2, 9]), o($Vc, [2, 10]), { 16: [1, 39] }, o($Vd, $V1, { 5: 40 }), o($Vd, $V1, { 5: 41 }), o([6, 8, 10, 11, 15, 17, 19, 20, 21, 22, 33], $V1, { 5: 42 }), { 12: 43, 33: $Va }, { 33: [2, 27] }, { 33: [2, 28] }, { 33: [2, 29] }, { 33: [2, 30] }, { 33: [2, 31] }, { 33: [2, 32] }, { 12: 44, 33: $Va }, { 8: $Ve, 26: 45 }, { 33: [2, 21] }, { 33: [2, 22] }, o($Vc, [2, 8]), { 10: [1, 47] }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 18: [1, 48], 19: $V7, 20: $V8, 22: $V9, 33: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 18: [1, 50], 19: $V7, 20: $V8, 22: $V9, 33: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: $V7, 20: $V8, 21: [1, 51], 22: $V9, 33: $Va }, { 24: 52, 40: $Vg }, { 24: 54, 40: $Vg }, { 12: 56, 27: 55, 33: $Va }, { 8: $Ve, 26: 57, 33: [2, 18] }, o($Vc, [2, 11]), o($Vc, [2, 12]), o($Vc, $Vb), o($Vc, [2, 13]), { 12: 58, 33: $Va }, { 10: [2, 23] }, { 10: [2, 33] }, { 10: [2, 15] }, { 12: 59, 33: $Va }, { 28: [1, 60], 33: [2, 19] }, { 33: [2, 17] }, o($Vd, $V1, { 5: 61 }), { 10: [2, 16] }, { 12: 62, 33: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 18: [1, 63], 19: $V7, 20: $V8, 22: $V9, 33: $Va }, { 33: [2, 20] }, o($Vc, [2, 14])],
+        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o($V0, $V1, { 5: 3 }), { 6: [1, 4], 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 20: $V7, 21: $V8, 23: $V9, 34: $Va }, o($V0, $Vb, { 1: [2, 1] }), o($Vc, [2, 3]), { 9: 19, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 20: $V7, 21: $V8, 23: $V9, 34: $Va }, o($Vc, [2, 5]), o($Vc, [2, 6]), { 12: 20, 34: $Va }, { 10: [1, 21] }, { 10: [1, 22] }, { 8: [1, 23] }, { 18: [1, 24] }, { 18: [1, 25] }, { 18: [1, 26] }, { 32: 27, 35: [1, 28], 36: [1, 29], 37: [1, 30], 38: [1, 31], 39: [1, 32], 40: [1, 33] }, { 24: 34, 26: [1, 35], 30: [1, 36], 31: [1, 37] }, o([10, 29, 34, 35, 36, 37, 38, 39, 40, 41], [2, 26]), o($Vc, [2, 4]), { 10: [1, 38] }, o($Vc, [2, 9]), o($Vc, [2, 10]), { 16: [1, 39] }, o($Vd, $V1, { 5: 40 }), o($Vd, $V1, { 5: 41 }), o([6, 8, 10, 11, 15, 17, 20, 21, 22, 23, 34], $V1, { 5: 42 }), { 12: 43, 34: $Va }, { 34: [2, 27] }, { 34: [2, 28] }, { 34: [2, 29] }, { 34: [2, 30] }, { 34: [2, 31] }, { 34: [2, 32] }, { 12: 44, 34: $Va }, { 8: $Ve, 27: 45 }, { 34: [2, 21] }, { 34: [2, 22] }, o($Vc, [2, 8]), { 10: [1, 47] }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: [1, 48], 20: $V7, 21: $V8, 23: $V9, 34: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: [1, 50], 20: $V7, 21: $V8, 23: $V9, 34: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 20: $V7, 21: $V8, 22: [1, 51], 23: $V9, 34: $Va }, { 25: 52, 41: $Vg }, { 25: 54, 41: $Vg }, { 12: 56, 28: 55, 34: $Va }, { 8: $Ve, 27: 57, 34: [2, 18] }, o($Vc, [2, 11]), o($Vc, [2, 12]), o($Vc, $Vb), o($Vc, [2, 13]), { 18: [1, 58] }, { 10: [2, 23] }, { 10: [2, 33] }, { 10: [2, 15] }, { 12: 59, 34: $Va }, { 29: [1, 60], 34: [2, 19] }, { 34: [2, 17] }, o($Vd, $V1, { 5: 61 }), { 10: [2, 16] }, { 12: 62, 34: $Va }, { 6: $Vf, 7: 5, 8: $V2, 9: 7, 10: $V3, 11: $V4, 12: 16, 13: 10, 14: 11, 15: $V5, 17: $V6, 19: [1, 63], 20: $V7, 21: $V8, 23: $V9, 34: $Va }, { 34: [2, 20] }, o($Vc, [2, 14])],
         defaultActions: { 28: [2, 27], 29: [2, 28], 30: [2, 29], 31: [2, 30], 32: [2, 31], 33: [2, 32], 36: [2, 21], 37: [2, 22], 52: [2, 23], 53: [2, 33], 54: [2, 15], 57: [2, 17], 59: [2, 16], 62: [2, 20] },
         parseError: function parseError(str, hash) {
             if (hash.recoverable) {
@@ -37864,6 +37882,7 @@ var sequenceDiagram = (function () {
             }
             return true;
         } };
+
     /* generated by jison-lex 0.3.4 */
     var lexer = (function () {
         var lexer = {
@@ -38179,93 +38198,91 @@ var sequenceDiagram = (function () {
             },
             options: { "case-insensitive": true },
             performAction: function anonymous(yy, yy_, $avoiding_name_collisions, YY_START) {
-                // Pre-lexer code can go here
-
                 var YYSTATE = YY_START;
                 switch ($avoiding_name_collisions) {
                     case 0:
                         return 10;
                         break;
                     case 1:
-                        return 38;
+                        /* skip all whitespace */
                         break;
                     case 2:
-                        return 39;
+                        /* skip same-line whitespace */
                         break;
                     case 3:
-                        return 36;
+                        /* skip comments */
                         break;
                     case 4:
-                        return 37;
+                        /* skip comments */
                         break;
                     case 5:
-                        /* skip whitespace */
-                        break;
-                    case 6:
-                        /* skip comments */
-                        break;
-                    case 7:
-                        /* skip comments */
-                        break;
-                    case 8:
                         return 11;
                         break;
+                    case 6:
+                        this.begin('LINE');return 17;
+                        break;
+                    case 7:
+                        this.begin('LINE');return 20;
+                        break;
+                    case 8:
+                        this.begin('LINE');return 21;
+                        break;
                     case 9:
-                        return 19;
+                        this.begin('LINE');return 22;
                         break;
                     case 10:
-                        return 17;
+                        this.popState();return 18;
                         break;
                     case 11:
-                        return 20;
+                        return 19;
                         break;
                     case 12:
-                        return 21;
-                        break;
-                    case 13:
-                        return 18;
-                        break;
-                    case 14:
-                        return 29;
-                        break;
-                    case 15:
                         return 30;
                         break;
+                    case 13:
+                        return 31;
+                        break;
+                    case 14:
+                        return 26;
+                        break;
+                    case 15:
+                        return 23;
+                        break;
                     case 16:
-                        return 25;
-                        break;
-                    case 17:
-                        return 22;
-                        break;
-                    case 18:
                         return 15;
                         break;
-                    case 19:
+                    case 17:
                         return 4;
                         break;
-                    case 20:
-                        return 28;
+                    case 18:
+                        return 29;
                         break;
-                    case 21:
+                    case 19:
                         return 10;
                         break;
-                    case 22:
-                        return 33;
-                        break;
-                    case 23:
+                    case 20:
                         return 34;
                         break;
-                    case 24:
-                        return 35;
-                        break;
-                    case 25:
-                        return 36;
-                        break;
-                    case 26:
+                    case 21:
                         return 37;
                         break;
-                    case 27:
+                    case 22:
+                        return 38;
+                        break;
+                    case 23:
+                        return 35;
+                        break;
+                    case 24:
+                        return 36;
+                        break;
+                    case 25:
+                        return 39;
+                        break;
+                    case 26:
                         return 40;
+                        break;
+                    case 27:
+                        return 41;
                         break;
                     case 28:
                         return 6;
@@ -38275,8 +38292,8 @@ var sequenceDiagram = (function () {
                         break;
                 }
             },
-            rules: [/^(?:[\n]+)/i, /^(?:[\-][x])/i, /^(?:[\-][\-][x])/i, /^(?:[\-][>][>])/i, /^(?:[\-][\-][>][>])/i, /^(?:\s+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:opt\b)/i, /^(?:loop\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
-            conditions: { "INITIAL": { "rules": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "inclusive": true } }
+            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "LINE": { "rules": [2, 3, 10], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "inclusive": true } }
         };
         return lexer;
     })();

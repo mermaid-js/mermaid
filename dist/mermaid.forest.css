@@ -253,9 +253,28 @@ text.actor {
 
 
 */
-text {
+g.classGroup text {
+  fill: #13540c;
+  stroke: none;
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
+}
+g.classGroup rect {
+  fill: #cde498;
+  stroke: #13540c;
+}
+g.classGroup line {
+  stroke: #13540c;
+  stroke-width: 1;
+}
+.relation {
+  stroke: #13540c;
+  stroke-width: 1;
+  fill: none;
+}
+text {
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 28px;
 }
 div.mermaidTooltip {
   position: absolute;
