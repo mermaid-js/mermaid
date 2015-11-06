@@ -129,11 +129,11 @@ exports.bounds = {
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-var drawNote = function(elem, startx, verticalPos, msg){
+var drawNote = function(elem, startx, verticalPos, msg, forceWidth){
     var rect = svgDraw.getNoteRect();
     rect.x = startx;
     rect.y = verticalPos;
-    rect.width = conf.width;
+    rect.width = forceWidth || conf.width;
     rect.class = 'note';
 
     var g = elem.append('g');
@@ -147,21 +147,19 @@ var drawNote = function(elem, startx, verticalPos, msg){
     textObj.text = msg.message;
     textObj.class = 'noteText';
 
-    var textElem = svgDraw.drawText(g,textObj, conf.width-conf.noteMargin);
+    var textElem = svgDraw.drawText(g,textObj, rect.width-conf.noteMargin);
 
     var textHeight = textElem[0][0].getBBox().height;
-    if(textHeight > conf.width){
+    if(!forceWidth && textHeight > conf.width){
         textElem.remove();
         g = elem.append('g');
 
-        //textObj.x = textObj.x - conf.width;
-        //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
-        textElem = svgDraw.drawText(g,textObj, 2*conf.width-conf.noteMargin);
+        textElem = svgDraw.drawText(g,textObj, 2*rect.width-conf.noteMargin);
         textHeight = textElem[0][0].getBBox().height;
-        rectElem.attr('width',2*conf.width);
-        exports.bounds.insert(startx, verticalPos, startx + 2*conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+        rectElem.attr('width',2*rect.width);
+        exports.bounds.insert(startx, verticalPos, startx + 2*rect.width,  verticalPos + 2*conf.noteMargin + textHeight);
     }else{
-        exports.bounds.insert(startx, verticalPos, startx + conf.width,  verticalPos + 2*conf.noteMargin + textHeight);
+        exports.bounds.insert(startx, verticalPos, startx + rect.width,  verticalPos + 2*conf.noteMargin + textHeight);
     }
 
     rectElem.attr('height',textHeight+ 2*conf.noteMargin);
@@ -290,6 +288,7 @@ module.exports.draw = function (text, id) {
 
     var startx;
     var stopx;
+    var forceWidth;
 
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
@@ -312,13 +311,19 @@ module.exports.draw = function (text, id) {
                 startx = actors[msg.from].x;
                 stopx = actors[msg.to].x;
 
-                if(msg.placement !== 0){
-                    // Right of
+                if(msg.placement === sq.yy.PLACEMENT.RIGHTOF){
                     drawNote(diagram, startx + (conf.width + conf.actorMargin)/2, exports.bounds.getVerticalPos(), msg);
 
-                }else{
-                    // Left of
+                }else if(msg.placement === sq.yy.PLACEMENT.LEFTOF){
                     drawNote(diagram, startx - (conf.width + conf.actorMargin)/2, exports.bounds.getVerticalPos(), msg);
+                }else if(msg.to === msg.from) {
+                    // Single-actor over
+                    drawNote(diagram, startx, exports.bounds.getVerticalPos(), msg);
+                }else{
+                    // Multi-actor over
+                    forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
+                    drawNote(diagram, (startx + stopx + conf.width - forceWidth)/2, exports.bounds.getVerticalPos(), msg,
+                        forceWidth);
                 }
                 break;
             case sq.yy.LINETYPE.LOOP_START:

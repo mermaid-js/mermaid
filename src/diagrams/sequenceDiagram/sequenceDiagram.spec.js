@@ -231,6 +231,31 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('John');
     });
+    it('it should handle notes over a single actor', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'Note over Bob: Bob thinks\n';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].from).toBe('Bob');
+        expect(messages[1].to).toBe('Bob');
+    });
+    it('it should handle notes over multiple actors', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'Note over Alice,Bob: confusion\n' +
+            'Note over Bob,Alice: resolution\n';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].from).toBe('Alice');
+        expect(messages[1].to).toBe('Bob');
+        expect(messages[2].from).toBe('Bob');
+        expect(messages[2].to).toBe('Alice');
+    });
     it('it should handle loop statements a sequenceDiagram', function () {
         var str = 'sequenceDiagram\n' +
             'Alice->Bob: Hello Bob, how are you?\n\n' +
@@ -623,7 +648,23 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.stopy ).toBe(conf.height);
 
     });
-    it('it should handle one actor and a note', function () {
+    it('it should handle one actor and a centered note', function () {
+        sd.bounds.init();
+        var str = 'sequenceDiagram\n' +
+            'participant Alice\n' +
+            'Note over Alice: Alice thinks\n';
+
+        sq.parse(str);
+        sd.draw(str,'tst');
+
+        var bounds = sd.bounds.getBounds();
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
+        expect(bounds.stopx ).toBe( conf.width);
+        // 10 comes from mock of text height
+        expect(bounds.stopy ).toBe( conf.height + conf.boxMargin + 2*conf.noteMargin +10);
+    });
+    it('it should handle one actor and a note to the left', function () {
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
             'participant Alice\n' +
@@ -668,7 +709,22 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.starty).toBe(0);
         expect(bounds.stopx ).toBe(conf.width*2 + conf.actorMargin);
         expect(bounds.stopy ).toBe(0 + conf.messageMargin + conf.height);
+    });
+    it('it should handle two actors and two centered shared notes', function () {
+        sd.bounds.init();
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n'+
+            'Note over Alice,Bob: Looks\n' +
+            'Note over Bob,Alice: Looks back\n';
 
+        sq.parse(str);
+        sd.draw(str,'tst');
+
+        var bounds = sd.bounds.getBounds();
+        expect(bounds.startx).toBe(0);
+        expect(bounds.starty).toBe(0);
+        expect(bounds.stopx ).toBe(conf.width*2 + conf.actorMargin);
+        expect(bounds.stopy ).toBe( conf.height + conf.messageMargin + 2*(conf.boxMargin + 2*conf.noteMargin + 10));
     });
     it('it should draw two actors and two messages', function () {
         sd.bounds.init();

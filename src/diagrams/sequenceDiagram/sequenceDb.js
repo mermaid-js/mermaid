@@ -77,8 +77,11 @@ exports.PLACEMENT = {
 exports.addNote = function (actor, placement, message){
     var note = {actor:actor, placement: placement, message:message};
 
+    // Coerce actor into a [to, from, ...] array
+    var actors = [].concat(actor, actor);
+
     notes.push(note);
-    messages.push({from:actor, to:actor, message:message, type:exports.LINETYPE.NOTE, placement: placement});
+    messages.push({from:actors[0], to:actors[1], message:message, type:exports.LINETYPE.NOTE, placement: placement});
 };
 
 
