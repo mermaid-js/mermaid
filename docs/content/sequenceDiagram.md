@@ -74,7 +74,7 @@ There are six types of arrows currently supported:
 
 ## Notes
 It is possible to add notes to a sequence diagram. This is done by the notation
-Note [ right | left ] of [Actor]: Text in note content
+Note [ right of | left of | over ] [Actor]: Text in note content
 
 See the example below:
 ```
@@ -92,18 +92,17 @@ sequenceDiagram
     Note right of John: Text in note
 ```
 
-It is possible to break text into different rows by using &lt;br/> as a line breaker.
+It is also possible to create notes spanning two participants:
 ```
-%% Example of sequence diagram
 sequenceDiagram
-    participant John
-    Note left of John: Text in note spanning several rows.
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction
 ```
 
 ```mermaid
 sequenceDiagram
-    participant John
-    Note left of John: Text in note spanning several rows.
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction
 ```
 
 ## Loops
