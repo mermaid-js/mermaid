@@ -104,6 +104,20 @@ describe('when cloning CSS ', function () {
         document.styleSheets[styleSheetCount].title = 'mermaid-svg-internal-css';
     }
 
+    it('should handle errors thrown when accessing CSS rules', function() {
+        var svg = document.createElement('svg');
+        svg.setAttribute('id', 'mermaid-01');
+
+        // Firefox throws a SecurityError when trying to access cssRules
+        document.styleSheets[document.styleSheets.length++] = {
+          get cssRules() { throw new Error('SecurityError'); }
+        };
+
+        expect(function() {
+          utils.cloneCssStyles(svg, {});
+        }).not.toThrow();
+    });
+
     it('should handle an empty set of classes', function () {
         var svg = document.createElement('svg');
         svg.setAttribute('id', 'mermaid-01');

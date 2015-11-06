@@ -80,8 +80,8 @@ var cloneCssStyles = function(svg, classes){
                     }
                 }
             }
-            catch(err) {
-                if(rule !== 'undefined'){
+            catch (err) {
+                if (typeof(rule) !== 'undefined') {
                     log.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
                 }
             }

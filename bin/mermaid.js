@@ -23,5 +23,5 @@ cli.parse(process.argv.slice(2), function(err, message, options) {
     return
   }
 
-  lib.process(options.files, options)
+  lib.process(options.files, options, process.exit)
 })
