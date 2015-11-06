@@ -17,11 +17,7 @@
 
 %%
 
-[\n]+             return 'NL';
-[\-][x]			  { return 'SOLID_CROSS';}
-[\-][\-][x]		  { return 'DOTTED_CROSS';}
-[\-][>][>]		  	  { return 'SOLID_ARROW';}
-[\-][\-][>][>]		  { return 'DOTTED_ARROW';}
+[\n]+                   return 'NL';
 \s+                     /* skip all whitespace */
 <LINE>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,LINE>\#[^\n]*  /* skip comments */
@@ -41,12 +37,14 @@
 "sequenceDiagram" return 'SD';
 ","               return ',';
 ";"               return 'NL';
-[^\->:\n,;]+       return 'ACTOR';
-"->"		      return 'SOLID_OPEN_ARROW';
-"-->"		 	  return 'DOTTED_OPEN_ARROW';
-"->>"			  return 'SOLID_ARROW';
+[^\->:\n,;]+      return 'ACTOR';
+"->>"             return 'SOLID_ARROW';
 "-->>"            return 'DOTTED_ARROW';
-":"[^#\n;]+        return 'TXT';
+"->"              return 'SOLID_OPEN_ARROW';
+"-->"             return 'DOTTED_OPEN_ARROW';
+\-[x]             return 'SOLID_CROSS';
+\-\-[x]           return 'DOTTED_CROSS';
+":"[^#\n;]+       return 'TXT';
 <<EOF>>           return 'EOF';
 .                 return 'INVALID';
 
