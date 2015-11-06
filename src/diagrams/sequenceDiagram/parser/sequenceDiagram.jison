@@ -45,7 +45,7 @@
 \-[x]             return 'SOLID_CROSS';
 \-\-[x]           return 'DOTTED_CROSS';
 ":"[^#\n;]+       return 'TXT';
-<<EOF>>           return 'EOF';
+<<EOF>>           return 'NL';
 .                 return 'INVALID';
 
 /lex
@@ -57,7 +57,7 @@
 %% /* language grammar */
 
 start
-	: SD document 'EOF' { yy.apply($2);return $2; }
+	: SD document { yy.apply($2);return $2; }
 	;
 
 document
@@ -69,7 +69,6 @@ line
 	: SPACE statement { $$ = $2 }
 	| statement { $$ = $1 }
 	| NL { $$=[];}
-	| EOF { $$=[];}
 	;
 
 statement
