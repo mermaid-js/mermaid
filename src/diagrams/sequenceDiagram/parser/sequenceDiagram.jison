@@ -12,9 +12,8 @@
 
 %options case-insensitive
 
-%{
-	// Pre-lexer code can go here
-%}
+// A special state for grabbing text up to the first comment/newline
+%x LINE
 
 %%
 
@@ -23,15 +22,17 @@
 [\-][\-][x]		  { return 'DOTTED_CROSS';}
 [\-][>][>]		  	  { return 'SOLID_ARROW';}
 [\-][\-][>][>]		  { return 'DOTTED_ARROW';}
-\s+               /* skip whitespace */
-\#[^\n]*          /* skip comments */
-\%%[^\n]*          /* skip comments */
+\s+                     /* skip all whitespace */
+<LINE>((?!\n)\s)+       /* skip same-line whitespace */
+<INITIAL,LINE>\#[^\n]*  /* skip comments */
+\%%[^\n]*               /* skip comments */
 "participant"     return 'participant';
-"opt"     		  return 'opt';
-"loop"     		  return 'loop';
-"alt"     		  return 'alt';
-"else"     		  return 'else';
-"end"     		  return 'end';
+"loop"            { this.begin('LINE'); return 'loop'; }
+"opt"             { this.begin('LINE'); return 'opt'; }
+"alt"             { this.begin('LINE'); return 'alt'; }
+"else"            { this.begin('LINE'); return 'else'; }
+<LINE>[^#\n;]*    { this.popState(); return 'restOfLine'; }
+"end"             return 'end';
 "left of"         return 'left_of';
 "right of"        return 'right_of';
 "over"            return 'over';
@@ -78,23 +79,23 @@ statement
 	| signal 'NL'
 	| note_statement 'NL'
 	| 'title' SPACE text 'NL'
-	| 'loop' actor document end
+	| 'loop' restOfLine document end
 	{
-		$3.unshift({type: 'loopStart', loopText:$2.actor, signalType: yy.LINETYPE.LOOP_START});
+		$3.unshift({type: 'loopStart', loopText:$2, signalType: yy.LINETYPE.LOOP_START});
 		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
 		$$=$3;}
-	| opt actor document end
+	| opt restOfLine document end
 	{
-		$3.unshift({type: 'optStart', optText:$2.actor, signalType: yy.LINETYPE.OPT_START});
-		$3.push({type: 'optEnd', optText:$2.actor, signalType: yy.LINETYPE.OPT_END});
+		$3.unshift({type: 'optStart', optText:$2, signalType: yy.LINETYPE.OPT_START});
+		$3.push({type: 'optEnd', optText:$2, signalType: yy.LINETYPE.OPT_END});
 		$$=$3;}
-	| alt actor document else actor document end
+	| alt restOfLine document else restOfLine document end
 	{
 		// Alt start
-		$3.unshift({type: 'altStart', altText:$2.actor, signalType: yy.LINETYPE.ALT_START});
+		$3.unshift({type: 'altStart', altText:$2, signalType: yy.LINETYPE.ALT_START});
 		// Content in alt is already in $3
 		// Else
-		$3.push({type: 'else', altText:$5.actor, signalType: yy.LINETYPE.ALT_ELSE});
+		$3.push({type: 'else', altText:$5, signalType: yy.LINETYPE.ALT_ELSE});
 		// Content in other alt
 		$3 = $3.concat($6);
 		// End
