@@ -352,6 +352,49 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[1].message).toBe('-:<>,');
         expect(messages[3].message).toBe(',<>:-');
     });
+    it('it should handle no-label loop', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'loop\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('');
+        expect(messages[2].message).toBe('I am good thanks!');
+    });
+    it('it should handle no-label opt', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'opt # comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('');
+        expect(messages[2].message).toBe('I am good thanks!');
+    });
+    it('it should handle no-label alt', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'alt;' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'else # comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('');
+        expect(messages[2].message).toBe('I am good thanks!');
+        expect(messages[3].message).toBe('');
+        expect(messages[4].message).toBe('I am good thanks!');
+    });
 });
 
 describe('when checking the bounds in a sequenceDiagram',function() {
