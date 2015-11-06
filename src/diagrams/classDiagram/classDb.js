@@ -19,7 +19,7 @@ var funs = [];
  * @param style
  */
 exports.addClass = function (id) {
-    console.log('Adding: '+id);
+    log.log('Adding: '+id);
     if(typeof classes.get(id) === 'undefined'){
         classes.set(id, {
             id:id,
@@ -46,7 +46,7 @@ module.exports.getRelations = function () {
 };
 
 exports.addRelation = function (relation) {
-    console.log('Adding relation: ' + JSON.stringify(relation));
+    log.log('Adding relation: ' + JSON.stringify(relation));
     exports.addClass(relation.id1);
     exports.addClass(relation.id2);
 
