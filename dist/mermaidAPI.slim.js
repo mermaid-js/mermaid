@@ -21850,7 +21850,6 @@ var funs = [];
  * @param style
  */
 exports.addClass = function (id) {
-    log.log('Adding: ' + id);
     if (typeof classes.get(id) === 'undefined') {
         classes.set(id, {
             id: id,
@@ -21877,7 +21876,7 @@ module.exports.getRelations = function () {
 };
 
 exports.addRelation = function (relation) {
-    log.log('Adding relation: ' + JSON.stringify(relation));
+    log.warn('Adding relation: ' + JSON.stringify(relation));
     exports.addClass(relation.id1);
     exports.addClass(relation.id2);
 
@@ -21984,15 +21983,38 @@ var getGraphId = function getGraphId(label) {
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 var insertMarkers = function insertMarkers(elem) {
-    elem.append('defs').append('marker').attr('id', 'extensionStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,7 L18,13 V 1 Z');
+    elem.append('defs').append('marker').attr('id', 'extensionStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 1,7 L18,13 V 1 Z');
 
-    elem.append('defs').append('marker').attr('id', 'extensionEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,1 V 13 L18,7 Z'); //this is actual shape for arrowhead
-    elem.append('defs').append('marker').attr('id', 'extensionStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,7 L18,13 V 1 Z');
+    elem.append('defs').append('marker').attr('id', 'extensionEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 1,1 V 13 L18,7 Z'); //this is actual shape for arrowhead
 
-    elem.append('defs').append('marker').attr('id', 'extensionEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('fill', 'white').attr('stroke', 'black').attr('stroke-width', 1).attr('d', 'M 1,1 V 13 L18,7 Z'); //this is actual shape for arrowhead
+    elem.append('defs').append('marker').attr('id', 'compositionStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'compositionEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'aggregationStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'aggregationEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'dependencyStart').attr('class', 'extension').attr('refX', 0).attr('refY', 7).attr('markerWidth', 190).attr('markerHeight', 240).attr('orient', 'auto').append('path').attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker').attr('id', 'dependencyEnd').attr('refX', 19).attr('refY', 7).attr('markerWidth', 20).attr('markerHeight', 28).attr('orient', 'auto').append('path').attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
 var drawEdge = function drawEdge(elem, path, relation) {
+    var getRelationType = function getRelationType(type) {
+        //console.warn(type);
+        switch (type) {
+            case cDDb.relationType.AGGREGATION:
+                return 'aggregation';
+            case cDDb.relationType.EXTENSION:
+                return 'extension';
+            case cDDb.relationType.COMPOSITION:
+                return 'composition';
+            case cDDb.relationType.DEPENDENCY:
+                return 'dependency';
+        }
+    };
+
     //The data for our line
     var lineData = path.points;
 
@@ -22005,13 +22027,18 @@ var drawEdge = function drawEdge(elem, path, relation) {
     //.interpolate('cardinal');
     .interpolate('basis');
 
-    var path = elem.append('path').attr('d', lineFunction(lineData)).attr('class', 'relation');
+    var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('class', 'relation');
     var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
 
-    path.attr('marker-end', 'url(' + url + '#extensionEnd)');
-    path.attr('marker-start', 'url(' + url + '#extensionStart)');
+    //console.log(relation.relation.type1);
+    if (relation.relation.type1 !== 'none') {
+        svgPath.attr('marker-start', 'url(' + url + '#' + getRelationType(relation.relation.type1) + 'Start' + ')');
+    }
+    if (relation.relation.type2 !== 'none') {
+        svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')');
+    }
 };
 
 var drawClass = function drawClass(elem, classDef) {
@@ -22200,7 +22227,7 @@ module.exports.draw = function (text, id) {
         for (var _iterator5 = relations[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
             var relation = _step5.value;
 
-            g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
+            g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation });
         }
     } catch (err) {
         _didIteratorError5 = true;
@@ -22226,7 +22253,7 @@ module.exports.draw = function (text, id) {
     });
     g.edges().forEach(function (e) {
         log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
-        drawEdge(diagram, g.edge(e), e);
+        drawEdge(diagram, g.edge(e), g.edge(e).relation);
     });
 
     //
@@ -28907,8 +28934,11 @@ exports.PLACEMENT = {
 exports.addNote = function (actor, placement, message) {
     var note = { actor: actor, placement: placement, message: message };
 
+    // Coerce actor into a [to, from, ...] array
+    var actors = [].concat(actor, actor);
+
     notes.push(note);
-    messages.push({ from: actor, to: actor, message: message, type: exports.LINETYPE.NOTE, placement: placement });
+    messages.push({ from: actors[0], to: actors[1], message: message, type: exports.LINETYPE.NOTE, placement: placement });
 };
 
 exports.parseError = function (err, hash) {
@@ -29102,11 +29132,11 @@ exports.bounds = {
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-var drawNote = function drawNote(elem, startx, verticalPos, msg) {
+var drawNote = function drawNote(elem, startx, verticalPos, msg, forceWidth) {
     var rect = svgDraw.getNoteRect();
     rect.x = startx;
     rect.y = verticalPos;
-    rect.width = conf.width;
+    rect.width = forceWidth || conf.width;
     rect['class'] = 'note';
 
     var g = elem.append('g');
@@ -29120,21 +29150,19 @@ var drawNote = function drawNote(elem, startx, verticalPos, msg) {
     textObj.text = msg.message;
     textObj['class'] = 'noteText';
 
-    var textElem = svgDraw.drawText(g, textObj, conf.width - conf.noteMargin);
+    var textElem = svgDraw.drawText(g, textObj, rect.width - conf.noteMargin);
 
     var textHeight = textElem[0][0].getBBox().height;
-    if (textHeight > conf.width) {
+    if (!forceWidth && textHeight > conf.width) {
         textElem.remove();
         g = elem.append('g');
 
-        //textObj.x = textObj.x - conf.width;
-        //textElem = svgDraw.drawText(g,textObj, 2*conf.noteMargin);
-        textElem = svgDraw.drawText(g, textObj, 2 * conf.width - conf.noteMargin);
+        textElem = svgDraw.drawText(g, textObj, 2 * rect.width - conf.noteMargin);
         textHeight = textElem[0][0].getBBox().height;
-        rectElem.attr('width', 2 * conf.width);
-        exports.bounds.insert(startx, verticalPos, startx + 2 * conf.width, verticalPos + 2 * conf.noteMargin + textHeight);
+        rectElem.attr('width', 2 * rect.width);
+        exports.bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight);
     } else {
-        exports.bounds.insert(startx, verticalPos, startx + conf.width, verticalPos + 2 * conf.noteMargin + textHeight);
+        exports.bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight);
     }
 
     rectElem.attr('height', textHeight + 2 * conf.noteMargin);
@@ -29251,6 +29279,7 @@ module.exports.draw = function (text, id) {
 
     var startx;
     var stopx;
+    var forceWidth;
 
     // Fetch data from the parsing
     var actors = sq.yy.getActors();
@@ -29273,12 +29302,17 @@ module.exports.draw = function (text, id) {
                 startx = actors[msg.from].x;
                 stopx = actors[msg.to].x;
 
-                if (msg.placement !== 0) {
-                    // Right of
+                if (msg.placement === sq.yy.PLACEMENT.RIGHTOF) {
                     drawNote(diagram, startx + (conf.width + conf.actorMargin) / 2, exports.bounds.getVerticalPos(), msg);
-                } else {
-                    // Left of
+                } else if (msg.placement === sq.yy.PLACEMENT.LEFTOF) {
                     drawNote(diagram, startx - (conf.width + conf.actorMargin) / 2, exports.bounds.getVerticalPos(), msg);
+                } else if (msg.to === msg.from) {
+                    // Single-actor over
+                    drawNote(diagram, startx, exports.bounds.getVerticalPos(), msg);
+                } else {
+                    // Multi-actor over
+                    forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
+                    drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, exports.bounds.getVerticalPos(), msg, forceWidth);
                 }
                 break;
             case sq.yy.LINETYPE.LOOP_START:

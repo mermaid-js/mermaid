@@ -45,9 +45,6 @@ var insertMarkers = function (elem) {
         .attr('markerHeight', 240)
         .attr('orient', 'auto')
         .append('path')
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1)
         .attr('d', 'M 1,7 L18,13 V 1 Z');
 
     elem.append('defs').append('marker')
@@ -58,13 +55,89 @@ var insertMarkers = function (elem) {
         .attr('markerHeight', 28)
         .attr('orient', 'auto')
         .append('path')
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .attr('stroke-width', 1)
         .attr('d', 'M 1,1 V 13 L18,7 Z'); //this is actual shape for arrowhead
+
+    elem.append('defs').append('marker')
+        .attr('id', 'compositionStart')
+        .attr('class', 'extension')
+        .attr('refX', 0)
+        .attr('refY', 7)
+        .attr('markerWidth', 190)
+        .attr('markerHeight', 240)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker')
+        .attr('id', 'compositionEnd')
+        .attr('refX', 19)
+        .attr('refY', 7)
+        .attr('markerWidth', 20)
+        .attr('markerHeight', 28)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+
+    elem.append('defs').append('marker')
+        .attr('id', 'aggregationStart')
+        .attr('class', 'extension')
+        .attr('refX', 0)
+        .attr('refY', 7)
+        .attr('markerWidth', 190)
+        .attr('markerHeight', 240)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker')
+        .attr('id', 'aggregationEnd')
+        .attr('refX', 19)
+        .attr('refY', 7)
+        .attr('markerWidth', 20)
+        .attr('markerHeight', 28)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker')
+        .attr('id', 'dependencyStart')
+        .attr('class', 'extension')
+        .attr('refX', 0)
+        .attr('refY', 7)
+        .attr('markerWidth', 190)
+        .attr('markerHeight', 240)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
+
+    elem.append('defs').append('marker')
+        .attr('id', 'dependencyEnd')
+        .attr('refX', 19)
+        .attr('refY', 7)
+        .attr('markerWidth', 20)
+        .attr('markerHeight', 28)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
 var drawEdge = function (elem, path, relation) {
+    var getRelationType = function(type){
+        //console.warn(type);
+        switch(type){
+            case cDDb.relationType.AGGREGATION:
+                return 'aggregation';
+            case cDDb.relationType.EXTENSION:
+                return 'extension';
+            case cDDb.relationType.COMPOSITION:
+                return 'composition';
+            case cDDb.relationType.DEPENDENCY:
+                return 'dependency';
+        }
+    };
+
+
     //The data for our line
     var lineData = path.points;
 
@@ -79,15 +152,20 @@ var drawEdge = function (elem, path, relation) {
         //.interpolate('cardinal');
         .interpolate('basis');
 
-    var path = elem.append('path')
+    var svgPath = elem.append('path')
         .attr('d', lineFunction(lineData))
         .attr('class', 'relation');
     var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
 
-    path.attr('marker-end', 'url(' + url + '#extensionEnd)');
-    path.attr('marker-start', 'url(' + url + '#extensionStart)');
+    //console.log(relation.relation.type1);
+    if(relation.relation.type1 !== 'none'){
+        svgPath.attr('marker-start', 'url(' + url + '#' + getRelationType(relation.relation.type1)+'Start' + ')');
+    }
+    if(relation.relation.type2 !== 'none'){
+        svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2)+'End' + ')');
+    }
 }
 
 var drawClass = function (elem, classDef) {
@@ -233,7 +311,7 @@ module.exports.draw = function (text, id) {
     let relations = cDDb.getRelations();
     for (let relation of relations) {
 
-        g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
+        g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2),{relation:relation});
     }
     dagre.layout(g);
     g.nodes().forEach(function (v) {
@@ -244,7 +322,7 @@ module.exports.draw = function (text, id) {
     });
     g.edges().forEach(function (e) {
         log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
-        drawEdge(diagram, g.edge(e), e)
+        drawEdge(diagram, g.edge(e), g.edge(e).relation);
     });
 
 
