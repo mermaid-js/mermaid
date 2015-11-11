@@ -62,13 +62,11 @@ exports.addMembers = function (className, MembersArr) {
             theClass.members.push(MembersArr);
         }
     }
-    //console.warn('MembersArr:'+MembersArr);
 };
 
 exports.cleanupLabel = function (label) {
 
     if(label.substring(0,1) === ':'){
-        //console.warn('Fixing label:'+label.substr(2).trim());
         return label.substr(2).trim();
     }
     else{

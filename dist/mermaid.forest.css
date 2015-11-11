@@ -267,6 +267,15 @@ g.classGroup line {
   stroke: #13540c;
   stroke-width: 1;
 }
+svg .classLabel .box {
+  stroke: none;
+  stroke-width: 0;
+  fill: #cde498;
+  opacity: 0.5;
+}
+svg .classLabel .label {
+  fill: #13540c;
+}
 .relation {
   stroke: #13540c;
   stroke-width: 1;
