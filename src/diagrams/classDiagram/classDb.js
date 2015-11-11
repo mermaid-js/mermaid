@@ -56,13 +56,24 @@ exports.addMembers = function (className, MembersArr) {
     var theClass = classes.get(className);
     if(typeof MembersArr === 'string'){
         if(MembersArr.substr(-1) === ')'){
-            theClass.methods.push(MembersArr.substr(2));
+            theClass.methods.push(MembersArr);
         }
         else{
-            theClass.members.push(MembersArr.substr(2));
+            theClass.members.push(MembersArr);
         }
     }
     //console.warn('MembersArr:'+MembersArr);
+};
+
+exports.cleanupLabel = function (label) {
+
+    if(label.substring(0,1) === ':'){
+        //console.warn('Fixing label:'+label.substr(2).trim());
+        return label.substr(2).trim();
+    }
+    else{
+        return label.trim();
+    }
 };
 
 exports.lineType = {

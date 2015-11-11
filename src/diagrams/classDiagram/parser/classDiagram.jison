@@ -138,7 +138,7 @@ className
 
 statement
     : relationStatement       { yy.addRelation($1); }
-    | relationStatement LABEL { $1.title = $2; yy.addRelation($1);        }
+    | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | classStatement
     | methodStatement
     ;
@@ -155,7 +155,7 @@ members
 
 methodStatement
     : className {/*console.log('Rel found',$1);*/}
-    | className LABEL {yy.addMembers($1,$2);}
+    | className LABEL {yy.addMembers($1,yy.cleanupLabel($2));}
     | MEMBER {console.warn('Member',$1);}
     | SEPARATOR {/*console.log('sep found',$1);*/}
     ;

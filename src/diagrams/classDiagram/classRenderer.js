@@ -122,10 +122,11 @@ var insertMarkers = function (elem) {
         .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
 
+var edgeCount = 0;
 var drawEdge = function (elem, path, relation) {
-    var getRelationType = function(type){
+    var getRelationType = function (type) {
         //console.warn(type);
-        switch(type){
+        switch (type) {
             case cDDb.relationType.AGGREGATION:
                 return 'aggregation';
             case cDDb.relationType.EXTENSION:
@@ -154,18 +155,69 @@ var drawEdge = function (elem, path, relation) {
 
     var svgPath = elem.append('path')
         .attr('d', lineFunction(lineData))
+        .attr('id', 'edge' + edgeCount)
         .attr('class', 'relation');
+
     var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
 
     //console.log(relation.relation.type1);
-    if(relation.relation.type1 !== 'none'){
-        svgPath.attr('marker-start', 'url(' + url + '#' + getRelationType(relation.relation.type1)+'Start' + ')');
+    if (relation.relation.type1 !== 'none') {
+        svgPath.attr('marker-start', 'url(' + url + '#' + getRelationType(relation.relation.type1) + 'Start' + ')');
     }
-    if(relation.relation.type2 !== 'none'){
-        svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2)+'End' + ')');
+    if (relation.relation.type2 !== 'none') {
+        svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')');
     }
+
+    console.warn(path);
+
+    //var bbox = svgPath[0][0].getBBox();
+    //var x = Math.floor(bbox.x + bbox.width/2.0);
+    //var y = Math.floor(bbox.y + bbox.height/2.0);
+    var x, y;
+    var l = path.points.length;
+    if ((l % 2) !== 0) {
+        var p1 = path.points[Math.floor(l / 2)];
+        var p2 = path.points[Math.ceil(l / 2)];
+        x = (p1.x + p2.x) / 2;
+        y = (p1.y + p2.y) / 2;
+    }
+    else {
+        var p = path.points[Math.floor(l / 2)];
+        x = p.x;
+        y = p.y;
+    }
+
+    if (typeof relation.title !== 'undefined') {
+        var g = elem.append('g').
+            attr('class','classLabel');
+        var label = g.append('text')
+            .attr('class', 'label')
+            .attr('x', x)
+            .attr('y', y)
+            .attr('fill', 'red')
+            .attr('text-anchor', 'middle')
+            .text(relation.title);
+
+        window.label = label;
+        var bounds = label.node().getBBox();
+        console.log(bounds);
+
+        g.insert('rect', ':first-child')
+            .attr('class', 'box')
+            .attr('x', bounds.x-conf.padding/2)
+            .attr('y', bounds.y-conf.padding/2)
+            .attr('width', bounds.width + 2 * conf.padding/2)
+            .attr('height', bounds.height + 2 * conf.padding/2);
+        //.append('textpath')
+        //.attr('xlink:href','#edge'+edgeCount)
+        //.attr('text-anchor','middle')
+        //.attr('startOffset','50%')
+
+    }
+
+    edgeCount++;
 }
 
 var drawClass = function (elem, classDef) {
@@ -283,10 +335,14 @@ module.exports.draw = function (text, id) {
     //var svg = diagram.append('svg');
 
     // Layout graph, Create a new directed graph
-    var g = new dagre.graphlib.Graph();
+    var g = new dagre.graphlib.Graph({
+        multigraph: true
+    });
 
     // Set an object for the graph label
-    g.setGraph({});
+    g.setGraph({
+        isMultiGraph: true
+    });
 
     // Default to assigning a new object as a label for each new edge.
     g.setDefaultEdgeLabel(function () {
@@ -309,9 +365,10 @@ module.exports.draw = function (text, id) {
     }
 
     let relations = cDDb.getRelations();
+    var i = 0;
     for (let relation of relations) {
-
-        g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2),{relation:relation});
+        i = i + 1;
+        g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation});
     }
     dagre.layout(g);
     g.nodes().forEach(function (v) {
