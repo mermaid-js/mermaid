@@ -77,6 +77,23 @@ Would end up like this:
 ```
 An id is also added to mermaid tags without id.
 
+###Labels out of bounds
+
+If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the 
+whole page to have been loaded (dom + assets, particularly the fonts file).
+
+$(document).load(function() {
+    mermaid.initialize();
+});
+over
+
+$(document).ready(function() {
+    mermaid.initialize();
+});
+
+Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration 
+in mermaid uses the window.load event to start rendering.
+
 ### Calling **mermaid.init**
 By default, **mermaid.init** will be called when the document is ready, finding all elements with
 ``class="mermaid"``. If you are adding content after mermaid is loaded, or otherwise need

@@ -1,5 +1,5 @@
 /* global window */
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var dagreD3;

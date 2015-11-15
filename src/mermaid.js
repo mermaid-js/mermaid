@@ -17,7 +17,7 @@
  * the diagrams to svg code.
  */
 
-import * as Logger from './logger';
+var Logger = require('./logger');
 
 var log = new Logger.Log();
 var mermaidAPI = require('./mermaidAPI');
@@ -270,7 +270,7 @@ if(typeof document !== 'undefined'){
     /*!
      * Wait for document loaded before starting the execution
      */
-    document.addEventListener('DOMContentLoaded', function(){
+    window.addEventListener('load', function(){
         exports.contentLoaded();
     }, false);
 }

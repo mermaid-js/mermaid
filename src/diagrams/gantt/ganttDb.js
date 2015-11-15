@@ -2,7 +2,7 @@
  * Created by knut on 15-01-14.
  */
 var moment = require('moment');
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 

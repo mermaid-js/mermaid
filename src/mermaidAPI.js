@@ -11,7 +11,7 @@
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
  */
-import * as Logger from './logger';
+var Logger = require('./logger');
 var log = new Logger.Log();
 
 var graph = require('./diagrams/flowchart/graphDb');
@@ -440,6 +440,8 @@ var render = function(id, txt, cb, container){
     var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+url +'#arrowhead','g');
 
     svgCode = exports.decodeEntities(svgCode);
+    console.warn('here');
+
     //console.warn('mermaid decode: ');
     //console.warn(svgCode);
     //var he = require('he');
@@ -447,13 +449,15 @@ var render = function(id, txt, cb, container){
     if(typeof cb !== 'undefined'){
         cb(svgCode,graph.bindFunctions);
     }else{
-        log.warn('CB = undefined');
+        log.warn('CB = undefined!');
     }
 
     var node = d3.select('#d'+id).node();
     if(node !== null && typeof node.remove === 'function'){
         d3.select('#d'+id).node().remove();
     }
+
+    return svgCode;
 };
 
 exports.render = function(id, text, cb, containerElement){
@@ -462,7 +466,7 @@ if(typeof document === 'undefined'){
     }
     else{
         // In browser
-        render( id, text, cb, containerElement);
+        return render( id, text, cb, containerElement);
     }
 };
 

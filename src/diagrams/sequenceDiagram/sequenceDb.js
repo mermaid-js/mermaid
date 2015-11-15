@@ -5,7 +5,7 @@ var actors    = {};
 var actorKeys = [];
 var messages  = [];
 var notes     = [];
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 

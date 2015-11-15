@@ -6,15 +6,14 @@ var cd = require('./parser/classDiagram').parser;
 var cDDb = require('./classDb');
 cd.yy = cDDb;
 var d3 = require('../../d3');
-import * as Logger from '../../logger';
-import * as dagre from 'dagre';
+var Logger = require('../../logger');
+var dagre = require('dagre');
 var log = new Logger.Log();
 
 var idCache;
-if (typeof Map !== 'undefined') {
-    idCache = new Map();
-}
-let classCnt = 0;
+idCache = {};
+
+var classCnt = 0;
 var conf = {
     dividerMargin: 10,
     padding: 5,
@@ -23,15 +22,19 @@ var conf = {
 
 // Todo optimize
 var getGraphId = function (label) {
-    for (var [id, classInfo] of idCache) {
-        if (classInfo.label === label) {
-            return id;
-        }
+    var keys = Object.keys(idCache);
+
+    var i;
+    for(i=0;i<keys.length;i++){
+      if(idCache[keys[i]].label === label){
+          return keys[i];
+      }
     }
+
     return undefined;
 }
 
-
+window.tunk = getGraphId;
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
@@ -232,8 +235,8 @@ var drawClass = function (elem, classDef) {
         }
     };
 
-    let id = 'classId' + classCnt;
-    let classInfo = {
+    var id = 'classId' + classCnt;
+    var classInfo = {
         id: id,
         label: classDef.id,
         width: 0,
@@ -261,13 +264,13 @@ var drawClass = function (elem, classDef) {
         .attr('fill', 'white')
         .attr('class', 'classText');
 
-    let isFirst = true;
-    for (let member of classDef.members) {
+    var isFirst = true;
+    for (var member of classDef.members) {
         addTspan(members, member, isFirst);
         isFirst = false;
     }
 
-    //console.warn(JSON.stringify(classDef));
+    console.warn(JSON.stringify(classDef));
 
     var membersBox = members.node().getBBox();
 
@@ -284,7 +287,7 @@ var drawClass = function (elem, classDef) {
         .attr('class', 'classText');
 
     isFirst = true;
-    for (let method of classDef.methods) {
+    for (var method of classDef.methods) {
         addTspan(methods, method, isFirst);
         isFirst = false;
     }
@@ -304,7 +307,8 @@ var drawClass = function (elem, classDef) {
     classInfo.width = classBox.width + 2 * conf.padding;
     classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
-    idCache.set(id, classInfo);
+    console.warn('setting id: '+id +' to '+JSON.stringify(classInfo));
+    idCache[id] = classInfo;
     classCnt++;
     return classInfo;
 };
@@ -349,9 +353,12 @@ module.exports.draw = function (text, id) {
         return {};
     });
 
-    let classes = cDDb.getClasses();
-    for (let classDef of classes.values()) {
-        let node = drawClass(diagram, classDef);
+    var classes = cDDb.getClasses();
+    var keys = Object.keys(classes);
+    var i;
+    for (i=0;i<keys.length;i++) {
+        var classDef = classes[keys[i]];
+        var node = drawClass(diagram, classDef);
         // Add nodes to the graph. The first argument is the node id. The second is
         // metadata about the node. In this case we're going to add labels to each of
         // our nodes.
@@ -364,18 +371,21 @@ module.exports.draw = function (text, id) {
         //g.setNode("kbacon",     { label: "Kevin Bacon",   width: 121, height: 100 });
     }
 
-    let relations = cDDb.getRelations();
+    var relations = cDDb.getRelations();
     var i = 0;
-    for (let relation of relations) {
+    for (var relation of relations) {
         i = i + 1;
+        log.info('tjoho' + getGraphId(relation.id1) +  getGraphId(relation.id2) + JSON.stringify(relation));
         g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation});
     }
     dagre.layout(g);
     g.nodes().forEach(function (v) {
-        log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
-        d3.select('#' + v).attr('transform', 'translate(' + (g.node(v).x - (g.node(v).width / 2)) + ',' + (g.node(v).y - (g.node(v).height / 2)) + ' )');
-        //d3.select('#' +v +' rect').attr('x',(g.node(v).x-(g.node(v).width/2)))
-        //.attr('y',(g.node(v).y-(g.node(v).height/2)));
+        if(typeof v !== 'undefined'){
+            log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+            d3.select('#' + v).attr('transform', 'translate(' + (g.node(v).x - (g.node(v).width / 2)) + ',' + (g.node(v).y - (g.node(v).height / 2)) + ' )');
+            //d3.select('#' +v +' rect').attr('x',(g.node(v).x-(g.node(v).width/2)))
+            //.attr('y',(g.node(v).y-(g.node(v).height/2)));
+        }
     });
     g.edges().forEach(function (e) {
         log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));

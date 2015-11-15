@@ -333,7 +333,7 @@ svg .classLabel .label {
 }
 text {
   font-family: 'trebuchet ms', verdana, arial;
-  font-size: 28px;
+  font-size: 14px;
 }
 div.mermaidTooltip {
   position: absolute;

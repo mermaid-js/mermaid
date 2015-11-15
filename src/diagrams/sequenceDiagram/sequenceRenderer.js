@@ -6,9 +6,8 @@ var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
 var d3 = require('../../d3');
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
-
 
 var conf = {
 

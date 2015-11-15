@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-11-23.
  */
-import * as utils from './utils';
+var utils = require('./utils');
 
 //var log = require('./logger').create();
 describe('when detecting chart type ', function () {

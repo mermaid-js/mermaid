@@ -19,7 +19,7 @@ const LEVELS = {
     default: 5
 };
 
-let defaultLevel = LEVELS.error;
+var defaultLevel = LEVELS.error;
 
 exports.setLogLevel = function (level) {
     defaultLevel = level;
@@ -54,13 +54,11 @@ function formatTime(timestamp) {
 }
 
 
-class Log {
-    constructor(level) {
-        this.level = level;
-    }
+function Log(level) {
+    this.level = level;
 
-    log(str, level) {
-        let logLevel = this.level;
+    this.log = function(str, level) {
+        var logLevel = this.level;
         if(typeof logLevel === 'undefined'){
             logLevel = defaultLevel;
         }
@@ -71,27 +69,27 @@ class Log {
                 }
             }
         }
-    }
+    };
 
-    trace(str) {
+    this.trace = function(str) {
         this.log(str, LEVELS.trace);
-    }
+    };
 
-    debug(str) {
+    this.debug = function(str) {
         this.log(str, LEVELS.debug);
-    }
+    };
 
-    info(str) {
+    this.info = function(str) {
         this.log(str, LEVELS.info);
-    }
+    };
 
-    warn(str) {
+    this.warn = function(str) {
         this.log(str, LEVELS.warn);
-    }
+    };
 
-    error(str) {
+    this.error = function(str) {
         this.log(str, LEVELS.error);
-    }
+    };
 }
 
 exports.Log = Log;

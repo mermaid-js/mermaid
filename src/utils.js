@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-11-23.
  */
-import * as Logger from './logger';
+var Logger = require('./logger');
 var log = new Logger.Log();
 
 /**
@@ -49,7 +49,7 @@ var detectType = function(text){
 
     return 'graph';
 };
-export {detectType};
+exports.detectType= detectType;
 
 /**
  * Copies all relevant CSS content into the graph SVG.
@@ -134,4 +134,4 @@ var cloneCssStyles = function(svg, classes){
     }
 };
 
-export {cloneCssStyles};
+exports.cloneCssStyles = cloneCssStyles;

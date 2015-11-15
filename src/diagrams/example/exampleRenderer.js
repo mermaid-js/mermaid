@@ -4,7 +4,7 @@
 var db = require('./exampleDb');
 var exampleParser = require('./parser/example.js');
 var d3 = require('../../d3');
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 /**

@@ -1,14 +1,14 @@
 
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var relations = [];
 
-let classes;
+var classes;
 var idCache;
-if(typeof Map !== 'undefined'){
-    classes = new Map();
-}
+classes = {
+};
+
 // Functions to be run after graph rendering
 var funs = [];
 /**
@@ -19,24 +19,24 @@ var funs = [];
  * @param style
  */
 exports.addClass = function (id) {
-    if(typeof classes.get(id) === 'undefined'){
-        classes.set(id, {
+    if(typeof classes[id] === 'undefined'){
+        classes[id] = {
             id:id,
             methods:[],
             members:[]
-        });
+        };
     }
 };
 
 exports.clear = function () {
     relations = [];
-    classes.clear();
+    classes = {};
 };
 
 module.exports.getClass = function (id) {
-    return classes.get(id);
+    return classes[id];
 };
-module.exports.getClasses = function (id) {
+module.exports.getClasses = function () {
     return classes;
 };
 
@@ -53,7 +53,7 @@ exports.addRelation = function (relation) {
 };
 
 exports.addMembers = function (className, MembersArr) {
-    var theClass = classes.get(className);
+    var theClass = classes[className];
     if(typeof MembersArr === 'string'){
         if(MembersArr.substr(-1) === ')'){
             theClass.methods.push(MembersArr);

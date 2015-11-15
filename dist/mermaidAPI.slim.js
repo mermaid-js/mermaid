@@ -21219,7 +21219,7 @@ module.exports={
     "chalk": "^0.5.1",
     "d3": "3.5.6",
     "dagre": "^0.7.4",
-    "dagre-d3": "~0.4.8",
+    "dagre-d3": "0.4.10",
     "he": "^0.5.0",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
@@ -21766,21 +21766,15 @@ module.exports = d3;
 },{"d3":"d3"}],107:[function(require,module,exports){
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var relations = [];
 
-var classes = undefined;
+var classes;
 var idCache;
-if (typeof Map !== 'undefined') {
-    classes = new Map();
-}
+classes = {};
+
 // Functions to be run after graph rendering
 var funs = [];
 /**
@@ -21791,24 +21785,24 @@ var funs = [];
  * @param style
  */
 exports.addClass = function (id) {
-    if (typeof classes.get(id) === 'undefined') {
-        classes.set(id, {
+    if (typeof classes[id] === 'undefined') {
+        classes[id] = {
             id: id,
             methods: [],
             members: []
-        });
+        };
     }
 };
 
 exports.clear = function () {
     relations = [];
-    classes.clear();
+    classes = {};
 };
 
 module.exports.getClass = function (id) {
-    return classes.get(id);
+    return classes[id];
 };
-module.exports.getClasses = function (id) {
+module.exports.getClasses = function () {
     return classes;
 };
 
@@ -21825,7 +21819,7 @@ exports.addRelation = function (relation) {
 };
 
 exports.addMembers = function (className, MembersArr) {
-    var theClass = classes.get(className);
+    var theClass = classes[className];
     if (typeof MembersArr === 'string') {
         if (MembersArr.substr(-1) === ')') {
             theClass.methods.push(MembersArr);
@@ -21863,29 +21857,17 @@ exports.relationType = {
 
 'use strict';
 
-var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
-var _dagre = require('dagre');
-
-var dagre = _interopRequireWildcard(_dagre);
-
 var cd = require('./parser/classDiagram').parser;
 var cDDb = require('./classDb');
 cd.yy = cDDb;
 var d3 = require('../../d3');
-
+var Logger = require('../../logger');
+var dagre = require('dagre');
 var log = new Logger.Log();
 
 var idCache;
-if (typeof Map !== 'undefined') {
-    idCache = new Map();
-}
+idCache = {};
+
 var classCnt = 0;
 var conf = {
     dividerMargin: 10,
@@ -21895,39 +21877,19 @@ var conf = {
 
 // Todo optimize
 var getGraphId = function getGraphId(label) {
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var keys = Object.keys(idCache);
 
-    try {
-        for (var _iterator = idCache[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var _step$value = _slicedToArray(_step.value, 2);
-
-            var id = _step$value[0];
-            var classInfo = _step$value[1];
-
-            if (classInfo.label === label) {
-                return id;
-            }
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator['return']) {
-                _iterator['return']();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
+    var i;
+    for (i = 0; i < keys.length; i++) {
+        if (idCache[keys[i]].label === label) {
+            return keys[i];
         }
     }
 
     return undefined;
 };
 
+window.tunk = getGraphId;
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
@@ -22057,19 +22019,54 @@ var drawClass = function drawClass(elem, classDef) {
     .attr('x', conf.padding).attr('y', titleHeight + conf.dividerMargin + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
 
     var isFirst = true;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = classDef.members[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var member = _step.value;
+
+            addTspan(members, member, isFirst);
+            isFirst = false;
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator['return']) {
+                _iterator['return']();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    console.warn(JSON.stringify(classDef));
+
+    var membersBox = members.node().getBBox();
+
+    var methodsLine = g.append('line') // text label for the x axis
+    .attr('x1', 0).attr('y1', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('y2', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height);
+
+    var methods = g.append('text') // text label for the x axis
+    .attr('x', conf.padding).attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
+
+    isFirst = true;
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
     var _iteratorError2 = undefined;
 
     try {
-        for (var _iterator2 = classDef.members[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var member = _step2.value;
+        for (var _iterator2 = classDef.methods[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var method = _step2.value;
 
-            addTspan(members, member, isFirst);
+            addTspan(methods, method, isFirst);
             isFirst = false;
         }
-
-        //console.warn(JSON.stringify(classDef));
     } catch (err) {
         _didIteratorError2 = true;
         _iteratorError2 = err;
@@ -22085,41 +22082,6 @@ var drawClass = function drawClass(elem, classDef) {
         }
     }
 
-    var membersBox = members.node().getBBox();
-
-    var methodsLine = g.append('line') // text label for the x axis
-    .attr('x1', 0).attr('y1', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height).attr('y2', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height);
-
-    var methods = g.append('text') // text label for the x axis
-    .attr('x', conf.padding).attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
-
-    isFirst = true;
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-        for (var _iterator3 = classDef.methods[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var method = _step3.value;
-
-            addTspan(methods, method, isFirst);
-            isFirst = false;
-        }
-    } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-                _iterator3['return']();
-            }
-        } finally {
-            if (_didIteratorError3) {
-                throw _iteratorError3;
-            }
-        }
-    }
-
     var classBox = g.node().getBBox();
     g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
 
@@ -22129,7 +22091,8 @@ var drawClass = function drawClass(elem, classDef) {
     classInfo.width = classBox.width + 2 * conf.padding;
     classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
-    idCache.set(id, classInfo);
+    console.warn('setting id: ' + id + ' to ' + JSON.stringify(classInfo));
+    idCache[id] = classInfo;
     classCnt++;
     return classInfo;
 };
@@ -22173,75 +22136,60 @@ module.exports.draw = function (text, id) {
     });
 
     var classes = cDDb.getClasses();
-    var _iteratorNormalCompletion4 = true;
-    var _didIteratorError4 = false;
-    var _iteratorError4 = undefined;
-
-    try {
-        for (var _iterator4 = classes.values()[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var classDef = _step4.value;
-
-            var node = drawClass(diagram, classDef);
-            // Add nodes to the graph. The first argument is the node id. The second is
-            // metadata about the node. In this case we're going to add labels to each of
-            // our nodes.
-            g.setNode(node.id, node);
-            log.info('Org height: ' + node.height);
-            //g.setNode("swilliams",  { label: "Saul Williams", width: 160, height: 100 });
-            //g.setNode("bpitt",      { label: "Brad Pitt",     width: 108, height: 100 });
-            //g.setNode("hford",      { label: "Harrison Ford", width: 168, height: 100 });
-            //g.setNode("lwilson",    { label: "Luke Wilson",   width: 144, height: 100 });
-            //g.setNode("kbacon",     { label: "Kevin Bacon",   width: 121, height: 100 });
-        }
-    } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion4 && _iterator4['return']) {
-                _iterator4['return']();
-            }
-        } finally {
-            if (_didIteratorError4) {
-                throw _iteratorError4;
-            }
-        }
+    var keys = Object.keys(classes);
+    var i;
+    for (i = 0; i < keys.length; i++) {
+        var classDef = classes[keys[i]];
+        var node = drawClass(diagram, classDef);
+        // Add nodes to the graph. The first argument is the node id. The second is
+        // metadata about the node. In this case we're going to add labels to each of
+        // our nodes.
+        g.setNode(node.id, node);
+        log.info('Org height: ' + node.height);
+        //g.setNode("swilliams",  { label: "Saul Williams", width: 160, height: 100 });
+        //g.setNode("bpitt",      { label: "Brad Pitt",     width: 108, height: 100 });
+        //g.setNode("hford",      { label: "Harrison Ford", width: 168, height: 100 });
+        //g.setNode("lwilson",    { label: "Luke Wilson",   width: 144, height: 100 });
+        //g.setNode("kbacon",     { label: "Kevin Bacon",   width: 121, height: 100 });
     }
 
     var relations = cDDb.getRelations();
     var i = 0;
-    var _iteratorNormalCompletion5 = true;
-    var _didIteratorError5 = false;
-    var _iteratorError5 = undefined;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
     try {
-        for (var _iterator5 = relations[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var relation = _step5.value;
+        for (var _iterator3 = relations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var relation = _step3.value;
 
             i = i + 1;
+            log.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
             g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation });
         }
     } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion5 && _iterator5['return']) {
-                _iterator5['return']();
+            if (!_iteratorNormalCompletion3 && _iterator3['return']) {
+                _iterator3['return']();
             }
         } finally {
-            if (_didIteratorError5) {
-                throw _iteratorError5;
+            if (_didIteratorError3) {
+                throw _iteratorError3;
             }
         }
     }
 
     dagre.layout(g);
     g.nodes().forEach(function (v) {
-        log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
-        d3.select('#' + v).attr('transform', 'translate(' + (g.node(v).x - g.node(v).width / 2) + ',' + (g.node(v).y - g.node(v).height / 2) + ' )');
-        //d3.select('#' +v +' rect').attr('x',(g.node(v).x-(g.node(v).width/2)))
-        //.attr('y',(g.node(v).y-(g.node(v).height/2)));
+        if (typeof v !== 'undefined') {
+            log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
+            d3.select('#' + v).attr('transform', 'translate(' + (g.node(v).x - g.node(v).width / 2) + ',' + (g.node(v).y - g.node(v).height / 2) + ' )');
+            //d3.select('#' +v +' rect').attr('x',(g.node(v).x-(g.node(v).width/2)))
+            //.attr('y',(g.node(v).y-(g.node(v).height/2)));
+        }
     });
     g.edges().forEach(function (e) {
         log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
@@ -23075,12 +23023,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var message = '';
@@ -23114,16 +23057,10 @@ exports.parseError = function (err, hash) {
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
 var db = require('./exampleDb');
 var exampleParser = require('./parser/example.js');
 var d3 = require('../../d3');
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 /**
@@ -23807,12 +23744,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 /* global window */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var dagreD3;
@@ -23838,18 +23770,12 @@ module.exports = dagreD3;
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
 var graph = require('./graphDb');
 var flow = require('./parser/flow');
 var dot = require('./parser/dot');
 var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var conf = {};
@@ -24280,12 +24206,7 @@ exports.draw = function (text, id, isDot) {
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var d3 = require('../../d3');
@@ -26615,14 +26536,8 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
 var moment = require('moment');
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var dateFormat = '';
@@ -28851,17 +28766,11 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
 var actors = {};
 var actorKeys = [];
 var messages = [];
 var notes = [];
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 exports.addActor = function (id, name, description) {
@@ -28998,17 +28907,11 @@ exports.apply = function (param) {
 
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('../../logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
 var sq = require('./parser/sequenceDiagram').parser;
 sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
 var d3 = require('../../d3');
-
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var conf = {
@@ -29615,10 +29518,6 @@ exports.getNoteRect = function () {
 
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
 var LEVELS = {
     debug: 1,
     info: 2,
@@ -29662,59 +29561,45 @@ function formatTime(timestamp) {
     return t;
 }
 
-var Log = (function () {
-    function Log(level) {
-        _classCallCheck(this, Log);
+function Log(level) {
+    this.level = level;
 
-        this.level = level;
-    }
-
-    _createClass(Log, [{
-        key: 'log',
-        value: function log(str, level) {
-            var logLevel = this.level;
-            if (typeof logLevel === 'undefined') {
-                logLevel = defaultLevel;
-            }
-            if (logLevel <= level) {
-                if (typeof console !== 'undefined') {
+    this.log = function (str, level) {
+        var logLevel = this.level;
+        if (typeof logLevel === 'undefined') {
+            logLevel = defaultLevel;
+        }
+        if (logLevel <= level) {
+            if (typeof console !== 'undefined') {
+                //eslint-disable-line no-console
+                if (typeof console.log !== 'undefined') {
                     //eslint-disable-line no-console
-                    if (typeof console.log !== 'undefined') {
-                        //eslint-disable-line no-console
-                        return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
-                    }
+                    return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
                 }
             }
         }
-    }, {
-        key: 'trace',
-        value: function trace(str) {
-            this.log(str, LEVELS.trace);
-        }
-    }, {
-        key: 'debug',
-        value: function debug(str) {
-            this.log(str, LEVELS.debug);
-        }
-    }, {
-        key: 'info',
-        value: function info(str) {
-            this.log(str, LEVELS.info);
-        }
-    }, {
-        key: 'warn',
-        value: function warn(str) {
-            this.log(str, LEVELS.warn);
-        }
-    }, {
-        key: 'error',
-        value: function error(str) {
-            this.log(str, LEVELS.error);
-        }
-    }]);
+    };
 
-    return Log;
-})();
+    this.trace = function (str) {
+        this.log(str, LEVELS.trace);
+    };
+
+    this.debug = function (str) {
+        this.log(str, LEVELS.debug);
+    };
+
+    this.info = function (str) {
+        this.log(str, LEVELS.info);
+    };
+
+    this.warn = function (str) {
+        this.log(str, LEVELS.warn);
+    };
+
+    this.error = function (str) {
+        this.log(str, LEVELS.error);
+    };
+}
 
 exports.Log = Log;
 
@@ -29735,12 +29620,7 @@ exports.Log = Log;
  */
 'use strict';
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('./logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
+var Logger = require('./logger');
 var log = new Logger.Log();
 
 var graph = require('./diagrams/flowchart/graphDb');
@@ -30149,6 +30029,8 @@ var render = function render(id, txt, cb, container) {
     var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g');
 
     svgCode = exports.decodeEntities(svgCode);
+    console.warn('here');
+
     //console.warn('mermaid decode: ');
     //console.warn(svgCode);
     //var he = require('he');
@@ -30156,13 +30038,15 @@ var render = function render(id, txt, cb, container) {
     if (typeof cb !== 'undefined') {
         cb(svgCode, graph.bindFunctions);
     } else {
-        log.warn('CB = undefined');
+        log.warn('CB = undefined!');
     }
 
     var node = d3.select('#d' + id).node();
     if (node !== null && typeof node.remove === 'function') {
         d3.select('#d' + id).node().remove();
     }
+
+    return svgCode;
 };
 
 exports.render = function (id, text, cb, containerElement) {
@@ -30170,7 +30054,7 @@ exports.render = function (id, text, cb, containerElement) {
         // Todo handle rendering serverside using phantomjs
     } else {
             // In browser
-            render(id, text, cb, containerElement);
+            return render(id, text, cb, containerElement);
         }
 };
 
@@ -30234,16 +30118,7 @@ global.mermaidAPI = {
  */
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-var _logger = require('./logger');
-
-var Logger = _interopRequireWildcard(_logger);
-
+var Logger = require('./logger');
 var log = new Logger.Log();
 
 /**

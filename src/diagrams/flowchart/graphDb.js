@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-11-03.
  */
-import * as Logger from '../../logger';
+var Logger = require('../../logger');
 var log = new Logger.Log();
 
 var d3 = require('../../d3');
