@@ -100,6 +100,7 @@
     "karma": "^0.13.15",
     "karma-babel-preprocessor": "^6.0.1",
     "karma-browserify": "^4.4.0",
+    "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.1",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
