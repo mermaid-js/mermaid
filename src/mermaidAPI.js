@@ -65,6 +65,12 @@ var config = {
     startOnLoad: true,
 
     /**
+     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute pats or
+     * an anchor, #. This matters if you are using base tag settings.
+     */
+    arrowMarkerAbsolute: false,
+
+    /**
      * ### flowchart
      * *The object containing configurations specific for flowcharts*
      */
@@ -225,7 +231,8 @@ var config = {
                 return d.getMonth();
             }]
         ]
-    }
+    },
+    classDiagram:{}
 };
 
 Logger.setLogLevel(config.logLevel);
@@ -385,7 +392,7 @@ var render = function(id, txt, cb, container){
     var classes = {};
     switch(graphType){
         case 'graph':
-
+            config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
             if(config.cloneCssStyles){
@@ -394,6 +401,7 @@ var render = function(id, txt, cb, container){
             }
             break;
         case 'dotGraph':
+            config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, true);
             if(config.cloneCssStyles) {
@@ -402,6 +410,7 @@ var render = function(id, txt, cb, container){
             }
             break;
         case 'sequenceDiagram':
+            config.sequenceDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             seq.setConf(config.sequenceDiagram);
             seq.draw(txt,id);
             if(config.cloneCssStyles) {
@@ -409,6 +418,7 @@ var render = function(id, txt, cb, container){
             }
             break;
         case 'gantt':
+            config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             gantt.setConf(config.gantt);
             gantt.draw(txt,id);
             if(config.cloneCssStyles) {
@@ -416,13 +426,15 @@ var render = function(id, txt, cb, container){
             }
             break;
         case 'classDiagram':
-            classRenderer.setConf(config.gantt);
+            config.classDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+            classRenderer.setConf(config.classDiagram);
             classRenderer.draw(txt,id);
             if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
         case 'info':
+            config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             info.draw(txt,id,exports.version());
             if(config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
@@ -432,10 +444,13 @@ var render = function(id, txt, cb, container){
 
     d3.select('#d'+id).selectAll('foreignobject div').attr('xmlns','http://www.w3.org/1999/xhtml');
 
+    var url =  '';
+    if(config.arrowMarkerAbsolute){
+        url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
+        url = url.replace(/\(/g,'\\(');
+        url = url.replace(/\)/g,'\\)');
+    }
 
-    var url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
-    url = url.replace(/\(/g,'\\(');
-    url = url.replace(/\)/g,'\\)');
     // Fix for when the base tag is used
     var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+url +'#arrowhead','g');
 

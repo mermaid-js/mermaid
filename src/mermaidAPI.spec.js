@@ -13,14 +13,15 @@ describe('when using mermaidAPI and ',function() {
         //var document;
         //var window;
         beforeEach(function () {
-            var MockBrowser = require('mock-browser').mocks.MockBrowser;
-            var mock = new MockBrowser();
+            //var MockBrowser = require('mock-browser').mocks.MockBrowser;
+            //var mock = new MockBrowser();
 
             delete global.mermaid_config;
 
             // and in the run-code inside some object
-            global.document = mock.getDocument();
-            global.window = mock.getWindow();
+            //global.document = mock.getDocument();
+            //global.window = mock.getWindow();
+            document.body.innerHTML = '';
         });
 
         it('should copy a literal into the configuration', function () {
@@ -55,6 +56,7 @@ describe('when using mermaidAPI and ',function() {
     });
     describe('checking validity of input ', function(){
         it('it should return false for an invalid definiton',function(){
+            global.mermaidAPI.parseError= function(){};
             spyOn(global.mermaidAPI,'parseError');
             var res = api.parse('this is not a mermaid diagram definition');
 
@@ -63,7 +65,7 @@ describe('when using mermaidAPI and ',function() {
         });
         it('it should return true for a valid definiton',function(){
             spyOn(global.mermaidAPI,'parseError');
-            var res = global.mermaid.parse('graph TD;A--x|text including URL space|B;');
+            var res = api.parse('graph TD;A--x|text including URL space|B;');
 
             expect(res).toBe(true);
             expect(global.mermaidAPI.parseError).not.toHaveBeenCalled();

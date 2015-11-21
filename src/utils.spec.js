@@ -35,13 +35,13 @@ describe('when cloning CSS ', function () {
 
 
     beforeEach(function () {
-        var MockBrowser = require('mock-browser').mocks.MockBrowser;
-        var mock = new MockBrowser();
+        //var MockBrowser = require('mock-browser').mocks.MockBrowser;
+        //var mock = new MockBrowser();
 
         // and in the run-code inside some object
-        global.document = mock.getDocument();
-        //document.body.innerHTML = '';
-        //document.body.innerHTML = '';
+        //global.document = mock.getDocument();
+        document.body.innerHTML = '';
+
     });
 
     function stylesToArray(svg) {
@@ -62,6 +62,7 @@ describe('when cloning CSS ', function () {
                 styleArrTrim.splice(i, 1);
                 i--;
             }
+            styleArrTrim[i] = styleArrTrim[i].trim();
         }
 
         return styleArrTrim;
@@ -69,13 +70,13 @@ describe('when cloning CSS ', function () {
 
     function addStyleToDocument() {
         var s = document.createElement('style');
-        s.innerHTML = '.node { stroke:#eee; }\n.node-square { stroke:#bbb; }\n';
+        s.innerHTML = '.node { stroke:#eeeeee; }\n.node-square { stroke:#bbbbbb; }\n';
         document.body.appendChild(s);
     }
 
     function addSecondStyleToDocument() {
         var s = document.createElement('style');
-        s.innerHTML = '.node2 { stroke:#eee; }\n.node-square { stroke:#beb; }\n';
+        s.innerHTML = '.node2 { stroke:#eeeeee; }\n.node-square { stroke:#beb; }\n';
         document.body.appendChild(s);
     }
 
@@ -151,7 +152,7 @@ describe('when cloning CSS ', function () {
         var svg = generateSVG();
         addStyleToDocument();
         utils.cloneCssStyles(svg, {});
-        expect(stylesToArray(svg)).toEqual(['.node { stroke: #eee; }', '.node-square { stroke: #bbb; }']);
+        expect(stylesToArray(svg)).toEqual(['.node { stroke: #eeeeee; }', '.node-square { stroke: #bbbbbb; }']);
     });
 
     it('should handle multiple stylesheets in document with classes in SVG', function () {
@@ -159,7 +160,7 @@ describe('when cloning CSS ', function () {
         addStyleToDocument();
         addSecondStyleToDocument();
         utils.cloneCssStyles(svg, {});
-        expect(stylesToArray(svg)).toEqual(['.node { stroke: #eee; }', '.node-square { stroke: #bbb; }', '.node-square { stroke: #beb; }']);
+        expect(stylesToArray(svg)).toEqual(['.node { stroke: #eeeeee; }', '.node-square { stroke: #bbbbbb; }', '.node-square { stroke: #bbeebb; }']);
     });
 
     it('should handle multiple stylesheets + ignore styles in other mermaid SVG', function () {
@@ -168,29 +169,29 @@ describe('when cloning CSS ', function () {
         addSecondStyleToDocument();
         addMermaidSVGwithStyleToDocument();
         utils.cloneCssStyles(svg, {});
-        expect(stylesToArray(svg)).toEqual(['.node { stroke: #eee; }', '.node-square { stroke: #bbb; }', '.node-square { stroke: #beb; }']);
+        expect(stylesToArray(svg)).toEqual(['.node { stroke: #eeeeee; }', '.node-square { stroke: #bbbbbb; }', '.node-square { stroke: #bbeebb; }']);
     });
 
     it('should handle a default class together with stylesheet in document with classes in SVG', function () {
         var svg = generateSVG();
         addStyleToDocument();
-        utils.cloneCssStyles(svg, {'default': {'styles': ['stroke:#fff', 'stroke-width:1.5px']}});
-        expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }', '.node { stroke: #eee; }', '.node-square { stroke: #bbb; }']);
+        utils.cloneCssStyles(svg, {'default': {'styles': ['stroke:#ffffff', 'stroke-width:1.5px']}});
+        expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#ffffff; stroke-width:1.5px; }', '.node { stroke: #eeeeee; }', '.node-square { stroke: #bbbbbb; }']);
     });
 
     it('should handle a default class together with stylesheet in document and classDefs', function () {
         var svg = generateSVG();
         addStyleToDocument();
         utils.cloneCssStyles(svg, {
-            'default': {'styles': ['stroke:#fff', 'stroke-width:1.5px']},
-            'node-square': {'styles': ['fill:#eee', 'stroke:#aaa']},
-            'node-circle': {'styles': ['fill:#444', 'stroke:#111']}
+            'default': {'styles': ['stroke:#ffffff', 'stroke-width:1.5px']},
+            'node-square': {'styles': ['fill:#eeeeee', 'stroke:#aaaaaa']},
+            'node-circle': {'styles': ['fill:#444444', 'stroke:#111111']}
         });
-        expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }',
-            '.node { stroke: #eee; }',
-            '.node-square { stroke: #bbb; }',
-            '#mermaid-01 .node-square>rect { fill:#eee; stroke:#aaa; }',
-            '#mermaid-01 .node-circle>rect { fill:#444; stroke:#111; }'
+        expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#ffffff; stroke-width:1.5px; }',
+            '.node { stroke: #eeeeee; }',
+            '.node-square { stroke: #bbbbbb; }',
+            '#mermaid-01 .node-square>rect { fill:#eeeeee; stroke:#aaaaaa; }',
+            '#mermaid-01 .node-circle>rect { fill:#444444; stroke:#111111; }'
         ]);
     });
 });

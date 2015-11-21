@@ -8,8 +8,11 @@
     <script src="../../dist/mermaid.js"></script>
 </head><body>
 <script>
-    mermaid.startOnLoad=true;
-    //mermaid.initialize();
+    var config = {
+        startOnLoad:true,
+        arrowMarkerAbsolute:true
+    };
+    mermaid.initialize(config);
 </script>
 <div class="mermaid">
 graph LR;

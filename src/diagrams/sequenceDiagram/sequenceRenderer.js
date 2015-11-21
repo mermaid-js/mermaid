@@ -225,9 +225,12 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
         line.attr('class', 'messageLine0');
     }
 
-    var url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
-    url = url.replace(/\(/g,'\\(');
-    url = url.replace(/\)/g,'\\)');
+    var url =  '';
+    if(conf.arrowMarkerAbsolute){
+        url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
+        url = url.replace(/\(/g,'\\(');
+        url = url.replace(/\)/g,'\\)');
+    }
 
     line.attr('stroke-width', 2);
     line.attr('stroke', 'black');

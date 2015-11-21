@@ -46,6 +46,7 @@ exports.drawText = function(elem, textData, width) {
     //span.attr('dy', textData.dy);
     span.text(nText);
     if(typeof textElem.textwrap !== 'undefined'){
+
         textElem.textwrap({
             x: textData.x, // bounding box is 300 pixels from the left
             y: textData.y, // bounding box is 400 pixels from the top

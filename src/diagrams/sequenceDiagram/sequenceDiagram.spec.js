@@ -1,7 +1,8 @@
+var proxyquire = require('proxyquire');
 /**
  * Created by knut on 14-11-18.
  */
-var proxyquire = require('proxyquire');
+//var proxyquire = require('proxyquire');
 //var log = require('../../logger').create();
 
 var sq = require('./parser/sequenceDiagram').parser;
@@ -17,6 +18,10 @@ var d3 = {
 };
 //var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
 var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 });
+
+//
+//
+//var sd = require('./sequenceRenderer');
 
 var str;
 describe('when parsing a sequenceDiagram',function() {
@@ -574,14 +579,14 @@ describe('when rendering a sequenceDiagram',function() {
         sq.yy = require('./sequenceDb');
         sq.yy.clear();
 
-        var MockBrowser = require('mock-browser').mocks.MockBrowser;
-        var mock = new MockBrowser();
+        //var MockBrowser = require('mock-browser').mocks.MockBrowser;
+        //var mock = new MockBrowser();
 
         delete global.mermaid_config;
 
         // and in the run-code inside some object
-        global.document = mock.getDocument();
-        global.window = mock.getWindow();
+        //global.document = mock.getDocument();
+        //global.window = mock.getWindow();
 
         //parseError = function(err, hash) {
         //    log.debug('Syntax error:' + err);
@@ -632,6 +637,12 @@ describe('when rendering a sequenceDiagram',function() {
             noteMargin:25
         };
         sd.setConf(conf);
+        //document.body.innerHTML = '<div id="tst"></div>';
+        //document.body.innerHTML = '<svg height="30" width="200"><text id="tst" x="0" y="15" fill="red">I love SVG!</text></svg>';
+        //document.body.innerHTML = '<svg height="30" width="200"><text x="0" y="15" fill="red"><tspan x="46" id="tst">Alice thinks</tspan></text></svg>';
+        //console.log('document.body');
+        //console.log(document.querySelector('#tst').getBBox());
+
     });
     it('it should handle one actor', function () {
         sd.bounds.init();

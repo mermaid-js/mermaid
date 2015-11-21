@@ -5,7 +5,7 @@ module.exports = function (config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '',
+        basePath: '.',
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -14,22 +14,31 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            '../src/**/*.js'
+            './src/*.spec.js',
+            './src/diagrams/flowchart/**/*.spec.js',
+            './src/diagrams/example/**/*.spec.js',
+            './src/diagrams/sequenceDiagram/**/*.spec.js',
+            './src/diagrams/classDiagram/**/*.spec.js',
+            './src/diagrams/gantt/**/*.spec.js'
         ],
 
         preprocessors: {
-            '../src/**/*.js': [ 'babel','browserify' ]
+            'src/**/*.spec.js': [ 'browserify' ]
         },
 
         // list of files to exclude
-        exclude: ['../src/backup/**/*.js'],
+        //exclude: ['src/diagrams/*.js'],
 
-        "babelPreprocessor": {
-            // options go here
-        },
         browserify: {
             debug: true,
-            //transform: [ 'brfs' ]
+            //plugin: ['proxyquireify/plugin']
+            extensions : ['.js'],
+            configure: function (bundle) {
+                bundle.on('prebundle', function () {
+                    bundle
+                        .plugin('proxyquire-universal')
+                });
+            }
         },
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
@@ -38,7 +47,7 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress'],
+        reporters: ['dots'],
 
 
         // web server port
@@ -51,7 +60,7 @@ module.exports = function (config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_DEBUG,
+        logLevel: config.LOG_INFO,
 
 
         // enable / disable watching file and executing tests whenever any file changes
@@ -60,8 +69,13 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['Chrome'],
-
+        browsers: ['PhantomJS'],
+        plugins: [
+            'karma-jasmine',
+            'karma-phantomjs-launcher',
+            'karma-browserify',
+            'karma-babel-preprocessor'
+        ],
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false

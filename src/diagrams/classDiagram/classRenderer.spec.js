@@ -14,7 +14,7 @@
 //};
 
 //var classRenderer = proxyquire('./classRenderer', { '../../d3': d3 });
-var testDom = require('testdom')('<html><body><div id="tst"></div></body></html>');
+//var testDom = require('testdom')('<html><body><div id="tst"></div></body></html>');
 
 var classRenderer = require('./classRenderer');
 var parser = require('./parser/classDiagram').parser;
@@ -101,8 +101,8 @@ describe('class diagram, ', function () {
             });
         });
         it('it should handle one actor', function () {
-            var str = `classDiagram
-                       Class01 --|> Class02`;
+            var str = 'classDiagram\n'+
+            'Class01 --|> Class02';
 
             //classRenderer.draw(str,'tst');
 

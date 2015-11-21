@@ -30702,12 +30702,13 @@ module.exports={
     "live": "live-server ./test/examples",
     "lint": "node node_modules/eslint/bin/eslint.js src",
     "jison": "gulp jison_legacy",
+    "karma": "./node_modules/karma/bin/karma start karma.conf.js --single-run",
     "watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
     "tape": "node node_modules/.bin/tape test/cli_test-*.js",
     "jasmine": "npm run jison &&node node_modules/jasmine-es6/bin/jasmine.js",
-    "posttest": "npm run jison",
-    "test": "npm run dist && npm run jasmine && npm run tape",
+    "pretest": "npm run jison",
+    "test": "npm run dist && npm run karma && npm run tape",
     "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
     "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
     "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
@@ -30735,7 +30736,6 @@ module.exports={
   "devDependencies": {
     "async": "^0.9.0",
     "babel-eslint": "^4.1.3",
-    
     "babelify": "^6.4.0",
     "browserify": "~6.2.0",
     "clone": "^0.2.0",
@@ -30762,6 +30762,7 @@ module.exports={
     "gulp-insert": "^0.4.0",
     "gulp-istanbul": "^0.4.0",
     "gulp-jasmine": "~2.1.0",
+    "gulp-jasmine-browser": "^0.2.3",
     "gulp-jison": "~1.2.0",
     "gulp-jshint": "^1.9.0",
     "gulp-less": "^3.0.1",
@@ -30773,6 +30774,7 @@ module.exports={
     "gulp-shell": "^0.2.10",
     "gulp-tag-version": "^1.2.1",
     "gulp-uglify": "~1.0.1",
+    "gulp-util": "^3.0.7",
     "gulp-vartree": "^2.0.1",
     "hogan.js": "^3.0.2",
     "jasmine": "2.3.2",
@@ -30780,12 +30782,15 @@ module.exports={
     "jison": "zaach/jison",
     "jsdom": "^7.0.2",
     "jshint-stylish": "^2.0.1",
+    "karma-babel-preprocessor": "^6.0.1",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
     "mock-browser": "^0.91.34",
     "path": "^0.4.9",
     "phantomjs": "^1.9.18",
-    "proxyquire": "^1.3.1",
+    "proxyquire": "^1.7.3",
+    "proxyquire-universal": "^1.0.8",
+    "proxyquireify": "^3.0.0",
     "require-dir": "^0.3.0",
     "rewire": "^2.1.3",
     "rimraf": "^2.2.8",
@@ -31394,7 +31399,6 @@ var getGraphId = function getGraphId(label) {
     return undefined;
 };
 
-window.tunk = getGraphId;
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
@@ -31445,10 +31449,12 @@ var drawEdge = function drawEdge(elem, path, relation) {
     .interpolate('basis');
 
     var svgPath = elem.append('path').attr('d', lineFunction(lineData)).attr('id', 'edge' + edgeCount).attr('class', 'relation');
-
-    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    var url = '';
+    if (conf.arrowMarkerAbsolute) {
+        url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+        url = url.replace(/\(/g, '\\(');
+        url = url.replace(/\)/g, '\\)');
+    }
 
     //console.log(relation.relation.type1);
     if (relation.relation.type1 !== 'none') {
@@ -31524,31 +31530,15 @@ var drawClass = function drawClass(elem, classDef) {
     .attr('x', conf.padding).attr('y', titleHeight + conf.dividerMargin + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
 
     var isFirst = true;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
 
-    try {
-        for (var _iterator = classDef.members[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var member = _step.value;
-
-            addTspan(members, member, isFirst);
-            isFirst = false;
-        }
-    } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion && _iterator['return']) {
-                _iterator['return']();
-            }
-        } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
-            }
-        }
-    }
+    classDef.members.forEach(function (member) {
+        addTspan(members, member, isFirst);
+        isFirst = false;
+    });
+    //for (var member of classDef.members) {
+    //    addTspan(members, member, isFirst);
+    //    isFirst = false;
+    //}
 
     console.warn(JSON.stringify(classDef));
 
@@ -31561,31 +31551,15 @@ var drawClass = function drawClass(elem, classDef) {
     .attr('x', conf.padding).attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight).attr('fill', 'white').attr('class', 'classText');
 
     isFirst = true;
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
 
-    try {
-        for (var _iterator2 = classDef.methods[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var method = _step2.value;
-
-            addTspan(methods, method, isFirst);
-            isFirst = false;
-        }
-    } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion2 && _iterator2['return']) {
-                _iterator2['return']();
-            }
-        } finally {
-            if (_didIteratorError2) {
-                throw _iteratorError2;
-            }
-        }
-    }
+    classDef.methods.forEach(function (method) {
+        addTspan(methods, method, isFirst);
+        isFirst = false;
+    });
+    //for (var method of classDef.methods) {
+    //    addTspan(methods, method, isFirst);
+    //    isFirst = false;
+    //}
 
     var classBox = g.node().getBBox();
     g.insert('rect', ':first-child').attr('x', 0).attr('y', 0).attr('width', classBox.width + 2 * conf.padding).attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
@@ -31660,33 +31634,16 @@ module.exports.draw = function (text, id) {
 
     var relations = cDDb.getRelations();
     var i = 0;
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
-
-    try {
-        for (var _iterator3 = relations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var relation = _step3.value;
-
-            i = i + 1;
-            log.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
-            g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation });
-        }
-    } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-    } finally {
-        try {
-            if (!_iteratorNormalCompletion3 && _iterator3['return']) {
-                _iterator3['return']();
-            }
-        } finally {
-            if (_didIteratorError3) {
-                throw _iteratorError3;
-            }
-        }
-    }
-
+    relations.forEach(function (relation) {
+        i = i + 1;
+        log.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation));
+        g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation });
+    });
+    //for (var relation of relations) {
+    //    i = i + 1;
+    //    log.info('tjoho' + getGraphId(relation.id1) +  getGraphId(relation.id2) + JSON.stringify(relation));
+    //    g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation});
+    //}
     dagre.layout(g);
     g.nodes().forEach(function (v) {
         if (typeof v !== 'undefined') {
@@ -38625,9 +38582,12 @@ var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg) {
         line.attr('class', 'messageLine0');
     }
 
-    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    var url = '';
+    if (conf.arrowMarkerAbsolute) {
+        url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+        url = url.replace(/\(/g, '\\(');
+        url = url.replace(/\)/g, '\\)');
+    }
 
     line.attr('stroke-width', 2);
     line.attr('stroke', 'black');
@@ -38851,6 +38811,7 @@ exports.drawText = function (elem, textData, width) {
     //span.attr('dy', textData.dy);
     span.text(nText);
     if (typeof textElem.textwrap !== 'undefined') {
+
         textElem.textwrap({
             x: textData.x, // bounding box is 300 pixels from the left
             y: textData.y, // bounding box is 400 pixels from the top
@@ -39179,6 +39140,12 @@ var config = {
     startOnLoad: true,
 
     /**
+     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute pats or
+     * an anchor, #. This matters if you are using base tag settings.
+     */
+    arrowMarkerAbsolute: false,
+
+    /**
      * ### flowchart
      * *The object containing configurations specific for flowcharts*
      */
@@ -39338,7 +39305,8 @@ var config = {
         ['%m-%y', function (d) {
             return d.getMonth();
         }]]
-    }
+    },
+    classDiagram: {}
 };
 
 Logger.setLogLevel(config.logLevel);
@@ -39480,7 +39448,7 @@ var render = function render(id, txt, cb, container) {
     var classes = {};
     switch (graphType) {
         case 'graph':
-
+            config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, false);
             if (config.cloneCssStyles) {
@@ -39489,6 +39457,7 @@ var render = function render(id, txt, cb, container) {
             }
             break;
         case 'dotGraph':
+            config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             flowRenderer.setConf(config.flowchart);
             flowRenderer.draw(txt, id, true);
             if (config.cloneCssStyles) {
@@ -39497,6 +39466,7 @@ var render = function render(id, txt, cb, container) {
             }
             break;
         case 'sequenceDiagram':
+            config.sequenceDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             seq.setConf(config.sequenceDiagram);
             seq.draw(txt, id);
             if (config.cloneCssStyles) {
@@ -39504,6 +39474,7 @@ var render = function render(id, txt, cb, container) {
             }
             break;
         case 'gantt':
+            config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             gantt.setConf(config.gantt);
             gantt.draw(txt, id);
             if (config.cloneCssStyles) {
@@ -39511,13 +39482,15 @@ var render = function render(id, txt, cb, container) {
             }
             break;
         case 'classDiagram':
-            classRenderer.setConf(config.gantt);
+            config.classDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+            classRenderer.setConf(config.classDiagram);
             classRenderer.draw(txt, id);
             if (config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
             }
             break;
         case 'info':
+            config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             info.draw(txt, id, exports.version());
             if (config.cloneCssStyles) {
                 utils.cloneCssStyles(element.firstChild, []);
@@ -39527,9 +39500,13 @@ var render = function render(id, txt, cb, container) {
 
     d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    var url = '';
+    if (config.arrowMarkerAbsolute) {
+        url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
+        url = url.replace(/\(/g, '\\(');
+        url = url.replace(/\)/g, '\\)');
+    }
+
     // Fix for when the base tag is used
     var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g');
 
@@ -39696,7 +39673,7 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
                             var elems;
                             elems = svg.querySelectorAll(rule.selectorText);
                             if (elems.length > 0) {
-                                usedStyles += rule.selectorText + ' { ' + rule.style.cssText + ' }\n';
+                                usedStyles += rule.selectorText + ' { ' + rule.style.cssText + '}\n';
                             }
                         }
                     }

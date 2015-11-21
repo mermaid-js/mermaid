@@ -58,3 +58,11 @@ gulp.task('usageTestsBower', function() {
     return bower({cwd: 'test/usageTests'})
         .pipe(gulp.dest('test/usageTests/bower_components'));
 });
+
+var jasmineBrowser = require('gulp-jasmine-browser');
+
+gulp.task('jasmine2', function() {
+    return gulp.src(['src/**/*.js'])
+        .pipe(jasmineBrowser.specRunner({console: true}))
+        .pipe(jasmineBrowser.headless());
+});

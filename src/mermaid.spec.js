@@ -4,7 +4,7 @@
 /**
  * Created by knut on 14-11-23.
  */
-var rewire = require('rewire');
+//var rewire = require('rewire');
 var mermaid = require('./mermaid');
 //var log = require('./logger').create();
 
@@ -14,19 +14,19 @@ describe('when using mermaid and ',function() {
         //var document;
         //var window;
         beforeEach(function () {
-            var MockBrowser = require('mock-browser').mocks.MockBrowser;
-            var mock = new MockBrowser();
-
-            delete global.mermaid_config;
-
-            // and in the run-code inside some object
-            global.document = mock.getDocument();
-            global.window = mock.getWindow();
+            //var MockBrowser = require('mock-browser').mocks.MockBrowser;
+            //var mock = new MockBrowser();
+            //
+            //delete global.mermaid_config;
+            //
+            //// and in the run-code inside some object
+            //global.document = mock.getDocument();
+            //global.window = mock.getWindow();
 
         });
 
         it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
-            mermaid = rewire('./mermaid');
+            //mermaid = rewire('./mermaid');
             global.mermaid_config ={startOnLoad : false};
 
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
@@ -37,7 +37,7 @@ describe('when using mermaid and ',function() {
         });
 
         it('should not start rendering with mermaid.startOnLoad set to false', function () {
-            mermaid = rewire('./mermaid');
+            //mermaid = rewire('./mermaid');
             global.mermaid.startOnLoad =  false;
             global.mermaid_config ={startOnLoad : true};
 
@@ -48,7 +48,7 @@ describe('when using mermaid and ',function() {
         });
 
         it('should start rendering with both startOnLoad set', function () {
-            mermaid = rewire('./mermaid');
+            //mermaid = rewire('./mermaid');
             global.mermaid.startOnLoad =  true;
             global.mermaid_config ={startOnLoad : true};
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
@@ -58,7 +58,7 @@ describe('when using mermaid and ',function() {
         });
 
         it('should start rendering with mermaid.startOnLoad set and no mermaid_config defined', function () {
-            mermaid = rewire('./mermaid');
+            //mermaid = rewire('./mermaid');
             global.mermaid.startOnLoad =  true;
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
@@ -67,7 +67,7 @@ describe('when using mermaid and ',function() {
         });
 
         it('should start rendering as a default with no changes performed', function () {
-            mermaid = rewire('./mermaid');
+            //mermaid = rewire('./mermaid');
             document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
             spyOn(global.mermaid,'init');
             mermaid.contentLoaded();
@@ -83,12 +83,12 @@ describe('when using mermaid and ',function() {
 
         beforeEach(function () {
             global.mermaid_config ={startOnLoad : false};
-            var MockBrowser = require('mock-browser').mocks.MockBrowser;
-            var mock = new MockBrowser();
+            //var MockBrowser = require('mock-browser').mocks.MockBrowser;
+            //var mock = new MockBrowser();
             flow.parser.yy =graph;
             graph.clear();
-            global.document = mock.getDocument();
-            mermaid = rewire('./mermaid');
+            //global.document = mock.getDocument();
+            //mermaid = rewire('./mermaid');
         });
         it('it should handle edges with text', function () {
             flow.parser.parse('graph TD;A-->|text ex|B;');

@@ -74,7 +74,7 @@ var cloneCssStyles = function(svg, classes){
                             var elems;
                             elems = svg.querySelectorAll(rule.selectorText);
                             if (elems.length > 0) {
-                                usedStyles += rule.selectorText + ' { ' + rule.style.cssText + ' }\n';
+                                usedStyles += rule.selectorText + ' { ' + rule.style.cssText + '}\n';
                             }
                         }
                     }

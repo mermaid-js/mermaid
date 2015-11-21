@@ -34,7 +34,6 @@ var getGraphId = function (label) {
     return undefined;
 }
 
-window.tunk = getGraphId;
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
@@ -160,10 +159,12 @@ var drawEdge = function (elem, path, relation) {
         .attr('d', lineFunction(lineData))
         .attr('id', 'edge' + edgeCount)
         .attr('class', 'relation');
-
-    var url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
+    var url =  '';
+    if(conf.arrowMarkerAbsolute){
+        url =  window.location.protocol+'//'+window.location.host+window.location.pathname +window.location.search;
+        url = url.replace(/\(/g,'\\(');
+        url = url.replace(/\)/g,'\\)');
+    }
 
     //console.log(relation.relation.type1);
     if (relation.relation.type1 !== 'none') {
@@ -265,10 +266,15 @@ var drawClass = function (elem, classDef) {
         .attr('class', 'classText');
 
     var isFirst = true;
-    for (var member of classDef.members) {
-        addTspan(members, member, isFirst);
-        isFirst = false;
-    }
+
+    classDef.members.forEach(function(member){
+            addTspan(members, member, isFirst);
+            isFirst = false;
+    });
+    //for (var member of classDef.members) {
+    //    addTspan(members, member, isFirst);
+    //    isFirst = false;
+    //}
 
     console.warn(JSON.stringify(classDef));
 
@@ -287,10 +293,15 @@ var drawClass = function (elem, classDef) {
         .attr('class', 'classText');
 
     isFirst = true;
-    for (var method of classDef.methods) {
-        addTspan(methods, method, isFirst);
-        isFirst = false;
-    }
+
+    classDef.methods.forEach(function(method){
+            addTspan(methods, method, isFirst);
+            isFirst = false;
+    });
+    //for (var method of classDef.methods) {
+    //    addTspan(methods, method, isFirst);
+    //    isFirst = false;
+    //}
 
     var classBox = g.node().getBBox();
     g.insert('rect', ':first-child')
@@ -373,11 +384,16 @@ module.exports.draw = function (text, id) {
 
     var relations = cDDb.getRelations();
     var i = 0;
-    for (var relation of relations) {
-        i = i + 1;
-        log.info('tjoho' + getGraphId(relation.id1) +  getGraphId(relation.id2) + JSON.stringify(relation));
-        g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation});
-    }
+    relations.forEach(function(relation){
+            i = i + 1;
+            log.info('tjoho' + getGraphId(relation.id1) +  getGraphId(relation.id2) + JSON.stringify(relation));
+            g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation});
+    });
+    //for (var relation of relations) {
+    //    i = i + 1;
+    //    log.info('tjoho' + getGraphId(relation.id1) +  getGraphId(relation.id2) + JSON.stringify(relation));
+    //    g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation});
+    //}
     dagre.layout(g);
     g.nodes().forEach(function (v) {
         if(typeof v !== 'undefined'){
