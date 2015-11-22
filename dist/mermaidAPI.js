@@ -39303,7 +39303,8 @@ var config = {
             return d.getMonth();
         }]]
     },
-    classDiagram: {}
+    classDiagram: {},
+    info: {}
 };
 
 Logger.setLogLevel(config.logLevel);
@@ -39528,18 +39529,21 @@ var render = function render(id, txt, cb, container) {
 };
 
 exports.render = function (id, text, cb, containerElement) {
-    log.info('APA');
-    if (arguments.length === 1) {
-        text = id;
-        id = 'mermaidId0';
-    }
-
-    if (typeof document === 'undefined') {
-        // Todo handle rendering serverside using phantomjs
-    } else {
-            // In browser
-            return render(id, text, cb, containerElement);
+    try {
+        if (arguments.length === 1) {
+            text = id;
+            id = 'mermaidId0';
         }
+
+        if (typeof document === 'undefined') {
+            // Todo handle rendering serverside using phantomjs
+        } else {
+                // In browser
+                return render(id, text, cb, containerElement);
+            }
+    } catch (e) {
+        log.warn(e);
+    }
 };
 
 var setConf = function setConf(cnf) {
