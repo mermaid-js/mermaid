@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="dist/mermaidAPI.js"></script>
+
+    <script>
+        mermaidAPI.initialize({
+            startOnLoad:true,
+            logLevel:2
+        });
+        $(function(){
+            var graphDefinition = 'graph TB\na-->b';
+//            var cb = function(html){
+//                console.log(html);
+//            }
+            console.log(mermaidAPI.render(graphDefinition));
+            console.log(mermaidAPI.render('id',graphDefinition));
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

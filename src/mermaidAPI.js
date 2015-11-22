@@ -455,7 +455,6 @@ var render = function(id, txt, cb, container){
     var svgCode = d3.select('#d'+id).node().innerHTML.replace(/url\(#arrowhead/g,'url('+url +'#arrowhead','g');
 
     svgCode = exports.decodeEntities(svgCode);
-    console.warn('here');
 
     //console.warn('mermaid decode: ');
     //console.warn(svgCode);
@@ -475,13 +474,19 @@ var render = function(id, txt, cb, container){
     return svgCode;
 };
 
-exports.render = function(id, text, cb, containerElement){
-if(typeof document === 'undefined'){
+exports.render = function (id, text, cb, containerElement) {
+    log.info('APA');
+    if(arguments.length === 1){
+        text = id;
+        id = 'mermaidId0';
+    }
+
+    if (typeof document === 'undefined') {
         // Todo handle rendering serverside using phantomjs
     }
-    else{
+    else {
         // In browser
-        return render( id, text, cb, containerElement);
+        return render(id, text, cb, containerElement);
     }
 };
 

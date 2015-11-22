@@ -127,7 +127,6 @@ var insertMarkers = function (elem) {
 var edgeCount = 0;
 var drawEdge = function (elem, path, relation) {
     var getRelationType = function (type) {
-        //console.warn(type);
         switch (type) {
             case cDDb.relationType.AGGREGATION:
                 return 'aggregation';
@@ -174,8 +173,6 @@ var drawEdge = function (elem, path, relation) {
         svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')');
     }
 
-    console.warn(path);
-
     //var bbox = svgPath[0][0].getBBox();
     //var x = Math.floor(bbox.x + bbox.width/2.0);
     //var y = Math.floor(bbox.y + bbox.height/2.0);
@@ -206,7 +203,6 @@ var drawEdge = function (elem, path, relation) {
 
         window.label = label;
         var bounds = label.node().getBBox();
-        console.log(bounds);
 
         g.insert('rect', ':first-child')
             .attr('class', 'box')
@@ -276,8 +272,6 @@ var drawClass = function (elem, classDef) {
     //    isFirst = false;
     //}
 
-    console.warn(JSON.stringify(classDef));
-
     var membersBox = members.node().getBBox();
 
     var methodsLine = g.append('line')      // text label for the x axis
@@ -318,7 +312,6 @@ var drawClass = function (elem, classDef) {
     classInfo.width = classBox.width + 2 * conf.padding;
     classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
-    console.warn('setting id: '+id +' to '+JSON.stringify(classInfo));
     idCache[id] = classInfo;
     classCnt++;
     return classInfo;
