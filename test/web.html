@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
-    <script src="../dist/mermaid.min.js"></script>
+    <script src="../dist/mermaid.js"></script>
     <script>
         var config = {
             startOnLoad:true,
@@ -47,7 +47,7 @@
         click A coolAction
         B --> D{Rhombus}
         C --> D
-        A("test(vcc) a a ") --> B;
+        A("test(vcc) a a ") --> B
         snda
         
     </div>
@@ -156,8 +156,9 @@
         c1-->a2
 
     </div>
-    <div class="mermaid" >graph TB
-        subgraph
+    <div class="mermaid">
+    graph TB
+        subgraph Tjo
             sq[Square shape] -.-> ci((Circle shape))
             od>Odd shape]-. Two line<br>edge comment .-> ro
             di{Diamond with <br/> line break} ==> ro(Rounded<br>square<br>shape)
@@ -183,12 +184,11 @@
             sq[Square shape]-->ci((Circle shape))
             od>Odd shape]---|Two line<br>edge comment|ro
         end
-        subgraph
-            od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape]
-            di{Diamond is broken}-->ro(Rounded squar shape);
-            di-->ro2(Rounded square shape)
-        end
-
+subgraph dfdg
+    od2>Really long text in an Odd shape]-->od3>Really long text with linebreak<br>in an Odd shape]
+    di{Diamond is broken}-->ro(Rounded squar shape)
+    di-->ro2(Rounded square shape)
+end
     </div>
     <div class="mermaid">
         graph LR;
@@ -201,30 +201,13 @@
         C-->|XYZ Router|D;
     </div>
 
-    <h1>Sequence diagrams (experimental)</h1>
-    <pre>
-        sequenceDiagram
-        participant John the Long
-        Alice->Bob: Hello Bob, how are you?
-        Note left of Bob: Bob thinks
-        Bob-->Alice: I am good thanks!
-        Bob-->John the Long: How about you John?
-        Note left of John the Long: Bob thinks
-        Bob-->Alice: Checking with John...
-
-        loop Multiple status checks
-        loog Naging
-        Alice->John the Long: Yes... John, how are you?
-        end
-        John the Long-->Alice: Better then you!
-        end
-    </pre>
-    <div class="mermaid2">
+    <h1>Sequence diagrams </h1>
+    <div class="mermaid">
         sequenceDiagram
         participant Alice
         Note left of Alice: Bob thinks about <br/> things <br/> to think about
     </div>
-    <div class="mermaid2">
+    <div class="mermaid">
         sequenceDiagram
         participant Alice
         participant Bob
