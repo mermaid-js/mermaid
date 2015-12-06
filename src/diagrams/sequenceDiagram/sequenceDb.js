@@ -2,7 +2,6 @@
  * Created by knut on 14-11-19.
  */
 var actors    = {};
-var actorKeys = [];
 var messages  = [];
 var notes     = [];
 var Logger = require('../../logger');
@@ -11,8 +10,14 @@ var log = new Logger.Log();
 
 
 exports.addActor = function(id,name,description){
+    // Don't allow description nulling
+    var old = actors[id];
+    if ( old && name === old.name && description == null ) return;
+
+    // Don't allow null descriptions, either
+    if ( description == null ) description = name;
+
     actors[id] = {name:name, description:description};
-    actorKeys.push(id);
 };
 
 exports.addMessage = function(idFrom, idTo, message,  answer){
@@ -98,7 +103,7 @@ exports.apply = function(param){
         // log.debug(param);
         switch(param.type){
             case 'addActor':
-                exports.addActor(param.actor, param.actor, param.actor);
+                exports.addActor(param.actor, param.actor, param.description);
                 break;
             case 'addNote':
                 exports.addNote(param.actor,param.placement, param.text);
