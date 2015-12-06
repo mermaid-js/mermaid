@@ -67,6 +67,25 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
     });
+    it('it should alias participants', function () {
+        str = 'sequenceDiagram\n' +
+            'participant A as Alice\n' +
+            'participant B as Bob\n' +
+            'A->B:Hello Bob, how are you?\n' +
+            'B-->A: I am good thanks!';
+
+        sq.parse(str);
+
+        var actors = sq.yy.getActors();
+        expect(Object.keys(actors)).toEqual(['A', 'B']);
+        expect(actors.A.description).toBe('Alice');
+        expect(actors.B.description).toBe('Bob');
+
+        var messages = sq.yy.getMessages();
+        expect(messages.length).toBe(2);
+        expect(messages[0].from).toBe('A');
+        expect(messages[1].from).toBe('B');
+    });
     it('it should handle in async messages', function () {
         var str = 'sequenceDiagram\n' +
         'Alice-xBob:Hello Bob, how are you?';
