@@ -12,17 +12,24 @@
 
 %options case-insensitive
 
+// Special states for recognizing aliases
+%x ID
+%x ALIAS
+
 // A special state for grabbing text up to the first comment/newline
 %x LINE
 
 %%
 
-[\n]+                   return 'NL';
-\s+                     /* skip all whitespace */
-<LINE>((?!\n)\s)+       /* skip same-line whitespace */
-<INITIAL,LINE>\#[^\n]*  /* skip comments */
-\%%[^\n]*               /* skip comments */
-"participant"     return 'participant';
+[\n]+                            return 'NL';
+\s+                              /* skip all whitespace */
+<ID,ALIAS,LINE>((?!\n)\s)+       /* skip same-line whitespace */
+<INITIAL,ID,ALIAS,LINE>\#[^\n]*  /* skip comments */
+\%%[^\n]*                        /* skip comments */
+"participant"     { this.begin('ID'); return 'participant'; }
+<ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)  { this.begin('ALIAS'); return 'ACTOR'; }
+<ALIAS>"as"       { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
+<ALIAS>(?:)       { this.popState(); this.popState(); return 'NL'; }
 "loop"            { this.begin('LINE'); return 'loop'; }
 "opt"             { this.begin('LINE'); return 'opt'; }
 "alt"             { this.begin('LINE'); return 'alt'; }
@@ -72,7 +79,8 @@ line
 	;
 
 statement
-	: 'participant' actor 'NL' {$$=$2;}
+	: 'participant' actor 'AS' restOfLine 'NL' {$2.description=$4; $$=$2;}
+	| 'participant' actor 'NL' {$$=$2;}
 	| signal 'NL'
 	| note_statement 'NL'
 	| 'title' SPACE text 'NL'
@@ -133,9 +141,6 @@ signal
 	{$$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
 
-actors: actors actor
-	  | actor
-	  ;
 actor
 	: ACTOR {$$={type: 'addActor', actor:$1}}
 	;
