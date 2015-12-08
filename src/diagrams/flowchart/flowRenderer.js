@@ -192,7 +192,7 @@ exports.addEdges = function (edges, g) {
             var edgeText = edge.text.replace(/<br>/g, '\n');
             if(typeof edge.style === 'undefined'){
                 if (conf.htmlLabels){
-                    g.setEdge(edge.start, edge.end,{labelType: 'html',style: style, labelpos:'c', label: '<span style="background:#e8e8e8">'+edge.text+'</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
+                    g.setEdge(edge.start, edge.end,{labelType: 'html',style: style, labelpos:'c', label: '<span class="edgeLabel">'+edge.text+'</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
                 }else{
                     g.setEdge(edge.start, edge.end,{labelType: 'text', style: 'stroke: #333; stroke-width: 1.5px;fill:none', labelpos:'c', label: edgeText, arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
                 }
