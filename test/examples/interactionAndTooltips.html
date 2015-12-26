@@ -19,6 +19,11 @@
         function callback2(id){
             alert('x'+id);
         }
+
+        function onNodeClick(nodeId){
+            alert(nodeId);
+        }
+
         mermaid.initialize({logLevel:1});
     </script>
 </head>
@@ -43,6 +48,22 @@
             A-->B
             B-->C
             click A callback2 "Tooltip3"
+    </div>
+
+    <h1>Issue #272</h1>
+
+    <div class="mermaid" id="i213">
+        graph LR;
+
+        A((start))-->B(step1);
+        B-->C[step2];
+        C-->D{step3};
+        D-->E[end];
+
+        classDef green fill:#9f6,stroke:#333,stroke-width:1px;
+        class A,B,C,D,E green;
+
+        click B onNodeClick "tooltip"
     </div>
     </body>
 </html>

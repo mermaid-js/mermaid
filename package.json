@@ -17,10 +17,10 @@
     "live": "live-server ./test/examples",
     "lint": "node node_modules/eslint/bin/eslint.js src",
     "jison": "gulp jison_legacy",
-    "karma": "./node_modules/karma/bin/karma start karma.conf.js --single-run",
+    "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
     "watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "tape": "node node_modules/.bin/tape test/cli_test-*.js",
+    "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
     "jasmine": "npm run jison &&node node_modules/jasmine-es6/bin/jasmine.js",
     "pretest": "npm run jison",
     "test": "npm run dist && npm run karma && npm run tape",
@@ -28,7 +28,7 @@
     "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
     "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
     "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
-    "dist": "npm run dist-slim-mermaid;npm run dist-slim-mermaidAPI; npm run dist-mermaid;npm run dist-mermaidAPI"
+    "dist": "npm run dist-slim-mermaid && npm run dist-slim-mermaidAPI && npm run dist-mermaid && npm run dist-mermaidAPI"
   },
   "repository": {
     "type": "git",
@@ -102,6 +102,7 @@
     "karma-browserify": "^4.4.0",
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.1",
+    "live-server": "^0.9.0",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
     "mock-browser": "^0.91.34",
@@ -117,6 +118,6 @@
     "testdom": "^2.0.0",
     "uglifyjs": "^2.4.10",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.2.2"
+    "watchify": "^3.6.1"
   }
 }

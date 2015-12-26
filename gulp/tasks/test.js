@@ -36,7 +36,7 @@ gulp.task('jas', function () {
         .pipe(jasmine({includeStackTrace:true}));
 });
 
-gulp.task('tape', shell.task(['./node_modules/.bin/tape ./test/cli_test-*.js']));
+gulp.task('tape', shell.task(['node_modules/.bin/tape ./test/cli_test-*.js']));
 
 gulp.task('coverage', function (cb) {
     gulp.src(['src/**/*.js', '!src/**/*.spec.js'])
