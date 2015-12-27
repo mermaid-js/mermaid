@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="dist/mermaid.css">
+    <style>
+        .node text {
+            font-size: 14px;
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serf;
+        }
+
+    </style>
+    <script src="../../dist/mermaid.js"></script>
+</head><body>
+<script>
+    mermaid.initialize({
+        flowchart:{
+            useMaxWidth:true,
+            htmlLabels:false
+        },
+        startOnLoad:true
+    });
+</script>
+<h1>The text should be inside the boxes</h1>
+<div class="mermaid" id="i211">
+    graph TD;
+    A[TESTTESTTESTTESTTESTTESTTEST];
+    A --> B[testtesttesttesttesttesttesttesttesttesttest];
+</div>
+</body></html>

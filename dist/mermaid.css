@@ -15,6 +15,9 @@
 .edgePath .path {
   stroke: #333333;
 }
+.edgeLabel {
+  background-color: #e8e8e8;
+}
 .cluster rect {
   fill: #ffffde !important;
   rx: 4 !important;
@@ -251,7 +254,7 @@ text.actor {
 
 
 */
-text {
+.node text {
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
 }

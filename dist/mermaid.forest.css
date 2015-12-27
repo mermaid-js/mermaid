@@ -17,6 +17,9 @@
   stroke: green;
   stroke-width: 1.5px;
 }
+.edgeLabel {
+  background-color: #e8e8e8;
+}
 .cluster rect {
   fill: #cdffb2 !important;
   rx: 4  !important;
@@ -331,7 +334,7 @@ svg .classLabel .label {
   stroke: #13540c;
   stroke-width: 1;
 }
-text {
+.node text {
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
 }
