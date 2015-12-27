@@ -31293,7 +31293,7 @@ classes = {};
 // Functions to be run after graph rendering
 var funs = [];
 /**
- * Function called by parser when a node definition has been found
+ * Function called by parser when a node definition has been found.
  * @param id
  * @param text
  * @param type
@@ -39730,7 +39730,7 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join('; ') + '; }\n';
+                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect, .' + className + '>polygon, .' + className + '>ellipse { ' + classes[className].styles.join('; ') + '; }\n';
                 }
             }
         }
