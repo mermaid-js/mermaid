@@ -158,56 +158,56 @@ var config = {
 
     /** ### gantt
      * The object containing configurations specific for gantt diagrams*
-     */ 
+     */
     gantt:{
         /**
          * **titleTopMargin** - margin top for the text over the gantt diagram
-         */ 
+         */
         titleTopMargin: 25,
 
-        /** 
+        /**
          * **barHeight** - the height of the bars in the graph
-         */ 
+         */
         barHeight: 20,
 
-        /** 
+        /**
          * **barGap** - the margin between the different activities in the gantt diagram
-         */ 
+         */
         barGap: 4,
 
-        /** 
+        /**
          *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
-         */  
+         */
         topPadding: 50,
 
-        /** 
+        /**
          *  **sidePadding** - the space allocated for the section name to the left of the activities.
-         */  
+         */
         sidePadding: 75,
 
-        /** 
+        /**
          *  **gridLineStartPadding** - Vertical starting position of the grid lines
          */
         gridLineStartPadding: 35,
 
-        /** 
+        /**
          *  **fontSize** - font size ...
          */
         fontSize: 11,
 
-        /** 
+        /**
          * **fontFamily** - font family ...
          */
         fontFamily: '"Open-Sans", "sans-serif"',
 
-        /** 
+        /**
          * **numberSectionStyles** - the number of alternating section styles
          */
         numberSectionStyles:3,
 
-        /** 
+        /**
          * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
-         */  
+         */
         axisFormatter: [
 
             // Within a day
@@ -278,7 +278,7 @@ var parse = function(text){
 
     try{
         parser.parse(text);
-        return true;
+        return parser.parser.yy;
     }
     catch(err){
         return false;
@@ -509,7 +509,7 @@ var setConf = function(cnf){
             for(j=0;j<lvl2Keys.length;j++) {
                 log.debug('Setting conf ',lvl1Keys[i],'-',lvl2Keys[j]);
                 if(typeof config[lvl1Keys[i]] === 'undefined'){
-                    
+
                     config[lvl1Keys[i]] = {};
                 }
                 log.debug('Setting config: '+lvl1Keys[i]+' '+lvl2Keys[j]+' to '+cnf[lvl1Keys[i]][lvl2Keys[j]]);
