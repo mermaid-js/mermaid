@@ -21513,7 +21513,7 @@ module.exports=require(52)
 },{}],106:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -30210,6 +30210,9 @@ var classRenderer = require('./diagrams/classDiagram/classRenderer');
 var classDb = require('./diagrams/classDiagram/classDb');
 var d3 = require('./d3');
 
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function (toElement) {
+    return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+};
 /**
  * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:

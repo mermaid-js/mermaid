@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
