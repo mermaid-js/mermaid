@@ -58,11 +58,15 @@ Then the dependencies will have been installed. You use gulp as build tool.
 The following targets are probably interesting:
 
 * jison - compiles the jison grammars to parser files
-* jasmine - runs the jasmine tests (will trigger the jison target)
 * dist - complies files to the dist catalog
 
 for instance:
 ```
 gulp jasmine
 ```
+To run the tests:
+```
+npm run karma
+```
+
 Thanks, Knut Sveidqvist
