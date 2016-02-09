@@ -84,6 +84,7 @@ Mermaid is supported in a number of publishing systems and editors. Please repor
 * [Using mermaid via Octopress](http://mostlyblather.com/blog/2015/05/23/mermaid-jekyll-octopress/)
 * [Mardown editor Haroopad](http://pad.haroopress.com/user.html)
 * [Plugin for atom](https://atom.io/packages/atom-mermaid)
+* [Markdown Plus](http://mdp.tylingsoft.com/)
 
 # Online live editor
 
