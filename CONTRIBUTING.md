@@ -53,12 +53,11 @@ Fork, then:
 npm install
 ```
 
-Then the dependencies will have been installed. You use gulp as build tool.
+Then the dependencies will have been installed. You use gulp and npm calls as build tools.
 
 The following targets are probably interesting:
 
 * jison - compiles the jison grammars to parser files
-* dist - complies files to the dist catalog
 
 for instance:
 ```
@@ -67,6 +66,11 @@ gulp jasmine
 To run the tests:
 ```
 npm run karma
+```
+
+To build the /dist directory
+```
+npm run dist
 ```
 
 Thanks, Knut Sveidqvist
