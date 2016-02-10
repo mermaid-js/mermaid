@@ -61,7 +61,7 @@ The following targets are probably interesting:
 
 for instance:
 ```
-gulp jasmine
+gulp jison
 ```
 To run the tests:
 ```
