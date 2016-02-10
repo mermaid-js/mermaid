@@ -151,8 +151,8 @@ exports.drawLoop = function(elem,bounds,labelText, conf){
     txt.text = labelText;
     txt.x = bounds.startx;
     txt.y = bounds.starty;
-    txt.labelMargin =  1.5 * conf.boxMargin;
-    txt.class =  'labelText';
+    txt.labelMargin =  1.5 * 10; // This is the small box that says "loop"
+    txt.class =  'labelText';    // Its size & position are fixed.
     txt.fill =  'white';
 
     exports.drawLabel(g,txt);
