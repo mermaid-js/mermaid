@@ -85,6 +85,7 @@ Mermaid is supported in a number of publishing systems and editors. Please repor
 * [Mardown editor Haroopad](http://pad.haroopress.com/user.html)
 * [Plugin for atom](https://atom.io/packages/atom-mermaid)
 * [Markdown Plus](http://mdp.tylingsoft.com/)
+* [Vim Plugin](https://github.com/kannokanno/previm)
 
 # Online live editor
 
