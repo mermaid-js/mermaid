@@ -3,10 +3,11 @@
 /* Gantt chart variables */
 .mermaid .label {
   font-family: 'trebuchet ms', verdana, arial;
-  color: #333333;
+  color: #333;
 }
 .node rect,
 .node circle,
+.node ellipse,
 .node polygon {
   fill: #cde498;
   stroke: #13540c;
@@ -16,6 +17,9 @@
   stroke: green;
   stroke-width: 1.5px;
 }
+.edgeLabel {
+  background-color: #e8e8e8;
+}
 .cluster rect {
   fill: #cdffb2 !important;
   rx: 4  !important;
@@ -23,7 +27,7 @@
   stroke-width: 1px !important;
 }
 .cluster text {
-  fill: #333333;
+  fill: #333;
 }
 .actor {
   stroke: #13540c;
@@ -40,22 +44,22 @@ text.actor {
   stroke-width: 1.5;
   stroke-dasharray: "2 2";
   marker-end: "url(#arrowhead)";
-  stroke: #333333;
+  stroke: #333;
 }
 .messageLine1 {
   stroke-width: 1.5;
   stroke-dasharray: "2 2";
-  stroke: #333333;
+  stroke: #333;
 }
 #arrowhead {
-  fill: #333333;
+  fill: #333;
 }
 #crosshead path {
-  fill: #333333 !important;
-  stroke: #333333 !important;
+  fill: #333 !important;
+  stroke: #333 !important;
 }
 .messageText {
-  fill: #333333;
+  fill: #333;
   stroke: none;
 }
 .labelBox {
@@ -103,16 +107,16 @@ text.actor {
   opacity: 0.2;
 }
 .sectionTitle0 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle1 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle2 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle3 {
-  fill: #333333;
+  fill: #333;
 }
 .sectionTitle {
   text-anchor: start;
@@ -252,7 +256,85 @@ text.actor {
 
 
 */
-text {
+g.classGroup text {
+  fill: #13540c;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 14px;
+}
+g.classGroup rect {
+  fill: #cde498;
+  stroke: #13540c;
+}
+g.classGroup line {
+  stroke: #13540c;
+  stroke-width: 1;
+}
+svg .classLabel .box {
+  stroke: none;
+  stroke-width: 0;
+  fill: #cde498;
+  opacity: 0.5;
+}
+svg .classLabel .label {
+  fill: #13540c;
+}
+.relation {
+  stroke: #13540c;
+  stroke-width: 1;
+  fill: none;
+}
+.composition {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#compositionStart {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#compositionEnd {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+.aggregation {
+  fill: #cde498;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#aggregationStart {
+  fill: #cde498;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#aggregationEnd {
+  fill: #cde498;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#dependencyStart {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#dependencyEnd {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#extensionStart {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+#extensionEnd {
+  fill: #13540c;
+  stroke: #13540c;
+  stroke-width: 1;
+}
+.node text {
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
 }
