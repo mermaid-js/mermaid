@@ -8,13 +8,23 @@
  * Controller of the angularMermaidApp
  */
 angular.module('angularMermaidApp')
-  .controller('MainCtrl', ['$scope', '$sce', '$location', function($scope, $sce, $location) {
-    $scope.absurl = '';
-    $scope.diaglink = '';
+  .controller('MainCtrl', ['$scope', '$sce', '$location', 'base64', function($scope, $sce, $location, base64) {
+    var absurl = window.location.href.split('#')[0];
+    var exampleCode = 'sequenceDiagram\n' +
+      'A->> B: Query\n' +
+      'B->> C: Forward query\n' +
+      'Note right of C: Thinking...\n' +
+      'C->> B: Response\n' +
+      'B->> A: Forward response\n';
+
+    $scope.viewlink = '';
+    $scope.editlink = '';
+    $scope.svglink = '';
     $scope.showerror = false;
 
     $scope.checkUpdate = function() {
-      $scope.diaglink = $scope.absurl + '##' + encodeURIComponent($scope.mermaidsyntax);
+      $scope.viewlink = buildURL('view', $scope.mermaidsyntax);
+      $scope.editlink = buildURL('edit', $scope.mermaidsyntax);
       setTimeout(function() {
         var syntax = $sce.trustAsHtml($scope.mermaidsyntax) + '\n';
         // Delete and re add the mermaid node from the DOM
@@ -31,35 +41,65 @@ angular.module('angularMermaidApp')
           mermaidnode.className = 'mermaid';
           mermaidnode.appendChild(document.createTextNode($sce.trustAsHtml($scope.mermaidsyntax)));
           mermaidholder.appendChild(mermaidnode);
-          console.log($scope.diaglink);
           mermaid.init(); // jshint ignore:line
+          $scope.svglink = buildSVGURL();
         } else {
           $scope.showerror = true;
         }
+        $scope.$apply();
       }, 1000);
     };
 
-    if ($location.hash()) {
-      $scope.mermaidsyntax = $location.hash();
-      console.log($location.hash());
-      //Delete the other elements and leave only the diagram
+    $scope.$watch(function() { return $location.url(); }, route);
+
+    function route() {
+      var code;
+
+      // ##uriEncodedDiagramString (for backwards compatibility)
+      if ($location.hash()) {
+        code = $location.hash();
+        return viewDiagram(code);
+      }
+
+      // #/view/base64EncodedDiagramString
+      if ($location.path().match(/^\/view\//)) {
+        code = base64.urldecode($location.path().split('/')[2]);
+        return viewDiagram(code);
+      }
+
+      // #/edit/base64EncodedDiagramString
+      if ($location.path().match(/^\/edit\//)) {
+        code = base64.urldecode($location.path().split('/')[2]);
+        return editDiagram(code);
+      }
+
+      return editDiagram(exampleCode);
+    }
+
+    function viewDiagram(code) {
+      $scope.mermaidsyntax = code;
+      // Delete the other elements and leave only the diagram
       $scope.showform = false;
       $scope.diagclass = 'col s12 m12 l12';
       $scope.cardclass = '';
+      $scope.checkUpdate();
+    }
 
-    } else {
-      $scope.absurl = $location.absUrl();
+    function editDiagram(code) {
+      $scope.mermaidsyntax = code;
       $scope.showform = true;
       $scope.diagclass = 'col s12 m12 l9';
       $scope.cardclass = 'card';
-      $scope.mermaidsyntax = 'sequenceDiagram\n' +
-        'A->> B: Query\n' +
-        'B->> C: Forward query\n' +
-        'Note right of C: Thinking...\n' +
-        'C->> B: Response\n' +
-        'B->> A: Forward response\n';
+      document.getElementsByClassName('materialize-textarea')[0].focus();
+      $scope.checkUpdate();
     }
-    document.getElementsByClassName('materialize-textarea')[0].focus();
-    $scope.checkUpdate();
 
+    function buildURL(action, code) {
+      return absurl + '#/' + action + '/' + base64.urlencode(code);
+    }
+
+    function buildSVGURL() {
+      var svg = document.querySelector('svg').outerHTML;
+      return 'data:image/svg+xml;base64,' + base64.encode(svg);
+    }
   }]);

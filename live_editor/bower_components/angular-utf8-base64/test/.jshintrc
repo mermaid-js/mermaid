@@ -1,0 +1,40 @@
+{
+	"bitwise": true,
+	"curly": false,
+	"eqeqeq": true,
+	"eqnull": true,
+	"evil": true,
+	"forin": true,
+	"globalstrict": true,
+	"immed": true,
+	"latedef": true,
+	"newcap": true,
+	"noarg": true,
+	"noempty": true,
+	"nonew": true,
+	"trailing": true,
+	"undef": true,
+	"unused": true,
+
+	"camelcase": true,
+	"indent": 4,
+	"quotmark": "single",
+
+	"globals": {
+		// Mocha
+		"describe": false,
+		"it": false,
+		"before": false,
+		"beforeEach": false,
+		"after": false,
+		"afterEach": false,
+
+		// chai
+		"expect": false,
+
+		// angular spec
+		"module": false,
+		"inject": false
+	}
+}
+
