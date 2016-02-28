@@ -44,7 +44,7 @@
 "sequenceDiagram" return 'SD';
 ","               return ',';
 ";"               return 'NL';
-[^\->:\n,;]+      return 'ACTOR';
+[^\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"             return 'SOLID_ARROW';
 "-->>"            return 'DOTTED_ARROW';
 "->"              return 'SOLID_OPEN_ARROW';
