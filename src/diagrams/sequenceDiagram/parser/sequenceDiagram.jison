@@ -64,7 +64,9 @@
 %% /* language grammar */
 
 start
-	: SD document { yy.apply($2);return $2; }
+	: SPACE start
+	| NL start
+	| SD document { yy.apply($2);return $2; }
 	;
 
 document
