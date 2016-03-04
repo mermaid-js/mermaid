@@ -51,6 +51,26 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[0].from).toBe('Alice');
         expect(messages[2].from).toBe('Bob');
     });
+		it('it should handle a sequenceDiagram definition with a title', function () {
+        str = 'sequenceDiagram\n' +
+        'title: Diagram Title\n' + 
+        'Alice->Bob:Hello Bob, how are you?\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'Bob-->Alice: I am good thanks!';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice.description).toBe('Alice');
+        actors.Bob.description = 'Bob';
+
+        var messages = sq.yy.getMessages();
+        var title = sq.yy.getTitle();
+
+        expect(messages.length).toBe(3);
+        expect(messages[0].from).toBe('Alice');
+        expect(messages[2].from).toBe('Bob');
+        expect(title).toBe('Diagram Title');
+    });
     it('it should space in actor names', function () {
         str = 'sequenceDiagram\n' +
         'Alice->Bob:Hello Bob, how are - you?\n' +
