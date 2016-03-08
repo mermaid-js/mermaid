@@ -43,8 +43,10 @@ exports.bounds = {
     verticalPos:0,
 
     list: [],
+    activations: [],
     init    : function(){
         this.list = [];
+        this.activations = [],
         this.data = {
             startx:undefined,
                 stopx :undefined,
@@ -95,6 +97,16 @@ exports.bounds = {
 
         this.updateLoops(_startx,_starty,_stopx,_stopy);
 
+    },
+    newActivation:function(message){
+        console.debug("new activation", message);
+        this.activations.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, actor: message.from.actor});
+    },
+    endActivation:function(){
+        var activation = this.activations.pop();
+        console.debug("render end activation", activation);
+        //loop.stopy =  exports.bounds.getVerticalPos();
+        return activation;
     },
     newLoop:function(title){
         this.list.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
@@ -327,6 +339,19 @@ module.exports.draw = function (text, id) {
                     drawNote(diagram, (startx + stopx + conf.width - forceWidth)/2, exports.bounds.getVerticalPos(), msg,
                         forceWidth);
                 }
+                break;
+            case sq.yy.LINETYPE.ACTIVE_START:
+                console.info('ACTIVE_START', msg);
+                // exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newActivation(msg);
+                // exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.ACTIVE_END:
+                console.info('ACTIVE_END', msg);
+                var activationData = exports.bounds.endActivation();
+
+                // svgDraw.drawActivation(diagram, activationData, conf);
+                // exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             case sq.yy.LINETYPE.LOOP_START:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
