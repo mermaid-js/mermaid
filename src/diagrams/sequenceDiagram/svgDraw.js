@@ -121,52 +121,24 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     ;
 };
 
+exports.anchorElement = function(elem) {
+    return elem.append('g');  
+};
 /**
  * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the list of actors
- * @param description The text in the box
+ * @param elem - element to append activation rect
+ * @param bounds - activation box bounds
+ * @param verticalPos - precise y cooridnate of bottom activation box edge
  */
-exports.drawActivation = function(elem,bounds,conf){
-
+exports.drawActivation = function(elem,bounds,verticalPos){
     var rect = exports.getNoteRect();
-    rect.x = left;
-    rect.y = verticalPos;
-    rect.fill = '#ffffff';
-    rect.width = conf.width;
-    rect.height = conf.height;
-    rect.class = 'actor';
+    var g = bounds.anchored;
+    rect.x = bounds.startx;
+    rect.y = bounds.starty;
+    rect.fill = 'white';
+    rect.width = bounds.stopx - bounds.startx;
+    rect.height = verticalPos - bounds.starty;
     exports.drawRect(g, rect);
-
-    // drawBox(bounds.startx, bounds.starty, bounds.stopx , bounds.starty);
-    // drawBox(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
-    // drawBox(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
-    // drawBox(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
-
-    // var txt = exports.getTextObj();
-    // txt.text = labelText;
-    // txt.x = bounds.startx;
-    // txt.y = bounds.starty;
-    // txt.labelMargin =  1.5 * 10; // This is the small box that says "loop"
-    // txt.class =  'labelText';    // Its size & position are fixed.
-    // txt.fill =  'white';
-    //
-    // exports.drawLabel(g,txt);
-    //
-    // txt = exports.getTextObj();
-    // txt.text = '[ ' + bounds.title + ' ]';
-    // txt.x = bounds.startx + (bounds.stopx - bounds.startx)/2;
-    // txt.y = bounds.starty + 1.5 * conf.boxMargin;
-    // txt.anchor = 'middle';
-    // txt.class = 'loopText';
-    //
-    // exports.drawText(g,txt);
-    //
-    // if(typeof bounds.elseText !== 'undefined') {
-    //     txt.text = '[ ' + bounds.elseText + ' ]';
-    //     txt.y = bounds.elsey + 1.5 * conf.boxMargin;
-    //     exports.drawText(g, txt);
-    // }
 };
 
 /**
