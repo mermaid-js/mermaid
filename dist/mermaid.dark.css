@@ -8,78 +8,78 @@
 .node circle,
 .node ellipse,
 .node polygon {
-  fill: #ECECFF;
-  stroke: #CCCCFF;
+  fill: #BDD5EA;
+  stroke: #81B1DB;
   stroke-width: 1px;
 }
 .edgePath .path {
-  stroke: #333333;
+  stroke: lightgrey;
 }
 .edgeLabel {
   background-color: #e8e8e8;
 }
 .cluster rect {
-  fill: #ffffde !important;
+  fill: #6D6D65 !important;
   rx: 4 !important;
-  stroke: #aaaa33 !important;
+  stroke: rgba(255, 255, 255, 0.25) !important;
   stroke-width: 1px !important;
 }
 .cluster text {
   fill: #F9FFFE;
 }
 .actor {
-  stroke: #CCCCFF;
-  fill: #ECECFF;
+  stroke: #81B1DB;
+  fill: #BDD5EA;
 }
 text.actor {
   fill: black;
   stroke: none;
 }
 .actor-line {
-  stroke: grey;
+  stroke: lightgrey;
 }
 .messageLine0 {
   stroke-width: 1.5;
   stroke-dasharray: "2 2";
   marker-end: "url(#arrowhead)";
-  stroke: #333;
+  stroke: lightgrey;
 }
 .messageLine1 {
   stroke-width: 1.5;
   stroke-dasharray: "2 2";
-  stroke: #333;
+  stroke: lightgrey;
 }
 #arrowhead {
-  fill: #333;
+  fill: lightgrey;
 }
 #crosshead path {
-  fill: #333 !important;
-  stroke: #333 !important;
+  fill: lightgrey !important;
+  stroke: lightgrey !important;
 }
 .messageText {
-  fill: #333;
+  fill: lightgrey;
   stroke: none;
 }
 .labelBox {
-  stroke: #CCCCFF;
-  fill: #ECECFF;
+  stroke: #81B1DB;
+  fill: #BDD5EA;
 }
 .labelText {
-  fill: black;
+  fill: #323D47;
   stroke: none;
 }
 .loopText {
-  fill: black;
+  fill: lightgrey;
   stroke: none;
 }
 .loopLine {
   stroke-width: 2;
   stroke-dasharray: "2 2";
   marker-end: "url(#arrowhead)";
-  stroke: #CCCCFF;
+  stroke: #81B1DB;
 }
 .note {
-  stroke: #aaaa33;
+  stroke: rgba(255, 255, 255, 0.25);
   fill: #fff5ad;
 }
 .noteText {
@@ -128,7 +128,7 @@ text.actor {
   shape-rendering: crispEdges;
 }
 .grid .tick text {
-  fill: #ccc;
+  fill: lightgrey;
   opacity: 0.5;
 }
 .grid path {
@@ -175,11 +175,11 @@ text.actor {
 }
 .taskTextOutside0,
 .taskTextOutside2 {
-  fill: #ccc;
+  fill: lightgrey;
 }
 .taskTextOutside1,
 .taskTextOutside3 {
-  fill: #ccc;
+  fill: lightgrey;
 }
 /* Active task */
 .active0,
@@ -239,7 +239,7 @@ text.actor {
 .doneCritText1,
 .doneCritText2,
 .doneCritText3 {
-  fill: #323D47 !important;
+  fill: lightgrey !important;
 }
 .activeCritText0,
 .activeCritText1,
@@ -250,7 +250,7 @@ text.actor {
 .titleText {
   text-anchor: middle;
   font-size: 18px;
-  fill: #ccc;
+  fill: lightgrey;
 }
 /*
 
@@ -267,8 +267,8 @@ div.mermaidTooltip {
   padding: 2px;
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 12px;
-  background: #ffffde;
-  border: 1px solid #aaaa33;
+  background: #6D6D65;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 2px;
   pointer-events: none;
   z-index: 100;
