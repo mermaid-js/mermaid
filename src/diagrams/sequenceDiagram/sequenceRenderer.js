@@ -82,7 +82,7 @@ exports.bounds = {
             if (!(type == 'activation')) {
                 _self.updateVal(item, 'startx',startx - n*conf.boxMargin, Math.min);
                 _self.updateVal(item, 'stopx' ,stopx  + n*conf.boxMargin, Math.max);
-                
+
                 _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
                 _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
             }
@@ -117,8 +117,12 @@ exports.bounds = {
             anchored: svgDraw.anchorElement(diagram)
         });
     },
-    endActivation:function(){
-        var activation = this.activations.pop();
+    endActivation:function(message){
+        // find most recent activation for given actor
+        var lastActorActivationIdx = this.activations
+          .map(function(activation) { return activation.actor })
+          .lastIndexOf(message.from.actor);
+        var activation = this.activations.splice(lastActorActivationIdx, 1)[0];
         return activation;
     },
     newLoop:function(title){
@@ -375,7 +379,7 @@ module.exports.draw = function (text, id) {
                 // exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.ACTIVE_END:
-                var activationData = exports.bounds.endActivation();
+                var activationData = exports.bounds.endActivation(msg);
                 svgDraw.drawActivation(diagram, activationData, exports.bounds.getVerticalPos(), conf);
 
                 exports.bounds.insert(activationData.startx, exports.bounds.getVerticalPos() -10, activationData.stopx,  exports.bounds.getVerticalPos());
