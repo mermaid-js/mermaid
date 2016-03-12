@@ -347,6 +347,18 @@ module.exports.draw = function (text, id) {
     svgDraw.insertArrowHead(diagram);
     svgDraw.insertArrowCrossHead(diagram);
 
+    function activeEnd(msg, verticalPos) {
+        var activationData = exports.bounds.endActivation(msg);
+        if(activationData.starty + 18 > verticalPos) {
+            activationData.starty = verticalPos - 18;
+        }
+        svgDraw.drawActivation(diagram, activationData, verticalPos, conf);
+
+        exports.bounds.insert(activationData.startx, verticalPos -10, activationData.stopx,  verticalPos);
+    }
+
+    var lastMsg;
+
     // Draw the messages/signals
     messages.forEach(function(msg){
         var loopData;
@@ -377,12 +389,12 @@ module.exports.draw = function (text, id) {
                 // exports.bounds.bumpVerticalPos(conf.boxMargin);
                 exports.bounds.newActivation(msg, diagram);
                 // exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                if (lastMsg && (lastMsg.from == lastMsg.to)) {
+                    activeEnd(msg, exports.bounds.getVerticalPos() - 12);
+                }
                 break;
             case sq.yy.LINETYPE.ACTIVE_END:
-                var activationData = exports.bounds.endActivation(msg);
-                svgDraw.drawActivation(diagram, activationData, exports.bounds.getVerticalPos(), conf);
-
-                exports.bounds.insert(activationData.startx, exports.bounds.getVerticalPos() -10, activationData.stopx,  exports.bounds.getVerticalPos());
+                activeEnd(msg, exports.bounds.getVerticalPos());
                 break;
             case sq.yy.LINETYPE.LOOP_START:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
@@ -426,12 +438,14 @@ module.exports.draw = function (text, id) {
                 break;
             default:
               try {
+                lastMsg = msg;
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
                 var fromBounds = actorFlowVerticaBounds(msg.from);
                 var toBounds = actorFlowVerticaBounds(msg.to);
-                var forward = fromBounds[0] < toBounds[0];
-                startx = fromBounds[forward?1:0];
-                stopx = toBounds[forward?0:1];
+                  var fromIdx = fromBounds[0] <= toBounds[0]?1:0;
+                  var toIdx = fromBounds[0] < toBounds[0]?0:1;
+                startx = fromBounds[fromIdx];
+                stopx = toBounds[toIdx];
 
                 drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
               } catch (e) {
