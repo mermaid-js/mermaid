@@ -112,7 +112,7 @@ exports.bounds = {
         var actorRect = sq.yy.getActors()[message.from.actor];
         var stackedSize = actorActivations(message.from.actor).length;
         var x = actorRect.x + conf.width/2 + (stackedSize-1)*conf.activationWidth/2;
-        this.activations.push({startx:x,starty:this.verticalPos,stopx:x+conf.activationWidth,stopy:undefined,
+        this.activations.push({startx:x,starty:this.verticalPos+2,stopx:x+conf.activationWidth,stopy:undefined,
             actor: message.from.actor,
             anchored: svgDraw.anchorElement(diagram)
         });
