@@ -2,7 +2,7 @@
 /* Sequence Diagram variables */
 /* Gantt chart variables */
 .mermaid .label {
-  color: #333;
+  color: #323D47;
 }
 .node rect,
 .node circle,
@@ -50,7 +50,7 @@ text.actor {
   stroke: lightgrey;
 }
 #arrowhead {
-  fill: lightgrey;
+  fill: lightgrey !important;
 }
 #crosshead path {
   fill: lightgrey !important;
