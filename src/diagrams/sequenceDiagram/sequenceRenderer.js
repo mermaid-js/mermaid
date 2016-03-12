@@ -442,12 +442,15 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
                 var fromBounds = actorFlowVerticaBounds(msg.from);
                 var toBounds = actorFlowVerticaBounds(msg.to);
-                  var fromIdx = fromBounds[0] <= toBounds[0]?1:0;
-                  var toIdx = fromBounds[0] < toBounds[0]?0:1;
+                var fromIdx = fromBounds[0] <= toBounds[0]?1:0;
+                var toIdx = fromBounds[0] < toBounds[0]?0:1;
                 startx = fromBounds[fromIdx];
                 stopx = toBounds[toIdx];
 
-                drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
+                var verticalPos = exports.bounds.getVerticalPos();
+                drawMessage(diagram, startx, stopx, verticalPos, msg);
+                var allBounds = fromBounds.concat(toBounds);
+                exports.bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos);
               } catch (e) {
                   console.error('error while drawing message', e);
               }
