@@ -44,7 +44,7 @@
 "sequenceDiagram" return 'SD';
 ","               return ',';
 ";"               return 'NL';
-[^\->:\n,;]+      return 'ACTOR';
+[^\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"             return 'SOLID_ARROW';
 "-->>"            return 'DOTTED_ARROW';
 "->"              return 'SOLID_OPEN_ARROW';
@@ -64,7 +64,9 @@
 %% /* language grammar */
 
 start
-	: SD document { yy.apply($2);return $2; }
+	: SPACE start
+	| NL start
+	| SD document { yy.apply($2);return $2; }
 	;
 
 document

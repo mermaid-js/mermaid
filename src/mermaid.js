@@ -67,8 +67,7 @@ var init = function () {
     nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
         : typeof nodes === 'string' ? document.querySelectorAll(nodes)
         : nodes instanceof Node ? [nodes]
-        /*! Last case  - sequence config was passed pick next */
-        : nodes;
+        : nodes;  // Last case  - sequence config was passed pick next
 
     var i;
 
