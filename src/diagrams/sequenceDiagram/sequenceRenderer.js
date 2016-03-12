@@ -350,7 +350,8 @@ module.exports.draw = function (text, id) {
     function activeEnd(msg, verticalPos) {
         var activationData = exports.bounds.endActivation(msg);
         if(activationData.starty + 18 > verticalPos) {
-            activationData.starty = verticalPos - 18;
+            activationData.starty = verticalPos - 6;
+            verticalPos += 12;
         }
         svgDraw.drawActivation(diagram, activationData, verticalPos, conf);
 
@@ -386,12 +387,7 @@ module.exports.draw = function (text, id) {
                 }
                 break;
             case sq.yy.LINETYPE.ACTIVE_START:
-                // exports.bounds.bumpVerticalPos(conf.boxMargin);
                 exports.bounds.newActivation(msg, diagram);
-                // exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
-                if (lastMsg && (lastMsg.from == lastMsg.to)) {
-                    activeEnd(msg, exports.bounds.getVerticalPos() - 12);
-                }
                 break;
             case sq.yy.LINETYPE.ACTIVE_END:
                 activeEnd(msg, exports.bounds.getVerticalPos());
