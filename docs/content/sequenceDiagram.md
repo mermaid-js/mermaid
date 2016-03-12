@@ -72,6 +72,55 @@ There are six types of arrows currently supported:
 --x which will render a dotted line with a cross at the end (async)
 
 
+## Activations
+It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:
+
+```
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    activate John
+    John-->>Alice: Great!
+    deactivate John
+```
+
+Renders to the diagram below:
+
+```mermaid
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    activate John
+    John-->>Alice: Great!
+    deactivate John
+```
+
+There is also a shortcut notation by appending `+`/`-` suffix to the message arrow:  
+
+```
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    John-->>-Alice: Great!
+```
+
+Activations can be stacked for same actor:
+
+```
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can yoy hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!
+```
+
+Stacked activations look like this:
+
+```mermaid
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can yoy hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!
+```
+
 ## Notes
 It is possible to add notes to a sequence diagram. This is done by the notation
 Note [ right of | left of | over ] [Actor]: Text in note content
