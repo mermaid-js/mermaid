@@ -135,7 +135,7 @@ exports.drawActivation = function(elem,bounds,verticalPos){
     var g = bounds.anchored;
     rect.x = bounds.startx;
     rect.y = bounds.starty;
-    rect.fill = 'white';
+    rect.fill = '#f4f4f4';
     rect.width = bounds.stopx - bounds.startx;
     rect.height = verticalPos - bounds.starty;
     exports.drawRect(g, rect);

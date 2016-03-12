@@ -108,11 +108,9 @@ exports.apply = function(param){
                 exports.addActor(param.actor, param.actor, param.description);
                 break;
             case 'activeStart':
-                console.info(param);
                 exports.addSignal(param.actor, undefined, undefined, param.signalType);
                 break;
             case 'activeEnd':
-                console.info(param);
                 exports.addSignal(param.actor, undefined, undefined, param.signalType);
                 break;
             case 'addNote':
