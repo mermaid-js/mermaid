@@ -40,11 +40,13 @@
 "right of"        return 'right_of';
 "over"            return 'over';
 "note"            return 'note';
+"activate"        { this.begin('ID'); return 'activate'; }
+"deactivate"      { this.begin('ID'); return 'deactivate'; }
 "title"           return 'title';
 "sequenceDiagram" return 'SD';
 ","               return ',';
 ";"               return 'NL';
-[^\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
+[^\+\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"             return 'SOLID_ARROW';
 "-->>"            return 'DOTTED_ARROW';
 "->"              return 'SOLID_OPEN_ARROW';
@@ -52,6 +54,8 @@
 \-[x]             return 'SOLID_CROSS';
 \-\-[x]           return 'DOTTED_CROSS';
 ":"[^#\n;]+       return 'TXT';
+"+"               return '+';
+"-"               return '-';
 <<EOF>>           return 'NL';
 .                 return 'INVALID';
 
@@ -84,6 +88,8 @@ statement
 	: 'participant' actor 'AS' restOfLine 'NL' {$2.description=$4; $$=$2;}
 	| 'participant' actor 'NL' {$$=$2;}
 	| signal 'NL'
+	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
+	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NL'
 	| 'title' SPACE text 'NL'
 	| 'loop' restOfLine document end
@@ -139,8 +145,16 @@ placement
 	;
 
 signal
-	: actor signaltype actor text2
-	{$$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
+	: actor signaltype '+' actor text2
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
+	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4}
+	             ]}
+	| actor signaltype '-' actor text2
+	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
+	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1}
+	             ]}
+	| actor signaltype actor text2
+	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
 	;
 
 actor

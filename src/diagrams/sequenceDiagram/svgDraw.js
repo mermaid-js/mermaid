@@ -121,6 +121,26 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     ;
 };
 
+exports.anchorElement = function(elem) {
+    return elem.append('g');  
+};
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param elem - element to append activation rect
+ * @param bounds - activation box bounds
+ * @param verticalPos - precise y cooridnate of bottom activation box edge
+ */
+exports.drawActivation = function(elem,bounds,verticalPos){
+    var rect = exports.getNoteRect();
+    var g = bounds.anchored;
+    rect.x = bounds.startx;
+    rect.y = bounds.starty;
+    rect.fill = '#f4f4f4';
+    rect.width = bounds.stopx - bounds.startx;
+    rect.height = verticalPos - bounds.starty;
+    exports.drawRect(g, rect);
+};
+
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor

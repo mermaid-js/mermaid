@@ -15,7 +15,7 @@ var conf = {
     diagramMarginY:10,
     // Margin between actors
     actorMargin:50,
-    // Width of actor moxes
+    // Width of actor boxes
     width:150,
     // Height of actor boxes
     height:65,
@@ -29,7 +29,10 @@ var conf = {
     mirrorActors:false,
     // Depending on css styling this might need adjustment
     // Prolongs the edge of the diagram downwards
-    bottomMarginAdj:1
+    bottomMarginAdj:1,
+
+    // width of activation box
+    activationWidth:10
 };
 
 //var bb = getBBox('path');
@@ -42,9 +45,11 @@ exports.bounds = {
     },
     verticalPos:0,
 
-    list: [],
+    sequenceItems: [],
+    activations: [],
     init    : function(){
-        this.list = [];
+        this.sequenceItems = [];
+        this.activations = [];
         this.data = {
             startx:undefined,
                 stopx :undefined,
@@ -60,24 +65,31 @@ exports.bounds = {
             obj[key] = fun(val,obj[key]);
         }
     },
-    updateLoops:function(startx,starty,stopx,stopy){
+    updateBounds:function(startx,starty,stopx,stopy){
         var _self = this;
         var cnt = 0;
-        this.list.forEach(function(loop){
+        function updateFn(type) { return function updateItemBounds(item) {
             cnt++;
-            // The loop list is a stack so the biggest margins in the beginning of the list
-            var n = _self.list.length-cnt+1;
+            // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
+            var n = _self.sequenceItems.length-cnt+1;
 
-            _self.updateVal(loop, 'startx',startx - n*conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'starty',starty - n*conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'stopx' ,stopx  + n*conf.boxMargin, Math.max);
-            _self.updateVal(loop, 'stopy' ,stopy  + n*conf.boxMargin, Math.max);
+            _self.updateVal(item, 'starty',starty - n*conf.boxMargin, Math.min);
+            _self.updateVal(item, 'stopy' ,stopy  + n*conf.boxMargin, Math.max);
 
-            _self.updateVal(exports.bounds.data,'startx',startx - n*conf.boxMargin ,Math.min);
-            _self.updateVal(exports.bounds.data,'starty',starty - n*conf.boxMargin ,Math.min);
-            _self.updateVal(exports.bounds.data,'stopx' ,stopx  + n*conf.boxMargin ,Math.max);
-            _self.updateVal(exports.bounds.data,'stopy' ,stopy  + n*conf.boxMargin ,Math.max);
-        });
+            _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min);
+            _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max);
+
+            if (!(type == 'activation')) {
+                _self.updateVal(item, 'startx',startx - n*conf.boxMargin, Math.min);
+                _self.updateVal(item, 'stopx' ,stopx  + n*conf.boxMargin, Math.max);
+
+                _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
+                _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
+            }
+        }}
+
+        this.sequenceItems.forEach(updateFn());
+        this.activations.forEach(updateFn('activation'));
     },
     insert:function(startx,starty,stopx,stopy){
 
@@ -93,22 +105,38 @@ exports.bounds = {
         this.updateVal(exports.bounds.data,'stopx' ,_stopx ,Math.max);
         this.updateVal(exports.bounds.data,'stopy' ,_stopy ,Math.max);
 
-        this.updateLoops(_startx,_starty,_stopx,_stopy);
+        this.updateBounds(_startx,_starty,_stopx,_stopy);
 
     },
+    newActivation:function(message, diagram){
+        var actorRect = sq.yy.getActors()[message.from.actor];
+        var stackedSize = actorActivations(message.from.actor).length;
+        var x = actorRect.x + conf.width/2 + (stackedSize-1)*conf.activationWidth/2;
+        this.activations.push({startx:x,starty:this.verticalPos+2,stopx:x+conf.activationWidth,stopy:undefined,
+            actor: message.from.actor,
+            anchored: svgDraw.anchorElement(diagram)
+        });
+    },
+    endActivation:function(message){
+        // find most recent activation for given actor
+        var lastActorActivationIdx = this.activations
+          .map(function(activation) { return activation.actor })
+          .lastIndexOf(message.from.actor);
+        var activation = this.activations.splice(lastActorActivationIdx, 1)[0];
+        return activation;
+    },
     newLoop:function(title){
-        this.list.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
+        this.sequenceItems.push({startx:undefined,starty:this.verticalPos,stopx:undefined,stopy:undefined, title:title});
     },
     endLoop:function(){
-        var loop = this.list.pop();
-        //loop.stopy =  exports.bounds.getVerticalPos();
+        var loop = this.sequenceItems.pop();
         return loop;
     },
     addElseToLoop:function(message){
-        var loop = this.list.pop();
+        var loop = this.sequenceItems.pop();
         loop.elsey =  exports.bounds.getVerticalPos();
         loop.elseText = message;
-        this.list.push(loop);
+        this.sequenceItems.push(loop);
     },
     bumpVerticalPos:function(bump){
         this.verticalPos = this.verticalPos + bump;
@@ -254,7 +282,7 @@ module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
         // Add some rendering data to the object
         actors[key].x = i*conf.actorMargin +i*conf.width;
         actors[key].y = verticalPos;
-        actors[key].width = conf.diagramMarginY;
+        actors[key].width = conf.diagramMarginX;
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
@@ -276,6 +304,23 @@ module.exports.setConf = function(cnf){
         conf[key] = cnf[key];
     });
 };
+
+var actorActivations = function(actor) {
+    return module.exports.bounds.activations.filter(function(activation) {
+        return activation.actor == actor;
+    });
+};
+
+var actorFlowVerticaBounds = function(actor) {
+    // handle multiple stacked activations for same actor
+    var actors = sq.yy.getActors();
+    var activations = actorActivations(actor);
+
+    var left = activations.reduce(function(acc,activation) { return Math.min(acc,activation.startx)}, actors[actor].x + conf.width/2);
+    var right = activations.reduce(function(acc,activation) { return Math.max(acc,activation.stopx)}, actors[actor].x + conf.width/2);
+    return [left,right];
+};
+
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
@@ -328,6 +373,17 @@ module.exports.draw = function (text, id) {
                         forceWidth);
                 }
                 break;
+            case sq.yy.LINETYPE.ACTIVE_START:
+                // exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newActivation(msg, diagram);
+                // exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.ACTIVE_END:
+                var activationData = exports.bounds.endActivation(msg);
+                svgDraw.drawActivation(diagram, activationData, exports.bounds.getVerticalPos(), conf);
+
+                exports.bounds.insert(activationData.startx, exports.bounds.getVerticalPos() -10, activationData.stopx,  exports.bounds.getVerticalPos());
+                break;
             case sq.yy.LINETYPE.LOOP_START:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 exports.bounds.newLoop(msg.message);
@@ -369,14 +425,21 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
+              try {
                 exports.bounds.bumpVerticalPos(conf.messageMargin);
-                startx = actors[msg.from].x + conf.width/2;
-                stopx = actors[msg.to].x + conf.width/2;
+                var fromBounds = actorFlowVerticaBounds(msg.from);
+                var toBounds = actorFlowVerticaBounds(msg.to);
+                var forward = fromBounds[0] < toBounds[0];
+                startx = fromBounds[forward?1:0];
+                stopx = toBounds[forward?0:1];
 
                 drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
-
+              } catch (e) {
+                  console.error('error while drawing message', e);
+              }
         }
     });
+
 
     if(conf.mirrorActors){
         // Draw actors below diagram

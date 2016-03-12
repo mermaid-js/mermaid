@@ -130,7 +130,7 @@ describe('when parsing a sequenceDiagram',function() {
     });
     it('it should handle in arrow messages', function () {
         var str = 'sequenceDiagram\n' +
-            'Alice-->>Bob:Hello Bob, how are you?';
+          'Alice-->>Bob:Hello Bob, how are you?';
 
         sq.parse(str);
         var actors = sq.yy.getActors();
@@ -141,6 +141,84 @@ describe('when parsing a sequenceDiagram',function() {
 
         expect(messages.length).toBe(1);
         expect(messages[0].type).toBe(sq.yy.LINETYPE.DOTTED);
+    });
+    it('it should handle actor activation', function () {
+        var str = 'sequenceDiagram\n' +
+          'Alice-->>Bob:Hello Bob, how are you?\n' +
+          'activate Bob\n' +
+          'Bob-->>Alice:Hello Alice, I\'m fine and  you?\n' +
+          'deactivate Bob';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice.description).toBe('Alice');
+        expect(actors.Bob.description).toBe('Bob');
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(4);
+        expect(messages[0].type).toBe(sq.yy.LINETYPE.DOTTED);
+        expect(messages[1].type).toBe(sq.yy.LINETYPE.ACTIVE_START);
+        expect(messages[1].from.actor).toBe('Bob');
+        expect(messages[2].type).toBe(sq.yy.LINETYPE.DOTTED);
+        expect(messages[3].type).toBe(sq.yy.LINETYPE.ACTIVE_END);
+        expect(messages[3].from.actor).toBe('Bob');
+    });
+    it('it should handle actor one line notation activation', function () {
+        var str = 'sequenceDiagram\n' +
+          'Alice-->>+Bob:Hello Bob, how are you?\n' +
+          'Bob-->>- Alice:Hello Alice, I\'m fine and  you?';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice.description).toBe('Alice');
+        expect(actors.Bob.description).toBe('Bob');
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(4);
+        console.log('msg', messages[0]);
+        expect(messages[0].type).toBe(sq.yy.LINETYPE.DOTTED);
+        console.log('msg', messages[1]);
+        expect(messages[1].type).toBe(sq.yy.LINETYPE.ACTIVE_START);
+        expect(messages[1].from.actor).toBe('Bob');
+        console.log('msg', messages[2]);
+        expect(messages[2].type).toBe(sq.yy.LINETYPE.DOTTED);
+        console.log('msg', messages[3]);
+        expect(messages[3].type).toBe(sq.yy.LINETYPE.ACTIVE_END);
+        expect(messages[3].from.actor).toBe('Bob');
+    });
+    it('it should handle stacked activations', function () {
+        var str = 'sequenceDiagram\n' +
+          'Alice-->>+Bob:Hello Bob, how are you?\n' +
+          'Bob-->>+Carol:Carol, let me introduce Alice?\n' +
+          'Bob-->>- Alice:Hello Alice, please meet Carol?\n' +
+          'Carol->>- Bob:Oh Bob, I\'m so happy to be here!';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+        expect(actors.Alice.description).toBe('Alice');
+        expect(actors.Bob.description).toBe('Bob');
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(8);
+        console.log('msg', messages[0]);
+        expect(messages[0].type).toBe(sq.yy.LINETYPE.DOTTED);
+        console.log('msg', messages[1]);
+        expect(messages[1].type).toBe(sq.yy.LINETYPE.ACTIVE_START);
+        expect(messages[1].from.actor).toBe('Bob');
+        console.log('msg', messages[2]);
+        expect(messages[2].type).toBe(sq.yy.LINETYPE.DOTTED);
+        console.log('msg', messages[3]);
+        expect(messages[3].type).toBe(sq.yy.LINETYPE.ACTIVE_START);
+        expect(messages[3].from.actor).toBe('Carol');
+        console.log('msg', messages[5]);
+        expect(messages[5].type).toBe(sq.yy.LINETYPE.ACTIVE_END);
+        expect(messages[5].from.actor).toBe('Bob');
+        console.log('msg', messages[7]);
+        expect(messages[7].type).toBe(sq.yy.LINETYPE.ACTIVE_END);
+        expect(messages[7].from.actor).toBe('Carol');
     });
     it('it should handle comments in a sequenceDiagram', function () {
         str = 'sequenceDiagram\n' +

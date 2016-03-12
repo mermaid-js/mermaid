@@ -65,7 +65,9 @@ exports.LINETYPE = {
     ALT_ELSE     : 13 ,
     ALT_END      : 14 ,
     OPT_START    : 15 ,
-    OPT_END      : 16
+    OPT_END      : 16 ,
+    ACTIVE_START : 17 ,
+    ACTIVE_END   : 18
 };
 
 exports.ARROWTYPE = {
@@ -100,10 +102,16 @@ exports.apply = function(param){
             exports.apply(item);
         });
     } else {
-        // log.debug(param);
+        // console.info(param);
         switch(param.type){
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.description);
+                break;
+            case 'activeStart':
+                exports.addSignal(param.actor, undefined, undefined, param.signalType);
+                break;
+            case 'activeEnd':
+                exports.addSignal(param.actor, undefined, undefined, param.signalType);
                 break;
             case 'addNote':
                 exports.addNote(param.actor,param.placement, param.text);
