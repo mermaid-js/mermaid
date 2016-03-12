@@ -83,8 +83,26 @@ exports.addVertices = function (vert, g) {
             });
 
         } else {
-            verticeText = verticeText.replace(/<br>/g, '\n');
-            labelTypeStr = 'text';
+            var svg_label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+            var rows = verticeText.split(/<br>/);
+
+            var j = 0;
+            for(j=0;j<rows.length;j++){
+                var tspan = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+                tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+                tspan.setAttribute('dy', '1em');
+                tspan.setAttribute('x', '1');
+                tspan.textContent = rows[j];
+                svg_label.appendChild(tspan);
+            }
+
+            labelTypeStr = 'svg';
+            verticeText = svg_label;
+
+
+            //verticeText = verticeText.replace(/<br\/>/g, '\n');
+            //labelTypeStr = 'text';
         }
 
         var radious = 0;
@@ -480,5 +498,27 @@ exports.draw = function (text, id,isDot) {
             }
         }
     }
+
+    // Add label rects for non html labels
+    if(!conf.htmlLabels){
+        var labels = document.querySelectorAll('#' + id +' .edgeLabel .label');
+        var i;
+        for(i=0;i<labels.length;i++){
+            var label = labels[i];
+
+            // Get dimensions of label
+            var dim = label.getBBox();
+
+            var rect =  document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('rx',0);
+            rect.setAttribute('ry',0);
+            rect.setAttribute('width',dim.width);
+            rect.setAttribute('height',dim.height);
+            rect.setAttribute('style','fill:#e8e8e8;');
+
+            label.insertBefore(rect, label.firstChild);
+        }
+    }
+
 };
 
