@@ -1,0 +1,275 @@
+/* Flowchart variables */
+/* Sequence Diagram variables */
+/* Gantt chart variables */
+.mermaid .label {
+  color: #323D47;
+}
+.node rect,
+.node circle,
+.node ellipse,
+.node polygon {
+  fill: #BDD5EA;
+  stroke: #81B1DB;
+  stroke-width: 1px;
+}
+.edgePath .path {
+  stroke: lightgrey;
+}
+.edgeLabel {
+  background-color: #e8e8e8;
+}
+.cluster rect {
+  fill: #6D6D65 !important;
+  rx: 4 !important;
+  stroke: rgba(255, 255, 255, 0.25) !important;
+  stroke-width: 1px !important;
+}
+.cluster text {
+  fill: #F9FFFE;
+}
+.actor {
+  stroke: #81B1DB;
+  fill: #BDD5EA;
+}
+text.actor {
+  fill: black;
+  stroke: none;
+}
+.actor-line {
+  stroke: lightgrey;
+}
+.messageLine0 {
+  stroke-width: 1.5;
+  stroke-dasharray: "2 2";
+  marker-end: "url(#arrowhead)";
+  stroke: lightgrey;
+}
+.messageLine1 {
+  stroke-width: 1.5;
+  stroke-dasharray: "2 2";
+  stroke: lightgrey;
+}
+#arrowhead {
+  fill: lightgrey !important;
+}
+#crosshead path {
+  fill: lightgrey !important;
+  stroke: lightgrey !important;
+}
+.messageText {
+  fill: lightgrey;
+  stroke: none;
+}
+.labelBox {
+  stroke: #81B1DB;
+  fill: #BDD5EA;
+}
+.labelText {
+  fill: #323D47;
+  stroke: none;
+}
+.loopText {
+  fill: lightgrey;
+  stroke: none;
+}
+.loopLine {
+  stroke-width: 2;
+  stroke-dasharray: "2 2";
+  marker-end: "url(#arrowhead)";
+  stroke: #81B1DB;
+}
+.note {
+  stroke: rgba(255, 255, 255, 0.25);
+  fill: #fff5ad;
+}
+.noteText {
+  fill: black;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 14px;
+}
+/** Section styling */
+.section {
+  stroke: none;
+  opacity: 0.2;
+}
+.section0 {
+  fill: rgba(255, 255, 255, 0.3);
+}
+.section2 {
+  fill: #EAE8B9;
+}
+.section1,
+.section3 {
+  fill: white;
+  opacity: 0.2;
+}
+.sectionTitle0 {
+  fill: #F9FFFE;
+}
+.sectionTitle1 {
+  fill: #F9FFFE;
+}
+.sectionTitle2 {
+  fill: #F9FFFE;
+}
+.sectionTitle3 {
+  fill: #F9FFFE;
+}
+.sectionTitle {
+  text-anchor: start;
+  font-size: 11px;
+  text-height: 14px;
+}
+/* Grid and axis */
+.grid .tick {
+  stroke: rgba(255, 255, 255, 0.3);
+  opacity: 0.3;
+  shape-rendering: crispEdges;
+}
+.grid .tick text {
+  fill: lightgrey;
+  opacity: 0.5;
+}
+.grid path {
+  stroke-width: 0;
+}
+/* Today line */
+.today {
+  fill: none;
+  stroke: #DB5757;
+  stroke-width: 2px;
+}
+/* Task styling */
+/* Default task */
+.task {
+  stroke-width: 1;
+}
+.taskText {
+  text-anchor: middle;
+  font-size: 11px;
+}
+.taskTextOutsideRight {
+  fill: #323D47;
+  text-anchor: start;
+  font-size: 11px;
+}
+.taskTextOutsideLeft {
+  fill: #323D47;
+  text-anchor: end;
+  font-size: 11px;
+}
+/* Specific task settings for the sections*/
+.taskText0,
+.taskText1,
+.taskText2,
+.taskText3 {
+  fill: #323D47;
+}
+.task0,
+.task1,
+.task2,
+.task3 {
+  fill: #BDD5EA;
+  stroke: rgba(255, 255, 255, 0.5);
+}
+.taskTextOutside0,
+.taskTextOutside2 {
+  fill: lightgrey;
+}
+.taskTextOutside1,
+.taskTextOutside3 {
+  fill: lightgrey;
+}
+/* Active task */
+.active0,
+.active1,
+.active2,
+.active3 {
+  fill: #81B1DB;
+  stroke: rgba(255, 255, 255, 0.5);
+}
+.activeText0,
+.activeText1,
+.activeText2,
+.activeText3 {
+  fill: #323D47 !important;
+}
+/* Completed task */
+.done0,
+.done1,
+.done2,
+.done3 {
+  fill: lightgrey;
+}
+.doneText0,
+.doneText1,
+.doneText2,
+.doneText3 {
+  fill: #323D47 !important;
+}
+/* Tasks on the critical line */
+.crit0,
+.crit1,
+.crit2,
+.crit3 {
+  stroke: #E83737;
+  fill: #E83737;
+  stroke-width: 2;
+}
+.activeCrit0,
+.activeCrit1,
+.activeCrit2,
+.activeCrit3 {
+  stroke: #E83737;
+  fill: #81B1DB;
+  stroke-width: 2;
+}
+.doneCrit0,
+.doneCrit1,
+.doneCrit2,
+.doneCrit3 {
+  stroke: #E83737;
+  fill: lightgrey;
+  stroke-width: 1;
+  cursor: pointer;
+  shape-rendering: crispEdges;
+}
+.doneCritText0,
+.doneCritText1,
+.doneCritText2,
+.doneCritText3 {
+  fill: lightgrey !important;
+}
+.activeCritText0,
+.activeCritText1,
+.activeCritText2,
+.activeCritText3 {
+  fill: #323D47 !important;
+}
+.titleText {
+  text-anchor: middle;
+  font-size: 18px;
+  fill: lightgrey;
+}
+/*
+
+
+*/
+.node text {
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 14px;
+}
+div.mermaidTooltip {
+  position: absolute;
+  text-align: center;
+  max-width: 200px;
+  padding: 2px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 12px;
+  background: #6D6D65;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 100;
+}

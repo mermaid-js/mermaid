@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
     <script src="../dist/mermaid.js"></script>
+    <link rel="stylesheet" href="../dist/mermaid.dark.css"/>
     <script>
         var mermaid_config = {
             startOnLoad:true,
@@ -63,6 +63,14 @@
     <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
+    <!-- Simulate Darker Themed Page -->
+    <style>
+      body {
+        background: #323D47;
+        font-family: sans-serif;
+      }
+    </style>
+
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
@@ -97,8 +105,8 @@
         B-- ... default style on links -->Z>My default thing this]
         C-->D{condition};
 
-        linkStyle 0 stroke-width:2px,fill:none,stroke:blue;
-        linkStyle default stroke-width:2px,fill:none,stroke:red;
+        linkStyle 0 stroke-width:2px,fill:none,stroke:steelblue;
+        linkStyle default stroke-width:2px,fill:none,stroke:crimson;
 
     </div>
     <hr/>
@@ -109,6 +117,7 @@
         A --> C(Round Rect)
         B    ==  testing ==>     D{Rhombus}
         C-.->D
+
     </div>
     <hr/>
     <div class="mermaid">
