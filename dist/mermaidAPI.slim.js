@@ -1,322 +1,6 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaidAPI=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":3}],3:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
-    }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],4:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -348,7 +32,7 @@ module.exports =  {
   version: require("./lib/version")
 };
 
-},{"./lib/dagre":11,"./lib/graphlib":12,"./lib/intersect":13,"./lib/render":28,"./lib/util":30,"./lib/version":31}],5:[function(require,module,exports){
+},{"./lib/dagre":9,"./lib/graphlib":10,"./lib/intersect":11,"./lib/render":26,"./lib/util":28,"./lib/version":29}],3:[function(require,module,exports){
 var util = require("./util");
 
 module.exports = {
@@ -412,7 +96,7 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":30}],6:[function(require,module,exports){
+},{"./util":28}],4:[function(require,module,exports){
 var util = require("./util"),
     addLabel = require("./label/add-label");
 
@@ -457,7 +141,7 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":21,"./util":30}],7:[function(require,module,exports){
+},{"./label/add-label":19,"./util":28}],5:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -494,7 +178,7 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":10,"./label/add-label":21,"./lodash":24,"./util":30}],8:[function(require,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],6:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -626,7 +310,7 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":10,"./intersect/intersect-node":17,"./lodash":24,"./util":30}],9:[function(require,module,exports){
+},{"./d3":8,"./intersect/intersect-node":15,"./lodash":22,"./util":28}],7:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -686,11 +370,11 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":10,"./label/add-label":21,"./lodash":24,"./util":30}],10:[function(require,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],8:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],11:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /* global window */
 
 var dagre;
@@ -707,7 +391,7 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":53}],12:[function(require,module,exports){
+},{"dagre":30}],10:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -724,7 +408,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":32}],13:[function(require,module,exports){
+},{"graphlib":60}],11:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -733,7 +417,7 @@ module.exports = {
   rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":14,"./intersect-ellipse":15,"./intersect-node":17,"./intersect-polygon":18,"./intersect-rect":19}],14:[function(require,module,exports){
+},{"./intersect-circle":12,"./intersect-ellipse":13,"./intersect-node":15,"./intersect-polygon":16,"./intersect-rect":17}],12:[function(require,module,exports){
 var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
@@ -742,7 +426,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":15}],15:[function(require,module,exports){
+},{"./intersect-ellipse":13}],13:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -769,7 +453,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -841,14 +525,14 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
@@ -905,7 +589,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":16}],19:[function(require,module,exports){
+},{"./intersect-line":14}],17:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -939,7 +623,7 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],20:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addHtmlLabel;
@@ -984,7 +668,7 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":30}],21:[function(require,module,exports){
+},{"../util":28}],19:[function(require,module,exports){
 var addTextLabel = require("./add-text-label"),
     addHtmlLabel = require("./add-html-label"),
     addSVGLabel  = require("./add-svg-label");
@@ -1023,7 +707,7 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":20,"./add-svg-label":22,"./add-text-label":23}],22:[function(require,module,exports){
+},{"./add-html-label":18,"./add-svg-label":20,"./add-text-label":21}],20:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addSVGLabel;
@@ -1038,7 +722,7 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":30}],23:[function(require,module,exports){
+},{"../util":28}],21:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addTextLabel;
@@ -1085,7 +769,7 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":30}],24:[function(require,module,exports){
+},{"../util":28}],22:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -1102,7 +786,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":52}],25:[function(require,module,exports){
+},{"lodash":80}],23:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1138,7 +822,7 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":10,"./util":30}],26:[function(require,module,exports){
+},{"./d3":8,"./util":28}],24:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1162,7 +846,7 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":10,"./lodash":24,"./util":30}],27:[function(require,module,exports){
+},{"./d3":8,"./lodash":22,"./util":28}],25:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1185,7 +869,7 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":10,"./util":30}],28:[function(require,module,exports){
+},{"./d3":8,"./util":28}],26:[function(require,module,exports){
 var _ = require("./lodash"),
     layout = require("./dagre").layout;
 
@@ -1354,7 +1038,7 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":5,"./create-clusters":6,"./create-edge-labels":7,"./create-edge-paths":8,"./create-nodes":9,"./dagre":11,"./lodash":24,"./position-clusters":25,"./position-edge-labels":26,"./position-nodes":27,"./shapes":29}],29:[function(require,module,exports){
+},{"./arrows":3,"./create-clusters":4,"./create-edge-labels":5,"./create-edge-paths":6,"./create-nodes":7,"./dagre":9,"./lodash":22,"./position-clusters":23,"./position-edge-labels":24,"./position-nodes":25,"./shapes":27}],27:[function(require,module,exports){
 "use strict";
 
 var intersectRect = require("./intersect/intersect-rect"),
@@ -1437,7 +1121,7 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":14,"./intersect/intersect-ellipse":15,"./intersect/intersect-polygon":18,"./intersect/intersect-rect":19}],30:[function(require,module,exports){
+},{"./intersect/intersect-circle":12,"./intersect/intersect-ellipse":13,"./intersect/intersect-polygon":16,"./intersect/intersect-rect":17}],28:[function(require,module,exports){
 var _ = require("./lodash");
 
 // Public utility functions
@@ -1493,10 +1177,2912 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":24}],31:[function(require,module,exports){
+},{"./lodash":22}],29:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
+/*
+Copyright (c) 2012-2014 Chris Pettitt
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+module.exports = {
+  graphlib: require("./lib/graphlib"),
+
+  layout: require("./lib/layout"),
+  debug: require("./lib/debug"),
+  util: {
+    time: require("./lib/util").time,
+    notime: require("./lib/util").notime
+  },
+  version: require("./lib/version")
+};
+
+},{"./lib/debug":35,"./lib/graphlib":36,"./lib/layout":38,"./lib/util":58,"./lib/version":59}],31:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    greedyFAS = require("./greedy-fas");
+
+module.exports = {
+  run: run,
+  undo: undo
+};
+
+function run(g) {
+  var fas = (g.graph().acyclicer === "greedy"
+                ? greedyFAS(g, weightFn(g))
+                : dfsFAS(g));
+  _.each(fas, function(e) {
+    var label = g.edge(e);
+    g.removeEdge(e);
+    label.forwardName = e.name;
+    label.reversed = true;
+    g.setEdge(e.w, e.v, label, _.uniqueId("rev"));
+  });
+
+  function weightFn(g) {
+    return function(e) {
+      return g.edge(e).weight;
+    };
+  }
+}
+
+function dfsFAS(g) {
+  var fas = [],
+      stack = {},
+      visited = {};
+
+  function dfs(v) {
+    if (_.has(visited, v)) {
+      return;
+    }
+    visited[v] = true;
+    stack[v] = true;
+    _.each(g.outEdges(v), function(e) {
+      if (_.has(stack, e.w)) {
+        fas.push(e);
+      } else {
+        dfs(e.w);
+      }
+    });
+    delete stack[v];
+  }
+
+  _.each(g.nodes(), dfs);
+  return fas;
+}
+
+function undo(g) {
+  _.each(g.edges(), function(e) {
+    var label = g.edge(e);
+    if (label.reversed) {
+      g.removeEdge(e);
+
+      var forwardName = label.forwardName;
+      delete label.reversed;
+      delete label.forwardName;
+      g.setEdge(e.w, e.v, label, forwardName);
+    }
+  });
+}
+
+},{"./greedy-fas":37,"./lodash":39}],32:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util");
+
+module.exports = addBorderSegments;
+
+function addBorderSegments(g) {
+  function dfs(v) {
+    var children = g.children(v),
+        node = g.node(v);
+    if (children.length) {
+      _.each(children, dfs);
+    }
+
+    if (_.has(node, "minRank")) {
+      node.borderLeft = [];
+      node.borderRight = [];
+      for (var rank = node.minRank, maxRank = node.maxRank + 1;
+           rank < maxRank;
+           ++rank) {
+        addBorderNode(g, "borderLeft", "_bl", v, node, rank);
+        addBorderNode(g, "borderRight", "_br", v, node, rank);
+      }
+    }
+  }
+
+  _.each(g.children(), dfs);
+}
+
+function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
+  var label = { width: 0, height: 0, rank: rank, borderType: prop },
+      prev = sgNode[prop][rank - 1],
+      curr = util.addDummyNode(g, "border", label, prefix);
+  sgNode[prop][rank] = curr;
+  g.setParent(curr, sg);
+  if (prev) {
+    g.setEdge(prev, curr, { weight: 1 });
+  }
+}
+
+},{"./lodash":39,"./util":58}],33:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash");
+
+module.exports = {
+  adjust: adjust,
+  undo: undo
+};
+
+function adjust(g) {
+  var rankDir = g.graph().rankdir.toLowerCase();
+  if (rankDir === "lr" || rankDir === "rl") {
+    swapWidthHeight(g);
+  }
+}
+
+function undo(g) {
+  var rankDir = g.graph().rankdir.toLowerCase();
+  if (rankDir === "bt" || rankDir === "rl") {
+    reverseY(g);
+  }
+
+  if (rankDir === "lr" || rankDir === "rl") {
+    swapXY(g);
+    swapWidthHeight(g);
+  }
+}
+
+function swapWidthHeight(g) {
+  _.each(g.nodes(), function(v) { swapWidthHeightOne(g.node(v)); });
+  _.each(g.edges(), function(e) { swapWidthHeightOne(g.edge(e)); });
+}
+
+function swapWidthHeightOne(attrs) {
+  var w = attrs.width;
+  attrs.width = attrs.height;
+  attrs.height = w;
+}
+
+function reverseY(g) {
+  _.each(g.nodes(), function(v) { reverseYOne(g.node(v)); });
+
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    _.each(edge.points, reverseYOne);
+    if (_.has(edge, "y")) {
+      reverseYOne(edge);
+    }
+  });
+}
+
+function reverseYOne(attrs) {
+  attrs.y = -attrs.y;
+}
+
+function swapXY(g) {
+  _.each(g.nodes(), function(v) { swapXYOne(g.node(v)); });
+
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    _.each(edge.points, swapXYOne);
+    if (_.has(edge, "x")) {
+      swapXYOne(edge);
+    }
+  });
+}
+
+function swapXYOne(attrs) {
+  var x = attrs.x;
+  attrs.x = attrs.y;
+  attrs.y = x;
+}
+
+},{"./lodash":39}],34:[function(require,module,exports){
+/*
+ * Simple doubly linked list implementation derived from Cormen, et al.,
+ * "Introduction to Algorithms".
+ */
+
+module.exports = List;
+
+function List() {
+  var sentinel = {};
+  sentinel._next = sentinel._prev = sentinel;
+  this._sentinel = sentinel;
+}
+
+List.prototype.dequeue = function() {
+  var sentinel = this._sentinel,
+      entry = sentinel._prev;
+  if (entry !== sentinel) {
+    unlink(entry);
+    return entry;
+  }
+};
+
+List.prototype.enqueue = function(entry) {
+  var sentinel = this._sentinel;
+  if (entry._prev && entry._next) {
+    unlink(entry);
+  }
+  entry._next = sentinel._next;
+  sentinel._next._prev = entry;
+  sentinel._next = entry;
+  entry._prev = sentinel;
+};
+
+List.prototype.toString = function() {
+  var strs = [],
+      sentinel = this._sentinel,
+      curr = sentinel._prev;
+  while (curr !== sentinel) {
+    strs.push(JSON.stringify(curr, filterOutLinks));
+    curr = curr._prev;
+  }
+  return "[" + strs.join(", ") + "]";
+};
+
+function unlink(entry) {
+  entry._prev._next = entry._next;
+  entry._next._prev = entry._prev;
+  delete entry._next;
+  delete entry._prev;
+}
+
+function filterOutLinks(k, v) {
+  if (k !== "_next" && k !== "_prev") {
+    return v;
+  }
+}
+
+},{}],35:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = {
+  debugOrdering: debugOrdering
+};
+
+/* istanbul ignore next */
+function debugOrdering(g) {
+  var layerMatrix = util.buildLayerMatrix(g);
+
+  var h = new Graph({ compound: true, multigraph: true }).setGraph({});
+
+  _.each(g.nodes(), function(v) {
+    h.setNode(v, { label: v });
+    h.setParent(v, "layer" + g.node(v).rank);
+  });
+
+  _.each(g.edges(), function(e) {
+    h.setEdge(e.v, e.w, {}, e.name);
+  });
+
+  _.each(layerMatrix, function(layer, i) {
+    var layerV = "layer" + i;
+    h.setNode(layerV, { rank: "same" });
+    _.reduce(layer, function(u, v) {
+      h.setEdge(u, v, { style: "invis" });
+      return v;
+    });
+  });
+
+  return h;
+}
+
+},{"./graphlib":36,"./lodash":39,"./util":58}],36:[function(require,module,exports){
+/* global window */
+
+var graphlib;
+
+if (typeof require === "function") {
+  try {
+    graphlib = require("graphlib");
+  } catch (e) {}
+}
+
+if (!graphlib) {
+  graphlib = window.graphlib;
+}
+
+module.exports = graphlib;
+
+},{"graphlib":60}],37:[function(require,module,exports){
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph,
+    List = require("./data/list");
+
+/*
+ * A greedy heuristic for finding a feedback arc set for a graph. A feedback
+ * arc set is a set of edges that can be removed to make a graph acyclic.
+ * The algorithm comes from: P. Eades, X. Lin, and W. F. Smyth, "A fast and
+ * effective heuristic for the feedback arc set problem." This implementation
+ * adjusts that from the paper to allow for weighted edges.
+ */
+module.exports = greedyFAS;
+
+var DEFAULT_WEIGHT_FN = _.constant(1);
+
+function greedyFAS(g, weightFn) {
+  if (g.nodeCount() <= 1) {
+    return [];
+  }
+  var state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
+  var results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
+
+  // Expand multi-edges
+  return _.flatten(_.map(results, function(e) {
+    return g.outEdges(e.v, e.w);
+  }), true);
+}
+
+function doGreedyFAS(g, buckets, zeroIdx) {
+  var results = [],
+      sources = buckets[buckets.length - 1],
+      sinks = buckets[0];
+
+  var entry;
+  while (g.nodeCount()) {
+    while ((entry = sinks.dequeue()))   { removeNode(g, buckets, zeroIdx, entry); }
+    while ((entry = sources.dequeue())) { removeNode(g, buckets, zeroIdx, entry); }
+    if (g.nodeCount()) {
+      for (var i = buckets.length - 2; i > 0; --i) {
+        entry = buckets[i].dequeue();
+        if (entry) {
+          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
+          break;
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+function removeNode(g, buckets, zeroIdx, entry, collectPredecessors) {
+  var results = collectPredecessors ? [] : undefined;
+
+  _.each(g.inEdges(entry.v), function(edge) {
+    var weight = g.edge(edge),
+        uEntry = g.node(edge.v);
+
+    if (collectPredecessors) {
+      results.push({ v: edge.v, w: edge.w });
+    }
+
+    uEntry.out -= weight;
+    assignBucket(buckets, zeroIdx, uEntry);
+  });
+
+  _.each(g.outEdges(entry.v), function(edge) {
+    var weight = g.edge(edge),
+        w = edge.w,
+        wEntry = g.node(w);
+    wEntry["in"] -= weight;
+    assignBucket(buckets, zeroIdx, wEntry);
+  });
+
+  g.removeNode(entry.v);
+
+  return results;
+}
+
+function buildState(g, weightFn) {
+  var fasGraph = new Graph(),
+      maxIn = 0,
+      maxOut = 0;
+
+  _.each(g.nodes(), function(v) {
+    fasGraph.setNode(v, { v: v, "in": 0, out: 0 });
+  });
+
+  // Aggregate weights on nodes, but also sum the weights across multi-edges
+  // into a single edge for the fasGraph.
+  _.each(g.edges(), function(e) {
+    var prevWeight = fasGraph.edge(e.v, e.w) || 0,
+        weight = weightFn(e),
+        edgeWeight = prevWeight + weight;
+    fasGraph.setEdge(e.v, e.w, edgeWeight);
+    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
+    maxIn  = Math.max(maxIn,  fasGraph.node(e.w)["in"]  += weight);
+  });
+
+  var buckets = _.range(maxOut + maxIn + 3).map(function() { return new List(); });
+  var zeroIdx = maxIn + 1;
+
+  _.each(fasGraph.nodes(), function(v) {
+    assignBucket(buckets, zeroIdx, fasGraph.node(v));
+  });
+
+  return { graph: fasGraph, buckets: buckets, zeroIdx: zeroIdx };
+}
+
+function assignBucket(buckets, zeroIdx, entry) {
+  if (!entry.out) {
+    buckets[0].enqueue(entry);
+  } else if (!entry["in"]) {
+    buckets[buckets.length - 1].enqueue(entry);
+  } else {
+    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
+  }
+}
+
+},{"./data/list":34,"./graphlib":36,"./lodash":39}],38:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    acyclic = require("./acyclic"),
+    normalize = require("./normalize"),
+    rank = require("./rank"),
+    normalizeRanks = require("./util").normalizeRanks,
+    parentDummyChains = require("./parent-dummy-chains"),
+    removeEmptyRanks = require("./util").removeEmptyRanks,
+    nestingGraph = require("./nesting-graph"),
+    addBorderSegments = require("./add-border-segments"),
+    coordinateSystem = require("./coordinate-system"),
+    order = require("./order"),
+    position = require("./position"),
+    util = require("./util"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = layout;
+
+function layout(g, opts) {
+  var time = opts && opts.debugTiming ? util.time : util.notime;
+  time("layout", function() {
+    var layoutGraph = time("  buildLayoutGraph",
+                               function() { return buildLayoutGraph(g); });
+    time("  runLayout",        function() { runLayout(layoutGraph, time); });
+    time("  updateInputGraph", function() { updateInputGraph(g, layoutGraph); });
+  });
+}
+
+function runLayout(g, time) {
+  time("    makeSpaceForEdgeLabels", function() { makeSpaceForEdgeLabels(g); });
+  time("    removeSelfEdges",        function() { removeSelfEdges(g); });
+  time("    acyclic",                function() { acyclic.run(g); });
+  time("    nestingGraph.run",       function() { nestingGraph.run(g); });
+  time("    rank",                   function() { rank(util.asNonCompoundGraph(g)); });
+  time("    injectEdgeLabelProxies", function() { injectEdgeLabelProxies(g); });
+  time("    removeEmptyRanks",       function() { removeEmptyRanks(g); });
+  time("    nestingGraph.cleanup",   function() { nestingGraph.cleanup(g); });
+  time("    normalizeRanks",         function() { normalizeRanks(g); });
+  time("    assignRankMinMax",       function() { assignRankMinMax(g); });
+  time("    removeEdgeLabelProxies", function() { removeEdgeLabelProxies(g); });
+  time("    normalize.run",          function() { normalize.run(g); });
+  time("    parentDummyChains",      function() { parentDummyChains(g); });
+  time("    addBorderSegments",      function() { addBorderSegments(g); });
+  time("    order",                  function() { order(g); });
+  time("    insertSelfEdges",        function() { insertSelfEdges(g); });
+  time("    adjustCoordinateSystem", function() { coordinateSystem.adjust(g); });
+  time("    position",               function() { position(g); });
+  time("    positionSelfEdges",      function() { positionSelfEdges(g); });
+  time("    removeBorderNodes",      function() { removeBorderNodes(g); });
+  time("    normalize.undo",         function() { normalize.undo(g); });
+  time("    fixupEdgeLabelCoords",   function() { fixupEdgeLabelCoords(g); });
+  time("    undoCoordinateSystem",   function() { coordinateSystem.undo(g); });
+  time("    translateGraph",         function() { translateGraph(g); });
+  time("    assignNodeIntersects",   function() { assignNodeIntersects(g); });
+  time("    reversePoints",          function() { reversePointsForReversedEdges(g); });
+  time("    acyclic.undo",           function() { acyclic.undo(g); });
+}
+
+/*
+ * Copies final layout information from the layout graph back to the input
+ * graph. This process only copies whitelisted attributes from the layout graph
+ * to the input graph, so it serves as a good place to determine what
+ * attributes can influence layout.
+ */
+function updateInputGraph(inputGraph, layoutGraph) {
+  _.each(inputGraph.nodes(), function(v) {
+    var inputLabel = inputGraph.node(v),
+        layoutLabel = layoutGraph.node(v);
+
+    if (inputLabel) {
+      inputLabel.x = layoutLabel.x;
+      inputLabel.y = layoutLabel.y;
+
+      if (layoutGraph.children(v).length) {
+        inputLabel.width = layoutLabel.width;
+        inputLabel.height = layoutLabel.height;
+      }
+    }
+  });
+
+  _.each(inputGraph.edges(), function(e) {
+    var inputLabel = inputGraph.edge(e),
+        layoutLabel = layoutGraph.edge(e);
+
+    inputLabel.points = layoutLabel.points;
+    if (_.has(layoutLabel, "x")) {
+      inputLabel.x = layoutLabel.x;
+      inputLabel.y = layoutLabel.y;
+    }
+  });
+
+  inputGraph.graph().width = layoutGraph.graph().width;
+  inputGraph.graph().height = layoutGraph.graph().height;
+}
+
+var graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"],
+    graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" },
+    graphAttrs = ["acyclicer", "ranker", "rankdir", "align"],
+    nodeNumAttrs = ["width", "height"],
+    nodeDefaults = { width: 0, height: 0 },
+    edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"],
+    edgeDefaults = {
+      minlen: 1, weight: 1, width: 0, height: 0,
+      labeloffset: 10, labelpos: "r"
+    },
+    edgeAttrs = ["labelpos"];
+
+/*
+ * Constructs a new graph from the input graph, which can be used for layout.
+ * This process copies only whitelisted attributes from the input graph to the
+ * layout graph. Thus this function serves as a good place to determine what
+ * attributes can influence layout.
+ */
+function buildLayoutGraph(inputGraph) {
+  var g = new Graph({ multigraph: true, compound: true }),
+      graph = canonicalize(inputGraph.graph());
+
+  g.setGraph(_.merge({},
+    graphDefaults,
+    selectNumberAttrs(graph, graphNumAttrs),
+    _.pick(graph, graphAttrs)));
+
+  _.each(inputGraph.nodes(), function(v) {
+    var node = canonicalize(inputGraph.node(v));
+    g.setNode(v, _.defaults(selectNumberAttrs(node, nodeNumAttrs), nodeDefaults));
+    g.setParent(v, inputGraph.parent(v));
+  });
+
+  _.each(inputGraph.edges(), function(e) {
+    var edge = canonicalize(inputGraph.edge(e));
+    g.setEdge(e, _.merge({},
+      edgeDefaults,
+      selectNumberAttrs(edge, edgeNumAttrs),
+      _.pick(edge, edgeAttrs)));
+  });
+
+  return g;
+}
+
+/*
+ * This idea comes from the Gansner paper: to account for edge labels in our
+ * layout we split each rank in half by doubling minlen and halving ranksep.
+ * Then we can place labels at these mid-points between nodes.
+ *
+ * We also add some minimal padding to the width to push the label for the edge
+ * away from the edge itself a bit.
+ */
+function makeSpaceForEdgeLabels(g) {
+  var graph = g.graph();
+  graph.ranksep /= 2;
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    edge.minlen *= 2;
+    if (edge.labelpos.toLowerCase() !== "c") {
+      if (graph.rankdir === "TB" || graph.rankdir === "BT") {
+        edge.width += edge.labeloffset;
+      } else {
+        edge.height += edge.labeloffset;
+      }
+    }
+  });
+}
+
+/*
+ * Creates temporary dummy nodes that capture the rank in which each edge's
+ * label is going to, if it has one of non-zero width and height. We do this
+ * so that we can safely remove empty ranks while preserving balance for the
+ * label's position.
+ */
+function injectEdgeLabelProxies(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (edge.width && edge.height) {
+      var v = g.node(e.v),
+          w = g.node(e.w),
+          label = { rank: (w.rank - v.rank) / 2 + v.rank, e: e };
+      util.addDummyNode(g, "edge-proxy", label, "_ep");
+    }
+  });
+}
+
+function assignRankMinMax(g) {
+  var maxRank = 0;
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (node.borderTop) {
+      node.minRank = g.node(node.borderTop).rank;
+      node.maxRank = g.node(node.borderBottom).rank;
+      maxRank = _.max(maxRank, node.maxRank);
+    }
+  });
+  g.graph().maxRank = maxRank;
+}
+
+function removeEdgeLabelProxies(g) {
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (node.dummy === "edge-proxy") {
+      g.edge(node.e).labelRank = node.rank;
+      g.removeNode(v);
+    }
+  });
+}
+
+function translateGraph(g) {
+  var minX = Number.POSITIVE_INFINITY,
+      maxX = 0,
+      minY = Number.POSITIVE_INFINITY,
+      maxY = 0,
+      graphLabel = g.graph(),
+      marginX = graphLabel.marginx || 0,
+      marginY = graphLabel.marginy || 0;
+
+  function getExtremes(attrs) {
+    var x = attrs.x,
+        y = attrs.y,
+        w = attrs.width,
+        h = attrs.height;
+    minX = Math.min(minX, x - w / 2);
+    maxX = Math.max(maxX, x + w / 2);
+    minY = Math.min(minY, y - h / 2);
+    maxY = Math.max(maxY, y + h / 2);
+  }
+
+  _.each(g.nodes(), function(v) { getExtremes(g.node(v)); });
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (_.has(edge, "x")) {
+      getExtremes(edge);
+    }
+  });
+
+  minX -= marginX;
+  minY -= marginY;
+
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    node.x -= minX;
+    node.y -= minY;
+  });
+
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    _.each(edge.points, function(p) {
+      p.x -= minX;
+      p.y -= minY;
+    });
+    if (_.has(edge, "x")) { edge.x -= minX; }
+    if (_.has(edge, "y")) { edge.y -= minY; }
+  });
+
+  graphLabel.width = maxX - minX + marginX;
+  graphLabel.height = maxY - minY + marginY;
+}
+
+function assignNodeIntersects(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e),
+        nodeV = g.node(e.v),
+        nodeW = g.node(e.w),
+        p1, p2;
+    if (!edge.points) {
+      edge.points = [];
+      p1 = nodeW;
+      p2 = nodeV;
+    } else {
+      p1 = edge.points[0];
+      p2 = edge.points[edge.points.length - 1];
+    }
+    edge.points.unshift(util.intersectRect(nodeV, p1));
+    edge.points.push(util.intersectRect(nodeW, p2));
+  });
+}
+
+function fixupEdgeLabelCoords(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (_.has(edge, "x")) {
+      if (edge.labelpos === "l" || edge.labelpos === "r") {
+        edge.width -= edge.labeloffset;
+      }
+      switch (edge.labelpos) {
+        case "l": edge.x -= edge.width / 2 + edge.labeloffset; break;
+        case "r": edge.x += edge.width / 2 + edge.labeloffset; break;
+      }
+    }
+  });
+}
+
+function reversePointsForReversedEdges(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (edge.reversed) {
+      edge.points.reverse();
+    }
+  });
+}
+
+function removeBorderNodes(g) {
+  _.each(g.nodes(), function(v) {
+    if (g.children(v).length) {
+      var node = g.node(v),
+          t = g.node(node.borderTop),
+          b = g.node(node.borderBottom),
+          l = g.node(_.last(node.borderLeft)),
+          r = g.node(_.last(node.borderRight));
+
+      node.width = Math.abs(r.x - l.x);
+      node.height = Math.abs(b.y - t.y);
+      node.x = l.x + node.width / 2;
+      node.y = t.y + node.height / 2;
+    }
+  });
+
+  _.each(g.nodes(), function(v) {
+    if (g.node(v).dummy === "border") {
+      g.removeNode(v);
+    }
+  });
+}
+
+function removeSelfEdges(g) {
+  _.each(g.edges(), function(e) {
+    if (e.v === e.w) {
+      var node = g.node(e.v);
+      if (!node.selfEdges) {
+        node.selfEdges = [];
+      }
+      node.selfEdges.push({ e: e, label: g.edge(e) });
+      g.removeEdge(e);
+    }
+  });
+}
+
+function insertSelfEdges(g) {
+  var layers = util.buildLayerMatrix(g);
+  _.each(layers, function(layer) {
+    var orderShift = 0;
+    _.each(layer, function(v, i) {
+      var node = g.node(v);
+      node.order = i + orderShift;
+      _.each(node.selfEdges, function(selfEdge) {
+        util.addDummyNode(g, "selfedge", {
+          width: selfEdge.label.width,
+          height: selfEdge.label.height,
+          rank: node.rank,
+          order: i + (++orderShift),
+          e: selfEdge.e,
+          label: selfEdge.label
+        }, "_se");
+      });
+      delete node.selfEdges;
+    });
+  });
+}
+
+function positionSelfEdges(g) {
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (node.dummy === "selfedge") {
+      var selfNode = g.node(node.e.v),
+          x = selfNode.x + selfNode.width / 2,
+          y = selfNode.y,
+          dx = node.x - x,
+          dy = selfNode.height / 2;
+      g.setEdge(node.e, node.label);
+      g.removeNode(v);
+      node.label.points = [
+        { x: x + 2 * dx / 3, y: y - dy },
+        { x: x + 5 * dx / 6, y: y - dy },
+        { x: x +     dx    , y: y },
+        { x: x + 5 * dx / 6, y: y + dy },
+        { x: x + 2 * dx / 3, y: y + dy },
+      ];
+      node.label.x = node.x;
+      node.label.y = node.y;
+    }
+  });
+}
+
+function selectNumberAttrs(obj, attrs) {
+  return _.mapValues(_.pick(obj, attrs), Number);
+}
+
+function canonicalize(attrs) {
+  var newAttrs = {};
+  _.each(attrs, function(v, k) {
+    newAttrs[k.toLowerCase()] = v;
+  });
+  return newAttrs;
+}
+
+},{"./acyclic":31,"./add-border-segments":32,"./coordinate-system":33,"./graphlib":36,"./lodash":39,"./nesting-graph":40,"./normalize":41,"./order":46,"./parent-dummy-chains":51,"./position":53,"./rank":55,"./util":58}],39:[function(require,module,exports){
+/* global window */
+
+var lodash;
+
+if (typeof require === "function") {
+  try {
+    lodash = require("lodash");
+  } catch (e) {}
+}
+
+if (!lodash) {
+  lodash = window._;
+}
+
+module.exports = lodash;
+
+},{"lodash":80}],40:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util");
+
+module.exports = {
+  run: run,
+  cleanup: cleanup
+};
+
+/*
+ * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
+ * adds appropriate edges to ensure that all cluster nodes are placed between
+ * these boundries, and ensures that the graph is connected.
+ *
+ * In addition we ensure, through the use of the minlen property, that nodes
+ * and subgraph border nodes to not end up on the same rank.
+ *
+ * Preconditions:
+ *
+ *    1. Input graph is a DAG
+ *    2. Nodes in the input graph has a minlen attribute
+ *
+ * Postconditions:
+ *
+ *    1. Input graph is connected.
+ *    2. Dummy nodes are added for the tops and bottoms of subgraphs.
+ *    3. The minlen attribute for nodes is adjusted to ensure nodes do not
+ *       get placed on the same rank as subgraph border nodes.
+ *
+ * The nesting graph idea comes from Sander, "Layout of Compound Directed
+ * Graphs."
+ */
+function run(g) {
+  var root = util.addDummyNode(g, "root", {}, "_root"),
+      depths = treeDepths(g),
+      height = _.max(depths) - 1,
+      nodeSep = 2 * height + 1;
+
+  g.graph().nestingRoot = root;
+
+  // Multiply minlen by nodeSep to align nodes on non-border ranks.
+  _.each(g.edges(), function(e) { g.edge(e).minlen *= nodeSep; });
+
+  // Calculate a weight that is sufficient to keep subgraphs vertically compact
+  var weight = sumWeights(g) + 1;
+
+  // Create border nodes and link them up
+  _.each(g.children(), function(child) {
+    dfs(g, root, nodeSep, weight, height, depths, child);
+  });
+
+  // Save the multiplier for node layers for later removal of empty border
+  // layers.
+  g.graph().nodeRankFactor = nodeSep;
+}
+
+function dfs(g, root, nodeSep, weight, height, depths, v) {
+  var children = g.children(v);
+  if (!children.length) {
+    if (v !== root) {
+      g.setEdge(root, v, { weight: 0, minlen: nodeSep });
+    }
+    return;
+  }
+
+  var top = util.addBorderNode(g, "_bt"),
+      bottom = util.addBorderNode(g, "_bb"),
+      label = g.node(v);
+
+  g.setParent(top, v);
+  label.borderTop = top;
+  g.setParent(bottom, v);
+  label.borderBottom = bottom;
+
+  _.each(children, function(child) {
+    dfs(g, root, nodeSep, weight, height, depths, child);
+
+    var childNode = g.node(child),
+        childTop = childNode.borderTop ? childNode.borderTop : child,
+        childBottom = childNode.borderBottom ? childNode.borderBottom : child,
+        thisWeight = childNode.borderTop ? weight : 2 * weight,
+        minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
+
+    g.setEdge(top, childTop, {
+      weight: thisWeight,
+      minlen: minlen,
+      nestingEdge: true
+    });
+
+    g.setEdge(childBottom, bottom, {
+      weight: thisWeight,
+      minlen: minlen,
+      nestingEdge: true
+    });
+  });
+
+  if (!g.parent(v)) {
+    g.setEdge(root, top, { weight: 0, minlen: height + depths[v] });
+  }
+}
+
+function treeDepths(g) {
+  var depths = {};
+  function dfs(v, depth) {
+    var children = g.children(v);
+    if (children && children.length) {
+      _.each(children, function(child) {
+        dfs(child, depth + 1);
+      });
+    }
+    depths[v] = depth;
+  }
+  _.each(g.children(), function(v) { dfs(v, 1); });
+  return depths;
+}
+
+function sumWeights(g) {
+  return _.reduce(g.edges(), function(acc, e) {
+    return acc + g.edge(e).weight;
+  }, 0);
+}
+
+function cleanup(g) {
+  var graphLabel = g.graph();
+  g.removeNode(graphLabel.nestingRoot);
+  delete graphLabel.nestingRoot;
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (edge.nestingEdge) {
+      g.removeEdge(e);
+    }
+  });
+}
+
+},{"./lodash":39,"./util":58}],41:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    util = require("./util");
+
+module.exports = {
+  run: run,
+  undo: undo
+};
+
+/*
+ * Breaks any long edges in the graph into short segments that span 1 layer
+ * each. This operation is undoable with the denormalize function.
+ *
+ * Pre-conditions:
+ *
+ *    1. The input graph is a DAG.
+ *    2. Each node in the graph has a "rank" property.
+ *
+ * Post-condition:
+ *
+ *    1. All edges in the graph have a length of 1.
+ *    2. Dummy nodes are added where edges have been split into segments.
+ *    3. The graph is augmented with a "dummyChains" attribute which contains
+ *       the first dummy in each chain of dummy nodes produced.
+ */
+function run(g) {
+  g.graph().dummyChains = [];
+  _.each(g.edges(), function(edge) { normalizeEdge(g, edge); });
+}
+
+function normalizeEdge(g, e) {
+  var v = e.v,
+      vRank = g.node(v).rank,
+      w = e.w,
+      wRank = g.node(w).rank,
+      name = e.name,
+      edgeLabel = g.edge(e),
+      labelRank = edgeLabel.labelRank;
+
+  if (wRank === vRank + 1) return;
+
+  g.removeEdge(e);
+
+  var dummy, attrs, i;
+  for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
+    edgeLabel.points = [];
+    attrs = {
+      width: 0, height: 0,
+      edgeLabel: edgeLabel, edgeObj: e,
+      rank: vRank
+    };
+    dummy = util.addDummyNode(g, "edge", attrs, "_d");
+    if (vRank === labelRank) {
+      attrs.width = edgeLabel.width;
+      attrs.height = edgeLabel.height;
+      attrs.dummy = "edge-label";
+      attrs.labelpos = edgeLabel.labelpos;
+    }
+    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
+    if (i === 0) {
+      g.graph().dummyChains.push(dummy);
+    }
+    v = dummy;
+  }
+
+  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
+}
+
+function undo(g) {
+  _.each(g.graph().dummyChains, function(v) {
+    var node = g.node(v),
+        origLabel = node.edgeLabel,
+        w;
+    g.setEdge(node.edgeObj, origLabel);
+    while (node.dummy) {
+      w = g.successors(v)[0];
+      g.removeNode(v);
+      origLabel.points.push({ x: node.x, y: node.y });
+      if (node.dummy === "edge-label") {
+        origLabel.x = node.x;
+        origLabel.y = node.y;
+        origLabel.width = node.width;
+        origLabel.height = node.height;
+      }
+      v = w;
+      node = g.node(v);
+    }
+  });
+}
+
+},{"./lodash":39,"./util":58}],42:[function(require,module,exports){
+var _ = require("../lodash");
+
+module.exports = addSubgraphConstraints;
+
+function addSubgraphConstraints(g, cg, vs) {
+  var prev = {},
+      rootPrev;
+
+  _.each(vs, function(v) {
+    var child = g.parent(v),
+        parent,
+        prevChild;
+    while (child) {
+      parent = g.parent(child);
+      if (parent) {
+        prevChild = prev[parent];
+        prev[parent] = child;
+      } else {
+        prevChild = rootPrev;
+        rootPrev = child;
+      }
+      if (prevChild && prevChild !== child) {
+        cg.setEdge(prevChild, child);
+        return;
+      }
+      child = parent;
+    }
+  });
+
+  /*
+  function dfs(v) {
+    var children = v ? g.children(v) : g.children();
+    if (children.length) {
+      var min = Number.POSITIVE_INFINITY,
+          subgraphs = [];
+      _.each(children, function(child) {
+        var childMin = dfs(child);
+        if (g.children(child).length) {
+          subgraphs.push({ v: child, order: childMin });
+        }
+        min = Math.min(min, childMin);
+      });
+      _.reduce(_.sortBy(subgraphs, "order"), function(prev, curr) {
+        cg.setEdge(prev.v, curr.v);
+        return curr;
+      });
+      return min;
+    }
+    return g.node(v).order;
+  }
+  dfs(undefined);
+  */
+}
+
+},{"../lodash":39}],43:[function(require,module,exports){
+var _ = require("../lodash");
+
+module.exports = barycenter;
+
+function barycenter(g, movable) {
+  return _.map(movable, function(v) {
+    var inV = g.inEdges(v);
+    if (!inV.length) {
+      return { v: v };
+    } else {
+      var result = _.reduce(inV, function(acc, e) {
+        var edge = g.edge(e),
+            nodeU = g.node(e.v);
+        return {
+          sum: acc.sum + (edge.weight * nodeU.order),
+          weight: acc.weight + edge.weight
+        };
+      }, { sum: 0, weight: 0 });
+
+      return {
+        v: v,
+        barycenter: result.sum / result.weight,
+        weight: result.weight
+      };
+    }
+  });
+}
+
+
+},{"../lodash":39}],44:[function(require,module,exports){
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph;
+
+module.exports = buildLayerGraph;
+
+/*
+ * Constructs a graph that can be used to sort a layer of nodes. The graph will
+ * contain all base and subgraph nodes from the request layer in their original
+ * hierarchy and any edges that are incident on these nodes and are of the type
+ * requested by the "relationship" parameter.
+ *
+ * Nodes from the requested rank that do not have parents are assigned a root
+ * node in the output graph, which is set in the root graph attribute. This
+ * makes it easy to walk the hierarchy of movable nodes during ordering.
+ *
+ * Pre-conditions:
+ *
+ *    1. Input graph is a DAG
+ *    2. Base nodes in the input graph have a rank attribute
+ *    3. Subgraph nodes in the input graph has minRank and maxRank attributes
+ *    4. Edges have an assigned weight
+ *
+ * Post-conditions:
+ *
+ *    1. Output graph has all nodes in the movable rank with preserved
+ *       hierarchy.
+ *    2. Root nodes in the movable layer are made children of the node
+ *       indicated by the root attribute of the graph.
+ *    3. Non-movable nodes incident on movable nodes, selected by the
+ *       relationship parameter, are included in the graph (without hierarchy).
+ *    4. Edges incident on movable nodes, selected by the relationship
+ *       parameter, are added to the output graph.
+ *    5. The weights for copied edges are aggregated as need, since the output
+ *       graph is not a multi-graph.
+ */
+function buildLayerGraph(g, rank, relationship) {
+  var root = createRootNode(g),
+      result = new Graph({ compound: true }).setGraph({ root: root })
+                  .setDefaultNodeLabel(function(v) { return g.node(v); });
+
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v),
+        parent = g.parent(v);
+
+    if (node.rank === rank || node.minRank <= rank && rank <= node.maxRank) {
+      result.setNode(v);
+      result.setParent(v, parent || root);
+
+      // This assumes we have only short edges!
+      _.each(g[relationship](v), function(e) {
+        var u = e.v === v ? e.w : e.v,
+            edge = result.edge(u, v),
+            weight = !_.isUndefined(edge) ? edge.weight : 0;
+        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
+      });
+
+      if (_.has(node, "minRank")) {
+        result.setNode(v, {
+          borderLeft: node.borderLeft[rank],
+          borderRight: node.borderRight[rank]
+        });
+      }
+    }
+  });
+
+  return result;
+}
+
+function createRootNode(g) {
+  var v;
+  while (g.hasNode((v = _.uniqueId("_root"))));
+  return v;
+}
+
+},{"../graphlib":36,"../lodash":39}],45:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = crossCount;
+
+/*
+ * A function that takes a layering (an array of layers, each with an array of
+ * ordererd nodes) and a graph and returns a weighted crossing count.
+ *
+ * Pre-conditions:
+ *
+ *    1. Input graph must be simple (not a multigraph), directed, and include
+ *       only simple edges.
+ *    2. Edges in the input graph must have assigned weights.
+ *
+ * Post-conditions:
+ *
+ *    1. The graph and layering matrix are left unchanged.
+ *
+ * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
+ */
+function crossCount(g, layering) {
+  var cc = 0;
+  for (var i = 1; i < layering.length; ++i) {
+    cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
+  }
+  return cc;
+}
+
+function twoLayerCrossCount(g, northLayer, southLayer) {
+  // Sort all of the edges between the north and south layers by their position
+  // in the north layer and then the south. Map these edges to the position of
+  // their head in the south layer.
+  var southPos = _.zipObject(southLayer,
+                             _.map(southLayer, function (v, i) { return i; }));
+  var southEntries = _.flatten(_.map(northLayer, function(v) {
+    return _.chain(g.outEdges(v))
+            .map(function(e) {
+              return { pos: southPos[e.w], weight: g.edge(e).weight };
+            })
+            .sortBy("pos")
+            .value();
+  }), true);
+
+  // Build the accumulator tree
+  var firstIndex = 1;
+  while (firstIndex < southLayer.length) firstIndex <<= 1;
+  var treeSize = 2 * firstIndex - 1;
+  firstIndex -= 1;
+  var tree = _.map(new Array(treeSize), function() { return 0; });
+
+  // Calculate the weighted crossings
+  var cc = 0;
+  _.each(southEntries.forEach(function(entry) {
+    var index = entry.pos + firstIndex;
+    tree[index] += entry.weight;
+    var weightSum = 0;
+    while (index > 0) {
+      if (index % 2) {
+        weightSum += tree[index + 1];
+      }
+      index = (index - 1) >> 1;
+      tree[index] += entry.weight;
+    }
+    cc += entry.weight * weightSum;
+  }));
+
+  return cc;
+}
+
+},{"../lodash":39}],46:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    initOrder = require("./init-order"),
+    crossCount = require("./cross-count"),
+    sortSubgraph = require("./sort-subgraph"),
+    buildLayerGraph = require("./build-layer-graph"),
+    addSubgraphConstraints = require("./add-subgraph-constraints"),
+    Graph = require("../graphlib").Graph,
+    util = require("../util");
+
+module.exports = order;
+
+/*
+ * Applies heuristics to minimize edge crossings in the graph and sets the best
+ * order solution as an order attribute on each node.
+ *
+ * Pre-conditions:
+ *
+ *    1. Graph must be DAG
+ *    2. Graph nodes must be objects with a "rank" attribute
+ *    3. Graph edges must have the "weight" attribute
+ *
+ * Post-conditions:
+ *
+ *    1. Graph nodes will have an "order" attribute based on the results of the
+ *       algorithm.
+ */
+function order(g) {
+  var maxRank = util.maxRank(g),
+      downLayerGraphs = buildLayerGraphs(g, _.range(1, maxRank + 1), "inEdges"),
+      upLayerGraphs = buildLayerGraphs(g, _.range(maxRank - 1, -1, -1), "outEdges");
+
+  var layering = initOrder(g);
+  assignOrder(g, layering);
+
+  var bestCC = Number.POSITIVE_INFINITY,
+      best;
+
+  for (var i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
+    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
+
+    layering = util.buildLayerMatrix(g);
+    var cc = crossCount(g, layering);
+    if (cc < bestCC) {
+      lastBest = 0;
+      best = _.cloneDeep(layering);
+      bestCC = cc;
+    }
+  }
+
+  assignOrder(g, best);
+}
+
+function buildLayerGraphs(g, ranks, relationship) {
+  return _.map(ranks, function(rank) {
+    return buildLayerGraph(g, rank, relationship);
+  });
+}
+
+function sweepLayerGraphs(layerGraphs, biasRight) {
+  var cg = new Graph();
+  _.each(layerGraphs, function(lg) {
+    var root = lg.graph().root;
+    var sorted = sortSubgraph(lg, root, cg, biasRight);
+    _.each(sorted.vs, function(v, i) {
+      lg.node(v).order = i;
+    });
+    addSubgraphConstraints(lg, cg, sorted.vs);
+  });
+}
+
+function assignOrder(g, layering) {
+  _.each(layering, function(layer) {
+    _.each(layer, function(v, i) {
+      g.node(v).order = i;
+    });
+  });
+}
+
+},{"../graphlib":36,"../lodash":39,"../util":58,"./add-subgraph-constraints":42,"./build-layer-graph":44,"./cross-count":45,"./init-order":47,"./sort-subgraph":49}],47:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = initOrder;
+
+/*
+ * Assigns an initial order value for each node by performing a DFS search
+ * starting from nodes in the first rank. Nodes are assigned an order in their
+ * rank as they are first visited.
+ *
+ * This approach comes from Gansner, et al., "A Technique for Drawing Directed
+ * Graphs."
+ *
+ * Returns a layering matrix with an array per layer and each layer sorted by
+ * the order of its nodes.
+ */
+function initOrder(g) {
+  var visited = {},
+      simpleNodes = _.filter(g.nodes(), function(v) {
+        return !g.children(v).length;
+      }),
+      maxRank = _.max(_.map(simpleNodes, function(v) { return g.node(v).rank; })),
+      layers = _.map(_.range(maxRank + 1), function() { return []; });
+
+  function dfs(v) {
+    if (_.has(visited, v)) return;
+    visited[v] = true;
+    var node = g.node(v);
+    layers[node.rank].push(v);
+    _.each(g.successors(v), dfs);
+  }
+
+  var orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v).rank; });
+  _.each(orderedVs, dfs);
+
+  return layers;
+}
+
+},{"../lodash":39}],48:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = resolveConflicts;
+
+/*
+ * Given a list of entries of the form {v, barycenter, weight} and a
+ * constraint graph this function will resolve any conflicts between the
+ * constraint graph and the barycenters for the entries. If the barycenters for
+ * an entry would violate a constraint in the constraint graph then we coalesce
+ * the nodes in the conflict into a new node that respects the contraint and
+ * aggregates barycenter and weight information.
+ *
+ * This implementation is based on the description in Forster, "A Fast and
+ * Simple Hueristic for Constrained Two-Level Crossing Reduction," thought it
+ * differs in some specific details.
+ *
+ * Pre-conditions:
+ *
+ *    1. Each entry has the form {v, barycenter, weight}, or if the node has
+ *       no barycenter, then {v}.
+ *
+ * Returns:
+ *
+ *    A new list of entries of the form {vs, i, barycenter, weight}. The list
+ *    `vs` may either be a singleton or it may be an aggregation of nodes
+ *    ordered such that they do not violate constraints from the constraint
+ *    graph. The property `i` is the lowest original index of any of the
+ *    elements in `vs`.
+ */
+function resolveConflicts(entries, cg) {
+  var mappedEntries = {};
+  _.each(entries, function(entry, i) {
+    var tmp = mappedEntries[entry.v] = {
+      indegree: 0,
+      "in": [],
+      out: [],
+      vs: [entry.v],
+      i: i
+    };
+    if (!_.isUndefined(entry.barycenter)) {
+      tmp.barycenter = entry.barycenter;
+      tmp.weight = entry.weight;
+    }
+  });
+
+  _.each(cg.edges(), function(e) {
+    var entryV = mappedEntries[e.v],
+        entryW = mappedEntries[e.w];
+    if (!_.isUndefined(entryV) && !_.isUndefined(entryW)) {
+      entryW.indegree++;
+      entryV.out.push(mappedEntries[e.w]);
+    }
+  });
+
+  var sourceSet = _.filter(mappedEntries, function(entry) {
+    return !entry.indegree;
+  });
+
+  return doResolveConflicts(sourceSet);
+}
+
+function doResolveConflicts(sourceSet) {
+  var entries = [];
+
+  function handleIn(vEntry) {
+    return function(uEntry) {
+      if (uEntry.merged) {
+        return;
+      }
+      if (_.isUndefined(uEntry.barycenter) ||
+          _.isUndefined(vEntry.barycenter) ||
+          uEntry.barycenter >= vEntry.barycenter) {
+        mergeEntries(vEntry, uEntry);
+      }
+    };
+  }
+
+  function handleOut(vEntry) {
+    return function(wEntry) {
+      wEntry["in"].push(vEntry);
+      if (--wEntry.indegree === 0) {
+        sourceSet.push(wEntry);
+      }
+    };
+  }
+
+  while (sourceSet.length) {
+    var entry = sourceSet.pop();
+    entries.push(entry);
+    _.each(entry["in"].reverse(), handleIn(entry));
+    _.each(entry.out, handleOut(entry));
+  }
+
+  return _.chain(entries)
+          .filter(function(entry) { return !entry.merged; })
+          .map(function(entry) {
+            return _.pick(entry, ["vs", "i", "barycenter", "weight"]);
+          })
+          .value();
+}
+
+function mergeEntries(target, source) {
+  var sum = 0,
+      weight = 0;
+
+  if (target.weight) {
+    sum += target.barycenter * target.weight;
+    weight += target.weight;
+  }
+
+  if (source.weight) {
+    sum += source.barycenter * source.weight;
+    weight += source.weight;
+  }
+
+  target.vs = source.vs.concat(target.vs);
+  target.barycenter = sum / weight;
+  target.weight = weight;
+  target.i = Math.min(source.i, target.i);
+  source.merged = true;
+}
+
+},{"../lodash":39}],49:[function(require,module,exports){
+var _ = require("../lodash"),
+    barycenter = require("./barycenter"),
+    resolveConflicts = require("./resolve-conflicts"),
+    sort = require("./sort");
+
+module.exports = sortSubgraph;
+
+function sortSubgraph(g, v, cg, biasRight) {
+  var movable = g.children(v),
+      node = g.node(v),
+      bl = node ? node.borderLeft : undefined,
+      br = node ? node.borderRight: undefined,
+      subgraphs = {};
+
+  if (bl) {
+    movable = _.filter(movable, function(w) {
+      return w !== bl && w !== br;
+    });
+  }
+
+  var barycenters = barycenter(g, movable);
+  _.each(barycenters, function(entry) {
+    if (g.children(entry.v).length) {
+      var subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
+      subgraphs[entry.v] = subgraphResult;
+      if (_.has(subgraphResult, "barycenter")) {
+        mergeBarycenters(entry, subgraphResult);
+      }
+    }
+  });
+
+  var entries = resolveConflicts(barycenters, cg);
+  expandSubgraphs(entries, subgraphs);
+
+  var result = sort(entries, biasRight);
+
+  if (bl) {
+    result.vs = _.flatten([bl, result.vs, br], true);
+    if (g.predecessors(bl).length) {
+      var blPred = g.node(g.predecessors(bl)[0]),
+          brPred = g.node(g.predecessors(br)[0]);
+      if (!_.has(result, "barycenter")) {
+        result.barycenter = 0;
+        result.weight = 0;
+      }
+      result.barycenter = (result.barycenter * result.weight +
+                           blPred.order + brPred.order) / (result.weight + 2);
+      result.weight += 2;
+    }
+  }
+
+  return result;
+}
+
+function expandSubgraphs(entries, subgraphs) {
+  _.each(entries, function(entry) {
+    entry.vs = _.flatten(entry.vs.map(function(v) {
+      if (subgraphs[v]) {
+        return subgraphs[v].vs;
+      }
+      return v;
+    }), true);
+  });
+}
+
+function mergeBarycenters(target, other) {
+  if (!_.isUndefined(target.barycenter)) {
+    target.barycenter = (target.barycenter * target.weight +
+                         other.barycenter * other.weight) /
+                        (target.weight + other.weight);
+    target.weight += other.weight;
+  } else {
+    target.barycenter = other.barycenter;
+    target.weight = other.weight;
+  }
+}
+
+},{"../lodash":39,"./barycenter":43,"./resolve-conflicts":48,"./sort":50}],50:[function(require,module,exports){
+var _ = require("../lodash"),
+    util = require("../util");
+
+module.exports = sort;
+
+function sort(entries, biasRight) {
+  var parts = util.partition(entries, function(entry) {
+    return _.has(entry, "barycenter");
+  });
+  var sortable = parts.lhs,
+      unsortable = _.sortBy(parts.rhs, function(entry) { return -entry.i; }),
+      vs = [],
+      sum = 0,
+      weight = 0,
+      vsIndex = 0;
+
+  sortable.sort(compareWithBias(!!biasRight));
+
+  vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
+
+  _.each(sortable, function (entry) {
+    vsIndex += entry.vs.length;
+    vs.push(entry.vs);
+    sum += entry.barycenter * entry.weight;
+    weight += entry.weight;
+    vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
+  });
+
+  var result = { vs: _.flatten(vs, true) };
+  if (weight) {
+    result.barycenter = sum / weight;
+    result.weight = weight;
+  }
+  return result;
+}
+
+function consumeUnsortable(vs, unsortable, index) {
+  var last;
+  while (unsortable.length && (last = _.last(unsortable)).i <= index) {
+    unsortable.pop();
+    vs.push(last.vs);
+    index++;
+  }
+  return index;
+}
+
+function compareWithBias(bias) {
+  return function(entryV, entryW) {
+    if (entryV.barycenter < entryW.barycenter) {
+      return -1;
+    } else if (entryV.barycenter > entryW.barycenter) {
+      return 1;
+    }
+
+    return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
+  };
+}
+
+},{"../lodash":39,"../util":58}],51:[function(require,module,exports){
+var _ = require("./lodash");
+
+module.exports = parentDummyChains;
+
+function parentDummyChains(g) {
+  var postorderNums = postorder(g);
+
+  _.each(g.graph().dummyChains, function(v) {
+    var node = g.node(v),
+        edgeObj = node.edgeObj,
+        pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w),
+        path = pathData.path,
+        lca = pathData.lca,
+        pathIdx = 0,
+        pathV = path[pathIdx],
+        ascending = true;
+
+    while (v !== edgeObj.w) {
+      node = g.node(v);
+
+      if (ascending) {
+        while ((pathV = path[pathIdx]) !== lca &&
+               g.node(pathV).maxRank < node.rank) {
+          pathIdx++;
+        }
+
+        if (pathV === lca) {
+          ascending = false;
+        }
+      }
+
+      if (!ascending) {
+        while (pathIdx < path.length - 1 &&
+               g.node(pathV = path[pathIdx + 1]).minRank <= node.rank) {
+          pathIdx++;
+        }
+        pathV = path[pathIdx];
+      }
+
+      g.setParent(v, pathV);
+      v = g.successors(v)[0];
+    }
+  });
+}
+
+// Find a path from v to w through the lowest common ancestor (LCA). Return the
+// full path and the LCA.
+function findPath(g, postorderNums, v, w) {
+  var vPath = [],
+      wPath = [],
+      low = Math.min(postorderNums[v].low, postorderNums[w].low),
+      lim = Math.max(postorderNums[v].lim, postorderNums[w].lim),
+      parent,
+      lca;
+
+  // Traverse up from v to find the LCA
+  parent = v;
+  do {
+    parent = g.parent(parent);
+    vPath.push(parent);
+  } while (parent &&
+           (postorderNums[parent].low > low || lim > postorderNums[parent].lim));
+  lca = parent;
+
+  // Traverse from w to LCA
+  parent = w;
+  while ((parent = g.parent(parent)) !== lca) {
+    wPath.push(parent);
+  }
+
+  return { path: vPath.concat(wPath.reverse()), lca: lca };
+}
+
+function postorder(g) {
+  var result = {},
+      lim = 0;
+
+  function dfs(v) {
+    var low = lim;
+    _.each(g.children(v), dfs);
+    result[v] = { low: low, lim: lim++ };
+  }
+  _.each(g.children(), dfs);
+
+  return result;
+}
+
+},{"./lodash":39}],52:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph,
+    util = require("../util");
+
+/*
+ * This module provides coordinate assignment based on Brandes and Köpf, "Fast
+ * and Simple Horizontal Coordinate Assignment."
+ */
+
+module.exports = {
+  positionX: positionX,
+  findType1Conflicts: findType1Conflicts,
+  findType2Conflicts: findType2Conflicts,
+  addConflict: addConflict,
+  hasConflict: hasConflict,
+  verticalAlignment: verticalAlignment,
+  horizontalCompaction: horizontalCompaction,
+  alignCoordinates: alignCoordinates,
+  findSmallestWidthAlignment: findSmallestWidthAlignment,
+  balance: balance
+};
+
+/*
+ * Marks all edges in the graph with a type-1 conflict with the "type1Conflict"
+ * property. A type-1 conflict is one where a non-inner segment crosses an
+ * inner segment. An inner segment is an edge with both incident nodes marked
+ * with the "dummy" property.
+ *
+ * This algorithm scans layer by layer, starting with the second, for type-1
+ * conflicts between the current layer and the previous layer. For each layer
+ * it scans the nodes from left to right until it reaches one that is incident
+ * on an inner segment. It then scans predecessors to determine if they have
+ * edges that cross that inner segment. At the end a final scan is done for all
+ * nodes on the current rank to see if they cross the last visited inner
+ * segment.
+ *
+ * This algorithm (safely) assumes that a dummy node will only be incident on a
+ * single node in the layers being scanned.
+ */
+function findType1Conflicts(g, layering) {
+  var conflicts = {};
+
+  function visitLayer(prevLayer, layer) {
+    var
+      // last visited node in the previous layer that is incident on an inner
+      // segment.
+      k0 = 0,
+      // Tracks the last node in this layer scanned for crossings with a type-1
+      // segment.
+      scanPos = 0,
+      prevLayerLength = prevLayer.length,
+      lastNode = _.last(layer);
+
+    _.each(layer, function(v, i) {
+      var w = findOtherInnerSegmentNode(g, v),
+          k1 = w ? g.node(w).order : prevLayerLength;
+
+      if (w || v === lastNode) {
+        _.each(layer.slice(scanPos, i +1), function(scanNode) {
+          _.each(g.predecessors(scanNode), function(u) {
+            var uLabel = g.node(u),
+                uPos = uLabel.order;
+            if ((uPos < k0 || k1 < uPos) &&
+                !(uLabel.dummy && g.node(scanNode).dummy)) {
+              addConflict(conflicts, u, scanNode);
+            }
+          });
+        });
+        scanPos = i + 1;
+        k0 = k1;
+      }
+    });
+
+    return layer;
+  }
+
+  _.reduce(layering, visitLayer);
+  return conflicts;
+}
+
+function findType2Conflicts(g, layering) {
+  var conflicts = {};
+
+  function scan(south, southPos, southEnd, prevNorthBorder, nextNorthBorder) {
+    var v;
+    _.each(_.range(southPos, southEnd), function(i) {
+      v = south[i];
+      if (g.node(v).dummy) {
+        _.each(g.predecessors(v), function(u) {
+          var uNode = g.node(u);
+          if (uNode.dummy &&
+              (uNode.order < prevNorthBorder || uNode.order > nextNorthBorder)) {
+            addConflict(conflicts, u, v);
+          }
+        });
+      }
+    });
+  }
+
+
+  function visitLayer(north, south) {
+    var prevNorthPos = -1,
+        nextNorthPos,
+        southPos = 0;
+
+    _.each(south, function(v, southLookahead) {
+      if (g.node(v).dummy === "border") {
+        var predecessors = g.predecessors(v);
+        if (predecessors.length) {
+          nextNorthPos = g.node(predecessors[0]).order;
+          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
+          southPos = southLookahead;
+          prevNorthPos = nextNorthPos;
+        }
+      }
+      scan(south, southPos, south.length, nextNorthPos, north.length);
+    });
+
+    return south;
+  }
+
+  _.reduce(layering, visitLayer);
+  return conflicts;
+}
+
+function findOtherInnerSegmentNode(g, v) {
+  if (g.node(v).dummy) {
+    return _.find(g.predecessors(v), function(u) {
+      return g.node(u).dummy;
+    });
+  }
+}
+
+function addConflict(conflicts, v, w) {
+  if (v > w) {
+    var tmp = v;
+    v = w;
+    w = tmp;
+  }
+
+  var conflictsV = conflicts[v];
+  if (!conflictsV) {
+    conflicts[v] = conflictsV = {};
+  }
+  conflictsV[w] = true;
+}
+
+function hasConflict(conflicts, v, w) {
+  if (v > w) {
+    var tmp = v;
+    v = w;
+    w = tmp;
+  }
+  return _.has(conflicts[v], w);
+}
+
+/*
+ * Try to align nodes into vertical "blocks" where possible. This algorithm
+ * attempts to align a node with one of its median neighbors. If the edge
+ * connecting a neighbor is a type-1 conflict then we ignore that possibility.
+ * If a previous node has already formed a block with a node after the node
+ * we're trying to form a block with, we also ignore that possibility - our
+ * blocks would be split in that scenario.
+ */
+function verticalAlignment(g, layering, conflicts, neighborFn) {
+  var root = {},
+      align = {},
+      pos = {};
+
+  // We cache the position here based on the layering because the graph and
+  // layering may be out of sync. The layering matrix is manipulated to
+  // generate different extreme alignments.
+  _.each(layering, function(layer) {
+    _.each(layer, function(v, order) {
+      root[v] = v;
+      align[v] = v;
+      pos[v] = order;
+    });
+  });
+
+  _.each(layering, function(layer) {
+    var prevIdx = -1;
+    _.each(layer, function(v) {
+      var ws = neighborFn(v);
+      if (ws.length) {
+        ws = _.sortBy(ws, function(w) { return pos[w]; });
+        var mp = (ws.length - 1) / 2;
+        for (var i = Math.floor(mp), il = Math.ceil(mp); i <= il; ++i) {
+          var w = ws[i];
+          if (align[v] === v &&
+              prevIdx < pos[w] &&
+              !hasConflict(conflicts, v, w)) {
+            align[w] = v;
+            align[v] = root[v] = root[w];
+            prevIdx = pos[w];
+          }
+        }
+      }
+    });
+  });
+
+  return { root: root, align: align };
+}
+
+function horizontalCompaction(g, layering, root, align, reverseSep) {
+  // This portion of the algorithm differs from BK due to a number of problems.
+  // Instead of their algorithm we construct a new block graph and do two
+  // sweeps. The first sweep places blocks with the smallest possible
+  // coordinates. The second sweep removes unused space by moving blocks to the
+  // greatest coordinates without violating separation.
+  var xs = {},
+      blockG = buildBlockGraph(g, layering, root, reverseSep);
+
+  // First pass, assign smallest coordinates via DFS
+  var visited = {};
+  function pass1(v) {
+    if (!_.has(visited, v)) {
+      visited[v] = true;
+      xs[v] = _.reduce(blockG.inEdges(v), function(max, e) {
+        pass1(e.v);
+        return Math.max(max, xs[e.v] + blockG.edge(e));
+      }, 0);
+    }
+  }
+  _.each(blockG.nodes(), pass1);
+
+  var borderType = reverseSep ? "borderLeft" : "borderRight";
+  function pass2(v) {
+    if (visited[v] !== 2) {
+      visited[v]++;
+      var node = g.node(v);
+      var min = _.reduce(blockG.outEdges(v), function(min, e) {
+        pass2(e.w);
+        return Math.min(min, xs[e.w] - blockG.edge(e));
+      }, Number.POSITIVE_INFINITY);
+      if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
+        xs[v] = Math.max(xs[v], min);
+      }
+    }
+  }
+  _.each(blockG.nodes(), pass2);
+
+  // Assign x coordinates to all nodes
+  _.each(align, function(v) {
+    xs[v] = xs[root[v]];
+  });
+
+  return xs;
+}
+
+
+function buildBlockGraph(g, layering, root, reverseSep) {
+  var blockGraph = new Graph(),
+      graphLabel = g.graph(),
+      sepFn = sep(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
+
+  _.each(layering, function(layer) {
+    var u;
+    _.each(layer, function(v) {
+      var vRoot = root[v];
+      blockGraph.setNode(vRoot);
+      if (u) {
+        var uRoot = root[u],
+            prevMax = blockGraph.edge(uRoot, vRoot);
+        blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
+      }
+      u = v;
+    });
+  });
+
+  return blockGraph;
+}
+
+/*
+ * Returns the alignment that has the smallest width of the given alignments.
+ */
+function findSmallestWidthAlignment(g, xss) {
+  return _.min(xss, function(xs) {
+    var min = _.min(xs, function(x, v) { return x - width(g, v) / 2; }),
+        max = _.max(xs, function(x, v) { return x + width(g, v) / 2; });
+    return max - min;
+  });
+}
+
+/*
+ * Align the coordinates of each of the layout alignments such that
+ * left-biased alignments have their minimum coordinate at the same point as
+ * the minimum coordinate of the smallest width alignment and right-biased
+ * alignments have their maximum coordinate at the same point as the maximum
+ * coordinate of the smallest width alignment.
+ */
+function alignCoordinates(xss, alignTo) {
+  var alignToMin = _.min(alignTo),
+      alignToMax = _.max(alignTo);
+
+  _.each(["u", "d"], function(vert) {
+    _.each(["l", "r"], function(horiz) {
+      var alignment = vert + horiz,
+          xs = xss[alignment],
+          delta;
+      if (xs === alignTo) return;
+
+      delta = horiz === "l" ? alignToMin - _.min(xs) : alignToMax - _.max(xs);
+
+      if (delta) {
+        xss[alignment] = _.mapValues(xs, function(x) { return x + delta; });
+      }
+    });
+  });
+}
+
+function balance(xss, align) {
+  return _.mapValues(xss.ul, function(ignore, v) {
+    if (align) {
+      return xss[align.toLowerCase()][v];
+    } else {
+      var xs = _.sortBy(_.pluck(xss, v));
+      return (xs[1] + xs[2]) / 2;
+    }
+  });
+}
+
+function positionX(g) {
+  var layering = util.buildLayerMatrix(g),
+      conflicts = _.merge(findType1Conflicts(g, layering),
+                          findType2Conflicts(g, layering));
+
+  var xss = {},
+      adjustedLayering;
+  _.each(["u", "d"], function(vert) {
+    adjustedLayering = vert === "u" ? layering : _.values(layering).reverse();
+    _.each(["l", "r"], function(horiz) {
+      if (horiz === "r") {
+        adjustedLayering = _.map(adjustedLayering, function(inner) {
+          return _.values(inner).reverse();
+        });
+      }
+
+      var neighborFn = _.bind(vert === "u" ? g.predecessors : g.successors, g);
+      var align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
+      var xs = horizontalCompaction(g, adjustedLayering,
+                                    align.root, align.align,
+                                    horiz === "r");
+      if (horiz === "r") {
+        xs = _.mapValues(xs, function(x) { return -x; });
+      }
+      xss[vert + horiz] = xs;
+    });
+  });
+
+  var smallestWidth = findSmallestWidthAlignment(g, xss);
+  alignCoordinates(xss, smallestWidth);
+  return balance(xss, g.graph().align);
+}
+
+function sep(nodeSep, edgeSep, reverseSep) {
+  return function(g, v, w) {
+    var vLabel = g.node(v),
+        wLabel = g.node(w),
+        sum = 0,
+        delta;
+
+    sum += vLabel.width / 2;
+    if (_.has(vLabel, "labelpos")) {
+      switch (vLabel.labelpos.toLowerCase()) {
+        case "l": delta = -vLabel.width / 2; break;
+        case "r": delta = vLabel.width / 2; break;
+      }
+    }
+    if (delta) {
+      sum += reverseSep ? delta : -delta;
+    }
+    delta = 0;
+
+    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
+    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
+
+    sum += wLabel.width / 2;
+    if (_.has(wLabel, "labelpos")) {
+      switch (wLabel.labelpos.toLowerCase()) {
+        case "l": delta = wLabel.width / 2; break;
+        case "r": delta = -wLabel.width / 2; break;
+      }
+    }
+    if (delta) {
+      sum += reverseSep ? delta : -delta;
+    }
+    delta = 0;
+
+    return sum;
+  };
+}
+
+function width(g, v) {
+  return g.node(v).width;
+}
+
+},{"../graphlib":36,"../lodash":39,"../util":58}],53:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    util = require("../util"),
+    positionX = require("./bk").positionX;
+
+module.exports = position;
+
+function position(g) {
+  g = util.asNonCompoundGraph(g);
+
+  positionY(g);
+  _.each(positionX(g), function(x, v) {
+    g.node(v).x = x;
+  });
+}
+
+function positionY(g) {
+  var layering = util.buildLayerMatrix(g),
+      rankSep = g.graph().ranksep,
+      prevY = 0;
+  _.each(layering, function(layer) {
+    var maxHeight = _.max(_.map(layer, function(v) { return g.node(v).height; }));
+    _.each(layer, function(v) {
+      g.node(v).y = prevY + maxHeight / 2;
+    });
+    prevY += maxHeight + rankSep;
+  });
+}
+
+
+},{"../lodash":39,"../util":58,"./bk":52}],54:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph,
+    slack = require("./util").slack;
+
+module.exports = feasibleTree;
+
+/*
+ * Constructs a spanning tree with tight edges and adjusted the input node's
+ * ranks to achieve this. A tight edge is one that is has a length that matches
+ * its "minlen" attribute.
+ *
+ * The basic structure for this function is derived from Gansner, et al., "A
+ * Technique for Drawing Directed Graphs."
+ *
+ * Pre-conditions:
+ *
+ *    1. Graph must be a DAG.
+ *    2. Graph must be connected.
+ *    3. Graph must have at least one node.
+ *    5. Graph nodes must have been previously assigned a "rank" property that
+ *       respects the "minlen" property of incident edges.
+ *    6. Graph edges must have a "minlen" property.
+ *
+ * Post-conditions:
+ *
+ *    - Graph nodes will have their rank adjusted to ensure that all edges are
+ *      tight.
+ *
+ * Returns a tree (undirected graph) that is constructed using only "tight"
+ * edges.
+ */
+function feasibleTree(g) {
+  var t = new Graph({ directed: false });
+
+  // Choose arbitrary node from which to start our tree
+  var start = g.nodes()[0],
+      size = g.nodeCount();
+  t.setNode(start, {});
+
+  var edge, delta;
+  while (tightTree(t, g) < size) {
+    edge = findMinSlackEdge(t, g);
+    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
+    shiftRanks(t, g, delta);
+  }
+
+  return t;
+}
+
+/*
+ * Finds a maximal tree of tight edges and returns the number of nodes in the
+ * tree.
+ */
+function tightTree(t, g) {
+  function dfs(v) {
+    _.each(g.nodeEdges(v), function(e) {
+      var edgeV = e.v,
+          w = (v === edgeV) ? e.w : edgeV;
+      if (!t.hasNode(w) && !slack(g, e)) {
+        t.setNode(w, {});
+        t.setEdge(v, w, {});
+        dfs(w);
+      }
+    });
+  }
+
+  _.each(t.nodes(), dfs);
+  return t.nodeCount();
+}
+
+/*
+ * Finds the edge with the smallest slack that is incident on tree and returns
+ * it.
+ */
+function findMinSlackEdge(t, g) {
+  return _.min(g.edges(), function(e) {
+    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
+      return slack(g, e);
+    }
+  });
+}
+
+function shiftRanks(t, g, delta) {
+  _.each(t.nodes(), function(v) {
+    g.node(v).rank += delta;
+  });
+}
+
+},{"../graphlib":36,"../lodash":39,"./util":57}],55:[function(require,module,exports){
+"use strict";
+
+var rankUtil = require("./util"),
+    longestPath = rankUtil.longestPath,
+    feasibleTree = require("./feasible-tree"),
+    networkSimplex = require("./network-simplex");
+
+module.exports = rank;
+
+/*
+ * Assigns a rank to each node in the input graph that respects the "minlen"
+ * constraint specified on edges between nodes.
+ *
+ * This basic structure is derived from Gansner, et al., "A Technique for
+ * Drawing Directed Graphs."
+ *
+ * Pre-conditions:
+ *
+ *    1. Graph must be a connected DAG
+ *    2. Graph nodes must be objects
+ *    3. Graph edges must have "weight" and "minlen" attributes
+ *
+ * Post-conditions:
+ *
+ *    1. Graph nodes will have a "rank" attribute based on the results of the
+ *       algorithm. Ranks can start at any index (including negative), we'll
+ *       fix them up later.
+ */
+function rank(g) {
+  switch(g.graph().ranker) {
+    case "network-simplex": networkSimplexRanker(g); break;
+    case "tight-tree": tightTreeRanker(g); break;
+    case "longest-path": longestPathRanker(g); break;
+    default: networkSimplexRanker(g);
+  }
+}
+
+// A fast and simple ranker, but results are far from optimal.
+var longestPathRanker = longestPath;
+
+function tightTreeRanker(g) {
+  longestPath(g);
+  feasibleTree(g);
+}
+
+function networkSimplexRanker(g) {
+  networkSimplex(g);
+}
+
+},{"./feasible-tree":54,"./network-simplex":56,"./util":57}],56:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    feasibleTree = require("./feasible-tree"),
+    slack = require("./util").slack,
+    initRank = require("./util").longestPath,
+    preorder = require("../graphlib").alg.preorder,
+    postorder = require("../graphlib").alg.postorder,
+    simplify = require("../util").simplify;
+
+module.exports = networkSimplex;
+
+// Expose some internals for testing purposes
+networkSimplex.initLowLimValues = initLowLimValues;
+networkSimplex.initCutValues = initCutValues;
+networkSimplex.calcCutValue = calcCutValue;
+networkSimplex.leaveEdge = leaveEdge;
+networkSimplex.enterEdge = enterEdge;
+networkSimplex.exchangeEdges = exchangeEdges;
+
+/*
+ * The network simplex algorithm assigns ranks to each node in the input graph
+ * and iteratively improves the ranking to reduce the length of edges.
+ *
+ * Preconditions:
+ *
+ *    1. The input graph must be a DAG.
+ *    2. All nodes in the graph must have an object value.
+ *    3. All edges in the graph must have "minlen" and "weight" attributes.
+ *
+ * Postconditions:
+ *
+ *    1. All nodes in the graph will have an assigned "rank" attribute that has
+ *       been optimized by the network simplex algorithm. Ranks start at 0.
+ *
+ *
+ * A rough sketch of the algorithm is as follows:
+ *
+ *    1. Assign initial ranks to each node. We use the longest path algorithm,
+ *       which assigns ranks to the lowest position possible. In general this
+ *       leads to very wide bottom ranks and unnecessarily long edges.
+ *    2. Construct a feasible tight tree. A tight tree is one such that all
+ *       edges in the tree have no slack (difference between length of edge
+ *       and minlen for the edge). This by itself greatly improves the assigned
+ *       rankings by shorting edges.
+ *    3. Iteratively find edges that have negative cut values. Generally a
+ *       negative cut value indicates that the edge could be removed and a new
+ *       tree edge could be added to produce a more compact graph.
+ *
+ * Much of the algorithms here are derived from Gansner, et al., "A Technique
+ * for Drawing Directed Graphs." The structure of the file roughly follows the
+ * structure of the overall algorithm.
+ */
+function networkSimplex(g) {
+  g = simplify(g);
+  initRank(g);
+  var t = feasibleTree(g);
+  initLowLimValues(t);
+  initCutValues(t, g);
+
+  var e, f;
+  while ((e = leaveEdge(t))) {
+    f = enterEdge(t, g, e);
+    exchangeEdges(t, g, e, f);
+  }
+}
+
+/*
+ * Initializes cut values for all edges in the tree.
+ */
+function initCutValues(t, g) {
+  var vs = postorder(t, t.nodes());
+  vs = vs.slice(0, vs.length - 1);
+  _.each(vs, function(v) {
+    assignCutValue(t, g, v);
+  });
+}
+
+function assignCutValue(t, g, child) {
+  var childLab = t.node(child),
+      parent = childLab.parent;
+  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
+}
+
+/*
+ * Given the tight tree, its graph, and a child in the graph calculate and
+ * return the cut value for the edge between the child and its parent.
+ */
+function calcCutValue(t, g, child) {
+  var childLab = t.node(child),
+      parent = childLab.parent,
+      // True if the child is on the tail end of the edge in the directed graph
+      childIsTail = true,
+      // The graph's view of the tree edge we're inspecting
+      graphEdge = g.edge(child, parent),
+      // The accumulated cut value for the edge between this node and its parent
+      cutValue = 0;
+
+  if (!graphEdge) {
+    childIsTail = false;
+    graphEdge = g.edge(parent, child);
+  }
+
+  cutValue = graphEdge.weight;
+
+  _.each(g.nodeEdges(child), function(e) {
+    var isOutEdge = e.v === child,
+        other = isOutEdge ? e.w : e.v;
+
+    if (other !== parent) {
+      var pointsToHead = isOutEdge === childIsTail,
+          otherWeight = g.edge(e).weight;
+
+      cutValue += pointsToHead ? otherWeight : -otherWeight;
+      if (isTreeEdge(t, child, other)) {
+        var otherCutValue = t.edge(child, other).cutvalue;
+        cutValue += pointsToHead ? -otherCutValue : otherCutValue;
+      }
+    }
+  });
+
+  return cutValue;
+}
+
+function initLowLimValues(tree, root) {
+  if (arguments.length < 2) {
+    root = tree.nodes()[0];
+  }
+  dfsAssignLowLim(tree, {}, 1, root);
+}
+
+function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
+  var low = nextLim,
+      label = tree.node(v);
+
+  visited[v] = true;
+  _.each(tree.neighbors(v), function(w) {
+    if (!_.has(visited, w)) {
+      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
+    }
+  });
+
+  label.low = low;
+  label.lim = nextLim++;
+  if (parent) {
+    label.parent = parent;
+  } else {
+    // TODO should be able to remove this when we incrementally update low lim
+    delete label.parent;
+  }
+
+  return nextLim;
+}
+
+function leaveEdge(tree) {
+  return _.find(tree.edges(), function(e) {
+    return tree.edge(e).cutvalue < 0;
+  });
+}
+
+function enterEdge(t, g, edge) {
+  var v = edge.v,
+      w = edge.w;
+
+  // For the rest of this function we assume that v is the tail and w is the
+  // head, so if we don't have this edge in the graph we should flip it to
+  // match the correct orientation.
+  if (!g.hasEdge(v, w)) {
+    v = edge.w;
+    w = edge.v;
+  }
+
+  var vLabel = t.node(v),
+      wLabel = t.node(w),
+      tailLabel = vLabel,
+      flip = false;
+
+  // If the root is in the tail of the edge then we need to flip the logic that
+  // checks for the head and tail nodes in the candidates function below.
+  if (vLabel.lim > wLabel.lim) {
+    tailLabel = wLabel;
+    flip = true;
+  }
+
+  var candidates = _.filter(g.edges(), function(edge) {
+    return flip === isDescendant(t, t.node(edge.v), tailLabel) &&
+           flip !== isDescendant(t, t.node(edge.w), tailLabel);
+  });
+
+  return _.min(candidates, function(edge) { return slack(g, edge); });
+}
+
+function exchangeEdges(t, g, e, f) {
+  var v = e.v,
+      w = e.w;
+  t.removeEdge(v, w);
+  t.setEdge(f.v, f.w, {});
+  initLowLimValues(t);
+  initCutValues(t, g);
+  updateRanks(t, g);
+}
+
+function updateRanks(t, g) {
+  var root = _.find(t.nodes(), function(v) { return !g.node(v).parent; }),
+      vs = preorder(t, root);
+  vs = vs.slice(1);
+  _.each(vs, function(v) {
+    var parent = t.node(v).parent,
+        edge = g.edge(v, parent),
+        flipped = false;
+
+    if (!edge) {
+      edge = g.edge(parent, v);
+      flipped = true;
+    }
+
+    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
+  });
+}
+
+/*
+ * Returns true if the edge is in the tree.
+ */
+function isTreeEdge(tree, u, v) {
+  return tree.hasEdge(u, v);
+}
+
+/*
+ * Returns true if the specified node is descendant of the root node per the
+ * assigned low and lim attributes in the tree.
+ */
+function isDescendant(tree, vLabel, rootLabel) {
+  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
+}
+
+},{"../graphlib":36,"../lodash":39,"../util":58,"./feasible-tree":54,"./util":57}],57:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = {
+  longestPath: longestPath,
+  slack: slack
+};
+
+/*
+ * Initializes ranks for the input graph using the longest path algorithm. This
+ * algorithm scales well and is fast in practice, it yields rather poor
+ * solutions. Nodes are pushed to the lowest layer possible, leaving the bottom
+ * ranks wide and leaving edges longer than necessary. However, due to its
+ * speed, this algorithm is good for getting an initial ranking that can be fed
+ * into other algorithms.
+ *
+ * This algorithm does not normalize layers because it will be used by other
+ * algorithms in most cases. If using this algorithm directly, be sure to
+ * run normalize at the end.
+ *
+ * Pre-conditions:
+ *
+ *    1. Input graph is a DAG.
+ *    2. Input graph node labels can be assigned properties.
+ *
+ * Post-conditions:
+ *
+ *    1. Each node will be assign an (unnormalized) "rank" property.
+ */
+function longestPath(g) {
+  var visited = {};
+
+  function dfs(v) {
+    var label = g.node(v);
+    if (_.has(visited, v)) {
+      return label.rank;
+    }
+    visited[v] = true;
+
+    var rank = _.min(_.map(g.outEdges(v), function(e) {
+      return dfs(e.w) - g.edge(e).minlen;
+    }));
+
+    if (rank === Number.POSITIVE_INFINITY) {
+      rank = 0;
+    }
+
+    return (label.rank = rank);
+  }
+
+  _.each(g.sources(), dfs);
+}
+
+/*
+ * Returns the amount of slack for the given edge. The slack is defined as the
+ * difference between the length of the edge and its minimum length.
+ */
+function slack(g, e) {
+  return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
+}
+
+},{"../lodash":39}],58:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = {
+  addDummyNode: addDummyNode,
+  simplify: simplify,
+  asNonCompoundGraph: asNonCompoundGraph,
+  successorWeights: successorWeights,
+  predecessorWeights: predecessorWeights,
+  intersectRect: intersectRect,
+  buildLayerMatrix: buildLayerMatrix,
+  normalizeRanks: normalizeRanks,
+  removeEmptyRanks: removeEmptyRanks,
+  addBorderNode: addBorderNode,
+  maxRank: maxRank,
+  partition: partition,
+  time: time,
+  notime: notime
+};
+
+/*
+ * Adds a dummy node to the graph and return v.
+ */
+function addDummyNode(g, type, attrs, name) {
+  var v;
+  do {
+    v = _.uniqueId(name);
+  } while (g.hasNode(v));
+
+  attrs.dummy = type;
+  g.setNode(v, attrs);
+  return v;
+}
+
+/*
+ * Returns a new graph with only simple edges. Handles aggregation of data
+ * associated with multi-edges.
+ */
+function simplify(g) {
+  var simplified = new Graph().setGraph(g.graph());
+  _.each(g.nodes(), function(v) { simplified.setNode(v, g.node(v)); });
+  _.each(g.edges(), function(e) {
+    var simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 },
+        label = g.edge(e);
+    simplified.setEdge(e.v, e.w, {
+      weight: simpleLabel.weight + label.weight,
+      minlen: Math.max(simpleLabel.minlen, label.minlen)
+    });
+  });
+  return simplified;
+}
+
+function asNonCompoundGraph(g) {
+  var simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(g.graph());
+  _.each(g.nodes(), function(v) {
+    if (!g.children(v).length) {
+      simplified.setNode(v, g.node(v));
+    }
+  });
+  _.each(g.edges(), function(e) {
+    simplified.setEdge(e, g.edge(e));
+  });
+  return simplified;
+}
+
+function successorWeights(g) {
+  var weightMap = _.map(g.nodes(), function(v) {
+    var sucs = {};
+    _.each(g.outEdges(v), function(e) {
+      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
+    });
+    return sucs;
+  });
+  return _.zipObject(g.nodes(), weightMap);
+}
+
+function predecessorWeights(g) {
+  var weightMap = _.map(g.nodes(), function(v) {
+    var preds = {};
+    _.each(g.inEdges(v), function(e) {
+      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
+    });
+    return preds;
+  });
+  return _.zipObject(g.nodes(), weightMap);
+}
+
+/*
+ * Finds where a line starting at point ({x, y}) would intersect a rectangle
+ * ({x, y, width, height}) if it were pointing at the rectangle's center.
+ */
+function intersectRect(rect, point) {
+  var x = rect.x;
+  var y = rect.y;
+
+  // Rectangle intersection algorithm from:
+  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
+  var dx = point.x - x;
+  var dy = point.y - y;
+  var w = rect.width / 2;
+  var h = rect.height / 2;
+
+  if (!dx && !dy) {
+    throw new Error("Not possible to find intersection inside of the rectangle");
+  }
+
+  var sx, sy;
+  if (Math.abs(dy) * w > Math.abs(dx) * h) {
+    // Intersection is top or bottom of rect.
+    if (dy < 0) {
+      h = -h;
+    }
+    sx = h * dx / dy;
+    sy = h;
+  } else {
+    // Intersection is left or right of rect.
+    if (dx < 0) {
+      w = -w;
+    }
+    sx = w;
+    sy = w * dy / dx;
+  }
+
+  return { x: x + sx, y: y + sy };
+}
+
+/*
+ * Given a DAG with each node assigned "rank" and "order" properties, this
+ * function will produce a matrix with the ids of each node.
+ */
+function buildLayerMatrix(g) {
+  var layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v),
+        rank = node.rank;
+    if (!_.isUndefined(rank)) {
+      layering[rank][node.order] = v;
+    }
+  });
+  return layering;
+}
+
+/*
+ * Adjusts the ranks for all nodes in the graph such that all nodes v have
+ * rank(v) >= 0 and at least one node w has rank(w) = 0.
+ */
+function normalizeRanks(g) {
+  var min = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (_.has(node, "rank")) {
+      node.rank -= min;
+    }
+  });
+}
+
+function removeEmptyRanks(g) {
+  // Ranks may not start at 0, so we need to offset them
+  var offset = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
+
+  var layers = [];
+  _.each(g.nodes(), function(v) {
+    var rank = g.node(v).rank - offset;
+    if (!layers[rank]) {
+      layers[rank] = [];
+    }
+    layers[rank].push(v);
+  });
+
+  var delta = 0,
+      nodeRankFactor = g.graph().nodeRankFactor;
+  _.each(layers, function(vs, i) {
+    if (_.isUndefined(vs) && i % nodeRankFactor !== 0) {
+      --delta;
+    } else if (delta) {
+      _.each(vs, function(v) { g.node(v).rank += delta; });
+    }
+  });
+}
+
+function addBorderNode(g, prefix, rank, order) {
+  var node = {
+    width: 0,
+    height: 0
+  };
+  if (arguments.length >= 4) {
+    node.rank = rank;
+    node.order = order;
+  }
+  return addDummyNode(g, "border", node, prefix);
+}
+
+function maxRank(g) {
+  return _.max(_.map(g.nodes(), function(v) {
+    var rank = g.node(v).rank;
+    if (!_.isUndefined(rank)) {
+      return rank;
+    }
+  }));
+}
+
+/*
+ * Partition a collection into two groups: `lhs` and `rhs`. If the supplied
+ * function returns true for an entry it goes into `lhs`. Otherwise it goes
+ * into `rhs.
+ */
+function partition(collection, fn) {
+  var result = { lhs: [], rhs: [] };
+  _.each(collection, function(value) {
+    if (fn(value)) {
+      result.lhs.push(value);
+    } else {
+      result.rhs.push(value);
+    }
+  });
+  return result;
+}
+
+/*
+ * Returns a new function that wraps `fn` with a timer. The wrapper logs the
+ * time it takes to execute the function.
+ */
+function time(name, fn) {
+  var start = _.now();
+  try {
+    return fn();
+  } finally {
+    console.log(name + " time: " + (_.now() - start) + "ms");
+  }
+}
+
+function notime(name, fn) {
+  return fn();
+}
+
+},{"./graphlib":36,"./lodash":39}],59:[function(require,module,exports){
+module.exports = "0.7.4";
+
+},{}],60:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -1536,7 +4122,7 @@ module.exports = {
   version: lib.version
 };
 
-},{"./lib":48,"./lib/alg":39,"./lib/json":49}],33:[function(require,module,exports){
+},{"./lib":76,"./lib/alg":67,"./lib/json":77}],61:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = components;
@@ -1565,7 +4151,7 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":50}],34:[function(require,module,exports){
+},{"../lodash":78}],62:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = dfs;
@@ -1606,7 +4192,7 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":50}],35:[function(require,module,exports){
+},{"../lodash":78}],63:[function(require,module,exports){
 var dijkstra = require("./dijkstra"),
     _ = require("../lodash");
 
@@ -1618,7 +4204,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":50,"./dijkstra":36}],36:[function(require,module,exports){
+},{"../lodash":78,"./dijkstra":64}],64:[function(require,module,exports){
 var _ = require("../lodash"),
     PriorityQueue = require("../data/priority-queue");
 
@@ -1674,7 +4260,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":46,"../lodash":50}],37:[function(require,module,exports){
+},{"../data/priority-queue":74,"../lodash":78}],65:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -1686,7 +4272,7 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":50,"./tarjan":44}],38:[function(require,module,exports){
+},{"../lodash":78,"./tarjan":72}],66:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = floydWarshall;
@@ -1738,7 +4324,7 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":50}],39:[function(require,module,exports){
+},{"../lodash":78}],67:[function(require,module,exports){
 module.exports = {
   components: require("./components"),
   dijkstra: require("./dijkstra"),
@@ -1753,7 +4339,7 @@ module.exports = {
   topsort: require("./topsort")
 };
 
-},{"./components":33,"./dijkstra":36,"./dijkstra-all":35,"./find-cycles":37,"./floyd-warshall":38,"./is-acyclic":40,"./postorder":41,"./preorder":42,"./prim":43,"./tarjan":44,"./topsort":45}],40:[function(require,module,exports){
+},{"./components":61,"./dijkstra":64,"./dijkstra-all":63,"./find-cycles":65,"./floyd-warshall":66,"./is-acyclic":68,"./postorder":69,"./preorder":70,"./prim":71,"./tarjan":72,"./topsort":73}],68:[function(require,module,exports){
 var topsort = require("./topsort");
 
 module.exports = isAcyclic;
@@ -1770,7 +4356,7 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":45}],41:[function(require,module,exports){
+},{"./topsort":73}],69:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = postorder;
@@ -1779,7 +4365,7 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":34}],42:[function(require,module,exports){
+},{"./dfs":62}],70:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = preorder;
@@ -1788,7 +4374,7 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":34}],43:[function(require,module,exports){
+},{"./dfs":62}],71:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
     PriorityQueue = require("../data/priority-queue");
@@ -1842,7 +4428,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":46,"../graph":47,"../lodash":50}],44:[function(require,module,exports){
+},{"../data/priority-queue":74,"../graph":75,"../lodash":78}],72:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
@@ -1891,7 +4477,7 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":50}],45:[function(require,module,exports){
+},{"../lodash":78}],73:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = topsort;
@@ -1927,7 +4513,7 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":50}],46:[function(require,module,exports){
+},{"../lodash":78}],74:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = PriorityQueue;
@@ -2081,7 +4667,7 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":50}],47:[function(require,module,exports){
+},{"../lodash":78}],75:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -2602,14 +5188,14 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":50}],48:[function(require,module,exports){
+},{"./lodash":78}],76:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
   Graph: require("./graph"),
   version: require("./version")
 };
 
-},{"./graph":47,"./version":51}],49:[function(require,module,exports){
+},{"./graph":75,"./version":79}],77:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graph");
 
@@ -2677,27 +5263,12 @@ function read(json) {
   return g;
 }
 
-},{"./graph":47,"./lodash":50}],50:[function(require,module,exports){
-/* global window */
-
-var lodash;
-
-if (typeof require === "function") {
-  try {
-    lodash = require("lodash");
-  } catch (e) {}
-}
-
-if (!lodash) {
-  lodash = window._;
-}
-
-module.exports = lodash;
-
-},{"lodash":52}],51:[function(require,module,exports){
+},{"./graph":75,"./lodash":78}],78:[function(require,module,exports){
+module.exports=require(39)
+},{"d:\\git\\3rd-party\\mermaid\\node_modules\\dagre\\lib\\lodash.js":39,"lodash":80}],79:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],52:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -15052,2943 +17623,14 @@ module.exports = '1.0.7';
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],53:[function(require,module,exports){
-/*
-Copyright (c) 2012-2014 Chris Pettitt
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-module.exports = {
-  graphlib: require("./lib/graphlib"),
-
-  layout: require("./lib/layout"),
-  debug: require("./lib/debug"),
-  util: {
-    time: require("./lib/util").time,
-    notime: require("./lib/util").notime
-  },
-  version: require("./lib/version")
-};
-
-},{"./lib/debug":58,"./lib/graphlib":59,"./lib/layout":61,"./lib/util":81,"./lib/version":82}],54:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    greedyFAS = require("./greedy-fas");
-
-module.exports = {
-  run: run,
-  undo: undo
-};
-
-function run(g) {
-  var fas = (g.graph().acyclicer === "greedy"
-                ? greedyFAS(g, weightFn(g))
-                : dfsFAS(g));
-  _.each(fas, function(e) {
-    var label = g.edge(e);
-    g.removeEdge(e);
-    label.forwardName = e.name;
-    label.reversed = true;
-    g.setEdge(e.w, e.v, label, _.uniqueId("rev"));
-  });
-
-  function weightFn(g) {
-    return function(e) {
-      return g.edge(e).weight;
-    };
-  }
-}
-
-function dfsFAS(g) {
-  var fas = [],
-      stack = {},
-      visited = {};
-
-  function dfs(v) {
-    if (_.has(visited, v)) {
-      return;
-    }
-    visited[v] = true;
-    stack[v] = true;
-    _.each(g.outEdges(v), function(e) {
-      if (_.has(stack, e.w)) {
-        fas.push(e);
-      } else {
-        dfs(e.w);
-      }
-    });
-    delete stack[v];
-  }
-
-  _.each(g.nodes(), dfs);
-  return fas;
-}
-
-function undo(g) {
-  _.each(g.edges(), function(e) {
-    var label = g.edge(e);
-    if (label.reversed) {
-      g.removeEdge(e);
-
-      var forwardName = label.forwardName;
-      delete label.reversed;
-      delete label.forwardName;
-      g.setEdge(e.w, e.v, label, forwardName);
-    }
-  });
-}
-
-},{"./greedy-fas":60,"./lodash":62}],55:[function(require,module,exports){
-var _ = require("./lodash"),
-    util = require("./util");
-
-module.exports = addBorderSegments;
-
-function addBorderSegments(g) {
-  function dfs(v) {
-    var children = g.children(v),
-        node = g.node(v);
-    if (children.length) {
-      _.each(children, dfs);
-    }
-
-    if (_.has(node, "minRank")) {
-      node.borderLeft = [];
-      node.borderRight = [];
-      for (var rank = node.minRank, maxRank = node.maxRank + 1;
-           rank < maxRank;
-           ++rank) {
-        addBorderNode(g, "borderLeft", "_bl", v, node, rank);
-        addBorderNode(g, "borderRight", "_br", v, node, rank);
-      }
-    }
-  }
-
-  _.each(g.children(), dfs);
-}
-
-function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
-  var label = { width: 0, height: 0, rank: rank, borderType: prop },
-      prev = sgNode[prop][rank - 1],
-      curr = util.addDummyNode(g, "border", label, prefix);
-  sgNode[prop][rank] = curr;
-  g.setParent(curr, sg);
-  if (prev) {
-    g.setEdge(prev, curr, { weight: 1 });
-  }
-}
-
-},{"./lodash":62,"./util":81}],56:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash");
-
-module.exports = {
-  adjust: adjust,
-  undo: undo
-};
-
-function adjust(g) {
-  var rankDir = g.graph().rankdir.toLowerCase();
-  if (rankDir === "lr" || rankDir === "rl") {
-    swapWidthHeight(g);
-  }
-}
-
-function undo(g) {
-  var rankDir = g.graph().rankdir.toLowerCase();
-  if (rankDir === "bt" || rankDir === "rl") {
-    reverseY(g);
-  }
-
-  if (rankDir === "lr" || rankDir === "rl") {
-    swapXY(g);
-    swapWidthHeight(g);
-  }
-}
-
-function swapWidthHeight(g) {
-  _.each(g.nodes(), function(v) { swapWidthHeightOne(g.node(v)); });
-  _.each(g.edges(), function(e) { swapWidthHeightOne(g.edge(e)); });
-}
-
-function swapWidthHeightOne(attrs) {
-  var w = attrs.width;
-  attrs.width = attrs.height;
-  attrs.height = w;
-}
-
-function reverseY(g) {
-  _.each(g.nodes(), function(v) { reverseYOne(g.node(v)); });
-
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    _.each(edge.points, reverseYOne);
-    if (_.has(edge, "y")) {
-      reverseYOne(edge);
-    }
-  });
-}
-
-function reverseYOne(attrs) {
-  attrs.y = -attrs.y;
-}
-
-function swapXY(g) {
-  _.each(g.nodes(), function(v) { swapXYOne(g.node(v)); });
-
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    _.each(edge.points, swapXYOne);
-    if (_.has(edge, "x")) {
-      swapXYOne(edge);
-    }
-  });
-}
-
-function swapXYOne(attrs) {
-  var x = attrs.x;
-  attrs.x = attrs.y;
-  attrs.y = x;
-}
-
-},{"./lodash":62}],57:[function(require,module,exports){
-/*
- * Simple doubly linked list implementation derived from Cormen, et al.,
- * "Introduction to Algorithms".
- */
-
-module.exports = List;
-
-function List() {
-  var sentinel = {};
-  sentinel._next = sentinel._prev = sentinel;
-  this._sentinel = sentinel;
-}
-
-List.prototype.dequeue = function() {
-  var sentinel = this._sentinel,
-      entry = sentinel._prev;
-  if (entry !== sentinel) {
-    unlink(entry);
-    return entry;
-  }
-};
-
-List.prototype.enqueue = function(entry) {
-  var sentinel = this._sentinel;
-  if (entry._prev && entry._next) {
-    unlink(entry);
-  }
-  entry._next = sentinel._next;
-  sentinel._next._prev = entry;
-  sentinel._next = entry;
-  entry._prev = sentinel;
-};
-
-List.prototype.toString = function() {
-  var strs = [],
-      sentinel = this._sentinel,
-      curr = sentinel._prev;
-  while (curr !== sentinel) {
-    strs.push(JSON.stringify(curr, filterOutLinks));
-    curr = curr._prev;
-  }
-  return "[" + strs.join(", ") + "]";
-};
-
-function unlink(entry) {
-  entry._prev._next = entry._next;
-  entry._next._prev = entry._prev;
-  delete entry._next;
-  delete entry._prev;
-}
-
-function filterOutLinks(k, v) {
-  if (k !== "_next" && k !== "_prev") {
-    return v;
-  }
-}
-
-},{}],58:[function(require,module,exports){
-var _ = require("./lodash"),
-    util = require("./util"),
-    Graph = require("./graphlib").Graph;
-
-module.exports = {
-  debugOrdering: debugOrdering
-};
-
-/* istanbul ignore next */
-function debugOrdering(g) {
-  var layerMatrix = util.buildLayerMatrix(g);
-
-  var h = new Graph({ compound: true, multigraph: true }).setGraph({});
-
-  _.each(g.nodes(), function(v) {
-    h.setNode(v, { label: v });
-    h.setParent(v, "layer" + g.node(v).rank);
-  });
-
-  _.each(g.edges(), function(e) {
-    h.setEdge(e.v, e.w, {}, e.name);
-  });
-
-  _.each(layerMatrix, function(layer, i) {
-    var layerV = "layer" + i;
-    h.setNode(layerV, { rank: "same" });
-    _.reduce(layer, function(u, v) {
-      h.setEdge(u, v, { style: "invis" });
-      return v;
-    });
-  });
-
-  return h;
-}
-
-},{"./graphlib":59,"./lodash":62,"./util":81}],59:[function(require,module,exports){
-/* global window */
-
-var graphlib;
-
-if (typeof require === "function") {
-  try {
-    graphlib = require("graphlib");
-  } catch (e) {}
-}
-
-if (!graphlib) {
-  graphlib = window.graphlib;
-}
-
-module.exports = graphlib;
-
-},{"graphlib":83}],60:[function(require,module,exports){
-var _ = require("./lodash"),
-    Graph = require("./graphlib").Graph,
-    List = require("./data/list");
-
-/*
- * A greedy heuristic for finding a feedback arc set for a graph. A feedback
- * arc set is a set of edges that can be removed to make a graph acyclic.
- * The algorithm comes from: P. Eades, X. Lin, and W. F. Smyth, "A fast and
- * effective heuristic for the feedback arc set problem." This implementation
- * adjusts that from the paper to allow for weighted edges.
- */
-module.exports = greedyFAS;
-
-var DEFAULT_WEIGHT_FN = _.constant(1);
-
-function greedyFAS(g, weightFn) {
-  if (g.nodeCount() <= 1) {
-    return [];
-  }
-  var state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
-  var results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
-
-  // Expand multi-edges
-  return _.flatten(_.map(results, function(e) {
-    return g.outEdges(e.v, e.w);
-  }), true);
-}
-
-function doGreedyFAS(g, buckets, zeroIdx) {
-  var results = [],
-      sources = buckets[buckets.length - 1],
-      sinks = buckets[0];
-
-  var entry;
-  while (g.nodeCount()) {
-    while ((entry = sinks.dequeue()))   { removeNode(g, buckets, zeroIdx, entry); }
-    while ((entry = sources.dequeue())) { removeNode(g, buckets, zeroIdx, entry); }
-    if (g.nodeCount()) {
-      for (var i = buckets.length - 2; i > 0; --i) {
-        entry = buckets[i].dequeue();
-        if (entry) {
-          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
-          break;
-        }
-      }
-    }
-  }
-
-  return results;
-}
-
-function removeNode(g, buckets, zeroIdx, entry, collectPredecessors) {
-  var results = collectPredecessors ? [] : undefined;
-
-  _.each(g.inEdges(entry.v), function(edge) {
-    var weight = g.edge(edge),
-        uEntry = g.node(edge.v);
-
-    if (collectPredecessors) {
-      results.push({ v: edge.v, w: edge.w });
-    }
-
-    uEntry.out -= weight;
-    assignBucket(buckets, zeroIdx, uEntry);
-  });
-
-  _.each(g.outEdges(entry.v), function(edge) {
-    var weight = g.edge(edge),
-        w = edge.w,
-        wEntry = g.node(w);
-    wEntry["in"] -= weight;
-    assignBucket(buckets, zeroIdx, wEntry);
-  });
-
-  g.removeNode(entry.v);
-
-  return results;
-}
-
-function buildState(g, weightFn) {
-  var fasGraph = new Graph(),
-      maxIn = 0,
-      maxOut = 0;
-
-  _.each(g.nodes(), function(v) {
-    fasGraph.setNode(v, { v: v, "in": 0, out: 0 });
-  });
-
-  // Aggregate weights on nodes, but also sum the weights across multi-edges
-  // into a single edge for the fasGraph.
-  _.each(g.edges(), function(e) {
-    var prevWeight = fasGraph.edge(e.v, e.w) || 0,
-        weight = weightFn(e),
-        edgeWeight = prevWeight + weight;
-    fasGraph.setEdge(e.v, e.w, edgeWeight);
-    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
-    maxIn  = Math.max(maxIn,  fasGraph.node(e.w)["in"]  += weight);
-  });
-
-  var buckets = _.range(maxOut + maxIn + 3).map(function() { return new List(); });
-  var zeroIdx = maxIn + 1;
-
-  _.each(fasGraph.nodes(), function(v) {
-    assignBucket(buckets, zeroIdx, fasGraph.node(v));
-  });
-
-  return { graph: fasGraph, buckets: buckets, zeroIdx: zeroIdx };
-}
-
-function assignBucket(buckets, zeroIdx, entry) {
-  if (!entry.out) {
-    buckets[0].enqueue(entry);
-  } else if (!entry["in"]) {
-    buckets[buckets.length - 1].enqueue(entry);
-  } else {
-    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
-  }
-}
-
-},{"./data/list":57,"./graphlib":59,"./lodash":62}],61:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    acyclic = require("./acyclic"),
-    normalize = require("./normalize"),
-    rank = require("./rank"),
-    normalizeRanks = require("./util").normalizeRanks,
-    parentDummyChains = require("./parent-dummy-chains"),
-    removeEmptyRanks = require("./util").removeEmptyRanks,
-    nestingGraph = require("./nesting-graph"),
-    addBorderSegments = require("./add-border-segments"),
-    coordinateSystem = require("./coordinate-system"),
-    order = require("./order"),
-    position = require("./position"),
-    util = require("./util"),
-    Graph = require("./graphlib").Graph;
-
-module.exports = layout;
-
-function layout(g, opts) {
-  var time = opts && opts.debugTiming ? util.time : util.notime;
-  time("layout", function() {
-    var layoutGraph = time("  buildLayoutGraph",
-                               function() { return buildLayoutGraph(g); });
-    time("  runLayout",        function() { runLayout(layoutGraph, time); });
-    time("  updateInputGraph", function() { updateInputGraph(g, layoutGraph); });
-  });
-}
-
-function runLayout(g, time) {
-  time("    makeSpaceForEdgeLabels", function() { makeSpaceForEdgeLabels(g); });
-  time("    removeSelfEdges",        function() { removeSelfEdges(g); });
-  time("    acyclic",                function() { acyclic.run(g); });
-  time("    nestingGraph.run",       function() { nestingGraph.run(g); });
-  time("    rank",                   function() { rank(util.asNonCompoundGraph(g)); });
-  time("    injectEdgeLabelProxies", function() { injectEdgeLabelProxies(g); });
-  time("    removeEmptyRanks",       function() { removeEmptyRanks(g); });
-  time("    nestingGraph.cleanup",   function() { nestingGraph.cleanup(g); });
-  time("    normalizeRanks",         function() { normalizeRanks(g); });
-  time("    assignRankMinMax",       function() { assignRankMinMax(g); });
-  time("    removeEdgeLabelProxies", function() { removeEdgeLabelProxies(g); });
-  time("    normalize.run",          function() { normalize.run(g); });
-  time("    parentDummyChains",      function() { parentDummyChains(g); });
-  time("    addBorderSegments",      function() { addBorderSegments(g); });
-  time("    order",                  function() { order(g); });
-  time("    insertSelfEdges",        function() { insertSelfEdges(g); });
-  time("    adjustCoordinateSystem", function() { coordinateSystem.adjust(g); });
-  time("    position",               function() { position(g); });
-  time("    positionSelfEdges",      function() { positionSelfEdges(g); });
-  time("    removeBorderNodes",      function() { removeBorderNodes(g); });
-  time("    normalize.undo",         function() { normalize.undo(g); });
-  time("    fixupEdgeLabelCoords",   function() { fixupEdgeLabelCoords(g); });
-  time("    undoCoordinateSystem",   function() { coordinateSystem.undo(g); });
-  time("    translateGraph",         function() { translateGraph(g); });
-  time("    assignNodeIntersects",   function() { assignNodeIntersects(g); });
-  time("    reversePoints",          function() { reversePointsForReversedEdges(g); });
-  time("    acyclic.undo",           function() { acyclic.undo(g); });
-}
-
-/*
- * Copies final layout information from the layout graph back to the input
- * graph. This process only copies whitelisted attributes from the layout graph
- * to the input graph, so it serves as a good place to determine what
- * attributes can influence layout.
- */
-function updateInputGraph(inputGraph, layoutGraph) {
-  _.each(inputGraph.nodes(), function(v) {
-    var inputLabel = inputGraph.node(v),
-        layoutLabel = layoutGraph.node(v);
-
-    if (inputLabel) {
-      inputLabel.x = layoutLabel.x;
-      inputLabel.y = layoutLabel.y;
-
-      if (layoutGraph.children(v).length) {
-        inputLabel.width = layoutLabel.width;
-        inputLabel.height = layoutLabel.height;
-      }
-    }
-  });
-
-  _.each(inputGraph.edges(), function(e) {
-    var inputLabel = inputGraph.edge(e),
-        layoutLabel = layoutGraph.edge(e);
-
-    inputLabel.points = layoutLabel.points;
-    if (_.has(layoutLabel, "x")) {
-      inputLabel.x = layoutLabel.x;
-      inputLabel.y = layoutLabel.y;
-    }
-  });
-
-  inputGraph.graph().width = layoutGraph.graph().width;
-  inputGraph.graph().height = layoutGraph.graph().height;
-}
-
-var graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"],
-    graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" },
-    graphAttrs = ["acyclicer", "ranker", "rankdir", "align"],
-    nodeNumAttrs = ["width", "height"],
-    nodeDefaults = { width: 0, height: 0 },
-    edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"],
-    edgeDefaults = {
-      minlen: 1, weight: 1, width: 0, height: 0,
-      labeloffset: 10, labelpos: "r"
-    },
-    edgeAttrs = ["labelpos"];
-
-/*
- * Constructs a new graph from the input graph, which can be used for layout.
- * This process copies only whitelisted attributes from the input graph to the
- * layout graph. Thus this function serves as a good place to determine what
- * attributes can influence layout.
- */
-function buildLayoutGraph(inputGraph) {
-  var g = new Graph({ multigraph: true, compound: true }),
-      graph = canonicalize(inputGraph.graph());
-
-  g.setGraph(_.merge({},
-    graphDefaults,
-    selectNumberAttrs(graph, graphNumAttrs),
-    _.pick(graph, graphAttrs)));
-
-  _.each(inputGraph.nodes(), function(v) {
-    var node = canonicalize(inputGraph.node(v));
-    g.setNode(v, _.defaults(selectNumberAttrs(node, nodeNumAttrs), nodeDefaults));
-    g.setParent(v, inputGraph.parent(v));
-  });
-
-  _.each(inputGraph.edges(), function(e) {
-    var edge = canonicalize(inputGraph.edge(e));
-    g.setEdge(e, _.merge({},
-      edgeDefaults,
-      selectNumberAttrs(edge, edgeNumAttrs),
-      _.pick(edge, edgeAttrs)));
-  });
-
-  return g;
-}
-
-/*
- * This idea comes from the Gansner paper: to account for edge labels in our
- * layout we split each rank in half by doubling minlen and halving ranksep.
- * Then we can place labels at these mid-points between nodes.
- *
- * We also add some minimal padding to the width to push the label for the edge
- * away from the edge itself a bit.
- */
-function makeSpaceForEdgeLabels(g) {
-  var graph = g.graph();
-  graph.ranksep /= 2;
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    edge.minlen *= 2;
-    if (edge.labelpos.toLowerCase() !== "c") {
-      if (graph.rankdir === "TB" || graph.rankdir === "BT") {
-        edge.width += edge.labeloffset;
-      } else {
-        edge.height += edge.labeloffset;
-      }
-    }
-  });
-}
-
-/*
- * Creates temporary dummy nodes that capture the rank in which each edge's
- * label is going to, if it has one of non-zero width and height. We do this
- * so that we can safely remove empty ranks while preserving balance for the
- * label's position.
- */
-function injectEdgeLabelProxies(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (edge.width && edge.height) {
-      var v = g.node(e.v),
-          w = g.node(e.w),
-          label = { rank: (w.rank - v.rank) / 2 + v.rank, e: e };
-      util.addDummyNode(g, "edge-proxy", label, "_ep");
-    }
-  });
-}
-
-function assignRankMinMax(g) {
-  var maxRank = 0;
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (node.borderTop) {
-      node.minRank = g.node(node.borderTop).rank;
-      node.maxRank = g.node(node.borderBottom).rank;
-      maxRank = _.max(maxRank, node.maxRank);
-    }
-  });
-  g.graph().maxRank = maxRank;
-}
-
-function removeEdgeLabelProxies(g) {
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (node.dummy === "edge-proxy") {
-      g.edge(node.e).labelRank = node.rank;
-      g.removeNode(v);
-    }
-  });
-}
-
-function translateGraph(g) {
-  var minX = Number.POSITIVE_INFINITY,
-      maxX = 0,
-      minY = Number.POSITIVE_INFINITY,
-      maxY = 0,
-      graphLabel = g.graph(),
-      marginX = graphLabel.marginx || 0,
-      marginY = graphLabel.marginy || 0;
-
-  function getExtremes(attrs) {
-    var x = attrs.x,
-        y = attrs.y,
-        w = attrs.width,
-        h = attrs.height;
-    minX = Math.min(minX, x - w / 2);
-    maxX = Math.max(maxX, x + w / 2);
-    minY = Math.min(minY, y - h / 2);
-    maxY = Math.max(maxY, y + h / 2);
-  }
-
-  _.each(g.nodes(), function(v) { getExtremes(g.node(v)); });
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (_.has(edge, "x")) {
-      getExtremes(edge);
-    }
-  });
-
-  minX -= marginX;
-  minY -= marginY;
-
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    node.x -= minX;
-    node.y -= minY;
-  });
-
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    _.each(edge.points, function(p) {
-      p.x -= minX;
-      p.y -= minY;
-    });
-    if (_.has(edge, "x")) { edge.x -= minX; }
-    if (_.has(edge, "y")) { edge.y -= minY; }
-  });
-
-  graphLabel.width = maxX - minX + marginX;
-  graphLabel.height = maxY - minY + marginY;
-}
-
-function assignNodeIntersects(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e),
-        nodeV = g.node(e.v),
-        nodeW = g.node(e.w),
-        p1, p2;
-    if (!edge.points) {
-      edge.points = [];
-      p1 = nodeW;
-      p2 = nodeV;
-    } else {
-      p1 = edge.points[0];
-      p2 = edge.points[edge.points.length - 1];
-    }
-    edge.points.unshift(util.intersectRect(nodeV, p1));
-    edge.points.push(util.intersectRect(nodeW, p2));
-  });
-}
-
-function fixupEdgeLabelCoords(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (_.has(edge, "x")) {
-      if (edge.labelpos === "l" || edge.labelpos === "r") {
-        edge.width -= edge.labeloffset;
-      }
-      switch (edge.labelpos) {
-        case "l": edge.x -= edge.width / 2 + edge.labeloffset; break;
-        case "r": edge.x += edge.width / 2 + edge.labeloffset; break;
-      }
-    }
-  });
-}
-
-function reversePointsForReversedEdges(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (edge.reversed) {
-      edge.points.reverse();
-    }
-  });
-}
-
-function removeBorderNodes(g) {
-  _.each(g.nodes(), function(v) {
-    if (g.children(v).length) {
-      var node = g.node(v),
-          t = g.node(node.borderTop),
-          b = g.node(node.borderBottom),
-          l = g.node(_.last(node.borderLeft)),
-          r = g.node(_.last(node.borderRight));
-
-      node.width = Math.abs(r.x - l.x);
-      node.height = Math.abs(b.y - t.y);
-      node.x = l.x + node.width / 2;
-      node.y = t.y + node.height / 2;
-    }
-  });
-
-  _.each(g.nodes(), function(v) {
-    if (g.node(v).dummy === "border") {
-      g.removeNode(v);
-    }
-  });
-}
-
-function removeSelfEdges(g) {
-  _.each(g.edges(), function(e) {
-    if (e.v === e.w) {
-      var node = g.node(e.v);
-      if (!node.selfEdges) {
-        node.selfEdges = [];
-      }
-      node.selfEdges.push({ e: e, label: g.edge(e) });
-      g.removeEdge(e);
-    }
-  });
-}
-
-function insertSelfEdges(g) {
-  var layers = util.buildLayerMatrix(g);
-  _.each(layers, function(layer) {
-    var orderShift = 0;
-    _.each(layer, function(v, i) {
-      var node = g.node(v);
-      node.order = i + orderShift;
-      _.each(node.selfEdges, function(selfEdge) {
-        util.addDummyNode(g, "selfedge", {
-          width: selfEdge.label.width,
-          height: selfEdge.label.height,
-          rank: node.rank,
-          order: i + (++orderShift),
-          e: selfEdge.e,
-          label: selfEdge.label
-        }, "_se");
-      });
-      delete node.selfEdges;
-    });
-  });
-}
-
-function positionSelfEdges(g) {
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (node.dummy === "selfedge") {
-      var selfNode = g.node(node.e.v),
-          x = selfNode.x + selfNode.width / 2,
-          y = selfNode.y,
-          dx = node.x - x,
-          dy = selfNode.height / 2;
-      g.setEdge(node.e, node.label);
-      g.removeNode(v);
-      node.label.points = [
-        { x: x + 2 * dx / 3, y: y - dy },
-        { x: x + 5 * dx / 6, y: y - dy },
-        { x: x +     dx    , y: y },
-        { x: x + 5 * dx / 6, y: y + dy },
-        { x: x + 2 * dx / 3, y: y + dy },
-      ];
-      node.label.x = node.x;
-      node.label.y = node.y;
-    }
-  });
-}
-
-function selectNumberAttrs(obj, attrs) {
-  return _.mapValues(_.pick(obj, attrs), Number);
-}
-
-function canonicalize(attrs) {
-  var newAttrs = {};
-  _.each(attrs, function(v, k) {
-    newAttrs[k.toLowerCase()] = v;
-  });
-  return newAttrs;
-}
-
-},{"./acyclic":54,"./add-border-segments":55,"./coordinate-system":56,"./graphlib":59,"./lodash":62,"./nesting-graph":63,"./normalize":64,"./order":69,"./parent-dummy-chains":74,"./position":76,"./rank":78,"./util":81}],62:[function(require,module,exports){
-module.exports=require(50)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":50,"lodash":103}],63:[function(require,module,exports){
-var _ = require("./lodash"),
-    util = require("./util");
-
-module.exports = {
-  run: run,
-  cleanup: cleanup
-};
-
-/*
- * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
- * adds appropriate edges to ensure that all cluster nodes are placed between
- * these boundries, and ensures that the graph is connected.
- *
- * In addition we ensure, through the use of the minlen property, that nodes
- * and subgraph border nodes to not end up on the same rank.
- *
- * Preconditions:
- *
- *    1. Input graph is a DAG
- *    2. Nodes in the input graph has a minlen attribute
- *
- * Postconditions:
- *
- *    1. Input graph is connected.
- *    2. Dummy nodes are added for the tops and bottoms of subgraphs.
- *    3. The minlen attribute for nodes is adjusted to ensure nodes do not
- *       get placed on the same rank as subgraph border nodes.
- *
- * The nesting graph idea comes from Sander, "Layout of Compound Directed
- * Graphs."
- */
-function run(g) {
-  var root = util.addDummyNode(g, "root", {}, "_root"),
-      depths = treeDepths(g),
-      height = _.max(depths) - 1,
-      nodeSep = 2 * height + 1;
-
-  g.graph().nestingRoot = root;
-
-  // Multiply minlen by nodeSep to align nodes on non-border ranks.
-  _.each(g.edges(), function(e) { g.edge(e).minlen *= nodeSep; });
-
-  // Calculate a weight that is sufficient to keep subgraphs vertically compact
-  var weight = sumWeights(g) + 1;
-
-  // Create border nodes and link them up
-  _.each(g.children(), function(child) {
-    dfs(g, root, nodeSep, weight, height, depths, child);
-  });
-
-  // Save the multiplier for node layers for later removal of empty border
-  // layers.
-  g.graph().nodeRankFactor = nodeSep;
-}
-
-function dfs(g, root, nodeSep, weight, height, depths, v) {
-  var children = g.children(v);
-  if (!children.length) {
-    if (v !== root) {
-      g.setEdge(root, v, { weight: 0, minlen: nodeSep });
-    }
-    return;
-  }
-
-  var top = util.addBorderNode(g, "_bt"),
-      bottom = util.addBorderNode(g, "_bb"),
-      label = g.node(v);
-
-  g.setParent(top, v);
-  label.borderTop = top;
-  g.setParent(bottom, v);
-  label.borderBottom = bottom;
-
-  _.each(children, function(child) {
-    dfs(g, root, nodeSep, weight, height, depths, child);
-
-    var childNode = g.node(child),
-        childTop = childNode.borderTop ? childNode.borderTop : child,
-        childBottom = childNode.borderBottom ? childNode.borderBottom : child,
-        thisWeight = childNode.borderTop ? weight : 2 * weight,
-        minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
-
-    g.setEdge(top, childTop, {
-      weight: thisWeight,
-      minlen: minlen,
-      nestingEdge: true
-    });
-
-    g.setEdge(childBottom, bottom, {
-      weight: thisWeight,
-      minlen: minlen,
-      nestingEdge: true
-    });
-  });
-
-  if (!g.parent(v)) {
-    g.setEdge(root, top, { weight: 0, minlen: height + depths[v] });
-  }
-}
-
-function treeDepths(g) {
-  var depths = {};
-  function dfs(v, depth) {
-    var children = g.children(v);
-    if (children && children.length) {
-      _.each(children, function(child) {
-        dfs(child, depth + 1);
-      });
-    }
-    depths[v] = depth;
-  }
-  _.each(g.children(), function(v) { dfs(v, 1); });
-  return depths;
-}
-
-function sumWeights(g) {
-  return _.reduce(g.edges(), function(acc, e) {
-    return acc + g.edge(e).weight;
-  }, 0);
-}
-
-function cleanup(g) {
-  var graphLabel = g.graph();
-  g.removeNode(graphLabel.nestingRoot);
-  delete graphLabel.nestingRoot;
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (edge.nestingEdge) {
-      g.removeEdge(e);
-    }
-  });
-}
-
-},{"./lodash":62,"./util":81}],64:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    util = require("./util");
-
-module.exports = {
-  run: run,
-  undo: undo
-};
-
-/*
- * Breaks any long edges in the graph into short segments that span 1 layer
- * each. This operation is undoable with the denormalize function.
- *
- * Pre-conditions:
- *
- *    1. The input graph is a DAG.
- *    2. Each node in the graph has a "rank" property.
- *
- * Post-condition:
- *
- *    1. All edges in the graph have a length of 1.
- *    2. Dummy nodes are added where edges have been split into segments.
- *    3. The graph is augmented with a "dummyChains" attribute which contains
- *       the first dummy in each chain of dummy nodes produced.
- */
-function run(g) {
-  g.graph().dummyChains = [];
-  _.each(g.edges(), function(edge) { normalizeEdge(g, edge); });
-}
-
-function normalizeEdge(g, e) {
-  var v = e.v,
-      vRank = g.node(v).rank,
-      w = e.w,
-      wRank = g.node(w).rank,
-      name = e.name,
-      edgeLabel = g.edge(e),
-      labelRank = edgeLabel.labelRank;
-
-  if (wRank === vRank + 1) return;
-
-  g.removeEdge(e);
-
-  var dummy, attrs, i;
-  for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
-    edgeLabel.points = [];
-    attrs = {
-      width: 0, height: 0,
-      edgeLabel: edgeLabel, edgeObj: e,
-      rank: vRank
-    };
-    dummy = util.addDummyNode(g, "edge", attrs, "_d");
-    if (vRank === labelRank) {
-      attrs.width = edgeLabel.width;
-      attrs.height = edgeLabel.height;
-      attrs.dummy = "edge-label";
-      attrs.labelpos = edgeLabel.labelpos;
-    }
-    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
-    if (i === 0) {
-      g.graph().dummyChains.push(dummy);
-    }
-    v = dummy;
-  }
-
-  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
-}
-
-function undo(g) {
-  _.each(g.graph().dummyChains, function(v) {
-    var node = g.node(v),
-        origLabel = node.edgeLabel,
-        w;
-    g.setEdge(node.edgeObj, origLabel);
-    while (node.dummy) {
-      w = g.successors(v)[0];
-      g.removeNode(v);
-      origLabel.points.push({ x: node.x, y: node.y });
-      if (node.dummy === "edge-label") {
-        origLabel.x = node.x;
-        origLabel.y = node.y;
-        origLabel.width = node.width;
-        origLabel.height = node.height;
-      }
-      v = w;
-      node = g.node(v);
-    }
-  });
-}
-
-},{"./lodash":62,"./util":81}],65:[function(require,module,exports){
-var _ = require("../lodash");
-
-module.exports = addSubgraphConstraints;
-
-function addSubgraphConstraints(g, cg, vs) {
-  var prev = {},
-      rootPrev;
-
-  _.each(vs, function(v) {
-    var child = g.parent(v),
-        parent,
-        prevChild;
-    while (child) {
-      parent = g.parent(child);
-      if (parent) {
-        prevChild = prev[parent];
-        prev[parent] = child;
-      } else {
-        prevChild = rootPrev;
-        rootPrev = child;
-      }
-      if (prevChild && prevChild !== child) {
-        cg.setEdge(prevChild, child);
-        return;
-      }
-      child = parent;
-    }
-  });
-
-  /*
-  function dfs(v) {
-    var children = v ? g.children(v) : g.children();
-    if (children.length) {
-      var min = Number.POSITIVE_INFINITY,
-          subgraphs = [];
-      _.each(children, function(child) {
-        var childMin = dfs(child);
-        if (g.children(child).length) {
-          subgraphs.push({ v: child, order: childMin });
-        }
-        min = Math.min(min, childMin);
-      });
-      _.reduce(_.sortBy(subgraphs, "order"), function(prev, curr) {
-        cg.setEdge(prev.v, curr.v);
-        return curr;
-      });
-      return min;
-    }
-    return g.node(v).order;
-  }
-  dfs(undefined);
-  */
-}
-
-},{"../lodash":62}],66:[function(require,module,exports){
-var _ = require("../lodash");
-
-module.exports = barycenter;
-
-function barycenter(g, movable) {
-  return _.map(movable, function(v) {
-    var inV = g.inEdges(v);
-    if (!inV.length) {
-      return { v: v };
-    } else {
-      var result = _.reduce(inV, function(acc, e) {
-        var edge = g.edge(e),
-            nodeU = g.node(e.v);
-        return {
-          sum: acc.sum + (edge.weight * nodeU.order),
-          weight: acc.weight + edge.weight
-        };
-      }, { sum: 0, weight: 0 });
-
-      return {
-        v: v,
-        barycenter: result.sum / result.weight,
-        weight: result.weight
-      };
-    }
-  });
-}
-
-
-},{"../lodash":62}],67:[function(require,module,exports){
-var _ = require("../lodash"),
-    Graph = require("../graphlib").Graph;
-
-module.exports = buildLayerGraph;
-
-/*
- * Constructs a graph that can be used to sort a layer of nodes. The graph will
- * contain all base and subgraph nodes from the request layer in their original
- * hierarchy and any edges that are incident on these nodes and are of the type
- * requested by the "relationship" parameter.
- *
- * Nodes from the requested rank that do not have parents are assigned a root
- * node in the output graph, which is set in the root graph attribute. This
- * makes it easy to walk the hierarchy of movable nodes during ordering.
- *
- * Pre-conditions:
- *
- *    1. Input graph is a DAG
- *    2. Base nodes in the input graph have a rank attribute
- *    3. Subgraph nodes in the input graph has minRank and maxRank attributes
- *    4. Edges have an assigned weight
- *
- * Post-conditions:
- *
- *    1. Output graph has all nodes in the movable rank with preserved
- *       hierarchy.
- *    2. Root nodes in the movable layer are made children of the node
- *       indicated by the root attribute of the graph.
- *    3. Non-movable nodes incident on movable nodes, selected by the
- *       relationship parameter, are included in the graph (without hierarchy).
- *    4. Edges incident on movable nodes, selected by the relationship
- *       parameter, are added to the output graph.
- *    5. The weights for copied edges are aggregated as need, since the output
- *       graph is not a multi-graph.
- */
-function buildLayerGraph(g, rank, relationship) {
-  var root = createRootNode(g),
-      result = new Graph({ compound: true }).setGraph({ root: root })
-                  .setDefaultNodeLabel(function(v) { return g.node(v); });
-
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v),
-        parent = g.parent(v);
-
-    if (node.rank === rank || node.minRank <= rank && rank <= node.maxRank) {
-      result.setNode(v);
-      result.setParent(v, parent || root);
-
-      // This assumes we have only short edges!
-      _.each(g[relationship](v), function(e) {
-        var u = e.v === v ? e.w : e.v,
-            edge = result.edge(u, v),
-            weight = !_.isUndefined(edge) ? edge.weight : 0;
-        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
-      });
-
-      if (_.has(node, "minRank")) {
-        result.setNode(v, {
-          borderLeft: node.borderLeft[rank],
-          borderRight: node.borderRight[rank]
-        });
-      }
-    }
-  });
-
-  return result;
-}
-
-function createRootNode(g) {
-  var v;
-  while (g.hasNode((v = _.uniqueId("_root"))));
-  return v;
-}
-
-},{"../graphlib":59,"../lodash":62}],68:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = crossCount;
-
-/*
- * A function that takes a layering (an array of layers, each with an array of
- * ordererd nodes) and a graph and returns a weighted crossing count.
- *
- * Pre-conditions:
- *
- *    1. Input graph must be simple (not a multigraph), directed, and include
- *       only simple edges.
- *    2. Edges in the input graph must have assigned weights.
- *
- * Post-conditions:
- *
- *    1. The graph and layering matrix are left unchanged.
- *
- * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
- */
-function crossCount(g, layering) {
-  var cc = 0;
-  for (var i = 1; i < layering.length; ++i) {
-    cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
-  }
-  return cc;
-}
-
-function twoLayerCrossCount(g, northLayer, southLayer) {
-  // Sort all of the edges between the north and south layers by their position
-  // in the north layer and then the south. Map these edges to the position of
-  // their head in the south layer.
-  var southPos = _.zipObject(southLayer,
-                             _.map(southLayer, function (v, i) { return i; }));
-  var southEntries = _.flatten(_.map(northLayer, function(v) {
-    return _.chain(g.outEdges(v))
-            .map(function(e) {
-              return { pos: southPos[e.w], weight: g.edge(e).weight };
-            })
-            .sortBy("pos")
-            .value();
-  }), true);
-
-  // Build the accumulator tree
-  var firstIndex = 1;
-  while (firstIndex < southLayer.length) firstIndex <<= 1;
-  var treeSize = 2 * firstIndex - 1;
-  firstIndex -= 1;
-  var tree = _.map(new Array(treeSize), function() { return 0; });
-
-  // Calculate the weighted crossings
-  var cc = 0;
-  _.each(southEntries.forEach(function(entry) {
-    var index = entry.pos + firstIndex;
-    tree[index] += entry.weight;
-    var weightSum = 0;
-    while (index > 0) {
-      if (index % 2) {
-        weightSum += tree[index + 1];
-      }
-      index = (index - 1) >> 1;
-      tree[index] += entry.weight;
-    }
-    cc += entry.weight * weightSum;
-  }));
-
-  return cc;
-}
-
-},{"../lodash":62}],69:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    initOrder = require("./init-order"),
-    crossCount = require("./cross-count"),
-    sortSubgraph = require("./sort-subgraph"),
-    buildLayerGraph = require("./build-layer-graph"),
-    addSubgraphConstraints = require("./add-subgraph-constraints"),
-    Graph = require("../graphlib").Graph,
-    util = require("../util");
-
-module.exports = order;
-
-/*
- * Applies heuristics to minimize edge crossings in the graph and sets the best
- * order solution as an order attribute on each node.
- *
- * Pre-conditions:
- *
- *    1. Graph must be DAG
- *    2. Graph nodes must be objects with a "rank" attribute
- *    3. Graph edges must have the "weight" attribute
- *
- * Post-conditions:
- *
- *    1. Graph nodes will have an "order" attribute based on the results of the
- *       algorithm.
- */
-function order(g) {
-  var maxRank = util.maxRank(g),
-      downLayerGraphs = buildLayerGraphs(g, _.range(1, maxRank + 1), "inEdges"),
-      upLayerGraphs = buildLayerGraphs(g, _.range(maxRank - 1, -1, -1), "outEdges");
-
-  var layering = initOrder(g);
-  assignOrder(g, layering);
-
-  var bestCC = Number.POSITIVE_INFINITY,
-      best;
-
-  for (var i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
-    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
-
-    layering = util.buildLayerMatrix(g);
-    var cc = crossCount(g, layering);
-    if (cc < bestCC) {
-      lastBest = 0;
-      best = _.cloneDeep(layering);
-      bestCC = cc;
-    }
-  }
-
-  assignOrder(g, best);
-}
-
-function buildLayerGraphs(g, ranks, relationship) {
-  return _.map(ranks, function(rank) {
-    return buildLayerGraph(g, rank, relationship);
-  });
-}
-
-function sweepLayerGraphs(layerGraphs, biasRight) {
-  var cg = new Graph();
-  _.each(layerGraphs, function(lg) {
-    var root = lg.graph().root;
-    var sorted = sortSubgraph(lg, root, cg, biasRight);
-    _.each(sorted.vs, function(v, i) {
-      lg.node(v).order = i;
-    });
-    addSubgraphConstraints(lg, cg, sorted.vs);
-  });
-}
-
-function assignOrder(g, layering) {
-  _.each(layering, function(layer) {
-    _.each(layer, function(v, i) {
-      g.node(v).order = i;
-    });
-  });
-}
-
-},{"../graphlib":59,"../lodash":62,"../util":81,"./add-subgraph-constraints":65,"./build-layer-graph":67,"./cross-count":68,"./init-order":70,"./sort-subgraph":72}],70:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = initOrder;
-
-/*
- * Assigns an initial order value for each node by performing a DFS search
- * starting from nodes in the first rank. Nodes are assigned an order in their
- * rank as they are first visited.
- *
- * This approach comes from Gansner, et al., "A Technique for Drawing Directed
- * Graphs."
- *
- * Returns a layering matrix with an array per layer and each layer sorted by
- * the order of its nodes.
- */
-function initOrder(g) {
-  var visited = {},
-      simpleNodes = _.filter(g.nodes(), function(v) {
-        return !g.children(v).length;
-      }),
-      maxRank = _.max(_.map(simpleNodes, function(v) { return g.node(v).rank; })),
-      layers = _.map(_.range(maxRank + 1), function() { return []; });
-
-  function dfs(v) {
-    if (_.has(visited, v)) return;
-    visited[v] = true;
-    var node = g.node(v);
-    layers[node.rank].push(v);
-    _.each(g.successors(v), dfs);
-  }
-
-  var orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v).rank; });
-  _.each(orderedVs, dfs);
-
-  return layers;
-}
-
-},{"../lodash":62}],71:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = resolveConflicts;
-
-/*
- * Given a list of entries of the form {v, barycenter, weight} and a
- * constraint graph this function will resolve any conflicts between the
- * constraint graph and the barycenters for the entries. If the barycenters for
- * an entry would violate a constraint in the constraint graph then we coalesce
- * the nodes in the conflict into a new node that respects the contraint and
- * aggregates barycenter and weight information.
- *
- * This implementation is based on the description in Forster, "A Fast and
- * Simple Hueristic for Constrained Two-Level Crossing Reduction," thought it
- * differs in some specific details.
- *
- * Pre-conditions:
- *
- *    1. Each entry has the form {v, barycenter, weight}, or if the node has
- *       no barycenter, then {v}.
- *
- * Returns:
- *
- *    A new list of entries of the form {vs, i, barycenter, weight}. The list
- *    `vs` may either be a singleton or it may be an aggregation of nodes
- *    ordered such that they do not violate constraints from the constraint
- *    graph. The property `i` is the lowest original index of any of the
- *    elements in `vs`.
- */
-function resolveConflicts(entries, cg) {
-  var mappedEntries = {};
-  _.each(entries, function(entry, i) {
-    var tmp = mappedEntries[entry.v] = {
-      indegree: 0,
-      "in": [],
-      out: [],
-      vs: [entry.v],
-      i: i
-    };
-    if (!_.isUndefined(entry.barycenter)) {
-      tmp.barycenter = entry.barycenter;
-      tmp.weight = entry.weight;
-    }
-  });
-
-  _.each(cg.edges(), function(e) {
-    var entryV = mappedEntries[e.v],
-        entryW = mappedEntries[e.w];
-    if (!_.isUndefined(entryV) && !_.isUndefined(entryW)) {
-      entryW.indegree++;
-      entryV.out.push(mappedEntries[e.w]);
-    }
-  });
-
-  var sourceSet = _.filter(mappedEntries, function(entry) {
-    return !entry.indegree;
-  });
-
-  return doResolveConflicts(sourceSet);
-}
-
-function doResolveConflicts(sourceSet) {
-  var entries = [];
-
-  function handleIn(vEntry) {
-    return function(uEntry) {
-      if (uEntry.merged) {
-        return;
-      }
-      if (_.isUndefined(uEntry.barycenter) ||
-          _.isUndefined(vEntry.barycenter) ||
-          uEntry.barycenter >= vEntry.barycenter) {
-        mergeEntries(vEntry, uEntry);
-      }
-    };
-  }
-
-  function handleOut(vEntry) {
-    return function(wEntry) {
-      wEntry["in"].push(vEntry);
-      if (--wEntry.indegree === 0) {
-        sourceSet.push(wEntry);
-      }
-    };
-  }
-
-  while (sourceSet.length) {
-    var entry = sourceSet.pop();
-    entries.push(entry);
-    _.each(entry["in"].reverse(), handleIn(entry));
-    _.each(entry.out, handleOut(entry));
-  }
-
-  return _.chain(entries)
-          .filter(function(entry) { return !entry.merged; })
-          .map(function(entry) {
-            return _.pick(entry, ["vs", "i", "barycenter", "weight"]);
-          })
-          .value();
-}
-
-function mergeEntries(target, source) {
-  var sum = 0,
-      weight = 0;
-
-  if (target.weight) {
-    sum += target.barycenter * target.weight;
-    weight += target.weight;
-  }
-
-  if (source.weight) {
-    sum += source.barycenter * source.weight;
-    weight += source.weight;
-  }
-
-  target.vs = source.vs.concat(target.vs);
-  target.barycenter = sum / weight;
-  target.weight = weight;
-  target.i = Math.min(source.i, target.i);
-  source.merged = true;
-}
-
-},{"../lodash":62}],72:[function(require,module,exports){
-var _ = require("../lodash"),
-    barycenter = require("./barycenter"),
-    resolveConflicts = require("./resolve-conflicts"),
-    sort = require("./sort");
-
-module.exports = sortSubgraph;
-
-function sortSubgraph(g, v, cg, biasRight) {
-  var movable = g.children(v),
-      node = g.node(v),
-      bl = node ? node.borderLeft : undefined,
-      br = node ? node.borderRight: undefined,
-      subgraphs = {};
-
-  if (bl) {
-    movable = _.filter(movable, function(w) {
-      return w !== bl && w !== br;
-    });
-  }
-
-  var barycenters = barycenter(g, movable);
-  _.each(barycenters, function(entry) {
-    if (g.children(entry.v).length) {
-      var subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
-      subgraphs[entry.v] = subgraphResult;
-      if (_.has(subgraphResult, "barycenter")) {
-        mergeBarycenters(entry, subgraphResult);
-      }
-    }
-  });
-
-  var entries = resolveConflicts(barycenters, cg);
-  expandSubgraphs(entries, subgraphs);
-
-  var result = sort(entries, biasRight);
-
-  if (bl) {
-    result.vs = _.flatten([bl, result.vs, br], true);
-    if (g.predecessors(bl).length) {
-      var blPred = g.node(g.predecessors(bl)[0]),
-          brPred = g.node(g.predecessors(br)[0]);
-      if (!_.has(result, "barycenter")) {
-        result.barycenter = 0;
-        result.weight = 0;
-      }
-      result.barycenter = (result.barycenter * result.weight +
-                           blPred.order + brPred.order) / (result.weight + 2);
-      result.weight += 2;
-    }
-  }
-
-  return result;
-}
-
-function expandSubgraphs(entries, subgraphs) {
-  _.each(entries, function(entry) {
-    entry.vs = _.flatten(entry.vs.map(function(v) {
-      if (subgraphs[v]) {
-        return subgraphs[v].vs;
-      }
-      return v;
-    }), true);
-  });
-}
-
-function mergeBarycenters(target, other) {
-  if (!_.isUndefined(target.barycenter)) {
-    target.barycenter = (target.barycenter * target.weight +
-                         other.barycenter * other.weight) /
-                        (target.weight + other.weight);
-    target.weight += other.weight;
-  } else {
-    target.barycenter = other.barycenter;
-    target.weight = other.weight;
-  }
-}
-
-},{"../lodash":62,"./barycenter":66,"./resolve-conflicts":71,"./sort":73}],73:[function(require,module,exports){
-var _ = require("../lodash"),
-    util = require("../util");
-
-module.exports = sort;
-
-function sort(entries, biasRight) {
-  var parts = util.partition(entries, function(entry) {
-    return _.has(entry, "barycenter");
-  });
-  var sortable = parts.lhs,
-      unsortable = _.sortBy(parts.rhs, function(entry) { return -entry.i; }),
-      vs = [],
-      sum = 0,
-      weight = 0,
-      vsIndex = 0;
-
-  sortable.sort(compareWithBias(!!biasRight));
-
-  vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
-
-  _.each(sortable, function (entry) {
-    vsIndex += entry.vs.length;
-    vs.push(entry.vs);
-    sum += entry.barycenter * entry.weight;
-    weight += entry.weight;
-    vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
-  });
-
-  var result = { vs: _.flatten(vs, true) };
-  if (weight) {
-    result.barycenter = sum / weight;
-    result.weight = weight;
-  }
-  return result;
-}
-
-function consumeUnsortable(vs, unsortable, index) {
-  var last;
-  while (unsortable.length && (last = _.last(unsortable)).i <= index) {
-    unsortable.pop();
-    vs.push(last.vs);
-    index++;
-  }
-  return index;
-}
-
-function compareWithBias(bias) {
-  return function(entryV, entryW) {
-    if (entryV.barycenter < entryW.barycenter) {
-      return -1;
-    } else if (entryV.barycenter > entryW.barycenter) {
-      return 1;
-    }
-
-    return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
-  };
-}
-
-},{"../lodash":62,"../util":81}],74:[function(require,module,exports){
-var _ = require("./lodash");
-
-module.exports = parentDummyChains;
-
-function parentDummyChains(g) {
-  var postorderNums = postorder(g);
-
-  _.each(g.graph().dummyChains, function(v) {
-    var node = g.node(v),
-        edgeObj = node.edgeObj,
-        pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w),
-        path = pathData.path,
-        lca = pathData.lca,
-        pathIdx = 0,
-        pathV = path[pathIdx],
-        ascending = true;
-
-    while (v !== edgeObj.w) {
-      node = g.node(v);
-
-      if (ascending) {
-        while ((pathV = path[pathIdx]) !== lca &&
-               g.node(pathV).maxRank < node.rank) {
-          pathIdx++;
-        }
-
-        if (pathV === lca) {
-          ascending = false;
-        }
-      }
-
-      if (!ascending) {
-        while (pathIdx < path.length - 1 &&
-               g.node(pathV = path[pathIdx + 1]).minRank <= node.rank) {
-          pathIdx++;
-        }
-        pathV = path[pathIdx];
-      }
-
-      g.setParent(v, pathV);
-      v = g.successors(v)[0];
-    }
-  });
-}
-
-// Find a path from v to w through the lowest common ancestor (LCA). Return the
-// full path and the LCA.
-function findPath(g, postorderNums, v, w) {
-  var vPath = [],
-      wPath = [],
-      low = Math.min(postorderNums[v].low, postorderNums[w].low),
-      lim = Math.max(postorderNums[v].lim, postorderNums[w].lim),
-      parent,
-      lca;
-
-  // Traverse up from v to find the LCA
-  parent = v;
-  do {
-    parent = g.parent(parent);
-    vPath.push(parent);
-  } while (parent &&
-           (postorderNums[parent].low > low || lim > postorderNums[parent].lim));
-  lca = parent;
-
-  // Traverse from w to LCA
-  parent = w;
-  while ((parent = g.parent(parent)) !== lca) {
-    wPath.push(parent);
-  }
-
-  return { path: vPath.concat(wPath.reverse()), lca: lca };
-}
-
-function postorder(g) {
-  var result = {},
-      lim = 0;
-
-  function dfs(v) {
-    var low = lim;
-    _.each(g.children(v), dfs);
-    result[v] = { low: low, lim: lim++ };
-  }
-  _.each(g.children(), dfs);
-
-  return result;
-}
-
-},{"./lodash":62}],75:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    Graph = require("../graphlib").Graph,
-    util = require("../util");
-
-/*
- * This module provides coordinate assignment based on Brandes and Köpf, "Fast
- * and Simple Horizontal Coordinate Assignment."
- */
-
-module.exports = {
-  positionX: positionX,
-  findType1Conflicts: findType1Conflicts,
-  findType2Conflicts: findType2Conflicts,
-  addConflict: addConflict,
-  hasConflict: hasConflict,
-  verticalAlignment: verticalAlignment,
-  horizontalCompaction: horizontalCompaction,
-  alignCoordinates: alignCoordinates,
-  findSmallestWidthAlignment: findSmallestWidthAlignment,
-  balance: balance
-};
-
-/*
- * Marks all edges in the graph with a type-1 conflict with the "type1Conflict"
- * property. A type-1 conflict is one where a non-inner segment crosses an
- * inner segment. An inner segment is an edge with both incident nodes marked
- * with the "dummy" property.
- *
- * This algorithm scans layer by layer, starting with the second, for type-1
- * conflicts between the current layer and the previous layer. For each layer
- * it scans the nodes from left to right until it reaches one that is incident
- * on an inner segment. It then scans predecessors to determine if they have
- * edges that cross that inner segment. At the end a final scan is done for all
- * nodes on the current rank to see if they cross the last visited inner
- * segment.
- *
- * This algorithm (safely) assumes that a dummy node will only be incident on a
- * single node in the layers being scanned.
- */
-function findType1Conflicts(g, layering) {
-  var conflicts = {};
-
-  function visitLayer(prevLayer, layer) {
-    var
-      // last visited node in the previous layer that is incident on an inner
-      // segment.
-      k0 = 0,
-      // Tracks the last node in this layer scanned for crossings with a type-1
-      // segment.
-      scanPos = 0,
-      prevLayerLength = prevLayer.length,
-      lastNode = _.last(layer);
-
-    _.each(layer, function(v, i) {
-      var w = findOtherInnerSegmentNode(g, v),
-          k1 = w ? g.node(w).order : prevLayerLength;
-
-      if (w || v === lastNode) {
-        _.each(layer.slice(scanPos, i +1), function(scanNode) {
-          _.each(g.predecessors(scanNode), function(u) {
-            var uLabel = g.node(u),
-                uPos = uLabel.order;
-            if ((uPos < k0 || k1 < uPos) &&
-                !(uLabel.dummy && g.node(scanNode).dummy)) {
-              addConflict(conflicts, u, scanNode);
-            }
-          });
-        });
-        scanPos = i + 1;
-        k0 = k1;
-      }
-    });
-
-    return layer;
-  }
-
-  _.reduce(layering, visitLayer);
-  return conflicts;
-}
-
-function findType2Conflicts(g, layering) {
-  var conflicts = {};
-
-  function scan(south, southPos, southEnd, prevNorthBorder, nextNorthBorder) {
-    var v;
-    _.each(_.range(southPos, southEnd), function(i) {
-      v = south[i];
-      if (g.node(v).dummy) {
-        _.each(g.predecessors(v), function(u) {
-          var uNode = g.node(u);
-          if (uNode.dummy &&
-              (uNode.order < prevNorthBorder || uNode.order > nextNorthBorder)) {
-            addConflict(conflicts, u, v);
-          }
-        });
-      }
-    });
-  }
-
-
-  function visitLayer(north, south) {
-    var prevNorthPos = -1,
-        nextNorthPos,
-        southPos = 0;
-
-    _.each(south, function(v, southLookahead) {
-      if (g.node(v).dummy === "border") {
-        var predecessors = g.predecessors(v);
-        if (predecessors.length) {
-          nextNorthPos = g.node(predecessors[0]).order;
-          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
-          southPos = southLookahead;
-          prevNorthPos = nextNorthPos;
-        }
-      }
-      scan(south, southPos, south.length, nextNorthPos, north.length);
-    });
-
-    return south;
-  }
-
-  _.reduce(layering, visitLayer);
-  return conflicts;
-}
-
-function findOtherInnerSegmentNode(g, v) {
-  if (g.node(v).dummy) {
-    return _.find(g.predecessors(v), function(u) {
-      return g.node(u).dummy;
-    });
-  }
-}
-
-function addConflict(conflicts, v, w) {
-  if (v > w) {
-    var tmp = v;
-    v = w;
-    w = tmp;
-  }
-
-  var conflictsV = conflicts[v];
-  if (!conflictsV) {
-    conflicts[v] = conflictsV = {};
-  }
-  conflictsV[w] = true;
-}
-
-function hasConflict(conflicts, v, w) {
-  if (v > w) {
-    var tmp = v;
-    v = w;
-    w = tmp;
-  }
-  return _.has(conflicts[v], w);
-}
-
-/*
- * Try to align nodes into vertical "blocks" where possible. This algorithm
- * attempts to align a node with one of its median neighbors. If the edge
- * connecting a neighbor is a type-1 conflict then we ignore that possibility.
- * If a previous node has already formed a block with a node after the node
- * we're trying to form a block with, we also ignore that possibility - our
- * blocks would be split in that scenario.
- */
-function verticalAlignment(g, layering, conflicts, neighborFn) {
-  var root = {},
-      align = {},
-      pos = {};
-
-  // We cache the position here based on the layering because the graph and
-  // layering may be out of sync. The layering matrix is manipulated to
-  // generate different extreme alignments.
-  _.each(layering, function(layer) {
-    _.each(layer, function(v, order) {
-      root[v] = v;
-      align[v] = v;
-      pos[v] = order;
-    });
-  });
-
-  _.each(layering, function(layer) {
-    var prevIdx = -1;
-    _.each(layer, function(v) {
-      var ws = neighborFn(v);
-      if (ws.length) {
-        ws = _.sortBy(ws, function(w) { return pos[w]; });
-        var mp = (ws.length - 1) / 2;
-        for (var i = Math.floor(mp), il = Math.ceil(mp); i <= il; ++i) {
-          var w = ws[i];
-          if (align[v] === v &&
-              prevIdx < pos[w] &&
-              !hasConflict(conflicts, v, w)) {
-            align[w] = v;
-            align[v] = root[v] = root[w];
-            prevIdx = pos[w];
-          }
-        }
-      }
-    });
-  });
-
-  return { root: root, align: align };
-}
-
-function horizontalCompaction(g, layering, root, align, reverseSep) {
-  // This portion of the algorithm differs from BK due to a number of problems.
-  // Instead of their algorithm we construct a new block graph and do two
-  // sweeps. The first sweep places blocks with the smallest possible
-  // coordinates. The second sweep removes unused space by moving blocks to the
-  // greatest coordinates without violating separation.
-  var xs = {},
-      blockG = buildBlockGraph(g, layering, root, reverseSep);
-
-  // First pass, assign smallest coordinates via DFS
-  var visited = {};
-  function pass1(v) {
-    if (!_.has(visited, v)) {
-      visited[v] = true;
-      xs[v] = _.reduce(blockG.inEdges(v), function(max, e) {
-        pass1(e.v);
-        return Math.max(max, xs[e.v] + blockG.edge(e));
-      }, 0);
-    }
-  }
-  _.each(blockG.nodes(), pass1);
-
-  var borderType = reverseSep ? "borderLeft" : "borderRight";
-  function pass2(v) {
-    if (visited[v] !== 2) {
-      visited[v]++;
-      var node = g.node(v);
-      var min = _.reduce(blockG.outEdges(v), function(min, e) {
-        pass2(e.w);
-        return Math.min(min, xs[e.w] - blockG.edge(e));
-      }, Number.POSITIVE_INFINITY);
-      if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
-        xs[v] = Math.max(xs[v], min);
-      }
-    }
-  }
-  _.each(blockG.nodes(), pass2);
-
-  // Assign x coordinates to all nodes
-  _.each(align, function(v) {
-    xs[v] = xs[root[v]];
-  });
-
-  return xs;
-}
-
-
-function buildBlockGraph(g, layering, root, reverseSep) {
-  var blockGraph = new Graph(),
-      graphLabel = g.graph(),
-      sepFn = sep(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
-
-  _.each(layering, function(layer) {
-    var u;
-    _.each(layer, function(v) {
-      var vRoot = root[v];
-      blockGraph.setNode(vRoot);
-      if (u) {
-        var uRoot = root[u],
-            prevMax = blockGraph.edge(uRoot, vRoot);
-        blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
-      }
-      u = v;
-    });
-  });
-
-  return blockGraph;
-}
-
-/*
- * Returns the alignment that has the smallest width of the given alignments.
- */
-function findSmallestWidthAlignment(g, xss) {
-  return _.min(xss, function(xs) {
-    var min = _.min(xs, function(x, v) { return x - width(g, v) / 2; }),
-        max = _.max(xs, function(x, v) { return x + width(g, v) / 2; });
-    return max - min;
-  });
-}
-
-/*
- * Align the coordinates of each of the layout alignments such that
- * left-biased alignments have their minimum coordinate at the same point as
- * the minimum coordinate of the smallest width alignment and right-biased
- * alignments have their maximum coordinate at the same point as the maximum
- * coordinate of the smallest width alignment.
- */
-function alignCoordinates(xss, alignTo) {
-  var alignToMin = _.min(alignTo),
-      alignToMax = _.max(alignTo);
-
-  _.each(["u", "d"], function(vert) {
-    _.each(["l", "r"], function(horiz) {
-      var alignment = vert + horiz,
-          xs = xss[alignment],
-          delta;
-      if (xs === alignTo) return;
-
-      delta = horiz === "l" ? alignToMin - _.min(xs) : alignToMax - _.max(xs);
-
-      if (delta) {
-        xss[alignment] = _.mapValues(xs, function(x) { return x + delta; });
-      }
-    });
-  });
-}
-
-function balance(xss, align) {
-  return _.mapValues(xss.ul, function(ignore, v) {
-    if (align) {
-      return xss[align.toLowerCase()][v];
-    } else {
-      var xs = _.sortBy(_.pluck(xss, v));
-      return (xs[1] + xs[2]) / 2;
-    }
-  });
-}
-
-function positionX(g) {
-  var layering = util.buildLayerMatrix(g),
-      conflicts = _.merge(findType1Conflicts(g, layering),
-                          findType2Conflicts(g, layering));
-
-  var xss = {},
-      adjustedLayering;
-  _.each(["u", "d"], function(vert) {
-    adjustedLayering = vert === "u" ? layering : _.values(layering).reverse();
-    _.each(["l", "r"], function(horiz) {
-      if (horiz === "r") {
-        adjustedLayering = _.map(adjustedLayering, function(inner) {
-          return _.values(inner).reverse();
-        });
-      }
-
-      var neighborFn = _.bind(vert === "u" ? g.predecessors : g.successors, g);
-      var align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
-      var xs = horizontalCompaction(g, adjustedLayering,
-                                    align.root, align.align,
-                                    horiz === "r");
-      if (horiz === "r") {
-        xs = _.mapValues(xs, function(x) { return -x; });
-      }
-      xss[vert + horiz] = xs;
-    });
-  });
-
-  var smallestWidth = findSmallestWidthAlignment(g, xss);
-  alignCoordinates(xss, smallestWidth);
-  return balance(xss, g.graph().align);
-}
-
-function sep(nodeSep, edgeSep, reverseSep) {
-  return function(g, v, w) {
-    var vLabel = g.node(v),
-        wLabel = g.node(w),
-        sum = 0,
-        delta;
-
-    sum += vLabel.width / 2;
-    if (_.has(vLabel, "labelpos")) {
-      switch (vLabel.labelpos.toLowerCase()) {
-        case "l": delta = -vLabel.width / 2; break;
-        case "r": delta = vLabel.width / 2; break;
-      }
-    }
-    if (delta) {
-      sum += reverseSep ? delta : -delta;
-    }
-    delta = 0;
-
-    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
-    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
-
-    sum += wLabel.width / 2;
-    if (_.has(wLabel, "labelpos")) {
-      switch (wLabel.labelpos.toLowerCase()) {
-        case "l": delta = wLabel.width / 2; break;
-        case "r": delta = -wLabel.width / 2; break;
-      }
-    }
-    if (delta) {
-      sum += reverseSep ? delta : -delta;
-    }
-    delta = 0;
-
-    return sum;
-  };
-}
-
-function width(g, v) {
-  return g.node(v).width;
-}
-
-},{"../graphlib":59,"../lodash":62,"../util":81}],76:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    util = require("../util"),
-    positionX = require("./bk").positionX;
-
-module.exports = position;
-
-function position(g) {
-  g = util.asNonCompoundGraph(g);
-
-  positionY(g);
-  _.each(positionX(g), function(x, v) {
-    g.node(v).x = x;
-  });
-}
-
-function positionY(g) {
-  var layering = util.buildLayerMatrix(g),
-      rankSep = g.graph().ranksep,
-      prevY = 0;
-  _.each(layering, function(layer) {
-    var maxHeight = _.max(_.map(layer, function(v) { return g.node(v).height; }));
-    _.each(layer, function(v) {
-      g.node(v).y = prevY + maxHeight / 2;
-    });
-    prevY += maxHeight + rankSep;
-  });
-}
-
-
-},{"../lodash":62,"../util":81,"./bk":75}],77:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    Graph = require("../graphlib").Graph,
-    slack = require("./util").slack;
-
-module.exports = feasibleTree;
-
-/*
- * Constructs a spanning tree with tight edges and adjusted the input node's
- * ranks to achieve this. A tight edge is one that is has a length that matches
- * its "minlen" attribute.
- *
- * The basic structure for this function is derived from Gansner, et al., "A
- * Technique for Drawing Directed Graphs."
- *
- * Pre-conditions:
- *
- *    1. Graph must be a DAG.
- *    2. Graph must be connected.
- *    3. Graph must have at least one node.
- *    5. Graph nodes must have been previously assigned a "rank" property that
- *       respects the "minlen" property of incident edges.
- *    6. Graph edges must have a "minlen" property.
- *
- * Post-conditions:
- *
- *    - Graph nodes will have their rank adjusted to ensure that all edges are
- *      tight.
- *
- * Returns a tree (undirected graph) that is constructed using only "tight"
- * edges.
- */
-function feasibleTree(g) {
-  var t = new Graph({ directed: false });
-
-  // Choose arbitrary node from which to start our tree
-  var start = g.nodes()[0],
-      size = g.nodeCount();
-  t.setNode(start, {});
-
-  var edge, delta;
-  while (tightTree(t, g) < size) {
-    edge = findMinSlackEdge(t, g);
-    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
-    shiftRanks(t, g, delta);
-  }
-
-  return t;
-}
-
-/*
- * Finds a maximal tree of tight edges and returns the number of nodes in the
- * tree.
- */
-function tightTree(t, g) {
-  function dfs(v) {
-    _.each(g.nodeEdges(v), function(e) {
-      var edgeV = e.v,
-          w = (v === edgeV) ? e.w : edgeV;
-      if (!t.hasNode(w) && !slack(g, e)) {
-        t.setNode(w, {});
-        t.setEdge(v, w, {});
-        dfs(w);
-      }
-    });
-  }
-
-  _.each(t.nodes(), dfs);
-  return t.nodeCount();
-}
-
-/*
- * Finds the edge with the smallest slack that is incident on tree and returns
- * it.
- */
-function findMinSlackEdge(t, g) {
-  return _.min(g.edges(), function(e) {
-    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
-      return slack(g, e);
-    }
-  });
-}
-
-function shiftRanks(t, g, delta) {
-  _.each(t.nodes(), function(v) {
-    g.node(v).rank += delta;
-  });
-}
-
-},{"../graphlib":59,"../lodash":62,"./util":80}],78:[function(require,module,exports){
-"use strict";
-
-var rankUtil = require("./util"),
-    longestPath = rankUtil.longestPath,
-    feasibleTree = require("./feasible-tree"),
-    networkSimplex = require("./network-simplex");
-
-module.exports = rank;
-
-/*
- * Assigns a rank to each node in the input graph that respects the "minlen"
- * constraint specified on edges between nodes.
- *
- * This basic structure is derived from Gansner, et al., "A Technique for
- * Drawing Directed Graphs."
- *
- * Pre-conditions:
- *
- *    1. Graph must be a connected DAG
- *    2. Graph nodes must be objects
- *    3. Graph edges must have "weight" and "minlen" attributes
- *
- * Post-conditions:
- *
- *    1. Graph nodes will have a "rank" attribute based on the results of the
- *       algorithm. Ranks can start at any index (including negative), we'll
- *       fix them up later.
- */
-function rank(g) {
-  switch(g.graph().ranker) {
-    case "network-simplex": networkSimplexRanker(g); break;
-    case "tight-tree": tightTreeRanker(g); break;
-    case "longest-path": longestPathRanker(g); break;
-    default: networkSimplexRanker(g);
-  }
-}
-
-// A fast and simple ranker, but results are far from optimal.
-var longestPathRanker = longestPath;
-
-function tightTreeRanker(g) {
-  longestPath(g);
-  feasibleTree(g);
-}
-
-function networkSimplexRanker(g) {
-  networkSimplex(g);
-}
-
-},{"./feasible-tree":77,"./network-simplex":79,"./util":80}],79:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    feasibleTree = require("./feasible-tree"),
-    slack = require("./util").slack,
-    initRank = require("./util").longestPath,
-    preorder = require("../graphlib").alg.preorder,
-    postorder = require("../graphlib").alg.postorder,
-    simplify = require("../util").simplify;
-
-module.exports = networkSimplex;
-
-// Expose some internals for testing purposes
-networkSimplex.initLowLimValues = initLowLimValues;
-networkSimplex.initCutValues = initCutValues;
-networkSimplex.calcCutValue = calcCutValue;
-networkSimplex.leaveEdge = leaveEdge;
-networkSimplex.enterEdge = enterEdge;
-networkSimplex.exchangeEdges = exchangeEdges;
-
-/*
- * The network simplex algorithm assigns ranks to each node in the input graph
- * and iteratively improves the ranking to reduce the length of edges.
- *
- * Preconditions:
- *
- *    1. The input graph must be a DAG.
- *    2. All nodes in the graph must have an object value.
- *    3. All edges in the graph must have "minlen" and "weight" attributes.
- *
- * Postconditions:
- *
- *    1. All nodes in the graph will have an assigned "rank" attribute that has
- *       been optimized by the network simplex algorithm. Ranks start at 0.
- *
- *
- * A rough sketch of the algorithm is as follows:
- *
- *    1. Assign initial ranks to each node. We use the longest path algorithm,
- *       which assigns ranks to the lowest position possible. In general this
- *       leads to very wide bottom ranks and unnecessarily long edges.
- *    2. Construct a feasible tight tree. A tight tree is one such that all
- *       edges in the tree have no slack (difference between length of edge
- *       and minlen for the edge). This by itself greatly improves the assigned
- *       rankings by shorting edges.
- *    3. Iteratively find edges that have negative cut values. Generally a
- *       negative cut value indicates that the edge could be removed and a new
- *       tree edge could be added to produce a more compact graph.
- *
- * Much of the algorithms here are derived from Gansner, et al., "A Technique
- * for Drawing Directed Graphs." The structure of the file roughly follows the
- * structure of the overall algorithm.
- */
-function networkSimplex(g) {
-  g = simplify(g);
-  initRank(g);
-  var t = feasibleTree(g);
-  initLowLimValues(t);
-  initCutValues(t, g);
-
-  var e, f;
-  while ((e = leaveEdge(t))) {
-    f = enterEdge(t, g, e);
-    exchangeEdges(t, g, e, f);
-  }
-}
-
-/*
- * Initializes cut values for all edges in the tree.
- */
-function initCutValues(t, g) {
-  var vs = postorder(t, t.nodes());
-  vs = vs.slice(0, vs.length - 1);
-  _.each(vs, function(v) {
-    assignCutValue(t, g, v);
-  });
-}
-
-function assignCutValue(t, g, child) {
-  var childLab = t.node(child),
-      parent = childLab.parent;
-  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
-}
-
-/*
- * Given the tight tree, its graph, and a child in the graph calculate and
- * return the cut value for the edge between the child and its parent.
- */
-function calcCutValue(t, g, child) {
-  var childLab = t.node(child),
-      parent = childLab.parent,
-      // True if the child is on the tail end of the edge in the directed graph
-      childIsTail = true,
-      // The graph's view of the tree edge we're inspecting
-      graphEdge = g.edge(child, parent),
-      // The accumulated cut value for the edge between this node and its parent
-      cutValue = 0;
-
-  if (!graphEdge) {
-    childIsTail = false;
-    graphEdge = g.edge(parent, child);
-  }
-
-  cutValue = graphEdge.weight;
-
-  _.each(g.nodeEdges(child), function(e) {
-    var isOutEdge = e.v === child,
-        other = isOutEdge ? e.w : e.v;
-
-    if (other !== parent) {
-      var pointsToHead = isOutEdge === childIsTail,
-          otherWeight = g.edge(e).weight;
-
-      cutValue += pointsToHead ? otherWeight : -otherWeight;
-      if (isTreeEdge(t, child, other)) {
-        var otherCutValue = t.edge(child, other).cutvalue;
-        cutValue += pointsToHead ? -otherCutValue : otherCutValue;
-      }
-    }
-  });
-
-  return cutValue;
-}
-
-function initLowLimValues(tree, root) {
-  if (arguments.length < 2) {
-    root = tree.nodes()[0];
-  }
-  dfsAssignLowLim(tree, {}, 1, root);
-}
-
-function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
-  var low = nextLim,
-      label = tree.node(v);
-
-  visited[v] = true;
-  _.each(tree.neighbors(v), function(w) {
-    if (!_.has(visited, w)) {
-      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
-    }
-  });
-
-  label.low = low;
-  label.lim = nextLim++;
-  if (parent) {
-    label.parent = parent;
-  } else {
-    // TODO should be able to remove this when we incrementally update low lim
-    delete label.parent;
-  }
-
-  return nextLim;
-}
-
-function leaveEdge(tree) {
-  return _.find(tree.edges(), function(e) {
-    return tree.edge(e).cutvalue < 0;
-  });
-}
-
-function enterEdge(t, g, edge) {
-  var v = edge.v,
-      w = edge.w;
-
-  // For the rest of this function we assume that v is the tail and w is the
-  // head, so if we don't have this edge in the graph we should flip it to
-  // match the correct orientation.
-  if (!g.hasEdge(v, w)) {
-    v = edge.w;
-    w = edge.v;
-  }
-
-  var vLabel = t.node(v),
-      wLabel = t.node(w),
-      tailLabel = vLabel,
-      flip = false;
-
-  // If the root is in the tail of the edge then we need to flip the logic that
-  // checks for the head and tail nodes in the candidates function below.
-  if (vLabel.lim > wLabel.lim) {
-    tailLabel = wLabel;
-    flip = true;
-  }
-
-  var candidates = _.filter(g.edges(), function(edge) {
-    return flip === isDescendant(t, t.node(edge.v), tailLabel) &&
-           flip !== isDescendant(t, t.node(edge.w), tailLabel);
-  });
-
-  return _.min(candidates, function(edge) { return slack(g, edge); });
-}
-
-function exchangeEdges(t, g, e, f) {
-  var v = e.v,
-      w = e.w;
-  t.removeEdge(v, w);
-  t.setEdge(f.v, f.w, {});
-  initLowLimValues(t);
-  initCutValues(t, g);
-  updateRanks(t, g);
-}
-
-function updateRanks(t, g) {
-  var root = _.find(t.nodes(), function(v) { return !g.node(v).parent; }),
-      vs = preorder(t, root);
-  vs = vs.slice(1);
-  _.each(vs, function(v) {
-    var parent = t.node(v).parent,
-        edge = g.edge(v, parent),
-        flipped = false;
-
-    if (!edge) {
-      edge = g.edge(parent, v);
-      flipped = true;
-    }
-
-    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
-  });
-}
-
-/*
- * Returns true if the edge is in the tree.
- */
-function isTreeEdge(tree, u, v) {
-  return tree.hasEdge(u, v);
-}
-
-/*
- * Returns true if the specified node is descendant of the root node per the
- * assigned low and lim attributes in the tree.
- */
-function isDescendant(tree, vLabel, rootLabel) {
-  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
-}
-
-},{"../graphlib":59,"../lodash":62,"../util":81,"./feasible-tree":77,"./util":80}],80:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = {
-  longestPath: longestPath,
-  slack: slack
-};
-
-/*
- * Initializes ranks for the input graph using the longest path algorithm. This
- * algorithm scales well and is fast in practice, it yields rather poor
- * solutions. Nodes are pushed to the lowest layer possible, leaving the bottom
- * ranks wide and leaving edges longer than necessary. However, due to its
- * speed, this algorithm is good for getting an initial ranking that can be fed
- * into other algorithms.
- *
- * This algorithm does not normalize layers because it will be used by other
- * algorithms in most cases. If using this algorithm directly, be sure to
- * run normalize at the end.
- *
- * Pre-conditions:
- *
- *    1. Input graph is a DAG.
- *    2. Input graph node labels can be assigned properties.
- *
- * Post-conditions:
- *
- *    1. Each node will be assign an (unnormalized) "rank" property.
- */
-function longestPath(g) {
-  var visited = {};
-
-  function dfs(v) {
-    var label = g.node(v);
-    if (_.has(visited, v)) {
-      return label.rank;
-    }
-    visited[v] = true;
-
-    var rank = _.min(_.map(g.outEdges(v), function(e) {
-      return dfs(e.w) - g.edge(e).minlen;
-    }));
-
-    if (rank === Number.POSITIVE_INFINITY) {
-      rank = 0;
-    }
-
-    return (label.rank = rank);
-  }
-
-  _.each(g.sources(), dfs);
-}
-
-/*
- * Returns the amount of slack for the given edge. The slack is defined as the
- * difference between the length of the edge and its minimum length.
- */
-function slack(g, e) {
-  return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
-}
-
-},{"../lodash":62}],81:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    Graph = require("./graphlib").Graph;
-
-module.exports = {
-  addDummyNode: addDummyNode,
-  simplify: simplify,
-  asNonCompoundGraph: asNonCompoundGraph,
-  successorWeights: successorWeights,
-  predecessorWeights: predecessorWeights,
-  intersectRect: intersectRect,
-  buildLayerMatrix: buildLayerMatrix,
-  normalizeRanks: normalizeRanks,
-  removeEmptyRanks: removeEmptyRanks,
-  addBorderNode: addBorderNode,
-  maxRank: maxRank,
-  partition: partition,
-  time: time,
-  notime: notime
-};
-
-/*
- * Adds a dummy node to the graph and return v.
- */
-function addDummyNode(g, type, attrs, name) {
-  var v;
-  do {
-    v = _.uniqueId(name);
-  } while (g.hasNode(v));
-
-  attrs.dummy = type;
-  g.setNode(v, attrs);
-  return v;
-}
-
-/*
- * Returns a new graph with only simple edges. Handles aggregation of data
- * associated with multi-edges.
- */
-function simplify(g) {
-  var simplified = new Graph().setGraph(g.graph());
-  _.each(g.nodes(), function(v) { simplified.setNode(v, g.node(v)); });
-  _.each(g.edges(), function(e) {
-    var simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 },
-        label = g.edge(e);
-    simplified.setEdge(e.v, e.w, {
-      weight: simpleLabel.weight + label.weight,
-      minlen: Math.max(simpleLabel.minlen, label.minlen)
-    });
-  });
-  return simplified;
-}
-
-function asNonCompoundGraph(g) {
-  var simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(g.graph());
-  _.each(g.nodes(), function(v) {
-    if (!g.children(v).length) {
-      simplified.setNode(v, g.node(v));
-    }
-  });
-  _.each(g.edges(), function(e) {
-    simplified.setEdge(e, g.edge(e));
-  });
-  return simplified;
-}
-
-function successorWeights(g) {
-  var weightMap = _.map(g.nodes(), function(v) {
-    var sucs = {};
-    _.each(g.outEdges(v), function(e) {
-      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
-    });
-    return sucs;
-  });
-  return _.zipObject(g.nodes(), weightMap);
-}
-
-function predecessorWeights(g) {
-  var weightMap = _.map(g.nodes(), function(v) {
-    var preds = {};
-    _.each(g.inEdges(v), function(e) {
-      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
-    });
-    return preds;
-  });
-  return _.zipObject(g.nodes(), weightMap);
-}
-
-/*
- * Finds where a line starting at point ({x, y}) would intersect a rectangle
- * ({x, y, width, height}) if it were pointing at the rectangle's center.
- */
-function intersectRect(rect, point) {
-  var x = rect.x;
-  var y = rect.y;
-
-  // Rectangle intersection algorithm from:
-  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
-  var dx = point.x - x;
-  var dy = point.y - y;
-  var w = rect.width / 2;
-  var h = rect.height / 2;
-
-  if (!dx && !dy) {
-    throw new Error("Not possible to find intersection inside of the rectangle");
-  }
-
-  var sx, sy;
-  if (Math.abs(dy) * w > Math.abs(dx) * h) {
-    // Intersection is top or bottom of rect.
-    if (dy < 0) {
-      h = -h;
-    }
-    sx = h * dx / dy;
-    sy = h;
-  } else {
-    // Intersection is left or right of rect.
-    if (dx < 0) {
-      w = -w;
-    }
-    sx = w;
-    sy = w * dy / dx;
-  }
-
-  return { x: x + sx, y: y + sy };
-}
-
-/*
- * Given a DAG with each node assigned "rank" and "order" properties, this
- * function will produce a matrix with the ids of each node.
- */
-function buildLayerMatrix(g) {
-  var layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v),
-        rank = node.rank;
-    if (!_.isUndefined(rank)) {
-      layering[rank][node.order] = v;
-    }
-  });
-  return layering;
-}
-
-/*
- * Adjusts the ranks for all nodes in the graph such that all nodes v have
- * rank(v) >= 0 and at least one node w has rank(w) = 0.
- */
-function normalizeRanks(g) {
-  var min = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (_.has(node, "rank")) {
-      node.rank -= min;
-    }
-  });
-}
-
-function removeEmptyRanks(g) {
-  // Ranks may not start at 0, so we need to offset them
-  var offset = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
-
-  var layers = [];
-  _.each(g.nodes(), function(v) {
-    var rank = g.node(v).rank - offset;
-    if (!layers[rank]) {
-      layers[rank] = [];
-    }
-    layers[rank].push(v);
-  });
-
-  var delta = 0,
-      nodeRankFactor = g.graph().nodeRankFactor;
-  _.each(layers, function(vs, i) {
-    if (_.isUndefined(vs) && i % nodeRankFactor !== 0) {
-      --delta;
-    } else if (delta) {
-      _.each(vs, function(v) { g.node(v).rank += delta; });
-    }
-  });
-}
-
-function addBorderNode(g, prefix, rank, order) {
-  var node = {
-    width: 0,
-    height: 0
-  };
-  if (arguments.length >= 4) {
-    node.rank = rank;
-    node.order = order;
-  }
-  return addDummyNode(g, "border", node, prefix);
-}
-
-function maxRank(g) {
-  return _.max(_.map(g.nodes(), function(v) {
-    var rank = g.node(v).rank;
-    if (!_.isUndefined(rank)) {
-      return rank;
-    }
-  }));
-}
-
-/*
- * Partition a collection into two groups: `lhs` and `rhs`. If the supplied
- * function returns true for an entry it goes into `lhs`. Otherwise it goes
- * into `rhs.
- */
-function partition(collection, fn) {
-  var result = { lhs: [], rhs: [] };
-  _.each(collection, function(value) {
-    if (fn(value)) {
-      result.lhs.push(value);
-    } else {
-      result.rhs.push(value);
-    }
-  });
-  return result;
-}
-
-/*
- * Returns a new function that wraps `fn` with a timer. The wrapper logs the
- * time it takes to execute the function.
- */
-function time(name, fn) {
-  var start = _.now();
-  try {
-    return fn();
-  } finally {
-    console.log(name + " time: " + (_.now() - start) + "ms");
-  }
-}
-
-function notime(name, fn) {
-  return fn();
-}
-
-},{"./graphlib":59,"./lodash":62}],82:[function(require,module,exports){
-module.exports = "0.7.4";
-
-},{}],83:[function(require,module,exports){
-module.exports=require(32)
-},{"./lib":99,"./lib/alg":90,"./lib/json":100,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\index.js":32}],84:[function(require,module,exports){
-module.exports=require(33)
-},{"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\components.js":33}],85:[function(require,module,exports){
-module.exports=require(34)
-},{"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dfs.js":34}],86:[function(require,module,exports){
-module.exports=require(35)
-},{"../lodash":101,"./dijkstra":87,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra-all.js":35}],87:[function(require,module,exports){
-module.exports=require(36)
-},{"../data/priority-queue":97,"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra.js":36}],88:[function(require,module,exports){
-module.exports=require(37)
-},{"../lodash":101,"./tarjan":95,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\find-cycles.js":37}],89:[function(require,module,exports){
-module.exports=require(38)
-},{"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\floyd-warshall.js":38}],90:[function(require,module,exports){
-module.exports=require(39)
-},{"./components":84,"./dijkstra":87,"./dijkstra-all":86,"./find-cycles":88,"./floyd-warshall":89,"./is-acyclic":91,"./postorder":92,"./preorder":93,"./prim":94,"./tarjan":95,"./topsort":96,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\index.js":39}],91:[function(require,module,exports){
-module.exports=require(40)
-},{"./topsort":96,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\is-acyclic.js":40}],92:[function(require,module,exports){
-module.exports=require(41)
-},{"./dfs":85,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\postorder.js":41}],93:[function(require,module,exports){
-module.exports=require(42)
-},{"./dfs":85,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\preorder.js":42}],94:[function(require,module,exports){
-module.exports=require(43)
-},{"../data/priority-queue":97,"../graph":98,"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\prim.js":43}],95:[function(require,module,exports){
-module.exports=require(44)
-},{"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\tarjan.js":44}],96:[function(require,module,exports){
-module.exports=require(45)
-},{"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\topsort.js":45}],97:[function(require,module,exports){
-module.exports=require(46)
-},{"../lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\data\\priority-queue.js":46}],98:[function(require,module,exports){
-module.exports=require(47)
-},{"./lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\graph.js":47}],99:[function(require,module,exports){
-module.exports=require(48)
-},{"./graph":98,"./version":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\index.js":48}],100:[function(require,module,exports){
-module.exports=require(49)
-},{"./graph":98,"./lodash":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\json.js":49}],101:[function(require,module,exports){
-module.exports=require(50)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":50,"lodash":103}],102:[function(require,module,exports){
-module.exports=require(51)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\version.js":51}],103:[function(require,module,exports){
-module.exports=require(52)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\lodash\\index.js":52}],104:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 //! moment.js
-//! version : 2.10.6
+//! version : 2.11.2
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
 
-(function (global, factory) {
+;(function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
     global.moment = factory()
@@ -18105,39 +17747,45 @@ module.exports=require(52)
         return m;
     }
 
+    function isUndefined(input) {
+        return input === void 0;
+    }
+
+    // Plugins that add properties should also add the key here (null value),
+    // so we can properly clone ourselves.
     var momentProperties = utils_hooks__hooks.momentProperties = [];
 
     function copyConfig(to, from) {
         var i, prop, val;
 
-        if (typeof from._isAMomentObject !== 'undefined') {
+        if (!isUndefined(from._isAMomentObject)) {
             to._isAMomentObject = from._isAMomentObject;
         }
-        if (typeof from._i !== 'undefined') {
+        if (!isUndefined(from._i)) {
             to._i = from._i;
         }
-        if (typeof from._f !== 'undefined') {
+        if (!isUndefined(from._f)) {
             to._f = from._f;
         }
-        if (typeof from._l !== 'undefined') {
+        if (!isUndefined(from._l)) {
             to._l = from._l;
         }
-        if (typeof from._strict !== 'undefined') {
+        if (!isUndefined(from._strict)) {
             to._strict = from._strict;
         }
-        if (typeof from._tzm !== 'undefined') {
+        if (!isUndefined(from._tzm)) {
             to._tzm = from._tzm;
         }
-        if (typeof from._isUTC !== 'undefined') {
+        if (!isUndefined(from._isUTC)) {
             to._isUTC = from._isUTC;
         }
-        if (typeof from._offset !== 'undefined') {
+        if (!isUndefined(from._offset)) {
             to._offset = from._offset;
         }
-        if (typeof from._pf !== 'undefined') {
+        if (!isUndefined(from._pf)) {
             to._pf = getParsingFlags(from);
         }
-        if (typeof from._locale !== 'undefined') {
+        if (!isUndefined(from._locale)) {
             to._locale = from._locale;
         }
 
@@ -18145,7 +17793,7 @@ module.exports=require(52)
             for (i in momentProperties) {
                 prop = momentProperties[i];
                 val = from[prop];
-                if (typeof val !== 'undefined') {
+                if (!isUndefined(val)) {
                     to[prop] = val;
                 }
             }
@@ -18192,6 +17840,7 @@ module.exports=require(52)
         return value;
     }
 
+    // compare two arrays, return the number of differences
     function compareArrays(array1, array2, dontConvert) {
         var len = Math.min(array1.length, array2.length),
             lengthDiff = Math.abs(array1.length - array2.length),
@@ -18209,6 +17858,7 @@ module.exports=require(52)
     function Locale() {
     }
 
+    // internal storage for locale config files
     var locales = {};
     var globalLocale;
 
@@ -18246,7 +17896,7 @@ module.exports=require(52)
     function loadLocale(name) {
         var oldLocale = null;
         // TODO: Find a better way to register and load all the locales in Node
-        if (!locales[name] && typeof module !== 'undefined' &&
+        if (!locales[name] && (typeof module !== 'undefined') &&
                 module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
@@ -18265,7 +17915,7 @@ module.exports=require(52)
     function locale_locales__getSetGlobalLocale (key, values) {
         var data;
         if (key) {
-            if (typeof values === 'undefined') {
+            if (isUndefined(values)) {
                 data = locale_locales__getLocale(key);
             }
             else {
@@ -18350,6 +18000,10 @@ module.exports=require(52)
         return normalizedInput;
     }
 
+    function isFunction(input) {
+        return input instanceof Function || Object.prototype.toString.call(input) === '[object Function]';
+    }
+
     function makeGetSet (unit, keepTime) {
         return function (value) {
             if (value != null) {
@@ -18363,11 +18017,14 @@ module.exports=require(52)
     }
 
     function get_set__get (mom, unit) {
-        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
+        return mom.isValid() ?
+            mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]() : NaN;
     }
 
     function get_set__set (mom, unit, value) {
-        return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+        if (mom.isValid()) {
+            mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+        }
     }
 
     // MOMENTS
@@ -18380,7 +18037,7 @@ module.exports=require(52)
             }
         } else {
             units = normalizeUnits(units);
-            if (typeof this[units] === 'function') {
+            if (isFunction(this[units])) {
                 return this[units](value);
             }
         }
@@ -18395,7 +18052,7 @@ module.exports=require(52)
             Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
 
     var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
@@ -18491,6 +18148,8 @@ module.exports=require(52)
     var match4         = /\d{4}/;         //    0000 - 9999
     var match6         = /[+-]?\d{6}/;    // -999999 - 999999
     var match1to2      = /\d\d?/;         //       0 - 99
+    var match3to4      = /\d\d\d\d?/;     //     999 - 9999
+    var match5to6      = /\d\d\d\d\d\d?/; //   99999 - 999999
     var match1to3      = /\d{1,3}/;       //       0 - 999
     var match1to4      = /\d{1,4}/;       //       0 - 9999
     var match1to6      = /[+-]?\d{1,6}/;  // -999999 - 999999
@@ -18499,23 +18158,19 @@ module.exports=require(52)
     var matchSigned    = /[+-]?\d+/;      //    -inf - inf
 
     var matchOffset    = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
+    var matchShortOffset = /Z|[+-]\d\d(?::?\d\d)?/gi; // +00 -00 +00:00 -00:00 +0000 -0000 or Z
 
     var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
 
     // any word (or two) characters or numbers including two/three word month in arabic.
+    // includes scottish gaelic two word and hyphenated months
     var matchWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i;
+
 
     var regexes = {};
 
-    function isFunction (sth) {
-        // https://github.com/moment/moment/issues/2325
-        return typeof sth === 'function' &&
-            Object.prototype.toString.call(sth) === '[object Function]';
-    }
-
-
     function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
+        regexes[token] = isFunction(regex) ? regex : function (isStrict, localeData) {
             return (isStrict && strictRegex) ? strictRegex : regex;
         };
     }
@@ -18530,9 +18185,13 @@ module.exports=require(52)
 
     // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
     function unescapeFormat(s) {
-        return s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+        return regexEscape(s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
             return p1 || p2 || p3 || p4;
-        }).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        }));
+    }
+
+    function regexEscape(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     }
 
     var tokens = {};
@@ -18572,6 +18231,8 @@ module.exports=require(52)
     var MINUTE = 4;
     var SECOND = 5;
     var MILLISECOND = 6;
+    var WEEK = 7;
+    var WEEKDAY = 8;
 
     function daysInMonth(year, month) {
         return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
@@ -18599,8 +18260,12 @@ module.exports=require(52)
 
     addRegexToken('M',    match1to2);
     addRegexToken('MM',   match1to2, match2);
-    addRegexToken('MMM',  matchWord);
-    addRegexToken('MMMM', matchWord);
+    addRegexToken('MMM',  function (isStrict, locale) {
+        return locale.monthsShortRegex(isStrict);
+    });
+    addRegexToken('MMMM', function (isStrict, locale) {
+        return locale.monthsRegex(isStrict);
+    });
 
     addParseToken(['M', 'MM'], function (input, array) {
         array[MONTH] = toInt(input) - 1;
@@ -18618,14 +18283,17 @@ module.exports=require(52)
 
     // LOCALES
 
+    var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s+)+MMMM?/;
     var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
-    function localeMonths (m) {
-        return this._months[m.month()];
+    function localeMonths (m, format) {
+        return isArray(this._months) ? this._months[m.month()] :
+            this._months[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
     }
 
     var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
-    function localeMonthsShort (m) {
-        return this._monthsShort[m.month()];
+    function localeMonthsShort (m, format) {
+        return isArray(this._monthsShort) ? this._monthsShort[m.month()] :
+            this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
     }
 
     function localeMonthsParse (monthName, format, strict) {
@@ -18664,6 +18332,11 @@ module.exports=require(52)
     function setMonth (mom, value) {
         var dayOfMonth;
 
+        if (!mom.isValid()) {
+            // No op
+            return mom;
+        }
+
         // TODO: Move this out of here!
         if (typeof value === 'string') {
             value = mom.localeData().monthsParse(value);
@@ -18692,6 +18365,72 @@ module.exports=require(52)
         return daysInMonth(this.year(), this.month());
     }
 
+    var defaultMonthsShortRegex = matchWord;
+    function monthsShortRegex (isStrict) {
+        if (this._monthsParseExact) {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                computeMonthsParse.call(this);
+            }
+            if (isStrict) {
+                return this._monthsShortStrictRegex;
+            } else {
+                return this._monthsShortRegex;
+            }
+        } else {
+            return this._monthsShortStrictRegex && isStrict ?
+                this._monthsShortStrictRegex : this._monthsShortRegex;
+        }
+    }
+
+    var defaultMonthsRegex = matchWord;
+    function monthsRegex (isStrict) {
+        if (this._monthsParseExact) {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                computeMonthsParse.call(this);
+            }
+            if (isStrict) {
+                return this._monthsStrictRegex;
+            } else {
+                return this._monthsRegex;
+            }
+        } else {
+            return this._monthsStrictRegex && isStrict ?
+                this._monthsStrictRegex : this._monthsRegex;
+        }
+    }
+
+    function computeMonthsParse () {
+        function cmpLenRev(a, b) {
+            return b.length - a.length;
+        }
+
+        var shortPieces = [], longPieces = [], mixedPieces = [],
+            i, mom;
+        for (i = 0; i < 12; i++) {
+            // make the regex if we don't have it already
+            mom = create_utc__createUTC([2000, i]);
+            shortPieces.push(this.monthsShort(mom, ''));
+            longPieces.push(this.months(mom, ''));
+            mixedPieces.push(this.months(mom, ''));
+            mixedPieces.push(this.monthsShort(mom, ''));
+        }
+        // Sorting makes sure if one month (or abbr) is a prefix of another it
+        // will match the longer piece.
+        shortPieces.sort(cmpLenRev);
+        longPieces.sort(cmpLenRev);
+        mixedPieces.sort(cmpLenRev);
+        for (i = 0; i < 12; i++) {
+            shortPieces[i] = regexEscape(shortPieces[i]);
+            longPieces[i] = regexEscape(longPieces[i]);
+            mixedPieces[i] = regexEscape(mixedPieces[i]);
+        }
+
+        this._monthsRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
+        this._monthsShortRegex = this._monthsRegex;
+        this._monthsStrictRegex = new RegExp('^(' + longPieces.join('|') + ')$', 'i');
+        this._monthsShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')$', 'i');
+    }
+
     function checkOverflow (m) {
         var overflow;
         var a = m._a;
@@ -18709,6 +18448,12 @@ module.exports=require(52)
             if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
             }
+            if (getParsingFlags(m)._overflowWeeks && overflow === -1) {
+                overflow = WEEK;
+            }
+            if (getParsingFlags(m)._overflowWeekday && overflow === -1) {
+                overflow = WEEKDAY;
+            }
 
             getParsingFlags(m).overflow = overflow;
         }
@@ -18717,7 +18462,8 @@ module.exports=require(52)
     }
 
     function warn(msg) {
-        if (utils_hooks__hooks.suppressDeprecationWarnings === false && typeof console !== 'undefined' && console.warn) {
+        if (utils_hooks__hooks.suppressDeprecationWarnings === false &&
+                (typeof console !==  'undefined') && console.warn) {
             console.warn('Deprecation warning: ' + msg);
         }
     }
@@ -18727,7 +18473,7 @@ module.exports=require(52)
 
         return extend(function () {
             if (firstTime) {
-                warn(msg + '\n' + (new Error()).stack);
+                warn(msg + '\nArguments: ' + Array.prototype.slice.call(arguments).join(', ') + '\n' + (new Error()).stack);
                 firstTime = false;
             }
             return fn.apply(this, arguments);
@@ -18745,22 +18491,39 @@ module.exports=require(52)
 
     utils_hooks__hooks.suppressDeprecationWarnings = false;
 
-    var from_string__isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+    // iso 8601 regex
+    // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+    var extendedIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?/;
+    var basicIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?/;
+
+    var tzRegex = /Z|[+-]\d\d(?::?\d\d)?/;
 
     var isoDates = [
-        ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
-        ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
-        ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
-        ['GGGG-[W]WW', /\d{4}-W\d{2}/],
-        ['YYYY-DDD', /\d{4}-\d{3}/]
+        ['YYYYYY-MM-DD', /[+-]\d{6}-\d\d-\d\d/],
+        ['YYYY-MM-DD', /\d{4}-\d\d-\d\d/],
+        ['GGGG-[W]WW-E', /\d{4}-W\d\d-\d/],
+        ['GGGG-[W]WW', /\d{4}-W\d\d/, false],
+        ['YYYY-DDD', /\d{4}-\d{3}/],
+        ['YYYY-MM', /\d{4}-\d\d/, false],
+        ['YYYYYYMMDD', /[+-]\d{10}/],
+        ['YYYYMMDD', /\d{8}/],
+        // YYYYMM is NOT allowed by the standard
+        ['GGGG[W]WWE', /\d{4}W\d{3}/],
+        ['GGGG[W]WW', /\d{4}W\d{2}/, false],
+        ['YYYYDDD', /\d{7}/]
     ];
 
     // iso time formats and regexes
     var isoTimes = [
-        ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
-        ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
-        ['HH:mm', /(T| )\d\d:\d\d/],
-        ['HH', /(T| )\d\d/]
+        ['HH:mm:ss.SSSS', /\d\d:\d\d:\d\d\.\d+/],
+        ['HH:mm:ss,SSSS', /\d\d:\d\d:\d\d,\d+/],
+        ['HH:mm:ss', /\d\d:\d\d:\d\d/],
+        ['HH:mm', /\d\d:\d\d/],
+        ['HHmmss.SSSS', /\d\d\d\d\d\d\.\d+/],
+        ['HHmmss,SSSS', /\d\d\d\d\d\d,\d+/],
+        ['HHmmss', /\d\d\d\d\d\d/],
+        ['HHmm', /\d\d\d\d/],
+        ['HH', /\d\d/]
     ];
 
     var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
@@ -18769,26 +18532,49 @@ module.exports=require(52)
     function configFromISO(config) {
         var i, l,
             string = config._i,
-            match = from_string__isoRegex.exec(string);
+            match = extendedIsoRegex.exec(string) || basicIsoRegex.exec(string),
+            allowTime, dateFormat, timeFormat, tzFormat;
 
         if (match) {
             getParsingFlags(config).iso = true;
+
             for (i = 0, l = isoDates.length; i < l; i++) {
-                if (isoDates[i][1].exec(string)) {
-                    config._f = isoDates[i][0];
+                if (isoDates[i][1].exec(match[1])) {
+                    dateFormat = isoDates[i][0];
+                    allowTime = isoDates[i][2] !== false;
                     break;
                 }
             }
-            for (i = 0, l = isoTimes.length; i < l; i++) {
-                if (isoTimes[i][1].exec(string)) {
-                    // match[6] should be 'T' or space
-                    config._f += (match[6] || ' ') + isoTimes[i][0];
-                    break;
+            if (dateFormat == null) {
+                config._isValid = false;
+                return;
+            }
+            if (match[3]) {
+                for (i = 0, l = isoTimes.length; i < l; i++) {
+                    if (isoTimes[i][1].exec(match[3])) {
+                        // match[2] should be 'T' or space
+                        timeFormat = (match[2] || ' ') + isoTimes[i][0];
+                        break;
+                    }
+                }
+                if (timeFormat == null) {
+                    config._isValid = false;
+                    return;
                 }
             }
-            if (string.match(matchOffset)) {
-                config._f += 'Z';
+            if (!allowTime && timeFormat != null) {
+                config._isValid = false;
+                return;
             }
+            if (match[4]) {
+                if (tzRegex.exec(match[4])) {
+                    tzFormat = 'Z';
+                } else {
+                    config._isValid = false;
+                    return;
+                }
+            }
+            config._f = dateFormat + (timeFormat || '') + (tzFormat || '');
             configFromStringAndFormat(config);
         } else {
             config._isValid = false;
@@ -18826,8 +18612,8 @@ module.exports=require(52)
         //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
         var date = new Date(y, m, d, h, M, s, ms);
 
-        //the date constructor doesn't accept years < 1970
-        if (y < 1970) {
+        //the date constructor remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0 && isFinite(date.getFullYear())) {
             date.setFullYear(y);
         }
         return date;
@@ -18835,11 +18621,20 @@ module.exports=require(52)
 
     function createUTCDate (y) {
         var date = new Date(Date.UTC.apply(null, arguments));
-        if (y < 1970) {
+
+        //the Date.UTC function remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0 && isFinite(date.getUTCFullYear())) {
             date.setUTCFullYear(y);
         }
         return date;
     }
+
+    // FORMATTING
+
+    addFormatToken('Y', 0, 0, function () {
+        var y = this.year();
+        return y <= 9999 ? '' + y : '+' + y;
+    });
 
     addFormatToken(0, ['YY', 2], 0, function () {
         return this.year() % 100;
@@ -18868,6 +18663,9 @@ module.exports=require(52)
     addParseToken('YY', function (input, array) {
         array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
+    addParseToken('Y', function (input, array) {
+        array[YEAR] = parseInt(input, 10);
+    });
 
     // HELPERS
 
@@ -18893,124 +18691,66 @@ module.exports=require(52)
         return isLeapYear(this.year());
     }
 
-    addFormatToken('w', ['ww', 2], 'wo', 'week');
-    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+    // start-of-first-week - start-of-year
+    function firstWeekOffset(year, dow, doy) {
+        var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+            fwd = 7 + dow - doy,
+            // first-week day local weekday -- which local weekday is fwd
+            fwdlw = (7 + createUTCDate(year, 0, fwd).getUTCDay() - dow) % 7;
 
-    // ALIASES
-
-    addUnitAlias('week', 'w');
-    addUnitAlias('isoWeek', 'W');
-
-    // PARSING
-
-    addRegexToken('w',  match1to2);
-    addRegexToken('ww', match1to2, match2);
-    addRegexToken('W',  match1to2);
-    addRegexToken('WW', match1to2, match2);
-
-    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
-        week[token.substr(0, 1)] = toInt(input);
-    });
-
-    // HELPERS
-
-    // firstDayOfWeek       0 = sun, 6 = sat
-    //                      the day of the week that starts the week
-    //                      (usually sunday or monday)
-    // firstDayOfWeekOfYear 0 = sun, 6 = sat
-    //                      the first week is the week that contains the first
-    //                      of this day of the week
-    //                      (eg. ISO weeks use thursday (4))
-    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
-        var end = firstDayOfWeekOfYear - firstDayOfWeek,
-            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
-            adjustedMoment;
-
-
-        if (daysToDayOfWeek > end) {
-            daysToDayOfWeek -= 7;
-        }
-
-        if (daysToDayOfWeek < end - 7) {
-            daysToDayOfWeek += 7;
-        }
-
-        adjustedMoment = local__createLocal(mom).add(daysToDayOfWeek, 'd');
-        return {
-            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
-            year: adjustedMoment.year()
-        };
+        return -fwdlw + fwd - 1;
     }
-
-    // LOCALES
-
-    function localeWeek (mom) {
-        return weekOfYear(mom, this._week.dow, this._week.doy).week;
-    }
-
-    var defaultLocaleWeek = {
-        dow : 0, // Sunday is the first day of the week.
-        doy : 6  // The week that contains Jan 1st is the first week of the year.
-    };
-
-    function localeFirstDayOfWeek () {
-        return this._week.dow;
-    }
-
-    function localeFirstDayOfYear () {
-        return this._week.doy;
-    }
-
-    // MOMENTS
-
-    function getSetWeek (input) {
-        var week = this.localeData().week(this);
-        return input == null ? week : this.add((input - week) * 7, 'd');
-    }
-
-    function getSetISOWeek (input) {
-        var week = weekOfYear(this, 1, 4).week;
-        return input == null ? week : this.add((input - week) * 7, 'd');
-    }
-
-    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
-
-    // ALIASES
-
-    addUnitAlias('dayOfYear', 'DDD');
-
-    // PARSING
-
-    addRegexToken('DDD',  match1to3);
-    addRegexToken('DDDD', match3);
-    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
-        config._dayOfYear = toInt(input);
-    });
-
-    // HELPERS
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
-    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
-        if (d < firstDayOfWeek) {
-            d += 7;
+    function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
+        var localWeekday = (7 + weekday - dow) % 7,
+            weekOffset = firstWeekOffset(year, dow, doy),
+            dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset,
+            resYear, resDayOfYear;
+
+        if (dayOfYear <= 0) {
+            resYear = year - 1;
+            resDayOfYear = daysInYear(resYear) + dayOfYear;
+        } else if (dayOfYear > daysInYear(year)) {
+            resYear = year + 1;
+            resDayOfYear = dayOfYear - daysInYear(year);
+        } else {
+            resYear = year;
+            resDayOfYear = dayOfYear;
         }
 
-        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
-
-        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
-
         return {
-            year: dayOfYear > 0 ? year : year - 1,
-            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
+            year: resYear,
+            dayOfYear: resDayOfYear
         };
     }
 
-    // MOMENTS
+    function weekOfYear(mom, dow, doy) {
+        var weekOffset = firstWeekOffset(mom.year(), dow, doy),
+            week = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1,
+            resWeek, resYear;
 
-    function getSetDayOfYear (input) {
-        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
-        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+        if (week < 1) {
+            resYear = mom.year() - 1;
+            resWeek = week + weeksInYear(resYear, dow, doy);
+        } else if (week > weeksInYear(mom.year(), dow, doy)) {
+            resWeek = week - weeksInYear(mom.year(), dow, doy);
+            resYear = mom.year() + 1;
+        } else {
+            resYear = mom.year();
+            resWeek = week;
+        }
+
+        return {
+            week: resWeek,
+            year: resYear
+        };
+    }
+
+    function weeksInYear(year, dow, doy) {
+        var weekOffset = firstWeekOffset(year, dow, doy),
+            weekOffsetNext = firstWeekOffset(year + 1, dow, doy);
+        return (daysInYear(year) - weekOffset + weekOffsetNext) / 7;
     }
 
     // Pick the first defined of two or three arguments.
@@ -19025,11 +18765,12 @@ module.exports=require(52)
     }
 
     function currentDateArray(config) {
-        var now = new Date();
+        // hooks is actually the exported moment object
+        var nowValue = new Date(utils_hooks__hooks.now());
         if (config._useUTC) {
-            return [now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()];
+            return [nowValue.getUTCFullYear(), nowValue.getUTCMonth(), nowValue.getUTCDate()];
         }
-        return [now.getFullYear(), now.getMonth(), now.getDate()];
+        return [nowValue.getFullYear(), nowValue.getMonth(), nowValue.getDate()];
     }
 
     // convert an array to a date.
@@ -19099,7 +18840,7 @@ module.exports=require(52)
     }
 
     function dayOfYearFromWeekInfo(config) {
-        var w, weekYear, week, weekday, dow, doy, temp;
+        var w, weekYear, week, weekday, dow, doy, temp, weekdayOverflow;
 
         w = config._w;
         if (w.GG != null || w.W != null || w.E != null) {
@@ -19113,6 +18854,9 @@ module.exports=require(52)
             weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(local__createLocal(), 1, 4).year);
             week = defaults(w.W, 1);
             weekday = defaults(w.E, 1);
+            if (weekday < 1 || weekday > 7) {
+                weekdayOverflow = true;
+            }
         } else {
             dow = config._locale._week.dow;
             doy = config._locale._week.doy;
@@ -19123,23 +18867,32 @@ module.exports=require(52)
             if (w.d != null) {
                 // weekday -- low day numbers are considered next week
                 weekday = w.d;
-                if (weekday < dow) {
-                    ++week;
+                if (weekday < 0 || weekday > 6) {
+                    weekdayOverflow = true;
                 }
             } else if (w.e != null) {
                 // local weekday -- counting starts from begining of week
                 weekday = w.e + dow;
+                if (w.e < 0 || w.e > 6) {
+                    weekdayOverflow = true;
+                }
             } else {
                 // default to begining of week
                 weekday = dow;
             }
         }
-        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
-
-        config._a[YEAR] = temp.year;
-        config._dayOfYear = temp.dayOfYear;
+        if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {
+            getParsingFlags(config)._overflowWeeks = true;
+        } else if (weekdayOverflow != null) {
+            getParsingFlags(config)._overflowWeekday = true;
+        } else {
+            temp = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy);
+            config._a[YEAR] = temp.year;
+            config._dayOfYear = temp.dayOfYear;
+        }
     }
 
+    // constant that refers to the ISO standard
     utils_hooks__hooks.ISO_8601 = function () {};
 
     // date from string and format string
@@ -19164,6 +18917,8 @@ module.exports=require(52)
         for (i = 0; i < tokens.length; i++) {
             token = tokens[i];
             parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+            // console.log('token', token, 'parsedInput', parsedInput,
+            //         'regex', getParseRegexForToken(token, config));
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
@@ -19232,6 +18987,7 @@ module.exports=require(52)
         }
     }
 
+    // date from string and array of format strings
     function configFromStringAndArray(config) {
         var tempConfig,
             bestMoment,
@@ -19282,7 +19038,9 @@ module.exports=require(52)
         }
 
         var i = normalizeObjectUnits(config._i);
-        config._a = [i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond];
+        config._a = map([i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond], function (obj) {
+            return obj && parseInt(obj, 10);
+        });
 
         configFromArray(config);
     }
@@ -19324,13 +19082,17 @@ module.exports=require(52)
             configFromInput(config);
         }
 
+        if (!valid__isValid(config)) {
+            config._d = null;
+        }
+
         return config;
     }
 
     function configFromInput(config) {
         var input = config._i;
         if (input === undefined) {
-            config._d = new Date();
+            config._d = new Date(utils_hooks__hooks.now());
         } else if (isDate(input)) {
             config._d = new Date(+input);
         } else if (typeof input === 'string') {
@@ -19377,7 +19139,11 @@ module.exports=require(52)
          'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
          function () {
              var other = local__createLocal.apply(null, arguments);
-             return other < this ? this : other;
+             if (this.isValid() && other.isValid()) {
+                 return other < this ? this : other;
+             } else {
+                 return valid__createInvalid();
+             }
          }
      );
 
@@ -19385,7 +19151,11 @@ module.exports=require(52)
         'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
         function () {
             var other = local__createLocal.apply(null, arguments);
-            return other > this ? this : other;
+            if (this.isValid() && other.isValid()) {
+                return other > this ? this : other;
+            } else {
+                return valid__createInvalid();
+            }
         }
     );
 
@@ -19423,6 +19193,10 @@ module.exports=require(52)
 
         return pickBy('isAfter', args);
     }
+
+    var now = function () {
+        return Date.now ? Date.now() : +(new Date());
+    };
 
     function Duration (duration) {
         var normalizedInput = normalizeObjectUnits(duration),
@@ -19463,6 +19237,8 @@ module.exports=require(52)
         return obj instanceof Duration;
     }
 
+    // FORMATTING
+
     function offset (token, separator) {
         addFormatToken(token, 0, 0, function () {
             var offset = this.utcOffset();
@@ -19480,11 +19256,11 @@ module.exports=require(52)
 
     // PARSING
 
-    addRegexToken('Z',  matchOffset);
-    addRegexToken('ZZ', matchOffset);
+    addRegexToken('Z',  matchShortOffset);
+    addRegexToken('ZZ', matchShortOffset);
     addParseToken(['Z', 'ZZ'], function (input, array, config) {
         config._useUTC = true;
-        config._tzm = offsetFromString(input);
+        config._tzm = offsetFromString(matchShortOffset, input);
     });
 
     // HELPERS
@@ -19494,8 +19270,8 @@ module.exports=require(52)
     // '-1530'  > ['-15', '30']
     var chunkOffset = /([\+\-]|\d\d)/gi;
 
-    function offsetFromString(string) {
-        var matches = ((string || '').match(matchOffset) || []);
+    function offsetFromString(matcher, string) {
+        var matches = ((string || '').match(matcher) || []);
         var chunk   = matches[matches.length - 1] || [];
         var parts   = (chunk + '').match(chunkOffset) || ['-', 0, 0];
         var minutes = +(parts[1] * 60) + toInt(parts[2]);
@@ -19545,11 +19321,13 @@ module.exports=require(52)
     function getSetOffset (input, keepLocalTime) {
         var offset = this._offset || 0,
             localAdjust;
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         if (input != null) {
             if (typeof input === 'string') {
-                input = offsetFromString(input);
-            }
-            if (Math.abs(input) < 16) {
+                input = offsetFromString(matchShortOffset, input);
+            } else if (Math.abs(input) < 16) {
                 input = input * 60;
             }
             if (!this._isUTC && keepLocalTime) {
@@ -19609,12 +19387,15 @@ module.exports=require(52)
         if (this._tzm) {
             this.utcOffset(this._tzm);
         } else if (typeof this._i === 'string') {
-            this.utcOffset(offsetFromString(this._i));
+            this.utcOffset(offsetFromString(matchOffset, this._i));
         }
         return this;
     }
 
     function hasAlignedHourOffset (input) {
+        if (!this.isValid()) {
+            return false;
+        }
         input = input ? local__createLocal(input).utcOffset() : 0;
 
         return (this.utcOffset() - input) % 60 === 0;
@@ -19628,7 +19409,7 @@ module.exports=require(52)
     }
 
     function isDaylightSavingTimeShifted () {
-        if (typeof this._isDSTShifted !== 'undefined') {
+        if (!isUndefined(this._isDSTShifted)) {
             return this._isDSTShifted;
         }
 
@@ -19649,22 +19430,23 @@ module.exports=require(52)
     }
 
     function isLocal () {
-        return !this._isUTC;
+        return this.isValid() ? !this._isUTC : false;
     }
 
     function isUtcOffset () {
-        return this._isUTC;
+        return this.isValid() ? this._isUTC : false;
     }
 
     function isUtc () {
-        return this._isUTC && this._offset === 0;
+        return this.isValid() ? this._isUTC && this._offset === 0 : false;
     }
 
-    var aspNetRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/;
+    // ASP.NET json date format regex
+    var aspNetRegex = /^(\-)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?\d*)?$/;
 
     // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
     // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
-    var create__isoRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/;
+    var isoRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/;
 
     function create__createDuration (input, key) {
         var duration = input,
@@ -19697,7 +19479,7 @@ module.exports=require(52)
                 s  : toInt(match[SECOND])      * sign,
                 ms : toInt(match[MILLISECOND]) * sign
             };
-        } else if (!!(match = create__isoRegex.exec(input))) {
+        } else if (!!(match = isoRegex.exec(input))) {
             sign = (match[1] === '-') ? -1 : 1;
             duration = {
                 y : parseIso(match[2], sign),
@@ -19754,6 +19536,10 @@ module.exports=require(52)
 
     function momentsDifference(base, other) {
         var res;
+        if (!(base.isValid() && other.isValid())) {
+            return {milliseconds: 0, months: 0};
+        }
+
         other = cloneWithOffset(other, base);
         if (base.isBefore(other)) {
             res = positiveMomentsDifference(base, other);
@@ -19766,6 +19552,7 @@ module.exports=require(52)
         return res;
     }
 
+    // TODO: remove 'name' arg after deprecation is removed
     function createAdder(direction, name) {
         return function (val, period) {
             var dur, tmp;
@@ -19786,6 +19573,12 @@ module.exports=require(52)
         var milliseconds = duration._milliseconds,
             days = duration._days,
             months = duration._months;
+
+        if (!mom.isValid()) {
+            // No op
+            return;
+        }
+
         updateOffset = updateOffset == null ? true : updateOffset;
 
         if (milliseconds) {
@@ -19817,7 +19610,10 @@ module.exports=require(52)
                 diff < 1 ? 'sameDay' :
                 diff < 2 ? 'nextDay' :
                 diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
+
+        var output = formats && (isFunction(formats[format]) ? formats[format]() : formats[format]);
+
+        return this.format(output || this.localeData().calendar(format, this, local__createLocal(now)));
     }
 
     function clone () {
@@ -19825,26 +19621,28 @@ module.exports=require(52)
     }
 
     function isAfter (input, units) {
-        var inputMs;
-        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+        var localInput = isMoment(input) ? input : local__createLocal(input);
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
         if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this > +input;
+            return +this > +localInput;
         } else {
-            inputMs = isMoment(input) ? +input : +local__createLocal(input);
-            return inputMs < +this.clone().startOf(units);
+            return +localInput < +this.clone().startOf(units);
         }
     }
 
     function isBefore (input, units) {
-        var inputMs;
-        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+        var localInput = isMoment(input) ? input : local__createLocal(input);
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
         if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this < +input;
+            return +this < +localInput;
         } else {
-            inputMs = isMoment(input) ? +input : +local__createLocal(input);
-            return +this.clone().endOf(units) < inputMs;
+            return +this.clone().endOf(units) < +localInput;
         }
     }
 
@@ -19853,21 +19651,44 @@ module.exports=require(52)
     }
 
     function isSame (input, units) {
-        var inputMs;
+        var localInput = isMoment(input) ? input : local__createLocal(input),
+            inputMs;
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
         units = normalizeUnits(units || 'millisecond');
         if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this === +input;
+            return +this === +localInput;
         } else {
-            inputMs = +local__createLocal(input);
+            inputMs = +localInput;
             return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
         }
     }
 
+    function isSameOrAfter (input, units) {
+        return this.isSame(input, units) || this.isAfter(input,units);
+    }
+
+    function isSameOrBefore (input, units) {
+        return this.isSame(input, units) || this.isBefore(input,units);
+    }
+
     function diff (input, units, asFloat) {
-        var that = cloneWithOffset(input, this),
-            zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4,
+        var that,
+            zoneDelta,
             delta, output;
+
+        if (!this.isValid()) {
+            return NaN;
+        }
+
+        that = cloneWithOffset(input, this);
+
+        if (!that.isValid()) {
+            return NaN;
+        }
+
+        zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4;
 
         units = normalizeUnits(units);
 
@@ -19919,7 +19740,7 @@ module.exports=require(52)
     function moment_format__toISOString () {
         var m = this.clone().utc();
         if (0 < m.year() && m.year() <= 9999) {
-            if ('function' === typeof Date.prototype.toISOString) {
+            if (isFunction(Date.prototype.toISOString)) {
                 // native implementation is ~50x faster, use it when we can
                 return this.toDate().toISOString();
             } else {
@@ -19936,10 +19757,13 @@ module.exports=require(52)
     }
 
     function from (time, withoutSuffix) {
-        if (!this.isValid()) {
+        if (this.isValid() &&
+                ((isMoment(time) && time.isValid()) ||
+                 local__createLocal(time).isValid())) {
+            return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+        } else {
             return this.localeData().invalidDate();
         }
-        return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function fromNow (withoutSuffix) {
@@ -19947,16 +19771,22 @@ module.exports=require(52)
     }
 
     function to (time, withoutSuffix) {
-        if (!this.isValid()) {
+        if (this.isValid() &&
+                ((isMoment(time) && time.isValid()) ||
+                 local__createLocal(time).isValid())) {
+            return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
+        } else {
             return this.localeData().invalidDate();
         }
-        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function toNow (withoutSuffix) {
         return this.to(local__createLocal(), withoutSuffix);
     }
 
+    // If passed a locale key, it will set the locale for this
+    // instance.  Otherwise, it will return the locale configuration
+    // variables for this instance.
     function locale (key) {
         var newLocaleData;
 
@@ -20067,6 +19897,11 @@ module.exports=require(52)
         };
     }
 
+    function toJSON () {
+        // JSON.stringify(new Date(NaN)) === 'null'
+        return this.isValid() ? this.toISOString() : 'null';
+    }
+
     function moment_valid__isValid () {
         return valid__isValid(this);
     }
@@ -20078,6 +19913,18 @@ module.exports=require(52)
     function invalidAt () {
         return getParsingFlags(this).overflow;
     }
+
+    function creationData() {
+        return {
+            input: this._i,
+            format: this._f,
+            locale: this._locale,
+            isUTC: this._isUTC,
+            strict: this._strict
+        };
+    }
+
+    // FORMATTING
 
     addFormatToken(0, ['gg', 2], 0, function () {
         return this.weekYear() % 100;
@@ -20120,22 +19967,20 @@ module.exports=require(52)
         week[token] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
 
-    // HELPERS
-
-    function weeksInYear(year, dow, doy) {
-        return weekOfYear(local__createLocal([year, 11, 31 + dow - doy]), dow, doy).week;
-    }
-
     // MOMENTS
 
     function getSetWeekYear (input) {
-        var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
-        return input == null ? year : this.add((input - year), 'y');
+        return getSetWeekYearHelper.call(this,
+                input,
+                this.week(),
+                this.weekday(),
+                this.localeData()._week.dow,
+                this.localeData()._week.doy);
     }
 
     function getSetISOWeekYear (input) {
-        var year = weekOfYear(this, 1, 4).year;
-        return input == null ? year : this.add((input - year), 'y');
+        return getSetWeekYearHelper.call(this,
+                input, this.isoWeek(), this.isoWeekday(), 1, 4);
     }
 
     function getISOWeeksInYear () {
@@ -20147,7 +19992,33 @@ module.exports=require(52)
         return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
     }
 
-    addFormatToken('Q', 0, 0, 'quarter');
+    function getSetWeekYearHelper(input, week, weekday, dow, doy) {
+        var weeksTarget;
+        if (input == null) {
+            return weekOfYear(this, dow, doy).year;
+        } else {
+            weeksTarget = weeksInYear(input, dow, doy);
+            if (week > weeksTarget) {
+                week = weeksTarget;
+            }
+            return setWeekAll.call(this, input, week, weekday, dow, doy);
+        }
+    }
+
+    function setWeekAll(weekYear, week, weekday, dow, doy) {
+        var dayOfYearData = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy),
+            date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
+
+        // console.log("got", weekYear, week, weekday, "set", date.toISOString());
+        this.year(date.getUTCFullYear());
+        this.month(date.getUTCMonth());
+        this.date(date.getUTCDate());
+        return this;
+    }
+
+    // FORMATTING
+
+    addFormatToken('Q', 0, 'Qo', 'quarter');
 
     // ALIASES
 
@@ -20165,6 +20036,62 @@ module.exports=require(52)
     function getSetQuarter (input) {
         return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
     }
+
+    // FORMATTING
+
+    addFormatToken('w', ['ww', 2], 'wo', 'week');
+    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+
+    // ALIASES
+
+    addUnitAlias('week', 'w');
+    addUnitAlias('isoWeek', 'W');
+
+    // PARSING
+
+    addRegexToken('w',  match1to2);
+    addRegexToken('ww', match1to2, match2);
+    addRegexToken('W',  match1to2);
+    addRegexToken('WW', match1to2, match2);
+
+    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
+        week[token.substr(0, 1)] = toInt(input);
+    });
+
+    // HELPERS
+
+    // LOCALES
+
+    function localeWeek (mom) {
+        return weekOfYear(mom, this._week.dow, this._week.doy).week;
+    }
+
+    var defaultLocaleWeek = {
+        dow : 0, // Sunday is the first day of the week.
+        doy : 6  // The week that contains Jan 1st is the first week of the year.
+    };
+
+    function localeFirstDayOfWeek () {
+        return this._week.dow;
+    }
+
+    function localeFirstDayOfYear () {
+        return this._week.doy;
+    }
+
+    // MOMENTS
+
+    function getSetWeek (input) {
+        var week = this.localeData().week(this);
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    function getSetISOWeek (input) {
+        var week = weekOfYear(this, 1, 4).week;
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    // FORMATTING
 
     addFormatToken('D', ['DD', 2], 'Do', 'date');
 
@@ -20188,6 +20115,8 @@ module.exports=require(52)
     // MOMENTS
 
     var getSetDayOfMonth = makeGetSet('Date', true);
+
+    // FORMATTING
 
     addFormatToken('d', 0, 'do', 'day');
 
@@ -20221,8 +20150,8 @@ module.exports=require(52)
     addRegexToken('ddd',  matchWord);
     addRegexToken('dddd', matchWord);
 
-    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config) {
-        var weekday = config._locale.weekdaysParse(input);
+    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config, token) {
+        var weekday = config._locale.weekdaysParse(input, token, config._strict);
         // if we didn't get a weekday name, mark the date as invalid
         if (weekday != null) {
             week.d = weekday;
@@ -20257,8 +20186,9 @@ module.exports=require(52)
     // LOCALES
 
     var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
-    function localeWeekdays (m) {
-        return this._weekdays[m.day()];
+    function localeWeekdays (m, format) {
+        return isArray(this._weekdays) ? this._weekdays[m.day()] :
+            this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
     }
 
     var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
@@ -20271,20 +20201,37 @@ module.exports=require(52)
         return this._weekdaysMin[m.day()];
     }
 
-    function localeWeekdaysParse (weekdayName) {
+    function localeWeekdaysParse (weekdayName, format, strict) {
         var i, mom, regex;
 
-        this._weekdaysParse = this._weekdaysParse || [];
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
+            this._minWeekdaysParse = [];
+            this._shortWeekdaysParse = [];
+            this._fullWeekdaysParse = [];
+        }
 
         for (i = 0; i < 7; i++) {
             // make the regex if we don't have it already
+
+            mom = local__createLocal([2000, 1]).day(i);
+            if (strict && !this._fullWeekdaysParse[i]) {
+                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\.?') + '$', 'i');
+                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\.?') + '$', 'i');
+                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\.?') + '$', 'i');
+            }
             if (!this._weekdaysParse[i]) {
-                mom = local__createLocal([2000, 1]).day(i);
                 regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
                 this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
             }
             // test the regex
-            if (this._weekdaysParse[i].test(weekdayName)) {
+            if (strict && format === 'dddd' && this._fullWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (strict && format === 'ddd' && this._shortWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (strict && format === 'dd' && this._minWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (!strict && this._weekdaysParse[i].test(weekdayName)) {
                 return i;
             }
         }
@@ -20293,6 +20240,9 @@ module.exports=require(52)
     // MOMENTS
 
     function getSetDayOfWeek (input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
         if (input != null) {
             input = parseWeekday(input, this.localeData());
@@ -20303,20 +20253,73 @@ module.exports=require(52)
     }
 
     function getSetLocaleDayOfWeek (input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
         return input == null ? weekday : this.add(input - weekday, 'd');
     }
 
     function getSetISODayOfWeek (input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         // behaves the same as moment#day except
         // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
         // as a setter, sunday should belong to the previous week.
         return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
     }
 
-    addFormatToken('H', ['HH', 2], 0, 'hour');
-    addFormatToken('h', ['hh', 2], 0, function () {
+    // FORMATTING
+
+    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
+
+    // ALIASES
+
+    addUnitAlias('dayOfYear', 'DDD');
+
+    // PARSING
+
+    addRegexToken('DDD',  match1to3);
+    addRegexToken('DDDD', match3);
+    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
+        config._dayOfYear = toInt(input);
+    });
+
+    // HELPERS
+
+    // MOMENTS
+
+    function getSetDayOfYear (input) {
+        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
+        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+    }
+
+    // FORMATTING
+
+    function hFormat() {
         return this.hours() % 12 || 12;
+    }
+
+    addFormatToken('H', ['HH', 2], 0, 'hour');
+    addFormatToken('h', ['hh', 2], 0, hFormat);
+
+    addFormatToken('hmm', 0, 0, function () {
+        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2);
+    });
+
+    addFormatToken('hmmss', 0, 0, function () {
+        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2) +
+            zeroFill(this.seconds(), 2);
+    });
+
+    addFormatToken('Hmm', 0, 0, function () {
+        return '' + this.hours() + zeroFill(this.minutes(), 2);
+    });
+
+    addFormatToken('Hmmss', 0, 0, function () {
+        return '' + this.hours() + zeroFill(this.minutes(), 2) +
+            zeroFill(this.seconds(), 2);
     });
 
     function meridiem (token, lowercase) {
@@ -20345,6 +20348,11 @@ module.exports=require(52)
     addRegexToken('HH', match1to2, match2);
     addRegexToken('hh', match1to2, match2);
 
+    addRegexToken('hmm', match3to4);
+    addRegexToken('hmmss', match5to6);
+    addRegexToken('Hmm', match3to4);
+    addRegexToken('Hmmss', match5to6);
+
     addParseToken(['H', 'HH'], HOUR);
     addParseToken(['a', 'A'], function (input, array, config) {
         config._isPm = config._locale.isPM(input);
@@ -20353,6 +20361,32 @@ module.exports=require(52)
     addParseToken(['h', 'hh'], function (input, array, config) {
         array[HOUR] = toInt(input);
         getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('hmm', function (input, array, config) {
+        var pos = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos));
+        array[MINUTE] = toInt(input.substr(pos));
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('hmmss', function (input, array, config) {
+        var pos1 = input.length - 4;
+        var pos2 = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos1));
+        array[MINUTE] = toInt(input.substr(pos1, 2));
+        array[SECOND] = toInt(input.substr(pos2));
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('Hmm', function (input, array, config) {
+        var pos = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos));
+        array[MINUTE] = toInt(input.substr(pos));
+    });
+    addParseToken('Hmmss', function (input, array, config) {
+        var pos1 = input.length - 4;
+        var pos2 = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos1));
+        array[MINUTE] = toInt(input.substr(pos1, 2));
+        array[SECOND] = toInt(input.substr(pos2));
     });
 
     // LOCALES
@@ -20381,6 +20415,8 @@ module.exports=require(52)
     // this rule.
     var getSetHour = makeGetSet('Hours', true);
 
+    // FORMATTING
+
     addFormatToken('m', ['mm', 2], 0, 'minute');
 
     // ALIASES
@@ -20397,6 +20433,8 @@ module.exports=require(52)
 
     var getSetMinute = makeGetSet('Minutes', false);
 
+    // FORMATTING
+
     addFormatToken('s', ['ss', 2], 0, 'second');
 
     // ALIASES
@@ -20412,6 +20450,8 @@ module.exports=require(52)
     // MOMENTS
 
     var getSetSecond = makeGetSet('Seconds', false);
+
+    // FORMATTING
 
     addFormatToken('S', 0, 0, function () {
         return ~~(this.millisecond() / 100);
@@ -20468,6 +20508,8 @@ module.exports=require(52)
 
     var getSetMillisecond = makeGetSet('Milliseconds', false);
 
+    // FORMATTING
+
     addFormatToken('z',  0, 0, 'zoneAbbr');
     addFormatToken('zz', 0, 0, 'zoneName');
 
@@ -20483,40 +20525,43 @@ module.exports=require(52)
 
     var momentPrototype__proto = Moment.prototype;
 
-    momentPrototype__proto.add          = add_subtract__add;
-    momentPrototype__proto.calendar     = moment_calendar__calendar;
-    momentPrototype__proto.clone        = clone;
-    momentPrototype__proto.diff         = diff;
-    momentPrototype__proto.endOf        = endOf;
-    momentPrototype__proto.format       = format;
-    momentPrototype__proto.from         = from;
-    momentPrototype__proto.fromNow      = fromNow;
-    momentPrototype__proto.to           = to;
-    momentPrototype__proto.toNow        = toNow;
-    momentPrototype__proto.get          = getSet;
-    momentPrototype__proto.invalidAt    = invalidAt;
-    momentPrototype__proto.isAfter      = isAfter;
-    momentPrototype__proto.isBefore     = isBefore;
-    momentPrototype__proto.isBetween    = isBetween;
-    momentPrototype__proto.isSame       = isSame;
-    momentPrototype__proto.isValid      = moment_valid__isValid;
-    momentPrototype__proto.lang         = lang;
-    momentPrototype__proto.locale       = locale;
-    momentPrototype__proto.localeData   = localeData;
-    momentPrototype__proto.max          = prototypeMax;
-    momentPrototype__proto.min          = prototypeMin;
-    momentPrototype__proto.parsingFlags = parsingFlags;
-    momentPrototype__proto.set          = getSet;
-    momentPrototype__proto.startOf      = startOf;
-    momentPrototype__proto.subtract     = add_subtract__subtract;
-    momentPrototype__proto.toArray      = toArray;
-    momentPrototype__proto.toObject     = toObject;
-    momentPrototype__proto.toDate       = toDate;
-    momentPrototype__proto.toISOString  = moment_format__toISOString;
-    momentPrototype__proto.toJSON       = moment_format__toISOString;
-    momentPrototype__proto.toString     = toString;
-    momentPrototype__proto.unix         = unix;
-    momentPrototype__proto.valueOf      = to_type__valueOf;
+    momentPrototype__proto.add               = add_subtract__add;
+    momentPrototype__proto.calendar          = moment_calendar__calendar;
+    momentPrototype__proto.clone             = clone;
+    momentPrototype__proto.diff              = diff;
+    momentPrototype__proto.endOf             = endOf;
+    momentPrototype__proto.format            = format;
+    momentPrototype__proto.from              = from;
+    momentPrototype__proto.fromNow           = fromNow;
+    momentPrototype__proto.to                = to;
+    momentPrototype__proto.toNow             = toNow;
+    momentPrototype__proto.get               = getSet;
+    momentPrototype__proto.invalidAt         = invalidAt;
+    momentPrototype__proto.isAfter           = isAfter;
+    momentPrototype__proto.isBefore          = isBefore;
+    momentPrototype__proto.isBetween         = isBetween;
+    momentPrototype__proto.isSame            = isSame;
+    momentPrototype__proto.isSameOrAfter     = isSameOrAfter;
+    momentPrototype__proto.isSameOrBefore    = isSameOrBefore;
+    momentPrototype__proto.isValid           = moment_valid__isValid;
+    momentPrototype__proto.lang              = lang;
+    momentPrototype__proto.locale            = locale;
+    momentPrototype__proto.localeData        = localeData;
+    momentPrototype__proto.max               = prototypeMax;
+    momentPrototype__proto.min               = prototypeMin;
+    momentPrototype__proto.parsingFlags      = parsingFlags;
+    momentPrototype__proto.set               = getSet;
+    momentPrototype__proto.startOf           = startOf;
+    momentPrototype__proto.subtract          = add_subtract__subtract;
+    momentPrototype__proto.toArray           = toArray;
+    momentPrototype__proto.toObject          = toObject;
+    momentPrototype__proto.toDate            = toDate;
+    momentPrototype__proto.toISOString       = moment_format__toISOString;
+    momentPrototype__proto.toJSON            = toJSON;
+    momentPrototype__proto.toString          = toString;
+    momentPrototype__proto.unix              = unix;
+    momentPrototype__proto.valueOf           = to_type__valueOf;
+    momentPrototype__proto.creationData      = creationData;
 
     // Year
     momentPrototype__proto.year       = getSetYear;
@@ -20602,7 +20647,7 @@ module.exports=require(52)
 
     function locale_calendar__calendar (key, mom, now) {
         var output = this._calendar[key];
-        return typeof output === 'function' ? output.call(mom, now) : output;
+        return isFunction(output) ? output.call(mom, now) : output;
     }
 
     var defaultLongDateFormat = {
@@ -20664,21 +20709,21 @@ module.exports=require(52)
 
     function relative__relativeTime (number, withoutSuffix, string, isFuture) {
         var output = this._relativeTime[string];
-        return (typeof output === 'function') ?
+        return (isFunction(output)) ?
             output(number, withoutSuffix, string, isFuture) :
             output.replace(/%d/i, number);
     }
 
     function pastFuture (diff, output) {
         var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
-        return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
+        return isFunction(format) ? format(output) : format.replace(/%s/i, output);
     }
 
     function locale_set__set (config) {
         var prop, i;
         for (i in config) {
             prop = config[i];
-            if (typeof prop === 'function') {
+            if (isFunction(prop)) {
                 this[i] = prop;
             } else {
                 this['_' + i] = prop;
@@ -20708,11 +20753,15 @@ module.exports=require(52)
     prototype__proto.set             = locale_set__set;
 
     // Month
-    prototype__proto.months       =        localeMonths;
-    prototype__proto._months      = defaultLocaleMonths;
-    prototype__proto.monthsShort  =        localeMonthsShort;
-    prototype__proto._monthsShort = defaultLocaleMonthsShort;
-    prototype__proto.monthsParse  =        localeMonthsParse;
+    prototype__proto.months            =        localeMonths;
+    prototype__proto._months           = defaultLocaleMonths;
+    prototype__proto.monthsShort       =        localeMonthsShort;
+    prototype__proto._monthsShort      = defaultLocaleMonthsShort;
+    prototype__proto.monthsParse       =        localeMonthsParse;
+    prototype__proto._monthsRegex      = defaultMonthsRegex;
+    prototype__proto.monthsRegex       = monthsRegex;
+    prototype__proto._monthsShortRegex = defaultMonthsShortRegex;
+    prototype__proto.monthsShortRegex  = monthsShortRegex;
 
     // Week
     prototype__proto.week = localeWeek;
@@ -21000,15 +21049,15 @@ module.exports=require(52)
         var years    = round(duration.as('y'));
 
         var a = seconds < thresholds.s && ['s', seconds]  ||
-                minutes === 1          && ['m']           ||
+                minutes <= 1           && ['m']           ||
                 minutes < thresholds.m && ['mm', minutes] ||
-                hours   === 1          && ['h']           ||
+                hours   <= 1           && ['h']           ||
                 hours   < thresholds.h && ['hh', hours]   ||
-                days    === 1          && ['d']           ||
+                days    <= 1           && ['d']           ||
                 days    < thresholds.d && ['dd', days]    ||
-                months  === 1          && ['M']           ||
+                months  <= 1           && ['M']           ||
                 months  < thresholds.M && ['MM', months]  ||
-                years   === 1          && ['y']           || ['yy', years];
+                years   <= 1           && ['y']           || ['yy', years];
 
         a[2] = withoutSuffix;
         a[3] = +posNegDuration > 0;
@@ -21129,6 +21178,8 @@ module.exports=require(52)
 
     // Side effect imports
 
+    // FORMATTING
+
     addFormatToken('X', 0, 0, 'unix');
     addFormatToken('x', 0, 0, 'valueOf');
 
@@ -21146,13 +21197,14 @@ module.exports=require(52)
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.6';
+    utils_hooks__hooks.version = '2.11.2';
 
     setHookCallback(local__createLocal);
 
     utils_hooks__hooks.fn                    = momentPrototype;
     utils_hooks__hooks.min                   = min;
     utils_hooks__hooks.max                   = max;
+    utils_hooks__hooks.now                   = now;
     utils_hooks__hooks.utc                   = create_utc__createUTC;
     utils_hooks__hooks.unix                  = moment__createUnix;
     utils_hooks__hooks.months                = lists__listMonths;
@@ -21171,13 +21223,330 @@ module.exports=require(52)
     utils_hooks__hooks.weekdaysShort         = lists__listWeekdaysShort;
     utils_hooks__hooks.normalizeUnits        = normalizeUnits;
     utils_hooks__hooks.relativeTimeThreshold = duration_humanize__getSetRelativeTimeThreshold;
+    utils_hooks__hooks.prototype             = momentPrototype;
 
     var _moment = utils_hooks__hooks;
 
     return _moment;
 
 }));
-},{}],105:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":83}],83:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],84:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
   "version": "0.5.8",
@@ -21302,7 +21671,7 @@ module.exports={
   }
 }
 
-},{}],106:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 /* global window */
 //log.debug('Setting up d3');
 'use strict';
@@ -21773,7 +22142,7 @@ module.exports = d3;
 })();
 /* jshint ignore:end */
 
-},{"d3":"d3"}],107:[function(require,module,exports){
+},{"d3":"d3"}],86:[function(require,module,exports){
 'use strict';
 
 var Logger = require('../../logger');
@@ -21860,7 +22229,7 @@ exports.relationType = {
     DEPENDENCY: 3
 };
 
-},{"../../logger":125}],108:[function(require,module,exports){
+},{"../../logger":104}],87:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -22169,7 +22538,7 @@ module.exports.draw = function (text, id) {
     //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":106,"../../logger":125,"./classDb":107,"./parser/classDiagram":109,"dagre":53}],109:[function(require,module,exports){
+},{"../../d3":85,"../../logger":104,"./classDb":86,"./parser/classDiagram":88,"dagre":30}],88:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -22971,7 +23340,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],110:[function(require,module,exports){
+},{"_process":83,"fs":1,"path":82}],89:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -23006,7 +23375,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":125}],111:[function(require,module,exports){
+},{"../../logger":104}],90:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -23041,7 +23410,7 @@ exports.draw = function (txt, id, ver) {
 
     /*
     var box = exports.bounds.getBounds();
-      var height = box.stopy-box.starty+2*conf.diagramMarginY;
+     var height = box.stopy-box.starty+2*conf.diagramMarginY;
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;*/
 
     svg.attr('height', 100);
@@ -23049,7 +23418,7 @@ exports.draw = function (txt, id, ver) {
     //svg.attr('viewBox', '0 0 300 150');
 };
 
-},{"../../d3":106,"../../logger":125,"./exampleDb":110,"./parser/example.js":112}],112:[function(require,module,exports){
+},{"../../d3":85,"../../logger":104,"./exampleDb":89,"./parser/example.js":91}],91:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -23695,7 +24064,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],113:[function(require,module,exports){
+},{"_process":83,"fs":1,"path":82}],92:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -23719,7 +24088,7 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":125,"dagre-d3":4}],114:[function(require,module,exports){
+},{"../../logger":104,"dagre-d3":2}],93:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -24192,7 +24561,7 @@ exports.draw = function (text, id, isDot) {
     }
 };
 
-},{"../../d3":106,"../../logger":125,"./dagre-d3":113,"./graphDb":115,"./parser/dot":116,"./parser/flow":117}],115:[function(require,module,exports){
+},{"../../d3":85,"../../logger":104,"./dagre-d3":92,"./graphDb":94,"./parser/dot":95,"./parser/flow":96}],94:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-03.
@@ -24581,7 +24950,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../d3":106,"../../logger":125}],116:[function(require,module,exports){
+},{"../../d3":85,"../../logger":104}],95:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -25412,7 +25781,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],117:[function(require,module,exports){
+},{"_process":83,"fs":1,"path":82}],96:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -26522,7 +26891,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],118:[function(require,module,exports){
+},{"_process":83,"fs":1,"path":82}],97:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -26909,7 +27278,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":125,"moment":104}],119:[function(require,module,exports){
+},{"../../logger":104,"moment":81}],98:[function(require,module,exports){
 'use strict';
 
 var gantt = require('./parser/gantt').parser;
@@ -27263,7 +27632,7 @@ module.exports.draw = function (text, id) {
     }
 };
 
-},{"../../d3":106,"./ganttDb":118,"./parser/gantt":120,"moment":104}],120:[function(require,module,exports){
+},{"../../d3":85,"./ganttDb":97,"./parser/gantt":99,"moment":81}],99:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -27946,9 +28315,9 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],121:[function(require,module,exports){
+},{"_process":83,"fs":1,"path":82}],100:[function(require,module,exports){
 (function (process){
-/* parser generated by jison 0.4.15 */
+/* parser generated by jison 0.4.17 */
 /*
   Returns a Parser object of the following structure:
 
@@ -28023,67 +28392,82 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 */
 "use strict";
 
-var sequenceDiagram = (function () {
+var parser = (function () {
     var o = function o(k, v, _o, l) {
         for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
     },
-        $V0 = [2, 2],
-        $V1 = [1, 5],
-        $V2 = [1, 7],
-        $V3 = [1, 8],
-        $V4 = [1, 11],
-        $V5 = [1, 12],
-        $V6 = [1, 13],
+        $V0 = [1, 2],
+        $V1 = [1, 3],
+        $V2 = [1, 4],
+        $V3 = [2, 4],
+        $V4 = [1, 9],
+        $V5 = [1, 11],
+        $V6 = [1, 12],
         $V7 = [1, 14],
-        $V8 = [1, 16],
+        $V8 = [1, 15],
         $V9 = [1, 17],
-        $Va = [1, 7, 9, 10, 16, 18, 19, 20, 21, 22, 23, 33],
-        $Vb = [7, 9, 10, 16, 18, 19, 20, 21, 23, 33],
-        $Vc = [1, 53];
+        $Va = [1, 18],
+        $Vb = [1, 19],
+        $Vc = [1, 20],
+        $Vd = [1, 22],
+        $Ve = [1, 23],
+        $Vf = [1, 4, 5, 10, 15, 16, 18, 20, 21, 22, 23, 24, 25, 36],
+        $Vg = [1, 31],
+        $Vh = [4, 5, 10, 15, 16, 18, 20, 21, 22, 23, 25, 36],
+        $Vi = [34, 35, 36];
     var parser = { trace: function trace() {},
         yy: {},
-        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "line": 6, "SPACE": 7, "statement": 8, "NL": 9, "participant": 10, "actor": 11, "AS": 12, "restOfLine": 13, "signal": 14, "note_statement": 15, "title": 16, "text": 17, "loop": 18, "end": 19, "opt": 20, "alt": 21, "else": 22, "note": 23, "placement": 24, "text2": 25, "over": 26, "actor_pair": 27, "spaceList": 28, ",": 29, "left_of": 30, "right_of": 31, "signaltype": 32, "ACTOR": 33, "SOLID_OPEN_ARROW": 34, "DOTTED_OPEN_ARROW": 35, "SOLID_ARROW": 36, "DOTTED_ARROW": 37, "SOLID_CROSS": 38, "DOTTED_CROSS": 39, "TXT": 40, "$accept": 0, "$end": 1 },
-        terminals_: { 2: "error", 4: "SD", 7: "SPACE", 9: "NL", 10: "participant", 12: "AS", 13: "restOfLine", 16: "title", 17: "text", 18: "loop", 19: "end", 20: "opt", 21: "alt", 22: "else", 23: "note", 26: "over", 29: ",", 30: "left_of", 31: "right_of", 33: "ACTOR", 34: "SOLID_OPEN_ARROW", 35: "DOTTED_OPEN_ARROW", 36: "SOLID_ARROW", 37: "DOTTED_ARROW", 38: "SOLID_CROSS", 39: "DOTTED_CROSS", 40: "TXT" },
-        productions_: [0, [3, 2], [5, 0], [5, 2], [6, 2], [6, 1], [6, 1], [8, 5], [8, 3], [8, 2], [8, 2], [8, 4], [8, 4], [8, 4], [8, 7], [15, 4], [15, 4], [28, 2], [28, 1], [27, 3], [27, 1], [24, 1], [24, 1], [14, 4], [11, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [25, 1]],
+        symbols_: { "error": 2, "start": 3, "SPACE": 4, "NL": 5, "SD": 6, "document": 7, "line": 8, "statement": 9, "participant": 10, "actor": 11, "AS": 12, "restOfLine": 13, "signal": 14, "activate": 15, "deactivate": 16, "note_statement": 17, "title": 18, "text2": 19, "loop": 20, "end": 21, "opt": 22, "alt": 23, "else": 24, "note": 25, "placement": 26, "over": 27, "actor_pair": 28, "spaceList": 29, ",": 30, "left_of": 31, "right_of": 32, "signaltype": 33, "+": 34, "-": 35, "ACTOR": 36, "SOLID_OPEN_ARROW": 37, "DOTTED_OPEN_ARROW": 38, "SOLID_ARROW": 39, "DOTTED_ARROW": 40, "SOLID_CROSS": 41, "DOTTED_CROSS": 42, "TXT": 43, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "SPACE", 5: "NL", 6: "SD", 10: "participant", 12: "AS", 13: "restOfLine", 15: "activate", 16: "deactivate", 18: "title", 20: "loop", 21: "end", 22: "opt", 23: "alt", 24: "else", 25: "note", 27: "over", 30: ",", 31: "left_of", 32: "right_of", 34: "+", 35: "-", 36: "ACTOR", 37: "SOLID_OPEN_ARROW", 38: "DOTTED_OPEN_ARROW", 39: "SOLID_ARROW", 40: "DOTTED_ARROW", 41: "SOLID_CROSS", 42: "DOTTED_CROSS", 43: "TXT" },
+        productions_: [0, [3, 2], [3, 2], [3, 2], [7, 0], [7, 2], [8, 2], [8, 1], [8, 1], [9, 5], [9, 3], [9, 2], [9, 3], [9, 3], [9, 2], [9, 3], [9, 4], [9, 4], [9, 7], [17, 4], [17, 4], [29, 2], [29, 1], [28, 3], [28, 1], [26, 1], [26, 1], [14, 5], [14, 5], [14, 4], [11, 1], [33, 1], [33, 1], [33, 1], [33, 1], [33, 1], [33, 1], [19, 1]],
         performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
             /* this == yyval */
 
             var $0 = $$.length - 1;
             switch (yystate) {
-                case 1:
+                case 3:
                     yy.apply($$[$0]);return $$[$0];
                     break;
-                case 2:
+                case 4:
                     this.$ = [];
                     break;
-                case 3:
+                case 5:
                     $$[$0 - 1].push($$[$0]);this.$ = $$[$0 - 1];
                     break;
-                case 4:case 5:
+                case 6:case 7:
                     this.$ = $$[$0];
                     break;
-                case 6:
+                case 8:
                     this.$ = [];
                     break;
-                case 7:
+                case 9:
                     $$[$0 - 3].description = $$[$0 - 1];this.$ = $$[$0 - 3];
                     break;
-                case 8:
+                case 10:
                     this.$ = $$[$0 - 1];
                     break;
                 case 12:
+                    this.$ = { type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0 - 1] };
+                    break;
+                case 13:
+                    this.$ = { type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0 - 1] };
+                    break;
+                case 15:
+                    this.$ = [{ type: 'setTitle', text: $$[$0 - 1] }];
+                    break;
+                case 16:
 
                     $$[$0 - 1].unshift({ type: 'loopStart', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_START });
                     $$[$0 - 1].push({ type: 'loopEnd', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_END });
                     this.$ = $$[$0 - 1];
                     break;
-                case 13:
+                case 17:
 
                     $$[$0 - 1].unshift({ type: 'optStart', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_START });
                     $$[$0 - 1].push({ type: 'optEnd', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_END });
                     this.$ = $$[$0 - 1];
                     break;
-                case 14:
+                case 18:
 
                     // Alt start
                     $$[$0 - 4].unshift({ type: 'altStart', altText: $$[$0 - 5], signalType: yy.LINETYPE.ALT_START });
@@ -28097,11 +28481,11 @@ var sequenceDiagram = (function () {
 
                     this.$ = $$[$0 - 4];
                     break;
-                case 15:
+                case 19:
 
                     this.$ = [$$[$0 - 1], { type: 'addNote', placement: $$[$0 - 2], actor: $$[$0 - 1].actor, text: $$[$0] }];
                     break;
-                case 16:
+                case 20:
 
                     // Coerce actor_pair into a [to, from, ...] array
                     $$[$0 - 2] = [].concat($$[$0 - 1], $$[$0 - 1]).slice(0, 2);
@@ -28109,49 +28493,55 @@ var sequenceDiagram = (function () {
                     $$[$0 - 2][1] = $$[$0 - 2][1].actor;
                     this.$ = [$$[$0 - 1], { type: 'addNote', placement: yy.PLACEMENT.OVER, actor: $$[$0 - 2].slice(0, 2), text: $$[$0] }];
                     break;
-                case 19:
+                case 23:
                     this.$ = [$$[$0 - 2], $$[$0]];
                     break;
-                case 20:
+                case 24:
                     this.$ = $$[$0];
                     break;
-                case 21:
+                case 25:
                     this.$ = yy.PLACEMENT.LEFTOF;
                     break;
-                case 22:
+                case 26:
                     this.$ = yy.PLACEMENT.RIGHTOF;
                     break;
-                case 23:
-                    this.$ = [$$[$0 - 3], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 3].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 2], msg: $$[$0] }];
-                    break;
-                case 24:
-                    this.$ = { type: 'addActor', actor: $$[$0] };
-                    break;
-                case 25:
-                    this.$ = yy.LINETYPE.SOLID_OPEN;
-                    break;
-                case 26:
-                    this.$ = yy.LINETYPE.DOTTED_OPEN;
-                    break;
                 case 27:
-                    this.$ = yy.LINETYPE.SOLID;
+                    this.$ = [$$[$0 - 4], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 4].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 3], msg: $$[$0] }, { type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0 - 1] }];
                     break;
                 case 28:
-                    this.$ = yy.LINETYPE.DOTTED;
+                    this.$ = [$$[$0 - 4], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 4].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 3], msg: $$[$0] }, { type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0 - 4] }];
                     break;
                 case 29:
-                    this.$ = yy.LINETYPE.SOLID_CROSS;
+                    this.$ = [$$[$0 - 3], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 3].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 2], msg: $$[$0] }];
                     break;
                 case 30:
-                    this.$ = yy.LINETYPE.DOTTED_CROSS;
+                    this.$ = { type: 'addActor', actor: $$[$0] };
                     break;
                 case 31:
+                    this.$ = yy.LINETYPE.SOLID_OPEN;
+                    break;
+                case 32:
+                    this.$ = yy.LINETYPE.DOTTED_OPEN;
+                    break;
+                case 33:
+                    this.$ = yy.LINETYPE.SOLID;
+                    break;
+                case 34:
+                    this.$ = yy.LINETYPE.DOTTED;
+                    break;
+                case 35:
+                    this.$ = yy.LINETYPE.SOLID_CROSS;
+                    break;
+                case 36:
+                    this.$ = yy.LINETYPE.DOTTED_CROSS;
+                    break;
+                case 37:
                     this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
                     break;
             }
         },
-        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o([1, 7, 9, 10, 16, 18, 20, 21, 23, 33], $V0, { 5: 3 }), { 1: [2, 1], 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 3]), { 8: 18, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 5]), o($Va, [2, 6]), { 11: 19, 33: $V9 }, { 9: [1, 20] }, { 9: [1, 21] }, { 7: [1, 22] }, { 13: [1, 23] }, { 13: [1, 24] }, { 13: [1, 25] }, { 32: 26, 34: [1, 27], 35: [1, 28], 36: [1, 29], 37: [1, 30], 38: [1, 31], 39: [1, 32] }, { 24: 33, 26: [1, 34], 30: [1, 35], 31: [1, 36] }, o([9, 12, 29, 34, 35, 36, 37, 38, 39, 40], [2, 24]), o($Va, [2, 4]), { 9: [1, 38], 12: [1, 37] }, o($Va, [2, 9]), o($Va, [2, 10]), { 17: [1, 39] }, o($Vb, $V0, { 5: 40 }), o($Vb, $V0, { 5: 41 }), o([7, 9, 10, 16, 18, 20, 21, 22, 23, 33], $V0, { 5: 42 }), { 11: 43, 33: $V9 }, { 33: [2, 25] }, { 33: [2, 26] }, { 33: [2, 27] }, { 33: [2, 28] }, { 33: [2, 29] }, { 33: [2, 30] }, { 11: 44, 33: $V9 }, { 11: 46, 27: 45, 33: $V9 }, { 33: [2, 21] }, { 33: [2, 22] }, { 13: [1, 47] }, o($Va, [2, 8]), { 9: [1, 48] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 49], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 50], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 22: [1, 51], 23: $V8, 33: $V9 }, { 25: 52, 40: $Vc }, { 25: 54, 40: $Vc }, { 25: 55, 40: $Vc }, { 29: [1, 56], 40: [2, 20] }, { 9: [1, 57] }, o($Va, [2, 11]), o($Va, [2, 12]), o($Va, [2, 13]), { 13: [1, 58] }, { 9: [2, 23] }, { 9: [2, 31] }, { 9: [2, 15] }, { 9: [2, 16] }, { 11: 59, 33: $V9 }, o($Va, [2, 7]), o($Vb, $V0, { 5: 60 }), { 40: [2, 19] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 61], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 14])],
-        defaultActions: { 27: [2, 25], 28: [2, 26], 29: [2, 27], 30: [2, 28], 31: [2, 29], 32: [2, 30], 35: [2, 21], 36: [2, 22], 52: [2, 23], 53: [2, 31], 54: [2, 15], 55: [2, 16], 59: [2, 19] },
+        table: [{ 3: 1, 4: $V0, 5: $V1, 6: $V2 }, { 1: [3] }, { 3: 5, 4: $V0, 5: $V1, 6: $V2 }, { 3: 6, 4: $V0, 5: $V1, 6: $V2 }, o([1, 4, 5, 10, 15, 16, 18, 20, 22, 23, 25, 36], $V3, { 7: 7 }), { 1: [2, 1] }, { 1: [2, 2] }, { 1: [2, 3], 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 22: $Vb, 23: $Vc, 25: $Vd, 36: $Ve }, o($Vf, [2, 5]), { 9: 24, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 22: $Vb, 23: $Vc, 25: $Vd, 36: $Ve }, o($Vf, [2, 7]), o($Vf, [2, 8]), { 11: 25, 36: $Ve }, { 5: [1, 26] }, { 11: 27, 36: $Ve }, { 11: 28, 36: $Ve }, { 5: [1, 29] }, { 19: 30, 43: $Vg }, { 13: [1, 32] }, { 13: [1, 33] }, { 13: [1, 34] }, { 33: 35, 37: [1, 36], 38: [1, 37], 39: [1, 38], 40: [1, 39], 41: [1, 40], 42: [1, 41] }, { 26: 42, 27: [1, 43], 31: [1, 44], 32: [1, 45] }, o([5, 12, 30, 37, 38, 39, 40, 41, 42, 43], [2, 30]), o($Vf, [2, 6]), { 5: [1, 47], 12: [1, 46] }, o($Vf, [2, 11]), { 5: [1, 48] }, { 5: [1, 49] }, o($Vf, [2, 14]), { 5: [1, 50] }, { 5: [2, 37] }, o($Vh, $V3, { 7: 51 }), o($Vh, $V3, { 7: 52 }), o([4, 5, 10, 15, 16, 18, 20, 22, 23, 24, 25, 36], $V3, { 7: 53 }), { 11: 56, 34: [1, 54], 35: [1, 55], 36: $Ve }, o($Vi, [2, 31]), o($Vi, [2, 32]), o($Vi, [2, 33]), o($Vi, [2, 34]), o($Vi, [2, 35]), o($Vi, [2, 36]), { 11: 57, 36: $Ve }, { 11: 59, 28: 58, 36: $Ve }, { 36: [2, 25] }, { 36: [2, 26] }, { 13: [1, 60] }, o($Vf, [2, 10]), o($Vf, [2, 12]), o($Vf, [2, 13]), o($Vf, [2, 15]), { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 21: [1, 61], 22: $Vb, 23: $Vc, 25: $Vd, 36: $Ve }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 21: [1, 62], 22: $Vb, 23: $Vc, 25: $Vd, 36: $Ve }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 22: $Vb, 23: $Vc, 24: [1, 63], 25: $Vd, 36: $Ve }, { 11: 64, 36: $Ve }, { 11: 65, 36: $Ve }, { 19: 66, 43: $Vg }, { 19: 67, 43: $Vg }, { 19: 68, 43: $Vg }, { 30: [1, 69], 43: [2, 24] }, { 5: [1, 70] }, o($Vf, [2, 16]), o($Vf, [2, 17]), { 13: [1, 71] }, { 19: 72, 43: $Vg }, { 19: 73, 43: $Vg }, { 5: [2, 29] }, { 5: [2, 19] }, { 5: [2, 20] }, { 11: 74, 36: $Ve }, o($Vf, [2, 9]), o($Vh, $V3, { 7: 75 }), { 5: [2, 27] }, { 5: [2, 28] }, { 43: [2, 23] }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 21: [1, 76], 22: $Vb, 23: $Vc, 25: $Vd, 36: $Ve }, o($Vf, [2, 18])],
+        defaultActions: { 5: [2, 1], 6: [2, 2], 31: [2, 37], 44: [2, 25], 45: [2, 26], 66: [2, 29], 67: [2, 19], 68: [2, 20], 72: [2, 27], 73: [2, 28], 74: [2, 23] },
         parseError: function parseError(str, hash) {
             if (hash.recoverable) {
                 this.trace(str);
@@ -28161,7 +28551,7 @@ var sequenceDiagram = (function () {
                     this.hash = hash;
                 };
 
-                _parseError.prototype = new Error();
+                _parseError.prototype = Error;
 
                 throw new _parseError(str, hash);
             }
@@ -28631,7 +29021,7 @@ var sequenceDiagram = (function () {
                 var YYSTATE = YY_START;
                 switch ($avoiding_name_collisions) {
                     case 0:
-                        return 9;
+                        return 5;
                         break;
                     case 1:
                         /* skip all whitespace */
@@ -28649,90 +29039,102 @@ var sequenceDiagram = (function () {
                         this.begin('ID');return 10;
                         break;
                     case 6:
-                        this.begin('ALIAS');return 33;
+                        this.begin('ALIAS');return 36;
                         break;
                     case 7:
                         this.popState();this.popState();this.begin('LINE');return 12;
                         break;
                     case 8:
-                        this.popState();this.popState();return 9;
+                        this.popState();this.popState();return 5;
                         break;
                     case 9:
-                        this.begin('LINE');return 18;
-                        break;
-                    case 10:
                         this.begin('LINE');return 20;
                         break;
+                    case 10:
+                        this.begin('LINE');return 22;
+                        break;
                     case 11:
-                        this.begin('LINE');return 21;
+                        this.begin('LINE');return 23;
                         break;
                     case 12:
-                        this.begin('LINE');return 22;
+                        this.begin('LINE');return 24;
                         break;
                     case 13:
                         this.popState();return 13;
                         break;
                     case 14:
-                        return 19;
+                        return 21;
                         break;
                     case 15:
-                        return 30;
-                        break;
-                    case 16:
                         return 31;
                         break;
+                    case 16:
+                        return 32;
+                        break;
                     case 17:
-                        return 26;
+                        return 27;
                         break;
                     case 18:
-                        return 23;
+                        return 25;
                         break;
                     case 19:
-                        return 16;
+                        this.begin('ID');return 15;
                         break;
                     case 20:
-                        return 4;
+                        this.begin('ID');return 16;
                         break;
                     case 21:
-                        return 29;
+                        return 18;
                         break;
                     case 22:
-                        return 9;
+                        return 6;
                         break;
                     case 23:
-                        return 33;
+                        return 30;
                         break;
                     case 24:
-                        return 36;
+                        return 5;
                         break;
                     case 25:
-                        return 37;
+                        yy_.yytext = yy_.yytext.trim();return 36;
                         break;
                     case 26:
-                        return 34;
-                        break;
-                    case 27:
-                        return 35;
-                        break;
-                    case 28:
-                        return 38;
-                        break;
-                    case 29:
                         return 39;
                         break;
-                    case 30:
+                    case 27:
                         return 40;
                         break;
+                    case 28:
+                        return 37;
+                        break;
+                    case 29:
+                        return 38;
+                        break;
+                    case 30:
+                        return 41;
+                        break;
                     case 31:
-                        return 9;
+                        return 42;
                         break;
                     case 32:
+                        return 43;
+                        break;
+                    case 33:
+                        return 34;
+                        break;
+                    case 34:
+                        return 35;
+                        break;
+                    case 35:
+                        return 5;
+                        break;
+                    case 36:
                         return 'INVALID';
                         break;
                 }
             },
-            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i, /^(?:as\b)/i, /^(?:(?:))/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
-            conditions: { "LINE": { "rules": [2, 3, 13], "inclusive": false }, "ALIAS": { "rules": [2, 3, 7, 8], "inclusive": false }, "ID": { "rules": [2, 3, 6], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], "inclusive": true } }
+            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i, /^(?:as\b)/i, /^(?:(?:))/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:activate\b)/i, /^(?:deactivate\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\+\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:\+)/i, /^(?:-)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "LINE": { "rules": [2, 3, 13], "inclusive": false }, "ALIAS": { "rules": [2, 3, 7, 8], "inclusive": false }, "ID": { "rules": [2, 3, 6], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36], "inclusive": true } }
         };
         return lexer;
     })();
@@ -28745,10 +29147,10 @@ var sequenceDiagram = (function () {
 })();
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-    exports.parser = sequenceDiagram;
-    exports.Parser = sequenceDiagram.Parser;
+    exports.parser = parser;
+    exports.Parser = parser.Parser;
     exports.parse = function () {
-        return sequenceDiagram.parse.apply(sequenceDiagram, arguments);
+        return parser.parse.apply(parser, arguments);
     };
     exports.main = function commonjsMain(args) {
         if (!args[1]) {
@@ -28764,7 +29166,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],122:[function(require,module,exports){
+},{"_process":83,"fs":1,"path":82}],101:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-19.
@@ -28774,6 +29176,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 var actors = {};
 var messages = [];
 var notes = [];
+var title = '';
 var Logger = require('../../logger');
 var log = new Logger.Log();
 
@@ -28813,6 +29216,9 @@ exports.getActor = function (id) {
 exports.getActorKeys = function () {
     return Object.keys(actors);
 };
+exports.getTitle = function () {
+    return title;
+};
 
 exports.clear = function () {
     actors = {};
@@ -28833,7 +29239,9 @@ exports.LINETYPE = {
     ALT_ELSE: 13,
     ALT_END: 14,
     OPT_START: 15,
-    OPT_END: 16
+    OPT_END: 16,
+    ACTIVE_START: 17,
+    ACTIVE_END: 18
 };
 
 exports.ARROWTYPE = {
@@ -28857,6 +29265,10 @@ exports.addNote = function (actor, placement, message) {
     messages.push({ from: actors[0], to: actors[1], message: message, type: exports.LINETYPE.NOTE, placement: placement });
 };
 
+exports.setTitle = function (titleText) {
+    title = titleText;
+};
+
 exports.parseError = function (err, hash) {
     global.mermaidAPI.parseError(err, hash);
 };
@@ -28867,10 +29279,16 @@ exports.apply = function (param) {
             exports.apply(item);
         });
     } else {
-        // log.debug(param);
+        // console.info(param);
         switch (param.type) {
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.description);
+                break;
+            case 'activeStart':
+                exports.addSignal(param.actor, undefined, undefined, param.signalType);
+                break;
+            case 'activeEnd':
+                exports.addSignal(param.actor, undefined, undefined, param.signalType);
                 break;
             case 'addNote':
                 exports.addNote(param.actor, param.placement, param.text);
@@ -28905,12 +29323,14 @@ exports.apply = function (param) {
             case 'altEnd':
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
+            case 'setTitle':
+                exports.setTitle(param.text);
         }
     }
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":125}],123:[function(require,module,exports){
+},{"../../logger":104}],102:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -28927,10 +29347,10 @@ var log = new Logger.Log();
 var conf = {
 
     diagramMarginX: 50,
-    diagramMarginY: 10,
+    diagramMarginY: 30,
     // Margin between actors
     actorMargin: 50,
-    // Width of actor moxes
+    // Width of actor boxes
     width: 150,
     // Height of actor boxes
     height: 65,
@@ -28944,7 +29364,10 @@ var conf = {
     mirrorActors: false,
     // Depending on css styling this might need adjustment
     // Prolongs the edge of the diagram downwards
-    bottomMarginAdj: 1
+    bottomMarginAdj: 1,
+
+    // width of activation box
+    activationWidth: 10
 };
 
 //var bb = getBBox('path');
@@ -28957,9 +29380,11 @@ exports.bounds = {
     },
     verticalPos: 0,
 
-    list: [],
+    sequenceItems: [],
+    activations: [],
     init: function init() {
-        this.list = [];
+        this.sequenceItems = [];
+        this.activations = [];
         this.data = {
             startx: undefined,
             stopx: undefined,
@@ -28975,24 +29400,33 @@ exports.bounds = {
             obj[key] = fun(val, obj[key]);
         }
     },
-    updateLoops: function updateLoops(startx, starty, stopx, stopy) {
+    updateBounds: function updateBounds(startx, starty, stopx, stopy) {
         var _self = this;
         var cnt = 0;
-        this.list.forEach(function (loop) {
-            cnt++;
-            // The loop list is a stack so the biggest margins in the beginning of the list
-            var n = _self.list.length - cnt + 1;
+        function updateFn(type) {
+            return function updateItemBounds(item) {
+                cnt++;
+                // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
+                var n = _self.sequenceItems.length - cnt + 1;
 
-            _self.updateVal(loop, 'startx', startx - n * conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'starty', starty - n * conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'stopx', stopx + n * conf.boxMargin, Math.max);
-            _self.updateVal(loop, 'stopy', stopy + n * conf.boxMargin, Math.max);
+                _self.updateVal(item, 'starty', starty - n * conf.boxMargin, Math.min);
+                _self.updateVal(item, 'stopy', stopy + n * conf.boxMargin, Math.max);
 
-            _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min);
-            _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
-            _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max);
-            _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
-        });
+                _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min);
+                _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max);
+
+                if (!(type == 'activation')) {
+                    _self.updateVal(item, 'startx', startx - n * conf.boxMargin, Math.min);
+                    _self.updateVal(item, 'stopx', stopx + n * conf.boxMargin, Math.max);
+
+                    _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
+                    _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
+                }
+            };
+        }
+
+        this.sequenceItems.forEach(updateFn());
+        this.activations.forEach(updateFn('activation'));
     },
     insert: function insert(startx, starty, stopx, stopy) {
 
@@ -29008,21 +29442,37 @@ exports.bounds = {
         this.updateVal(exports.bounds.data, 'stopx', _stopx, Math.max);
         this.updateVal(exports.bounds.data, 'stopy', _stopy, Math.max);
 
-        this.updateLoops(_startx, _starty, _stopx, _stopy);
+        this.updateBounds(_startx, _starty, _stopx, _stopy);
+    },
+    newActivation: function newActivation(message, diagram) {
+        var actorRect = sq.yy.getActors()[message.from.actor];
+        var stackedSize = actorActivations(message.from.actor).length;
+        var x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
+        this.activations.push({ startx: x, starty: this.verticalPos + 2, stopx: x + conf.activationWidth, stopy: undefined,
+            actor: message.from.actor,
+            anchored: svgDraw.anchorElement(diagram)
+        });
+    },
+    endActivation: function endActivation(message) {
+        // find most recent activation for given actor
+        var lastActorActivationIdx = this.activations.map(function (activation) {
+            return activation.actor;
+        }).lastIndexOf(message.from.actor);
+        var activation = this.activations.splice(lastActorActivationIdx, 1)[0];
+        return activation;
     },
     newLoop: function newLoop(title) {
-        this.list.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title });
+        this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title });
     },
     endLoop: function endLoop() {
-        var loop = this.list.pop();
-        //loop.stopy =  exports.bounds.getVerticalPos();
+        var loop = this.sequenceItems.pop();
         return loop;
     },
     addElseToLoop: function addElseToLoop(message) {
-        var loop = this.list.pop();
+        var loop = this.sequenceItems.pop();
         loop.elsey = exports.bounds.getVerticalPos();
         loop.elseText = message;
-        this.list.push(loop);
+        this.sequenceItems.push(loop);
     },
     bumpVerticalPos: function bumpVerticalPos(bump) {
         this.verticalPos = this.verticalPos + bump;
@@ -29158,7 +29608,7 @@ module.exports.drawActors = function (diagram, actors, actorKeys, verticalPos) {
         // Add some rendering data to the object
         actors[key].x = i * conf.actorMargin + i * conf.width;
         actors[key].y = verticalPos;
-        actors[key].width = conf.diagramMarginY;
+        actors[key].width = conf.diagramMarginX;
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
@@ -29178,6 +29628,27 @@ module.exports.setConf = function (cnf) {
         conf[key] = cnf[key];
     });
 };
+
+var actorActivations = function actorActivations(actor) {
+    return module.exports.bounds.activations.filter(function (activation) {
+        return activation.actor == actor;
+    });
+};
+
+var actorFlowVerticaBounds = function actorFlowVerticaBounds(actor) {
+    // handle multiple stacked activations for same actor
+    var actors = sq.yy.getActors();
+    var activations = actorActivations(actor);
+
+    var left = activations.reduce(function (acc, activation) {
+        return Math.min(acc, activation.startx);
+    }, actors[actor].x + conf.width / 2);
+    var right = activations.reduce(function (acc, activation) {
+        return Math.max(acc, activation.stopx);
+    }, actors[actor].x + conf.width / 2);
+    return [left, right];
+};
+
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
@@ -29198,11 +29669,25 @@ module.exports.draw = function (text, id) {
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
+    var title = sq.yy.getTitle();
     module.exports.drawActors(diagram, actors, actorKeys, 0);
 
     // The arrow head definition is attached to the svg once
     svgDraw.insertArrowHead(diagram);
     svgDraw.insertArrowCrossHead(diagram);
+
+    function activeEnd(msg, verticalPos) {
+        var activationData = exports.bounds.endActivation(msg);
+        if (activationData.starty + 18 > verticalPos) {
+            activationData.starty = verticalPos - 6;
+            verticalPos += 12;
+        }
+        svgDraw.drawActivation(diagram, activationData, verticalPos, conf);
+
+        exports.bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
+    }
+
+    var lastMsg;
 
     // Draw the messages/signals
     messages.forEach(function (msg) {
@@ -29227,6 +29712,12 @@ module.exports.draw = function (text, id) {
                     forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
                     drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, exports.bounds.getVerticalPos(), msg, forceWidth);
                 }
+                break;
+            case sq.yy.LINETYPE.ACTIVE_START:
+                exports.bounds.newActivation(msg, diagram);
+                break;
+            case sq.yy.LINETYPE.ACTIVE_END:
+                activeEnd(msg, exports.bounds.getVerticalPos());
                 break;
             case sq.yy.LINETYPE.LOOP_START:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
@@ -29269,12 +29760,23 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
-                exports.bounds.bumpVerticalPos(conf.messageMargin);
-                startx = actors[msg.from].x + conf.width / 2;
-                stopx = actors[msg.to].x + conf.width / 2;
+                try {
+                    lastMsg = msg;
+                    exports.bounds.bumpVerticalPos(conf.messageMargin);
+                    var fromBounds = actorFlowVerticaBounds(msg.from);
+                    var toBounds = actorFlowVerticaBounds(msg.to);
+                    var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
+                    var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
+                    startx = fromBounds[fromIdx];
+                    stopx = toBounds[toIdx];
 
-                drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
-
+                    var verticalPos = exports.bounds.getVerticalPos();
+                    drawMessage(diagram, startx, stopx, verticalPos, msg);
+                    var allBounds = fromBounds.concat(toBounds);
+                    exports.bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos);
+                } catch (e) {
+                    console.error('error while drawing message', e);
+                }
         }
     });
 
@@ -29298,6 +29800,11 @@ module.exports.draw = function (text, id) {
     }
 
     var width = box.stopx - box.startx + 2 * conf.diagramMarginX;
+
+    if (title) {
+        diagram.append('text').text(title).attr('x', (box.stopx - box.startx) / 2 - 2 * conf.diagramMarginX).attr('y', -25);
+    }
+
     if (conf.useMaxWidth) {
         diagram.attr('height', '100%');
         diagram.attr('width', '100%');
@@ -29306,10 +29813,11 @@ module.exports.draw = function (text, id) {
         diagram.attr('height', height);
         diagram.attr('width', width);
     }
-    diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + conf.diagramMarginY + ' ' + width + ' ' + height);
+    var extraVertForTitle = title ? 40 : 0;
+    diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
 };
 
-},{"../../d3":106,"../../logger":125,"./parser/sequenceDiagram":121,"./sequenceDb":122,"./svgDraw":124}],124:[function(require,module,exports){
+},{"../../d3":85,"../../logger":104,"./parser/sequenceDiagram":100,"./sequenceDb":101,"./svgDraw":103}],103:[function(require,module,exports){
 /**
  * Created by knut on 14-12-20.
  */
@@ -29421,6 +29929,26 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
     .attr('x', center).attr('y', verticalPos + conf.height / 2 + 5).attr('class', 'actor').style('text-anchor', 'middle').text(description);
 };
 
+exports.anchorElement = function (elem) {
+    return elem.append('g');
+};
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param elem - element to append activation rect
+ * @param bounds - activation box bounds
+ * @param verticalPos - precise y cooridnate of bottom activation box edge
+ */
+exports.drawActivation = function (elem, bounds, verticalPos) {
+    var rect = exports.getNoteRect();
+    var g = bounds.anchored;
+    rect.x = bounds.startx;
+    rect.y = bounds.starty;
+    rect.fill = '#f4f4f4';
+    rect.width = bounds.stopx - bounds.startx;
+    rect.height = verticalPos - bounds.starty;
+    exports.drawRect(g, rect);
+};
+
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -29517,7 +30045,7 @@ exports.getNoteRect = function () {
     return rect;
 };
 
-},{}],125:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 /**
  * #logger
  * logger = require('logger').create()
@@ -29617,7 +30145,7 @@ function Log(level) {
 
 exports.Log = Log;
 
-},{}],126:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 (function (global){
 /**
  * ---
@@ -30154,7 +30682,7 @@ global.mermaidAPI = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":105,"./d3":106,"./diagrams/classDiagram/classDb":107,"./diagrams/classDiagram/classRenderer":108,"./diagrams/classDiagram/parser/classDiagram":109,"./diagrams/example/exampleDb":110,"./diagrams/example/exampleRenderer":111,"./diagrams/example/parser/example":112,"./diagrams/flowchart/flowRenderer":114,"./diagrams/flowchart/graphDb":115,"./diagrams/flowchart/parser/dot":116,"./diagrams/flowchart/parser/flow":117,"./diagrams/gantt/ganttDb":118,"./diagrams/gantt/ganttRenderer":119,"./diagrams/gantt/parser/gantt":120,"./diagrams/sequenceDiagram/parser/sequenceDiagram":121,"./diagrams/sequenceDiagram/sequenceDb":122,"./diagrams/sequenceDiagram/sequenceRenderer":123,"./logger":125,"./utils":127}],127:[function(require,module,exports){
+},{"../package.json":84,"./d3":85,"./diagrams/classDiagram/classDb":86,"./diagrams/classDiagram/classRenderer":87,"./diagrams/classDiagram/parser/classDiagram":88,"./diagrams/example/exampleDb":89,"./diagrams/example/exampleRenderer":90,"./diagrams/example/parser/example":91,"./diagrams/flowchart/flowRenderer":93,"./diagrams/flowchart/graphDb":94,"./diagrams/flowchart/parser/dot":95,"./diagrams/flowchart/parser/flow":96,"./diagrams/gantt/ganttDb":97,"./diagrams/gantt/ganttRenderer":98,"./diagrams/gantt/parser/gantt":99,"./diagrams/sequenceDiagram/parser/sequenceDiagram":100,"./diagrams/sequenceDiagram/sequenceDb":101,"./diagrams/sequenceDiagram/sequenceRenderer":102,"./logger":104,"./utils":106}],106:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -30294,5 +30822,5 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
 
 exports.cloneCssStyles = cloneCssStyles;
 
-},{"./logger":125}]},{},[126])(126)
+},{"./logger":104}]},{},[105])(105)
 });
