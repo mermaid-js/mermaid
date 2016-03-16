@@ -91,7 +91,7 @@ statement
 	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NL'
-	| 'title' SPACE text 'NL'
+	| title text2 'NL' {$$=[{type:'setTitle', text:$2}]}
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:$2, signalType: yy.LINETYPE.LOOP_START});
