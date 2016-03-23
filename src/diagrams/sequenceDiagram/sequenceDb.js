@@ -4,6 +4,7 @@
 var actors    = {};
 var messages  = [];
 var notes     = [];
+var title = '';
 var Logger = require('../../logger');
 var log = new Logger.Log();
 
@@ -45,6 +46,9 @@ exports.getActor = function(id){
 exports.getActorKeys = function(){
     return Object.keys(actors);
 };
+exports.getTitle = function() {
+  return title;
+}
 
 exports.clear = function(){
     actors   = {};
@@ -90,6 +94,10 @@ exports.addNote = function (actor, placement, message){
     notes.push(note);
     messages.push({from:actors[0], to:actors[1], message:message, type:exports.LINETYPE.NOTE, placement: placement});
 };
+
+exports.setTitle = function(titleText){
+  title = titleText;
+}
 
 
 exports.parseError = function(err,hash){
@@ -146,6 +154,8 @@ exports.apply = function(param){
             case 'altEnd':
                 exports.addSignal(undefined, undefined, undefined, param.signalType);
                 break;
+            case 'setTitle': 
+                exports.setTitle(param.text);
         }
     }
 };

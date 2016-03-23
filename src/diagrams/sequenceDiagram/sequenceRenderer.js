@@ -12,7 +12,7 @@ var log = new Logger.Log();
 var conf = {
 
     diagramMarginX:50,
-    diagramMarginY:10,
+    diagramMarginY:30,
     // Margin between actors
     actorMargin:50,
     // Width of actor boxes
@@ -341,6 +341,7 @@ module.exports.draw = function (text, id) {
     var actors = sq.yy.getActors();
     var actorKeys = sq.yy.getActorKeys();
     var messages = sq.yy.getMessages();
+    var title = sq.yy.getTitle();
     module.exports.drawActors(diagram, actors, actorKeys, 0);
 
     // The arrow head definition is attached to the svg once
@@ -474,7 +475,15 @@ module.exports.draw = function (text, id) {
         height = height - conf.boxMargin + conf.bottomMarginAdj;
     }
 
-    var width  = box.stopx-box.startx+2*conf.diagramMarginX;
+    var width = (box.stopx - box.startx) + (2 * conf.diagramMarginX);
+    
+    if(title) {
+      diagram.append('text')
+        .text(title)
+        .attr('x', ( ( box.stopx-box.startx) / 2 ) - ( 2 * conf.diagramMarginX ) )
+        .attr('y', -25);
+    }
+    
     if(conf.useMaxWidth) {
         diagram.attr('height', '100%');
         diagram.attr('width', '100%');
@@ -483,5 +492,6 @@ module.exports.draw = function (text, id) {
         diagram.attr('height',height);
         diagram.attr('width', width );
     }
-    diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
+    var extraVertForTitle = title ? 40 : 0;
+    diagram.attr('viewBox', (box.startx - conf.diagramMarginX) + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
 };
