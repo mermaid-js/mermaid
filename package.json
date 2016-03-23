@@ -107,7 +107,7 @@
     "marked": "^0.3.2",
     "mock-browser": "^0.91.34",
     "path": "^0.4.9",
-    "phantomjs": "^1.9.18",
+    "phantomjs": "^2.1.3",
     "proxyquire": "^1.7.3",
     "proxyquire-universal": "^1.0.8",
     "proxyquireify": "^3.0.0",

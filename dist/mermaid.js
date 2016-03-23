@@ -1,322 +1,6 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaid=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":3}],3:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
-    }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],4:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.6"
@@ -9821,7 +9505,7 @@ process.chdir = function (dir) {
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],5:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -9853,7 +9537,7 @@ module.exports =  {
   version: require("./lib/version")
 };
 
-},{"./lib/dagre":12,"./lib/graphlib":13,"./lib/intersect":14,"./lib/render":29,"./lib/util":31,"./lib/version":32}],6:[function(require,module,exports){
+},{"./lib/dagre":10,"./lib/graphlib":11,"./lib/intersect":12,"./lib/render":27,"./lib/util":29,"./lib/version":30}],4:[function(require,module,exports){
 var util = require("./util");
 
 module.exports = {
@@ -9917,7 +9601,7 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":31}],7:[function(require,module,exports){
+},{"./util":29}],5:[function(require,module,exports){
 var util = require("./util"),
     addLabel = require("./label/add-label");
 
@@ -9962,7 +9646,7 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":22,"./util":31}],8:[function(require,module,exports){
+},{"./label/add-label":20,"./util":29}],6:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -9999,7 +9683,7 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],9:[function(require,module,exports){
+},{"./d3":9,"./label/add-label":20,"./lodash":23,"./util":29}],7:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10131,7 +9815,7 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":11,"./intersect/intersect-node":18,"./lodash":25,"./util":31}],10:[function(require,module,exports){
+},{"./d3":9,"./intersect/intersect-node":16,"./lodash":23,"./util":29}],8:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10191,11 +9875,11 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],11:[function(require,module,exports){
+},{"./d3":9,"./label/add-label":20,"./lodash":23,"./util":29}],9:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],12:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /* global window */
 
 var dagre;
@@ -10212,7 +9896,7 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":54}],13:[function(require,module,exports){
+},{"dagre":31}],11:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -10229,7 +9913,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":33}],14:[function(require,module,exports){
+},{"graphlib":61}],12:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -10238,7 +9922,7 @@ module.exports = {
   rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":15,"./intersect-ellipse":16,"./intersect-node":18,"./intersect-polygon":19,"./intersect-rect":20}],15:[function(require,module,exports){
+},{"./intersect-circle":13,"./intersect-ellipse":14,"./intersect-node":16,"./intersect-polygon":17,"./intersect-rect":18}],13:[function(require,module,exports){
 var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
@@ -10247,7 +9931,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":16}],16:[function(require,module,exports){
+},{"./intersect-ellipse":14}],14:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -10274,7 +9958,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -10346,14 +10030,14 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],19:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
@@ -10410,7 +10094,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":17}],20:[function(require,module,exports){
+},{"./intersect-line":15}],18:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -10444,7 +10128,7 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],21:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addHtmlLabel;
@@ -10489,7 +10173,7 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":31}],22:[function(require,module,exports){
+},{"../util":29}],20:[function(require,module,exports){
 var addTextLabel = require("./add-text-label"),
     addHtmlLabel = require("./add-html-label"),
     addSVGLabel  = require("./add-svg-label");
@@ -10528,7 +10212,7 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":21,"./add-svg-label":23,"./add-text-label":24}],23:[function(require,module,exports){
+},{"./add-html-label":19,"./add-svg-label":21,"./add-text-label":22}],21:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addSVGLabel;
@@ -10543,7 +10227,7 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":31}],24:[function(require,module,exports){
+},{"../util":29}],22:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addTextLabel;
@@ -10590,7 +10274,7 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":31}],25:[function(require,module,exports){
+},{"../util":29}],23:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -10607,7 +10291,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":53}],26:[function(require,module,exports){
+},{"lodash":82}],24:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10643,7 +10327,7 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":11,"./util":31}],27:[function(require,module,exports){
+},{"./d3":9,"./util":29}],25:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10667,7 +10351,7 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":11,"./lodash":25,"./util":31}],28:[function(require,module,exports){
+},{"./d3":9,"./lodash":23,"./util":29}],26:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10690,7 +10374,7 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":11,"./util":31}],29:[function(require,module,exports){
+},{"./d3":9,"./util":29}],27:[function(require,module,exports){
 var _ = require("./lodash"),
     layout = require("./dagre").layout;
 
@@ -10859,7 +10543,7 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":6,"./create-clusters":7,"./create-edge-labels":8,"./create-edge-paths":9,"./create-nodes":10,"./dagre":12,"./lodash":25,"./position-clusters":26,"./position-edge-labels":27,"./position-nodes":28,"./shapes":30}],30:[function(require,module,exports){
+},{"./arrows":4,"./create-clusters":5,"./create-edge-labels":6,"./create-edge-paths":7,"./create-nodes":8,"./dagre":10,"./lodash":23,"./position-clusters":24,"./position-edge-labels":25,"./position-nodes":26,"./shapes":28}],28:[function(require,module,exports){
 "use strict";
 
 var intersectRect = require("./intersect/intersect-rect"),
@@ -10942,7 +10626,7 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":15,"./intersect/intersect-ellipse":16,"./intersect/intersect-polygon":19,"./intersect/intersect-rect":20}],31:[function(require,module,exports){
+},{"./intersect/intersect-circle":13,"./intersect/intersect-ellipse":14,"./intersect/intersect-polygon":17,"./intersect/intersect-rect":18}],29:[function(require,module,exports){
 var _ = require("./lodash");
 
 // Public utility functions
@@ -10998,10 +10682,2912 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":25}],32:[function(require,module,exports){
+},{"./lodash":23}],30:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],33:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
+/*
+Copyright (c) 2012-2014 Chris Pettitt
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+module.exports = {
+  graphlib: require("./lib/graphlib"),
+
+  layout: require("./lib/layout"),
+  debug: require("./lib/debug"),
+  util: {
+    time: require("./lib/util").time,
+    notime: require("./lib/util").notime
+  },
+  version: require("./lib/version")
+};
+
+},{"./lib/debug":36,"./lib/graphlib":37,"./lib/layout":39,"./lib/util":59,"./lib/version":60}],32:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    greedyFAS = require("./greedy-fas");
+
+module.exports = {
+  run: run,
+  undo: undo
+};
+
+function run(g) {
+  var fas = (g.graph().acyclicer === "greedy"
+                ? greedyFAS(g, weightFn(g))
+                : dfsFAS(g));
+  _.each(fas, function(e) {
+    var label = g.edge(e);
+    g.removeEdge(e);
+    label.forwardName = e.name;
+    label.reversed = true;
+    g.setEdge(e.w, e.v, label, _.uniqueId("rev"));
+  });
+
+  function weightFn(g) {
+    return function(e) {
+      return g.edge(e).weight;
+    };
+  }
+}
+
+function dfsFAS(g) {
+  var fas = [],
+      stack = {},
+      visited = {};
+
+  function dfs(v) {
+    if (_.has(visited, v)) {
+      return;
+    }
+    visited[v] = true;
+    stack[v] = true;
+    _.each(g.outEdges(v), function(e) {
+      if (_.has(stack, e.w)) {
+        fas.push(e);
+      } else {
+        dfs(e.w);
+      }
+    });
+    delete stack[v];
+  }
+
+  _.each(g.nodes(), dfs);
+  return fas;
+}
+
+function undo(g) {
+  _.each(g.edges(), function(e) {
+    var label = g.edge(e);
+    if (label.reversed) {
+      g.removeEdge(e);
+
+      var forwardName = label.forwardName;
+      delete label.reversed;
+      delete label.forwardName;
+      g.setEdge(e.w, e.v, label, forwardName);
+    }
+  });
+}
+
+},{"./greedy-fas":38,"./lodash":40}],33:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util");
+
+module.exports = addBorderSegments;
+
+function addBorderSegments(g) {
+  function dfs(v) {
+    var children = g.children(v),
+        node = g.node(v);
+    if (children.length) {
+      _.each(children, dfs);
+    }
+
+    if (_.has(node, "minRank")) {
+      node.borderLeft = [];
+      node.borderRight = [];
+      for (var rank = node.minRank, maxRank = node.maxRank + 1;
+           rank < maxRank;
+           ++rank) {
+        addBorderNode(g, "borderLeft", "_bl", v, node, rank);
+        addBorderNode(g, "borderRight", "_br", v, node, rank);
+      }
+    }
+  }
+
+  _.each(g.children(), dfs);
+}
+
+function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
+  var label = { width: 0, height: 0, rank: rank, borderType: prop },
+      prev = sgNode[prop][rank - 1],
+      curr = util.addDummyNode(g, "border", label, prefix);
+  sgNode[prop][rank] = curr;
+  g.setParent(curr, sg);
+  if (prev) {
+    g.setEdge(prev, curr, { weight: 1 });
+  }
+}
+
+},{"./lodash":40,"./util":59}],34:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash");
+
+module.exports = {
+  adjust: adjust,
+  undo: undo
+};
+
+function adjust(g) {
+  var rankDir = g.graph().rankdir.toLowerCase();
+  if (rankDir === "lr" || rankDir === "rl") {
+    swapWidthHeight(g);
+  }
+}
+
+function undo(g) {
+  var rankDir = g.graph().rankdir.toLowerCase();
+  if (rankDir === "bt" || rankDir === "rl") {
+    reverseY(g);
+  }
+
+  if (rankDir === "lr" || rankDir === "rl") {
+    swapXY(g);
+    swapWidthHeight(g);
+  }
+}
+
+function swapWidthHeight(g) {
+  _.each(g.nodes(), function(v) { swapWidthHeightOne(g.node(v)); });
+  _.each(g.edges(), function(e) { swapWidthHeightOne(g.edge(e)); });
+}
+
+function swapWidthHeightOne(attrs) {
+  var w = attrs.width;
+  attrs.width = attrs.height;
+  attrs.height = w;
+}
+
+function reverseY(g) {
+  _.each(g.nodes(), function(v) { reverseYOne(g.node(v)); });
+
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    _.each(edge.points, reverseYOne);
+    if (_.has(edge, "y")) {
+      reverseYOne(edge);
+    }
+  });
+}
+
+function reverseYOne(attrs) {
+  attrs.y = -attrs.y;
+}
+
+function swapXY(g) {
+  _.each(g.nodes(), function(v) { swapXYOne(g.node(v)); });
+
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    _.each(edge.points, swapXYOne);
+    if (_.has(edge, "x")) {
+      swapXYOne(edge);
+    }
+  });
+}
+
+function swapXYOne(attrs) {
+  var x = attrs.x;
+  attrs.x = attrs.y;
+  attrs.y = x;
+}
+
+},{"./lodash":40}],35:[function(require,module,exports){
+/*
+ * Simple doubly linked list implementation derived from Cormen, et al.,
+ * "Introduction to Algorithms".
+ */
+
+module.exports = List;
+
+function List() {
+  var sentinel = {};
+  sentinel._next = sentinel._prev = sentinel;
+  this._sentinel = sentinel;
+}
+
+List.prototype.dequeue = function() {
+  var sentinel = this._sentinel,
+      entry = sentinel._prev;
+  if (entry !== sentinel) {
+    unlink(entry);
+    return entry;
+  }
+};
+
+List.prototype.enqueue = function(entry) {
+  var sentinel = this._sentinel;
+  if (entry._prev && entry._next) {
+    unlink(entry);
+  }
+  entry._next = sentinel._next;
+  sentinel._next._prev = entry;
+  sentinel._next = entry;
+  entry._prev = sentinel;
+};
+
+List.prototype.toString = function() {
+  var strs = [],
+      sentinel = this._sentinel,
+      curr = sentinel._prev;
+  while (curr !== sentinel) {
+    strs.push(JSON.stringify(curr, filterOutLinks));
+    curr = curr._prev;
+  }
+  return "[" + strs.join(", ") + "]";
+};
+
+function unlink(entry) {
+  entry._prev._next = entry._next;
+  entry._next._prev = entry._prev;
+  delete entry._next;
+  delete entry._prev;
+}
+
+function filterOutLinks(k, v) {
+  if (k !== "_next" && k !== "_prev") {
+    return v;
+  }
+}
+
+},{}],36:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = {
+  debugOrdering: debugOrdering
+};
+
+/* istanbul ignore next */
+function debugOrdering(g) {
+  var layerMatrix = util.buildLayerMatrix(g);
+
+  var h = new Graph({ compound: true, multigraph: true }).setGraph({});
+
+  _.each(g.nodes(), function(v) {
+    h.setNode(v, { label: v });
+    h.setParent(v, "layer" + g.node(v).rank);
+  });
+
+  _.each(g.edges(), function(e) {
+    h.setEdge(e.v, e.w, {}, e.name);
+  });
+
+  _.each(layerMatrix, function(layer, i) {
+    var layerV = "layer" + i;
+    h.setNode(layerV, { rank: "same" });
+    _.reduce(layer, function(u, v) {
+      h.setEdge(u, v, { style: "invis" });
+      return v;
+    });
+  });
+
+  return h;
+}
+
+},{"./graphlib":37,"./lodash":40,"./util":59}],37:[function(require,module,exports){
+/* global window */
+
+var graphlib;
+
+if (typeof require === "function") {
+  try {
+    graphlib = require("graphlib");
+  } catch (e) {}
+}
+
+if (!graphlib) {
+  graphlib = window.graphlib;
+}
+
+module.exports = graphlib;
+
+},{"graphlib":61}],38:[function(require,module,exports){
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph,
+    List = require("./data/list");
+
+/*
+ * A greedy heuristic for finding a feedback arc set for a graph. A feedback
+ * arc set is a set of edges that can be removed to make a graph acyclic.
+ * The algorithm comes from: P. Eades, X. Lin, and W. F. Smyth, "A fast and
+ * effective heuristic for the feedback arc set problem." This implementation
+ * adjusts that from the paper to allow for weighted edges.
+ */
+module.exports = greedyFAS;
+
+var DEFAULT_WEIGHT_FN = _.constant(1);
+
+function greedyFAS(g, weightFn) {
+  if (g.nodeCount() <= 1) {
+    return [];
+  }
+  var state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
+  var results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
+
+  // Expand multi-edges
+  return _.flatten(_.map(results, function(e) {
+    return g.outEdges(e.v, e.w);
+  }), true);
+}
+
+function doGreedyFAS(g, buckets, zeroIdx) {
+  var results = [],
+      sources = buckets[buckets.length - 1],
+      sinks = buckets[0];
+
+  var entry;
+  while (g.nodeCount()) {
+    while ((entry = sinks.dequeue()))   { removeNode(g, buckets, zeroIdx, entry); }
+    while ((entry = sources.dequeue())) { removeNode(g, buckets, zeroIdx, entry); }
+    if (g.nodeCount()) {
+      for (var i = buckets.length - 2; i > 0; --i) {
+        entry = buckets[i].dequeue();
+        if (entry) {
+          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
+          break;
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+function removeNode(g, buckets, zeroIdx, entry, collectPredecessors) {
+  var results = collectPredecessors ? [] : undefined;
+
+  _.each(g.inEdges(entry.v), function(edge) {
+    var weight = g.edge(edge),
+        uEntry = g.node(edge.v);
+
+    if (collectPredecessors) {
+      results.push({ v: edge.v, w: edge.w });
+    }
+
+    uEntry.out -= weight;
+    assignBucket(buckets, zeroIdx, uEntry);
+  });
+
+  _.each(g.outEdges(entry.v), function(edge) {
+    var weight = g.edge(edge),
+        w = edge.w,
+        wEntry = g.node(w);
+    wEntry["in"] -= weight;
+    assignBucket(buckets, zeroIdx, wEntry);
+  });
+
+  g.removeNode(entry.v);
+
+  return results;
+}
+
+function buildState(g, weightFn) {
+  var fasGraph = new Graph(),
+      maxIn = 0,
+      maxOut = 0;
+
+  _.each(g.nodes(), function(v) {
+    fasGraph.setNode(v, { v: v, "in": 0, out: 0 });
+  });
+
+  // Aggregate weights on nodes, but also sum the weights across multi-edges
+  // into a single edge for the fasGraph.
+  _.each(g.edges(), function(e) {
+    var prevWeight = fasGraph.edge(e.v, e.w) || 0,
+        weight = weightFn(e),
+        edgeWeight = prevWeight + weight;
+    fasGraph.setEdge(e.v, e.w, edgeWeight);
+    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
+    maxIn  = Math.max(maxIn,  fasGraph.node(e.w)["in"]  += weight);
+  });
+
+  var buckets = _.range(maxOut + maxIn + 3).map(function() { return new List(); });
+  var zeroIdx = maxIn + 1;
+
+  _.each(fasGraph.nodes(), function(v) {
+    assignBucket(buckets, zeroIdx, fasGraph.node(v));
+  });
+
+  return { graph: fasGraph, buckets: buckets, zeroIdx: zeroIdx };
+}
+
+function assignBucket(buckets, zeroIdx, entry) {
+  if (!entry.out) {
+    buckets[0].enqueue(entry);
+  } else if (!entry["in"]) {
+    buckets[buckets.length - 1].enqueue(entry);
+  } else {
+    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
+  }
+}
+
+},{"./data/list":35,"./graphlib":37,"./lodash":40}],39:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    acyclic = require("./acyclic"),
+    normalize = require("./normalize"),
+    rank = require("./rank"),
+    normalizeRanks = require("./util").normalizeRanks,
+    parentDummyChains = require("./parent-dummy-chains"),
+    removeEmptyRanks = require("./util").removeEmptyRanks,
+    nestingGraph = require("./nesting-graph"),
+    addBorderSegments = require("./add-border-segments"),
+    coordinateSystem = require("./coordinate-system"),
+    order = require("./order"),
+    position = require("./position"),
+    util = require("./util"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = layout;
+
+function layout(g, opts) {
+  var time = opts && opts.debugTiming ? util.time : util.notime;
+  time("layout", function() {
+    var layoutGraph = time("  buildLayoutGraph",
+                               function() { return buildLayoutGraph(g); });
+    time("  runLayout",        function() { runLayout(layoutGraph, time); });
+    time("  updateInputGraph", function() { updateInputGraph(g, layoutGraph); });
+  });
+}
+
+function runLayout(g, time) {
+  time("    makeSpaceForEdgeLabels", function() { makeSpaceForEdgeLabels(g); });
+  time("    removeSelfEdges",        function() { removeSelfEdges(g); });
+  time("    acyclic",                function() { acyclic.run(g); });
+  time("    nestingGraph.run",       function() { nestingGraph.run(g); });
+  time("    rank",                   function() { rank(util.asNonCompoundGraph(g)); });
+  time("    injectEdgeLabelProxies", function() { injectEdgeLabelProxies(g); });
+  time("    removeEmptyRanks",       function() { removeEmptyRanks(g); });
+  time("    nestingGraph.cleanup",   function() { nestingGraph.cleanup(g); });
+  time("    normalizeRanks",         function() { normalizeRanks(g); });
+  time("    assignRankMinMax",       function() { assignRankMinMax(g); });
+  time("    removeEdgeLabelProxies", function() { removeEdgeLabelProxies(g); });
+  time("    normalize.run",          function() { normalize.run(g); });
+  time("    parentDummyChains",      function() { parentDummyChains(g); });
+  time("    addBorderSegments",      function() { addBorderSegments(g); });
+  time("    order",                  function() { order(g); });
+  time("    insertSelfEdges",        function() { insertSelfEdges(g); });
+  time("    adjustCoordinateSystem", function() { coordinateSystem.adjust(g); });
+  time("    position",               function() { position(g); });
+  time("    positionSelfEdges",      function() { positionSelfEdges(g); });
+  time("    removeBorderNodes",      function() { removeBorderNodes(g); });
+  time("    normalize.undo",         function() { normalize.undo(g); });
+  time("    fixupEdgeLabelCoords",   function() { fixupEdgeLabelCoords(g); });
+  time("    undoCoordinateSystem",   function() { coordinateSystem.undo(g); });
+  time("    translateGraph",         function() { translateGraph(g); });
+  time("    assignNodeIntersects",   function() { assignNodeIntersects(g); });
+  time("    reversePoints",          function() { reversePointsForReversedEdges(g); });
+  time("    acyclic.undo",           function() { acyclic.undo(g); });
+}
+
+/*
+ * Copies final layout information from the layout graph back to the input
+ * graph. This process only copies whitelisted attributes from the layout graph
+ * to the input graph, so it serves as a good place to determine what
+ * attributes can influence layout.
+ */
+function updateInputGraph(inputGraph, layoutGraph) {
+  _.each(inputGraph.nodes(), function(v) {
+    var inputLabel = inputGraph.node(v),
+        layoutLabel = layoutGraph.node(v);
+
+    if (inputLabel) {
+      inputLabel.x = layoutLabel.x;
+      inputLabel.y = layoutLabel.y;
+
+      if (layoutGraph.children(v).length) {
+        inputLabel.width = layoutLabel.width;
+        inputLabel.height = layoutLabel.height;
+      }
+    }
+  });
+
+  _.each(inputGraph.edges(), function(e) {
+    var inputLabel = inputGraph.edge(e),
+        layoutLabel = layoutGraph.edge(e);
+
+    inputLabel.points = layoutLabel.points;
+    if (_.has(layoutLabel, "x")) {
+      inputLabel.x = layoutLabel.x;
+      inputLabel.y = layoutLabel.y;
+    }
+  });
+
+  inputGraph.graph().width = layoutGraph.graph().width;
+  inputGraph.graph().height = layoutGraph.graph().height;
+}
+
+var graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"],
+    graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" },
+    graphAttrs = ["acyclicer", "ranker", "rankdir", "align"],
+    nodeNumAttrs = ["width", "height"],
+    nodeDefaults = { width: 0, height: 0 },
+    edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"],
+    edgeDefaults = {
+      minlen: 1, weight: 1, width: 0, height: 0,
+      labeloffset: 10, labelpos: "r"
+    },
+    edgeAttrs = ["labelpos"];
+
+/*
+ * Constructs a new graph from the input graph, which can be used for layout.
+ * This process copies only whitelisted attributes from the input graph to the
+ * layout graph. Thus this function serves as a good place to determine what
+ * attributes can influence layout.
+ */
+function buildLayoutGraph(inputGraph) {
+  var g = new Graph({ multigraph: true, compound: true }),
+      graph = canonicalize(inputGraph.graph());
+
+  g.setGraph(_.merge({},
+    graphDefaults,
+    selectNumberAttrs(graph, graphNumAttrs),
+    _.pick(graph, graphAttrs)));
+
+  _.each(inputGraph.nodes(), function(v) {
+    var node = canonicalize(inputGraph.node(v));
+    g.setNode(v, _.defaults(selectNumberAttrs(node, nodeNumAttrs), nodeDefaults));
+    g.setParent(v, inputGraph.parent(v));
+  });
+
+  _.each(inputGraph.edges(), function(e) {
+    var edge = canonicalize(inputGraph.edge(e));
+    g.setEdge(e, _.merge({},
+      edgeDefaults,
+      selectNumberAttrs(edge, edgeNumAttrs),
+      _.pick(edge, edgeAttrs)));
+  });
+
+  return g;
+}
+
+/*
+ * This idea comes from the Gansner paper: to account for edge labels in our
+ * layout we split each rank in half by doubling minlen and halving ranksep.
+ * Then we can place labels at these mid-points between nodes.
+ *
+ * We also add some minimal padding to the width to push the label for the edge
+ * away from the edge itself a bit.
+ */
+function makeSpaceForEdgeLabels(g) {
+  var graph = g.graph();
+  graph.ranksep /= 2;
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    edge.minlen *= 2;
+    if (edge.labelpos.toLowerCase() !== "c") {
+      if (graph.rankdir === "TB" || graph.rankdir === "BT") {
+        edge.width += edge.labeloffset;
+      } else {
+        edge.height += edge.labeloffset;
+      }
+    }
+  });
+}
+
+/*
+ * Creates temporary dummy nodes that capture the rank in which each edge's
+ * label is going to, if it has one of non-zero width and height. We do this
+ * so that we can safely remove empty ranks while preserving balance for the
+ * label's position.
+ */
+function injectEdgeLabelProxies(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (edge.width && edge.height) {
+      var v = g.node(e.v),
+          w = g.node(e.w),
+          label = { rank: (w.rank - v.rank) / 2 + v.rank, e: e };
+      util.addDummyNode(g, "edge-proxy", label, "_ep");
+    }
+  });
+}
+
+function assignRankMinMax(g) {
+  var maxRank = 0;
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (node.borderTop) {
+      node.minRank = g.node(node.borderTop).rank;
+      node.maxRank = g.node(node.borderBottom).rank;
+      maxRank = _.max(maxRank, node.maxRank);
+    }
+  });
+  g.graph().maxRank = maxRank;
+}
+
+function removeEdgeLabelProxies(g) {
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (node.dummy === "edge-proxy") {
+      g.edge(node.e).labelRank = node.rank;
+      g.removeNode(v);
+    }
+  });
+}
+
+function translateGraph(g) {
+  var minX = Number.POSITIVE_INFINITY,
+      maxX = 0,
+      minY = Number.POSITIVE_INFINITY,
+      maxY = 0,
+      graphLabel = g.graph(),
+      marginX = graphLabel.marginx || 0,
+      marginY = graphLabel.marginy || 0;
+
+  function getExtremes(attrs) {
+    var x = attrs.x,
+        y = attrs.y,
+        w = attrs.width,
+        h = attrs.height;
+    minX = Math.min(minX, x - w / 2);
+    maxX = Math.max(maxX, x + w / 2);
+    minY = Math.min(minY, y - h / 2);
+    maxY = Math.max(maxY, y + h / 2);
+  }
+
+  _.each(g.nodes(), function(v) { getExtremes(g.node(v)); });
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (_.has(edge, "x")) {
+      getExtremes(edge);
+    }
+  });
+
+  minX -= marginX;
+  minY -= marginY;
+
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    node.x -= minX;
+    node.y -= minY;
+  });
+
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    _.each(edge.points, function(p) {
+      p.x -= minX;
+      p.y -= minY;
+    });
+    if (_.has(edge, "x")) { edge.x -= minX; }
+    if (_.has(edge, "y")) { edge.y -= minY; }
+  });
+
+  graphLabel.width = maxX - minX + marginX;
+  graphLabel.height = maxY - minY + marginY;
+}
+
+function assignNodeIntersects(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e),
+        nodeV = g.node(e.v),
+        nodeW = g.node(e.w),
+        p1, p2;
+    if (!edge.points) {
+      edge.points = [];
+      p1 = nodeW;
+      p2 = nodeV;
+    } else {
+      p1 = edge.points[0];
+      p2 = edge.points[edge.points.length - 1];
+    }
+    edge.points.unshift(util.intersectRect(nodeV, p1));
+    edge.points.push(util.intersectRect(nodeW, p2));
+  });
+}
+
+function fixupEdgeLabelCoords(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (_.has(edge, "x")) {
+      if (edge.labelpos === "l" || edge.labelpos === "r") {
+        edge.width -= edge.labeloffset;
+      }
+      switch (edge.labelpos) {
+        case "l": edge.x -= edge.width / 2 + edge.labeloffset; break;
+        case "r": edge.x += edge.width / 2 + edge.labeloffset; break;
+      }
+    }
+  });
+}
+
+function reversePointsForReversedEdges(g) {
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (edge.reversed) {
+      edge.points.reverse();
+    }
+  });
+}
+
+function removeBorderNodes(g) {
+  _.each(g.nodes(), function(v) {
+    if (g.children(v).length) {
+      var node = g.node(v),
+          t = g.node(node.borderTop),
+          b = g.node(node.borderBottom),
+          l = g.node(_.last(node.borderLeft)),
+          r = g.node(_.last(node.borderRight));
+
+      node.width = Math.abs(r.x - l.x);
+      node.height = Math.abs(b.y - t.y);
+      node.x = l.x + node.width / 2;
+      node.y = t.y + node.height / 2;
+    }
+  });
+
+  _.each(g.nodes(), function(v) {
+    if (g.node(v).dummy === "border") {
+      g.removeNode(v);
+    }
+  });
+}
+
+function removeSelfEdges(g) {
+  _.each(g.edges(), function(e) {
+    if (e.v === e.w) {
+      var node = g.node(e.v);
+      if (!node.selfEdges) {
+        node.selfEdges = [];
+      }
+      node.selfEdges.push({ e: e, label: g.edge(e) });
+      g.removeEdge(e);
+    }
+  });
+}
+
+function insertSelfEdges(g) {
+  var layers = util.buildLayerMatrix(g);
+  _.each(layers, function(layer) {
+    var orderShift = 0;
+    _.each(layer, function(v, i) {
+      var node = g.node(v);
+      node.order = i + orderShift;
+      _.each(node.selfEdges, function(selfEdge) {
+        util.addDummyNode(g, "selfedge", {
+          width: selfEdge.label.width,
+          height: selfEdge.label.height,
+          rank: node.rank,
+          order: i + (++orderShift),
+          e: selfEdge.e,
+          label: selfEdge.label
+        }, "_se");
+      });
+      delete node.selfEdges;
+    });
+  });
+}
+
+function positionSelfEdges(g) {
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (node.dummy === "selfedge") {
+      var selfNode = g.node(node.e.v),
+          x = selfNode.x + selfNode.width / 2,
+          y = selfNode.y,
+          dx = node.x - x,
+          dy = selfNode.height / 2;
+      g.setEdge(node.e, node.label);
+      g.removeNode(v);
+      node.label.points = [
+        { x: x + 2 * dx / 3, y: y - dy },
+        { x: x + 5 * dx / 6, y: y - dy },
+        { x: x +     dx    , y: y },
+        { x: x + 5 * dx / 6, y: y + dy },
+        { x: x + 2 * dx / 3, y: y + dy },
+      ];
+      node.label.x = node.x;
+      node.label.y = node.y;
+    }
+  });
+}
+
+function selectNumberAttrs(obj, attrs) {
+  return _.mapValues(_.pick(obj, attrs), Number);
+}
+
+function canonicalize(attrs) {
+  var newAttrs = {};
+  _.each(attrs, function(v, k) {
+    newAttrs[k.toLowerCase()] = v;
+  });
+  return newAttrs;
+}
+
+},{"./acyclic":32,"./add-border-segments":33,"./coordinate-system":34,"./graphlib":37,"./lodash":40,"./nesting-graph":41,"./normalize":42,"./order":47,"./parent-dummy-chains":52,"./position":54,"./rank":56,"./util":59}],40:[function(require,module,exports){
+/* global window */
+
+var lodash;
+
+if (typeof require === "function") {
+  try {
+    lodash = require("lodash");
+  } catch (e) {}
+}
+
+if (!lodash) {
+  lodash = window._;
+}
+
+module.exports = lodash;
+
+},{"lodash":82}],41:[function(require,module,exports){
+var _ = require("./lodash"),
+    util = require("./util");
+
+module.exports = {
+  run: run,
+  cleanup: cleanup
+};
+
+/*
+ * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
+ * adds appropriate edges to ensure that all cluster nodes are placed between
+ * these boundries, and ensures that the graph is connected.
+ *
+ * In addition we ensure, through the use of the minlen property, that nodes
+ * and subgraph border nodes to not end up on the same rank.
+ *
+ * Preconditions:
+ *
+ *    1. Input graph is a DAG
+ *    2. Nodes in the input graph has a minlen attribute
+ *
+ * Postconditions:
+ *
+ *    1. Input graph is connected.
+ *    2. Dummy nodes are added for the tops and bottoms of subgraphs.
+ *    3. The minlen attribute for nodes is adjusted to ensure nodes do not
+ *       get placed on the same rank as subgraph border nodes.
+ *
+ * The nesting graph idea comes from Sander, "Layout of Compound Directed
+ * Graphs."
+ */
+function run(g) {
+  var root = util.addDummyNode(g, "root", {}, "_root"),
+      depths = treeDepths(g),
+      height = _.max(depths) - 1,
+      nodeSep = 2 * height + 1;
+
+  g.graph().nestingRoot = root;
+
+  // Multiply minlen by nodeSep to align nodes on non-border ranks.
+  _.each(g.edges(), function(e) { g.edge(e).minlen *= nodeSep; });
+
+  // Calculate a weight that is sufficient to keep subgraphs vertically compact
+  var weight = sumWeights(g) + 1;
+
+  // Create border nodes and link them up
+  _.each(g.children(), function(child) {
+    dfs(g, root, nodeSep, weight, height, depths, child);
+  });
+
+  // Save the multiplier for node layers for later removal of empty border
+  // layers.
+  g.graph().nodeRankFactor = nodeSep;
+}
+
+function dfs(g, root, nodeSep, weight, height, depths, v) {
+  var children = g.children(v);
+  if (!children.length) {
+    if (v !== root) {
+      g.setEdge(root, v, { weight: 0, minlen: nodeSep });
+    }
+    return;
+  }
+
+  var top = util.addBorderNode(g, "_bt"),
+      bottom = util.addBorderNode(g, "_bb"),
+      label = g.node(v);
+
+  g.setParent(top, v);
+  label.borderTop = top;
+  g.setParent(bottom, v);
+  label.borderBottom = bottom;
+
+  _.each(children, function(child) {
+    dfs(g, root, nodeSep, weight, height, depths, child);
+
+    var childNode = g.node(child),
+        childTop = childNode.borderTop ? childNode.borderTop : child,
+        childBottom = childNode.borderBottom ? childNode.borderBottom : child,
+        thisWeight = childNode.borderTop ? weight : 2 * weight,
+        minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
+
+    g.setEdge(top, childTop, {
+      weight: thisWeight,
+      minlen: minlen,
+      nestingEdge: true
+    });
+
+    g.setEdge(childBottom, bottom, {
+      weight: thisWeight,
+      minlen: minlen,
+      nestingEdge: true
+    });
+  });
+
+  if (!g.parent(v)) {
+    g.setEdge(root, top, { weight: 0, minlen: height + depths[v] });
+  }
+}
+
+function treeDepths(g) {
+  var depths = {};
+  function dfs(v, depth) {
+    var children = g.children(v);
+    if (children && children.length) {
+      _.each(children, function(child) {
+        dfs(child, depth + 1);
+      });
+    }
+    depths[v] = depth;
+  }
+  _.each(g.children(), function(v) { dfs(v, 1); });
+  return depths;
+}
+
+function sumWeights(g) {
+  return _.reduce(g.edges(), function(acc, e) {
+    return acc + g.edge(e).weight;
+  }, 0);
+}
+
+function cleanup(g) {
+  var graphLabel = g.graph();
+  g.removeNode(graphLabel.nestingRoot);
+  delete graphLabel.nestingRoot;
+  _.each(g.edges(), function(e) {
+    var edge = g.edge(e);
+    if (edge.nestingEdge) {
+      g.removeEdge(e);
+    }
+  });
+}
+
+},{"./lodash":40,"./util":59}],42:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    util = require("./util");
+
+module.exports = {
+  run: run,
+  undo: undo
+};
+
+/*
+ * Breaks any long edges in the graph into short segments that span 1 layer
+ * each. This operation is undoable with the denormalize function.
+ *
+ * Pre-conditions:
+ *
+ *    1. The input graph is a DAG.
+ *    2. Each node in the graph has a "rank" property.
+ *
+ * Post-condition:
+ *
+ *    1. All edges in the graph have a length of 1.
+ *    2. Dummy nodes are added where edges have been split into segments.
+ *    3. The graph is augmented with a "dummyChains" attribute which contains
+ *       the first dummy in each chain of dummy nodes produced.
+ */
+function run(g) {
+  g.graph().dummyChains = [];
+  _.each(g.edges(), function(edge) { normalizeEdge(g, edge); });
+}
+
+function normalizeEdge(g, e) {
+  var v = e.v,
+      vRank = g.node(v).rank,
+      w = e.w,
+      wRank = g.node(w).rank,
+      name = e.name,
+      edgeLabel = g.edge(e),
+      labelRank = edgeLabel.labelRank;
+
+  if (wRank === vRank + 1) return;
+
+  g.removeEdge(e);
+
+  var dummy, attrs, i;
+  for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
+    edgeLabel.points = [];
+    attrs = {
+      width: 0, height: 0,
+      edgeLabel: edgeLabel, edgeObj: e,
+      rank: vRank
+    };
+    dummy = util.addDummyNode(g, "edge", attrs, "_d");
+    if (vRank === labelRank) {
+      attrs.width = edgeLabel.width;
+      attrs.height = edgeLabel.height;
+      attrs.dummy = "edge-label";
+      attrs.labelpos = edgeLabel.labelpos;
+    }
+    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
+    if (i === 0) {
+      g.graph().dummyChains.push(dummy);
+    }
+    v = dummy;
+  }
+
+  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
+}
+
+function undo(g) {
+  _.each(g.graph().dummyChains, function(v) {
+    var node = g.node(v),
+        origLabel = node.edgeLabel,
+        w;
+    g.setEdge(node.edgeObj, origLabel);
+    while (node.dummy) {
+      w = g.successors(v)[0];
+      g.removeNode(v);
+      origLabel.points.push({ x: node.x, y: node.y });
+      if (node.dummy === "edge-label") {
+        origLabel.x = node.x;
+        origLabel.y = node.y;
+        origLabel.width = node.width;
+        origLabel.height = node.height;
+      }
+      v = w;
+      node = g.node(v);
+    }
+  });
+}
+
+},{"./lodash":40,"./util":59}],43:[function(require,module,exports){
+var _ = require("../lodash");
+
+module.exports = addSubgraphConstraints;
+
+function addSubgraphConstraints(g, cg, vs) {
+  var prev = {},
+      rootPrev;
+
+  _.each(vs, function(v) {
+    var child = g.parent(v),
+        parent,
+        prevChild;
+    while (child) {
+      parent = g.parent(child);
+      if (parent) {
+        prevChild = prev[parent];
+        prev[parent] = child;
+      } else {
+        prevChild = rootPrev;
+        rootPrev = child;
+      }
+      if (prevChild && prevChild !== child) {
+        cg.setEdge(prevChild, child);
+        return;
+      }
+      child = parent;
+    }
+  });
+
+  /*
+  function dfs(v) {
+    var children = v ? g.children(v) : g.children();
+    if (children.length) {
+      var min = Number.POSITIVE_INFINITY,
+          subgraphs = [];
+      _.each(children, function(child) {
+        var childMin = dfs(child);
+        if (g.children(child).length) {
+          subgraphs.push({ v: child, order: childMin });
+        }
+        min = Math.min(min, childMin);
+      });
+      _.reduce(_.sortBy(subgraphs, "order"), function(prev, curr) {
+        cg.setEdge(prev.v, curr.v);
+        return curr;
+      });
+      return min;
+    }
+    return g.node(v).order;
+  }
+  dfs(undefined);
+  */
+}
+
+},{"../lodash":40}],44:[function(require,module,exports){
+var _ = require("../lodash");
+
+module.exports = barycenter;
+
+function barycenter(g, movable) {
+  return _.map(movable, function(v) {
+    var inV = g.inEdges(v);
+    if (!inV.length) {
+      return { v: v };
+    } else {
+      var result = _.reduce(inV, function(acc, e) {
+        var edge = g.edge(e),
+            nodeU = g.node(e.v);
+        return {
+          sum: acc.sum + (edge.weight * nodeU.order),
+          weight: acc.weight + edge.weight
+        };
+      }, { sum: 0, weight: 0 });
+
+      return {
+        v: v,
+        barycenter: result.sum / result.weight,
+        weight: result.weight
+      };
+    }
+  });
+}
+
+
+},{"../lodash":40}],45:[function(require,module,exports){
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph;
+
+module.exports = buildLayerGraph;
+
+/*
+ * Constructs a graph that can be used to sort a layer of nodes. The graph will
+ * contain all base and subgraph nodes from the request layer in their original
+ * hierarchy and any edges that are incident on these nodes and are of the type
+ * requested by the "relationship" parameter.
+ *
+ * Nodes from the requested rank that do not have parents are assigned a root
+ * node in the output graph, which is set in the root graph attribute. This
+ * makes it easy to walk the hierarchy of movable nodes during ordering.
+ *
+ * Pre-conditions:
+ *
+ *    1. Input graph is a DAG
+ *    2. Base nodes in the input graph have a rank attribute
+ *    3. Subgraph nodes in the input graph has minRank and maxRank attributes
+ *    4. Edges have an assigned weight
+ *
+ * Post-conditions:
+ *
+ *    1. Output graph has all nodes in the movable rank with preserved
+ *       hierarchy.
+ *    2. Root nodes in the movable layer are made children of the node
+ *       indicated by the root attribute of the graph.
+ *    3. Non-movable nodes incident on movable nodes, selected by the
+ *       relationship parameter, are included in the graph (without hierarchy).
+ *    4. Edges incident on movable nodes, selected by the relationship
+ *       parameter, are added to the output graph.
+ *    5. The weights for copied edges are aggregated as need, since the output
+ *       graph is not a multi-graph.
+ */
+function buildLayerGraph(g, rank, relationship) {
+  var root = createRootNode(g),
+      result = new Graph({ compound: true }).setGraph({ root: root })
+                  .setDefaultNodeLabel(function(v) { return g.node(v); });
+
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v),
+        parent = g.parent(v);
+
+    if (node.rank === rank || node.minRank <= rank && rank <= node.maxRank) {
+      result.setNode(v);
+      result.setParent(v, parent || root);
+
+      // This assumes we have only short edges!
+      _.each(g[relationship](v), function(e) {
+        var u = e.v === v ? e.w : e.v,
+            edge = result.edge(u, v),
+            weight = !_.isUndefined(edge) ? edge.weight : 0;
+        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
+      });
+
+      if (_.has(node, "minRank")) {
+        result.setNode(v, {
+          borderLeft: node.borderLeft[rank],
+          borderRight: node.borderRight[rank]
+        });
+      }
+    }
+  });
+
+  return result;
+}
+
+function createRootNode(g) {
+  var v;
+  while (g.hasNode((v = _.uniqueId("_root"))));
+  return v;
+}
+
+},{"../graphlib":37,"../lodash":40}],46:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = crossCount;
+
+/*
+ * A function that takes a layering (an array of layers, each with an array of
+ * ordererd nodes) and a graph and returns a weighted crossing count.
+ *
+ * Pre-conditions:
+ *
+ *    1. Input graph must be simple (not a multigraph), directed, and include
+ *       only simple edges.
+ *    2. Edges in the input graph must have assigned weights.
+ *
+ * Post-conditions:
+ *
+ *    1. The graph and layering matrix are left unchanged.
+ *
+ * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
+ */
+function crossCount(g, layering) {
+  var cc = 0;
+  for (var i = 1; i < layering.length; ++i) {
+    cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
+  }
+  return cc;
+}
+
+function twoLayerCrossCount(g, northLayer, southLayer) {
+  // Sort all of the edges between the north and south layers by their position
+  // in the north layer and then the south. Map these edges to the position of
+  // their head in the south layer.
+  var southPos = _.zipObject(southLayer,
+                             _.map(southLayer, function (v, i) { return i; }));
+  var southEntries = _.flatten(_.map(northLayer, function(v) {
+    return _.chain(g.outEdges(v))
+            .map(function(e) {
+              return { pos: southPos[e.w], weight: g.edge(e).weight };
+            })
+            .sortBy("pos")
+            .value();
+  }), true);
+
+  // Build the accumulator tree
+  var firstIndex = 1;
+  while (firstIndex < southLayer.length) firstIndex <<= 1;
+  var treeSize = 2 * firstIndex - 1;
+  firstIndex -= 1;
+  var tree = _.map(new Array(treeSize), function() { return 0; });
+
+  // Calculate the weighted crossings
+  var cc = 0;
+  _.each(southEntries.forEach(function(entry) {
+    var index = entry.pos + firstIndex;
+    tree[index] += entry.weight;
+    var weightSum = 0;
+    while (index > 0) {
+      if (index % 2) {
+        weightSum += tree[index + 1];
+      }
+      index = (index - 1) >> 1;
+      tree[index] += entry.weight;
+    }
+    cc += entry.weight * weightSum;
+  }));
+
+  return cc;
+}
+
+},{"../lodash":40}],47:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    initOrder = require("./init-order"),
+    crossCount = require("./cross-count"),
+    sortSubgraph = require("./sort-subgraph"),
+    buildLayerGraph = require("./build-layer-graph"),
+    addSubgraphConstraints = require("./add-subgraph-constraints"),
+    Graph = require("../graphlib").Graph,
+    util = require("../util");
+
+module.exports = order;
+
+/*
+ * Applies heuristics to minimize edge crossings in the graph and sets the best
+ * order solution as an order attribute on each node.
+ *
+ * Pre-conditions:
+ *
+ *    1. Graph must be DAG
+ *    2. Graph nodes must be objects with a "rank" attribute
+ *    3. Graph edges must have the "weight" attribute
+ *
+ * Post-conditions:
+ *
+ *    1. Graph nodes will have an "order" attribute based on the results of the
+ *       algorithm.
+ */
+function order(g) {
+  var maxRank = util.maxRank(g),
+      downLayerGraphs = buildLayerGraphs(g, _.range(1, maxRank + 1), "inEdges"),
+      upLayerGraphs = buildLayerGraphs(g, _.range(maxRank - 1, -1, -1), "outEdges");
+
+  var layering = initOrder(g);
+  assignOrder(g, layering);
+
+  var bestCC = Number.POSITIVE_INFINITY,
+      best;
+
+  for (var i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
+    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
+
+    layering = util.buildLayerMatrix(g);
+    var cc = crossCount(g, layering);
+    if (cc < bestCC) {
+      lastBest = 0;
+      best = _.cloneDeep(layering);
+      bestCC = cc;
+    }
+  }
+
+  assignOrder(g, best);
+}
+
+function buildLayerGraphs(g, ranks, relationship) {
+  return _.map(ranks, function(rank) {
+    return buildLayerGraph(g, rank, relationship);
+  });
+}
+
+function sweepLayerGraphs(layerGraphs, biasRight) {
+  var cg = new Graph();
+  _.each(layerGraphs, function(lg) {
+    var root = lg.graph().root;
+    var sorted = sortSubgraph(lg, root, cg, biasRight);
+    _.each(sorted.vs, function(v, i) {
+      lg.node(v).order = i;
+    });
+    addSubgraphConstraints(lg, cg, sorted.vs);
+  });
+}
+
+function assignOrder(g, layering) {
+  _.each(layering, function(layer) {
+    _.each(layer, function(v, i) {
+      g.node(v).order = i;
+    });
+  });
+}
+
+},{"../graphlib":37,"../lodash":40,"../util":59,"./add-subgraph-constraints":43,"./build-layer-graph":45,"./cross-count":46,"./init-order":48,"./sort-subgraph":50}],48:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = initOrder;
+
+/*
+ * Assigns an initial order value for each node by performing a DFS search
+ * starting from nodes in the first rank. Nodes are assigned an order in their
+ * rank as they are first visited.
+ *
+ * This approach comes from Gansner, et al., "A Technique for Drawing Directed
+ * Graphs."
+ *
+ * Returns a layering matrix with an array per layer and each layer sorted by
+ * the order of its nodes.
+ */
+function initOrder(g) {
+  var visited = {},
+      simpleNodes = _.filter(g.nodes(), function(v) {
+        return !g.children(v).length;
+      }),
+      maxRank = _.max(_.map(simpleNodes, function(v) { return g.node(v).rank; })),
+      layers = _.map(_.range(maxRank + 1), function() { return []; });
+
+  function dfs(v) {
+    if (_.has(visited, v)) return;
+    visited[v] = true;
+    var node = g.node(v);
+    layers[node.rank].push(v);
+    _.each(g.successors(v), dfs);
+  }
+
+  var orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v).rank; });
+  _.each(orderedVs, dfs);
+
+  return layers;
+}
+
+},{"../lodash":40}],49:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = resolveConflicts;
+
+/*
+ * Given a list of entries of the form {v, barycenter, weight} and a
+ * constraint graph this function will resolve any conflicts between the
+ * constraint graph and the barycenters for the entries. If the barycenters for
+ * an entry would violate a constraint in the constraint graph then we coalesce
+ * the nodes in the conflict into a new node that respects the contraint and
+ * aggregates barycenter and weight information.
+ *
+ * This implementation is based on the description in Forster, "A Fast and
+ * Simple Hueristic for Constrained Two-Level Crossing Reduction," thought it
+ * differs in some specific details.
+ *
+ * Pre-conditions:
+ *
+ *    1. Each entry has the form {v, barycenter, weight}, or if the node has
+ *       no barycenter, then {v}.
+ *
+ * Returns:
+ *
+ *    A new list of entries of the form {vs, i, barycenter, weight}. The list
+ *    `vs` may either be a singleton or it may be an aggregation of nodes
+ *    ordered such that they do not violate constraints from the constraint
+ *    graph. The property `i` is the lowest original index of any of the
+ *    elements in `vs`.
+ */
+function resolveConflicts(entries, cg) {
+  var mappedEntries = {};
+  _.each(entries, function(entry, i) {
+    var tmp = mappedEntries[entry.v] = {
+      indegree: 0,
+      "in": [],
+      out: [],
+      vs: [entry.v],
+      i: i
+    };
+    if (!_.isUndefined(entry.barycenter)) {
+      tmp.barycenter = entry.barycenter;
+      tmp.weight = entry.weight;
+    }
+  });
+
+  _.each(cg.edges(), function(e) {
+    var entryV = mappedEntries[e.v],
+        entryW = mappedEntries[e.w];
+    if (!_.isUndefined(entryV) && !_.isUndefined(entryW)) {
+      entryW.indegree++;
+      entryV.out.push(mappedEntries[e.w]);
+    }
+  });
+
+  var sourceSet = _.filter(mappedEntries, function(entry) {
+    return !entry.indegree;
+  });
+
+  return doResolveConflicts(sourceSet);
+}
+
+function doResolveConflicts(sourceSet) {
+  var entries = [];
+
+  function handleIn(vEntry) {
+    return function(uEntry) {
+      if (uEntry.merged) {
+        return;
+      }
+      if (_.isUndefined(uEntry.barycenter) ||
+          _.isUndefined(vEntry.barycenter) ||
+          uEntry.barycenter >= vEntry.barycenter) {
+        mergeEntries(vEntry, uEntry);
+      }
+    };
+  }
+
+  function handleOut(vEntry) {
+    return function(wEntry) {
+      wEntry["in"].push(vEntry);
+      if (--wEntry.indegree === 0) {
+        sourceSet.push(wEntry);
+      }
+    };
+  }
+
+  while (sourceSet.length) {
+    var entry = sourceSet.pop();
+    entries.push(entry);
+    _.each(entry["in"].reverse(), handleIn(entry));
+    _.each(entry.out, handleOut(entry));
+  }
+
+  return _.chain(entries)
+          .filter(function(entry) { return !entry.merged; })
+          .map(function(entry) {
+            return _.pick(entry, ["vs", "i", "barycenter", "weight"]);
+          })
+          .value();
+}
+
+function mergeEntries(target, source) {
+  var sum = 0,
+      weight = 0;
+
+  if (target.weight) {
+    sum += target.barycenter * target.weight;
+    weight += target.weight;
+  }
+
+  if (source.weight) {
+    sum += source.barycenter * source.weight;
+    weight += source.weight;
+  }
+
+  target.vs = source.vs.concat(target.vs);
+  target.barycenter = sum / weight;
+  target.weight = weight;
+  target.i = Math.min(source.i, target.i);
+  source.merged = true;
+}
+
+},{"../lodash":40}],50:[function(require,module,exports){
+var _ = require("../lodash"),
+    barycenter = require("./barycenter"),
+    resolveConflicts = require("./resolve-conflicts"),
+    sort = require("./sort");
+
+module.exports = sortSubgraph;
+
+function sortSubgraph(g, v, cg, biasRight) {
+  var movable = g.children(v),
+      node = g.node(v),
+      bl = node ? node.borderLeft : undefined,
+      br = node ? node.borderRight: undefined,
+      subgraphs = {};
+
+  if (bl) {
+    movable = _.filter(movable, function(w) {
+      return w !== bl && w !== br;
+    });
+  }
+
+  var barycenters = barycenter(g, movable);
+  _.each(barycenters, function(entry) {
+    if (g.children(entry.v).length) {
+      var subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
+      subgraphs[entry.v] = subgraphResult;
+      if (_.has(subgraphResult, "barycenter")) {
+        mergeBarycenters(entry, subgraphResult);
+      }
+    }
+  });
+
+  var entries = resolveConflicts(barycenters, cg);
+  expandSubgraphs(entries, subgraphs);
+
+  var result = sort(entries, biasRight);
+
+  if (bl) {
+    result.vs = _.flatten([bl, result.vs, br], true);
+    if (g.predecessors(bl).length) {
+      var blPred = g.node(g.predecessors(bl)[0]),
+          brPred = g.node(g.predecessors(br)[0]);
+      if (!_.has(result, "barycenter")) {
+        result.barycenter = 0;
+        result.weight = 0;
+      }
+      result.barycenter = (result.barycenter * result.weight +
+                           blPred.order + brPred.order) / (result.weight + 2);
+      result.weight += 2;
+    }
+  }
+
+  return result;
+}
+
+function expandSubgraphs(entries, subgraphs) {
+  _.each(entries, function(entry) {
+    entry.vs = _.flatten(entry.vs.map(function(v) {
+      if (subgraphs[v]) {
+        return subgraphs[v].vs;
+      }
+      return v;
+    }), true);
+  });
+}
+
+function mergeBarycenters(target, other) {
+  if (!_.isUndefined(target.barycenter)) {
+    target.barycenter = (target.barycenter * target.weight +
+                         other.barycenter * other.weight) /
+                        (target.weight + other.weight);
+    target.weight += other.weight;
+  } else {
+    target.barycenter = other.barycenter;
+    target.weight = other.weight;
+  }
+}
+
+},{"../lodash":40,"./barycenter":44,"./resolve-conflicts":49,"./sort":51}],51:[function(require,module,exports){
+var _ = require("../lodash"),
+    util = require("../util");
+
+module.exports = sort;
+
+function sort(entries, biasRight) {
+  var parts = util.partition(entries, function(entry) {
+    return _.has(entry, "barycenter");
+  });
+  var sortable = parts.lhs,
+      unsortable = _.sortBy(parts.rhs, function(entry) { return -entry.i; }),
+      vs = [],
+      sum = 0,
+      weight = 0,
+      vsIndex = 0;
+
+  sortable.sort(compareWithBias(!!biasRight));
+
+  vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
+
+  _.each(sortable, function (entry) {
+    vsIndex += entry.vs.length;
+    vs.push(entry.vs);
+    sum += entry.barycenter * entry.weight;
+    weight += entry.weight;
+    vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
+  });
+
+  var result = { vs: _.flatten(vs, true) };
+  if (weight) {
+    result.barycenter = sum / weight;
+    result.weight = weight;
+  }
+  return result;
+}
+
+function consumeUnsortable(vs, unsortable, index) {
+  var last;
+  while (unsortable.length && (last = _.last(unsortable)).i <= index) {
+    unsortable.pop();
+    vs.push(last.vs);
+    index++;
+  }
+  return index;
+}
+
+function compareWithBias(bias) {
+  return function(entryV, entryW) {
+    if (entryV.barycenter < entryW.barycenter) {
+      return -1;
+    } else if (entryV.barycenter > entryW.barycenter) {
+      return 1;
+    }
+
+    return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
+  };
+}
+
+},{"../lodash":40,"../util":59}],52:[function(require,module,exports){
+var _ = require("./lodash");
+
+module.exports = parentDummyChains;
+
+function parentDummyChains(g) {
+  var postorderNums = postorder(g);
+
+  _.each(g.graph().dummyChains, function(v) {
+    var node = g.node(v),
+        edgeObj = node.edgeObj,
+        pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w),
+        path = pathData.path,
+        lca = pathData.lca,
+        pathIdx = 0,
+        pathV = path[pathIdx],
+        ascending = true;
+
+    while (v !== edgeObj.w) {
+      node = g.node(v);
+
+      if (ascending) {
+        while ((pathV = path[pathIdx]) !== lca &&
+               g.node(pathV).maxRank < node.rank) {
+          pathIdx++;
+        }
+
+        if (pathV === lca) {
+          ascending = false;
+        }
+      }
+
+      if (!ascending) {
+        while (pathIdx < path.length - 1 &&
+               g.node(pathV = path[pathIdx + 1]).minRank <= node.rank) {
+          pathIdx++;
+        }
+        pathV = path[pathIdx];
+      }
+
+      g.setParent(v, pathV);
+      v = g.successors(v)[0];
+    }
+  });
+}
+
+// Find a path from v to w through the lowest common ancestor (LCA). Return the
+// full path and the LCA.
+function findPath(g, postorderNums, v, w) {
+  var vPath = [],
+      wPath = [],
+      low = Math.min(postorderNums[v].low, postorderNums[w].low),
+      lim = Math.max(postorderNums[v].lim, postorderNums[w].lim),
+      parent,
+      lca;
+
+  // Traverse up from v to find the LCA
+  parent = v;
+  do {
+    parent = g.parent(parent);
+    vPath.push(parent);
+  } while (parent &&
+           (postorderNums[parent].low > low || lim > postorderNums[parent].lim));
+  lca = parent;
+
+  // Traverse from w to LCA
+  parent = w;
+  while ((parent = g.parent(parent)) !== lca) {
+    wPath.push(parent);
+  }
+
+  return { path: vPath.concat(wPath.reverse()), lca: lca };
+}
+
+function postorder(g) {
+  var result = {},
+      lim = 0;
+
+  function dfs(v) {
+    var low = lim;
+    _.each(g.children(v), dfs);
+    result[v] = { low: low, lim: lim++ };
+  }
+  _.each(g.children(), dfs);
+
+  return result;
+}
+
+},{"./lodash":40}],53:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph,
+    util = require("../util");
+
+/*
+ * This module provides coordinate assignment based on Brandes and Köpf, "Fast
+ * and Simple Horizontal Coordinate Assignment."
+ */
+
+module.exports = {
+  positionX: positionX,
+  findType1Conflicts: findType1Conflicts,
+  findType2Conflicts: findType2Conflicts,
+  addConflict: addConflict,
+  hasConflict: hasConflict,
+  verticalAlignment: verticalAlignment,
+  horizontalCompaction: horizontalCompaction,
+  alignCoordinates: alignCoordinates,
+  findSmallestWidthAlignment: findSmallestWidthAlignment,
+  balance: balance
+};
+
+/*
+ * Marks all edges in the graph with a type-1 conflict with the "type1Conflict"
+ * property. A type-1 conflict is one where a non-inner segment crosses an
+ * inner segment. An inner segment is an edge with both incident nodes marked
+ * with the "dummy" property.
+ *
+ * This algorithm scans layer by layer, starting with the second, for type-1
+ * conflicts between the current layer and the previous layer. For each layer
+ * it scans the nodes from left to right until it reaches one that is incident
+ * on an inner segment. It then scans predecessors to determine if they have
+ * edges that cross that inner segment. At the end a final scan is done for all
+ * nodes on the current rank to see if they cross the last visited inner
+ * segment.
+ *
+ * This algorithm (safely) assumes that a dummy node will only be incident on a
+ * single node in the layers being scanned.
+ */
+function findType1Conflicts(g, layering) {
+  var conflicts = {};
+
+  function visitLayer(prevLayer, layer) {
+    var
+      // last visited node in the previous layer that is incident on an inner
+      // segment.
+      k0 = 0,
+      // Tracks the last node in this layer scanned for crossings with a type-1
+      // segment.
+      scanPos = 0,
+      prevLayerLength = prevLayer.length,
+      lastNode = _.last(layer);
+
+    _.each(layer, function(v, i) {
+      var w = findOtherInnerSegmentNode(g, v),
+          k1 = w ? g.node(w).order : prevLayerLength;
+
+      if (w || v === lastNode) {
+        _.each(layer.slice(scanPos, i +1), function(scanNode) {
+          _.each(g.predecessors(scanNode), function(u) {
+            var uLabel = g.node(u),
+                uPos = uLabel.order;
+            if ((uPos < k0 || k1 < uPos) &&
+                !(uLabel.dummy && g.node(scanNode).dummy)) {
+              addConflict(conflicts, u, scanNode);
+            }
+          });
+        });
+        scanPos = i + 1;
+        k0 = k1;
+      }
+    });
+
+    return layer;
+  }
+
+  _.reduce(layering, visitLayer);
+  return conflicts;
+}
+
+function findType2Conflicts(g, layering) {
+  var conflicts = {};
+
+  function scan(south, southPos, southEnd, prevNorthBorder, nextNorthBorder) {
+    var v;
+    _.each(_.range(southPos, southEnd), function(i) {
+      v = south[i];
+      if (g.node(v).dummy) {
+        _.each(g.predecessors(v), function(u) {
+          var uNode = g.node(u);
+          if (uNode.dummy &&
+              (uNode.order < prevNorthBorder || uNode.order > nextNorthBorder)) {
+            addConflict(conflicts, u, v);
+          }
+        });
+      }
+    });
+  }
+
+
+  function visitLayer(north, south) {
+    var prevNorthPos = -1,
+        nextNorthPos,
+        southPos = 0;
+
+    _.each(south, function(v, southLookahead) {
+      if (g.node(v).dummy === "border") {
+        var predecessors = g.predecessors(v);
+        if (predecessors.length) {
+          nextNorthPos = g.node(predecessors[0]).order;
+          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
+          southPos = southLookahead;
+          prevNorthPos = nextNorthPos;
+        }
+      }
+      scan(south, southPos, south.length, nextNorthPos, north.length);
+    });
+
+    return south;
+  }
+
+  _.reduce(layering, visitLayer);
+  return conflicts;
+}
+
+function findOtherInnerSegmentNode(g, v) {
+  if (g.node(v).dummy) {
+    return _.find(g.predecessors(v), function(u) {
+      return g.node(u).dummy;
+    });
+  }
+}
+
+function addConflict(conflicts, v, w) {
+  if (v > w) {
+    var tmp = v;
+    v = w;
+    w = tmp;
+  }
+
+  var conflictsV = conflicts[v];
+  if (!conflictsV) {
+    conflicts[v] = conflictsV = {};
+  }
+  conflictsV[w] = true;
+}
+
+function hasConflict(conflicts, v, w) {
+  if (v > w) {
+    var tmp = v;
+    v = w;
+    w = tmp;
+  }
+  return _.has(conflicts[v], w);
+}
+
+/*
+ * Try to align nodes into vertical "blocks" where possible. This algorithm
+ * attempts to align a node with one of its median neighbors. If the edge
+ * connecting a neighbor is a type-1 conflict then we ignore that possibility.
+ * If a previous node has already formed a block with a node after the node
+ * we're trying to form a block with, we also ignore that possibility - our
+ * blocks would be split in that scenario.
+ */
+function verticalAlignment(g, layering, conflicts, neighborFn) {
+  var root = {},
+      align = {},
+      pos = {};
+
+  // We cache the position here based on the layering because the graph and
+  // layering may be out of sync. The layering matrix is manipulated to
+  // generate different extreme alignments.
+  _.each(layering, function(layer) {
+    _.each(layer, function(v, order) {
+      root[v] = v;
+      align[v] = v;
+      pos[v] = order;
+    });
+  });
+
+  _.each(layering, function(layer) {
+    var prevIdx = -1;
+    _.each(layer, function(v) {
+      var ws = neighborFn(v);
+      if (ws.length) {
+        ws = _.sortBy(ws, function(w) { return pos[w]; });
+        var mp = (ws.length - 1) / 2;
+        for (var i = Math.floor(mp), il = Math.ceil(mp); i <= il; ++i) {
+          var w = ws[i];
+          if (align[v] === v &&
+              prevIdx < pos[w] &&
+              !hasConflict(conflicts, v, w)) {
+            align[w] = v;
+            align[v] = root[v] = root[w];
+            prevIdx = pos[w];
+          }
+        }
+      }
+    });
+  });
+
+  return { root: root, align: align };
+}
+
+function horizontalCompaction(g, layering, root, align, reverseSep) {
+  // This portion of the algorithm differs from BK due to a number of problems.
+  // Instead of their algorithm we construct a new block graph and do two
+  // sweeps. The first sweep places blocks with the smallest possible
+  // coordinates. The second sweep removes unused space by moving blocks to the
+  // greatest coordinates without violating separation.
+  var xs = {},
+      blockG = buildBlockGraph(g, layering, root, reverseSep);
+
+  // First pass, assign smallest coordinates via DFS
+  var visited = {};
+  function pass1(v) {
+    if (!_.has(visited, v)) {
+      visited[v] = true;
+      xs[v] = _.reduce(blockG.inEdges(v), function(max, e) {
+        pass1(e.v);
+        return Math.max(max, xs[e.v] + blockG.edge(e));
+      }, 0);
+    }
+  }
+  _.each(blockG.nodes(), pass1);
+
+  var borderType = reverseSep ? "borderLeft" : "borderRight";
+  function pass2(v) {
+    if (visited[v] !== 2) {
+      visited[v]++;
+      var node = g.node(v);
+      var min = _.reduce(blockG.outEdges(v), function(min, e) {
+        pass2(e.w);
+        return Math.min(min, xs[e.w] - blockG.edge(e));
+      }, Number.POSITIVE_INFINITY);
+      if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
+        xs[v] = Math.max(xs[v], min);
+      }
+    }
+  }
+  _.each(blockG.nodes(), pass2);
+
+  // Assign x coordinates to all nodes
+  _.each(align, function(v) {
+    xs[v] = xs[root[v]];
+  });
+
+  return xs;
+}
+
+
+function buildBlockGraph(g, layering, root, reverseSep) {
+  var blockGraph = new Graph(),
+      graphLabel = g.graph(),
+      sepFn = sep(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
+
+  _.each(layering, function(layer) {
+    var u;
+    _.each(layer, function(v) {
+      var vRoot = root[v];
+      blockGraph.setNode(vRoot);
+      if (u) {
+        var uRoot = root[u],
+            prevMax = blockGraph.edge(uRoot, vRoot);
+        blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
+      }
+      u = v;
+    });
+  });
+
+  return blockGraph;
+}
+
+/*
+ * Returns the alignment that has the smallest width of the given alignments.
+ */
+function findSmallestWidthAlignment(g, xss) {
+  return _.min(xss, function(xs) {
+    var min = _.min(xs, function(x, v) { return x - width(g, v) / 2; }),
+        max = _.max(xs, function(x, v) { return x + width(g, v) / 2; });
+    return max - min;
+  });
+}
+
+/*
+ * Align the coordinates of each of the layout alignments such that
+ * left-biased alignments have their minimum coordinate at the same point as
+ * the minimum coordinate of the smallest width alignment and right-biased
+ * alignments have their maximum coordinate at the same point as the maximum
+ * coordinate of the smallest width alignment.
+ */
+function alignCoordinates(xss, alignTo) {
+  var alignToMin = _.min(alignTo),
+      alignToMax = _.max(alignTo);
+
+  _.each(["u", "d"], function(vert) {
+    _.each(["l", "r"], function(horiz) {
+      var alignment = vert + horiz,
+          xs = xss[alignment],
+          delta;
+      if (xs === alignTo) return;
+
+      delta = horiz === "l" ? alignToMin - _.min(xs) : alignToMax - _.max(xs);
+
+      if (delta) {
+        xss[alignment] = _.mapValues(xs, function(x) { return x + delta; });
+      }
+    });
+  });
+}
+
+function balance(xss, align) {
+  return _.mapValues(xss.ul, function(ignore, v) {
+    if (align) {
+      return xss[align.toLowerCase()][v];
+    } else {
+      var xs = _.sortBy(_.pluck(xss, v));
+      return (xs[1] + xs[2]) / 2;
+    }
+  });
+}
+
+function positionX(g) {
+  var layering = util.buildLayerMatrix(g),
+      conflicts = _.merge(findType1Conflicts(g, layering),
+                          findType2Conflicts(g, layering));
+
+  var xss = {},
+      adjustedLayering;
+  _.each(["u", "d"], function(vert) {
+    adjustedLayering = vert === "u" ? layering : _.values(layering).reverse();
+    _.each(["l", "r"], function(horiz) {
+      if (horiz === "r") {
+        adjustedLayering = _.map(adjustedLayering, function(inner) {
+          return _.values(inner).reverse();
+        });
+      }
+
+      var neighborFn = _.bind(vert === "u" ? g.predecessors : g.successors, g);
+      var align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
+      var xs = horizontalCompaction(g, adjustedLayering,
+                                    align.root, align.align,
+                                    horiz === "r");
+      if (horiz === "r") {
+        xs = _.mapValues(xs, function(x) { return -x; });
+      }
+      xss[vert + horiz] = xs;
+    });
+  });
+
+  var smallestWidth = findSmallestWidthAlignment(g, xss);
+  alignCoordinates(xss, smallestWidth);
+  return balance(xss, g.graph().align);
+}
+
+function sep(nodeSep, edgeSep, reverseSep) {
+  return function(g, v, w) {
+    var vLabel = g.node(v),
+        wLabel = g.node(w),
+        sum = 0,
+        delta;
+
+    sum += vLabel.width / 2;
+    if (_.has(vLabel, "labelpos")) {
+      switch (vLabel.labelpos.toLowerCase()) {
+        case "l": delta = -vLabel.width / 2; break;
+        case "r": delta = vLabel.width / 2; break;
+      }
+    }
+    if (delta) {
+      sum += reverseSep ? delta : -delta;
+    }
+    delta = 0;
+
+    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
+    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
+
+    sum += wLabel.width / 2;
+    if (_.has(wLabel, "labelpos")) {
+      switch (wLabel.labelpos.toLowerCase()) {
+        case "l": delta = wLabel.width / 2; break;
+        case "r": delta = -wLabel.width / 2; break;
+      }
+    }
+    if (delta) {
+      sum += reverseSep ? delta : -delta;
+    }
+    delta = 0;
+
+    return sum;
+  };
+}
+
+function width(g, v) {
+  return g.node(v).width;
+}
+
+},{"../graphlib":37,"../lodash":40,"../util":59}],54:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    util = require("../util"),
+    positionX = require("./bk").positionX;
+
+module.exports = position;
+
+function position(g) {
+  g = util.asNonCompoundGraph(g);
+
+  positionY(g);
+  _.each(positionX(g), function(x, v) {
+    g.node(v).x = x;
+  });
+}
+
+function positionY(g) {
+  var layering = util.buildLayerMatrix(g),
+      rankSep = g.graph().ranksep,
+      prevY = 0;
+  _.each(layering, function(layer) {
+    var maxHeight = _.max(_.map(layer, function(v) { return g.node(v).height; }));
+    _.each(layer, function(v) {
+      g.node(v).y = prevY + maxHeight / 2;
+    });
+    prevY += maxHeight + rankSep;
+  });
+}
+
+
+},{"../lodash":40,"../util":59,"./bk":53}],55:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    Graph = require("../graphlib").Graph,
+    slack = require("./util").slack;
+
+module.exports = feasibleTree;
+
+/*
+ * Constructs a spanning tree with tight edges and adjusted the input node's
+ * ranks to achieve this. A tight edge is one that is has a length that matches
+ * its "minlen" attribute.
+ *
+ * The basic structure for this function is derived from Gansner, et al., "A
+ * Technique for Drawing Directed Graphs."
+ *
+ * Pre-conditions:
+ *
+ *    1. Graph must be a DAG.
+ *    2. Graph must be connected.
+ *    3. Graph must have at least one node.
+ *    5. Graph nodes must have been previously assigned a "rank" property that
+ *       respects the "minlen" property of incident edges.
+ *    6. Graph edges must have a "minlen" property.
+ *
+ * Post-conditions:
+ *
+ *    - Graph nodes will have their rank adjusted to ensure that all edges are
+ *      tight.
+ *
+ * Returns a tree (undirected graph) that is constructed using only "tight"
+ * edges.
+ */
+function feasibleTree(g) {
+  var t = new Graph({ directed: false });
+
+  // Choose arbitrary node from which to start our tree
+  var start = g.nodes()[0],
+      size = g.nodeCount();
+  t.setNode(start, {});
+
+  var edge, delta;
+  while (tightTree(t, g) < size) {
+    edge = findMinSlackEdge(t, g);
+    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
+    shiftRanks(t, g, delta);
+  }
+
+  return t;
+}
+
+/*
+ * Finds a maximal tree of tight edges and returns the number of nodes in the
+ * tree.
+ */
+function tightTree(t, g) {
+  function dfs(v) {
+    _.each(g.nodeEdges(v), function(e) {
+      var edgeV = e.v,
+          w = (v === edgeV) ? e.w : edgeV;
+      if (!t.hasNode(w) && !slack(g, e)) {
+        t.setNode(w, {});
+        t.setEdge(v, w, {});
+        dfs(w);
+      }
+    });
+  }
+
+  _.each(t.nodes(), dfs);
+  return t.nodeCount();
+}
+
+/*
+ * Finds the edge with the smallest slack that is incident on tree and returns
+ * it.
+ */
+function findMinSlackEdge(t, g) {
+  return _.min(g.edges(), function(e) {
+    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
+      return slack(g, e);
+    }
+  });
+}
+
+function shiftRanks(t, g, delta) {
+  _.each(t.nodes(), function(v) {
+    g.node(v).rank += delta;
+  });
+}
+
+},{"../graphlib":37,"../lodash":40,"./util":58}],56:[function(require,module,exports){
+"use strict";
+
+var rankUtil = require("./util"),
+    longestPath = rankUtil.longestPath,
+    feasibleTree = require("./feasible-tree"),
+    networkSimplex = require("./network-simplex");
+
+module.exports = rank;
+
+/*
+ * Assigns a rank to each node in the input graph that respects the "minlen"
+ * constraint specified on edges between nodes.
+ *
+ * This basic structure is derived from Gansner, et al., "A Technique for
+ * Drawing Directed Graphs."
+ *
+ * Pre-conditions:
+ *
+ *    1. Graph must be a connected DAG
+ *    2. Graph nodes must be objects
+ *    3. Graph edges must have "weight" and "minlen" attributes
+ *
+ * Post-conditions:
+ *
+ *    1. Graph nodes will have a "rank" attribute based on the results of the
+ *       algorithm. Ranks can start at any index (including negative), we'll
+ *       fix them up later.
+ */
+function rank(g) {
+  switch(g.graph().ranker) {
+    case "network-simplex": networkSimplexRanker(g); break;
+    case "tight-tree": tightTreeRanker(g); break;
+    case "longest-path": longestPathRanker(g); break;
+    default: networkSimplexRanker(g);
+  }
+}
+
+// A fast and simple ranker, but results are far from optimal.
+var longestPathRanker = longestPath;
+
+function tightTreeRanker(g) {
+  longestPath(g);
+  feasibleTree(g);
+}
+
+function networkSimplexRanker(g) {
+  networkSimplex(g);
+}
+
+},{"./feasible-tree":55,"./network-simplex":57,"./util":58}],57:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash"),
+    feasibleTree = require("./feasible-tree"),
+    slack = require("./util").slack,
+    initRank = require("./util").longestPath,
+    preorder = require("../graphlib").alg.preorder,
+    postorder = require("../graphlib").alg.postorder,
+    simplify = require("../util").simplify;
+
+module.exports = networkSimplex;
+
+// Expose some internals for testing purposes
+networkSimplex.initLowLimValues = initLowLimValues;
+networkSimplex.initCutValues = initCutValues;
+networkSimplex.calcCutValue = calcCutValue;
+networkSimplex.leaveEdge = leaveEdge;
+networkSimplex.enterEdge = enterEdge;
+networkSimplex.exchangeEdges = exchangeEdges;
+
+/*
+ * The network simplex algorithm assigns ranks to each node in the input graph
+ * and iteratively improves the ranking to reduce the length of edges.
+ *
+ * Preconditions:
+ *
+ *    1. The input graph must be a DAG.
+ *    2. All nodes in the graph must have an object value.
+ *    3. All edges in the graph must have "minlen" and "weight" attributes.
+ *
+ * Postconditions:
+ *
+ *    1. All nodes in the graph will have an assigned "rank" attribute that has
+ *       been optimized by the network simplex algorithm. Ranks start at 0.
+ *
+ *
+ * A rough sketch of the algorithm is as follows:
+ *
+ *    1. Assign initial ranks to each node. We use the longest path algorithm,
+ *       which assigns ranks to the lowest position possible. In general this
+ *       leads to very wide bottom ranks and unnecessarily long edges.
+ *    2. Construct a feasible tight tree. A tight tree is one such that all
+ *       edges in the tree have no slack (difference between length of edge
+ *       and minlen for the edge). This by itself greatly improves the assigned
+ *       rankings by shorting edges.
+ *    3. Iteratively find edges that have negative cut values. Generally a
+ *       negative cut value indicates that the edge could be removed and a new
+ *       tree edge could be added to produce a more compact graph.
+ *
+ * Much of the algorithms here are derived from Gansner, et al., "A Technique
+ * for Drawing Directed Graphs." The structure of the file roughly follows the
+ * structure of the overall algorithm.
+ */
+function networkSimplex(g) {
+  g = simplify(g);
+  initRank(g);
+  var t = feasibleTree(g);
+  initLowLimValues(t);
+  initCutValues(t, g);
+
+  var e, f;
+  while ((e = leaveEdge(t))) {
+    f = enterEdge(t, g, e);
+    exchangeEdges(t, g, e, f);
+  }
+}
+
+/*
+ * Initializes cut values for all edges in the tree.
+ */
+function initCutValues(t, g) {
+  var vs = postorder(t, t.nodes());
+  vs = vs.slice(0, vs.length - 1);
+  _.each(vs, function(v) {
+    assignCutValue(t, g, v);
+  });
+}
+
+function assignCutValue(t, g, child) {
+  var childLab = t.node(child),
+      parent = childLab.parent;
+  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
+}
+
+/*
+ * Given the tight tree, its graph, and a child in the graph calculate and
+ * return the cut value for the edge between the child and its parent.
+ */
+function calcCutValue(t, g, child) {
+  var childLab = t.node(child),
+      parent = childLab.parent,
+      // True if the child is on the tail end of the edge in the directed graph
+      childIsTail = true,
+      // The graph's view of the tree edge we're inspecting
+      graphEdge = g.edge(child, parent),
+      // The accumulated cut value for the edge between this node and its parent
+      cutValue = 0;
+
+  if (!graphEdge) {
+    childIsTail = false;
+    graphEdge = g.edge(parent, child);
+  }
+
+  cutValue = graphEdge.weight;
+
+  _.each(g.nodeEdges(child), function(e) {
+    var isOutEdge = e.v === child,
+        other = isOutEdge ? e.w : e.v;
+
+    if (other !== parent) {
+      var pointsToHead = isOutEdge === childIsTail,
+          otherWeight = g.edge(e).weight;
+
+      cutValue += pointsToHead ? otherWeight : -otherWeight;
+      if (isTreeEdge(t, child, other)) {
+        var otherCutValue = t.edge(child, other).cutvalue;
+        cutValue += pointsToHead ? -otherCutValue : otherCutValue;
+      }
+    }
+  });
+
+  return cutValue;
+}
+
+function initLowLimValues(tree, root) {
+  if (arguments.length < 2) {
+    root = tree.nodes()[0];
+  }
+  dfsAssignLowLim(tree, {}, 1, root);
+}
+
+function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
+  var low = nextLim,
+      label = tree.node(v);
+
+  visited[v] = true;
+  _.each(tree.neighbors(v), function(w) {
+    if (!_.has(visited, w)) {
+      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
+    }
+  });
+
+  label.low = low;
+  label.lim = nextLim++;
+  if (parent) {
+    label.parent = parent;
+  } else {
+    // TODO should be able to remove this when we incrementally update low lim
+    delete label.parent;
+  }
+
+  return nextLim;
+}
+
+function leaveEdge(tree) {
+  return _.find(tree.edges(), function(e) {
+    return tree.edge(e).cutvalue < 0;
+  });
+}
+
+function enterEdge(t, g, edge) {
+  var v = edge.v,
+      w = edge.w;
+
+  // For the rest of this function we assume that v is the tail and w is the
+  // head, so if we don't have this edge in the graph we should flip it to
+  // match the correct orientation.
+  if (!g.hasEdge(v, w)) {
+    v = edge.w;
+    w = edge.v;
+  }
+
+  var vLabel = t.node(v),
+      wLabel = t.node(w),
+      tailLabel = vLabel,
+      flip = false;
+
+  // If the root is in the tail of the edge then we need to flip the logic that
+  // checks for the head and tail nodes in the candidates function below.
+  if (vLabel.lim > wLabel.lim) {
+    tailLabel = wLabel;
+    flip = true;
+  }
+
+  var candidates = _.filter(g.edges(), function(edge) {
+    return flip === isDescendant(t, t.node(edge.v), tailLabel) &&
+           flip !== isDescendant(t, t.node(edge.w), tailLabel);
+  });
+
+  return _.min(candidates, function(edge) { return slack(g, edge); });
+}
+
+function exchangeEdges(t, g, e, f) {
+  var v = e.v,
+      w = e.w;
+  t.removeEdge(v, w);
+  t.setEdge(f.v, f.w, {});
+  initLowLimValues(t);
+  initCutValues(t, g);
+  updateRanks(t, g);
+}
+
+function updateRanks(t, g) {
+  var root = _.find(t.nodes(), function(v) { return !g.node(v).parent; }),
+      vs = preorder(t, root);
+  vs = vs.slice(1);
+  _.each(vs, function(v) {
+    var parent = t.node(v).parent,
+        edge = g.edge(v, parent),
+        flipped = false;
+
+    if (!edge) {
+      edge = g.edge(parent, v);
+      flipped = true;
+    }
+
+    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
+  });
+}
+
+/*
+ * Returns true if the edge is in the tree.
+ */
+function isTreeEdge(tree, u, v) {
+  return tree.hasEdge(u, v);
+}
+
+/*
+ * Returns true if the specified node is descendant of the root node per the
+ * assigned low and lim attributes in the tree.
+ */
+function isDescendant(tree, vLabel, rootLabel) {
+  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
+}
+
+},{"../graphlib":37,"../lodash":40,"../util":59,"./feasible-tree":55,"./util":58}],58:[function(require,module,exports){
+"use strict";
+
+var _ = require("../lodash");
+
+module.exports = {
+  longestPath: longestPath,
+  slack: slack
+};
+
+/*
+ * Initializes ranks for the input graph using the longest path algorithm. This
+ * algorithm scales well and is fast in practice, it yields rather poor
+ * solutions. Nodes are pushed to the lowest layer possible, leaving the bottom
+ * ranks wide and leaving edges longer than necessary. However, due to its
+ * speed, this algorithm is good for getting an initial ranking that can be fed
+ * into other algorithms.
+ *
+ * This algorithm does not normalize layers because it will be used by other
+ * algorithms in most cases. If using this algorithm directly, be sure to
+ * run normalize at the end.
+ *
+ * Pre-conditions:
+ *
+ *    1. Input graph is a DAG.
+ *    2. Input graph node labels can be assigned properties.
+ *
+ * Post-conditions:
+ *
+ *    1. Each node will be assign an (unnormalized) "rank" property.
+ */
+function longestPath(g) {
+  var visited = {};
+
+  function dfs(v) {
+    var label = g.node(v);
+    if (_.has(visited, v)) {
+      return label.rank;
+    }
+    visited[v] = true;
+
+    var rank = _.min(_.map(g.outEdges(v), function(e) {
+      return dfs(e.w) - g.edge(e).minlen;
+    }));
+
+    if (rank === Number.POSITIVE_INFINITY) {
+      rank = 0;
+    }
+
+    return (label.rank = rank);
+  }
+
+  _.each(g.sources(), dfs);
+}
+
+/*
+ * Returns the amount of slack for the given edge. The slack is defined as the
+ * difference between the length of the edge and its minimum length.
+ */
+function slack(g, e) {
+  return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
+}
+
+},{"../lodash":40}],59:[function(require,module,exports){
+"use strict";
+
+var _ = require("./lodash"),
+    Graph = require("./graphlib").Graph;
+
+module.exports = {
+  addDummyNode: addDummyNode,
+  simplify: simplify,
+  asNonCompoundGraph: asNonCompoundGraph,
+  successorWeights: successorWeights,
+  predecessorWeights: predecessorWeights,
+  intersectRect: intersectRect,
+  buildLayerMatrix: buildLayerMatrix,
+  normalizeRanks: normalizeRanks,
+  removeEmptyRanks: removeEmptyRanks,
+  addBorderNode: addBorderNode,
+  maxRank: maxRank,
+  partition: partition,
+  time: time,
+  notime: notime
+};
+
+/*
+ * Adds a dummy node to the graph and return v.
+ */
+function addDummyNode(g, type, attrs, name) {
+  var v;
+  do {
+    v = _.uniqueId(name);
+  } while (g.hasNode(v));
+
+  attrs.dummy = type;
+  g.setNode(v, attrs);
+  return v;
+}
+
+/*
+ * Returns a new graph with only simple edges. Handles aggregation of data
+ * associated with multi-edges.
+ */
+function simplify(g) {
+  var simplified = new Graph().setGraph(g.graph());
+  _.each(g.nodes(), function(v) { simplified.setNode(v, g.node(v)); });
+  _.each(g.edges(), function(e) {
+    var simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 },
+        label = g.edge(e);
+    simplified.setEdge(e.v, e.w, {
+      weight: simpleLabel.weight + label.weight,
+      minlen: Math.max(simpleLabel.minlen, label.minlen)
+    });
+  });
+  return simplified;
+}
+
+function asNonCompoundGraph(g) {
+  var simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(g.graph());
+  _.each(g.nodes(), function(v) {
+    if (!g.children(v).length) {
+      simplified.setNode(v, g.node(v));
+    }
+  });
+  _.each(g.edges(), function(e) {
+    simplified.setEdge(e, g.edge(e));
+  });
+  return simplified;
+}
+
+function successorWeights(g) {
+  var weightMap = _.map(g.nodes(), function(v) {
+    var sucs = {};
+    _.each(g.outEdges(v), function(e) {
+      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
+    });
+    return sucs;
+  });
+  return _.zipObject(g.nodes(), weightMap);
+}
+
+function predecessorWeights(g) {
+  var weightMap = _.map(g.nodes(), function(v) {
+    var preds = {};
+    _.each(g.inEdges(v), function(e) {
+      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
+    });
+    return preds;
+  });
+  return _.zipObject(g.nodes(), weightMap);
+}
+
+/*
+ * Finds where a line starting at point ({x, y}) would intersect a rectangle
+ * ({x, y, width, height}) if it were pointing at the rectangle's center.
+ */
+function intersectRect(rect, point) {
+  var x = rect.x;
+  var y = rect.y;
+
+  // Rectangle intersection algorithm from:
+  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
+  var dx = point.x - x;
+  var dy = point.y - y;
+  var w = rect.width / 2;
+  var h = rect.height / 2;
+
+  if (!dx && !dy) {
+    throw new Error("Not possible to find intersection inside of the rectangle");
+  }
+
+  var sx, sy;
+  if (Math.abs(dy) * w > Math.abs(dx) * h) {
+    // Intersection is top or bottom of rect.
+    if (dy < 0) {
+      h = -h;
+    }
+    sx = h * dx / dy;
+    sy = h;
+  } else {
+    // Intersection is left or right of rect.
+    if (dx < 0) {
+      w = -w;
+    }
+    sx = w;
+    sy = w * dy / dx;
+  }
+
+  return { x: x + sx, y: y + sy };
+}
+
+/*
+ * Given a DAG with each node assigned "rank" and "order" properties, this
+ * function will produce a matrix with the ids of each node.
+ */
+function buildLayerMatrix(g) {
+  var layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v),
+        rank = node.rank;
+    if (!_.isUndefined(rank)) {
+      layering[rank][node.order] = v;
+    }
+  });
+  return layering;
+}
+
+/*
+ * Adjusts the ranks for all nodes in the graph such that all nodes v have
+ * rank(v) >= 0 and at least one node w has rank(w) = 0.
+ */
+function normalizeRanks(g) {
+  var min = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
+  _.each(g.nodes(), function(v) {
+    var node = g.node(v);
+    if (_.has(node, "rank")) {
+      node.rank -= min;
+    }
+  });
+}
+
+function removeEmptyRanks(g) {
+  // Ranks may not start at 0, so we need to offset them
+  var offset = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
+
+  var layers = [];
+  _.each(g.nodes(), function(v) {
+    var rank = g.node(v).rank - offset;
+    if (!layers[rank]) {
+      layers[rank] = [];
+    }
+    layers[rank].push(v);
+  });
+
+  var delta = 0,
+      nodeRankFactor = g.graph().nodeRankFactor;
+  _.each(layers, function(vs, i) {
+    if (_.isUndefined(vs) && i % nodeRankFactor !== 0) {
+      --delta;
+    } else if (delta) {
+      _.each(vs, function(v) { g.node(v).rank += delta; });
+    }
+  });
+}
+
+function addBorderNode(g, prefix, rank, order) {
+  var node = {
+    width: 0,
+    height: 0
+  };
+  if (arguments.length >= 4) {
+    node.rank = rank;
+    node.order = order;
+  }
+  return addDummyNode(g, "border", node, prefix);
+}
+
+function maxRank(g) {
+  return _.max(_.map(g.nodes(), function(v) {
+    var rank = g.node(v).rank;
+    if (!_.isUndefined(rank)) {
+      return rank;
+    }
+  }));
+}
+
+/*
+ * Partition a collection into two groups: `lhs` and `rhs`. If the supplied
+ * function returns true for an entry it goes into `lhs`. Otherwise it goes
+ * into `rhs.
+ */
+function partition(collection, fn) {
+  var result = { lhs: [], rhs: [] };
+  _.each(collection, function(value) {
+    if (fn(value)) {
+      result.lhs.push(value);
+    } else {
+      result.rhs.push(value);
+    }
+  });
+  return result;
+}
+
+/*
+ * Returns a new function that wraps `fn` with a timer. The wrapper logs the
+ * time it takes to execute the function.
+ */
+function time(name, fn) {
+  var start = _.now();
+  try {
+    return fn();
+  } finally {
+    console.log(name + " time: " + (_.now() - start) + "ms");
+  }
+}
+
+function notime(name, fn) {
+  return fn();
+}
+
+},{"./graphlib":37,"./lodash":40}],60:[function(require,module,exports){
+module.exports = "0.7.4";
+
+},{}],61:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -11041,7 +13627,7 @@ module.exports = {
   version: lib.version
 };
 
-},{"./lib":49,"./lib/alg":40,"./lib/json":50}],34:[function(require,module,exports){
+},{"./lib":77,"./lib/alg":68,"./lib/json":78}],62:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = components;
@@ -11070,7 +13656,7 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":51}],35:[function(require,module,exports){
+},{"../lodash":79}],63:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = dfs;
@@ -11111,7 +13697,7 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":51}],36:[function(require,module,exports){
+},{"../lodash":79}],64:[function(require,module,exports){
 var dijkstra = require("./dijkstra"),
     _ = require("../lodash");
 
@@ -11123,7 +13709,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":51,"./dijkstra":37}],37:[function(require,module,exports){
+},{"../lodash":79,"./dijkstra":65}],65:[function(require,module,exports){
 var _ = require("../lodash"),
     PriorityQueue = require("../data/priority-queue");
 
@@ -11179,7 +13765,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":47,"../lodash":51}],38:[function(require,module,exports){
+},{"../data/priority-queue":75,"../lodash":79}],66:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -11191,7 +13777,7 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":51,"./tarjan":45}],39:[function(require,module,exports){
+},{"../lodash":79,"./tarjan":73}],67:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = floydWarshall;
@@ -11243,7 +13829,7 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":51}],40:[function(require,module,exports){
+},{"../lodash":79}],68:[function(require,module,exports){
 module.exports = {
   components: require("./components"),
   dijkstra: require("./dijkstra"),
@@ -11258,7 +13844,7 @@ module.exports = {
   topsort: require("./topsort")
 };
 
-},{"./components":34,"./dijkstra":37,"./dijkstra-all":36,"./find-cycles":38,"./floyd-warshall":39,"./is-acyclic":41,"./postorder":42,"./preorder":43,"./prim":44,"./tarjan":45,"./topsort":46}],41:[function(require,module,exports){
+},{"./components":62,"./dijkstra":65,"./dijkstra-all":64,"./find-cycles":66,"./floyd-warshall":67,"./is-acyclic":69,"./postorder":70,"./preorder":71,"./prim":72,"./tarjan":73,"./topsort":74}],69:[function(require,module,exports){
 var topsort = require("./topsort");
 
 module.exports = isAcyclic;
@@ -11275,7 +13861,7 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":46}],42:[function(require,module,exports){
+},{"./topsort":74}],70:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = postorder;
@@ -11284,7 +13870,7 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":35}],43:[function(require,module,exports){
+},{"./dfs":63}],71:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = preorder;
@@ -11293,7 +13879,7 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":35}],44:[function(require,module,exports){
+},{"./dfs":63}],72:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
     PriorityQueue = require("../data/priority-queue");
@@ -11347,7 +13933,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":47,"../graph":48,"../lodash":51}],45:[function(require,module,exports){
+},{"../data/priority-queue":75,"../graph":76,"../lodash":79}],73:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
@@ -11396,7 +13982,7 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":51}],46:[function(require,module,exports){
+},{"../lodash":79}],74:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = topsort;
@@ -11432,7 +14018,7 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":51}],47:[function(require,module,exports){
+},{"../lodash":79}],75:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = PriorityQueue;
@@ -11586,7 +14172,7 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":51}],48:[function(require,module,exports){
+},{"../lodash":79}],76:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -12107,14 +14693,14 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":51}],49:[function(require,module,exports){
+},{"./lodash":79}],77:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
   Graph: require("./graph"),
   version: require("./version")
 };
 
-},{"./graph":48,"./version":52}],50:[function(require,module,exports){
+},{"./graph":76,"./version":80}],78:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graph");
 
@@ -12182,27 +14768,345 @@ function read(json) {
   return g;
 }
 
-},{"./graph":48,"./lodash":51}],51:[function(require,module,exports){
-/* global window */
-
-var lodash;
-
-if (typeof require === "function") {
-  try {
-    lodash = require("lodash");
-  } catch (e) {}
-}
-
-if (!lodash) {
-  lodash = window._;
-}
-
-module.exports = lodash;
-
-},{"lodash":53}],52:[function(require,module,exports){
+},{"./graph":76,"./lodash":79}],79:[function(require,module,exports){
+module.exports=require(40)
+},{"/Users/knut/source/mermaid/node_modules/dagre/lib/lodash.js":40,"lodash":82}],80:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],53:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
+(function (global){
+/*! http://mths.be/he v0.5.0 by @mathias | MIT license */
+;(function(root) {
+
+	// Detect free variables `exports`.
+	var freeExports = typeof exports == 'object' && exports;
+
+	// Detect free variable `module`.
+	var freeModule = typeof module == 'object' && module &&
+		module.exports == freeExports && module;
+
+	// Detect free variable `global`, from Node.js or Browserified code,
+	// and use it as `root`.
+	var freeGlobal = typeof global == 'object' && global;
+	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
+		root = freeGlobal;
+	}
+
+	/*--------------------------------------------------------------------------*/
+
+	// All astral symbols.
+	var regexAstralSymbols = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+	// All ASCII symbols (not just printable ASCII) except those listed in the
+	// first column of the overrides table.
+	// http://whatwg.org/html/tokenization.html#table-charref-overrides
+	var regexAsciiWhitelist = /[\x01-\x7F]/g;
+	// All BMP symbols that are not ASCII newlines, printable ASCII symbols, or
+	// code points listed in the first column of the overrides table on
+	// http://whatwg.org/html/tokenization.html#table-charref-overrides.
+	var regexBmpWhitelist = /[\x01-\t\x0B\f\x0E-\x1F\x7F\x81\x8D\x8F\x90\x9D\xA0-\uFFFF]/g;
+
+	var regexEncodeNonAscii = /<\u20D2|=\u20E5|>\u20D2|\u205F\u200A|\u219D\u0338|\u2202\u0338|\u2220\u20D2|\u2229\uFE00|\u222A\uFE00|\u223C\u20D2|\u223D\u0331|\u223E\u0333|\u2242\u0338|\u224B\u0338|\u224D\u20D2|\u224E\u0338|\u224F\u0338|\u2250\u0338|\u2261\u20E5|\u2264\u20D2|\u2265\u20D2|\u2266\u0338|\u2267\u0338|\u2268\uFE00|\u2269\uFE00|\u226A\u0338|\u226A\u20D2|\u226B\u0338|\u226B\u20D2|\u227F\u0338|\u2282\u20D2|\u2283\u20D2|\u228A\uFE00|\u228B\uFE00|\u228F\u0338|\u2290\u0338|\u2293\uFE00|\u2294\uFE00|\u22B4\u20D2|\u22B5\u20D2|\u22D8\u0338|\u22D9\u0338|\u22DA\uFE00|\u22DB\uFE00|\u22F5\u0338|\u22F9\u0338|\u2933\u0338|\u29CF\u0338|\u29D0\u0338|\u2A6D\u0338|\u2A70\u0338|\u2A7D\u0338|\u2A7E\u0338|\u2AA1\u0338|\u2AA2\u0338|\u2AAC\uFE00|\u2AAD\uFE00|\u2AAF\u0338|\u2AB0\u0338|\u2AC5\u0338|\u2AC6\u0338|\u2ACB\uFE00|\u2ACC\uFE00|\u2AFD\u20E5|[\xA0-\u0113\u0116-\u0122\u0124-\u012B\u012E-\u014D\u0150-\u017E\u0192\u01B5\u01F5\u0237\u02C6\u02C7\u02D8-\u02DD\u0311\u0391-\u03A1\u03A3-\u03A9\u03B1-\u03C9\u03D1\u03D2\u03D5\u03D6\u03DC\u03DD\u03F0\u03F1\u03F5\u03F6\u0401-\u040C\u040E-\u044F\u0451-\u045C\u045E\u045F\u2002-\u2005\u2007-\u2010\u2013-\u2016\u2018-\u201A\u201C-\u201E\u2020-\u2022\u2025\u2026\u2030-\u2035\u2039\u203A\u203E\u2041\u2043\u2044\u204F\u2057\u205F-\u2063\u20AC\u20DB\u20DC\u2102\u2105\u210A-\u2113\u2115-\u211E\u2122\u2124\u2127-\u2129\u212C\u212D\u212F-\u2131\u2133-\u2138\u2145-\u2148\u2153-\u215E\u2190-\u219B\u219D-\u21A7\u21A9-\u21AE\u21B0-\u21B3\u21B5-\u21B7\u21BA-\u21DB\u21DD\u21E4\u21E5\u21F5\u21FD-\u2205\u2207-\u2209\u220B\u220C\u220F-\u2214\u2216-\u2218\u221A\u221D-\u2238\u223A-\u2257\u2259\u225A\u225C\u225F-\u2262\u2264-\u228B\u228D-\u229B\u229D-\u22A5\u22A7-\u22B0\u22B2-\u22BB\u22BD-\u22DB\u22DE-\u22E3\u22E6-\u22F7\u22F9-\u22FE\u2305\u2306\u2308-\u2310\u2312\u2313\u2315\u2316\u231C-\u231F\u2322\u2323\u232D\u232E\u2336\u233D\u233F\u237C\u23B0\u23B1\u23B4-\u23B6\u23DC-\u23DF\u23E2\u23E7\u2423\u24C8\u2500\u2502\u250C\u2510\u2514\u2518\u251C\u2524\u252C\u2534\u253C\u2550-\u256C\u2580\u2584\u2588\u2591-\u2593\u25A1\u25AA\u25AB\u25AD\u25AE\u25B1\u25B3-\u25B5\u25B8\u25B9\u25BD-\u25BF\u25C2\u25C3\u25CA\u25CB\u25EC\u25EF\u25F8-\u25FC\u2605\u2606\u260E\u2640\u2642\u2660\u2663\u2665\u2666\u266A\u266D-\u266F\u2713\u2717\u2720\u2736\u2758\u2772\u2773\u27C8\u27C9\u27E6-\u27ED\u27F5-\u27FA\u27FC\u27FF\u2902-\u2905\u290C-\u2913\u2916\u2919-\u2920\u2923-\u292A\u2933\u2935-\u2939\u293C\u293D\u2945\u2948-\u294B\u294E-\u2976\u2978\u2979\u297B-\u297F\u2985\u2986\u298B-\u2996\u299A\u299C\u299D\u29A4-\u29B7\u29B9\u29BB\u29BC\u29BE-\u29C5\u29C9\u29CD-\u29D0\u29DC-\u29DE\u29E3-\u29E5\u29EB\u29F4\u29F6\u2A00-\u2A02\u2A04\u2A06\u2A0C\u2A0D\u2A10-\u2A17\u2A22-\u2A27\u2A29\u2A2A\u2A2D-\u2A31\u2A33-\u2A3C\u2A3F\u2A40\u2A42-\u2A4D\u2A50\u2A53-\u2A58\u2A5A-\u2A5D\u2A5F\u2A66\u2A6A\u2A6D-\u2A75\u2A77-\u2A9A\u2A9D-\u2AA2\u2AA4-\u2AB0\u2AB3-\u2AC8\u2ACB\u2ACC\u2ACF-\u2ADB\u2AE4\u2AE6-\u2AE9\u2AEB-\u2AF3\u2AFD\uFB00-\uFB04]|\uD835[\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDCCF\uDD04\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDD6B]/g;
+	var encodeMap = {'\xC1':'Aacute','\xE1':'aacute','\u0102':'Abreve','\u0103':'abreve','\u223E':'ac','\u223F':'acd','\u223E\u0333':'acE','\xC2':'Acirc','\xE2':'acirc','\xB4':'acute','\u0410':'Acy','\u0430':'acy','\xC6':'AElig','\xE6':'aelig','\u2061':'af','\uD835\uDD04':'Afr','\uD835\uDD1E':'afr','\xC0':'Agrave','\xE0':'agrave','\u2135':'aleph','\u0391':'Alpha','\u03B1':'alpha','\u0100':'Amacr','\u0101':'amacr','\u2A3F':'amalg','&':'amp','\u2A55':'andand','\u2A53':'And','\u2227':'and','\u2A5C':'andd','\u2A58':'andslope','\u2A5A':'andv','\u2220':'ang','\u29A4':'ange','\u29A8':'angmsdaa','\u29A9':'angmsdab','\u29AA':'angmsdac','\u29AB':'angmsdad','\u29AC':'angmsdae','\u29AD':'angmsdaf','\u29AE':'angmsdag','\u29AF':'angmsdah','\u2221':'angmsd','\u221F':'angrt','\u22BE':'angrtvb','\u299D':'angrtvbd','\u2222':'angsph','\xC5':'angst','\u237C':'angzarr','\u0104':'Aogon','\u0105':'aogon','\uD835\uDD38':'Aopf','\uD835\uDD52':'aopf','\u2A6F':'apacir','\u2248':'ap','\u2A70':'apE','\u224A':'ape','\u224B':'apid','\'':'apos','\xE5':'aring','\uD835\uDC9C':'Ascr','\uD835\uDCB6':'ascr','\u2254':'colone','*':'ast','\u224D':'CupCap','\xC3':'Atilde','\xE3':'atilde','\xC4':'Auml','\xE4':'auml','\u2233':'awconint','\u2A11':'awint','\u224C':'bcong','\u03F6':'bepsi','\u2035':'bprime','\u223D':'bsim','\u22CD':'bsime','\u2216':'setmn','\u2AE7':'Barv','\u22BD':'barvee','\u2305':'barwed','\u2306':'Barwed','\u23B5':'bbrk','\u23B6':'bbrktbrk','\u0411':'Bcy','\u0431':'bcy','\u201E':'bdquo','\u2235':'becaus','\u29B0':'bemptyv','\u212C':'Bscr','\u0392':'Beta','\u03B2':'beta','\u2136':'beth','\u226C':'twixt','\uD835\uDD05':'Bfr','\uD835\uDD1F':'bfr','\u22C2':'xcap','\u25EF':'xcirc','\u22C3':'xcup','\u2A00':'xodot','\u2A01':'xoplus','\u2A02':'xotime','\u2A06':'xsqcup','\u2605':'starf','\u25BD':'xdtri','\u25B3':'xutri','\u2A04':'xuplus','\u22C1':'Vee','\u22C0':'Wedge','\u290D':'rbarr','\u29EB':'lozf','\u25AA':'squf','\u25B4':'utrif','\u25BE':'dtrif','\u25C2':'ltrif','\u25B8':'rtrif','\u2423':'blank','\u2592':'blk12','\u2591':'blk14','\u2593':'blk34','\u2588':'block','=\u20E5':'bne','\u2261\u20E5':'bnequiv','\u2AED':'bNot','\u2310':'bnot','\uD835\uDD39':'Bopf','\uD835\uDD53':'bopf','\u22A5':'bot','\u22C8':'bowtie','\u29C9':'boxbox','\u2510':'boxdl','\u2555':'boxdL','\u2556':'boxDl','\u2557':'boxDL','\u250C':'boxdr','\u2552':'boxdR','\u2553':'boxDr','\u2554':'boxDR','\u2500':'boxh','\u2550':'boxH','\u252C':'boxhd','\u2564':'boxHd','\u2565':'boxhD','\u2566':'boxHD','\u2534':'boxhu','\u2567':'boxHu','\u2568':'boxhU','\u2569':'boxHU','\u229F':'minusb','\u229E':'plusb','\u22A0':'timesb','\u2518':'boxul','\u255B':'boxuL','\u255C':'boxUl','\u255D':'boxUL','\u2514':'boxur','\u2558':'boxuR','\u2559':'boxUr','\u255A':'boxUR','\u2502':'boxv','\u2551':'boxV','\u253C':'boxvh','\u256A':'boxvH','\u256B':'boxVh','\u256C':'boxVH','\u2524':'boxvl','\u2561':'boxvL','\u2562':'boxVl','\u2563':'boxVL','\u251C':'boxvr','\u255E':'boxvR','\u255F':'boxVr','\u2560':'boxVR','\u02D8':'breve','\xA6':'brvbar','\uD835\uDCB7':'bscr','\u204F':'bsemi','\u29C5':'bsolb','\\':'bsol','\u27C8':'bsolhsub','\u2022':'bull','\u224E':'bump','\u2AAE':'bumpE','\u224F':'bumpe','\u0106':'Cacute','\u0107':'cacute','\u2A44':'capand','\u2A49':'capbrcup','\u2A4B':'capcap','\u2229':'cap','\u22D2':'Cap','\u2A47':'capcup','\u2A40':'capdot','\u2145':'DD','\u2229\uFE00':'caps','\u2041':'caret','\u02C7':'caron','\u212D':'Cfr','\u2A4D':'ccaps','\u010C':'Ccaron','\u010D':'ccaron','\xC7':'Ccedil','\xE7':'ccedil','\u0108':'Ccirc','\u0109':'ccirc','\u2230':'Cconint','\u2A4C':'ccups','\u2A50':'ccupssm','\u010A':'Cdot','\u010B':'cdot','\xB8':'cedil','\u29B2':'cemptyv','\xA2':'cent','\xB7':'middot','\uD835\uDD20':'cfr','\u0427':'CHcy','\u0447':'chcy','\u2713':'check','\u03A7':'Chi','\u03C7':'chi','\u02C6':'circ','\u2257':'cire','\u21BA':'olarr','\u21BB':'orarr','\u229B':'oast','\u229A':'ocir','\u229D':'odash','\u2299':'odot','\xAE':'reg','\u24C8':'oS','\u2296':'ominus','\u2295':'oplus','\u2297':'otimes','\u25CB':'cir','\u29C3':'cirE','\u2A10':'cirfnint','\u2AEF':'cirmid','\u29C2':'cirscir','\u2232':'cwconint','\u201D':'rdquo','\u2019':'rsquo','\u2663':'clubs',':':'colon','\u2237':'Colon','\u2A74':'Colone',',':'comma','@':'commat','\u2201':'comp','\u2218':'compfn','\u2102':'Copf','\u2245':'cong','\u2A6D':'congdot','\u2261':'equiv','\u222E':'oint','\u222F':'Conint','\uD835\uDD54':'copf','\u2210':'coprod','\xA9':'copy','\u2117':'copysr','\u21B5':'crarr','\u2717':'cross','\u2A2F':'Cross','\uD835\uDC9E':'Cscr','\uD835\uDCB8':'cscr','\u2ACF':'csub','\u2AD1':'csube','\u2AD0':'csup','\u2AD2':'csupe','\u22EF':'ctdot','\u2938':'cudarrl','\u2935':'cudarrr','\u22DE':'cuepr','\u22DF':'cuesc','\u21B6':'cularr','\u293D':'cularrp','\u2A48':'cupbrcap','\u2A46':'cupcap','\u222A':'cup','\u22D3':'Cup','\u2A4A':'cupcup','\u228D':'cupdot','\u2A45':'cupor','\u222A\uFE00':'cups','\u21B7':'curarr','\u293C':'curarrm','\u22CE':'cuvee','\u22CF':'cuwed','\xA4':'curren','\u2231':'cwint','\u232D':'cylcty','\u2020':'dagger','\u2021':'Dagger','\u2138':'daleth','\u2193':'darr','\u21A1':'Darr','\u21D3':'dArr','\u2010':'dash','\u2AE4':'Dashv','\u22A3':'dashv','\u290F':'rBarr','\u02DD':'dblac','\u010E':'Dcaron','\u010F':'dcaron','\u0414':'Dcy','\u0434':'dcy','\u21CA':'ddarr','\u2146':'dd','\u2911':'DDotrahd','\u2A77':'eDDot','\xB0':'deg','\u2207':'Del','\u0394':'Delta','\u03B4':'delta','\u29B1':'demptyv','\u297F':'dfisht','\uD835\uDD07':'Dfr','\uD835\uDD21':'dfr','\u2965':'dHar','\u21C3':'dharl','\u21C2':'dharr','\u02D9':'dot','`':'grave','\u02DC':'tilde','\u22C4':'diam','\u2666':'diams','\xA8':'die','\u03DD':'gammad','\u22F2':'disin','\xF7':'div','\u22C7':'divonx','\u0402':'DJcy','\u0452':'djcy','\u231E':'dlcorn','\u230D':'dlcrop','$':'dollar','\uD835\uDD3B':'Dopf','\uD835\uDD55':'dopf','\u20DC':'DotDot','\u2250':'doteq','\u2251':'eDot','\u2238':'minusd','\u2214':'plusdo','\u22A1':'sdotb','\u21D0':'lArr','\u21D4':'iff','\u27F8':'xlArr','\u27FA':'xhArr','\u27F9':'xrArr','\u21D2':'rArr','\u22A8':'vDash','\u21D1':'uArr','\u21D5':'vArr','\u2225':'par','\u2913':'DownArrowBar','\u21F5':'duarr','\u0311':'DownBreve','\u2950':'DownLeftRightVector','\u295E':'DownLeftTeeVector','\u2956':'DownLeftVectorBar','\u21BD':'lhard','\u295F':'DownRightTeeVector','\u2957':'DownRightVectorBar','\u21C1':'rhard','\u21A7':'mapstodown','\u22A4':'top','\u2910':'RBarr','\u231F':'drcorn','\u230C':'drcrop','\uD835\uDC9F':'Dscr','\uD835\uDCB9':'dscr','\u0405':'DScy','\u0455':'dscy','\u29F6':'dsol','\u0110':'Dstrok','\u0111':'dstrok','\u22F1':'dtdot','\u25BF':'dtri','\u296F':'duhar','\u29A6':'dwangle','\u040F':'DZcy','\u045F':'dzcy','\u27FF':'dzigrarr','\xC9':'Eacute','\xE9':'eacute','\u2A6E':'easter','\u011A':'Ecaron','\u011B':'ecaron','\xCA':'Ecirc','\xEA':'ecirc','\u2256':'ecir','\u2255':'ecolon','\u042D':'Ecy','\u044D':'ecy','\u0116':'Edot','\u0117':'edot','\u2147':'ee','\u2252':'efDot','\uD835\uDD08':'Efr','\uD835\uDD22':'efr','\u2A9A':'eg','\xC8':'Egrave','\xE8':'egrave','\u2A96':'egs','\u2A98':'egsdot','\u2A99':'el','\u2208':'in','\u23E7':'elinters','\u2113':'ell','\u2A95':'els','\u2A97':'elsdot','\u0112':'Emacr','\u0113':'emacr','\u2205':'empty','\u25FB':'EmptySmallSquare','\u25AB':'EmptyVerySmallSquare','\u2004':'emsp13','\u2005':'emsp14','\u2003':'emsp','\u014A':'ENG','\u014B':'eng','\u2002':'ensp','\u0118':'Eogon','\u0119':'eogon','\uD835\uDD3C':'Eopf','\uD835\uDD56':'eopf','\u22D5':'epar','\u29E3':'eparsl','\u2A71':'eplus','\u03B5':'epsi','\u0395':'Epsilon','\u03F5':'epsiv','\u2242':'esim','\u2A75':'Equal','=':'equals','\u225F':'equest','\u21CC':'rlhar','\u2A78':'equivDD','\u29E5':'eqvparsl','\u2971':'erarr','\u2253':'erDot','\u212F':'escr','\u2130':'Escr','\u2A73':'Esim','\u0397':'Eta','\u03B7':'eta','\xD0':'ETH','\xF0':'eth','\xCB':'Euml','\xEB':'euml','\u20AC':'euro','!':'excl','\u2203':'exist','\u0424':'Fcy','\u0444':'fcy','\u2640':'female','\uFB03':'ffilig','\uFB00':'fflig','\uFB04':'ffllig','\uD835\uDD09':'Ffr','\uD835\uDD23':'ffr','\uFB01':'filig','\u25FC':'FilledSmallSquare','fj':'fjlig','\u266D':'flat','\uFB02':'fllig','\u25B1':'fltns','\u0192':'fnof','\uD835\uDD3D':'Fopf','\uD835\uDD57':'fopf','\u2200':'forall','\u22D4':'fork','\u2AD9':'forkv','\u2131':'Fscr','\u2A0D':'fpartint','\xBD':'half','\u2153':'frac13','\xBC':'frac14','\u2155':'frac15','\u2159':'frac16','\u215B':'frac18','\u2154':'frac23','\u2156':'frac25','\xBE':'frac34','\u2157':'frac35','\u215C':'frac38','\u2158':'frac45','\u215A':'frac56','\u215D':'frac58','\u215E':'frac78','\u2044':'frasl','\u2322':'frown','\uD835\uDCBB':'fscr','\u01F5':'gacute','\u0393':'Gamma','\u03B3':'gamma','\u03DC':'Gammad','\u2A86':'gap','\u011E':'Gbreve','\u011F':'gbreve','\u0122':'Gcedil','\u011C':'Gcirc','\u011D':'gcirc','\u0413':'Gcy','\u0433':'gcy','\u0120':'Gdot','\u0121':'gdot','\u2265':'ge','\u2267':'gE','\u2A8C':'gEl','\u22DB':'gel','\u2A7E':'ges','\u2AA9':'gescc','\u2A80':'gesdot','\u2A82':'gesdoto','\u2A84':'gesdotol','\u22DB\uFE00':'gesl','\u2A94':'gesles','\uD835\uDD0A':'Gfr','\uD835\uDD24':'gfr','\u226B':'gg','\u22D9':'Gg','\u2137':'gimel','\u0403':'GJcy','\u0453':'gjcy','\u2AA5':'gla','\u2277':'gl','\u2A92':'glE','\u2AA4':'glj','\u2A8A':'gnap','\u2A88':'gne','\u2269':'gnE','\u22E7':'gnsim','\uD835\uDD3E':'Gopf','\uD835\uDD58':'gopf','\u2AA2':'GreaterGreater','\u2273':'gsim','\uD835\uDCA2':'Gscr','\u210A':'gscr','\u2A8E':'gsime','\u2A90':'gsiml','\u2AA7':'gtcc','\u2A7A':'gtcir','>':'gt','\u22D7':'gtdot','\u2995':'gtlPar','\u2A7C':'gtquest','\u2978':'gtrarr','\u2269\uFE00':'gvnE','\u200A':'hairsp','\u210B':'Hscr','\u042A':'HARDcy','\u044A':'hardcy','\u2948':'harrcir','\u2194':'harr','\u21AD':'harrw','^':'Hat','\u210F':'hbar','\u0124':'Hcirc','\u0125':'hcirc','\u2665':'hearts','\u2026':'mldr','\u22B9':'hercon','\uD835\uDD25':'hfr','\u210C':'Hfr','\u2925':'searhk','\u2926':'swarhk','\u21FF':'hoarr','\u223B':'homtht','\u21A9':'larrhk','\u21AA':'rarrhk','\uD835\uDD59':'hopf','\u210D':'Hopf','\u2015':'horbar','\uD835\uDCBD':'hscr','\u0126':'Hstrok','\u0127':'hstrok','\u2043':'hybull','\xCD':'Iacute','\xED':'iacute','\u2063':'ic','\xCE':'Icirc','\xEE':'icirc','\u0418':'Icy','\u0438':'icy','\u0130':'Idot','\u0415':'IEcy','\u0435':'iecy','\xA1':'iexcl','\uD835\uDD26':'ifr','\u2111':'Im','\xCC':'Igrave','\xEC':'igrave','\u2148':'ii','\u2A0C':'qint','\u222D':'tint','\u29DC':'iinfin','\u2129':'iiota','\u0132':'IJlig','\u0133':'ijlig','\u012A':'Imacr','\u012B':'imacr','\u2110':'Iscr','\u0131':'imath','\u22B7':'imof','\u01B5':'imped','\u2105':'incare','\u221E':'infin','\u29DD':'infintie','\u22BA':'intcal','\u222B':'int','\u222C':'Int','\u2124':'Zopf','\u2A17':'intlarhk','\u2A3C':'iprod','\u2062':'it','\u0401':'IOcy','\u0451':'iocy','\u012E':'Iogon','\u012F':'iogon','\uD835\uDD40':'Iopf','\uD835\uDD5A':'iopf','\u0399':'Iota','\u03B9':'iota','\xBF':'iquest','\uD835\uDCBE':'iscr','\u22F5':'isindot','\u22F9':'isinE','\u22F4':'isins','\u22F3':'isinsv','\u0128':'Itilde','\u0129':'itilde','\u0406':'Iukcy','\u0456':'iukcy','\xCF':'Iuml','\xEF':'iuml','\u0134':'Jcirc','\u0135':'jcirc','\u0419':'Jcy','\u0439':'jcy','\uD835\uDD0D':'Jfr','\uD835\uDD27':'jfr','\u0237':'jmath','\uD835\uDD41':'Jopf','\uD835\uDD5B':'jopf','\uD835\uDCA5':'Jscr','\uD835\uDCBF':'jscr','\u0408':'Jsercy','\u0458':'jsercy','\u0404':'Jukcy','\u0454':'jukcy','\u039A':'Kappa','\u03BA':'kappa','\u03F0':'kappav','\u0136':'Kcedil','\u0137':'kcedil','\u041A':'Kcy','\u043A':'kcy','\uD835\uDD0E':'Kfr','\uD835\uDD28':'kfr','\u0138':'kgreen','\u0425':'KHcy','\u0445':'khcy','\u040C':'KJcy','\u045C':'kjcy','\uD835\uDD42':'Kopf','\uD835\uDD5C':'kopf','\uD835\uDCA6':'Kscr','\uD835\uDCC0':'kscr','\u21DA':'lAarr','\u0139':'Lacute','\u013A':'lacute','\u29B4':'laemptyv','\u2112':'Lscr','\u039B':'Lambda','\u03BB':'lambda','\u27E8':'lang','\u27EA':'Lang','\u2991':'langd','\u2A85':'lap','\xAB':'laquo','\u21E4':'larrb','\u291F':'larrbfs','\u2190':'larr','\u219E':'Larr','\u291D':'larrfs','\u21AB':'larrlp','\u2939':'larrpl','\u2973':'larrsim','\u21A2':'larrtl','\u2919':'latail','\u291B':'lAtail','\u2AAB':'lat','\u2AAD':'late','\u2AAD\uFE00':'lates','\u290C':'lbarr','\u290E':'lBarr','\u2772':'lbbrk','{':'lcub','[':'lsqb','\u298B':'lbrke','\u298F':'lbrksld','\u298D':'lbrkslu','\u013D':'Lcaron','\u013E':'lcaron','\u013B':'Lcedil','\u013C':'lcedil','\u2308':'lceil','\u041B':'Lcy','\u043B':'lcy','\u2936':'ldca','\u201C':'ldquo','\u2967':'ldrdhar','\u294B':'ldrushar','\u21B2':'ldsh','\u2264':'le','\u2266':'lE','\u21C6':'lrarr','\u27E6':'lobrk','\u2961':'LeftDownTeeVector','\u2959':'LeftDownVectorBar','\u230A':'lfloor','\u21BC':'lharu','\u21C7':'llarr','\u21CB':'lrhar','\u294E':'LeftRightVector','\u21A4':'mapstoleft','\u295A':'LeftTeeVector','\u22CB':'lthree','\u29CF':'LeftTriangleBar','\u22B2':'vltri','\u22B4':'ltrie','\u2951':'LeftUpDownVector','\u2960':'LeftUpTeeVector','\u2958':'LeftUpVectorBar','\u21BF':'uharl','\u2952':'LeftVectorBar','\u2A8B':'lEg','\u22DA':'leg','\u2A7D':'les','\u2AA8':'lescc','\u2A7F':'lesdot','\u2A81':'lesdoto','\u2A83':'lesdotor','\u22DA\uFE00':'lesg','\u2A93':'lesges','\u22D6':'ltdot','\u2276':'lg','\u2AA1':'LessLess','\u2272':'lsim','\u297C':'lfisht','\uD835\uDD0F':'Lfr','\uD835\uDD29':'lfr','\u2A91':'lgE','\u2962':'lHar','\u296A':'lharul','\u2584':'lhblk','\u0409':'LJcy','\u0459':'ljcy','\u226A':'ll','\u22D8':'Ll','\u296B':'llhard','\u25FA':'lltri','\u013F':'Lmidot','\u0140':'lmidot','\u23B0':'lmoust','\u2A89':'lnap','\u2A87':'lne','\u2268':'lnE','\u22E6':'lnsim','\u27EC':'loang','\u21FD':'loarr','\u27F5':'xlarr','\u27F7':'xharr','\u27FC':'xmap','\u27F6':'xrarr','\u21AC':'rarrlp','\u2985':'lopar','\uD835\uDD43':'Lopf','\uD835\uDD5D':'lopf','\u2A2D':'loplus','\u2A34':'lotimes','\u2217':'lowast','_':'lowbar','\u2199':'swarr','\u2198':'searr','\u25CA':'loz','(':'lpar','\u2993':'lparlt','\u296D':'lrhard','\u200E':'lrm','\u22BF':'lrtri','\u2039':'lsaquo','\uD835\uDCC1':'lscr','\u21B0':'lsh','\u2A8D':'lsime','\u2A8F':'lsimg','\u2018':'lsquo','\u201A':'sbquo','\u0141':'Lstrok','\u0142':'lstrok','\u2AA6':'ltcc','\u2A79':'ltcir','<':'lt','\u22C9':'ltimes','\u2976':'ltlarr','\u2A7B':'ltquest','\u25C3':'ltri','\u2996':'ltrPar','\u294A':'lurdshar','\u2966':'luruhar','\u2268\uFE00':'lvnE','\xAF':'macr','\u2642':'male','\u2720':'malt','\u2905':'Map','\u21A6':'map','\u21A5':'mapstoup','\u25AE':'marker','\u2A29':'mcomma','\u041C':'Mcy','\u043C':'mcy','\u2014':'mdash','\u223A':'mDDot','\u205F':'MediumSpace','\u2133':'Mscr','\uD835\uDD10':'Mfr','\uD835\uDD2A':'mfr','\u2127':'mho','\xB5':'micro','\u2AF0':'midcir','\u2223':'mid','\u2212':'minus','\u2A2A':'minusdu','\u2213':'mp','\u2ADB':'mlcp','\u22A7':'models','\uD835\uDD44':'Mopf','\uD835\uDD5E':'mopf','\uD835\uDCC2':'mscr','\u039C':'Mu','\u03BC':'mu','\u22B8':'mumap','\u0143':'Nacute','\u0144':'nacute','\u2220\u20D2':'nang','\u2249':'nap','\u2A70\u0338':'napE','\u224B\u0338':'napid','\u0149':'napos','\u266E':'natur','\u2115':'Nopf','\xA0':'nbsp','\u224E\u0338':'nbump','\u224F\u0338':'nbumpe','\u2A43':'ncap','\u0147':'Ncaron','\u0148':'ncaron','\u0145':'Ncedil','\u0146':'ncedil','\u2247':'ncong','\u2A6D\u0338':'ncongdot','\u2A42':'ncup','\u041D':'Ncy','\u043D':'ncy','\u2013':'ndash','\u2924':'nearhk','\u2197':'nearr','\u21D7':'neArr','\u2260':'ne','\u2250\u0338':'nedot','\u200B':'ZeroWidthSpace','\u2262':'nequiv','\u2928':'toea','\u2242\u0338':'nesim','\n':'NewLine','\u2204':'nexist','\uD835\uDD11':'Nfr','\uD835\uDD2B':'nfr','\u2267\u0338':'ngE','\u2271':'nge','\u2A7E\u0338':'nges','\u22D9\u0338':'nGg','\u2275':'ngsim','\u226B\u20D2':'nGt','\u226F':'ngt','\u226B\u0338':'nGtv','\u21AE':'nharr','\u21CE':'nhArr','\u2AF2':'nhpar','\u220B':'ni','\u22FC':'nis','\u22FA':'nisd','\u040A':'NJcy','\u045A':'njcy','\u219A':'nlarr','\u21CD':'nlArr','\u2025':'nldr','\u2266\u0338':'nlE','\u2270':'nle','\u2A7D\u0338':'nles','\u226E':'nlt','\u22D8\u0338':'nLl','\u2274':'nlsim','\u226A\u20D2':'nLt','\u22EA':'nltri','\u22EC':'nltrie','\u226A\u0338':'nLtv','\u2224':'nmid','\u2060':'NoBreak','\uD835\uDD5F':'nopf','\u2AEC':'Not','\xAC':'not','\u226D':'NotCupCap','\u2226':'npar','\u2209':'notin','\u2279':'ntgl','\u22F5\u0338':'notindot','\u22F9\u0338':'notinE','\u22F7':'notinvb','\u22F6':'notinvc','\u29CF\u0338':'NotLeftTriangleBar','\u2278':'ntlg','\u2AA2\u0338':'NotNestedGreaterGreater','\u2AA1\u0338':'NotNestedLessLess','\u220C':'notni','\u22FE':'notnivb','\u22FD':'notnivc','\u2280':'npr','\u2AAF\u0338':'npre','\u22E0':'nprcue','\u29D0\u0338':'NotRightTriangleBar','\u22EB':'nrtri','\u22ED':'nrtrie','\u228F\u0338':'NotSquareSubset','\u22E2':'nsqsube','\u2290\u0338':'NotSquareSuperset','\u22E3':'nsqsupe','\u2282\u20D2':'vnsub','\u2288':'nsube','\u2281':'nsc','\u2AB0\u0338':'nsce','\u22E1':'nsccue','\u227F\u0338':'NotSucceedsTilde','\u2283\u20D2':'vnsup','\u2289':'nsupe','\u2241':'nsim','\u2244':'nsime','\u2AFD\u20E5':'nparsl','\u2202\u0338':'npart','\u2A14':'npolint','\u2933\u0338':'nrarrc','\u219B':'nrarr','\u21CF':'nrArr','\u219D\u0338':'nrarrw','\uD835\uDCA9':'Nscr','\uD835\uDCC3':'nscr','\u2284':'nsub','\u2AC5\u0338':'nsubE','\u2285':'nsup','\u2AC6\u0338':'nsupE','\xD1':'Ntilde','\xF1':'ntilde','\u039D':'Nu','\u03BD':'nu','#':'num','\u2116':'numero','\u2007':'numsp','\u224D\u20D2':'nvap','\u22AC':'nvdash','\u22AD':'nvDash','\u22AE':'nVdash','\u22AF':'nVDash','\u2265\u20D2':'nvge','>\u20D2':'nvgt','\u2904':'nvHarr','\u29DE':'nvinfin','\u2902':'nvlArr','\u2264\u20D2':'nvle','<\u20D2':'nvlt','\u22B4\u20D2':'nvltrie','\u2903':'nvrArr','\u22B5\u20D2':'nvrtrie','\u223C\u20D2':'nvsim','\u2923':'nwarhk','\u2196':'nwarr','\u21D6':'nwArr','\u2927':'nwnear','\xD3':'Oacute','\xF3':'oacute','\xD4':'Ocirc','\xF4':'ocirc','\u041E':'Ocy','\u043E':'ocy','\u0150':'Odblac','\u0151':'odblac','\u2A38':'odiv','\u29BC':'odsold','\u0152':'OElig','\u0153':'oelig','\u29BF':'ofcir','\uD835\uDD12':'Ofr','\uD835\uDD2C':'ofr','\u02DB':'ogon','\xD2':'Ograve','\xF2':'ograve','\u29C1':'ogt','\u29B5':'ohbar','\u03A9':'ohm','\u29BE':'olcir','\u29BB':'olcross','\u203E':'oline','\u29C0':'olt','\u014C':'Omacr','\u014D':'omacr','\u03C9':'omega','\u039F':'Omicron','\u03BF':'omicron','\u29B6':'omid','\uD835\uDD46':'Oopf','\uD835\uDD60':'oopf','\u29B7':'opar','\u29B9':'operp','\u2A54':'Or','\u2228':'or','\u2A5D':'ord','\u2134':'oscr','\xAA':'ordf','\xBA':'ordm','\u22B6':'origof','\u2A56':'oror','\u2A57':'orslope','\u2A5B':'orv','\uD835\uDCAA':'Oscr','\xD8':'Oslash','\xF8':'oslash','\u2298':'osol','\xD5':'Otilde','\xF5':'otilde','\u2A36':'otimesas','\u2A37':'Otimes','\xD6':'Ouml','\xF6':'ouml','\u233D':'ovbar','\u23DE':'OverBrace','\u23B4':'tbrk','\u23DC':'OverParenthesis','\xB6':'para','\u2AF3':'parsim','\u2AFD':'parsl','\u2202':'part','\u041F':'Pcy','\u043F':'pcy','%':'percnt','.':'period','\u2030':'permil','\u2031':'pertenk','\uD835\uDD13':'Pfr','\uD835\uDD2D':'pfr','\u03A6':'Phi','\u03C6':'phi','\u03D5':'phiv','\u260E':'phone','\u03A0':'Pi','\u03C0':'pi','\u03D6':'piv','\u210E':'planckh','\u2A23':'plusacir','\u2A22':'pluscir','+':'plus','\u2A25':'plusdu','\u2A72':'pluse','\xB1':'pm','\u2A26':'plussim','\u2A27':'plustwo','\u2A15':'pointint','\uD835\uDD61':'popf','\u2119':'Popf','\xA3':'pound','\u2AB7':'prap','\u2ABB':'Pr','\u227A':'pr','\u227C':'prcue','\u2AAF':'pre','\u227E':'prsim','\u2AB9':'prnap','\u2AB5':'prnE','\u22E8':'prnsim','\u2AB3':'prE','\u2032':'prime','\u2033':'Prime','\u220F':'prod','\u232E':'profalar','\u2312':'profline','\u2313':'profsurf','\u221D':'prop','\u22B0':'prurel','\uD835\uDCAB':'Pscr','\uD835\uDCC5':'pscr','\u03A8':'Psi','\u03C8':'psi','\u2008':'puncsp','\uD835\uDD14':'Qfr','\uD835\uDD2E':'qfr','\uD835\uDD62':'qopf','\u211A':'Qopf','\u2057':'qprime','\uD835\uDCAC':'Qscr','\uD835\uDCC6':'qscr','\u2A16':'quatint','?':'quest','"':'quot','\u21DB':'rAarr','\u223D\u0331':'race','\u0154':'Racute','\u0155':'racute','\u221A':'Sqrt','\u29B3':'raemptyv','\u27E9':'rang','\u27EB':'Rang','\u2992':'rangd','\u29A5':'range','\xBB':'raquo','\u2975':'rarrap','\u21E5':'rarrb','\u2920':'rarrbfs','\u2933':'rarrc','\u2192':'rarr','\u21A0':'Rarr','\u291E':'rarrfs','\u2945':'rarrpl','\u2974':'rarrsim','\u2916':'Rarrtl','\u21A3':'rarrtl','\u219D':'rarrw','\u291A':'ratail','\u291C':'rAtail','\u2236':'ratio','\u2773':'rbbrk','}':'rcub',']':'rsqb','\u298C':'rbrke','\u298E':'rbrksld','\u2990':'rbrkslu','\u0158':'Rcaron','\u0159':'rcaron','\u0156':'Rcedil','\u0157':'rcedil','\u2309':'rceil','\u0420':'Rcy','\u0440':'rcy','\u2937':'rdca','\u2969':'rdldhar','\u21B3':'rdsh','\u211C':'Re','\u211B':'Rscr','\u211D':'Ropf','\u25AD':'rect','\u297D':'rfisht','\u230B':'rfloor','\uD835\uDD2F':'rfr','\u2964':'rHar','\u21C0':'rharu','\u296C':'rharul','\u03A1':'Rho','\u03C1':'rho','\u03F1':'rhov','\u21C4':'rlarr','\u27E7':'robrk','\u295D':'RightDownTeeVector','\u2955':'RightDownVectorBar','\u21C9':'rrarr','\u22A2':'vdash','\u295B':'RightTeeVector','\u22CC':'rthree','\u29D0':'RightTriangleBar','\u22B3':'vrtri','\u22B5':'rtrie','\u294F':'RightUpDownVector','\u295C':'RightUpTeeVector','\u2954':'RightUpVectorBar','\u21BE':'uharr','\u2953':'RightVectorBar','\u02DA':'ring','\u200F':'rlm','\u23B1':'rmoust','\u2AEE':'rnmid','\u27ED':'roang','\u21FE':'roarr','\u2986':'ropar','\uD835\uDD63':'ropf','\u2A2E':'roplus','\u2A35':'rotimes','\u2970':'RoundImplies',')':'rpar','\u2994':'rpargt','\u2A12':'rppolint','\u203A':'rsaquo','\uD835\uDCC7':'rscr','\u21B1':'rsh','\u22CA':'rtimes','\u25B9':'rtri','\u29CE':'rtriltri','\u29F4':'RuleDelayed','\u2968':'ruluhar','\u211E':'rx','\u015A':'Sacute','\u015B':'sacute','\u2AB8':'scap','\u0160':'Scaron','\u0161':'scaron','\u2ABC':'Sc','\u227B':'sc','\u227D':'sccue','\u2AB0':'sce','\u2AB4':'scE','\u015E':'Scedil','\u015F':'scedil','\u015C':'Scirc','\u015D':'scirc','\u2ABA':'scnap','\u2AB6':'scnE','\u22E9':'scnsim','\u2A13':'scpolint','\u227F':'scsim','\u0421':'Scy','\u0441':'scy','\u22C5':'sdot','\u2A66':'sdote','\u21D8':'seArr','\xA7':'sect',';':'semi','\u2929':'tosa','\u2736':'sext','\uD835\uDD16':'Sfr','\uD835\uDD30':'sfr','\u266F':'sharp','\u0429':'SHCHcy','\u0449':'shchcy','\u0428':'SHcy','\u0448':'shcy','\u2191':'uarr','\xAD':'shy','\u03A3':'Sigma','\u03C3':'sigma','\u03C2':'sigmaf','\u223C':'sim','\u2A6A':'simdot','\u2243':'sime','\u2A9E':'simg','\u2AA0':'simgE','\u2A9D':'siml','\u2A9F':'simlE','\u2246':'simne','\u2A24':'simplus','\u2972':'simrarr','\u2A33':'smashp','\u29E4':'smeparsl','\u2323':'smile','\u2AAA':'smt','\u2AAC':'smte','\u2AAC\uFE00':'smtes','\u042C':'SOFTcy','\u044C':'softcy','\u233F':'solbar','\u29C4':'solb','/':'sol','\uD835\uDD4A':'Sopf','\uD835\uDD64':'sopf','\u2660':'spades','\u2293':'sqcap','\u2293\uFE00':'sqcaps','\u2294':'sqcup','\u2294\uFE00':'sqcups','\u228F':'sqsub','\u2291':'sqsube','\u2290':'sqsup','\u2292':'sqsupe','\u25A1':'squ','\uD835\uDCAE':'Sscr','\uD835\uDCC8':'sscr','\u22C6':'Star','\u2606':'star','\u2282':'sub','\u22D0':'Sub','\u2ABD':'subdot','\u2AC5':'subE','\u2286':'sube','\u2AC3':'subedot','\u2AC1':'submult','\u2ACB':'subnE','\u228A':'subne','\u2ABF':'subplus','\u2979':'subrarr','\u2AC7':'subsim','\u2AD5':'subsub','\u2AD3':'subsup','\u2211':'sum','\u266A':'sung','\xB9':'sup1','\xB2':'sup2','\xB3':'sup3','\u2283':'sup','\u22D1':'Sup','\u2ABE':'supdot','\u2AD8':'supdsub','\u2AC6':'supE','\u2287':'supe','\u2AC4':'supedot','\u27C9':'suphsol','\u2AD7':'suphsub','\u297B':'suplarr','\u2AC2':'supmult','\u2ACC':'supnE','\u228B':'supne','\u2AC0':'supplus','\u2AC8':'supsim','\u2AD4':'supsub','\u2AD6':'supsup','\u21D9':'swArr','\u292A':'swnwar','\xDF':'szlig','\t':'Tab','\u2316':'target','\u03A4':'Tau','\u03C4':'tau','\u0164':'Tcaron','\u0165':'tcaron','\u0162':'Tcedil','\u0163':'tcedil','\u0422':'Tcy','\u0442':'tcy','\u20DB':'tdot','\u2315':'telrec','\uD835\uDD17':'Tfr','\uD835\uDD31':'tfr','\u2234':'there4','\u0398':'Theta','\u03B8':'theta','\u03D1':'thetav','\u205F\u200A':'ThickSpace','\u2009':'thinsp','\xDE':'THORN','\xFE':'thorn','\u2A31':'timesbar','\xD7':'times','\u2A30':'timesd','\u2336':'topbot','\u2AF1':'topcir','\uD835\uDD4B':'Topf','\uD835\uDD65':'topf','\u2ADA':'topfork','\u2034':'tprime','\u2122':'trade','\u25B5':'utri','\u225C':'trie','\u25EC':'tridot','\u2A3A':'triminus','\u2A39':'triplus','\u29CD':'trisb','\u2A3B':'tritime','\u23E2':'trpezium','\uD835\uDCAF':'Tscr','\uD835\uDCC9':'tscr','\u0426':'TScy','\u0446':'tscy','\u040B':'TSHcy','\u045B':'tshcy','\u0166':'Tstrok','\u0167':'tstrok','\xDA':'Uacute','\xFA':'uacute','\u219F':'Uarr','\u2949':'Uarrocir','\u040E':'Ubrcy','\u045E':'ubrcy','\u016C':'Ubreve','\u016D':'ubreve','\xDB':'Ucirc','\xFB':'ucirc','\u0423':'Ucy','\u0443':'ucy','\u21C5':'udarr','\u0170':'Udblac','\u0171':'udblac','\u296E':'udhar','\u297E':'ufisht','\uD835\uDD18':'Ufr','\uD835\uDD32':'ufr','\xD9':'Ugrave','\xF9':'ugrave','\u2963':'uHar','\u2580':'uhblk','\u231C':'ulcorn','\u230F':'ulcrop','\u25F8':'ultri','\u016A':'Umacr','\u016B':'umacr','\u23DF':'UnderBrace','\u23DD':'UnderParenthesis','\u228E':'uplus','\u0172':'Uogon','\u0173':'uogon','\uD835\uDD4C':'Uopf','\uD835\uDD66':'uopf','\u2912':'UpArrowBar','\u2195':'varr','\u03C5':'upsi','\u03D2':'Upsi','\u03A5':'Upsilon','\u21C8':'uuarr','\u231D':'urcorn','\u230E':'urcrop','\u016E':'Uring','\u016F':'uring','\u25F9':'urtri','\uD835\uDCB0':'Uscr','\uD835\uDCCA':'uscr','\u22F0':'utdot','\u0168':'Utilde','\u0169':'utilde','\xDC':'Uuml','\xFC':'uuml','\u29A7':'uwangle','\u299C':'vangrt','\u228A\uFE00':'vsubne','\u2ACB\uFE00':'vsubnE','\u228B\uFE00':'vsupne','\u2ACC\uFE00':'vsupnE','\u2AE8':'vBar','\u2AEB':'Vbar','\u2AE9':'vBarv','\u0412':'Vcy','\u0432':'vcy','\u22A9':'Vdash','\u22AB':'VDash','\u2AE6':'Vdashl','\u22BB':'veebar','\u225A':'veeeq','\u22EE':'vellip','|':'vert','\u2016':'Vert','\u2758':'VerticalSeparator','\u2240':'wr','\uD835\uDD19':'Vfr','\uD835\uDD33':'vfr','\uD835\uDD4D':'Vopf','\uD835\uDD67':'vopf','\uD835\uDCB1':'Vscr','\uD835\uDCCB':'vscr','\u22AA':'Vvdash','\u299A':'vzigzag','\u0174':'Wcirc','\u0175':'wcirc','\u2A5F':'wedbar','\u2259':'wedgeq','\u2118':'wp','\uD835\uDD1A':'Wfr','\uD835\uDD34':'wfr','\uD835\uDD4E':'Wopf','\uD835\uDD68':'wopf','\uD835\uDCB2':'Wscr','\uD835\uDCCC':'wscr','\uD835\uDD1B':'Xfr','\uD835\uDD35':'xfr','\u039E':'Xi','\u03BE':'xi','\u22FB':'xnis','\uD835\uDD4F':'Xopf','\uD835\uDD69':'xopf','\uD835\uDCB3':'Xscr','\uD835\uDCCD':'xscr','\xDD':'Yacute','\xFD':'yacute','\u042F':'YAcy','\u044F':'yacy','\u0176':'Ycirc','\u0177':'ycirc','\u042B':'Ycy','\u044B':'ycy','\xA5':'yen','\uD835\uDD1C':'Yfr','\uD835\uDD36':'yfr','\u0407':'YIcy','\u0457':'yicy','\uD835\uDD50':'Yopf','\uD835\uDD6A':'yopf','\uD835\uDCB4':'Yscr','\uD835\uDCCE':'yscr','\u042E':'YUcy','\u044E':'yucy','\xFF':'yuml','\u0178':'Yuml','\u0179':'Zacute','\u017A':'zacute','\u017D':'Zcaron','\u017E':'zcaron','\u0417':'Zcy','\u0437':'zcy','\u017B':'Zdot','\u017C':'zdot','\u2128':'Zfr','\u0396':'Zeta','\u03B6':'zeta','\uD835\uDD37':'zfr','\u0416':'ZHcy','\u0436':'zhcy','\u21DD':'zigrarr','\uD835\uDD6B':'zopf','\uD835\uDCB5':'Zscr','\uD835\uDCCF':'zscr','\u200D':'zwj','\u200C':'zwnj'};
+
+	var regexEscape = /["&'<>`]/g;
+	var escapeMap = {
+		'"': '&quot;',
+		'&': '&amp;',
+		'\'': '&#x27;',
+		'<': '&lt;',
+		// See https://mathiasbynens.be/notes/ambiguous-ampersands: in HTML, the
+		// following is not strictly necessary unless it’s part of a tag or an
+		// unquoted attribute value. We’re only escaping it to support those
+		// situations, and for XML support.
+		'>': '&gt;',
+		// In Internet Explorer ≤ 8, the backtick character can be used
+		// to break out of (un)quoted attribute values or HTML comments.
+		// See http://html5sec.org/#102, http://html5sec.org/#108, and
+		// http://html5sec.org/#133.
+		'`': '&#x60;'
+	};
+
+	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
+	var regexInvalidRawCodePoint = /[\0-\x08\x0B\x0E-\x1F\x7F-\x9F\uFDD0-\uFDEF\uFFFE\uFFFF]|[\uD83F\uD87F\uD8BF\uD8FF\uD93F\uD97F\uD9BF\uD9FF\uDA3F\uDA7F\uDABF\uDAFF\uDB3F\uDB7F\uDBBF\uDBFF][\uDFFE\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
+	var regexDecode = /&#([0-9]+)(;?)|&#[xX]([a-fA-F0-9]+)(;?)|&([0-9a-zA-Z]+);|&(Aacute|iacute|Uacute|plusmn|otilde|Otilde|Agrave|agrave|yacute|Yacute|oslash|Oslash|Atilde|atilde|brvbar|Ccedil|ccedil|ograve|curren|divide|Eacute|eacute|Ograve|oacute|Egrave|egrave|ugrave|frac12|frac14|frac34|Ugrave|Oacute|Iacute|ntilde|Ntilde|uacute|middot|Igrave|igrave|iquest|aacute|laquo|THORN|micro|iexcl|icirc|Icirc|Acirc|ucirc|ecirc|Ocirc|ocirc|Ecirc|Ucirc|aring|Aring|aelig|AElig|acute|pound|raquo|acirc|times|thorn|szlig|cedil|COPY|Auml|ordf|ordm|uuml|macr|Uuml|auml|Ouml|ouml|para|nbsp|Euml|quot|QUOT|euml|yuml|cent|sect|copy|sup1|sup2|sup3|Iuml|iuml|shy|eth|reg|not|yen|amp|AMP|REG|uml|ETH|deg|gt|GT|LT|lt)([=a-zA-Z0-9])?/g;
+	var decodeMap = {'Aacute':'\xC1','aacute':'\xE1','Abreve':'\u0102','abreve':'\u0103','ac':'\u223E','acd':'\u223F','acE':'\u223E\u0333','Acirc':'\xC2','acirc':'\xE2','acute':'\xB4','Acy':'\u0410','acy':'\u0430','AElig':'\xC6','aelig':'\xE6','af':'\u2061','Afr':'\uD835\uDD04','afr':'\uD835\uDD1E','Agrave':'\xC0','agrave':'\xE0','alefsym':'\u2135','aleph':'\u2135','Alpha':'\u0391','alpha':'\u03B1','Amacr':'\u0100','amacr':'\u0101','amalg':'\u2A3F','amp':'&','AMP':'&','andand':'\u2A55','And':'\u2A53','and':'\u2227','andd':'\u2A5C','andslope':'\u2A58','andv':'\u2A5A','ang':'\u2220','ange':'\u29A4','angle':'\u2220','angmsdaa':'\u29A8','angmsdab':'\u29A9','angmsdac':'\u29AA','angmsdad':'\u29AB','angmsdae':'\u29AC','angmsdaf':'\u29AD','angmsdag':'\u29AE','angmsdah':'\u29AF','angmsd':'\u2221','angrt':'\u221F','angrtvb':'\u22BE','angrtvbd':'\u299D','angsph':'\u2222','angst':'\xC5','angzarr':'\u237C','Aogon':'\u0104','aogon':'\u0105','Aopf':'\uD835\uDD38','aopf':'\uD835\uDD52','apacir':'\u2A6F','ap':'\u2248','apE':'\u2A70','ape':'\u224A','apid':'\u224B','apos':'\'','ApplyFunction':'\u2061','approx':'\u2248','approxeq':'\u224A','Aring':'\xC5','aring':'\xE5','Ascr':'\uD835\uDC9C','ascr':'\uD835\uDCB6','Assign':'\u2254','ast':'*','asymp':'\u2248','asympeq':'\u224D','Atilde':'\xC3','atilde':'\xE3','Auml':'\xC4','auml':'\xE4','awconint':'\u2233','awint':'\u2A11','backcong':'\u224C','backepsilon':'\u03F6','backprime':'\u2035','backsim':'\u223D','backsimeq':'\u22CD','Backslash':'\u2216','Barv':'\u2AE7','barvee':'\u22BD','barwed':'\u2305','Barwed':'\u2306','barwedge':'\u2305','bbrk':'\u23B5','bbrktbrk':'\u23B6','bcong':'\u224C','Bcy':'\u0411','bcy':'\u0431','bdquo':'\u201E','becaus':'\u2235','because':'\u2235','Because':'\u2235','bemptyv':'\u29B0','bepsi':'\u03F6','bernou':'\u212C','Bernoullis':'\u212C','Beta':'\u0392','beta':'\u03B2','beth':'\u2136','between':'\u226C','Bfr':'\uD835\uDD05','bfr':'\uD835\uDD1F','bigcap':'\u22C2','bigcirc':'\u25EF','bigcup':'\u22C3','bigodot':'\u2A00','bigoplus':'\u2A01','bigotimes':'\u2A02','bigsqcup':'\u2A06','bigstar':'\u2605','bigtriangledown':'\u25BD','bigtriangleup':'\u25B3','biguplus':'\u2A04','bigvee':'\u22C1','bigwedge':'\u22C0','bkarow':'\u290D','blacklozenge':'\u29EB','blacksquare':'\u25AA','blacktriangle':'\u25B4','blacktriangledown':'\u25BE','blacktriangleleft':'\u25C2','blacktriangleright':'\u25B8','blank':'\u2423','blk12':'\u2592','blk14':'\u2591','blk34':'\u2593','block':'\u2588','bne':'=\u20E5','bnequiv':'\u2261\u20E5','bNot':'\u2AED','bnot':'\u2310','Bopf':'\uD835\uDD39','bopf':'\uD835\uDD53','bot':'\u22A5','bottom':'\u22A5','bowtie':'\u22C8','boxbox':'\u29C9','boxdl':'\u2510','boxdL':'\u2555','boxDl':'\u2556','boxDL':'\u2557','boxdr':'\u250C','boxdR':'\u2552','boxDr':'\u2553','boxDR':'\u2554','boxh':'\u2500','boxH':'\u2550','boxhd':'\u252C','boxHd':'\u2564','boxhD':'\u2565','boxHD':'\u2566','boxhu':'\u2534','boxHu':'\u2567','boxhU':'\u2568','boxHU':'\u2569','boxminus':'\u229F','boxplus':'\u229E','boxtimes':'\u22A0','boxul':'\u2518','boxuL':'\u255B','boxUl':'\u255C','boxUL':'\u255D','boxur':'\u2514','boxuR':'\u2558','boxUr':'\u2559','boxUR':'\u255A','boxv':'\u2502','boxV':'\u2551','boxvh':'\u253C','boxvH':'\u256A','boxVh':'\u256B','boxVH':'\u256C','boxvl':'\u2524','boxvL':'\u2561','boxVl':'\u2562','boxVL':'\u2563','boxvr':'\u251C','boxvR':'\u255E','boxVr':'\u255F','boxVR':'\u2560','bprime':'\u2035','breve':'\u02D8','Breve':'\u02D8','brvbar':'\xA6','bscr':'\uD835\uDCB7','Bscr':'\u212C','bsemi':'\u204F','bsim':'\u223D','bsime':'\u22CD','bsolb':'\u29C5','bsol':'\\','bsolhsub':'\u27C8','bull':'\u2022','bullet':'\u2022','bump':'\u224E','bumpE':'\u2AAE','bumpe':'\u224F','Bumpeq':'\u224E','bumpeq':'\u224F','Cacute':'\u0106','cacute':'\u0107','capand':'\u2A44','capbrcup':'\u2A49','capcap':'\u2A4B','cap':'\u2229','Cap':'\u22D2','capcup':'\u2A47','capdot':'\u2A40','CapitalDifferentialD':'\u2145','caps':'\u2229\uFE00','caret':'\u2041','caron':'\u02C7','Cayleys':'\u212D','ccaps':'\u2A4D','Ccaron':'\u010C','ccaron':'\u010D','Ccedil':'\xC7','ccedil':'\xE7','Ccirc':'\u0108','ccirc':'\u0109','Cconint':'\u2230','ccups':'\u2A4C','ccupssm':'\u2A50','Cdot':'\u010A','cdot':'\u010B','cedil':'\xB8','Cedilla':'\xB8','cemptyv':'\u29B2','cent':'\xA2','centerdot':'\xB7','CenterDot':'\xB7','cfr':'\uD835\uDD20','Cfr':'\u212D','CHcy':'\u0427','chcy':'\u0447','check':'\u2713','checkmark':'\u2713','Chi':'\u03A7','chi':'\u03C7','circ':'\u02C6','circeq':'\u2257','circlearrowleft':'\u21BA','circlearrowright':'\u21BB','circledast':'\u229B','circledcirc':'\u229A','circleddash':'\u229D','CircleDot':'\u2299','circledR':'\xAE','circledS':'\u24C8','CircleMinus':'\u2296','CirclePlus':'\u2295','CircleTimes':'\u2297','cir':'\u25CB','cirE':'\u29C3','cire':'\u2257','cirfnint':'\u2A10','cirmid':'\u2AEF','cirscir':'\u29C2','ClockwiseContourIntegral':'\u2232','CloseCurlyDoubleQuote':'\u201D','CloseCurlyQuote':'\u2019','clubs':'\u2663','clubsuit':'\u2663','colon':':','Colon':'\u2237','Colone':'\u2A74','colone':'\u2254','coloneq':'\u2254','comma':',','commat':'@','comp':'\u2201','compfn':'\u2218','complement':'\u2201','complexes':'\u2102','cong':'\u2245','congdot':'\u2A6D','Congruent':'\u2261','conint':'\u222E','Conint':'\u222F','ContourIntegral':'\u222E','copf':'\uD835\uDD54','Copf':'\u2102','coprod':'\u2210','Coproduct':'\u2210','copy':'\xA9','COPY':'\xA9','copysr':'\u2117','CounterClockwiseContourIntegral':'\u2233','crarr':'\u21B5','cross':'\u2717','Cross':'\u2A2F','Cscr':'\uD835\uDC9E','cscr':'\uD835\uDCB8','csub':'\u2ACF','csube':'\u2AD1','csup':'\u2AD0','csupe':'\u2AD2','ctdot':'\u22EF','cudarrl':'\u2938','cudarrr':'\u2935','cuepr':'\u22DE','cuesc':'\u22DF','cularr':'\u21B6','cularrp':'\u293D','cupbrcap':'\u2A48','cupcap':'\u2A46','CupCap':'\u224D','cup':'\u222A','Cup':'\u22D3','cupcup':'\u2A4A','cupdot':'\u228D','cupor':'\u2A45','cups':'\u222A\uFE00','curarr':'\u21B7','curarrm':'\u293C','curlyeqprec':'\u22DE','curlyeqsucc':'\u22DF','curlyvee':'\u22CE','curlywedge':'\u22CF','curren':'\xA4','curvearrowleft':'\u21B6','curvearrowright':'\u21B7','cuvee':'\u22CE','cuwed':'\u22CF','cwconint':'\u2232','cwint':'\u2231','cylcty':'\u232D','dagger':'\u2020','Dagger':'\u2021','daleth':'\u2138','darr':'\u2193','Darr':'\u21A1','dArr':'\u21D3','dash':'\u2010','Dashv':'\u2AE4','dashv':'\u22A3','dbkarow':'\u290F','dblac':'\u02DD','Dcaron':'\u010E','dcaron':'\u010F','Dcy':'\u0414','dcy':'\u0434','ddagger':'\u2021','ddarr':'\u21CA','DD':'\u2145','dd':'\u2146','DDotrahd':'\u2911','ddotseq':'\u2A77','deg':'\xB0','Del':'\u2207','Delta':'\u0394','delta':'\u03B4','demptyv':'\u29B1','dfisht':'\u297F','Dfr':'\uD835\uDD07','dfr':'\uD835\uDD21','dHar':'\u2965','dharl':'\u21C3','dharr':'\u21C2','DiacriticalAcute':'\xB4','DiacriticalDot':'\u02D9','DiacriticalDoubleAcute':'\u02DD','DiacriticalGrave':'`','DiacriticalTilde':'\u02DC','diam':'\u22C4','diamond':'\u22C4','Diamond':'\u22C4','diamondsuit':'\u2666','diams':'\u2666','die':'\xA8','DifferentialD':'\u2146','digamma':'\u03DD','disin':'\u22F2','div':'\xF7','divide':'\xF7','divideontimes':'\u22C7','divonx':'\u22C7','DJcy':'\u0402','djcy':'\u0452','dlcorn':'\u231E','dlcrop':'\u230D','dollar':'$','Dopf':'\uD835\uDD3B','dopf':'\uD835\uDD55','Dot':'\xA8','dot':'\u02D9','DotDot':'\u20DC','doteq':'\u2250','doteqdot':'\u2251','DotEqual':'\u2250','dotminus':'\u2238','dotplus':'\u2214','dotsquare':'\u22A1','doublebarwedge':'\u2306','DoubleContourIntegral':'\u222F','DoubleDot':'\xA8','DoubleDownArrow':'\u21D3','DoubleLeftArrow':'\u21D0','DoubleLeftRightArrow':'\u21D4','DoubleLeftTee':'\u2AE4','DoubleLongLeftArrow':'\u27F8','DoubleLongLeftRightArrow':'\u27FA','DoubleLongRightArrow':'\u27F9','DoubleRightArrow':'\u21D2','DoubleRightTee':'\u22A8','DoubleUpArrow':'\u21D1','DoubleUpDownArrow':'\u21D5','DoubleVerticalBar':'\u2225','DownArrowBar':'\u2913','downarrow':'\u2193','DownArrow':'\u2193','Downarrow':'\u21D3','DownArrowUpArrow':'\u21F5','DownBreve':'\u0311','downdownarrows':'\u21CA','downharpoonleft':'\u21C3','downharpoonright':'\u21C2','DownLeftRightVector':'\u2950','DownLeftTeeVector':'\u295E','DownLeftVectorBar':'\u2956','DownLeftVector':'\u21BD','DownRightTeeVector':'\u295F','DownRightVectorBar':'\u2957','DownRightVector':'\u21C1','DownTeeArrow':'\u21A7','DownTee':'\u22A4','drbkarow':'\u2910','drcorn':'\u231F','drcrop':'\u230C','Dscr':'\uD835\uDC9F','dscr':'\uD835\uDCB9','DScy':'\u0405','dscy':'\u0455','dsol':'\u29F6','Dstrok':'\u0110','dstrok':'\u0111','dtdot':'\u22F1','dtri':'\u25BF','dtrif':'\u25BE','duarr':'\u21F5','duhar':'\u296F','dwangle':'\u29A6','DZcy':'\u040F','dzcy':'\u045F','dzigrarr':'\u27FF','Eacute':'\xC9','eacute':'\xE9','easter':'\u2A6E','Ecaron':'\u011A','ecaron':'\u011B','Ecirc':'\xCA','ecirc':'\xEA','ecir':'\u2256','ecolon':'\u2255','Ecy':'\u042D','ecy':'\u044D','eDDot':'\u2A77','Edot':'\u0116','edot':'\u0117','eDot':'\u2251','ee':'\u2147','efDot':'\u2252','Efr':'\uD835\uDD08','efr':'\uD835\uDD22','eg':'\u2A9A','Egrave':'\xC8','egrave':'\xE8','egs':'\u2A96','egsdot':'\u2A98','el':'\u2A99','Element':'\u2208','elinters':'\u23E7','ell':'\u2113','els':'\u2A95','elsdot':'\u2A97','Emacr':'\u0112','emacr':'\u0113','empty':'\u2205','emptyset':'\u2205','EmptySmallSquare':'\u25FB','emptyv':'\u2205','EmptyVerySmallSquare':'\u25AB','emsp13':'\u2004','emsp14':'\u2005','emsp':'\u2003','ENG':'\u014A','eng':'\u014B','ensp':'\u2002','Eogon':'\u0118','eogon':'\u0119','Eopf':'\uD835\uDD3C','eopf':'\uD835\uDD56','epar':'\u22D5','eparsl':'\u29E3','eplus':'\u2A71','epsi':'\u03B5','Epsilon':'\u0395','epsilon':'\u03B5','epsiv':'\u03F5','eqcirc':'\u2256','eqcolon':'\u2255','eqsim':'\u2242','eqslantgtr':'\u2A96','eqslantless':'\u2A95','Equal':'\u2A75','equals':'=','EqualTilde':'\u2242','equest':'\u225F','Equilibrium':'\u21CC','equiv':'\u2261','equivDD':'\u2A78','eqvparsl':'\u29E5','erarr':'\u2971','erDot':'\u2253','escr':'\u212F','Escr':'\u2130','esdot':'\u2250','Esim':'\u2A73','esim':'\u2242','Eta':'\u0397','eta':'\u03B7','ETH':'\xD0','eth':'\xF0','Euml':'\xCB','euml':'\xEB','euro':'\u20AC','excl':'!','exist':'\u2203','Exists':'\u2203','expectation':'\u2130','exponentiale':'\u2147','ExponentialE':'\u2147','fallingdotseq':'\u2252','Fcy':'\u0424','fcy':'\u0444','female':'\u2640','ffilig':'\uFB03','fflig':'\uFB00','ffllig':'\uFB04','Ffr':'\uD835\uDD09','ffr':'\uD835\uDD23','filig':'\uFB01','FilledSmallSquare':'\u25FC','FilledVerySmallSquare':'\u25AA','fjlig':'fj','flat':'\u266D','fllig':'\uFB02','fltns':'\u25B1','fnof':'\u0192','Fopf':'\uD835\uDD3D','fopf':'\uD835\uDD57','forall':'\u2200','ForAll':'\u2200','fork':'\u22D4','forkv':'\u2AD9','Fouriertrf':'\u2131','fpartint':'\u2A0D','frac12':'\xBD','frac13':'\u2153','frac14':'\xBC','frac15':'\u2155','frac16':'\u2159','frac18':'\u215B','frac23':'\u2154','frac25':'\u2156','frac34':'\xBE','frac35':'\u2157','frac38':'\u215C','frac45':'\u2158','frac56':'\u215A','frac58':'\u215D','frac78':'\u215E','frasl':'\u2044','frown':'\u2322','fscr':'\uD835\uDCBB','Fscr':'\u2131','gacute':'\u01F5','Gamma':'\u0393','gamma':'\u03B3','Gammad':'\u03DC','gammad':'\u03DD','gap':'\u2A86','Gbreve':'\u011E','gbreve':'\u011F','Gcedil':'\u0122','Gcirc':'\u011C','gcirc':'\u011D','Gcy':'\u0413','gcy':'\u0433','Gdot':'\u0120','gdot':'\u0121','ge':'\u2265','gE':'\u2267','gEl':'\u2A8C','gel':'\u22DB','geq':'\u2265','geqq':'\u2267','geqslant':'\u2A7E','gescc':'\u2AA9','ges':'\u2A7E','gesdot':'\u2A80','gesdoto':'\u2A82','gesdotol':'\u2A84','gesl':'\u22DB\uFE00','gesles':'\u2A94','Gfr':'\uD835\uDD0A','gfr':'\uD835\uDD24','gg':'\u226B','Gg':'\u22D9','ggg':'\u22D9','gimel':'\u2137','GJcy':'\u0403','gjcy':'\u0453','gla':'\u2AA5','gl':'\u2277','glE':'\u2A92','glj':'\u2AA4','gnap':'\u2A8A','gnapprox':'\u2A8A','gne':'\u2A88','gnE':'\u2269','gneq':'\u2A88','gneqq':'\u2269','gnsim':'\u22E7','Gopf':'\uD835\uDD3E','gopf':'\uD835\uDD58','grave':'`','GreaterEqual':'\u2265','GreaterEqualLess':'\u22DB','GreaterFullEqual':'\u2267','GreaterGreater':'\u2AA2','GreaterLess':'\u2277','GreaterSlantEqual':'\u2A7E','GreaterTilde':'\u2273','Gscr':'\uD835\uDCA2','gscr':'\u210A','gsim':'\u2273','gsime':'\u2A8E','gsiml':'\u2A90','gtcc':'\u2AA7','gtcir':'\u2A7A','gt':'>','GT':'>','Gt':'\u226B','gtdot':'\u22D7','gtlPar':'\u2995','gtquest':'\u2A7C','gtrapprox':'\u2A86','gtrarr':'\u2978','gtrdot':'\u22D7','gtreqless':'\u22DB','gtreqqless':'\u2A8C','gtrless':'\u2277','gtrsim':'\u2273','gvertneqq':'\u2269\uFE00','gvnE':'\u2269\uFE00','Hacek':'\u02C7','hairsp':'\u200A','half':'\xBD','hamilt':'\u210B','HARDcy':'\u042A','hardcy':'\u044A','harrcir':'\u2948','harr':'\u2194','hArr':'\u21D4','harrw':'\u21AD','Hat':'^','hbar':'\u210F','Hcirc':'\u0124','hcirc':'\u0125','hearts':'\u2665','heartsuit':'\u2665','hellip':'\u2026','hercon':'\u22B9','hfr':'\uD835\uDD25','Hfr':'\u210C','HilbertSpace':'\u210B','hksearow':'\u2925','hkswarow':'\u2926','hoarr':'\u21FF','homtht':'\u223B','hookleftarrow':'\u21A9','hookrightarrow':'\u21AA','hopf':'\uD835\uDD59','Hopf':'\u210D','horbar':'\u2015','HorizontalLine':'\u2500','hscr':'\uD835\uDCBD','Hscr':'\u210B','hslash':'\u210F','Hstrok':'\u0126','hstrok':'\u0127','HumpDownHump':'\u224E','HumpEqual':'\u224F','hybull':'\u2043','hyphen':'\u2010','Iacute':'\xCD','iacute':'\xED','ic':'\u2063','Icirc':'\xCE','icirc':'\xEE','Icy':'\u0418','icy':'\u0438','Idot':'\u0130','IEcy':'\u0415','iecy':'\u0435','iexcl':'\xA1','iff':'\u21D4','ifr':'\uD835\uDD26','Ifr':'\u2111','Igrave':'\xCC','igrave':'\xEC','ii':'\u2148','iiiint':'\u2A0C','iiint':'\u222D','iinfin':'\u29DC','iiota':'\u2129','IJlig':'\u0132','ijlig':'\u0133','Imacr':'\u012A','imacr':'\u012B','image':'\u2111','ImaginaryI':'\u2148','imagline':'\u2110','imagpart':'\u2111','imath':'\u0131','Im':'\u2111','imof':'\u22B7','imped':'\u01B5','Implies':'\u21D2','incare':'\u2105','in':'\u2208','infin':'\u221E','infintie':'\u29DD','inodot':'\u0131','intcal':'\u22BA','int':'\u222B','Int':'\u222C','integers':'\u2124','Integral':'\u222B','intercal':'\u22BA','Intersection':'\u22C2','intlarhk':'\u2A17','intprod':'\u2A3C','InvisibleComma':'\u2063','InvisibleTimes':'\u2062','IOcy':'\u0401','iocy':'\u0451','Iogon':'\u012E','iogon':'\u012F','Iopf':'\uD835\uDD40','iopf':'\uD835\uDD5A','Iota':'\u0399','iota':'\u03B9','iprod':'\u2A3C','iquest':'\xBF','iscr':'\uD835\uDCBE','Iscr':'\u2110','isin':'\u2208','isindot':'\u22F5','isinE':'\u22F9','isins':'\u22F4','isinsv':'\u22F3','isinv':'\u2208','it':'\u2062','Itilde':'\u0128','itilde':'\u0129','Iukcy':'\u0406','iukcy':'\u0456','Iuml':'\xCF','iuml':'\xEF','Jcirc':'\u0134','jcirc':'\u0135','Jcy':'\u0419','jcy':'\u0439','Jfr':'\uD835\uDD0D','jfr':'\uD835\uDD27','jmath':'\u0237','Jopf':'\uD835\uDD41','jopf':'\uD835\uDD5B','Jscr':'\uD835\uDCA5','jscr':'\uD835\uDCBF','Jsercy':'\u0408','jsercy':'\u0458','Jukcy':'\u0404','jukcy':'\u0454','Kappa':'\u039A','kappa':'\u03BA','kappav':'\u03F0','Kcedil':'\u0136','kcedil':'\u0137','Kcy':'\u041A','kcy':'\u043A','Kfr':'\uD835\uDD0E','kfr':'\uD835\uDD28','kgreen':'\u0138','KHcy':'\u0425','khcy':'\u0445','KJcy':'\u040C','kjcy':'\u045C','Kopf':'\uD835\uDD42','kopf':'\uD835\uDD5C','Kscr':'\uD835\uDCA6','kscr':'\uD835\uDCC0','lAarr':'\u21DA','Lacute':'\u0139','lacute':'\u013A','laemptyv':'\u29B4','lagran':'\u2112','Lambda':'\u039B','lambda':'\u03BB','lang':'\u27E8','Lang':'\u27EA','langd':'\u2991','langle':'\u27E8','lap':'\u2A85','Laplacetrf':'\u2112','laquo':'\xAB','larrb':'\u21E4','larrbfs':'\u291F','larr':'\u2190','Larr':'\u219E','lArr':'\u21D0','larrfs':'\u291D','larrhk':'\u21A9','larrlp':'\u21AB','larrpl':'\u2939','larrsim':'\u2973','larrtl':'\u21A2','latail':'\u2919','lAtail':'\u291B','lat':'\u2AAB','late':'\u2AAD','lates':'\u2AAD\uFE00','lbarr':'\u290C','lBarr':'\u290E','lbbrk':'\u2772','lbrace':'{','lbrack':'[','lbrke':'\u298B','lbrksld':'\u298F','lbrkslu':'\u298D','Lcaron':'\u013D','lcaron':'\u013E','Lcedil':'\u013B','lcedil':'\u013C','lceil':'\u2308','lcub':'{','Lcy':'\u041B','lcy':'\u043B','ldca':'\u2936','ldquo':'\u201C','ldquor':'\u201E','ldrdhar':'\u2967','ldrushar':'\u294B','ldsh':'\u21B2','le':'\u2264','lE':'\u2266','LeftAngleBracket':'\u27E8','LeftArrowBar':'\u21E4','leftarrow':'\u2190','LeftArrow':'\u2190','Leftarrow':'\u21D0','LeftArrowRightArrow':'\u21C6','leftarrowtail':'\u21A2','LeftCeiling':'\u2308','LeftDoubleBracket':'\u27E6','LeftDownTeeVector':'\u2961','LeftDownVectorBar':'\u2959','LeftDownVector':'\u21C3','LeftFloor':'\u230A','leftharpoondown':'\u21BD','leftharpoonup':'\u21BC','leftleftarrows':'\u21C7','leftrightarrow':'\u2194','LeftRightArrow':'\u2194','Leftrightarrow':'\u21D4','leftrightarrows':'\u21C6','leftrightharpoons':'\u21CB','leftrightsquigarrow':'\u21AD','LeftRightVector':'\u294E','LeftTeeArrow':'\u21A4','LeftTee':'\u22A3','LeftTeeVector':'\u295A','leftthreetimes':'\u22CB','LeftTriangleBar':'\u29CF','LeftTriangle':'\u22B2','LeftTriangleEqual':'\u22B4','LeftUpDownVector':'\u2951','LeftUpTeeVector':'\u2960','LeftUpVectorBar':'\u2958','LeftUpVector':'\u21BF','LeftVectorBar':'\u2952','LeftVector':'\u21BC','lEg':'\u2A8B','leg':'\u22DA','leq':'\u2264','leqq':'\u2266','leqslant':'\u2A7D','lescc':'\u2AA8','les':'\u2A7D','lesdot':'\u2A7F','lesdoto':'\u2A81','lesdotor':'\u2A83','lesg':'\u22DA\uFE00','lesges':'\u2A93','lessapprox':'\u2A85','lessdot':'\u22D6','lesseqgtr':'\u22DA','lesseqqgtr':'\u2A8B','LessEqualGreater':'\u22DA','LessFullEqual':'\u2266','LessGreater':'\u2276','lessgtr':'\u2276','LessLess':'\u2AA1','lesssim':'\u2272','LessSlantEqual':'\u2A7D','LessTilde':'\u2272','lfisht':'\u297C','lfloor':'\u230A','Lfr':'\uD835\uDD0F','lfr':'\uD835\uDD29','lg':'\u2276','lgE':'\u2A91','lHar':'\u2962','lhard':'\u21BD','lharu':'\u21BC','lharul':'\u296A','lhblk':'\u2584','LJcy':'\u0409','ljcy':'\u0459','llarr':'\u21C7','ll':'\u226A','Ll':'\u22D8','llcorner':'\u231E','Lleftarrow':'\u21DA','llhard':'\u296B','lltri':'\u25FA','Lmidot':'\u013F','lmidot':'\u0140','lmoustache':'\u23B0','lmoust':'\u23B0','lnap':'\u2A89','lnapprox':'\u2A89','lne':'\u2A87','lnE':'\u2268','lneq':'\u2A87','lneqq':'\u2268','lnsim':'\u22E6','loang':'\u27EC','loarr':'\u21FD','lobrk':'\u27E6','longleftarrow':'\u27F5','LongLeftArrow':'\u27F5','Longleftarrow':'\u27F8','longleftrightarrow':'\u27F7','LongLeftRightArrow':'\u27F7','Longleftrightarrow':'\u27FA','longmapsto':'\u27FC','longrightarrow':'\u27F6','LongRightArrow':'\u27F6','Longrightarrow':'\u27F9','looparrowleft':'\u21AB','looparrowright':'\u21AC','lopar':'\u2985','Lopf':'\uD835\uDD43','lopf':'\uD835\uDD5D','loplus':'\u2A2D','lotimes':'\u2A34','lowast':'\u2217','lowbar':'_','LowerLeftArrow':'\u2199','LowerRightArrow':'\u2198','loz':'\u25CA','lozenge':'\u25CA','lozf':'\u29EB','lpar':'(','lparlt':'\u2993','lrarr':'\u21C6','lrcorner':'\u231F','lrhar':'\u21CB','lrhard':'\u296D','lrm':'\u200E','lrtri':'\u22BF','lsaquo':'\u2039','lscr':'\uD835\uDCC1','Lscr':'\u2112','lsh':'\u21B0','Lsh':'\u21B0','lsim':'\u2272','lsime':'\u2A8D','lsimg':'\u2A8F','lsqb':'[','lsquo':'\u2018','lsquor':'\u201A','Lstrok':'\u0141','lstrok':'\u0142','ltcc':'\u2AA6','ltcir':'\u2A79','lt':'<','LT':'<','Lt':'\u226A','ltdot':'\u22D6','lthree':'\u22CB','ltimes':'\u22C9','ltlarr':'\u2976','ltquest':'\u2A7B','ltri':'\u25C3','ltrie':'\u22B4','ltrif':'\u25C2','ltrPar':'\u2996','lurdshar':'\u294A','luruhar':'\u2966','lvertneqq':'\u2268\uFE00','lvnE':'\u2268\uFE00','macr':'\xAF','male':'\u2642','malt':'\u2720','maltese':'\u2720','Map':'\u2905','map':'\u21A6','mapsto':'\u21A6','mapstodown':'\u21A7','mapstoleft':'\u21A4','mapstoup':'\u21A5','marker':'\u25AE','mcomma':'\u2A29','Mcy':'\u041C','mcy':'\u043C','mdash':'\u2014','mDDot':'\u223A','measuredangle':'\u2221','MediumSpace':'\u205F','Mellintrf':'\u2133','Mfr':'\uD835\uDD10','mfr':'\uD835\uDD2A','mho':'\u2127','micro':'\xB5','midast':'*','midcir':'\u2AF0','mid':'\u2223','middot':'\xB7','minusb':'\u229F','minus':'\u2212','minusd':'\u2238','minusdu':'\u2A2A','MinusPlus':'\u2213','mlcp':'\u2ADB','mldr':'\u2026','mnplus':'\u2213','models':'\u22A7','Mopf':'\uD835\uDD44','mopf':'\uD835\uDD5E','mp':'\u2213','mscr':'\uD835\uDCC2','Mscr':'\u2133','mstpos':'\u223E','Mu':'\u039C','mu':'\u03BC','multimap':'\u22B8','mumap':'\u22B8','nabla':'\u2207','Nacute':'\u0143','nacute':'\u0144','nang':'\u2220\u20D2','nap':'\u2249','napE':'\u2A70\u0338','napid':'\u224B\u0338','napos':'\u0149','napprox':'\u2249','natural':'\u266E','naturals':'\u2115','natur':'\u266E','nbsp':'\xA0','nbump':'\u224E\u0338','nbumpe':'\u224F\u0338','ncap':'\u2A43','Ncaron':'\u0147','ncaron':'\u0148','Ncedil':'\u0145','ncedil':'\u0146','ncong':'\u2247','ncongdot':'\u2A6D\u0338','ncup':'\u2A42','Ncy':'\u041D','ncy':'\u043D','ndash':'\u2013','nearhk':'\u2924','nearr':'\u2197','neArr':'\u21D7','nearrow':'\u2197','ne':'\u2260','nedot':'\u2250\u0338','NegativeMediumSpace':'\u200B','NegativeThickSpace':'\u200B','NegativeThinSpace':'\u200B','NegativeVeryThinSpace':'\u200B','nequiv':'\u2262','nesear':'\u2928','nesim':'\u2242\u0338','NestedGreaterGreater':'\u226B','NestedLessLess':'\u226A','NewLine':'\n','nexist':'\u2204','nexists':'\u2204','Nfr':'\uD835\uDD11','nfr':'\uD835\uDD2B','ngE':'\u2267\u0338','nge':'\u2271','ngeq':'\u2271','ngeqq':'\u2267\u0338','ngeqslant':'\u2A7E\u0338','nges':'\u2A7E\u0338','nGg':'\u22D9\u0338','ngsim':'\u2275','nGt':'\u226B\u20D2','ngt':'\u226F','ngtr':'\u226F','nGtv':'\u226B\u0338','nharr':'\u21AE','nhArr':'\u21CE','nhpar':'\u2AF2','ni':'\u220B','nis':'\u22FC','nisd':'\u22FA','niv':'\u220B','NJcy':'\u040A','njcy':'\u045A','nlarr':'\u219A','nlArr':'\u21CD','nldr':'\u2025','nlE':'\u2266\u0338','nle':'\u2270','nleftarrow':'\u219A','nLeftarrow':'\u21CD','nleftrightarrow':'\u21AE','nLeftrightarrow':'\u21CE','nleq':'\u2270','nleqq':'\u2266\u0338','nleqslant':'\u2A7D\u0338','nles':'\u2A7D\u0338','nless':'\u226E','nLl':'\u22D8\u0338','nlsim':'\u2274','nLt':'\u226A\u20D2','nlt':'\u226E','nltri':'\u22EA','nltrie':'\u22EC','nLtv':'\u226A\u0338','nmid':'\u2224','NoBreak':'\u2060','NonBreakingSpace':'\xA0','nopf':'\uD835\uDD5F','Nopf':'\u2115','Not':'\u2AEC','not':'\xAC','NotCongruent':'\u2262','NotCupCap':'\u226D','NotDoubleVerticalBar':'\u2226','NotElement':'\u2209','NotEqual':'\u2260','NotEqualTilde':'\u2242\u0338','NotExists':'\u2204','NotGreater':'\u226F','NotGreaterEqual':'\u2271','NotGreaterFullEqual':'\u2267\u0338','NotGreaterGreater':'\u226B\u0338','NotGreaterLess':'\u2279','NotGreaterSlantEqual':'\u2A7E\u0338','NotGreaterTilde':'\u2275','NotHumpDownHump':'\u224E\u0338','NotHumpEqual':'\u224F\u0338','notin':'\u2209','notindot':'\u22F5\u0338','notinE':'\u22F9\u0338','notinva':'\u2209','notinvb':'\u22F7','notinvc':'\u22F6','NotLeftTriangleBar':'\u29CF\u0338','NotLeftTriangle':'\u22EA','NotLeftTriangleEqual':'\u22EC','NotLess':'\u226E','NotLessEqual':'\u2270','NotLessGreater':'\u2278','NotLessLess':'\u226A\u0338','NotLessSlantEqual':'\u2A7D\u0338','NotLessTilde':'\u2274','NotNestedGreaterGreater':'\u2AA2\u0338','NotNestedLessLess':'\u2AA1\u0338','notni':'\u220C','notniva':'\u220C','notnivb':'\u22FE','notnivc':'\u22FD','NotPrecedes':'\u2280','NotPrecedesEqual':'\u2AAF\u0338','NotPrecedesSlantEqual':'\u22E0','NotReverseElement':'\u220C','NotRightTriangleBar':'\u29D0\u0338','NotRightTriangle':'\u22EB','NotRightTriangleEqual':'\u22ED','NotSquareSubset':'\u228F\u0338','NotSquareSubsetEqual':'\u22E2','NotSquareSuperset':'\u2290\u0338','NotSquareSupersetEqual':'\u22E3','NotSubset':'\u2282\u20D2','NotSubsetEqual':'\u2288','NotSucceeds':'\u2281','NotSucceedsEqual':'\u2AB0\u0338','NotSucceedsSlantEqual':'\u22E1','NotSucceedsTilde':'\u227F\u0338','NotSuperset':'\u2283\u20D2','NotSupersetEqual':'\u2289','NotTilde':'\u2241','NotTildeEqual':'\u2244','NotTildeFullEqual':'\u2247','NotTildeTilde':'\u2249','NotVerticalBar':'\u2224','nparallel':'\u2226','npar':'\u2226','nparsl':'\u2AFD\u20E5','npart':'\u2202\u0338','npolint':'\u2A14','npr':'\u2280','nprcue':'\u22E0','nprec':'\u2280','npreceq':'\u2AAF\u0338','npre':'\u2AAF\u0338','nrarrc':'\u2933\u0338','nrarr':'\u219B','nrArr':'\u21CF','nrarrw':'\u219D\u0338','nrightarrow':'\u219B','nRightarrow':'\u21CF','nrtri':'\u22EB','nrtrie':'\u22ED','nsc':'\u2281','nsccue':'\u22E1','nsce':'\u2AB0\u0338','Nscr':'\uD835\uDCA9','nscr':'\uD835\uDCC3','nshortmid':'\u2224','nshortparallel':'\u2226','nsim':'\u2241','nsime':'\u2244','nsimeq':'\u2244','nsmid':'\u2224','nspar':'\u2226','nsqsube':'\u22E2','nsqsupe':'\u22E3','nsub':'\u2284','nsubE':'\u2AC5\u0338','nsube':'\u2288','nsubset':'\u2282\u20D2','nsubseteq':'\u2288','nsubseteqq':'\u2AC5\u0338','nsucc':'\u2281','nsucceq':'\u2AB0\u0338','nsup':'\u2285','nsupE':'\u2AC6\u0338','nsupe':'\u2289','nsupset':'\u2283\u20D2','nsupseteq':'\u2289','nsupseteqq':'\u2AC6\u0338','ntgl':'\u2279','Ntilde':'\xD1','ntilde':'\xF1','ntlg':'\u2278','ntriangleleft':'\u22EA','ntrianglelefteq':'\u22EC','ntriangleright':'\u22EB','ntrianglerighteq':'\u22ED','Nu':'\u039D','nu':'\u03BD','num':'#','numero':'\u2116','numsp':'\u2007','nvap':'\u224D\u20D2','nvdash':'\u22AC','nvDash':'\u22AD','nVdash':'\u22AE','nVDash':'\u22AF','nvge':'\u2265\u20D2','nvgt':'>\u20D2','nvHarr':'\u2904','nvinfin':'\u29DE','nvlArr':'\u2902','nvle':'\u2264\u20D2','nvlt':'<\u20D2','nvltrie':'\u22B4\u20D2','nvrArr':'\u2903','nvrtrie':'\u22B5\u20D2','nvsim':'\u223C\u20D2','nwarhk':'\u2923','nwarr':'\u2196','nwArr':'\u21D6','nwarrow':'\u2196','nwnear':'\u2927','Oacute':'\xD3','oacute':'\xF3','oast':'\u229B','Ocirc':'\xD4','ocirc':'\xF4','ocir':'\u229A','Ocy':'\u041E','ocy':'\u043E','odash':'\u229D','Odblac':'\u0150','odblac':'\u0151','odiv':'\u2A38','odot':'\u2299','odsold':'\u29BC','OElig':'\u0152','oelig':'\u0153','ofcir':'\u29BF','Ofr':'\uD835\uDD12','ofr':'\uD835\uDD2C','ogon':'\u02DB','Ograve':'\xD2','ograve':'\xF2','ogt':'\u29C1','ohbar':'\u29B5','ohm':'\u03A9','oint':'\u222E','olarr':'\u21BA','olcir':'\u29BE','olcross':'\u29BB','oline':'\u203E','olt':'\u29C0','Omacr':'\u014C','omacr':'\u014D','Omega':'\u03A9','omega':'\u03C9','Omicron':'\u039F','omicron':'\u03BF','omid':'\u29B6','ominus':'\u2296','Oopf':'\uD835\uDD46','oopf':'\uD835\uDD60','opar':'\u29B7','OpenCurlyDoubleQuote':'\u201C','OpenCurlyQuote':'\u2018','operp':'\u29B9','oplus':'\u2295','orarr':'\u21BB','Or':'\u2A54','or':'\u2228','ord':'\u2A5D','order':'\u2134','orderof':'\u2134','ordf':'\xAA','ordm':'\xBA','origof':'\u22B6','oror':'\u2A56','orslope':'\u2A57','orv':'\u2A5B','oS':'\u24C8','Oscr':'\uD835\uDCAA','oscr':'\u2134','Oslash':'\xD8','oslash':'\xF8','osol':'\u2298','Otilde':'\xD5','otilde':'\xF5','otimesas':'\u2A36','Otimes':'\u2A37','otimes':'\u2297','Ouml':'\xD6','ouml':'\xF6','ovbar':'\u233D','OverBar':'\u203E','OverBrace':'\u23DE','OverBracket':'\u23B4','OverParenthesis':'\u23DC','para':'\xB6','parallel':'\u2225','par':'\u2225','parsim':'\u2AF3','parsl':'\u2AFD','part':'\u2202','PartialD':'\u2202','Pcy':'\u041F','pcy':'\u043F','percnt':'%','period':'.','permil':'\u2030','perp':'\u22A5','pertenk':'\u2031','Pfr':'\uD835\uDD13','pfr':'\uD835\uDD2D','Phi':'\u03A6','phi':'\u03C6','phiv':'\u03D5','phmmat':'\u2133','phone':'\u260E','Pi':'\u03A0','pi':'\u03C0','pitchfork':'\u22D4','piv':'\u03D6','planck':'\u210F','planckh':'\u210E','plankv':'\u210F','plusacir':'\u2A23','plusb':'\u229E','pluscir':'\u2A22','plus':'+','plusdo':'\u2214','plusdu':'\u2A25','pluse':'\u2A72','PlusMinus':'\xB1','plusmn':'\xB1','plussim':'\u2A26','plustwo':'\u2A27','pm':'\xB1','Poincareplane':'\u210C','pointint':'\u2A15','popf':'\uD835\uDD61','Popf':'\u2119','pound':'\xA3','prap':'\u2AB7','Pr':'\u2ABB','pr':'\u227A','prcue':'\u227C','precapprox':'\u2AB7','prec':'\u227A','preccurlyeq':'\u227C','Precedes':'\u227A','PrecedesEqual':'\u2AAF','PrecedesSlantEqual':'\u227C','PrecedesTilde':'\u227E','preceq':'\u2AAF','precnapprox':'\u2AB9','precneqq':'\u2AB5','precnsim':'\u22E8','pre':'\u2AAF','prE':'\u2AB3','precsim':'\u227E','prime':'\u2032','Prime':'\u2033','primes':'\u2119','prnap':'\u2AB9','prnE':'\u2AB5','prnsim':'\u22E8','prod':'\u220F','Product':'\u220F','profalar':'\u232E','profline':'\u2312','profsurf':'\u2313','prop':'\u221D','Proportional':'\u221D','Proportion':'\u2237','propto':'\u221D','prsim':'\u227E','prurel':'\u22B0','Pscr':'\uD835\uDCAB','pscr':'\uD835\uDCC5','Psi':'\u03A8','psi':'\u03C8','puncsp':'\u2008','Qfr':'\uD835\uDD14','qfr':'\uD835\uDD2E','qint':'\u2A0C','qopf':'\uD835\uDD62','Qopf':'\u211A','qprime':'\u2057','Qscr':'\uD835\uDCAC','qscr':'\uD835\uDCC6','quaternions':'\u210D','quatint':'\u2A16','quest':'?','questeq':'\u225F','quot':'"','QUOT':'"','rAarr':'\u21DB','race':'\u223D\u0331','Racute':'\u0154','racute':'\u0155','radic':'\u221A','raemptyv':'\u29B3','rang':'\u27E9','Rang':'\u27EB','rangd':'\u2992','range':'\u29A5','rangle':'\u27E9','raquo':'\xBB','rarrap':'\u2975','rarrb':'\u21E5','rarrbfs':'\u2920','rarrc':'\u2933','rarr':'\u2192','Rarr':'\u21A0','rArr':'\u21D2','rarrfs':'\u291E','rarrhk':'\u21AA','rarrlp':'\u21AC','rarrpl':'\u2945','rarrsim':'\u2974','Rarrtl':'\u2916','rarrtl':'\u21A3','rarrw':'\u219D','ratail':'\u291A','rAtail':'\u291C','ratio':'\u2236','rationals':'\u211A','rbarr':'\u290D','rBarr':'\u290F','RBarr':'\u2910','rbbrk':'\u2773','rbrace':'}','rbrack':']','rbrke':'\u298C','rbrksld':'\u298E','rbrkslu':'\u2990','Rcaron':'\u0158','rcaron':'\u0159','Rcedil':'\u0156','rcedil':'\u0157','rceil':'\u2309','rcub':'}','Rcy':'\u0420','rcy':'\u0440','rdca':'\u2937','rdldhar':'\u2969','rdquo':'\u201D','rdquor':'\u201D','rdsh':'\u21B3','real':'\u211C','realine':'\u211B','realpart':'\u211C','reals':'\u211D','Re':'\u211C','rect':'\u25AD','reg':'\xAE','REG':'\xAE','ReverseElement':'\u220B','ReverseEquilibrium':'\u21CB','ReverseUpEquilibrium':'\u296F','rfisht':'\u297D','rfloor':'\u230B','rfr':'\uD835\uDD2F','Rfr':'\u211C','rHar':'\u2964','rhard':'\u21C1','rharu':'\u21C0','rharul':'\u296C','Rho':'\u03A1','rho':'\u03C1','rhov':'\u03F1','RightAngleBracket':'\u27E9','RightArrowBar':'\u21E5','rightarrow':'\u2192','RightArrow':'\u2192','Rightarrow':'\u21D2','RightArrowLeftArrow':'\u21C4','rightarrowtail':'\u21A3','RightCeiling':'\u2309','RightDoubleBracket':'\u27E7','RightDownTeeVector':'\u295D','RightDownVectorBar':'\u2955','RightDownVector':'\u21C2','RightFloor':'\u230B','rightharpoondown':'\u21C1','rightharpoonup':'\u21C0','rightleftarrows':'\u21C4','rightleftharpoons':'\u21CC','rightrightarrows':'\u21C9','rightsquigarrow':'\u219D','RightTeeArrow':'\u21A6','RightTee':'\u22A2','RightTeeVector':'\u295B','rightthreetimes':'\u22CC','RightTriangleBar':'\u29D0','RightTriangle':'\u22B3','RightTriangleEqual':'\u22B5','RightUpDownVector':'\u294F','RightUpTeeVector':'\u295C','RightUpVectorBar':'\u2954','RightUpVector':'\u21BE','RightVectorBar':'\u2953','RightVector':'\u21C0','ring':'\u02DA','risingdotseq':'\u2253','rlarr':'\u21C4','rlhar':'\u21CC','rlm':'\u200F','rmoustache':'\u23B1','rmoust':'\u23B1','rnmid':'\u2AEE','roang':'\u27ED','roarr':'\u21FE','robrk':'\u27E7','ropar':'\u2986','ropf':'\uD835\uDD63','Ropf':'\u211D','roplus':'\u2A2E','rotimes':'\u2A35','RoundImplies':'\u2970','rpar':')','rpargt':'\u2994','rppolint':'\u2A12','rrarr':'\u21C9','Rrightarrow':'\u21DB','rsaquo':'\u203A','rscr':'\uD835\uDCC7','Rscr':'\u211B','rsh':'\u21B1','Rsh':'\u21B1','rsqb':']','rsquo':'\u2019','rsquor':'\u2019','rthree':'\u22CC','rtimes':'\u22CA','rtri':'\u25B9','rtrie':'\u22B5','rtrif':'\u25B8','rtriltri':'\u29CE','RuleDelayed':'\u29F4','ruluhar':'\u2968','rx':'\u211E','Sacute':'\u015A','sacute':'\u015B','sbquo':'\u201A','scap':'\u2AB8','Scaron':'\u0160','scaron':'\u0161','Sc':'\u2ABC','sc':'\u227B','sccue':'\u227D','sce':'\u2AB0','scE':'\u2AB4','Scedil':'\u015E','scedil':'\u015F','Scirc':'\u015C','scirc':'\u015D','scnap':'\u2ABA','scnE':'\u2AB6','scnsim':'\u22E9','scpolint':'\u2A13','scsim':'\u227F','Scy':'\u0421','scy':'\u0441','sdotb':'\u22A1','sdot':'\u22C5','sdote':'\u2A66','searhk':'\u2925','searr':'\u2198','seArr':'\u21D8','searrow':'\u2198','sect':'\xA7','semi':';','seswar':'\u2929','setminus':'\u2216','setmn':'\u2216','sext':'\u2736','Sfr':'\uD835\uDD16','sfr':'\uD835\uDD30','sfrown':'\u2322','sharp':'\u266F','SHCHcy':'\u0429','shchcy':'\u0449','SHcy':'\u0428','shcy':'\u0448','ShortDownArrow':'\u2193','ShortLeftArrow':'\u2190','shortmid':'\u2223','shortparallel':'\u2225','ShortRightArrow':'\u2192','ShortUpArrow':'\u2191','shy':'\xAD','Sigma':'\u03A3','sigma':'\u03C3','sigmaf':'\u03C2','sigmav':'\u03C2','sim':'\u223C','simdot':'\u2A6A','sime':'\u2243','simeq':'\u2243','simg':'\u2A9E','simgE':'\u2AA0','siml':'\u2A9D','simlE':'\u2A9F','simne':'\u2246','simplus':'\u2A24','simrarr':'\u2972','slarr':'\u2190','SmallCircle':'\u2218','smallsetminus':'\u2216','smashp':'\u2A33','smeparsl':'\u29E4','smid':'\u2223','smile':'\u2323','smt':'\u2AAA','smte':'\u2AAC','smtes':'\u2AAC\uFE00','SOFTcy':'\u042C','softcy':'\u044C','solbar':'\u233F','solb':'\u29C4','sol':'/','Sopf':'\uD835\uDD4A','sopf':'\uD835\uDD64','spades':'\u2660','spadesuit':'\u2660','spar':'\u2225','sqcap':'\u2293','sqcaps':'\u2293\uFE00','sqcup':'\u2294','sqcups':'\u2294\uFE00','Sqrt':'\u221A','sqsub':'\u228F','sqsube':'\u2291','sqsubset':'\u228F','sqsubseteq':'\u2291','sqsup':'\u2290','sqsupe':'\u2292','sqsupset':'\u2290','sqsupseteq':'\u2292','square':'\u25A1','Square':'\u25A1','SquareIntersection':'\u2293','SquareSubset':'\u228F','SquareSubsetEqual':'\u2291','SquareSuperset':'\u2290','SquareSupersetEqual':'\u2292','SquareUnion':'\u2294','squarf':'\u25AA','squ':'\u25A1','squf':'\u25AA','srarr':'\u2192','Sscr':'\uD835\uDCAE','sscr':'\uD835\uDCC8','ssetmn':'\u2216','ssmile':'\u2323','sstarf':'\u22C6','Star':'\u22C6','star':'\u2606','starf':'\u2605','straightepsilon':'\u03F5','straightphi':'\u03D5','strns':'\xAF','sub':'\u2282','Sub':'\u22D0','subdot':'\u2ABD','subE':'\u2AC5','sube':'\u2286','subedot':'\u2AC3','submult':'\u2AC1','subnE':'\u2ACB','subne':'\u228A','subplus':'\u2ABF','subrarr':'\u2979','subset':'\u2282','Subset':'\u22D0','subseteq':'\u2286','subseteqq':'\u2AC5','SubsetEqual':'\u2286','subsetneq':'\u228A','subsetneqq':'\u2ACB','subsim':'\u2AC7','subsub':'\u2AD5','subsup':'\u2AD3','succapprox':'\u2AB8','succ':'\u227B','succcurlyeq':'\u227D','Succeeds':'\u227B','SucceedsEqual':'\u2AB0','SucceedsSlantEqual':'\u227D','SucceedsTilde':'\u227F','succeq':'\u2AB0','succnapprox':'\u2ABA','succneqq':'\u2AB6','succnsim':'\u22E9','succsim':'\u227F','SuchThat':'\u220B','sum':'\u2211','Sum':'\u2211','sung':'\u266A','sup1':'\xB9','sup2':'\xB2','sup3':'\xB3','sup':'\u2283','Sup':'\u22D1','supdot':'\u2ABE','supdsub':'\u2AD8','supE':'\u2AC6','supe':'\u2287','supedot':'\u2AC4','Superset':'\u2283','SupersetEqual':'\u2287','suphsol':'\u27C9','suphsub':'\u2AD7','suplarr':'\u297B','supmult':'\u2AC2','supnE':'\u2ACC','supne':'\u228B','supplus':'\u2AC0','supset':'\u2283','Supset':'\u22D1','supseteq':'\u2287','supseteqq':'\u2AC6','supsetneq':'\u228B','supsetneqq':'\u2ACC','supsim':'\u2AC8','supsub':'\u2AD4','supsup':'\u2AD6','swarhk':'\u2926','swarr':'\u2199','swArr':'\u21D9','swarrow':'\u2199','swnwar':'\u292A','szlig':'\xDF','Tab':'\t','target':'\u2316','Tau':'\u03A4','tau':'\u03C4','tbrk':'\u23B4','Tcaron':'\u0164','tcaron':'\u0165','Tcedil':'\u0162','tcedil':'\u0163','Tcy':'\u0422','tcy':'\u0442','tdot':'\u20DB','telrec':'\u2315','Tfr':'\uD835\uDD17','tfr':'\uD835\uDD31','there4':'\u2234','therefore':'\u2234','Therefore':'\u2234','Theta':'\u0398','theta':'\u03B8','thetasym':'\u03D1','thetav':'\u03D1','thickapprox':'\u2248','thicksim':'\u223C','ThickSpace':'\u205F\u200A','ThinSpace':'\u2009','thinsp':'\u2009','thkap':'\u2248','thksim':'\u223C','THORN':'\xDE','thorn':'\xFE','tilde':'\u02DC','Tilde':'\u223C','TildeEqual':'\u2243','TildeFullEqual':'\u2245','TildeTilde':'\u2248','timesbar':'\u2A31','timesb':'\u22A0','times':'\xD7','timesd':'\u2A30','tint':'\u222D','toea':'\u2928','topbot':'\u2336','topcir':'\u2AF1','top':'\u22A4','Topf':'\uD835\uDD4B','topf':'\uD835\uDD65','topfork':'\u2ADA','tosa':'\u2929','tprime':'\u2034','trade':'\u2122','TRADE':'\u2122','triangle':'\u25B5','triangledown':'\u25BF','triangleleft':'\u25C3','trianglelefteq':'\u22B4','triangleq':'\u225C','triangleright':'\u25B9','trianglerighteq':'\u22B5','tridot':'\u25EC','trie':'\u225C','triminus':'\u2A3A','TripleDot':'\u20DB','triplus':'\u2A39','trisb':'\u29CD','tritime':'\u2A3B','trpezium':'\u23E2','Tscr':'\uD835\uDCAF','tscr':'\uD835\uDCC9','TScy':'\u0426','tscy':'\u0446','TSHcy':'\u040B','tshcy':'\u045B','Tstrok':'\u0166','tstrok':'\u0167','twixt':'\u226C','twoheadleftarrow':'\u219E','twoheadrightarrow':'\u21A0','Uacute':'\xDA','uacute':'\xFA','uarr':'\u2191','Uarr':'\u219F','uArr':'\u21D1','Uarrocir':'\u2949','Ubrcy':'\u040E','ubrcy':'\u045E','Ubreve':'\u016C','ubreve':'\u016D','Ucirc':'\xDB','ucirc':'\xFB','Ucy':'\u0423','ucy':'\u0443','udarr':'\u21C5','Udblac':'\u0170','udblac':'\u0171','udhar':'\u296E','ufisht':'\u297E','Ufr':'\uD835\uDD18','ufr':'\uD835\uDD32','Ugrave':'\xD9','ugrave':'\xF9','uHar':'\u2963','uharl':'\u21BF','uharr':'\u21BE','uhblk':'\u2580','ulcorn':'\u231C','ulcorner':'\u231C','ulcrop':'\u230F','ultri':'\u25F8','Umacr':'\u016A','umacr':'\u016B','uml':'\xA8','UnderBar':'_','UnderBrace':'\u23DF','UnderBracket':'\u23B5','UnderParenthesis':'\u23DD','Union':'\u22C3','UnionPlus':'\u228E','Uogon':'\u0172','uogon':'\u0173','Uopf':'\uD835\uDD4C','uopf':'\uD835\uDD66','UpArrowBar':'\u2912','uparrow':'\u2191','UpArrow':'\u2191','Uparrow':'\u21D1','UpArrowDownArrow':'\u21C5','updownarrow':'\u2195','UpDownArrow':'\u2195','Updownarrow':'\u21D5','UpEquilibrium':'\u296E','upharpoonleft':'\u21BF','upharpoonright':'\u21BE','uplus':'\u228E','UpperLeftArrow':'\u2196','UpperRightArrow':'\u2197','upsi':'\u03C5','Upsi':'\u03D2','upsih':'\u03D2','Upsilon':'\u03A5','upsilon':'\u03C5','UpTeeArrow':'\u21A5','UpTee':'\u22A5','upuparrows':'\u21C8','urcorn':'\u231D','urcorner':'\u231D','urcrop':'\u230E','Uring':'\u016E','uring':'\u016F','urtri':'\u25F9','Uscr':'\uD835\uDCB0','uscr':'\uD835\uDCCA','utdot':'\u22F0','Utilde':'\u0168','utilde':'\u0169','utri':'\u25B5','utrif':'\u25B4','uuarr':'\u21C8','Uuml':'\xDC','uuml':'\xFC','uwangle':'\u29A7','vangrt':'\u299C','varepsilon':'\u03F5','varkappa':'\u03F0','varnothing':'\u2205','varphi':'\u03D5','varpi':'\u03D6','varpropto':'\u221D','varr':'\u2195','vArr':'\u21D5','varrho':'\u03F1','varsigma':'\u03C2','varsubsetneq':'\u228A\uFE00','varsubsetneqq':'\u2ACB\uFE00','varsupsetneq':'\u228B\uFE00','varsupsetneqq':'\u2ACC\uFE00','vartheta':'\u03D1','vartriangleleft':'\u22B2','vartriangleright':'\u22B3','vBar':'\u2AE8','Vbar':'\u2AEB','vBarv':'\u2AE9','Vcy':'\u0412','vcy':'\u0432','vdash':'\u22A2','vDash':'\u22A8','Vdash':'\u22A9','VDash':'\u22AB','Vdashl':'\u2AE6','veebar':'\u22BB','vee':'\u2228','Vee':'\u22C1','veeeq':'\u225A','vellip':'\u22EE','verbar':'|','Verbar':'\u2016','vert':'|','Vert':'\u2016','VerticalBar':'\u2223','VerticalLine':'|','VerticalSeparator':'\u2758','VerticalTilde':'\u2240','VeryThinSpace':'\u200A','Vfr':'\uD835\uDD19','vfr':'\uD835\uDD33','vltri':'\u22B2','vnsub':'\u2282\u20D2','vnsup':'\u2283\u20D2','Vopf':'\uD835\uDD4D','vopf':'\uD835\uDD67','vprop':'\u221D','vrtri':'\u22B3','Vscr':'\uD835\uDCB1','vscr':'\uD835\uDCCB','vsubnE':'\u2ACB\uFE00','vsubne':'\u228A\uFE00','vsupnE':'\u2ACC\uFE00','vsupne':'\u228B\uFE00','Vvdash':'\u22AA','vzigzag':'\u299A','Wcirc':'\u0174','wcirc':'\u0175','wedbar':'\u2A5F','wedge':'\u2227','Wedge':'\u22C0','wedgeq':'\u2259','weierp':'\u2118','Wfr':'\uD835\uDD1A','wfr':'\uD835\uDD34','Wopf':'\uD835\uDD4E','wopf':'\uD835\uDD68','wp':'\u2118','wr':'\u2240','wreath':'\u2240','Wscr':'\uD835\uDCB2','wscr':'\uD835\uDCCC','xcap':'\u22C2','xcirc':'\u25EF','xcup':'\u22C3','xdtri':'\u25BD','Xfr':'\uD835\uDD1B','xfr':'\uD835\uDD35','xharr':'\u27F7','xhArr':'\u27FA','Xi':'\u039E','xi':'\u03BE','xlarr':'\u27F5','xlArr':'\u27F8','xmap':'\u27FC','xnis':'\u22FB','xodot':'\u2A00','Xopf':'\uD835\uDD4F','xopf':'\uD835\uDD69','xoplus':'\u2A01','xotime':'\u2A02','xrarr':'\u27F6','xrArr':'\u27F9','Xscr':'\uD835\uDCB3','xscr':'\uD835\uDCCD','xsqcup':'\u2A06','xuplus':'\u2A04','xutri':'\u25B3','xvee':'\u22C1','xwedge':'\u22C0','Yacute':'\xDD','yacute':'\xFD','YAcy':'\u042F','yacy':'\u044F','Ycirc':'\u0176','ycirc':'\u0177','Ycy':'\u042B','ycy':'\u044B','yen':'\xA5','Yfr':'\uD835\uDD1C','yfr':'\uD835\uDD36','YIcy':'\u0407','yicy':'\u0457','Yopf':'\uD835\uDD50','yopf':'\uD835\uDD6A','Yscr':'\uD835\uDCB4','yscr':'\uD835\uDCCE','YUcy':'\u042E','yucy':'\u044E','yuml':'\xFF','Yuml':'\u0178','Zacute':'\u0179','zacute':'\u017A','Zcaron':'\u017D','zcaron':'\u017E','Zcy':'\u0417','zcy':'\u0437','Zdot':'\u017B','zdot':'\u017C','zeetrf':'\u2128','ZeroWidthSpace':'\u200B','Zeta':'\u0396','zeta':'\u03B6','zfr':'\uD835\uDD37','Zfr':'\u2128','ZHcy':'\u0416','zhcy':'\u0436','zigrarr':'\u21DD','zopf':'\uD835\uDD6B','Zopf':'\u2124','Zscr':'\uD835\uDCB5','zscr':'\uD835\uDCCF','zwj':'\u200D','zwnj':'\u200C'};
+	var decodeMapLegacy = {'Aacute':'\xC1','aacute':'\xE1','Acirc':'\xC2','acirc':'\xE2','acute':'\xB4','AElig':'\xC6','aelig':'\xE6','Agrave':'\xC0','agrave':'\xE0','amp':'&','AMP':'&','Aring':'\xC5','aring':'\xE5','Atilde':'\xC3','atilde':'\xE3','Auml':'\xC4','auml':'\xE4','brvbar':'\xA6','Ccedil':'\xC7','ccedil':'\xE7','cedil':'\xB8','cent':'\xA2','copy':'\xA9','COPY':'\xA9','curren':'\xA4','deg':'\xB0','divide':'\xF7','Eacute':'\xC9','eacute':'\xE9','Ecirc':'\xCA','ecirc':'\xEA','Egrave':'\xC8','egrave':'\xE8','ETH':'\xD0','eth':'\xF0','Euml':'\xCB','euml':'\xEB','frac12':'\xBD','frac14':'\xBC','frac34':'\xBE','gt':'>','GT':'>','Iacute':'\xCD','iacute':'\xED','Icirc':'\xCE','icirc':'\xEE','iexcl':'\xA1','Igrave':'\xCC','igrave':'\xEC','iquest':'\xBF','Iuml':'\xCF','iuml':'\xEF','laquo':'\xAB','lt':'<','LT':'<','macr':'\xAF','micro':'\xB5','middot':'\xB7','nbsp':'\xA0','not':'\xAC','Ntilde':'\xD1','ntilde':'\xF1','Oacute':'\xD3','oacute':'\xF3','Ocirc':'\xD4','ocirc':'\xF4','Ograve':'\xD2','ograve':'\xF2','ordf':'\xAA','ordm':'\xBA','Oslash':'\xD8','oslash':'\xF8','Otilde':'\xD5','otilde':'\xF5','Ouml':'\xD6','ouml':'\xF6','para':'\xB6','plusmn':'\xB1','pound':'\xA3','quot':'"','QUOT':'"','raquo':'\xBB','reg':'\xAE','REG':'\xAE','sect':'\xA7','shy':'\xAD','sup1':'\xB9','sup2':'\xB2','sup3':'\xB3','szlig':'\xDF','THORN':'\xDE','thorn':'\xFE','times':'\xD7','Uacute':'\xDA','uacute':'\xFA','Ucirc':'\xDB','ucirc':'\xFB','Ugrave':'\xD9','ugrave':'\xF9','uml':'\xA8','Uuml':'\xDC','uuml':'\xFC','Yacute':'\xDD','yacute':'\xFD','yen':'\xA5','yuml':'\xFF'};
+	var decodeMapNumeric = {'0':'\uFFFD','128':'\u20AC','130':'\u201A','131':'\u0192','132':'\u201E','133':'\u2026','134':'\u2020','135':'\u2021','136':'\u02C6','137':'\u2030','138':'\u0160','139':'\u2039','140':'\u0152','142':'\u017D','145':'\u2018','146':'\u2019','147':'\u201C','148':'\u201D','149':'\u2022','150':'\u2013','151':'\u2014','152':'\u02DC','153':'\u2122','154':'\u0161','155':'\u203A','156':'\u0153','158':'\u017E','159':'\u0178'};
+	var invalidReferenceCodePoints = [1,2,3,4,5,6,7,8,11,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,64976,64977,64978,64979,64980,64981,64982,64983,64984,64985,64986,64987,64988,64989,64990,64991,64992,64993,64994,64995,64996,64997,64998,64999,65000,65001,65002,65003,65004,65005,65006,65007,65534,65535,131070,131071,196606,196607,262142,262143,327678,327679,393214,393215,458750,458751,524286,524287,589822,589823,655358,655359,720894,720895,786430,786431,851966,851967,917502,917503,983038,983039,1048574,1048575,1114110,1114111];
+
+	/*--------------------------------------------------------------------------*/
+
+	var stringFromCharCode = String.fromCharCode;
+
+	var object = {};
+	var hasOwnProperty = object.hasOwnProperty;
+	var has = function(object, propertyName) {
+		return hasOwnProperty.call(object, propertyName);
+	};
+
+	var contains = function(array, value) {
+		var index = -1;
+		var length = array.length;
+		while (++index < length) {
+			if (array[index] == value) {
+				return true;
+			}
+		}
+		return false;
+	};
+
+	var merge = function(options, defaults) {
+		if (!options) {
+			return defaults;
+		}
+		var result = {};
+		var key;
+		for (key in defaults) {
+			// A `hasOwnProperty` check is not needed here, since only recognized
+			// option names are used anyway. Any others are ignored.
+			result[key] = has(options, key) ? options[key] : defaults[key];
+		}
+		return result;
+	};
+
+	// Modified version of `ucs2encode`; see http://mths.be/punycode.
+	var codePointToSymbol = function(codePoint, strict) {
+		var output = '';
+		if ((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF) {
+			// See issue #4:
+			// “Otherwise, if the number is in the range 0xD800 to 0xDFFF or is
+			// greater than 0x10FFFF, then this is a parse error. Return a U+FFFD
+			// REPLACEMENT CHARACTER.”
+			if (strict) {
+				parseError('character reference outside the permissible Unicode range');
+			}
+			return '\uFFFD';
+		}
+		if (has(decodeMapNumeric, codePoint)) {
+			if (strict) {
+				parseError('disallowed character reference');
+			}
+			return decodeMapNumeric[codePoint];
+		}
+		if (strict && contains(invalidReferenceCodePoints, codePoint)) {
+			parseError('disallowed character reference');
+		}
+		if (codePoint > 0xFFFF) {
+			codePoint -= 0x10000;
+			output += stringFromCharCode(codePoint >>> 10 & 0x3FF | 0xD800);
+			codePoint = 0xDC00 | codePoint & 0x3FF;
+		}
+		output += stringFromCharCode(codePoint);
+		return output;
+	};
+
+	var hexEscape = function(symbol) {
+		return '&#x' + symbol.charCodeAt(0).toString(16).toUpperCase() + ';';
+	};
+
+	var parseError = function(message) {
+		throw Error('Parse error: ' + message);
+	};
+
+	/*--------------------------------------------------------------------------*/
+
+	var encode = function(string, options) {
+		options = merge(options, encode.options);
+		var strict = options.strict;
+		if (strict && regexInvalidRawCodePoint.test(string)) {
+			parseError('forbidden code point');
+		}
+		var encodeEverything = options.encodeEverything;
+		var useNamedReferences = options.useNamedReferences;
+		var allowUnsafeSymbols = options.allowUnsafeSymbols;
+		if (encodeEverything) {
+			// Encode ASCII symbols.
+			string = string.replace(regexAsciiWhitelist, function(symbol) {
+				// Use named references if requested & possible.
+				if (useNamedReferences && has(encodeMap, symbol)) {
+					return '&' + encodeMap[symbol] + ';';
+				}
+				return hexEscape(symbol);
+			});
+			// Shorten a few escapes that represent two symbols, of which at least one
+			// is within the ASCII range.
+			if (useNamedReferences) {
+				string = string
+					.replace(/&gt;\u20D2/g, '&nvgt;')
+					.replace(/&lt;\u20D2/g, '&nvlt;')
+					.replace(/&#x66;&#x6A;/g, '&fjlig;');
+			}
+			// Encode non-ASCII symbols.
+			if (useNamedReferences) {
+				// Encode non-ASCII symbols that can be replaced with a named reference.
+				string = string.replace(regexEncodeNonAscii, function(string) {
+					// Note: there is no need to check `has(encodeMap, string)` here.
+					return '&' + encodeMap[string] + ';';
+				});
+			}
+			// Note: any remaining non-ASCII symbols are handled outside of the `if`.
+		} else if (useNamedReferences) {
+			// Apply named character references.
+			// Encode `<>"'&` using named character references.
+			if (!allowUnsafeSymbols) {
+				string = string.replace(regexEscape, function(string) {
+					return '&' + encodeMap[string] + ';'; // no need to check `has()` here
+				});
+			}
+			// Shorten escapes that represent two symbols, of which at least one is
+			// `<>"'&`.
+			string = string
+				.replace(/&gt;\u20D2/g, '&nvgt;')
+				.replace(/&lt;\u20D2/g, '&nvlt;');
+			// Encode non-ASCII symbols that can be replaced with a named reference.
+			string = string.replace(regexEncodeNonAscii, function(string) {
+				// Note: there is no need to check `has(encodeMap, string)` here.
+				return '&' + encodeMap[string] + ';';
+			});
+		} else if (!allowUnsafeSymbols) {
+			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
+			// using named character references.
+			string = string.replace(regexEscape, hexEscape);
+		}
+		return string
+			// Encode astral symbols.
+			.replace(regexAstralSymbols, function($0) {
+				// https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+				var high = $0.charCodeAt(0);
+				var low = $0.charCodeAt(1);
+				var codePoint = (high - 0xD800) * 0x400 + low - 0xDC00 + 0x10000;
+				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
+			})
+			// Encode any remaining BMP symbols that are not printable ASCII symbols
+			// using a hexadecimal escape.
+			.replace(regexBmpWhitelist, hexEscape);
+	};
+	// Expose default options (so they can be overridden globally).
+	encode.options = {
+		'allowUnsafeSymbols': false,
+		'encodeEverything': false,
+		'strict': false,
+		'useNamedReferences': false
+	};
+
+	var decode = function(html, options) {
+		options = merge(options, decode.options);
+		var strict = options.strict;
+		if (strict && regexInvalidEntity.test(html)) {
+			parseError('malformed character reference');
+		}
+		return html.replace(regexDecode, function($0, $1, $2, $3, $4, $5, $6, $7) {
+			var codePoint;
+			var semicolon;
+			var hexDigits;
+			var reference;
+			var next;
+			if ($1) {
+				// Decode decimal escapes, e.g. `&#119558;`.
+				codePoint = $1;
+				semicolon = $2;
+				if (strict && !semicolon) {
+					parseError('character reference was not terminated by a semicolon');
+				}
+				return codePointToSymbol(codePoint, strict);
+			}
+			if ($3) {
+				// Decode hexadecimal escapes, e.g. `&#x1D306;`.
+				hexDigits = $3;
+				semicolon = $4;
+				if (strict && !semicolon) {
+					parseError('character reference was not terminated by a semicolon');
+				}
+				codePoint = parseInt(hexDigits, 16);
+				return codePointToSymbol(codePoint, strict);
+			}
+			if ($5) {
+				// Decode named character references with trailing `;`, e.g. `&copy;`.
+				reference = $5;
+				if (has(decodeMap, reference)) {
+					return decodeMap[reference];
+				} else {
+					// Ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands.
+					if (strict) {
+						parseError(
+							'named character reference was not terminated by a semicolon'
+						);
+					}
+					return $0;
+				}
+			}
+			// If we’re still here, it’s a legacy reference for sure. No need for an
+			// extra `if` check.
+			// Decode named character references without trailing `;`, e.g. `&amp`
+			// This is only a parse error if it gets converted to `&`, or if it is
+			// followed by `=` in an attribute context.
+			reference = $6;
+			next = $7;
+			if (next && options.isAttributeValue) {
+				if (strict && next == '=') {
+					parseError('`&` did not start a character reference');
+				}
+				return $0;
+			} else {
+				if (strict) {
+					parseError(
+						'named character reference was not terminated by a semicolon'
+					);
+				}
+				// Note: there is no need to check `has(decodeMapLegacy, reference)`.
+				return decodeMapLegacy[reference] + (next || '');
+			}
+		});
+	};
+	// Expose default options (so they can be overridden globally).
+	decode.options = {
+		'isAttributeValue': false,
+		'strict': false
+	};
+
+	var escape = function(string) {
+		return string.replace(regexEscape, function($0) {
+			// Note: there is no need to check `has(escapeMap, $0)` here.
+			return escapeMap[$0];
+		});
+	};
+
+	/*--------------------------------------------------------------------------*/
+
+	var he = {
+		'version': '0.5.0',
+		'encode': encode,
+		'decode': decode,
+		'escape': escape,
+		'unescape': decode
+	};
+
+	// Some AMD build optimizers, like r.js, check for specific condition patterns
+	// like the following:
+	if (
+		typeof define == 'function' &&
+		typeof define.amd == 'object' &&
+		define.amd
+	) {
+		define(function() {
+			return he;
+		});
+	}	else if (freeExports && !freeExports.nodeType) {
+		if (freeModule) { // in Node.js or RingoJS v0.8.0+
+			freeModule.exports = he;
+		} else { // in Narwhal or RingoJS v0.7.0-
+			for (var key in he) {
+				has(he, key) && (freeExports[key] = he[key]);
+			}
+		}
+	} else { // in Rhino or a web browser
+		root.he = he;
+	}
+
+}(this));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],82:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -24557,3276 +27461,14 @@ module.exports = '1.0.7';
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],54:[function(require,module,exports){
-/*
-Copyright (c) 2012-2014 Chris Pettitt
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
-
-module.exports = {
-  graphlib: require("./lib/graphlib"),
-
-  layout: require("./lib/layout"),
-  debug: require("./lib/debug"),
-  util: {
-    time: require("./lib/util").time,
-    notime: require("./lib/util").notime
-  },
-  version: require("./lib/version")
-};
-
-},{"./lib/debug":59,"./lib/graphlib":60,"./lib/layout":62,"./lib/util":82,"./lib/version":83}],55:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    greedyFAS = require("./greedy-fas");
-
-module.exports = {
-  run: run,
-  undo: undo
-};
-
-function run(g) {
-  var fas = (g.graph().acyclicer === "greedy"
-                ? greedyFAS(g, weightFn(g))
-                : dfsFAS(g));
-  _.each(fas, function(e) {
-    var label = g.edge(e);
-    g.removeEdge(e);
-    label.forwardName = e.name;
-    label.reversed = true;
-    g.setEdge(e.w, e.v, label, _.uniqueId("rev"));
-  });
-
-  function weightFn(g) {
-    return function(e) {
-      return g.edge(e).weight;
-    };
-  }
-}
-
-function dfsFAS(g) {
-  var fas = [],
-      stack = {},
-      visited = {};
-
-  function dfs(v) {
-    if (_.has(visited, v)) {
-      return;
-    }
-    visited[v] = true;
-    stack[v] = true;
-    _.each(g.outEdges(v), function(e) {
-      if (_.has(stack, e.w)) {
-        fas.push(e);
-      } else {
-        dfs(e.w);
-      }
-    });
-    delete stack[v];
-  }
-
-  _.each(g.nodes(), dfs);
-  return fas;
-}
-
-function undo(g) {
-  _.each(g.edges(), function(e) {
-    var label = g.edge(e);
-    if (label.reversed) {
-      g.removeEdge(e);
-
-      var forwardName = label.forwardName;
-      delete label.reversed;
-      delete label.forwardName;
-      g.setEdge(e.w, e.v, label, forwardName);
-    }
-  });
-}
-
-},{"./greedy-fas":61,"./lodash":63}],56:[function(require,module,exports){
-var _ = require("./lodash"),
-    util = require("./util");
-
-module.exports = addBorderSegments;
-
-function addBorderSegments(g) {
-  function dfs(v) {
-    var children = g.children(v),
-        node = g.node(v);
-    if (children.length) {
-      _.each(children, dfs);
-    }
-
-    if (_.has(node, "minRank")) {
-      node.borderLeft = [];
-      node.borderRight = [];
-      for (var rank = node.minRank, maxRank = node.maxRank + 1;
-           rank < maxRank;
-           ++rank) {
-        addBorderNode(g, "borderLeft", "_bl", v, node, rank);
-        addBorderNode(g, "borderRight", "_br", v, node, rank);
-      }
-    }
-  }
-
-  _.each(g.children(), dfs);
-}
-
-function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
-  var label = { width: 0, height: 0, rank: rank, borderType: prop },
-      prev = sgNode[prop][rank - 1],
-      curr = util.addDummyNode(g, "border", label, prefix);
-  sgNode[prop][rank] = curr;
-  g.setParent(curr, sg);
-  if (prev) {
-    g.setEdge(prev, curr, { weight: 1 });
-  }
-}
-
-},{"./lodash":63,"./util":82}],57:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash");
-
-module.exports = {
-  adjust: adjust,
-  undo: undo
-};
-
-function adjust(g) {
-  var rankDir = g.graph().rankdir.toLowerCase();
-  if (rankDir === "lr" || rankDir === "rl") {
-    swapWidthHeight(g);
-  }
-}
-
-function undo(g) {
-  var rankDir = g.graph().rankdir.toLowerCase();
-  if (rankDir === "bt" || rankDir === "rl") {
-    reverseY(g);
-  }
-
-  if (rankDir === "lr" || rankDir === "rl") {
-    swapXY(g);
-    swapWidthHeight(g);
-  }
-}
-
-function swapWidthHeight(g) {
-  _.each(g.nodes(), function(v) { swapWidthHeightOne(g.node(v)); });
-  _.each(g.edges(), function(e) { swapWidthHeightOne(g.edge(e)); });
-}
-
-function swapWidthHeightOne(attrs) {
-  var w = attrs.width;
-  attrs.width = attrs.height;
-  attrs.height = w;
-}
-
-function reverseY(g) {
-  _.each(g.nodes(), function(v) { reverseYOne(g.node(v)); });
-
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    _.each(edge.points, reverseYOne);
-    if (_.has(edge, "y")) {
-      reverseYOne(edge);
-    }
-  });
-}
-
-function reverseYOne(attrs) {
-  attrs.y = -attrs.y;
-}
-
-function swapXY(g) {
-  _.each(g.nodes(), function(v) { swapXYOne(g.node(v)); });
-
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    _.each(edge.points, swapXYOne);
-    if (_.has(edge, "x")) {
-      swapXYOne(edge);
-    }
-  });
-}
-
-function swapXYOne(attrs) {
-  var x = attrs.x;
-  attrs.x = attrs.y;
-  attrs.y = x;
-}
-
-},{"./lodash":63}],58:[function(require,module,exports){
-/*
- * Simple doubly linked list implementation derived from Cormen, et al.,
- * "Introduction to Algorithms".
- */
-
-module.exports = List;
-
-function List() {
-  var sentinel = {};
-  sentinel._next = sentinel._prev = sentinel;
-  this._sentinel = sentinel;
-}
-
-List.prototype.dequeue = function() {
-  var sentinel = this._sentinel,
-      entry = sentinel._prev;
-  if (entry !== sentinel) {
-    unlink(entry);
-    return entry;
-  }
-};
-
-List.prototype.enqueue = function(entry) {
-  var sentinel = this._sentinel;
-  if (entry._prev && entry._next) {
-    unlink(entry);
-  }
-  entry._next = sentinel._next;
-  sentinel._next._prev = entry;
-  sentinel._next = entry;
-  entry._prev = sentinel;
-};
-
-List.prototype.toString = function() {
-  var strs = [],
-      sentinel = this._sentinel,
-      curr = sentinel._prev;
-  while (curr !== sentinel) {
-    strs.push(JSON.stringify(curr, filterOutLinks));
-    curr = curr._prev;
-  }
-  return "[" + strs.join(", ") + "]";
-};
-
-function unlink(entry) {
-  entry._prev._next = entry._next;
-  entry._next._prev = entry._prev;
-  delete entry._next;
-  delete entry._prev;
-}
-
-function filterOutLinks(k, v) {
-  if (k !== "_next" && k !== "_prev") {
-    return v;
-  }
-}
-
-},{}],59:[function(require,module,exports){
-var _ = require("./lodash"),
-    util = require("./util"),
-    Graph = require("./graphlib").Graph;
-
-module.exports = {
-  debugOrdering: debugOrdering
-};
-
-/* istanbul ignore next */
-function debugOrdering(g) {
-  var layerMatrix = util.buildLayerMatrix(g);
-
-  var h = new Graph({ compound: true, multigraph: true }).setGraph({});
-
-  _.each(g.nodes(), function(v) {
-    h.setNode(v, { label: v });
-    h.setParent(v, "layer" + g.node(v).rank);
-  });
-
-  _.each(g.edges(), function(e) {
-    h.setEdge(e.v, e.w, {}, e.name);
-  });
-
-  _.each(layerMatrix, function(layer, i) {
-    var layerV = "layer" + i;
-    h.setNode(layerV, { rank: "same" });
-    _.reduce(layer, function(u, v) {
-      h.setEdge(u, v, { style: "invis" });
-      return v;
-    });
-  });
-
-  return h;
-}
-
-},{"./graphlib":60,"./lodash":63,"./util":82}],60:[function(require,module,exports){
-/* global window */
-
-var graphlib;
-
-if (typeof require === "function") {
-  try {
-    graphlib = require("graphlib");
-  } catch (e) {}
-}
-
-if (!graphlib) {
-  graphlib = window.graphlib;
-}
-
-module.exports = graphlib;
-
-},{"graphlib":84}],61:[function(require,module,exports){
-var _ = require("./lodash"),
-    Graph = require("./graphlib").Graph,
-    List = require("./data/list");
-
-/*
- * A greedy heuristic for finding a feedback arc set for a graph. A feedback
- * arc set is a set of edges that can be removed to make a graph acyclic.
- * The algorithm comes from: P. Eades, X. Lin, and W. F. Smyth, "A fast and
- * effective heuristic for the feedback arc set problem." This implementation
- * adjusts that from the paper to allow for weighted edges.
- */
-module.exports = greedyFAS;
-
-var DEFAULT_WEIGHT_FN = _.constant(1);
-
-function greedyFAS(g, weightFn) {
-  if (g.nodeCount() <= 1) {
-    return [];
-  }
-  var state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
-  var results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
-
-  // Expand multi-edges
-  return _.flatten(_.map(results, function(e) {
-    return g.outEdges(e.v, e.w);
-  }), true);
-}
-
-function doGreedyFAS(g, buckets, zeroIdx) {
-  var results = [],
-      sources = buckets[buckets.length - 1],
-      sinks = buckets[0];
-
-  var entry;
-  while (g.nodeCount()) {
-    while ((entry = sinks.dequeue()))   { removeNode(g, buckets, zeroIdx, entry); }
-    while ((entry = sources.dequeue())) { removeNode(g, buckets, zeroIdx, entry); }
-    if (g.nodeCount()) {
-      for (var i = buckets.length - 2; i > 0; --i) {
-        entry = buckets[i].dequeue();
-        if (entry) {
-          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
-          break;
-        }
-      }
-    }
-  }
-
-  return results;
-}
-
-function removeNode(g, buckets, zeroIdx, entry, collectPredecessors) {
-  var results = collectPredecessors ? [] : undefined;
-
-  _.each(g.inEdges(entry.v), function(edge) {
-    var weight = g.edge(edge),
-        uEntry = g.node(edge.v);
-
-    if (collectPredecessors) {
-      results.push({ v: edge.v, w: edge.w });
-    }
-
-    uEntry.out -= weight;
-    assignBucket(buckets, zeroIdx, uEntry);
-  });
-
-  _.each(g.outEdges(entry.v), function(edge) {
-    var weight = g.edge(edge),
-        w = edge.w,
-        wEntry = g.node(w);
-    wEntry["in"] -= weight;
-    assignBucket(buckets, zeroIdx, wEntry);
-  });
-
-  g.removeNode(entry.v);
-
-  return results;
-}
-
-function buildState(g, weightFn) {
-  var fasGraph = new Graph(),
-      maxIn = 0,
-      maxOut = 0;
-
-  _.each(g.nodes(), function(v) {
-    fasGraph.setNode(v, { v: v, "in": 0, out: 0 });
-  });
-
-  // Aggregate weights on nodes, but also sum the weights across multi-edges
-  // into a single edge for the fasGraph.
-  _.each(g.edges(), function(e) {
-    var prevWeight = fasGraph.edge(e.v, e.w) || 0,
-        weight = weightFn(e),
-        edgeWeight = prevWeight + weight;
-    fasGraph.setEdge(e.v, e.w, edgeWeight);
-    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
-    maxIn  = Math.max(maxIn,  fasGraph.node(e.w)["in"]  += weight);
-  });
-
-  var buckets = _.range(maxOut + maxIn + 3).map(function() { return new List(); });
-  var zeroIdx = maxIn + 1;
-
-  _.each(fasGraph.nodes(), function(v) {
-    assignBucket(buckets, zeroIdx, fasGraph.node(v));
-  });
-
-  return { graph: fasGraph, buckets: buckets, zeroIdx: zeroIdx };
-}
-
-function assignBucket(buckets, zeroIdx, entry) {
-  if (!entry.out) {
-    buckets[0].enqueue(entry);
-  } else if (!entry["in"]) {
-    buckets[buckets.length - 1].enqueue(entry);
-  } else {
-    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
-  }
-}
-
-},{"./data/list":58,"./graphlib":60,"./lodash":63}],62:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    acyclic = require("./acyclic"),
-    normalize = require("./normalize"),
-    rank = require("./rank"),
-    normalizeRanks = require("./util").normalizeRanks,
-    parentDummyChains = require("./parent-dummy-chains"),
-    removeEmptyRanks = require("./util").removeEmptyRanks,
-    nestingGraph = require("./nesting-graph"),
-    addBorderSegments = require("./add-border-segments"),
-    coordinateSystem = require("./coordinate-system"),
-    order = require("./order"),
-    position = require("./position"),
-    util = require("./util"),
-    Graph = require("./graphlib").Graph;
-
-module.exports = layout;
-
-function layout(g, opts) {
-  var time = opts && opts.debugTiming ? util.time : util.notime;
-  time("layout", function() {
-    var layoutGraph = time("  buildLayoutGraph",
-                               function() { return buildLayoutGraph(g); });
-    time("  runLayout",        function() { runLayout(layoutGraph, time); });
-    time("  updateInputGraph", function() { updateInputGraph(g, layoutGraph); });
-  });
-}
-
-function runLayout(g, time) {
-  time("    makeSpaceForEdgeLabels", function() { makeSpaceForEdgeLabels(g); });
-  time("    removeSelfEdges",        function() { removeSelfEdges(g); });
-  time("    acyclic",                function() { acyclic.run(g); });
-  time("    nestingGraph.run",       function() { nestingGraph.run(g); });
-  time("    rank",                   function() { rank(util.asNonCompoundGraph(g)); });
-  time("    injectEdgeLabelProxies", function() { injectEdgeLabelProxies(g); });
-  time("    removeEmptyRanks",       function() { removeEmptyRanks(g); });
-  time("    nestingGraph.cleanup",   function() { nestingGraph.cleanup(g); });
-  time("    normalizeRanks",         function() { normalizeRanks(g); });
-  time("    assignRankMinMax",       function() { assignRankMinMax(g); });
-  time("    removeEdgeLabelProxies", function() { removeEdgeLabelProxies(g); });
-  time("    normalize.run",          function() { normalize.run(g); });
-  time("    parentDummyChains",      function() { parentDummyChains(g); });
-  time("    addBorderSegments",      function() { addBorderSegments(g); });
-  time("    order",                  function() { order(g); });
-  time("    insertSelfEdges",        function() { insertSelfEdges(g); });
-  time("    adjustCoordinateSystem", function() { coordinateSystem.adjust(g); });
-  time("    position",               function() { position(g); });
-  time("    positionSelfEdges",      function() { positionSelfEdges(g); });
-  time("    removeBorderNodes",      function() { removeBorderNodes(g); });
-  time("    normalize.undo",         function() { normalize.undo(g); });
-  time("    fixupEdgeLabelCoords",   function() { fixupEdgeLabelCoords(g); });
-  time("    undoCoordinateSystem",   function() { coordinateSystem.undo(g); });
-  time("    translateGraph",         function() { translateGraph(g); });
-  time("    assignNodeIntersects",   function() { assignNodeIntersects(g); });
-  time("    reversePoints",          function() { reversePointsForReversedEdges(g); });
-  time("    acyclic.undo",           function() { acyclic.undo(g); });
-}
-
-/*
- * Copies final layout information from the layout graph back to the input
- * graph. This process only copies whitelisted attributes from the layout graph
- * to the input graph, so it serves as a good place to determine what
- * attributes can influence layout.
- */
-function updateInputGraph(inputGraph, layoutGraph) {
-  _.each(inputGraph.nodes(), function(v) {
-    var inputLabel = inputGraph.node(v),
-        layoutLabel = layoutGraph.node(v);
-
-    if (inputLabel) {
-      inputLabel.x = layoutLabel.x;
-      inputLabel.y = layoutLabel.y;
-
-      if (layoutGraph.children(v).length) {
-        inputLabel.width = layoutLabel.width;
-        inputLabel.height = layoutLabel.height;
-      }
-    }
-  });
-
-  _.each(inputGraph.edges(), function(e) {
-    var inputLabel = inputGraph.edge(e),
-        layoutLabel = layoutGraph.edge(e);
-
-    inputLabel.points = layoutLabel.points;
-    if (_.has(layoutLabel, "x")) {
-      inputLabel.x = layoutLabel.x;
-      inputLabel.y = layoutLabel.y;
-    }
-  });
-
-  inputGraph.graph().width = layoutGraph.graph().width;
-  inputGraph.graph().height = layoutGraph.graph().height;
-}
-
-var graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"],
-    graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" },
-    graphAttrs = ["acyclicer", "ranker", "rankdir", "align"],
-    nodeNumAttrs = ["width", "height"],
-    nodeDefaults = { width: 0, height: 0 },
-    edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"],
-    edgeDefaults = {
-      minlen: 1, weight: 1, width: 0, height: 0,
-      labeloffset: 10, labelpos: "r"
-    },
-    edgeAttrs = ["labelpos"];
-
-/*
- * Constructs a new graph from the input graph, which can be used for layout.
- * This process copies only whitelisted attributes from the input graph to the
- * layout graph. Thus this function serves as a good place to determine what
- * attributes can influence layout.
- */
-function buildLayoutGraph(inputGraph) {
-  var g = new Graph({ multigraph: true, compound: true }),
-      graph = canonicalize(inputGraph.graph());
-
-  g.setGraph(_.merge({},
-    graphDefaults,
-    selectNumberAttrs(graph, graphNumAttrs),
-    _.pick(graph, graphAttrs)));
-
-  _.each(inputGraph.nodes(), function(v) {
-    var node = canonicalize(inputGraph.node(v));
-    g.setNode(v, _.defaults(selectNumberAttrs(node, nodeNumAttrs), nodeDefaults));
-    g.setParent(v, inputGraph.parent(v));
-  });
-
-  _.each(inputGraph.edges(), function(e) {
-    var edge = canonicalize(inputGraph.edge(e));
-    g.setEdge(e, _.merge({},
-      edgeDefaults,
-      selectNumberAttrs(edge, edgeNumAttrs),
-      _.pick(edge, edgeAttrs)));
-  });
-
-  return g;
-}
-
-/*
- * This idea comes from the Gansner paper: to account for edge labels in our
- * layout we split each rank in half by doubling minlen and halving ranksep.
- * Then we can place labels at these mid-points between nodes.
- *
- * We also add some minimal padding to the width to push the label for the edge
- * away from the edge itself a bit.
- */
-function makeSpaceForEdgeLabels(g) {
-  var graph = g.graph();
-  graph.ranksep /= 2;
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    edge.minlen *= 2;
-    if (edge.labelpos.toLowerCase() !== "c") {
-      if (graph.rankdir === "TB" || graph.rankdir === "BT") {
-        edge.width += edge.labeloffset;
-      } else {
-        edge.height += edge.labeloffset;
-      }
-    }
-  });
-}
-
-/*
- * Creates temporary dummy nodes that capture the rank in which each edge's
- * label is going to, if it has one of non-zero width and height. We do this
- * so that we can safely remove empty ranks while preserving balance for the
- * label's position.
- */
-function injectEdgeLabelProxies(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (edge.width && edge.height) {
-      var v = g.node(e.v),
-          w = g.node(e.w),
-          label = { rank: (w.rank - v.rank) / 2 + v.rank, e: e };
-      util.addDummyNode(g, "edge-proxy", label, "_ep");
-    }
-  });
-}
-
-function assignRankMinMax(g) {
-  var maxRank = 0;
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (node.borderTop) {
-      node.minRank = g.node(node.borderTop).rank;
-      node.maxRank = g.node(node.borderBottom).rank;
-      maxRank = _.max(maxRank, node.maxRank);
-    }
-  });
-  g.graph().maxRank = maxRank;
-}
-
-function removeEdgeLabelProxies(g) {
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (node.dummy === "edge-proxy") {
-      g.edge(node.e).labelRank = node.rank;
-      g.removeNode(v);
-    }
-  });
-}
-
-function translateGraph(g) {
-  var minX = Number.POSITIVE_INFINITY,
-      maxX = 0,
-      minY = Number.POSITIVE_INFINITY,
-      maxY = 0,
-      graphLabel = g.graph(),
-      marginX = graphLabel.marginx || 0,
-      marginY = graphLabel.marginy || 0;
-
-  function getExtremes(attrs) {
-    var x = attrs.x,
-        y = attrs.y,
-        w = attrs.width,
-        h = attrs.height;
-    minX = Math.min(minX, x - w / 2);
-    maxX = Math.max(maxX, x + w / 2);
-    minY = Math.min(minY, y - h / 2);
-    maxY = Math.max(maxY, y + h / 2);
-  }
-
-  _.each(g.nodes(), function(v) { getExtremes(g.node(v)); });
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (_.has(edge, "x")) {
-      getExtremes(edge);
-    }
-  });
-
-  minX -= marginX;
-  minY -= marginY;
-
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    node.x -= minX;
-    node.y -= minY;
-  });
-
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    _.each(edge.points, function(p) {
-      p.x -= minX;
-      p.y -= minY;
-    });
-    if (_.has(edge, "x")) { edge.x -= minX; }
-    if (_.has(edge, "y")) { edge.y -= minY; }
-  });
-
-  graphLabel.width = maxX - minX + marginX;
-  graphLabel.height = maxY - minY + marginY;
-}
-
-function assignNodeIntersects(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e),
-        nodeV = g.node(e.v),
-        nodeW = g.node(e.w),
-        p1, p2;
-    if (!edge.points) {
-      edge.points = [];
-      p1 = nodeW;
-      p2 = nodeV;
-    } else {
-      p1 = edge.points[0];
-      p2 = edge.points[edge.points.length - 1];
-    }
-    edge.points.unshift(util.intersectRect(nodeV, p1));
-    edge.points.push(util.intersectRect(nodeW, p2));
-  });
-}
-
-function fixupEdgeLabelCoords(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (_.has(edge, "x")) {
-      if (edge.labelpos === "l" || edge.labelpos === "r") {
-        edge.width -= edge.labeloffset;
-      }
-      switch (edge.labelpos) {
-        case "l": edge.x -= edge.width / 2 + edge.labeloffset; break;
-        case "r": edge.x += edge.width / 2 + edge.labeloffset; break;
-      }
-    }
-  });
-}
-
-function reversePointsForReversedEdges(g) {
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (edge.reversed) {
-      edge.points.reverse();
-    }
-  });
-}
-
-function removeBorderNodes(g) {
-  _.each(g.nodes(), function(v) {
-    if (g.children(v).length) {
-      var node = g.node(v),
-          t = g.node(node.borderTop),
-          b = g.node(node.borderBottom),
-          l = g.node(_.last(node.borderLeft)),
-          r = g.node(_.last(node.borderRight));
-
-      node.width = Math.abs(r.x - l.x);
-      node.height = Math.abs(b.y - t.y);
-      node.x = l.x + node.width / 2;
-      node.y = t.y + node.height / 2;
-    }
-  });
-
-  _.each(g.nodes(), function(v) {
-    if (g.node(v).dummy === "border") {
-      g.removeNode(v);
-    }
-  });
-}
-
-function removeSelfEdges(g) {
-  _.each(g.edges(), function(e) {
-    if (e.v === e.w) {
-      var node = g.node(e.v);
-      if (!node.selfEdges) {
-        node.selfEdges = [];
-      }
-      node.selfEdges.push({ e: e, label: g.edge(e) });
-      g.removeEdge(e);
-    }
-  });
-}
-
-function insertSelfEdges(g) {
-  var layers = util.buildLayerMatrix(g);
-  _.each(layers, function(layer) {
-    var orderShift = 0;
-    _.each(layer, function(v, i) {
-      var node = g.node(v);
-      node.order = i + orderShift;
-      _.each(node.selfEdges, function(selfEdge) {
-        util.addDummyNode(g, "selfedge", {
-          width: selfEdge.label.width,
-          height: selfEdge.label.height,
-          rank: node.rank,
-          order: i + (++orderShift),
-          e: selfEdge.e,
-          label: selfEdge.label
-        }, "_se");
-      });
-      delete node.selfEdges;
-    });
-  });
-}
-
-function positionSelfEdges(g) {
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (node.dummy === "selfedge") {
-      var selfNode = g.node(node.e.v),
-          x = selfNode.x + selfNode.width / 2,
-          y = selfNode.y,
-          dx = node.x - x,
-          dy = selfNode.height / 2;
-      g.setEdge(node.e, node.label);
-      g.removeNode(v);
-      node.label.points = [
-        { x: x + 2 * dx / 3, y: y - dy },
-        { x: x + 5 * dx / 6, y: y - dy },
-        { x: x +     dx    , y: y },
-        { x: x + 5 * dx / 6, y: y + dy },
-        { x: x + 2 * dx / 3, y: y + dy },
-      ];
-      node.label.x = node.x;
-      node.label.y = node.y;
-    }
-  });
-}
-
-function selectNumberAttrs(obj, attrs) {
-  return _.mapValues(_.pick(obj, attrs), Number);
-}
-
-function canonicalize(attrs) {
-  var newAttrs = {};
-  _.each(attrs, function(v, k) {
-    newAttrs[k.toLowerCase()] = v;
-  });
-  return newAttrs;
-}
-
-},{"./acyclic":55,"./add-border-segments":56,"./coordinate-system":57,"./graphlib":60,"./lodash":63,"./nesting-graph":64,"./normalize":65,"./order":70,"./parent-dummy-chains":75,"./position":77,"./rank":79,"./util":82}],63:[function(require,module,exports){
-module.exports=require(51)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":51,"lodash":104}],64:[function(require,module,exports){
-var _ = require("./lodash"),
-    util = require("./util");
-
-module.exports = {
-  run: run,
-  cleanup: cleanup
-};
-
-/*
- * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
- * adds appropriate edges to ensure that all cluster nodes are placed between
- * these boundries, and ensures that the graph is connected.
- *
- * In addition we ensure, through the use of the minlen property, that nodes
- * and subgraph border nodes to not end up on the same rank.
- *
- * Preconditions:
- *
- *    1. Input graph is a DAG
- *    2. Nodes in the input graph has a minlen attribute
- *
- * Postconditions:
- *
- *    1. Input graph is connected.
- *    2. Dummy nodes are added for the tops and bottoms of subgraphs.
- *    3. The minlen attribute for nodes is adjusted to ensure nodes do not
- *       get placed on the same rank as subgraph border nodes.
- *
- * The nesting graph idea comes from Sander, "Layout of Compound Directed
- * Graphs."
- */
-function run(g) {
-  var root = util.addDummyNode(g, "root", {}, "_root"),
-      depths = treeDepths(g),
-      height = _.max(depths) - 1,
-      nodeSep = 2 * height + 1;
-
-  g.graph().nestingRoot = root;
-
-  // Multiply minlen by nodeSep to align nodes on non-border ranks.
-  _.each(g.edges(), function(e) { g.edge(e).minlen *= nodeSep; });
-
-  // Calculate a weight that is sufficient to keep subgraphs vertically compact
-  var weight = sumWeights(g) + 1;
-
-  // Create border nodes and link them up
-  _.each(g.children(), function(child) {
-    dfs(g, root, nodeSep, weight, height, depths, child);
-  });
-
-  // Save the multiplier for node layers for later removal of empty border
-  // layers.
-  g.graph().nodeRankFactor = nodeSep;
-}
-
-function dfs(g, root, nodeSep, weight, height, depths, v) {
-  var children = g.children(v);
-  if (!children.length) {
-    if (v !== root) {
-      g.setEdge(root, v, { weight: 0, minlen: nodeSep });
-    }
-    return;
-  }
-
-  var top = util.addBorderNode(g, "_bt"),
-      bottom = util.addBorderNode(g, "_bb"),
-      label = g.node(v);
-
-  g.setParent(top, v);
-  label.borderTop = top;
-  g.setParent(bottom, v);
-  label.borderBottom = bottom;
-
-  _.each(children, function(child) {
-    dfs(g, root, nodeSep, weight, height, depths, child);
-
-    var childNode = g.node(child),
-        childTop = childNode.borderTop ? childNode.borderTop : child,
-        childBottom = childNode.borderBottom ? childNode.borderBottom : child,
-        thisWeight = childNode.borderTop ? weight : 2 * weight,
-        minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
-
-    g.setEdge(top, childTop, {
-      weight: thisWeight,
-      minlen: minlen,
-      nestingEdge: true
-    });
-
-    g.setEdge(childBottom, bottom, {
-      weight: thisWeight,
-      minlen: minlen,
-      nestingEdge: true
-    });
-  });
-
-  if (!g.parent(v)) {
-    g.setEdge(root, top, { weight: 0, minlen: height + depths[v] });
-  }
-}
-
-function treeDepths(g) {
-  var depths = {};
-  function dfs(v, depth) {
-    var children = g.children(v);
-    if (children && children.length) {
-      _.each(children, function(child) {
-        dfs(child, depth + 1);
-      });
-    }
-    depths[v] = depth;
-  }
-  _.each(g.children(), function(v) { dfs(v, 1); });
-  return depths;
-}
-
-function sumWeights(g) {
-  return _.reduce(g.edges(), function(acc, e) {
-    return acc + g.edge(e).weight;
-  }, 0);
-}
-
-function cleanup(g) {
-  var graphLabel = g.graph();
-  g.removeNode(graphLabel.nestingRoot);
-  delete graphLabel.nestingRoot;
-  _.each(g.edges(), function(e) {
-    var edge = g.edge(e);
-    if (edge.nestingEdge) {
-      g.removeEdge(e);
-    }
-  });
-}
-
-},{"./lodash":63,"./util":82}],65:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    util = require("./util");
-
-module.exports = {
-  run: run,
-  undo: undo
-};
-
-/*
- * Breaks any long edges in the graph into short segments that span 1 layer
- * each. This operation is undoable with the denormalize function.
- *
- * Pre-conditions:
- *
- *    1. The input graph is a DAG.
- *    2. Each node in the graph has a "rank" property.
- *
- * Post-condition:
- *
- *    1. All edges in the graph have a length of 1.
- *    2. Dummy nodes are added where edges have been split into segments.
- *    3. The graph is augmented with a "dummyChains" attribute which contains
- *       the first dummy in each chain of dummy nodes produced.
- */
-function run(g) {
-  g.graph().dummyChains = [];
-  _.each(g.edges(), function(edge) { normalizeEdge(g, edge); });
-}
-
-function normalizeEdge(g, e) {
-  var v = e.v,
-      vRank = g.node(v).rank,
-      w = e.w,
-      wRank = g.node(w).rank,
-      name = e.name,
-      edgeLabel = g.edge(e),
-      labelRank = edgeLabel.labelRank;
-
-  if (wRank === vRank + 1) return;
-
-  g.removeEdge(e);
-
-  var dummy, attrs, i;
-  for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
-    edgeLabel.points = [];
-    attrs = {
-      width: 0, height: 0,
-      edgeLabel: edgeLabel, edgeObj: e,
-      rank: vRank
-    };
-    dummy = util.addDummyNode(g, "edge", attrs, "_d");
-    if (vRank === labelRank) {
-      attrs.width = edgeLabel.width;
-      attrs.height = edgeLabel.height;
-      attrs.dummy = "edge-label";
-      attrs.labelpos = edgeLabel.labelpos;
-    }
-    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
-    if (i === 0) {
-      g.graph().dummyChains.push(dummy);
-    }
-    v = dummy;
-  }
-
-  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
-}
-
-function undo(g) {
-  _.each(g.graph().dummyChains, function(v) {
-    var node = g.node(v),
-        origLabel = node.edgeLabel,
-        w;
-    g.setEdge(node.edgeObj, origLabel);
-    while (node.dummy) {
-      w = g.successors(v)[0];
-      g.removeNode(v);
-      origLabel.points.push({ x: node.x, y: node.y });
-      if (node.dummy === "edge-label") {
-        origLabel.x = node.x;
-        origLabel.y = node.y;
-        origLabel.width = node.width;
-        origLabel.height = node.height;
-      }
-      v = w;
-      node = g.node(v);
-    }
-  });
-}
-
-},{"./lodash":63,"./util":82}],66:[function(require,module,exports){
-var _ = require("../lodash");
-
-module.exports = addSubgraphConstraints;
-
-function addSubgraphConstraints(g, cg, vs) {
-  var prev = {},
-      rootPrev;
-
-  _.each(vs, function(v) {
-    var child = g.parent(v),
-        parent,
-        prevChild;
-    while (child) {
-      parent = g.parent(child);
-      if (parent) {
-        prevChild = prev[parent];
-        prev[parent] = child;
-      } else {
-        prevChild = rootPrev;
-        rootPrev = child;
-      }
-      if (prevChild && prevChild !== child) {
-        cg.setEdge(prevChild, child);
-        return;
-      }
-      child = parent;
-    }
-  });
-
-  /*
-  function dfs(v) {
-    var children = v ? g.children(v) : g.children();
-    if (children.length) {
-      var min = Number.POSITIVE_INFINITY,
-          subgraphs = [];
-      _.each(children, function(child) {
-        var childMin = dfs(child);
-        if (g.children(child).length) {
-          subgraphs.push({ v: child, order: childMin });
-        }
-        min = Math.min(min, childMin);
-      });
-      _.reduce(_.sortBy(subgraphs, "order"), function(prev, curr) {
-        cg.setEdge(prev.v, curr.v);
-        return curr;
-      });
-      return min;
-    }
-    return g.node(v).order;
-  }
-  dfs(undefined);
-  */
-}
-
-},{"../lodash":63}],67:[function(require,module,exports){
-var _ = require("../lodash");
-
-module.exports = barycenter;
-
-function barycenter(g, movable) {
-  return _.map(movable, function(v) {
-    var inV = g.inEdges(v);
-    if (!inV.length) {
-      return { v: v };
-    } else {
-      var result = _.reduce(inV, function(acc, e) {
-        var edge = g.edge(e),
-            nodeU = g.node(e.v);
-        return {
-          sum: acc.sum + (edge.weight * nodeU.order),
-          weight: acc.weight + edge.weight
-        };
-      }, { sum: 0, weight: 0 });
-
-      return {
-        v: v,
-        barycenter: result.sum / result.weight,
-        weight: result.weight
-      };
-    }
-  });
-}
-
-
-},{"../lodash":63}],68:[function(require,module,exports){
-var _ = require("../lodash"),
-    Graph = require("../graphlib").Graph;
-
-module.exports = buildLayerGraph;
-
-/*
- * Constructs a graph that can be used to sort a layer of nodes. The graph will
- * contain all base and subgraph nodes from the request layer in their original
- * hierarchy and any edges that are incident on these nodes and are of the type
- * requested by the "relationship" parameter.
- *
- * Nodes from the requested rank that do not have parents are assigned a root
- * node in the output graph, which is set in the root graph attribute. This
- * makes it easy to walk the hierarchy of movable nodes during ordering.
- *
- * Pre-conditions:
- *
- *    1. Input graph is a DAG
- *    2. Base nodes in the input graph have a rank attribute
- *    3. Subgraph nodes in the input graph has minRank and maxRank attributes
- *    4. Edges have an assigned weight
- *
- * Post-conditions:
- *
- *    1. Output graph has all nodes in the movable rank with preserved
- *       hierarchy.
- *    2. Root nodes in the movable layer are made children of the node
- *       indicated by the root attribute of the graph.
- *    3. Non-movable nodes incident on movable nodes, selected by the
- *       relationship parameter, are included in the graph (without hierarchy).
- *    4. Edges incident on movable nodes, selected by the relationship
- *       parameter, are added to the output graph.
- *    5. The weights for copied edges are aggregated as need, since the output
- *       graph is not a multi-graph.
- */
-function buildLayerGraph(g, rank, relationship) {
-  var root = createRootNode(g),
-      result = new Graph({ compound: true }).setGraph({ root: root })
-                  .setDefaultNodeLabel(function(v) { return g.node(v); });
-
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v),
-        parent = g.parent(v);
-
-    if (node.rank === rank || node.minRank <= rank && rank <= node.maxRank) {
-      result.setNode(v);
-      result.setParent(v, parent || root);
-
-      // This assumes we have only short edges!
-      _.each(g[relationship](v), function(e) {
-        var u = e.v === v ? e.w : e.v,
-            edge = result.edge(u, v),
-            weight = !_.isUndefined(edge) ? edge.weight : 0;
-        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
-      });
-
-      if (_.has(node, "minRank")) {
-        result.setNode(v, {
-          borderLeft: node.borderLeft[rank],
-          borderRight: node.borderRight[rank]
-        });
-      }
-    }
-  });
-
-  return result;
-}
-
-function createRootNode(g) {
-  var v;
-  while (g.hasNode((v = _.uniqueId("_root"))));
-  return v;
-}
-
-},{"../graphlib":60,"../lodash":63}],69:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = crossCount;
-
-/*
- * A function that takes a layering (an array of layers, each with an array of
- * ordererd nodes) and a graph and returns a weighted crossing count.
- *
- * Pre-conditions:
- *
- *    1. Input graph must be simple (not a multigraph), directed, and include
- *       only simple edges.
- *    2. Edges in the input graph must have assigned weights.
- *
- * Post-conditions:
- *
- *    1. The graph and layering matrix are left unchanged.
- *
- * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
- */
-function crossCount(g, layering) {
-  var cc = 0;
-  for (var i = 1; i < layering.length; ++i) {
-    cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
-  }
-  return cc;
-}
-
-function twoLayerCrossCount(g, northLayer, southLayer) {
-  // Sort all of the edges between the north and south layers by their position
-  // in the north layer and then the south. Map these edges to the position of
-  // their head in the south layer.
-  var southPos = _.zipObject(southLayer,
-                             _.map(southLayer, function (v, i) { return i; }));
-  var southEntries = _.flatten(_.map(northLayer, function(v) {
-    return _.chain(g.outEdges(v))
-            .map(function(e) {
-              return { pos: southPos[e.w], weight: g.edge(e).weight };
-            })
-            .sortBy("pos")
-            .value();
-  }), true);
-
-  // Build the accumulator tree
-  var firstIndex = 1;
-  while (firstIndex < southLayer.length) firstIndex <<= 1;
-  var treeSize = 2 * firstIndex - 1;
-  firstIndex -= 1;
-  var tree = _.map(new Array(treeSize), function() { return 0; });
-
-  // Calculate the weighted crossings
-  var cc = 0;
-  _.each(southEntries.forEach(function(entry) {
-    var index = entry.pos + firstIndex;
-    tree[index] += entry.weight;
-    var weightSum = 0;
-    while (index > 0) {
-      if (index % 2) {
-        weightSum += tree[index + 1];
-      }
-      index = (index - 1) >> 1;
-      tree[index] += entry.weight;
-    }
-    cc += entry.weight * weightSum;
-  }));
-
-  return cc;
-}
-
-},{"../lodash":63}],70:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    initOrder = require("./init-order"),
-    crossCount = require("./cross-count"),
-    sortSubgraph = require("./sort-subgraph"),
-    buildLayerGraph = require("./build-layer-graph"),
-    addSubgraphConstraints = require("./add-subgraph-constraints"),
-    Graph = require("../graphlib").Graph,
-    util = require("../util");
-
-module.exports = order;
-
-/*
- * Applies heuristics to minimize edge crossings in the graph and sets the best
- * order solution as an order attribute on each node.
- *
- * Pre-conditions:
- *
- *    1. Graph must be DAG
- *    2. Graph nodes must be objects with a "rank" attribute
- *    3. Graph edges must have the "weight" attribute
- *
- * Post-conditions:
- *
- *    1. Graph nodes will have an "order" attribute based on the results of the
- *       algorithm.
- */
-function order(g) {
-  var maxRank = util.maxRank(g),
-      downLayerGraphs = buildLayerGraphs(g, _.range(1, maxRank + 1), "inEdges"),
-      upLayerGraphs = buildLayerGraphs(g, _.range(maxRank - 1, -1, -1), "outEdges");
-
-  var layering = initOrder(g);
-  assignOrder(g, layering);
-
-  var bestCC = Number.POSITIVE_INFINITY,
-      best;
-
-  for (var i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
-    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
-
-    layering = util.buildLayerMatrix(g);
-    var cc = crossCount(g, layering);
-    if (cc < bestCC) {
-      lastBest = 0;
-      best = _.cloneDeep(layering);
-      bestCC = cc;
-    }
-  }
-
-  assignOrder(g, best);
-}
-
-function buildLayerGraphs(g, ranks, relationship) {
-  return _.map(ranks, function(rank) {
-    return buildLayerGraph(g, rank, relationship);
-  });
-}
-
-function sweepLayerGraphs(layerGraphs, biasRight) {
-  var cg = new Graph();
-  _.each(layerGraphs, function(lg) {
-    var root = lg.graph().root;
-    var sorted = sortSubgraph(lg, root, cg, biasRight);
-    _.each(sorted.vs, function(v, i) {
-      lg.node(v).order = i;
-    });
-    addSubgraphConstraints(lg, cg, sorted.vs);
-  });
-}
-
-function assignOrder(g, layering) {
-  _.each(layering, function(layer) {
-    _.each(layer, function(v, i) {
-      g.node(v).order = i;
-    });
-  });
-}
-
-},{"../graphlib":60,"../lodash":63,"../util":82,"./add-subgraph-constraints":66,"./build-layer-graph":68,"./cross-count":69,"./init-order":71,"./sort-subgraph":73}],71:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = initOrder;
-
-/*
- * Assigns an initial order value for each node by performing a DFS search
- * starting from nodes in the first rank. Nodes are assigned an order in their
- * rank as they are first visited.
- *
- * This approach comes from Gansner, et al., "A Technique for Drawing Directed
- * Graphs."
- *
- * Returns a layering matrix with an array per layer and each layer sorted by
- * the order of its nodes.
- */
-function initOrder(g) {
-  var visited = {},
-      simpleNodes = _.filter(g.nodes(), function(v) {
-        return !g.children(v).length;
-      }),
-      maxRank = _.max(_.map(simpleNodes, function(v) { return g.node(v).rank; })),
-      layers = _.map(_.range(maxRank + 1), function() { return []; });
-
-  function dfs(v) {
-    if (_.has(visited, v)) return;
-    visited[v] = true;
-    var node = g.node(v);
-    layers[node.rank].push(v);
-    _.each(g.successors(v), dfs);
-  }
-
-  var orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v).rank; });
-  _.each(orderedVs, dfs);
-
-  return layers;
-}
-
-},{"../lodash":63}],72:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = resolveConflicts;
-
-/*
- * Given a list of entries of the form {v, barycenter, weight} and a
- * constraint graph this function will resolve any conflicts between the
- * constraint graph and the barycenters for the entries. If the barycenters for
- * an entry would violate a constraint in the constraint graph then we coalesce
- * the nodes in the conflict into a new node that respects the contraint and
- * aggregates barycenter and weight information.
- *
- * This implementation is based on the description in Forster, "A Fast and
- * Simple Hueristic for Constrained Two-Level Crossing Reduction," thought it
- * differs in some specific details.
- *
- * Pre-conditions:
- *
- *    1. Each entry has the form {v, barycenter, weight}, or if the node has
- *       no barycenter, then {v}.
- *
- * Returns:
- *
- *    A new list of entries of the form {vs, i, barycenter, weight}. The list
- *    `vs` may either be a singleton or it may be an aggregation of nodes
- *    ordered such that they do not violate constraints from the constraint
- *    graph. The property `i` is the lowest original index of any of the
- *    elements in `vs`.
- */
-function resolveConflicts(entries, cg) {
-  var mappedEntries = {};
-  _.each(entries, function(entry, i) {
-    var tmp = mappedEntries[entry.v] = {
-      indegree: 0,
-      "in": [],
-      out: [],
-      vs: [entry.v],
-      i: i
-    };
-    if (!_.isUndefined(entry.barycenter)) {
-      tmp.barycenter = entry.barycenter;
-      tmp.weight = entry.weight;
-    }
-  });
-
-  _.each(cg.edges(), function(e) {
-    var entryV = mappedEntries[e.v],
-        entryW = mappedEntries[e.w];
-    if (!_.isUndefined(entryV) && !_.isUndefined(entryW)) {
-      entryW.indegree++;
-      entryV.out.push(mappedEntries[e.w]);
-    }
-  });
-
-  var sourceSet = _.filter(mappedEntries, function(entry) {
-    return !entry.indegree;
-  });
-
-  return doResolveConflicts(sourceSet);
-}
-
-function doResolveConflicts(sourceSet) {
-  var entries = [];
-
-  function handleIn(vEntry) {
-    return function(uEntry) {
-      if (uEntry.merged) {
-        return;
-      }
-      if (_.isUndefined(uEntry.barycenter) ||
-          _.isUndefined(vEntry.barycenter) ||
-          uEntry.barycenter >= vEntry.barycenter) {
-        mergeEntries(vEntry, uEntry);
-      }
-    };
-  }
-
-  function handleOut(vEntry) {
-    return function(wEntry) {
-      wEntry["in"].push(vEntry);
-      if (--wEntry.indegree === 0) {
-        sourceSet.push(wEntry);
-      }
-    };
-  }
-
-  while (sourceSet.length) {
-    var entry = sourceSet.pop();
-    entries.push(entry);
-    _.each(entry["in"].reverse(), handleIn(entry));
-    _.each(entry.out, handleOut(entry));
-  }
-
-  return _.chain(entries)
-          .filter(function(entry) { return !entry.merged; })
-          .map(function(entry) {
-            return _.pick(entry, ["vs", "i", "barycenter", "weight"]);
-          })
-          .value();
-}
-
-function mergeEntries(target, source) {
-  var sum = 0,
-      weight = 0;
-
-  if (target.weight) {
-    sum += target.barycenter * target.weight;
-    weight += target.weight;
-  }
-
-  if (source.weight) {
-    sum += source.barycenter * source.weight;
-    weight += source.weight;
-  }
-
-  target.vs = source.vs.concat(target.vs);
-  target.barycenter = sum / weight;
-  target.weight = weight;
-  target.i = Math.min(source.i, target.i);
-  source.merged = true;
-}
-
-},{"../lodash":63}],73:[function(require,module,exports){
-var _ = require("../lodash"),
-    barycenter = require("./barycenter"),
-    resolveConflicts = require("./resolve-conflicts"),
-    sort = require("./sort");
-
-module.exports = sortSubgraph;
-
-function sortSubgraph(g, v, cg, biasRight) {
-  var movable = g.children(v),
-      node = g.node(v),
-      bl = node ? node.borderLeft : undefined,
-      br = node ? node.borderRight: undefined,
-      subgraphs = {};
-
-  if (bl) {
-    movable = _.filter(movable, function(w) {
-      return w !== bl && w !== br;
-    });
-  }
-
-  var barycenters = barycenter(g, movable);
-  _.each(barycenters, function(entry) {
-    if (g.children(entry.v).length) {
-      var subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
-      subgraphs[entry.v] = subgraphResult;
-      if (_.has(subgraphResult, "barycenter")) {
-        mergeBarycenters(entry, subgraphResult);
-      }
-    }
-  });
-
-  var entries = resolveConflicts(barycenters, cg);
-  expandSubgraphs(entries, subgraphs);
-
-  var result = sort(entries, biasRight);
-
-  if (bl) {
-    result.vs = _.flatten([bl, result.vs, br], true);
-    if (g.predecessors(bl).length) {
-      var blPred = g.node(g.predecessors(bl)[0]),
-          brPred = g.node(g.predecessors(br)[0]);
-      if (!_.has(result, "barycenter")) {
-        result.barycenter = 0;
-        result.weight = 0;
-      }
-      result.barycenter = (result.barycenter * result.weight +
-                           blPred.order + brPred.order) / (result.weight + 2);
-      result.weight += 2;
-    }
-  }
-
-  return result;
-}
-
-function expandSubgraphs(entries, subgraphs) {
-  _.each(entries, function(entry) {
-    entry.vs = _.flatten(entry.vs.map(function(v) {
-      if (subgraphs[v]) {
-        return subgraphs[v].vs;
-      }
-      return v;
-    }), true);
-  });
-}
-
-function mergeBarycenters(target, other) {
-  if (!_.isUndefined(target.barycenter)) {
-    target.barycenter = (target.barycenter * target.weight +
-                         other.barycenter * other.weight) /
-                        (target.weight + other.weight);
-    target.weight += other.weight;
-  } else {
-    target.barycenter = other.barycenter;
-    target.weight = other.weight;
-  }
-}
-
-},{"../lodash":63,"./barycenter":67,"./resolve-conflicts":72,"./sort":74}],74:[function(require,module,exports){
-var _ = require("../lodash"),
-    util = require("../util");
-
-module.exports = sort;
-
-function sort(entries, biasRight) {
-  var parts = util.partition(entries, function(entry) {
-    return _.has(entry, "barycenter");
-  });
-  var sortable = parts.lhs,
-      unsortable = _.sortBy(parts.rhs, function(entry) { return -entry.i; }),
-      vs = [],
-      sum = 0,
-      weight = 0,
-      vsIndex = 0;
-
-  sortable.sort(compareWithBias(!!biasRight));
-
-  vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
-
-  _.each(sortable, function (entry) {
-    vsIndex += entry.vs.length;
-    vs.push(entry.vs);
-    sum += entry.barycenter * entry.weight;
-    weight += entry.weight;
-    vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
-  });
-
-  var result = { vs: _.flatten(vs, true) };
-  if (weight) {
-    result.barycenter = sum / weight;
-    result.weight = weight;
-  }
-  return result;
-}
-
-function consumeUnsortable(vs, unsortable, index) {
-  var last;
-  while (unsortable.length && (last = _.last(unsortable)).i <= index) {
-    unsortable.pop();
-    vs.push(last.vs);
-    index++;
-  }
-  return index;
-}
-
-function compareWithBias(bias) {
-  return function(entryV, entryW) {
-    if (entryV.barycenter < entryW.barycenter) {
-      return -1;
-    } else if (entryV.barycenter > entryW.barycenter) {
-      return 1;
-    }
-
-    return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
-  };
-}
-
-},{"../lodash":63,"../util":82}],75:[function(require,module,exports){
-var _ = require("./lodash");
-
-module.exports = parentDummyChains;
-
-function parentDummyChains(g) {
-  var postorderNums = postorder(g);
-
-  _.each(g.graph().dummyChains, function(v) {
-    var node = g.node(v),
-        edgeObj = node.edgeObj,
-        pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w),
-        path = pathData.path,
-        lca = pathData.lca,
-        pathIdx = 0,
-        pathV = path[pathIdx],
-        ascending = true;
-
-    while (v !== edgeObj.w) {
-      node = g.node(v);
-
-      if (ascending) {
-        while ((pathV = path[pathIdx]) !== lca &&
-               g.node(pathV).maxRank < node.rank) {
-          pathIdx++;
-        }
-
-        if (pathV === lca) {
-          ascending = false;
-        }
-      }
-
-      if (!ascending) {
-        while (pathIdx < path.length - 1 &&
-               g.node(pathV = path[pathIdx + 1]).minRank <= node.rank) {
-          pathIdx++;
-        }
-        pathV = path[pathIdx];
-      }
-
-      g.setParent(v, pathV);
-      v = g.successors(v)[0];
-    }
-  });
-}
-
-// Find a path from v to w through the lowest common ancestor (LCA). Return the
-// full path and the LCA.
-function findPath(g, postorderNums, v, w) {
-  var vPath = [],
-      wPath = [],
-      low = Math.min(postorderNums[v].low, postorderNums[w].low),
-      lim = Math.max(postorderNums[v].lim, postorderNums[w].lim),
-      parent,
-      lca;
-
-  // Traverse up from v to find the LCA
-  parent = v;
-  do {
-    parent = g.parent(parent);
-    vPath.push(parent);
-  } while (parent &&
-           (postorderNums[parent].low > low || lim > postorderNums[parent].lim));
-  lca = parent;
-
-  // Traverse from w to LCA
-  parent = w;
-  while ((parent = g.parent(parent)) !== lca) {
-    wPath.push(parent);
-  }
-
-  return { path: vPath.concat(wPath.reverse()), lca: lca };
-}
-
-function postorder(g) {
-  var result = {},
-      lim = 0;
-
-  function dfs(v) {
-    var low = lim;
-    _.each(g.children(v), dfs);
-    result[v] = { low: low, lim: lim++ };
-  }
-  _.each(g.children(), dfs);
-
-  return result;
-}
-
-},{"./lodash":63}],76:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    Graph = require("../graphlib").Graph,
-    util = require("../util");
-
-/*
- * This module provides coordinate assignment based on Brandes and Köpf, "Fast
- * and Simple Horizontal Coordinate Assignment."
- */
-
-module.exports = {
-  positionX: positionX,
-  findType1Conflicts: findType1Conflicts,
-  findType2Conflicts: findType2Conflicts,
-  addConflict: addConflict,
-  hasConflict: hasConflict,
-  verticalAlignment: verticalAlignment,
-  horizontalCompaction: horizontalCompaction,
-  alignCoordinates: alignCoordinates,
-  findSmallestWidthAlignment: findSmallestWidthAlignment,
-  balance: balance
-};
-
-/*
- * Marks all edges in the graph with a type-1 conflict with the "type1Conflict"
- * property. A type-1 conflict is one where a non-inner segment crosses an
- * inner segment. An inner segment is an edge with both incident nodes marked
- * with the "dummy" property.
- *
- * This algorithm scans layer by layer, starting with the second, for type-1
- * conflicts between the current layer and the previous layer. For each layer
- * it scans the nodes from left to right until it reaches one that is incident
- * on an inner segment. It then scans predecessors to determine if they have
- * edges that cross that inner segment. At the end a final scan is done for all
- * nodes on the current rank to see if they cross the last visited inner
- * segment.
- *
- * This algorithm (safely) assumes that a dummy node will only be incident on a
- * single node in the layers being scanned.
- */
-function findType1Conflicts(g, layering) {
-  var conflicts = {};
-
-  function visitLayer(prevLayer, layer) {
-    var
-      // last visited node in the previous layer that is incident on an inner
-      // segment.
-      k0 = 0,
-      // Tracks the last node in this layer scanned for crossings with a type-1
-      // segment.
-      scanPos = 0,
-      prevLayerLength = prevLayer.length,
-      lastNode = _.last(layer);
-
-    _.each(layer, function(v, i) {
-      var w = findOtherInnerSegmentNode(g, v),
-          k1 = w ? g.node(w).order : prevLayerLength;
-
-      if (w || v === lastNode) {
-        _.each(layer.slice(scanPos, i +1), function(scanNode) {
-          _.each(g.predecessors(scanNode), function(u) {
-            var uLabel = g.node(u),
-                uPos = uLabel.order;
-            if ((uPos < k0 || k1 < uPos) &&
-                !(uLabel.dummy && g.node(scanNode).dummy)) {
-              addConflict(conflicts, u, scanNode);
-            }
-          });
-        });
-        scanPos = i + 1;
-        k0 = k1;
-      }
-    });
-
-    return layer;
-  }
-
-  _.reduce(layering, visitLayer);
-  return conflicts;
-}
-
-function findType2Conflicts(g, layering) {
-  var conflicts = {};
-
-  function scan(south, southPos, southEnd, prevNorthBorder, nextNorthBorder) {
-    var v;
-    _.each(_.range(southPos, southEnd), function(i) {
-      v = south[i];
-      if (g.node(v).dummy) {
-        _.each(g.predecessors(v), function(u) {
-          var uNode = g.node(u);
-          if (uNode.dummy &&
-              (uNode.order < prevNorthBorder || uNode.order > nextNorthBorder)) {
-            addConflict(conflicts, u, v);
-          }
-        });
-      }
-    });
-  }
-
-
-  function visitLayer(north, south) {
-    var prevNorthPos = -1,
-        nextNorthPos,
-        southPos = 0;
-
-    _.each(south, function(v, southLookahead) {
-      if (g.node(v).dummy === "border") {
-        var predecessors = g.predecessors(v);
-        if (predecessors.length) {
-          nextNorthPos = g.node(predecessors[0]).order;
-          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
-          southPos = southLookahead;
-          prevNorthPos = nextNorthPos;
-        }
-      }
-      scan(south, southPos, south.length, nextNorthPos, north.length);
-    });
-
-    return south;
-  }
-
-  _.reduce(layering, visitLayer);
-  return conflicts;
-}
-
-function findOtherInnerSegmentNode(g, v) {
-  if (g.node(v).dummy) {
-    return _.find(g.predecessors(v), function(u) {
-      return g.node(u).dummy;
-    });
-  }
-}
-
-function addConflict(conflicts, v, w) {
-  if (v > w) {
-    var tmp = v;
-    v = w;
-    w = tmp;
-  }
-
-  var conflictsV = conflicts[v];
-  if (!conflictsV) {
-    conflicts[v] = conflictsV = {};
-  }
-  conflictsV[w] = true;
-}
-
-function hasConflict(conflicts, v, w) {
-  if (v > w) {
-    var tmp = v;
-    v = w;
-    w = tmp;
-  }
-  return _.has(conflicts[v], w);
-}
-
-/*
- * Try to align nodes into vertical "blocks" where possible. This algorithm
- * attempts to align a node with one of its median neighbors. If the edge
- * connecting a neighbor is a type-1 conflict then we ignore that possibility.
- * If a previous node has already formed a block with a node after the node
- * we're trying to form a block with, we also ignore that possibility - our
- * blocks would be split in that scenario.
- */
-function verticalAlignment(g, layering, conflicts, neighborFn) {
-  var root = {},
-      align = {},
-      pos = {};
-
-  // We cache the position here based on the layering because the graph and
-  // layering may be out of sync. The layering matrix is manipulated to
-  // generate different extreme alignments.
-  _.each(layering, function(layer) {
-    _.each(layer, function(v, order) {
-      root[v] = v;
-      align[v] = v;
-      pos[v] = order;
-    });
-  });
-
-  _.each(layering, function(layer) {
-    var prevIdx = -1;
-    _.each(layer, function(v) {
-      var ws = neighborFn(v);
-      if (ws.length) {
-        ws = _.sortBy(ws, function(w) { return pos[w]; });
-        var mp = (ws.length - 1) / 2;
-        for (var i = Math.floor(mp), il = Math.ceil(mp); i <= il; ++i) {
-          var w = ws[i];
-          if (align[v] === v &&
-              prevIdx < pos[w] &&
-              !hasConflict(conflicts, v, w)) {
-            align[w] = v;
-            align[v] = root[v] = root[w];
-            prevIdx = pos[w];
-          }
-        }
-      }
-    });
-  });
-
-  return { root: root, align: align };
-}
-
-function horizontalCompaction(g, layering, root, align, reverseSep) {
-  // This portion of the algorithm differs from BK due to a number of problems.
-  // Instead of their algorithm we construct a new block graph and do two
-  // sweeps. The first sweep places blocks with the smallest possible
-  // coordinates. The second sweep removes unused space by moving blocks to the
-  // greatest coordinates without violating separation.
-  var xs = {},
-      blockG = buildBlockGraph(g, layering, root, reverseSep);
-
-  // First pass, assign smallest coordinates via DFS
-  var visited = {};
-  function pass1(v) {
-    if (!_.has(visited, v)) {
-      visited[v] = true;
-      xs[v] = _.reduce(blockG.inEdges(v), function(max, e) {
-        pass1(e.v);
-        return Math.max(max, xs[e.v] + blockG.edge(e));
-      }, 0);
-    }
-  }
-  _.each(blockG.nodes(), pass1);
-
-  var borderType = reverseSep ? "borderLeft" : "borderRight";
-  function pass2(v) {
-    if (visited[v] !== 2) {
-      visited[v]++;
-      var node = g.node(v);
-      var min = _.reduce(blockG.outEdges(v), function(min, e) {
-        pass2(e.w);
-        return Math.min(min, xs[e.w] - blockG.edge(e));
-      }, Number.POSITIVE_INFINITY);
-      if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
-        xs[v] = Math.max(xs[v], min);
-      }
-    }
-  }
-  _.each(blockG.nodes(), pass2);
-
-  // Assign x coordinates to all nodes
-  _.each(align, function(v) {
-    xs[v] = xs[root[v]];
-  });
-
-  return xs;
-}
-
-
-function buildBlockGraph(g, layering, root, reverseSep) {
-  var blockGraph = new Graph(),
-      graphLabel = g.graph(),
-      sepFn = sep(graphLabel.nodesep, graphLabel.edgesep, reverseSep);
-
-  _.each(layering, function(layer) {
-    var u;
-    _.each(layer, function(v) {
-      var vRoot = root[v];
-      blockGraph.setNode(vRoot);
-      if (u) {
-        var uRoot = root[u],
-            prevMax = blockGraph.edge(uRoot, vRoot);
-        blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
-      }
-      u = v;
-    });
-  });
-
-  return blockGraph;
-}
-
-/*
- * Returns the alignment that has the smallest width of the given alignments.
- */
-function findSmallestWidthAlignment(g, xss) {
-  return _.min(xss, function(xs) {
-    var min = _.min(xs, function(x, v) { return x - width(g, v) / 2; }),
-        max = _.max(xs, function(x, v) { return x + width(g, v) / 2; });
-    return max - min;
-  });
-}
-
-/*
- * Align the coordinates of each of the layout alignments such that
- * left-biased alignments have their minimum coordinate at the same point as
- * the minimum coordinate of the smallest width alignment and right-biased
- * alignments have their maximum coordinate at the same point as the maximum
- * coordinate of the smallest width alignment.
- */
-function alignCoordinates(xss, alignTo) {
-  var alignToMin = _.min(alignTo),
-      alignToMax = _.max(alignTo);
-
-  _.each(["u", "d"], function(vert) {
-    _.each(["l", "r"], function(horiz) {
-      var alignment = vert + horiz,
-          xs = xss[alignment],
-          delta;
-      if (xs === alignTo) return;
-
-      delta = horiz === "l" ? alignToMin - _.min(xs) : alignToMax - _.max(xs);
-
-      if (delta) {
-        xss[alignment] = _.mapValues(xs, function(x) { return x + delta; });
-      }
-    });
-  });
-}
-
-function balance(xss, align) {
-  return _.mapValues(xss.ul, function(ignore, v) {
-    if (align) {
-      return xss[align.toLowerCase()][v];
-    } else {
-      var xs = _.sortBy(_.pluck(xss, v));
-      return (xs[1] + xs[2]) / 2;
-    }
-  });
-}
-
-function positionX(g) {
-  var layering = util.buildLayerMatrix(g),
-      conflicts = _.merge(findType1Conflicts(g, layering),
-                          findType2Conflicts(g, layering));
-
-  var xss = {},
-      adjustedLayering;
-  _.each(["u", "d"], function(vert) {
-    adjustedLayering = vert === "u" ? layering : _.values(layering).reverse();
-    _.each(["l", "r"], function(horiz) {
-      if (horiz === "r") {
-        adjustedLayering = _.map(adjustedLayering, function(inner) {
-          return _.values(inner).reverse();
-        });
-      }
-
-      var neighborFn = _.bind(vert === "u" ? g.predecessors : g.successors, g);
-      var align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
-      var xs = horizontalCompaction(g, adjustedLayering,
-                                    align.root, align.align,
-                                    horiz === "r");
-      if (horiz === "r") {
-        xs = _.mapValues(xs, function(x) { return -x; });
-      }
-      xss[vert + horiz] = xs;
-    });
-  });
-
-  var smallestWidth = findSmallestWidthAlignment(g, xss);
-  alignCoordinates(xss, smallestWidth);
-  return balance(xss, g.graph().align);
-}
-
-function sep(nodeSep, edgeSep, reverseSep) {
-  return function(g, v, w) {
-    var vLabel = g.node(v),
-        wLabel = g.node(w),
-        sum = 0,
-        delta;
-
-    sum += vLabel.width / 2;
-    if (_.has(vLabel, "labelpos")) {
-      switch (vLabel.labelpos.toLowerCase()) {
-        case "l": delta = -vLabel.width / 2; break;
-        case "r": delta = vLabel.width / 2; break;
-      }
-    }
-    if (delta) {
-      sum += reverseSep ? delta : -delta;
-    }
-    delta = 0;
-
-    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
-    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
-
-    sum += wLabel.width / 2;
-    if (_.has(wLabel, "labelpos")) {
-      switch (wLabel.labelpos.toLowerCase()) {
-        case "l": delta = wLabel.width / 2; break;
-        case "r": delta = -wLabel.width / 2; break;
-      }
-    }
-    if (delta) {
-      sum += reverseSep ? delta : -delta;
-    }
-    delta = 0;
-
-    return sum;
-  };
-}
-
-function width(g, v) {
-  return g.node(v).width;
-}
-
-},{"../graphlib":60,"../lodash":63,"../util":82}],77:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    util = require("../util"),
-    positionX = require("./bk").positionX;
-
-module.exports = position;
-
-function position(g) {
-  g = util.asNonCompoundGraph(g);
-
-  positionY(g);
-  _.each(positionX(g), function(x, v) {
-    g.node(v).x = x;
-  });
-}
-
-function positionY(g) {
-  var layering = util.buildLayerMatrix(g),
-      rankSep = g.graph().ranksep,
-      prevY = 0;
-  _.each(layering, function(layer) {
-    var maxHeight = _.max(_.map(layer, function(v) { return g.node(v).height; }));
-    _.each(layer, function(v) {
-      g.node(v).y = prevY + maxHeight / 2;
-    });
-    prevY += maxHeight + rankSep;
-  });
-}
-
-
-},{"../lodash":63,"../util":82,"./bk":76}],78:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    Graph = require("../graphlib").Graph,
-    slack = require("./util").slack;
-
-module.exports = feasibleTree;
-
-/*
- * Constructs a spanning tree with tight edges and adjusted the input node's
- * ranks to achieve this. A tight edge is one that is has a length that matches
- * its "minlen" attribute.
- *
- * The basic structure for this function is derived from Gansner, et al., "A
- * Technique for Drawing Directed Graphs."
- *
- * Pre-conditions:
- *
- *    1. Graph must be a DAG.
- *    2. Graph must be connected.
- *    3. Graph must have at least one node.
- *    5. Graph nodes must have been previously assigned a "rank" property that
- *       respects the "minlen" property of incident edges.
- *    6. Graph edges must have a "minlen" property.
- *
- * Post-conditions:
- *
- *    - Graph nodes will have their rank adjusted to ensure that all edges are
- *      tight.
- *
- * Returns a tree (undirected graph) that is constructed using only "tight"
- * edges.
- */
-function feasibleTree(g) {
-  var t = new Graph({ directed: false });
-
-  // Choose arbitrary node from which to start our tree
-  var start = g.nodes()[0],
-      size = g.nodeCount();
-  t.setNode(start, {});
-
-  var edge, delta;
-  while (tightTree(t, g) < size) {
-    edge = findMinSlackEdge(t, g);
-    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
-    shiftRanks(t, g, delta);
-  }
-
-  return t;
-}
-
-/*
- * Finds a maximal tree of tight edges and returns the number of nodes in the
- * tree.
- */
-function tightTree(t, g) {
-  function dfs(v) {
-    _.each(g.nodeEdges(v), function(e) {
-      var edgeV = e.v,
-          w = (v === edgeV) ? e.w : edgeV;
-      if (!t.hasNode(w) && !slack(g, e)) {
-        t.setNode(w, {});
-        t.setEdge(v, w, {});
-        dfs(w);
-      }
-    });
-  }
-
-  _.each(t.nodes(), dfs);
-  return t.nodeCount();
-}
-
-/*
- * Finds the edge with the smallest slack that is incident on tree and returns
- * it.
- */
-function findMinSlackEdge(t, g) {
-  return _.min(g.edges(), function(e) {
-    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
-      return slack(g, e);
-    }
-  });
-}
-
-function shiftRanks(t, g, delta) {
-  _.each(t.nodes(), function(v) {
-    g.node(v).rank += delta;
-  });
-}
-
-},{"../graphlib":60,"../lodash":63,"./util":81}],79:[function(require,module,exports){
-"use strict";
-
-var rankUtil = require("./util"),
-    longestPath = rankUtil.longestPath,
-    feasibleTree = require("./feasible-tree"),
-    networkSimplex = require("./network-simplex");
-
-module.exports = rank;
-
-/*
- * Assigns a rank to each node in the input graph that respects the "minlen"
- * constraint specified on edges between nodes.
- *
- * This basic structure is derived from Gansner, et al., "A Technique for
- * Drawing Directed Graphs."
- *
- * Pre-conditions:
- *
- *    1. Graph must be a connected DAG
- *    2. Graph nodes must be objects
- *    3. Graph edges must have "weight" and "minlen" attributes
- *
- * Post-conditions:
- *
- *    1. Graph nodes will have a "rank" attribute based on the results of the
- *       algorithm. Ranks can start at any index (including negative), we'll
- *       fix them up later.
- */
-function rank(g) {
-  switch(g.graph().ranker) {
-    case "network-simplex": networkSimplexRanker(g); break;
-    case "tight-tree": tightTreeRanker(g); break;
-    case "longest-path": longestPathRanker(g); break;
-    default: networkSimplexRanker(g);
-  }
-}
-
-// A fast and simple ranker, but results are far from optimal.
-var longestPathRanker = longestPath;
-
-function tightTreeRanker(g) {
-  longestPath(g);
-  feasibleTree(g);
-}
-
-function networkSimplexRanker(g) {
-  networkSimplex(g);
-}
-
-},{"./feasible-tree":78,"./network-simplex":80,"./util":81}],80:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash"),
-    feasibleTree = require("./feasible-tree"),
-    slack = require("./util").slack,
-    initRank = require("./util").longestPath,
-    preorder = require("../graphlib").alg.preorder,
-    postorder = require("../graphlib").alg.postorder,
-    simplify = require("../util").simplify;
-
-module.exports = networkSimplex;
-
-// Expose some internals for testing purposes
-networkSimplex.initLowLimValues = initLowLimValues;
-networkSimplex.initCutValues = initCutValues;
-networkSimplex.calcCutValue = calcCutValue;
-networkSimplex.leaveEdge = leaveEdge;
-networkSimplex.enterEdge = enterEdge;
-networkSimplex.exchangeEdges = exchangeEdges;
-
-/*
- * The network simplex algorithm assigns ranks to each node in the input graph
- * and iteratively improves the ranking to reduce the length of edges.
- *
- * Preconditions:
- *
- *    1. The input graph must be a DAG.
- *    2. All nodes in the graph must have an object value.
- *    3. All edges in the graph must have "minlen" and "weight" attributes.
- *
- * Postconditions:
- *
- *    1. All nodes in the graph will have an assigned "rank" attribute that has
- *       been optimized by the network simplex algorithm. Ranks start at 0.
- *
- *
- * A rough sketch of the algorithm is as follows:
- *
- *    1. Assign initial ranks to each node. We use the longest path algorithm,
- *       which assigns ranks to the lowest position possible. In general this
- *       leads to very wide bottom ranks and unnecessarily long edges.
- *    2. Construct a feasible tight tree. A tight tree is one such that all
- *       edges in the tree have no slack (difference between length of edge
- *       and minlen for the edge). This by itself greatly improves the assigned
- *       rankings by shorting edges.
- *    3. Iteratively find edges that have negative cut values. Generally a
- *       negative cut value indicates that the edge could be removed and a new
- *       tree edge could be added to produce a more compact graph.
- *
- * Much of the algorithms here are derived from Gansner, et al., "A Technique
- * for Drawing Directed Graphs." The structure of the file roughly follows the
- * structure of the overall algorithm.
- */
-function networkSimplex(g) {
-  g = simplify(g);
-  initRank(g);
-  var t = feasibleTree(g);
-  initLowLimValues(t);
-  initCutValues(t, g);
-
-  var e, f;
-  while ((e = leaveEdge(t))) {
-    f = enterEdge(t, g, e);
-    exchangeEdges(t, g, e, f);
-  }
-}
-
-/*
- * Initializes cut values for all edges in the tree.
- */
-function initCutValues(t, g) {
-  var vs = postorder(t, t.nodes());
-  vs = vs.slice(0, vs.length - 1);
-  _.each(vs, function(v) {
-    assignCutValue(t, g, v);
-  });
-}
-
-function assignCutValue(t, g, child) {
-  var childLab = t.node(child),
-      parent = childLab.parent;
-  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
-}
-
-/*
- * Given the tight tree, its graph, and a child in the graph calculate and
- * return the cut value for the edge between the child and its parent.
- */
-function calcCutValue(t, g, child) {
-  var childLab = t.node(child),
-      parent = childLab.parent,
-      // True if the child is on the tail end of the edge in the directed graph
-      childIsTail = true,
-      // The graph's view of the tree edge we're inspecting
-      graphEdge = g.edge(child, parent),
-      // The accumulated cut value for the edge between this node and its parent
-      cutValue = 0;
-
-  if (!graphEdge) {
-    childIsTail = false;
-    graphEdge = g.edge(parent, child);
-  }
-
-  cutValue = graphEdge.weight;
-
-  _.each(g.nodeEdges(child), function(e) {
-    var isOutEdge = e.v === child,
-        other = isOutEdge ? e.w : e.v;
-
-    if (other !== parent) {
-      var pointsToHead = isOutEdge === childIsTail,
-          otherWeight = g.edge(e).weight;
-
-      cutValue += pointsToHead ? otherWeight : -otherWeight;
-      if (isTreeEdge(t, child, other)) {
-        var otherCutValue = t.edge(child, other).cutvalue;
-        cutValue += pointsToHead ? -otherCutValue : otherCutValue;
-      }
-    }
-  });
-
-  return cutValue;
-}
-
-function initLowLimValues(tree, root) {
-  if (arguments.length < 2) {
-    root = tree.nodes()[0];
-  }
-  dfsAssignLowLim(tree, {}, 1, root);
-}
-
-function dfsAssignLowLim(tree, visited, nextLim, v, parent) {
-  var low = nextLim,
-      label = tree.node(v);
-
-  visited[v] = true;
-  _.each(tree.neighbors(v), function(w) {
-    if (!_.has(visited, w)) {
-      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
-    }
-  });
-
-  label.low = low;
-  label.lim = nextLim++;
-  if (parent) {
-    label.parent = parent;
-  } else {
-    // TODO should be able to remove this when we incrementally update low lim
-    delete label.parent;
-  }
-
-  return nextLim;
-}
-
-function leaveEdge(tree) {
-  return _.find(tree.edges(), function(e) {
-    return tree.edge(e).cutvalue < 0;
-  });
-}
-
-function enterEdge(t, g, edge) {
-  var v = edge.v,
-      w = edge.w;
-
-  // For the rest of this function we assume that v is the tail and w is the
-  // head, so if we don't have this edge in the graph we should flip it to
-  // match the correct orientation.
-  if (!g.hasEdge(v, w)) {
-    v = edge.w;
-    w = edge.v;
-  }
-
-  var vLabel = t.node(v),
-      wLabel = t.node(w),
-      tailLabel = vLabel,
-      flip = false;
-
-  // If the root is in the tail of the edge then we need to flip the logic that
-  // checks for the head and tail nodes in the candidates function below.
-  if (vLabel.lim > wLabel.lim) {
-    tailLabel = wLabel;
-    flip = true;
-  }
-
-  var candidates = _.filter(g.edges(), function(edge) {
-    return flip === isDescendant(t, t.node(edge.v), tailLabel) &&
-           flip !== isDescendant(t, t.node(edge.w), tailLabel);
-  });
-
-  return _.min(candidates, function(edge) { return slack(g, edge); });
-}
-
-function exchangeEdges(t, g, e, f) {
-  var v = e.v,
-      w = e.w;
-  t.removeEdge(v, w);
-  t.setEdge(f.v, f.w, {});
-  initLowLimValues(t);
-  initCutValues(t, g);
-  updateRanks(t, g);
-}
-
-function updateRanks(t, g) {
-  var root = _.find(t.nodes(), function(v) { return !g.node(v).parent; }),
-      vs = preorder(t, root);
-  vs = vs.slice(1);
-  _.each(vs, function(v) {
-    var parent = t.node(v).parent,
-        edge = g.edge(v, parent),
-        flipped = false;
-
-    if (!edge) {
-      edge = g.edge(parent, v);
-      flipped = true;
-    }
-
-    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
-  });
-}
-
-/*
- * Returns true if the edge is in the tree.
- */
-function isTreeEdge(tree, u, v) {
-  return tree.hasEdge(u, v);
-}
-
-/*
- * Returns true if the specified node is descendant of the root node per the
- * assigned low and lim attributes in the tree.
- */
-function isDescendant(tree, vLabel, rootLabel) {
-  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
-}
-
-},{"../graphlib":60,"../lodash":63,"../util":82,"./feasible-tree":78,"./util":81}],81:[function(require,module,exports){
-"use strict";
-
-var _ = require("../lodash");
-
-module.exports = {
-  longestPath: longestPath,
-  slack: slack
-};
-
-/*
- * Initializes ranks for the input graph using the longest path algorithm. This
- * algorithm scales well and is fast in practice, it yields rather poor
- * solutions. Nodes are pushed to the lowest layer possible, leaving the bottom
- * ranks wide and leaving edges longer than necessary. However, due to its
- * speed, this algorithm is good for getting an initial ranking that can be fed
- * into other algorithms.
- *
- * This algorithm does not normalize layers because it will be used by other
- * algorithms in most cases. If using this algorithm directly, be sure to
- * run normalize at the end.
- *
- * Pre-conditions:
- *
- *    1. Input graph is a DAG.
- *    2. Input graph node labels can be assigned properties.
- *
- * Post-conditions:
- *
- *    1. Each node will be assign an (unnormalized) "rank" property.
- */
-function longestPath(g) {
-  var visited = {};
-
-  function dfs(v) {
-    var label = g.node(v);
-    if (_.has(visited, v)) {
-      return label.rank;
-    }
-    visited[v] = true;
-
-    var rank = _.min(_.map(g.outEdges(v), function(e) {
-      return dfs(e.w) - g.edge(e).minlen;
-    }));
-
-    if (rank === Number.POSITIVE_INFINITY) {
-      rank = 0;
-    }
-
-    return (label.rank = rank);
-  }
-
-  _.each(g.sources(), dfs);
-}
-
-/*
- * Returns the amount of slack for the given edge. The slack is defined as the
- * difference between the length of the edge and its minimum length.
- */
-function slack(g, e) {
-  return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
-}
-
-},{"../lodash":63}],82:[function(require,module,exports){
-"use strict";
-
-var _ = require("./lodash"),
-    Graph = require("./graphlib").Graph;
-
-module.exports = {
-  addDummyNode: addDummyNode,
-  simplify: simplify,
-  asNonCompoundGraph: asNonCompoundGraph,
-  successorWeights: successorWeights,
-  predecessorWeights: predecessorWeights,
-  intersectRect: intersectRect,
-  buildLayerMatrix: buildLayerMatrix,
-  normalizeRanks: normalizeRanks,
-  removeEmptyRanks: removeEmptyRanks,
-  addBorderNode: addBorderNode,
-  maxRank: maxRank,
-  partition: partition,
-  time: time,
-  notime: notime
-};
-
-/*
- * Adds a dummy node to the graph and return v.
- */
-function addDummyNode(g, type, attrs, name) {
-  var v;
-  do {
-    v = _.uniqueId(name);
-  } while (g.hasNode(v));
-
-  attrs.dummy = type;
-  g.setNode(v, attrs);
-  return v;
-}
-
-/*
- * Returns a new graph with only simple edges. Handles aggregation of data
- * associated with multi-edges.
- */
-function simplify(g) {
-  var simplified = new Graph().setGraph(g.graph());
-  _.each(g.nodes(), function(v) { simplified.setNode(v, g.node(v)); });
-  _.each(g.edges(), function(e) {
-    var simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 },
-        label = g.edge(e);
-    simplified.setEdge(e.v, e.w, {
-      weight: simpleLabel.weight + label.weight,
-      minlen: Math.max(simpleLabel.minlen, label.minlen)
-    });
-  });
-  return simplified;
-}
-
-function asNonCompoundGraph(g) {
-  var simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(g.graph());
-  _.each(g.nodes(), function(v) {
-    if (!g.children(v).length) {
-      simplified.setNode(v, g.node(v));
-    }
-  });
-  _.each(g.edges(), function(e) {
-    simplified.setEdge(e, g.edge(e));
-  });
-  return simplified;
-}
-
-function successorWeights(g) {
-  var weightMap = _.map(g.nodes(), function(v) {
-    var sucs = {};
-    _.each(g.outEdges(v), function(e) {
-      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
-    });
-    return sucs;
-  });
-  return _.zipObject(g.nodes(), weightMap);
-}
-
-function predecessorWeights(g) {
-  var weightMap = _.map(g.nodes(), function(v) {
-    var preds = {};
-    _.each(g.inEdges(v), function(e) {
-      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
-    });
-    return preds;
-  });
-  return _.zipObject(g.nodes(), weightMap);
-}
-
-/*
- * Finds where a line starting at point ({x, y}) would intersect a rectangle
- * ({x, y, width, height}) if it were pointing at the rectangle's center.
- */
-function intersectRect(rect, point) {
-  var x = rect.x;
-  var y = rect.y;
-
-  // Rectangle intersection algorithm from:
-  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
-  var dx = point.x - x;
-  var dy = point.y - y;
-  var w = rect.width / 2;
-  var h = rect.height / 2;
-
-  if (!dx && !dy) {
-    throw new Error("Not possible to find intersection inside of the rectangle");
-  }
-
-  var sx, sy;
-  if (Math.abs(dy) * w > Math.abs(dx) * h) {
-    // Intersection is top or bottom of rect.
-    if (dy < 0) {
-      h = -h;
-    }
-    sx = h * dx / dy;
-    sy = h;
-  } else {
-    // Intersection is left or right of rect.
-    if (dx < 0) {
-      w = -w;
-    }
-    sx = w;
-    sy = w * dy / dx;
-  }
-
-  return { x: x + sx, y: y + sy };
-}
-
-/*
- * Given a DAG with each node assigned "rank" and "order" properties, this
- * function will produce a matrix with the ids of each node.
- */
-function buildLayerMatrix(g) {
-  var layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v),
-        rank = node.rank;
-    if (!_.isUndefined(rank)) {
-      layering[rank][node.order] = v;
-    }
-  });
-  return layering;
-}
-
-/*
- * Adjusts the ranks for all nodes in the graph such that all nodes v have
- * rank(v) >= 0 and at least one node w has rank(w) = 0.
- */
-function normalizeRanks(g) {
-  var min = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
-  _.each(g.nodes(), function(v) {
-    var node = g.node(v);
-    if (_.has(node, "rank")) {
-      node.rank -= min;
-    }
-  });
-}
-
-function removeEmptyRanks(g) {
-  // Ranks may not start at 0, so we need to offset them
-  var offset = _.min(_.map(g.nodes(), function(v) { return g.node(v).rank; }));
-
-  var layers = [];
-  _.each(g.nodes(), function(v) {
-    var rank = g.node(v).rank - offset;
-    if (!layers[rank]) {
-      layers[rank] = [];
-    }
-    layers[rank].push(v);
-  });
-
-  var delta = 0,
-      nodeRankFactor = g.graph().nodeRankFactor;
-  _.each(layers, function(vs, i) {
-    if (_.isUndefined(vs) && i % nodeRankFactor !== 0) {
-      --delta;
-    } else if (delta) {
-      _.each(vs, function(v) { g.node(v).rank += delta; });
-    }
-  });
-}
-
-function addBorderNode(g, prefix, rank, order) {
-  var node = {
-    width: 0,
-    height: 0
-  };
-  if (arguments.length >= 4) {
-    node.rank = rank;
-    node.order = order;
-  }
-  return addDummyNode(g, "border", node, prefix);
-}
-
-function maxRank(g) {
-  return _.max(_.map(g.nodes(), function(v) {
-    var rank = g.node(v).rank;
-    if (!_.isUndefined(rank)) {
-      return rank;
-    }
-  }));
-}
-
-/*
- * Partition a collection into two groups: `lhs` and `rhs`. If the supplied
- * function returns true for an entry it goes into `lhs`. Otherwise it goes
- * into `rhs.
- */
-function partition(collection, fn) {
-  var result = { lhs: [], rhs: [] };
-  _.each(collection, function(value) {
-    if (fn(value)) {
-      result.lhs.push(value);
-    } else {
-      result.rhs.push(value);
-    }
-  });
-  return result;
-}
-
-/*
- * Returns a new function that wraps `fn` with a timer. The wrapper logs the
- * time it takes to execute the function.
- */
-function time(name, fn) {
-  var start = _.now();
-  try {
-    return fn();
-  } finally {
-    console.log(name + " time: " + (_.now() - start) + "ms");
-  }
-}
-
-function notime(name, fn) {
-  return fn();
-}
-
-},{"./graphlib":60,"./lodash":63}],83:[function(require,module,exports){
-module.exports = "0.7.4";
-
-},{}],84:[function(require,module,exports){
-module.exports=require(33)
-},{"./lib":100,"./lib/alg":91,"./lib/json":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\index.js":33}],85:[function(require,module,exports){
-module.exports=require(34)
-},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\components.js":34}],86:[function(require,module,exports){
-module.exports=require(35)
-},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dfs.js":35}],87:[function(require,module,exports){
-module.exports=require(36)
-},{"../lodash":102,"./dijkstra":88,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra-all.js":36}],88:[function(require,module,exports){
-module.exports=require(37)
-},{"../data/priority-queue":98,"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra.js":37}],89:[function(require,module,exports){
-module.exports=require(38)
-},{"../lodash":102,"./tarjan":96,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\find-cycles.js":38}],90:[function(require,module,exports){
-module.exports=require(39)
-},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\floyd-warshall.js":39}],91:[function(require,module,exports){
-module.exports=require(40)
-},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\index.js":40}],92:[function(require,module,exports){
-module.exports=require(41)
-},{"./topsort":97,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\is-acyclic.js":41}],93:[function(require,module,exports){
-module.exports=require(42)
-},{"./dfs":86,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\postorder.js":42}],94:[function(require,module,exports){
-module.exports=require(43)
-},{"./dfs":86,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\preorder.js":43}],95:[function(require,module,exports){
-module.exports=require(44)
-},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\prim.js":44}],96:[function(require,module,exports){
-module.exports=require(45)
-},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\tarjan.js":45}],97:[function(require,module,exports){
-module.exports=require(46)
-},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\topsort.js":46}],98:[function(require,module,exports){
-module.exports=require(47)
-},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\data\\priority-queue.js":47}],99:[function(require,module,exports){
-module.exports=require(48)
-},{"./lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\graph.js":48}],100:[function(require,module,exports){
-module.exports=require(49)
-},{"./graph":99,"./version":103,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\index.js":49}],101:[function(require,module,exports){
-module.exports=require(50)
-},{"./graph":99,"./lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\json.js":50}],102:[function(require,module,exports){
-module.exports=require(51)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":51,"lodash":104}],103:[function(require,module,exports){
-module.exports=require(52)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\version.js":52}],104:[function(require,module,exports){
-module.exports=require(53)
-},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\lodash\\index.js":53}],105:[function(require,module,exports){
-(function (global){
-/*! http://mths.be/he v0.5.0 by @mathias | MIT license */
-;(function(root) {
-
-	// Detect free variables `exports`.
-	var freeExports = typeof exports == 'object' && exports;
-
-	// Detect free variable `module`.
-	var freeModule = typeof module == 'object' && module &&
-		module.exports == freeExports && module;
-
-	// Detect free variable `global`, from Node.js or Browserified code,
-	// and use it as `root`.
-	var freeGlobal = typeof global == 'object' && global;
-	if (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal) {
-		root = freeGlobal;
-	}
-
-	/*--------------------------------------------------------------------------*/
-
-	// All astral symbols.
-	var regexAstralSymbols = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-	// All ASCII symbols (not just printable ASCII) except those listed in the
-	// first column of the overrides table.
-	// http://whatwg.org/html/tokenization.html#table-charref-overrides
-	var regexAsciiWhitelist = /[\x01-\x7F]/g;
-	// All BMP symbols that are not ASCII newlines, printable ASCII symbols, or
-	// code points listed in the first column of the overrides table on
-	// http://whatwg.org/html/tokenization.html#table-charref-overrides.
-	var regexBmpWhitelist = /[\x01-\t\x0B\f\x0E-\x1F\x7F\x81\x8D\x8F\x90\x9D\xA0-\uFFFF]/g;
-
-	var regexEncodeNonAscii = /<\u20D2|=\u20E5|>\u20D2|\u205F\u200A|\u219D\u0338|\u2202\u0338|\u2220\u20D2|\u2229\uFE00|\u222A\uFE00|\u223C\u20D2|\u223D\u0331|\u223E\u0333|\u2242\u0338|\u224B\u0338|\u224D\u20D2|\u224E\u0338|\u224F\u0338|\u2250\u0338|\u2261\u20E5|\u2264\u20D2|\u2265\u20D2|\u2266\u0338|\u2267\u0338|\u2268\uFE00|\u2269\uFE00|\u226A\u0338|\u226A\u20D2|\u226B\u0338|\u226B\u20D2|\u227F\u0338|\u2282\u20D2|\u2283\u20D2|\u228A\uFE00|\u228B\uFE00|\u228F\u0338|\u2290\u0338|\u2293\uFE00|\u2294\uFE00|\u22B4\u20D2|\u22B5\u20D2|\u22D8\u0338|\u22D9\u0338|\u22DA\uFE00|\u22DB\uFE00|\u22F5\u0338|\u22F9\u0338|\u2933\u0338|\u29CF\u0338|\u29D0\u0338|\u2A6D\u0338|\u2A70\u0338|\u2A7D\u0338|\u2A7E\u0338|\u2AA1\u0338|\u2AA2\u0338|\u2AAC\uFE00|\u2AAD\uFE00|\u2AAF\u0338|\u2AB0\u0338|\u2AC5\u0338|\u2AC6\u0338|\u2ACB\uFE00|\u2ACC\uFE00|\u2AFD\u20E5|[\xA0-\u0113\u0116-\u0122\u0124-\u012B\u012E-\u014D\u0150-\u017E\u0192\u01B5\u01F5\u0237\u02C6\u02C7\u02D8-\u02DD\u0311\u0391-\u03A1\u03A3-\u03A9\u03B1-\u03C9\u03D1\u03D2\u03D5\u03D6\u03DC\u03DD\u03F0\u03F1\u03F5\u03F6\u0401-\u040C\u040E-\u044F\u0451-\u045C\u045E\u045F\u2002-\u2005\u2007-\u2010\u2013-\u2016\u2018-\u201A\u201C-\u201E\u2020-\u2022\u2025\u2026\u2030-\u2035\u2039\u203A\u203E\u2041\u2043\u2044\u204F\u2057\u205F-\u2063\u20AC\u20DB\u20DC\u2102\u2105\u210A-\u2113\u2115-\u211E\u2122\u2124\u2127-\u2129\u212C\u212D\u212F-\u2131\u2133-\u2138\u2145-\u2148\u2153-\u215E\u2190-\u219B\u219D-\u21A7\u21A9-\u21AE\u21B0-\u21B3\u21B5-\u21B7\u21BA-\u21DB\u21DD\u21E4\u21E5\u21F5\u21FD-\u2205\u2207-\u2209\u220B\u220C\u220F-\u2214\u2216-\u2218\u221A\u221D-\u2238\u223A-\u2257\u2259\u225A\u225C\u225F-\u2262\u2264-\u228B\u228D-\u229B\u229D-\u22A5\u22A7-\u22B0\u22B2-\u22BB\u22BD-\u22DB\u22DE-\u22E3\u22E6-\u22F7\u22F9-\u22FE\u2305\u2306\u2308-\u2310\u2312\u2313\u2315\u2316\u231C-\u231F\u2322\u2323\u232D\u232E\u2336\u233D\u233F\u237C\u23B0\u23B1\u23B4-\u23B6\u23DC-\u23DF\u23E2\u23E7\u2423\u24C8\u2500\u2502\u250C\u2510\u2514\u2518\u251C\u2524\u252C\u2534\u253C\u2550-\u256C\u2580\u2584\u2588\u2591-\u2593\u25A1\u25AA\u25AB\u25AD\u25AE\u25B1\u25B3-\u25B5\u25B8\u25B9\u25BD-\u25BF\u25C2\u25C3\u25CA\u25CB\u25EC\u25EF\u25F8-\u25FC\u2605\u2606\u260E\u2640\u2642\u2660\u2663\u2665\u2666\u266A\u266D-\u266F\u2713\u2717\u2720\u2736\u2758\u2772\u2773\u27C8\u27C9\u27E6-\u27ED\u27F5-\u27FA\u27FC\u27FF\u2902-\u2905\u290C-\u2913\u2916\u2919-\u2920\u2923-\u292A\u2933\u2935-\u2939\u293C\u293D\u2945\u2948-\u294B\u294E-\u2976\u2978\u2979\u297B-\u297F\u2985\u2986\u298B-\u2996\u299A\u299C\u299D\u29A4-\u29B7\u29B9\u29BB\u29BC\u29BE-\u29C5\u29C9\u29CD-\u29D0\u29DC-\u29DE\u29E3-\u29E5\u29EB\u29F4\u29F6\u2A00-\u2A02\u2A04\u2A06\u2A0C\u2A0D\u2A10-\u2A17\u2A22-\u2A27\u2A29\u2A2A\u2A2D-\u2A31\u2A33-\u2A3C\u2A3F\u2A40\u2A42-\u2A4D\u2A50\u2A53-\u2A58\u2A5A-\u2A5D\u2A5F\u2A66\u2A6A\u2A6D-\u2A75\u2A77-\u2A9A\u2A9D-\u2AA2\u2AA4-\u2AB0\u2AB3-\u2AC8\u2ACB\u2ACC\u2ACF-\u2ADB\u2AE4\u2AE6-\u2AE9\u2AEB-\u2AF3\u2AFD\uFB00-\uFB04]|\uD835[\uDC9C\uDC9E\uDC9F\uDCA2\uDCA5\uDCA6\uDCA9-\uDCAC\uDCAE-\uDCB9\uDCBB\uDCBD-\uDCC3\uDCC5-\uDCCF\uDD04\uDD05\uDD07-\uDD0A\uDD0D-\uDD14\uDD16-\uDD1C\uDD1E-\uDD39\uDD3B-\uDD3E\uDD40-\uDD44\uDD46\uDD4A-\uDD50\uDD52-\uDD6B]/g;
-	var encodeMap = {'\xC1':'Aacute','\xE1':'aacute','\u0102':'Abreve','\u0103':'abreve','\u223E':'ac','\u223F':'acd','\u223E\u0333':'acE','\xC2':'Acirc','\xE2':'acirc','\xB4':'acute','\u0410':'Acy','\u0430':'acy','\xC6':'AElig','\xE6':'aelig','\u2061':'af','\uD835\uDD04':'Afr','\uD835\uDD1E':'afr','\xC0':'Agrave','\xE0':'agrave','\u2135':'aleph','\u0391':'Alpha','\u03B1':'alpha','\u0100':'Amacr','\u0101':'amacr','\u2A3F':'amalg','&':'amp','\u2A55':'andand','\u2A53':'And','\u2227':'and','\u2A5C':'andd','\u2A58':'andslope','\u2A5A':'andv','\u2220':'ang','\u29A4':'ange','\u29A8':'angmsdaa','\u29A9':'angmsdab','\u29AA':'angmsdac','\u29AB':'angmsdad','\u29AC':'angmsdae','\u29AD':'angmsdaf','\u29AE':'angmsdag','\u29AF':'angmsdah','\u2221':'angmsd','\u221F':'angrt','\u22BE':'angrtvb','\u299D':'angrtvbd','\u2222':'angsph','\xC5':'angst','\u237C':'angzarr','\u0104':'Aogon','\u0105':'aogon','\uD835\uDD38':'Aopf','\uD835\uDD52':'aopf','\u2A6F':'apacir','\u2248':'ap','\u2A70':'apE','\u224A':'ape','\u224B':'apid','\'':'apos','\xE5':'aring','\uD835\uDC9C':'Ascr','\uD835\uDCB6':'ascr','\u2254':'colone','*':'ast','\u224D':'CupCap','\xC3':'Atilde','\xE3':'atilde','\xC4':'Auml','\xE4':'auml','\u2233':'awconint','\u2A11':'awint','\u224C':'bcong','\u03F6':'bepsi','\u2035':'bprime','\u223D':'bsim','\u22CD':'bsime','\u2216':'setmn','\u2AE7':'Barv','\u22BD':'barvee','\u2305':'barwed','\u2306':'Barwed','\u23B5':'bbrk','\u23B6':'bbrktbrk','\u0411':'Bcy','\u0431':'bcy','\u201E':'bdquo','\u2235':'becaus','\u29B0':'bemptyv','\u212C':'Bscr','\u0392':'Beta','\u03B2':'beta','\u2136':'beth','\u226C':'twixt','\uD835\uDD05':'Bfr','\uD835\uDD1F':'bfr','\u22C2':'xcap','\u25EF':'xcirc','\u22C3':'xcup','\u2A00':'xodot','\u2A01':'xoplus','\u2A02':'xotime','\u2A06':'xsqcup','\u2605':'starf','\u25BD':'xdtri','\u25B3':'xutri','\u2A04':'xuplus','\u22C1':'Vee','\u22C0':'Wedge','\u290D':'rbarr','\u29EB':'lozf','\u25AA':'squf','\u25B4':'utrif','\u25BE':'dtrif','\u25C2':'ltrif','\u25B8':'rtrif','\u2423':'blank','\u2592':'blk12','\u2591':'blk14','\u2593':'blk34','\u2588':'block','=\u20E5':'bne','\u2261\u20E5':'bnequiv','\u2AED':'bNot','\u2310':'bnot','\uD835\uDD39':'Bopf','\uD835\uDD53':'bopf','\u22A5':'bot','\u22C8':'bowtie','\u29C9':'boxbox','\u2510':'boxdl','\u2555':'boxdL','\u2556':'boxDl','\u2557':'boxDL','\u250C':'boxdr','\u2552':'boxdR','\u2553':'boxDr','\u2554':'boxDR','\u2500':'boxh','\u2550':'boxH','\u252C':'boxhd','\u2564':'boxHd','\u2565':'boxhD','\u2566':'boxHD','\u2534':'boxhu','\u2567':'boxHu','\u2568':'boxhU','\u2569':'boxHU','\u229F':'minusb','\u229E':'plusb','\u22A0':'timesb','\u2518':'boxul','\u255B':'boxuL','\u255C':'boxUl','\u255D':'boxUL','\u2514':'boxur','\u2558':'boxuR','\u2559':'boxUr','\u255A':'boxUR','\u2502':'boxv','\u2551':'boxV','\u253C':'boxvh','\u256A':'boxvH','\u256B':'boxVh','\u256C':'boxVH','\u2524':'boxvl','\u2561':'boxvL','\u2562':'boxVl','\u2563':'boxVL','\u251C':'boxvr','\u255E':'boxvR','\u255F':'boxVr','\u2560':'boxVR','\u02D8':'breve','\xA6':'brvbar','\uD835\uDCB7':'bscr','\u204F':'bsemi','\u29C5':'bsolb','\\':'bsol','\u27C8':'bsolhsub','\u2022':'bull','\u224E':'bump','\u2AAE':'bumpE','\u224F':'bumpe','\u0106':'Cacute','\u0107':'cacute','\u2A44':'capand','\u2A49':'capbrcup','\u2A4B':'capcap','\u2229':'cap','\u22D2':'Cap','\u2A47':'capcup','\u2A40':'capdot','\u2145':'DD','\u2229\uFE00':'caps','\u2041':'caret','\u02C7':'caron','\u212D':'Cfr','\u2A4D':'ccaps','\u010C':'Ccaron','\u010D':'ccaron','\xC7':'Ccedil','\xE7':'ccedil','\u0108':'Ccirc','\u0109':'ccirc','\u2230':'Cconint','\u2A4C':'ccups','\u2A50':'ccupssm','\u010A':'Cdot','\u010B':'cdot','\xB8':'cedil','\u29B2':'cemptyv','\xA2':'cent','\xB7':'middot','\uD835\uDD20':'cfr','\u0427':'CHcy','\u0447':'chcy','\u2713':'check','\u03A7':'Chi','\u03C7':'chi','\u02C6':'circ','\u2257':'cire','\u21BA':'olarr','\u21BB':'orarr','\u229B':'oast','\u229A':'ocir','\u229D':'odash','\u2299':'odot','\xAE':'reg','\u24C8':'oS','\u2296':'ominus','\u2295':'oplus','\u2297':'otimes','\u25CB':'cir','\u29C3':'cirE','\u2A10':'cirfnint','\u2AEF':'cirmid','\u29C2':'cirscir','\u2232':'cwconint','\u201D':'rdquo','\u2019':'rsquo','\u2663':'clubs',':':'colon','\u2237':'Colon','\u2A74':'Colone',',':'comma','@':'commat','\u2201':'comp','\u2218':'compfn','\u2102':'Copf','\u2245':'cong','\u2A6D':'congdot','\u2261':'equiv','\u222E':'oint','\u222F':'Conint','\uD835\uDD54':'copf','\u2210':'coprod','\xA9':'copy','\u2117':'copysr','\u21B5':'crarr','\u2717':'cross','\u2A2F':'Cross','\uD835\uDC9E':'Cscr','\uD835\uDCB8':'cscr','\u2ACF':'csub','\u2AD1':'csube','\u2AD0':'csup','\u2AD2':'csupe','\u22EF':'ctdot','\u2938':'cudarrl','\u2935':'cudarrr','\u22DE':'cuepr','\u22DF':'cuesc','\u21B6':'cularr','\u293D':'cularrp','\u2A48':'cupbrcap','\u2A46':'cupcap','\u222A':'cup','\u22D3':'Cup','\u2A4A':'cupcup','\u228D':'cupdot','\u2A45':'cupor','\u222A\uFE00':'cups','\u21B7':'curarr','\u293C':'curarrm','\u22CE':'cuvee','\u22CF':'cuwed','\xA4':'curren','\u2231':'cwint','\u232D':'cylcty','\u2020':'dagger','\u2021':'Dagger','\u2138':'daleth','\u2193':'darr','\u21A1':'Darr','\u21D3':'dArr','\u2010':'dash','\u2AE4':'Dashv','\u22A3':'dashv','\u290F':'rBarr','\u02DD':'dblac','\u010E':'Dcaron','\u010F':'dcaron','\u0414':'Dcy','\u0434':'dcy','\u21CA':'ddarr','\u2146':'dd','\u2911':'DDotrahd','\u2A77':'eDDot','\xB0':'deg','\u2207':'Del','\u0394':'Delta','\u03B4':'delta','\u29B1':'demptyv','\u297F':'dfisht','\uD835\uDD07':'Dfr','\uD835\uDD21':'dfr','\u2965':'dHar','\u21C3':'dharl','\u21C2':'dharr','\u02D9':'dot','`':'grave','\u02DC':'tilde','\u22C4':'diam','\u2666':'diams','\xA8':'die','\u03DD':'gammad','\u22F2':'disin','\xF7':'div','\u22C7':'divonx','\u0402':'DJcy','\u0452':'djcy','\u231E':'dlcorn','\u230D':'dlcrop','$':'dollar','\uD835\uDD3B':'Dopf','\uD835\uDD55':'dopf','\u20DC':'DotDot','\u2250':'doteq','\u2251':'eDot','\u2238':'minusd','\u2214':'plusdo','\u22A1':'sdotb','\u21D0':'lArr','\u21D4':'iff','\u27F8':'xlArr','\u27FA':'xhArr','\u27F9':'xrArr','\u21D2':'rArr','\u22A8':'vDash','\u21D1':'uArr','\u21D5':'vArr','\u2225':'par','\u2913':'DownArrowBar','\u21F5':'duarr','\u0311':'DownBreve','\u2950':'DownLeftRightVector','\u295E':'DownLeftTeeVector','\u2956':'DownLeftVectorBar','\u21BD':'lhard','\u295F':'DownRightTeeVector','\u2957':'DownRightVectorBar','\u21C1':'rhard','\u21A7':'mapstodown','\u22A4':'top','\u2910':'RBarr','\u231F':'drcorn','\u230C':'drcrop','\uD835\uDC9F':'Dscr','\uD835\uDCB9':'dscr','\u0405':'DScy','\u0455':'dscy','\u29F6':'dsol','\u0110':'Dstrok','\u0111':'dstrok','\u22F1':'dtdot','\u25BF':'dtri','\u296F':'duhar','\u29A6':'dwangle','\u040F':'DZcy','\u045F':'dzcy','\u27FF':'dzigrarr','\xC9':'Eacute','\xE9':'eacute','\u2A6E':'easter','\u011A':'Ecaron','\u011B':'ecaron','\xCA':'Ecirc','\xEA':'ecirc','\u2256':'ecir','\u2255':'ecolon','\u042D':'Ecy','\u044D':'ecy','\u0116':'Edot','\u0117':'edot','\u2147':'ee','\u2252':'efDot','\uD835\uDD08':'Efr','\uD835\uDD22':'efr','\u2A9A':'eg','\xC8':'Egrave','\xE8':'egrave','\u2A96':'egs','\u2A98':'egsdot','\u2A99':'el','\u2208':'in','\u23E7':'elinters','\u2113':'ell','\u2A95':'els','\u2A97':'elsdot','\u0112':'Emacr','\u0113':'emacr','\u2205':'empty','\u25FB':'EmptySmallSquare','\u25AB':'EmptyVerySmallSquare','\u2004':'emsp13','\u2005':'emsp14','\u2003':'emsp','\u014A':'ENG','\u014B':'eng','\u2002':'ensp','\u0118':'Eogon','\u0119':'eogon','\uD835\uDD3C':'Eopf','\uD835\uDD56':'eopf','\u22D5':'epar','\u29E3':'eparsl','\u2A71':'eplus','\u03B5':'epsi','\u0395':'Epsilon','\u03F5':'epsiv','\u2242':'esim','\u2A75':'Equal','=':'equals','\u225F':'equest','\u21CC':'rlhar','\u2A78':'equivDD','\u29E5':'eqvparsl','\u2971':'erarr','\u2253':'erDot','\u212F':'escr','\u2130':'Escr','\u2A73':'Esim','\u0397':'Eta','\u03B7':'eta','\xD0':'ETH','\xF0':'eth','\xCB':'Euml','\xEB':'euml','\u20AC':'euro','!':'excl','\u2203':'exist','\u0424':'Fcy','\u0444':'fcy','\u2640':'female','\uFB03':'ffilig','\uFB00':'fflig','\uFB04':'ffllig','\uD835\uDD09':'Ffr','\uD835\uDD23':'ffr','\uFB01':'filig','\u25FC':'FilledSmallSquare','fj':'fjlig','\u266D':'flat','\uFB02':'fllig','\u25B1':'fltns','\u0192':'fnof','\uD835\uDD3D':'Fopf','\uD835\uDD57':'fopf','\u2200':'forall','\u22D4':'fork','\u2AD9':'forkv','\u2131':'Fscr','\u2A0D':'fpartint','\xBD':'half','\u2153':'frac13','\xBC':'frac14','\u2155':'frac15','\u2159':'frac16','\u215B':'frac18','\u2154':'frac23','\u2156':'frac25','\xBE':'frac34','\u2157':'frac35','\u215C':'frac38','\u2158':'frac45','\u215A':'frac56','\u215D':'frac58','\u215E':'frac78','\u2044':'frasl','\u2322':'frown','\uD835\uDCBB':'fscr','\u01F5':'gacute','\u0393':'Gamma','\u03B3':'gamma','\u03DC':'Gammad','\u2A86':'gap','\u011E':'Gbreve','\u011F':'gbreve','\u0122':'Gcedil','\u011C':'Gcirc','\u011D':'gcirc','\u0413':'Gcy','\u0433':'gcy','\u0120':'Gdot','\u0121':'gdot','\u2265':'ge','\u2267':'gE','\u2A8C':'gEl','\u22DB':'gel','\u2A7E':'ges','\u2AA9':'gescc','\u2A80':'gesdot','\u2A82':'gesdoto','\u2A84':'gesdotol','\u22DB\uFE00':'gesl','\u2A94':'gesles','\uD835\uDD0A':'Gfr','\uD835\uDD24':'gfr','\u226B':'gg','\u22D9':'Gg','\u2137':'gimel','\u0403':'GJcy','\u0453':'gjcy','\u2AA5':'gla','\u2277':'gl','\u2A92':'glE','\u2AA4':'glj','\u2A8A':'gnap','\u2A88':'gne','\u2269':'gnE','\u22E7':'gnsim','\uD835\uDD3E':'Gopf','\uD835\uDD58':'gopf','\u2AA2':'GreaterGreater','\u2273':'gsim','\uD835\uDCA2':'Gscr','\u210A':'gscr','\u2A8E':'gsime','\u2A90':'gsiml','\u2AA7':'gtcc','\u2A7A':'gtcir','>':'gt','\u22D7':'gtdot','\u2995':'gtlPar','\u2A7C':'gtquest','\u2978':'gtrarr','\u2269\uFE00':'gvnE','\u200A':'hairsp','\u210B':'Hscr','\u042A':'HARDcy','\u044A':'hardcy','\u2948':'harrcir','\u2194':'harr','\u21AD':'harrw','^':'Hat','\u210F':'hbar','\u0124':'Hcirc','\u0125':'hcirc','\u2665':'hearts','\u2026':'mldr','\u22B9':'hercon','\uD835\uDD25':'hfr','\u210C':'Hfr','\u2925':'searhk','\u2926':'swarhk','\u21FF':'hoarr','\u223B':'homtht','\u21A9':'larrhk','\u21AA':'rarrhk','\uD835\uDD59':'hopf','\u210D':'Hopf','\u2015':'horbar','\uD835\uDCBD':'hscr','\u0126':'Hstrok','\u0127':'hstrok','\u2043':'hybull','\xCD':'Iacute','\xED':'iacute','\u2063':'ic','\xCE':'Icirc','\xEE':'icirc','\u0418':'Icy','\u0438':'icy','\u0130':'Idot','\u0415':'IEcy','\u0435':'iecy','\xA1':'iexcl','\uD835\uDD26':'ifr','\u2111':'Im','\xCC':'Igrave','\xEC':'igrave','\u2148':'ii','\u2A0C':'qint','\u222D':'tint','\u29DC':'iinfin','\u2129':'iiota','\u0132':'IJlig','\u0133':'ijlig','\u012A':'Imacr','\u012B':'imacr','\u2110':'Iscr','\u0131':'imath','\u22B7':'imof','\u01B5':'imped','\u2105':'incare','\u221E':'infin','\u29DD':'infintie','\u22BA':'intcal','\u222B':'int','\u222C':'Int','\u2124':'Zopf','\u2A17':'intlarhk','\u2A3C':'iprod','\u2062':'it','\u0401':'IOcy','\u0451':'iocy','\u012E':'Iogon','\u012F':'iogon','\uD835\uDD40':'Iopf','\uD835\uDD5A':'iopf','\u0399':'Iota','\u03B9':'iota','\xBF':'iquest','\uD835\uDCBE':'iscr','\u22F5':'isindot','\u22F9':'isinE','\u22F4':'isins','\u22F3':'isinsv','\u0128':'Itilde','\u0129':'itilde','\u0406':'Iukcy','\u0456':'iukcy','\xCF':'Iuml','\xEF':'iuml','\u0134':'Jcirc','\u0135':'jcirc','\u0419':'Jcy','\u0439':'jcy','\uD835\uDD0D':'Jfr','\uD835\uDD27':'jfr','\u0237':'jmath','\uD835\uDD41':'Jopf','\uD835\uDD5B':'jopf','\uD835\uDCA5':'Jscr','\uD835\uDCBF':'jscr','\u0408':'Jsercy','\u0458':'jsercy','\u0404':'Jukcy','\u0454':'jukcy','\u039A':'Kappa','\u03BA':'kappa','\u03F0':'kappav','\u0136':'Kcedil','\u0137':'kcedil','\u041A':'Kcy','\u043A':'kcy','\uD835\uDD0E':'Kfr','\uD835\uDD28':'kfr','\u0138':'kgreen','\u0425':'KHcy','\u0445':'khcy','\u040C':'KJcy','\u045C':'kjcy','\uD835\uDD42':'Kopf','\uD835\uDD5C':'kopf','\uD835\uDCA6':'Kscr','\uD835\uDCC0':'kscr','\u21DA':'lAarr','\u0139':'Lacute','\u013A':'lacute','\u29B4':'laemptyv','\u2112':'Lscr','\u039B':'Lambda','\u03BB':'lambda','\u27E8':'lang','\u27EA':'Lang','\u2991':'langd','\u2A85':'lap','\xAB':'laquo','\u21E4':'larrb','\u291F':'larrbfs','\u2190':'larr','\u219E':'Larr','\u291D':'larrfs','\u21AB':'larrlp','\u2939':'larrpl','\u2973':'larrsim','\u21A2':'larrtl','\u2919':'latail','\u291B':'lAtail','\u2AAB':'lat','\u2AAD':'late','\u2AAD\uFE00':'lates','\u290C':'lbarr','\u290E':'lBarr','\u2772':'lbbrk','{':'lcub','[':'lsqb','\u298B':'lbrke','\u298F':'lbrksld','\u298D':'lbrkslu','\u013D':'Lcaron','\u013E':'lcaron','\u013B':'Lcedil','\u013C':'lcedil','\u2308':'lceil','\u041B':'Lcy','\u043B':'lcy','\u2936':'ldca','\u201C':'ldquo','\u2967':'ldrdhar','\u294B':'ldrushar','\u21B2':'ldsh','\u2264':'le','\u2266':'lE','\u21C6':'lrarr','\u27E6':'lobrk','\u2961':'LeftDownTeeVector','\u2959':'LeftDownVectorBar','\u230A':'lfloor','\u21BC':'lharu','\u21C7':'llarr','\u21CB':'lrhar','\u294E':'LeftRightVector','\u21A4':'mapstoleft','\u295A':'LeftTeeVector','\u22CB':'lthree','\u29CF':'LeftTriangleBar','\u22B2':'vltri','\u22B4':'ltrie','\u2951':'LeftUpDownVector','\u2960':'LeftUpTeeVector','\u2958':'LeftUpVectorBar','\u21BF':'uharl','\u2952':'LeftVectorBar','\u2A8B':'lEg','\u22DA':'leg','\u2A7D':'les','\u2AA8':'lescc','\u2A7F':'lesdot','\u2A81':'lesdoto','\u2A83':'lesdotor','\u22DA\uFE00':'lesg','\u2A93':'lesges','\u22D6':'ltdot','\u2276':'lg','\u2AA1':'LessLess','\u2272':'lsim','\u297C':'lfisht','\uD835\uDD0F':'Lfr','\uD835\uDD29':'lfr','\u2A91':'lgE','\u2962':'lHar','\u296A':'lharul','\u2584':'lhblk','\u0409':'LJcy','\u0459':'ljcy','\u226A':'ll','\u22D8':'Ll','\u296B':'llhard','\u25FA':'lltri','\u013F':'Lmidot','\u0140':'lmidot','\u23B0':'lmoust','\u2A89':'lnap','\u2A87':'lne','\u2268':'lnE','\u22E6':'lnsim','\u27EC':'loang','\u21FD':'loarr','\u27F5':'xlarr','\u27F7':'xharr','\u27FC':'xmap','\u27F6':'xrarr','\u21AC':'rarrlp','\u2985':'lopar','\uD835\uDD43':'Lopf','\uD835\uDD5D':'lopf','\u2A2D':'loplus','\u2A34':'lotimes','\u2217':'lowast','_':'lowbar','\u2199':'swarr','\u2198':'searr','\u25CA':'loz','(':'lpar','\u2993':'lparlt','\u296D':'lrhard','\u200E':'lrm','\u22BF':'lrtri','\u2039':'lsaquo','\uD835\uDCC1':'lscr','\u21B0':'lsh','\u2A8D':'lsime','\u2A8F':'lsimg','\u2018':'lsquo','\u201A':'sbquo','\u0141':'Lstrok','\u0142':'lstrok','\u2AA6':'ltcc','\u2A79':'ltcir','<':'lt','\u22C9':'ltimes','\u2976':'ltlarr','\u2A7B':'ltquest','\u25C3':'ltri','\u2996':'ltrPar','\u294A':'lurdshar','\u2966':'luruhar','\u2268\uFE00':'lvnE','\xAF':'macr','\u2642':'male','\u2720':'malt','\u2905':'Map','\u21A6':'map','\u21A5':'mapstoup','\u25AE':'marker','\u2A29':'mcomma','\u041C':'Mcy','\u043C':'mcy','\u2014':'mdash','\u223A':'mDDot','\u205F':'MediumSpace','\u2133':'Mscr','\uD835\uDD10':'Mfr','\uD835\uDD2A':'mfr','\u2127':'mho','\xB5':'micro','\u2AF0':'midcir','\u2223':'mid','\u2212':'minus','\u2A2A':'minusdu','\u2213':'mp','\u2ADB':'mlcp','\u22A7':'models','\uD835\uDD44':'Mopf','\uD835\uDD5E':'mopf','\uD835\uDCC2':'mscr','\u039C':'Mu','\u03BC':'mu','\u22B8':'mumap','\u0143':'Nacute','\u0144':'nacute','\u2220\u20D2':'nang','\u2249':'nap','\u2A70\u0338':'napE','\u224B\u0338':'napid','\u0149':'napos','\u266E':'natur','\u2115':'Nopf','\xA0':'nbsp','\u224E\u0338':'nbump','\u224F\u0338':'nbumpe','\u2A43':'ncap','\u0147':'Ncaron','\u0148':'ncaron','\u0145':'Ncedil','\u0146':'ncedil','\u2247':'ncong','\u2A6D\u0338':'ncongdot','\u2A42':'ncup','\u041D':'Ncy','\u043D':'ncy','\u2013':'ndash','\u2924':'nearhk','\u2197':'nearr','\u21D7':'neArr','\u2260':'ne','\u2250\u0338':'nedot','\u200B':'ZeroWidthSpace','\u2262':'nequiv','\u2928':'toea','\u2242\u0338':'nesim','\n':'NewLine','\u2204':'nexist','\uD835\uDD11':'Nfr','\uD835\uDD2B':'nfr','\u2267\u0338':'ngE','\u2271':'nge','\u2A7E\u0338':'nges','\u22D9\u0338':'nGg','\u2275':'ngsim','\u226B\u20D2':'nGt','\u226F':'ngt','\u226B\u0338':'nGtv','\u21AE':'nharr','\u21CE':'nhArr','\u2AF2':'nhpar','\u220B':'ni','\u22FC':'nis','\u22FA':'nisd','\u040A':'NJcy','\u045A':'njcy','\u219A':'nlarr','\u21CD':'nlArr','\u2025':'nldr','\u2266\u0338':'nlE','\u2270':'nle','\u2A7D\u0338':'nles','\u226E':'nlt','\u22D8\u0338':'nLl','\u2274':'nlsim','\u226A\u20D2':'nLt','\u22EA':'nltri','\u22EC':'nltrie','\u226A\u0338':'nLtv','\u2224':'nmid','\u2060':'NoBreak','\uD835\uDD5F':'nopf','\u2AEC':'Not','\xAC':'not','\u226D':'NotCupCap','\u2226':'npar','\u2209':'notin','\u2279':'ntgl','\u22F5\u0338':'notindot','\u22F9\u0338':'notinE','\u22F7':'notinvb','\u22F6':'notinvc','\u29CF\u0338':'NotLeftTriangleBar','\u2278':'ntlg','\u2AA2\u0338':'NotNestedGreaterGreater','\u2AA1\u0338':'NotNestedLessLess','\u220C':'notni','\u22FE':'notnivb','\u22FD':'notnivc','\u2280':'npr','\u2AAF\u0338':'npre','\u22E0':'nprcue','\u29D0\u0338':'NotRightTriangleBar','\u22EB':'nrtri','\u22ED':'nrtrie','\u228F\u0338':'NotSquareSubset','\u22E2':'nsqsube','\u2290\u0338':'NotSquareSuperset','\u22E3':'nsqsupe','\u2282\u20D2':'vnsub','\u2288':'nsube','\u2281':'nsc','\u2AB0\u0338':'nsce','\u22E1':'nsccue','\u227F\u0338':'NotSucceedsTilde','\u2283\u20D2':'vnsup','\u2289':'nsupe','\u2241':'nsim','\u2244':'nsime','\u2AFD\u20E5':'nparsl','\u2202\u0338':'npart','\u2A14':'npolint','\u2933\u0338':'nrarrc','\u219B':'nrarr','\u21CF':'nrArr','\u219D\u0338':'nrarrw','\uD835\uDCA9':'Nscr','\uD835\uDCC3':'nscr','\u2284':'nsub','\u2AC5\u0338':'nsubE','\u2285':'nsup','\u2AC6\u0338':'nsupE','\xD1':'Ntilde','\xF1':'ntilde','\u039D':'Nu','\u03BD':'nu','#':'num','\u2116':'numero','\u2007':'numsp','\u224D\u20D2':'nvap','\u22AC':'nvdash','\u22AD':'nvDash','\u22AE':'nVdash','\u22AF':'nVDash','\u2265\u20D2':'nvge','>\u20D2':'nvgt','\u2904':'nvHarr','\u29DE':'nvinfin','\u2902':'nvlArr','\u2264\u20D2':'nvle','<\u20D2':'nvlt','\u22B4\u20D2':'nvltrie','\u2903':'nvrArr','\u22B5\u20D2':'nvrtrie','\u223C\u20D2':'nvsim','\u2923':'nwarhk','\u2196':'nwarr','\u21D6':'nwArr','\u2927':'nwnear','\xD3':'Oacute','\xF3':'oacute','\xD4':'Ocirc','\xF4':'ocirc','\u041E':'Ocy','\u043E':'ocy','\u0150':'Odblac','\u0151':'odblac','\u2A38':'odiv','\u29BC':'odsold','\u0152':'OElig','\u0153':'oelig','\u29BF':'ofcir','\uD835\uDD12':'Ofr','\uD835\uDD2C':'ofr','\u02DB':'ogon','\xD2':'Ograve','\xF2':'ograve','\u29C1':'ogt','\u29B5':'ohbar','\u03A9':'ohm','\u29BE':'olcir','\u29BB':'olcross','\u203E':'oline','\u29C0':'olt','\u014C':'Omacr','\u014D':'omacr','\u03C9':'omega','\u039F':'Omicron','\u03BF':'omicron','\u29B6':'omid','\uD835\uDD46':'Oopf','\uD835\uDD60':'oopf','\u29B7':'opar','\u29B9':'operp','\u2A54':'Or','\u2228':'or','\u2A5D':'ord','\u2134':'oscr','\xAA':'ordf','\xBA':'ordm','\u22B6':'origof','\u2A56':'oror','\u2A57':'orslope','\u2A5B':'orv','\uD835\uDCAA':'Oscr','\xD8':'Oslash','\xF8':'oslash','\u2298':'osol','\xD5':'Otilde','\xF5':'otilde','\u2A36':'otimesas','\u2A37':'Otimes','\xD6':'Ouml','\xF6':'ouml','\u233D':'ovbar','\u23DE':'OverBrace','\u23B4':'tbrk','\u23DC':'OverParenthesis','\xB6':'para','\u2AF3':'parsim','\u2AFD':'parsl','\u2202':'part','\u041F':'Pcy','\u043F':'pcy','%':'percnt','.':'period','\u2030':'permil','\u2031':'pertenk','\uD835\uDD13':'Pfr','\uD835\uDD2D':'pfr','\u03A6':'Phi','\u03C6':'phi','\u03D5':'phiv','\u260E':'phone','\u03A0':'Pi','\u03C0':'pi','\u03D6':'piv','\u210E':'planckh','\u2A23':'plusacir','\u2A22':'pluscir','+':'plus','\u2A25':'plusdu','\u2A72':'pluse','\xB1':'pm','\u2A26':'plussim','\u2A27':'plustwo','\u2A15':'pointint','\uD835\uDD61':'popf','\u2119':'Popf','\xA3':'pound','\u2AB7':'prap','\u2ABB':'Pr','\u227A':'pr','\u227C':'prcue','\u2AAF':'pre','\u227E':'prsim','\u2AB9':'prnap','\u2AB5':'prnE','\u22E8':'prnsim','\u2AB3':'prE','\u2032':'prime','\u2033':'Prime','\u220F':'prod','\u232E':'profalar','\u2312':'profline','\u2313':'profsurf','\u221D':'prop','\u22B0':'prurel','\uD835\uDCAB':'Pscr','\uD835\uDCC5':'pscr','\u03A8':'Psi','\u03C8':'psi','\u2008':'puncsp','\uD835\uDD14':'Qfr','\uD835\uDD2E':'qfr','\uD835\uDD62':'qopf','\u211A':'Qopf','\u2057':'qprime','\uD835\uDCAC':'Qscr','\uD835\uDCC6':'qscr','\u2A16':'quatint','?':'quest','"':'quot','\u21DB':'rAarr','\u223D\u0331':'race','\u0154':'Racute','\u0155':'racute','\u221A':'Sqrt','\u29B3':'raemptyv','\u27E9':'rang','\u27EB':'Rang','\u2992':'rangd','\u29A5':'range','\xBB':'raquo','\u2975':'rarrap','\u21E5':'rarrb','\u2920':'rarrbfs','\u2933':'rarrc','\u2192':'rarr','\u21A0':'Rarr','\u291E':'rarrfs','\u2945':'rarrpl','\u2974':'rarrsim','\u2916':'Rarrtl','\u21A3':'rarrtl','\u219D':'rarrw','\u291A':'ratail','\u291C':'rAtail','\u2236':'ratio','\u2773':'rbbrk','}':'rcub',']':'rsqb','\u298C':'rbrke','\u298E':'rbrksld','\u2990':'rbrkslu','\u0158':'Rcaron','\u0159':'rcaron','\u0156':'Rcedil','\u0157':'rcedil','\u2309':'rceil','\u0420':'Rcy','\u0440':'rcy','\u2937':'rdca','\u2969':'rdldhar','\u21B3':'rdsh','\u211C':'Re','\u211B':'Rscr','\u211D':'Ropf','\u25AD':'rect','\u297D':'rfisht','\u230B':'rfloor','\uD835\uDD2F':'rfr','\u2964':'rHar','\u21C0':'rharu','\u296C':'rharul','\u03A1':'Rho','\u03C1':'rho','\u03F1':'rhov','\u21C4':'rlarr','\u27E7':'robrk','\u295D':'RightDownTeeVector','\u2955':'RightDownVectorBar','\u21C9':'rrarr','\u22A2':'vdash','\u295B':'RightTeeVector','\u22CC':'rthree','\u29D0':'RightTriangleBar','\u22B3':'vrtri','\u22B5':'rtrie','\u294F':'RightUpDownVector','\u295C':'RightUpTeeVector','\u2954':'RightUpVectorBar','\u21BE':'uharr','\u2953':'RightVectorBar','\u02DA':'ring','\u200F':'rlm','\u23B1':'rmoust','\u2AEE':'rnmid','\u27ED':'roang','\u21FE':'roarr','\u2986':'ropar','\uD835\uDD63':'ropf','\u2A2E':'roplus','\u2A35':'rotimes','\u2970':'RoundImplies',')':'rpar','\u2994':'rpargt','\u2A12':'rppolint','\u203A':'rsaquo','\uD835\uDCC7':'rscr','\u21B1':'rsh','\u22CA':'rtimes','\u25B9':'rtri','\u29CE':'rtriltri','\u29F4':'RuleDelayed','\u2968':'ruluhar','\u211E':'rx','\u015A':'Sacute','\u015B':'sacute','\u2AB8':'scap','\u0160':'Scaron','\u0161':'scaron','\u2ABC':'Sc','\u227B':'sc','\u227D':'sccue','\u2AB0':'sce','\u2AB4':'scE','\u015E':'Scedil','\u015F':'scedil','\u015C':'Scirc','\u015D':'scirc','\u2ABA':'scnap','\u2AB6':'scnE','\u22E9':'scnsim','\u2A13':'scpolint','\u227F':'scsim','\u0421':'Scy','\u0441':'scy','\u22C5':'sdot','\u2A66':'sdote','\u21D8':'seArr','\xA7':'sect',';':'semi','\u2929':'tosa','\u2736':'sext','\uD835\uDD16':'Sfr','\uD835\uDD30':'sfr','\u266F':'sharp','\u0429':'SHCHcy','\u0449':'shchcy','\u0428':'SHcy','\u0448':'shcy','\u2191':'uarr','\xAD':'shy','\u03A3':'Sigma','\u03C3':'sigma','\u03C2':'sigmaf','\u223C':'sim','\u2A6A':'simdot','\u2243':'sime','\u2A9E':'simg','\u2AA0':'simgE','\u2A9D':'siml','\u2A9F':'simlE','\u2246':'simne','\u2A24':'simplus','\u2972':'simrarr','\u2A33':'smashp','\u29E4':'smeparsl','\u2323':'smile','\u2AAA':'smt','\u2AAC':'smte','\u2AAC\uFE00':'smtes','\u042C':'SOFTcy','\u044C':'softcy','\u233F':'solbar','\u29C4':'solb','/':'sol','\uD835\uDD4A':'Sopf','\uD835\uDD64':'sopf','\u2660':'spades','\u2293':'sqcap','\u2293\uFE00':'sqcaps','\u2294':'sqcup','\u2294\uFE00':'sqcups','\u228F':'sqsub','\u2291':'sqsube','\u2290':'sqsup','\u2292':'sqsupe','\u25A1':'squ','\uD835\uDCAE':'Sscr','\uD835\uDCC8':'sscr','\u22C6':'Star','\u2606':'star','\u2282':'sub','\u22D0':'Sub','\u2ABD':'subdot','\u2AC5':'subE','\u2286':'sube','\u2AC3':'subedot','\u2AC1':'submult','\u2ACB':'subnE','\u228A':'subne','\u2ABF':'subplus','\u2979':'subrarr','\u2AC7':'subsim','\u2AD5':'subsub','\u2AD3':'subsup','\u2211':'sum','\u266A':'sung','\xB9':'sup1','\xB2':'sup2','\xB3':'sup3','\u2283':'sup','\u22D1':'Sup','\u2ABE':'supdot','\u2AD8':'supdsub','\u2AC6':'supE','\u2287':'supe','\u2AC4':'supedot','\u27C9':'suphsol','\u2AD7':'suphsub','\u297B':'suplarr','\u2AC2':'supmult','\u2ACC':'supnE','\u228B':'supne','\u2AC0':'supplus','\u2AC8':'supsim','\u2AD4':'supsub','\u2AD6':'supsup','\u21D9':'swArr','\u292A':'swnwar','\xDF':'szlig','\t':'Tab','\u2316':'target','\u03A4':'Tau','\u03C4':'tau','\u0164':'Tcaron','\u0165':'tcaron','\u0162':'Tcedil','\u0163':'tcedil','\u0422':'Tcy','\u0442':'tcy','\u20DB':'tdot','\u2315':'telrec','\uD835\uDD17':'Tfr','\uD835\uDD31':'tfr','\u2234':'there4','\u0398':'Theta','\u03B8':'theta','\u03D1':'thetav','\u205F\u200A':'ThickSpace','\u2009':'thinsp','\xDE':'THORN','\xFE':'thorn','\u2A31':'timesbar','\xD7':'times','\u2A30':'timesd','\u2336':'topbot','\u2AF1':'topcir','\uD835\uDD4B':'Topf','\uD835\uDD65':'topf','\u2ADA':'topfork','\u2034':'tprime','\u2122':'trade','\u25B5':'utri','\u225C':'trie','\u25EC':'tridot','\u2A3A':'triminus','\u2A39':'triplus','\u29CD':'trisb','\u2A3B':'tritime','\u23E2':'trpezium','\uD835\uDCAF':'Tscr','\uD835\uDCC9':'tscr','\u0426':'TScy','\u0446':'tscy','\u040B':'TSHcy','\u045B':'tshcy','\u0166':'Tstrok','\u0167':'tstrok','\xDA':'Uacute','\xFA':'uacute','\u219F':'Uarr','\u2949':'Uarrocir','\u040E':'Ubrcy','\u045E':'ubrcy','\u016C':'Ubreve','\u016D':'ubreve','\xDB':'Ucirc','\xFB':'ucirc','\u0423':'Ucy','\u0443':'ucy','\u21C5':'udarr','\u0170':'Udblac','\u0171':'udblac','\u296E':'udhar','\u297E':'ufisht','\uD835\uDD18':'Ufr','\uD835\uDD32':'ufr','\xD9':'Ugrave','\xF9':'ugrave','\u2963':'uHar','\u2580':'uhblk','\u231C':'ulcorn','\u230F':'ulcrop','\u25F8':'ultri','\u016A':'Umacr','\u016B':'umacr','\u23DF':'UnderBrace','\u23DD':'UnderParenthesis','\u228E':'uplus','\u0172':'Uogon','\u0173':'uogon','\uD835\uDD4C':'Uopf','\uD835\uDD66':'uopf','\u2912':'UpArrowBar','\u2195':'varr','\u03C5':'upsi','\u03D2':'Upsi','\u03A5':'Upsilon','\u21C8':'uuarr','\u231D':'urcorn','\u230E':'urcrop','\u016E':'Uring','\u016F':'uring','\u25F9':'urtri','\uD835\uDCB0':'Uscr','\uD835\uDCCA':'uscr','\u22F0':'utdot','\u0168':'Utilde','\u0169':'utilde','\xDC':'Uuml','\xFC':'uuml','\u29A7':'uwangle','\u299C':'vangrt','\u228A\uFE00':'vsubne','\u2ACB\uFE00':'vsubnE','\u228B\uFE00':'vsupne','\u2ACC\uFE00':'vsupnE','\u2AE8':'vBar','\u2AEB':'Vbar','\u2AE9':'vBarv','\u0412':'Vcy','\u0432':'vcy','\u22A9':'Vdash','\u22AB':'VDash','\u2AE6':'Vdashl','\u22BB':'veebar','\u225A':'veeeq','\u22EE':'vellip','|':'vert','\u2016':'Vert','\u2758':'VerticalSeparator','\u2240':'wr','\uD835\uDD19':'Vfr','\uD835\uDD33':'vfr','\uD835\uDD4D':'Vopf','\uD835\uDD67':'vopf','\uD835\uDCB1':'Vscr','\uD835\uDCCB':'vscr','\u22AA':'Vvdash','\u299A':'vzigzag','\u0174':'Wcirc','\u0175':'wcirc','\u2A5F':'wedbar','\u2259':'wedgeq','\u2118':'wp','\uD835\uDD1A':'Wfr','\uD835\uDD34':'wfr','\uD835\uDD4E':'Wopf','\uD835\uDD68':'wopf','\uD835\uDCB2':'Wscr','\uD835\uDCCC':'wscr','\uD835\uDD1B':'Xfr','\uD835\uDD35':'xfr','\u039E':'Xi','\u03BE':'xi','\u22FB':'xnis','\uD835\uDD4F':'Xopf','\uD835\uDD69':'xopf','\uD835\uDCB3':'Xscr','\uD835\uDCCD':'xscr','\xDD':'Yacute','\xFD':'yacute','\u042F':'YAcy','\u044F':'yacy','\u0176':'Ycirc','\u0177':'ycirc','\u042B':'Ycy','\u044B':'ycy','\xA5':'yen','\uD835\uDD1C':'Yfr','\uD835\uDD36':'yfr','\u0407':'YIcy','\u0457':'yicy','\uD835\uDD50':'Yopf','\uD835\uDD6A':'yopf','\uD835\uDCB4':'Yscr','\uD835\uDCCE':'yscr','\u042E':'YUcy','\u044E':'yucy','\xFF':'yuml','\u0178':'Yuml','\u0179':'Zacute','\u017A':'zacute','\u017D':'Zcaron','\u017E':'zcaron','\u0417':'Zcy','\u0437':'zcy','\u017B':'Zdot','\u017C':'zdot','\u2128':'Zfr','\u0396':'Zeta','\u03B6':'zeta','\uD835\uDD37':'zfr','\u0416':'ZHcy','\u0436':'zhcy','\u21DD':'zigrarr','\uD835\uDD6B':'zopf','\uD835\uDCB5':'Zscr','\uD835\uDCCF':'zscr','\u200D':'zwj','\u200C':'zwnj'};
-
-	var regexEscape = /["&'<>`]/g;
-	var escapeMap = {
-		'"': '&quot;',
-		'&': '&amp;',
-		'\'': '&#x27;',
-		'<': '&lt;',
-		// See https://mathiasbynens.be/notes/ambiguous-ampersands: in HTML, the
-		// following is not strictly necessary unless it’s part of a tag or an
-		// unquoted attribute value. We’re only escaping it to support those
-		// situations, and for XML support.
-		'>': '&gt;',
-		// In Internet Explorer ≤ 8, the backtick character can be used
-		// to break out of (un)quoted attribute values or HTML comments.
-		// See http://html5sec.org/#102, http://html5sec.org/#108, and
-		// http://html5sec.org/#133.
-		'`': '&#x60;'
-	};
-
-	var regexInvalidEntity = /&#(?:[xX][^a-fA-F0-9]|[^0-9xX])/;
-	var regexInvalidRawCodePoint = /[\0-\x08\x0B\x0E-\x1F\x7F-\x9F\uFDD0-\uFDEF\uFFFE\uFFFF]|[\uD83F\uD87F\uD8BF\uD8FF\uD93F\uD97F\uD9BF\uD9FF\uDA3F\uDA7F\uDABF\uDAFF\uDB3F\uDB7F\uDBBF\uDBFF][\uDFFE\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
-	var regexDecode = /&#([0-9]+)(;?)|&#[xX]([a-fA-F0-9]+)(;?)|&([0-9a-zA-Z]+);|&(Aacute|iacute|Uacute|plusmn|otilde|Otilde|Agrave|agrave|yacute|Yacute|oslash|Oslash|Atilde|atilde|brvbar|Ccedil|ccedil|ograve|curren|divide|Eacute|eacute|Ograve|oacute|Egrave|egrave|ugrave|frac12|frac14|frac34|Ugrave|Oacute|Iacute|ntilde|Ntilde|uacute|middot|Igrave|igrave|iquest|aacute|laquo|THORN|micro|iexcl|icirc|Icirc|Acirc|ucirc|ecirc|Ocirc|ocirc|Ecirc|Ucirc|aring|Aring|aelig|AElig|acute|pound|raquo|acirc|times|thorn|szlig|cedil|COPY|Auml|ordf|ordm|uuml|macr|Uuml|auml|Ouml|ouml|para|nbsp|Euml|quot|QUOT|euml|yuml|cent|sect|copy|sup1|sup2|sup3|Iuml|iuml|shy|eth|reg|not|yen|amp|AMP|REG|uml|ETH|deg|gt|GT|LT|lt)([=a-zA-Z0-9])?/g;
-	var decodeMap = {'Aacute':'\xC1','aacute':'\xE1','Abreve':'\u0102','abreve':'\u0103','ac':'\u223E','acd':'\u223F','acE':'\u223E\u0333','Acirc':'\xC2','acirc':'\xE2','acute':'\xB4','Acy':'\u0410','acy':'\u0430','AElig':'\xC6','aelig':'\xE6','af':'\u2061','Afr':'\uD835\uDD04','afr':'\uD835\uDD1E','Agrave':'\xC0','agrave':'\xE0','alefsym':'\u2135','aleph':'\u2135','Alpha':'\u0391','alpha':'\u03B1','Amacr':'\u0100','amacr':'\u0101','amalg':'\u2A3F','amp':'&','AMP':'&','andand':'\u2A55','And':'\u2A53','and':'\u2227','andd':'\u2A5C','andslope':'\u2A58','andv':'\u2A5A','ang':'\u2220','ange':'\u29A4','angle':'\u2220','angmsdaa':'\u29A8','angmsdab':'\u29A9','angmsdac':'\u29AA','angmsdad':'\u29AB','angmsdae':'\u29AC','angmsdaf':'\u29AD','angmsdag':'\u29AE','angmsdah':'\u29AF','angmsd':'\u2221','angrt':'\u221F','angrtvb':'\u22BE','angrtvbd':'\u299D','angsph':'\u2222','angst':'\xC5','angzarr':'\u237C','Aogon':'\u0104','aogon':'\u0105','Aopf':'\uD835\uDD38','aopf':'\uD835\uDD52','apacir':'\u2A6F','ap':'\u2248','apE':'\u2A70','ape':'\u224A','apid':'\u224B','apos':'\'','ApplyFunction':'\u2061','approx':'\u2248','approxeq':'\u224A','Aring':'\xC5','aring':'\xE5','Ascr':'\uD835\uDC9C','ascr':'\uD835\uDCB6','Assign':'\u2254','ast':'*','asymp':'\u2248','asympeq':'\u224D','Atilde':'\xC3','atilde':'\xE3','Auml':'\xC4','auml':'\xE4','awconint':'\u2233','awint':'\u2A11','backcong':'\u224C','backepsilon':'\u03F6','backprime':'\u2035','backsim':'\u223D','backsimeq':'\u22CD','Backslash':'\u2216','Barv':'\u2AE7','barvee':'\u22BD','barwed':'\u2305','Barwed':'\u2306','barwedge':'\u2305','bbrk':'\u23B5','bbrktbrk':'\u23B6','bcong':'\u224C','Bcy':'\u0411','bcy':'\u0431','bdquo':'\u201E','becaus':'\u2235','because':'\u2235','Because':'\u2235','bemptyv':'\u29B0','bepsi':'\u03F6','bernou':'\u212C','Bernoullis':'\u212C','Beta':'\u0392','beta':'\u03B2','beth':'\u2136','between':'\u226C','Bfr':'\uD835\uDD05','bfr':'\uD835\uDD1F','bigcap':'\u22C2','bigcirc':'\u25EF','bigcup':'\u22C3','bigodot':'\u2A00','bigoplus':'\u2A01','bigotimes':'\u2A02','bigsqcup':'\u2A06','bigstar':'\u2605','bigtriangledown':'\u25BD','bigtriangleup':'\u25B3','biguplus':'\u2A04','bigvee':'\u22C1','bigwedge':'\u22C0','bkarow':'\u290D','blacklozenge':'\u29EB','blacksquare':'\u25AA','blacktriangle':'\u25B4','blacktriangledown':'\u25BE','blacktriangleleft':'\u25C2','blacktriangleright':'\u25B8','blank':'\u2423','blk12':'\u2592','blk14':'\u2591','blk34':'\u2593','block':'\u2588','bne':'=\u20E5','bnequiv':'\u2261\u20E5','bNot':'\u2AED','bnot':'\u2310','Bopf':'\uD835\uDD39','bopf':'\uD835\uDD53','bot':'\u22A5','bottom':'\u22A5','bowtie':'\u22C8','boxbox':'\u29C9','boxdl':'\u2510','boxdL':'\u2555','boxDl':'\u2556','boxDL':'\u2557','boxdr':'\u250C','boxdR':'\u2552','boxDr':'\u2553','boxDR':'\u2554','boxh':'\u2500','boxH':'\u2550','boxhd':'\u252C','boxHd':'\u2564','boxhD':'\u2565','boxHD':'\u2566','boxhu':'\u2534','boxHu':'\u2567','boxhU':'\u2568','boxHU':'\u2569','boxminus':'\u229F','boxplus':'\u229E','boxtimes':'\u22A0','boxul':'\u2518','boxuL':'\u255B','boxUl':'\u255C','boxUL':'\u255D','boxur':'\u2514','boxuR':'\u2558','boxUr':'\u2559','boxUR':'\u255A','boxv':'\u2502','boxV':'\u2551','boxvh':'\u253C','boxvH':'\u256A','boxVh':'\u256B','boxVH':'\u256C','boxvl':'\u2524','boxvL':'\u2561','boxVl':'\u2562','boxVL':'\u2563','boxvr':'\u251C','boxvR':'\u255E','boxVr':'\u255F','boxVR':'\u2560','bprime':'\u2035','breve':'\u02D8','Breve':'\u02D8','brvbar':'\xA6','bscr':'\uD835\uDCB7','Bscr':'\u212C','bsemi':'\u204F','bsim':'\u223D','bsime':'\u22CD','bsolb':'\u29C5','bsol':'\\','bsolhsub':'\u27C8','bull':'\u2022','bullet':'\u2022','bump':'\u224E','bumpE':'\u2AAE','bumpe':'\u224F','Bumpeq':'\u224E','bumpeq':'\u224F','Cacute':'\u0106','cacute':'\u0107','capand':'\u2A44','capbrcup':'\u2A49','capcap':'\u2A4B','cap':'\u2229','Cap':'\u22D2','capcup':'\u2A47','capdot':'\u2A40','CapitalDifferentialD':'\u2145','caps':'\u2229\uFE00','caret':'\u2041','caron':'\u02C7','Cayleys':'\u212D','ccaps':'\u2A4D','Ccaron':'\u010C','ccaron':'\u010D','Ccedil':'\xC7','ccedil':'\xE7','Ccirc':'\u0108','ccirc':'\u0109','Cconint':'\u2230','ccups':'\u2A4C','ccupssm':'\u2A50','Cdot':'\u010A','cdot':'\u010B','cedil':'\xB8','Cedilla':'\xB8','cemptyv':'\u29B2','cent':'\xA2','centerdot':'\xB7','CenterDot':'\xB7','cfr':'\uD835\uDD20','Cfr':'\u212D','CHcy':'\u0427','chcy':'\u0447','check':'\u2713','checkmark':'\u2713','Chi':'\u03A7','chi':'\u03C7','circ':'\u02C6','circeq':'\u2257','circlearrowleft':'\u21BA','circlearrowright':'\u21BB','circledast':'\u229B','circledcirc':'\u229A','circleddash':'\u229D','CircleDot':'\u2299','circledR':'\xAE','circledS':'\u24C8','CircleMinus':'\u2296','CirclePlus':'\u2295','CircleTimes':'\u2297','cir':'\u25CB','cirE':'\u29C3','cire':'\u2257','cirfnint':'\u2A10','cirmid':'\u2AEF','cirscir':'\u29C2','ClockwiseContourIntegral':'\u2232','CloseCurlyDoubleQuote':'\u201D','CloseCurlyQuote':'\u2019','clubs':'\u2663','clubsuit':'\u2663','colon':':','Colon':'\u2237','Colone':'\u2A74','colone':'\u2254','coloneq':'\u2254','comma':',','commat':'@','comp':'\u2201','compfn':'\u2218','complement':'\u2201','complexes':'\u2102','cong':'\u2245','congdot':'\u2A6D','Congruent':'\u2261','conint':'\u222E','Conint':'\u222F','ContourIntegral':'\u222E','copf':'\uD835\uDD54','Copf':'\u2102','coprod':'\u2210','Coproduct':'\u2210','copy':'\xA9','COPY':'\xA9','copysr':'\u2117','CounterClockwiseContourIntegral':'\u2233','crarr':'\u21B5','cross':'\u2717','Cross':'\u2A2F','Cscr':'\uD835\uDC9E','cscr':'\uD835\uDCB8','csub':'\u2ACF','csube':'\u2AD1','csup':'\u2AD0','csupe':'\u2AD2','ctdot':'\u22EF','cudarrl':'\u2938','cudarrr':'\u2935','cuepr':'\u22DE','cuesc':'\u22DF','cularr':'\u21B6','cularrp':'\u293D','cupbrcap':'\u2A48','cupcap':'\u2A46','CupCap':'\u224D','cup':'\u222A','Cup':'\u22D3','cupcup':'\u2A4A','cupdot':'\u228D','cupor':'\u2A45','cups':'\u222A\uFE00','curarr':'\u21B7','curarrm':'\u293C','curlyeqprec':'\u22DE','curlyeqsucc':'\u22DF','curlyvee':'\u22CE','curlywedge':'\u22CF','curren':'\xA4','curvearrowleft':'\u21B6','curvearrowright':'\u21B7','cuvee':'\u22CE','cuwed':'\u22CF','cwconint':'\u2232','cwint':'\u2231','cylcty':'\u232D','dagger':'\u2020','Dagger':'\u2021','daleth':'\u2138','darr':'\u2193','Darr':'\u21A1','dArr':'\u21D3','dash':'\u2010','Dashv':'\u2AE4','dashv':'\u22A3','dbkarow':'\u290F','dblac':'\u02DD','Dcaron':'\u010E','dcaron':'\u010F','Dcy':'\u0414','dcy':'\u0434','ddagger':'\u2021','ddarr':'\u21CA','DD':'\u2145','dd':'\u2146','DDotrahd':'\u2911','ddotseq':'\u2A77','deg':'\xB0','Del':'\u2207','Delta':'\u0394','delta':'\u03B4','demptyv':'\u29B1','dfisht':'\u297F','Dfr':'\uD835\uDD07','dfr':'\uD835\uDD21','dHar':'\u2965','dharl':'\u21C3','dharr':'\u21C2','DiacriticalAcute':'\xB4','DiacriticalDot':'\u02D9','DiacriticalDoubleAcute':'\u02DD','DiacriticalGrave':'`','DiacriticalTilde':'\u02DC','diam':'\u22C4','diamond':'\u22C4','Diamond':'\u22C4','diamondsuit':'\u2666','diams':'\u2666','die':'\xA8','DifferentialD':'\u2146','digamma':'\u03DD','disin':'\u22F2','div':'\xF7','divide':'\xF7','divideontimes':'\u22C7','divonx':'\u22C7','DJcy':'\u0402','djcy':'\u0452','dlcorn':'\u231E','dlcrop':'\u230D','dollar':'$','Dopf':'\uD835\uDD3B','dopf':'\uD835\uDD55','Dot':'\xA8','dot':'\u02D9','DotDot':'\u20DC','doteq':'\u2250','doteqdot':'\u2251','DotEqual':'\u2250','dotminus':'\u2238','dotplus':'\u2214','dotsquare':'\u22A1','doublebarwedge':'\u2306','DoubleContourIntegral':'\u222F','DoubleDot':'\xA8','DoubleDownArrow':'\u21D3','DoubleLeftArrow':'\u21D0','DoubleLeftRightArrow':'\u21D4','DoubleLeftTee':'\u2AE4','DoubleLongLeftArrow':'\u27F8','DoubleLongLeftRightArrow':'\u27FA','DoubleLongRightArrow':'\u27F9','DoubleRightArrow':'\u21D2','DoubleRightTee':'\u22A8','DoubleUpArrow':'\u21D1','DoubleUpDownArrow':'\u21D5','DoubleVerticalBar':'\u2225','DownArrowBar':'\u2913','downarrow':'\u2193','DownArrow':'\u2193','Downarrow':'\u21D3','DownArrowUpArrow':'\u21F5','DownBreve':'\u0311','downdownarrows':'\u21CA','downharpoonleft':'\u21C3','downharpoonright':'\u21C2','DownLeftRightVector':'\u2950','DownLeftTeeVector':'\u295E','DownLeftVectorBar':'\u2956','DownLeftVector':'\u21BD','DownRightTeeVector':'\u295F','DownRightVectorBar':'\u2957','DownRightVector':'\u21C1','DownTeeArrow':'\u21A7','DownTee':'\u22A4','drbkarow':'\u2910','drcorn':'\u231F','drcrop':'\u230C','Dscr':'\uD835\uDC9F','dscr':'\uD835\uDCB9','DScy':'\u0405','dscy':'\u0455','dsol':'\u29F6','Dstrok':'\u0110','dstrok':'\u0111','dtdot':'\u22F1','dtri':'\u25BF','dtrif':'\u25BE','duarr':'\u21F5','duhar':'\u296F','dwangle':'\u29A6','DZcy':'\u040F','dzcy':'\u045F','dzigrarr':'\u27FF','Eacute':'\xC9','eacute':'\xE9','easter':'\u2A6E','Ecaron':'\u011A','ecaron':'\u011B','Ecirc':'\xCA','ecirc':'\xEA','ecir':'\u2256','ecolon':'\u2255','Ecy':'\u042D','ecy':'\u044D','eDDot':'\u2A77','Edot':'\u0116','edot':'\u0117','eDot':'\u2251','ee':'\u2147','efDot':'\u2252','Efr':'\uD835\uDD08','efr':'\uD835\uDD22','eg':'\u2A9A','Egrave':'\xC8','egrave':'\xE8','egs':'\u2A96','egsdot':'\u2A98','el':'\u2A99','Element':'\u2208','elinters':'\u23E7','ell':'\u2113','els':'\u2A95','elsdot':'\u2A97','Emacr':'\u0112','emacr':'\u0113','empty':'\u2205','emptyset':'\u2205','EmptySmallSquare':'\u25FB','emptyv':'\u2205','EmptyVerySmallSquare':'\u25AB','emsp13':'\u2004','emsp14':'\u2005','emsp':'\u2003','ENG':'\u014A','eng':'\u014B','ensp':'\u2002','Eogon':'\u0118','eogon':'\u0119','Eopf':'\uD835\uDD3C','eopf':'\uD835\uDD56','epar':'\u22D5','eparsl':'\u29E3','eplus':'\u2A71','epsi':'\u03B5','Epsilon':'\u0395','epsilon':'\u03B5','epsiv':'\u03F5','eqcirc':'\u2256','eqcolon':'\u2255','eqsim':'\u2242','eqslantgtr':'\u2A96','eqslantless':'\u2A95','Equal':'\u2A75','equals':'=','EqualTilde':'\u2242','equest':'\u225F','Equilibrium':'\u21CC','equiv':'\u2261','equivDD':'\u2A78','eqvparsl':'\u29E5','erarr':'\u2971','erDot':'\u2253','escr':'\u212F','Escr':'\u2130','esdot':'\u2250','Esim':'\u2A73','esim':'\u2242','Eta':'\u0397','eta':'\u03B7','ETH':'\xD0','eth':'\xF0','Euml':'\xCB','euml':'\xEB','euro':'\u20AC','excl':'!','exist':'\u2203','Exists':'\u2203','expectation':'\u2130','exponentiale':'\u2147','ExponentialE':'\u2147','fallingdotseq':'\u2252','Fcy':'\u0424','fcy':'\u0444','female':'\u2640','ffilig':'\uFB03','fflig':'\uFB00','ffllig':'\uFB04','Ffr':'\uD835\uDD09','ffr':'\uD835\uDD23','filig':'\uFB01','FilledSmallSquare':'\u25FC','FilledVerySmallSquare':'\u25AA','fjlig':'fj','flat':'\u266D','fllig':'\uFB02','fltns':'\u25B1','fnof':'\u0192','Fopf':'\uD835\uDD3D','fopf':'\uD835\uDD57','forall':'\u2200','ForAll':'\u2200','fork':'\u22D4','forkv':'\u2AD9','Fouriertrf':'\u2131','fpartint':'\u2A0D','frac12':'\xBD','frac13':'\u2153','frac14':'\xBC','frac15':'\u2155','frac16':'\u2159','frac18':'\u215B','frac23':'\u2154','frac25':'\u2156','frac34':'\xBE','frac35':'\u2157','frac38':'\u215C','frac45':'\u2158','frac56':'\u215A','frac58':'\u215D','frac78':'\u215E','frasl':'\u2044','frown':'\u2322','fscr':'\uD835\uDCBB','Fscr':'\u2131','gacute':'\u01F5','Gamma':'\u0393','gamma':'\u03B3','Gammad':'\u03DC','gammad':'\u03DD','gap':'\u2A86','Gbreve':'\u011E','gbreve':'\u011F','Gcedil':'\u0122','Gcirc':'\u011C','gcirc':'\u011D','Gcy':'\u0413','gcy':'\u0433','Gdot':'\u0120','gdot':'\u0121','ge':'\u2265','gE':'\u2267','gEl':'\u2A8C','gel':'\u22DB','geq':'\u2265','geqq':'\u2267','geqslant':'\u2A7E','gescc':'\u2AA9','ges':'\u2A7E','gesdot':'\u2A80','gesdoto':'\u2A82','gesdotol':'\u2A84','gesl':'\u22DB\uFE00','gesles':'\u2A94','Gfr':'\uD835\uDD0A','gfr':'\uD835\uDD24','gg':'\u226B','Gg':'\u22D9','ggg':'\u22D9','gimel':'\u2137','GJcy':'\u0403','gjcy':'\u0453','gla':'\u2AA5','gl':'\u2277','glE':'\u2A92','glj':'\u2AA4','gnap':'\u2A8A','gnapprox':'\u2A8A','gne':'\u2A88','gnE':'\u2269','gneq':'\u2A88','gneqq':'\u2269','gnsim':'\u22E7','Gopf':'\uD835\uDD3E','gopf':'\uD835\uDD58','grave':'`','GreaterEqual':'\u2265','GreaterEqualLess':'\u22DB','GreaterFullEqual':'\u2267','GreaterGreater':'\u2AA2','GreaterLess':'\u2277','GreaterSlantEqual':'\u2A7E','GreaterTilde':'\u2273','Gscr':'\uD835\uDCA2','gscr':'\u210A','gsim':'\u2273','gsime':'\u2A8E','gsiml':'\u2A90','gtcc':'\u2AA7','gtcir':'\u2A7A','gt':'>','GT':'>','Gt':'\u226B','gtdot':'\u22D7','gtlPar':'\u2995','gtquest':'\u2A7C','gtrapprox':'\u2A86','gtrarr':'\u2978','gtrdot':'\u22D7','gtreqless':'\u22DB','gtreqqless':'\u2A8C','gtrless':'\u2277','gtrsim':'\u2273','gvertneqq':'\u2269\uFE00','gvnE':'\u2269\uFE00','Hacek':'\u02C7','hairsp':'\u200A','half':'\xBD','hamilt':'\u210B','HARDcy':'\u042A','hardcy':'\u044A','harrcir':'\u2948','harr':'\u2194','hArr':'\u21D4','harrw':'\u21AD','Hat':'^','hbar':'\u210F','Hcirc':'\u0124','hcirc':'\u0125','hearts':'\u2665','heartsuit':'\u2665','hellip':'\u2026','hercon':'\u22B9','hfr':'\uD835\uDD25','Hfr':'\u210C','HilbertSpace':'\u210B','hksearow':'\u2925','hkswarow':'\u2926','hoarr':'\u21FF','homtht':'\u223B','hookleftarrow':'\u21A9','hookrightarrow':'\u21AA','hopf':'\uD835\uDD59','Hopf':'\u210D','horbar':'\u2015','HorizontalLine':'\u2500','hscr':'\uD835\uDCBD','Hscr':'\u210B','hslash':'\u210F','Hstrok':'\u0126','hstrok':'\u0127','HumpDownHump':'\u224E','HumpEqual':'\u224F','hybull':'\u2043','hyphen':'\u2010','Iacute':'\xCD','iacute':'\xED','ic':'\u2063','Icirc':'\xCE','icirc':'\xEE','Icy':'\u0418','icy':'\u0438','Idot':'\u0130','IEcy':'\u0415','iecy':'\u0435','iexcl':'\xA1','iff':'\u21D4','ifr':'\uD835\uDD26','Ifr':'\u2111','Igrave':'\xCC','igrave':'\xEC','ii':'\u2148','iiiint':'\u2A0C','iiint':'\u222D','iinfin':'\u29DC','iiota':'\u2129','IJlig':'\u0132','ijlig':'\u0133','Imacr':'\u012A','imacr':'\u012B','image':'\u2111','ImaginaryI':'\u2148','imagline':'\u2110','imagpart':'\u2111','imath':'\u0131','Im':'\u2111','imof':'\u22B7','imped':'\u01B5','Implies':'\u21D2','incare':'\u2105','in':'\u2208','infin':'\u221E','infintie':'\u29DD','inodot':'\u0131','intcal':'\u22BA','int':'\u222B','Int':'\u222C','integers':'\u2124','Integral':'\u222B','intercal':'\u22BA','Intersection':'\u22C2','intlarhk':'\u2A17','intprod':'\u2A3C','InvisibleComma':'\u2063','InvisibleTimes':'\u2062','IOcy':'\u0401','iocy':'\u0451','Iogon':'\u012E','iogon':'\u012F','Iopf':'\uD835\uDD40','iopf':'\uD835\uDD5A','Iota':'\u0399','iota':'\u03B9','iprod':'\u2A3C','iquest':'\xBF','iscr':'\uD835\uDCBE','Iscr':'\u2110','isin':'\u2208','isindot':'\u22F5','isinE':'\u22F9','isins':'\u22F4','isinsv':'\u22F3','isinv':'\u2208','it':'\u2062','Itilde':'\u0128','itilde':'\u0129','Iukcy':'\u0406','iukcy':'\u0456','Iuml':'\xCF','iuml':'\xEF','Jcirc':'\u0134','jcirc':'\u0135','Jcy':'\u0419','jcy':'\u0439','Jfr':'\uD835\uDD0D','jfr':'\uD835\uDD27','jmath':'\u0237','Jopf':'\uD835\uDD41','jopf':'\uD835\uDD5B','Jscr':'\uD835\uDCA5','jscr':'\uD835\uDCBF','Jsercy':'\u0408','jsercy':'\u0458','Jukcy':'\u0404','jukcy':'\u0454','Kappa':'\u039A','kappa':'\u03BA','kappav':'\u03F0','Kcedil':'\u0136','kcedil':'\u0137','Kcy':'\u041A','kcy':'\u043A','Kfr':'\uD835\uDD0E','kfr':'\uD835\uDD28','kgreen':'\u0138','KHcy':'\u0425','khcy':'\u0445','KJcy':'\u040C','kjcy':'\u045C','Kopf':'\uD835\uDD42','kopf':'\uD835\uDD5C','Kscr':'\uD835\uDCA6','kscr':'\uD835\uDCC0','lAarr':'\u21DA','Lacute':'\u0139','lacute':'\u013A','laemptyv':'\u29B4','lagran':'\u2112','Lambda':'\u039B','lambda':'\u03BB','lang':'\u27E8','Lang':'\u27EA','langd':'\u2991','langle':'\u27E8','lap':'\u2A85','Laplacetrf':'\u2112','laquo':'\xAB','larrb':'\u21E4','larrbfs':'\u291F','larr':'\u2190','Larr':'\u219E','lArr':'\u21D0','larrfs':'\u291D','larrhk':'\u21A9','larrlp':'\u21AB','larrpl':'\u2939','larrsim':'\u2973','larrtl':'\u21A2','latail':'\u2919','lAtail':'\u291B','lat':'\u2AAB','late':'\u2AAD','lates':'\u2AAD\uFE00','lbarr':'\u290C','lBarr':'\u290E','lbbrk':'\u2772','lbrace':'{','lbrack':'[','lbrke':'\u298B','lbrksld':'\u298F','lbrkslu':'\u298D','Lcaron':'\u013D','lcaron':'\u013E','Lcedil':'\u013B','lcedil':'\u013C','lceil':'\u2308','lcub':'{','Lcy':'\u041B','lcy':'\u043B','ldca':'\u2936','ldquo':'\u201C','ldquor':'\u201E','ldrdhar':'\u2967','ldrushar':'\u294B','ldsh':'\u21B2','le':'\u2264','lE':'\u2266','LeftAngleBracket':'\u27E8','LeftArrowBar':'\u21E4','leftarrow':'\u2190','LeftArrow':'\u2190','Leftarrow':'\u21D0','LeftArrowRightArrow':'\u21C6','leftarrowtail':'\u21A2','LeftCeiling':'\u2308','LeftDoubleBracket':'\u27E6','LeftDownTeeVector':'\u2961','LeftDownVectorBar':'\u2959','LeftDownVector':'\u21C3','LeftFloor':'\u230A','leftharpoondown':'\u21BD','leftharpoonup':'\u21BC','leftleftarrows':'\u21C7','leftrightarrow':'\u2194','LeftRightArrow':'\u2194','Leftrightarrow':'\u21D4','leftrightarrows':'\u21C6','leftrightharpoons':'\u21CB','leftrightsquigarrow':'\u21AD','LeftRightVector':'\u294E','LeftTeeArrow':'\u21A4','LeftTee':'\u22A3','LeftTeeVector':'\u295A','leftthreetimes':'\u22CB','LeftTriangleBar':'\u29CF','LeftTriangle':'\u22B2','LeftTriangleEqual':'\u22B4','LeftUpDownVector':'\u2951','LeftUpTeeVector':'\u2960','LeftUpVectorBar':'\u2958','LeftUpVector':'\u21BF','LeftVectorBar':'\u2952','LeftVector':'\u21BC','lEg':'\u2A8B','leg':'\u22DA','leq':'\u2264','leqq':'\u2266','leqslant':'\u2A7D','lescc':'\u2AA8','les':'\u2A7D','lesdot':'\u2A7F','lesdoto':'\u2A81','lesdotor':'\u2A83','lesg':'\u22DA\uFE00','lesges':'\u2A93','lessapprox':'\u2A85','lessdot':'\u22D6','lesseqgtr':'\u22DA','lesseqqgtr':'\u2A8B','LessEqualGreater':'\u22DA','LessFullEqual':'\u2266','LessGreater':'\u2276','lessgtr':'\u2276','LessLess':'\u2AA1','lesssim':'\u2272','LessSlantEqual':'\u2A7D','LessTilde':'\u2272','lfisht':'\u297C','lfloor':'\u230A','Lfr':'\uD835\uDD0F','lfr':'\uD835\uDD29','lg':'\u2276','lgE':'\u2A91','lHar':'\u2962','lhard':'\u21BD','lharu':'\u21BC','lharul':'\u296A','lhblk':'\u2584','LJcy':'\u0409','ljcy':'\u0459','llarr':'\u21C7','ll':'\u226A','Ll':'\u22D8','llcorner':'\u231E','Lleftarrow':'\u21DA','llhard':'\u296B','lltri':'\u25FA','Lmidot':'\u013F','lmidot':'\u0140','lmoustache':'\u23B0','lmoust':'\u23B0','lnap':'\u2A89','lnapprox':'\u2A89','lne':'\u2A87','lnE':'\u2268','lneq':'\u2A87','lneqq':'\u2268','lnsim':'\u22E6','loang':'\u27EC','loarr':'\u21FD','lobrk':'\u27E6','longleftarrow':'\u27F5','LongLeftArrow':'\u27F5','Longleftarrow':'\u27F8','longleftrightarrow':'\u27F7','LongLeftRightArrow':'\u27F7','Longleftrightarrow':'\u27FA','longmapsto':'\u27FC','longrightarrow':'\u27F6','LongRightArrow':'\u27F6','Longrightarrow':'\u27F9','looparrowleft':'\u21AB','looparrowright':'\u21AC','lopar':'\u2985','Lopf':'\uD835\uDD43','lopf':'\uD835\uDD5D','loplus':'\u2A2D','lotimes':'\u2A34','lowast':'\u2217','lowbar':'_','LowerLeftArrow':'\u2199','LowerRightArrow':'\u2198','loz':'\u25CA','lozenge':'\u25CA','lozf':'\u29EB','lpar':'(','lparlt':'\u2993','lrarr':'\u21C6','lrcorner':'\u231F','lrhar':'\u21CB','lrhard':'\u296D','lrm':'\u200E','lrtri':'\u22BF','lsaquo':'\u2039','lscr':'\uD835\uDCC1','Lscr':'\u2112','lsh':'\u21B0','Lsh':'\u21B0','lsim':'\u2272','lsime':'\u2A8D','lsimg':'\u2A8F','lsqb':'[','lsquo':'\u2018','lsquor':'\u201A','Lstrok':'\u0141','lstrok':'\u0142','ltcc':'\u2AA6','ltcir':'\u2A79','lt':'<','LT':'<','Lt':'\u226A','ltdot':'\u22D6','lthree':'\u22CB','ltimes':'\u22C9','ltlarr':'\u2976','ltquest':'\u2A7B','ltri':'\u25C3','ltrie':'\u22B4','ltrif':'\u25C2','ltrPar':'\u2996','lurdshar':'\u294A','luruhar':'\u2966','lvertneqq':'\u2268\uFE00','lvnE':'\u2268\uFE00','macr':'\xAF','male':'\u2642','malt':'\u2720','maltese':'\u2720','Map':'\u2905','map':'\u21A6','mapsto':'\u21A6','mapstodown':'\u21A7','mapstoleft':'\u21A4','mapstoup':'\u21A5','marker':'\u25AE','mcomma':'\u2A29','Mcy':'\u041C','mcy':'\u043C','mdash':'\u2014','mDDot':'\u223A','measuredangle':'\u2221','MediumSpace':'\u205F','Mellintrf':'\u2133','Mfr':'\uD835\uDD10','mfr':'\uD835\uDD2A','mho':'\u2127','micro':'\xB5','midast':'*','midcir':'\u2AF0','mid':'\u2223','middot':'\xB7','minusb':'\u229F','minus':'\u2212','minusd':'\u2238','minusdu':'\u2A2A','MinusPlus':'\u2213','mlcp':'\u2ADB','mldr':'\u2026','mnplus':'\u2213','models':'\u22A7','Mopf':'\uD835\uDD44','mopf':'\uD835\uDD5E','mp':'\u2213','mscr':'\uD835\uDCC2','Mscr':'\u2133','mstpos':'\u223E','Mu':'\u039C','mu':'\u03BC','multimap':'\u22B8','mumap':'\u22B8','nabla':'\u2207','Nacute':'\u0143','nacute':'\u0144','nang':'\u2220\u20D2','nap':'\u2249','napE':'\u2A70\u0338','napid':'\u224B\u0338','napos':'\u0149','napprox':'\u2249','natural':'\u266E','naturals':'\u2115','natur':'\u266E','nbsp':'\xA0','nbump':'\u224E\u0338','nbumpe':'\u224F\u0338','ncap':'\u2A43','Ncaron':'\u0147','ncaron':'\u0148','Ncedil':'\u0145','ncedil':'\u0146','ncong':'\u2247','ncongdot':'\u2A6D\u0338','ncup':'\u2A42','Ncy':'\u041D','ncy':'\u043D','ndash':'\u2013','nearhk':'\u2924','nearr':'\u2197','neArr':'\u21D7','nearrow':'\u2197','ne':'\u2260','nedot':'\u2250\u0338','NegativeMediumSpace':'\u200B','NegativeThickSpace':'\u200B','NegativeThinSpace':'\u200B','NegativeVeryThinSpace':'\u200B','nequiv':'\u2262','nesear':'\u2928','nesim':'\u2242\u0338','NestedGreaterGreater':'\u226B','NestedLessLess':'\u226A','NewLine':'\n','nexist':'\u2204','nexists':'\u2204','Nfr':'\uD835\uDD11','nfr':'\uD835\uDD2B','ngE':'\u2267\u0338','nge':'\u2271','ngeq':'\u2271','ngeqq':'\u2267\u0338','ngeqslant':'\u2A7E\u0338','nges':'\u2A7E\u0338','nGg':'\u22D9\u0338','ngsim':'\u2275','nGt':'\u226B\u20D2','ngt':'\u226F','ngtr':'\u226F','nGtv':'\u226B\u0338','nharr':'\u21AE','nhArr':'\u21CE','nhpar':'\u2AF2','ni':'\u220B','nis':'\u22FC','nisd':'\u22FA','niv':'\u220B','NJcy':'\u040A','njcy':'\u045A','nlarr':'\u219A','nlArr':'\u21CD','nldr':'\u2025','nlE':'\u2266\u0338','nle':'\u2270','nleftarrow':'\u219A','nLeftarrow':'\u21CD','nleftrightarrow':'\u21AE','nLeftrightarrow':'\u21CE','nleq':'\u2270','nleqq':'\u2266\u0338','nleqslant':'\u2A7D\u0338','nles':'\u2A7D\u0338','nless':'\u226E','nLl':'\u22D8\u0338','nlsim':'\u2274','nLt':'\u226A\u20D2','nlt':'\u226E','nltri':'\u22EA','nltrie':'\u22EC','nLtv':'\u226A\u0338','nmid':'\u2224','NoBreak':'\u2060','NonBreakingSpace':'\xA0','nopf':'\uD835\uDD5F','Nopf':'\u2115','Not':'\u2AEC','not':'\xAC','NotCongruent':'\u2262','NotCupCap':'\u226D','NotDoubleVerticalBar':'\u2226','NotElement':'\u2209','NotEqual':'\u2260','NotEqualTilde':'\u2242\u0338','NotExists':'\u2204','NotGreater':'\u226F','NotGreaterEqual':'\u2271','NotGreaterFullEqual':'\u2267\u0338','NotGreaterGreater':'\u226B\u0338','NotGreaterLess':'\u2279','NotGreaterSlantEqual':'\u2A7E\u0338','NotGreaterTilde':'\u2275','NotHumpDownHump':'\u224E\u0338','NotHumpEqual':'\u224F\u0338','notin':'\u2209','notindot':'\u22F5\u0338','notinE':'\u22F9\u0338','notinva':'\u2209','notinvb':'\u22F7','notinvc':'\u22F6','NotLeftTriangleBar':'\u29CF\u0338','NotLeftTriangle':'\u22EA','NotLeftTriangleEqual':'\u22EC','NotLess':'\u226E','NotLessEqual':'\u2270','NotLessGreater':'\u2278','NotLessLess':'\u226A\u0338','NotLessSlantEqual':'\u2A7D\u0338','NotLessTilde':'\u2274','NotNestedGreaterGreater':'\u2AA2\u0338','NotNestedLessLess':'\u2AA1\u0338','notni':'\u220C','notniva':'\u220C','notnivb':'\u22FE','notnivc':'\u22FD','NotPrecedes':'\u2280','NotPrecedesEqual':'\u2AAF\u0338','NotPrecedesSlantEqual':'\u22E0','NotReverseElement':'\u220C','NotRightTriangleBar':'\u29D0\u0338','NotRightTriangle':'\u22EB','NotRightTriangleEqual':'\u22ED','NotSquareSubset':'\u228F\u0338','NotSquareSubsetEqual':'\u22E2','NotSquareSuperset':'\u2290\u0338','NotSquareSupersetEqual':'\u22E3','NotSubset':'\u2282\u20D2','NotSubsetEqual':'\u2288','NotSucceeds':'\u2281','NotSucceedsEqual':'\u2AB0\u0338','NotSucceedsSlantEqual':'\u22E1','NotSucceedsTilde':'\u227F\u0338','NotSuperset':'\u2283\u20D2','NotSupersetEqual':'\u2289','NotTilde':'\u2241','NotTildeEqual':'\u2244','NotTildeFullEqual':'\u2247','NotTildeTilde':'\u2249','NotVerticalBar':'\u2224','nparallel':'\u2226','npar':'\u2226','nparsl':'\u2AFD\u20E5','npart':'\u2202\u0338','npolint':'\u2A14','npr':'\u2280','nprcue':'\u22E0','nprec':'\u2280','npreceq':'\u2AAF\u0338','npre':'\u2AAF\u0338','nrarrc':'\u2933\u0338','nrarr':'\u219B','nrArr':'\u21CF','nrarrw':'\u219D\u0338','nrightarrow':'\u219B','nRightarrow':'\u21CF','nrtri':'\u22EB','nrtrie':'\u22ED','nsc':'\u2281','nsccue':'\u22E1','nsce':'\u2AB0\u0338','Nscr':'\uD835\uDCA9','nscr':'\uD835\uDCC3','nshortmid':'\u2224','nshortparallel':'\u2226','nsim':'\u2241','nsime':'\u2244','nsimeq':'\u2244','nsmid':'\u2224','nspar':'\u2226','nsqsube':'\u22E2','nsqsupe':'\u22E3','nsub':'\u2284','nsubE':'\u2AC5\u0338','nsube':'\u2288','nsubset':'\u2282\u20D2','nsubseteq':'\u2288','nsubseteqq':'\u2AC5\u0338','nsucc':'\u2281','nsucceq':'\u2AB0\u0338','nsup':'\u2285','nsupE':'\u2AC6\u0338','nsupe':'\u2289','nsupset':'\u2283\u20D2','nsupseteq':'\u2289','nsupseteqq':'\u2AC6\u0338','ntgl':'\u2279','Ntilde':'\xD1','ntilde':'\xF1','ntlg':'\u2278','ntriangleleft':'\u22EA','ntrianglelefteq':'\u22EC','ntriangleright':'\u22EB','ntrianglerighteq':'\u22ED','Nu':'\u039D','nu':'\u03BD','num':'#','numero':'\u2116','numsp':'\u2007','nvap':'\u224D\u20D2','nvdash':'\u22AC','nvDash':'\u22AD','nVdash':'\u22AE','nVDash':'\u22AF','nvge':'\u2265\u20D2','nvgt':'>\u20D2','nvHarr':'\u2904','nvinfin':'\u29DE','nvlArr':'\u2902','nvle':'\u2264\u20D2','nvlt':'<\u20D2','nvltrie':'\u22B4\u20D2','nvrArr':'\u2903','nvrtrie':'\u22B5\u20D2','nvsim':'\u223C\u20D2','nwarhk':'\u2923','nwarr':'\u2196','nwArr':'\u21D6','nwarrow':'\u2196','nwnear':'\u2927','Oacute':'\xD3','oacute':'\xF3','oast':'\u229B','Ocirc':'\xD4','ocirc':'\xF4','ocir':'\u229A','Ocy':'\u041E','ocy':'\u043E','odash':'\u229D','Odblac':'\u0150','odblac':'\u0151','odiv':'\u2A38','odot':'\u2299','odsold':'\u29BC','OElig':'\u0152','oelig':'\u0153','ofcir':'\u29BF','Ofr':'\uD835\uDD12','ofr':'\uD835\uDD2C','ogon':'\u02DB','Ograve':'\xD2','ograve':'\xF2','ogt':'\u29C1','ohbar':'\u29B5','ohm':'\u03A9','oint':'\u222E','olarr':'\u21BA','olcir':'\u29BE','olcross':'\u29BB','oline':'\u203E','olt':'\u29C0','Omacr':'\u014C','omacr':'\u014D','Omega':'\u03A9','omega':'\u03C9','Omicron':'\u039F','omicron':'\u03BF','omid':'\u29B6','ominus':'\u2296','Oopf':'\uD835\uDD46','oopf':'\uD835\uDD60','opar':'\u29B7','OpenCurlyDoubleQuote':'\u201C','OpenCurlyQuote':'\u2018','operp':'\u29B9','oplus':'\u2295','orarr':'\u21BB','Or':'\u2A54','or':'\u2228','ord':'\u2A5D','order':'\u2134','orderof':'\u2134','ordf':'\xAA','ordm':'\xBA','origof':'\u22B6','oror':'\u2A56','orslope':'\u2A57','orv':'\u2A5B','oS':'\u24C8','Oscr':'\uD835\uDCAA','oscr':'\u2134','Oslash':'\xD8','oslash':'\xF8','osol':'\u2298','Otilde':'\xD5','otilde':'\xF5','otimesas':'\u2A36','Otimes':'\u2A37','otimes':'\u2297','Ouml':'\xD6','ouml':'\xF6','ovbar':'\u233D','OverBar':'\u203E','OverBrace':'\u23DE','OverBracket':'\u23B4','OverParenthesis':'\u23DC','para':'\xB6','parallel':'\u2225','par':'\u2225','parsim':'\u2AF3','parsl':'\u2AFD','part':'\u2202','PartialD':'\u2202','Pcy':'\u041F','pcy':'\u043F','percnt':'%','period':'.','permil':'\u2030','perp':'\u22A5','pertenk':'\u2031','Pfr':'\uD835\uDD13','pfr':'\uD835\uDD2D','Phi':'\u03A6','phi':'\u03C6','phiv':'\u03D5','phmmat':'\u2133','phone':'\u260E','Pi':'\u03A0','pi':'\u03C0','pitchfork':'\u22D4','piv':'\u03D6','planck':'\u210F','planckh':'\u210E','plankv':'\u210F','plusacir':'\u2A23','plusb':'\u229E','pluscir':'\u2A22','plus':'+','plusdo':'\u2214','plusdu':'\u2A25','pluse':'\u2A72','PlusMinus':'\xB1','plusmn':'\xB1','plussim':'\u2A26','plustwo':'\u2A27','pm':'\xB1','Poincareplane':'\u210C','pointint':'\u2A15','popf':'\uD835\uDD61','Popf':'\u2119','pound':'\xA3','prap':'\u2AB7','Pr':'\u2ABB','pr':'\u227A','prcue':'\u227C','precapprox':'\u2AB7','prec':'\u227A','preccurlyeq':'\u227C','Precedes':'\u227A','PrecedesEqual':'\u2AAF','PrecedesSlantEqual':'\u227C','PrecedesTilde':'\u227E','preceq':'\u2AAF','precnapprox':'\u2AB9','precneqq':'\u2AB5','precnsim':'\u22E8','pre':'\u2AAF','prE':'\u2AB3','precsim':'\u227E','prime':'\u2032','Prime':'\u2033','primes':'\u2119','prnap':'\u2AB9','prnE':'\u2AB5','prnsim':'\u22E8','prod':'\u220F','Product':'\u220F','profalar':'\u232E','profline':'\u2312','profsurf':'\u2313','prop':'\u221D','Proportional':'\u221D','Proportion':'\u2237','propto':'\u221D','prsim':'\u227E','prurel':'\u22B0','Pscr':'\uD835\uDCAB','pscr':'\uD835\uDCC5','Psi':'\u03A8','psi':'\u03C8','puncsp':'\u2008','Qfr':'\uD835\uDD14','qfr':'\uD835\uDD2E','qint':'\u2A0C','qopf':'\uD835\uDD62','Qopf':'\u211A','qprime':'\u2057','Qscr':'\uD835\uDCAC','qscr':'\uD835\uDCC6','quaternions':'\u210D','quatint':'\u2A16','quest':'?','questeq':'\u225F','quot':'"','QUOT':'"','rAarr':'\u21DB','race':'\u223D\u0331','Racute':'\u0154','racute':'\u0155','radic':'\u221A','raemptyv':'\u29B3','rang':'\u27E9','Rang':'\u27EB','rangd':'\u2992','range':'\u29A5','rangle':'\u27E9','raquo':'\xBB','rarrap':'\u2975','rarrb':'\u21E5','rarrbfs':'\u2920','rarrc':'\u2933','rarr':'\u2192','Rarr':'\u21A0','rArr':'\u21D2','rarrfs':'\u291E','rarrhk':'\u21AA','rarrlp':'\u21AC','rarrpl':'\u2945','rarrsim':'\u2974','Rarrtl':'\u2916','rarrtl':'\u21A3','rarrw':'\u219D','ratail':'\u291A','rAtail':'\u291C','ratio':'\u2236','rationals':'\u211A','rbarr':'\u290D','rBarr':'\u290F','RBarr':'\u2910','rbbrk':'\u2773','rbrace':'}','rbrack':']','rbrke':'\u298C','rbrksld':'\u298E','rbrkslu':'\u2990','Rcaron':'\u0158','rcaron':'\u0159','Rcedil':'\u0156','rcedil':'\u0157','rceil':'\u2309','rcub':'}','Rcy':'\u0420','rcy':'\u0440','rdca':'\u2937','rdldhar':'\u2969','rdquo':'\u201D','rdquor':'\u201D','rdsh':'\u21B3','real':'\u211C','realine':'\u211B','realpart':'\u211C','reals':'\u211D','Re':'\u211C','rect':'\u25AD','reg':'\xAE','REG':'\xAE','ReverseElement':'\u220B','ReverseEquilibrium':'\u21CB','ReverseUpEquilibrium':'\u296F','rfisht':'\u297D','rfloor':'\u230B','rfr':'\uD835\uDD2F','Rfr':'\u211C','rHar':'\u2964','rhard':'\u21C1','rharu':'\u21C0','rharul':'\u296C','Rho':'\u03A1','rho':'\u03C1','rhov':'\u03F1','RightAngleBracket':'\u27E9','RightArrowBar':'\u21E5','rightarrow':'\u2192','RightArrow':'\u2192','Rightarrow':'\u21D2','RightArrowLeftArrow':'\u21C4','rightarrowtail':'\u21A3','RightCeiling':'\u2309','RightDoubleBracket':'\u27E7','RightDownTeeVector':'\u295D','RightDownVectorBar':'\u2955','RightDownVector':'\u21C2','RightFloor':'\u230B','rightharpoondown':'\u21C1','rightharpoonup':'\u21C0','rightleftarrows':'\u21C4','rightleftharpoons':'\u21CC','rightrightarrows':'\u21C9','rightsquigarrow':'\u219D','RightTeeArrow':'\u21A6','RightTee':'\u22A2','RightTeeVector':'\u295B','rightthreetimes':'\u22CC','RightTriangleBar':'\u29D0','RightTriangle':'\u22B3','RightTriangleEqual':'\u22B5','RightUpDownVector':'\u294F','RightUpTeeVector':'\u295C','RightUpVectorBar':'\u2954','RightUpVector':'\u21BE','RightVectorBar':'\u2953','RightVector':'\u21C0','ring':'\u02DA','risingdotseq':'\u2253','rlarr':'\u21C4','rlhar':'\u21CC','rlm':'\u200F','rmoustache':'\u23B1','rmoust':'\u23B1','rnmid':'\u2AEE','roang':'\u27ED','roarr':'\u21FE','robrk':'\u27E7','ropar':'\u2986','ropf':'\uD835\uDD63','Ropf':'\u211D','roplus':'\u2A2E','rotimes':'\u2A35','RoundImplies':'\u2970','rpar':')','rpargt':'\u2994','rppolint':'\u2A12','rrarr':'\u21C9','Rrightarrow':'\u21DB','rsaquo':'\u203A','rscr':'\uD835\uDCC7','Rscr':'\u211B','rsh':'\u21B1','Rsh':'\u21B1','rsqb':']','rsquo':'\u2019','rsquor':'\u2019','rthree':'\u22CC','rtimes':'\u22CA','rtri':'\u25B9','rtrie':'\u22B5','rtrif':'\u25B8','rtriltri':'\u29CE','RuleDelayed':'\u29F4','ruluhar':'\u2968','rx':'\u211E','Sacute':'\u015A','sacute':'\u015B','sbquo':'\u201A','scap':'\u2AB8','Scaron':'\u0160','scaron':'\u0161','Sc':'\u2ABC','sc':'\u227B','sccue':'\u227D','sce':'\u2AB0','scE':'\u2AB4','Scedil':'\u015E','scedil':'\u015F','Scirc':'\u015C','scirc':'\u015D','scnap':'\u2ABA','scnE':'\u2AB6','scnsim':'\u22E9','scpolint':'\u2A13','scsim':'\u227F','Scy':'\u0421','scy':'\u0441','sdotb':'\u22A1','sdot':'\u22C5','sdote':'\u2A66','searhk':'\u2925','searr':'\u2198','seArr':'\u21D8','searrow':'\u2198','sect':'\xA7','semi':';','seswar':'\u2929','setminus':'\u2216','setmn':'\u2216','sext':'\u2736','Sfr':'\uD835\uDD16','sfr':'\uD835\uDD30','sfrown':'\u2322','sharp':'\u266F','SHCHcy':'\u0429','shchcy':'\u0449','SHcy':'\u0428','shcy':'\u0448','ShortDownArrow':'\u2193','ShortLeftArrow':'\u2190','shortmid':'\u2223','shortparallel':'\u2225','ShortRightArrow':'\u2192','ShortUpArrow':'\u2191','shy':'\xAD','Sigma':'\u03A3','sigma':'\u03C3','sigmaf':'\u03C2','sigmav':'\u03C2','sim':'\u223C','simdot':'\u2A6A','sime':'\u2243','simeq':'\u2243','simg':'\u2A9E','simgE':'\u2AA0','siml':'\u2A9D','simlE':'\u2A9F','simne':'\u2246','simplus':'\u2A24','simrarr':'\u2972','slarr':'\u2190','SmallCircle':'\u2218','smallsetminus':'\u2216','smashp':'\u2A33','smeparsl':'\u29E4','smid':'\u2223','smile':'\u2323','smt':'\u2AAA','smte':'\u2AAC','smtes':'\u2AAC\uFE00','SOFTcy':'\u042C','softcy':'\u044C','solbar':'\u233F','solb':'\u29C4','sol':'/','Sopf':'\uD835\uDD4A','sopf':'\uD835\uDD64','spades':'\u2660','spadesuit':'\u2660','spar':'\u2225','sqcap':'\u2293','sqcaps':'\u2293\uFE00','sqcup':'\u2294','sqcups':'\u2294\uFE00','Sqrt':'\u221A','sqsub':'\u228F','sqsube':'\u2291','sqsubset':'\u228F','sqsubseteq':'\u2291','sqsup':'\u2290','sqsupe':'\u2292','sqsupset':'\u2290','sqsupseteq':'\u2292','square':'\u25A1','Square':'\u25A1','SquareIntersection':'\u2293','SquareSubset':'\u228F','SquareSubsetEqual':'\u2291','SquareSuperset':'\u2290','SquareSupersetEqual':'\u2292','SquareUnion':'\u2294','squarf':'\u25AA','squ':'\u25A1','squf':'\u25AA','srarr':'\u2192','Sscr':'\uD835\uDCAE','sscr':'\uD835\uDCC8','ssetmn':'\u2216','ssmile':'\u2323','sstarf':'\u22C6','Star':'\u22C6','star':'\u2606','starf':'\u2605','straightepsilon':'\u03F5','straightphi':'\u03D5','strns':'\xAF','sub':'\u2282','Sub':'\u22D0','subdot':'\u2ABD','subE':'\u2AC5','sube':'\u2286','subedot':'\u2AC3','submult':'\u2AC1','subnE':'\u2ACB','subne':'\u228A','subplus':'\u2ABF','subrarr':'\u2979','subset':'\u2282','Subset':'\u22D0','subseteq':'\u2286','subseteqq':'\u2AC5','SubsetEqual':'\u2286','subsetneq':'\u228A','subsetneqq':'\u2ACB','subsim':'\u2AC7','subsub':'\u2AD5','subsup':'\u2AD3','succapprox':'\u2AB8','succ':'\u227B','succcurlyeq':'\u227D','Succeeds':'\u227B','SucceedsEqual':'\u2AB0','SucceedsSlantEqual':'\u227D','SucceedsTilde':'\u227F','succeq':'\u2AB0','succnapprox':'\u2ABA','succneqq':'\u2AB6','succnsim':'\u22E9','succsim':'\u227F','SuchThat':'\u220B','sum':'\u2211','Sum':'\u2211','sung':'\u266A','sup1':'\xB9','sup2':'\xB2','sup3':'\xB3','sup':'\u2283','Sup':'\u22D1','supdot':'\u2ABE','supdsub':'\u2AD8','supE':'\u2AC6','supe':'\u2287','supedot':'\u2AC4','Superset':'\u2283','SupersetEqual':'\u2287','suphsol':'\u27C9','suphsub':'\u2AD7','suplarr':'\u297B','supmult':'\u2AC2','supnE':'\u2ACC','supne':'\u228B','supplus':'\u2AC0','supset':'\u2283','Supset':'\u22D1','supseteq':'\u2287','supseteqq':'\u2AC6','supsetneq':'\u228B','supsetneqq':'\u2ACC','supsim':'\u2AC8','supsub':'\u2AD4','supsup':'\u2AD6','swarhk':'\u2926','swarr':'\u2199','swArr':'\u21D9','swarrow':'\u2199','swnwar':'\u292A','szlig':'\xDF','Tab':'\t','target':'\u2316','Tau':'\u03A4','tau':'\u03C4','tbrk':'\u23B4','Tcaron':'\u0164','tcaron':'\u0165','Tcedil':'\u0162','tcedil':'\u0163','Tcy':'\u0422','tcy':'\u0442','tdot':'\u20DB','telrec':'\u2315','Tfr':'\uD835\uDD17','tfr':'\uD835\uDD31','there4':'\u2234','therefore':'\u2234','Therefore':'\u2234','Theta':'\u0398','theta':'\u03B8','thetasym':'\u03D1','thetav':'\u03D1','thickapprox':'\u2248','thicksim':'\u223C','ThickSpace':'\u205F\u200A','ThinSpace':'\u2009','thinsp':'\u2009','thkap':'\u2248','thksim':'\u223C','THORN':'\xDE','thorn':'\xFE','tilde':'\u02DC','Tilde':'\u223C','TildeEqual':'\u2243','TildeFullEqual':'\u2245','TildeTilde':'\u2248','timesbar':'\u2A31','timesb':'\u22A0','times':'\xD7','timesd':'\u2A30','tint':'\u222D','toea':'\u2928','topbot':'\u2336','topcir':'\u2AF1','top':'\u22A4','Topf':'\uD835\uDD4B','topf':'\uD835\uDD65','topfork':'\u2ADA','tosa':'\u2929','tprime':'\u2034','trade':'\u2122','TRADE':'\u2122','triangle':'\u25B5','triangledown':'\u25BF','triangleleft':'\u25C3','trianglelefteq':'\u22B4','triangleq':'\u225C','triangleright':'\u25B9','trianglerighteq':'\u22B5','tridot':'\u25EC','trie':'\u225C','triminus':'\u2A3A','TripleDot':'\u20DB','triplus':'\u2A39','trisb':'\u29CD','tritime':'\u2A3B','trpezium':'\u23E2','Tscr':'\uD835\uDCAF','tscr':'\uD835\uDCC9','TScy':'\u0426','tscy':'\u0446','TSHcy':'\u040B','tshcy':'\u045B','Tstrok':'\u0166','tstrok':'\u0167','twixt':'\u226C','twoheadleftarrow':'\u219E','twoheadrightarrow':'\u21A0','Uacute':'\xDA','uacute':'\xFA','uarr':'\u2191','Uarr':'\u219F','uArr':'\u21D1','Uarrocir':'\u2949','Ubrcy':'\u040E','ubrcy':'\u045E','Ubreve':'\u016C','ubreve':'\u016D','Ucirc':'\xDB','ucirc':'\xFB','Ucy':'\u0423','ucy':'\u0443','udarr':'\u21C5','Udblac':'\u0170','udblac':'\u0171','udhar':'\u296E','ufisht':'\u297E','Ufr':'\uD835\uDD18','ufr':'\uD835\uDD32','Ugrave':'\xD9','ugrave':'\xF9','uHar':'\u2963','uharl':'\u21BF','uharr':'\u21BE','uhblk':'\u2580','ulcorn':'\u231C','ulcorner':'\u231C','ulcrop':'\u230F','ultri':'\u25F8','Umacr':'\u016A','umacr':'\u016B','uml':'\xA8','UnderBar':'_','UnderBrace':'\u23DF','UnderBracket':'\u23B5','UnderParenthesis':'\u23DD','Union':'\u22C3','UnionPlus':'\u228E','Uogon':'\u0172','uogon':'\u0173','Uopf':'\uD835\uDD4C','uopf':'\uD835\uDD66','UpArrowBar':'\u2912','uparrow':'\u2191','UpArrow':'\u2191','Uparrow':'\u21D1','UpArrowDownArrow':'\u21C5','updownarrow':'\u2195','UpDownArrow':'\u2195','Updownarrow':'\u21D5','UpEquilibrium':'\u296E','upharpoonleft':'\u21BF','upharpoonright':'\u21BE','uplus':'\u228E','UpperLeftArrow':'\u2196','UpperRightArrow':'\u2197','upsi':'\u03C5','Upsi':'\u03D2','upsih':'\u03D2','Upsilon':'\u03A5','upsilon':'\u03C5','UpTeeArrow':'\u21A5','UpTee':'\u22A5','upuparrows':'\u21C8','urcorn':'\u231D','urcorner':'\u231D','urcrop':'\u230E','Uring':'\u016E','uring':'\u016F','urtri':'\u25F9','Uscr':'\uD835\uDCB0','uscr':'\uD835\uDCCA','utdot':'\u22F0','Utilde':'\u0168','utilde':'\u0169','utri':'\u25B5','utrif':'\u25B4','uuarr':'\u21C8','Uuml':'\xDC','uuml':'\xFC','uwangle':'\u29A7','vangrt':'\u299C','varepsilon':'\u03F5','varkappa':'\u03F0','varnothing':'\u2205','varphi':'\u03D5','varpi':'\u03D6','varpropto':'\u221D','varr':'\u2195','vArr':'\u21D5','varrho':'\u03F1','varsigma':'\u03C2','varsubsetneq':'\u228A\uFE00','varsubsetneqq':'\u2ACB\uFE00','varsupsetneq':'\u228B\uFE00','varsupsetneqq':'\u2ACC\uFE00','vartheta':'\u03D1','vartriangleleft':'\u22B2','vartriangleright':'\u22B3','vBar':'\u2AE8','Vbar':'\u2AEB','vBarv':'\u2AE9','Vcy':'\u0412','vcy':'\u0432','vdash':'\u22A2','vDash':'\u22A8','Vdash':'\u22A9','VDash':'\u22AB','Vdashl':'\u2AE6','veebar':'\u22BB','vee':'\u2228','Vee':'\u22C1','veeeq':'\u225A','vellip':'\u22EE','verbar':'|','Verbar':'\u2016','vert':'|','Vert':'\u2016','VerticalBar':'\u2223','VerticalLine':'|','VerticalSeparator':'\u2758','VerticalTilde':'\u2240','VeryThinSpace':'\u200A','Vfr':'\uD835\uDD19','vfr':'\uD835\uDD33','vltri':'\u22B2','vnsub':'\u2282\u20D2','vnsup':'\u2283\u20D2','Vopf':'\uD835\uDD4D','vopf':'\uD835\uDD67','vprop':'\u221D','vrtri':'\u22B3','Vscr':'\uD835\uDCB1','vscr':'\uD835\uDCCB','vsubnE':'\u2ACB\uFE00','vsubne':'\u228A\uFE00','vsupnE':'\u2ACC\uFE00','vsupne':'\u228B\uFE00','Vvdash':'\u22AA','vzigzag':'\u299A','Wcirc':'\u0174','wcirc':'\u0175','wedbar':'\u2A5F','wedge':'\u2227','Wedge':'\u22C0','wedgeq':'\u2259','weierp':'\u2118','Wfr':'\uD835\uDD1A','wfr':'\uD835\uDD34','Wopf':'\uD835\uDD4E','wopf':'\uD835\uDD68','wp':'\u2118','wr':'\u2240','wreath':'\u2240','Wscr':'\uD835\uDCB2','wscr':'\uD835\uDCCC','xcap':'\u22C2','xcirc':'\u25EF','xcup':'\u22C3','xdtri':'\u25BD','Xfr':'\uD835\uDD1B','xfr':'\uD835\uDD35','xharr':'\u27F7','xhArr':'\u27FA','Xi':'\u039E','xi':'\u03BE','xlarr':'\u27F5','xlArr':'\u27F8','xmap':'\u27FC','xnis':'\u22FB','xodot':'\u2A00','Xopf':'\uD835\uDD4F','xopf':'\uD835\uDD69','xoplus':'\u2A01','xotime':'\u2A02','xrarr':'\u27F6','xrArr':'\u27F9','Xscr':'\uD835\uDCB3','xscr':'\uD835\uDCCD','xsqcup':'\u2A06','xuplus':'\u2A04','xutri':'\u25B3','xvee':'\u22C1','xwedge':'\u22C0','Yacute':'\xDD','yacute':'\xFD','YAcy':'\u042F','yacy':'\u044F','Ycirc':'\u0176','ycirc':'\u0177','Ycy':'\u042B','ycy':'\u044B','yen':'\xA5','Yfr':'\uD835\uDD1C','yfr':'\uD835\uDD36','YIcy':'\u0407','yicy':'\u0457','Yopf':'\uD835\uDD50','yopf':'\uD835\uDD6A','Yscr':'\uD835\uDCB4','yscr':'\uD835\uDCCE','YUcy':'\u042E','yucy':'\u044E','yuml':'\xFF','Yuml':'\u0178','Zacute':'\u0179','zacute':'\u017A','Zcaron':'\u017D','zcaron':'\u017E','Zcy':'\u0417','zcy':'\u0437','Zdot':'\u017B','zdot':'\u017C','zeetrf':'\u2128','ZeroWidthSpace':'\u200B','Zeta':'\u0396','zeta':'\u03B6','zfr':'\uD835\uDD37','Zfr':'\u2128','ZHcy':'\u0416','zhcy':'\u0436','zigrarr':'\u21DD','zopf':'\uD835\uDD6B','Zopf':'\u2124','Zscr':'\uD835\uDCB5','zscr':'\uD835\uDCCF','zwj':'\u200D','zwnj':'\u200C'};
-	var decodeMapLegacy = {'Aacute':'\xC1','aacute':'\xE1','Acirc':'\xC2','acirc':'\xE2','acute':'\xB4','AElig':'\xC6','aelig':'\xE6','Agrave':'\xC0','agrave':'\xE0','amp':'&','AMP':'&','Aring':'\xC5','aring':'\xE5','Atilde':'\xC3','atilde':'\xE3','Auml':'\xC4','auml':'\xE4','brvbar':'\xA6','Ccedil':'\xC7','ccedil':'\xE7','cedil':'\xB8','cent':'\xA2','copy':'\xA9','COPY':'\xA9','curren':'\xA4','deg':'\xB0','divide':'\xF7','Eacute':'\xC9','eacute':'\xE9','Ecirc':'\xCA','ecirc':'\xEA','Egrave':'\xC8','egrave':'\xE8','ETH':'\xD0','eth':'\xF0','Euml':'\xCB','euml':'\xEB','frac12':'\xBD','frac14':'\xBC','frac34':'\xBE','gt':'>','GT':'>','Iacute':'\xCD','iacute':'\xED','Icirc':'\xCE','icirc':'\xEE','iexcl':'\xA1','Igrave':'\xCC','igrave':'\xEC','iquest':'\xBF','Iuml':'\xCF','iuml':'\xEF','laquo':'\xAB','lt':'<','LT':'<','macr':'\xAF','micro':'\xB5','middot':'\xB7','nbsp':'\xA0','not':'\xAC','Ntilde':'\xD1','ntilde':'\xF1','Oacute':'\xD3','oacute':'\xF3','Ocirc':'\xD4','ocirc':'\xF4','Ograve':'\xD2','ograve':'\xF2','ordf':'\xAA','ordm':'\xBA','Oslash':'\xD8','oslash':'\xF8','Otilde':'\xD5','otilde':'\xF5','Ouml':'\xD6','ouml':'\xF6','para':'\xB6','plusmn':'\xB1','pound':'\xA3','quot':'"','QUOT':'"','raquo':'\xBB','reg':'\xAE','REG':'\xAE','sect':'\xA7','shy':'\xAD','sup1':'\xB9','sup2':'\xB2','sup3':'\xB3','szlig':'\xDF','THORN':'\xDE','thorn':'\xFE','times':'\xD7','Uacute':'\xDA','uacute':'\xFA','Ucirc':'\xDB','ucirc':'\xFB','Ugrave':'\xD9','ugrave':'\xF9','uml':'\xA8','Uuml':'\xDC','uuml':'\xFC','Yacute':'\xDD','yacute':'\xFD','yen':'\xA5','yuml':'\xFF'};
-	var decodeMapNumeric = {'0':'\uFFFD','128':'\u20AC','130':'\u201A','131':'\u0192','132':'\u201E','133':'\u2026','134':'\u2020','135':'\u2021','136':'\u02C6','137':'\u2030','138':'\u0160','139':'\u2039','140':'\u0152','142':'\u017D','145':'\u2018','146':'\u2019','147':'\u201C','148':'\u201D','149':'\u2022','150':'\u2013','151':'\u2014','152':'\u02DC','153':'\u2122','154':'\u0161','155':'\u203A','156':'\u0153','158':'\u017E','159':'\u0178'};
-	var invalidReferenceCodePoints = [1,2,3,4,5,6,7,8,11,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,64976,64977,64978,64979,64980,64981,64982,64983,64984,64985,64986,64987,64988,64989,64990,64991,64992,64993,64994,64995,64996,64997,64998,64999,65000,65001,65002,65003,65004,65005,65006,65007,65534,65535,131070,131071,196606,196607,262142,262143,327678,327679,393214,393215,458750,458751,524286,524287,589822,589823,655358,655359,720894,720895,786430,786431,851966,851967,917502,917503,983038,983039,1048574,1048575,1114110,1114111];
-
-	/*--------------------------------------------------------------------------*/
-
-	var stringFromCharCode = String.fromCharCode;
-
-	var object = {};
-	var hasOwnProperty = object.hasOwnProperty;
-	var has = function(object, propertyName) {
-		return hasOwnProperty.call(object, propertyName);
-	};
-
-	var contains = function(array, value) {
-		var index = -1;
-		var length = array.length;
-		while (++index < length) {
-			if (array[index] == value) {
-				return true;
-			}
-		}
-		return false;
-	};
-
-	var merge = function(options, defaults) {
-		if (!options) {
-			return defaults;
-		}
-		var result = {};
-		var key;
-		for (key in defaults) {
-			// A `hasOwnProperty` check is not needed here, since only recognized
-			// option names are used anyway. Any others are ignored.
-			result[key] = has(options, key) ? options[key] : defaults[key];
-		}
-		return result;
-	};
-
-	// Modified version of `ucs2encode`; see http://mths.be/punycode.
-	var codePointToSymbol = function(codePoint, strict) {
-		var output = '';
-		if ((codePoint >= 0xD800 && codePoint <= 0xDFFF) || codePoint > 0x10FFFF) {
-			// See issue #4:
-			// “Otherwise, if the number is in the range 0xD800 to 0xDFFF or is
-			// greater than 0x10FFFF, then this is a parse error. Return a U+FFFD
-			// REPLACEMENT CHARACTER.”
-			if (strict) {
-				parseError('character reference outside the permissible Unicode range');
-			}
-			return '\uFFFD';
-		}
-		if (has(decodeMapNumeric, codePoint)) {
-			if (strict) {
-				parseError('disallowed character reference');
-			}
-			return decodeMapNumeric[codePoint];
-		}
-		if (strict && contains(invalidReferenceCodePoints, codePoint)) {
-			parseError('disallowed character reference');
-		}
-		if (codePoint > 0xFFFF) {
-			codePoint -= 0x10000;
-			output += stringFromCharCode(codePoint >>> 10 & 0x3FF | 0xD800);
-			codePoint = 0xDC00 | codePoint & 0x3FF;
-		}
-		output += stringFromCharCode(codePoint);
-		return output;
-	};
-
-	var hexEscape = function(symbol) {
-		return '&#x' + symbol.charCodeAt(0).toString(16).toUpperCase() + ';';
-	};
-
-	var parseError = function(message) {
-		throw Error('Parse error: ' + message);
-	};
-
-	/*--------------------------------------------------------------------------*/
-
-	var encode = function(string, options) {
-		options = merge(options, encode.options);
-		var strict = options.strict;
-		if (strict && regexInvalidRawCodePoint.test(string)) {
-			parseError('forbidden code point');
-		}
-		var encodeEverything = options.encodeEverything;
-		var useNamedReferences = options.useNamedReferences;
-		var allowUnsafeSymbols = options.allowUnsafeSymbols;
-		if (encodeEverything) {
-			// Encode ASCII symbols.
-			string = string.replace(regexAsciiWhitelist, function(symbol) {
-				// Use named references if requested & possible.
-				if (useNamedReferences && has(encodeMap, symbol)) {
-					return '&' + encodeMap[symbol] + ';';
-				}
-				return hexEscape(symbol);
-			});
-			// Shorten a few escapes that represent two symbols, of which at least one
-			// is within the ASCII range.
-			if (useNamedReferences) {
-				string = string
-					.replace(/&gt;\u20D2/g, '&nvgt;')
-					.replace(/&lt;\u20D2/g, '&nvlt;')
-					.replace(/&#x66;&#x6A;/g, '&fjlig;');
-			}
-			// Encode non-ASCII symbols.
-			if (useNamedReferences) {
-				// Encode non-ASCII symbols that can be replaced with a named reference.
-				string = string.replace(regexEncodeNonAscii, function(string) {
-					// Note: there is no need to check `has(encodeMap, string)` here.
-					return '&' + encodeMap[string] + ';';
-				});
-			}
-			// Note: any remaining non-ASCII symbols are handled outside of the `if`.
-		} else if (useNamedReferences) {
-			// Apply named character references.
-			// Encode `<>"'&` using named character references.
-			if (!allowUnsafeSymbols) {
-				string = string.replace(regexEscape, function(string) {
-					return '&' + encodeMap[string] + ';'; // no need to check `has()` here
-				});
-			}
-			// Shorten escapes that represent two symbols, of which at least one is
-			// `<>"'&`.
-			string = string
-				.replace(/&gt;\u20D2/g, '&nvgt;')
-				.replace(/&lt;\u20D2/g, '&nvlt;');
-			// Encode non-ASCII symbols that can be replaced with a named reference.
-			string = string.replace(regexEncodeNonAscii, function(string) {
-				// Note: there is no need to check `has(encodeMap, string)` here.
-				return '&' + encodeMap[string] + ';';
-			});
-		} else if (!allowUnsafeSymbols) {
-			// Encode `<>"'&` using hexadecimal escapes, now that they’re not handled
-			// using named character references.
-			string = string.replace(regexEscape, hexEscape);
-		}
-		return string
-			// Encode astral symbols.
-			.replace(regexAstralSymbols, function($0) {
-				// https://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-				var high = $0.charCodeAt(0);
-				var low = $0.charCodeAt(1);
-				var codePoint = (high - 0xD800) * 0x400 + low - 0xDC00 + 0x10000;
-				return '&#x' + codePoint.toString(16).toUpperCase() + ';';
-			})
-			// Encode any remaining BMP symbols that are not printable ASCII symbols
-			// using a hexadecimal escape.
-			.replace(regexBmpWhitelist, hexEscape);
-	};
-	// Expose default options (so they can be overridden globally).
-	encode.options = {
-		'allowUnsafeSymbols': false,
-		'encodeEverything': false,
-		'strict': false,
-		'useNamedReferences': false
-	};
-
-	var decode = function(html, options) {
-		options = merge(options, decode.options);
-		var strict = options.strict;
-		if (strict && regexInvalidEntity.test(html)) {
-			parseError('malformed character reference');
-		}
-		return html.replace(regexDecode, function($0, $1, $2, $3, $4, $5, $6, $7) {
-			var codePoint;
-			var semicolon;
-			var hexDigits;
-			var reference;
-			var next;
-			if ($1) {
-				// Decode decimal escapes, e.g. `&#119558;`.
-				codePoint = $1;
-				semicolon = $2;
-				if (strict && !semicolon) {
-					parseError('character reference was not terminated by a semicolon');
-				}
-				return codePointToSymbol(codePoint, strict);
-			}
-			if ($3) {
-				// Decode hexadecimal escapes, e.g. `&#x1D306;`.
-				hexDigits = $3;
-				semicolon = $4;
-				if (strict && !semicolon) {
-					parseError('character reference was not terminated by a semicolon');
-				}
-				codePoint = parseInt(hexDigits, 16);
-				return codePointToSymbol(codePoint, strict);
-			}
-			if ($5) {
-				// Decode named character references with trailing `;`, e.g. `&copy;`.
-				reference = $5;
-				if (has(decodeMap, reference)) {
-					return decodeMap[reference];
-				} else {
-					// Ambiguous ampersand; see http://mths.be/notes/ambiguous-ampersands.
-					if (strict) {
-						parseError(
-							'named character reference was not terminated by a semicolon'
-						);
-					}
-					return $0;
-				}
-			}
-			// If we’re still here, it’s a legacy reference for sure. No need for an
-			// extra `if` check.
-			// Decode named character references without trailing `;`, e.g. `&amp`
-			// This is only a parse error if it gets converted to `&`, or if it is
-			// followed by `=` in an attribute context.
-			reference = $6;
-			next = $7;
-			if (next && options.isAttributeValue) {
-				if (strict && next == '=') {
-					parseError('`&` did not start a character reference');
-				}
-				return $0;
-			} else {
-				if (strict) {
-					parseError(
-						'named character reference was not terminated by a semicolon'
-					);
-				}
-				// Note: there is no need to check `has(decodeMapLegacy, reference)`.
-				return decodeMapLegacy[reference] + (next || '');
-			}
-		});
-	};
-	// Expose default options (so they can be overridden globally).
-	decode.options = {
-		'isAttributeValue': false,
-		'strict': false
-	};
-
-	var escape = function(string) {
-		return string.replace(regexEscape, function($0) {
-			// Note: there is no need to check `has(escapeMap, $0)` here.
-			return escapeMap[$0];
-		});
-	};
-
-	/*--------------------------------------------------------------------------*/
-
-	var he = {
-		'version': '0.5.0',
-		'encode': encode,
-		'decode': decode,
-		'escape': escape,
-		'unescape': decode
-	};
-
-	// Some AMD build optimizers, like r.js, check for specific condition patterns
-	// like the following:
-	if (
-		typeof define == 'function' &&
-		typeof define.amd == 'object' &&
-		define.amd
-	) {
-		define(function() {
-			return he;
-		});
-	}	else if (freeExports && !freeExports.nodeType) {
-		if (freeModule) { // in Node.js or RingoJS v0.8.0+
-			freeModule.exports = he;
-		} else { // in Narwhal or RingoJS v0.7.0-
-			for (var key in he) {
-				has(he, key) && (freeExports[key] = he[key]);
-			}
-		}
-	} else { // in Rhino or a web browser
-		root.he = he;
-	}
-
-}(this));
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],106:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 //! moment.js
-//! version : 2.10.6
+//! version : 2.12.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
 
-(function (global, factory) {
+;(function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
     global.moment = factory()
@@ -27845,7 +27487,7 @@ module.exports=require(53)
     }
 
     function isArray(input) {
-        return Object.prototype.toString.call(input) === '[object Array]';
+        return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
     }
 
     function isDate(input) {
@@ -27943,39 +27585,45 @@ module.exports=require(53)
         return m;
     }
 
+    function isUndefined(input) {
+        return input === void 0;
+    }
+
+    // Plugins that add properties should also add the key here (null value),
+    // so we can properly clone ourselves.
     var momentProperties = utils_hooks__hooks.momentProperties = [];
 
     function copyConfig(to, from) {
         var i, prop, val;
 
-        if (typeof from._isAMomentObject !== 'undefined') {
+        if (!isUndefined(from._isAMomentObject)) {
             to._isAMomentObject = from._isAMomentObject;
         }
-        if (typeof from._i !== 'undefined') {
+        if (!isUndefined(from._i)) {
             to._i = from._i;
         }
-        if (typeof from._f !== 'undefined') {
+        if (!isUndefined(from._f)) {
             to._f = from._f;
         }
-        if (typeof from._l !== 'undefined') {
+        if (!isUndefined(from._l)) {
             to._l = from._l;
         }
-        if (typeof from._strict !== 'undefined') {
+        if (!isUndefined(from._strict)) {
             to._strict = from._strict;
         }
-        if (typeof from._tzm !== 'undefined') {
+        if (!isUndefined(from._tzm)) {
             to._tzm = from._tzm;
         }
-        if (typeof from._isUTC !== 'undefined') {
+        if (!isUndefined(from._isUTC)) {
             to._isUTC = from._isUTC;
         }
-        if (typeof from._offset !== 'undefined') {
+        if (!isUndefined(from._offset)) {
             to._offset = from._offset;
         }
-        if (typeof from._pf !== 'undefined') {
+        if (!isUndefined(from._pf)) {
             to._pf = getParsingFlags(from);
         }
-        if (typeof from._locale !== 'undefined') {
+        if (!isUndefined(from._locale)) {
             to._locale = from._locale;
         }
 
@@ -27983,7 +27631,7 @@ module.exports=require(53)
             for (i in momentProperties) {
                 prop = momentProperties[i];
                 val = from[prop];
-                if (typeof val !== 'undefined') {
+                if (!isUndefined(val)) {
                     to[prop] = val;
                 }
             }
@@ -28030,6 +27678,7 @@ module.exports=require(53)
         return value;
     }
 
+    // compare two arrays, return the number of differences
     function compareArrays(array1, array2, dontConvert) {
         var len = Math.min(array1.length, array2.length),
             lengthDiff = Math.abs(array1.length - array2.length),
@@ -28044,9 +27693,85 @@ module.exports=require(53)
         return diffs + lengthDiff;
     }
 
-    function Locale() {
+    function warn(msg) {
+        if (utils_hooks__hooks.suppressDeprecationWarnings === false &&
+                (typeof console !==  'undefined') && console.warn) {
+            console.warn('Deprecation warning: ' + msg);
+        }
     }
 
+    function deprecate(msg, fn) {
+        var firstTime = true;
+
+        return extend(function () {
+            if (firstTime) {
+                warn(msg + '\nArguments: ' + Array.prototype.slice.call(arguments).join(', ') + '\n' + (new Error()).stack);
+                firstTime = false;
+            }
+            return fn.apply(this, arguments);
+        }, fn);
+    }
+
+    var deprecations = {};
+
+    function deprecateSimple(name, msg) {
+        if (!deprecations[name]) {
+            warn(msg);
+            deprecations[name] = true;
+        }
+    }
+
+    utils_hooks__hooks.suppressDeprecationWarnings = false;
+
+    function isFunction(input) {
+        return input instanceof Function || Object.prototype.toString.call(input) === '[object Function]';
+    }
+
+    function isObject(input) {
+        return Object.prototype.toString.call(input) === '[object Object]';
+    }
+
+    function locale_set__set (config) {
+        var prop, i;
+        for (i in config) {
+            prop = config[i];
+            if (isFunction(prop)) {
+                this[i] = prop;
+            } else {
+                this['_' + i] = prop;
+            }
+        }
+        this._config = config;
+        // Lenient ordinal parsing accepts just a number in addition to
+        // number + (possibly) stuff coming from _ordinalParseLenient.
+        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
+    }
+
+    function mergeConfigs(parentConfig, childConfig) {
+        var res = extend({}, parentConfig), prop;
+        for (prop in childConfig) {
+            if (hasOwnProp(childConfig, prop)) {
+                if (isObject(parentConfig[prop]) && isObject(childConfig[prop])) {
+                    res[prop] = {};
+                    extend(res[prop], parentConfig[prop]);
+                    extend(res[prop], childConfig[prop]);
+                } else if (childConfig[prop] != null) {
+                    res[prop] = childConfig[prop];
+                } else {
+                    delete res[prop];
+                }
+            }
+        }
+        return res;
+    }
+
+    function Locale(config) {
+        if (config != null) {
+            this.set(config);
+        }
+    }
+
+    // internal storage for locale config files
     var locales = {};
     var globalLocale;
 
@@ -28084,7 +27809,7 @@ module.exports=require(53)
     function loadLocale(name) {
         var oldLocale = null;
         // TODO: Find a better way to register and load all the locales in Node
-        if (!locales[name] && typeof module !== 'undefined' &&
+        if (!locales[name] && (typeof module !== 'undefined') &&
                 module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
@@ -28103,7 +27828,7 @@ module.exports=require(53)
     function locale_locales__getSetGlobalLocale (key, values) {
         var data;
         if (key) {
-            if (typeof values === 'undefined') {
+            if (isUndefined(values)) {
                 data = locale_locales__getLocale(key);
             }
             else {
@@ -28119,11 +27844,25 @@ module.exports=require(53)
         return globalLocale._abbr;
     }
 
-    function defineLocale (name, values) {
-        if (values !== null) {
-            values.abbr = name;
-            locales[name] = locales[name] || new Locale();
-            locales[name].set(values);
+    function defineLocale (name, config) {
+        if (config !== null) {
+            config.abbr = name;
+            if (locales[name] != null) {
+                deprecateSimple('defineLocaleOverride',
+                        'use moment.updateLocale(localeName, config) to change ' +
+                        'an existing locale. moment.defineLocale(localeName, ' +
+                        'config) should only be used for creating a new locale');
+                config = mergeConfigs(locales[name]._config, config);
+            } else if (config.parentLocale != null) {
+                if (locales[config.parentLocale] != null) {
+                    config = mergeConfigs(locales[config.parentLocale]._config, config);
+                } else {
+                    // treat as if there is no base config
+                    deprecateSimple('parentLocaleUndefined',
+                            'specified parentLocale is not defined yet');
+                }
+            }
+            locales[name] = new Locale(config);
 
             // backwards compat for now: also set the locale
             locale_locales__getSetGlobalLocale(name);
@@ -28134,6 +27873,31 @@ module.exports=require(53)
             delete locales[name];
             return null;
         }
+    }
+
+    function updateLocale(name, config) {
+        if (config != null) {
+            var locale;
+            if (locales[name] != null) {
+                config = mergeConfigs(locales[name]._config, config);
+            }
+            locale = new Locale(config);
+            locale.parentLocale = locales[name];
+            locales[name] = locale;
+
+            // backwards compat for now: also set the locale
+            locale_locales__getSetGlobalLocale(name);
+        } else {
+            // pass null for config to unupdate, useful for tests
+            if (locales[name] != null) {
+                if (locales[name].parentLocale != null) {
+                    locales[name] = locales[name].parentLocale;
+                } else if (locales[name] != null) {
+                    delete locales[name];
+                }
+            }
+        }
+        return locales[name];
     }
 
     // returns locale data
@@ -28158,6 +27922,10 @@ module.exports=require(53)
         }
 
         return chooseLocale(key);
+    }
+
+    function locale_locales__listLocales() {
+        return Object.keys(locales);
     }
 
     var aliases = {};
@@ -28201,11 +27969,14 @@ module.exports=require(53)
     }
 
     function get_set__get (mom, unit) {
-        return mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]();
+        return mom.isValid() ?
+            mom._d['get' + (mom._isUTC ? 'UTC' : '') + unit]() : NaN;
     }
 
     function get_set__set (mom, unit, value) {
-        return mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+        if (mom.isValid()) {
+            mom._d['set' + (mom._isUTC ? 'UTC' : '') + unit](value);
+        }
     }
 
     // MOMENTS
@@ -28218,7 +27989,7 @@ module.exports=require(53)
             }
         } else {
             units = normalizeUnits(units);
-            if (typeof this[units] === 'function') {
+            if (isFunction(this[units])) {
                 return this[units](value);
             }
         }
@@ -28233,7 +28004,7 @@ module.exports=require(53)
             Math.pow(10, Math.max(0, zerosToFill)).toString().substr(1) + absNumber;
     }
 
-    var formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Q|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
+    var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g;
 
     var localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
 
@@ -28329,6 +28100,8 @@ module.exports=require(53)
     var match4         = /\d{4}/;         //    0000 - 9999
     var match6         = /[+-]?\d{6}/;    // -999999 - 999999
     var match1to2      = /\d\d?/;         //       0 - 99
+    var match3to4      = /\d\d\d\d?/;     //     999 - 9999
+    var match5to6      = /\d\d\d\d\d\d?/; //   99999 - 999999
     var match1to3      = /\d{1,3}/;       //       0 - 999
     var match1to4      = /\d{1,4}/;       //       0 - 9999
     var match1to6      = /[+-]?\d{1,6}/;  // -999999 - 999999
@@ -28337,23 +28110,19 @@ module.exports=require(53)
     var matchSigned    = /[+-]?\d+/;      //    -inf - inf
 
     var matchOffset    = /Z|[+-]\d\d:?\d\d/gi; // +00:00 -00:00 +0000 -0000 or Z
+    var matchShortOffset = /Z|[+-]\d\d(?::?\d\d)?/gi; // +00 -00 +00:00 -00:00 +0000 -0000 or Z
 
     var matchTimestamp = /[+-]?\d+(\.\d{1,3})?/; // 123456789 123456789.123
 
     // any word (or two) characters or numbers including two/three word month in arabic.
+    // includes scottish gaelic two word and hyphenated months
     var matchWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i;
+
 
     var regexes = {};
 
-    function isFunction (sth) {
-        // https://github.com/moment/moment/issues/2325
-        return typeof sth === 'function' &&
-            Object.prototype.toString.call(sth) === '[object Function]';
-    }
-
-
     function addRegexToken (token, regex, strictRegex) {
-        regexes[token] = isFunction(regex) ? regex : function (isStrict) {
+        regexes[token] = isFunction(regex) ? regex : function (isStrict, localeData) {
             return (isStrict && strictRegex) ? strictRegex : regex;
         };
     }
@@ -28368,9 +28137,13 @@ module.exports=require(53)
 
     // Code from http://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript
     function unescapeFormat(s) {
-        return s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
+        return regexEscape(s.replace('\\', '').replace(/\\(\[)|\\(\])|\[([^\]\[]*)\]|\\(.)/g, function (matched, p1, p2, p3, p4) {
             return p1 || p2 || p3 || p4;
-        }).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        }));
+    }
+
+    function regexEscape(s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
     }
 
     var tokens = {};
@@ -28410,6 +28183,8 @@ module.exports=require(53)
     var MINUTE = 4;
     var SECOND = 5;
     var MILLISECOND = 6;
+    var WEEK = 7;
+    var WEEKDAY = 8;
 
     function daysInMonth(year, month) {
         return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
@@ -28437,8 +28212,12 @@ module.exports=require(53)
 
     addRegexToken('M',    match1to2);
     addRegexToken('MM',   match1to2, match2);
-    addRegexToken('MMM',  matchWord);
-    addRegexToken('MMMM', matchWord);
+    addRegexToken('MMM',  function (isStrict, locale) {
+        return locale.monthsShortRegex(isStrict);
+    });
+    addRegexToken('MMMM', function (isStrict, locale) {
+        return locale.monthsRegex(isStrict);
+    });
 
     addParseToken(['M', 'MM'], function (input, array) {
         array[MONTH] = toInt(input) - 1;
@@ -28456,14 +28235,17 @@ module.exports=require(53)
 
     // LOCALES
 
+    var MONTHS_IN_FORMAT = /D[oD]?(\[[^\[\]]*\]|\s+)+MMMM?/;
     var defaultLocaleMonths = 'January_February_March_April_May_June_July_August_September_October_November_December'.split('_');
-    function localeMonths (m) {
-        return this._months[m.month()];
+    function localeMonths (m, format) {
+        return isArray(this._months) ? this._months[m.month()] :
+            this._months[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
     }
 
     var defaultLocaleMonthsShort = 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_');
-    function localeMonthsShort (m) {
-        return this._monthsShort[m.month()];
+    function localeMonthsShort (m, format) {
+        return isArray(this._monthsShort) ? this._monthsShort[m.month()] :
+            this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
     }
 
     function localeMonthsParse (monthName, format, strict) {
@@ -28502,12 +28284,20 @@ module.exports=require(53)
     function setMonth (mom, value) {
         var dayOfMonth;
 
-        // TODO: Move this out of here!
+        if (!mom.isValid()) {
+            // No op
+            return mom;
+        }
+
         if (typeof value === 'string') {
-            value = mom.localeData().monthsParse(value);
-            // TODO: Another silent failure?
-            if (typeof value !== 'number') {
-                return mom;
+            if (/^\d+$/.test(value)) {
+                value = toInt(value);
+            } else {
+                value = mom.localeData().monthsParse(value);
+                // TODO: Another silent failure?
+                if (typeof value !== 'number') {
+                    return mom;
+                }
             }
         }
 
@@ -28530,6 +28320,72 @@ module.exports=require(53)
         return daysInMonth(this.year(), this.month());
     }
 
+    var defaultMonthsShortRegex = matchWord;
+    function monthsShortRegex (isStrict) {
+        if (this._monthsParseExact) {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                computeMonthsParse.call(this);
+            }
+            if (isStrict) {
+                return this._monthsShortStrictRegex;
+            } else {
+                return this._monthsShortRegex;
+            }
+        } else {
+            return this._monthsShortStrictRegex && isStrict ?
+                this._monthsShortStrictRegex : this._monthsShortRegex;
+        }
+    }
+
+    var defaultMonthsRegex = matchWord;
+    function monthsRegex (isStrict) {
+        if (this._monthsParseExact) {
+            if (!hasOwnProp(this, '_monthsRegex')) {
+                computeMonthsParse.call(this);
+            }
+            if (isStrict) {
+                return this._monthsStrictRegex;
+            } else {
+                return this._monthsRegex;
+            }
+        } else {
+            return this._monthsStrictRegex && isStrict ?
+                this._monthsStrictRegex : this._monthsRegex;
+        }
+    }
+
+    function computeMonthsParse () {
+        function cmpLenRev(a, b) {
+            return b.length - a.length;
+        }
+
+        var shortPieces = [], longPieces = [], mixedPieces = [],
+            i, mom;
+        for (i = 0; i < 12; i++) {
+            // make the regex if we don't have it already
+            mom = create_utc__createUTC([2000, i]);
+            shortPieces.push(this.monthsShort(mom, ''));
+            longPieces.push(this.months(mom, ''));
+            mixedPieces.push(this.months(mom, ''));
+            mixedPieces.push(this.monthsShort(mom, ''));
+        }
+        // Sorting makes sure if one month (or abbr) is a prefix of another it
+        // will match the longer piece.
+        shortPieces.sort(cmpLenRev);
+        longPieces.sort(cmpLenRev);
+        mixedPieces.sort(cmpLenRev);
+        for (i = 0; i < 12; i++) {
+            shortPieces[i] = regexEscape(shortPieces[i]);
+            longPieces[i] = regexEscape(longPieces[i]);
+            mixedPieces[i] = regexEscape(mixedPieces[i]);
+        }
+
+        this._monthsRegex = new RegExp('^(' + mixedPieces.join('|') + ')', 'i');
+        this._monthsShortRegex = this._monthsRegex;
+        this._monthsStrictRegex = new RegExp('^(' + longPieces.join('|') + ')$', 'i');
+        this._monthsShortStrictRegex = new RegExp('^(' + shortPieces.join('|') + ')$', 'i');
+    }
+
     function checkOverflow (m) {
         var overflow;
         var a = m._a;
@@ -28547,6 +28403,12 @@ module.exports=require(53)
             if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
             }
+            if (getParsingFlags(m)._overflowWeeks && overflow === -1) {
+                overflow = WEEK;
+            }
+            if (getParsingFlags(m)._overflowWeekday && overflow === -1) {
+                overflow = WEEKDAY;
+            }
 
             getParsingFlags(m).overflow = overflow;
         }
@@ -28554,51 +28416,39 @@ module.exports=require(53)
         return m;
     }
 
-    function warn(msg) {
-        if (utils_hooks__hooks.suppressDeprecationWarnings === false && typeof console !== 'undefined' && console.warn) {
-            console.warn('Deprecation warning: ' + msg);
-        }
-    }
+    // iso 8601 regex
+    // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+    var extendedIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?/;
+    var basicIsoRegex = /^\s*((?:[+-]\d{6}|\d{4})(?:\d\d\d\d|W\d\d\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?:\d\d(?:\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?/;
 
-    function deprecate(msg, fn) {
-        var firstTime = true;
-
-        return extend(function () {
-            if (firstTime) {
-                warn(msg + '\n' + (new Error()).stack);
-                firstTime = false;
-            }
-            return fn.apply(this, arguments);
-        }, fn);
-    }
-
-    var deprecations = {};
-
-    function deprecateSimple(name, msg) {
-        if (!deprecations[name]) {
-            warn(msg);
-            deprecations[name] = true;
-        }
-    }
-
-    utils_hooks__hooks.suppressDeprecationWarnings = false;
-
-    var from_string__isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
+    var tzRegex = /Z|[+-]\d\d(?::?\d\d)?/;
 
     var isoDates = [
-        ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
-        ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
-        ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
-        ['GGGG-[W]WW', /\d{4}-W\d{2}/],
-        ['YYYY-DDD', /\d{4}-\d{3}/]
+        ['YYYYYY-MM-DD', /[+-]\d{6}-\d\d-\d\d/],
+        ['YYYY-MM-DD', /\d{4}-\d\d-\d\d/],
+        ['GGGG-[W]WW-E', /\d{4}-W\d\d-\d/],
+        ['GGGG-[W]WW', /\d{4}-W\d\d/, false],
+        ['YYYY-DDD', /\d{4}-\d{3}/],
+        ['YYYY-MM', /\d{4}-\d\d/, false],
+        ['YYYYYYMMDD', /[+-]\d{10}/],
+        ['YYYYMMDD', /\d{8}/],
+        // YYYYMM is NOT allowed by the standard
+        ['GGGG[W]WWE', /\d{4}W\d{3}/],
+        ['GGGG[W]WW', /\d{4}W\d{2}/, false],
+        ['YYYYDDD', /\d{7}/]
     ];
 
     // iso time formats and regexes
     var isoTimes = [
-        ['HH:mm:ss.SSSS', /(T| )\d\d:\d\d:\d\d\.\d+/],
-        ['HH:mm:ss', /(T| )\d\d:\d\d:\d\d/],
-        ['HH:mm', /(T| )\d\d:\d\d/],
-        ['HH', /(T| )\d\d/]
+        ['HH:mm:ss.SSSS', /\d\d:\d\d:\d\d\.\d+/],
+        ['HH:mm:ss,SSSS', /\d\d:\d\d:\d\d,\d+/],
+        ['HH:mm:ss', /\d\d:\d\d:\d\d/],
+        ['HH:mm', /\d\d:\d\d/],
+        ['HHmmss.SSSS', /\d\d\d\d\d\d\.\d+/],
+        ['HHmmss,SSSS', /\d\d\d\d\d\d,\d+/],
+        ['HHmmss', /\d\d\d\d\d\d/],
+        ['HHmm', /\d\d\d\d/],
+        ['HH', /\d\d/]
     ];
 
     var aspNetJsonRegex = /^\/?Date\((\-?\d+)/i;
@@ -28607,26 +28457,49 @@ module.exports=require(53)
     function configFromISO(config) {
         var i, l,
             string = config._i,
-            match = from_string__isoRegex.exec(string);
+            match = extendedIsoRegex.exec(string) || basicIsoRegex.exec(string),
+            allowTime, dateFormat, timeFormat, tzFormat;
 
         if (match) {
             getParsingFlags(config).iso = true;
+
             for (i = 0, l = isoDates.length; i < l; i++) {
-                if (isoDates[i][1].exec(string)) {
-                    config._f = isoDates[i][0];
+                if (isoDates[i][1].exec(match[1])) {
+                    dateFormat = isoDates[i][0];
+                    allowTime = isoDates[i][2] !== false;
                     break;
                 }
             }
-            for (i = 0, l = isoTimes.length; i < l; i++) {
-                if (isoTimes[i][1].exec(string)) {
-                    // match[6] should be 'T' or space
-                    config._f += (match[6] || ' ') + isoTimes[i][0];
-                    break;
+            if (dateFormat == null) {
+                config._isValid = false;
+                return;
+            }
+            if (match[3]) {
+                for (i = 0, l = isoTimes.length; i < l; i++) {
+                    if (isoTimes[i][1].exec(match[3])) {
+                        // match[2] should be 'T' or space
+                        timeFormat = (match[2] || ' ') + isoTimes[i][0];
+                        break;
+                    }
+                }
+                if (timeFormat == null) {
+                    config._isValid = false;
+                    return;
                 }
             }
-            if (string.match(matchOffset)) {
-                config._f += 'Z';
+            if (!allowTime && timeFormat != null) {
+                config._isValid = false;
+                return;
             }
+            if (match[4]) {
+                if (tzRegex.exec(match[4])) {
+                    tzFormat = 'Z';
+                } else {
+                    config._isValid = false;
+                    return;
+                }
+            }
+            config._f = dateFormat + (timeFormat || '') + (tzFormat || '');
             configFromStringAndFormat(config);
         } else {
             config._isValid = false;
@@ -28664,8 +28537,8 @@ module.exports=require(53)
         //http://stackoverflow.com/questions/181348/instantiating-a-javascript-object-by-calling-prototype-constructor-apply
         var date = new Date(y, m, d, h, M, s, ms);
 
-        //the date constructor doesn't accept years < 1970
-        if (y < 1970) {
+        //the date constructor remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0 && isFinite(date.getFullYear())) {
             date.setFullYear(y);
         }
         return date;
@@ -28673,11 +28546,20 @@ module.exports=require(53)
 
     function createUTCDate (y) {
         var date = new Date(Date.UTC.apply(null, arguments));
-        if (y < 1970) {
+
+        //the Date.UTC function remaps years 0-99 to 1900-1999
+        if (y < 100 && y >= 0 && isFinite(date.getUTCFullYear())) {
             date.setUTCFullYear(y);
         }
         return date;
     }
+
+    // FORMATTING
+
+    addFormatToken('Y', 0, 0, function () {
+        var y = this.year();
+        return y <= 9999 ? '' + y : '+' + y;
+    });
 
     addFormatToken(0, ['YY', 2], 0, function () {
         return this.year() % 100;
@@ -28706,6 +28588,9 @@ module.exports=require(53)
     addParseToken('YY', function (input, array) {
         array[YEAR] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
+    addParseToken('Y', function (input, array) {
+        array[YEAR] = parseInt(input, 10);
+    });
 
     // HELPERS
 
@@ -28731,124 +28616,66 @@ module.exports=require(53)
         return isLeapYear(this.year());
     }
 
-    addFormatToken('w', ['ww', 2], 'wo', 'week');
-    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+    // start-of-first-week - start-of-year
+    function firstWeekOffset(year, dow, doy) {
+        var // first-week day -- which january is always in the first week (4 for iso, 1 for other)
+            fwd = 7 + dow - doy,
+            // first-week day local weekday -- which local weekday is fwd
+            fwdlw = (7 + createUTCDate(year, 0, fwd).getUTCDay() - dow) % 7;
 
-    // ALIASES
-
-    addUnitAlias('week', 'w');
-    addUnitAlias('isoWeek', 'W');
-
-    // PARSING
-
-    addRegexToken('w',  match1to2);
-    addRegexToken('ww', match1to2, match2);
-    addRegexToken('W',  match1to2);
-    addRegexToken('WW', match1to2, match2);
-
-    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
-        week[token.substr(0, 1)] = toInt(input);
-    });
-
-    // HELPERS
-
-    // firstDayOfWeek       0 = sun, 6 = sat
-    //                      the day of the week that starts the week
-    //                      (usually sunday or monday)
-    // firstDayOfWeekOfYear 0 = sun, 6 = sat
-    //                      the first week is the week that contains the first
-    //                      of this day of the week
-    //                      (eg. ISO weeks use thursday (4))
-    function weekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
-        var end = firstDayOfWeekOfYear - firstDayOfWeek,
-            daysToDayOfWeek = firstDayOfWeekOfYear - mom.day(),
-            adjustedMoment;
-
-
-        if (daysToDayOfWeek > end) {
-            daysToDayOfWeek -= 7;
-        }
-
-        if (daysToDayOfWeek < end - 7) {
-            daysToDayOfWeek += 7;
-        }
-
-        adjustedMoment = local__createLocal(mom).add(daysToDayOfWeek, 'd');
-        return {
-            week: Math.ceil(adjustedMoment.dayOfYear() / 7),
-            year: adjustedMoment.year()
-        };
+        return -fwdlw + fwd - 1;
     }
-
-    // LOCALES
-
-    function localeWeek (mom) {
-        return weekOfYear(mom, this._week.dow, this._week.doy).week;
-    }
-
-    var defaultLocaleWeek = {
-        dow : 0, // Sunday is the first day of the week.
-        doy : 6  // The week that contains Jan 1st is the first week of the year.
-    };
-
-    function localeFirstDayOfWeek () {
-        return this._week.dow;
-    }
-
-    function localeFirstDayOfYear () {
-        return this._week.doy;
-    }
-
-    // MOMENTS
-
-    function getSetWeek (input) {
-        var week = this.localeData().week(this);
-        return input == null ? week : this.add((input - week) * 7, 'd');
-    }
-
-    function getSetISOWeek (input) {
-        var week = weekOfYear(this, 1, 4).week;
-        return input == null ? week : this.add((input - week) * 7, 'd');
-    }
-
-    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
-
-    // ALIASES
-
-    addUnitAlias('dayOfYear', 'DDD');
-
-    // PARSING
-
-    addRegexToken('DDD',  match1to3);
-    addRegexToken('DDDD', match3);
-    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
-        config._dayOfYear = toInt(input);
-    });
-
-    // HELPERS
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
-    function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var week1Jan = 6 + firstDayOfWeek - firstDayOfWeekOfYear, janX = createUTCDate(year, 0, 1 + week1Jan), d = janX.getUTCDay(), dayOfYear;
-        if (d < firstDayOfWeek) {
-            d += 7;
+    function dayOfYearFromWeeks(year, week, weekday, dow, doy) {
+        var localWeekday = (7 + weekday - dow) % 7,
+            weekOffset = firstWeekOffset(year, dow, doy),
+            dayOfYear = 1 + 7 * (week - 1) + localWeekday + weekOffset,
+            resYear, resDayOfYear;
+
+        if (dayOfYear <= 0) {
+            resYear = year - 1;
+            resDayOfYear = daysInYear(resYear) + dayOfYear;
+        } else if (dayOfYear > daysInYear(year)) {
+            resYear = year + 1;
+            resDayOfYear = dayOfYear - daysInYear(year);
+        } else {
+            resYear = year;
+            resDayOfYear = dayOfYear;
         }
 
-        weekday = weekday != null ? 1 * weekday : firstDayOfWeek;
-
-        dayOfYear = 1 + week1Jan + 7 * (week - 1) - d + weekday;
-
         return {
-            year: dayOfYear > 0 ? year : year - 1,
-            dayOfYear: dayOfYear > 0 ?  dayOfYear : daysInYear(year - 1) + dayOfYear
+            year: resYear,
+            dayOfYear: resDayOfYear
         };
     }
 
-    // MOMENTS
+    function weekOfYear(mom, dow, doy) {
+        var weekOffset = firstWeekOffset(mom.year(), dow, doy),
+            week = Math.floor((mom.dayOfYear() - weekOffset - 1) / 7) + 1,
+            resWeek, resYear;
 
-    function getSetDayOfYear (input) {
-        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
-        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+        if (week < 1) {
+            resYear = mom.year() - 1;
+            resWeek = week + weeksInYear(resYear, dow, doy);
+        } else if (week > weeksInYear(mom.year(), dow, doy)) {
+            resWeek = week - weeksInYear(mom.year(), dow, doy);
+            resYear = mom.year() + 1;
+        } else {
+            resYear = mom.year();
+            resWeek = week;
+        }
+
+        return {
+            week: resWeek,
+            year: resYear
+        };
+    }
+
+    function weeksInYear(year, dow, doy) {
+        var weekOffset = firstWeekOffset(year, dow, doy),
+            weekOffsetNext = firstWeekOffset(year + 1, dow, doy);
+        return (daysInYear(year) - weekOffset + weekOffsetNext) / 7;
     }
 
     // Pick the first defined of two or three arguments.
@@ -28863,11 +28690,12 @@ module.exports=require(53)
     }
 
     function currentDateArray(config) {
-        var now = new Date();
+        // hooks is actually the exported moment object
+        var nowValue = new Date(utils_hooks__hooks.now());
         if (config._useUTC) {
-            return [now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()];
+            return [nowValue.getUTCFullYear(), nowValue.getUTCMonth(), nowValue.getUTCDate()];
         }
-        return [now.getFullYear(), now.getMonth(), now.getDate()];
+        return [nowValue.getFullYear(), nowValue.getMonth(), nowValue.getDate()];
     }
 
     // convert an array to a date.
@@ -28937,7 +28765,7 @@ module.exports=require(53)
     }
 
     function dayOfYearFromWeekInfo(config) {
-        var w, weekYear, week, weekday, dow, doy, temp;
+        var w, weekYear, week, weekday, dow, doy, temp, weekdayOverflow;
 
         w = config._w;
         if (w.GG != null || w.W != null || w.E != null) {
@@ -28951,6 +28779,9 @@ module.exports=require(53)
             weekYear = defaults(w.GG, config._a[YEAR], weekOfYear(local__createLocal(), 1, 4).year);
             week = defaults(w.W, 1);
             weekday = defaults(w.E, 1);
+            if (weekday < 1 || weekday > 7) {
+                weekdayOverflow = true;
+            }
         } else {
             dow = config._locale._week.dow;
             doy = config._locale._week.doy;
@@ -28961,23 +28792,32 @@ module.exports=require(53)
             if (w.d != null) {
                 // weekday -- low day numbers are considered next week
                 weekday = w.d;
-                if (weekday < dow) {
-                    ++week;
+                if (weekday < 0 || weekday > 6) {
+                    weekdayOverflow = true;
                 }
             } else if (w.e != null) {
                 // local weekday -- counting starts from begining of week
                 weekday = w.e + dow;
+                if (w.e < 0 || w.e > 6) {
+                    weekdayOverflow = true;
+                }
             } else {
                 // default to begining of week
                 weekday = dow;
             }
         }
-        temp = dayOfYearFromWeeks(weekYear, week, weekday, doy, dow);
-
-        config._a[YEAR] = temp.year;
-        config._dayOfYear = temp.dayOfYear;
+        if (week < 1 || week > weeksInYear(weekYear, dow, doy)) {
+            getParsingFlags(config)._overflowWeeks = true;
+        } else if (weekdayOverflow != null) {
+            getParsingFlags(config)._overflowWeekday = true;
+        } else {
+            temp = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy);
+            config._a[YEAR] = temp.year;
+            config._dayOfYear = temp.dayOfYear;
+        }
     }
 
+    // constant that refers to the ISO standard
     utils_hooks__hooks.ISO_8601 = function () {};
 
     // date from string and format string
@@ -29002,6 +28842,8 @@ module.exports=require(53)
         for (i = 0; i < tokens.length; i++) {
             token = tokens[i];
             parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
+            // console.log('token', token, 'parsedInput', parsedInput,
+            //         'regex', getParseRegexForToken(token, config));
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
@@ -29070,6 +28912,7 @@ module.exports=require(53)
         }
     }
 
+    // date from string and array of format strings
     function configFromStringAndArray(config) {
         var tempConfig,
             bestMoment,
@@ -29120,7 +28963,9 @@ module.exports=require(53)
         }
 
         var i = normalizeObjectUnits(config._i);
-        config._a = [i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond];
+        config._a = map([i.year, i.month, i.day || i.date, i.hour, i.minute, i.second, i.millisecond], function (obj) {
+            return obj && parseInt(obj, 10);
+        });
 
         configFromArray(config);
     }
@@ -29162,13 +29007,17 @@ module.exports=require(53)
             configFromInput(config);
         }
 
+        if (!valid__isValid(config)) {
+            config._d = null;
+        }
+
         return config;
     }
 
     function configFromInput(config) {
         var input = config._i;
         if (input === undefined) {
-            config._d = new Date();
+            config._d = new Date(utils_hooks__hooks.now());
         } else if (isDate(input)) {
             config._d = new Date(+input);
         } else if (typeof input === 'string') {
@@ -29212,18 +29061,26 @@ module.exports=require(53)
     }
 
     var prototypeMin = deprecate(
-         'moment().min is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
+         'moment().min is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
          function () {
              var other = local__createLocal.apply(null, arguments);
-             return other < this ? this : other;
+             if (this.isValid() && other.isValid()) {
+                 return other < this ? this : other;
+             } else {
+                 return valid__createInvalid();
+             }
          }
      );
 
     var prototypeMax = deprecate(
-        'moment().max is deprecated, use moment.max instead. https://github.com/moment/moment/issues/1548',
+        'moment().max is deprecated, use moment.min instead. https://github.com/moment/moment/issues/1548',
         function () {
             var other = local__createLocal.apply(null, arguments);
-            return other > this ? this : other;
+            if (this.isValid() && other.isValid()) {
+                return other > this ? this : other;
+            } else {
+                return valid__createInvalid();
+            }
         }
     );
 
@@ -29261,6 +29118,10 @@ module.exports=require(53)
 
         return pickBy('isAfter', args);
     }
+
+    var now = function () {
+        return Date.now ? Date.now() : +(new Date());
+    };
 
     function Duration (duration) {
         var normalizedInput = normalizeObjectUnits(duration),
@@ -29301,6 +29162,8 @@ module.exports=require(53)
         return obj instanceof Duration;
     }
 
+    // FORMATTING
+
     function offset (token, separator) {
         addFormatToken(token, 0, 0, function () {
             var offset = this.utcOffset();
@@ -29318,11 +29181,11 @@ module.exports=require(53)
 
     // PARSING
 
-    addRegexToken('Z',  matchOffset);
-    addRegexToken('ZZ', matchOffset);
+    addRegexToken('Z',  matchShortOffset);
+    addRegexToken('ZZ', matchShortOffset);
     addParseToken(['Z', 'ZZ'], function (input, array, config) {
         config._useUTC = true;
-        config._tzm = offsetFromString(input);
+        config._tzm = offsetFromString(matchShortOffset, input);
     });
 
     // HELPERS
@@ -29332,8 +29195,8 @@ module.exports=require(53)
     // '-1530'  > ['-15', '30']
     var chunkOffset = /([\+\-]|\d\d)/gi;
 
-    function offsetFromString(string) {
-        var matches = ((string || '').match(matchOffset) || []);
+    function offsetFromString(matcher, string) {
+        var matches = ((string || '').match(matcher) || []);
         var chunk   = matches[matches.length - 1] || [];
         var parts   = (chunk + '').match(chunkOffset) || ['-', 0, 0];
         var minutes = +(parts[1] * 60) + toInt(parts[2]);
@@ -29383,11 +29246,13 @@ module.exports=require(53)
     function getSetOffset (input, keepLocalTime) {
         var offset = this._offset || 0,
             localAdjust;
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         if (input != null) {
             if (typeof input === 'string') {
-                input = offsetFromString(input);
-            }
-            if (Math.abs(input) < 16) {
+                input = offsetFromString(matchShortOffset, input);
+            } else if (Math.abs(input) < 16) {
                 input = input * 60;
             }
             if (!this._isUTC && keepLocalTime) {
@@ -29447,12 +29312,15 @@ module.exports=require(53)
         if (this._tzm) {
             this.utcOffset(this._tzm);
         } else if (typeof this._i === 'string') {
-            this.utcOffset(offsetFromString(this._i));
+            this.utcOffset(offsetFromString(matchOffset, this._i));
         }
         return this;
     }
 
     function hasAlignedHourOffset (input) {
+        if (!this.isValid()) {
+            return false;
+        }
         input = input ? local__createLocal(input).utcOffset() : 0;
 
         return (this.utcOffset() - input) % 60 === 0;
@@ -29466,7 +29334,7 @@ module.exports=require(53)
     }
 
     function isDaylightSavingTimeShifted () {
-        if (typeof this._isDSTShifted !== 'undefined') {
+        if (!isUndefined(this._isDSTShifted)) {
             return this._isDSTShifted;
         }
 
@@ -29487,22 +29355,24 @@ module.exports=require(53)
     }
 
     function isLocal () {
-        return !this._isUTC;
+        return this.isValid() ? !this._isUTC : false;
     }
 
     function isUtcOffset () {
-        return this._isUTC;
+        return this.isValid() ? this._isUTC : false;
     }
 
     function isUtc () {
-        return this._isUTC && this._offset === 0;
+        return this.isValid() ? this._isUTC && this._offset === 0 : false;
     }
 
-    var aspNetRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/;
+    // ASP.NET json date format regex
+    var aspNetRegex = /^(\-)?(?:(\d*)[. ])?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?\d*)?$/;
 
     // from http://docs.closure-library.googlecode.com/git/closure_goog_date_date.js.source.html
     // somewhat more in line with 4.4.3.2 2004 spec, but allows decimal anywhere
-    var create__isoRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/;
+    // and further modified to allow for strings containing both week and day
+    var isoRegex = /^(-)?P(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)W)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?$/;
 
     function create__createDuration (input, key) {
         var duration = input,
@@ -29535,16 +29405,16 @@ module.exports=require(53)
                 s  : toInt(match[SECOND])      * sign,
                 ms : toInt(match[MILLISECOND]) * sign
             };
-        } else if (!!(match = create__isoRegex.exec(input))) {
+        } else if (!!(match = isoRegex.exec(input))) {
             sign = (match[1] === '-') ? -1 : 1;
             duration = {
                 y : parseIso(match[2], sign),
                 M : parseIso(match[3], sign),
-                d : parseIso(match[4], sign),
-                h : parseIso(match[5], sign),
-                m : parseIso(match[6], sign),
-                s : parseIso(match[7], sign),
-                w : parseIso(match[8], sign)
+                w : parseIso(match[4], sign),
+                d : parseIso(match[5], sign),
+                h : parseIso(match[6], sign),
+                m : parseIso(match[7], sign),
+                s : parseIso(match[8], sign)
             };
         } else if (duration == null) {// checks for null or undefined
             duration = {};
@@ -29592,6 +29462,10 @@ module.exports=require(53)
 
     function momentsDifference(base, other) {
         var res;
+        if (!(base.isValid() && other.isValid())) {
+            return {milliseconds: 0, months: 0};
+        }
+
         other = cloneWithOffset(other, base);
         if (base.isBefore(other)) {
             res = positiveMomentsDifference(base, other);
@@ -29604,6 +29478,15 @@ module.exports=require(53)
         return res;
     }
 
+    function absRound (number) {
+        if (number < 0) {
+            return Math.round(-1 * number) * -1;
+        } else {
+            return Math.round(number);
+        }
+    }
+
+    // TODO: remove 'name' arg after deprecation is removed
     function createAdder(direction, name) {
         return function (val, period) {
             var dur, tmp;
@@ -29622,8 +29505,14 @@ module.exports=require(53)
 
     function add_subtract__addSubtract (mom, duration, isAdding, updateOffset) {
         var milliseconds = duration._milliseconds,
-            days = duration._days,
-            months = duration._months;
+            days = absRound(duration._days),
+            months = absRound(duration._months);
+
+        if (!mom.isValid()) {
+            // No op
+            return;
+        }
+
         updateOffset = updateOffset == null ? true : updateOffset;
 
         if (milliseconds) {
@@ -29655,7 +29544,10 @@ module.exports=require(53)
                 diff < 1 ? 'sameDay' :
                 diff < 2 ? 'nextDay' :
                 diff < 7 ? 'nextWeek' : 'sameElse';
-        return this.format(formats && formats[format] || this.localeData().calendar(format, this, local__createLocal(now)));
+
+        var output = formats && (isFunction(formats[format]) ? formats[format]() : formats[format]);
+
+        return this.format(output || this.localeData().calendar(format, this, local__createLocal(now)));
     }
 
     function clone () {
@@ -29663,26 +29555,28 @@ module.exports=require(53)
     }
 
     function isAfter (input, units) {
-        var inputMs;
-        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+        var localInput = isMoment(input) ? input : local__createLocal(input);
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
         if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this > +input;
+            return +this > +localInput;
         } else {
-            inputMs = isMoment(input) ? +input : +local__createLocal(input);
-            return inputMs < +this.clone().startOf(units);
+            return +localInput < +this.clone().startOf(units);
         }
     }
 
     function isBefore (input, units) {
-        var inputMs;
-        units = normalizeUnits(typeof units !== 'undefined' ? units : 'millisecond');
+        var localInput = isMoment(input) ? input : local__createLocal(input);
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
+        units = normalizeUnits(!isUndefined(units) ? units : 'millisecond');
         if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this < +input;
+            return +this < +localInput;
         } else {
-            inputMs = isMoment(input) ? +input : +local__createLocal(input);
-            return +this.clone().endOf(units) < inputMs;
+            return +this.clone().endOf(units) < +localInput;
         }
     }
 
@@ -29691,21 +29585,44 @@ module.exports=require(53)
     }
 
     function isSame (input, units) {
-        var inputMs;
+        var localInput = isMoment(input) ? input : local__createLocal(input),
+            inputMs;
+        if (!(this.isValid() && localInput.isValid())) {
+            return false;
+        }
         units = normalizeUnits(units || 'millisecond');
         if (units === 'millisecond') {
-            input = isMoment(input) ? input : local__createLocal(input);
-            return +this === +input;
+            return +this === +localInput;
         } else {
-            inputMs = +local__createLocal(input);
+            inputMs = +localInput;
             return +(this.clone().startOf(units)) <= inputMs && inputMs <= +(this.clone().endOf(units));
         }
     }
 
+    function isSameOrAfter (input, units) {
+        return this.isSame(input, units) || this.isAfter(input,units);
+    }
+
+    function isSameOrBefore (input, units) {
+        return this.isSame(input, units) || this.isBefore(input,units);
+    }
+
     function diff (input, units, asFloat) {
-        var that = cloneWithOffset(input, this),
-            zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4,
+        var that,
+            zoneDelta,
             delta, output;
+
+        if (!this.isValid()) {
+            return NaN;
+        }
+
+        that = cloneWithOffset(input, this);
+
+        if (!that.isValid()) {
+            return NaN;
+        }
+
+        zoneDelta = (that.utcOffset() - this.utcOffset()) * 6e4;
 
         units = normalizeUnits(units);
 
@@ -29757,7 +29674,7 @@ module.exports=require(53)
     function moment_format__toISOString () {
         var m = this.clone().utc();
         if (0 < m.year() && m.year() <= 9999) {
-            if ('function' === typeof Date.prototype.toISOString) {
+            if (isFunction(Date.prototype.toISOString)) {
                 // native implementation is ~50x faster, use it when we can
                 return this.toDate().toISOString();
             } else {
@@ -29774,10 +29691,13 @@ module.exports=require(53)
     }
 
     function from (time, withoutSuffix) {
-        if (!this.isValid()) {
+        if (this.isValid() &&
+                ((isMoment(time) && time.isValid()) ||
+                 local__createLocal(time).isValid())) {
+            return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
+        } else {
             return this.localeData().invalidDate();
         }
-        return create__createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function fromNow (withoutSuffix) {
@@ -29785,16 +29705,22 @@ module.exports=require(53)
     }
 
     function to (time, withoutSuffix) {
-        if (!this.isValid()) {
+        if (this.isValid() &&
+                ((isMoment(time) && time.isValid()) ||
+                 local__createLocal(time).isValid())) {
+            return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
+        } else {
             return this.localeData().invalidDate();
         }
-        return create__createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
     }
 
     function toNow (withoutSuffix) {
         return this.to(local__createLocal(), withoutSuffix);
     }
 
+    // If passed a locale key, it will set the locale for this
+    // instance.  Otherwise, it will return the locale configuration
+    // variables for this instance.
     function locale (key) {
         var newLocaleData;
 
@@ -29905,6 +29831,11 @@ module.exports=require(53)
         };
     }
 
+    function toJSON () {
+        // new Date(NaN).toJSON() === null
+        return this.isValid() ? this.toISOString() : null;
+    }
+
     function moment_valid__isValid () {
         return valid__isValid(this);
     }
@@ -29916,6 +29847,18 @@ module.exports=require(53)
     function invalidAt () {
         return getParsingFlags(this).overflow;
     }
+
+    function creationData() {
+        return {
+            input: this._i,
+            format: this._f,
+            locale: this._locale,
+            isUTC: this._isUTC,
+            strict: this._strict
+        };
+    }
+
+    // FORMATTING
 
     addFormatToken(0, ['gg', 2], 0, function () {
         return this.weekYear() % 100;
@@ -29958,22 +29901,20 @@ module.exports=require(53)
         week[token] = utils_hooks__hooks.parseTwoDigitYear(input);
     });
 
-    // HELPERS
-
-    function weeksInYear(year, dow, doy) {
-        return weekOfYear(local__createLocal([year, 11, 31 + dow - doy]), dow, doy).week;
-    }
-
     // MOMENTS
 
     function getSetWeekYear (input) {
-        var year = weekOfYear(this, this.localeData()._week.dow, this.localeData()._week.doy).year;
-        return input == null ? year : this.add((input - year), 'y');
+        return getSetWeekYearHelper.call(this,
+                input,
+                this.week(),
+                this.weekday(),
+                this.localeData()._week.dow,
+                this.localeData()._week.doy);
     }
 
     function getSetISOWeekYear (input) {
-        var year = weekOfYear(this, 1, 4).year;
-        return input == null ? year : this.add((input - year), 'y');
+        return getSetWeekYearHelper.call(this,
+                input, this.isoWeek(), this.isoWeekday(), 1, 4);
     }
 
     function getISOWeeksInYear () {
@@ -29985,7 +29926,32 @@ module.exports=require(53)
         return weeksInYear(this.year(), weekInfo.dow, weekInfo.doy);
     }
 
-    addFormatToken('Q', 0, 0, 'quarter');
+    function getSetWeekYearHelper(input, week, weekday, dow, doy) {
+        var weeksTarget;
+        if (input == null) {
+            return weekOfYear(this, dow, doy).year;
+        } else {
+            weeksTarget = weeksInYear(input, dow, doy);
+            if (week > weeksTarget) {
+                week = weeksTarget;
+            }
+            return setWeekAll.call(this, input, week, weekday, dow, doy);
+        }
+    }
+
+    function setWeekAll(weekYear, week, weekday, dow, doy) {
+        var dayOfYearData = dayOfYearFromWeeks(weekYear, week, weekday, dow, doy),
+            date = createUTCDate(dayOfYearData.year, 0, dayOfYearData.dayOfYear);
+
+        this.year(date.getUTCFullYear());
+        this.month(date.getUTCMonth());
+        this.date(date.getUTCDate());
+        return this;
+    }
+
+    // FORMATTING
+
+    addFormatToken('Q', 0, 'Qo', 'quarter');
 
     // ALIASES
 
@@ -30003,6 +29969,62 @@ module.exports=require(53)
     function getSetQuarter (input) {
         return input == null ? Math.ceil((this.month() + 1) / 3) : this.month((input - 1) * 3 + this.month() % 3);
     }
+
+    // FORMATTING
+
+    addFormatToken('w', ['ww', 2], 'wo', 'week');
+    addFormatToken('W', ['WW', 2], 'Wo', 'isoWeek');
+
+    // ALIASES
+
+    addUnitAlias('week', 'w');
+    addUnitAlias('isoWeek', 'W');
+
+    // PARSING
+
+    addRegexToken('w',  match1to2);
+    addRegexToken('ww', match1to2, match2);
+    addRegexToken('W',  match1to2);
+    addRegexToken('WW', match1to2, match2);
+
+    addWeekParseToken(['w', 'ww', 'W', 'WW'], function (input, week, config, token) {
+        week[token.substr(0, 1)] = toInt(input);
+    });
+
+    // HELPERS
+
+    // LOCALES
+
+    function localeWeek (mom) {
+        return weekOfYear(mom, this._week.dow, this._week.doy).week;
+    }
+
+    var defaultLocaleWeek = {
+        dow : 0, // Sunday is the first day of the week.
+        doy : 6  // The week that contains Jan 1st is the first week of the year.
+    };
+
+    function localeFirstDayOfWeek () {
+        return this._week.dow;
+    }
+
+    function localeFirstDayOfYear () {
+        return this._week.doy;
+    }
+
+    // MOMENTS
+
+    function getSetWeek (input) {
+        var week = this.localeData().week(this);
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    function getSetISOWeek (input) {
+        var week = weekOfYear(this, 1, 4).week;
+        return input == null ? week : this.add((input - week) * 7, 'd');
+    }
+
+    // FORMATTING
 
     addFormatToken('D', ['DD', 2], 'Do', 'date');
 
@@ -30026,6 +30048,8 @@ module.exports=require(53)
     // MOMENTS
 
     var getSetDayOfMonth = makeGetSet('Date', true);
+
+    // FORMATTING
 
     addFormatToken('d', 0, 'do', 'day');
 
@@ -30059,8 +30083,8 @@ module.exports=require(53)
     addRegexToken('ddd',  matchWord);
     addRegexToken('dddd', matchWord);
 
-    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config) {
-        var weekday = config._locale.weekdaysParse(input);
+    addWeekParseToken(['dd', 'ddd', 'dddd'], function (input, week, config, token) {
+        var weekday = config._locale.weekdaysParse(input, token, config._strict);
         // if we didn't get a weekday name, mark the date as invalid
         if (weekday != null) {
             week.d = weekday;
@@ -30095,8 +30119,9 @@ module.exports=require(53)
     // LOCALES
 
     var defaultLocaleWeekdays = 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_');
-    function localeWeekdays (m) {
-        return this._weekdays[m.day()];
+    function localeWeekdays (m, format) {
+        return isArray(this._weekdays) ? this._weekdays[m.day()] :
+            this._weekdays[this._weekdays.isFormat.test(format) ? 'format' : 'standalone'][m.day()];
     }
 
     var defaultLocaleWeekdaysShort = 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_');
@@ -30109,20 +30134,37 @@ module.exports=require(53)
         return this._weekdaysMin[m.day()];
     }
 
-    function localeWeekdaysParse (weekdayName) {
+    function localeWeekdaysParse (weekdayName, format, strict) {
         var i, mom, regex;
 
-        this._weekdaysParse = this._weekdaysParse || [];
+        if (!this._weekdaysParse) {
+            this._weekdaysParse = [];
+            this._minWeekdaysParse = [];
+            this._shortWeekdaysParse = [];
+            this._fullWeekdaysParse = [];
+        }
 
         for (i = 0; i < 7; i++) {
             // make the regex if we don't have it already
+
+            mom = local__createLocal([2000, 1]).day(i);
+            if (strict && !this._fullWeekdaysParse[i]) {
+                this._fullWeekdaysParse[i] = new RegExp('^' + this.weekdays(mom, '').replace('.', '\.?') + '$', 'i');
+                this._shortWeekdaysParse[i] = new RegExp('^' + this.weekdaysShort(mom, '').replace('.', '\.?') + '$', 'i');
+                this._minWeekdaysParse[i] = new RegExp('^' + this.weekdaysMin(mom, '').replace('.', '\.?') + '$', 'i');
+            }
             if (!this._weekdaysParse[i]) {
-                mom = local__createLocal([2000, 1]).day(i);
                 regex = '^' + this.weekdays(mom, '') + '|^' + this.weekdaysShort(mom, '') + '|^' + this.weekdaysMin(mom, '');
                 this._weekdaysParse[i] = new RegExp(regex.replace('.', ''), 'i');
             }
             // test the regex
-            if (this._weekdaysParse[i].test(weekdayName)) {
+            if (strict && format === 'dddd' && this._fullWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (strict && format === 'ddd' && this._shortWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (strict && format === 'dd' && this._minWeekdaysParse[i].test(weekdayName)) {
+                return i;
+            } else if (!strict && this._weekdaysParse[i].test(weekdayName)) {
                 return i;
             }
         }
@@ -30131,6 +30173,9 @@ module.exports=require(53)
     // MOMENTS
 
     function getSetDayOfWeek (input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         var day = this._isUTC ? this._d.getUTCDay() : this._d.getDay();
         if (input != null) {
             input = parseWeekday(input, this.localeData());
@@ -30141,20 +30186,73 @@ module.exports=require(53)
     }
 
     function getSetLocaleDayOfWeek (input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         var weekday = (this.day() + 7 - this.localeData()._week.dow) % 7;
         return input == null ? weekday : this.add(input - weekday, 'd');
     }
 
     function getSetISODayOfWeek (input) {
+        if (!this.isValid()) {
+            return input != null ? this : NaN;
+        }
         // behaves the same as moment#day except
         // as a getter, returns 7 instead of 0 (1-7 range instead of 0-6)
         // as a setter, sunday should belong to the previous week.
         return input == null ? this.day() || 7 : this.day(this.day() % 7 ? input : input - 7);
     }
 
-    addFormatToken('H', ['HH', 2], 0, 'hour');
-    addFormatToken('h', ['hh', 2], 0, function () {
+    // FORMATTING
+
+    addFormatToken('DDD', ['DDDD', 3], 'DDDo', 'dayOfYear');
+
+    // ALIASES
+
+    addUnitAlias('dayOfYear', 'DDD');
+
+    // PARSING
+
+    addRegexToken('DDD',  match1to3);
+    addRegexToken('DDDD', match3);
+    addParseToken(['DDD', 'DDDD'], function (input, array, config) {
+        config._dayOfYear = toInt(input);
+    });
+
+    // HELPERS
+
+    // MOMENTS
+
+    function getSetDayOfYear (input) {
+        var dayOfYear = Math.round((this.clone().startOf('day') - this.clone().startOf('year')) / 864e5) + 1;
+        return input == null ? dayOfYear : this.add((input - dayOfYear), 'd');
+    }
+
+    // FORMATTING
+
+    function hFormat() {
         return this.hours() % 12 || 12;
+    }
+
+    addFormatToken('H', ['HH', 2], 0, 'hour');
+    addFormatToken('h', ['hh', 2], 0, hFormat);
+
+    addFormatToken('hmm', 0, 0, function () {
+        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2);
+    });
+
+    addFormatToken('hmmss', 0, 0, function () {
+        return '' + hFormat.apply(this) + zeroFill(this.minutes(), 2) +
+            zeroFill(this.seconds(), 2);
+    });
+
+    addFormatToken('Hmm', 0, 0, function () {
+        return '' + this.hours() + zeroFill(this.minutes(), 2);
+    });
+
+    addFormatToken('Hmmss', 0, 0, function () {
+        return '' + this.hours() + zeroFill(this.minutes(), 2) +
+            zeroFill(this.seconds(), 2);
     });
 
     function meridiem (token, lowercase) {
@@ -30183,6 +30281,11 @@ module.exports=require(53)
     addRegexToken('HH', match1to2, match2);
     addRegexToken('hh', match1to2, match2);
 
+    addRegexToken('hmm', match3to4);
+    addRegexToken('hmmss', match5to6);
+    addRegexToken('Hmm', match3to4);
+    addRegexToken('Hmmss', match5to6);
+
     addParseToken(['H', 'HH'], HOUR);
     addParseToken(['a', 'A'], function (input, array, config) {
         config._isPm = config._locale.isPM(input);
@@ -30191,6 +30294,32 @@ module.exports=require(53)
     addParseToken(['h', 'hh'], function (input, array, config) {
         array[HOUR] = toInt(input);
         getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('hmm', function (input, array, config) {
+        var pos = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos));
+        array[MINUTE] = toInt(input.substr(pos));
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('hmmss', function (input, array, config) {
+        var pos1 = input.length - 4;
+        var pos2 = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos1));
+        array[MINUTE] = toInt(input.substr(pos1, 2));
+        array[SECOND] = toInt(input.substr(pos2));
+        getParsingFlags(config).bigHour = true;
+    });
+    addParseToken('Hmm', function (input, array, config) {
+        var pos = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos));
+        array[MINUTE] = toInt(input.substr(pos));
+    });
+    addParseToken('Hmmss', function (input, array, config) {
+        var pos1 = input.length - 4;
+        var pos2 = input.length - 2;
+        array[HOUR] = toInt(input.substr(0, pos1));
+        array[MINUTE] = toInt(input.substr(pos1, 2));
+        array[SECOND] = toInt(input.substr(pos2));
     });
 
     // LOCALES
@@ -30219,6 +30348,8 @@ module.exports=require(53)
     // this rule.
     var getSetHour = makeGetSet('Hours', true);
 
+    // FORMATTING
+
     addFormatToken('m', ['mm', 2], 0, 'minute');
 
     // ALIASES
@@ -30235,6 +30366,8 @@ module.exports=require(53)
 
     var getSetMinute = makeGetSet('Minutes', false);
 
+    // FORMATTING
+
     addFormatToken('s', ['ss', 2], 0, 'second');
 
     // ALIASES
@@ -30250,6 +30383,8 @@ module.exports=require(53)
     // MOMENTS
 
     var getSetSecond = makeGetSet('Seconds', false);
+
+    // FORMATTING
 
     addFormatToken('S', 0, 0, function () {
         return ~~(this.millisecond() / 100);
@@ -30306,6 +30441,8 @@ module.exports=require(53)
 
     var getSetMillisecond = makeGetSet('Milliseconds', false);
 
+    // FORMATTING
+
     addFormatToken('z',  0, 0, 'zoneAbbr');
     addFormatToken('zz', 0, 0, 'zoneName');
 
@@ -30321,40 +30458,43 @@ module.exports=require(53)
 
     var momentPrototype__proto = Moment.prototype;
 
-    momentPrototype__proto.add          = add_subtract__add;
-    momentPrototype__proto.calendar     = moment_calendar__calendar;
-    momentPrototype__proto.clone        = clone;
-    momentPrototype__proto.diff         = diff;
-    momentPrototype__proto.endOf        = endOf;
-    momentPrototype__proto.format       = format;
-    momentPrototype__proto.from         = from;
-    momentPrototype__proto.fromNow      = fromNow;
-    momentPrototype__proto.to           = to;
-    momentPrototype__proto.toNow        = toNow;
-    momentPrototype__proto.get          = getSet;
-    momentPrototype__proto.invalidAt    = invalidAt;
-    momentPrototype__proto.isAfter      = isAfter;
-    momentPrototype__proto.isBefore     = isBefore;
-    momentPrototype__proto.isBetween    = isBetween;
-    momentPrototype__proto.isSame       = isSame;
-    momentPrototype__proto.isValid      = moment_valid__isValid;
-    momentPrototype__proto.lang         = lang;
-    momentPrototype__proto.locale       = locale;
-    momentPrototype__proto.localeData   = localeData;
-    momentPrototype__proto.max          = prototypeMax;
-    momentPrototype__proto.min          = prototypeMin;
-    momentPrototype__proto.parsingFlags = parsingFlags;
-    momentPrototype__proto.set          = getSet;
-    momentPrototype__proto.startOf      = startOf;
-    momentPrototype__proto.subtract     = add_subtract__subtract;
-    momentPrototype__proto.toArray      = toArray;
-    momentPrototype__proto.toObject     = toObject;
-    momentPrototype__proto.toDate       = toDate;
-    momentPrototype__proto.toISOString  = moment_format__toISOString;
-    momentPrototype__proto.toJSON       = moment_format__toISOString;
-    momentPrototype__proto.toString     = toString;
-    momentPrototype__proto.unix         = unix;
-    momentPrototype__proto.valueOf      = to_type__valueOf;
+    momentPrototype__proto.add               = add_subtract__add;
+    momentPrototype__proto.calendar          = moment_calendar__calendar;
+    momentPrototype__proto.clone             = clone;
+    momentPrototype__proto.diff              = diff;
+    momentPrototype__proto.endOf             = endOf;
+    momentPrototype__proto.format            = format;
+    momentPrototype__proto.from              = from;
+    momentPrototype__proto.fromNow           = fromNow;
+    momentPrototype__proto.to                = to;
+    momentPrototype__proto.toNow             = toNow;
+    momentPrototype__proto.get               = getSet;
+    momentPrototype__proto.invalidAt         = invalidAt;
+    momentPrototype__proto.isAfter           = isAfter;
+    momentPrototype__proto.isBefore          = isBefore;
+    momentPrototype__proto.isBetween         = isBetween;
+    momentPrototype__proto.isSame            = isSame;
+    momentPrototype__proto.isSameOrAfter     = isSameOrAfter;
+    momentPrototype__proto.isSameOrBefore    = isSameOrBefore;
+    momentPrototype__proto.isValid           = moment_valid__isValid;
+    momentPrototype__proto.lang              = lang;
+    momentPrototype__proto.locale            = locale;
+    momentPrototype__proto.localeData        = localeData;
+    momentPrototype__proto.max               = prototypeMax;
+    momentPrototype__proto.min               = prototypeMin;
+    momentPrototype__proto.parsingFlags      = parsingFlags;
+    momentPrototype__proto.set               = getSet;
+    momentPrototype__proto.startOf           = startOf;
+    momentPrototype__proto.subtract          = add_subtract__subtract;
+    momentPrototype__proto.toArray           = toArray;
+    momentPrototype__proto.toObject          = toObject;
+    momentPrototype__proto.toDate            = toDate;
+    momentPrototype__proto.toISOString       = moment_format__toISOString;
+    momentPrototype__proto.toJSON            = toJSON;
+    momentPrototype__proto.toString          = toString;
+    momentPrototype__proto.unix              = unix;
+    momentPrototype__proto.valueOf           = to_type__valueOf;
+    momentPrototype__proto.creationData      = creationData;
 
     // Year
     momentPrototype__proto.year       = getSetYear;
@@ -30440,7 +30580,7 @@ module.exports=require(53)
 
     function locale_calendar__calendar (key, mom, now) {
         var output = this._calendar[key];
-        return typeof output === 'function' ? output.call(mom, now) : output;
+        return isFunction(output) ? output.call(mom, now) : output;
     }
 
     var defaultLongDateFormat = {
@@ -30502,29 +30642,14 @@ module.exports=require(53)
 
     function relative__relativeTime (number, withoutSuffix, string, isFuture) {
         var output = this._relativeTime[string];
-        return (typeof output === 'function') ?
+        return (isFunction(output)) ?
             output(number, withoutSuffix, string, isFuture) :
             output.replace(/%d/i, number);
     }
 
     function pastFuture (diff, output) {
         var format = this._relativeTime[diff > 0 ? 'future' : 'past'];
-        return typeof format === 'function' ? format(output) : format.replace(/%s/i, output);
-    }
-
-    function locale_set__set (config) {
-        var prop, i;
-        for (i in config) {
-            prop = config[i];
-            if (typeof prop === 'function') {
-                this[i] = prop;
-            } else {
-                this['_' + i] = prop;
-            }
-        }
-        // Lenient ordinal parsing accepts just a number in addition to
-        // number + (possibly) stuff coming from _ordinalParseLenient.
-        this._ordinalParseLenient = new RegExp(this._ordinalParse.source + '|' + (/\d{1,2}/).source);
+        return isFunction(format) ? format(output) : format.replace(/%s/i, output);
     }
 
     var prototype__proto = Locale.prototype;
@@ -30546,11 +30671,15 @@ module.exports=require(53)
     prototype__proto.set             = locale_set__set;
 
     // Month
-    prototype__proto.months       =        localeMonths;
-    prototype__proto._months      = defaultLocaleMonths;
-    prototype__proto.monthsShort  =        localeMonthsShort;
-    prototype__proto._monthsShort = defaultLocaleMonthsShort;
-    prototype__proto.monthsParse  =        localeMonthsParse;
+    prototype__proto.months            =        localeMonths;
+    prototype__proto._months           = defaultLocaleMonths;
+    prototype__proto.monthsShort       =        localeMonthsShort;
+    prototype__proto._monthsShort      = defaultLocaleMonthsShort;
+    prototype__proto.monthsParse       =        localeMonthsParse;
+    prototype__proto._monthsRegex      = defaultMonthsRegex;
+    prototype__proto.monthsRegex       = monthsRegex;
+    prototype__proto._monthsShortRegex = defaultMonthsShortRegex;
+    prototype__proto.monthsShortRegex  = monthsShortRegex;
 
     // Week
     prototype__proto.week = localeWeek;
@@ -30838,15 +30967,15 @@ module.exports=require(53)
         var years    = round(duration.as('y'));
 
         var a = seconds < thresholds.s && ['s', seconds]  ||
-                minutes === 1          && ['m']           ||
+                minutes <= 1           && ['m']           ||
                 minutes < thresholds.m && ['mm', minutes] ||
-                hours   === 1          && ['h']           ||
+                hours   <= 1           && ['h']           ||
                 hours   < thresholds.h && ['hh', hours]   ||
-                days    === 1          && ['d']           ||
+                days    <= 1           && ['d']           ||
                 days    < thresholds.d && ['dd', days]    ||
-                months  === 1          && ['M']           ||
+                months  <= 1           && ['M']           ||
                 months  < thresholds.M && ['MM', months]  ||
-                years   === 1          && ['y']           || ['yy', years];
+                years   <= 1           && ['y']           || ['yy', years];
 
         a[2] = withoutSuffix;
         a[3] = +posNegDuration > 0;
@@ -30967,6 +31096,8 @@ module.exports=require(53)
 
     // Side effect imports
 
+    // FORMATTING
+
     addFormatToken('X', 0, 0, 'unix');
     addFormatToken('x', 0, 0, 'valueOf');
 
@@ -30984,13 +31115,14 @@ module.exports=require(53)
     // Side effect imports
 
 
-    utils_hooks__hooks.version = '2.10.6';
+    utils_hooks__hooks.version = '2.12.0';
 
     setHookCallback(local__createLocal);
 
     utils_hooks__hooks.fn                    = momentPrototype;
     utils_hooks__hooks.min                   = min;
     utils_hooks__hooks.max                   = max;
+    utils_hooks__hooks.now                   = now;
     utils_hooks__hooks.utc                   = create_utc__createUTC;
     utils_hooks__hooks.unix                  = moment__createUnix;
     utils_hooks__hooks.months                = lists__listMonths;
@@ -31006,16 +31138,335 @@ module.exports=require(53)
     utils_hooks__hooks.monthsShort           = lists__listMonthsShort;
     utils_hooks__hooks.weekdaysMin           = lists__listWeekdaysMin;
     utils_hooks__hooks.defineLocale          = defineLocale;
+    utils_hooks__hooks.updateLocale          = updateLocale;
+    utils_hooks__hooks.locales               = locale_locales__listLocales;
     utils_hooks__hooks.weekdaysShort         = lists__listWeekdaysShort;
     utils_hooks__hooks.normalizeUnits        = normalizeUnits;
     utils_hooks__hooks.relativeTimeThreshold = duration_humanize__getSetRelativeTimeThreshold;
+    utils_hooks__hooks.prototype             = momentPrototype;
 
     var _moment = utils_hooks__hooks;
 
     return _moment;
 
 }));
-},{}],107:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":85}],85:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
+},{}],86:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
   "version": "0.5.8",
@@ -31125,7 +31576,7 @@ module.exports={
     "marked": "^0.3.2",
     "mock-browser": "^0.91.34",
     "path": "^0.4.9",
-    "phantomjs": "^1.9.18",
+    "phantomjs": "^2.1.3",
     "proxyquire": "^1.7.3",
     "proxyquire-universal": "^1.0.8",
     "proxyquireify": "^3.0.0",
@@ -31140,7 +31591,7 @@ module.exports={
   }
 }
 
-},{}],108:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /* global window */
 //log.debug('Setting up d3');
 'use strict';
@@ -31611,7 +32062,7 @@ module.exports = d3;
 })();
 /* jshint ignore:end */
 
-},{"d3":4}],109:[function(require,module,exports){
+},{"d3":2}],88:[function(require,module,exports){
 'use strict';
 
 var Logger = require('../../logger');
@@ -31698,7 +32149,7 @@ exports.relationType = {
     DEPENDENCY: 3
 };
 
-},{"../../logger":127}],110:[function(require,module,exports){
+},{"../../logger":106}],89:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -32007,7 +32458,7 @@ module.exports.draw = function (text, id) {
     //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":108,"../../logger":127,"./classDb":109,"./parser/classDiagram":111,"dagre":54}],111:[function(require,module,exports){
+},{"../../d3":87,"../../logger":106,"./classDb":88,"./parser/classDiagram":90,"dagre":31}],90:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -32809,7 +33260,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],112:[function(require,module,exports){
+},{"_process":85,"fs":1,"path":84}],91:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -32844,7 +33295,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":127}],113:[function(require,module,exports){
+},{"../../logger":106}],92:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -32879,7 +33330,7 @@ exports.draw = function (txt, id, ver) {
 
     /*
     var box = exports.bounds.getBounds();
-      var height = box.stopy-box.starty+2*conf.diagramMarginY;
+     var height = box.stopy-box.starty+2*conf.diagramMarginY;
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;*/
 
     svg.attr('height', 100);
@@ -32887,7 +33338,7 @@ exports.draw = function (txt, id, ver) {
     //svg.attr('viewBox', '0 0 300 150');
 };
 
-},{"../../d3":108,"../../logger":127,"./exampleDb":112,"./parser/example.js":114}],114:[function(require,module,exports){
+},{"../../d3":87,"../../logger":106,"./exampleDb":91,"./parser/example.js":93}],93:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -33533,7 +33984,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],115:[function(require,module,exports){
+},{"_process":85,"fs":1,"path":84}],94:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -33557,7 +34008,7 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":127,"dagre-d3":5}],116:[function(require,module,exports){
+},{"../../logger":106,"dagre-d3":3}],95:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -34030,7 +34481,7 @@ exports.draw = function (text, id, isDot) {
     }
 };
 
-},{"../../d3":108,"../../logger":127,"./dagre-d3":115,"./graphDb":117,"./parser/dot":118,"./parser/flow":119}],117:[function(require,module,exports){
+},{"../../d3":87,"../../logger":106,"./dagre-d3":94,"./graphDb":96,"./parser/dot":97,"./parser/flow":98}],96:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-03.
@@ -34419,7 +34870,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../d3":108,"../../logger":127}],118:[function(require,module,exports){
+},{"../../d3":87,"../../logger":106}],97:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -35250,7 +35701,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],119:[function(require,module,exports){
+},{"_process":85,"fs":1,"path":84}],98:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -36360,7 +36811,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],120:[function(require,module,exports){
+},{"_process":85,"fs":1,"path":84}],99:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -36747,7 +37198,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":127,"moment":106}],121:[function(require,module,exports){
+},{"../../logger":106,"moment":83}],100:[function(require,module,exports){
 'use strict';
 
 var gantt = require('./parser/gantt').parser;
@@ -37101,7 +37552,7 @@ module.exports.draw = function (text, id) {
     }
 };
 
-},{"../../d3":108,"./ganttDb":120,"./parser/gantt":122,"moment":106}],122:[function(require,module,exports){
+},{"../../d3":87,"./ganttDb":99,"./parser/gantt":101,"moment":83}],101:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -37784,9 +38235,9 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],123:[function(require,module,exports){
+},{"_process":85,"fs":1,"path":84}],102:[function(require,module,exports){
 (function (process){
-/* parser generated by jison 0.4.15 */
+/* parser generated by jison 0.4.17 */
 /*
   Returns a Parser object of the following structure:
 
@@ -37865,63 +38316,75 @@ var sequenceDiagram = (function () {
     var o = function o(k, v, _o, l) {
         for (_o = _o || {}, l = k.length; l--; _o[k[l]] = v);return _o;
     },
-        $V0 = [2, 2],
-        $V1 = [1, 5],
-        $V2 = [1, 7],
-        $V3 = [1, 8],
-        $V4 = [1, 11],
-        $V5 = [1, 12],
-        $V6 = [1, 13],
+        $V0 = [1, 2],
+        $V1 = [1, 3],
+        $V2 = [1, 4],
+        $V3 = [2, 4],
+        $V4 = [1, 9],
+        $V5 = [1, 11],
+        $V6 = [1, 12],
         $V7 = [1, 14],
-        $V8 = [1, 16],
+        $V8 = [1, 15],
         $V9 = [1, 17],
-        $Va = [1, 7, 9, 10, 16, 18, 19, 20, 21, 22, 23, 33],
-        $Vb = [7, 9, 10, 16, 18, 19, 20, 21, 23, 33],
-        $Vc = [1, 53];
+        $Va = [1, 18],
+        $Vb = [1, 19],
+        $Vc = [1, 20],
+        $Vd = [1, 22],
+        $Ve = [1, 23],
+        $Vf = [1, 4, 5, 10, 15, 16, 18, 20, 21, 22, 23, 24, 25, 37],
+        $Vg = [4, 5, 10, 15, 16, 18, 20, 21, 22, 23, 25, 37],
+        $Vh = [35, 36, 37],
+        $Vi = [1, 67];
     var parser = { trace: function trace() {},
         yy: {},
-        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "line": 6, "SPACE": 7, "statement": 8, "NL": 9, "participant": 10, "actor": 11, "AS": 12, "restOfLine": 13, "signal": 14, "note_statement": 15, "title": 16, "text": 17, "loop": 18, "end": 19, "opt": 20, "alt": 21, "else": 22, "note": 23, "placement": 24, "text2": 25, "over": 26, "actor_pair": 27, "spaceList": 28, ",": 29, "left_of": 30, "right_of": 31, "signaltype": 32, "ACTOR": 33, "SOLID_OPEN_ARROW": 34, "DOTTED_OPEN_ARROW": 35, "SOLID_ARROW": 36, "DOTTED_ARROW": 37, "SOLID_CROSS": 38, "DOTTED_CROSS": 39, "TXT": 40, "$accept": 0, "$end": 1 },
-        terminals_: { 2: "error", 4: "SD", 7: "SPACE", 9: "NL", 10: "participant", 12: "AS", 13: "restOfLine", 16: "title", 17: "text", 18: "loop", 19: "end", 20: "opt", 21: "alt", 22: "else", 23: "note", 26: "over", 29: ",", 30: "left_of", 31: "right_of", 33: "ACTOR", 34: "SOLID_OPEN_ARROW", 35: "DOTTED_OPEN_ARROW", 36: "SOLID_ARROW", 37: "DOTTED_ARROW", 38: "SOLID_CROSS", 39: "DOTTED_CROSS", 40: "TXT" },
-        productions_: [0, [3, 2], [5, 0], [5, 2], [6, 2], [6, 1], [6, 1], [8, 5], [8, 3], [8, 2], [8, 2], [8, 4], [8, 4], [8, 4], [8, 7], [15, 4], [15, 4], [28, 2], [28, 1], [27, 3], [27, 1], [24, 1], [24, 1], [14, 4], [11, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [25, 1]],
+        symbols_: { "error": 2, "start": 3, "SPACE": 4, "NL": 5, "SD": 6, "document": 7, "line": 8, "statement": 9, "participant": 10, "actor": 11, "AS": 12, "restOfLine": 13, "signal": 14, "activate": 15, "deactivate": 16, "note_statement": 17, "title": 18, "text": 19, "loop": 20, "end": 21, "opt": 22, "alt": 23, "else": 24, "note": 25, "placement": 26, "text2": 27, "over": 28, "actor_pair": 29, "spaceList": 30, ",": 31, "left_of": 32, "right_of": 33, "signaltype": 34, "+": 35, "-": 36, "ACTOR": 37, "SOLID_OPEN_ARROW": 38, "DOTTED_OPEN_ARROW": 39, "SOLID_ARROW": 40, "DOTTED_ARROW": 41, "SOLID_CROSS": 42, "DOTTED_CROSS": 43, "TXT": 44, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "SPACE", 5: "NL", 6: "SD", 10: "participant", 12: "AS", 13: "restOfLine", 15: "activate", 16: "deactivate", 18: "title", 19: "text", 20: "loop", 21: "end", 22: "opt", 23: "alt", 24: "else", 25: "note", 28: "over", 31: ",", 32: "left_of", 33: "right_of", 35: "+", 36: "-", 37: "ACTOR", 38: "SOLID_OPEN_ARROW", 39: "DOTTED_OPEN_ARROW", 40: "SOLID_ARROW", 41: "DOTTED_ARROW", 42: "SOLID_CROSS", 43: "DOTTED_CROSS", 44: "TXT" },
+        productions_: [0, [3, 2], [3, 2], [3, 2], [7, 0], [7, 2], [8, 2], [8, 1], [8, 1], [9, 5], [9, 3], [9, 2], [9, 3], [9, 3], [9, 2], [9, 4], [9, 4], [9, 4], [9, 7], [17, 4], [17, 4], [30, 2], [30, 1], [29, 3], [29, 1], [26, 1], [26, 1], [14, 5], [14, 5], [14, 4], [11, 1], [34, 1], [34, 1], [34, 1], [34, 1], [34, 1], [34, 1], [27, 1]],
         performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
             /* this == yyval */
 
             var $0 = $$.length - 1;
             switch (yystate) {
-                case 1:
+                case 3:
                     yy.apply($$[$0]);return $$[$0];
                     break;
-                case 2:
+                case 4:
                     this.$ = [];
                     break;
-                case 3:
+                case 5:
                     $$[$0 - 1].push($$[$0]);this.$ = $$[$0 - 1];
                     break;
-                case 4:case 5:
+                case 6:case 7:
                     this.$ = $$[$0];
                     break;
-                case 6:
+                case 8:
                     this.$ = [];
                     break;
-                case 7:
+                case 9:
                     $$[$0 - 3].description = $$[$0 - 1];this.$ = $$[$0 - 3];
                     break;
-                case 8:
+                case 10:
                     this.$ = $$[$0 - 1];
                     break;
                 case 12:
+                    this.$ = { type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0 - 1] };
+                    break;
+                case 13:
+                    this.$ = { type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0 - 1] };
+                    break;
+                case 16:
 
                     $$[$0 - 1].unshift({ type: 'loopStart', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_START });
                     $$[$0 - 1].push({ type: 'loopEnd', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_END });
                     this.$ = $$[$0 - 1];
                     break;
-                case 13:
+                case 17:
 
                     $$[$0 - 1].unshift({ type: 'optStart', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_START });
                     $$[$0 - 1].push({ type: 'optEnd', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_END });
                     this.$ = $$[$0 - 1];
                     break;
-                case 14:
+                case 18:
 
                     // Alt start
                     $$[$0 - 4].unshift({ type: 'altStart', altText: $$[$0 - 5], signalType: yy.LINETYPE.ALT_START });
@@ -37935,11 +38398,11 @@ var sequenceDiagram = (function () {
 
                     this.$ = $$[$0 - 4];
                     break;
-                case 15:
+                case 19:
 
                     this.$ = [$$[$0 - 1], { type: 'addNote', placement: $$[$0 - 2], actor: $$[$0 - 1].actor, text: $$[$0] }];
                     break;
-                case 16:
+                case 20:
 
                     // Coerce actor_pair into a [to, from, ...] array
                     $$[$0 - 2] = [].concat($$[$0 - 1], $$[$0 - 1]).slice(0, 2);
@@ -37947,49 +38410,55 @@ var sequenceDiagram = (function () {
                     $$[$0 - 2][1] = $$[$0 - 2][1].actor;
                     this.$ = [$$[$0 - 1], { type: 'addNote', placement: yy.PLACEMENT.OVER, actor: $$[$0 - 2].slice(0, 2), text: $$[$0] }];
                     break;
-                case 19:
+                case 23:
                     this.$ = [$$[$0 - 2], $$[$0]];
                     break;
-                case 20:
+                case 24:
                     this.$ = $$[$0];
                     break;
-                case 21:
+                case 25:
                     this.$ = yy.PLACEMENT.LEFTOF;
                     break;
-                case 22:
+                case 26:
                     this.$ = yy.PLACEMENT.RIGHTOF;
                     break;
-                case 23:
-                    this.$ = [$$[$0 - 3], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 3].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 2], msg: $$[$0] }];
-                    break;
-                case 24:
-                    this.$ = { type: 'addActor', actor: $$[$0] };
-                    break;
-                case 25:
-                    this.$ = yy.LINETYPE.SOLID_OPEN;
-                    break;
-                case 26:
-                    this.$ = yy.LINETYPE.DOTTED_OPEN;
-                    break;
                 case 27:
-                    this.$ = yy.LINETYPE.SOLID;
+                    this.$ = [$$[$0 - 4], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 4].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 3], msg: $$[$0] }, { type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0 - 1] }];
                     break;
                 case 28:
-                    this.$ = yy.LINETYPE.DOTTED;
+                    this.$ = [$$[$0 - 4], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 4].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 3], msg: $$[$0] }, { type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0 - 4] }];
                     break;
                 case 29:
-                    this.$ = yy.LINETYPE.SOLID_CROSS;
+                    this.$ = [$$[$0 - 3], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 3].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 2], msg: $$[$0] }];
                     break;
                 case 30:
-                    this.$ = yy.LINETYPE.DOTTED_CROSS;
+                    this.$ = { type: 'addActor', actor: $$[$0] };
                     break;
                 case 31:
+                    this.$ = yy.LINETYPE.SOLID_OPEN;
+                    break;
+                case 32:
+                    this.$ = yy.LINETYPE.DOTTED_OPEN;
+                    break;
+                case 33:
+                    this.$ = yy.LINETYPE.SOLID;
+                    break;
+                case 34:
+                    this.$ = yy.LINETYPE.DOTTED;
+                    break;
+                case 35:
+                    this.$ = yy.LINETYPE.SOLID_CROSS;
+                    break;
+                case 36:
+                    this.$ = yy.LINETYPE.DOTTED_CROSS;
+                    break;
+                case 37:
                     this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
                     break;
             }
         },
-        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o([1, 7, 9, 10, 16, 18, 20, 21, 23, 33], $V0, { 5: 3 }), { 1: [2, 1], 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 3]), { 8: 18, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 5]), o($Va, [2, 6]), { 11: 19, 33: $V9 }, { 9: [1, 20] }, { 9: [1, 21] }, { 7: [1, 22] }, { 13: [1, 23] }, { 13: [1, 24] }, { 13: [1, 25] }, { 32: 26, 34: [1, 27], 35: [1, 28], 36: [1, 29], 37: [1, 30], 38: [1, 31], 39: [1, 32] }, { 24: 33, 26: [1, 34], 30: [1, 35], 31: [1, 36] }, o([9, 12, 29, 34, 35, 36, 37, 38, 39, 40], [2, 24]), o($Va, [2, 4]), { 9: [1, 38], 12: [1, 37] }, o($Va, [2, 9]), o($Va, [2, 10]), { 17: [1, 39] }, o($Vb, $V0, { 5: 40 }), o($Vb, $V0, { 5: 41 }), o([7, 9, 10, 16, 18, 20, 21, 22, 23, 33], $V0, { 5: 42 }), { 11: 43, 33: $V9 }, { 33: [2, 25] }, { 33: [2, 26] }, { 33: [2, 27] }, { 33: [2, 28] }, { 33: [2, 29] }, { 33: [2, 30] }, { 11: 44, 33: $V9 }, { 11: 46, 27: 45, 33: $V9 }, { 33: [2, 21] }, { 33: [2, 22] }, { 13: [1, 47] }, o($Va, [2, 8]), { 9: [1, 48] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 49], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 50], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 22: [1, 51], 23: $V8, 33: $V9 }, { 25: 52, 40: $Vc }, { 25: 54, 40: $Vc }, { 25: 55, 40: $Vc }, { 29: [1, 56], 40: [2, 20] }, { 9: [1, 57] }, o($Va, [2, 11]), o($Va, [2, 12]), o($Va, [2, 13]), { 13: [1, 58] }, { 9: [2, 23] }, { 9: [2, 31] }, { 9: [2, 15] }, { 9: [2, 16] }, { 11: 59, 33: $V9 }, o($Va, [2, 7]), o($Vb, $V0, { 5: 60 }), { 40: [2, 19] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 61], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 14])],
-        defaultActions: { 27: [2, 25], 28: [2, 26], 29: [2, 27], 30: [2, 28], 31: [2, 29], 32: [2, 30], 35: [2, 21], 36: [2, 22], 52: [2, 23], 53: [2, 31], 54: [2, 15], 55: [2, 16], 59: [2, 19] },
+        table: [{ 3: 1, 4: $V0, 5: $V1, 6: $V2 }, { 1: [3] }, { 3: 5, 4: $V0, 5: $V1, 6: $V2 }, { 3: 6, 4: $V0, 5: $V1, 6: $V2 }, o([1, 4, 5, 10, 15, 16, 18, 20, 22, 23, 25, 37], $V3, { 7: 7 }), { 1: [2, 1] }, { 1: [2, 2] }, { 1: [2, 3], 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 22: $Vb, 23: $Vc, 25: $Vd, 37: $Ve }, o($Vf, [2, 5]), { 9: 24, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 22: $Vb, 23: $Vc, 25: $Vd, 37: $Ve }, o($Vf, [2, 7]), o($Vf, [2, 8]), { 11: 25, 37: $Ve }, { 5: [1, 26] }, { 11: 27, 37: $Ve }, { 11: 28, 37: $Ve }, { 5: [1, 29] }, { 4: [1, 30] }, { 13: [1, 31] }, { 13: [1, 32] }, { 13: [1, 33] }, { 34: 34, 38: [1, 35], 39: [1, 36], 40: [1, 37], 41: [1, 38], 42: [1, 39], 43: [1, 40] }, { 26: 41, 28: [1, 42], 32: [1, 43], 33: [1, 44] }, o([5, 12, 31, 38, 39, 40, 41, 42, 43, 44], [2, 30]), o($Vf, [2, 6]), { 5: [1, 46], 12: [1, 45] }, o($Vf, [2, 11]), { 5: [1, 47] }, { 5: [1, 48] }, o($Vf, [2, 14]), { 19: [1, 49] }, o($Vg, $V3, { 7: 50 }), o($Vg, $V3, { 7: 51 }), o([4, 5, 10, 15, 16, 18, 20, 22, 23, 24, 25, 37], $V3, { 7: 52 }), { 11: 55, 35: [1, 53], 36: [1, 54], 37: $Ve }, o($Vh, [2, 31]), o($Vh, [2, 32]), o($Vh, [2, 33]), o($Vh, [2, 34]), o($Vh, [2, 35]), o($Vh, [2, 36]), { 11: 56, 37: $Ve }, { 11: 58, 29: 57, 37: $Ve }, { 37: [2, 25] }, { 37: [2, 26] }, { 13: [1, 59] }, o($Vf, [2, 10]), o($Vf, [2, 12]), o($Vf, [2, 13]), { 5: [1, 60] }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 21: [1, 61], 22: $Vb, 23: $Vc, 25: $Vd, 37: $Ve }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 21: [1, 62], 22: $Vb, 23: $Vc, 25: $Vd, 37: $Ve }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 22: $Vb, 23: $Vc, 24: [1, 63], 25: $Vd, 37: $Ve }, { 11: 64, 37: $Ve }, { 11: 65, 37: $Ve }, { 27: 66, 44: $Vi }, { 27: 68, 44: $Vi }, { 27: 69, 44: $Vi }, { 31: [1, 70], 44: [2, 24] }, { 5: [1, 71] }, o($Vf, [2, 15]), o($Vf, [2, 16]), o($Vf, [2, 17]), { 13: [1, 72] }, { 27: 73, 44: $Vi }, { 27: 74, 44: $Vi }, { 5: [2, 29] }, { 5: [2, 37] }, { 5: [2, 19] }, { 5: [2, 20] }, { 11: 75, 37: $Ve }, o($Vf, [2, 9]), o($Vg, $V3, { 7: 76 }), { 5: [2, 27] }, { 5: [2, 28] }, { 44: [2, 23] }, { 4: $V4, 5: $V5, 8: 8, 9: 10, 10: $V6, 11: 21, 14: 13, 15: $V7, 16: $V8, 17: 16, 18: $V9, 20: $Va, 21: [1, 77], 22: $Vb, 23: $Vc, 25: $Vd, 37: $Ve }, o($Vf, [2, 18])],
+        defaultActions: { 5: [2, 1], 6: [2, 2], 43: [2, 25], 44: [2, 26], 66: [2, 29], 67: [2, 37], 68: [2, 19], 69: [2, 20], 73: [2, 27], 74: [2, 28], 75: [2, 23] },
         parseError: function parseError(str, hash) {
             if (hash.recoverable) {
                 this.trace(str);
@@ -37999,7 +38468,7 @@ var sequenceDiagram = (function () {
                     this.hash = hash;
                 };
 
-                _parseError.prototype = new Error();
+                _parseError.prototype = Error;
 
                 throw new _parseError(str, hash);
             }
@@ -38469,7 +38938,7 @@ var sequenceDiagram = (function () {
                 var YYSTATE = YY_START;
                 switch ($avoiding_name_collisions) {
                     case 0:
-                        return 9;
+                        return 5;
                         break;
                     case 1:
                         /* skip all whitespace */
@@ -38487,70 +38956,70 @@ var sequenceDiagram = (function () {
                         this.begin('ID');return 10;
                         break;
                     case 6:
-                        this.begin('ALIAS');return 33;
+                        this.begin('ALIAS');return 37;
                         break;
                     case 7:
                         this.popState();this.popState();this.begin('LINE');return 12;
                         break;
                     case 8:
-                        this.popState();this.popState();return 9;
+                        this.popState();this.popState();return 5;
                         break;
                     case 9:
-                        this.begin('LINE');return 18;
-                        break;
-                    case 10:
                         this.begin('LINE');return 20;
                         break;
+                    case 10:
+                        this.begin('LINE');return 22;
+                        break;
                     case 11:
-                        this.begin('LINE');return 21;
+                        this.begin('LINE');return 23;
                         break;
                     case 12:
-                        this.begin('LINE');return 22;
+                        this.begin('LINE');return 24;
                         break;
                     case 13:
                         this.popState();return 13;
                         break;
                     case 14:
-                        return 19;
+                        return 21;
                         break;
                     case 15:
-                        return 30;
+                        return 32;
                         break;
                     case 16:
-                        return 31;
-                        break;
-                    case 17:
-                        return 26;
-                        break;
-                    case 18:
-                        return 23;
-                        break;
-                    case 19:
-                        return 16;
-                        break;
-                    case 20:
-                        return 4;
-                        break;
-                    case 21:
-                        return 29;
-                        break;
-                    case 22:
-                        return 9;
-                        break;
-                    case 23:
                         return 33;
                         break;
+                    case 17:
+                        return 28;
+                        break;
+                    case 18:
+                        return 25;
+                        break;
+                    case 19:
+                        this.begin('ID');return 15;
+                        break;
+                    case 20:
+                        this.begin('ID');return 16;
+                        break;
+                    case 21:
+                        return 18;
+                        break;
+                    case 22:
+                        return 6;
+                        break;
+                    case 23:
+                        return 31;
+                        break;
                     case 24:
-                        return 36;
+                        return 5;
                         break;
                     case 25:
-                        return 37;
+                        yy_.yytext = yy_.yytext.trim();return 37;
                         break;
                     case 26:
-                        return 34;
+                        return 40;
                         break;
                     case 27:
-                        return 35;
+                        return 41;
                         break;
                     case 28:
                         return 38;
@@ -38559,18 +39028,30 @@ var sequenceDiagram = (function () {
                         return 39;
                         break;
                     case 30:
-                        return 40;
+                        return 42;
                         break;
                     case 31:
-                        return 9;
+                        return 43;
                         break;
                     case 32:
+                        return 44;
+                        break;
+                    case 33:
+                        return 35;
+                        break;
+                    case 34:
+                        return 36;
+                        break;
+                    case 35:
+                        return 5;
+                        break;
+                    case 36:
                         return 'INVALID';
                         break;
                 }
             },
-            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i, /^(?:as\b)/i, /^(?:(?:))/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
-            conditions: { "LINE": { "rules": [2, 3, 13], "inclusive": false }, "ALIAS": { "rules": [2, 3, 7, 8], "inclusive": false }, "ID": { "rules": [2, 3, 6], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], "inclusive": true } }
+            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i, /^(?:as\b)/i, /^(?:(?:))/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:activate\b)/i, /^(?:deactivate\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\+\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:\+)/i, /^(?:-)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "LINE": { "rules": [2, 3, 13], "inclusive": false }, "ALIAS": { "rules": [2, 3, 7, 8], "inclusive": false }, "ID": { "rules": [2, 3, 6], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36], "inclusive": true } }
         };
         return lexer;
     })();
@@ -38602,7 +39083,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],124:[function(require,module,exports){
+},{"_process":85,"fs":1,"path":84}],103:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-19.
@@ -38671,7 +39152,9 @@ exports.LINETYPE = {
     ALT_ELSE: 13,
     ALT_END: 14,
     OPT_START: 15,
-    OPT_END: 16
+    OPT_END: 16,
+    ACTIVE_START: 17,
+    ACTIVE_END: 18
 };
 
 exports.ARROWTYPE = {
@@ -38705,10 +39188,16 @@ exports.apply = function (param) {
             exports.apply(item);
         });
     } else {
-        // log.debug(param);
+        // console.info(param);
         switch (param.type) {
             case 'addActor':
                 exports.addActor(param.actor, param.actor, param.description);
+                break;
+            case 'activeStart':
+                exports.addSignal(param.actor, undefined, undefined, param.signalType);
+                break;
+            case 'activeEnd':
+                exports.addSignal(param.actor, undefined, undefined, param.signalType);
                 break;
             case 'addNote':
                 exports.addNote(param.actor, param.placement, param.text);
@@ -38748,7 +39237,7 @@ exports.apply = function (param) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":127}],125:[function(require,module,exports){
+},{"../../logger":106}],104:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -38768,7 +39257,7 @@ var conf = {
     diagramMarginY: 10,
     // Margin between actors
     actorMargin: 50,
-    // Width of actor moxes
+    // Width of actor boxes
     width: 150,
     // Height of actor boxes
     height: 65,
@@ -38782,7 +39271,10 @@ var conf = {
     mirrorActors: false,
     // Depending on css styling this might need adjustment
     // Prolongs the edge of the diagram downwards
-    bottomMarginAdj: 1
+    bottomMarginAdj: 1,
+
+    // width of activation box
+    activationWidth: 10
 };
 
 //var bb = getBBox('path');
@@ -38795,9 +39287,11 @@ exports.bounds = {
     },
     verticalPos: 0,
 
-    list: [],
+    sequenceItems: [],
+    activations: [],
     init: function init() {
-        this.list = [];
+        this.sequenceItems = [];
+        this.activations = [];
         this.data = {
             startx: undefined,
             stopx: undefined,
@@ -38813,24 +39307,33 @@ exports.bounds = {
             obj[key] = fun(val, obj[key]);
         }
     },
-    updateLoops: function updateLoops(startx, starty, stopx, stopy) {
+    updateBounds: function updateBounds(startx, starty, stopx, stopy) {
         var _self = this;
         var cnt = 0;
-        this.list.forEach(function (loop) {
-            cnt++;
-            // The loop list is a stack so the biggest margins in the beginning of the list
-            var n = _self.list.length - cnt + 1;
+        function updateFn(type) {
+            return function updateItemBounds(item) {
+                cnt++;
+                // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
+                var n = _self.sequenceItems.length - cnt + 1;
 
-            _self.updateVal(loop, 'startx', startx - n * conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'starty', starty - n * conf.boxMargin, Math.min);
-            _self.updateVal(loop, 'stopx', stopx + n * conf.boxMargin, Math.max);
-            _self.updateVal(loop, 'stopy', stopy + n * conf.boxMargin, Math.max);
+                _self.updateVal(item, 'starty', starty - n * conf.boxMargin, Math.min);
+                _self.updateVal(item, 'stopy', stopy + n * conf.boxMargin, Math.max);
 
-            _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min);
-            _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
-            _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max);
-            _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
-        });
+                _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min);
+                _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max);
+
+                if (!(type == 'activation')) {
+                    _self.updateVal(item, 'startx', startx - n * conf.boxMargin, Math.min);
+                    _self.updateVal(item, 'stopx', stopx + n * conf.boxMargin, Math.max);
+
+                    _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min);
+                    _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max);
+                }
+            };
+        }
+
+        this.sequenceItems.forEach(updateFn());
+        this.activations.forEach(updateFn('activation'));
     },
     insert: function insert(startx, starty, stopx, stopy) {
 
@@ -38846,21 +39349,37 @@ exports.bounds = {
         this.updateVal(exports.bounds.data, 'stopx', _stopx, Math.max);
         this.updateVal(exports.bounds.data, 'stopy', _stopy, Math.max);
 
-        this.updateLoops(_startx, _starty, _stopx, _stopy);
+        this.updateBounds(_startx, _starty, _stopx, _stopy);
+    },
+    newActivation: function newActivation(message, diagram) {
+        var actorRect = sq.yy.getActors()[message.from.actor];
+        var stackedSize = actorActivations(message.from.actor).length;
+        var x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
+        this.activations.push({ startx: x, starty: this.verticalPos + 2, stopx: x + conf.activationWidth, stopy: undefined,
+            actor: message.from.actor,
+            anchored: svgDraw.anchorElement(diagram)
+        });
+    },
+    endActivation: function endActivation(message) {
+        // find most recent activation for given actor
+        var lastActorActivationIdx = this.activations.map(function (activation) {
+            return activation.actor;
+        }).lastIndexOf(message.from.actor);
+        var activation = this.activations.splice(lastActorActivationIdx, 1)[0];
+        return activation;
     },
     newLoop: function newLoop(title) {
-        this.list.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title });
+        this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title });
     },
     endLoop: function endLoop() {
-        var loop = this.list.pop();
-        //loop.stopy =  exports.bounds.getVerticalPos();
+        var loop = this.sequenceItems.pop();
         return loop;
     },
     addElseToLoop: function addElseToLoop(message) {
-        var loop = this.list.pop();
+        var loop = this.sequenceItems.pop();
         loop.elsey = exports.bounds.getVerticalPos();
         loop.elseText = message;
-        this.list.push(loop);
+        this.sequenceItems.push(loop);
     },
     bumpVerticalPos: function bumpVerticalPos(bump) {
         this.verticalPos = this.verticalPos + bump;
@@ -38996,7 +39515,7 @@ module.exports.drawActors = function (diagram, actors, actorKeys, verticalPos) {
         // Add some rendering data to the object
         actors[key].x = i * conf.actorMargin + i * conf.width;
         actors[key].y = verticalPos;
-        actors[key].width = conf.diagramMarginY;
+        actors[key].width = conf.diagramMarginX;
         actors[key].height = conf.diagramMarginY;
 
         // Draw the box with the attached line
@@ -39016,6 +39535,27 @@ module.exports.setConf = function (cnf) {
         conf[key] = cnf[key];
     });
 };
+
+var actorActivations = function actorActivations(actor) {
+    return module.exports.bounds.activations.filter(function (activation) {
+        return activation.actor == actor;
+    });
+};
+
+var actorFlowVerticaBounds = function actorFlowVerticaBounds(actor) {
+    // handle multiple stacked activations for same actor
+    var actors = sq.yy.getActors();
+    var activations = actorActivations(actor);
+
+    var left = activations.reduce(function (acc, activation) {
+        return Math.min(acc, activation.startx);
+    }, actors[actor].x + conf.width / 2);
+    var right = activations.reduce(function (acc, activation) {
+        return Math.max(acc, activation.stopx);
+    }, actors[actor].x + conf.width / 2);
+    return [left, right];
+};
+
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
@@ -39042,6 +39582,19 @@ module.exports.draw = function (text, id) {
     svgDraw.insertArrowHead(diagram);
     svgDraw.insertArrowCrossHead(diagram);
 
+    function activeEnd(msg, verticalPos) {
+        var activationData = exports.bounds.endActivation(msg);
+        if (activationData.starty + 18 > verticalPos) {
+            activationData.starty = verticalPos - 6;
+            verticalPos += 12;
+        }
+        svgDraw.drawActivation(diagram, activationData, verticalPos, conf);
+
+        exports.bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
+    }
+
+    var lastMsg;
+
     // Draw the messages/signals
     messages.forEach(function (msg) {
         var loopData;
@@ -39065,6 +39618,12 @@ module.exports.draw = function (text, id) {
                     forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
                     drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, exports.bounds.getVerticalPos(), msg, forceWidth);
                 }
+                break;
+            case sq.yy.LINETYPE.ACTIVE_START:
+                exports.bounds.newActivation(msg, diagram);
+                break;
+            case sq.yy.LINETYPE.ACTIVE_END:
+                activeEnd(msg, exports.bounds.getVerticalPos());
                 break;
             case sq.yy.LINETYPE.LOOP_START:
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
@@ -39107,12 +39666,23 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:
-                exports.bounds.bumpVerticalPos(conf.messageMargin);
-                startx = actors[msg.from].x + conf.width / 2;
-                stopx = actors[msg.to].x + conf.width / 2;
+                try {
+                    lastMsg = msg;
+                    exports.bounds.bumpVerticalPos(conf.messageMargin);
+                    var fromBounds = actorFlowVerticaBounds(msg.from);
+                    var toBounds = actorFlowVerticaBounds(msg.to);
+                    var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
+                    var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
+                    startx = fromBounds[fromIdx];
+                    stopx = toBounds[toIdx];
 
-                drawMessage(diagram, startx, stopx, exports.bounds.getVerticalPos(), msg);
-
+                    var verticalPos = exports.bounds.getVerticalPos();
+                    drawMessage(diagram, startx, stopx, verticalPos, msg);
+                    var allBounds = fromBounds.concat(toBounds);
+                    exports.bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos);
+                } catch (e) {
+                    console.error('error while drawing message', e);
+                }
         }
     });
 
@@ -39147,7 +39717,7 @@ module.exports.draw = function (text, id) {
     diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":108,"../../logger":127,"./parser/sequenceDiagram":123,"./sequenceDb":124,"./svgDraw":126}],126:[function(require,module,exports){
+},{"../../d3":87,"../../logger":106,"./parser/sequenceDiagram":102,"./sequenceDb":103,"./svgDraw":105}],105:[function(require,module,exports){
 /**
  * Created by knut on 14-12-20.
  */
@@ -39259,6 +39829,26 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
     .attr('x', center).attr('y', verticalPos + conf.height / 2 + 5).attr('class', 'actor').style('text-anchor', 'middle').text(description);
 };
 
+exports.anchorElement = function (elem) {
+    return elem.append('g');
+};
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param elem - element to append activation rect
+ * @param bounds - activation box bounds
+ * @param verticalPos - precise y cooridnate of bottom activation box edge
+ */
+exports.drawActivation = function (elem, bounds, verticalPos) {
+    var rect = exports.getNoteRect();
+    var g = bounds.anchored;
+    rect.x = bounds.startx;
+    rect.y = bounds.starty;
+    rect.fill = '#f4f4f4';
+    rect.width = bounds.stopx - bounds.startx;
+    rect.height = verticalPos - bounds.starty;
+    exports.drawRect(g, rect);
+};
+
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -39355,7 +39945,7 @@ exports.getNoteRect = function () {
     return rect;
 };
 
-},{}],127:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 /**
  * #logger
  * logger = require('logger').create()
@@ -39455,7 +40045,7 @@ function Log(level) {
 
 exports.Log = Log;
 
-},{}],128:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 (function (global){
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
@@ -39712,7 +40302,7 @@ if (typeof document !== 'undefined') {
 //}));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":107,"./logger":127,"./mermaidAPI":129,"he":105}],129:[function(require,module,exports){
+},{"../package.json":86,"./logger":106,"./mermaidAPI":108,"he":81}],108:[function(require,module,exports){
 (function (global){
 /**
  * ---
@@ -40249,7 +40839,7 @@ global.mermaidAPI = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":107,"./d3":108,"./diagrams/classDiagram/classDb":109,"./diagrams/classDiagram/classRenderer":110,"./diagrams/classDiagram/parser/classDiagram":111,"./diagrams/example/exampleDb":112,"./diagrams/example/exampleRenderer":113,"./diagrams/example/parser/example":114,"./diagrams/flowchart/flowRenderer":116,"./diagrams/flowchart/graphDb":117,"./diagrams/flowchart/parser/dot":118,"./diagrams/flowchart/parser/flow":119,"./diagrams/gantt/ganttDb":120,"./diagrams/gantt/ganttRenderer":121,"./diagrams/gantt/parser/gantt":122,"./diagrams/sequenceDiagram/parser/sequenceDiagram":123,"./diagrams/sequenceDiagram/sequenceDb":124,"./diagrams/sequenceDiagram/sequenceRenderer":125,"./logger":127,"./utils":130}],130:[function(require,module,exports){
+},{"../package.json":86,"./d3":87,"./diagrams/classDiagram/classDb":88,"./diagrams/classDiagram/classRenderer":89,"./diagrams/classDiagram/parser/classDiagram":90,"./diagrams/example/exampleDb":91,"./diagrams/example/exampleRenderer":92,"./diagrams/example/parser/example":93,"./diagrams/flowchart/flowRenderer":95,"./diagrams/flowchart/graphDb":96,"./diagrams/flowchart/parser/dot":97,"./diagrams/flowchart/parser/flow":98,"./diagrams/gantt/ganttDb":99,"./diagrams/gantt/ganttRenderer":100,"./diagrams/gantt/parser/gantt":101,"./diagrams/sequenceDiagram/parser/sequenceDiagram":102,"./diagrams/sequenceDiagram/sequenceDb":103,"./diagrams/sequenceDiagram/sequenceRenderer":104,"./logger":106,"./utils":109}],109:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -40389,5 +40979,5 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
 
 exports.cloneCssStyles = cloneCssStyles;
 
-},{"./logger":127}]},{},[128])(128)
+},{"./logger":106}]},{},[107])(107)
 });
