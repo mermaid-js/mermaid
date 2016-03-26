@@ -48,8 +48,8 @@ line
     ;
 
 statement
-    : COMMIT
-    | BRANCH ID
-    | MERGE ID
+    : COMMIT {yy.pushCommit()}
+    | BRANCH ID {yy.createBranch($2)}
+    | MERGE ID {yy.mergeBranch($2)}
 ;
 
