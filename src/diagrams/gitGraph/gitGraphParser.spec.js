@@ -176,5 +176,7 @@ describe('when parsing a gitGraph',function() {
         expect(parser.yy.getCurrentBranch()).toBe("newbranch");
         expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);
         expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["master"]);
+
+        parser.yy.prettyPrint();
     });
 });

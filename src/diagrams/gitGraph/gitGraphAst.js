@@ -1,6 +1,7 @@
 var crypto = require("crypto");
 var Logger = require('../../logger');
 var log = new Logger.Log();
+var _ = require("lodash");
 //var log = new Logger.Log(1);
 
 
@@ -42,9 +43,11 @@ function isReachableFrom(currentCommit, otherCommit) {
     if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
     return false;
 }
+
 exports.setDirection = function(dir) {
     direction = dir;
 }
+
 exports.commit = function(msg) {
     var commit = { id: getId(),
         message: msg,
@@ -99,6 +102,14 @@ exports.reset = function(ref) {
     var commit = ref == 'HEAD' ? head : commits[branches[ref]];
     head = commit;
     branches[curBranch] = commit.id;
+}
+
+exports.prettyPrint = function() {
+    var commitArr = Object.keys(commits).map(function (key) {
+        return commits[key];
+    });
+    var sortedCommits = _.orderBy(commitArr, ['seq'], ['desc']);
+    console.log(sortedCommits);
 }
 
 exports.clear = function () {
