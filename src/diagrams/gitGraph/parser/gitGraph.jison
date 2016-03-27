@@ -61,9 +61,15 @@ statement
     | BRANCH ID {yy.branch($2)}
     | CHECKOUT ID {yy.checkout($2)}
     | MERGE ID {yy.merge($2)}
-;
+    | RESET reset_arg {yy.reset($2)}
+    ;
 
 commit_arg
     : /* empty */ {$$ = ""}
     | STR {$$=$1}
+    ;
+
+reset_arg
+    : 'HEAD' 
+    | ID
     ;

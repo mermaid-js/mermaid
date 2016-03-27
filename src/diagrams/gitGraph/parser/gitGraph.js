@@ -72,14 +72,14 @@
   }
 */
 var gitGraph = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[7,11,12,14,16,17],$V1=[2,3],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[7,11,12,14,16,17,18],$V1=[2,3],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14],$V7=[1,15];
 var parser = {trace: function trace() {
         Jison.print.apply(null, arguments);
     },
 yy: {},
-symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"DIR":8,"line":9,"statement":10,"NL":11,"COMMIT":12,"commit_arg":13,"BRANCH":14,"ID":15,"CHECKOUT":16,"MERGE":17,"STR":18,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"GG",5:":",7:"EOF",8:"DIR",11:"NL",12:"COMMIT",14:"BRANCH",15:"ID",16:"CHECKOUT",17:"MERGE",18:"STR"},
-productions_: [0,[3,4],[3,5],[6,0],[6,2],[9,2],[9,1],[10,2],[10,2],[10,2],[10,2],[13,0],[13,1]],
+symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"DIR":8,"line":9,"statement":10,"NL":11,"COMMIT":12,"commit_arg":13,"BRANCH":14,"ID":15,"CHECKOUT":16,"MERGE":17,"RESET":18,"reset_arg":19,"STR":20,"HEAD":21,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"GG",5:":",7:"EOF",8:"DIR",11:"NL",12:"COMMIT",14:"BRANCH",15:"ID",16:"CHECKOUT",17:"MERGE",18:"RESET",20:"STR",21:"HEAD"},
+productions_: [0,[3,4],[3,5],[6,0],[6,2],[9,2],[9,1],[10,2],[10,2],[10,2],[10,2],[10,2],[13,0],[13,1],[19,1],[19,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -113,15 +113,18 @@ case 10:
 yy.merge($$[$0])
 break;
 case 11:
-this.$ = ""
+yy.reset($$[$0])
 break;
 case 12:
+this.$ = ""
+break;
+case 13:
 this.$=$$[$0]
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3],8:[1,4]},o($V0,$V1,{6:5}),{5:[1,6]},{7:[1,7],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6},o($V0,$V1,{6:15}),{1:[2,1]},o($V0,[2,4]),{11:[1,16]},o($V0,[2,6]),{11:[2,11],13:17,18:[1,18]},{15:[1,19]},{15:[1,20]},{15:[1,21]},{7:[1,22],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6},o($V0,[2,5]),{11:[2,7]},{11:[2,12]},{11:[2,8]},{11:[2,9]},{11:[2,10]},{1:[2,2]}],
-defaultActions: {7:[2,1],17:[2,7],18:[2,12],19:[2,8],20:[2,9],21:[2,10],22:[2,2]},
+table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3],8:[1,4]},o($V0,$V1,{6:5}),{5:[1,6]},{7:[1,7],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7},o($V0,$V1,{6:16}),{1:[2,1]},o($V0,[2,4]),{11:[1,17]},o($V0,[2,6]),{11:[2,12],13:18,20:[1,19]},{15:[1,20]},{15:[1,21]},{15:[1,22]},{15:[1,25],19:23,21:[1,24]},{7:[1,26],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7},o($V0,[2,5]),{11:[2,7]},{11:[2,13]},{11:[2,8]},{11:[2,9]},{11:[2,10]},{11:[2,11]},{11:[2,14]},{11:[2,15]},{1:[2,2]}],
+defaultActions: {7:[2,1],18:[2,7],19:[2,13],20:[2,8],21:[2,9],22:[2,10],23:[2,11],24:[2,14],25:[2,15],26:[2,2]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -616,7 +619,7 @@ case 6:return 14;
 break;
 case 7:return 17;
 break;
-case 8:return 'RESET';
+case 8:return 18;
 break;
 case 9:return 16;
 break;
@@ -632,7 +635,7 @@ case 14:this.begin("string");
 break;
 case 15:this.popState();
 break;
-case 16:return 18;
+case 16:return 20;
 break;
 case 17:return 15;
 break;

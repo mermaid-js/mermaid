@@ -76,22 +76,23 @@ describe('when parsing a gitGraph',function() {
         expect(parser.yy.getCurrentBranch()).toBe("master");
     });
 
-    it('should handle branch statement', function () {
+    it('it should reset a branch', function () {
         var str = 'gitGraph:\n' +
         'commit\n' +
         'commit\n' +
         'branch newbranch\n' +
+        'checkout newbranch\n' +
         'commit\n' +
-        'commit\n';
+        'reset master\n';
 
         console.log(parser.parse(str));
         var commits = parser.yy.getCommits();
         console.log(commits);
 
-        expect(Object.keys(commits).length).toBe(4);
-        expect(parser.yy.getCurrentBranch()).toBe("master");
-        expect(Object.keys(parser.yy.getBranches())).toContain('newbranch');
-        expect(Object.keys(parser.yy.getBranches()).length).toBe(2);
+        expect(Object.keys(commits).length).toBe(3);
+        expect(parser.yy.getCurrentBranch()).toBe("newbranch");
+        expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);
+        expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["newbranch"]);
     });
 
 });

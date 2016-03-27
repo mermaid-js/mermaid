@@ -41,6 +41,14 @@ exports.checkout = function(branch) {
     var id = branches[curBranch];
     head = commits[id];
 }
+
+exports.reset = function(ref) {
+    log.debug("in reset");
+    var commit = ref == 'HEAD' ? head : commits[branches[ref]];
+    head = commit;
+    branches[curBranch] = commit.id;
+}
+
 exports.clear = function () {
     commits = {};
     head  = null;
@@ -52,3 +60,4 @@ exports.getBranches = function() { return branches; }
 exports.getCommits = function() { return commits; }
 exports.getCurrentBranch = function() { return curBranch; }
 exports.getDirection = function() { return direction; }
+exports.getHead = function() { return head; }
