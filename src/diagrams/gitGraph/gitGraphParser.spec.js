@@ -85,12 +85,31 @@ describe('when parsing a gitGraph',function() {
         'commit\n' +
         'reset master\n';
 
-        console.log(parser.parse(str));
-        var commits = parser.yy.getCommits();
-        console.log(commits);
+        parser.parse(str);
 
+        var commits = parser.yy.getCommits();
         expect(Object.keys(commits).length).toBe(3);
         expect(parser.yy.getCurrentBranch()).toBe("newbranch");
+        expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);
+        expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["newbranch"]);
+    });
+
+    it('it should handle fast forwardable merges', function () {
+        var str = 'gitGraph:\n' +
+        'commit\n' +
+        'branch newbranch\n' +
+        'checkout newbranch\n' +
+        'commit\n' +
+        'commit\n' +
+        'checkout master\n'+
+        'merge newbranch\n';
+
+        parser.parse(str);
+
+        var commits = parser.yy.getCommits();
+        console.log(commits);
+        expect(Object.keys(commits).length).toBe(3);
+        expect(parser.yy.getCurrentBranch()).toBe("master");
         expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);
         expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["newbranch"]);
     });

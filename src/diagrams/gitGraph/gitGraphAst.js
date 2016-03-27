@@ -8,17 +8,35 @@ var head  = null;
 var branches = { "master" : head };
 var curBranch = "master";
 var direction = "LR";
+var seq = 0;
 
 function getId() {
     return crypto.randomBytes(20).toString('hex').substring(0, 7);
 }
 
+
+function isfastforwardable(current, other) {
+    var currentCommit = commits[branches[current]];
+    var currentSeq = currentCommit.seq;
+    var otherCommit = commits[branches[other]];
+    var otherSeq = otherCommit.seq;
+
+    log.debug(commits);
+    log.debug(currentCommit, otherCommit);
+    while (currentSeq <= otherSeq && currentCommit != otherCommit) {
+        // only if source has more commits
+        otherCommit = commits[otherCommit.parent];
+    }
+    log.debug(currentCommit.id, otherCommit.id);
+    return currentCommit.id == otherCommit.id;
+}
 exports.setDirection = function(dir) {
     direction = dir;
 }
 exports.commit = function(msg) {
     var commit = { id: getId(),
         message: msg,
+        seq: seq++,
         parent:  head == null ? null : head.id};
     head = commit;
     commits[commit.id] = commit;
@@ -31,7 +49,12 @@ exports.branch = function(name) {
     log.debug("in createBranch");
 }
 
-exports.merge = function() {
+exports.merge = function(sourceBranch) {
+    if (isfastforwardable(curBranch, sourceBranch)){
+        branches[curBranch] = branches[sourceBranch];
+        head = commits[branches[curBranch]];
+    }
+    log.debug(branches);
     log.debug("in mergeBranch");
 }
 
@@ -54,6 +77,7 @@ exports.clear = function () {
     head  = null;
     branches = { "master" : head };
     curBranch = "master";
+    seq =0;
 }
 
 exports.getBranches = function() { return branches; }
