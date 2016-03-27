@@ -153,4 +153,28 @@ describe('when parsing a gitGraph',function() {
         expect(parser.yy.getBranches()["newbranch"]).not.toEqual(parser.yy.getBranches()["master"]);
         expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["master"]);
     });
+
+    it('it should handle ff merge when history walk has two parents (merge commit)', function () {
+        var str = 'gitGraph:\n' +
+        'commit\n' +
+        'branch newbranch\n' +
+        'checkout newbranch\n' +
+        'commit\n' +
+        'commit\n' +
+        'checkout master\n' +
+        'commit\n' +
+        'merge newbranch\n' +
+        'commit\n' +
+        'checkout newbranch\n' +
+        'merge master\n' ;
+
+        parser.parse(str);
+
+        var commits = parser.yy.getCommits();
+        console.log(commits);
+        expect(Object.keys(commits).length).toBe(6);
+        expect(parser.yy.getCurrentBranch()).toBe("newbranch");
+        expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);
+        expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["master"]);
+    });
 });

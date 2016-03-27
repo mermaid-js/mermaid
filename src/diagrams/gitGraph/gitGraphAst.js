@@ -1,7 +1,7 @@
 var crypto = require("crypto");
 var Logger = require('../../logger');
-//var log = new Logger.Log();
-var log = new Logger.Log(1);
+var log = new Logger.Log();
+//var log = new Logger.Log(1);
 
 
 var commits = {};
@@ -16,29 +16,30 @@ function getId() {
 }
 
 
-function isfastforwardable(current, other) {
-    var currentCommit = commits[branches[current]];
+function isfastforwardable(currentCommit, otherCommit) {
     var currentSeq = currentCommit.seq;
-    var otherCommit = commits[branches[other]];
     var otherSeq = otherCommit.seq;
 
     log.debug(commits);
     log.debug(currentCommit, otherCommit);
     while (currentSeq <= otherSeq && currentCommit != otherCommit) {
-        // only if source has more commits
+        // only if other branch has more commits
         if (otherCommit.parent == null) break;
-        otherCommit = commits[otherCommit.parent];
+        if (Array.isArray(otherCommit.parent)){
+            return isfastforwardable(currentCommit, otherCommit.parent[0]) ||
+                    isfastforwardable(currentCommit, otherCommit.parent[1])
+        } else {
+            otherCommit = commits[otherCommit.parent];
+        }
     }
     log.debug(currentCommit.id, otherCommit.id);
     return currentCommit.id == otherCommit.id;
 }
 
-function isReachableFrom(current, other) {
-    var currentCommit = commits[branches[current]];
+function isReachableFrom(currentCommit, otherCommit) {
     var currentSeq = currentCommit.seq;
-    var otherCommit = commits[branches[other]];
     var otherSeq = otherCommit.seq;
-    if (currentSeq > otherSeq) return isfastforwardable(other, current);
+    if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
     return false;
 }
 exports.setDirection = function(dir) {
@@ -61,11 +62,13 @@ exports.branch = function(name) {
 }
 
 exports.merge = function(otherBranch) {
-    if (isReachableFrom(curBranch, otherBranch)) {
+    var currentCommit = commits[branches[curBranch]];
+    var otherCommit = commits[branches[otherBranch]];
+    if (isReachableFrom(currentCommit, otherCommit)) {
         log.debug("Already merged");
         return;
     }
-    if (isfastforwardable(curBranch, otherBranch)){
+    if (isfastforwardable(currentCommit, otherCommit)){
         branches[curBranch] = branches[otherBranch];
         head = commits[branches[curBranch]];
     } else {
