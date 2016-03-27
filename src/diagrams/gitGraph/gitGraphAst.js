@@ -16,7 +16,7 @@ function getId() {
 exports.setDirection = function(dir) {
     direction = dir;
 }
-exports.pushCommit = function(msg) {
+exports.commit = function(msg) {
     var commit = { id: getId(),
         message: msg,
         parent:  head == null ? null : head.id};
@@ -26,12 +26,12 @@ exports.pushCommit = function(msg) {
     log.debug("in pushCommit");
 }
 
-exports.createBranch = function(name) {
+exports.branch = function(name) {
     branches[name] = head != null ? head.id: null;
     log.debug("in createBranch");
 }
 
-exports.mergeBranch = function() {
+exports.merge = function() {
     log.debug("in mergeBranch");
 }
 
@@ -41,7 +41,7 @@ exports.checkout = function(branch) {
     var id = branches[curBranch];
     head = commits[id];
 }
-exports.reset = function () {
+exports.clear = function () {
     commits = {};
     head  = null;
     branches = { "master" : head };

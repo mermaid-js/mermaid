@@ -57,10 +57,10 @@ line
     ;
 
 statement
-    : COMMIT commit_arg {yy.pushCommit($2)}
-    | BRANCH ID {yy.createBranch($2)}
+    : COMMIT commit_arg {yy.commit($2)}
+    | BRANCH ID {yy.branch($2)}
     | CHECKOUT ID {yy.checkout($2)}
-    | MERGE ID {yy.mergeBranch($2)}
+    | MERGE ID {yy.merge($2)}
 ;
 
 commit_arg

@@ -4,7 +4,7 @@ describe('when parsing a gitGraph',function() {
     "use strict";
     beforeEach(function () {
         parser.yy = ast;
-        parser.yy.reset();
+        parser.yy.clear();
     });
     it('should handle a gitGraph defintion', function () {
         var str = 'gitGraph:\n' +

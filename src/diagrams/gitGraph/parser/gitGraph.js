@@ -101,16 +101,16 @@ case 5:
 this.$ =$$[$0-1]
 break;
 case 7:
-yy.pushCommit($$[$0])
+yy.commit($$[$0])
 break;
 case 8:
-yy.createBranch($$[$0])
+yy.branch($$[$0])
 break;
 case 9:
 yy.checkout($$[$0])
 break;
 case 10:
-yy.mergeBranch($$[$0])
+yy.merge($$[$0])
 break;
 case 11:
 this.$ = ""
