@@ -8,6 +8,7 @@
  */
 %lex
 
+%x string
 %options case-insensitive
 
 %%
@@ -21,7 +22,14 @@
 "branch"                        return 'BRANCH';
 "merge"                         return 'MERGE';
 "reset"                         return 'RESET';
-":" return ':';
+"checkout"                         return 'CHECKOUT';
+"LR"                            return 'DIR';
+"TB"                            return 'DIR';
+"BT"                            return 'DIR';
+":"                             return ':';
+["]                             this.begin("string");
+<string>["]                     this.popState();
+<string>[^"]*                   return 'STR';
 [a-zA-Z][a-zA-Z0-9_]+           return 'ID';
 <<EOF>>                         return 'EOF';
 
@@ -35,6 +43,7 @@
 
 start
     : GG ':' document EOF{ return $3; }
+    | GG DIR ':' document EOF {yy.setDirection($2); return $4;}
     ;
 
 document
@@ -43,13 +52,18 @@ document
     ;
 
 line
-    : statement {$$ =$1}
+    : statement NL{$$ =$1}
     | NL
     ;
 
 statement
-    : COMMIT {yy.pushCommit()}
+    : COMMIT commit_arg {yy.pushCommit($2)}
     | BRANCH ID {yy.createBranch($2)}
+    | CHECKOUT ID {yy.checkout($2)}
     | MERGE ID {yy.mergeBranch($2)}
 ;
 
+commit_arg
+    : /* empty */ {$$ = ""}
+    | STR {$$=$1}
+    ;

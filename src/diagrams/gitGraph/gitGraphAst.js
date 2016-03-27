@@ -2,16 +2,23 @@ var crypto = require("crypto");
 var Logger = require('../../logger');
 var log = new Logger.Log();
 
+
 var commits = {};
 var head  = null;
 var branches = { "master" : head };
 var curBranch = "master";
+var direction = "LR";
 
 function getId() {
     return crypto.randomBytes(20).toString('hex').substring(0, 7);
 }
-exports.pushCommit = function() {
+
+exports.setDirection = function(dir) {
+    direction = dir;
+}
+exports.pushCommit = function(msg) {
     var commit = { id: getId(),
+        message: msg,
         parent:  head == null ? null : head.id};
     head = commit;
     commits[commit.id] = commit;
@@ -20,7 +27,7 @@ exports.pushCommit = function() {
 }
 
 exports.createBranch = function(name) {
-    branches[name] = head.id;
+    branches[name] = head != null ? head.id: null;
     log.debug("in createBranch");
 }
 
@@ -28,6 +35,12 @@ exports.mergeBranch = function() {
     log.debug("in mergeBranch");
 }
 
+exports.checkout = function(branch) {
+    log.debug("in checkout");
+    curBranch = branch;
+    var id = branches[curBranch];
+    head = commits[id];
+}
 exports.reset = function () {
     commits = {};
     head  = null;
@@ -38,3 +51,4 @@ exports.reset = function () {
 exports.getBranches = function() { return branches; }
 exports.getCommits = function() { return commits; }
 exports.getCurrentBranch = function() { return curBranch; }
+exports.getDirection = function() { return direction; }

@@ -72,12 +72,14 @@
   }
 */
 var gitGraph = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[7,10,11,12,14];
-var parser = {trace: function trace() { },
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[7,11,12,14,16,17],$V1=[2,3],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14];
+var parser = {trace: function trace() {
+        Jison.print.apply(null, arguments);
+    },
 yy: {},
-symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"line":8,"statement":9,"NL":10,"COMMIT":11,"BRANCH":12,"ID":13,"MERGE":14,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"GG",5:":",7:"EOF",10:"NL",11:"COMMIT",12:"BRANCH",13:"ID",14:"MERGE"},
-productions_: [0,[3,4],[6,0],[6,2],[8,1],[8,1],[9,1],[9,2],[9,2]],
+symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"DIR":8,"line":9,"statement":10,"NL":11,"COMMIT":12,"commit_arg":13,"BRANCH":14,"ID":15,"CHECKOUT":16,"MERGE":17,"STR":18,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"GG",5:":",7:"EOF",8:"DIR",11:"NL",12:"COMMIT",14:"BRANCH",15:"ID",16:"CHECKOUT",17:"MERGE",18:"STR"},
+productions_: [0,[3,4],[3,5],[6,0],[6,2],[9,2],[9,1],[10,2],[10,2],[10,2],[10,2],[13,0],[13,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -87,27 +89,39 @@ case 1:
  return $$[$0-1]; 
 break;
 case 2:
-this.$ =[]
+yy.setDirection($$[$0-3]); return $$[$0-1];
 break;
 case 3:
-$$[$0-1].push($$[$0]); this.$ = $$[$0-1]
+this.$ =[]
 break;
 case 4:
-this.$ =$$[$0]
+$$[$0-1].push($$[$0]); this.$ = $$[$0-1]
 break;
-case 6:
-yy.pushCommit()
+case 5:
+this.$ =$$[$0-1]
 break;
 case 7:
-yy.createBranch($$[$0])
+yy.pushCommit($$[$0])
 break;
 case 8:
+yy.createBranch($$[$0])
+break;
+case 9:
+yy.checkout($$[$0])
+break;
+case 10:
 yy.mergeBranch($$[$0])
+break;
+case 11:
+this.$ = ""
+break;
+case 12:
+this.$=$$[$0]
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3]},o($V0,[2,2],{6:4}),{7:[1,5],8:6,9:7,10:[1,8],11:[1,9],12:[1,10],14:[1,11]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),o($V0,[2,6]),{13:[1,12]},{13:[1,13]},o($V0,[2,7]),o($V0,[2,8])],
-defaultActions: {5:[2,1]},
+table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3],8:[1,4]},o($V0,$V1,{6:5}),{5:[1,6]},{7:[1,7],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6},o($V0,$V1,{6:15}),{1:[2,1]},o($V0,[2,4]),{11:[1,16]},o($V0,[2,6]),{11:[2,11],13:17,18:[1,18]},{15:[1,19]},{15:[1,20]},{15:[1,21]},{7:[1,22],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6},o($V0,[2,5]),{11:[2,7]},{11:[2,12]},{11:[2,8]},{11:[2,9]},{11:[2,10]},{1:[2,2]}],
+defaultActions: {7:[2,1],17:[2,7],18:[2,12],19:[2,8],20:[2,9],21:[2,10],22:[2,2]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -586,7 +600,7 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 10;
+case 0:return 11;
 break;
 case 1:/* skip all whitespace */
 break;
@@ -596,24 +610,38 @@ case 3:/* skip comments */
 break;
 case 4:return 4;
 break;
-case 5:return 11;
+case 5:return 12;
 break;
-case 6:return 12;
+case 6:return 14;
 break;
-case 7:return 14;
+case 7:return 17;
 break;
 case 8:return 'RESET';
 break;
-case 9:return 5;
+case 9:return 16;
 break;
-case 10:return 13;
+case 10:return 8;
 break;
-case 11:return 7;
+case 11:return 8;
+break;
+case 12:return 8;
+break;
+case 13:return 5;
+break;
+case 14:this.begin("string");
+break;
+case 15:this.popState();
+break;
+case 16:return 18;
+break;
+case 17:return 15;
+break;
+case 18:return 7;
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?::)/i,/^(?:[a-zA-Z][a-zA-Z0-9_]+)/i,/^(?:$)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:TB\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][a-zA-Z0-9_]+)/i,/^(?:$)/i],
+conditions: {"string":{"rules":[15,16],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,18],"inclusive":true}}
 });
 return lexer;
 })();
