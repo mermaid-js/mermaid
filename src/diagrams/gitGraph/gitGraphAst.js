@@ -1,6 +1,7 @@
 var crypto = require("crypto");
 var Logger = require('../../logger');
-var log = new Logger.Log();
+//var log = new Logger.Log();
+var log = new Logger.Log(1);
 
 
 var commits = {};
@@ -30,6 +31,15 @@ function isfastforwardable(current, other) {
     log.debug(currentCommit.id, otherCommit.id);
     return currentCommit.id == otherCommit.id;
 }
+
+function isReachableFrom(current, other) {
+    var currentCommit = commits[branches[current]];
+    var currentSeq = currentCommit.seq;
+    var otherCommit = commits[branches[other]];
+    var otherSeq = otherCommit.seq;
+    if (currentSeq > otherSeq) return isfastforwardable(other, current);
+    return false;
+}
 exports.setDirection = function(dir) {
     direction = dir;
 }
@@ -49,9 +59,13 @@ exports.branch = function(name) {
     log.debug("in createBranch");
 }
 
-exports.merge = function(sourceBranch) {
-    if (isfastforwardable(curBranch, sourceBranch)){
-        branches[curBranch] = branches[sourceBranch];
+exports.merge = function(otherBranch) {
+    if (isReachableFrom(curBranch, otherBranch)) {
+        log.debug("Already merged");
+        return;
+    }
+    if (isfastforwardable(curBranch, otherBranch)){
+        branches[curBranch] = branches[otherBranch];
         head = commits[branches[curBranch]];
     }
     log.debug(branches);
