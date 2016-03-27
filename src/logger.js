@@ -65,7 +65,7 @@ function Log(level) {
         if (logLevel <= level) {
             if (typeof console !== 'undefined') { //eslint-disable-line no-console
                 if (typeof console.log !== 'undefined') { //eslint-disable-line no-console
-                    return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
+                    return console.log('[' + formatTime(new Date()) + '] ' , str); //eslint-disable-line no-console
                 }
             }
         }
