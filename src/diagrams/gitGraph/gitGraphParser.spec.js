@@ -132,4 +132,25 @@ describe('when parsing a gitGraph',function() {
         expect(parser.yy.getBranches()["newbranch"]).not.toEqual(parser.yy.getBranches()["master"]);
         expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["newbranch"]);
     });
+
+    it('it should handle merge with 2 parents', function () {
+        var str = 'gitGraph:\n' +
+        'commit\n' +
+        'branch newbranch\n' +
+        'checkout newbranch\n' +
+        'commit\n' +
+        'commit\n' +
+        'checkout master\n' +
+        'commit\n' +
+        'merge newbranch\n';
+
+        parser.parse(str);
+
+        var commits = parser.yy.getCommits();
+        console.log(commits);
+        expect(Object.keys(commits).length).toBe(5);
+        expect(parser.yy.getCurrentBranch()).toBe("master");
+        expect(parser.yy.getBranches()["newbranch"]).not.toEqual(parser.yy.getBranches()["master"]);
+        expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()["master"]);
+    });
 });

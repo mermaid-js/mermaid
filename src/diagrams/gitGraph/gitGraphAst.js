@@ -26,6 +26,7 @@ function isfastforwardable(current, other) {
     log.debug(currentCommit, otherCommit);
     while (currentSeq <= otherSeq && currentCommit != otherCommit) {
         // only if source has more commits
+        if (otherCommit.parent == null) break;
         otherCommit = commits[otherCommit.parent];
     }
     log.debug(currentCommit.id, otherCommit.id);
@@ -67,6 +68,17 @@ exports.merge = function(otherBranch) {
     if (isfastforwardable(curBranch, otherBranch)){
         branches[curBranch] = branches[otherBranch];
         head = commits[branches[curBranch]];
+    } else {
+        // create merge commit
+        var commit = {
+            id: getId(),
+            message: 'merged branch ' + otherBranch + ' into ' + curBranch,
+            seq: seq++,
+            parent:  [head == null ? null : head.id, commits[branches[otherBranch]]]
+        };
+        head = commit;
+        commits[commit.id] = commit;
+        branches[curBranch] = commit.id;
     }
     log.debug(branches);
     log.debug("in mergeBranch");
