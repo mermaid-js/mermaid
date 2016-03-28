@@ -101,13 +101,55 @@ exports.reset = function(ref) {
     head = commit;
     branches[curBranch] = commit.id;
 }
+function upsert(arr, key, newval) {
+    var match = _.find(arr, key);
+    if(match){
+        var index = _.indexOf(arr, _.find(arr, key));
+        arr.splice(index, 1, newval);
+    } else {
+        arr.push(newval);
+    }
+    //console.log(arr);
+};
+function prettyPrintCommitHistory(commitArr) {
+    var commit = _.maxBy(commitArr, 'seq');
+    var line = "";
+    _.each(commitArr, function(c, idx) {
+        if (c == commit) {
+            line += "\t*"
+        } else {
+            line +="\t|"
+        }
+    });
+    var label = [line, commit.id, commit.seq];
+    _.each(branches, function(v,k){
+        if (v == commit.id) label.push(k);
+    });
+    console.log.apply(console, label);
+    if (Array.isArray(commit.parent)) {
+        //console.log("here", commit.parent);
+        var newCommit = commits[commit.parent[0]];
+        upsert(commitArr, commit, newCommit);
+        commitArr.push(commits[commit.parent[1]]);
+        //console.log("shoudl have 2", commitArr);
+    } else if(commit.parent == null){
+        return;
+    } else {
+        var newCommit = commits[commit.parent];
+        upsert(commitArr, commit, newCommit);
+    }
+    commitArr = _.uniqBy(commitArr, 'id');
+    prettyPrintCommitHistory(commitArr);
 
+}
 exports.prettyPrint = function() {
     var commitArr = Object.keys(commits).map(function (key) {
         return commits[key];
     });
     var sortedCommits = _.orderBy(commitArr, ['seq'], ['desc']);
     console.log(sortedCommits);
+    var node = sortedCommits[0];
+    prettyPrintCommitHistory([node]);
 }
 
 exports.clear = function () {
