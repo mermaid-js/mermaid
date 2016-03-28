@@ -1,7 +1,8 @@
 var crypto = require("crypto");
 var Logger = require('../../logger');
-var log = new Logger.Log();
 var _ = require("lodash");
+
+var log = new Logger.Log();
 //var log = new Logger.Log(1);
 
 
@@ -18,17 +19,14 @@ function getId() {
 
 
 function isfastforwardable(currentCommit, otherCommit) {
-    var currentSeq = currentCommit.seq;
-    var otherSeq = otherCommit.seq;
-
-    log.debug(commits);
-    log.debug(currentCommit, otherCommit);
-    while (currentSeq <= otherSeq && currentCommit != otherCommit) {
+    log.debug("Entering isfastforwardable:", currentCommit.id, otherCommit.id);
+    while (currentCommit.seq <= otherCommit.seq && currentCommit != otherCommit) {
         // only if other branch has more commits
         if (otherCommit.parent == null) break;
         if (Array.isArray(otherCommit.parent)){
-            return isfastforwardable(currentCommit, otherCommit.parent[0]) ||
-                    isfastforwardable(currentCommit, otherCommit.parent[1])
+            log.debug("In merge commit:", otherCommit.parent);
+            return isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
+                    isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
         } else {
             otherCommit = commits[otherCommit.parent];
         }
@@ -80,7 +78,7 @@ exports.merge = function(otherBranch) {
             id: getId(),
             message: 'merged branch ' + otherBranch + ' into ' + curBranch,
             seq: seq++,
-            parent:  [head == null ? null : head.id, commits[branches[otherBranch]]]
+            parent:  [head == null ? null : head.id, branches[otherBranch]]
         };
         head = commit;
         commits[commit.id] = commit;
