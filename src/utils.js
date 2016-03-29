@@ -47,6 +47,10 @@ var detectType = function(text){
         return 'classDiagram';
     }
 
+    if(text.match(/^\s*gitGraph/)) {
+        log.debug('Detected gitGraph syntax');
+        return 'gitGraph';
+    }
     return 'graph';
 };
 exports.detectType= detectType;
@@ -85,7 +89,7 @@ var cloneCssStyles = function(svg, classes){
                     log.warn('Invalid CSS selector "' + rule.selectorText + '"', err);
                 }
             }
-        } 
+        }
     }
 
     var defaultStyles = '';
