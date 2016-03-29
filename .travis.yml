@@ -6,6 +6,8 @@
     sudo: false
     node_js:
         - "4.2"
+        - "4.4"
+        - "5.9"
     addons:
        code_climate:
          repo_token: e87e6bf1c253e0555437ebd23235fdfe2749b889358e7c6d100e4ea5b4f2e091
