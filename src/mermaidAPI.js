@@ -403,10 +403,10 @@ var render = function(id, txt, cb, container){
             config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
             gitGraphRenderer.setConf(config.gitGraph);
             gitGraphRenderer.draw(txt, id, false);
-            if(config.cloneCssStyles){
-                classes = gitGraphRenderer.getClasses(txt, false);
-                utils.cloneCssStyles(element.firstChild, classes);
-            }
+            //if(config.cloneCssStyles){
+                //classes = gitGraphRenderer.getClasses(txt, false);
+                //utils.cloneCssStyles(element.firstChild, classes);
+            //}
             break;
         case 'graph':
             config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
