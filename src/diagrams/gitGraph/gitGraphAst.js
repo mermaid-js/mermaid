@@ -1,9 +1,8 @@
-var crypto = require("crypto");
 var Logger = require('../../logger');
 var _ = require("lodash");
 
-var log = new Logger.Log();
-//var log = new Logger.Log(1);
+//var log = new Logger.Log();
+var log = new Logger.Log(1);
 
 
 var commits = {};
@@ -12,9 +11,16 @@ var branches = { "master" : head };
 var curBranch = "master";
 var direction = "LR";
 var seq = 0;
-
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 function getId() {
-    return crypto.randomBytes(20).toString('hex').substring(0, 7);
+    var pool="0123456789abcdef";
+    var id = "";
+    for (var i = 0; i < 7; i++) {
+        id += pool[getRandomInt(0,16)]
+    }
+    return id;
 }
 
 
@@ -54,7 +60,7 @@ exports.commit = function(msg) {
     head = commit;
     commits[commit.id] = commit;
     branches[curBranch] = commit.id;
-    log.debug("in pushCommit");
+    log.debug("in pushCommit '" + commit.id + "'");
 }
 
 exports.branch = function(name) {
@@ -143,12 +149,8 @@ function prettyPrintCommitHistory(commitArr) {
 
 }
 exports.prettyPrint = function() {
-    var commitArr = Object.keys(commits).map(function (key) {
-        return commits[key];
-    });
-    var sortedCommits = _.orderBy(commitArr, ['seq'], ['desc']);
-    console.log(sortedCommits);
-    var node = sortedCommits[0];
+    log.debug(commits);
+    var node = exports.getCommitsArray()[0];
     prettyPrintCommitHistory([node]);
 }
 
@@ -159,9 +161,20 @@ exports.clear = function () {
     curBranch = "master";
     seq =0;
 }
-
+exports.getBranchesAsObjArray = function() {
+    return _.map(branches, function(v,k) {
+        return {"name": k, "commitid": v};
+    });
+}
 exports.getBranches = function() { return branches; }
 exports.getCommits = function() { return commits; }
+exports.getCommitsArray = function() {
+    var commitArr = Object.keys(commits).map(function (key) {
+        return commits[key];
+    });
+    _.each(commitArr, function(o) { console.log(o.id) });
+    return _.orderBy(commitArr, ['seq'], ['desc']);
+    }
 exports.getCurrentBranch = function() { return curBranch; }
 exports.getDirection = function() { return direction; }
 exports.getHead = function() { return head; }
