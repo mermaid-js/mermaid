@@ -1,4 +1,7 @@
     language: node_js
+    os:
+        - linux
+        - osx
     sudo: false
     node_js:
         - "4.2"
