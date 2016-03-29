@@ -13,7 +13,7 @@
 
 %%
 
-[\n]+                           return 'NL';
+[\n|\r\n]+                           return 'NL';
 \s+                             /* skip all whitespace */
 \#[^\n]*                        /* skip comments */
 \%%[^\n]*                       /* skip comments */
