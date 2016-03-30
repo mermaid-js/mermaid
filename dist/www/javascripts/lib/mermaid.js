@@ -53614,20 +53614,21 @@ exports.draw = function (txt, id, ver) {
             "orient": "auto",
             "viewBox": "0,0,10,10"
         }).append("svg:path").attr("d", "M 0 0 L 10 5 L 0 10 z");
+        var count = commits.length;
         var nodes = svg.selectAll("g.commit").data(commits).enter().append("g").attr("class", "commit").attr("id", function (d) {
             return d.id;
         }).attr("transform", function (d, i) {
             if (direction == "TB" || direction == "BT") return "translate(50," + (50 + i * 100) + ")";
-            if (direction == "LR") return "translate(" + (50 + i * 100) + ", 50)";
+            if (direction == "LR") return "translate(" + (50 + (count - i) * 100) + ", 50)";
         });
 
         var lines = svg.selectAll("g.arrows").data(commits).enter().append("g").append("line").attr("transform", function (d, i) {
             if (direction == "TB" || direction == "BT") return "translate(50," + (70 + i * 100) + ")";
             if (direction == "LR") return "translate(" + (70 + i * 100) + ", 50)";
         }).attr({
-            "x1": direction == "LR" ? 0 : 0,
+            "x1": direction == "LR" ? 60 : 0,
             "y1": direction == "LR" ? 0 : 0,
-            "x2": direction == "LR" ? 60 : 0,
+            "x2": direction == "LR" ? 0 : 0,
             "y2": direction == "LR" ? 0 : 60
         }).attr("marker-end", "url(#triangle)").attr("stroke", "black").attr("stroke-width", "3");
         //g.append('text')      // text label for the x axis

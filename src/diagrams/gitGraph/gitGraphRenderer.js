@@ -43,6 +43,7 @@ exports.draw = function (txt, id, ver) {
             })
             .append("svg:path")
             .attr("d", "M 0 0 L 10 5 L 0 10 z");
+        var count = commits.length;
         var nodes = svg
             .selectAll("g.commit")
             .data(commits)
@@ -56,7 +57,7 @@ exports.draw = function (txt, id, ver) {
                 if (direction == "TB" || direction == "BT")
                     return "translate(50," + (50 + i * 100) + ")";
                 if (direction == "LR")
-                    return "translate(" + (50 + i * 100) + ", 50)";
+                    return "translate(" + (50 + (count -i) * 100) + ", 50)";
             });
 
         var lines = svg.selectAll("g.arrows")
@@ -71,9 +72,9 @@ exports.draw = function (txt, id, ver) {
                     return "translate(" + (70 + (i * 100)) + ", 50)";
             })
             .attr({
-                "x1": direction == "LR" ? 0:0,
+                "x1": direction == "LR" ? 60:0,
                 "y1": direction == "LR" ? 0:0,
-                "x2": direction == "LR" ? 60:0,
+                "x2": direction == "LR" ? 0:0,
                 "y2": direction == "LR" ? 0:60
             })
             .attr("marker-end", "url(#triangle)")
