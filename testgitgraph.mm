@@ -1,4 +1,4 @@
-gitGraph:
+gitGraph TB:
     commit
     branch newbranch
     checkout newbranch
