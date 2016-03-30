@@ -19,15 +19,24 @@ exports.draw = function (txt, id, ver) {
         // Parse the graph definition
         parser.parse(txt + "\n");
         var commits = db.getCommitsArray();
-        log.debug(commits);
-        log.debug("id: " + commits[0].id);
-        log.debug(db.getCommits());
-        log.debug("length:", commits.length);
-        log.debug("length:", Object.keys(db.getCommits()).length);
+        log.debug("# of commits: " + commits.length);
+        //log.debug("id: " + commits[0].id);
+        //log.debug(db.getCommits());
+        //log.debug("length:", commits.length);
+        //log.debug("length:", Object.keys(db.getCommits()).length);
         // Fetch the default direction, use TD if none was found
         var svg = d3.select('#'+id);
 
-        var g = svg.append('g');
+        var nodes = svg
+                        .selectAll("g")
+                        .data(commits)
+                        .enter()
+                        .append("g")
+                        .attr("class", "commit")
+                        .attr("id", function(d){return d.id;})
+                        .attr("transform", function(d,i){
+                            return "translate(" + (50 + i*100) + ", 50)";
+                        });
 
         //g.append('text')      // text label for the x axis
         //.attr('x', 100)
@@ -37,17 +46,18 @@ exports.draw = function (txt, id, ver) {
         //.style('text-anchor', 'middle')
         //.text('mermaid raghu'+ ver);
 
-        var circles = svg.selectAll("circle")
-            .data(commits)
-            .enter()
+        var circles = svg.selectAll("g.commit")
             .append("circle")
-            .attr("cx", function(d, i){
-                return (i*50) + 25;
-            })
-            .attr("cy", 50)
             .attr("r", 15)
             .attr("fill", "yellow")
             .attr("stroke", "grey");
+        var textContainer = svg.selectAll("g.commit")
+                    .append("g")
+                    .attr("transform", "translate(-40, 35)")
+                    .attr("class", "commit-label");
+        textContainer
+                    .append("text")
+                    .text(function(c){ return c.id; });
         /*
         var box = exports.bounds.getBounds();
 

@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaid=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.mermaid = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
 (function (process){
@@ -232,69 +232,74 @@ var substr = 'ab'.substr(-1) === 'b'
 // shim for using process in browser
 
 var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
 
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
     }
+    if (queue.length) {
+        drainQueue();
+    }
+}
 
-    var queue = [];
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
 
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
             }
-            queue.push(fn);
-        };
+        }
+        queueIndex = -1;
+        len = queue.length;
     }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
 
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
     }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
 
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
 function noop() {}
 
@@ -310,11 +315,11 @@ process.binding = function (name) {
     throw new Error('process.binding is not supported');
 };
 
-// TODO(shtylman)
 process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
+process.umask = function() { return 0; };
 
 },{}],4:[function(require,module,exports){
 !function() {
@@ -25401,8 +25406,8 @@ function canonicalize(attrs) {
 }
 
 },{"./acyclic":55,"./add-border-segments":56,"./coordinate-system":57,"./graphlib":60,"./lodash":63,"./nesting-graph":64,"./normalize":65,"./order":70,"./parent-dummy-chains":75,"./position":77,"./rank":79,"./util":82}],63:[function(require,module,exports){
-module.exports=require(51)
-},{"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":51,"lodash":104}],64:[function(require,module,exports){
+arguments[4][51][0].apply(exports,arguments)
+},{"dup":51,"lodash":104}],64:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -27445,48 +27450,48 @@ function notime(name, fn) {
 module.exports = "0.7.4";
 
 },{}],84:[function(require,module,exports){
-module.exports=require(33)
-},{"./lib":100,"./lib/alg":91,"./lib/json":101,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\index.js":33}],85:[function(require,module,exports){
-module.exports=require(34)
-},{"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\components.js":34}],86:[function(require,module,exports){
-module.exports=require(35)
-},{"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dfs.js":35}],87:[function(require,module,exports){
-module.exports=require(36)
-},{"../lodash":102,"./dijkstra":88,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra-all.js":36}],88:[function(require,module,exports){
-module.exports=require(37)
-},{"../data/priority-queue":98,"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra.js":37}],89:[function(require,module,exports){
-module.exports=require(38)
-},{"../lodash":102,"./tarjan":96,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\find-cycles.js":38}],90:[function(require,module,exports){
-module.exports=require(39)
-},{"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\floyd-warshall.js":39}],91:[function(require,module,exports){
-module.exports=require(40)
-},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\index.js":40}],92:[function(require,module,exports){
-module.exports=require(41)
-},{"./topsort":97,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\is-acyclic.js":41}],93:[function(require,module,exports){
-module.exports=require(42)
-},{"./dfs":86,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\postorder.js":42}],94:[function(require,module,exports){
-module.exports=require(43)
-},{"./dfs":86,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\preorder.js":43}],95:[function(require,module,exports){
-module.exports=require(44)
-},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\prim.js":44}],96:[function(require,module,exports){
-module.exports=require(45)
-},{"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\tarjan.js":45}],97:[function(require,module,exports){
-module.exports=require(46)
-},{"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\topsort.js":46}],98:[function(require,module,exports){
-module.exports=require(47)
-},{"../lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\data\\priority-queue.js":47}],99:[function(require,module,exports){
-module.exports=require(48)
-},{"./lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\graph.js":48}],100:[function(require,module,exports){
-module.exports=require(49)
-},{"./graph":99,"./version":103,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\index.js":49}],101:[function(require,module,exports){
-module.exports=require(50)
-},{"./graph":99,"./lodash":102,"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\json.js":50}],102:[function(require,module,exports){
-module.exports=require(51)
-},{"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":51,"lodash":104}],103:[function(require,module,exports){
-module.exports=require(52)
-},{"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\version.js":52}],104:[function(require,module,exports){
-module.exports=require(53)
-},{"E:\\code\\mermaid\\node_modules\\dagre-d3\\node_modules\\lodash\\index.js":53}],105:[function(require,module,exports){
+arguments[4][33][0].apply(exports,arguments)
+},{"./lib":100,"./lib/alg":91,"./lib/json":101,"dup":33}],85:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"../lodash":102,"dup":34}],86:[function(require,module,exports){
+arguments[4][35][0].apply(exports,arguments)
+},{"../lodash":102,"dup":35}],87:[function(require,module,exports){
+arguments[4][36][0].apply(exports,arguments)
+},{"../lodash":102,"./dijkstra":88,"dup":36}],88:[function(require,module,exports){
+arguments[4][37][0].apply(exports,arguments)
+},{"../data/priority-queue":98,"../lodash":102,"dup":37}],89:[function(require,module,exports){
+arguments[4][38][0].apply(exports,arguments)
+},{"../lodash":102,"./tarjan":96,"dup":38}],90:[function(require,module,exports){
+arguments[4][39][0].apply(exports,arguments)
+},{"../lodash":102,"dup":39}],91:[function(require,module,exports){
+arguments[4][40][0].apply(exports,arguments)
+},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"dup":40}],92:[function(require,module,exports){
+arguments[4][41][0].apply(exports,arguments)
+},{"./topsort":97,"dup":41}],93:[function(require,module,exports){
+arguments[4][42][0].apply(exports,arguments)
+},{"./dfs":86,"dup":42}],94:[function(require,module,exports){
+arguments[4][43][0].apply(exports,arguments)
+},{"./dfs":86,"dup":43}],95:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"dup":44}],96:[function(require,module,exports){
+arguments[4][45][0].apply(exports,arguments)
+},{"../lodash":102,"dup":45}],97:[function(require,module,exports){
+arguments[4][46][0].apply(exports,arguments)
+},{"../lodash":102,"dup":46}],98:[function(require,module,exports){
+arguments[4][47][0].apply(exports,arguments)
+},{"../lodash":102,"dup":47}],99:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"./lodash":102,"dup":48}],100:[function(require,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"./graph":99,"./version":103,"dup":49}],101:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"./graph":99,"./lodash":102,"dup":50}],102:[function(require,module,exports){
+arguments[4][51][0].apply(exports,arguments)
+},{"dup":51,"lodash":104}],103:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"dup":52}],104:[function(require,module,exports){
+arguments[4][53][0].apply(exports,arguments)
+},{"dup":53}],105:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -53587,15 +53592,19 @@ exports.draw = function (txt, id, ver) {
         // Parse the graph definition
         parser.parse(txt + "\n");
         var commits = db.getCommitsArray();
-        log.debug(commits);
-        log.debug("id: " + commits[0].id);
-        log.debug(db.getCommits());
-        log.debug("length:", commits.length);
-        log.debug("length:", Object.keys(db.getCommits()).length);
+        log.debug("# of commits: " + commits.length);
+        //log.debug("id: " + commits[0].id);
+        //log.debug(db.getCommits());
+        //log.debug("length:", commits.length);
+        //log.debug("length:", Object.keys(db.getCommits()).length);
         // Fetch the default direction, use TD if none was found
         var svg = d3.select('#' + id);
 
-        var g = svg.append('g');
+        var nodes = svg.selectAll("g").data(commits).enter().append("g").attr("class", "commit").attr("id", function (d) {
+            return d.id;
+        }).attr("transform", function (d, i) {
+            return "translate(" + (50 + i * 100) + ", 50)";
+        });
 
         //g.append('text')      // text label for the x axis
         //.attr('x', 100)
@@ -53605,9 +53614,11 @@ exports.draw = function (txt, id, ver) {
         //.style('text-anchor', 'middle')
         //.text('mermaid raghu'+ ver);
 
-        var circles = svg.selectAll("circle").data(commits).enter().append("circle").attr("cx", function (d, i) {
-            return i * 50 + 25;
-        }).attr("cy", 50).attr("r", 15).attr("fill", "yellow").attr("stroke", "grey");
+        var circles = svg.selectAll("g.commit").append("circle").attr("r", 15).attr("fill", "yellow").attr("stroke", "grey");
+        var textContainer = svg.selectAll("g.commit").append("g").attr("transform", "translate(-40, 35)").attr("class", "commit-label");
+        textContainer.append("text").text(function (c) {
+            return c.id;
+        });
         /*
         var box = exports.bounds.getBounds();
          var height = box.stopy-box.starty+2*conf.diagramMarginY;
