@@ -62,7 +62,7 @@ function svgDrawLineForCommits(svg, fromId, toId) {
     log.debug("svgDrawLineForCommits: ", fromId, toId);
     var fromBbox = svg.select("#node-" + fromId).node().getBBox();
     var toBbox = svg.select("#node-" + toId).node().getBBox();
-    log.debug("svgDrawLineForCommits: ", fromBbox, toBbox);
+    //log.debug("svgDrawLineForCommits: ", fromBbox, toBbox);
     svgDrawLine(svg, [
         {"x": fromBbox.x, "y": fromBbox.y + fromBbox.height/2 },
         {"x": toBbox.x + (fromBbox.x - toBbox.x)/2, "y": fromBbox.y + fromBbox.height/2 },
@@ -91,37 +91,6 @@ function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
                 .attr("stroke", "grey")
                 .attr("stroke-width", "2");
 
-            if (commit.parent && commit.seq > 0) {
-                log.debug("drawing line: ", commit.id, commit.seq);
-                var parent = allCommitsDict[commit.parent] || allCommitsDict[commit.parent[0]];
-                log.debug("parentid: ", parent.id);
-                var parentNode = svg.select("#node-" + parent.id);
-                log.debug("parent:", parentNode.size());
-                var pathInfo = [
-                    {x: commit.seq *100 + 35, y: branchNum* 50},
-                    {x: parent.seq *100 + 65, y: branchNum* 50}
-                ];
-                if (parentNode.node()) {
-                    var rect = parentNode.node().getBBox();
-                    //log.debug("parent BBox", rect);
-                    var endX = rect.x + rect.width;
-                    var endY = rect.y + rect.height/2;
-                    pathInfo[1] = {
-                        x: endX + (pathInfo[0].x - endX)/2,
-                        y: pathInfo[0].y
-                    };
-                    pathInfo.push({
-                        x : endX + (pathInfo[0].x - endX)/2,
-                        y : endY
-                    });
-                    pathInfo.push({
-                        x : endX,
-                        y : endY
-                    });
-                    log.debug("pathinfo:", pathInfo);
-                }
-                svgDrawLine(svg, pathInfo);
-            }
             commitid = commit.parent
         } while (commitid && allCommitsDict[commitid]);
     }
@@ -130,11 +99,23 @@ function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
         log.debug("found merge commmit", commitid);
         renderCommitHistory(svg, commitid[0], branches, direction, branchNum);
         renderCommitHistory(svg, commitid[1], branches, direction, ++branchNum);
-        //confusing but works... commit should still refer to original commit.
-        // commitid has been modified as commitid = commit.parent;
-        svgDrawLineForCommits(svg, commit.id, commitid[1]);
     }
 }
+
+function renderLines(svg, commit) {
+    while (commit.seq > 0) {
+        if (_.isString(commit.parent)) {
+            svgDrawLineForCommits(svg, commit.id, commit.parent);
+            commit = allCommitsDict[commit.parent];
+        } else if (_.isArray(commit.parent)) {
+            svgDrawLineForCommits(svg, commit.id, commit.parent[0])
+            svgDrawLineForCommits(svg, commit.id, commit.parent[1])
+            renderLines(svg, allCommitsDict[commit.parent[1]]);
+            commit = allCommitsDict[commit.parent[0]];
+        }
+    }
+}
+
 exports.draw = function (txt, id, ver) {
     try {
         var parser;
@@ -155,66 +136,7 @@ exports.draw = function (txt, id, ver) {
         var count = commits.length;
 
         renderCommitHistory(svg, commit.id, branches, direction);
-        /*
-         *var nodes = svg
-         *    .selectAll("g.commit")
-         *    .data(commits)
-         *    .enter()
-         *    .append("g")
-         *    .attr("class", "commit")
-         *    .attr("id", function (d) {
-         *        return d.id;
-         *    })
-         *    .attr("transform", function (d, i) {
-         *        if (direction == "TB" || direction == "BT")
-         *            return "translate(50," + (50 + i * 100) + ")";
-         *        if (direction == "LR")
-         *            return "translate(" + (50 + (count -i) * 100) + ", 50)";
-         *    });
-         */
-
-        /*
-         *var lines = svg.selectAll("g.arrows")
-         *    .data(commits)
-         *    .enter()
-         *    .append("g")
-         *    .append("line")
-         *    .attr("transform", function(d, i) {
-         *        if (direction == "TB" || direction == "BT")
-         *            return "translate(50," + (70 + (i * 100)) + ")";
-         *        if (direction == "LR")
-         *            return "translate(" + (70 + (i * 100)) + ", 50)";
-         *    })
-         *    .attr({
-         *        "x1": direction == "LR" ? 60:0,
-         *        "y1": direction == "LR" ? 0:0,
-         *        "x2": direction == "LR" ? 0:0,
-         *        "y2": direction == "LR" ? 0:60
-         *    })
-         *    .attr("marker-end", "url(#triangle)")
-         *    .attr("stroke", "black")
-         *    .attr("stroke-width", "3")
-         */
-
-        /*
-         *var circles = svg.selectAll("g.commit")
-         *    .append("circle")
-         *    .attr("r", 15)
-         *    .attr("fill", "yellow")
-         *    .attr("stroke", "grey");
-         *var textContainer = svg.selectAll("g.commit")
-         *    .append("g")
-         *    .attr("transform", function () {
-         *        if (direction == "LR") return "translate(-30, 35)";
-         *        if (direction == "BT" || direction == "TB") return "translate(200, 0)";
-         *    })
-         *    .attr("class", "commit-label");
-         *textContainer
-         *    .append("text")
-         *    .text(function (c) {
-         *        return c.id + "," + c.seq;
-         *    });
-         */
+        renderLines(svg, commit);
 
         svg.attr('height', 900);
         svg.attr('width', 1200);
