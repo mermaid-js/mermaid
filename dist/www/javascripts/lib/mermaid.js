@@ -53608,7 +53608,7 @@ function svgDrawLine(svg, points) {
         return d.x;
     }).y(function (d) {
         return d.y;
-    }).interpolate("linear");
+    }).interpolate("basis");
 
     svg.append("svg:path").attr("d", lineGen(points)).style("stroke", "grey").style("stroke-width", "2").style("fill", "none");
 }
@@ -53618,7 +53618,7 @@ function svgDrawLineForCommits(svg, fromId, toId) {
     var fromBbox = svg.select("#node-" + fromId).node().getBBox();
     var toBbox = svg.select("#node-" + toId).node().getBBox();
     log.debug("svgDrawLineForCommits: ", fromBbox, toBbox);
-    svgDrawLine(svg, [{ "x": fromBbox.x, "y": fromBbox.y + fromBbox.height / 2 }, { "x": toBbox.x + toBbox.width, "y": toBbox.y + toBbox.height / 2 }]);
+    svgDrawLine(svg, [{ "x": fromBbox.x, "y": fromBbox.y + fromBbox.height / 2 }, { "x": toBbox.x + (fromBbox.x - toBbox.x) / 2, "y": fromBbox.y + fromBbox.height / 2 }, { "x": toBbox.x + (fromBbox.x - toBbox.x) / 2, "y": toBbox.y + toBbox.height / 2 }, { "x": toBbox.x + toBbox.width, "y": toBbox.y + toBbox.height / 2 }]);
 }
 function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
     var commit;
@@ -53640,19 +53640,25 @@ function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
                 log.debug("parentid: ", parent.id);
                 var parentNode = svg.select("#node-" + parent.id);
                 log.debug("parent:", parentNode.size());
-                //var parentNode = document.getElementById("node-"+parent.id);
-                //if (parentNode) {
-                //log.debug("parent  ", parentNode);
-                //log.debug("parent BBox", parentNode.);
-                //}
                 var pathInfo = [{ x: commit.seq * 100 + 35, y: branchNum * 50 }, { x: parent.seq * 100 + 65, y: branchNum * 50 }];
                 if (parentNode.node()) {
-                    //var rect = parentNode.node().getBoundingClientRect()
-                    //log.debug("parent BCR", rect);
                     var rect = parentNode.node().getBBox();
-                    log.debug("parent BBox", rect);
-                    pathInfo[1].x = rect.x + rect.width;
-                    pathInfo[1].y = rect.y + rect.height / 2;
+                    //log.debug("parent BBox", rect);
+                    var endX = rect.x + rect.width;
+                    var endY = rect.y + rect.height / 2;
+                    pathInfo[1] = {
+                        x: endX + (pathInfo[0].x - endX) / 2,
+                        y: pathInfo[0].y
+                    };
+                    pathInfo.push({
+                        x: endX + (pathInfo[0].x - endX) / 2,
+                        y: endY
+                    });
+                    pathInfo.push({
+                        x: endX,
+                        y: endY
+                    });
+                    log.debug("pathinfo:", pathInfo);
                 }
                 svgDrawLine(svg, pathInfo);
             }
@@ -53664,7 +53670,7 @@ function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
         log.debug("found merge commmit", commitid);
         renderCommitHistory(svg, commitid[0], branches, direction, branchNum);
         renderCommitHistory(svg, commitid[1], branches, direction, ++branchNum);
-        //confusing... commit should still refer to original commit.
+        //confusing but works... commit should still refer to original commit.
         // commitid has been modified as commitid = commit.parent;
         svgDrawLineForCommits(svg, commit.id, commitid[1]);
     }
