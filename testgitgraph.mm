@@ -1,7 +1,13 @@
 gitGraph :
     commit
+    commit
     branch newbranch
     checkout newbranch
+    commit
+    commit
+    branch other
+    checkout other
+    commit
     commit
     commit
     checkout master
@@ -10,3 +16,4 @@ gitGraph :
     commit
     checkout newbranch
     merge master
+    merge other

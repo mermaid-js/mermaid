@@ -163,7 +163,7 @@ exports.clear = function () {
 }
 exports.getBranchesAsObjArray = function() {
     return _.map(branches, function(v,k) {
-        return {"name": k, "commitid": v};
+        return {"name": k, "commit": commits[v]};
     });
 }
 exports.getBranches = function() { return branches; }
