@@ -16,4 +16,3 @@ gitGraph :
     commit
     checkout newbranch
     merge master
-    merge other

@@ -54,7 +54,7 @@ function svgDrawLine(svg, points) {
     .append("svg:path")
     .attr("d", lineGen(points))
     .style("stroke", "grey")
-    .style("stroke-width", "2")
+    .style("stroke-width", "4")
     .style("fill", "none");
 }
 
@@ -126,17 +126,17 @@ exports.draw = function (txt, id, ver) {
         // Parse the graph definition
         parser.parse(txt + "\n");
         var direction = db.getDirection();
-        var commits = db.getCommitsArray();
         allCommitsDict = db.getCommits();
         var branches = db.getBranchesAsObjArray();
-        var commit = _.maxBy(commits, 'seq');
         var svg = d3.select('#' + id);
         svgAddArrowMarker(svg);
         svgCreateDefs(svg);
-        var count = commits.length;
-
-        renderCommitHistory(svg, commit.id, branches, direction);
-        renderLines(svg, commit);
+        var branchNum = 0;
+        _.each(branches, function(v, k) {
+            renderCommitHistory(svg, v.commit.id, branches, direction, branchNum);
+            renderLines(svg, v.commit);
+            branchNum++;
+        })
 
         svg.attr('height', 900);
         svg.attr('width', 1200);
