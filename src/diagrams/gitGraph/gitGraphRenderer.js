@@ -6,70 +6,106 @@ var Logger = require('../../logger');
 
 var log = new Logger.Log();
 var allCommitsDict = {};
-exports.setConf = function (config) {
+exports.setConf = function(config) {
 
 }
 
 function svgCreateDefs(svg) {
     svg.append("defs")
-        .append("circle")
+        .append("g")
         .attr("id", "def-commit")
+        .append("circle")
         .attr("r", 15)
         .attr("cx", 0)
         .attr("cy", 0);
-    svg.select("defs")
-        .append("line")
-        .attr("id", "def-arrow-rl")
-        .attr("x1", 25)
-        .attr("y1", 0)
-        .attr("x2", -25)
-        .attr("y2", 0)
-        .attr("marker-end", "url(#triangle)");
-}
-function svgAddArrowMarker(svg) {
-    svg.append("marker")
-    .attr({
-        "id": "triangle",
-        "refX": "5",
-        "refY": "5",
-        "markerUnits": "strokeWidth",
-        "fill": "#666",
-        "markerWidth": "4",
-        "markerHeight": "3",
-        "orient": "auto",
-        "viewBox": "0,0,10,10"
-    })
-    .append("svg:path")
-    .attr("d", "M 0 0 L 10 5 L 0 10 z");
+    svg.select("#def-commit")
+        .append('foreignObject')
+        .attr('width', 100)
+        .attr('height', 100)
+        .attr('x', 50)
+        .attr('y', 50)
+        .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
+        .append('xhtml:p')
+        .text("a big chunk of text that should wrap");
+    //.attr("requiredExtensions", "http://www.w3.org/1999/xhtml")
+    //.attr("width", 50)
+    //.attr("height", 30)
+    //.attr("x", 30)
+    //.attr("y", 30)
+    //.append("xhtml:body")
+    //.append("xhtml:p")
+    //.text("something")
 }
 
-function svgDrawLine(svg, points) {
 
+function svgDrawLine(svg, points, interpolate) {
+    interpolate = interpolate || "basis";
     var lineGen = d3.svg.line()
-    .x(function(d) { return d.x })
-    .y(function(d) {return d.y})
-    .interpolate("basis");
+        .x(function(d) {
+            return Math.round(d.x)
+        })
+        .y(function(d) {
+            return Math.round(d.y)
+        })
+        .interpolate(interpolate);
 
     svg
-    .append("svg:path")
-    .attr("d", lineGen(points))
-    .style("stroke", "grey")
-    .style("stroke-width", "4")
-    .style("fill", "none");
+        .append("svg:path")
+        .attr("d", lineGen(points))
+        .style("stroke", "grey")
+        .style("stroke-width", "4")
+        .style("fill", "none");
 }
+// Pass in the element and its pre-transform coords
+function getElementCoords(element, coords) {
+    coords = coords || element.node().getBBox();
+    var ctm = element.node().getCTM(),
+        xn = ctm.e + coords.x * ctm.a,
+        yn = ctm.f + coords.y * ctm.d;
+    //log.debug(ctm, coords);
+    return {
+        left: xn,
+        top: yn,
+        width: coords.width,
+        height: coords.height
+    };
+};
 
 function svgDrawLineForCommits(svg, fromId, toId) {
     log.debug("svgDrawLineForCommits: ", fromId, toId);
-    var fromBbox = svg.select("#node-" + fromId).node().getBBox();
-    var toBbox = svg.select("#node-" + toId).node().getBBox();
+    var fromBbox = getElementCoords(svg.select("#node-" + fromId + " circle"));
+    var toBbox = getElementCoords(svg.select("#node-" + toId + " circle"));
     //log.debug("svgDrawLineForCommits: ", fromBbox, toBbox);
-    svgDrawLine(svg, [
-        {"x": fromBbox.x, "y": fromBbox.y + fromBbox.height/2 },
-        {"x": toBbox.x + (fromBbox.x - toBbox.x)/2, "y": fromBbox.y + fromBbox.height/2 },
-        {"x": toBbox.x + (fromBbox.x - toBbox.x)/2, "y": toBbox.y + toBbox.height/2 },
-        {"x": toBbox.x + toBbox.width, "y": toBbox.y + toBbox.height/2 }
-        ]);
+    if (fromBbox.left - toBbox.left > 100) {
+        var lineStart = { x: fromBbox.left - 100, y: toBbox.top  + toBbox.height/2};
+        var lineEnd ={ x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height/2 };
+        svgDrawLine(svg, [lineStart , lineEnd], "linear")
+        svgDrawLine(svg, [
+        {x: fromBbox.left, y: fromBbox.top + fromBbox.height/2},
+        {x: fromBbox.left - 50, y: fromBbox.top + fromBbox.height/2},
+        {x: fromBbox.left - 50, y: lineStart.y},
+        lineStart]);
+    } else {
+        svgDrawLine(svg, [{
+            "x": fromBbox.left,
+            "y": fromBbox.top + fromBbox.height / 2
+        }, {
+            "x": fromBbox.left - 50,
+            "y": fromBbox.top + fromBbox.height / 2
+        }, {
+            "x": fromBbox.left - 50,
+            "y": toBbox.top + toBbox.height / 2
+        }, {
+            "x": toBbox.left + toBbox.width,
+            "y": toBbox.top + toBbox.height / 2
+        }]);
+    }
 }
+
+function cloneNode(svg, selector) {
+    return svg.select(selector).node().cloneNode(true);
+}
+
 function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
     var commit;
     branchNum = branchNum || 1;
@@ -77,16 +113,20 @@ function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
         do {
             commit = allCommitsDict[commitid];
             log.debug("in renderCommitHistory", commit.id, commit.seq);
-            if (svg.select("#node-" +  commitid).size() > 0) return;
+            if (svg.select("#node-" + commitid).size() > 0) return;
             svg
-                .append("g")
-                .attr("class", "commit")
-                .attr("id", function() { return "node-" + commit.id; })
-                .append("use")
-                .attr("transform", function() {
-                    return "translate(" + (commit.seq * 100 + 50 )+ ", " + (branchNum * 50)+")";
+                .append(function() {
+                    return cloneNode(svg, "#def-commit");
                 })
-                .attr("xlink:href", "#def-commit")
+                .attr("class", "commit")
+                .attr("id", function() {
+                    return "node-" + commit.id;
+                })
+                //.append("use")
+                .attr("transform", function() {
+                    return "translate(" + (commit.seq * 100 + 50) + ", " + (branchNum * 50) + ")";
+                })
+                //.attr("xlink:href", "#def-commit")
                 .attr("fill", "yellow")
                 .attr("stroke", "grey")
                 .attr("stroke-width", "2");
@@ -116,7 +156,7 @@ function renderLines(svg, commit) {
     }
 }
 
-exports.draw = function (txt, id, ver) {
+exports.draw = function(txt, id, ver) {
     try {
         var parser;
         parser = gitGraphParser.parser;
@@ -129,9 +169,8 @@ exports.draw = function (txt, id, ver) {
         allCommitsDict = db.getCommits();
         var branches = db.getBranchesAsObjArray();
         var svg = d3.select('#' + id);
-        svgAddArrowMarker(svg);
         svgCreateDefs(svg);
-        var branchNum = 0;
+        var branchNum = 1;
         _.each(branches, function(v, k) {
             renderCommitHistory(svg, v.commit.id, branches, direction, branchNum);
             renderLines(svg, v.commit);
