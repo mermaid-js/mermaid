@@ -53632,6 +53632,14 @@ var Logger = require('../../logger');
 
 var log = new Logger.Log();
 var allCommitsDict = {};
+var branchNum;
+var config = {
+    nodeWidth: 75,
+    lineStrokeWidth: 4,
+    branchLineHeight: 50,
+    lineColor: "grey",
+    leftMargin: 50
+};
 exports.setConf = function (config) {};
 
 function svgCreateDefs(svg) {
@@ -53655,7 +53663,7 @@ function svgDrawLine(svg, points, interpolate) {
         return Math.round(d.y);
     }).interpolate(interpolate);
 
-    svg.append("svg:path").attr("d", lineGen(points)).style("stroke", "grey").style("stroke-width", "4").style("fill", "none");
+    svg.append("svg:path").attr("d", lineGen(points)).style("stroke", config.lineColor).style("stroke-width", config.lineStrokeWidth).style("fill", "none");
 }
 // Pass in the element and its pre-transform coords
 function getElementCoords(element, coords) {
@@ -53677,20 +53685,20 @@ function svgDrawLineForCommits(svg, fromId, toId) {
     var fromBbox = getElementCoords(svg.select("#node-" + fromId + " circle"));
     var toBbox = getElementCoords(svg.select("#node-" + toId + " circle"));
     //log.debug("svgDrawLineForCommits: ", fromBbox, toBbox);
-    if (fromBbox.left - toBbox.left > 100) {
-        var lineStart = { x: fromBbox.left - 100, y: toBbox.top + toBbox.height / 2 };
+    if (fromBbox.left - toBbox.left > config.nodeWidth) {
+        var lineStart = { x: fromBbox.left - config.nodeWidth, y: toBbox.top + toBbox.height / 2 };
         var lineEnd = { x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height / 2 };
         svgDrawLine(svg, [lineStart, lineEnd], "linear");
-        svgDrawLine(svg, [{ x: fromBbox.left, y: fromBbox.top + fromBbox.height / 2 }, { x: fromBbox.left - 50, y: fromBbox.top + fromBbox.height / 2 }, { x: fromBbox.left - 50, y: lineStart.y }, lineStart]);
+        svgDrawLine(svg, [{ x: fromBbox.left, y: fromBbox.top + fromBbox.height / 2 }, { x: fromBbox.left - config.nodeWidth / 2, y: fromBbox.top + fromBbox.height / 2 }, { x: fromBbox.left - config.nodeWidth / 2, y: lineStart.y }, lineStart]);
     } else {
         svgDrawLine(svg, [{
             "x": fromBbox.left,
             "y": fromBbox.top + fromBbox.height / 2
         }, {
-            "x": fromBbox.left - 50,
+            "x": fromBbox.left - config.nodeWidth / 2,
             "y": fromBbox.top + fromBbox.height / 2
         }, {
-            "x": fromBbox.left - 50,
+            "x": fromBbox.left - config.nodeWidth / 2,
             "y": toBbox.top + toBbox.height / 2
         }, {
             "x": toBbox.left + toBbox.width,
@@ -53703,25 +53711,22 @@ function cloneNode(svg, selector) {
     return svg.select(selector).node().cloneNode(true);
 }
 
-function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
+function renderCommitHistory(svg, commitid, branches, direction) {
     var commit;
-    branchNum = branchNum || 1;
     if (_.isString(commitid)) {
         do {
             commit = allCommitsDict[commitid];
             log.debug("in renderCommitHistory", commit.id, commit.seq);
-            if (svg.select("#node-" + commitid).size() > 0) return;
+            if (svg.select("#node-" + commitid).size() > 0) {
+                return;
+            }
             svg.append(function () {
                 return cloneNode(svg, "#def-commit");
             }).attr("class", "commit").attr("id", function () {
                 return "node-" + commit.id;
-            })
-            //.append("use")
-            .attr("transform", function () {
-                return "translate(" + (commit.seq * 100 + 50) + ", " + branchNum * 50 + ")";
-            })
-            //.attr("xlink:href", "#def-commit")
-            .attr("fill", "yellow").attr("stroke", "grey").attr("stroke-width", "2");
+            }).attr("transform", function () {
+                return "translate(" + (commit.seq * config.nodeWidth + config.leftMargin) + ", " + branchNum * config.branchLineHeight + ")";
+            }).attr("fill", "yellow").attr("stroke", "grey").attr("stroke-width", "2");
 
             commitid = commit.parent;
         } while (commitid && allCommitsDict[commitid]);
@@ -53729,8 +53734,9 @@ function renderCommitHistory(svg, commitid, branches, direction, branchNum) {
 
     if (_.isArray(commitid)) {
         log.debug("found merge commmit", commitid);
-        renderCommitHistory(svg, commitid[0], branches, direction, branchNum);
-        renderCommitHistory(svg, commitid[1], branches, direction, ++branchNum);
+        renderCommitHistory(svg, commitid[0], branches, direction);
+        branchNum++;
+        renderCommitHistory(svg, commitid[1], branches, direction);
     }
 }
 
@@ -53761,17 +53767,16 @@ exports.draw = function (txt, id, ver) {
         allCommitsDict = db.getCommits();
         var branches = db.getBranchesAsObjArray();
         var svg = d3.select('#' + id);
-        svgAddArrowMarker(svg);
         svgCreateDefs(svg);
-        var branchNum = 1;
+        branchNum = 1;
         _.each(branches, function (v, k) {
-            renderCommitHistory(svg, v.commit.id, branches, direction, branchNum);
+            renderCommitHistory(svg, v.commit.id, branches, direction);
             renderLines(svg, v.commit);
             branchNum++;
         });
 
         svg.attr('height', 900);
-        svg.attr('width', 1200);
+        svg.attr('width', 2500);
     } catch (e) {
         log.error("Error while rendering gitgraph");
         log.error(e.message);

@@ -14,5 +14,13 @@ gitGraph :
     commit
     merge newbranch
     commit
-    checkout newbranch
+    merge other
+    commit
+    branch bug
+    checkout bug
+    commit
+    commit
+    checkout master
+    commit
+    checkout bug
     merge master
