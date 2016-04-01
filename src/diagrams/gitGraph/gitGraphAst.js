@@ -51,6 +51,21 @@ function isReachableFrom(currentCommit, otherCommit) {
 exports.setDirection = function(dir) {
     direction = dir;
 }
+var options = {};
+exports.setOptions = function(rawOptString) {
+    log.debug("options str", rawOptString);
+    rawOptString = rawOptString && rawOptString.trim();
+    rawOptString = rawOptString || "{}";
+    try {
+        options = JSON.parse(rawOptString)
+    } catch(e) {
+        log.error("error while parsing gitGraph options", e.message);
+    }
+}
+
+exports.getOptions = function() {
+    return options;
+}
 
 exports.commit = function(msg) {
     var commit = { id: getId(),

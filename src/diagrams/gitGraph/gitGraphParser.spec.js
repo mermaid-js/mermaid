@@ -12,8 +12,59 @@ describe('when parsing a gitGraph',function() {
 
         parser.parse(str);
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
 
+        expect(Object.keys(commits).length).toBe(1);
+        expect(parser.yy.getCurrentBranch()).toBe("master");
+        expect(parser.yy.getDirection()).toBe("LR");
+        expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    });
+
+    it('should handle a gitGraph defintion with empty options', function () {
+        var str = 'gitGraph:\n' +
+        'options\n' +
+        'end\n' +
+        'commit\n';
+
+        parser.parse(str);
+        var commits = parser.yy.getCommits();
+        //console.log(commits);
+
+        expect(parser.yy.getOptions()).toEqual({});
+        expect(Object.keys(commits).length).toBe(1);
+        expect(parser.yy.getCurrentBranch()).toBe("master");
+        expect(parser.yy.getDirection()).toBe("LR");
+        expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    });
+
+    it('should handle a gitGraph defintion with valid options', function () {
+        var str = 'gitGraph:\n' +
+        'options\n' +
+        '{"key": "value"}\n' +
+        'end\n' +
+        'commit\n';
+
+        parser.parse(str);
+        var commits = parser.yy.getCommits();
+        //console.log(commits);
+        console.log("options object", parser.yy.getOptions());
+        expect(parser.yy.getOptions()["key"]).toBe("value");
+        expect(Object.keys(commits).length).toBe(1);
+        expect(parser.yy.getCurrentBranch()).toBe("master");
+        expect(parser.yy.getDirection()).toBe("LR");
+        expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
+    });
+
+    it('should not fail on a gitGraph with malformed json', function () {
+        var str = 'gitGraph:\n' +
+        'options\n' +
+        '{"key": "value"\n' +
+        'end\n' +
+        'commit\n';
+
+        parser.parse(str);
+        var commits = parser.yy.getCommits();
+        //console.log(commits);
         expect(Object.keys(commits).length).toBe(1);
         expect(parser.yy.getCurrentBranch()).toBe("master");
         expect(parser.yy.getDirection()).toBe("LR");
@@ -26,7 +77,7 @@ describe('when parsing a gitGraph',function() {
 
         parser.parse(str);
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
 
         expect(Object.keys(commits).length).toBe(1);
         expect(parser.yy.getCurrentBranch()).toBe("master");
@@ -68,7 +119,7 @@ describe('when parsing a gitGraph',function() {
 
         parser.parse(str);
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
 
         expect(Object.keys(commits).length).toBe(1);
         var key = Object.keys(commits)[0];
@@ -107,7 +158,7 @@ describe('when parsing a gitGraph',function() {
         parser.parse(str);
 
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
         expect(Object.keys(commits).length).toBe(3);
         expect(parser.yy.getCurrentBranch()).toBe("master");
         expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);
@@ -126,7 +177,7 @@ describe('when parsing a gitGraph',function() {
         parser.parse(str);
 
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
         expect(Object.keys(commits).length).toBe(3);
         expect(parser.yy.getCurrentBranch()).toBe("newbranch");
         expect(parser.yy.getBranches()["newbranch"]).not.toEqual(parser.yy.getBranches()["master"]);
@@ -147,7 +198,7 @@ describe('when parsing a gitGraph',function() {
         parser.parse(str);
 
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
         expect(Object.keys(commits).length).toBe(5);
         expect(parser.yy.getCurrentBranch()).toBe("master");
         expect(parser.yy.getBranches()["newbranch"]).not.toEqual(parser.yy.getBranches()["master"]);
@@ -171,7 +222,7 @@ describe('when parsing a gitGraph',function() {
         parser.parse(str);
 
         var commits = parser.yy.getCommits();
-        console.log(commits);
+        //console.log(commits);
         expect(Object.keys(commits).length).toBe(6);
         expect(parser.yy.getCurrentBranch()).toBe("newbranch");
         expect(parser.yy.getBranches()["newbranch"]).toEqual(parser.yy.getBranches()["master"]);

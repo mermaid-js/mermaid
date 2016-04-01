@@ -9,11 +9,12 @@
 %lex
 
 %x string
+%x options
 %options case-insensitive
 
 %%
 
-[\n|\r\n]+                           return 'NL';
+(\r?\n)+                           return 'NL';
 \s+                             /* skip all whitespace */
 \#[^\n]*                        /* skip comments */
 \%%[^\n]*                       /* skip comments */
@@ -27,9 +28,12 @@
 "TB"                            return 'DIR';
 "BT"                            return 'DIR';
 ":"                             return ':';
+"options"\r?\n                       this.begin("options");
+<options>"end"\r?\n                   this.popState();
+<options>[^\n]+\r?\n                 return 'OPT';
 ["]                             this.begin("string");
 <string>["]                     this.popState();
-<string>[^"]*                   return 'STR';
+<string>[^"]*                     return 'STR';
 [a-zA-Z][a-zA-Z0-9_]+           return 'ID';
 <<EOF>>                         return 'EOF';
 
@@ -46,11 +50,20 @@ start
     | GG DIR ':' document EOF {yy.setDirection($2); return $4;}
     ;
 
+
 document
-    : /* empty */ {$$ =[]}
-    | document line {$1.push($2); $$ = $1}
+    : /*empty*/
+    | options body { yy.setOptions($1); $$ = $2}
     ;
 
+options
+    : options OPT {$1 +=$2; $$=$1}
+    | NL
+    ;
+body
+    : /*emmpty*/ {$$ = []}
+    | body line {$1.push($2); $$=$1;}
+    ;
 line
     : statement NL{$$ =$1}
     | NL

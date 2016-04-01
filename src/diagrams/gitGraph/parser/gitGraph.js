@@ -72,14 +72,14 @@
   }
 */
 var gitGraph = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[7,11,12,14,16,17,18],$V1=[2,3],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14],$V7=[1,15];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,3],$V1=[1,7],$V2=[7,12,15,17,19,20,21],$V3=[7,11,12,15,17,19,20,21];
 var parser = {trace: function trace() {
         Jison.print.apply(null, arguments);
     },
 yy: {},
-symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"DIR":8,"line":9,"statement":10,"NL":11,"COMMIT":12,"commit_arg":13,"BRANCH":14,"ID":15,"CHECKOUT":16,"MERGE":17,"RESET":18,"reset_arg":19,"STR":20,"HEAD":21,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"GG",5:":",7:"EOF",8:"DIR",11:"NL",12:"COMMIT",14:"BRANCH",15:"ID",16:"CHECKOUT",17:"MERGE",18:"RESET",20:"STR",21:"HEAD"},
-productions_: [0,[3,4],[3,5],[6,0],[6,2],[9,2],[9,1],[10,2],[10,2],[10,2],[10,2],[10,2],[13,0],[13,1],[19,1],[19,1]],
+symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"DIR":8,"options":9,"body":10,"OPT":11,"NL":12,"line":13,"statement":14,"COMMIT":15,"commit_arg":16,"BRANCH":17,"ID":18,"CHECKOUT":19,"MERGE":20,"RESET":21,"reset_arg":22,"STR":23,"HEAD":24,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"GG",5:":",7:"EOF",8:"DIR",11:"OPT",12:"NL",15:"COMMIT",17:"BRANCH",18:"ID",19:"CHECKOUT",20:"MERGE",21:"RESET",23:"STR",24:"HEAD"},
+productions_: [0,[3,4],[3,5],[6,0],[6,2],[9,2],[9,1],[10,0],[10,2],[13,2],[13,1],[14,2],[14,2],[14,2],[14,2],[14,2],[16,0],[16,1],[22,1],[22,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -91,40 +91,46 @@ break;
 case 2:
 yy.setDirection($$[$0-3]); return $$[$0-1];
 break;
-case 3:
-this.$ =[]
-break;
 case 4:
-$$[$0-1].push($$[$0]); this.$ = $$[$0-1]
+ yy.setOptions($$[$0-1]); this.$ = $$[$0]
 break;
 case 5:
-this.$ =$$[$0-1]
+$$[$0-1] +=$$[$0]; this.$=$$[$0-1]
 break;
 case 7:
-yy.commit($$[$0])
+this.$ = []
 break;
 case 8:
-yy.branch($$[$0])
+$$[$0-1].push($$[$0]); this.$=$$[$0-1];
 break;
 case 9:
-yy.checkout($$[$0])
-break;
-case 10:
-yy.merge($$[$0])
+this.$ =$$[$0-1]
 break;
 case 11:
-yy.reset($$[$0])
+yy.commit($$[$0])
 break;
 case 12:
-this.$ = ""
+yy.branch($$[$0])
 break;
 case 13:
+yy.checkout($$[$0])
+break;
+case 14:
+yy.merge($$[$0])
+break;
+case 15:
+yy.reset($$[$0])
+break;
+case 16:
+this.$ = ""
+break;
+case 17:
 this.$=$$[$0]
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3],8:[1,4]},o($V0,$V1,{6:5}),{5:[1,6]},{7:[1,7],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7},o($V0,$V1,{6:16}),{1:[2,1]},o($V0,[2,4]),{11:[1,17]},o($V0,[2,6]),{11:[2,12],13:18,20:[1,19]},{15:[1,20]},{15:[1,21]},{15:[1,22]},{15:[1,25],19:23,21:[1,24]},{7:[1,26],9:8,10:9,11:$V2,12:$V3,14:$V4,16:$V5,17:$V6,18:$V7},o($V0,[2,5]),{11:[2,7]},{11:[2,13]},{11:[2,8]},{11:[2,9]},{11:[2,10]},{11:[2,11]},{11:[2,14]},{11:[2,15]},{1:[2,2]}],
-defaultActions: {7:[2,1],18:[2,7],19:[2,13],20:[2,8],21:[2,9],22:[2,10],23:[2,11],24:[2,14],25:[2,15],26:[2,2]},
+table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3],8:[1,4]},{6:5,7:$V0,9:6,12:$V1},{5:[1,8]},{7:[1,9]},o($V2,[2,7],{10:10,11:[1,11]}),o($V3,[2,6]),{6:12,7:$V0,9:6,12:$V1},{1:[2,1]},{7:[2,4],12:[1,15],13:13,14:14,15:[1,16],17:[1,17],19:[1,18],20:[1,19],21:[1,20]},o($V3,[2,5]),{7:[1,21]},o($V2,[2,8]),{12:[1,22]},o($V2,[2,10]),{12:[2,16],16:23,23:[1,24]},{18:[1,25]},{18:[1,26]},{18:[1,27]},{18:[1,30],22:28,24:[1,29]},{1:[2,2]},o($V2,[2,9]),{12:[2,11]},{12:[2,17]},{12:[2,12]},{12:[2,13]},{12:[2,14]},{12:[2,15]},{12:[2,18]},{12:[2,19]}],
+defaultActions: {9:[2,1],21:[2,2],23:[2,11],24:[2,17],25:[2,12],26:[2,13],27:[2,14],28:[2,15],29:[2,18],30:[2,19]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -603,7 +609,7 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 11;
+case 0:return 12;
 break;
 case 1:/* skip all whitespace */
 break;
@@ -613,15 +619,15 @@ case 3:/* skip comments */
 break;
 case 4:return 4;
 break;
-case 5:return 12;
+case 5:return 15;
 break;
-case 6:return 14;
+case 6:return 17;
 break;
-case 7:return 17;
+case 7:return 20;
 break;
-case 8:return 18;
+case 8:return 21;
 break;
-case 9:return 16;
+case 9:return 19;
 break;
 case 10:return 8;
 break;
@@ -631,20 +637,26 @@ case 12:return 8;
 break;
 case 13:return 5;
 break;
-case 14:this.begin("string");
+case 14:this.begin("options");
 break;
 case 15:this.popState();
 break;
-case 16:return 20;
+case 16:return 11;
 break;
-case 17:return 15;
+case 17:this.begin("string");
 break;
-case 18:return 7;
+case 18:this.popState();
+break;
+case 19:return 23;
+break;
+case 20:return 18;
+break;
+case 21:return 7;
 break;
 }
 },
-rules: [/^(?:[\n|\r\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:TB\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][a-zA-Z0-9_]+)/i,/^(?:$)/i],
-conditions: {"string":{"rules":[15,16],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,18],"inclusive":true}}
+rules: [/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:TB\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][a-zA-Z0-9_]+)/i,/^(?:$)/i],
+conditions: {"options":{"rules":[15,16],"inclusive":false},"string":{"rules":[18,19],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,20,21],"inclusive":true}}
 });
 return lexer;
 })();

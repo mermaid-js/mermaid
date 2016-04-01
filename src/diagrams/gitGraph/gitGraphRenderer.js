@@ -14,8 +14,9 @@ var config = {
     lineColor: "grey",
     leftMargin: 50
 }
-exports.setConf = function(config) {
-
+var apiConfig = {};
+exports.setConf = function(c) {
+    apiConfig = c;
 }
 
 
@@ -175,6 +176,9 @@ exports.draw = function(txt, id, ver) {
         log.debug('in gitgraph renderer', txt, id, ver);
         // Parse the graph definition
         parser.parse(txt + "\n");
+
+        config = _.extend(config, apiConfig, db.getOptions());
+        log.debug("effective options", config);
         var direction = db.getDirection();
         allCommitsDict = db.getCommits();
         var branches = db.getBranchesAsObjArray();
