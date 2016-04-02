@@ -1,7 +1,9 @@
 gitGraph :
 options
 {"key": "value",
-"nodeWidth": 100
+"nodeWidth": 150
 }
 end
+    commit
+    commit
     commit

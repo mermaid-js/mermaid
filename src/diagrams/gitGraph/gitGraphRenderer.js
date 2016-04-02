@@ -12,7 +12,13 @@ var config = {
     lineStrokeWidth: 4,
     branchLineHeight: 50,
     lineColor: "grey",
-    leftMargin: 50
+    leftMargin: 50,
+    nodeLabel: {
+        width: 50,
+        height: 100,
+        x: -25,
+        y: 25
+    }
 }
 var apiConfig = {};
 exports.setConf = function(c) {
@@ -21,7 +27,8 @@ exports.setConf = function(c) {
 
 
 function svgCreateDefs(svg) {
-    svg.append("defs")
+    svg
+        .append("defs")
         .append("g")
         .attr("id", "def-commit")
         .append("circle")
@@ -30,21 +37,14 @@ function svgCreateDefs(svg) {
         .attr("cy", 0);
     svg.select("#def-commit")
         .append('foreignObject')
-        .attr('width', 100)
-        .attr('height', 100)
-        .attr('x', 50)
-        .attr('y', 50)
+        .attr('width', config.nodeLabel.width)
+        .attr('height', config.nodeLabel.height)
+        .attr('x', config.nodeLabel.x)
+        .attr('y', config.nodeLabel.y)
+        .attr('class', "node-label")
         .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
         .append('xhtml:p')
-        .text("a big chunk of text that should wrap");
-    //.attr("requiredExtensions", "http://www.w3.org/1999/xhtml")
-    //.attr("width", 50)
-    //.attr("height", 30)
-    //.attr("x", 30)
-    //.attr("y", 30)
-    //.append("xhtml:body")
-    //.append("xhtml:p")
-    //.text("something")
+        .html("a big chunk of text that should wrap");
 }
 
 
@@ -141,6 +141,15 @@ function renderCommitHistory(svg, commitid, branches, direction) {
                 .attr("stroke", "grey")
                 .attr("stroke-width", "2");
 
+            svg.select("#node-" + commit.id + " p")
+                .text(commit.id);
+            var branch = _.find(branches, ["commit", commit]);
+            if (branch) {
+                svg.select("#node-" + commit.id + " foreignObject")
+                    .append("xhtml:p")
+                    .attr("class", "branch-label")
+                    .text(branch.name);
+            }
             commitid = commit.parent
         } while (commitid && allCommitsDict[commitid]);
     }
