@@ -1,327 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.mermaid = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-
-},{}],2:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":3}],3:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = setTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    clearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],4:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.6"
@@ -9826,7 +9503,7 @@ process.umask = function() { return 0; };
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],5:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -9858,7 +9535,7 @@ module.exports =  {
   version: require("./lib/version")
 };
 
-},{"./lib/dagre":12,"./lib/graphlib":13,"./lib/intersect":14,"./lib/render":29,"./lib/util":31,"./lib/version":32}],6:[function(require,module,exports){
+},{"./lib/dagre":9,"./lib/graphlib":10,"./lib/intersect":11,"./lib/render":26,"./lib/util":28,"./lib/version":29}],3:[function(require,module,exports){
 var util = require("./util");
 
 module.exports = {
@@ -9922,7 +9599,7 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":31}],7:[function(require,module,exports){
+},{"./util":28}],4:[function(require,module,exports){
 var util = require("./util"),
     addLabel = require("./label/add-label");
 
@@ -9967,7 +9644,7 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":22,"./util":31}],8:[function(require,module,exports){
+},{"./label/add-label":19,"./util":28}],5:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10004,7 +9681,7 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],9:[function(require,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],6:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10136,7 +9813,7 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":11,"./intersect/intersect-node":18,"./lodash":25,"./util":31}],10:[function(require,module,exports){
+},{"./d3":8,"./intersect/intersect-node":15,"./lodash":22,"./util":28}],7:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10196,11 +9873,11 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],11:[function(require,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],8:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],12:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /* global window */
 
 var dagre;
@@ -10217,7 +9894,7 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":54}],13:[function(require,module,exports){
+},{"dagre":51}],10:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -10234,7 +9911,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":33}],14:[function(require,module,exports){
+},{"graphlib":30}],11:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -10243,7 +9920,7 @@ module.exports = {
   rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":15,"./intersect-ellipse":16,"./intersect-node":18,"./intersect-polygon":19,"./intersect-rect":20}],15:[function(require,module,exports){
+},{"./intersect-circle":12,"./intersect-ellipse":13,"./intersect-node":15,"./intersect-polygon":16,"./intersect-rect":17}],12:[function(require,module,exports){
 var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
@@ -10252,7 +9929,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":16}],16:[function(require,module,exports){
+},{"./intersect-ellipse":13}],13:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -10279,7 +9956,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],17:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -10351,14 +10028,14 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],19:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
@@ -10415,7 +10092,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":17}],20:[function(require,module,exports){
+},{"./intersect-line":14}],17:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -10449,7 +10126,7 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],21:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addHtmlLabel;
@@ -10494,7 +10171,7 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":31}],22:[function(require,module,exports){
+},{"../util":28}],19:[function(require,module,exports){
 var addTextLabel = require("./add-text-label"),
     addHtmlLabel = require("./add-html-label"),
     addSVGLabel  = require("./add-svg-label");
@@ -10533,7 +10210,7 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":21,"./add-svg-label":23,"./add-text-label":24}],23:[function(require,module,exports){
+},{"./add-html-label":18,"./add-svg-label":20,"./add-text-label":21}],20:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addSVGLabel;
@@ -10548,7 +10225,7 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":31}],24:[function(require,module,exports){
+},{"../util":28}],21:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addTextLabel;
@@ -10595,7 +10272,7 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":31}],25:[function(require,module,exports){
+},{"../util":28}],22:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -10612,7 +10289,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":53}],26:[function(require,module,exports){
+},{"lodash":50}],23:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10648,7 +10325,7 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":11,"./util":31}],27:[function(require,module,exports){
+},{"./d3":8,"./util":28}],24:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10672,7 +10349,7 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":11,"./lodash":25,"./util":31}],28:[function(require,module,exports){
+},{"./d3":8,"./lodash":22,"./util":28}],25:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10695,7 +10372,7 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":11,"./util":31}],29:[function(require,module,exports){
+},{"./d3":8,"./util":28}],26:[function(require,module,exports){
 var _ = require("./lodash"),
     layout = require("./dagre").layout;
 
@@ -10864,7 +10541,7 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":6,"./create-clusters":7,"./create-edge-labels":8,"./create-edge-paths":9,"./create-nodes":10,"./dagre":12,"./lodash":25,"./position-clusters":26,"./position-edge-labels":27,"./position-nodes":28,"./shapes":30}],30:[function(require,module,exports){
+},{"./arrows":3,"./create-clusters":4,"./create-edge-labels":5,"./create-edge-paths":6,"./create-nodes":7,"./dagre":9,"./lodash":22,"./position-clusters":23,"./position-edge-labels":24,"./position-nodes":25,"./shapes":27}],27:[function(require,module,exports){
 "use strict";
 
 var intersectRect = require("./intersect/intersect-rect"),
@@ -10947,7 +10624,7 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":15,"./intersect/intersect-ellipse":16,"./intersect/intersect-polygon":19,"./intersect/intersect-rect":20}],31:[function(require,module,exports){
+},{"./intersect/intersect-circle":12,"./intersect/intersect-ellipse":13,"./intersect/intersect-polygon":16,"./intersect/intersect-rect":17}],28:[function(require,module,exports){
 var _ = require("./lodash");
 
 // Public utility functions
@@ -11003,10 +10680,10 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":25}],32:[function(require,module,exports){
+},{"./lodash":22}],29:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],33:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -11046,7 +10723,7 @@ module.exports = {
   version: lib.version
 };
 
-},{"./lib":49,"./lib/alg":40,"./lib/json":50}],34:[function(require,module,exports){
+},{"./lib":46,"./lib/alg":37,"./lib/json":47}],31:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = components;
@@ -11075,7 +10752,7 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":51}],35:[function(require,module,exports){
+},{"../lodash":48}],32:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = dfs;
@@ -11116,7 +10793,7 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":51}],36:[function(require,module,exports){
+},{"../lodash":48}],33:[function(require,module,exports){
 var dijkstra = require("./dijkstra"),
     _ = require("../lodash");
 
@@ -11128,7 +10805,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":51,"./dijkstra":37}],37:[function(require,module,exports){
+},{"../lodash":48,"./dijkstra":34}],34:[function(require,module,exports){
 var _ = require("../lodash"),
     PriorityQueue = require("../data/priority-queue");
 
@@ -11184,7 +10861,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":47,"../lodash":51}],38:[function(require,module,exports){
+},{"../data/priority-queue":44,"../lodash":48}],35:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -11196,7 +10873,7 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":51,"./tarjan":45}],39:[function(require,module,exports){
+},{"../lodash":48,"./tarjan":42}],36:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = floydWarshall;
@@ -11248,7 +10925,7 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":51}],40:[function(require,module,exports){
+},{"../lodash":48}],37:[function(require,module,exports){
 module.exports = {
   components: require("./components"),
   dijkstra: require("./dijkstra"),
@@ -11263,7 +10940,7 @@ module.exports = {
   topsort: require("./topsort")
 };
 
-},{"./components":34,"./dijkstra":37,"./dijkstra-all":36,"./find-cycles":38,"./floyd-warshall":39,"./is-acyclic":41,"./postorder":42,"./preorder":43,"./prim":44,"./tarjan":45,"./topsort":46}],41:[function(require,module,exports){
+},{"./components":31,"./dijkstra":34,"./dijkstra-all":33,"./find-cycles":35,"./floyd-warshall":36,"./is-acyclic":38,"./postorder":39,"./preorder":40,"./prim":41,"./tarjan":42,"./topsort":43}],38:[function(require,module,exports){
 var topsort = require("./topsort");
 
 module.exports = isAcyclic;
@@ -11280,7 +10957,7 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":46}],42:[function(require,module,exports){
+},{"./topsort":43}],39:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = postorder;
@@ -11289,7 +10966,7 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":35}],43:[function(require,module,exports){
+},{"./dfs":32}],40:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = preorder;
@@ -11298,7 +10975,7 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":35}],44:[function(require,module,exports){
+},{"./dfs":32}],41:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
     PriorityQueue = require("../data/priority-queue");
@@ -11352,7 +11029,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":47,"../graph":48,"../lodash":51}],45:[function(require,module,exports){
+},{"../data/priority-queue":44,"../graph":45,"../lodash":48}],42:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
@@ -11401,7 +11078,7 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":51}],46:[function(require,module,exports){
+},{"../lodash":48}],43:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = topsort;
@@ -11437,7 +11114,7 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":51}],47:[function(require,module,exports){
+},{"../lodash":48}],44:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = PriorityQueue;
@@ -11591,7 +11268,7 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":51}],48:[function(require,module,exports){
+},{"../lodash":48}],45:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -12112,14 +11789,14 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":51}],49:[function(require,module,exports){
+},{"./lodash":48}],46:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
   Graph: require("./graph"),
   version: require("./version")
 };
 
-},{"./graph":48,"./version":52}],50:[function(require,module,exports){
+},{"./graph":45,"./version":49}],47:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graph");
 
@@ -12187,7 +11864,7 @@ function read(json) {
   return g;
 }
 
-},{"./graph":48,"./lodash":51}],51:[function(require,module,exports){
+},{"./graph":45,"./lodash":48}],48:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -12204,10 +11881,10 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":53}],52:[function(require,module,exports){
+},{"lodash":50}],49:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],53:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -24562,7 +24239,7 @@ module.exports = '1.0.7';
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],54:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /*
 Copyright (c) 2012-2014 Chris Pettitt
 
@@ -24597,7 +24274,7 @@ module.exports = {
   version: require("./lib/version")
 };
 
-},{"./lib/debug":59,"./lib/graphlib":60,"./lib/layout":62,"./lib/util":82,"./lib/version":83}],55:[function(require,module,exports){
+},{"./lib/debug":56,"./lib/graphlib":57,"./lib/layout":59,"./lib/util":79,"./lib/version":80}],52:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -24666,7 +24343,7 @@ function undo(g) {
   });
 }
 
-},{"./greedy-fas":61,"./lodash":63}],56:[function(require,module,exports){
+},{"./greedy-fas":58,"./lodash":60}],53:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -24706,7 +24383,7 @@ function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
   }
 }
 
-},{"./lodash":63,"./util":82}],57:[function(require,module,exports){
+},{"./lodash":60,"./util":79}],54:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -24780,7 +24457,7 @@ function swapXYOne(attrs) {
   attrs.y = x;
 }
 
-},{"./lodash":63}],58:[function(require,module,exports){
+},{"./lodash":60}],55:[function(require,module,exports){
 /*
  * Simple doubly linked list implementation derived from Cormen, et al.,
  * "Introduction to Algorithms".
@@ -24838,7 +24515,7 @@ function filterOutLinks(k, v) {
   }
 }
 
-},{}],59:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util"),
     Graph = require("./graphlib").Graph;
@@ -24874,7 +24551,7 @@ function debugOrdering(g) {
   return h;
 }
 
-},{"./graphlib":60,"./lodash":63,"./util":82}],60:[function(require,module,exports){
+},{"./graphlib":57,"./lodash":60,"./util":79}],57:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -24891,7 +24568,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":84}],61:[function(require,module,exports){
+},{"graphlib":81}],58:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graphlib").Graph,
     List = require("./data/list");
@@ -25011,7 +24688,7 @@ function assignBucket(buckets, zeroIdx, entry) {
   }
 }
 
-},{"./data/list":58,"./graphlib":60,"./lodash":63}],62:[function(require,module,exports){
+},{"./data/list":55,"./graphlib":57,"./lodash":60}],59:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -25405,9 +25082,9 @@ function canonicalize(attrs) {
   return newAttrs;
 }
 
-},{"./acyclic":55,"./add-border-segments":56,"./coordinate-system":57,"./graphlib":60,"./lodash":63,"./nesting-graph":64,"./normalize":65,"./order":70,"./parent-dummy-chains":75,"./position":77,"./rank":79,"./util":82}],63:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"dup":51,"lodash":104}],64:[function(require,module,exports){
+},{"./acyclic":52,"./add-border-segments":53,"./coordinate-system":54,"./graphlib":57,"./lodash":60,"./nesting-graph":61,"./normalize":62,"./order":67,"./parent-dummy-chains":72,"./position":74,"./rank":76,"./util":79}],60:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"dup":48,"lodash":101}],61:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -25541,7 +25218,7 @@ function cleanup(g) {
   });
 }
 
-},{"./lodash":63,"./util":82}],65:[function(require,module,exports){
+},{"./lodash":60,"./util":79}],62:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -25633,7 +25310,7 @@ function undo(g) {
   });
 }
 
-},{"./lodash":63,"./util":82}],66:[function(require,module,exports){
+},{"./lodash":60,"./util":79}],63:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = addSubgraphConstraints;
@@ -25688,7 +25365,7 @@ function addSubgraphConstraints(g, cg, vs) {
   */
 }
 
-},{"../lodash":63}],67:[function(require,module,exports){
+},{"../lodash":60}],64:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = barycenter;
@@ -25718,7 +25395,7 @@ function barycenter(g, movable) {
 }
 
 
-},{"../lodash":63}],68:[function(require,module,exports){
+},{"../lodash":60}],65:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graphlib").Graph;
 
@@ -25793,7 +25470,7 @@ function createRootNode(g) {
   return v;
 }
 
-},{"../graphlib":60,"../lodash":63}],69:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60}],66:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -25865,7 +25542,7 @@ function twoLayerCrossCount(g, northLayer, southLayer) {
   return cc;
 }
 
-},{"../lodash":63}],70:[function(require,module,exports){
+},{"../lodash":60}],67:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -25946,7 +25623,7 @@ function assignOrder(g, layering) {
   });
 }
 
-},{"../graphlib":60,"../lodash":63,"../util":82,"./add-subgraph-constraints":66,"./build-layer-graph":68,"./cross-count":69,"./init-order":71,"./sort-subgraph":73}],71:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"../util":79,"./add-subgraph-constraints":63,"./build-layer-graph":65,"./cross-count":66,"./init-order":68,"./sort-subgraph":70}],68:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -25986,7 +25663,7 @@ function initOrder(g) {
   return layers;
 }
 
-},{"../lodash":63}],72:[function(require,module,exports){
+},{"../lodash":60}],69:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -26111,7 +25788,7 @@ function mergeEntries(target, source) {
   source.merged = true;
 }
 
-},{"../lodash":63}],73:[function(require,module,exports){
+},{"../lodash":60}],70:[function(require,module,exports){
 var _ = require("../lodash"),
     barycenter = require("./barycenter"),
     resolveConflicts = require("./resolve-conflicts"),
@@ -26189,7 +25866,7 @@ function mergeBarycenters(target, other) {
   }
 }
 
-},{"../lodash":63,"./barycenter":67,"./resolve-conflicts":72,"./sort":74}],74:[function(require,module,exports){
+},{"../lodash":60,"./barycenter":64,"./resolve-conflicts":69,"./sort":71}],71:[function(require,module,exports){
 var _ = require("../lodash"),
     util = require("../util");
 
@@ -26248,7 +25925,7 @@ function compareWithBias(bias) {
   };
 }
 
-},{"../lodash":63,"../util":82}],75:[function(require,module,exports){
+},{"../lodash":60,"../util":79}],72:[function(require,module,exports){
 var _ = require("./lodash");
 
 module.exports = parentDummyChains;
@@ -26336,7 +26013,7 @@ function postorder(g) {
   return result;
 }
 
-},{"./lodash":63}],76:[function(require,module,exports){
+},{"./lodash":60}],73:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -26736,7 +26413,7 @@ function width(g, v) {
   return g.node(v).width;
 }
 
-},{"../graphlib":60,"../lodash":63,"../util":82}],77:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"../util":79}],74:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -26768,7 +26445,7 @@ function positionY(g) {
 }
 
 
-},{"../lodash":63,"../util":82,"./bk":76}],78:[function(require,module,exports){
+},{"../lodash":60,"../util":79,"./bk":73}],75:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -26859,7 +26536,7 @@ function shiftRanks(t, g, delta) {
   });
 }
 
-},{"../graphlib":60,"../lodash":63,"./util":81}],79:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"./util":78}],76:[function(require,module,exports){
 "use strict";
 
 var rankUtil = require("./util"),
@@ -26909,7 +26586,7 @@ function networkSimplexRanker(g) {
   networkSimplex(g);
 }
 
-},{"./feasible-tree":78,"./network-simplex":80,"./util":81}],80:[function(require,module,exports){
+},{"./feasible-tree":75,"./network-simplex":77,"./util":78}],77:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -27145,7 +26822,7 @@ function isDescendant(tree, vLabel, rootLabel) {
   return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
 }
 
-},{"../graphlib":60,"../lodash":63,"../util":82,"./feasible-tree":78,"./util":81}],81:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"../util":79,"./feasible-tree":75,"./util":78}],78:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -27208,7 +26885,7 @@ function slack(g, e) {
   return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
 }
 
-},{"../lodash":63}],82:[function(require,module,exports){
+},{"../lodash":60}],79:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -27446,52 +27123,52 @@ function notime(name, fn) {
   return fn();
 }
 
-},{"./graphlib":60,"./lodash":63}],83:[function(require,module,exports){
+},{"./graphlib":57,"./lodash":60}],80:[function(require,module,exports){
 module.exports = "0.7.4";
 
-},{}],84:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
+arguments[4][30][0].apply(exports,arguments)
+},{"./lib":97,"./lib/alg":88,"./lib/json":98,"dup":30}],82:[function(require,module,exports){
+arguments[4][31][0].apply(exports,arguments)
+},{"../lodash":99,"dup":31}],83:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"../lodash":99,"dup":32}],84:[function(require,module,exports){
 arguments[4][33][0].apply(exports,arguments)
-},{"./lib":100,"./lib/alg":91,"./lib/json":101,"dup":33}],85:[function(require,module,exports){
+},{"../lodash":99,"./dijkstra":85,"dup":33}],85:[function(require,module,exports){
 arguments[4][34][0].apply(exports,arguments)
-},{"../lodash":102,"dup":34}],86:[function(require,module,exports){
+},{"../data/priority-queue":95,"../lodash":99,"dup":34}],86:[function(require,module,exports){
 arguments[4][35][0].apply(exports,arguments)
-},{"../lodash":102,"dup":35}],87:[function(require,module,exports){
+},{"../lodash":99,"./tarjan":93,"dup":35}],87:[function(require,module,exports){
 arguments[4][36][0].apply(exports,arguments)
-},{"../lodash":102,"./dijkstra":88,"dup":36}],88:[function(require,module,exports){
+},{"../lodash":99,"dup":36}],88:[function(require,module,exports){
 arguments[4][37][0].apply(exports,arguments)
-},{"../data/priority-queue":98,"../lodash":102,"dup":37}],89:[function(require,module,exports){
+},{"./components":82,"./dijkstra":85,"./dijkstra-all":84,"./find-cycles":86,"./floyd-warshall":87,"./is-acyclic":89,"./postorder":90,"./preorder":91,"./prim":92,"./tarjan":93,"./topsort":94,"dup":37}],89:[function(require,module,exports){
 arguments[4][38][0].apply(exports,arguments)
-},{"../lodash":102,"./tarjan":96,"dup":38}],90:[function(require,module,exports){
+},{"./topsort":94,"dup":38}],90:[function(require,module,exports){
 arguments[4][39][0].apply(exports,arguments)
-},{"../lodash":102,"dup":39}],91:[function(require,module,exports){
+},{"./dfs":83,"dup":39}],91:[function(require,module,exports){
 arguments[4][40][0].apply(exports,arguments)
-},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"dup":40}],92:[function(require,module,exports){
+},{"./dfs":83,"dup":40}],92:[function(require,module,exports){
 arguments[4][41][0].apply(exports,arguments)
-},{"./topsort":97,"dup":41}],93:[function(require,module,exports){
+},{"../data/priority-queue":95,"../graph":96,"../lodash":99,"dup":41}],93:[function(require,module,exports){
 arguments[4][42][0].apply(exports,arguments)
-},{"./dfs":86,"dup":42}],94:[function(require,module,exports){
+},{"../lodash":99,"dup":42}],94:[function(require,module,exports){
 arguments[4][43][0].apply(exports,arguments)
-},{"./dfs":86,"dup":43}],95:[function(require,module,exports){
+},{"../lodash":99,"dup":43}],95:[function(require,module,exports){
 arguments[4][44][0].apply(exports,arguments)
-},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"dup":44}],96:[function(require,module,exports){
+},{"../lodash":99,"dup":44}],96:[function(require,module,exports){
 arguments[4][45][0].apply(exports,arguments)
-},{"../lodash":102,"dup":45}],97:[function(require,module,exports){
+},{"./lodash":99,"dup":45}],97:[function(require,module,exports){
 arguments[4][46][0].apply(exports,arguments)
-},{"../lodash":102,"dup":46}],98:[function(require,module,exports){
+},{"./graph":96,"./version":100,"dup":46}],98:[function(require,module,exports){
 arguments[4][47][0].apply(exports,arguments)
-},{"../lodash":102,"dup":47}],99:[function(require,module,exports){
+},{"./graph":96,"./lodash":99,"dup":47}],99:[function(require,module,exports){
 arguments[4][48][0].apply(exports,arguments)
-},{"./lodash":102,"dup":48}],100:[function(require,module,exports){
+},{"dup":48,"lodash":101}],100:[function(require,module,exports){
 arguments[4][49][0].apply(exports,arguments)
-},{"./graph":99,"./version":103,"dup":49}],101:[function(require,module,exports){
+},{"dup":49}],101:[function(require,module,exports){
 arguments[4][50][0].apply(exports,arguments)
-},{"./graph":99,"./lodash":102,"dup":50}],102:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"dup":51,"lodash":104}],103:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"dup":52}],104:[function(require,module,exports){
-arguments[4][53][0].apply(exports,arguments)
-},{"dup":53}],105:[function(require,module,exports){
+},{"dup":50}],102:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -27824,7 +27501,7 @@ arguments[4][53][0].apply(exports,arguments)
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],106:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -42901,7 +42578,7 @@ arguments[4][53][0].apply(exports,arguments)
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],107:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 //! moment.js
 //! version : 2.12.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -46590,7 +46267,7 @@ arguments[4][53][0].apply(exports,arguments)
     return _moment;
 
 }));
-},{}],108:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
   "version": "0.5.8",
@@ -46717,7 +46394,7 @@ module.exports={
   }
 }
 
-},{}],109:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 /* global window */
 //log.debug('Setting up d3');
 'use strict';
@@ -47188,7 +46865,7 @@ module.exports = d3;
 })();
 /* jshint ignore:end */
 
-},{"d3":4}],110:[function(require,module,exports){
+},{"d3":1}],107:[function(require,module,exports){
 'use strict';
 
 var Logger = require('../../logger');
@@ -47275,7 +46952,7 @@ exports.relationType = {
     DEPENDENCY: 3
 };
 
-},{"../../logger":131}],111:[function(require,module,exports){
+},{"../../logger":128}],108:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -47584,7 +47261,7 @@ module.exports.draw = function (text, id) {
     //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":109,"../../logger":131,"./classDb":110,"./parser/classDiagram":112,"dagre":54}],112:[function(require,module,exports){
+},{"../../d3":106,"../../logger":128,"./classDb":107,"./parser/classDiagram":109,"dagre":51}],109:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -48386,7 +48063,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],113:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],110:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -48421,7 +48098,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":131}],114:[function(require,module,exports){
+},{"../../logger":128}],111:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -48464,7 +48141,7 @@ exports.draw = function (txt, id, ver) {
     //svg.attr('viewBox', '0 0 300 150');
 };
 
-},{"../../d3":109,"../../logger":131,"./exampleDb":113,"./parser/example.js":115}],115:[function(require,module,exports){
+},{"../../d3":106,"../../logger":128,"./exampleDb":110,"./parser/example.js":112}],112:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -49110,7 +48787,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],116:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],113:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -49134,7 +48811,7 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":131,"dagre-d3":5}],117:[function(require,module,exports){
+},{"../../logger":128,"dagre-d3":2}],114:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -49607,7 +49284,7 @@ exports.draw = function (text, id, isDot) {
     }
 };
 
-},{"../../d3":109,"../../logger":131,"./dagre-d3":116,"./graphDb":118,"./parser/dot":119,"./parser/flow":120}],118:[function(require,module,exports){
+},{"../../d3":106,"../../logger":128,"./dagre-d3":113,"./graphDb":115,"./parser/dot":116,"./parser/flow":117}],115:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-03.
@@ -49996,7 +49673,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../d3":109,"../../logger":131}],119:[function(require,module,exports){
+},{"../../d3":106,"../../logger":128}],116:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -50827,7 +50504,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],120:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],117:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -51937,7 +51614,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],121:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],118:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -52324,7 +52001,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":131,"moment":107}],122:[function(require,module,exports){
+},{"../../logger":128,"moment":104}],119:[function(require,module,exports){
 'use strict';
 
 var gantt = require('./parser/gantt').parser;
@@ -52678,7 +52355,7 @@ module.exports.draw = function (text, id) {
     }
 };
 
-},{"../../d3":109,"./ganttDb":121,"./parser/gantt":123,"moment":107}],123:[function(require,module,exports){
+},{"../../d3":106,"./ganttDb":118,"./parser/gantt":120,"moment":104}],120:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.15 */
 /*
@@ -53361,7 +53038,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],124:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],121:[function(require,module,exports){
 "use strict";
 
 var Logger = require('../../logger');
@@ -53586,7 +53263,7 @@ exports.getHead = function () {
     return head;
 };
 
-},{"../../logger":131,"lodash":106}],125:[function(require,module,exports){
+},{"../../logger":128,"lodash":103}],122:[function(require,module,exports){
 'use strict';
 
 var db = require('./gitGraphAst');
@@ -53697,7 +53374,10 @@ function renderCommitHistory(svg, commitid, branches, direction) {
             svg.select("#node-" + commit.id + " p").text(commit.id);
             var branch = _.find(branches, ["commit", commit]);
             if (branch) {
-                svg.select("#node-" + commit.id + " foreignObject").append("xhtml:p").attr("class", "branch-label").text(branch.name);
+                log.debug("found branch ", branch.name);
+                // don't try to select foreignObject - doesn't work.
+                // instead select by class name and it works.
+                svg.select("#node-" + commit.id + " .node-label").append("xhtml:p").attr("class", "branch-label").text(branch.name);
             }
             commitid = commit.parent;
         } while (commitid && allCommitsDict[commitid]);
@@ -53757,7 +53437,7 @@ exports.draw = function (txt, id, ver) {
     }
 };
 
-},{"../../d3":109,"../../logger":131,"./gitGraphAst":124,"./parser/gitGraph":126,"lodash":106}],126:[function(require,module,exports){
+},{"../../d3":106,"../../logger":128,"./gitGraphAst":121,"./parser/gitGraph":123,"lodash":103}],123:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -54478,7 +54158,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],127:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],124:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -55329,7 +55009,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],128:[function(require,module,exports){
+},{"_process":134,"fs":132,"path":133}],125:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-19.
@@ -55493,7 +55173,7 @@ exports.apply = function (param) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":131}],129:[function(require,module,exports){
+},{"../../logger":128}],126:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -55980,7 +55660,7 @@ module.exports.draw = function (text, id) {
     diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
 };
 
-},{"../../d3":109,"../../logger":131,"./parser/sequenceDiagram":127,"./sequenceDb":128,"./svgDraw":130}],130:[function(require,module,exports){
+},{"../../d3":106,"../../logger":128,"./parser/sequenceDiagram":124,"./sequenceDb":125,"./svgDraw":127}],127:[function(require,module,exports){
 /**
  * Created by knut on 14-12-20.
  */
@@ -56208,7 +55888,7 @@ exports.getNoteRect = function () {
     return rect;
 };
 
-},{}],131:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 /**
  * #logger
  * logger = require('logger').create()
@@ -56325,7 +56005,7 @@ function Log(level) {
 
 exports.Log = Log;
 
-},{}],132:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 (function (global){
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
@@ -56582,7 +56262,7 @@ if (typeof document !== 'undefined') {
 //}));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":108,"./logger":131,"./mermaidAPI":133,"he":105}],133:[function(require,module,exports){
+},{"../package.json":105,"./logger":128,"./mermaidAPI":130,"he":102}],130:[function(require,module,exports){
 (function (global){
 /**
  * ---
@@ -57132,7 +56812,7 @@ global.mermaidAPI = {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../package.json":108,"./d3":109,"./diagrams/classDiagram/classDb":110,"./diagrams/classDiagram/classRenderer":111,"./diagrams/classDiagram/parser/classDiagram":112,"./diagrams/example/exampleDb":113,"./diagrams/example/exampleRenderer":114,"./diagrams/example/parser/example":115,"./diagrams/flowchart/flowRenderer":117,"./diagrams/flowchart/graphDb":118,"./diagrams/flowchart/parser/dot":119,"./diagrams/flowchart/parser/flow":120,"./diagrams/gantt/ganttDb":121,"./diagrams/gantt/ganttRenderer":122,"./diagrams/gantt/parser/gantt":123,"./diagrams/gitGraph/gitGraphAst":124,"./diagrams/gitGraph/gitGraphRenderer":125,"./diagrams/gitGraph/parser/gitGraph":126,"./diagrams/sequenceDiagram/parser/sequenceDiagram":127,"./diagrams/sequenceDiagram/sequenceDb":128,"./diagrams/sequenceDiagram/sequenceRenderer":129,"./logger":131,"./utils":134}],134:[function(require,module,exports){
+},{"../package.json":105,"./d3":106,"./diagrams/classDiagram/classDb":107,"./diagrams/classDiagram/classRenderer":108,"./diagrams/classDiagram/parser/classDiagram":109,"./diagrams/example/exampleDb":110,"./diagrams/example/exampleRenderer":111,"./diagrams/example/parser/example":112,"./diagrams/flowchart/flowRenderer":114,"./diagrams/flowchart/graphDb":115,"./diagrams/flowchart/parser/dot":116,"./diagrams/flowchart/parser/flow":117,"./diagrams/gantt/ganttDb":118,"./diagrams/gantt/ganttRenderer":119,"./diagrams/gantt/parser/gantt":120,"./diagrams/gitGraph/gitGraphAst":121,"./diagrams/gitGraph/gitGraphRenderer":122,"./diagrams/gitGraph/parser/gitGraph":123,"./diagrams/sequenceDiagram/parser/sequenceDiagram":124,"./diagrams/sequenceDiagram/sequenceDb":125,"./diagrams/sequenceDiagram/sequenceRenderer":126,"./logger":128,"./utils":131}],131:[function(require,module,exports){
 /**
  * Created by knut on 14-11-23.
  */
@@ -57276,5 +56956,328 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
 
 exports.cloneCssStyles = cloneCssStyles;
 
-},{"./logger":131}]},{},[132])(132)
+},{"./logger":128}],132:[function(require,module,exports){
+
+},{}],133:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":134}],134:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}]},{},[129])(129)
 });

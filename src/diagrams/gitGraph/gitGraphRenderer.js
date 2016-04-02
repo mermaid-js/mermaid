@@ -145,7 +145,10 @@ function renderCommitHistory(svg, commitid, branches, direction) {
                 .text(commit.id);
             var branch = _.find(branches, ["commit", commit]);
             if (branch) {
-                svg.select("#node-" + commit.id + " foreignObject")
+                log.debug("found branch ", branch.name);
+                // don't try to select foreignObject - doesn't work.
+                // instead select by class name and it works.
+                svg.select("#node-" + commit.id + " .node-label")
                     .append("xhtml:p")
                     .attr("class", "branch-label")
                     .text(branch.name);
