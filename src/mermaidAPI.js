@@ -257,6 +257,10 @@ var parse = function(text){
     var parser;
 
     switch(graphType){
+        case 'gitGraph':
+            parser = gitGraphParser;
+            parser.parser.yy = gitGraphAst;
+            break;
         case 'graph':
             parser = flowParser;
             parser.parser.yy = graph;
