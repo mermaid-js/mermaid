@@ -136,7 +136,7 @@ function upsert(arr, key, newval) {
 function prettyPrintCommitHistory(commitArr) {
     var commit = _.maxBy(commitArr, 'seq');
     var line = '';
-    _.each(commitArr, function(c, idx) {
+    _.each(commitArr, function(c) {
         if (c == commit) {
             line += '\t*'
         } else {
@@ -147,7 +147,7 @@ function prettyPrintCommitHistory(commitArr) {
     _.each(branches, function(v,k){
         if (v == commit.id) label.push(k);
     });
-    console.log.apply(console, label);
+    log.debug(label);
     if (Array.isArray(commit.parent)) {
         //console.log("here", commit.parent);
         var newCommit = commits[commit.parent[0]];
@@ -157,8 +157,8 @@ function prettyPrintCommitHistory(commitArr) {
     } else if(commit.parent == null){
         return;
     } else {
-        var newCommit = commits[commit.parent];
-        upsert(commitArr, commit, newCommit);
+        var nextCommit = commits[commit.parent];
+        upsert(commitArr, commit, nextCommit);
     }
     commitArr = _.uniqBy(commitArr, 'id');
     prettyPrintCommitHistory(commitArr);
@@ -188,7 +188,7 @@ exports.getCommitsArray = function() {
     var commitArr = Object.keys(commits).map(function (key) {
         return commits[key];
     });
-    _.each(commitArr, function(o) { console.log(o.id) });
+    _.each(commitArr, function(o) { log.debug(o.id) });
     return _.orderBy(commitArr, ['seq'], ['desc']);
     }
 exports.getCurrentBranch = function() { return curBranch; }

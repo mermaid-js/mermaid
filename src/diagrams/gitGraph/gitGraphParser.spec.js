@@ -47,7 +47,7 @@ describe('when parsing a gitGraph',function() {
         parser.parse(str);
         var commits = parser.yy.getCommits();
         //console.log(commits);
-        console.log('options object', parser.yy.getOptions());
+        //console.log('options object', parser.yy.getOptions());
         expect(parser.yy.getOptions()['key']).toBe('value');
         expect(Object.keys(commits).length).toBe(1);
         expect(parser.yy.getCurrentBranch()).toBe('master');
