@@ -11,7 +11,7 @@ var config = {
     nodeWidth: 75,
     lineStrokeWidth: 4,
     branchLineHeight: 50,
-    lineColor: "grey",
+    lineColor: 'grey',
     leftMargin: 50,
     nodeLabel: {
         width: 50,
@@ -28,28 +28,28 @@ exports.setConf = function(c) {
 
 function svgCreateDefs(svg) {
     svg
-        .append("defs")
-        .append("g")
-        .attr("id", "def-commit")
-        .append("circle")
-        .attr("r", 15)
-        .attr("cx", 0)
-        .attr("cy", 0);
-    svg.select("#def-commit")
+        .append('defs')
+        .append('g')
+        .attr('id', 'def-commit')
+        .append('circle')
+        .attr('r', 15)
+        .attr('cx', 0)
+        .attr('cy', 0);
+    svg.select('#def-commit')
         .append('foreignObject')
         .attr('width', config.nodeLabel.width)
         .attr('height', config.nodeLabel.height)
         .attr('x', config.nodeLabel.x)
         .attr('y', config.nodeLabel.y)
-        .attr('class', "node-label")
+        .attr('class', 'node-label')
         .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
         .append('xhtml:p')
-        .html("a big chunk of text that should wrap");
+        .html('a big chunk of text that should wrap');
 }
 
 
 function svgDrawLine(svg, points, interpolate) {
-    interpolate = interpolate || "basis";
+    interpolate = interpolate || 'basis';
     var lineGen = d3.svg.line()
         .x(function(d) {
             return Math.round(d.x)
@@ -60,11 +60,11 @@ function svgDrawLine(svg, points, interpolate) {
         .interpolate(interpolate);
 
     svg
-        .append("svg:path")
-        .attr("d", lineGen(points))
-        .style("stroke", config.lineColor)
-        .style("stroke-width", config.lineStrokeWidth)
-        .style("fill", "none");
+        .append('svg:path')
+        .attr('d', lineGen(points))
+        .style('stroke', config.lineColor)
+        .style('stroke-width', config.lineStrokeWidth)
+        .style('fill', 'none');
 }
 // Pass in the element and its pre-transform coords
 function getElementCoords(element, coords) {
@@ -79,17 +79,17 @@ function getElementCoords(element, coords) {
         width: coords.width,
         height: coords.height
     };
-};
+}
 
 function svgDrawLineForCommits(svg, fromId, toId) {
-    log.debug("svgDrawLineForCommits: ", fromId, toId);
-    var fromBbox = getElementCoords(svg.select("#node-" + fromId + " circle"));
-    var toBbox = getElementCoords(svg.select("#node-" + toId + " circle"));
-    //log.debug("svgDrawLineForCommits: ", fromBbox, toBbox);
+    log.debug('svgDrawLineForCommits: ', fromId, toId);
+    var fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
+    var toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'));
+    //log.debug('svgDrawLineForCommits: ', fromBbox, toBbox);
     if (fromBbox.left - toBbox.left > config.nodeWidth) {
         var lineStart = { x: fromBbox.left - config.nodeWidth, y: toBbox.top  + toBbox.height/2};
         var lineEnd ={ x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height/2 };
-        svgDrawLine(svg, [lineStart , lineEnd], "linear")
+        svgDrawLine(svg, [lineStart , lineEnd], 'linear')
         svgDrawLine(svg, [
         {x: fromBbox.left, y: fromBbox.top + fromBbox.height/2},
         {x: fromBbox.left - config.nodeWidth/2, y: fromBbox.top + fromBbox.height/2},
@@ -97,17 +97,17 @@ function svgDrawLineForCommits(svg, fromId, toId) {
         lineStart]);
     } else {
         svgDrawLine(svg, [{
-            "x": fromBbox.left,
-            "y": fromBbox.top + fromBbox.height / 2
+            'x': fromBbox.left,
+            'y': fromBbox.top + fromBbox.height / 2
         }, {
-            "x": fromBbox.left - config.nodeWidth/2,
-            "y": fromBbox.top + fromBbox.height / 2
+            'x': fromBbox.left - config.nodeWidth/2,
+            'y': fromBbox.top + fromBbox.height / 2
         }, {
-            "x": fromBbox.left - config.nodeWidth/2,
-            "y": toBbox.top + toBbox.height / 2
+            'x': fromBbox.left - config.nodeWidth/2,
+            'y': toBbox.top + toBbox.height / 2
         }, {
-            "x": toBbox.left + toBbox.width,
-            "y": toBbox.top + toBbox.height / 2
+            'x': toBbox.left + toBbox.width,
+            'y': toBbox.top + toBbox.height / 2
         }]);
     }
 }
@@ -121,36 +121,36 @@ function renderCommitHistory(svg, commitid, branches, direction) {
     if (_.isString(commitid)) {
         do {
             commit = allCommitsDict[commitid];
-            log.debug("in renderCommitHistory", commit.id, commit.seq);
-            if (svg.select("#node-" + commitid).size() > 0)  {
+            log.debug('in renderCommitHistory', commit.id, commit.seq);
+            if (svg.select('#node-' + commitid).size() > 0)  {
             return;
             }
             svg
                 .append(function() {
-                    return cloneNode(svg, "#def-commit");
+                    return cloneNode(svg, '#def-commit');
                 })
-                .attr("class", "commit")
-                .attr("id", function() {
-                    return "node-" + commit.id;
+                .attr('class', 'commit')
+                .attr('id', function() {
+                    return 'node-' + commit.id;
                 })
-                .attr("transform", function() {
-                    return "translate(" + (commit.seq * config.nodeWidth + config.leftMargin) + ", "
-                                + (branchNum * config.branchLineHeight) + ")";
+                .attr('transform', function() {
+                    return 'translate(' + (commit.seq * config.nodeWidth + config.leftMargin) + ', '
+                                + (branchNum * config.branchLineHeight) + ')';
                 })
-                .attr("fill", "yellow")
-                .attr("stroke", "grey")
-                .attr("stroke-width", "2");
+                .attr('fill', 'yellow')
+                .attr('stroke', 'grey')
+                .attr('stroke-width', '2');
 
-            svg.select("#node-" + commit.id + " p")
+            svg.select('#node-' + commit.id + ' p')
                 .text(commit.id);
-            var branch = _.find(branches, ["commit", commit]);
+            var branch = _.find(branches, ['commit', commit]);
             if (branch) {
-                log.debug("found branch ", branch.name);
+                log.debug('found branch ', branch.name);
                 // don't try to select foreignObject - doesn't work.
                 // instead select by class name and it works.
-                svg.select("#node-" + commit.id + " .node-label")
-                    .append("xhtml:p")
-                    .attr("class", "branch-label")
+                svg.select('#node-' + commit.id + ' .node-label')
+                    .append('xhtml:p')
+                    .attr('class', 'branch-label')
                     .text(branch.name);
             }
             commitid = commit.parent
@@ -158,7 +158,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
     }
 
     if (_.isArray(commitid)) {
-        log.debug("found merge commmit", commitid);
+        log.debug('found merge commmit', commitid);
         renderCommitHistory(svg, commitid[0], branches, direction);
         branchNum++;
         renderCommitHistory(svg, commitid[1], branches, direction);
@@ -187,17 +187,17 @@ exports.draw = function(txt, id, ver) {
 
         log.debug('in gitgraph renderer', txt, id, ver);
         // Parse the graph definition
-        parser.parse(txt + "\n");
+        parser.parse(txt + '\n');
 
         config = _.extend(config, apiConfig, db.getOptions());
-        log.debug("effective options", config);
+        log.debug('effective options', config);
         var direction = db.getDirection();
         allCommitsDict = db.getCommits();
         var branches = db.getBranchesAsObjArray();
         var svg = d3.select('#' + id);
         svgCreateDefs(svg);
         branchNum = 1;
-        _.each(branches, function(v, k) {
+        _.each(branches, function(v) {
             renderCommitHistory(svg, v.commit.id, branches, direction);
             renderLines(svg, v.commit);
             branchNum++;
@@ -206,7 +206,7 @@ exports.draw = function(txt, id, ver) {
         svg.attr('height', 900);
         svg.attr('width', 2500);
     } catch (e) {
-        log.error("Error while rendering gitgraph");
+        log.error('Error while rendering gitgraph');
         log.error(e.message);
     }
 };

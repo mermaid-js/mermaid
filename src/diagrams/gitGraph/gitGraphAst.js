@@ -1,5 +1,5 @@
 var Logger = require('../../logger');
-var _ = require("lodash");
+var _ = require('lodash');
 
 //var log = new Logger.Log();
 var log = new Logger.Log(1);
@@ -7,16 +7,16 @@ var log = new Logger.Log(1);
 
 var commits = {};
 var head  = null;
-var branches = { "master" : head };
-var curBranch = "master";
-var direction = "LR";
+var branches = { 'master' : head };
+var curBranch = 'master';
+var direction = 'LR';
 var seq = 0;
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 function getId() {
-    var pool="0123456789abcdef";
-    var id = "";
+    var pool='0123456789abcdef';
+    var id = '';
     for (var i = 0; i < 7; i++) {
         id += pool[getRandomInt(0,16)]
     }
@@ -25,12 +25,12 @@ function getId() {
 
 
 function isfastforwardable(currentCommit, otherCommit) {
-    log.debug("Entering isfastforwardable:", currentCommit.id, otherCommit.id);
+    log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id);
     while (currentCommit.seq <= otherCommit.seq && currentCommit != otherCommit) {
         // only if other branch has more commits
         if (otherCommit.parent == null) break;
         if (Array.isArray(otherCommit.parent)){
-            log.debug("In merge commit:", otherCommit.parent);
+            log.debug('In merge commit:', otherCommit.parent);
             return isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
                     isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
         } else {
@@ -53,13 +53,13 @@ exports.setDirection = function(dir) {
 }
 var options = {};
 exports.setOptions = function(rawOptString) {
-    log.debug("options str", rawOptString);
+    log.debug('options str', rawOptString);
     rawOptString = rawOptString && rawOptString.trim();
-    rawOptString = rawOptString || "{}";
+    rawOptString = rawOptString || '{}';
     try {
         options = JSON.parse(rawOptString)
     } catch(e) {
-        log.error("error while parsing gitGraph options", e.message);
+        log.error('error while parsing gitGraph options', e.message);
     }
 }
 
@@ -75,19 +75,19 @@ exports.commit = function(msg) {
     head = commit;
     commits[commit.id] = commit;
     branches[curBranch] = commit.id;
-    log.debug("in pushCommit '" + commit.id + "'");
+    log.debug('in pushCommit ' + commit.id);
 }
 
 exports.branch = function(name) {
     branches[name] = head != null ? head.id: null;
-    log.debug("in createBranch");
+    log.debug('in createBranch');
 }
 
 exports.merge = function(otherBranch) {
     var currentCommit = commits[branches[curBranch]];
     var otherCommit = commits[branches[otherBranch]];
     if (isReachableFrom(currentCommit, otherCommit)) {
-        log.debug("Already merged");
+        log.debug('Already merged');
         return;
     }
     if (isfastforwardable(currentCommit, otherCommit)){
@@ -106,18 +106,18 @@ exports.merge = function(otherBranch) {
         branches[curBranch] = commit.id;
     }
     log.debug(branches);
-    log.debug("in mergeBranch");
+    log.debug('in mergeBranch');
 }
 
 exports.checkout = function(branch) {
-    log.debug("in checkout");
+    log.debug('in checkout');
     curBranch = branch;
     var id = branches[curBranch];
     head = commits[id];
 }
 
 exports.reset = function(ref) {
-    log.debug("in reset");
+    log.debug('in reset');
     var commit = ref == 'HEAD' ? head : commits[branches[ref]];
     head = commit;
     branches[curBranch] = commit.id;
@@ -131,15 +131,16 @@ function upsert(arr, key, newval) {
         arr.push(newval);
     }
     //console.log(arr);
-};
+}
+
 function prettyPrintCommitHistory(commitArr) {
     var commit = _.maxBy(commitArr, 'seq');
-    var line = "";
+    var line = '';
     _.each(commitArr, function(c, idx) {
         if (c == commit) {
-            line += "\t*"
+            line += '\t*'
         } else {
-            line +="\t|"
+            line +='\t|'
         }
     });
     var label = [line, commit.id, commit.seq];
@@ -172,13 +173,13 @@ exports.prettyPrint = function() {
 exports.clear = function () {
     commits = {};
     head  = null;
-    branches = { "master" : head };
-    curBranch = "master";
+    branches = { 'master' : head };
+    curBranch = 'master';
     seq =0;
 }
 exports.getBranchesAsObjArray = function() {
     return _.map(branches, function(v,k) {
-        return {"name": k, "commit": commits[v]};
+        return {'name': k, 'commit': commits[v]};
     });
 }
 exports.getBranches = function() { return branches; }
