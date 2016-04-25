@@ -14,10 +14,10 @@ var config = {
     lineColor: 'grey',
     leftMargin: 50,
     nodeLabel: {
-        width: 50,
+        width: 75,
         height: 100,
         x: -25,
-        y: 25
+        y: 15
     }
 }
 var apiConfig = {};
