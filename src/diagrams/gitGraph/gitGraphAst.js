@@ -147,7 +147,7 @@ function prettyPrintCommitHistory(commitArr) {
     _.each(branches, function(v,k){
         if (v == commit.id) label.push(k);
     });
-    log.debug(label);
+    log.debug(label.join(' '));
     if (Array.isArray(commit.parent)) {
         //console.log("here", commit.parent);
         var newCommit = commits[commit.parent[0]];
