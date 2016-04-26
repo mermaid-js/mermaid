@@ -1,7 +1,7 @@
-gitGraph :
+gitGraph BT:
 options
 {"key": "value",
-"nodeWidth": 150
+"nodeSpacing": 150
 }
 end
     commit
