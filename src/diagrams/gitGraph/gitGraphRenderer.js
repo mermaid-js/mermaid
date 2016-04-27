@@ -266,6 +266,13 @@ exports.draw = function(txt, id, ver) {
             renderLines(svg, v.commit, direction);
             branchNum++;
         });
+        svg.attr('height', function() {
+            if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
+            return branches.length * config.branchOffset;
+        });
+        svg.attr('width', function() {
+            return Object.keys(allCommitsDict).length * config.nodeSpacing;
+        });
     } catch (e) {
         log.error('Error while rendering gitgraph');
         log.error(e.message);
