@@ -49,7 +49,7 @@ function svgCreateDefs(svg) {
         .attr('class', 'node-label')
         .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
         .append('xhtml:p')
-        .html('a big chunk of text that should wrap');
+        .html('');
 }
 
 
@@ -191,17 +191,23 @@ function renderCommitHistory(svg, commitid, branches, direction) {
                 .attr('stroke', config.nodeStrokeColor)
                 .attr('stroke-width', config.nodeStrokeWidth);
 
-            svg.select('#node-' + commit.id + ' p')
-                .text(commit.id);
             var branch = _.find(branches, ['commit', commit]);
             if (branch) {
                 log.debug('found branch ', branch.name);
-                // don't try to select foreignObject - doesn't work.
-                // instead select by class name and it works.
                 svg.select('#node-' + commit.id + ' p')
+                    .append('xhtml:span')
+                    .attr('class', 'branch-label')
+                    .text(branch.name + ', ');
+            }
+            svg.select('#node-' + commit.id + ' p')
                 .append('xhtml:span')
-                .attr('class', 'branch-label')
-                .text( ' ' + branch.name);
+                .attr('class', 'commit-id')
+                .text(commit.id);
+            if (commit.message !== '' && direction === 'BT') {
+                svg.select('#node-' + commit.id + ' p')
+                    .append('xhtml:span')
+                    .attr('class', 'commit-msg')
+                    .text( ', ' + commit.message);
             }
             commitid = commit.parent
         } while (commitid && allCommitsDict[commitid]);
@@ -249,6 +255,7 @@ exports.draw = function(txt, id, ver) {
         var branches = db.getBranchesAsObjArray();
         if (direction === 'BT') {
             config.nodeLabel.x =  branches.length * config.branchOffset;
+            config.nodeLabel.width =  '100%';
             config.nodeLabel.y = -1 * 2* config.nodeRadius;
         }
         var svg = d3.select('#' + id);
