@@ -9,10 +9,14 @@ var allCommitsDict = {};
 var branchNum;
 var config = {
     nodeSpacing: 75,
+    nodeFillColor: 'yellow',
+    nodeStrokeWidth: 2,
+    nodeStrokeColor: 'grey',
     lineStrokeWidth: 4,
     branchOffset: 50,
     lineColor: 'grey',
     leftMargin: 50,
+    branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
     nodeRadius: 15,
     nodeLabel: {
         width: 75,
@@ -49,8 +53,9 @@ function svgCreateDefs(svg) {
 }
 
 
-function svgDrawLine(svg, points, interpolate) {
+function svgDrawLine(svg, points, colorIdx, interpolate) {
     interpolate = interpolate || 'basis';
+    var color = config.branchColors[colorIdx % config.branchColors.length];
     var lineGen = d3.svg.line()
         .x(function(d) {
             return Math.round(d.x)
@@ -63,7 +68,7 @@ function svgDrawLine(svg, points, interpolate) {
     svg
         .append('svg:path')
         .attr('d', lineGen(points))
-        .style('stroke', config.lineColor)
+        .style('stroke', color)
         .style('stroke-width', config.lineStrokeWidth)
         .style('fill', 'none');
 }
@@ -82,22 +87,25 @@ function getElementCoords(element, coords) {
     };
 }
 
-function svgDrawLineForCommits(svg, fromId, toId, direction) {
+function svgDrawLineForCommits(svg, fromId, toId, direction, color) {
     log.debug('svgDrawLineForCommits: ', fromId, toId);
     var fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'));
     var toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'));
     //log.debug('svgDrawLineForCommits: ', fromBbox, toBbox);
     switch (direction) {
         case 'LR':
+            // (toBbox)
+            //  +--------
+            //          + (fromBbox)
             if (fromBbox.left - toBbox.left > config.nodeSpacing) {
                 var lineStart = { x: fromBbox.left - config.nodeSpacing, y: toBbox.top  + toBbox.height/2};
                 var lineEnd ={ x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height/2 };
-                svgDrawLine(svg, [lineStart , lineEnd], 'linear')
+                svgDrawLine(svg, [lineStart , lineEnd], color, 'linear')
                 svgDrawLine(svg, [
                     {x: fromBbox.left, y: fromBbox.top + fromBbox.height/2},
                     {x: fromBbox.left - config.nodeSpacing/2, y: fromBbox.top + fromBbox.height/2},
                     {x: fromBbox.left - config.nodeSpacing/2, y: lineStart.y},
-                lineStart]);
+                lineStart], color);
             } else {
                 svgDrawLine(svg, [{
                     'x': fromBbox.left,
@@ -111,7 +119,7 @@ function svgDrawLineForCommits(svg, fromId, toId, direction) {
                 }, {
                     'x': toBbox.left + toBbox.width,
                     'y': toBbox.top + toBbox.height / 2
-                }]);
+                }], color);
             }
             break;
         case 'BT':
@@ -122,12 +130,12 @@ function svgDrawLineForCommits(svg, fromId, toId, direction) {
             if (toBbox.top - fromBbox.top > config.nodeSpacing) {
                 lineStart = { x: toBbox.left + toBbox.width/2, y: fromBbox.top  + fromBbox.height + config.nodeSpacing};
                 lineEnd ={ x: toBbox.left + toBbox.width/2, y: toBbox.top };
-                svgDrawLine(svg, [lineStart , lineEnd], 'linear')
+                svgDrawLine(svg, [lineStart , lineEnd], color, 'linear')
                 svgDrawLine(svg, [
                     {x: fromBbox.left + fromBbox.width/2, y: fromBbox.top + fromBbox.height},
                     {x: fromBbox.left + fromBbox.width/2, y: fromBbox.top + fromBbox.height + config.nodeSpacing/2},
                     {x: toBbox.left + toBbox.width/2, y: lineStart.y - config.nodeSpacing/2},
-                lineStart]);
+                lineStart], color);
             } else {
                 svgDrawLine(svg, [{
                     'x': fromBbox.left + fromBbox.width/2,
@@ -141,7 +149,7 @@ function svgDrawLineForCommits(svg, fromId, toId, direction) {
                 }, {
                     'x': toBbox.left + toBbox.width/2,
                     'y': toBbox.top
-                }]);
+                }], color);
             }
             break;
     }
@@ -179,9 +187,9 @@ function renderCommitHistory(svg, commitid, branches, direction) {
                                 + ((numCommits - commit.seq) * config.nodeSpacing) + ')';
                     }
                 })
-                .attr('fill', 'yellow')
-                .attr('stroke', 'grey')
-                .attr('stroke-width', '2');
+                .attr('fill', config.nodeFillColor)
+                .attr('stroke', config.nodeStrokeColor)
+                .attr('stroke-width', config.nodeStrokeWidth);
 
             svg.select('#node-' + commit.id + ' p')
                 .text(commit.id);
@@ -207,15 +215,18 @@ function renderCommitHistory(svg, commitid, branches, direction) {
     }
 }
 
-function renderLines(svg, commit, direction) {
-    while (commit.seq > 0) {
+function renderLines(svg, commit, direction, branchColor) {
+    branchColor = branchColor || 0;
+    while (commit.seq > 0 && !commit.lineDrawn) {
         if (_.isString(commit.parent)) {
-            svgDrawLineForCommits(svg, commit.id, commit.parent, direction);
+            svgDrawLineForCommits(svg, commit.id, commit.parent, direction, branchColor);
+            commit.lineDrawn = true;
             commit = allCommitsDict[commit.parent];
         } else if (_.isArray(commit.parent)) {
-            svgDrawLineForCommits(svg, commit.id, commit.parent[0], direction)
-            svgDrawLineForCommits(svg, commit.id, commit.parent[1], direction)
-            renderLines(svg, allCommitsDict[commit.parent[1]], direction);
+            svgDrawLineForCommits(svg, commit.id, commit.parent[0], direction, branchColor)
+            svgDrawLineForCommits(svg, commit.id, commit.parent[1], direction, branchColor + 1)
+            renderLines(svg, allCommitsDict[commit.parent[1]], direction, branchColor + 1);
+            commit.lineDrawn = true;
             commit = allCommitsDict[commit.parent[0]];
         }
     }
@@ -234,12 +245,12 @@ exports.draw = function(txt, id, ver) {
         config = _.extend(config, apiConfig, db.getOptions());
         log.debug('effective options', config);
         var direction = db.getDirection();
-        if (direction === 'BT') {
-            config.nodeLabel.x += 200;
-            config.nodeLabel.y = -1 * 2* config.nodeRadius;
-        }
         allCommitsDict = db.getCommits();
         var branches = db.getBranchesAsObjArray();
+        if (direction === 'BT') {
+            config.nodeLabel.x =  branches.length * config.branchOffset;
+            config.nodeLabel.y = -1 * 2* config.nodeRadius;
+        }
         var svg = d3.select('#' + id);
         svgCreateDefs(svg);
         branchNum = 1;
@@ -247,10 +258,7 @@ exports.draw = function(txt, id, ver) {
             renderCommitHistory(svg, v.commit.id, branches, direction);
             renderLines(svg, v.commit, direction);
             branchNum++;
-        })
-
-        //svg.attr('height', 2500);
-        //svg.attr('width', 2500);
+        });
     } catch (e) {
         log.error('Error while rendering gitgraph');
         log.error(e.message);
