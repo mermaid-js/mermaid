@@ -29,6 +29,12 @@ describe('when detecting chart type ', function () {
         var type = utils.detectType(str);
         expect(type).toBe('graph');
     });
+    it('should handle a graph defintion for gitGraph', function () {
+        str = '  \n  gitGraph TB:\nbfs1:queue';
+
+        var type = utils.detectType(str);
+        expect(type).toBe('gitGraph');
+    });
 });
 
 describe('when cloning CSS ', function () {

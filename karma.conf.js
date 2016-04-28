@@ -19,7 +19,8 @@ module.exports = function (config) {
             './src/diagrams/example/**/*.spec.js',
             './src/diagrams/sequenceDiagram/**/*.spec.js',
             './src/diagrams/classDiagram/**/*.spec.js',
-            './src/diagrams/gantt/**/*.spec.js'
+            './src/diagrams/gantt/**/*.spec.js',
+            './src/diagrams/gitGraph/**/*.spec.js'
         ],
 
         preprocessors: {

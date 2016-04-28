@@ -27,6 +27,7 @@
     "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
     "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
     "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
+    "dist-mermaid-nomin": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js && node bin/mermaid -v -s testgitgraph.mm && testgitgraph.mm.svg",
     "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
     "dist": "npm run dist-slim-mermaid && npm run dist-slim-mermaidAPI && npm run dist-mermaid && npm run dist-mermaidAPI"
   },
@@ -42,6 +43,7 @@
     "dagre": "^0.7.4",
     "dagre-d3": "0.4.10",
     "he": "^0.5.0",
+    "lodash": "^4.6.1",
     "minimist": "^1.1.0",
     "mkdirp": "^0.5.0",
     "moment": "^2.9.0",

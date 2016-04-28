@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+
+        <script src="..\dist\mermaid.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+        <style>
+            .node-label p {
+                    margin:0px;
+                    font-size:12px;
+            }
+            p.branch-label {
+                font-weight:bold;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mermaid">
+gitGraph :
+options
+{"key": "value",
+"nodeWidth": 150
+}
+end
+    commit
+    commit
+    commit
+    branch newbranch
+    checkout newbranch
+    commit
+    commit
+    merge master
+    checkout master
+    commit
+    commit
+        </div>
+    </body>
+

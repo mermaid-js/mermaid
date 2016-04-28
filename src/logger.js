@@ -57,7 +57,9 @@ function formatTime(timestamp) {
 function Log(level) {
     this.level = level;
 
-    this.log = function(str, level) {
+    this.log = function() {
+        var args = Array.prototype.slice.call(arguments);
+        var level = args.shift();
         var logLevel = this.level;
         if(typeof logLevel === 'undefined'){
             logLevel = defaultLevel;
@@ -65,30 +67,45 @@ function Log(level) {
         if (logLevel <= level) {
             if (typeof console !== 'undefined') { //eslint-disable-line no-console
                 if (typeof console.log !== 'undefined') { //eslint-disable-line no-console
-                    return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
+                    //return console.log('[' + formatTime(new Date()) + '] ' , str); //eslint-disable-line no-console
+                    args.unshift('[' + formatTime(new Date()) + '] ');
+                    console.log.apply(console, args.map(function(a){
+                        if (typeof a === "object") return JSON.stringify(a, null, 2);
+                        return a;
+                    }));
                 }
             }
         }
     };
 
     this.trace = function(str) {
-        this.log(str, LEVELS.trace);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(LEVELS.trace);
+        this.log.apply(this, args);
     };
 
     this.debug = function(str) {
-        this.log(str, LEVELS.debug);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(LEVELS.debug);
+        this.log.apply(this, args);
     };
 
     this.info = function(str) {
-        this.log(str, LEVELS.info);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(LEVELS.info);
+        this.log.apply(this, args);
     };
 
     this.warn = function(str) {
-        this.log(str, LEVELS.warn);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(LEVELS.warn);
+        this.log.apply(this, args);
     };
 
     this.error = function(str) {
-        this.log(str, LEVELS.error);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(LEVELS.error);
+        this.log.apply(this, args);
     };
 }
 
