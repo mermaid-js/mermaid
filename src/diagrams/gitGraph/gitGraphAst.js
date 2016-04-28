@@ -11,9 +11,11 @@ var branches = { 'master' : head };
 var curBranch = 'master';
 var direction = 'LR';
 var seq = 0;
+
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
 function getId() {
     var pool='0123456789abcdef';
     var id = '';
@@ -122,6 +124,7 @@ exports.reset = function(ref) {
     head = commit;
     branches[curBranch] = commit.id;
 }
+
 function upsert(arr, key, newval) {
     var match = _.find(arr, key);
     if(match){
@@ -164,6 +167,7 @@ function prettyPrintCommitHistory(commitArr) {
     prettyPrintCommitHistory(commitArr);
 
 }
+
 exports.prettyPrint = function() {
     log.debug(commits);
     var node = exports.getCommitsArray()[0];
@@ -177,11 +181,15 @@ exports.clear = function () {
     curBranch = 'master';
     seq =0;
 }
+
 exports.getBranchesAsObjArray = function() {
-    return _.map(branches, function(v,k) {
+    var branchArr = _.map(branches, function(v,k) {
         return {'name': k, 'commit': commits[v]};
     });
+    //return _.orderBy(branchArr, [function(b) { return b.commit.seq}], ['desc']);
+    return branchArr;
 }
+
 exports.getBranches = function() { return branches; }
 exports.getCommits = function() { return commits; }
 exports.getCommitsArray = function() {
