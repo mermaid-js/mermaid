@@ -218,6 +218,7 @@ function renderCommitHistory(svg, commitid, branches, direction) {
         renderCommitHistory(svg, commitid[0], branches, direction);
         branchNum++;
         renderCommitHistory(svg, commitid[1], branches, direction);
+        branchNum--;
     }
 }
 
@@ -268,11 +269,12 @@ exports.draw = function(txt, id, ver) {
         });
         svg.attr('height', function() {
             if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing;
-            return branches.length * config.branchOffset;
+            return (branches.length + 1) * config.branchOffset;
         });
-        svg.attr('width', function() {
-            return Object.keys(allCommitsDict).length * config.nodeSpacing;
-        });
+        //svg.attr('width', function() {
+            //if (direction === 'LR') return Object.keys(allCommitsDict).length * config.nodeSpacing + config.leftMargin;
+            //return (branches.length + 1) * config.branchOffset;
+        //});
     } catch (e) {
         log.error('Error while rendering gitgraph');
         log.error(e.message);
