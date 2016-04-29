@@ -455,6 +455,58 @@ describe('when parsing ',function(){
         expect(edges[0].type).toBe('arrow');
     });
 
+    it('should handle line interpolation default definitions',function(){
+        var res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'linkStyle default interpolate basis');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges.defaultInterpolate).toBe('basis');
+    });
+
+    it('should handle line interpolation numbered definitions',function(){
+        var res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0 interpolate basis\n' +
+        'linkStyle 1 interpolate cardinal');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges[0].interpolate).toBe('basis');
+        expect(edges[1].interpolate).toBe('cardinal');
+    });
+
+    it('should handle line interpolation default with style',function(){
+        var res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'linkStyle default interpolate basis stroke-width:1px;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+
+        expect(edges.defaultInterpolate).toBe('basis');
+    });
+
+    it('should handle line interpolation numbered with style',function(){
+        var res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0 interpolate basis stroke-width:1px;\n' +
+        'linkStyle 1 interpolate cardinal stroke-width:1px;');
+
+        var vert = flow.parser.yy.getVertices();
+        var edges = flow.parser.yy.getEdges();
+
+        expect(edges[0].interpolate).toBe('basis');
+        expect(edges[1].interpolate).toBe('cardinal');
+    });
+
     describe('it should handle interaction, ',function(){
 
         it('it should be possible to use click to a callback',function(){

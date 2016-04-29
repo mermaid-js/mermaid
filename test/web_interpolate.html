@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../dist/mermaid.forest.css"/>
+    <script src="../dist/mermaid.js"></script>
+    <script>
+        var config = {
+            startOnLoad:true,
+            callback:function(id){
+                console.log(id,' rendered');
+            },
+            flowchart:{
+                    useMaxWidth:false,
+                    htmlLabels:true
+                },
+            logLevel:5
+        };
+        mermaid.initialize(config);
+    </script>
+
+</head>
+    <body>
+
+    <h1>Line Interpolation Linear (default)</h1>
+    <div class="mermaid" id="linear">
+
+        graph TB
+        A --> B
+        B --> C
+        C --> D
+        D --> A
+        
+    </div>
+    <h1>Line Interpolation Basis</h1>
+    <div class="mermaid" id="basis">
+
+        graph TB
+        linkStyle default interpolate basis fill:none;
+        A --> B
+        B --> C
+        C --> D
+        D --> A
+        
+    </div>
+    <h1>Line Interpolation Step-After</h1>
+    <div class="mermaid" id="step-after">
+
+        graph TB
+        linkStyle default interpolate step-after fill:none;
+        A --> B
+        B --> C
+        C --> D
+        D --> A
+        
+    </div>
+    <h1>Hierarchy Using Defaults</h1>
+    <div class="mermaid" id="default-hier">
+
+        graph TB
+        A --> B
+        A --> C
+        A --> D
+        A --> E
+        B --> B1
+        B --> B2
+        
+    </div>
+    <h1>Hierarchy Using step-after</h1>
+    <div class="mermaid" id="hierarchy">
+
+        graph TB
+        linkStyle default interpolate step-after fill:none;
+        A --> B
+        A --> C
+        A --> D
+        A --> E
+        B --> B1
+        B --> B2
+        
+    </div>
+    <h1>LR Hierarchy Using step-before</h1>
+    <div>step-after works here too</div>
+    <div class="mermaid" id="hierarchy">
+
+        graph LR
+        linkStyle default interpolate step-before fill:none;
+        A --> B
+        A --> C
+        A --> D
+        A --> E
+        B --> B1
+        B --> B2
+        
+    </div>
+    <h1>Line Interpolation Cardinal</h1>
+    <div class="mermaid" id="cardinal">
+
+        graph TB
+        linkStyle default interpolate cardinal fill:none;
+        A --> B
+        A --> C
+        A --> D
+        D --> A
+        
+    </div>
+    <h1>Line Interpolation Monotone</h1>
+    <div>Monotone is monotonic in y, so it only looks good LR</div>
+    <div class="mermaid" id="monotone">
+
+        graph LR
+        linkStyle default interpolate monotone fill:none;
+        A --> B
+        B --> C
+        C --> D
+        D --> A
+        
+    </div>
+    <h1>Mixing Line Interpolation Types</h1>
+    <div>Specify the link number; the link must be defined first</div>
+    <div class="mermaid" id="mixed">
+
+        graph TB
+        A -- basis --> B
+        A -- linear --> C
+        C -- step-after --> D
+        D -- cardinal --> A
+        linkStyle 0 interpolate basis fill:none;
+        linkStyle 1 interpolate linear fill:none;
+        linkStyle 2 interpolate step-after fill:none;
+        linkStyle 3 interpolate cardinal fill:none;
+        
+    </div>
+
+    </body>
+</html>

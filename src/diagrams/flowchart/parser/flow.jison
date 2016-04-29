@@ -16,6 +16,7 @@
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
+"interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
@@ -412,6 +413,14 @@ linkStyleStatement
           {$$ = $1;yy.updateLink($3,$5);}
     | LINKSTYLE SPACE NUM SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
+    | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
+    | LINKSTYLE SPACE NUM SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
+    | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $1;yy.updateLinkInterpolate($3,$7);}
+    | LINKSTYLE SPACE NUM SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $1;yy.updateLinkInterpolate($3,$7);}
     ;
 
 commentStatement: PCT PCT commentText;
