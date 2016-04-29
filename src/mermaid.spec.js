@@ -156,6 +156,22 @@ describe('when using mermaid and ',function() {
 
             flowRend.addEdges(edges,mockG);
         });
+        it('should handle edges with interpolation defined', function () {
+            flow.parser.parse('graph TD;A---B; linkStyle 0 interpolate basis');
+            flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            var mockG = {
+                setEdge:function(start, end,options){
+                    expect(start).toBe('A');
+                    expect(end).toBe('B');
+                    expect(options.arrowhead).toBe('none');
+                    expect(options.lineInterpolate).toBe('basis');
+                }
+            };
+
+            flowRend.addEdges(edges,mockG);
+        });
         it('should handle edges with text and styles defined', function () {
             flow.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;');
             flow.parser.yy.getVertices();

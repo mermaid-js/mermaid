@@ -86,6 +86,20 @@ exports.addLink = function (start, end, type, linktext) {
     }
     edges.push(edge);
 };
+
+/**
+ * Updates a link's line interpolation algorithm
+ * @param pos
+ * @param interpolate
+ */
+exports.updateLinkInterpolate = function (pos, interp) {
+    if(pos === 'default'){
+        edges.defaultInterpolate = interp;
+    }else{
+        edges[pos].interpolate = interp;
+    }
+};
+
 /**
  * Updates a link with a style
  * @param pos

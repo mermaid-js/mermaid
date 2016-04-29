@@ -151,23 +151,22 @@ exports.addVertices = function (vert, g) {
  */
 exports.addEdges = function (edges, g) {
     var cnt=0;
-    var aHead;
     
     var defaultStyle;
     if(typeof edges.defaultStyle !== 'undefined'){
         defaultStyle = edges.defaultStyle.toString().replace(/,/g , ';');
-
     }
 
     edges.forEach(function (edge) {
         cnt++;
+        var edgeData = {};
 
         // Set link type for rendering
         if(edge.type === 'arrow_open'){
-            aHead = 'none';
+            edgeData.arrowhead = 'none';
         }
         else{
-            aHead = 'normal';
+            edgeData.arrowhead = 'normal';
         }
 
         var style = '';
@@ -194,32 +193,38 @@ exports.addEdges = function (edges, g) {
                     break;
             }
         }
+        edgeData.style = style;
+        
+        if (typeof edge.interpolate !== 'undefined') {
+            edgeData.lineInterpolate = edge.interpolate;
+        } else {
+            if (typeof edges.defaultInterpolate !== 'undefined') {
+                edgeData.lineInterpolate = edges.defaultInterpolate;
+            }
+        }
 
-        // Add the edge to the graph
         if (typeof edge.text === 'undefined') {
-            if(typeof edge.style === 'undefined'){
-                g.setEdge(edge.start, edge.end,{ style: style, arrowhead: aHead},cnt);
-            }else{
-                g.setEdge(edge.start, edge.end, {
-                    style: style, arrowheadStyle: 'fill: #333', arrowhead: aHead
-                },cnt);
+            if (typeof edge.style !== 'undefined') {
+                edgeData.arrowheadStyle = 'fill: #333';
             }
-        }
-        // Edge with text
-        else {
-            var edgeText = edge.text.replace(/<br>/g, '\n');
-            if(typeof edge.style === 'undefined'){
-                if (conf.htmlLabels){
-                    g.setEdge(edge.start, edge.end,{labelType: 'html',style: style, labelpos:'c', label: '<span class="edgeLabel">'+edge.text+'</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
-                }else{
-                    g.setEdge(edge.start, edge.end,{labelType: 'text', style: 'stroke: #333; stroke-width: 1.5px;fill:none', labelpos:'c', label: edgeText, arrowheadStyle: 'fill: #333', arrowhead: aHead},cnt);
+        } else {
+            edgeData.arrowheadStyle = 'fill: #333';
+            if(typeof edge.style === 'undefined') {
+                edgeData.labelpos = 'c';
+                if (conf.htmlLabels) {
+                    edgeData.labelType = 'html';
+                    edgeData.label = '<span class="edgeLabel">'+edge.text+'</span>';
+                } else {
+                    edgeData.labelType = 'text';
+                    edgeData.style = 'stroke: #333; stroke-width: 1.5px;fill:none';
+                    edgeData.label = edge.text.replace(/<br>/g, '\n');
                 }
-             }else{
-                g.setEdge(edge.start, edge.end, {
-                    labelType: 'text', style: style, arrowheadStyle: 'fill: #333', label: edgeText, arrowhead: aHead
-                },cnt);
+             } else {
+                edgeData.label = edge.text.replace(/<br>/g, '\n');
             }
         }
+        // Add the edge to the graph
+        g.setEdge(edge.start, edge.end, edgeData, cnt);
     });
 };
 
