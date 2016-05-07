@@ -25,9 +25,9 @@
 "reset"                         return 'RESET';
 "checkout"                         return 'CHECKOUT';
 "LR"                            return 'DIR';
-"TB"                            return 'DIR';
 "BT"                            return 'DIR';
 ":"                             return ':';
+"^"                             return 'CARET'
 "options"\r?\n                       this.begin("options");
 <options>"end"\r?\n                   this.popState();
 <options>[^\n]+\r?\n                 return 'OPT';
@@ -83,6 +83,10 @@ commit_arg
     ;
 
 reset_arg
-    : 'HEAD' 
-    | ID
+    : 'HEAD' reset_parents{$$ = $1+ ":" + $2 }
+    | ID reset_parents{$$ = $1+ ":"  + yy.count; yy.count = 0}
+    ;
+reset_parents
+    : /* empty */ {yy.count = 0}
+    | CARET reset_parents { yy.count += 1 }
     ;

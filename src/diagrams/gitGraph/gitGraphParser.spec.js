@@ -72,7 +72,7 @@ describe('when parsing a gitGraph',function() {
     });
 
     it('should handle set direction', function () {
-        var str = 'gitGraph TB:\n' +
+        var str = 'gitGraph BT:\n' +
         'commit\n';
 
         parser.parse(str);
@@ -81,7 +81,7 @@ describe('when parsing a gitGraph',function() {
 
         expect(Object.keys(commits).length).toBe(1);
         expect(parser.yy.getCurrentBranch()).toBe('master');
-        expect(parser.yy.getDirection()).toBe('TB');
+        expect(parser.yy.getDirection()).toBe('BT');
         expect(Object.keys(parser.yy.getBranches()).length).toBe(1);
     });
 
@@ -144,6 +144,24 @@ describe('when parsing a gitGraph',function() {
         expect(parser.yy.getBranches()['newbranch']).toEqual(parser.yy.getBranches()['master']);
         expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['newbranch']);
     });
+
+    it('reset can take an argument', function () {
+        var str = 'gitGraph:\n' +
+        'commit\n' +
+        'commit\n' +
+        'branch newbranch\n' +
+        'checkout newbranch\n' +
+        'commit\n' +
+        'reset master^\n';
+
+        parser.parse(str);
+
+        var commits = parser.yy.getCommits();
+        expect(Object.keys(commits).length).toBe(3);
+        expect(parser.yy.getCurrentBranch()).toBe('newbranch');
+        var master = commits[parser.yy.getBranches()['master']];
+        expect(parser.yy.getHead().id).toEqual(master.parent);
+    })
 
     it('it should handle fast forwardable merges', function () {
         var str = 'gitGraph:\n' +
