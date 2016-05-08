@@ -1,6 +1,6 @@
 gitGraph BT:
 options
-{"key": "value",
+{
 "nodeSpacing": 150
 }
 end
@@ -13,4 +13,7 @@ end
     commit
     commit
     merge newbranch
+    reset newbranch^^
+    commit
+    commit
 

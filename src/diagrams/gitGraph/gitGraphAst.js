@@ -118,9 +118,21 @@ exports.checkout = function(branch) {
     head = commits[id];
 }
 
-exports.reset = function(ref) {
-    log.debug('in reset');
+exports.reset = function(commitRef) {
+    log.debug('in reset', commitRef);
+    var ref = commitRef.split(':')[0];
+    var parentCount = parseInt(commitRef.split(':')[1]);
     var commit = ref == 'HEAD' ? head : commits[branches[ref]];
+    log.debug(commit, parentCount);
+    while (parentCount > 0) {
+        commit = commits[commit.parent];
+        parentCount--;
+        if (!commit) {
+            var err = 'Critical error - unique parent commit not found during reset';
+            log.error(err);
+            throw err;
+        }
+    }
     head = commit;
     branches[curBranch] = commit.id;
 }
