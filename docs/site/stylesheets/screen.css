@@ -639,7 +639,6 @@ html, body {
     padding: 0 28px;
     box-sizing: border-box;
     display: block;
-    text-shadow: 0px 1px 0px #fff
 }
 
 .content > ul, .content > ol {
@@ -761,7 +760,6 @@ html, body {
 .content aside {
     padding-top: 1em;
     padding-bottom: 1em;
-    text-shadow: 0 1px 0 #c6dde9;
     margin-top: 1.5em;
     margin-bottom: 1.5em;
     background: #8fbcd4;
@@ -770,12 +768,10 @@ html, body {
 
 .content aside.warning {
     background-color: #c97a7e;
-    text-shadow: 0 1px 0 #dfb0b3
 }
 
 .content aside.success {
     background-color: #6ac174;
-    text-shadow: 0 1px 0 #a0d7a6
 }
 
 .content aside:before {
@@ -789,7 +785,6 @@ html, body {
     margin: -2px;
     border-radius: 4px;
     border: 1px solid #F7E633;
-    text-shadow: 1px 1px 0 #666;
     background: linear-gradient(to top left, #f7e633 0%, #f1d32f 100%)
 }
 
@@ -803,7 +798,6 @@ html, body {
     float: right;
     clear: right;
     box-sizing: border-box;
-    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4)
 }
 
 .content pre > p, .content blockquote > p {
