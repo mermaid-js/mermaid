@@ -10,7 +10,8 @@ var conf = {
     barHeight: 20,
     barGap: 4,
     topPadding: 50,
-    sidePadding: 75,
+    rightPadding: 75,
+    leftPadding: 75,
     gridLineStartPadding: 35,
     fontSize: 11,
     fontFamily: '"Open-Sans", "sans-serif"'
@@ -68,7 +69,7 @@ module.exports.draw = function (text, id) {
             d3.max(taskArray, function (d) {
                 return d.endTime;
             })])
-        .rangeRound([0, w - 150]);
+        .rangeRound([0, w - conf.leftPadding - conf.rightPadding]);
         //.nice(d3.time.monday);
 
     var categories = [];
@@ -102,17 +103,17 @@ module.exports.draw = function (text, id) {
         var barHeight = conf.barHeight;
         var gap = barHeight + conf.barGap;
         var topPadding = conf.topPadding;
-        var sidePadding = conf.sidePadding;
+        var leftPadding = conf.leftPadding;
 
         var colorScale = d3.scale.linear()
             .domain([0, categories.length])
             .range(['#00B9FA', '#F95002'])
             .interpolate(d3.interpolateHcl);
 
-        makeGrid(sidePadding, topPadding, pageWidth, pageHeight);
-        drawRects(tasks, gap, topPadding, sidePadding, barHeight, colorScale, pageWidth, pageHeight);
-        vertLabels(gap, topPadding, sidePadding, barHeight, colorScale);
-        drawToday(sidePadding, topPadding, pageWidth, pageHeight);
+        makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
+        drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
+        vertLabels(gap, topPadding, leftPadding, barHeight, colorScale);
+        drawToday(leftPadding, topPadding, pageWidth, pageHeight);
 
     }
 
@@ -129,7 +130,7 @@ module.exports.draw = function (text, id) {
                 return i * theGap + theTopPad - 2;
             })
             .attr('width', function () {
-                return w - theSidePad / 2;
+                return w - conf.rightPadding / 2;
             })
             .attr('height', theGap)
             .attr('class', function (d) { //eslint-disable-line no-unused-vars
@@ -211,7 +212,7 @@ module.exports.draw = function (text, id) {
 
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
-                    if (endX + textWidth  + 1.5*conf.sidePadding> w) {
+                    if (endX + textWidth  + 1.5*conf.leftPadding> w) {
                         return startX + theSidePad - 5;
                     } else {
                         return endX + theSidePad + 5;
@@ -259,7 +260,7 @@ module.exports.draw = function (text, id) {
 
                 // Check id text width > width of rectangle
                 if (textWidth > (endX - startX)) {
-                    if (endX + textWidth + 1.5*conf.sidePadding > w) {
+                    if (endX + textWidth + 1.5*conf.leftPadding > w) {
                         return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
                     } else {
                         return 'taskTextOutsideRight taskTextOutside' + secNum+ ' ' + taskType;
