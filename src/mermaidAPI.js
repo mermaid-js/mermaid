@@ -187,9 +187,9 @@ var config = {
         topPadding: 50,
 
         /**
-         *  **sidePadding** - the space allocated for the section name to the left of the activities.
+         *  **leftPadding** - the space allocated for the section name to the left of the activities.
          */
-        sidePadding: 75,
+        leftPadding: 75,
 
         /**
          *  **gridLineStartPadding** - Vertical starting position of the grid lines
