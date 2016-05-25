@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="dist/mermaid.css"/>
+
+    <script src="dist/mermaid.js"></script>
+    <script>
+        mermaid.initialize({
+            gantt: {
+                leftPadding: 400
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="mermaid" id="i211">
+        gantt
+            dateFormat YYYY-MM-DD
+            title My Project
+
+            section Long Long Long Long Task Name
+            Completed task  :done,      des1, 2016-04-25, 2016-05-21
+            Active task     :active,    des1, 2016-04-25, 2016-04-30
+            Future task     :           des1, 2016-04-25, 2016-05-30
+    </div>
+</body>
+</html>
