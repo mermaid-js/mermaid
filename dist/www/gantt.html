@@ -1,0 +1,353 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>mermaid - Generation of diagrams and flowcharts from text in a similar manner as markdown.</title>
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
+
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="stylesheets/mermaid.forest.css" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/solarized_light.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="javascripts/lib/mermaid.js"></script>
+    <script src="javascripts/all.js" type="text/javascript"></script>
+    <script src="javascripts/highlight.pack.js" type="text/javascript"></script>
+
+    <script>
+        var g = function (hljs) {
+            var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+            var keyw = {
+                keyword: 'graph sequenceDiagram participant loop end',
+                typename: 'Note',
+                literal: "false true left right"
+            };
+            return {
+                case_insensitive: false,
+                aliases: ["mermaid"],
+                k: keyw,
+                i: 'for',
+                c: [{
+                    cN: "function",
+                    b: "^" + r + "\\s*\\(",
+                    e: "->",
+                    rB: !0,
+                    i: "\\(|#|//|/\\*|\\\\|:|;",
+                    starts: {
+                        e: ";|\\.", k: keyw, c: [
+                            {cN: "comment", b: "%", e: "$"}
+                        ]
+                    }
+                },
+                    {cN: "comment", b: "%", e: "$"}
+                ]
+            };
+        };
+        hljs.registerLanguage('mermaid', g);
+        hljs.initHighlightingOnLoad();
+        $(function () {
+            setupLanguages(["shell", "javascript", "html", "css","mermaid"]);
+        });
+        var callback = function(){
+            alert('A callback was triggered');
+        }
+    </script>
+</head>
+
+<body class="index">
+<a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png"/>
+      </span>
+</a>
+
+<div class="tocify-wrapper">
+    <img src="images/logo.png"/>
+
+    <div class="lang-selector" style="display:none">
+        <a href="#" data-language-name="shell">shell</a>
+        <a href="#" data-language-name="javascript">javascript</a>
+        <a href="#" data-language-name="html">html</a>
+        <a href="#" data-language-name="css">css</a>
+    </div>
+    <div class="search">
+        <input type="text" class="search" id="input-search" placeholder="Search">
+    </div>
+    <ul class="search-results"></ul>
+    <div id="toc">
+    </div>
+    <ul class="toc-footer">
+        <div style="margin-left:5px;">
+            <a href="https://github.com/knsv/mermaid" class="github-button" >Star</a>
+            <a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
+            <a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
+        </div>
+        <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+        <li><a href='http://github.com/tripit/slate' style="color:grey">Documentation Powered by Slate</a></li>
+    </ul>
+</div>
+<div class="page-wrapper">
+    <div class="dark-box"></div>
+    <div class="content">
+        <h1 id="gant-diagrams">Gant diagrams</h1>
+<blockquote>
+<p>A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule. Gantt charts illustrate the start and finish dates of the terminal elements and summary elements of a project.</p>
+</blockquote>
+<p>Mermaid can render Gantt diagrams. The code snippet below:</p>
+<pre class="css"><code>%% Example of sequence diagram
+gantt
+    title A Gantt Diagram
+
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :after a1  , 20d
+    section Another
+    Task in sec      :2014-01-12  , 12d
+    anther task      : 24d</code></pre><p>Renders the following diagram:</p>
+<div class="mermaid">gantt
+    title A Gantt Diagram
+    dateFormat  YYYY-MM-DD
+    section Section
+    A task           :a1, 2014-01-01, 30d
+    Another task     :after a1  , 20d
+    section Another
+    Task in sec      :2014-01-12  , 12d
+    anther task      : 24d</div><h2 id="syntax">Syntax</h2>
+<pre class="css"><code>%% Example with slection of syntaxes
+        gantt
+        dateFormat  YYYY-MM-DD
+        title Adding GANTT diagram functionality to mermaid
+
+        section A section
+        Completed task            :done,    des1, 2014-01-06,2014-01-08
+        Active task               :active,  des2, 2014-01-09, 3d
+        Future task               :         des3, after des2, 5d
+        Future task2               :         des4, after des3, 5d
+
+        section Critical tasks
+        Completed task in the critical line :crit, done, 2014-01-06,24h
+        Implement parser and jison          :crit, done, after des1, 2d
+        Create tests for parser             :crit, active, 3d
+        Future task in critical line        :crit, 5d
+        Create tests for renderer           :2d
+        Add to mermaid                      :1d
+
+        section Documentation
+        Describe gantt syntax               :active, a1, after des1, 3d
+        Add gantt diagram to demo page      :after a1  , 20h
+        Add another diagram to demo page    :doc1, after a1  , 48h
+
+        section Last section
+        Describe gantt syntax               :after doc1, 3d
+        Add gantt diagram to demo page      : 20h
+        Add another diagram to demo page    : 48h</code></pre><p>Renders like below:</p>
+<div class="mermaid">gantt
+       dateFormat  YYYY-MM-DD
+       title Adding GANTT diagram functionality to mermaid
+
+       section A section
+       Completed task            :done,    des1, 2014-01-06,2014-01-08
+       Active task               :active,  des2, 2014-01-09, 3d
+       Future task               :         des3, after des2, 5d
+       Future task2               :         des4, after des3, 5d
+
+       section Critical tasks
+       Completed task in the critical line :crit, done, 2014-01-06,24h
+       Implement parser and jison          :crit, done, after des1, 2d
+       Create tests for parser             :crit, active, 3d
+       Future task in critical line        :crit, 5d
+       Create tests for renderer           :2d
+       Add to mermaid                      :1d
+
+       section Documentation
+       Describe gantt syntax               :active, a1, after des1, 3d
+       Add gantt diagram to demo page      :after a1  , 20h
+       Add another diagram to demo page    :doc1, after a1  , 48h
+
+       section Last section
+       Describe gantt syntax               :after doc1, 3d
+       Add gantt diagram to demo page      : 20h
+       Add another diagram to demo page    : 48h</div><h3 id="title">title</h3>
+<p>Tbd</p>
+<h2 id="sections-statements">Sections statements</h2>
+<p>Tbd</p>
+<h2 id="setting-dates">Setting dates</h2>
+<p>Tbd</p>
+<h3 id="date-format">Date format</h3>
+<p>Tbd</p>
+<h4 id="diagram-definition">Diagram definition</h4>
+<p>Input    Example    Description:</p>
+<pre class="css"><code>YYYY    2014    4 digit year
+YY    14    2 digit year
+Q    1..4    Quarter of year. Sets month to first month in quarter.
+M MM    1..12    Month number
+MMM MMMM    January..Dec    Month name in locale set by moment.locale()
+D DD    1..31    Day of month
+Do    1st..31st    Day of month with ordinal
+DDD DDDD    1..365    Day of year
+X    1410715640.579    Unix timestamp
+x    1410715640579    Unix ms timestamp
+
+Input    Example    Description
+H HH    0..23    24 hour time
+h hh    1..12    12 hour time used with a A.
+a A    am pm    Post or ante meridiem
+m mm    0..59    Minutes
+s ss    0..59    Seconds
+S    0..9    Tenths of a second
+SS    0..99    Hundreds of a second
+SSS    0..999    Thousandths of a second
+Z ZZ    +12:00    Offset from UTC as +-HH:mm, +-HHmm, or Z</code></pre><p>More info in: <a href="http://momentjs.com/docs/#/parsing/string-format/">http://momentjs.com/docs/#/parsing/string-format/</a></p>
+<h4 id="scale">Scale</h4>
+<pre class="css"><code>%a - abbreviated weekday name.
+%A - full weekday name.
+%b - abbreviated month name.
+%B - full month name.
+%c - date and time, as "%a %b %e %H:%M:%S %Y".
+%d - zero-padded day of the month as a decimal number [01,31].
+%e - space-padded day of the month as a decimal number [ 1,31]; equivalent to %_d.
+%H - hour (24-hour clock) as a decimal number [00,23].
+%I - hour (12-hour clock) as a decimal number [01,12].
+%j - day of the year as a decimal number [001,366].
+%m - month as a decimal number [01,12].
+%M - minute as a decimal number [00,59].
+%L - milliseconds as a decimal number [000, 999].
+%p - either AM or PM.
+%S - second as a decimal number [00,61].
+%U - week number of the year (Sunday as the first day of the week) as a decimal number [00,53].
+%w - weekday as a decimal number [0(Sunday),6].
+%W - week number of the year (Monday as the first day of the week) as a decimal number [00,53].
+%x - date, as "%m/%d/%Y".
+%X - time, as "%H:%M:%S".
+%y - year without century as a decimal number [00,99].
+%Y - year with century as a decimal number.
+%Z - time zone offset, such as "-0700".
+%% - a literal "%" character.</code></pre><p>More info in: <a href="https://github.com/mbostock/d3/wiki/Time-Formatting">https://github.com/mbostock/d3/wiki/Time-Formatting</a></p>
+<h2 id="styling">Styling</h2>
+<p>Styling of the a sequence diagram is done by defining a number of css classes.  During rendering these classes are extracted from the</p>
+<h3 id="classes-used">Classes used</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>actor</td>
+<td>Style for the actor box at the top of the diagram.</td>
+</tr>
+<tr>
+<td>text.actor</td>
+<td>Styles for text in the actor box at the top of the diagram.</td>
+</tr>
+<tr>
+<td>actor-line</td>
+<td>The vertical line for an actor.</td>
+</tr>
+<tr>
+<td>messageLine0</td>
+<td>Styles for the solid message line.</td>
+</tr>
+<tr>
+<td>messageLine1</td>
+<td>Styles for the dotted message line.</td>
+</tr>
+<tr>
+<td>messageText</td>
+<td>Defines styles for the text on the message arrows.</td>
+</tr>
+<tr>
+<td>labelBox</td>
+<td>Defines styles label to left in a loop.</td>
+</tr>
+<tr>
+<td>labelText</td>
+<td>Styles for the text in label for loops.</td>
+</tr>
+<tr>
+<td>loopText</td>
+<td>Styles for the text in the loop box.</td>
+</tr>
+<tr>
+<td>loopLine</td>
+<td>Defines styles for the lines in the loop box.</td>
+</tr>
+<tr>
+<td>note</td>
+<td>Styles for the note box.</td>
+</tr>
+<tr>
+<td>noteText</td>
+<td>Styles for the text on in the note boxes.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sample-stylesheet">Sample stylesheet</h3>
+<pre class="css"><code>
+            .grid .tick {
+                stroke: lightgrey;
+                opacity: 0.3;
+                shape-rendering: crispEdges;
+            }
+            .grid path {
+                stroke-width: 0;
+            }
+
+
+            #tag {
+                color: white;
+                background: #FA283D;
+                width: 150px;
+                position: absolute;
+                display: none;
+                padding:3px 6px;
+                margin-left: -80px;
+                font-size: 11px;
+            }
+
+
+
+            #tag:before {
+                border: solid transparent;
+                content: ' ';
+                height: 0;
+                left: 50%;
+                margin-left: -5px;
+                position: absolute;
+                width: 0;
+                border-width: 10px;
+                border-bottom-color: #FA283D;
+                top: -20px;
+            }
+            .taskText {
+                fill:white;
+                text-anchor:middle;
+            }
+            .taskTextOutsideRight {
+                fill:black;
+                text-anchor:start;
+            }
+            .taskTextOutsideLeft {
+                fill:black;
+                text-anchor:end;
+            }</code></pre><h2 id="configuration">Configuration</h2>
+<p>Is it possible to adjust the margins for rendering the sequence diagram.</p>
+<p>This is done by defining the <strong>sequenceConfig</strong> part of the configuration object. Read more about it <a href="http://knsv.github.io/mermaid/index.html#configuration28">here</a>. How to use<br>the CLI is described in the <a href="(http://knsv.github.io/mermaid/index.html#mermaidCLI">mermaidCLI</a> page.</p>
+
+
+    </div>
+    <div class="dark-box">
+        <div class="lang-selector">
+            <a href="#" data-language-name="shell">shell</a>
+            <a href="#" data-language-name="ruby">ruby</a>
+            <a href="#" data-language-name="python">python</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

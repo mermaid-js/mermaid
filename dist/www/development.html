@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>mermaid - Generation of diagrams and flowcharts from text in a similar manner as markdown.</title>
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
+
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="stylesheets/mermaid.forest.css" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/solarized_light.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="javascripts/lib/mermaid.js"></script>
+    <script src="javascripts/all.js" type="text/javascript"></script>
+    <script src="javascripts/highlight.pack.js" type="text/javascript"></script>
+
+    <script>
+        var g = function (hljs) {
+            var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+            var keyw = {
+                keyword: 'graph sequenceDiagram participant loop end',
+                typename: 'Note',
+                literal: "false true left right"
+            };
+            return {
+                case_insensitive: false,
+                aliases: ["mermaid"],
+                k: keyw,
+                i: 'for',
+                c: [{
+                    cN: "function",
+                    b: "^" + r + "\\s*\\(",
+                    e: "->",
+                    rB: !0,
+                    i: "\\(|#|//|/\\*|\\\\|:|;",
+                    starts: {
+                        e: ";|\\.", k: keyw, c: [
+                            {cN: "comment", b: "%", e: "$"}
+                        ]
+                    }
+                },
+                    {cN: "comment", b: "%", e: "$"}
+                ]
+            };
+        };
+        hljs.registerLanguage('mermaid', g);
+        hljs.initHighlightingOnLoad();
+        $(function () {
+            setupLanguages(["shell", "javascript", "html", "css","mermaid"]);
+        });
+        var callback = function(){
+            alert('A callback was triggered');
+        }
+    </script>
+</head>
+
+<body class="index">
+<a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png"/>
+      </span>
+</a>
+
+<div class="tocify-wrapper">
+    <img src="images/logo.png"/>
+
+    <div class="lang-selector" style="display:none">
+        <a href="#" data-language-name="shell">shell</a>
+        <a href="#" data-language-name="javascript">javascript</a>
+        <a href="#" data-language-name="html">html</a>
+        <a href="#" data-language-name="css">css</a>
+    </div>
+    <div class="search">
+        <input type="text" class="search" id="input-search" placeholder="Search">
+    </div>
+    <ul class="search-results"></ul>
+    <div id="toc">
+    </div>
+    <ul class="toc-footer">
+        <div style="margin-left:5px;">
+            <a href="https://github.com/knsv/mermaid" class="github-button" >Star</a>
+            <a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
+            <a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
+        </div>
+        <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+        <li><a href='http://github.com/tripit/slate' style="color:grey">Documentation Powered by Slate</a></li>
+    </ul>
+</div>
+<div class="page-wrapper">
+    <div class="dark-box"></div>
+    <div class="content">
+        <h1 id="development">Development</h1>
+<h2 id="updating-the-documentation">Updating the documentation</h2>
+<h2 id="getting-the-development-environment-up">Getting the development environment up</h2>
+<ol>
+<li>Fork the gh-pages branch in the the mermaid repository</li>
+<li>Do npm install</li>
+</ol>
+<h2 id="working-with-the-documentation">Working with the documentation</h2>
+<p>The html files are generated from the source and the markdown files in the docs folder. The site generation is done<br>using the docker.js framework with the command below.</p>
+<pre class="css"><code>docker -i ../mermaid/ -x "*git*|*travis*|*bin*|*dist*|*node_modules*|*gulp*|*lib*|*editor*|*conf*|*scripts*|*test*|*htmlDocs*" --extras mermaid -w -o htmlDocs</code></pre><p>Thus ... One important thing to remember. <em> Do not edit the html files directly! </em> Those changes will be overwritten<br>when the site is re-generated.</p>
+<h2 id="committing-the-changes">Committing the changes</h2>
+<p>Do a pull request to merge the changes to the site.</p>
+<h2 id="things-to-be-done-in-order-to-add-a-new-diagram-type">Things to be done in order to add a new diagram type</h2>
+<h3 id="step-1-grammar-parsing">Step 1: Grammar &amp; Parsing</h3>
+<h4 id="grammar">Grammar</h4>
+<p>This would be to define a jison grammar for the new diagram type. That should start with a way to identify that the text in the mermaid tag is a diagram of that type. Create a new folder under diagrams for your new diagram type and a parser folder in it. This leads us to step 2.</p>
+<p>For instance:</p>
+<ul>
+<li>the flowchart starts with the keyword graph.</li>
+<li>the sequence diagram starts with the keyword sequenceDiagram</li>
+</ul>
+<h4 id="store-data-found-during-parsing">Store data found during parsing</h4>
+<p>There are some jison specific sub steps here where the parser stores the data encountered when parsing the diagram, this data is later used by the renderer. You can during the parsing call a object provided to the parser by the user of the parser. This object can be called during parsing for storing data.</p>
+<pre class="css"><code>statement
+    : 'participant' actor  { $$='actor'; }
+    | signal               { $$='signal'; }
+    | note_statement       { $$='note';  }
+    | 'title' message      { yy.setTitle($2);  }
+    ;</code></pre><p>In the extract of the grammar above, it is defined that a call to the setTitle method in the data object will be done when parsing and the title keyword is encountered.</p>
+<p><strong>Note:</strong> Make sure that the parseError function for the parser is defined and calling mermaidPAI.parseError this way a common way of detecting parse errors is provided for the end-user.</p>
+<p>For more info look in the example diagram type:</p>
+<p>The yy object has the following function:</p>
+<pre class="css"><code>exports.parseError = function(err,hash){
+   mermaidAPI.parseError(err,hash);
+};</code></pre><p>when parsing the yy object is initialized as per below:</p>
+<pre class="css"><code>    var parser;
+    parser = exampleParser.parser;
+    parser.yy = db;</code></pre><h3 id="step-2-rendering">Step 2: Rendering</h3>
+<p>Write a renderer that given the data found during parsing renders the diagram. To look at an example look at sequendeRenderer.js rather then the flowchart renderer as this is a more generic example.</p>
+<p>Place the renderer in the diagram folder.</p>
+<h3 id="step-3-detection-of-the-new-diagram-type">Step 3: Detection of the new diagram type</h3>
+<p>The second thing to do is to add the capability to detect the new new diagram to type to the detectType in utils.js. The detection should return a key for the new diagram type.</p>
+<h3 id="step-4-the-final-piece-triggering-the-rendering">Step 4: The final piece - triggering the rendering</h3>
+<p>At this point when mermaid is trying to render the diagram, it will detect it as being of the new type but there will be no match when trying to render the diagram. To fix this add a new case in the switch statement in main.js:init this should match the diagram type returned from step number 2. The code in this new case statement should call the renderer for the diagram type with the data found by the parser as an argument.</p>
+<h2 id="usage-of-the-parser-as-a-separate-module">Usage of the parser as a separate module</h2>
+<h3 id="setup">Setup</h3>
+<pre class="css"><code>var graph = require('./graphDb');
+var flow = require('./parser/flow');
+flow.parser.yy = graph;</code></pre><h3 id="parsing">Parsing</h3>
+<pre class="css"><code>flow.parser.parse(text);</code></pre><h3 id="data-extraction">Data extraction</h3>
+<pre class="css"><code>// Javascript example
+graph.getDirection();
+graph.getVertices();
+graph.getEdges();</code></pre><p>The parser is also exposed in the mermaid api by calling:</p>
+<pre class="css"><code>var parser = mermaid.getParser();</code></pre><p>Note that the parse needs a graph object to store the data as per:</p>
+<pre class="css"><code>flow.parser.yy = graph;</code></pre><p>Look at graphDb.js for more details on that object.</p>
+
+
+    </div>
+    <div class="dark-box">
+        <div class="lang-selector">
+            <a href="#" data-language-name="shell">shell</a>
+            <a href="#" data-language-name="ruby">ruby</a>
+            <a href="#" data-language-name="python">python</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
