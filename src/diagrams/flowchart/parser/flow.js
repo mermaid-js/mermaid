@@ -311,9 +311,13 @@ parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
-        var error = new Error(str);
-        error.hash = hash;
-        throw error;
+        function _parseError (msg, hash) {
+            this.message = msg;
+            this.hash = hash;
+        }
+        _parseError.prototype = Error;
+
+        throw new _parseError(str, hash);
     }
 },
 parse: function parse(input) {

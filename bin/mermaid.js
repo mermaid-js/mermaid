@@ -4,7 +4,7 @@ var fs = require('fs')
   , chalk = require('chalk')
   , error = chalk.bold.red
   , cli = require('../lib/cli.js')
-  , lib = require('../lib')
+  , lib = require('../lib');
 
 cli.parse(process.argv.slice(2), function(err, message, options) {
   if (err) {
@@ -24,4 +24,4 @@ cli.parse(process.argv.slice(2), function(err, message, options) {
   }
 
   lib.process(options.files, options, process.exit)
-})
+});
