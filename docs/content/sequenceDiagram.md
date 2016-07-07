@@ -190,7 +190,7 @@ else
 end
 ```
 
-or if there is sequence that is optionat (if without else).
+or if there is sequence that is optional (if without else).
 
 ```
 opt Describing text
