@@ -86,6 +86,7 @@ Mermaid is supported in a number of publishing systems and editors. Please repor
 * [Plugin for atom](https://atom.io/packages/atom-mermaid)
 * [Markdown Plus](http://mdp.tylingsoft.com/)
 * [Vim Plugin](https://github.com/kannokanno/previm)
+* [Sphinx extension](https://github.com/mgaitan/sphinxcontrib-mermaid)
 
 # Online live editor
 
