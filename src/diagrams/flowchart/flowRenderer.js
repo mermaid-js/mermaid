@@ -425,6 +425,25 @@ exports.draw = function (text, id,isDot) {
         dagreD3.util.applyStyle(path, edge[type + 'Style']);
     };
 
+    // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
+    render.arrows().normal = function normal(parent, id, edge, type) {
+        var marker = parent.append("marker")
+        .attr("id", id)
+        .attr("viewBox", "0 0 10 10")
+        .attr("refX", 9)
+        .attr("refY", 5)
+        .attr("markerUnits", "strokeWidth")
+        .attr("markerWidth", 8)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+
+        var path = marker.append("path")
+        .attr("d", "M 0 0 L 10 5 L 0 10 z")
+        .attr("class", "arrowheadPath")
+        .style("stroke-width", 1)
+        .style("stroke-dasharray", "1,0");
+    };
+
     // Set up an SVG group so that we can translate the final graph.
     var svg = d3.select('#' + id);
     //svgGroup = d3.select('#' + id + ' g');
