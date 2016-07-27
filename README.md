@@ -25,7 +25,7 @@ graph TD;
                 </code>
             </pre>
         </td>
-        <td>
+        <td style="text-align:center">
             <img src='http://www.sveido.com/mermaid/img/ex1.png' alt='Example 1'>
         </td>
     </tr>
