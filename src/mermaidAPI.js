@@ -71,7 +71,7 @@ var config = {
     startOnLoad: true,
 
     /**
-     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute pats or
+     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute paths or
      * an anchor, #. This matters if you are using base tag settings.
      */
     arrowMarkerAbsolute: false,
