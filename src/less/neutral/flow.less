@@ -1,0 +1,30 @@
+.mermaid .label { color: @text }
+
+.node rect,
+.node circle,
+.node ellipse,
+.node polygon {
+  fill: @mainBkg;
+  stroke: @nodeBorder;
+  stroke-width: 1px;
+}
+
+.edgePath .path {
+  stroke: @lineColor;
+  stroke-width: 1.5px;
+}
+
+.edgeLabel {
+  background-color: @edgeLabelBackground;
+}
+
+.cluster rect {
+  fill: @secondBkg !important;
+  rx: 4 !important;
+  stroke: @clusterBorder !important;
+  stroke-width: 1px !important;
+}
+
+.cluster text {
+  fill: @titleColor;
+}

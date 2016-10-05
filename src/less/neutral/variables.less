@@ -1,0 +1,66 @@
+@mainBkg:   #eee;
+@secondBkg: lighten(@contrast, 55%);
+@lineColor: #666;
+@border1:   #999;
+@border2:   @contrast;
+
+@note:      #ffa;
+@text:      #333;
+@contrast:  #26a;
+@critical:  #d42;
+@done:      #bbb;
+
+/* Flowchart variables */
+@nodeBkg: @mainBkg;
+@nodeBorder: @border1;
+
+@clusterBkg: @secondBkg;
+@clusterBorder: @border2;
+
+@defaultLinkColor: @lineColor;
+
+@titleColor: @text;
+
+@edgeLabelBackground: white;
+
+/* Sequence Diagram variables */
+@actorBorder: @border1;
+@actorBkg:    @mainBkg;
+@actorTextColor: @text;
+@actorLineColor: @lineColor;
+
+@signalColor: @text;
+@signalTextColor: @text;
+
+@labelBoxBkgColor: @contrast;
+@labelBoxBorderColor: @contrast;
+@labelTextColor: white;
+
+@noteBorderColor: darken(@note, 60%);
+@noteBkgColor:    @note;
+
+/* Gantt chart variables */
+@sectionBkgColor: lighten(@contrast, 30%);
+@altSectionBkgColor: white;
+@sectionBkgColor2: lighten(@contrast, 30%);
+
+@taskBorderColor: darken(@contrast, 10%);
+@taskBkgColor: @contrast;
+@taskTextColor: @taskTextLightColor;
+@taskTextOutsideColor: @taskTextDarkColor;
+
+@activeTaskBorderColor: @taskBorderColor;
+@activeTaskBkgColor: @mainBkg;
+
+@gridColor: lighten(@border1, 30%);
+
+@doneTaskBkgColor: @done;
+@doneTaskBorderColor: @lineColor;
+
+@critBorderColor: darken(@critBkgColor, 10%);
+@critBkgColor: @critical;
+
+@taskTextLightColor: white;
+@taskTextDarkColor: @text;
+
+@todayLineColor: @critBkgColor;
