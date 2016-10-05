@@ -1,0 +1,24 @@
+@import "variables";
+@import "flow";
+@import "sequenceDiagram";
+@import "gantt";
+@import "classDiagram";
+
+.node text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:14px;
+}
+
+div.mermaidTooltip {
+  position: absolute;
+  text-align: center;
+  max-width: 200px;
+  padding: 2px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  background: @secondBkg;
+  border: 1px solid @border2;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index:100;
+}
