@@ -24,12 +24,18 @@ var singleFile = {
       , outputDir:  path.join(process.cwd(),'test/tmp2/')
       , phantomPath: path.join(process.cwd(),phantomCmd)
       , width : 1200
+      , css: path.join(__dirname, '..', 'dist', 'mermaid.css')
+      , sequenceConfig: null
+      , ganttConfig: null
     }
   , multiFile = {
         files: [path.join('test','fixtures','test.mermaid'), path.join('test','fixtures','test2.mermaid')]
       , outputDir: 'test/tmp2/'
       , phantomPath: path.join(process.cwd(),phantomCmd)
       , width : 1200
+      , css: path.join(__dirname, '..', 'dist', 'mermaid.css')
+      , sequenceConfig: null
+      , ganttConfig: null
     }
 
 
@@ -40,7 +46,7 @@ test('output of single png', function(t) {
 
   opt = clone(singleFile)
   opt.png = true
-
+ 
   mermaid.process(opt.files, opt, function(code) {
     t.equal(code, 0, 'has clean exit code')
 
@@ -113,7 +119,7 @@ test('output including CSS', function(t) {
     one = fs.statSync(filename)
       //console.log('one: '+opt.files[0]);
 
-    opt2.css = fs.readFileSync(path.join('test','fixtures','test.css'), 'utf8')
+    opt2.css = path.join('test','fixtures','test.css')
       //console.log(opt2.css);
 
       console.log('Generating #2');

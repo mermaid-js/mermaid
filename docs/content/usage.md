@@ -77,7 +77,7 @@ Would end up like this:
 ```
 An id is also added to mermaid tags without id.
 
-###Labels out of bounds
+### Labels out of bounds
 
 If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the 
 whole page to have been loaded (dom + assets, particularly the fonts file).
