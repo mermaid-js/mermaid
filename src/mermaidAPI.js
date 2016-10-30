@@ -540,6 +540,7 @@ var setConf = function(cnf){
         }
     }
 };
+
 exports.initialize = function(options){
     log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization
