@@ -15,15 +15,17 @@ bower install mermaid --save-dev
 npm install mermaid --save-dev
 ```
 
-Or download javascript files as per the url below, note that #version# should be replaced with version of choice:
+Or download css and javascript files as per the url below, note that #version# should be replaced with version of choice:
 
 ```
+https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.css
 https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js
 ```
 
 Ex:
-* [version 0.5.1](https://cdn.rawgit.com/knsv/mermaid/0.5.1/dist/mermaid.min.js)
+* [js version 6.0.0](https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js)
 
+Checkout the [latest version](https://github.com/knsv/mermaid/releases) and [other styles](https://github.com/knsv/mermaid/tree/master/dist) such as `forest` and `dark`.
 
 There are some bundles to choose from:
 * mermaid.js, mermaid.min.js This bundle contains everything you need to run mermaid
@@ -47,10 +49,10 @@ locate the graphs n the page and transform them to svg files.
 
 ### Include mermaid on your web page:
 
-```
+```html
+<link rel="stylesheet" href="mermaid.css">
 &lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
 &lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;
-
 ```
 
 Further down on your page mermaid will look for tags with ```class="mermaid"```. From these tags mermaid will try to
