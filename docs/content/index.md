@@ -87,13 +87,14 @@ Mermaid is supported in a number of publishing systems and editors. Please repor
 * [Markdown Plus](http://mdp.tylingsoft.com/)
 * [Vim Plugin](https://github.com/kannokanno/previm)
 * [Sphinx extension](https://github.com/mgaitan/sphinxcontrib-mermaid)
+* [Pandoc filter](https://github.com/raghur/mermaid-filter)
 
 # Online live editor
 
 An editor is available for creating diagrams. With it you can quickly start writing mermaid diagrams. It is possible to:
 
 * save the result as a svg
-* get a link to a viewer of the diagram 
+* get a link to a viewer of the diagram
 * get a link to edit of the diagram to share a diagram so that someone else can tweak it and send a new link back
- 
+
 * [Editor](http://knsv.github.io/mermaid/live_editor)
