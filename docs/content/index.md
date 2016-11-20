@@ -88,6 +88,7 @@ Mermaid is supported in a number of publishing systems and editors. Please repor
 * [Vim Plugin](https://github.com/kannokanno/previm)
 * [Sphinx extension](https://github.com/mgaitan/sphinxcontrib-mermaid)
 * [Pandoc filter](https://github.com/raghur/mermaid-filter)
+* [hads](https://github.com/sinedied/hads)
 
 # Online live editor
 
