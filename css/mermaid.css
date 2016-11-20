@@ -12,7 +12,7 @@
   stroke-width: 1px;
 }
 .edgePath .path {
-  stroke: #333333 !important;
+  stroke: #333333;
 }
 .cluster rect {
   fill: #ffffde;
