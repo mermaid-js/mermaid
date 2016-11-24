@@ -15,7 +15,7 @@ bower install mermaid --save-dev
 npm install mermaid --save-dev
 ```
 
-Or download css and javascript files as per the url below, note that #version# should be replaced with version of choice:
+Or download a javascript bundle and a stylesheet, e.g. the urls below are for the default style and the all-in-one javascript - note that #version# should be replaced with version of choice:
 
 ```
 https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.css
@@ -28,7 +28,7 @@ Ex:
 Checkout the [latest version](https://github.com/knsv/mermaid/releases) and [other styles](https://github.com/knsv/mermaid/tree/master/dist) such as `forest` and `dark`.
 
 There are some bundles to choose from:
-* mermaid.js, mermaid.min.js This bundle contains everything you need to run mermaid
+* mermaid.js, mermaid.min.js This bundle contains all the javascript libraries you need to run mermaid
 * mermaid.slim.js, mermaid.slim.min.js This bundle does not contain d3 which is useful for sites that already have d3 in place
 * mermaidAPI.js, mermaidAPI.min.js, This bundle does not contain the web integration provided in the other packages but has a render function instead returns svg code.
 
