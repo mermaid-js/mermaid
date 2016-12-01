@@ -112,17 +112,12 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    g.append('text')      // text label for the x axis
-        .attr('x', center)
-        .attr('y', verticalPos + (conf.height/2)+5)
-        .attr('class','actor')
-        .style('text-anchor', 'middle')
-        .text(description)
-    ;
+    _drawTextCandidateFunc(conf)(
+      description, g, rect.x, rect.y, rect.width, rect.height);
 };
 
 exports.anchorElement = function(elem) {
-    return elem.append('g');  
+    return elem.append('g');
 };
 /**
  * Draws an actor in the diagram with the attaced line
@@ -269,3 +264,30 @@ exports.getNoteRect = function(){
     };
     return rect;
 };
+
+var _drawTextCandidateFunc = (function() {
+    var byText = function(content, g, x, y, width, height) {
+        var center = x + width / 2;
+        g.append('text')
+          .attr('x', center).attr('y', y + y / 2 + 5)
+          .attr('class', 'actor').style('text-anchor', 'middle')
+          .text(content);
+    };
+    var byFo = function(content, g, x, y, width, height) {
+        var s = g.append('switch');
+        var f = s.append("foreignObject")
+                  .attr('x', x).attr('y', y)
+                  .attr('width', width).attr('height', height);
+
+        f.append('div').style('display', 'table')
+          .style('height', '100%').style('width', '100%')
+          .append('div').style('display', 'table-cell')
+           .style('text-align', 'center').style('vertical-align', 'middle')
+           .text(content)
+
+        byText(content, s, x, y, width, height);
+    };
+    return function(conf) {
+      return conf.textPlacement==='fo' ? byFo : byText;
+    };
+})();
