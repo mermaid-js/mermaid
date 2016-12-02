@@ -269,7 +269,7 @@ var _drawTextCandidateFunc = (function() {
     var byText = function(content, g, x, y, width, height) {
         var center = x + width / 2;
         g.append('text')
-          .attr('x', center).attr('y', y + y / 2 + 5)
+          .attr('x', center).attr('y', y + height / 2 + 5)
           .attr('class', 'actor').style('text-anchor', 'middle')
           .text(content);
     };
