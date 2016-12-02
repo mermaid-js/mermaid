@@ -32,10 +32,12 @@ var conf = {
     bottomMarginAdj:1,
 
     // width of activation box
-    activationWidth:10
+    activationWidth:10,
+
+    //text placement as: tspan | fo
+    textPlacement: 'fo',
 };
 
-//var bb = getBBox('path');
 exports.bounds = {
     data:{
         startx:undefined,
@@ -221,8 +223,8 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     }
     else{
         //textWidth = getBBox(textElem).width; //.getComputedTextLength()
-        textWidth = textElem[0][0].getBoundingClientRect();  
-        //textWidth = textElem[0][0].getComputedTextLength();  
+        textWidth = textElem[0][0].getBoundingClientRect();
+        //textWidth = textElem[0][0].getComputedTextLength();
     }
 
     var line;
@@ -272,6 +274,7 @@ var drawMessage = function(elem, startx, stopx, verticalPos, msg){
     }
 
 };
+
 
 module.exports.drawActors = function(diagram, actors, actorKeys,verticalPos){
     var i;
@@ -476,14 +479,14 @@ module.exports.draw = function (text, id) {
     }
 
     var width = (box.stopx - box.startx) + (2 * conf.diagramMarginX);
-    
+
     if(title) {
       diagram.append('text')
         .text(title)
         .attr('x', ( ( box.stopx-box.startx) / 2 ) - ( 2 * conf.diagramMarginX ) )
         .attr('y', -25);
     }
-    
+
     if(conf.useMaxWidth) {
         diagram.attr('height', '100%');
         diagram.attr('width', '100%');
