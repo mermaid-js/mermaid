@@ -70,7 +70,10 @@ function Log(level) {
                     //return console.log('[' + formatTime(new Date()) + '] ' , str); //eslint-disable-line no-console
                     args.unshift('[' + formatTime(new Date()) + '] ');
                     console.log.apply(console, args.map(function(a){
-                        if (typeof a === "object") return JSON.stringify(a, null, 2);
+                        if (typeof a === "object") {
+                          if (a.stack !== undefined) { return a.stack; }
+                          return JSON.stringify(a, null, 2);
+                        }
                         return a;
                     }));
                 }
