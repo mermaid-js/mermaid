@@ -35,7 +35,7 @@ var conf = {
     activationWidth:10,
 
     //text placement as: tspan | fo | <else> only text as before 
-    textPlacement: 'tspan', 
+    textPlacement: 'fo', 
 };
 
 exports.bounds = {

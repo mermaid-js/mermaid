@@ -23,6 +23,13 @@ var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 });
 //
 //var sd = require('./sequenceRenderer');
 
+function addConf(conf, key, value) {
+  if (value !== undefined) {
+    conf[key]=value;
+  }
+  return conf;
+}
+
 var str;
 describe('when parsing a sequenceDiagram',function() {
     beforeEach(function () {
@@ -761,7 +768,9 @@ describe('when rendering a sequenceDiagram',function() {
         //console.log(document.querySelector('#tst').getBBox());
 
     });
-    it('it should handle one actor', function () {
+    ['tspan','fo','old',undefined].forEach(function(textPlacement) {
+      it('it should handle one actor, when textPlacement is '+textPlacement, function () {
+        sd.setConf(addConf(conf, 'textPlacement', textPlacement));
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
             'participant Alice';
@@ -774,7 +783,7 @@ describe('when rendering a sequenceDiagram',function() {
         expect(bounds.starty).toBe(0);
         expect(bounds.stopx ).toBe( conf.width);
         expect(bounds.stopy ).toBe(conf.height);
-
+      });
     });
     it('it should handle one actor and a centered note', function () {
         sd.bounds.init();
@@ -987,7 +996,9 @@ describe('when rendering a sequenceDiagram with actor mirror activated',function
         };
         sd.setConf(conf);
     });
-    it('it should handle one actor', function () {
+    ['tspan','fo','old',undefined].forEach(function(textPlacement) {
+      it('it should handle one actor, when textPlacement is'+textPlacement, function () {
+        sd.setConf(addConf(conf, 'textPlacement', textPlacement));
         sd.bounds.init();
         var str = 'sequenceDiagram\n' +
             'participant Alice';
@@ -1000,6 +1011,6 @@ describe('when rendering a sequenceDiagram with actor mirror activated',function
         expect(bounds.starty).toBe(0);
         expect(bounds.stopx ).toBe( conf.width);
         expect(bounds.stopy ).toBe(2*conf.height+2*conf.boxMargin);
-
+      });
     });
 });
