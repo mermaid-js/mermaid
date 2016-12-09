@@ -134,7 +134,8 @@ exports.addVertices = function (vert, g) {
                 break;
             case 'group':
                 _shape = 'rect';
-                verticeText = '';
+                // Need to create a text node if using svg labels, see #367
+                verticeText = conf.htmlLabels ? '' : document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 break;
             default:
                 _shape = 'rect';
