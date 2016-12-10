@@ -112,8 +112,8 @@ exports.drawActor = function(elem, left, verticalPos, description,conf){
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    _drawTextCandidateFunc(conf)(
-      description, g, rect.x, rect.y, rect.width, rect.height);
+    _drawTextCandidateFunc(conf)(description, g, 
+        rect.x, rect.y, rect.width, rect.height, {'class':'actor'});
 };
 
 exports.anchorElement = function(elem) {
@@ -266,28 +266,66 @@ exports.getNoteRect = function(){
 };
 
 var _drawTextCandidateFunc = (function() {
-    var byText = function(content, g, x, y, width, height) {
-        var center = x + width / 2;
-        g.append('text')
-          .attr('x', center).attr('y', y + height / 2 + 5)
-          .attr('class', 'actor').style('text-anchor', 'middle')
-          .text(content);
+    function byText(content, g, x, y, width, height, textAttrs) {
+      var text = g.append('text')
+        .attr('x', x + width / 2).attr('y', y + height / 2 + 5)
+        .style('text-anchor', 'middle')
+        .text(content);
+      for (var key in textAttrs) {
+        text.attr(key, textAttrs[key]);
+      }
     };
-    var byFo = function(content, g, x, y, width, height) {
+
+    function byTspan(content, g, x, y, width, height, textAttrs) {
+      var text = g.append('text')
+        .attr('x', x + width / 2).attr('y', y) 
+        .style('text-anchor', 'middle');
+      var tspan = text.append('tspan')
+        .attr('x', x + width / 2).attr('dy', '0') 
+        .text(content);
+
+      if(typeof(text.textwrap) !== 'undefined'){
+        text.textwrap({ //d3textwrap
+              x: x + width / 2, y: y, width: width, height: height
+        }, 0);
+        //vertical aligment after d3textwrap expans tspan to multiple tspans
+        var tspans = text.selectAll('tspan');
+        if (tspans.length > 0 && tspans[0].length > 0) {
+          tspans = tspans[0];
+          //set y of <text> to the mid y of the first line 
+          text.attr('y', y + (height/2.- text[0][0].getBBox().height*(1 - 1.0/tspans.length)/2.))
+            .attr("dominant-baseline", "central")
+            .attr("alignment-baseline", "central")
+        }
+      } 
+
+      for (var key in textAttrs) {
+        text.attr(key, textAttrs[key]);
+      }
+    };
+
+    function byFo(content, g, x, y, width, height, textAttrs) {
         var s = g.append('switch');
         var f = s.append("foreignObject")
                   .attr('x', x).attr('y', y)
                   .attr('width', width).attr('height', height);
 
-        f.append('div').style('display', 'table')
-          .style('height', '100%').style('width', '100%')
-          .append('div').style('display', 'table-cell')
+        var text = f.append('div').style('display', 'table')
+          .style('height', '100%').style('width', '100%');
+
+        text.append('div').style('display', 'table-cell')
            .style('text-align', 'center').style('vertical-align', 'middle')
            .text(content)
 
-        byText(content, s, x, y, width, height);
+        byTspan(content, s, x, y, width, height, textAttrs);
+
+        for (var key in textAttrs) {
+          text.attr(key, textAttrs[key]);
+        }
     };
+
     return function(conf) {
-      return conf.textPlacement==='fo' ? byFo : byText;
+      return conf.textPlacement==='fo' ? byFo : (
+          conf.textPlacement==='tspan' ? byTspan : byText);
     };
 })();

@@ -34,8 +34,8 @@ var conf = {
     // width of activation box
     activationWidth:10,
 
-    //text placement as: tspan | fo
-    textPlacement: 'fo',
+    //text placement as: tspan | fo | <else> only text as before 
+    textPlacement: 'fo', 
 };
 
 exports.bounds = {
