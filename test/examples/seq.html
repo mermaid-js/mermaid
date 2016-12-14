@@ -8,9 +8,11 @@
     <script>
         mermaid.initialize({
                 sequenceDiagram:{
-                    mirrorActors:true,
+                    mirrorActors:false,
                     height:35,
-                    topPadding:125
+                    topPadding:125,
+                    useMaxWidth:false
+
                 },
                 logLevel:1
 
@@ -31,7 +33,7 @@
 
     <div class="mermaid">
         sequenceDiagram
-        Merchant->>Customer: foo
+        Merchant->>Customer: "foo#b"
         Note left of Person:One row for the a
         Note right of Person: Bob thinks a long long time, so long that the text does not fit In a row. Bob thinks a long long time, so long that the text does not fit In a row. Bob thinks a long long time, so long that the text does not fit In a row. Bob thinks a long long time, so long that the text does not fit In a row.
 
