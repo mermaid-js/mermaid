@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="../../dist/mermaid.css"/>
+    <script src="dist/mermaidAPI.js"></script>
+
+<script>
+    mermaidAPI.initialize({
+        startOnLoad: false,
+        logLevel: 1
+    });
+    $(function(){
+    // Example of using the API
+        
+
+        var insertSvg = function(svgCode, bindFunctions){
+            // Rendering is completed so something with the svgCode
+            var element = document.querySelector("#resDiv");
+            element.innerHTML = svgCode;
+        };
+
+
+        var graphDefinition = 'graph TB\na-->b';
+        var graphDefinition2 = 'graph TB\nc-->d';
+        var element = document.querySelector("#resDiv");
+        var graph = mermaidAPI.render( 'graphDiv', graphDefinition, insertSvg, element);
+
+        element = document.querySelector("#resDiv");
+        graph = mermaidAPI.render( 'graphDiv', graphDefinition2, insertSvg, element);
+
+    });
+</script>
+</head>
+<body>
+<div id="resDiv"></div>
+</body>
+</html>
