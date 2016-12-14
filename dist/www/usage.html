@@ -95,14 +95,16 @@
         <h1 id="usage">Usage</h1>
 <h2 id="installation">Installation</h2>
 <p>Either use the npm or bower package managers as per below:</p>
-<pre class="css"><code>bower install mermaid --save-dev</code></pre><pre class="css"><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files as per the url below, note that #version# should be replaced with version of choice:</p>
-<pre class="css"><code>https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p>Ex:</p>
+<pre class="css"><code>bower install mermaid --save-dev</code></pre><pre class="css"><code>npm install mermaid --save-dev</code></pre><p>Or download a javascript bundle and a stylesheet, e.g. the urls below are for the default style and the all-in-one javascript - note that #version# should be replaced with version of choice:</p>
+<pre class="css"><code>https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.css
+https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p>Ex:</p>
 <ul>
-<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.5.1/dist/mermaid.min.js">version 0.5.1</a></li>
+<li><a href="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js">js version 6.0.0</a></li>
 </ul>
+<p>Checkout the <a href="https://github.com/knsv/mermaid/releases">latest version</a> and <a href="https://github.com/knsv/mermaid/tree/master/dist">other styles</a> such as <code>forest</code> and <code>dark</code>.</p>
 <p>There are some bundles to choose from:</p>
 <ul>
-<li>mermaid.js, mermaid.min.js This bundle contains everything you need to run mermaid</li>
+<li>mermaid.js, mermaid.min.js This bundle contains all the javascript libraries you need to run mermaid</li>
 <li>mermaid.slim.js, mermaid.slim.min.js This bundle does not contain d3 which is useful for sites that already have d3 in place</li>
 <li>mermaidAPI.js, mermaidAPI.min.js, This bundle does not contain the web integration provided in the other packages but has a render function instead returns svg code.</li>
 </ul>
@@ -119,7 +121,8 @@
 </ol>
 <p>If these things are in place mermaid listens to the page load event and when fires, when the page has loaded, it will<br>locate the graphs n the page and transform them to svg files.</p>
 <h3 id="include-mermaid-on-your-web-page-">Include mermaid on your web page:</h3>
-<pre class="css"><code>&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
+<pre class="css"><code><link rel="stylesheet" href="mermaid.css">
+&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
 &lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to<br>read the chart definiton which will be replaced with the svg chart.</p>
 <h3 id="define-a-chart-like-this-">Define a chart like this:</h3>
 <pre class="css"><code>&lt;div class=&quot;mermaid&quot;&gt;
@@ -130,7 +133,7 @@
         Chart ends up here
     &lt;/svg&gt;
 &lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
-<p>###Labels out of bounds</p>
+<h3 id="labels-out-of-bounds">Labels out of bounds</h3>
 <p>If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the<br>whole page to have been loaded (dom + assets, particularly the fonts file).</p>
 <p>$(document).load(function() {<br>    mermaid.initialize();<br>});<br>over</p>
 <p>$(document).ready(function() {<br>    mermaid.initialize();<br>});</p>

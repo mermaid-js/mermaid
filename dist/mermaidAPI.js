@@ -1,322 +1,6 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaidAPI=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":3}],3:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
-    }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],4:[function(require,module,exports){
 !function() {
   var d3 = {
     version: "3.5.6"
@@ -9821,7 +9505,7 @@ process.chdir = function (dir) {
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
-},{}],5:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -9853,7 +9537,7 @@ module.exports =  {
   version: require("./lib/version")
 };
 
-},{"./lib/dagre":12,"./lib/graphlib":13,"./lib/intersect":14,"./lib/render":29,"./lib/util":31,"./lib/version":32}],6:[function(require,module,exports){
+},{"./lib/dagre":10,"./lib/graphlib":11,"./lib/intersect":12,"./lib/render":27,"./lib/util":29,"./lib/version":30}],4:[function(require,module,exports){
 var util = require("./util");
 
 module.exports = {
@@ -9917,7 +9601,7 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":31}],7:[function(require,module,exports){
+},{"./util":29}],5:[function(require,module,exports){
 var util = require("./util"),
     addLabel = require("./label/add-label");
 
@@ -9962,7 +9646,7 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":22,"./util":31}],8:[function(require,module,exports){
+},{"./label/add-label":20,"./util":29}],6:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -9999,7 +9683,7 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],9:[function(require,module,exports){
+},{"./d3":9,"./label/add-label":20,"./lodash":23,"./util":29}],7:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10131,7 +9815,7 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":11,"./intersect/intersect-node":18,"./lodash":25,"./util":31}],10:[function(require,module,exports){
+},{"./d3":9,"./intersect/intersect-node":16,"./lodash":23,"./util":29}],8:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -10191,11 +9875,11 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":11,"./label/add-label":22,"./lodash":25,"./util":31}],11:[function(require,module,exports){
+},{"./d3":9,"./label/add-label":20,"./lodash":23,"./util":29}],9:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],12:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /* global window */
 
 var dagre;
@@ -10212,7 +9896,7 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":54}],13:[function(require,module,exports){
+},{"dagre":52}],11:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -10229,7 +9913,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":33}],14:[function(require,module,exports){
+},{"graphlib":31}],12:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -10238,7 +9922,7 @@ module.exports = {
   rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":15,"./intersect-ellipse":16,"./intersect-node":18,"./intersect-polygon":19,"./intersect-rect":20}],15:[function(require,module,exports){
+},{"./intersect-circle":13,"./intersect-ellipse":14,"./intersect-node":16,"./intersect-polygon":17,"./intersect-rect":18}],13:[function(require,module,exports){
 var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
@@ -10247,7 +9931,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":16}],16:[function(require,module,exports){
+},{"./intersect-ellipse":14}],14:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -10274,7 +9958,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -10346,14 +10030,14 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],19:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
@@ -10410,7 +10094,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":17}],20:[function(require,module,exports){
+},{"./intersect-line":15}],18:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -10444,7 +10128,7 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],21:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addHtmlLabel;
@@ -10489,7 +10173,7 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":31}],22:[function(require,module,exports){
+},{"../util":29}],20:[function(require,module,exports){
 var addTextLabel = require("./add-text-label"),
     addHtmlLabel = require("./add-html-label"),
     addSVGLabel  = require("./add-svg-label");
@@ -10528,7 +10212,7 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":21,"./add-svg-label":23,"./add-text-label":24}],23:[function(require,module,exports){
+},{"./add-html-label":19,"./add-svg-label":21,"./add-text-label":22}],21:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addSVGLabel;
@@ -10543,7 +10227,7 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":31}],24:[function(require,module,exports){
+},{"../util":29}],22:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addTextLabel;
@@ -10590,7 +10274,7 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":31}],25:[function(require,module,exports){
+},{"../util":29}],23:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -10607,7 +10291,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":53}],26:[function(require,module,exports){
+},{"lodash":51}],24:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10643,7 +10327,7 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":11,"./util":31}],27:[function(require,module,exports){
+},{"./d3":9,"./util":29}],25:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10667,7 +10351,7 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":11,"./lodash":25,"./util":31}],28:[function(require,module,exports){
+},{"./d3":9,"./lodash":23,"./util":29}],26:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -10690,7 +10374,7 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":11,"./util":31}],29:[function(require,module,exports){
+},{"./d3":9,"./util":29}],27:[function(require,module,exports){
 var _ = require("./lodash"),
     layout = require("./dagre").layout;
 
@@ -10859,7 +10543,7 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":6,"./create-clusters":7,"./create-edge-labels":8,"./create-edge-paths":9,"./create-nodes":10,"./dagre":12,"./lodash":25,"./position-clusters":26,"./position-edge-labels":27,"./position-nodes":28,"./shapes":30}],30:[function(require,module,exports){
+},{"./arrows":4,"./create-clusters":5,"./create-edge-labels":6,"./create-edge-paths":7,"./create-nodes":8,"./dagre":10,"./lodash":23,"./position-clusters":24,"./position-edge-labels":25,"./position-nodes":26,"./shapes":28}],28:[function(require,module,exports){
 "use strict";
 
 var intersectRect = require("./intersect/intersect-rect"),
@@ -10942,7 +10626,7 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":15,"./intersect/intersect-ellipse":16,"./intersect/intersect-polygon":19,"./intersect/intersect-rect":20}],31:[function(require,module,exports){
+},{"./intersect/intersect-circle":13,"./intersect/intersect-ellipse":14,"./intersect/intersect-polygon":17,"./intersect/intersect-rect":18}],29:[function(require,module,exports){
 var _ = require("./lodash");
 
 // Public utility functions
@@ -10998,10 +10682,10 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":25}],32:[function(require,module,exports){
+},{"./lodash":23}],30:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],33:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -11041,7 +10725,7 @@ module.exports = {
   version: lib.version
 };
 
-},{"./lib":49,"./lib/alg":40,"./lib/json":50}],34:[function(require,module,exports){
+},{"./lib":47,"./lib/alg":38,"./lib/json":48}],32:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = components;
@@ -11070,7 +10754,7 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":51}],35:[function(require,module,exports){
+},{"../lodash":49}],33:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = dfs;
@@ -11111,7 +10795,7 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":51}],36:[function(require,module,exports){
+},{"../lodash":49}],34:[function(require,module,exports){
 var dijkstra = require("./dijkstra"),
     _ = require("../lodash");
 
@@ -11123,7 +10807,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":51,"./dijkstra":37}],37:[function(require,module,exports){
+},{"../lodash":49,"./dijkstra":35}],35:[function(require,module,exports){
 var _ = require("../lodash"),
     PriorityQueue = require("../data/priority-queue");
 
@@ -11179,7 +10863,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":47,"../lodash":51}],38:[function(require,module,exports){
+},{"../data/priority-queue":45,"../lodash":49}],36:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -11191,7 +10875,7 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":51,"./tarjan":45}],39:[function(require,module,exports){
+},{"../lodash":49,"./tarjan":43}],37:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = floydWarshall;
@@ -11243,7 +10927,7 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":51}],40:[function(require,module,exports){
+},{"../lodash":49}],38:[function(require,module,exports){
 module.exports = {
   components: require("./components"),
   dijkstra: require("./dijkstra"),
@@ -11258,7 +10942,7 @@ module.exports = {
   topsort: require("./topsort")
 };
 
-},{"./components":34,"./dijkstra":37,"./dijkstra-all":36,"./find-cycles":38,"./floyd-warshall":39,"./is-acyclic":41,"./postorder":42,"./preorder":43,"./prim":44,"./tarjan":45,"./topsort":46}],41:[function(require,module,exports){
+},{"./components":32,"./dijkstra":35,"./dijkstra-all":34,"./find-cycles":36,"./floyd-warshall":37,"./is-acyclic":39,"./postorder":40,"./preorder":41,"./prim":42,"./tarjan":43,"./topsort":44}],39:[function(require,module,exports){
 var topsort = require("./topsort");
 
 module.exports = isAcyclic;
@@ -11275,7 +10959,7 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":46}],42:[function(require,module,exports){
+},{"./topsort":44}],40:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = postorder;
@@ -11284,7 +10968,7 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":35}],43:[function(require,module,exports){
+},{"./dfs":33}],41:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = preorder;
@@ -11293,7 +10977,7 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":35}],44:[function(require,module,exports){
+},{"./dfs":33}],42:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
     PriorityQueue = require("../data/priority-queue");
@@ -11347,7 +11031,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":47,"../graph":48,"../lodash":51}],45:[function(require,module,exports){
+},{"../data/priority-queue":45,"../graph":46,"../lodash":49}],43:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
@@ -11396,7 +11080,7 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":51}],46:[function(require,module,exports){
+},{"../lodash":49}],44:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = topsort;
@@ -11432,7 +11116,7 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":51}],47:[function(require,module,exports){
+},{"../lodash":49}],45:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = PriorityQueue;
@@ -11586,7 +11270,7 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":51}],48:[function(require,module,exports){
+},{"../lodash":49}],46:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -12107,14 +11791,14 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":51}],49:[function(require,module,exports){
+},{"./lodash":49}],47:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
   Graph: require("./graph"),
   version: require("./version")
 };
 
-},{"./graph":48,"./version":52}],50:[function(require,module,exports){
+},{"./graph":46,"./version":50}],48:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graph");
 
@@ -12182,7 +11866,7 @@ function read(json) {
   return g;
 }
 
-},{"./graph":48,"./lodash":51}],51:[function(require,module,exports){
+},{"./graph":46,"./lodash":49}],49:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -12199,10 +11883,10 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":53}],52:[function(require,module,exports){
+},{"lodash":51}],50:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],53:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -24557,7 +24241,7 @@ module.exports = '1.0.7';
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],54:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /*
 Copyright (c) 2012-2014 Chris Pettitt
 
@@ -24592,7 +24276,7 @@ module.exports = {
   version: require("./lib/version")
 };
 
-},{"./lib/debug":59,"./lib/graphlib":60,"./lib/layout":62,"./lib/util":82,"./lib/version":83}],55:[function(require,module,exports){
+},{"./lib/debug":57,"./lib/graphlib":58,"./lib/layout":60,"./lib/util":80,"./lib/version":81}],53:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -24661,7 +24345,7 @@ function undo(g) {
   });
 }
 
-},{"./greedy-fas":61,"./lodash":63}],56:[function(require,module,exports){
+},{"./greedy-fas":59,"./lodash":61}],54:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -24701,7 +24385,7 @@ function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
   }
 }
 
-},{"./lodash":63,"./util":82}],57:[function(require,module,exports){
+},{"./lodash":61,"./util":80}],55:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -24775,7 +24459,7 @@ function swapXYOne(attrs) {
   attrs.y = x;
 }
 
-},{"./lodash":63}],58:[function(require,module,exports){
+},{"./lodash":61}],56:[function(require,module,exports){
 /*
  * Simple doubly linked list implementation derived from Cormen, et al.,
  * "Introduction to Algorithms".
@@ -24833,7 +24517,7 @@ function filterOutLinks(k, v) {
   }
 }
 
-},{}],59:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util"),
     Graph = require("./graphlib").Graph;
@@ -24869,7 +24553,7 @@ function debugOrdering(g) {
   return h;
 }
 
-},{"./graphlib":60,"./lodash":63,"./util":82}],60:[function(require,module,exports){
+},{"./graphlib":58,"./lodash":61,"./util":80}],58:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -24886,7 +24570,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":84}],61:[function(require,module,exports){
+},{"graphlib":82}],59:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graphlib").Graph,
     List = require("./data/list");
@@ -25006,7 +24690,7 @@ function assignBucket(buckets, zeroIdx, entry) {
   }
 }
 
-},{"./data/list":58,"./graphlib":60,"./lodash":63}],62:[function(require,module,exports){
+},{"./data/list":56,"./graphlib":58,"./lodash":61}],60:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -25400,9 +25084,9 @@ function canonicalize(attrs) {
   return newAttrs;
 }
 
-},{"./acyclic":55,"./add-border-segments":56,"./coordinate-system":57,"./graphlib":60,"./lodash":63,"./nesting-graph":64,"./normalize":65,"./order":70,"./parent-dummy-chains":75,"./position":77,"./rank":79,"./util":82}],63:[function(require,module,exports){
-module.exports=require(51)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":51,"lodash":104}],64:[function(require,module,exports){
+},{"./acyclic":53,"./add-border-segments":54,"./coordinate-system":55,"./graphlib":58,"./lodash":61,"./nesting-graph":62,"./normalize":63,"./order":68,"./parent-dummy-chains":73,"./position":75,"./rank":77,"./util":80}],61:[function(require,module,exports){
+module.exports=require(49)
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":49,"lodash":102}],62:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -25536,7 +25220,7 @@ function cleanup(g) {
   });
 }
 
-},{"./lodash":63,"./util":82}],65:[function(require,module,exports){
+},{"./lodash":61,"./util":80}],63:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -25628,7 +25312,7 @@ function undo(g) {
   });
 }
 
-},{"./lodash":63,"./util":82}],66:[function(require,module,exports){
+},{"./lodash":61,"./util":80}],64:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = addSubgraphConstraints;
@@ -25683,7 +25367,7 @@ function addSubgraphConstraints(g, cg, vs) {
   */
 }
 
-},{"../lodash":63}],67:[function(require,module,exports){
+},{"../lodash":61}],65:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = barycenter;
@@ -25713,7 +25397,7 @@ function barycenter(g, movable) {
 }
 
 
-},{"../lodash":63}],68:[function(require,module,exports){
+},{"../lodash":61}],66:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graphlib").Graph;
 
@@ -25788,7 +25472,7 @@ function createRootNode(g) {
   return v;
 }
 
-},{"../graphlib":60,"../lodash":63}],69:[function(require,module,exports){
+},{"../graphlib":58,"../lodash":61}],67:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -25860,7 +25544,7 @@ function twoLayerCrossCount(g, northLayer, southLayer) {
   return cc;
 }
 
-},{"../lodash":63}],70:[function(require,module,exports){
+},{"../lodash":61}],68:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -25941,7 +25625,7 @@ function assignOrder(g, layering) {
   });
 }
 
-},{"../graphlib":60,"../lodash":63,"../util":82,"./add-subgraph-constraints":66,"./build-layer-graph":68,"./cross-count":69,"./init-order":71,"./sort-subgraph":73}],71:[function(require,module,exports){
+},{"../graphlib":58,"../lodash":61,"../util":80,"./add-subgraph-constraints":64,"./build-layer-graph":66,"./cross-count":67,"./init-order":69,"./sort-subgraph":71}],69:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -25981,7 +25665,7 @@ function initOrder(g) {
   return layers;
 }
 
-},{"../lodash":63}],72:[function(require,module,exports){
+},{"../lodash":61}],70:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -26106,7 +25790,7 @@ function mergeEntries(target, source) {
   source.merged = true;
 }
 
-},{"../lodash":63}],73:[function(require,module,exports){
+},{"../lodash":61}],71:[function(require,module,exports){
 var _ = require("../lodash"),
     barycenter = require("./barycenter"),
     resolveConflicts = require("./resolve-conflicts"),
@@ -26184,7 +25868,7 @@ function mergeBarycenters(target, other) {
   }
 }
 
-},{"../lodash":63,"./barycenter":67,"./resolve-conflicts":72,"./sort":74}],74:[function(require,module,exports){
+},{"../lodash":61,"./barycenter":65,"./resolve-conflicts":70,"./sort":72}],72:[function(require,module,exports){
 var _ = require("../lodash"),
     util = require("../util");
 
@@ -26243,7 +25927,7 @@ function compareWithBias(bias) {
   };
 }
 
-},{"../lodash":63,"../util":82}],75:[function(require,module,exports){
+},{"../lodash":61,"../util":80}],73:[function(require,module,exports){
 var _ = require("./lodash");
 
 module.exports = parentDummyChains;
@@ -26331,7 +26015,7 @@ function postorder(g) {
   return result;
 }
 
-},{"./lodash":63}],76:[function(require,module,exports){
+},{"./lodash":61}],74:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -26731,7 +26415,7 @@ function width(g, v) {
   return g.node(v).width;
 }
 
-},{"../graphlib":60,"../lodash":63,"../util":82}],77:[function(require,module,exports){
+},{"../graphlib":58,"../lodash":61,"../util":80}],75:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -26763,7 +26447,7 @@ function positionY(g) {
 }
 
 
-},{"../lodash":63,"../util":82,"./bk":76}],78:[function(require,module,exports){
+},{"../lodash":61,"../util":80,"./bk":74}],76:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -26854,7 +26538,7 @@ function shiftRanks(t, g, delta) {
   });
 }
 
-},{"../graphlib":60,"../lodash":63,"./util":81}],79:[function(require,module,exports){
+},{"../graphlib":58,"../lodash":61,"./util":79}],77:[function(require,module,exports){
 "use strict";
 
 var rankUtil = require("./util"),
@@ -26904,7 +26588,7 @@ function networkSimplexRanker(g) {
   networkSimplex(g);
 }
 
-},{"./feasible-tree":78,"./network-simplex":80,"./util":81}],80:[function(require,module,exports){
+},{"./feasible-tree":76,"./network-simplex":78,"./util":79}],78:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -27140,7 +26824,7 @@ function isDescendant(tree, vLabel, rootLabel) {
   return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
 }
 
-},{"../graphlib":60,"../lodash":63,"../util":82,"./feasible-tree":78,"./util":81}],81:[function(require,module,exports){
+},{"../graphlib":58,"../lodash":61,"../util":80,"./feasible-tree":76,"./util":79}],79:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -27203,7 +26887,7 @@ function slack(g, e) {
   return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
 }
 
-},{"../lodash":63}],82:[function(require,module,exports){
+},{"../lodash":61}],80:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -27441,52 +27125,52 @@ function notime(name, fn) {
   return fn();
 }
 
-},{"./graphlib":60,"./lodash":63}],83:[function(require,module,exports){
+},{"./graphlib":58,"./lodash":61}],81:[function(require,module,exports){
 module.exports = "0.7.4";
 
-},{}],84:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
+module.exports=require(31)
+},{"./lib":98,"./lib/alg":89,"./lib/json":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":31}],83:[function(require,module,exports){
+module.exports=require(32)
+},{"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":32}],84:[function(require,module,exports){
 module.exports=require(33)
-},{"./lib":100,"./lib/alg":91,"./lib/json":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":33}],85:[function(require,module,exports){
+},{"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":33}],85:[function(require,module,exports){
 module.exports=require(34)
-},{"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":34}],86:[function(require,module,exports){
+},{"../lodash":100,"./dijkstra":86,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":34}],86:[function(require,module,exports){
 module.exports=require(35)
-},{"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":35}],87:[function(require,module,exports){
+},{"../data/priority-queue":96,"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":35}],87:[function(require,module,exports){
 module.exports=require(36)
-},{"../lodash":102,"./dijkstra":88,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":36}],88:[function(require,module,exports){
+},{"../lodash":100,"./tarjan":94,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":36}],88:[function(require,module,exports){
 module.exports=require(37)
-},{"../data/priority-queue":98,"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":37}],89:[function(require,module,exports){
+},{"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":37}],89:[function(require,module,exports){
 module.exports=require(38)
-},{"../lodash":102,"./tarjan":96,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":38}],90:[function(require,module,exports){
+},{"./components":83,"./dijkstra":86,"./dijkstra-all":85,"./find-cycles":87,"./floyd-warshall":88,"./is-acyclic":90,"./postorder":91,"./preorder":92,"./prim":93,"./tarjan":94,"./topsort":95,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":38}],90:[function(require,module,exports){
 module.exports=require(39)
-},{"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":39}],91:[function(require,module,exports){
+},{"./topsort":95,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":39}],91:[function(require,module,exports){
 module.exports=require(40)
-},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":40}],92:[function(require,module,exports){
+},{"./dfs":84,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":40}],92:[function(require,module,exports){
 module.exports=require(41)
-},{"./topsort":97,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":41}],93:[function(require,module,exports){
+},{"./dfs":84,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":41}],93:[function(require,module,exports){
 module.exports=require(42)
-},{"./dfs":86,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":42}],94:[function(require,module,exports){
+},{"../data/priority-queue":96,"../graph":97,"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":42}],94:[function(require,module,exports){
 module.exports=require(43)
-},{"./dfs":86,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":43}],95:[function(require,module,exports){
+},{"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":43}],95:[function(require,module,exports){
 module.exports=require(44)
-},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":44}],96:[function(require,module,exports){
+},{"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":44}],96:[function(require,module,exports){
 module.exports=require(45)
-},{"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":45}],97:[function(require,module,exports){
+},{"../lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":45}],97:[function(require,module,exports){
 module.exports=require(46)
-},{"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":46}],98:[function(require,module,exports){
+},{"./lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":46}],98:[function(require,module,exports){
 module.exports=require(47)
-},{"../lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":47}],99:[function(require,module,exports){
+},{"./graph":97,"./version":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":47}],99:[function(require,module,exports){
 module.exports=require(48)
-},{"./lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":48}],100:[function(require,module,exports){
+},{"./graph":97,"./lodash":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":48}],100:[function(require,module,exports){
 module.exports=require(49)
-},{"./graph":99,"./version":103,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":49}],101:[function(require,module,exports){
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":49,"lodash":102}],101:[function(require,module,exports){
 module.exports=require(50)
-},{"./graph":99,"./lodash":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":50}],102:[function(require,module,exports){
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":50}],102:[function(require,module,exports){
 module.exports=require(51)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":51,"lodash":104}],103:[function(require,module,exports){
-module.exports=require(52)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":52}],104:[function(require,module,exports){
-module.exports=require(53)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":53}],105:[function(require,module,exports){
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":51}],103:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -43894,7 +43578,7 @@ module.exports=require(53)
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],106:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 //! moment.js
 //! version : 2.13.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -47935,6 +47619,322 @@ module.exports=require(53)
     return _moment;
 
 }));
+},{}],105:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":106}],106:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
 },{}],107:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
@@ -48533,7 +48533,7 @@ module.exports = d3;
 })();
 /* jshint ignore:end */
 
-},{"d3":4}],109:[function(require,module,exports){
+},{"d3":2}],109:[function(require,module,exports){
 'use strict';
 
 var Logger = require('../../logger');
@@ -48929,7 +48929,7 @@ module.exports.draw = function (text, id) {
     //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":108,"../../logger":130,"./classDb":109,"./parser/classDiagram":111,"dagre":54}],111:[function(require,module,exports){
+},{"../../d3":108,"../../logger":130,"./classDb":109,"./parser/classDiagram":111,"dagre":52}],111:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -49731,7 +49731,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],112:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],112:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -50455,7 +50455,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],115:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],115:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -50479,7 +50479,7 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":130,"dagre-d3":5}],116:[function(require,module,exports){
+},{"../../logger":130,"dagre-d3":3}],116:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -50611,7 +50611,8 @@ exports.addVertices = function (vert, g) {
                 break;
             case 'group':
                 _shape = 'rect';
-                verticeText = '';
+                // Need to create a text node if using svg labels, see #367
+                verticeText = conf.htmlLabels ? '' : document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 break;
             default:
                 _shape = 'rect';
@@ -50860,6 +50861,13 @@ exports.draw = function (text, id, isDot) {
         dagreD3.util.applyStyle(path, edge[type + 'Style']);
     };
 
+    // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
+    render.arrows().normal = function normal(parent, id, edge, type) {
+        var marker = parent.append("marker").attr("id", id).attr("viewBox", "0 0 10 10").attr("refX", 9).attr("refY", 5).attr("markerUnits", "strokeWidth").attr("markerWidth", 8).attr("markerHeight", 6).attr("orient", "auto");
+
+        var path = marker.append("path").attr("d", "M 0 0 L 10 5 L 0 10 z").attr("class", "arrowheadPath").style("stroke-width", 1).style("stroke-dasharray", "1,0");
+    };
+
     // Set up an SVG group so that we can translate the final graph.
     var svg = d3.select('#' + id);
     //svgGroup = d3.select('#' + id + ' g');
@@ -51031,7 +51039,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-    log.debug('Got edge', start, end);
+    log.info('Got edge...', start, end);
     var edge = { start: start, end: end, type: undefined, text: '' };
     linktext = type.text;
 
@@ -52192,7 +52200,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],119:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],119:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -53311,7 +53319,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],120:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],120:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -53698,7 +53706,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":130,"moment":106}],121:[function(require,module,exports){
+},{"../../logger":130,"moment":104}],121:[function(require,module,exports){
 'use strict';
 
 var gantt = require('./parser/gantt').parser;
@@ -54053,7 +54061,7 @@ module.exports.draw = function (text, id) {
     }
 };
 
-},{"../../d3":108,"./ganttDb":120,"./parser/gantt":122,"moment":106}],122:[function(require,module,exports){
+},{"../../d3":108,"./ganttDb":120,"./parser/gantt":122,"moment":104}],122:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -54736,7 +54744,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],123:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],123:[function(require,module,exports){
 'use strict';
 
 var Logger = require('../../logger');
@@ -54982,7 +54990,7 @@ exports.getHead = function () {
     return head;
 };
 
-},{"../../logger":130,"lodash":105}],124:[function(require,module,exports){
+},{"../../logger":130,"lodash":103}],124:[function(require,module,exports){
 'use strict';
 
 var db = require('./gitGraphAst');
@@ -55216,7 +55224,7 @@ exports.draw = function (txt, id, ver) {
     }
 };
 
-},{"../../d3":108,"../../logger":130,"./gitGraphAst":123,"./parser/gitGraph":125,"lodash":105}],125:[function(require,module,exports){
+},{"../../d3":108,"../../logger":130,"./gitGraphAst":123,"./parser/gitGraph":125,"lodash":103}],125:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -55949,7 +55957,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],126:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],126:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -56800,7 +56808,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],127:[function(require,module,exports){
+},{"_process":106,"fs":1,"path":105}],127:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-19.
@@ -57001,10 +57009,12 @@ var conf = {
     bottomMarginAdj: 1,
 
     // width of activation box
-    activationWidth: 10
+    activationWidth: 10,
+
+    //text placement as: tspan | fo | <else> only text as before
+    textPlacement: 'fo'
 };
 
-//var bb = getBBox('path');
 exports.bounds = {
     data: {
         startx: undefined,
@@ -57559,8 +57569,7 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    g.append('text') // text label for the x axis
-    .attr('x', center).attr('y', verticalPos + conf.height / 2 + 5).attr('class', 'actor').style('text-anchor', 'middle').text(description);
+    _drawTextCandidateFunc(conf)(description, g, rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' });
 };
 
 exports.anchorElement = function (elem) {
@@ -57679,6 +57688,56 @@ exports.getNoteRect = function () {
     return rect;
 };
 
+var _drawTextCandidateFunc = (function () {
+    function byText(content, g, x, y, width, height, textAttrs) {
+        var text = g.append('text').attr('x', x + width / 2).attr('y', y + height / 2 + 5).style('text-anchor', 'middle').text(content);
+        for (var key in textAttrs) {
+            text.attr(key, textAttrs[key]);
+        }
+    };
+
+    function byTspan(content, g, x, y, width, height, textAttrs) {
+        var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle');
+        var tspan = text.append('tspan').attr('x', x + width / 2).attr('dy', '0').text(content);
+
+        if (typeof text.textwrap !== 'undefined') {
+            text.textwrap({ //d3textwrap
+                x: x + width / 2, y: y, width: width, height: height
+            }, 0);
+            //vertical aligment after d3textwrap expans tspan to multiple tspans
+            var tspans = text.selectAll('tspan');
+            if (tspans.length > 0 && tspans[0].length > 0) {
+                tspans = tspans[0];
+                //set y of <text> to the mid y of the first line
+                text.attr('y', y + (height / 2. - text[0][0].getBBox().height * (1 - 1.0 / tspans.length) / 2.)).attr("dominant-baseline", "central").attr("alignment-baseline", "central");
+            }
+        }
+
+        for (var key in textAttrs) {
+            text.attr(key, textAttrs[key]);
+        }
+    };
+
+    function byFo(content, g, x, y, width, height, textAttrs) {
+        var s = g.append('switch');
+        var f = s.append("foreignObject").attr('x', x).attr('y', y).attr('width', width).attr('height', height);
+
+        var text = f.append('div').style('display', 'table').style('height', '100%').style('width', '100%');
+
+        text.append('div').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').text(content);
+
+        byTspan(content, s, x, y, width, height, textAttrs);
+
+        for (var key in textAttrs) {
+            text.attr(key, textAttrs[key]);
+        }
+    };
+
+    return function (conf) {
+        return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'tspan' ? byTspan : byText;
+    };
+})();
+
 },{}],130:[function(require,module,exports){
 /**
  * #logger
@@ -57737,6 +57796,11 @@ function formatTime(timestamp) {
     return t;
 }
 
+function format(level) {
+    var time = formatTime(new Date());
+    return '%c ' + time + ' :%c' + level + ': ';
+}
+
 function Log(level) {
     this.level = level;
 
@@ -57755,7 +57819,12 @@ function Log(level) {
                     //return console.log('[' + formatTime(new Date()) + '] ' , str); //eslint-disable-line no-console
                     args.unshift('[' + formatTime(new Date()) + '] ');
                     console.log.apply(console, args.map(function (a) {
-                        if (typeof a === "object") return JSON.stringify(a, null, 2);
+                        if (typeof a === "object") {
+                            if (a.stack !== undefined) {
+                                return a.stack;
+                            }
+                            return JSON.stringify(a, null, 2);
+                        }
                         return a;
                     }));
                 }
@@ -57763,35 +57832,11 @@ function Log(level) {
         }
     };
 
-    this.trace = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.trace);
-        this.log.apply(this, args);
-    };
-
-    this.debug = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.debug);
-        this.log.apply(this, args);
-    };
-
-    this.info = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.info);
-        this.log.apply(this, args);
-    };
-
-    this.warn = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.warn);
-        this.log.apply(this, args);
-    };
-
-    this.error = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.error);
-        this.log.apply(this, args);
-    };
+    this.trace = window.console.debug.bind(window.console, format('TRACE', name), 'color:grey;', 'color: grey;');
+    this.debug = window.console.debug.bind(window.console, format('DEBUG', name), 'color:grey;', 'color: green;');
+    this.info = window.console.debug.bind(window.console, format('INFO', name), 'color:grey;', 'color: blue;');
+    this.warn = window.console.debug.bind(window.console, format('WARN', name), 'color:grey;', 'color: orange;');
+    this.error = window.console.debug.bind(window.console, format('ERROR', name), 'color:grey;', 'color: red;');
 }
 
 exports.Log = Log;
@@ -57873,7 +57918,7 @@ var config = {
     startOnLoad: true,
 
     /**
-     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute pats or
+     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute paths or
      * an anchor, #. This matters if you are using base tag settings.
      */
     arrowMarkerAbsolute: false,
@@ -58172,8 +58217,15 @@ exports.decodeEntities = function (text) {
 var render = function render(id, txt, cb, container) {
 
     if (typeof container !== 'undefined') {
+        container.innerHTML = '';
+
         d3.select(container).append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
     } else {
+        var element = document.querySelector('#' + 'd' + id);
+        if (element) {
+            element.innerHTML = '';
+        }
+
         d3.select('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
     }
 
@@ -58320,6 +58372,7 @@ var setConf = function setConf(cnf) {
         }
     }
 };
+
 exports.initialize = function (options) {
     log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization

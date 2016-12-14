@@ -1,322 +1,6 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.mermaidAPI=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
-(function (process){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length - 1; i >= 0; i--) {
-    var last = parts[i];
-    if (last === '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Split a filename into [root, dir, basename, ext], unix version
-// 'root' is just a slash, or nothing.
-var splitPathRe =
-    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-var splitPath = function(filename) {
-  return splitPathRe.exec(filename).slice(1);
-};
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-  var resolvedPath = '',
-      resolvedAbsolute = false;
-
-  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-    var path = (i >= 0) ? arguments[i] : process.cwd();
-
-    // Skip empty and invalid entries
-    if (typeof path !== 'string') {
-      throw new TypeError('Arguments to path.resolve must be strings');
-    } else if (!path) {
-      continue;
-    }
-
-    resolvedPath = path + '/' + resolvedPath;
-    resolvedAbsolute = path.charAt(0) === '/';
-  }
-
-  // At this point the path should be resolved to a full absolute path, but
-  // handle relative paths to be safe (might happen when process.cwd() fails)
-
-  // Normalize the path
-  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-  var isAbsolute = exports.isAbsolute(path),
-      trailingSlash = substr(path, -1) === '/';
-
-  // Normalize the path
-  path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-
-  return (isAbsolute ? '/' : '') + path;
-};
-
-// posix version
-exports.isAbsolute = function(path) {
-  return path.charAt(0) === '/';
-};
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    if (typeof p !== 'string') {
-      throw new TypeError('Arguments to path.join must be strings');
-    }
-    return p;
-  }).join('/'));
-};
-
-
-// path.relative(from, to)
-// posix version
-exports.relative = function(from, to) {
-  from = exports.resolve(from).substr(1);
-  to = exports.resolve(to).substr(1);
-
-  function trim(arr) {
-    var start = 0;
-    for (; start < arr.length; start++) {
-      if (arr[start] !== '') break;
-    }
-
-    var end = arr.length - 1;
-    for (; end >= 0; end--) {
-      if (arr[end] !== '') break;
-    }
-
-    if (start > end) return [];
-    return arr.slice(start, end - start + 1);
-  }
-
-  var fromParts = trim(from.split('/'));
-  var toParts = trim(to.split('/'));
-
-  var length = Math.min(fromParts.length, toParts.length);
-  var samePartsLength = length;
-  for (var i = 0; i < length; i++) {
-    if (fromParts[i] !== toParts[i]) {
-      samePartsLength = i;
-      break;
-    }
-  }
-
-  var outputParts = [];
-  for (var i = samePartsLength; i < fromParts.length; i++) {
-    outputParts.push('..');
-  }
-
-  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-
-  return outputParts.join('/');
-};
-
-exports.sep = '/';
-exports.delimiter = ':';
-
-exports.dirname = function(path) {
-  var result = splitPath(path),
-      root = result[0],
-      dir = result[1];
-
-  if (!root && !dir) {
-    // No dirname whatsoever
-    return '.';
-  }
-
-  if (dir) {
-    // It has a dirname, strip trailing slash
-    dir = dir.substr(0, dir.length - 1);
-  }
-
-  return root + dir;
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPath(path)[2];
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPath(path)[3];
-};
-
-function filter (xs, f) {
-    if (xs.filter) return xs.filter(f);
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (f(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// String.prototype.substr - negative index don't work in IE8
-var substr = 'ab'.substr(-1) === 'b'
-    ? function (str, start, len) { return str.substr(start, len) }
-    : function (str, start, len) {
-        if (start < 0) start = str.length + start;
-        return str.substr(start, len);
-    }
-;
-
-}).call(this,require('_process'))
-},{"_process":3}],3:[function(require,module,exports){
-// shim for using process in browser
-
-var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
-    }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-
-},{}],4:[function(require,module,exports){
 /**
  * @license
  * Copyright (c) 2012-2013 Chris Pettitt
@@ -348,7 +32,7 @@ module.exports =  {
   version: require("./lib/version")
 };
 
-},{"./lib/dagre":11,"./lib/graphlib":12,"./lib/intersect":13,"./lib/render":28,"./lib/util":30,"./lib/version":31}],5:[function(require,module,exports){
+},{"./lib/dagre":9,"./lib/graphlib":10,"./lib/intersect":11,"./lib/render":26,"./lib/util":28,"./lib/version":29}],3:[function(require,module,exports){
 var util = require("./util");
 
 module.exports = {
@@ -412,7 +96,7 @@ function undirected(parent, id, edge, type) {
   util.applyStyle(path, edge[type + "Style"]);
 }
 
-},{"./util":30}],6:[function(require,module,exports){
+},{"./util":28}],4:[function(require,module,exports){
 var util = require("./util"),
     addLabel = require("./label/add-label");
 
@@ -457,7 +141,7 @@ function createClusters(selection, g) {
   return svgClusters;
 }
 
-},{"./label/add-label":21,"./util":30}],7:[function(require,module,exports){
+},{"./label/add-label":19,"./util":28}],5:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -494,7 +178,7 @@ function createEdgeLabels(selection, g) {
   return svgEdgeLabels;
 }
 
-},{"./d3":10,"./label/add-label":21,"./lodash":24,"./util":30}],8:[function(require,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],6:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -626,7 +310,7 @@ function exit(svgPaths, g) {
     });
 }
 
-},{"./d3":10,"./intersect/intersect-node":17,"./lodash":24,"./util":30}],9:[function(require,module,exports){
+},{"./d3":8,"./intersect/intersect-node":15,"./lodash":22,"./util":28}],7:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -686,11 +370,11 @@ function createNodes(selection, g, shapes) {
   return svgNodes;
 }
 
-},{"./d3":10,"./label/add-label":21,"./lodash":24,"./util":30}],10:[function(require,module,exports){
+},{"./d3":8,"./label/add-label":19,"./lodash":22,"./util":28}],8:[function(require,module,exports){
 // Stub to get D3 either via NPM or from the global object
 module.exports = window.d3;
 
-},{}],11:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /* global window */
 
 var dagre;
@@ -707,7 +391,7 @@ if (!dagre) {
 
 module.exports = dagre;
 
-},{"dagre":53}],12:[function(require,module,exports){
+},{"dagre":51}],10:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -724,7 +408,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":32}],13:[function(require,module,exports){
+},{"graphlib":30}],11:[function(require,module,exports){
 module.exports = {
   node: require("./intersect-node"),
   circle: require("./intersect-circle"),
@@ -733,7 +417,7 @@ module.exports = {
   rect: require("./intersect-rect")
 };
 
-},{"./intersect-circle":14,"./intersect-ellipse":15,"./intersect-node":17,"./intersect-polygon":18,"./intersect-rect":19}],14:[function(require,module,exports){
+},{"./intersect-circle":12,"./intersect-ellipse":13,"./intersect-node":15,"./intersect-polygon":16,"./intersect-rect":17}],12:[function(require,module,exports){
 var intersectEllipse = require("./intersect-ellipse");
 
 module.exports = intersectCircle;
@@ -742,7 +426,7 @@ function intersectCircle(node, rx, point) {
   return intersectEllipse(node, rx, rx, point);
 }
 
-},{"./intersect-ellipse":15}],15:[function(require,module,exports){
+},{"./intersect-ellipse":13}],13:[function(require,module,exports){
 module.exports = intersectEllipse;
 
 function intersectEllipse(node, rx, ry, point) {
@@ -769,7 +453,7 @@ function intersectEllipse(node, rx, ry, point) {
 }
 
 
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = intersectLine;
 
 /*
@@ -841,14 +525,14 @@ function sameSign(r1, r2) {
   return r1 * r2 > 0;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = intersectNode;
 
 function intersectNode(node, point) {
   return node.intersect(point);
 }
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var intersectLine = require("./intersect-line");
 
 module.exports = intersectPolygon;
@@ -905,7 +589,7 @@ function intersectPolygon(node, polyPoints, point) {
   return intersections[0];
 }
 
-},{"./intersect-line":16}],19:[function(require,module,exports){
+},{"./intersect-line":14}],17:[function(require,module,exports){
 module.exports = intersectRect;
 
 function intersectRect(node, point) {
@@ -939,7 +623,7 @@ function intersectRect(node, point) {
   return {x: x + sx, y: y + sy};
 }
 
-},{}],20:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addHtmlLabel;
@@ -984,7 +668,7 @@ function addHtmlLabel(root, node) {
   return fo;
 }
 
-},{"../util":30}],21:[function(require,module,exports){
+},{"../util":28}],19:[function(require,module,exports){
 var addTextLabel = require("./add-text-label"),
     addHtmlLabel = require("./add-html-label"),
     addSVGLabel  = require("./add-svg-label");
@@ -1023,7 +707,7 @@ function addLabel(root, node, location) {
   return labelSvg;
 }
 
-},{"./add-html-label":20,"./add-svg-label":22,"./add-text-label":23}],22:[function(require,module,exports){
+},{"./add-html-label":18,"./add-svg-label":20,"./add-text-label":21}],20:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addSVGLabel;
@@ -1038,7 +722,7 @@ function addSVGLabel(root, node) {
   return domNode;
 }
 
-},{"../util":30}],23:[function(require,module,exports){
+},{"../util":28}],21:[function(require,module,exports){
 var util = require("../util");
 
 module.exports = addTextLabel;
@@ -1085,7 +769,7 @@ function processEscapeSequences(text) {
   return newText;
 }
 
-},{"../util":30}],24:[function(require,module,exports){
+},{"../util":28}],22:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -1102,7 +786,7 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":52}],25:[function(require,module,exports){
+},{"lodash":50}],23:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1138,7 +822,7 @@ function positionClusters(selection, g) {
 
 }
 
-},{"./d3":10,"./util":30}],26:[function(require,module,exports){
+},{"./d3":8,"./util":28}],24:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1162,7 +846,7 @@ function positionEdgeLabels(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":10,"./lodash":24,"./util":30}],27:[function(require,module,exports){
+},{"./d3":8,"./lodash":22,"./util":28}],25:[function(require,module,exports){
 "use strict";
 
 var util = require("./util"),
@@ -1185,7 +869,7 @@ function positionNodes(selection, g) {
     .attr("transform", translate);
 }
 
-},{"./d3":10,"./util":30}],28:[function(require,module,exports){
+},{"./d3":8,"./util":28}],26:[function(require,module,exports){
 var _ = require("./lodash"),
     layout = require("./dagre").layout;
 
@@ -1354,7 +1038,7 @@ function createOrSelectGroup(root, name) {
   return selection;
 }
 
-},{"./arrows":5,"./create-clusters":6,"./create-edge-labels":7,"./create-edge-paths":8,"./create-nodes":9,"./dagre":11,"./lodash":24,"./position-clusters":25,"./position-edge-labels":26,"./position-nodes":27,"./shapes":29}],29:[function(require,module,exports){
+},{"./arrows":3,"./create-clusters":4,"./create-edge-labels":5,"./create-edge-paths":6,"./create-nodes":7,"./dagre":9,"./lodash":22,"./position-clusters":23,"./position-edge-labels":24,"./position-nodes":25,"./shapes":27}],27:[function(require,module,exports){
 "use strict";
 
 var intersectRect = require("./intersect/intersect-rect"),
@@ -1437,7 +1121,7 @@ function diamond(parent, bbox, node) {
   return shapeSvg;
 }
 
-},{"./intersect/intersect-circle":14,"./intersect/intersect-ellipse":15,"./intersect/intersect-polygon":18,"./intersect/intersect-rect":19}],30:[function(require,module,exports){
+},{"./intersect/intersect-circle":12,"./intersect/intersect-ellipse":13,"./intersect/intersect-polygon":16,"./intersect/intersect-rect":17}],28:[function(require,module,exports){
 var _ = require("./lodash");
 
 // Public utility functions
@@ -1493,10 +1177,10 @@ function applyTransition(selection, g) {
   return selection;
 }
 
-},{"./lodash":24}],31:[function(require,module,exports){
+},{"./lodash":22}],29:[function(require,module,exports){
 module.exports = "0.4.10";
 
-},{}],32:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * Copyright (c) 2014, Chris Pettitt
  * All rights reserved.
@@ -1536,7 +1220,7 @@ module.exports = {
   version: lib.version
 };
 
-},{"./lib":48,"./lib/alg":39,"./lib/json":49}],33:[function(require,module,exports){
+},{"./lib":46,"./lib/alg":37,"./lib/json":47}],31:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = components;
@@ -1565,7 +1249,7 @@ function components(g) {
   return cmpts;
 }
 
-},{"../lodash":50}],34:[function(require,module,exports){
+},{"../lodash":48}],32:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = dfs;
@@ -1606,7 +1290,7 @@ function doDfs(g, v, postorder, visited, acc) {
   }
 }
 
-},{"../lodash":50}],35:[function(require,module,exports){
+},{"../lodash":48}],33:[function(require,module,exports){
 var dijkstra = require("./dijkstra"),
     _ = require("../lodash");
 
@@ -1618,7 +1302,7 @@ function dijkstraAll(g, weightFunc, edgeFunc) {
   }, {});
 }
 
-},{"../lodash":50,"./dijkstra":36}],36:[function(require,module,exports){
+},{"../lodash":48,"./dijkstra":34}],34:[function(require,module,exports){
 var _ = require("../lodash"),
     PriorityQueue = require("../data/priority-queue");
 
@@ -1674,7 +1358,7 @@ function runDijkstra(g, source, weightFn, edgeFn) {
   return results;
 }
 
-},{"../data/priority-queue":46,"../lodash":50}],37:[function(require,module,exports){
+},{"../data/priority-queue":44,"../lodash":48}],35:[function(require,module,exports){
 var _ = require("../lodash"),
     tarjan = require("./tarjan");
 
@@ -1686,7 +1370,7 @@ function findCycles(g) {
   });
 }
 
-},{"../lodash":50,"./tarjan":44}],38:[function(require,module,exports){
+},{"../lodash":48,"./tarjan":42}],36:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = floydWarshall;
@@ -1738,7 +1422,7 @@ function runFloydWarshall(g, weightFn, edgeFn) {
   return results;
 }
 
-},{"../lodash":50}],39:[function(require,module,exports){
+},{"../lodash":48}],37:[function(require,module,exports){
 module.exports = {
   components: require("./components"),
   dijkstra: require("./dijkstra"),
@@ -1753,7 +1437,7 @@ module.exports = {
   topsort: require("./topsort")
 };
 
-},{"./components":33,"./dijkstra":36,"./dijkstra-all":35,"./find-cycles":37,"./floyd-warshall":38,"./is-acyclic":40,"./postorder":41,"./preorder":42,"./prim":43,"./tarjan":44,"./topsort":45}],40:[function(require,module,exports){
+},{"./components":31,"./dijkstra":34,"./dijkstra-all":33,"./find-cycles":35,"./floyd-warshall":36,"./is-acyclic":38,"./postorder":39,"./preorder":40,"./prim":41,"./tarjan":42,"./topsort":43}],38:[function(require,module,exports){
 var topsort = require("./topsort");
 
 module.exports = isAcyclic;
@@ -1770,7 +1454,7 @@ function isAcyclic(g) {
   return true;
 }
 
-},{"./topsort":45}],41:[function(require,module,exports){
+},{"./topsort":43}],39:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = postorder;
@@ -1779,7 +1463,7 @@ function postorder(g, vs) {
   return dfs(g, vs, "post");
 }
 
-},{"./dfs":34}],42:[function(require,module,exports){
+},{"./dfs":32}],40:[function(require,module,exports){
 var dfs = require("./dfs");
 
 module.exports = preorder;
@@ -1788,7 +1472,7 @@ function preorder(g, vs) {
   return dfs(g, vs, "pre");
 }
 
-},{"./dfs":34}],43:[function(require,module,exports){
+},{"./dfs":32}],41:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graph"),
     PriorityQueue = require("../data/priority-queue");
@@ -1842,7 +1526,7 @@ function prim(g, weightFunc) {
   return result;
 }
 
-},{"../data/priority-queue":46,"../graph":47,"../lodash":50}],44:[function(require,module,exports){
+},{"../data/priority-queue":44,"../graph":45,"../lodash":48}],42:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = tarjan;
@@ -1891,7 +1575,7 @@ function tarjan(g) {
   return results;
 }
 
-},{"../lodash":50}],45:[function(require,module,exports){
+},{"../lodash":48}],43:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = topsort;
@@ -1927,7 +1611,7 @@ function topsort(g) {
 
 function CycleException() {}
 
-},{"../lodash":50}],46:[function(require,module,exports){
+},{"../lodash":48}],44:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = PriorityQueue;
@@ -2081,7 +1765,7 @@ PriorityQueue.prototype._swap = function(i, j) {
   keyIndices[origArrI.key] = j;
 };
 
-},{"../lodash":50}],47:[function(require,module,exports){
+},{"../lodash":48}],45:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -2602,14 +2286,14 @@ function edgeObjToId(isDirected, edgeObj) {
   return edgeArgsToId(isDirected, edgeObj.v, edgeObj.w, edgeObj.name);
 }
 
-},{"./lodash":50}],48:[function(require,module,exports){
+},{"./lodash":48}],46:[function(require,module,exports){
 // Includes only the "core" of graphlib
 module.exports = {
   Graph: require("./graph"),
   version: require("./version")
 };
 
-},{"./graph":47,"./version":51}],49:[function(require,module,exports){
+},{"./graph":45,"./version":49}],47:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graph");
 
@@ -2677,7 +2361,7 @@ function read(json) {
   return g;
 }
 
-},{"./graph":47,"./lodash":50}],50:[function(require,module,exports){
+},{"./graph":45,"./lodash":48}],48:[function(require,module,exports){
 /* global window */
 
 var lodash;
@@ -2694,10 +2378,10 @@ if (!lodash) {
 
 module.exports = lodash;
 
-},{"lodash":52}],51:[function(require,module,exports){
+},{"lodash":50}],49:[function(require,module,exports){
 module.exports = '1.0.7';
 
-},{}],52:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -15052,7 +14736,7 @@ module.exports = '1.0.7';
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],53:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /*
 Copyright (c) 2012-2014 Chris Pettitt
 
@@ -15087,7 +14771,7 @@ module.exports = {
   version: require("./lib/version")
 };
 
-},{"./lib/debug":58,"./lib/graphlib":59,"./lib/layout":61,"./lib/util":81,"./lib/version":82}],54:[function(require,module,exports){
+},{"./lib/debug":56,"./lib/graphlib":57,"./lib/layout":59,"./lib/util":79,"./lib/version":80}],52:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -15156,7 +14840,7 @@ function undo(g) {
   });
 }
 
-},{"./greedy-fas":60,"./lodash":62}],55:[function(require,module,exports){
+},{"./greedy-fas":58,"./lodash":60}],53:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -15196,7 +14880,7 @@ function addBorderNode(g, prop, prefix, sg, sgNode, rank) {
   }
 }
 
-},{"./lodash":62,"./util":81}],56:[function(require,module,exports){
+},{"./lodash":60,"./util":79}],54:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash");
@@ -15270,7 +14954,7 @@ function swapXYOne(attrs) {
   attrs.y = x;
 }
 
-},{"./lodash":62}],57:[function(require,module,exports){
+},{"./lodash":60}],55:[function(require,module,exports){
 /*
  * Simple doubly linked list implementation derived from Cormen, et al.,
  * "Introduction to Algorithms".
@@ -15328,7 +15012,7 @@ function filterOutLinks(k, v) {
   }
 }
 
-},{}],58:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util"),
     Graph = require("./graphlib").Graph;
@@ -15364,7 +15048,7 @@ function debugOrdering(g) {
   return h;
 }
 
-},{"./graphlib":59,"./lodash":62,"./util":81}],59:[function(require,module,exports){
+},{"./graphlib":57,"./lodash":60,"./util":79}],57:[function(require,module,exports){
 /* global window */
 
 var graphlib;
@@ -15381,7 +15065,7 @@ if (!graphlib) {
 
 module.exports = graphlib;
 
-},{"graphlib":83}],60:[function(require,module,exports){
+},{"graphlib":81}],58:[function(require,module,exports){
 var _ = require("./lodash"),
     Graph = require("./graphlib").Graph,
     List = require("./data/list");
@@ -15501,7 +15185,7 @@ function assignBucket(buckets, zeroIdx, entry) {
   }
 }
 
-},{"./data/list":57,"./graphlib":59,"./lodash":62}],61:[function(require,module,exports){
+},{"./data/list":55,"./graphlib":57,"./lodash":60}],59:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -15895,9 +15579,9 @@ function canonicalize(attrs) {
   return newAttrs;
 }
 
-},{"./acyclic":54,"./add-border-segments":55,"./coordinate-system":56,"./graphlib":59,"./lodash":62,"./nesting-graph":63,"./normalize":64,"./order":69,"./parent-dummy-chains":74,"./position":76,"./rank":78,"./util":81}],62:[function(require,module,exports){
-module.exports=require(50)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":50,"lodash":103}],63:[function(require,module,exports){
+},{"./acyclic":52,"./add-border-segments":53,"./coordinate-system":54,"./graphlib":57,"./lodash":60,"./nesting-graph":61,"./normalize":62,"./order":67,"./parent-dummy-chains":72,"./position":74,"./rank":76,"./util":79}],60:[function(require,module,exports){
+module.exports=require(48)
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":48,"lodash":101}],61:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -16031,7 +15715,7 @@ function cleanup(g) {
   });
 }
 
-},{"./lodash":62,"./util":81}],64:[function(require,module,exports){
+},{"./lodash":60,"./util":79}],62:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -16123,7 +15807,7 @@ function undo(g) {
   });
 }
 
-},{"./lodash":62,"./util":81}],65:[function(require,module,exports){
+},{"./lodash":60,"./util":79}],63:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = addSubgraphConstraints;
@@ -16178,7 +15862,7 @@ function addSubgraphConstraints(g, cg, vs) {
   */
 }
 
-},{"../lodash":62}],66:[function(require,module,exports){
+},{"../lodash":60}],64:[function(require,module,exports){
 var _ = require("../lodash");
 
 module.exports = barycenter;
@@ -16208,7 +15892,7 @@ function barycenter(g, movable) {
 }
 
 
-},{"../lodash":62}],67:[function(require,module,exports){
+},{"../lodash":60}],65:[function(require,module,exports){
 var _ = require("../lodash"),
     Graph = require("../graphlib").Graph;
 
@@ -16283,7 +15967,7 @@ function createRootNode(g) {
   return v;
 }
 
-},{"../graphlib":59,"../lodash":62}],68:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60}],66:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -16355,7 +16039,7 @@ function twoLayerCrossCount(g, northLayer, southLayer) {
   return cc;
 }
 
-},{"../lodash":62}],69:[function(require,module,exports){
+},{"../lodash":60}],67:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -16436,7 +16120,7 @@ function assignOrder(g, layering) {
   });
 }
 
-},{"../graphlib":59,"../lodash":62,"../util":81,"./add-subgraph-constraints":65,"./build-layer-graph":67,"./cross-count":68,"./init-order":70,"./sort-subgraph":72}],70:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"../util":79,"./add-subgraph-constraints":63,"./build-layer-graph":65,"./cross-count":66,"./init-order":68,"./sort-subgraph":70}],68:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -16476,7 +16160,7 @@ function initOrder(g) {
   return layers;
 }
 
-},{"../lodash":62}],71:[function(require,module,exports){
+},{"../lodash":60}],69:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -16601,7 +16285,7 @@ function mergeEntries(target, source) {
   source.merged = true;
 }
 
-},{"../lodash":62}],72:[function(require,module,exports){
+},{"../lodash":60}],70:[function(require,module,exports){
 var _ = require("../lodash"),
     barycenter = require("./barycenter"),
     resolveConflicts = require("./resolve-conflicts"),
@@ -16679,7 +16363,7 @@ function mergeBarycenters(target, other) {
   }
 }
 
-},{"../lodash":62,"./barycenter":66,"./resolve-conflicts":71,"./sort":73}],73:[function(require,module,exports){
+},{"../lodash":60,"./barycenter":64,"./resolve-conflicts":69,"./sort":71}],71:[function(require,module,exports){
 var _ = require("../lodash"),
     util = require("../util");
 
@@ -16738,7 +16422,7 @@ function compareWithBias(bias) {
   };
 }
 
-},{"../lodash":62,"../util":81}],74:[function(require,module,exports){
+},{"../lodash":60,"../util":79}],72:[function(require,module,exports){
 var _ = require("./lodash");
 
 module.exports = parentDummyChains;
@@ -16826,7 +16510,7 @@ function postorder(g) {
   return result;
 }
 
-},{"./lodash":62}],75:[function(require,module,exports){
+},{"./lodash":60}],73:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -17226,7 +16910,7 @@ function width(g, v) {
   return g.node(v).width;
 }
 
-},{"../graphlib":59,"../lodash":62,"../util":81}],76:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"../util":79}],74:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -17258,7 +16942,7 @@ function positionY(g) {
 }
 
 
-},{"../lodash":62,"../util":81,"./bk":75}],77:[function(require,module,exports){
+},{"../lodash":60,"../util":79,"./bk":73}],75:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -17349,7 +17033,7 @@ function shiftRanks(t, g, delta) {
   });
 }
 
-},{"../graphlib":59,"../lodash":62,"./util":80}],78:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"./util":78}],76:[function(require,module,exports){
 "use strict";
 
 var rankUtil = require("./util"),
@@ -17399,7 +17083,7 @@ function networkSimplexRanker(g) {
   networkSimplex(g);
 }
 
-},{"./feasible-tree":77,"./network-simplex":79,"./util":80}],79:[function(require,module,exports){
+},{"./feasible-tree":75,"./network-simplex":77,"./util":78}],77:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash"),
@@ -17635,7 +17319,7 @@ function isDescendant(tree, vLabel, rootLabel) {
   return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
 }
 
-},{"../graphlib":59,"../lodash":62,"../util":81,"./feasible-tree":77,"./util":80}],80:[function(require,module,exports){
+},{"../graphlib":57,"../lodash":60,"../util":79,"./feasible-tree":75,"./util":78}],78:[function(require,module,exports){
 "use strict";
 
 var _ = require("../lodash");
@@ -17698,7 +17382,7 @@ function slack(g, e) {
   return g.node(e.w).rank - g.node(e.v).rank - g.edge(e).minlen;
 }
 
-},{"../lodash":62}],81:[function(require,module,exports){
+},{"../lodash":60}],79:[function(require,module,exports){
 "use strict";
 
 var _ = require("./lodash"),
@@ -17936,52 +17620,52 @@ function notime(name, fn) {
   return fn();
 }
 
-},{"./graphlib":59,"./lodash":62}],82:[function(require,module,exports){
+},{"./graphlib":57,"./lodash":60}],80:[function(require,module,exports){
 module.exports = "0.7.4";
 
-},{}],83:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
+module.exports=require(30)
+},{"./lib":97,"./lib/alg":88,"./lib/json":98,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":30}],82:[function(require,module,exports){
+module.exports=require(31)
+},{"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":31}],83:[function(require,module,exports){
 module.exports=require(32)
-},{"./lib":99,"./lib/alg":90,"./lib/json":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":32}],84:[function(require,module,exports){
+},{"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":32}],84:[function(require,module,exports){
 module.exports=require(33)
-},{"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":33}],85:[function(require,module,exports){
+},{"../lodash":99,"./dijkstra":85,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":33}],85:[function(require,module,exports){
 module.exports=require(34)
-},{"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":34}],86:[function(require,module,exports){
+},{"../data/priority-queue":95,"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":34}],86:[function(require,module,exports){
 module.exports=require(35)
-},{"../lodash":101,"./dijkstra":87,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":35}],87:[function(require,module,exports){
+},{"../lodash":99,"./tarjan":93,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":35}],87:[function(require,module,exports){
 module.exports=require(36)
-},{"../data/priority-queue":97,"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":36}],88:[function(require,module,exports){
+},{"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":36}],88:[function(require,module,exports){
 module.exports=require(37)
-},{"../lodash":101,"./tarjan":95,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":37}],89:[function(require,module,exports){
+},{"./components":82,"./dijkstra":85,"./dijkstra-all":84,"./find-cycles":86,"./floyd-warshall":87,"./is-acyclic":89,"./postorder":90,"./preorder":91,"./prim":92,"./tarjan":93,"./topsort":94,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":37}],89:[function(require,module,exports){
 module.exports=require(38)
-},{"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":38}],90:[function(require,module,exports){
+},{"./topsort":94,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":38}],90:[function(require,module,exports){
 module.exports=require(39)
-},{"./components":84,"./dijkstra":87,"./dijkstra-all":86,"./find-cycles":88,"./floyd-warshall":89,"./is-acyclic":91,"./postorder":92,"./preorder":93,"./prim":94,"./tarjan":95,"./topsort":96,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":39}],91:[function(require,module,exports){
+},{"./dfs":83,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":39}],91:[function(require,module,exports){
 module.exports=require(40)
-},{"./topsort":96,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":40}],92:[function(require,module,exports){
+},{"./dfs":83,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":40}],92:[function(require,module,exports){
 module.exports=require(41)
-},{"./dfs":85,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":41}],93:[function(require,module,exports){
+},{"../data/priority-queue":95,"../graph":96,"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":41}],93:[function(require,module,exports){
 module.exports=require(42)
-},{"./dfs":85,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":42}],94:[function(require,module,exports){
+},{"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":42}],94:[function(require,module,exports){
 module.exports=require(43)
-},{"../data/priority-queue":97,"../graph":98,"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":43}],95:[function(require,module,exports){
+},{"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":43}],95:[function(require,module,exports){
 module.exports=require(44)
-},{"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":44}],96:[function(require,module,exports){
+},{"../lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":44}],96:[function(require,module,exports){
 module.exports=require(45)
-},{"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":45}],97:[function(require,module,exports){
+},{"./lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":45}],97:[function(require,module,exports){
 module.exports=require(46)
-},{"../lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":46}],98:[function(require,module,exports){
+},{"./graph":96,"./version":100,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":46}],98:[function(require,module,exports){
 module.exports=require(47)
-},{"./lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":47}],99:[function(require,module,exports){
+},{"./graph":96,"./lodash":99,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":47}],99:[function(require,module,exports){
 module.exports=require(48)
-},{"./graph":98,"./version":102,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":48}],100:[function(require,module,exports){
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":48,"lodash":101}],100:[function(require,module,exports){
 module.exports=require(49)
-},{"./graph":98,"./lodash":101,"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":49}],101:[function(require,module,exports){
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":49}],101:[function(require,module,exports){
 module.exports=require(50)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":50,"lodash":103}],102:[function(require,module,exports){
-module.exports=require(51)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":51}],103:[function(require,module,exports){
-module.exports=require(52)
-},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":52}],104:[function(require,module,exports){
+},{"/Users/knut/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":50}],102:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -34389,7 +34073,7 @@ module.exports=require(52)
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],105:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 //! moment.js
 //! version : 2.13.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -38430,6 +38114,322 @@ module.exports=require(52)
     return _moment;
 
 }));
+},{}],104:[function(require,module,exports){
+(function (process){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// resolves . and .. elements in a path array with directory names there
+// must be no slashes, empty elements, or device names (c:\) in the array
+// (so also no leading and trailing slashes - it does not distinguish
+// relative and absolute paths)
+function normalizeArray(parts, allowAboveRoot) {
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = parts.length - 1; i >= 0; i--) {
+    var last = parts[i];
+    if (last === '.') {
+      parts.splice(i, 1);
+    } else if (last === '..') {
+      parts.splice(i, 1);
+      up++;
+    } else if (up) {
+      parts.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (allowAboveRoot) {
+    for (; up--; up) {
+      parts.unshift('..');
+    }
+  }
+
+  return parts;
+}
+
+// Split a filename into [root, dir, basename, ext], unix version
+// 'root' is just a slash, or nothing.
+var splitPathRe =
+    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// path.resolve([from ...], to)
+// posix version
+exports.resolve = function() {
+  var resolvedPath = '',
+      resolvedAbsolute = false;
+
+  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+    var path = (i >= 0) ? arguments[i] : process.cwd();
+
+    // Skip empty and invalid entries
+    if (typeof path !== 'string') {
+      throw new TypeError('Arguments to path.resolve must be strings');
+    } else if (!path) {
+      continue;
+    }
+
+    resolvedPath = path + '/' + resolvedPath;
+    resolvedAbsolute = path.charAt(0) === '/';
+  }
+
+  // At this point the path should be resolved to a full absolute path, but
+  // handle relative paths to be safe (might happen when process.cwd() fails)
+
+  // Normalize the path
+  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+    return !!p;
+  }), !resolvedAbsolute).join('/');
+
+  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+};
+
+// path.normalize(path)
+// posix version
+exports.normalize = function(path) {
+  var isAbsolute = exports.isAbsolute(path),
+      trailingSlash = substr(path, -1) === '/';
+
+  // Normalize the path
+  path = normalizeArray(filter(path.split('/'), function(p) {
+    return !!p;
+  }), !isAbsolute).join('/');
+
+  if (!path && !isAbsolute) {
+    path = '.';
+  }
+  if (path && trailingSlash) {
+    path += '/';
+  }
+
+  return (isAbsolute ? '/' : '') + path;
+};
+
+// posix version
+exports.isAbsolute = function(path) {
+  return path.charAt(0) === '/';
+};
+
+// posix version
+exports.join = function() {
+  var paths = Array.prototype.slice.call(arguments, 0);
+  return exports.normalize(filter(paths, function(p, index) {
+    if (typeof p !== 'string') {
+      throw new TypeError('Arguments to path.join must be strings');
+    }
+    return p;
+  }).join('/'));
+};
+
+
+// path.relative(from, to)
+// posix version
+exports.relative = function(from, to) {
+  from = exports.resolve(from).substr(1);
+  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+exports.sep = '/';
+exports.delimiter = ':';
+
+exports.dirname = function(path) {
+  var result = splitPath(path),
+      root = result[0],
+      dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+
+exports.basename = function(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
+
+
+exports.extname = function(path) {
+  return splitPath(path)[3];
+};
+
+function filter (xs, f) {
+    if (xs.filter) return xs.filter(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        if (f(xs[i], i, xs)) res.push(xs[i]);
+    }
+    return res;
+}
+
+// String.prototype.substr - negative index don't work in IE8
+var substr = 'ab'.substr(-1) === 'b'
+    ? function (str, start, len) { return str.substr(start, len) }
+    : function (str, start, len) {
+        if (start < 0) start = str.length + start;
+        return str.substr(start, len);
+    }
+;
+
+}).call(this,require('_process'))
+},{"_process":105}],105:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+
+process.nextTick = (function () {
+    var canSetImmediate = typeof window !== 'undefined'
+    && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
+    var canPost = typeof window !== 'undefined'
+    && window.postMessage && window.addEventListener
+    ;
+
+    if (canSetImmediate) {
+        return function (f) { return window.setImmediate(f) };
+    }
+
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
+    if (canPost) {
+        window.addEventListener('message', function (ev) {
+            var source = ev.source;
+            if ((source === window || source === null) && ev.data === 'process-tick') {
+                ev.stopPropagation();
+                if (queue.length > 0) {
+                    var fn = queue.shift();
+                    fn();
+                }
+            }
+        }, true);
+
+        return function nextTick(fn) {
+            queue.push(fn);
+            window.postMessage('process-tick', '*');
+        };
+    }
+
+    return function nextTick(fn) {
+        setTimeout(fn, 0);
+    };
+})();
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+
 },{}],106:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
@@ -39424,7 +39424,7 @@ module.exports.draw = function (text, id) {
     //diagram.attr('viewBox', (box.startx-conf.diagramMarginX) + ' -' +conf.diagramMarginY + ' ' + width + ' ' + height);
 };
 
-},{"../../d3":107,"../../logger":129,"./classDb":108,"./parser/classDiagram":110,"dagre":53}],110:[function(require,module,exports){
+},{"../../d3":107,"../../logger":129,"./classDb":108,"./parser/classDiagram":110,"dagre":51}],110:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -40226,7 +40226,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],111:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],111:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -40950,7 +40950,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],114:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],114:[function(require,module,exports){
 /* global window */
 'use strict';
 
@@ -40974,7 +40974,7 @@ if (!dagreD3) {
 
 module.exports = dagreD3;
 
-},{"../../logger":129,"dagre-d3":4}],115:[function(require,module,exports){
+},{"../../logger":129,"dagre-d3":2}],115:[function(require,module,exports){
 /**
  * Created by knut on 14-12-11.
  */
@@ -41106,7 +41106,8 @@ exports.addVertices = function (vert, g) {
                 break;
             case 'group':
                 _shape = 'rect';
-                verticeText = '';
+                // Need to create a text node if using svg labels, see #367
+                verticeText = conf.htmlLabels ? '' : document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 break;
             default:
                 _shape = 'rect';
@@ -41355,6 +41356,13 @@ exports.draw = function (text, id, isDot) {
         dagreD3.util.applyStyle(path, edge[type + 'Style']);
     };
 
+    // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
+    render.arrows().normal = function normal(parent, id, edge, type) {
+        var marker = parent.append("marker").attr("id", id).attr("viewBox", "0 0 10 10").attr("refX", 9).attr("refY", 5).attr("markerUnits", "strokeWidth").attr("markerWidth", 8).attr("markerHeight", 6).attr("orient", "auto");
+
+        var path = marker.append("path").attr("d", "M 0 0 L 10 5 L 0 10 z").attr("class", "arrowheadPath").style("stroke-width", 1).style("stroke-dasharray", "1,0");
+    };
+
     // Set up an SVG group so that we can translate the final graph.
     var svg = d3.select('#' + id);
     //svgGroup = d3.select('#' + id + ' g');
@@ -41526,7 +41534,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-    log.debug('Got edge', start, end);
+    log.info('Got edge...', start, end);
     var edge = { start: start, end: end, type: undefined, text: '' };
     linktext = type.text;
 
@@ -42687,7 +42695,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],118:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],118:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -43806,7 +43814,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],119:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],119:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 15-01-14.
@@ -44193,7 +44201,7 @@ exports.parseError = function (err, hash) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../logger":129,"moment":105}],120:[function(require,module,exports){
+},{"../../logger":129,"moment":103}],120:[function(require,module,exports){
 'use strict';
 
 var gantt = require('./parser/gantt').parser;
@@ -44548,7 +44556,7 @@ module.exports.draw = function (text, id) {
     }
 };
 
-},{"../../d3":107,"./ganttDb":119,"./parser/gantt":121,"moment":105}],121:[function(require,module,exports){
+},{"../../d3":107,"./ganttDb":119,"./parser/gantt":121,"moment":103}],121:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -45231,7 +45239,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],122:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],122:[function(require,module,exports){
 'use strict';
 
 var Logger = require('../../logger');
@@ -45477,7 +45485,7 @@ exports.getHead = function () {
     return head;
 };
 
-},{"../../logger":129,"lodash":104}],123:[function(require,module,exports){
+},{"../../logger":129,"lodash":102}],123:[function(require,module,exports){
 'use strict';
 
 var db = require('./gitGraphAst');
@@ -45711,7 +45719,7 @@ exports.draw = function (txt, id, ver) {
     }
 };
 
-},{"../../d3":107,"../../logger":129,"./gitGraphAst":122,"./parser/gitGraph":124,"lodash":104}],124:[function(require,module,exports){
+},{"../../d3":107,"../../logger":129,"./gitGraphAst":122,"./parser/gitGraph":124,"lodash":102}],124:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -46444,7 +46452,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],125:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],125:[function(require,module,exports){
 (function (process){
 /* parser generated by jison 0.4.17 */
 /*
@@ -47295,7 +47303,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 }
 
 }).call(this,require('_process'))
-},{"_process":3,"fs":1,"path":2}],126:[function(require,module,exports){
+},{"_process":105,"fs":1,"path":104}],126:[function(require,module,exports){
 (function (global){
 /**
  * Created by knut on 14-11-19.
@@ -47496,10 +47504,12 @@ var conf = {
     bottomMarginAdj: 1,
 
     // width of activation box
-    activationWidth: 10
+    activationWidth: 10,
+
+    //text placement as: tspan | fo | <else> only text as before
+    textPlacement: 'fo'
 };
 
-//var bb = getBBox('path');
 exports.bounds = {
     data: {
         startx: undefined,
@@ -48054,8 +48064,7 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
     rect.ry = 3;
     exports.drawRect(g, rect);
 
-    g.append('text') // text label for the x axis
-    .attr('x', center).attr('y', verticalPos + conf.height / 2 + 5).attr('class', 'actor').style('text-anchor', 'middle').text(description);
+    _drawTextCandidateFunc(conf)(description, g, rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' });
 };
 
 exports.anchorElement = function (elem) {
@@ -48174,6 +48183,56 @@ exports.getNoteRect = function () {
     return rect;
 };
 
+var _drawTextCandidateFunc = (function () {
+    function byText(content, g, x, y, width, height, textAttrs) {
+        var text = g.append('text').attr('x', x + width / 2).attr('y', y + height / 2 + 5).style('text-anchor', 'middle').text(content);
+        for (var key in textAttrs) {
+            text.attr(key, textAttrs[key]);
+        }
+    };
+
+    function byTspan(content, g, x, y, width, height, textAttrs) {
+        var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle');
+        var tspan = text.append('tspan').attr('x', x + width / 2).attr('dy', '0').text(content);
+
+        if (typeof text.textwrap !== 'undefined') {
+            text.textwrap({ //d3textwrap
+                x: x + width / 2, y: y, width: width, height: height
+            }, 0);
+            //vertical aligment after d3textwrap expans tspan to multiple tspans
+            var tspans = text.selectAll('tspan');
+            if (tspans.length > 0 && tspans[0].length > 0) {
+                tspans = tspans[0];
+                //set y of <text> to the mid y of the first line
+                text.attr('y', y + (height / 2. - text[0][0].getBBox().height * (1 - 1.0 / tspans.length) / 2.)).attr("dominant-baseline", "central").attr("alignment-baseline", "central");
+            }
+        }
+
+        for (var key in textAttrs) {
+            text.attr(key, textAttrs[key]);
+        }
+    };
+
+    function byFo(content, g, x, y, width, height, textAttrs) {
+        var s = g.append('switch');
+        var f = s.append("foreignObject").attr('x', x).attr('y', y).attr('width', width).attr('height', height);
+
+        var text = f.append('div').style('display', 'table').style('height', '100%').style('width', '100%');
+
+        text.append('div').style('display', 'table-cell').style('text-align', 'center').style('vertical-align', 'middle').text(content);
+
+        byTspan(content, s, x, y, width, height, textAttrs);
+
+        for (var key in textAttrs) {
+            text.attr(key, textAttrs[key]);
+        }
+    };
+
+    return function (conf) {
+        return conf.textPlacement === 'fo' ? byFo : conf.textPlacement === 'tspan' ? byTspan : byText;
+    };
+})();
+
 },{}],129:[function(require,module,exports){
 /**
  * #logger
@@ -48232,6 +48291,11 @@ function formatTime(timestamp) {
     return t;
 }
 
+function format(level) {
+    var time = formatTime(new Date());
+    return '%c ' + time + ' :%c' + level + ': ';
+}
+
 function Log(level) {
     this.level = level;
 
@@ -48250,7 +48314,12 @@ function Log(level) {
                     //return console.log('[' + formatTime(new Date()) + '] ' , str); //eslint-disable-line no-console
                     args.unshift('[' + formatTime(new Date()) + '] ');
                     console.log.apply(console, args.map(function (a) {
-                        if (typeof a === "object") return JSON.stringify(a, null, 2);
+                        if (typeof a === "object") {
+                            if (a.stack !== undefined) {
+                                return a.stack;
+                            }
+                            return JSON.stringify(a, null, 2);
+                        }
                         return a;
                     }));
                 }
@@ -48258,35 +48327,11 @@ function Log(level) {
         }
     };
 
-    this.trace = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.trace);
-        this.log.apply(this, args);
-    };
-
-    this.debug = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.debug);
-        this.log.apply(this, args);
-    };
-
-    this.info = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.info);
-        this.log.apply(this, args);
-    };
-
-    this.warn = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.warn);
-        this.log.apply(this, args);
-    };
-
-    this.error = function (str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.error);
-        this.log.apply(this, args);
-    };
+    this.trace = window.console.debug.bind(window.console, format('TRACE', name), 'color:grey;', 'color: grey;');
+    this.debug = window.console.debug.bind(window.console, format('DEBUG', name), 'color:grey;', 'color: green;');
+    this.info = window.console.debug.bind(window.console, format('INFO', name), 'color:grey;', 'color: blue;');
+    this.warn = window.console.debug.bind(window.console, format('WARN', name), 'color:grey;', 'color: orange;');
+    this.error = window.console.debug.bind(window.console, format('ERROR', name), 'color:grey;', 'color: red;');
 }
 
 exports.Log = Log;
@@ -48368,7 +48413,7 @@ var config = {
     startOnLoad: true,
 
     /**
-     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute pats or
+     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute paths or
      * an anchor, #. This matters if you are using base tag settings.
      */
     arrowMarkerAbsolute: false,
@@ -48667,8 +48712,15 @@ exports.decodeEntities = function (text) {
 var render = function render(id, txt, cb, container) {
 
     if (typeof container !== 'undefined') {
+        container.innerHTML = '';
+
         d3.select(container).append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
     } else {
+        var element = document.querySelector('#' + 'd' + id);
+        if (element) {
+            element.innerHTML = '';
+        }
+
         d3.select('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
     }
 
@@ -48815,6 +48867,7 @@ var setConf = function setConf(cnf) {
         }
     }
 };
+
 exports.initialize = function (options) {
     log.debug('Initializing mermaidAPI');
     // Update default config with options supplied at initialization

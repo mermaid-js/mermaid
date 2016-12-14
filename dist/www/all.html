@@ -150,12 +150,15 @@
 <li><a href="https://atom.io/packages/atom-mermaid">Plugin for atom</a></li>
 <li><a href="http://mdp.tylingsoft.com/">Markdown Plus</a></li>
 <li><a href="https://github.com/kannokanno/previm">Vim Plugin</a></li>
+<li><a href="https://github.com/mgaitan/sphinxcontrib-mermaid">Sphinx extension</a></li>
+<li><a href="https://github.com/raghur/mermaid-filter">Pandoc filter</a></li>
+<li><a href="https://github.com/sinedied/hads">hads</a></li>
 </ul>
 <h1 id="online-live-editor">Online live editor</h1>
 <p>An editor is available for creating diagrams. With it you can quickly start writing mermaid diagrams. It is possible to:</p>
 <ul>
 <li>save the result as a svg</li>
-<li>get a link to a viewer of the diagram </li>
+<li>get a link to a viewer of the diagram</li>
 <li><p>get a link to edit of the diagram to share a diagram so that someone else can tweak it and send a new link back</p>
 </li>
 <li><p><a href="http://knsv.github.io/mermaid/live_editor">Editor</a></p>
@@ -165,14 +168,16 @@
 <h1 id="usage">Usage</h1>
 <h2 id="installation">Installation</h2>
 <p>Either use the npm or bower package managers as per below:</p>
-<pre class="css"><code>bower install mermaid --save-dev</code></pre><pre class="css"><code>npm install mermaid --save-dev</code></pre><p>Or download javascript files as per the url below, note that #version# should be replaced with version of choice:</p>
-<pre class="css"><code>https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p>Ex:</p>
+<pre class="css"><code>bower install mermaid --save-dev</code></pre><pre class="css"><code>npm install mermaid --save-dev</code></pre><p>Or download a javascript bundle and a stylesheet, e.g. the urls below are for the default style and the all-in-one javascript - note that #version# should be replaced with version of choice:</p>
+<pre class="css"><code>https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.css
+https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p>Ex:</p>
 <ul>
-<li><a href="https://cdn.rawgit.com/knsv/mermaid/0.5.1/dist/mermaid.min.js">version 0.5.1</a></li>
+<li><a href="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js">js version 6.0.0</a></li>
 </ul>
+<p>Checkout the <a href="https://github.com/knsv/mermaid/releases">latest version</a> and <a href="https://github.com/knsv/mermaid/tree/master/dist">other styles</a> such as <code>forest</code> and <code>dark</code>.</p>
 <p>There are some bundles to choose from:</p>
 <ul>
-<li>mermaid.js, mermaid.min.js This bundle contains everything you need to run mermaid</li>
+<li>mermaid.js, mermaid.min.js This bundle contains all the javascript libraries you need to run mermaid</li>
 <li>mermaid.slim.js, mermaid.slim.min.js This bundle does not contain d3 which is useful for sites that already have d3 in place</li>
 <li>mermaidAPI.js, mermaidAPI.min.js, This bundle does not contain the web integration provided in the other packages but has a render function instead returns svg code.</li>
 </ul>
@@ -189,7 +194,8 @@
 </ol>
 <p>If these things are in place mermaid listens to the page load event and when fires, when the page has loaded, it will<br>locate the graphs n the page and transform them to svg files.</p>
 <h3 id="include-mermaid-on-your-web-page-">Include mermaid on your web page:</h3>
-<pre class="css"><code>&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
+<pre class="css"><code><link rel="stylesheet" href="mermaid.css">
+&lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
 &lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to<br>read the chart definiton which will be replaced with the svg chart.</p>
 <h3 id="define-a-chart-like-this-">Define a chart like this:</h3>
 <pre class="css"><code>&lt;div class=&quot;mermaid&quot;&gt;
@@ -200,7 +206,7 @@
         Chart ends up here
     &lt;/svg&gt;
 &lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
-<p>###Labels out of bounds</p>
+<h3 id="labels-out-of-bounds">Labels out of bounds</h3>
 <p>If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the<br>whole page to have been loaded (dom + assets, particularly the fonts file).</p>
 <p>$(document).load(function() {<br>    mermaid.initialize();<br>});<br>over</p>
 <p>$(document).ready(function() {<br>    mermaid.initialize();<br>});</p>
@@ -671,7 +677,7 @@ sequenceDiagram
 ... statements ...
 else
 ... statements ...
-end</code></pre><p>or if there is sequence that is optionat (if without else).</p>
+end</code></pre><p>or if there is sequence that is optional (if without else).</p>
 <pre class="css"><code>opt Describing text
 ... statements ...
 end</code></pre><p>See the example below</p>
@@ -1303,7 +1309,7 @@ sequenceDiagram
 <li>info: 2</li>
 <li>warn: 3</li>
 <li>error: 4</li>
-<li>fatal: 5<br><strong>cloneCssStyles</strong> - This options controls whether or not the css rules should be copied into the generated svg<br><strong>startOnLoad</strong> - This options controls whether or mermaid starts when the page loads<br><strong>arrowMarkerAbsolute</strong> - This options controls whether or arrow markers in html code will be absolute pats or<br>an anchor, #. This matters if you are using base tag settings.<h3 id="flowchart">flowchart</h3>
+<li>fatal: 5<br><strong>cloneCssStyles</strong> - This options controls whether or not the css rules should be copied into the generated svg<br><strong>startOnLoad</strong> - This options controls whether or mermaid starts when the page loads<br><strong>arrowMarkerAbsolute</strong> - This options controls whether or arrow markers in html code will be absolute paths or<br>an anchor, #. This matters if you are using base tag settings.<h3 id="flowchart">flowchart</h3>
 <em>The object containing configurations specific for flowcharts</em><br><strong>htmlLabels</strong> - Flag for setting whether or not a html tag should be used for rendering labels<br>on the edges<br><strong>useMaxWidth</strong> - Flag for setting whether or not a all available width should be used for<br>the diagram.<h3 id="sequencediagram">sequenceDiagram</h3>
 The object containing configurations specific for sequence diagrams<br><strong>diagramMarginX</strong> - margin to the right and left of the sequence diagram<br><strong>diagramMarginY</strong> - margin to the over and under the sequence diagram<br><strong>actorMargin</strong> - Margin between actors<br><strong>width</strong> - Width of actor boxes<br><strong>height</strong> - Height of actor boxes<br><strong>boxMargin</strong> - Margin around loop boxes<br><strong>boxTextMargin</strong> - margin around the text in loop/alt/opt boxes<br><strong>noteMargin</strong> - margin around notes<br><strong>messageMargin</strong> - Space between messages<br><strong>mirrorActors</strong> - mirror actors under diagram<br><strong>bottomMarginAdj</strong> - Depending on css styling this might need adjustment.<br>Prolongs the edge of the diagram downwards<br><strong>useMaxWidth</strong> - when this flag is set the height and width is set to 100% and is then scaling with the<br>available space if not the absolute space required is used<h3 id="gantt">gantt</h3>
 The object containing configurations specific for gantt diagrams<em><br><strong>titleTopMargin</strong> - margin top for the text over the gantt diagram<br><strong>barHeight</strong> - the height of the bars in the graph<br><strong>barGap</strong> - the margin between the different activities in the gantt diagram<br><strong>topPadding</strong> - margin between title and gantt diagram and between axis and gantt diagram.<br><strong>leftPadding</strong> - the space allocated for the section name to the left of the activities.<br><strong>gridLineStartPadding</strong> - Vertical starting position of the grid lines<br><strong>fontSize</strong> - font size ...<br><strong>fontFamily</strong> - font family ...<br><strong>numberSectionStyles</strong> - the number of alternating section styles<br><em>*axisFormatter</em></em> - formatting of the axis, this might need adjustment to match your locale and preferences<h2 id="parse">parse</h2>
