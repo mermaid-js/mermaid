@@ -75,8 +75,7 @@ function Log(level) {
                     args.unshift('[' + formatTime(new Date()) + '] ');
                     console.log.apply(console, args.map(function(a){
                         if (typeof a === "object") {
-                          if (a.stack !== undefined) { return a.stack; }
-                          return JSON.stringify(a, null, 2);
+                          return a.toString() + JSON.stringify(a, null, 2);
                         }
                         return a;
                     }));

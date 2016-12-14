@@ -326,6 +326,6 @@ var _drawTextCandidateFunc = (function() {
 
     return function(conf) {
       return conf.textPlacement==='fo' ? byFo : (
-          conf.textPlacement==='tspan' ? byTspan : byText);
+          conf.textPlacement==='old' ? byText: byTspan);
     };
 })();
