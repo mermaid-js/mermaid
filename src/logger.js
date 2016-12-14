@@ -53,6 +53,10 @@ function formatTime(timestamp) {
     return t;
 }
 
+function format(level) {
+  const time = formatTime(new Date());
+  return '%c ' + time  +' :%c' + level + ': ';
+}
 
 function Log(level) {
     this.level = level;
@@ -81,35 +85,12 @@ function Log(level) {
         }
     };
 
-    this.trace = function(str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.trace);
-        this.log.apply(this, args);
-    };
+    this.trace = window.console.debug.bind(window.console, format('TRACE', name), 'color:grey;', 'color: grey;');
+    this.debug = window.console.debug.bind(window.console, format('DEBUG', name), 'color:grey;', 'color: green;');
+    this.info  = window.console.debug.bind(window.console, format('INFO',  name), 'color:grey;', 'color: blue;');
+    this.warn  = window.console.debug.bind(window.console, format('WARN',  name), 'color:grey;', 'color: orange;');
+    this.error = window.console.debug.bind(window.console, format('ERROR', name), 'color:grey;', 'color: red;');
 
-    this.debug = function(str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.debug);
-        this.log.apply(this, args);
-    };
-
-    this.info = function(str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.info);
-        this.log.apply(this, args);
-    };
-
-    this.warn = function(str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.warn);
-        this.log.apply(this, args);
-    };
-
-    this.error = function(str) {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift(LEVELS.error);
-        this.log.apply(this, args);
-    };
 }
 
 exports.Log = Log;

@@ -346,8 +346,6 @@ exports.decodeEntities = function(text){
         return ';';
     });
 
-
-
     return txt;
 };
 /**
@@ -376,6 +374,8 @@ exports.decodeEntities = function(text){
 var render = function(id, txt, cb, container){
 
     if(typeof container !== 'undefined'){
+        container.innerHTML = '';
+
         d3.select(container).append('div')
             .attr('id', 'd'+id)
             .append('svg')
@@ -385,6 +385,11 @@ var render = function(id, txt, cb, container){
             .append('g');
     }
     else{
+        var element = document.querySelector('#' + 'd'+id);
+        if(element){
+            element.innerHTML = '';
+        }
+
         d3.select('body').append('div')
             .attr('id', 'd'+id)
             .append('svg')

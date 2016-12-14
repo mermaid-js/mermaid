@@ -67,7 +67,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-    log.debug('Got edge', start, end);
+    log.info('Got edge...', start, end);
     var edge = {start: start, end: end, type: undefined, text: ''};
     linktext = type.text;
 
