@@ -271,16 +271,14 @@ var _drawTextCandidateFunc = (function() {
         .attr('x', x + width / 2).attr('y', y + height / 2 + 5)
         .style('text-anchor', 'middle')
         .text(content);
-      for (var key in textAttrs) {
-        text.attr(key, textAttrs[key]);
-      }
-    };
+      _setTextAttrs(text, textAttrs);
+    }
 
     function byTspan(content, g, x, y, width, height, textAttrs) {
       var text = g.append('text')
         .attr('x', x + width / 2).attr('y', y) 
         .style('text-anchor', 'middle');
-      var tspan = text.append('tspan')
+      text.append('tspan')
         .attr('x', x + width / 2).attr('dy', '0') 
         .text(content);
 
@@ -293,16 +291,13 @@ var _drawTextCandidateFunc = (function() {
         if (tspans.length > 0 && tspans[0].length > 0) {
           tspans = tspans[0];
           //set y of <text> to the mid y of the first line 
-          text.attr('y', y + (height/2.- text[0][0].getBBox().height*(1 - 1.0/tspans.length)/2.))
+          text.attr('y', y + (height/2.0 - text[0][0].getBBox().height*(1 - 1.0/tspans.length)/2.0))
             .attr("dominant-baseline", "central")
-            .attr("alignment-baseline", "central")
+            .attr("alignment-baseline", "central");
         }
       } 
-
-      for (var key in textAttrs) {
-        text.attr(key, textAttrs[key]);
-      }
-    };
+      _setTextAttrs(text, textAttrs);
+    }
 
     function byFo(content, g, x, y, width, height, textAttrs) {
         var s = g.append('switch');
@@ -315,14 +310,19 @@ var _drawTextCandidateFunc = (function() {
 
         text.append('div').style('display', 'table-cell')
            .style('text-align', 'center').style('vertical-align', 'middle')
-           .text(content)
+           .text(content);
 
         byTspan(content, s, x, y, width, height, textAttrs);
+        _setTextAttrs(text, textAttrs);
+    }
 
-        for (var key in textAttrs) {
-          text.attr(key, textAttrs[key]);
+    function _setTextAttrs(toText, fromTextAttrsDict) {
+      for (var key in fromTextAttrsDict) {
+        if (fromTextAttrsDict.hasOwnProperty(key)) {
+          toText.attr(key, fromTextAttrsDict[key]);
         }
-    };
+      }
+    }
 
     return function(conf) {
       return conf.textPlacement==='fo' ? byFo : (
