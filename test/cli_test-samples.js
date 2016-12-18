@@ -29,26 +29,13 @@ test('mermaid cli help', function(t) {
     });
 });
 
-test('sequence (actor) text default svg', function(t) {
-  t.plan(1);
-  var args = [ "--svg",
-    "--outputDir=" + test_dir,
-    test_dir+"sequence_text.mmd",
-  ]
-  exec_mermaid(args.join(" "),
-    function(error, stdout, stderr) {
-      t.notOk(error, 'no error code')
-      t.end()
-    });
-});
-
-['fo', 'tspan', 'old'].forEach(function(textPlacement) {
+[undefined, 'fo', 'tspan', 'old'].forEach(function(textPlacement) {
   test('sequence svg text placelment: '+textPlacement, function(t) {
     t.plan(1);
     var args = [ "--svg",
       "--outputDir=" + test_dir,
-      "--outputSuffix=_"+textPlacement,
-      "--sequenceConfig="+test_dir+path.sep+"sequence_text_"+textPlacement+".cfg",  
+      textPlacement===undefined ? "" : "--outputSuffix=_"+textPlacement,
+      textPlacement===undefined ? "" : "--sequenceConfig="+test_dir+path.sep+"sequence_text_"+textPlacement+".cfg",  
       test_dir+"sequence_text.mmd",
     ]
     exec_mermaid(args.join(" "),
