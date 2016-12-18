@@ -154,7 +154,7 @@ function verifyFiles(expected, dir, t) {
       }
     , function(err) {
         t.notOk(err, 'all files passed')
-        var delete_tmps = false
+        var delete_tmps = true
         var _rimraf=delete_tmps ? rimraf : function(dir, f) { f(0); }
         _rimraf(dir, function(rmerr) {
           t.notOk(rmerr, 'cleaned up')
