@@ -87,3 +87,16 @@ test('sequence png', function(t) {
     });
 })
 
+test('flowchart svg text', function(t) {
+  t.plan(1);
+  var args = [ "--svg",
+    "--outputDir=" + test_dir,
+    "--outputSuffix=.actual",
+    test_dir+"flowchart_text.mmd",
+  ]
+  exec_mermaid(args.join(" "),
+    function(error, stdout, stderr) {
+      t.notOk(stderr, 'no error')
+      t.end()
+    });
+})
