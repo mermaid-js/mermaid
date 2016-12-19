@@ -47,7 +47,7 @@ test('output of single png', function(t) {
 
   var expected = ['test.mermaid.png']
 
-  opt = clone(singleFile)
+  var opt = clone(singleFile)
   opt.outputDir += '_png'
   opt.png = true
  
@@ -64,7 +64,7 @@ test('output of multiple png', function(t) {
   var expected = ['test.mermaid.png', 'test2.mermaid.png', 
     'gantt.mermaid.png', 'sequence.mermaid.png']
 
-  opt = clone(multiFile)
+  var opt = clone(multiFile)
   opt.outputDir += '_png'
   opt.png = true
 
@@ -80,7 +80,7 @@ test('output of single svg', function(t) {
 
   var expected = ['test.mermaid.svg']
 
-  opt = clone(singleFile)
+  var opt = clone(singleFile)
   opt.outputDir += '_svg'
   opt.svg = true
 
@@ -97,7 +97,7 @@ test('output of multiple svg', function(t) {
   var expected = ['test.mermaid.svg', 'test2.mermaid.svg', 
     'gantt.mermaid.svg', 'sequence.mermaid.svg']
 
-  opt = clone(multiFile)
+  var opt = clone(multiFile)
   opt.outputDir += '_svg'
   opt.svg = true
 
