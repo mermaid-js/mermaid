@@ -17,18 +17,16 @@ function prepend_output_args(args) {
 
 function exec_mermaid(args, verify) {
   var cmd = 'bin/mermaid.js ' + args
-  console.log('cmd: ', cmd)
-  exec(cmd,
-    {env: {PATH: './node_modules/.bin'+path.delimiter+process.env.PATH}}, 
-    function(error, stdout, stderr) {
-      console.log('error:',error,'\nstdout:\n',stdout,'\nstderr:\n',stderr);
-      verify(error, stdout, stderr);
-    });
+  exec_cmd(cmd, verify)
 }
 
 function exec_phantomjs_to_load_html_save_screenshot_png(html, verify) {
   var cmd = (phantomjs + ' ' + load_html_save_screenshot_png_scripts + 
     ' ' + html + ' ' + html + '.actual.png');
+  exec_cmd(cmd, verify)
+}
+
+function exec_cmd(cmd, verify) {
   console.log('cmd: ', cmd)
   exec(cmd,
     {env: {PATH: './node_modules/.bin'+path.delimiter+process.env.PATH}}, 
