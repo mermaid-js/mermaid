@@ -2,7 +2,7 @@
 //log.debug('Setting up d3');
 var d3;
 
-if (require) {
+if (typeof require!=='undefined') {
   try {
     d3 = require('d3');
   } catch (e) {
