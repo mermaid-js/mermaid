@@ -139,3 +139,20 @@ var cloneCssStyles = function(svg, classes){
 };
 
 exports.cloneCssStyles = cloneCssStyles;
+
+
+/**
+ * @function isSubstringInArray
+ * Detects whether a substring in present in a given array
+ * @param {string} str The substring to detect
+ * @param {array} arr The array to search
+ * @returns {number} the array index containing the substring or -1 if not present
+ **/
+var isSubstringInArray = function (str, arr) {
+  for (var i = 0; i < arr.length; i++) {
+      if (arr[i].match(str)) return i;
+  }
+  return -1;
+};
+
+exports.isSubstringInArray = isSubstringInArray;
