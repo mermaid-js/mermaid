@@ -200,4 +200,16 @@ describe('when cloning CSS ', function () {
             '#mermaid-01 .node-circle>rect, .node-circle>polygon, .node-circle>circle, .node-circle>ellipse { fill:#444444; stroke:#111111; }'
         ]);
     });
+
+describe('when finding substring in array ', function () {
+    it('should return the array index that contains the substring', function () {
+        var arr = ['stroke:val1', 'fill:val2'];
+        var result = utils.isSubstringInArray('fill', arr);
+        expect(result).toEqual(1);
+    });
+    it('should return -1 if the substring is not found in the array', function () {
+      var arr = ['stroke:val1', 'stroke-width:val2'];
+      var result = utils.isSubstringInArray('fill', arr);
+      expect(result).toEqual(-1);
+    });
 });

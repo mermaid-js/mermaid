@@ -150,7 +150,7 @@ describe('when using mermaid and ',function() {
                     expect(start).toBe('A');
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('none');
-                    expect(options.style).toBe('stroke:val1;stroke-width:val2;');
+                    expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
                 }
             };
 
@@ -183,7 +183,40 @@ describe('when using mermaid and ',function() {
                     expect(end).toBe('B');
                     expect(options.arrowhead).toBe('none');
                     expect(options.label.match('the text')).toBeTruthy();
-                    expect(options.style).toBe('stroke:val1;stroke-width:val2;');
+                    expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
+                }
+            };
+
+            flowRend.addEdges(edges,mockG);
+        });
+
+        it('should set fill to "none" by default when handling edges', function () {
+            flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
+            flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+
+            var mockG = {
+                setEdge:function(start, end,options){
+                    expect(start).toBe('A');
+                    expect(end).toBe('B');
+                    expect(options.arrowhead).toBe('none');
+                    expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
+                }
+            };
+
+            flowRend.addEdges(edges,mockG);
+        });
+
+        it('should not set fill to none if fill is set in linkStyle', function () {
+            flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;');
+            flow.parser.yy.getVertices();
+            var edges = flow.parser.yy.getEdges();
+            var mockG = {
+                setEdge:function(start, end,options){
+                    expect(start).toBe('A');
+                    expect(end).toBe('B');
+                    expect(options.arrowhead).toBe('none');
+                    expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:blue;');
                 }
             };
 
