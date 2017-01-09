@@ -112,7 +112,7 @@ var cloneCssStyles = function(svg, classes){
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect, .' + className + '>polygon, .' + className + '>ellipse { ' + classes[className].styles.join('; ') + '; }\n';
+                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect, .' + className + '>polygon, .' + className + '>circle, .' + className + '>ellipse { ' + classes[className].styles.join('; ') + '; }\n';
                 }
             }
         }
