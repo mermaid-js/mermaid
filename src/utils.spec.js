@@ -200,6 +200,7 @@ describe('when cloning CSS ', function () {
             '#mermaid-01 .node-circle>rect, .node-circle>polygon, .node-circle>circle, .node-circle>ellipse { fill:#444444; stroke:#111111; }'
         ]);
     });
+});
 
 describe('when finding substring in array ', function () {
     it('should return the array index that contains the substring', function () {
