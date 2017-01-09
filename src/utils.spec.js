@@ -196,11 +196,10 @@ describe('when cloning CSS ', function () {
         expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#ffffff; stroke-width:1.5px; }',
             '.node { stroke: #eeeeee;}',
             '.node-square { stroke: #bbbbbb;}',
-            '#mermaid-01 .node-square>rect, .node-square>polygon, .node-square>ellipse { fill:#eeeeee; stroke:#aaaaaa; }',
-            '#mermaid-01 .node-circle>rect, .node-circle>polygon, .node-circle>ellipse { fill:#444444; stroke:#111111; }'
+            '#mermaid-01 .node-square>rect, .node-square>polygon, .node-square>circle, .node-square>ellipse { fill:#eeeeee; stroke:#aaaaaa; }',
+            '#mermaid-01 .node-circle>rect, .node-circle>polygon, .node-circle>circle, .node-circle>ellipse { fill:#444444; stroke:#111111; }'
         ]);
     });
-});
 
 describe('when finding substring in array ', function () {
     it('should return the array index that contains the substring', function () {

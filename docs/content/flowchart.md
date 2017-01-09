@@ -345,6 +345,7 @@ should have a different look.
 
 a class definition looks like the example below:
 
+
 ```
     classDef className fill:#f9f,stroke:#333,stroke-width:4px;
 ```
@@ -396,7 +397,7 @@ If a class is named default it will be assigned to all classes without specific 
 
 ## Basic support for fontawesome
 
-It is possible to add icons from fontawesome. In order to do so, you need to add the fontwesome as described in the instructions at 
+It is possible to add icons from fontawesome. In order to do so, you need to add the fontawesome as described in the instructions at 
 [the fontawesome web site](https://fortawesome.github.io/Font-Awesome/).
 
 The icons are acessed via the syntax fa:#icon class name#.
