@@ -79,6 +79,39 @@ Would end up like this:
 ```
 An id is also added to mermaid tags without id.
 
+### Simple full example:
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Downloaded as per http://knsv.github.io/mermaid/#installation -->
+  <!-- Stored in the same directory as html file                     -->
+  <link rel="stylesheet" href="mermaid.css">
+
+  <!-- Optional to use fontawesome                                   -->
+  <!-- Downloaded as per http://fontawesome.io/get-started/          -->
+  <!-- Stored in the same directory as html file                     -->
+  <script src="https://use.fontawesome.com/7065416dc9.js"></script>
+
+</head>
+<body>
+
+  <!-- Include mermaid on your web page:                             -->
+  <script src="mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+
+  <div class="mermaid">
+  graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
+  </div>
+
+</body>
+</html>
+```
 ### Labels out of bounds
 
 If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the 

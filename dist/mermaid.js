@@ -48269,9 +48269,9 @@ process.chdir = function (dir) {
 };
 
 },{}],108:[function(require,module,exports){
-module.exports={
+module.exports=    {
   "name": "mermaid",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
