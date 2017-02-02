@@ -134,10 +134,12 @@ exports.bounds = {
         var loop = this.sequenceItems.pop();
         return loop;
     },
-    addElseToLoop:function(message){
+    addSectionToLoop: function(message) {
         var loop = this.sequenceItems.pop();
-        loop.elsey =  exports.bounds.getVerticalPos();
-        loop.elseText = message;
+        loop.sections = loop.sections || [];
+        loop.sectionTitles = loop.sectionTitles || [];
+        loop.sections.push(exports.bounds.getVerticalPos());
+        loop.sectionTitles.push(message);
         this.sequenceItems.push(loop);
     },
     bumpVerticalPos:function(bump){
@@ -424,16 +426,29 @@ module.exports.draw = function (text, id) {
                 exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
                 break;
             case sq.yy.LINETYPE.ALT_ELSE:
-
-                //exports.drawLoop(diagram, loopData);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
-                loopData = exports.bounds.addElseToLoop(msg.message);
+                loopData = exports.bounds.addSectionToLoop(msg.message);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             case sq.yy.LINETYPE.ALT_END:
                 loopData = exports.bounds.endLoop();
 
                 svgDraw.drawLoop(diagram, loopData,'alt', conf);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.PAR_START:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                exports.bounds.newLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+                break;
+            case sq.yy.LINETYPE.PAR_AND:
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                loopData = exports.bounds.addSectionToLoop(msg.message);
+                exports.bounds.bumpVerticalPos(conf.boxMargin);
+                break;
+            case sq.yy.LINETYPE.PAR_END:
+                loopData = exports.bounds.endLoop();
+                svgDraw.drawLoop(diagram, loopData, 'par', conf);
                 exports.bounds.bumpVerticalPos(conf.boxMargin);
                 break;
             default:

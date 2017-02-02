@@ -71,7 +71,10 @@ exports.LINETYPE = {
     OPT_START    : 15 ,
     OPT_END      : 16 ,
     ACTIVE_START : 17 ,
-    ACTIVE_END   : 18
+    ACTIVE_END   : 18 ,
+    PAR_START    : 19 ,
+    PAR_AND      : 20 ,
+    PAR_END      : 21
 };
 
 exports.ARROWTYPE = {
@@ -156,6 +159,16 @@ exports.apply = function(param){
                 break;
             case 'setTitle': 
                 exports.setTitle(param.text);
+                break;
+            case 'parStart':
+                exports.addSignal(undefined, undefined, param.parText, param.signalType);
+                break;
+            case 'and':
+                exports.addSignal(undefined, undefined, param.parText, param.signalType);
+                break;
+            case 'parEnd':
+                exports.addSignal(undefined, undefined, undefined, param.signalType);
+                break;
         }
     }
 };

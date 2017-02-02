@@ -158,8 +158,10 @@ exports.drawLoop = function(elem,bounds,labelText, conf){
     drawLoopLine(bounds.stopx , bounds.starty, bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.stopy , bounds.stopx , bounds.stopy );
     drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy );
-    if(typeof bounds.elsey !== 'undefined'){
-        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey).style('stroke-dasharray', '3, 3');
+    if (typeof bounds.sections !== 'undefined') {
+        bounds.sections.forEach(function(item) {
+            drawLoopLine(bounds.startx, item, bounds.stopx, item).style('stroke-dasharray', '3, 3');
+        });
     }
 
     var txt = exports.getTextObj();
@@ -181,10 +183,14 @@ exports.drawLoop = function(elem,bounds,labelText, conf){
 
     exports.drawText(g,txt);
 
-    if (typeof bounds.elseText !== 'undefined' && bounds.elseText !== "") {
-        txt.text = '[ ' + bounds.elseText + ' ]';
-        txt.y = bounds.elsey + 1.5 * conf.boxMargin;
-        exports.drawText(g, txt);
+    if (typeof bounds.sectionTitles !== 'undefined') {
+        bounds.sectionTitles.forEach(function(item, idx) {
+            if (item !== '') {
+                txt.text = '[ ' + item + ' ]';
+                txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
+                exports.drawText(g, txt);
+            }
+        });
     }
 };
 
