@@ -405,6 +405,7 @@ module.exports.draw = function (text, id) {
     //
     diagram.attr('height', '100%');
     diagram.attr('width', '100%');
+    diagram.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
     //
     //
     //
