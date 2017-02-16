@@ -44,6 +44,7 @@ exports.drawText = function(elem, textData, width) {
     //span.attr('x', textData.x);
     span.attr('x', textData.x+textData.textMargin*2);
     //span.attr('dy', textData.dy);
+    span.attr("fill", textData.fill);
     span.text(nText);
     if(typeof textElem.textwrap !== 'undefined'){
 
@@ -68,7 +69,7 @@ exports.drawLabel = function (elem, txtObject) {
     }
     var polygon = elem.append("polygon");
     polygon.attr("points" , genPoints(txtObject.x, txtObject.y, 50, 20, 7));
-    polygon.attr("style", "fill:#e4db14;stroke:none");
+    polygon.attr("style", "fill:#526e52;stroke:none");
 
     txtObject.y = txtObject.y + txtObject.labelMargin;
     txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
