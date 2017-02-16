@@ -226,6 +226,22 @@ end
 
     </div>
 
+    <div class="mermaid">
+        sequenceDiagram
+        loop Daily query
+            Alice->>Bob: Hello Bob, how are you?
+            alt is sick
+                Bob->>Alice: Not so good :(
+            else
+                Bob->>Alice: Feeling fresh like a daisy
+            end
+        opt Extra response
+        Bob->>Alice: Thanks for asking
+        end
+
+        end
+    </div>
+
     <div  class="mermaid">
 graph LR;
                 A[Start]-->B{a = '1,2'}
