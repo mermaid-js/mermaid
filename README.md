@@ -78,6 +78,36 @@ classDiagram
             <img src='./docs/img/class-diagram.png' alt='Example 3'>
         </td>
     </tr>
+    <tr>
+        <td>
+            <pre>
+                <code>
+gitGraph :
+options
+{
+    "key": "value",
+    "nodeWidth": 150,
+    "nodeSpacing" : 150
+}
+end
+    commit
+    branch newbranch
+    checkout newbranch
+    commit
+    commit
+    checkout master
+    commit
+    commit
+    merge newbranch
+
+                </code>
+            </pre>
+        </td>
+        <td>
+            <img src='./docs/img/gitgraph.mm.png' alt='Example 4'>
+        </td>
+    </tr>
+
 </table>
 
 ## Further reading
