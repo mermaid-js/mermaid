@@ -57846,6 +57846,7 @@ exports.drawText = function (elem, textData, width) {
     //span.attr('x', textData.x);
     span.attr('x', textData.x + textData.textMargin * 2);
     //span.attr('dy', textData.dy);
+    span.attr("fill", textData.fill);
     span.text(nText);
     if (typeof textElem.textwrap !== 'undefined') {
 
@@ -57861,17 +57862,16 @@ exports.drawText = function (elem, textData, width) {
 };
 
 exports.drawLabel = function (elem, txtObject) {
-    var rectData = exports.getNoteRect();
-    rectData.x = txtObject.x;
-    rectData.y = txtObject.y;
-    rectData.width = 50;
-    rectData.height = 20;
-    rectData.fill = '#526e52';
-    rectData.stroke = 'none';
-    rectData['class'] = 'labelBox';
-    //rectData.color = 'white';
-
-    exports.drawRect(elem, rectData);
+    function genPoints(x, y, width, height, cut) {
+        return x + "," + y + " " +
+            (x + width) + "," + y + " " +
+            (x + width) + "," + (y + height - cut) + " " +
+            (x + width - cut * 1.2) + "," + (y + height) + " " +
+            (x) + "," + (y + height);
+    }
+    var polygon = elem.append("polygon");
+    polygon.attr("points" , genPoints(txtObject.x, txtObject.y, 50, 20, 7));
+    polygon.attr("style", "fill:#526e52;stroke:none");
 
     txtObject.y = txtObject.y + txtObject.labelMargin;
     txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
@@ -57938,14 +57938,14 @@ exports.drawActivation = function (elem, bounds, verticalPos) {
 exports.drawLoop = function (elem, bounds, labelText, conf) {
     var g = elem.append('g');
     var drawLoopLine = function drawLoopLine(startx, starty, stopx, stopy) {
-        g.append('line').attr('x1', startx).attr('y1', starty).attr('x2', stopx).attr('y2', stopy).attr('stroke-width', 2).attr('stroke', '#526e52').attr('class', 'loopLine');
+        return g.append('line').attr('x1', startx).attr('y1', starty).attr('x2', stopx).attr('y2', stopy).attr('stroke-width', 2).attr('stroke', '#526e52').attr('class', 'loopLine');
     };
     drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty);
     drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy);
     drawLoopLine(bounds.startx, bounds.stopy, bounds.stopx, bounds.stopy);
     drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy);
     if (typeof bounds.elsey !== 'undefined') {
-        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey);
+        drawLoopLine(bounds.startx, bounds.elsey, bounds.stopx, bounds.elsey).style('stroke-dasharray', '3, 3');
     }
 
     var txt = exports.getTextObj();
@@ -57967,7 +57967,7 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
 
     exports.drawText(g, txt);
 
-    if (typeof bounds.elseText !== 'undefined') {
+    if (typeof bounds.elseText !== 'undefined' && bounds.elseText !== "") {
         txt.text = '[ ' + bounds.elseText + ' ]';
         txt.y = bounds.elsey + 1.5 * conf.boxMargin;
         exports.drawText(g, txt);
