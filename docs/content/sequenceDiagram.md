@@ -59,17 +59,14 @@ Messages can be of two displayed either solid or with a dotted line.
 
 There are six types of arrows currently supported:
 
--> which will render a solid line without arrow
-
---> which will render a dotted line  without arrow
-
-->> which will render a solid line with arrowhead
-
--->> which will render a dotted line  with arrowhead
-
--x which will render a solid line with a cross at the end (async)
-
---x which will render a dotted line with a cross at the end (async)
+Type | Description
+---  | ---
+->   | Solid line without arrow
+-->  | Dotted line  without arrow
+->>  | Solid line with arrowhead
+-->> | Dotted line  with arrowhead
+-x   | Solid line with a cross at the end (async)
+--x  | Dotted line with a cross at the end (async)
 
 
 ## Activations
@@ -337,9 +334,9 @@ text.actor {
 
 Is it possible to adjust the margins for rendering the sequence diagram.
 
-This is done by defining **mermaid.sequenceConfig** or by the CLI to use a json file with the configuration. How to use
-the CLI is described in the mermaidCLI page.
-mermaid.sequenceConfig can be set to a JSON string with config parameters or the corresponding object.
+This is done by defining **mermaid.sequenceConfig** or by the CLI to use a json file with the configuration.
+How to use the CLI is described in the [mermaidCLI](#mermaid-cli8) page.
+**mermaid.sequenceConfig** can be set to a JSON string with config parameters or the corresponding object.
 
 ```
 mermaid.sequenceConfig = {
@@ -356,5 +353,5 @@ mermaid.sequenceConfig = {
 
 Param | Descriotion | Default value
 --- | --- | ---
-mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
-bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists.|1
+mirrorActor     | Turns on/off the rendering of actors below the diagram as well as above it                                                                  | false
+bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists. | 1

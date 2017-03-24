@@ -45,7 +45,7 @@ gantt
         Completed task            :done,    des1, 2014-01-06,2014-01-08
         Active task               :active,  des2, 2014-01-09, 3d
         Future task               :         des3, after des2, 5d
-        Future task2               :         des4, after des3, 5d
+        Future task2              :         des4, after des3, 5d
 
         section Critical tasks
         Completed task in the critical line :crit, done, 2014-01-06,24h
@@ -62,8 +62,8 @@ gantt
         
         section Last section
         Describe gantt syntax               :after doc1, 3d
-        Add gantt diagram to demo page      : 20h
-        Add another diagram to demo page    : 48h
+        Add gantt diagram to demo page      :20h
+        Add another diagram to demo page    :48h
 ``` 
 
 Renders like below:
@@ -77,7 +77,7 @@ gantt
        Completed task            :done,    des1, 2014-01-06,2014-01-08
        Active task               :active,  des2, 2014-01-09, 3d
        Future task               :         des3, after des2, 5d
-       Future task2               :         des4, after des3, 5d
+       Future task2              :         des4, after des3, 5d
 
        section Critical tasks
        Completed task in the critical line :crit, done, 2014-01-06,24h
@@ -94,10 +94,10 @@ gantt
        
        section Last section
        Describe gantt syntax               :after doc1, 3d
-       Add gantt diagram to demo page      : 20h
-       Add another diagram to demo page    : 48h
-   ```  
-### title
+       Add gantt diagram to demo page      :20h
+       Add another diagram to demo page    :48h
+```  
+### Title
 
 Tbd
 
@@ -108,7 +108,6 @@ Tbd
 ## Setting dates
 
 Tbd
-
 
 ### Date format
 
@@ -251,5 +250,5 @@ noteText     | Styles for the text on in the note boxes.
 
 Is it possible to adjust the margins for rendering the sequence diagram.
 
-This is done by defining the **sequenceConfig** part of the configuration object. Read more about it [here](http://knsv.github.io/mermaid/index.html#configuration28). How to use
-the CLI is described in the [mermaidCLI]((http://knsv.github.io/mermaid/index.html#mermaidCLI) page.
+This is done by defining the **sequenceConfig** part of the configuration object. Read more about it [here](#configuration35).
+How to use the CLI is described in the [mermaidCLI](#mermaid-cli8) page.

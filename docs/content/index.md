@@ -4,15 +4,13 @@ order: 0
 
 mermaid
 =======
-![Alt text](images/header.png)
+![Header Image](images/header.png)
 
 >Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
 Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
 
-
-This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. [Try it using our editor](http://knsv.github.io/mermaid/live_editor).
-
+This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. [Try it using our editor][live_editor].
 
 Code examples below:
 
@@ -59,13 +57,11 @@ gantt
         Add to mermaid                      :1d
 ```
 
-Play with mermaid using this [editor](http://danielmschmidt.github.io/mermaid-demo/) or this [live editor](live_editor).
+Play with mermaid using this [editor](https://danielmschmidt.github.io/mermaid-demo/) or this [live editor][live_editor].
 
 ## Credits
-Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
-the graphical layout and drawing libraries! Thanks also to the
-[js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the
-sequence diagrams.
+Many thanks to the [d3](https://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
+Thanks also to the [js-sequence-diagram](https://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams.
 
 *Mermaid was created by Knut Sveidqvist for easier documentation.*
 
@@ -84,7 +80,7 @@ Mermaid is supported in a number of publishing systems and editors. Please repor
 * [Using mermaid via Octopress](http://mostlyblather.com/blog/2015/05/23/mermaid-jekyll-octopress/)
 * [Mardown editor Haroopad](http://pad.haroopress.com/user.html)
 * [Plugin for atom](https://atom.io/packages/atom-mermaid)
-* [Markdown Plus](http://mdp.tylingsoft.com/)
+* [Markdown Plus](https://mdp.tylingsoft.com/)
 * [Vim Plugin](https://github.com/kannokanno/previm)
 * [Sphinx extension](https://github.com/mgaitan/sphinxcontrib-mermaid)
 * [Pandoc filter](https://github.com/raghur/mermaid-filter)
@@ -98,4 +94,6 @@ An editor is available for creating diagrams. With it you can quickly start writ
 * get a link to a viewer of the diagram
 * get a link to edit of the diagram to share a diagram so that someone else can tweak it and send a new link back
 
-* [Editor](http://knsv.github.io/mermaid/live_editor)
+* [Editor][live_editor]
+
+[live_editor]: https://knsv.github.io/mermaid/live_editor/
