@@ -58,7 +58,7 @@ sequenceDiagram
             <pre>
                 <code>
 classDiagram
-    Class01 <|-- AveryLongClass : Cool
+    Class01 &lt;|-- AveryLongClass : Cool
     Class03 *-- Class04
     Class05 o-- Class06
     Class07 .. Class08
@@ -70,7 +70,7 @@ classDiagram
     Class01 : size()
     Class01 : int chimp
     Class01 : int gorilla
-    Class08 <--> C2: Cool label
+    Class08 &lt;--> C2: Cool label
                 </code>
             </pre>
         </td>
@@ -99,7 +99,6 @@ end
     commit
     commit
     merge newbranch
-
                 </code>
             </pre>
         </td>
