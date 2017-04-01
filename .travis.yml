@@ -5,7 +5,7 @@
         - osx
     sudo: false
     node_js:
-        - "4.2"
+        - "6.2"
         - "4.4"
         - "5.9"
     addons:
