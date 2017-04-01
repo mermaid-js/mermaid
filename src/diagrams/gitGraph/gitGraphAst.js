@@ -1,8 +1,6 @@
 var Logger = require('../../logger');
+var log = Logger.Log;
 var _ = require('lodash');
-
-//var log = new Logger.Log();
-var log = new Logger.Log(1);
 
 
 var commits = {};

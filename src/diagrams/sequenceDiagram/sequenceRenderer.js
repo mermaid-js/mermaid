@@ -7,7 +7,7 @@ sq.yy = require('./sequenceDb');
 var svgDraw = require('./svgDraw');
 var d3 = require('../../d3');
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 
 var conf = {
 

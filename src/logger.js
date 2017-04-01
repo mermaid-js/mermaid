@@ -21,9 +21,9 @@ const LEVELS = {
 
 var defaultLevel = LEVELS.error;
 
-exports.setLogLevel = function (level) {
-    defaultLevel = level;
-};
+// exports.setLogLevel = function (level) {
+//     defaultLevel = level;
+// };
 
 function formatTime(timestamp) {
     var hh = timestamp.getUTCHours();
@@ -58,38 +58,39 @@ function format(level) {
   return '%c ' + time  +' :%c' + level + ': ';
 }
 
-function Log(level) {
-    this.level = level;
+var debug = function(){};
+var info = function(){};
+var warn = function(){};
+var error = function(){};
+var fatal = function(){};
 
-    this.log = function() {
-        var args = Array.prototype.slice.call(arguments);
-        var level = args.shift();
-        var logLevel = this.level;
-        if(typeof logLevel === 'undefined'){
-            logLevel = defaultLevel;
-        }
-        if (logLevel <= level) {
-            if (typeof console !== 'undefined') { //eslint-disable-line no-console
-                if (typeof console.log !== 'undefined') { //eslint-disable-line no-console
-                    //return console.log('[' + formatTime(new Date()) + '] ' , str); //eslint-disable-line no-console
-                    args.unshift('[' + formatTime(new Date()) + '] ');
-                    console.log.apply(console, args.map(function(a){
-                        if (typeof a === "object") {
-                          return a.toString() + JSON.stringify(a, null, 2);
-                        }
-                        return a;
-                    }));
-                }
-            }
-        }
-    };
-
-    this.trace = window.console.debug.bind(window.console, format('TRACE', name), 'color:grey;', 'color: grey;');
-    this.debug = window.console.debug.bind(window.console, format('DEBUG', name), 'color:grey;', 'color: green;');
-    this.info  = window.console.debug.bind(window.console, format('INFO',  name), 'color:grey;', 'color: blue;');
-    this.warn  = window.console.debug.bind(window.console, format('WARN',  name), 'color:grey;', 'color: orange;');
-    this.error = window.console.debug.bind(window.console, format('ERROR', name), 'color:grey;', 'color: red;');
-
+/**
+ * logLevel , decides the amount of logging to be used.
+ *    * debug: 1
+ *    * info: 2
+ *    * warn: 3
+ *    * error: 4
+ *    * fatal: 5
+ */
+exports.setLogLevel = function(level){
+    switch(level){
+        case 1:
+            exports.Log.debug = window.console.debug.bind(window.console, format('DEBUG', name), 'color:grey;', 'color: green;');
+        case 2:
+            exports.Log.info = window.console.debug.bind(window.console, format('INFO', name), 'color:grey;', 'color: info;');
+        case 3:
+            exports.Log.warn  = window.console.debug.bind(window.console, format('INFO',  name), 'color:grey;', 'color: orange;');
+        case 4:
+            exports.Log.error  = window.console.debug.bind(window.console, format('ERROR',  name), 'color:grey;', 'color: red;');
+        case 5:
+            exports.Log.fatal = window.console.debug.bind(window.console, format('FATAL', name), 'color:grey;', 'color: red;');
+    }
 }
 
-exports.Log = Log;
+exports.Log = {
+    debug: debug,
+    info: info,
+    warn: warn,
+    error: error,
+    fatal: fatal,
+};

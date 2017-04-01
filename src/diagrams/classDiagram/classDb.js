@@ -1,7 +1,6 @@
 
 var Logger = require('../../logger');
-var log = new Logger.Log();
-
+var log = Logger.Log;
 var relations = [];
 
 var classes;

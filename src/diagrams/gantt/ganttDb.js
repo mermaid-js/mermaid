@@ -3,7 +3,7 @@
  */
 var moment = require('moment');
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 
 
 var dateFormat = '';

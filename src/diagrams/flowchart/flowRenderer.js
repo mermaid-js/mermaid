@@ -7,7 +7,7 @@ var dot = require('./parser/dot');
 var d3 = require('../../d3');
 var dagreD3 = require('./dagre-d3');
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 
 
 var conf = {

@@ -2,7 +2,7 @@
  * Created by knut on 14-11-23.
  */
 var Logger = require('./logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 
 /**
  * @function detectType

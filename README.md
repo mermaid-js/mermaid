@@ -117,6 +117,24 @@ end
 * [Mermaid client](http://knsv.github.io/mermaid/#mermaid-cli)
 * [Demos](http://knsv.github.io/mermaid/#demos)
 
+# Request for assistance
+
+Things are piling up and I have hard time keeping up. To remedy this
+it would be great if we could form a core team of developers to cooperate
+with the future development mermaid.
+
+As part of this team you would get write access to the repository and would
+represent the project when answering questions and issues.
+
+Together we could continue the work with things like:
+* port the code to es6
+* improved support for webpack
+* modernizing the build
+* adding more typers of diagrams like mindmaps, ert digrams etc
+* improving existing diagrams
+
+Don't hesitate to contact me if you want to get involved.
+
 # Credits
 Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
 the graphical layout and drawing libraries! Thanks also to the

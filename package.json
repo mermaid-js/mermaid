@@ -24,11 +24,11 @@
     "jasmine": "npm run jison &&node node_modules/jasmine-es6/bin/jasmine.js",
     "pretest": "npm run jison",
     "test": "npm run dist && npm run karma && npm run tape",
-    "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
-    "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
-    "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
-    "dist-mermaid-nomin": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid  -o dist/mermaid.js",
-    "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
+    "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
+    "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
+    "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
+    "dist-mermaid-nomin": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -s mermaid  -o dist/mermaid.js",
+    "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
     "dist": "npm run dist-slim-mermaid && npm run dist-slim-mermaidAPI && npm run dist-mermaid && npm run dist-mermaidAPI"
   },
   "repository": {

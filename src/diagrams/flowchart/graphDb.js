@@ -2,7 +2,7 @@
  * Created by knut on 14-11-03.
  */
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 var utils = require('../../utils');
 
 var d3 = require('../../d3');

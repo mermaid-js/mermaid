@@ -2,7 +2,7 @@
  * Created by knut on 15-01-14.
  */
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 
 var message = '';
 var info = false;

@@ -4,8 +4,10 @@
 var db = require('./exampleDb');
 var exampleParser = require('./parser/example.js');
 var d3 = require('../../d3');
+
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
+// var log = new Logger.Log();
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.

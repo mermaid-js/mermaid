@@ -7,8 +7,8 @@ var cDDb = require('./classDb');
 cd.yy = cDDb;
 var d3 = require('../../d3');
 var Logger = require('../../logger');
+var log = Logger.Log;
 var dagre = require('dagre');
-var log = new Logger.Log();
 
 var idCache;
 idCache = {};

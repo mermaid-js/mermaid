@@ -6,7 +6,7 @@ var messages  = [];
 var notes     = [];
 var title = '';
 var Logger = require('../../logger');
-var log = new Logger.Log();
+var log = Logger.Log;
 
 
 

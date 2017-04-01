@@ -3,8 +3,8 @@ var _ = require('lodash');
 var gitGraphParser = require('./parser/gitGraph');
 var d3 = require('../../d3');
 var Logger = require('../../logger');
+var log = Logger.Log;
 
-var log = new Logger.Log();
 var allCommitsDict = {};
 var branchNum;
 var config = {
