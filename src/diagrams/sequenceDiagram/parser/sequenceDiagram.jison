@@ -34,6 +34,8 @@
 "opt"             { this.begin('LINE'); return 'opt'; }
 "alt"             { this.begin('LINE'); return 'alt'; }
 "else"            { this.begin('LINE'); return 'else'; }
+"par"             { this.begin('LINE'); return 'par'; }
+"and"             { this.begin('LINE'); return 'and'; }
 <LINE>[^#\n;]*    { this.popState(); return 'restOfLine'; }
 "end"             return 'end';
 "left of"         return 'left_of';
@@ -115,6 +117,20 @@ statement
 		$3.push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 
 		$$=$3;}
+	| par restOfLine par_sections end
+	{
+		// Parallel start
+		$3.unshift({type: 'parStart', parText:$2, signalType: yy.LINETYPE.PAR_START});
+		// Content in par is already in $3
+		// End
+		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
+		$$=$3;}
+	;
+
+par_sections
+	: document
+	| document and restOfLine par_sections
+	{ $$ = $1.concat([{type: 'and', parText:$3, signalType: yy.LINETYPE.PAR_AND}, $4]); }
 	;
 
 note_statement

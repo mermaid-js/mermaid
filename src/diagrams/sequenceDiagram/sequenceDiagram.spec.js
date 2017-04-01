@@ -448,6 +448,32 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[0].from).toBe('Alice');
         expect(messages[1].from).toBe('Bob');
     });
+    it('it should handle par statements a sequenceDiagram', function () {
+        var str = 'sequenceDiagram\n' +
+            'par Parallel one\n' +
+            'Alice->>Bob: Hello Bob, how are you?\n' +
+            'Bob-->>Alice: I am good thanks!\n' +
+            'and Parallel two\n' +
+            'Alice->>Bob: Are you OK?\n' +
+            'Bob-->>Alice: Fine!\n' +
+            'and Parallel three\n' +
+            'Alice->>Bob: What do you think about it?\n' +
+            'Bob-->>Alice: It\'s good!\n' +
+            'end';
+
+        sq.parse(str);
+        var actors = sq.yy.getActors();
+
+        expect(actors.Alice.description).toBe('Alice');
+        expect(actors.Bob.description).toBe('Bob');
+
+        var messages = sq.yy.getMessages();
+
+        expect(messages.length).toBe(10);
+        expect(messages[0].message).toBe('Parallel one');
+        expect(messages[1].from).toBe('Alice');
+        expect(messages[2].from).toBe('Bob');
+    });
     it('it should handle special characters in signals', function () {
         var str = 'sequenceDiagram\n' +
             'Alice->Bob: -:<>,;# comment';
@@ -506,6 +532,21 @@ describe('when parsing a sequenceDiagram',function() {
         expect(messages[1].message).toBe('-:<>,');
         expect(messages[3].message).toBe(',<>:-');
     });
+    it('it should handle special characters in par', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'par -:<>,;# comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'and ,<>:-#; comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('-:<>,');
+        expect(messages[3].message).toBe(',<>:-');
+    });
     it('it should handle no-label loop', function () {
         var str = 'sequenceDiagram\n' +
             'Alice->Bob: Hello Bob, how are you?\n' +
@@ -538,6 +579,23 @@ describe('when parsing a sequenceDiagram',function() {
             'alt;' +
             'Bob-->Alice: I am good thanks!\n' +
             'else # comment\n' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'end';
+
+        sq.parse(str);
+
+        var messages = sq.yy.getMessages();
+        expect(messages[1].message).toBe('');
+        expect(messages[2].message).toBe('I am good thanks!');
+        expect(messages[3].message).toBe('');
+        expect(messages[4].message).toBe('I am good thanks!');
+    });
+    it('it should handle no-label par', function () {
+        var str = 'sequenceDiagram\n' +
+            'Alice->Bob: Hello Bob, how are you?\n' +
+            'par;' +
+            'Bob-->Alice: I am good thanks!\n' +
+            'and # comment\n' +
             'Bob-->Alice: I am good thanks!\n' +
             'end';
 

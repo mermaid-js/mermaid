@@ -122,6 +122,21 @@
         Alice->>John the Long: Yes... John, how are you?
         John the Long-->>Alice: Super!
     </div>
+
+    <h1>Parallel</h1>
+    <div class="mermaid">
+        sequenceDiagram
+        par Parallel one
+        Alice->>Bob: Hello Bob, how are you?
+        Bob-->>Alice: I am good thanks!
+        and Parallel two
+        Alice->>Bob: Are you OK?
+        Bob-->>Alice: Fine!
+        and Parallel three
+        Alice->>Bob: What do you think about it?
+        Bob-->>Alice: It's good!
+        end
+    </div>
     <br/>
 
 
