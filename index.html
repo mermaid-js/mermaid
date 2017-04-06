@@ -93,12 +93,12 @@
     <div class="dark-box"></div>
     <div class="content">
         <h1 id="mermaid">mermaid</h1>
-<p><img src="images/header.png" alt="Alt text"></p>
+<p><img src="images/header.png" alt="Header Image"></p>
 <blockquote>
 <p>Generation of diagrams and flowcharts from text in a similar manner as markdown.</p>
 </blockquote>
 <p>Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?</p>
-<p>This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. <a href="http://knsv.github.io/mermaid/live_editor">Try it using our editor</a>.</p>
+<p>This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript. <a href="https://knsv.github.io/mermaid/live_editor/">Try it using our editor</a>.</p>
 <p>Code examples below:</p>
 <h3 id="an-example-of-a-flowchart">An example of a flowchart</h3>
 <pre class="css"><code>graph TD;
@@ -131,9 +131,9 @@
         Create tests for parser             :crit, active, 3d
         Future task in critical line        :crit, 5d
         Create tests for renderer           :2d
-        Add to mermaid                      :1d</code></pre><p>Play with mermaid using this <a href="http://danielmschmidt.github.io/mermaid-demo/">editor</a> or this <a href="live_editor">live editor</a>.</p>
+        Add to mermaid                      :1d</code></pre><p>Play with mermaid using this <a href="https://danielmschmidt.github.io/mermaid-demo/">editor</a> or this <a href="https://knsv.github.io/mermaid/live_editor/">live editor</a>.</p>
 <h2 id="credits">Credits</h2>
-<p>Many thanks to the <a href="http://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing<br>the graphical layout and drawing libraries! Thanks also to the<br><a href="http://bramp.github.io/js-sequence-diagrams">js-sequence-diagram</a> project for usage of the grammar for the<br>sequence diagrams.</p>
+<p>Many thanks to the <a href="https://d3js.org/">d3</a> and <a href="https://github.com/cpettitt/dagre-d3">dagre-d3</a> projects for providing the graphical layout and drawing libraries!<br>Thanks also to the <a href="https://bramp.github.io/js-sequence-diagrams">js-sequence-diagram</a> project for usage of the grammar for the sequence diagrams.</p>
 <p><em>Mermaid was created by Knut Sveidqvist for easier documentation.</em></p>
 <p>Knut has not done all work by himself, here is the full list of the projects <a href="https://github.com/knsv/mermaid/graphs/contributors">contributors</a>.</p>
 <h1 id="downstream-projects">Downstream projects</h1>
@@ -148,7 +148,7 @@
 <li><a href="http://mostlyblather.com/blog/2015/05/23/mermaid-jekyll-octopress/">Using mermaid via Octopress</a></li>
 <li><a href="http://pad.haroopress.com/user.html">Mardown editor Haroopad</a></li>
 <li><a href="https://atom.io/packages/atom-mermaid">Plugin for atom</a></li>
-<li><a href="http://mdp.tylingsoft.com/">Markdown Plus</a></li>
+<li><a href="https://mdp.tylingsoft.com/">Markdown Plus</a></li>
 <li><a href="https://github.com/kannokanno/previm">Vim Plugin</a></li>
 <li><a href="https://github.com/mgaitan/sphinxcontrib-mermaid">Sphinx extension</a></li>
 <li><a href="https://github.com/raghur/mermaid-filter">Pandoc filter</a></li>
@@ -161,7 +161,7 @@
 <li>get a link to a viewer of the diagram</li>
 <li><p>get a link to edit of the diagram to share a diagram so that someone else can tweak it and send a new link back</p>
 </li>
-<li><p><a href="http://knsv.github.io/mermaid/live_editor">Editor</a></p>
+<li><p><a href="https://knsv.github.io/mermaid/live_editor/">Editor</a></p>
 </li>
 </ul>
 
@@ -206,7 +206,37 @@ https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p
         Chart ends up here
     &lt;/svg&gt;
 &lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
-<h3 id="labels-out-of-bounds">Labels out of bounds</h3>
+<h3 id="simple-full-example-">Simple full example:</h3>
+<pre class="css"><code><!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- Downloaded as per http://knsv.github.io/mermaid/#installation -->
+  <!-- Stored in the same directory as html file                     -->
+  <link rel="stylesheet" href="mermaid.css">
+
+  <!-- Optional to use fontawesome                                   -->
+  <!-- Downloaded as per http://fontawesome.io/get-started/          -->
+  <!-- Stored in the same directory as html file                     -->
+  <script src="https://use.fontawesome.com/7065416dc9.js"></script>
+
+</head>
+<body>
+
+  <!-- Include mermaid on your web page:                             -->
+  <script src="mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+
+  <div class="mermaid">
+  graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
+  </div>
+
+</body>
+</html></code></pre><h3 id="labels-out-of-bounds">Labels out of bounds</h3>
 <p>If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the<br>whole page to have been loaded (dom + assets, particularly the fonts file).</p>
 <p>$(document).load(function() {<br>    mermaid.initialize();<br>});<br>over</p>
 <p>$(document).ready(function() {<br>    mermaid.initialize();<br>});</p>
@@ -556,7 +586,7 @@ graph LR
 <h3 id="default-class">Default class</h3>
 <p>If a class is named default it will be assigned to all classes without specific class definitions.</p>
 <pre class="css"><code>    classDef default fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><h2 id="basic-support-for-fontawesome">Basic support for fontawesome</h2>
-<p>It is possible to add icons from fontawesome. In order to do so, you need to add the fontwesome as described in the instructions at<br><a href="https://fortawesome.github.io/Font-Awesome/">the fontawesome web site</a>.</p>
+<p>It is possible to add icons from fontawesome. In order to do so, you need to add the fontawesome as described in the instructions at<br><a href="https://fortawesome.github.io/Font-Awesome/">the fontawesome web site</a>.</p>
 <p>The icons are acessed via the syntax fa:#icon class name#.</p>
 <p>The example code below</p>
 <pre class="css"><code>graph TD
@@ -613,12 +643,40 @@ sequenceDiagram
     John-->>Alice: Great!</div><h2 id="messages">Messages</h2>
 <p>Messages can be of two displayed either solid or with a dotted line.</p>
 <pre class="css"><code>[Actor][Arrow][Actor]:Message text</code></pre><p>There are six types of arrows currently supported:</p>
-<p>-&gt; which will render a solid line without arrow</p>
-<p>--&gt; which will render a dotted line  without arrow</p>
-<p>-&gt;&gt; which will render a solid line with arrowhead</p>
-<p>--&gt;&gt; which will render a dotted line  with arrowhead</p>
-<p>-x which will render a solid line with a cross at the end (async)</p>
-<p>--x which will render a dotted line with a cross at the end (async)</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-&gt;</td>
+<td>Solid line without arrow</td>
+</tr>
+<tr>
+<td>--&gt;</td>
+<td>Dotted line  without arrow</td>
+</tr>
+<tr>
+<td>-&gt;&gt;</td>
+<td>Solid line with arrowhead</td>
+</tr>
+<tr>
+<td>--&gt;&gt;</td>
+<td>Dotted line  with arrowhead</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>Solid line with a cross at the end (async)</td>
+</tr>
+<tr>
+<td>--x</td>
+<td>Dotted line with a cross at the end (async)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="activations">Activations</h2>
 <p>It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:</p>
 <pre class="css"><code>sequenceDiagram
@@ -843,7 +901,7 @@ text.actor {
     font-size:14px;
 }</code></pre><h2 id="configuration">Configuration</h2>
 <p>Is it possible to adjust the margins for rendering the sequence diagram.</p>
-<p>This is done by defining <strong>mermaid.sequenceConfig</strong> or by the CLI to use a json file with the configuration. How to use<br>the CLI is described in the mermaidCLI page.<br>mermaid.sequenceConfig can be set to a JSON string with config parameters or the corresponding object.</p>
+<p>This is done by defining <strong>mermaid.sequenceConfig</strong> or by the CLI to use a json file with the configuration.<br>How to use the CLI is described in the <a href="#mermaid-cli8">mermaidCLI</a> page.<br><strong>mermaid.sequenceConfig</strong> can be set to a JSON string with config parameters or the corresponding object.</p>
 <pre class="css"><code>mermaid.sequenceConfig = {
     diagramMarginX:50,
     diagramMarginY:10,
@@ -888,7 +946,7 @@ gantt
     Another task     :after a1  , 20d
     section Another
     Task in sec      :2014-01-12  , 12d
-    anther task      : 24d</code></pre><p>Renders the following diagram:</p>
+    another task      : 24d</code></pre><p>Renders the following diagram:</p>
 <div class="mermaid">gantt
     title A Gantt Diagram
     dateFormat  YYYY-MM-DD
@@ -897,7 +955,7 @@ gantt
     Another task     :after a1  , 20d
     section Another
     Task in sec      :2014-01-12  , 12d
-    anther task      : 24d</div><h2 id="syntax">Syntax</h2>
+    another task      : 24d</div><h2 id="syntax">Syntax</h2>
 <pre class="css"><code>%% Example with slection of syntaxes
         gantt
         dateFormat  YYYY-MM-DD
@@ -907,7 +965,7 @@ gantt
         Completed task            :done,    des1, 2014-01-06,2014-01-08
         Active task               :active,  des2, 2014-01-09, 3d
         Future task               :         des3, after des2, 5d
-        Future task2               :         des4, after des3, 5d
+        Future task2              :         des4, after des3, 5d
 
         section Critical tasks
         Completed task in the critical line :crit, done, 2014-01-06,24h
@@ -924,8 +982,8 @@ gantt
 
         section Last section
         Describe gantt syntax               :after doc1, 3d
-        Add gantt diagram to demo page      : 20h
-        Add another diagram to demo page    : 48h</code></pre><p>Renders like below:</p>
+        Add gantt diagram to demo page      :20h
+        Add another diagram to demo page    :48h</code></pre><p>Renders like below:</p>
 <div class="mermaid">gantt
        dateFormat  YYYY-MM-DD
        title Adding GANTT diagram functionality to mermaid
@@ -934,7 +992,7 @@ gantt
        Completed task            :done,    des1, 2014-01-06,2014-01-08
        Active task               :active,  des2, 2014-01-09, 3d
        Future task               :         des3, after des2, 5d
-       Future task2               :         des4, after des3, 5d
+       Future task2              :         des4, after des3, 5d
 
        section Critical tasks
        Completed task in the critical line :crit, done, 2014-01-06,24h
@@ -951,8 +1009,8 @@ gantt
 
        section Last section
        Describe gantt syntax               :after doc1, 3d
-       Add gantt diagram to demo page      : 20h
-       Add another diagram to demo page    : 48h</div><h3 id="title">title</h3>
+       Add gantt diagram to demo page      :20h
+       Add another diagram to demo page    :48h</div><h3 id="title">Title</h3>
 <p>Tbd</p>
 <h2 id="sections-statements">Sections statements</h2>
 <p>Tbd</p>
@@ -1119,7 +1177,7 @@ Z ZZ    +12:00    Offset from UTC as +-HH:mm, +-HHmm, or Z</code></pre><p>More i
                 text-anchor:end;
             }</code></pre><h2 id="configuration">Configuration</h2>
 <p>Is it possible to adjust the margins for rendering the sequence diagram.</p>
-<p>This is done by defining the <strong>sequenceConfig</strong> part of the configuration object. Read more about it <a href="http://knsv.github.io/mermaid/index.html#configuration28">here</a>. How to use<br>the CLI is described in the <a href="(http://knsv.github.io/mermaid/index.html#mermaidCLI">mermaidCLI</a> page.</p>
+<p>This is done by defining the <strong>sequenceConfig</strong> part of the configuration object. Read more about it <a href="#configuration35">here</a>.<br>How to use the CLI is described in the <a href="#mermaid-cli8">mermaidCLI</a> page.</p>
 
 <h1 id="mermaid-cli">mermaid CLI</h1>
 <p>Installing mermaid globally (<code>npm install -g mermaid</code>) will expose the <code>mermaid</code> command to your environment, allowing you to generate PNGs from any file containing mermaid markup via the command line.</p>

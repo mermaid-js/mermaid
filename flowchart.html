@@ -1,293 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Flowchart</title>
-    <meta name="description" content="">
-    <meta name="author" content="ink, cookbook, recipes">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="icon" type="image/x-icon" href="https://assets-cdn.github.com/favicon.ico">
-    <lnk rel="shortcut icon" href="http://cdn.ink.sapo.pt/3.1.1/img/favicon.ico"></lnk>
-        <link rel="apple-touch-icon" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad.png">
-        <link rel="apple-touch-icon" sizes="120x120"
-              href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-iphone-retina.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="http://cdn.ink.sapo.pt/3.1.1/img/touch-icon-ipad-retina.png">
-        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.320x460.png"
-              media="screen and (min-device-width: 200px) and (max-device-width: 320px) and (orientation:portrait)">
-        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.768x1004.png"
-              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)">
-        <link rel="apple-touch-startup-image" href="http://cdn.ink.sapo.pt/3.1.1/img/splash.1024x748.png"
-              media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape)">
-        <!-- load Ink's css from the cdn -->
-        <lnk rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="css/ink-flex.min.css"></lnk>
-        <link rel="stylesheet" type="text/css" href="css/mermaid.css">
-        <link rel="stylesheet" type="text/css" href="http://cdn.ink.sapo.pt/3.1.1/css/ink-flex.min.css">
-        <link rel="stylesheet" type="text/css" title="mermaid-svg-internal-css" href="3.1.1/css/font-awesome.min.css">
-        <!-- load Ink's css for IE8 -->
-        <!--[if lt IE 9 ]>
-        <link rel="stylesheet" title="mermaid-svg-internal-css" href="css/ink-ie.min.css" type="text/css" media="screen"
-              title="no title" charset="utf-8">
-        <![endif]-->
-        <link rel="stylesheet" href="css/monokai_sublime.css">
-        <script src="js/highlight.pack.js"></script>
-        <link rel="stylesheet" href="css/seq.css" type="text/css" media="screen" title="no title" charset="utf-8">
-        <!-- test browser flexbox support and load legacy grid if unsupported -->
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/modernizr.js"></script>
-        <script type="text/javascript">
-            Modernizr.load({
-                test: Modernizr.flexbox,
-                nope: 'http://cdn.ink.sapo.pt/3.1.1/css/ink-legacy.min.css'
-            });
-        </script>
-        <!-- load Ink's javascript files from the cdn -->
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/holder.js"></script>
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/ink-all.min.js"></script>
-        <script type="text/javascript" src="http://cdn.ink.sapo.pt/3.1.1/js/autoload.js"></script>
-        <scrpt type="text/javascript" src="https://cdn.rawgit.com/knsv/mermaid/0.5.0/dist/mermaid.js"></scrpt>
-        <script type="text/javascript" src="js/mermaid.js"></script>
-        <style type="text/css">
-            body {
-                background: #ffffff;
-                font-family: sans-serif;
-                font-size: 90%;
-                
-            }
-            header h1 small:before {
-                content: "|";
-                margin: 0 0.5em;
-                font-size: 1.5em;
-            }
-            h1 {
-                color: #104e8b
-            }
-            article header {
-                padding: 0;
-                overflow: hidden;
-            }
-            article footer {
-                background: none;
-            }
-            article {
-                padding-bottom: 2em;
-                border-bottom: 1px solid #ccc;
-            }
-            table, th, td {
-                border: 1px solid #8b8989;
-            }
-            .date {
-                float: right;
-            }
-            summary {
-                font-weight: 700;
-                line-height: 1.5;
-            }
-            .push, footer {
-                height: 120px;
-                margin-top: 0;
-                margin-bottom: 10;
-            }
-            footer {
-                background: #a9a9a9;
-            }
-            .cluster {
-                fill: #fcac93;
-                rx:4px;
-                stroke: grey;
-            }
-            svg {
-                padding-left:2px;
-            }
-            /* Gantt styles */
-            .grid .tick {
-                stroke: lightgrey;
-                opacity: 0.3;
-                shape-rendering: crispEdges;
-            }
-            .grid path {
-                stroke-width: 0;
-            }
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>mermaid - Generation of diagrams and flowcharts from text in a similar manner as markdown.</title>
+    <link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
 
+    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="stylesheets/mermaid.forest.css" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/solarized_light.css" rel="stylesheet" type="text/css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="javascripts/lib/mermaid.js"></script>
+    <script src="javascripts/all.js" type="text/javascript"></script>
+    <script src="javascripts/highlight.pack.js" type="text/javascript"></script>
 
-            #tag {
-                color: white;
-                background: #FA283D;
-                width: 150px;
-                position: absolute;
-                display: none;
-                padding:3px 6px;
-                margin-left: -80px;
-                font-size: 11px;
-            }
-
-
-
-            #tag:before {
-                border: solid transparent;
-                content: ' ';
-                height: 0;
-                left: 50%;
-                margin-left: -5px;
-                position: absolute;
-                width: 0;
-                border-width: 10px;
-                border-bottom-color: #FA283D;
-                top: -20px;
-            }
-            .taskText {
-                fill:white;
-                text-anchor:middle;
-            }
-            .taskTextOutsideRight {
-                fill:black;
-                text-anchor:start;
-            }
-            .taskTextOutsideLeft {
-                fill:black;
-                text-anchor:end;
-            }
-        </style>
-        <script>
-            var g = function (hljs) {
-                var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
-                var keyw = {
-                    keyword: 'graph sequenceDiagram participant loop end',
-                    typename: 'Note',
-                    literal: "false true left right"
-                };
-                return {
-                    case_insensitive: false,
-                    aliases: ["mermaid"],
-                    k: keyw,
-                    i: 'for',
-                    c: [{
-                        cN: "function",
-                        b: "^" + r + "\\s*\\(",
-                        e: "->",
-                        rB: !0,
-                        i: "\\(|#|//|/\\*|\\\\|:|;",
-                        starts: {
-                            e: ";|\\.", k: keyw, c: [
-                                {cN: "comment", b: "%", e: "$"}
-                            ]
-                        }
-                    },
-                        {cN: "comment", b: "%", e: "$"}
-                    ]
-                };
+    <script>
+        var g = function (hljs) {
+            var r = "[a-z'][a-zA-Z0-9_']*", c = "(" + r + ":" + r + "|" + r + ")";
+            var keyw = {
+                keyword: 'graph sequenceDiagram participant loop end',
+                typename: 'Note',
+                literal: "false true left right"
             };
-            hljs.registerLanguage('mm', g);
-            hljs.initHighlightingOnLoad();
-            Ink.requireModules(['Ink.Dom.Loaded_1'], function (DomLoaded) {
-                DomLoaded.run(function () {
-                    var elements = document.querySelectorAll('article h1,h2');
-                    var i;
-                    var sections = document.getElementById('sections');
-                    for (i = 0; i < elements.length; i++) {
-                        var e = elements[i];
-                        sections.innerHTML = sections.innerHTML + '<li><a href="#' + e.id + '">' + e.innerHTML + '</a></li>';
-//$("#sections").append('<li><a href="http://www.idg.se">'+$e.text()+'</a></li>');
+            return {
+                case_insensitive: false,
+                aliases: ["mermaid"],
+                k: keyw,
+                i: 'for',
+                c: [{
+                    cN: "function",
+                    b: "^" + r + "\\s*\\(",
+                    e: "->",
+                    rB: !0,
+                    i: "\\(|#|//|/\\*|\\\\|:|;",
+                    starts: {
+                        e: ";|\\.", k: keyw, c: [
+                            {cN: "comment", b: "%", e: "$"}
+                        ]
                     }
-                    Ink.requireModules(['Ink.UI.Sticky_1'], function (Sticky) {
-                        new Sticky('#sidenav')
-                    });
-                    console.log('Registering new lang');
-                });
-            });
-            var mermaid_config = {
-                startOnLoad:true,
-                htmlLabels:true
-            }
-            mermaid.sequenceConfig = {
-                diagramMarginX:50,
-                diagramMarginY:10,
-                boxTextMargin:5,
-                noteMargin:10,
-                messageMargin:35,
-                mirrorActors:true,
-                width:150,
-                // Height of actor boxes
-                height:30
-            };
-            mermaid.ganttConfig = {
-                titleTopMargin:25,
-                barHeight:20,
-                barGap:4,
-                topPadding:50,
-                sidePadding:100,
-                gridLineStartPadding:35,
-                fontSize:11,
-                numberSectionStyles:4,
-                axisFormatter: [
-                    // Within a day
-                    ["%I:%M", function (d) {
-                        return d.getHours();
-                    }],
-                    // Monday a week
-                    ["w. %U", function (d) {
-                        return d.getDay() == 1;
-                    }],
-                    // Day within a week (not monday)
-                    ["%a %d", function (d) {
-                        return d.getDay() && d.getDate() != 1;
-                    }],
-                    // within a month
-                    ["%b %d", function (d) {
-                        return d.getDate() != 1;
-                    }],
-                    // Month
-                    ["%m-%y", function (d) {
-                        return d.getMonth();
-                    }]
+                },
+                    {cN: "comment", b: "%", e: "$"}
                 ]
             };
-        </script>
+        };
+        hljs.registerLanguage('mermaid', g);
+        hljs.initHighlightingOnLoad();
+        $(function () {
+            setupLanguages(["shell", "javascript", "html", "css","mermaid"]);
+        });
+        var callback = function(){
+            alert('A callback was triggered');
+        }
+    </script>
 </head>
-<body>
-<nav class="ink-navigation xlarge-push-right large-push-right half-top-space">
-    <ul class="menu horizontal blue">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="usage.html">Usage</a></li>
-        <li class="active"><a href="flowchart.html">Flowchart</a></li>
-        <li><a href="sequenceDiagram.html">Sequence Diagram</a></li>
-        <li><a href="gantt.html">Gantt Diagram</a></li>
-        <li><a href="mermaidCLI.html">mermaid CLI</a></li>
-        <li><a href="demos.html">Demos</a></li>
-        <li><a href="development.html">Development</a></li>
-    </ul>
-</nav>
-<div class="ink-grid">
-    <!--[if lte IE 9 ]>
-    <div class="ink-alert basic" role="alert">
-    <button class="ink-dismiss">&times;</button>
-    <p>
-    <strong>You are using an outdated Internet Explorer version.</strong>
-    Please <a href="http://browsehappy.com/">upgrade to a modern browser</a> to improve your web experience.
-    </p>
-    </div>
-    -->
-    <!-- Add your site or application content here -->
-    <header class="clearfix vertical-padding">
-        <h1 class="logo xlarge-push-left large-push-left">
-            <a href="https://github.com/knsv/mermaid" >mermaid</a>
-            <small>Diagrams and flowcharts from textsimilar to markdown</small>
-        </h1>
 
-    </header>
-    <section class="column-group gutters article">
-        <div class="xlarge-80 large-80 medium-70 small-100 tiny-100">
-            <article id="main" width="1096">
-                <h1 id="flowcharts-basic-syntax">Flowcharts - Basic Syntax</h1>
+<body class="index">
+<a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png"/>
+      </span>
+</a>
+
+<div class="tocify-wrapper">
+    <img src="images/logo.png"/>
+
+    <div class="lang-selector" style="display:none">
+        <a href="#" data-language-name="shell">shell</a>
+        <a href="#" data-language-name="javascript">javascript</a>
+        <a href="#" data-language-name="html">html</a>
+        <a href="#" data-language-name="css">css</a>
+    </div>
+    <div class="search">
+        <input type="text" class="search" id="input-search" placeholder="Search">
+    </div>
+    <ul class="search-results"></ul>
+    <div id="toc">
+    </div>
+    <ul class="toc-footer">
+        <div style="margin-left:5px;">
+            <a href="https://github.com/knsv/mermaid" class="github-button" >Star</a>
+            <a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
+            <a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
+        </div>
+        <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+        <li><a href='http://github.com/tripit/slate' style="color:grey">Documentation Powered by Slate</a></li>
+    </ul>
+</div>
+<div class="page-wrapper">
+    <div class="dark-box"></div>
+    <div class="content">
+        <h1 id="flowcharts-basic-syntax">Flowcharts - Basic Syntax</h1>
 <h2 id="graph">Graph</h2>
 <p>This statement declares a new graph and the direction of the graph layout.</p>
-<pre><code>%% Example code
+<pre class="css"><code>%% Example code
 graph TD</code></pre><p>This declares a graph oriented from top to bottom.</p>
-<p><img src="http://www.sveido.com/mermaid/img/ex3.png" alt="Example 3"></p>
-<pre><code>%% Example code
+<div class="mermaid">graph TD
+    Start --> Stop</div><pre class="css"><code>%% Example code
 graph LR</code></pre><p>This declares a graph oriented from left to right.</p>
 <p>Possible directions are:</p>
 <ul>
@@ -299,35 +110,45 @@ graph LR</code></pre><p>This declares a graph oriented from left to right.</p>
 <li><p>TD - same as TB</p>
 </li>
 </ul>
-<p><img src="http://www.sveido.com/mermaid/img/ex4.png" alt="Example 4"></p>
-<h2 id="nodes-shapes">Nodes &amp; shapes</h2>
+<div class="mermaid">graph LR
+    Start --> Stop</div><h2 id="nodes-shapes">Nodes &amp; shapes</h2>
 <h3 id="a-node-default-">A node (default)</h3>
-<pre><code>id1</code></pre><div class="mermaid">graph LR
+<pre class="css"><code>graph LR
+    id1</code></pre><div class="mermaid">graph LR
     id</div><p>Note that the id is what is displayed in the box.</p>
 <h3 id="a-node-with-text">A node with text</h3>
-<p>It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text
-found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
-one previously defined will be used when rendering the box.</p>
-<pre><code>id1[This is the text in the box]</code></pre><div class="mermaid">graph LR
+<p>It is also possible to set text in the box that differs from the id. If this is done several times, it is the last text<br>found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The<br>one previously defined will be used when rendering the box.</p>
+<pre class="css"><code>graph LR
+    id1[This is the text in the box]</code></pre><div class="mermaid">graph LR
     id1[This is the text in the box]</div><h3 id="a-node-with-round-edges">A node with round edges</h3>
-<pre><code>id1(This is the text in the box);</code></pre><div class="mermaid">graph LR
+<pre class="css"><code>graph LR
+    id1(This is the text in the box);</code></pre><div class="mermaid">graph LR
     id1(This is the text in the box)</div><h3 id="a-node-in-the-form-of-a-circle">A node in the form of a circle</h3>
-<pre><code>    id1((This is the text in the circle));</code></pre><div class="mermaid">graph LR
+<pre class="css"><code>graph LR
+    id1((This is the text in the circle));</code></pre><div class="mermaid">graph LR
     id1((This is the text in the circle))</div><h3 id="a-node-in-an-asymetric-shape">A node in an asymetric shape</h3>
-<pre><code>    id1>This is the text in the box]</code></pre><div class="mermaid">graph LR
+<pre class="css"><code>graph LR
+    id1>This is the text in the box]</code></pre><div class="mermaid">graph LR
     id1>This is the text in the box]</div><p>Currently only the shape above is possible and not its mirror. <em>This might change with future releases.</em></p>
 <h3 id="a-node-rhombus-">A node (rhombus)</h3>
-<pre><code>    id1{This is the text in the box}</code></pre><div class="mermaid">graph LR
+<pre class="css"><code>graph LR
+    id1{This is the text in the box}</code></pre><div class="mermaid">graph LR
     id1{This is the text in the box}</div><h2 id="links-between-nodes">Links between nodes</h2>
 <p>Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.</p>
 <h3 id="a-link-with-arrow-head">A link with arrow head</h3>
-<pre><code>A-->B</code></pre><div class="mermaid">graph LR;
-    A-->B</div><h3 id="an-open-link">An open link</h3>
-<pre><code>A --- B</code></pre><div class="mermaid">graph LR;
+<pre class="css"><code>graph LR
+    A-->B</code></pre><pre class="css"><code>graph LR;
+    A-->B</code></pre><h3 id="an-open-link">An open link</h3>
+<pre class="css"><code>graph LR
+    A --- B</code></pre><div class="mermaid">graph LR;
     A --- B</div><h3 id="text-on-links">Text on links</h3>
-<pre><code>A-- This is the text --- B</code></pre><p>or</p>
-<pre><code>A---|This is the text|B;</code></pre><div class="mermaid">graph LR;
-   A-- This is the text ---B</div><h3 id="dotted-link">Dotted link</h3>
+<pre class="css"><code>A-- This is the text --- B</code></pre><p>or</p>
+<pre class="css"><code>A---|This is the text|B;</code></pre><div class="mermaid">graph LR;
+   A-- This is the text ---B</div><h3 id="a-link-with-arrow-head-and-text">A link with arrow head and text</h3>
+<pre class="css"><code>A-->|text|B</code></pre><div class="mermaid">graph LR;
+    A-->|text|B</div><p>or</p>
+<pre class="css"><code>A-- text -->B</code></pre><div class="mermaid">graph LR;
+    A-- text -->B</div><h3 id="dotted-link">Dotted link</h3>
 <p>-.-&gt;</p>
 <div class="mermaid">graph LR;
    A-.->B;</div><h3 id="dotted-link-with-text">Dotted link with text</h3>
@@ -339,11 +160,21 @@ one previously defined will be used when rendering the box.</p>
    A ==> B</div><h3 id="thick-link-with-text">Thick link with text</h3>
 <p>== text ==&gt;</p>
 <div class="mermaid">graph LR;
-   A == text ==> B</div><h2 id="subgraphs">Subgraphs</h2>
-<pre><code>subgraph title
+   A == text ==> B</div><h2 id="special-characters-that-break-syntax">Special characters that break syntax</h2>
+<p>It is possible to put text within quotes in order to render more troublesome characters. As in the example below:</p>
+<pre class="css"><code>graph LR
+    d1["This is the (text) in the box"]</code></pre><div class="mermaid">graph LR
+    id1["This is the (text) in the box"]</div><h3 id="entity-codes-to-escape-characters">Entity codes to escape characters</h3>
+<p>It is possible to escape characters using the syntax examplified here.</p>
+<p>The flowchart defined by the following code:</p>
+<pre class="css"><code>    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]</code></pre><p>This would render to the diagram below:</p>
+<div class="mermaid">    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]</div><h2 id="subgraphs">Subgraphs</h2>
+<pre class="css"><code>subgraph title
     graph definition
 end</code></pre><p>An example below:</p>
-<pre><code> %% Subgraph example
+<pre class="css"><code> %% Subgraph example
  graph TB
          subgraph one
          a1-->a2
@@ -365,20 +196,32 @@ end</code></pre><p>An example below:</p>
     subgraph three
     c1-->c2
     end</div><h2 id="interaction">Interaction</h2>
-<p>It is possible to bind a click event to a node:</p>
-<pre><code>click nodeId callback</code></pre><ul>
+<p>It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.</p>
+<pre class="css"><code>click nodeId callback</code></pre><ul>
 <li>nodeId is the id of the node</li>
-<li>callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.<h2 id="styling-and-classes">Styling and classes</h2>
-</li>
+<li>callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the nodeId as parameter.</li>
 </ul>
+<p>Examples of tooltip usage below:</p>
+<pre class="css"><code>&lt;script&gt;
+    var callback = function(){
+        alert(&#39;A callback was triggered&#39;);
+    }
+&lt;script&gt;</code></pre><pre class="css"><code>graph LR;
+    A-->B;
+    click A callback "Tooltip for a callback"
+    click B "http://www.github.com" "This is a tooltip for a link"</code></pre><p>The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.</p>
+<div class="mermaid">graph LR;
+    A-->B;
+    click A callback "Tooltip"
+    click B "http://www.github.com" "This is a link"</div><aside class="success">The tooltip functionality and the ability to link to urls are available from version 0.5.2.</aside>
+
+<p>When integration mermaid using the mermaidAPI #mermaidapi the function that binds the events need to be run when the finished graph has been added to the page. This is described in the <a href="#api-usage">API usage</a> section.</p>
+<h2 id="styling-and-classes">Styling and classes</h2>
 <h3 id="styling-links">Styling links</h3>
-<p>It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links
-have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.
-Instead of ids, the order number of when the link was defined in the graph is used. In the example below the style
-defined in the linkStyle statement will belong to the fourth link in the graph:</p>
-<pre><code>linkStyle 3 stroke:#ff3,stroke-width:4px;</code></pre><h3 id="styling-a-node">Styling a node</h3>
+<p>It is possible to style links. For instance you might want to style a link that is going backwards in the flow. As links<br>have no ids in the same way as nodes, some other way of deciding what style the links should be attached to is required.<br>Instead of ids, the order number of when the link was defined in the graph is used. In the example below the style<br>defined in the linkStyle statement will belong to the fourth link in the graph:</p>
+<pre class="css"><code>linkStyle 3 stroke:#ff3,stroke-width:4px;</code></pre><h3 id="styling-a-node">Styling a node</h3>
 <p>It is possible to apply specific styles such as a thicker border or a different background color to a node.</p>
-<pre><code>%% Example code
+<pre class="css"><code>%% Example code
 graph LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px;
@@ -386,14 +229,44 @@ graph LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5</div><h4 id="classes">Classes</h4>
-<p>More convenient then defining the style everytime is to define a class of styles and attach this class to the nodes that
-should have a different look.</p>
+<p>More convenient then defining the style every time is to define a class of styles and attach this class to the nodes that<br>should have a different look.</p>
 <p>a class definition looks like the example below:</p>
-<pre><code>    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><p>Attachment of a class to a node is done as per below:</p>
-<pre><code>    class nodeId1 className;</code></pre><p>It is also possible to attach a class to a list of nodes in one statement:</p>
-<pre><code>    class nodeId1,nodeId2 className;</code></pre><h4 id="default-class">Default class</h4>
+<pre class="css"><code>    classDef className fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><p>Attachment of a class to a node is done as per below:</p>
+<pre class="css"><code>    class nodeId1 className;</code></pre><p>It is also possible to attach a class to a list of nodes in one statement:</p>
+<pre class="css"><code>    class nodeId1,nodeId2 className;</code></pre><h3 id="css-classes">Css classes</h3>
+<p>It is also possible to pre dine classes in css styles that can be applied from the graph definition as in the example<br>below:<br><strong>Example style</strong></p>
+<pre class="css"><code><style>
+    .cssClass > rect{
+        fill:#FF0000;
+        stroke:#FFFF00;
+        stroke-width:4px;
+    }
+</style></code></pre><p><strong>Example definition</strong></p>
+<pre class="css"><code>graph LR;
+    A-->B[AAA<span>BBB</span>];
+    B-->D;
+    class A cssClass;</code></pre><aside class="warning">Class definitions in the graph defnition is broken in version 0.5.1 but has been fixed in the master branch of mermaid. This fix will be included in 0.5.2</aside>
+
+
+
+<h3 id="default-class">Default class</h3>
 <p>If a class is named default it will be assigned to all classes without specific class definitions.</p>
-<pre><code>    classDef default fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><h2 id="graph-declarations-with-spaces-between-vertices-and-link-and-without-semicolon">Graph declarations with spaces between vertices and link and without semicolon</h2>
+<pre class="css"><code>    classDef default fill:#f9f,stroke:#333,stroke-width:4px;</code></pre><h2 id="basic-support-for-fontawesome">Basic support for fontawesome</h2>
+<p>It is possible to add icons from fontawesome. In order to do so, you need to add the fontwesome as described in the instructions at<br><a href="https://fortawesome.github.io/Font-Awesome/">the fontawesome web site</a>.</p>
+<p>The icons are acessed via the syntax fa:#icon class name#.</p>
+<p>The example code below</p>
+<pre class="css"><code>graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);</code></pre><p>Would render the graph below:</p>
+<div class="mermaid">graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);</div><aside class="success">Support for fontawesome has been comitted to the  master branch and will be included in 0.5.3</aside>
+
+<h2 id="graph-declarations-with-spaces-between-vertices-and-link-and-without-semicolon">Graph declarations with spaces between vertices and link and without semicolon</h2>
 <ul>
 <li><p>In graph declarations, the statements also can now end without a semicolon. After release 0.2.16, ending a graph statement with semicolon is just optional. So the below graph declaration is also valid along with the old declarations of the graph.</p>
 </li>
@@ -401,47 +274,23 @@ should have a different look.</p>
 </li>
 </ul>
 <p>Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.</p>
-<pre><code>    A[Hard edge] -->|Link text| B(Round edge)
+<pre class="css"><code>    A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}
     C -->|One| D[Result one]
     C -->|Two| E[Result two]</code></pre><div class="mermaid">graph LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}
     C -->|One| D[Result one]
-    C -->|Two| E[Result two]</div><h2 id="configuration-">Configuration...</h2>
-<p>Is it possible to adjust the width of the rendered flowchart.</p>
-<p>This is done by defining <strong>mermaid.flowchartConfig</strong> or by the CLI to use a json file with the configuration. How to use
-the CLI is described in the mermaidCLI page.
-mermaid.flowchartConfig can be set to a JSON string with config parameters or the corresponding object.</p>
-<pre><code>mermaid.flowchartConfig = {
-        width:100%;
-    };</code></pre>
-            </article>
-        </div>
-        <section class="xlarge-20 large-20 medium-30 small-100 tiny-100">
+    C -->|Two| E[Result two]</div>
 
-            <a href="https://github.com/knsv/mermaid" class="github-button">Star</a>
-            <a href="https://github.com/knsv/mermaid" class="github-button">Fork</a>
-            <a href="https://github.com/knsv/mermaid/archive/master.zip" class="github-button">Download</a>
-            <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
-            <a href="https://travis-ci.org/knsv/mermaid"><img src="https://travis-ci.org/knsv/mermaid.svg?branch=master" alt="Build Status"></a>
-            <a href="https://codeclimate.com/github/knsv/mermaid"><img src="https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg" alt="Code Climate"></a>
-            <nav id="sidenav" class="ink-navigation ink-sticky bottom-space"
-                 data-bottom-element="#sticky-stop">
-                <ul class="menu vertical grey" id="sections">
-                    <li class="heading active"><a href="#">Index:</a></li>
-                </ul>
-            </nav>
-        </section>
-    </section>
-    <div id="sticky-stop">&nbsp;</div>
-</div>
-<footer class="clearfix">
-    <div class="ink-grid">
-        <p class="note"><br/>These pages are generated from markdown source files. <a href="https://raw.githubusercontent.com/knsv/mermaid/gh-pages/docs/flowchart.md">flowchart.md</a> is an example of a markdown file which includes mermaid source.</p>
     </div>
-</footer>
+    <div class="dark-box">
+        <div class="lang-selector">
+            <a href="#" data-language-name="shell">shell</a>
+            <a href="#" data-language-name="ruby">ruby</a>
+            <a href="#" data-language-name="python">python</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>
-
-
