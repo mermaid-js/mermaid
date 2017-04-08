@@ -21,8 +21,11 @@ Options:
   -s --svg             Output SVG instead of PNG (experimental)
   -p --png             If SVG was selected, and you also want PNG, set this flag
   -o --outputDir       Directory to save files, will be created automatically, defaults to `cwd`
+  -O --outputSuffix    Suffix to output filenames in front of '.svg' or '.png', defaults to ''
   -e --phantomPath     Specify the path to the phantomjs executable
+  -t --css             Specify the path to a CSS file to be included when processing output
   -c --sequenceConfig  Specify the path to the file with the configuration to be applied in the sequence diagram
+  -g --ganttConfig     Specify the path to the file with the configuration to be applied in the gantt diagram
   -h --help            Show this message
   -v --verbose         Show logging
   -w --width           width of the generated png (number)
