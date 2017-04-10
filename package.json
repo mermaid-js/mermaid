@@ -24,7 +24,7 @@
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
     "jasmine": "npm run jison &&node node_modules/jasmine-es6/bin/jasmine.js",
     "pretest": "npm run jison",
-    "test": "npm run dist && npm run karma && npm run tape",
+    "test": "npm run tape && npm run karma",
     "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
     "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
     "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
