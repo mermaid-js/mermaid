@@ -10,4 +10,4 @@ bower_components
 coverage
 
 test/tmp_*
-test/fixtures/samples/*.actual.*
+test/fixtures/samples/*.actual*
