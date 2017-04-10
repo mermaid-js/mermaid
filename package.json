@@ -44,11 +44,11 @@
     "dagre-d3": "0.4.10",
     "he": "^1.1.1",
     "lodash": "^4.17.4",
-    "minimist": "^1.1.0",
-    "mkdirp": "^0.5.0",
-    "moment": "^2.9.0",
-    "semver": "^4.1.1",
-    "which": "^1.0.8"
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.18.1",
+    "semver": "^5.3.0",
+    "which": "^1.2.14"
   },
   "devDependencies": {
     "async": "^0.9.0",
