@@ -5526,7 +5526,7 @@ phantomjs@^1.9.12:
     request-progress "~2.0.1"
     which "~1.2.2"
 
-phantomjs@^2.1.3:
+phantomjs@^2.1.7:
   version "2.1.7+deprecated"
   resolved "https://registry.yarnpkg.com/phantomjs/-/phantomjs-2.1.7.tgz#c6910f67935c37285b6114329fc2f27d5f3e3134"
   dependencies:
@@ -5686,7 +5686,7 @@ q@^1.1.2:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.0.tgz#dd01bac9d06d30e6f219aecb8253ee9ebdc308f1"
 
-qs@5.2.0:
+qs@5.2.0, qs@~5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-5.2.0.tgz#a9f31142af468cb72b25b30136ba2456834916be"
 
@@ -5701,10 +5701,6 @@ qs@~0.6.0:
 qs@~2.2.3:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/qs/-/qs-2.2.5.tgz#1088abaf9dcc0ae5ae45b709e6c6b5888b23923c"
-
-qs@~5.2.0:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-5.2.1.tgz#801fee030e0b9450d6385adc48a4cc55b44aedfc"
 
 querystring-es3@0.2.0:
   version "0.2.0"
