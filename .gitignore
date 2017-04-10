@@ -11,3 +11,5 @@ coverage
 
 test/tmp_*
 test/fixtures/samples/*.actual*
+
+dist/*.js
