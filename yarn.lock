@@ -2053,8 +2053,8 @@ d3@3.5.6:
   resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.6.tgz#9451c651ca733fb9672c81fb7f2655164a73a42d"
 
 d3@^3.3.8:
-  version "3.5.17"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
+  version "3.5.7"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.7.tgz#4a34db35e68ca05caa214d01b508732bc9afdc81"
 
 d@1:
   version "1.0.0"
