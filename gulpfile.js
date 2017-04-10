@@ -19,22 +19,3 @@ var tasks = requireDir('./gulp/tasks');
 var paths = {
   scripts: ['./src/**/*.js', '!**/parser/*.js']
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
