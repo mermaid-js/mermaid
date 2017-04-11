@@ -64,12 +64,12 @@ var init = function () {
   }
   nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
         : typeof nodes === 'string' ? document.querySelectorAll(nodes)
-        : nodes instanceof Node ? [nodes]
+        : nodes instanceof window.Node ? [nodes]
         : nodes  // Last case  - sequence config was passed pick next
 
   var i
 
-  if (typeof mermaid_config !== 'undefined') {
+  if (typeof global.mermaid_config !== 'undefined') {
     mermaidAPI.initialize(global.mermaid_config)
   }
   log.debug('Start On Load before: ' + global.mermaid.startOnLoad)
@@ -204,7 +204,7 @@ exports.parseError = global.mermaid.parseError
 exports.contentLoaded = function () {
   var config
     // Check state of start config mermaid namespace
-  if (typeof mermaid_config !== 'undefined') {
+  if (typeof global.mermaid_config !== 'undefined') {
     if (equals(false, global.mermaid_config.htmlLabels)) {
       global.mermaid.htmlLabels = false
     }

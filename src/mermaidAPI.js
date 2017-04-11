@@ -36,7 +36,7 @@ var gitGraphRenderer = require('./diagrams/gitGraph/gitGraphRenderer')
 var gitGraphAst = require('./diagrams/gitGraph/gitGraphAst')
 var d3 = require('./d3')
 
-SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function (toElement) {
+window.SVGElement.prototype.getTransformToElement = window.SVGElement.prototype.getTransformToElement || function (toElement) {
   return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM())
 }
 /**
@@ -222,15 +222,15 @@ var config = {
       }],
             // Monday a week
       ['w. %U', function (d) {
-        return d.getDay() == 1
+        return d.getDay() === 1
       }],
             // Day within a week (not monday)
       ['%a %d', function (d) {
-        return d.getDay() && d.getDate() != 1
+        return d.getDay() && d.getDate() !== 1
       }],
             // within a month
       ['%b %d', function (d) {
-        return d.getDate() != 1
+        return d.getDate() !== 1
       }],
             // Month
       ['%m-%y', function (d) {
@@ -316,7 +316,7 @@ exports.encodeEntities = function (text) {
     return innerTxt
   })
 
-  txt = txt.replace(/#\w+\;/g, function (s) {
+  txt = txt.replace(/#\w+;/g, function (s) {
     var innerTxt = s.substring(1, s.length - 1)
 
     var isInt = /^\+?\d+$/.test(innerTxt)
@@ -333,10 +333,10 @@ exports.encodeEntities = function (text) {
 exports.decodeEntities = function (text) {
   var txt = text
 
-  txt = txt.replace(/\ﬂ\°\°/g, function () {
+  txt = txt.replace(/ﬂ°°/g, function () {
     return '&#'
   })
-  txt = txt.replace(/\ﬂ\°/g, function () {
+  txt = txt.replace(/ﬂ°/g, function () {
     return '&'
   })
   txt = txt.replace(/¶ß/g, function () {
@@ -380,7 +380,7 @@ var render = function (id, txt, cb, container) {
             .attr('xmlns', 'http://www.w3.org/2000/svg')
             .append('g')
   } else {
-    var element = document.querySelector('#' + 'd' + id)
+    const element = document.querySelector('#' + 'd' + id)
     if (element) {
       element.innerHTML = ''
     }
