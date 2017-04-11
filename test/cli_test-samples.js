@@ -37,6 +37,7 @@ function execCmd (cmd, verify) {
 
 function verifyNoError (t) {
   return function (error, stdout, stderr) {
+    t.ok(!error, 'no error')
     t.notOk(stderr, 'no stderr')
     t.end()
   }
@@ -44,25 +45,26 @@ function verifyNoError (t) {
 
 function verifyError (t) {
   return function (error, stdout, stderr) {
-    t.ok(stderr, 'should get error')
+    t.ok(!error, 'no error')
+    t.ok(stderr, 'should get stderr')
     t.end()
   }
 }
 
 test('mermaid cli help', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['--help']
   execMermaid(args.join(' '), verifyNoError(t))
 })
 
 test('mermaid cli help', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['--badopt']
   execMermaid(args.join(' '), verifyError(t))
 })
 
 test.skip('sequence syntax error', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['--svg',
     testDir + 'sequence_err.mmd'
   ]
@@ -71,7 +73,7 @@ test.skip('sequence syntax error', function (t) {
 
 ['', 'fo', 'tspan', 'old'].forEach(function (textPlacement) {
   test('sequence svg text placelment: ' + textPlacement, function (t) {
-    t.plan(1)
+    t.plan(2)
     const args = ['--svg',
       '--outputDir=' + testDir,
       '--outputSuffix=' + (textPlacement ? '_' + textPlacement : '') + '.actual',
@@ -83,7 +85,7 @@ test.skip('sequence syntax error', function (t) {
 })
 
 test('sequence png', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['--png',
     testDir + 'sequence_text.mmd'
   ]
@@ -91,7 +93,7 @@ test('sequence png', function (t) {
 })
 
 test('flowchart svg text', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['--svg',
     '--css=dist/mermaid.css',
     '--width=500',
@@ -102,7 +104,7 @@ test('flowchart svg text', function (t) {
 
 ['svg', 'png'].forEach(function (format) {
   test('flowchart ' + format + 'text2', function (t) {
-    t.plan(1)
+    t.plan(2)
     const args = ['--' + format,
       '--css=dist/mermaid.forest.css',
       '--width=500',
@@ -113,7 +115,7 @@ test('flowchart svg text', function (t) {
 })
 
 test('gantt axis formatter svg', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['--svg',
     '--css=dist/mermaid.css',
     '--width=500',
@@ -124,7 +126,7 @@ test('gantt axis formatter svg', function (t) {
 })
 
 test('gitgraph sample svg', function (t) {
-  t.plan(1)
+  t.plan(2)
   const args = ['-s', '-v',
     '--width=500',
     testDir + 'gitgraph.mmd'
@@ -133,7 +135,7 @@ test('gitgraph sample svg', function (t) {
 })
 
 test('load sample.html in phantomjs and save screenshot png', function (t) {
-  t.plan(1)
+  t.plan(2)
   execPhantomjsToLoadHtmlSaveScreenshotPng(testDir + 'samples.html',
     verifyNoError(t))
 })

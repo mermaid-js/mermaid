@@ -102,6 +102,19 @@ test('setting a css source file succeeds', function (t) {
   })
 })
 
+test('setting an output directory incorrectly causes an error', function (t) {
+  t.plan(1)
+
+  const cli = require(cliPath)
+  const argv = ['-o']
+
+  cli.parse(argv, function (err) {
+    t.ok(err, 'an error is raised')
+
+    t.end()
+  })
+})
+
 test('a callback function is called after parsing', function (t) {
   t.plan(3)
 
@@ -112,19 +125,6 @@ test('a callback function is called after parsing', function (t) {
     t.ok(!err, 'no err')
     t.ok(true, 'callback was called')
     t.deepEqual(argv, opts.files, 'options are as expected')
-
-    t.end()
-  })
-})
-
-test('setting an output directory incorrectly causes an error', function (t) {
-  t.plan(1)
-
-  const cli = require(cliPath)
-  const argv = ['-o']
-
-  cli.parse(argv, function (err) {
-    t.ok(err, 'an error is raised')
 
     t.end()
   })
