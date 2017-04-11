@@ -1,0 +1,3 @@
+--ignore-dir=dist
+--ignore-dir=docs
+--ignore-dir=editor
