@@ -1,3 +1,4 @@
+/* eslint-env jasmine */
 // var proxyquire = require('proxyquire');
 // var newD3;
 /// **

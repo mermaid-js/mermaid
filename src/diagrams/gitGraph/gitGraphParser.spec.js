@@ -1,3 +1,4 @@
+/* eslint-env jasmine */
 var parser = require('./parser/gitGraph').parser
 var ast = require('./gitGraphAst.js')
 describe('when parsing a gitGraph', function () {

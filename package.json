@@ -38,6 +38,13 @@
   },
   "author": "Knut Sveidqvist",
   "license": "MIT",
+  "standard": {
+    "ignore": [
+      "**/parser/*.js",
+      "src/d3.js",
+      "dist/*.js"
+    ]
+  },
   "dependencies": {
     "chalk": "^1.1.3",
     "d3": "3.5.6",

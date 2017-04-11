@@ -1,3 +1,4 @@
+/* eslint-env qunit */
 require.config({
   paths: {
     mermaid: '../../dist/mermaid'

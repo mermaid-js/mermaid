@@ -1,3 +1,4 @@
+/* eslint-env jasmine */
 /**
  * Created by knut on 14-11-18.
  */

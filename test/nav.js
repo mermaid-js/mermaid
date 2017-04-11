@@ -1,7 +1,7 @@
 /**
  * Created by knut on 2015-09-15.
  */
-var navApp = angular.module('navApp', [])
+var navApp = window.angular.module('navApp', [])
 
 navApp.controller('NavAppCtrl', function ($scope) {
   $scope.items = [
@@ -14,6 +14,6 @@ navApp.controller('NavAppCtrl', function ($scope) {
   $scope.frameUrl = 'web.html'
 
   $scope.go = function (url) {
-    alert(url)
+    window.alert(url)
   }
 })
