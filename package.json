@@ -42,7 +42,9 @@
     "ignore": [
       "**/parser/*.js",
       "src/d3.js",
-      "dist/*.js"
+      "dist/**/*.js",
+      "docs/**/*.js",
+      "editor/**/*.js"
     ]
   },
   "dependencies": {

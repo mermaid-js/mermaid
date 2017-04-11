@@ -10,16 +10,16 @@
  * => [2011-3-3T20:24:4.810 error (5021)] booom
  */
 
-const LEVELS = {
-  debug: 1,
-  info: 2,
-  warn: 3,
-  error: 4,
-  fatal: 5,
-  default: 5
-}
+// const LEVELS = {
+//   debug: 1,
+//   info: 2,
+//   warn: 3,
+//   error: 4,
+//   fatal: 5,
+//   default: 5
+// }
 
-var defaultLevel = LEVELS.error
+// var defaultLevel = LEVELS.error
 
 // exports.setLogLevel = function (level) {
 //     defaultLevel = level;
@@ -73,17 +73,20 @@ var fatal = function () {}
  *    * fatal: 5
  */
 exports.setLogLevel = function (level) {
-  switch (level) {
-    case 1:
-      exports.Log.debug = window.console.debug.bind(window.console, format('DEBUG', name), 'color:grey;', 'color: green;')
-    case 2:
-      exports.Log.info = window.console.debug.bind(window.console, format('INFO', name), 'color:grey;', 'color: info;')
-    case 3:
-      exports.Log.warn = window.console.debug.bind(window.console, format('INFO', name), 'color:grey;', 'color: orange;')
-    case 4:
-      exports.Log.error = window.console.debug.bind(window.console, format('ERROR', name), 'color:grey;', 'color: red;')
-    case 5:
-      exports.Log.fatal = window.console.debug.bind(window.console, format('FATAL', name), 'color:grey;', 'color: red;')
+  if (level < 6) {
+    exports.Log.fatal = window.console.debug.bind(window.console, format('FATAL'), 'color:grey;', 'color: red;')
+  }
+  if (level < 5) {
+    exports.Log.error = window.console.debug.bind(window.console, format('ERROR'), 'color:grey;', 'color: red;')
+  }
+  if (level < 4) {
+    exports.Log.warn = window.console.debug.bind(window.console, format('WARN'), 'color:grey;', 'color: orange;')
+  }
+  if (level < 3) {
+    exports.Log.info = window.console.debug.bind(window.console, format('INFO'), 'color:grey;', 'color: info;')
+  }
+  if (level < 2) {
+    exports.Log.debug = window.console.debug.bind(window.console, format('DEBUG'), 'color:grey;', 'color: green;')
   }
 }
 
