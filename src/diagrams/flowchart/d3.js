@@ -1,6 +1,6 @@
 /* global window */
 
-/*var d3;
+/* var d3;
 
 if (require) {
   try {
@@ -12,4 +12,4 @@ if (!d3) {
   d3 = window.d3;
 }
 
-module.exports = d3;*/
+module.exports = d3; */
