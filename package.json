@@ -16,7 +16,7 @@
   "scripts": {
     "upgrade": "ncu -ua && yarn upgrade",
     "live": "live-server ./test/examples",
-    "lint": "node node_modules/eslint/bin/eslint.js src",
+    "lint": "node_modules/.bin/standard",
     "jison": "gulp jison_legacy",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
     "watch": "source  ./scripts/watch.sh",
