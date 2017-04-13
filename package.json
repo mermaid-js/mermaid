@@ -13,13 +13,21 @@
   "bin": {
     "mermaid": "./bin/mermaid.js"
   },
+  "watch": {
+    "lint": {
+      "patterns": ["bin", "gulp", "lib", "src", "test", "*.js"],
+      "extensions": "js",
+      "ignore": ["src/d3.js", "**/parser/*.js"]
+    }
+  },
   "scripts": {
     "upgrade": "ncu -ua && yarn upgrade",
     "live": "live-server ./test/examples",
     "lint": "node_modules/.bin/standard",
     "jison": "gulp jison_legacy",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
-    "watch": "source  ./scripts/watch.sh",
+    "watch": "npm-watch",
+    "old_watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
     "jasmine": "yarn run jison && node node_modules/jasmine-es6/bin/jasmine.js",
@@ -117,6 +125,7 @@
     "marked": "^0.3.6",
     "mock-browser": "^0.92.14",
     "npm-check-updates": "^2.10.5",
+    "npm-watch": "^0.1.8",
     "path": "^0.12.7",
     "phantomjs": "^2.1.7",
     "proxyquire": "^1.7.11",

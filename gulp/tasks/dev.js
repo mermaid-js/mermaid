@@ -25,8 +25,7 @@ gulp.task('live-server', function () {
 
 gulp.task('watch2', ['live-server'], function () {
   return shell.task([
-    'watchify src/mermaid.js    -s mermaid   -o dist/mermaid.js',
-    'node node_modules/eslint-watch/bin/esw src -w'
+    'watchify src/mermaid.js    -s mermaid   -o dist/mermaid.js'
   ])
 })
 
