@@ -109,7 +109,7 @@ module.exports.draw = function (text, id) {
     drawToday(leftPadding, topPadding, pageWidth, pageHeight)
   }
 
-  function drawRects (theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) { // eslint-disable-line no-unused-vars
+  function drawRects (theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
     svg.append('g')
       .selectAll('rect')
       .data(theArray)
@@ -123,7 +123,7 @@ module.exports.draw = function (text, id) {
         return w - conf.rightPadding / 2
       })
       .attr('height', theGap)
-      .attr('class', function (d) { // eslint-disable-line no-unused-vars
+      .attr('class', function (d) {
         for (var i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             return 'section section' + (i % conf.numberSectionStyles)
