@@ -172,7 +172,7 @@ var setClickFun = function (id, functionName) {
       var elem = d3.select(element).select('#' + id)
       if (elem !== null) {
         elem.on('click', function () {
-          eval(functionName + '(\'' + id + '\')') // jshint ignore:line
+          window[functionName](id)
         })
       }
     })
@@ -314,7 +314,8 @@ exports.defaultStyle = function () {
  */
 exports.addSubGraph = function (list, title) {
   function uniq (a) {
-    var prims = {'boolean': {}, 'number': {}, 'string': {}}, objs = []
+    var prims = {'boolean': {}, 'number': {}, 'string': {}}
+    var objs = []
 
     return a.filter(function (item) {
       var type = typeof item

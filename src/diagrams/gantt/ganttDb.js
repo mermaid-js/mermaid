@@ -70,7 +70,7 @@ var getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
     // Test for after
-  var re = /^after\s+([\d\w\-]+)/
+  var re = /^after\s+([\d\w-]+)/
   var afterStatement = re.exec(str.trim())
 
   if (afterStatement !== null) {

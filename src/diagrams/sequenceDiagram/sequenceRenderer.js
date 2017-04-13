@@ -82,7 +82,7 @@ exports.bounds = {
         _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min)
         _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max)
 
-        if (!(type == 'activation')) {
+        if (!(type === 'activation')) {
           _self.updateVal(item, 'startx', startx - n * conf.boxMargin, Math.min)
           _self.updateVal(item, 'stopx', stopx + n * conf.boxMargin, Math.max)
 
@@ -308,7 +308,7 @@ module.exports.setConf = function (cnf) {
 
 var actorActivations = function (actor) {
   return module.exports.bounds.activations.filter(function (activation) {
-    return activation.actor == actor
+    return activation.actor === actor
   })
 }
 
@@ -360,7 +360,7 @@ module.exports.draw = function (text, id) {
     exports.bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
   }
 
-  var lastMsg
+  // var lastMsg
 
     // Draw the messages/signals
   messages.forEach(function (msg) {
@@ -448,7 +448,7 @@ module.exports.draw = function (text, id) {
         break
       default:
         try {
-          lastMsg = msg
+          // lastMsg = msg
           exports.bounds.bumpVerticalPos(conf.messageMargin)
           var fromBounds = actorFlowVerticaBounds(msg.from)
           var toBounds = actorFlowVerticaBounds(msg.to)

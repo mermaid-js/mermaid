@@ -24,7 +24,7 @@ function getId () {
 
 function isfastforwardable (currentCommit, otherCommit) {
   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id)
-  while (currentCommit.seq <= otherCommit.seq && currentCommit != otherCommit) {
+  while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
         // only if other branch has more commits
     if (otherCommit.parent == null) break
     if (Array.isArray(otherCommit.parent)) {
@@ -36,7 +36,7 @@ function isfastforwardable (currentCommit, otherCommit) {
     }
   }
   log.debug(currentCommit.id, otherCommit.id)
-  return currentCommit.id == otherCommit.id
+  return currentCommit.id === otherCommit.id
 }
 
 function isReachableFrom (currentCommit, otherCommit) {
@@ -118,7 +118,7 @@ exports.reset = function (commitRef) {
   log.debug('in reset', commitRef)
   var ref = commitRef.split(':')[0]
   var parentCount = parseInt(commitRef.split(':')[1])
-  var commit = ref == 'HEAD' ? head : commits[branches[ref]]
+  var commit = ref === 'HEAD' ? head : commits[branches[ref]]
   log.debug(commit, parentCount)
   while (parentCount > 0) {
     commit = commits[commit.parent]
@@ -148,7 +148,7 @@ function prettyPrintCommitHistory (commitArr) {
   var commit = _.maxBy(commitArr, 'seq')
   var line = ''
   _.each(commitArr, function (c) {
-    if (c == commit) {
+    if (c === commit) {
       line += '\t*'
     } else {
       line += '\t|'
@@ -156,7 +156,7 @@ function prettyPrintCommitHistory (commitArr) {
   })
   var label = [line, commit.id, commit.seq]
   _.each(branches, function (v, k) {
-    if (v == commit.id) label.push(k)
+    if (v === commit.id) label.push(k)
   })
   log.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {

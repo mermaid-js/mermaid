@@ -7,14 +7,14 @@ var proxyquire = require('proxyquire')
 // var log = require('../../logger').create();
 
 var sq = require('./parser/sequenceDiagram').parser
-var newD3
+var NewD3
 
 var d3 = {
   select: function () {
-    return new newD3()
+    return new NewD3()
   },
   selectAll: function () {
-    return new newD3()
+    return new NewD3()
   }
 }
 // var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
@@ -773,10 +773,10 @@ describe('when rendering a sequenceDiagram', function () {
         // };
         // sq.yy.parseError = parseError;
 
-    newD3 = function () {
+    NewD3 = function () {
       var o = {
         append: function () {
-          return newD3()
+          return NewD3()
         },
         attr: function () {
           return this
@@ -998,10 +998,10 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
         // };
         // sq.yy.parseError = parseError;
 
-    newD3 = function () {
+    NewD3 = function () {
       var o = {
         append: function () {
-          return newD3()
+          return NewD3()
         },
         attr: function () {
           return this

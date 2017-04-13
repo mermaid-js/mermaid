@@ -41,15 +41,15 @@ module.exports.draw = function (text, id) {
 
   var taskArray = gantt.yy.getTasks()
 
-    // Set height based on number of tasks
+  // Set height based on number of tasks
   var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding
 
   elem.setAttribute('height', '100%')
-    // Set viewBox
+  // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h)
   var svg = d3.select('#' + id)
 
-    // var dateFormat = d3.time.format('%Y-%m-%d');
+  // var dateFormat = d3.time.format('%Y-%m-%d');
 
   var startDate = d3.min(taskArray, function (d) {
     return d.startTime
@@ -58,16 +58,16 @@ module.exports.draw = function (text, id) {
     return d.endTime
   })
 
-    // Set timescale
+  // Set timescale
   var timeScale = d3.time.scale()
-        .domain([d3.min(taskArray, function (d) {
-          return d.startTime
-        }),
-          d3.max(taskArray, function (d) {
-            return d.endTime
-          })])
-        .rangeRound([0, w - conf.leftPadding - conf.rightPadding])
-        // .nice(d3.time.monday);
+    .domain([d3.min(taskArray, function (d) {
+      return d.startTime
+    }),
+      d3.max(taskArray, function (d) {
+        return d.endTime
+      })])
+    .rangeRound([0, w - conf.leftPadding - conf.rightPadding])
+  // .nice(d3.time.monday);
 
   var categories = []
 
@@ -87,10 +87,10 @@ module.exports.draw = function (text, id) {
   }
 
   svg.append('text')
-        .text(gantt.yy.getTitle())
-        .attr('x', w / 2)
-        .attr('y', conf.titleTopMargin)
-        .attr('class', 'titleText')
+    .text(gantt.yy.getTitle())
+    .attr('x', w / 2)
+    .attr('y', conf.titleTopMargin)
+    .attr('class', 'titleText')
 
   function makeGant (tasks, pageWidth, pageHeight) {
     var barHeight = conf.barHeight
@@ -99,9 +99,9 @@ module.exports.draw = function (text, id) {
     var leftPadding = conf.leftPadding
 
     var colorScale = d3.scale.linear()
-            .domain([0, categories.length])
-            .range(['#00B9FA', '#F95002'])
-            .interpolate(d3.interpolateHcl)
+      .domain([0, categories.length])
+      .range(['#00B9FA', '#F95002'])
+      .interpolate(d3.interpolateHcl)
 
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight)
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight)
@@ -111,148 +111,148 @@ module.exports.draw = function (text, id) {
 
   function drawRects (theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) { // eslint-disable-line no-unused-vars
     svg.append('g')
-            .selectAll('rect')
-            .data(theArray)
-            .enter()
-            .append('rect')
-            .attr('x', 0)
-            .attr('y', function (d, i) {
-              return i * theGap + theTopPad - 2
-            })
-            .attr('width', function () {
-              return w - conf.rightPadding / 2
-            })
-            .attr('height', theGap)
-            .attr('class', function (d) { // eslint-disable-line no-unused-vars
-              for (var i = 0; i < categories.length; i++) {
-                if (d.type === categories[i]) {
-                  return 'section section' + (i % conf.numberSectionStyles)
-                }
-              }
-              return 'section section0'
-            })
+      .selectAll('rect')
+      .data(theArray)
+      .enter()
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', function (d, i) {
+        return i * theGap + theTopPad - 2
+      })
+      .attr('width', function () {
+        return w - conf.rightPadding / 2
+      })
+      .attr('height', theGap)
+      .attr('class', function (d) { // eslint-disable-line no-unused-vars
+        for (var i = 0; i < categories.length; i++) {
+          if (d.type === categories[i]) {
+            return 'section section' + (i % conf.numberSectionStyles)
+          }
+        }
+        return 'section section0'
+      })
 
     var rectangles = svg.append('g')
-            .selectAll('rect')
-            .data(theArray)
-            .enter()
+      .selectAll('rect')
+      .data(theArray)
+      .enter()
 
     rectangles.append('rect')
-                .attr('rx', 3)
-                .attr('ry', 3)
-                .attr('x', function (d) {
-                  return timeScale(d.startTime) + theSidePad
-                })
-                .attr('y', function (d, i) {
-                  return i * theGap + theTopPad
-                })
-                .attr('width', function (d) {
-                  return (timeScale(d.endTime) - timeScale(d.startTime))
-                })
-                .attr('height', theBarHeight)
-                .attr('class', function (d) {
-                  var res = 'task '
+      .attr('rx', 3)
+      .attr('ry', 3)
+      .attr('x', function (d) {
+        return timeScale(d.startTime) + theSidePad
+      })
+      .attr('y', function (d, i) {
+        return i * theGap + theTopPad
+      })
+      .attr('width', function (d) {
+        return (timeScale(d.endTime) - timeScale(d.startTime))
+      })
+      .attr('height', theBarHeight)
+      .attr('class', function (d) {
+        var res = 'task '
 
-                  var secNum = 0
-                  for (var i = 0; i < categories.length; i++) {
-                    if (d.type === categories[i]) {
-                      secNum = (i % conf.numberSectionStyles)
-                    }
-                  }
+        var secNum = 0
+        for (var i = 0; i < categories.length; i++) {
+          if (d.type === categories[i]) {
+            secNum = (i % conf.numberSectionStyles)
+          }
+        }
 
-                  if (d.active) {
-                    if (d.crit) {
-                      return res + ' activeCrit' + secNum
-                    } else {
-                      return res + ' active' + secNum
-                    }
-                  }
+        if (d.active) {
+          if (d.crit) {
+            return res + ' activeCrit' + secNum
+          } else {
+            return res + ' active' + secNum
+          }
+        }
 
-                  if (d.done) {
-                    if (d.crit) {
-                      return res + ' doneCrit' + secNum
-                    } else {
-                      return res + ' done' + secNum
-                    }
-                  }
+        if (d.done) {
+          if (d.crit) {
+            return res + ' doneCrit' + secNum
+          } else {
+            return res + ' done' + secNum
+          }
+        }
 
-                  if (d.crit) {
-                    return res + ' crit' + secNum
-                  }
+        if (d.crit) {
+          return res + ' crit' + secNum
+        }
 
-                  return res + ' task' + secNum
-                })
+        return res + ' task' + secNum
+      })
 
     rectangles.append('text')
-            .text(function (d) {
-              return d.task
-            })
-            .attr('font-size', conf.fontSize)
-            // .attr('font-family',conf.fontFamily)
-            .attr('x', function (d) {
-              var startX = timeScale(d.startTime),
-                endX = timeScale(d.endTime),
-                textWidth = this.getBBox().width
+      .text(function (d) {
+        return d.task
+      })
+      .attr('font-size', conf.fontSize)
+      // .attr('font-family',conf.fontFamily)
+      .attr('x', function (d) {
+        var startX = timeScale(d.startTime)
+        var endX = timeScale(d.endTime)
+        var textWidth = this.getBBox().width
 
-                // Check id text width > width of rectangle
-              if (textWidth > (endX - startX)) {
-                if (endX + textWidth + 1.5 * conf.leftPadding > w) {
-                  return startX + theSidePad - 5
-                } else {
-                  return endX + theSidePad + 5
-                }
-              } else {
-                return (endX - startX) / 2 + startX + theSidePad
-              }
-            })
-            .attr('y', function (d, i) {
-              return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad
-            })
-            // .attr('text-anchor', 'middle')
-            .attr('text-height', theBarHeight)
-            .attr('class', function (d) {
-              var startX = timeScale(d.startTime),
-                endX = timeScale(d.endTime),
-                textWidth = this.getBBox().width
-              var secNum = 0
-              for (var i = 0; i < categories.length; i++) {
-                if (d.type === categories[i]) {
-                  secNum = (i % conf.numberSectionStyles)
-                }
-              }
+        // Check id text width > width of rectangle
+        if (textWidth > (endX - startX)) {
+          if (endX + textWidth + 1.5 * conf.leftPadding > w) {
+            return startX + theSidePad - 5
+          } else {
+            return endX + theSidePad + 5
+          }
+        } else {
+          return (endX - startX) / 2 + startX + theSidePad
+        }
+      })
+      .attr('y', function (d, i) {
+        return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad
+      })
+      // .attr('text-anchor', 'middle')
+      .attr('text-height', theBarHeight)
+      .attr('class', function (d) {
+        var startX = timeScale(d.startTime)
+        var endX = timeScale(d.endTime)
+        var textWidth = this.getBBox().width
+        var secNum = 0
+        for (var i = 0; i < categories.length; i++) {
+          if (d.type === categories[i]) {
+            secNum = (i % conf.numberSectionStyles)
+          }
+        }
 
-              var taskType = ''
-              if (d.active) {
-                if (d.crit) {
-                  taskType = 'activeCritText' + secNum
-                } else {
-                  taskType = 'activeText' + secNum
-                }
-              }
+        var taskType = ''
+        if (d.active) {
+          if (d.crit) {
+            taskType = 'activeCritText' + secNum
+          } else {
+            taskType = 'activeText' + secNum
+          }
+        }
 
-              if (d.done) {
-                if (d.crit) {
-                  taskType = taskType + ' doneCritText' + secNum
-                } else {
-                  taskType = taskType + ' doneText' + secNum
-                }
-              } else {
-                if (d.crit) {
-                  taskType = taskType + ' critText' + secNum
-                }
-              }
+        if (d.done) {
+          if (d.crit) {
+            taskType = taskType + ' doneCritText' + secNum
+          } else {
+            taskType = taskType + ' doneText' + secNum
+          }
+        } else {
+          if (d.crit) {
+            taskType = taskType + ' critText' + secNum
+          }
+        }
 
-                // Check id text width > width of rectangle
-              if (textWidth > (endX - startX)) {
-                if (endX + textWidth + 1.5 * conf.leftPadding > w) {
-                  return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType
-                } else {
-                  return 'taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType
-                }
-              } else {
-                return 'taskText taskText' + secNum + ' ' + taskType
-              }
-            })
+        // Check id text width > width of rectangle
+        if (textWidth > (endX - startX)) {
+          if (endX + textWidth + 1.5 * conf.leftPadding > w) {
+            return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType
+          } else {
+            return 'taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType
+          }
+        } else {
+          return 'taskText taskText' + secNum + ' ' + taskType
+        }
+      })
   }
 
   function makeGrid (theSidePad, theTopPad, w, h) {
@@ -263,7 +263,7 @@ module.exports.draw = function (text, id) {
       [':%S', function (d) {
         return d.getSeconds()
       }],
-            // Within a hour
+      // Within a hour
       ['h1 %I:%M', function (d) {
         return d.getMinutes()
       }]]
@@ -273,20 +273,20 @@ module.exports.draw = function (text, id) {
       }]]
 
     var mid = [
-            // Within a day
+      // Within a day
       ['%I:%M', function (d) {
         return d.getHours()
       }],
-            // Day within a week (not monday)
+      // Day within a week (not monday)
       ['%a %d', function (d) {
-                // return d.getDay() ==1;
-        return d.getDay() && d.getDate() != 1
+        // return d.getDay() ==1;
+        return d.getDay() && d.getDate() !== 1
       }],
-            // within a month
+      // within a month
       ['%b %d', function (d) {
-        return d.getDate() != 1
+        return d.getDate() !== 1
       }],
-            // Month
+      // Month
       ['%B', function (d) {
         return d.getMonth()
       }]
@@ -304,25 +304,25 @@ module.exports.draw = function (text, id) {
     formatter = pre.concat(mid).concat(post)
 
     var xAxis = d3.svg.axis()
-                .scale(timeScale)
-                .orient('bottom')
-                .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-                .tickFormat(d3.time.format.multi(formatter))
+      .scale(timeScale)
+      .orient('bottom')
+      .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
+      .tickFormat(d3.time.format.multi(formatter))
 
     if (daysInChart > 7 && daysInChart < 230) {
       xAxis = xAxis.ticks(d3.time.monday.range)
     }
 
     svg.append('g')
-            .attr('class', 'grid')
-            .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-            .call(xAxis)
-            .selectAll('text')
-            .style('text-anchor', 'middle')
-            .attr('fill', '#000')
-            .attr('stroke', 'none')
-            .attr('font-size', 10)
-            .attr('dy', '1em')
+      .attr('class', 'grid')
+      .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
+      .call(xAxis)
+      .selectAll('text')
+      .style('text-anchor', 'middle')
+      .attr('fill', '#000')
+      .attr('stroke', 'none')
+      .attr('font-size', 10)
+      .attr('dy', '1em')
   }
 
   function vertLabels (theGap, theTopPad) {
@@ -334,52 +334,53 @@ module.exports.draw = function (text, id) {
     }
 
     svg.append('g') // without doing this, impossible to put grid lines behind text
-            .selectAll('text')
-            .data(numOccurances)
-            .enter()
-            .append('text')
-            .text(function (d) {
-              return d[0]
-            })
-            .attr('x', 10)
-            .attr('y', function (d, i) {
-              if (i > 0) {
-                for (var j = 0; j < i; j++) {
-                  prevGap += numOccurances[i - 1][1]
-                        // log.debug(prevGap);
-                  return d[1] * theGap / 2 + prevGap * theGap + theTopPad
-                }
-              } else {
-                return d[1] * theGap / 2 + theTopPad
-              }
-            })
-            .attr('class', function (d) {
-              for (var i = 0; i < categories.length; i++) {
-                if (d[0] === categories[i]) {
-                  return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles)
-                }
-              }
-              return 'sectionTitle'
-            })
+      .selectAll('text')
+      .data(numOccurances)
+      .enter()
+      .append('text')
+      .text(function (d) {
+        return d[0]
+      })
+      .attr('x', 10)
+      .attr('y', function (d, i) {
+        if (i > 0) {
+          for (var j = 0; j < i; j++) {
+            prevGap += numOccurances[i - 1][1]
+            // log.debug(prevGap);
+            return d[1] * theGap / 2 + prevGap * theGap + theTopPad
+          }
+        } else {
+          return d[1] * theGap / 2 + theTopPad
+        }
+      })
+      .attr('class', function (d) {
+        for (var i = 0; i < categories.length; i++) {
+          if (d[0] === categories[i]) {
+            return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles)
+          }
+        }
+        return 'sectionTitle'
+      })
   }
 
   function drawToday (theSidePad, theTopPad, w, h) {
     var todayG = svg.append('g')
-            .attr('class', 'today')
+      .attr('class', 'today')
 
     var today = new Date()
 
     todayG.append('line')
-                .attr('x1', timeScale(today) + theSidePad)
-                .attr('x2', timeScale(today) + theSidePad)
-                .attr('y1', conf.titleTopMargin)
-                .attr('y2', h - conf.titleTopMargin)
-                .attr('class', 'today')
+      .attr('x1', timeScale(today) + theSidePad)
+      .attr('x2', timeScale(today) + theSidePad)
+      .attr('y1', conf.titleTopMargin)
+      .attr('y2', h - conf.titleTopMargin)
+      .attr('class', 'today')
   }
 
-// from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
+  // from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
   function checkUnique (arr) {
-    var hash = {}, result = []
+    var hash = {}
+    var result = []
     for (var i = 0, l = arr.length; i < l; ++i) {
       if (!hash.hasOwnProperty(arr[i])) { // it works with objects! in FF, at least
         hash[arr[i]] = true
@@ -389,17 +390,17 @@ module.exports.draw = function (text, id) {
     return result
   }
 
-// from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
+  // from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
   function getCounts (arr) {
-    var i = arr.length, // var to loop over
-      obj = {} // obj to store results
+    var i = arr.length // var to loop over
+    var obj = {} // obj to store results
     while (i) {
       obj[arr[--i]] = (obj[arr[i]] || 0) + 1 // count occurrences
     }
     return obj
   }
 
-// get specific from everything
+  // get specific from everything
   function getCount (word, arr) {
     return getCounts(arr)[word] || 0
   }

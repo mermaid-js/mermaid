@@ -73,9 +73,9 @@ function svgDrawLine (svg, points, colorIdx, interpolate) {
 // Pass in the element and its pre-transform coords
 function getElementCoords (element, coords) {
   coords = coords || element.node().getBBox()
-  var ctm = element.node().getCTM(),
-    xn = ctm.e + coords.x * ctm.a,
-    yn = ctm.f + coords.y * ctm.d
+  var ctm = element.node().getCTM()
+  var xn = ctm.e + coords.x * ctm.a
+  var yn = ctm.f + coords.y * ctm.d
     // log.debug(ctm, coords);
   return {
     left: xn,
@@ -96,7 +96,7 @@ function svgDrawLineForCommits (svg, fromId, toId, direction, color) {
             //  +--------
             //          + (fromBbox)
       if (fromBbox.left - toBbox.left > config.nodeSpacing) {
-        var lineStart = { x: fromBbox.left - config.nodeSpacing, y: toBbox.top + toBbox.height / 2}
+        var lineStart = { x: fromBbox.left - config.nodeSpacing, y: toBbox.top + toBbox.height / 2 }
         var lineEnd = { x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height / 2 }
         svgDrawLine(svg, [lineStart, lineEnd], color, 'linear')
         svgDrawLine(svg, [
@@ -126,7 +126,7 @@ function svgDrawLineForCommits (svg, fromId, toId, direction, color) {
             //      |
             //              +   (toBbox)
       if (toBbox.top - fromBbox.top > config.nodeSpacing) {
-        lineStart = { x: toBbox.left + toBbox.width / 2, y: fromBbox.top + fromBbox.height + config.nodeSpacing}
+        lineStart = { x: toBbox.left + toBbox.width / 2, y: fromBbox.top + fromBbox.height + config.nodeSpacing }
         lineEnd = { x: toBbox.left + toBbox.width / 2, y: toBbox.top }
         svgDrawLine(svg, [lineStart, lineEnd], color, 'linear')
         svgDrawLine(svg, [
