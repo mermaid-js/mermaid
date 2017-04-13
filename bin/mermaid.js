@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-var fs = require('fs'),
-  chalk = require('chalk'),
-  error = chalk.bold.red,
-  cli = require('../lib/cli.js'),
-  lib = require('../lib')
+// var fs = require('fs')
+var chalk = require('chalk')
+var error = chalk.bold.red
+var cli = require('../lib/cli.js')
+var lib = require('../lib')
 
 cli.parse(process.argv.slice(2), function (err, message, options) {
   if (err) {

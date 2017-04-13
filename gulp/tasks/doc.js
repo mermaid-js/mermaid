@@ -1,8 +1,8 @@
 var gulp = require('gulp')
-var mdvars = require('gulp-mdvars')
+// var mdvars = require('gulp-mdvars')
 var vartree = require('gulp-vartree')
 var gmarked = require('gulp-marked')
-var marked = require('marked')
+// var marked = require('marked')
 var concat = require('gulp-concat')
 var frontMatter = require('gulp-front-matter')
 var hogan = require('hogan.js')
@@ -70,7 +70,8 @@ gulp.task('vartree', ['dox', 'copyContent', 'copySite'], function () {
           // Run each file through a template
           .pipe(es.map(function (file, cb) {
               // console.log('file:',fileList);
-            file.contents = new Buffer(template.render(file))
+            // file.contents = new Buffer(template.render(file))
+            file.contents = Buffer.from(template.render(file))
 
             cb(null, file)
           }))
@@ -82,9 +83,9 @@ gulp.task('vartree', ['dox', 'copyContent', 'copySite'], function () {
 
 var dox = require('gulp-dox')
 
-var doxJson2Md = require('../plugins/doxJson2Md')
+// var doxJson2Md = require('../plugins/doxJson2Md')
 var map = require('map-stream')
-var ext_replace = require('gulp-ext-replace')
+var extReplace = require('gulp-ext-replace')
 
 gulp.task('dox', function () {
     // return  gulp.src(['src/**/*.js','!src/**/parser/*.js','!src/**/*.spec.js'])
@@ -102,10 +103,11 @@ gulp.task('dox', function () {
                 // console.log(json[i].description.full);
             str = str + json[i].description.full + '\n'
           }
-          file.contents = new Buffer(str)
+          // file.contents = new Buffer(str)
+          file.contents = Buffer.from(str)
           done(null, file)
         }))
-        .pipe(ext_replace('.md'))
+        .pipe(extReplace('.md'))
         .pipe(gulp.dest('./build/content'))
 })
 

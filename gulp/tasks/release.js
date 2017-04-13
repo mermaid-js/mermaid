@@ -1,5 +1,6 @@
 var gulp = require('gulp')
 var bump = require('gulp-bump')
+var tagVersion = require('gulp-tag-version')
 
 gulp.task('bump', function () {
   gulp.src('./bw.json')
@@ -10,7 +11,7 @@ gulp.task('bump', function () {
 // Assuming there's "version: 1.2.3" in package.json,
 // tag the last commit as "v1.2.3"//
 gulp.task('tag', function () {
-  return gulp.src(['./package.json']).pipe(tag_version())
+  return gulp.src(['./package.json']).pipe(tagVersion())
 })
 
 /**

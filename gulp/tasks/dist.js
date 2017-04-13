@@ -1,12 +1,12 @@
 var gulp = require('gulp')
 var browserify = require('gulp-browserify')
-var shell = require('gulp-shell')
+// var shell = require('gulp-shell')
 
 var concat = require('gulp-concat')
 var uglify = require('gulp-uglify')
 var extReplace = require('gulp-ext-replace')
 var rename = require('gulp-rename')
-var istanbul = require('gulp-istanbul')
+// var istanbul = require('gulp-istanbul')
 var insert = require('gulp-insert')
 
 /**
@@ -61,7 +61,7 @@ gulp.task('fullDist', ['slimDist'], function () {
 // Basic usage
 gulp.task('mermaid.slim', function () {
     // Single entry point to browserify
-  var EXTERNALS = ['d3']
+  // var EXTERNALS = ['d3']
 
   return gulp.src('src/mermaid.js')
         .pipe(browserify({

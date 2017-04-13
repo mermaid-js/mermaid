@@ -4,6 +4,10 @@
 var gulp = require('gulp')
 var shell = require('gulp-shell')
 var liveServer = require('live-server')
+var rename = require('gulp-rename')
+var uglify = require('gulp-uglify')
+var browserify = require('gulp-browserify')
+var extReplace = require('gulp-ext-replace')
 
 var params = {
   port: 8080, // Set the server port. Defaults to 8080.
