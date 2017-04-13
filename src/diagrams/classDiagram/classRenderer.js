@@ -367,9 +367,9 @@ module.exports.draw = function (text, id) {
   }
 
   var relations = cDDb.getRelations()
-  var i = 0
+  // var i = 0
   relations.forEach(function (relation) {
-    i = i + 1
+    // i = i + 1
     log.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation))
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {relation: relation})
   })

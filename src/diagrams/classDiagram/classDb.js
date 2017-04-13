@@ -4,12 +4,12 @@ var log = Logger.Log
 var relations = []
 
 var classes
-var idCache
+// var idCache
 classes = {
 }
 
 // Functions to be run after graph rendering
-var funs = []
+// var funs = []
 /**
  * Function called by parser when a node definition has been found.
  * @param id

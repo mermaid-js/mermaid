@@ -17,12 +17,12 @@
 // var classRenderer = proxyquire('./classRenderer', { '../../d3': d3 });
 // var testDom = require('testdom')('<html><body><div id="tst"></div></body></html>');
 
-var classRenderer = require('./classRenderer')
-var parser = require('./parser/classDiagram').parser
+// var classRenderer = require('./classRenderer')
+// var parser = require('./parser/classDiagram').parser
 
 describe('class diagram, ', function () {
   describe('when rendering a classDiagram', function () {
-    var conf
+    // var conf
     beforeEach(function () {
             /// /parser.yy = require('./classDb');
             /// /parser.yy.clear();
@@ -101,8 +101,8 @@ describe('class diagram, ', function () {
       })
     })
     it('it should handle one actor', function () {
-      var str = 'classDiagram\n' +
-            'Class01 --|> Class02'
+      // var str = 'classDiagram\n' +
+      //       'Class01 --|> Class02'
 
             // classRenderer.draw(str,'tst');
 
