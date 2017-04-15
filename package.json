@@ -31,7 +31,12 @@
     }
   },
   "scripts": {
-    "build": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
+    "build": "yarn build-mermaid && yarn build-mermaid-slim",
+    "build-mermaid": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
+    "build-mermaid-slim": "node -r babel-register ./node_modules/.bin/webpack --progress --colors --config webpack.config.slim.js",
+    "dist": "yarn dist-mermaid && yarn dist-mermaid-slim",
+    "dist-mermaid": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.prod.config.js",
+    "dist-mermaid-slim": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.prod.config.slim.js",
     "upgrade": "rm -rf node_modules && rm yarn.lock && yarn install && ncu -ua && yarn upgrade && yarn remove d3 && yarn add d3@3.5.17",
     "live": "live-server ./test/examples",
     "lint": "node_modules/.bin/standard",
@@ -43,13 +48,7 @@
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
     "jasmine": "yarn run jison && node node_modules/jasmine-es6/bin/jasmine.js",
     "pretest": "yarn run jison && yarn lint",
-    "test": "yarn run tape && yarn run karma",
-    "dist-slim-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js -s mermaid    -o dist/mermaid.slim.js    -x d3   && cat dist/mermaid.slim.js    | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.slim.min.js",
-    "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
-    "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
-    "dist-mermaid-nomin": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -s mermaid  -o dist/mermaid.js",
-    "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
-    "dist": "yarn run dist-slim-mermaid && yarn run dist-slim-mermaidAPI && yarn run dist-mermaid && yarn run dist-mermaidAPI"
+    "test": "yarn run tape && yarn run karma"
   },
   "repository": {
     "type": "git",

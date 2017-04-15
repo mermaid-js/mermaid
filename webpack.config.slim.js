@@ -6,10 +6,10 @@ const config = {
     mermaid: './src/mermaid.js',
     mermaidAPI: './src/mermaidAPI.js'
   },
-  externals: 'fs',
+  externals: ['fs', 'd3'],
   output: {
     path: path.join(__dirname, './dist/'),
-    filename: '[name].js'
+    filename: '[name].slim.js'
   }
 }
 
