@@ -2113,9 +2113,9 @@ custom-event@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/custom-event/-/custom-event-1.0.1.tgz#5d02a46850adf1b4a317946a3928fccb5bfd0425"
 
-d3@3.5.12:
-  version "3.5.12"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.12.tgz#3b821f5b72c5371eccea1aaf4da2f317eb473240"
+d3@3.5.17:
+  version "3.5.17"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
 d3@3.5.6:
   version "3.5.6"
