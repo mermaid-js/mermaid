@@ -2123,9 +2123,9 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-dagre-d3-renderer@0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.1.1.tgz#0d9c47aa56a7eda1c0fb5581214bd93feb77a30d"
+dagre-d3-renderer@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.1.2.tgz#543fc06f6a7c9acc916c507c4b33b837705ad5cf"
   dependencies:
     d3 "3.5.6"
     dagre "^0.7.4"
