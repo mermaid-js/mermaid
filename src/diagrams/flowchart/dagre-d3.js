@@ -1,18 +1,22 @@
-/* global window */
-var Logger = require('../../logger')
-var log = Logger.Log
+// /* global window */
+// var Logger = require('../../logger')
+// var log = Logger.Log
 
-var dagreD3
-// log.debug('setting up dagre-d3');
-if (require) {
-  try {
-    dagreD3 = require('dagre-d3')
-      // log.debug('Got it (dagre-d3)');
-  } catch (e) { log.debug('Could not load dagre-d3') }
-}
+// var dagreD3
+// // log.debug('setting up dagre-d3');
+// if (require) {
+//   try {
+//     dagreD3 = require('dagre-d3')
+//       // log.debug('Got it (dagre-d3)');
+//   } catch (e) { log.debug('Could not load dagre-d3') }
+// }
 
-if (!dagreD3) {
-  dagreD3 = window.dagreD3
-}
+// if (!dagreD3) {
+//   dagreD3 = window.dagreD3
+// }
 
-module.exports = dagreD3
+// module.exports = dagreD3
+
+// const dagreD3 = require('dagre-d3-renderer')
+
+// module.exports = dagreD3

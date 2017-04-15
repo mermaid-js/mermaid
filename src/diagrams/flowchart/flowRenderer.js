@@ -5,7 +5,7 @@ var graph = require('./graphDb')
 var flow = require('./parser/flow')
 var dot = require('./parser/dot')
 var d3 = require('../../d3')
-var dagreD3 = require('./dagre-d3')
+var dagreD3 = require('dagre-d3-renderer')
 var Logger = require('../../logger')
 var log = Logger.Log
 
