@@ -68,7 +68,6 @@
   "dependencies": {
     "chalk": "^1.1.3",
     "d3": "3.5.17",
-    "d3-textwrap": "^2.0.0",
     "dagre": "^0.7.4",
     "dagre-d3-renderer": "0.1.6",
     "he": "^1.1.1",
