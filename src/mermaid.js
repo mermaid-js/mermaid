@@ -4,6 +4,7 @@
  */
 
 var Logger = require('./logger')
+Logger.setLogLevel(1)
 var log = Logger.Log
 var mermaidAPI = require('./mermaidAPI')
 var nextId = 0

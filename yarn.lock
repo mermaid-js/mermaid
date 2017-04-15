@@ -2113,7 +2113,7 @@ custom-event@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/custom-event/-/custom-event-1.0.1.tgz#5d02a46850adf1b4a317946a3928fccb5bfd0425"
 
-d3@3.5.6, d3@^3.3.8:
+d3@3.5.6:
   version "3.5.6"
   resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.6.tgz#9451c651ca733fb9672c81fb7f2655164a73a42d"
 
@@ -2123,16 +2123,16 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-dagre-d3-renderer@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.1.0.tgz#2e06c51f191b4b2ce04a65e92a3c4123e00e91b8"
+dagre-d3-renderer@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.1.1.tgz#0d9c47aa56a7eda1c0fb5581214bd93feb77a30d"
   dependencies:
-    d3 "^3.3.8"
-    dagre "^0.7.3"
-    graphlib "^1.0.5"
-    lodash "^3.10.0"
+    d3 "3.5.6"
+    dagre "^0.7.4"
+    graphlib "^2.1.1"
+    lodash "^4.17.4"
 
-dagre@^0.7.3, dagre@^0.7.4:
+dagre@^0.7.4:
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.7.4.tgz#de72f0e74a550ce11ce638f0a136fed712398022"
   dependencies:
@@ -3694,6 +3694,12 @@ graphlib@^1.0.5:
   resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-1.0.7.tgz#0cab2df0ffe6abe070b2625bfa1edb6ec967b8b1"
   dependencies:
     lodash "^3.10.0"
+
+graphlib@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-2.1.1.tgz#42352c52ba2f4d035cb566eb91f7395f76ebc951"
+  dependencies:
+    lodash "^4.11.1"
 
 gulp-bower@0.0.13:
   version "0.0.13"
@@ -5570,7 +5576,7 @@ lodash@^3.10.0, lodash@^3.10.1, lodash@^3.3.1, lodash@^3.7.0, lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.0, lodash@^4.0.1, lodash@^4.12.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.5, lodash@^4.5.0:
+lodash@^4.0.0, lodash@^4.0.1, lodash@^4.11.1, lodash@^4.12.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.5, lodash@^4.5.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
