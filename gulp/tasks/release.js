@@ -4,8 +4,8 @@ var tagVersion = require('gulp-tag-version')
 
 gulp.task('bump', function () {
   gulp.src('./bw.json')
-        .pipe(bump({key: 'version'}))
-        .pipe(gulp.dest('./'))
+    .pipe(bump({ key: 'version' }))
+    .pipe(gulp.dest('./'))
 })
 
 // Assuming there's "version: 1.2.3" in package.json,
@@ -29,19 +29,12 @@ gulp.task('tag', function () {
  */
 
 function inc (importance) {
-    // get all the files to bump version in
+  // get all the files to bump version in
   return gulp.src(['./package.json'])
-        // bump the version number in those files
-        .pipe(bump({type: importance}))
-        // save it back to filesystem
-        .pipe(gulp.dest('./'))
-    // commit the changed version number
-    // .pipe(git.commit('bumps package version'))
-
-    // read only one file to get the version number
-    // .pipe(filter('package.json'))
-    // **tag it in the repository**
-    // .pipe(tag_version());
+    // bump the version number in those files
+    .pipe(bump({ type: importance }))
+    // save it back to filesystem
+    .pipe(gulp.dest('./'))
 }
 
 gulp.task('patch', function () { return inc('patch') })

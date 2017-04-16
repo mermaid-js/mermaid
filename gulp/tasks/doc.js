@@ -1,8 +1,6 @@
 var gulp = require('gulp')
-// var mdvars = require('gulp-mdvars')
 var vartree = require('gulp-vartree')
 var gmarked = require('gulp-marked')
-// var marked = require('marked')
 var concat = require('gulp-concat')
 var frontMatter = require('gulp-front-matter')
 var hogan = require('hogan.js')
@@ -41,7 +39,7 @@ var filelog = require('gulp-filelog')
 
 gulp.task('vartree', ['dox', 'copyContent', 'copySite'], function () {
   gulp.src(['build/content/**/*.md'])
-      .pipe(filelog())
+    .pipe(filelog())
     .pipe(frontMatter({
       property: 'order' // will put metadata in the file.meta property
     }))
@@ -57,24 +55,19 @@ gulp.task('vartree', ['dox', 'copyContent', 'copySite'], function () {
     })) // Do whatever you want with the files later
     .pipe(gulp.dest('build/www')).on('end', function () {
       iterator(root)
-
-          // console.log('filelist');
-          // console.log(filelist);
       gulp.src(filelist)
         .pipe(concat('all.html'))
         .pipe(gulp.dest('./build/www')).on('end', function () {
           filelist.push('build/www' + '/all.html')
 
           gulp.src(filelist)
-              .pipe(filelog('html files'))
-          // Run each file through a template
-          .pipe(es.map(function (file, cb) {
-              // console.log('file:',fileList);
-            // file.contents = new Buffer(template.render(file))
-            file.contents = Buffer.from(template.render(file))
+            .pipe(filelog('html files'))
+            // Run each file through a template
+            .pipe(es.map(function (file, cb) {
+              file.contents = Buffer.from(template.render(file))
 
-            cb(null, file)
-          }))
+              cb(null, file)
+            }))
             // Output to build directory
             .pipe(gulp.dest('./dist/www'))
         })
@@ -83,65 +76,60 @@ gulp.task('vartree', ['dox', 'copyContent', 'copySite'], function () {
 
 var dox = require('gulp-dox')
 
-// var doxJson2Md = require('../plugins/doxJson2Md')
 var map = require('map-stream')
 var extReplace = require('gulp-ext-replace')
 
 gulp.task('dox', function () {
-    // return  gulp.src(['src/**/*.js','!src/**/parser/*.js','!src/**/*.spec.js'])
-
   return gulp.src(['./src/**/mermaidAPI.js'])
-        .pipe(filelog())
-        .pipe(dox({
-          'raw': true
-        }))
-        .pipe(map(function (file, done) {
-          var json = JSON.parse(file.contents.toString())
-          var i
-          var str = ''
-          for (i = 0; i < json.length; i++) {
-                // console.log(json[i].description.full);
-            str = str + json[i].description.full + '\n'
-          }
-          // file.contents = new Buffer(str)
-          file.contents = Buffer.from(str)
-          done(null, file)
-        }))
-        .pipe(extReplace('.md'))
-        .pipe(gulp.dest('./build/content'))
+    .pipe(filelog())
+    .pipe(dox({
+      'raw': true
+    }))
+    .pipe(map(function (file, done) {
+      var json = JSON.parse(file.contents.toString())
+      var i
+      var str = ''
+      for (i = 0; i < json.length; i++) {
+        str = str + json[i].description.full + '\n'
+      }
+      file.contents = Buffer.from(str)
+      done(null, file)
+    }))
+    .pipe(extReplace('.md'))
+    .pipe(gulp.dest('./build/content'))
 })
 
 gulp.task('copyContent', function () {
   return gulp.src(['./docs/content/**/*.md'])
-        .pipe(gulp.dest('./build/content'))
+    .pipe(gulp.dest('./build/content'))
 })
 
 gulp.task('copyContent', function () {
   return gulp.src(['./docs/content/**/*.md'])
-        .pipe(gulp.dest('./build/content'))
+    .pipe(gulp.dest('./build/content'))
 })
 
 gulp.task('copySite', function () {
   gulp.src(['./dist/mermaid.js'])
-        .pipe(filelog())
-        .pipe(gulp.dest('./dist/www/javascripts/lib'))
+    .pipe(filelog())
+    .pipe(gulp.dest('./dist/www/javascripts/lib'))
   gulp.src(['./docs/site/**/*.css'])
-        .pipe(filelog())
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(filelog())
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.eot'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.svg'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.png'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.jpg'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.ttf'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.woff'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   gulp.src(['./docs/site/**/*.woff2'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
   return gulp.src(['./docs/site/**/*.js'])
-        .pipe(gulp.dest('./dist/www'))
+    .pipe(gulp.dest('./dist/www'))
 })

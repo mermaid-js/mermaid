@@ -15,7 +15,7 @@ var params = {
   root: './test/examples', // Set root directory that's being server. Defaults to cwd.
   open: true, // When false, it won't load your browser by default.
   ignore: 'scss,my/templates', // comma-separated string for paths to ignore
-    // file: "index.html", // When set, serve this file for every 404 (useful for single-page applications)
+  // file: "index.html", // When set, serve this file for every 404 (useful for single-page applications)
   wait: 1000, // Waits for all changes, before reloading. Defaults to 0 sec.
   mount: [['/dist', './dist']] // Mount a directory to a route.
 }
@@ -32,30 +32,13 @@ gulp.task('watch2', ['live-server'], function () {
 // Basic usage
 gulp.task('watch-mermaid', function () {
   return gulp.src('src/mermaid.js')
-        .pipe(browserify({
-          entry: 'src/mermaid.js',
-          standalone: 'mermaid'
-        }))
-        .pipe(rename('mermaid.js'))
-        .pipe(gulp.dest('./dist/'))
-        .pipe(uglify())
-        .pipe(extReplace('.min.js'))
-        .pipe(gulp.dest('./dist/'))
+    .pipe(browserify({
+      entry: 'src/mermaid.js',
+      standalone: 'mermaid'
+    }))
+    .pipe(rename('mermaid.js'))
+    .pipe(gulp.dest('./dist/'))
+    .pipe(uglify())
+    .pipe(extReplace('.min.js'))
+    .pipe(gulp.dest('./dist/'))
 })
-
-// var bg = require("gulp-bg");
-//
-// let bgtask;
-// gulp.task("server", bgtask = bg("node", "--harmony", "server.js"));
-//
-// const exitCallback = (proc) => { if (proc.errorcode != 0) { process.exit(proc.errorcode); } };
-//
-// gulp.task("stop", () => {
-//    bgtask.setCallback(exitCallback);
-// bgtask.stop();
-// }
-// });
-//
-// gulp.task("default", ["server"], function() {
-//    gulp.watch(["server.js"], ["server"]);
-// });

@@ -5,9 +5,9 @@ var filelog = require('gulp-filelog')
 
 gulp.task('jison', function () {
   return gulp.src('./src/**/*.jison')
-        .pipe(filelog('Jison file:'))
-        .pipe(jison({ moduleType: 'commonjs' }))
-        .pipe(gulp.dest('./src/'))
+    .pipe(filelog('Jison file:'))
+    .pipe(jison({ moduleType: 'commonjs' }))
+    .pipe(gulp.dest('./src/'))
 })
 
 gulp.task('jison_legacy', function () {

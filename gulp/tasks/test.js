@@ -1,19 +1,9 @@
 var gulp = require('gulp')
 var jasmine = require('gulp-jasmine')
-// var gulp = require('gulp')
-// var browserify = require('gulp-browserify')
 var shell = require('gulp-shell')
-// var jison = require('gulp-jison')
-
-// var concat = require('gulp-concat')
-// var uglify = require('gulp-uglify')
-// var extReplace = require('gulp-ext-replace')
-// var rename = require('gulp-rename')
 var istanbul = require('gulp-istanbul')
-// var insert = require('gulp-insert')
 var jshint = require('gulp-jshint')
 var stylish = require('jshint-stylish')
-
 var qunit = require('gulp-qunit')
 var bower = require('gulp-bower')
 
