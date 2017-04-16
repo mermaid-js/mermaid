@@ -31,12 +31,8 @@
     }
   },
   "scripts": {
-    "build": "yarn build-mermaid && yarn build-mermaid-slim",
-    "build-mermaid": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
-    "build-mermaid-slim": "node -r babel-register ./node_modules/.bin/webpack --progress --colors --config webpack.config.slim.js",
-    "dist": "yarn dist-mermaid && yarn dist-mermaid-slim",
-    "dist-mermaid": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.prod.config.js",
-    "dist-mermaid-slim": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.prod.config.slim.js",
+    "build": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
+    "dist": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.config.prod.js",
     "upgrade": "rm -rf node_modules && rm yarn.lock && yarn install && ncu -ua && yarn upgrade && yarn remove d3 && yarn add d3@3.5.17",
     "live": "live-server ./test/examples",
     "lint": "node_modules/.bin/standard",
@@ -151,6 +147,7 @@
     "uglifyjs": "^2.4.10",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.9.0",
-    "webpack": "^2.4.1"
+    "webpack": "^2.4.1",
+    "webpack-node-externals": "^1.5.4"
   }
 }

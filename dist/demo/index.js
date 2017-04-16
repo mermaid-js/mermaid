@@ -1,5 +1,4 @@
-const api = require('../../src/mermaidAPI.js')
-console.log(api)
+const api = require('../mermaidAPI.js')
 
 const r = api.parse(`sequenceDiagram
 loop every day
