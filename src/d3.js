@@ -3,7 +3,6 @@ const d3 = require('d3')
 module.exports = d3;
 
 /*
-
  D3 Text Wrap
  By Vijith Assar
  http://www.vijithassar.com
@@ -11,7 +10,6 @@ module.exports = d3;
  @vijithassar
 
  Detailed instructions at http://www.github.com/vijithassar/d3textwrap
-
  */
 
 (function () {
@@ -313,8 +311,6 @@ module.exports = d3;
               // adjust the length by the offset we've tracked
               // due to the misreported length discussed above
 
-              // var testWidth = newWidth - totalOffset
-
               // if our latest version of the string is too
               // big for the bounds, use the previous
               // version of the string (without the newest word
@@ -363,9 +359,6 @@ module.exports = d3;
             textNodeSelected.text('')
             for (i = 0; i < substrings.length; i++) {
               substring = substrings[i].string
-              // if (i > 0) {
-              //   var previousSubstring = substrings[i - 1]
-              // }
               // only append if we're sure it won't make the tspans
               // overflow the bounds.
               if ((i) * lineHeight < bounds.height - (lineHeight * 1.5)) {
@@ -387,15 +380,6 @@ module.exports = d3;
                     if (padding) { xOffset += padding }
                     return xOffset
                   })
-                //                                    .attr('dx', function() {
-                //                                        if(i == 0) {
-                //                                            var render_offset = 0;
-                //                                        } else if(i > 0) {
-                //                                            render_offset = substrings[i - 1].width;
-                //                                            render_offset = render_offset * -1;
-                //                                        }
-                //                                        return render_offset;
-                //                                    });
               }
             }
           }
@@ -461,4 +445,3 @@ module.exports = d3;
     }
   }
 })()
-/* jshint ignore:end */

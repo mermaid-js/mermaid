@@ -1,6 +1,6 @@
 function decodeHTMLEntities (str) {
   if (str && typeof str === 'string') {
-      // strip script/html tags
+    // strip script/html tags
     var element = document.querySelector('.editor')
 
     str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '')

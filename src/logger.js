@@ -10,29 +10,14 @@
  * => [2011-3-3T20:24:4.810 error (5021)] booom
  */
 
-// const LEVELS = {
-//   debug: 1,
-//   info: 2,
-//   warn: 3,
-//   error: 4,
-//   fatal: 5,
-//   default: 5
-// }
-
-// var defaultLevel = LEVELS.error
-
-// exports.setLogLevel = function (level) {
-//     defaultLevel = level;
-// };
-
 function formatTime (timestamp) {
   var hh = timestamp.getUTCHours()
   var mm = timestamp.getUTCMinutes()
   var ss = timestamp.getSeconds()
   var ms = timestamp.getMilliseconds()
-    // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
-    // if (hh > 12) {hh = hh % 12;}
-    // These lines ensure you have two-digits
+  // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
+  // if (hh > 12) {hh = hh % 12;}
+  // These lines ensure you have two-digits
   if (hh < 10) {
     hh = '0' + hh
   }
@@ -48,7 +33,7 @@ function formatTime (timestamp) {
   if (ms < 10) {
     ms = '00' + ms
   }
-    // This formats your string to HH:MM:SS
+  // This formats your string to HH:MM:SS
   var t = hh + ':' + mm + ':' + ss + ' (' + ms + ')'
   return t
 }
@@ -58,11 +43,11 @@ function format (level) {
   return '%c ' + time + ' :%c' + level + ': '
 }
 
-var debug = function () {}
-var info = function () {}
-var warn = function () {}
-var error = function () {}
-var fatal = function () {}
+var debug = function () { }
+var info = function () { }
+var warn = function () { }
+var error = function () { }
+var fatal = function () { }
 
 /**
  * logLevel , decides the amount of logging to be used.

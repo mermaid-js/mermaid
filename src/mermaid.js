@@ -38,7 +38,7 @@ var init = function () {
   log.debug('Starting rendering diagrams')
   var nodes
   if (arguments.length >= 2) {
-        /*! sequence config was passed as #1 */
+    /*! sequence config was passed as #1 */
     if (typeof arguments[0] !== 'undefined') {
       global.mermaid.sequenceConfig = arguments[0]
     }
@@ -48,7 +48,7 @@ var init = function () {
     nodes = arguments[0]
   }
 
-    // if last argument is a function this is the callback function
+  // if last argument is a function this is the callback function
   var callback
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1]
@@ -64,11 +64,9 @@ var init = function () {
     }
   }
   nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
-        : typeof nodes === 'string' ? document.querySelectorAll(nodes)
-        : nodes instanceof window.Node ? [nodes]
+    : typeof nodes === 'string' ? document.querySelectorAll(nodes)
+      : nodes instanceof window.Node ? [nodes]
         : nodes  // Last case  - sequence config was passed pick next
-
-  var i
 
   if (typeof global.mermaid_config !== 'undefined') {
     mermaidAPI.initialize(global.mermaid_config)
@@ -76,11 +74,11 @@ var init = function () {
   log.debug('Start On Load before: ' + global.mermaid.startOnLoad)
   if (typeof global.mermaid.startOnLoad !== 'undefined') {
     log.debug('Start On Load inner: ' + global.mermaid.startOnLoad)
-    mermaidAPI.initialize({startOnLoad: global.mermaid.startOnLoad})
+    mermaidAPI.initialize({ startOnLoad: global.mermaid.startOnLoad })
   }
 
   if (typeof global.mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.initialize({gantt: global.mermaid.ganttConfig})
+    mermaidAPI.initialize({ gantt: global.mermaid.ganttConfig })
   }
 
   var txt
@@ -92,10 +90,10 @@ var init = function () {
     bindFunctions(element)
   }
 
-  for (i = 0; i < nodes.length; i++) {
+  for (var i = 0; i < nodes.length; i++) {
     var element = nodes[i]
 
-        /*! Check if previously processed */
+    /*! Check if previously processed */
     if (!element.getAttribute('data-processed')) {
       element.setAttribute('data-processed', true)
     } else {
@@ -104,16 +102,11 @@ var init = function () {
 
     var id = 'mermaidChart' + nextId++
 
-        // Fetch the graph definition including tags
+    // Fetch the graph definition including tags
     txt = element.innerHTML
 
-        // console.warn('delivererd from the browser: ');
-        // console.warn(txt);
-
-        // transforms the html to pure text
+    // transforms the html to pure text
     txt = he.decode(txt).trim()
-        // console.warn('he decode: ');
-        // console.warn(txt);
 
     mermaidAPI.render(id, txt, insertSvg, element)
   }
@@ -204,7 +197,7 @@ exports.parseError = global.mermaid.parseError
  */
 exports.contentLoaded = function () {
   var config
-    // Check state of start config mermaid namespace
+  // Check state of start config mermaid namespace
   if (typeof global.mermaid_config !== 'undefined') {
     if (equals(false, global.mermaid_config.htmlLabels)) {
       global.mermaid.htmlLabels = false
@@ -212,43 +205,35 @@ exports.contentLoaded = function () {
   }
 
   if (global.mermaid.startOnLoad) {
-        // For backwards compatability reasons also check mermaid_config variable
+    // For backwards compatability reasons also check mermaid_config variable
     if (typeof global.mermaid_config !== 'undefined') {
-            // Check if property startOnLoad is set
+      // Check if property startOnLoad is set
       if (equals(true, global.mermaid_config.startOnLoad)) {
         global.mermaid.init()
       }
     } else {
-            // No config found, do check API config
+      // No config found, do check API config
       config = mermaidAPI.getConfig()
       if (config.startOnLoad) {
         global.mermaid.init()
       }
     }
   } else {
-        // if(typeof global.mermaid === 'undefined' ){
     if (typeof global.mermaid.startOnLoad === 'undefined') {
       log.debug('In start, no config')
       config = mermaidAPI.getConfig()
       if (config.startOnLoad) {
         global.mermaid.init()
       }
-            // }else{
-            //
-            // }
     }
   }
 }
 
 if (typeof document !== 'undefined') {
-    /*!
-     * Wait for document loaded before starting the execution
-     */
+  /*!
+   * Wait for document loaded before starting the execution
+   */
   window.addEventListener('load', function () {
     exports.contentLoaded()
   }, false)
 }
-
-//    // Your actual module
-//    return module.exports;
-// }));
