@@ -25,7 +25,7 @@ gulp.task('live-server', function () {
 
 gulp.task('watch2', ['live-server'], function () {
   return shell.task([
-    'watchify src/mermaid.js    -s mermaid   -o dist/mermaid.js'
+    'yarn build -- --watch'
   ])
 })
 

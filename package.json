@@ -142,10 +142,6 @@
     "rimraf": "^2.6.1",
     "standard": "^10.0.2",
     "tape": "^4.6.3",
-    "testdom": "^2.0.0",
-    "uglifyjs": "^2.4.10",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.9.0",
     "webpack": "^2.4.1",
     "webpack-node-externals": "^1.5.4"
   }
