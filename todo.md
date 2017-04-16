@@ -1,3 +1,4 @@
 - Upgrade d3 to version 4
 - use external d3-textwrap library
     - Problem is it's for d3 v4 only
+- node console output colors like Chrome console

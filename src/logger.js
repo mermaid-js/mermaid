@@ -74,19 +74,19 @@ var fatal = function () {}
  */
 exports.setLogLevel = function (level) {
   if (level < 6) {
-    exports.Log.fatal = window.console.debug.bind(window.console, format('FATAL'), 'color:grey;', 'color: red;')
+    exports.Log.fatal = console.debug.bind(console, format('FATAL'), 'color:grey;', 'color: red;')
   }
   if (level < 5) {
-    exports.Log.error = window.console.debug.bind(window.console, format('ERROR'), 'color:grey;', 'color: red;')
+    exports.Log.error = console.debug.bind(console, format('ERROR'), 'color:grey;', 'color: red;')
   }
   if (level < 4) {
-    exports.Log.warn = window.console.debug.bind(window.console, format('WARN'), 'color:grey;', 'color: orange;')
+    exports.Log.warn = console.debug.bind(console, format('WARN'), 'color:grey;', 'color: orange;')
   }
   if (level < 3) {
-    exports.Log.info = window.console.debug.bind(window.console, format('INFO'), 'color:grey;', 'color: info;')
+    exports.Log.info = console.debug.bind(console, format('INFO'), 'color:grey;', 'color: info;')
   }
   if (level < 2) {
-    exports.Log.debug = window.console.debug.bind(window.console, format('DEBUG'), 'color:grey;', 'color: green;')
+    exports.Log.debug = console.debug.bind(console, format('DEBUG'), 'color:grey;', 'color: green;')
   }
 }
 
