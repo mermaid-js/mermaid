@@ -7,8 +7,6 @@ describe('when parsing a gantt diagram it', function () {
   beforeEach(function () {
     gantt = require('./parser/gantt').parser
     gantt.yy = require('./ganttDb')
-
-        // ex.yy.parseError = parseError;
   })
 
   it('should handle an dateFormat definition', function () {
@@ -31,26 +29,24 @@ describe('when parsing a gantt diagram it', function () {
 
     gantt.parse(str)
   })
-    /**
-     * Beslutsflöde inligt nedan. Obs bla bla bla
-     * ```
-     * graph TD
-     * A[Hard pledge] -- text on link -->B(Round edge)
-     * B --> C{to do or not to do}
-     * C -->|Too| D[Result one]
-     * C -->|Doo| E[Result two]
-     ```
-     * params bapa - a unique bapap
-     */
+  /**
+   * Beslutsflöde inligt nedan. Obs bla bla bla
+   * ```
+   * graph TD
+   * A[Hard pledge] -- text on link -->B(Round edge)
+   * B --> C{to do or not to do}
+   * C -->|Too| D[Result one]
+   * C -->|Doo| E[Result two]
+   ```
+   * params bapa - a unique bapap
+   */
   it('should handle a task definition', function () {
     var str = 'gantt\n' +
-            'dateFormat yyyy-mm-dd\n' +
-            'title Adding gantt diagram functionality to mermaid\n' +
-            'section Documentation\n' +
-            'Design jison grammar:des1, 2014-01-01, 2014-01-04'
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation\n' +
+      'Design jison grammar:des1, 2014-01-01, 2014-01-04'
 
     gantt.parse(str)
   })
 })
-
-// Ogiltigt id i after id

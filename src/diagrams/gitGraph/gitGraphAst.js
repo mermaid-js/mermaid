@@ -25,12 +25,12 @@ function getId () {
 function isfastforwardable (currentCommit, otherCommit) {
   log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id)
   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
-        // only if other branch has more commits
+    // only if other branch has more commits
     if (otherCommit.parent == null) break
     if (Array.isArray(otherCommit.parent)) {
       log.debug('In merge commit:', otherCommit.parent)
       return isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
-                    isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
+        isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
     } else {
       otherCommit = commits[otherCommit.parent]
     }
@@ -66,10 +66,12 @@ exports.getOptions = function () {
 }
 
 exports.commit = function (msg) {
-  var commit = { id: getId(),
+  var commit = {
+    id: getId(),
     message: msg,
     seq: seq++,
-    parent: head == null ? null : head.id}
+    parent: head == null ? null : head.id
+  }
   head = commit
   commits[commit.id] = commit
   branches[curBranch] = commit.id
@@ -92,7 +94,7 @@ exports.merge = function (otherBranch) {
     branches[curBranch] = branches[otherBranch]
     head = commits[branches[curBranch]]
   } else {
-        // create merge commit
+    // create merge commit
     var commit = {
       id: getId(),
       message: 'merged branch ' + otherBranch + ' into ' + curBranch,
@@ -141,7 +143,6 @@ function upsert (arr, key, newval) {
   } else {
     arr.push(newval)
   }
-    // console.log(arr);
 }
 
 function prettyPrintCommitHistory (commitArr) {
@@ -160,11 +161,9 @@ function prettyPrintCommitHistory (commitArr) {
   })
   log.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {
-        // console.log("here", commit.parent);
     var newCommit = commits[commit.parent[0]]
     upsert(commitArr, commit, newCommit)
     commitArr.push(commits[commit.parent[1]])
-        // console.log("shoudl have 2", commitArr);
   } else if (commit.parent == null) {
     return
   } else {
@@ -191,9 +190,8 @@ exports.clear = function () {
 
 exports.getBranchesAsObjArray = function () {
   var branchArr = _.map(branches, function (v, k) {
-    return {'name': k, 'commit': commits[v]}
+    return { 'name': k, 'commit': commits[v] }
   })
-    // return _.orderBy(branchArr, [function(b) { return b.commit.seq}], ['desc']);
   return branchArr
 }
 

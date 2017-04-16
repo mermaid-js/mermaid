@@ -53,23 +53,13 @@ exports.getTasks = function () {
 
   tasks = rawTasks
 
-    // var i;
-    // for(i=10000;i<tasks.length;i++){
-    //    tasks[i].startTime = moment(tasks[i].startTime).format(dateFormat);
-    //    tasks[i].endTime = moment(tasks[i].endTime).format(dateFormat);
-    // }
-
   return tasks
 }
 
 var getStartDate = function (prevTime, dateFormat, str) {
-    // console.log('Deciding start date:'+JSON.stringify(str));
-    // log.debug('Deciding start date:'+str);
-    // log.debug('with dateformat:'+dateFormat);
-
   str = str.trim()
 
-    // Test for after
+  // Test for after
   var re = /^after\s+([\d\w-]+)/
   var afterStatement = re.exec(str.trim())
 
@@ -80,34 +70,32 @@ var getStartDate = function (prevTime, dateFormat, str) {
       var dt = new Date()
       dt.setHours(0, 0, 0, 0)
       return dt
-            // return undefined;
     }
     return task.endTime
   }
 
-    // Check for actual date set
+  // Check for actual date set
   if (moment(str, dateFormat.trim(), true).isValid()) {
     return moment(str, dateFormat.trim(), true).toDate()
   } else {
     log.debug('Invalid date:' + str)
     log.debug('With date format:' + dateFormat.trim())
-        // log.debug('----');
   }
 
-    // Default date - now
+  // Default date - now
   return new Date()
 }
 
 var getEndDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
-    // Check for actual date
+  // Check for actual date
   if (moment(str, dateFormat.trim(), true).isValid()) {
     return moment(str, dateFormat.trim()).toDate()
   }
 
   var d = moment(prevTime)
-    // Check for length
+  // Check for length
   var re = /^([\d]+)([wdhms])/
   var durationStatement = re.exec(str.trim())
 
@@ -131,7 +119,7 @@ var getEndDate = function (prevTime, dateFormat, str) {
     }
     return d.toDate()
   }
-    // Default date - now
+  // Default date - now
   return d.toDate()
 }
 
@@ -168,7 +156,7 @@ var compileData = function (prevTask, dataStr) {
   var task = {}
   var df = exports.getDateFormat()
 
-    // Get tags like active, done cand crit
+  // Get tags like active, done cand crit
   var matchFound = true
   while (matchFound) {
     matchFound = false
@@ -228,7 +216,7 @@ var parseData = function (prevTaskId, dataStr) {
 
   var task = {}
 
-    // Get tags like active, done cand crit
+  // Get tags like active, done cand crit
   var matchFound = true
   while (matchFound) {
     matchFound = false
@@ -256,18 +244,18 @@ var parseData = function (prevTaskId, dataStr) {
   switch (data.length) {
     case 1:
       task.id = parseId()
-      task.startTime = {type: 'prevTaskEnd', id: prevTaskId}
-      task.endTime = {data: data[0]}
+      task.startTime = { type: 'prevTaskEnd', id: prevTaskId }
+      task.endTime = { data: data[0] }
       break
     case 2:
       task.id = parseId()
-      task.startTime = {type: 'getStartDate', startData: data[0]}
-      task.endTime = {data: data[1]}
+      task.startTime = { type: 'getStartDate', startData: data[0] }
+      task.endTime = { data: data[1] }
       break
     case 3:
       task.id = parseId(data[0])
-      task.startTime = {type: 'getStartDate', startData: data[1]}
-      task.endTime = {data: data[2]}
+      task.startTime = { type: 'getStartDate', startData: data[1] }
+      task.endTime = { data: data[2] }
       break
     default:
   }
@@ -284,7 +272,7 @@ exports.addTask = function (descr, data) {
     section: currentSection,
     type: currentSection,
     processed: false,
-    raw: {data: data},
+    raw: { data: data },
     task: descr
   }
   var taskInfo = parseData(lastTaskID, data)
@@ -299,18 +287,11 @@ exports.addTask = function (descr, data) {
   var pos = rawTasks.push(rawTask)
 
   lastTaskID = rawTask.id
-    // Store cross ref
+  // Store cross ref
   taskDb[rawTask.id] = pos - 1
 }
 
 exports.findTaskById = function (id) {
-    // var i;
-    // for(i=0;i<tasks.length;i++){
-    //    if(tasks[i].id === id){
-    //        return tasks[i];
-    //    }
-    // }
-
   var pos = taskDb[id]
   return rawTasks[pos]
 }

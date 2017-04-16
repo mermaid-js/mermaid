@@ -2,7 +2,6 @@ var gantt = require('./parser/gantt').parser
 gantt.yy = require('./ganttDb')
 var d3 = require('../../d3')
 var moment = require('moment')
-// var log = require('../../logger').create();
 
 var daysInChart
 var conf = {
@@ -49,8 +48,6 @@ module.exports.draw = function (text, id) {
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h)
   var svg = d3.select('#' + id)
 
-  // var dateFormat = d3.time.format('%Y-%m-%d');
-
   var startDate = d3.min(taskArray, function (d) {
     return d.startTime
   })
@@ -67,7 +64,6 @@ module.exports.draw = function (text, id) {
         return d.endTime
       })])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding])
-  // .nice(d3.time.monday);
 
   var categories = []
 
@@ -188,7 +184,6 @@ module.exports.draw = function (text, id) {
         return d.task
       })
       .attr('font-size', conf.fontSize)
-      // .attr('font-family',conf.fontFamily)
       .attr('x', function (d) {
         var startX = timeScale(d.startTime)
         var endX = timeScale(d.endTime)
@@ -208,7 +203,6 @@ module.exports.draw = function (text, id) {
       .attr('y', function (d, i) {
         return i * theGap + (conf.barHeight / 2) + (conf.fontSize / 2 - 2) + theTopPad
       })
-      // .attr('text-anchor', 'middle')
       .attr('text-height', theBarHeight)
       .attr('class', function (d) {
         var startX = timeScale(d.startTime)
@@ -279,7 +273,6 @@ module.exports.draw = function (text, id) {
       }],
       // Day within a week (not monday)
       ['%a %d', function (d) {
-        // return d.getDay() ==1;
         return d.getDay() && d.getDate() !== 1
       }],
       // within a month
@@ -346,7 +339,6 @@ module.exports.draw = function (text, id) {
         if (i > 0) {
           for (var j = 0; j < i; j++) {
             prevGap += numOccurances[i - 1][1]
-            // log.debug(prevGap);
             return d[1] * theGap / 2 + prevGap * theGap + theTopPad
           }
         } else {

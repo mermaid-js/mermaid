@@ -1,7 +1,6 @@
 /**
  * Created by knut on 14-12-20.
  */
-// var log = require('../../logger').create();
 exports.drawRect = function (elem, rectData) {
   var rectElem = elem.append('rect')
   rectElem.attr('x', rectData.x)
@@ -21,7 +20,7 @@ exports.drawRect = function (elem, rectData) {
 }
 
 exports.drawText = function (elem, textData, width) {
-    // Remove and ignore br:s
+  // Remove and ignore br:s
   var nText = textData.text.replace(/<br\/?>/ig, ' ')
 
   var textElem = elem.append('text')
@@ -32,17 +31,9 @@ exports.drawText = function (elem, textData, width) {
   if (typeof textData.class !== 'undefined') {
     textElem.attr('class', textData.class)
   }
-    /*    textData.text.split(/<br\/?>/ig).forEach(function(rowText){
-            var span = textElem.append('tspan');
-            span.attr('x', textData.x +textData.textMargin);
-            span.attr('dy', textData.dy);
-            span.text(rowText);
-        }); */
 
   var span = textElem.append('tspan')
-    // span.attr('x', textData.x);
   span.attr('x', textData.x + textData.textMargin * 2)
-    // span.attr('dy', textData.dy);
   span.attr('fill', textData.fill)
   span.text(nText)
   if (typeof textElem.textwrap !== 'undefined') {
@@ -60,10 +51,10 @@ exports.drawText = function (elem, textData, width) {
 exports.drawLabel = function (elem, txtObject) {
   function genPoints (x, y, width, height, cut) {
     return x + ',' + y + ' ' +
-            (x + width) + ',' + y + ' ' +
-            (x + width) + ',' + (y + height - cut) + ' ' +
-            (x + width - cut * 1.2) + ',' + (y + height) + ' ' +
-            (x) + ',' + (y + height)
+      (x + width) + ',' + y + ' ' +
+      (x + width) + ',' + (y + height - cut) + ' ' +
+      (x + width - cut * 1.2) + ',' + (y + height) + ' ' +
+      (x) + ',' + (y + height)
   }
   var polygon = elem.append('polygon')
   polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7))
@@ -73,8 +64,6 @@ exports.drawLabel = function (elem, txtObject) {
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin
   txtObject.fill = 'white'
   exports.drawText(elem, txtObject)
-
-    // return textElem;
 }
 var actorCnt = -1
 /**
@@ -89,14 +78,14 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
   if (verticalPos === 0) {
     actorCnt++
     g.append('line')
-            .attr('id', 'actor' + actorCnt)
-            .attr('x1', center)
-            .attr('y1', 5)
-            .attr('x2', center)
-            .attr('y2', 2000)
-            .attr('class', 'actor-line')
-            .attr('stroke-width', '0.5px')
-            .attr('stroke', '#999')
+      .attr('id', 'actor' + actorCnt)
+      .attr('x1', center)
+      .attr('y1', 5)
+      .attr('x2', center)
+      .attr('y2', 2000)
+      .attr('class', 'actor-line')
+      .attr('stroke-width', '0.5px')
+      .attr('stroke', '#999')
   }
 
   var rect = exports.getNoteRect()
@@ -111,7 +100,7 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
   exports.drawRect(g, rect)
 
   _drawTextCandidateFunc(conf)(description, g,
-        rect.x, rect.y, rect.width, rect.height, {'class': 'actor'})
+    rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' })
 }
 
 exports.anchorElement = function (elem) {
@@ -144,13 +133,13 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
   var g = elem.append('g')
   var drawLoopLine = function (startx, starty, stopx, stopy) {
     return g.append('line')
-            .attr('x1', startx)
-            .attr('y1', starty)
-            .attr('x2', stopx)
-            .attr('y2', stopy)
-            .attr('stroke-width', 2)
-            .attr('stroke', '#526e52')
-            .attr('class', 'loopLine')
+      .attr('x1', startx)
+      .attr('y1', starty)
+      .attr('x2', stopx)
+      .attr('y2', stopy)
+      .attr('stroke-width', 2)
+      .attr('stroke', '#526e52')
+      .attr('class', 'loopLine')
   }
   drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty)
   drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy)
@@ -197,14 +186,14 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
  */
 exports.insertArrowHead = function (elem) {
   elem.append('defs').append('marker')
-        .attr('id', 'arrowhead')
-        .attr('refX', 5)
-        .attr('refY', 2)
-        .attr('markerWidth', 6)
-        .attr('markerHeight', 4)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M 0,0 V 4 L6,2 Z') // this is actual shape for arrowhead
+    .attr('id', 'arrowhead')
+    .attr('refX', 5)
+    .attr('refY', 2)
+    .attr('markerWidth', 6)
+    .attr('markerHeight', 4)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0,0 V 4 L6,2 Z') // this is actual shape for arrowhead
 }
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
@@ -212,29 +201,29 @@ exports.insertArrowHead = function (elem) {
 exports.insertArrowCrossHead = function (elem) {
   var defs = elem.append('defs')
   var marker = defs.append('marker')
-        .attr('id', 'crosshead')
-        .attr('markerWidth', 15)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .attr('refX', 16)
-        .attr('refY', 4)
+    .attr('id', 'crosshead')
+    .attr('markerWidth', 15)
+    .attr('markerHeight', 8)
+    .attr('orient', 'auto')
+    .attr('refX', 16)
+    .attr('refY', 4)
 
-    // The arrow
+  // The arrow
   marker.append('path')
-            .attr('fill', 'black')
-            .attr('stroke', '#000000')
-            .style('stroke-dasharray', ('0, 0'))
-            .attr('stroke-width', '1px')
-            .attr('d', 'M 9,2 V 6 L16,4 Z')
+    .attr('fill', 'black')
+    .attr('stroke', '#000000')
+    .style('stroke-dasharray', ('0, 0'))
+    .attr('stroke-width', '1px')
+    .attr('d', 'M 9,2 V 6 L16,4 Z')
 
-    // The cross
+  // The cross
   marker.append('path')
-            .attr('fill', 'none')
-            .attr('stroke', '#000000')
-            .style('stroke-dasharray', ('0, 0'))
-            .attr('stroke-width', '1px')
-            .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7')
-         // this is actual shape for arrowhead
+    .attr('fill', 'none')
+    .attr('stroke', '#000000')
+    .style('stroke-dasharray', ('0, 0'))
+    .attr('stroke-width', '1px')
+    .attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7')
+  // this is actual shape for arrowhead
 }
 
 exports.getTextObj = function () {
@@ -271,32 +260,32 @@ exports.getNoteRect = function () {
 var _drawTextCandidateFunc = (function () {
   function byText (content, g, x, y, width, height, textAttrs) {
     var text = g.append('text')
-        .attr('x', x + width / 2).attr('y', y + height / 2 + 5)
-        .style('text-anchor', 'middle')
-        .text(content)
+      .attr('x', x + width / 2).attr('y', y + height / 2 + 5)
+      .style('text-anchor', 'middle')
+      .text(content)
     _setTextAttrs(text, textAttrs)
   }
 
   function byTspan (content, g, x, y, width, height, textAttrs) {
     var text = g.append('text')
-        .attr('x', x + width / 2).attr('y', y)
-        .style('text-anchor', 'middle')
+      .attr('x', x + width / 2).attr('y', y)
+      .style('text-anchor', 'middle')
     text.append('tspan')
-        .attr('x', x + width / 2).attr('dy', '0')
-        .text(content)
+      .attr('x', x + width / 2).attr('dy', '0')
+      .text(content)
 
     if (typeof (text.textwrap) !== 'undefined') {
       text.textwrap({ // d3textwrap
         x: x + width / 2, y: y, width: width, height: height
       }, 0)
-        // vertical aligment after d3textwrap expans tspan to multiple tspans
+      // vertical aligment after d3textwrap expans tspan to multiple tspans
       var tspans = text.selectAll('tspan')
       if (tspans.length > 0 && tspans[0].length > 0) {
         tspans = tspans[0]
-          // set y of <text> to the mid y of the first line
+        // set y of <text> to the mid y of the first line
         text.attr('y', y + (height / 2.0 - text[0][0].getBBox().height * (1 - 1.0 / tspans.length) / 2.0))
-            .attr('dominant-baseline', 'central')
-            .attr('alignment-baseline', 'central')
+          .attr('dominant-baseline', 'central')
+          .attr('alignment-baseline', 'central')
       }
     }
     _setTextAttrs(text, textAttrs)
@@ -305,15 +294,15 @@ var _drawTextCandidateFunc = (function () {
   function byFo (content, g, x, y, width, height, textAttrs) {
     var s = g.append('switch')
     var f = s.append('foreignObject')
-                  .attr('x', x).attr('y', y)
-                  .attr('width', width).attr('height', height)
+      .attr('x', x).attr('y', y)
+      .attr('width', width).attr('height', height)
 
     var text = f.append('div').style('display', 'table')
-          .style('height', '100%').style('width', '100%')
+      .style('height', '100%').style('width', '100%')
 
     text.append('div').style('display', 'table-cell')
-           .style('text-align', 'center').style('vertical-align', 'middle')
-           .text(content)
+      .style('text-align', 'center').style('vertical-align', 'middle')
+      .text(content)
 
     byTspan(content, s, x, y, width, height, textAttrs)
     _setTextAttrs(text, textAttrs)
@@ -329,6 +318,6 @@ var _drawTextCandidateFunc = (function () {
 
   return function (conf) {
     return conf.textPlacement === 'fo' ? byFo : (
-          conf.textPlacement === 'old' ? byText : byTspan)
+      conf.textPlacement === 'old' ? byText : byTspan)
   }
 })()

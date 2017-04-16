@@ -11,11 +11,10 @@ describe('when parsing a gitGraph', function () {
   })
   it('should handle a gitGraph defintion', function () {
     var str = 'gitGraph:\n' +
-        'commit\n'
+      'commit\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
-        // console.log(commits);
 
     expect(Object.keys(commits).length).toBe(1)
     expect(parser.yy.getCurrentBranch()).toBe('master')
@@ -25,13 +24,12 @@ describe('when parsing a gitGraph', function () {
 
   it('should handle a gitGraph defintion with empty options', function () {
     var str = 'gitGraph:\n' +
-        'options\n' +
-        'end\n' +
-        'commit\n'
+      'options\n' +
+      'end\n' +
+      'commit\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
-        // console.log(commits);
 
     expect(parser.yy.getOptions()).toEqual({})
     expect(Object.keys(commits).length).toBe(1)
@@ -42,15 +40,13 @@ describe('when parsing a gitGraph', function () {
 
   it('should handle a gitGraph defintion with valid options', function () {
     var str = 'gitGraph:\n' +
-        'options\n' +
-        '{"key": "value"}\n' +
-        'end\n' +
-        'commit\n'
+      'options\n' +
+      '{"key": "value"}\n' +
+      'end\n' +
+      'commit\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
-        // console.log(commits);
-        // console.log('options object', parser.yy.getOptions());
     expect(parser.yy.getOptions()['key']).toBe('value')
     expect(Object.keys(commits).length).toBe(1)
     expect(parser.yy.getCurrentBranch()).toBe('master')
@@ -60,14 +56,13 @@ describe('when parsing a gitGraph', function () {
 
   it('should not fail on a gitGraph with malformed json', function () {
     var str = 'gitGraph:\n' +
-        'options\n' +
-        '{"key": "value"\n' +
-        'end\n' +
-        'commit\n'
+      'options\n' +
+      '{"key": "value"\n' +
+      'end\n' +
+      'commit\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
-        // console.log(commits);
     expect(Object.keys(commits).length).toBe(1)
     expect(parser.yy.getCurrentBranch()).toBe('master')
     expect(parser.yy.getDirection()).toBe('LR')
@@ -76,11 +71,10 @@ describe('when parsing a gitGraph', function () {
 
   it('should handle set direction', function () {
     var str = 'gitGraph BT:\n' +
-        'commit\n'
+      'commit\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
-        // console.log(commits);
 
     expect(Object.keys(commits).length).toBe(1)
     expect(parser.yy.getCurrentBranch()).toBe('master')
@@ -90,8 +84,8 @@ describe('when parsing a gitGraph', function () {
 
   it('should checkout a branch', function () {
     var str = 'gitGraph:\n' +
-        'branch new\n' +
-        'checkout new\n'
+      'branch new\n' +
+      'checkout new\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
@@ -102,10 +96,10 @@ describe('when parsing a gitGraph', function () {
 
   it('should add commits to checked out branch', function () {
     var str = 'gitGraph:\n' +
-        'branch new\n' +
-        'checkout new\n' +
-        'commit\n' +
-        'commit\n'
+      'branch new\n' +
+      'checkout new\n' +
+      'commit\n' +
+      'commit\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
@@ -118,11 +112,10 @@ describe('when parsing a gitGraph', function () {
   })
   it('should handle commit with args', function () {
     var str = 'gitGraph:\n' +
-        'commit "a commit"\n'
+      'commit "a commit"\n'
 
     parser.parse(str)
     var commits = parser.yy.getCommits()
-        // console.log(commits);
 
     expect(Object.keys(commits).length).toBe(1)
     var key = Object.keys(commits)[0]
@@ -132,12 +125,12 @@ describe('when parsing a gitGraph', function () {
 
   it('it should reset a branch', function () {
     var str = 'gitGraph:\n' +
-        'commit\n' +
-        'commit\n' +
-        'branch newbranch\n' +
-        'checkout newbranch\n' +
-        'commit\n' +
-        'reset master\n'
+      'commit\n' +
+      'commit\n' +
+      'branch newbranch\n' +
+      'checkout newbranch\n' +
+      'commit\n' +
+      'reset master\n'
 
     parser.parse(str)
 
@@ -150,12 +143,12 @@ describe('when parsing a gitGraph', function () {
 
   it('reset can take an argument', function () {
     var str = 'gitGraph:\n' +
-        'commit\n' +
-        'commit\n' +
-        'branch newbranch\n' +
-        'checkout newbranch\n' +
-        'commit\n' +
-        'reset master^\n'
+      'commit\n' +
+      'commit\n' +
+      'branch newbranch\n' +
+      'checkout newbranch\n' +
+      'commit\n' +
+      'reset master^\n'
 
     parser.parse(str)
 
@@ -168,18 +161,17 @@ describe('when parsing a gitGraph', function () {
 
   it('it should handle fast forwardable merges', function () {
     var str = 'gitGraph:\n' +
-        'commit\n' +
-        'branch newbranch\n' +
-        'checkout newbranch\n' +
-        'commit\n' +
-        'commit\n' +
-        'checkout master\n' +
-        'merge newbranch\n'
+      'commit\n' +
+      'branch newbranch\n' +
+      'checkout newbranch\n' +
+      'commit\n' +
+      'commit\n' +
+      'checkout master\n' +
+      'merge newbranch\n'
 
     parser.parse(str)
 
     var commits = parser.yy.getCommits()
-        // console.log(commits);
     expect(Object.keys(commits).length).toBe(3)
     expect(parser.yy.getCurrentBranch()).toBe('master')
     expect(parser.yy.getBranches()['newbranch']).toEqual(parser.yy.getBranches()['master'])
@@ -188,17 +180,16 @@ describe('when parsing a gitGraph', function () {
 
   it('it should handle cases when merge is a noop', function () {
     var str = 'gitGraph:\n' +
-        'commit\n' +
-        'branch newbranch\n' +
-        'checkout newbranch\n' +
-        'commit\n' +
-        'commit\n' +
-        'merge master\n'
+      'commit\n' +
+      'branch newbranch\n' +
+      'checkout newbranch\n' +
+      'commit\n' +
+      'commit\n' +
+      'merge master\n'
 
     parser.parse(str)
 
     var commits = parser.yy.getCommits()
-        // console.log(commits);
     expect(Object.keys(commits).length).toBe(3)
     expect(parser.yy.getCurrentBranch()).toBe('newbranch')
     expect(parser.yy.getBranches()['newbranch']).not.toEqual(parser.yy.getBranches()['master'])
@@ -207,19 +198,18 @@ describe('when parsing a gitGraph', function () {
 
   it('it should handle merge with 2 parents', function () {
     var str = 'gitGraph:\n' +
-        'commit\n' +
-        'branch newbranch\n' +
-        'checkout newbranch\n' +
-        'commit\n' +
-        'commit\n' +
-        'checkout master\n' +
-        'commit\n' +
-        'merge newbranch\n'
+      'commit\n' +
+      'branch newbranch\n' +
+      'checkout newbranch\n' +
+      'commit\n' +
+      'commit\n' +
+      'checkout master\n' +
+      'commit\n' +
+      'merge newbranch\n'
 
     parser.parse(str)
 
     var commits = parser.yy.getCommits()
-        // console.log(commits);
     expect(Object.keys(commits).length).toBe(5)
     expect(parser.yy.getCurrentBranch()).toBe('master')
     expect(parser.yy.getBranches()['newbranch']).not.toEqual(parser.yy.getBranches()['master'])
@@ -228,22 +218,21 @@ describe('when parsing a gitGraph', function () {
 
   it('it should handle ff merge when history walk has two parents (merge commit)', function () {
     var str = 'gitGraph:\n' +
-        'commit\n' +
-        'branch newbranch\n' +
-        'checkout newbranch\n' +
-        'commit\n' +
-        'commit\n' +
-        'checkout master\n' +
-        'commit\n' +
-        'merge newbranch\n' +
-        'commit\n' +
-        'checkout newbranch\n' +
-        'merge master\n'
+      'commit\n' +
+      'branch newbranch\n' +
+      'checkout newbranch\n' +
+      'commit\n' +
+      'commit\n' +
+      'checkout master\n' +
+      'commit\n' +
+      'merge newbranch\n' +
+      'commit\n' +
+      'checkout newbranch\n' +
+      'merge master\n'
 
     parser.parse(str)
 
     var commits = parser.yy.getCommits()
-        // console.log(commits);
     expect(Object.keys(commits).length).toBe(6)
     expect(parser.yy.getCurrentBranch()).toBe('newbranch')
     expect(parser.yy.getBranches()['newbranch']).toEqual(parser.yy.getBranches()['master'])

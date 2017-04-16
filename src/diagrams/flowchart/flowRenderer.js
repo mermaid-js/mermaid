@@ -50,8 +50,6 @@ exports.addVertices = function (vert, g) {
      */
     var classStr = ''
 
-    // log.debug(vertice.classes);
-
     if (vertice.classes.length > 0) {
       classStr = vertice.classes.join(' ')
     }
@@ -94,9 +92,6 @@ exports.addVertices = function (vert, g) {
 
       labelTypeStr = 'svg'
       verticeText = svgLabel
-
-      // verticeText = verticeText.replace(/<br\/>/g, '\n');
-      // labelTypeStr = 'text';
     }
 
     var radious = 0
@@ -242,7 +237,6 @@ exports.getClasses = function (text, isDot) {
   // Add default class if undefined
   if (typeof (classes.default) === 'undefined') {
     classes.default = { id: 'default' }
-    // classes.default.styles = ['fill:#ffa','stroke:#666','stroke-width:3px'];
     classes.default.styles = []
     classes.default.clusterStyles = ['rx:4px', 'fill: rgb(255, 255, 222)', 'rx: 4px', 'stroke: rgb(170, 170, 51)', 'stroke-width: 1px']
     classes.default.nodeLabelStyles = ['fill:#000', 'stroke:none', 'font-weight:300', 'font-family:"Helvetica Neue",Helvetica,Arial,sans-serf', 'font-size:14px']
@@ -307,7 +301,6 @@ exports.draw = function (text, id, isDot) {
   // Fetch the verices/nodes and edges/links from the parsed graph definition
   var vert = graph.getVertices()
 
-  // log.debug(vert);
   var edges = graph.getEdges()
 
   i = 0
@@ -318,7 +311,6 @@ exports.draw = function (text, id, isDot) {
     d3.selectAll('cluster').append('text')
 
     for (j = 0; j < subG.nodes.length; j++) {
-      // log.debug('Setting node',subG.nodes[j],' to subgraph '+id);
       g.setParent(subG.nodes[j], subG.id)
     }
   }
@@ -435,35 +427,20 @@ exports.draw = function (text, id, isDot) {
 
   // Set up an SVG group so that we can translate the final graph.
   var svg = d3.select('#' + id)
-  // svgGroup = d3.select('#' + id + ' g');
 
   // Run the renderer. This is what draws the final graph.
   var element = d3.select('#' + id + ' g')
   render(element, g)
 
-  // var tip = d3.tip().html(function(d) { return d; });
   element.selectAll('g.node')
     .attr('title', function () {
       return graph.getTooltip(this.id)
     })
 
-  /*
-   var xPos = document.querySelectorAll('.clusters rect')[0].x.baseVal.value;
-   var width = document.querySelectorAll('.clusters rect')[0].width.baseVal.value;
-      var cluster = d3.selectAll('.cluster');
-      var te = cluster.append('text');
-      te.attr('x', xPos+width/2);
-      te.attr('y', 12);
-      //te.stroke('black');
-      te.attr('id', 'apa12');
-      te.style('text-anchor', 'middle');
-      te.text('Title for cluster');
-  */
   if (conf.useMaxWidth) {
     // Center the graph
     svg.attr('height', '100%')
     svg.attr('width', conf.width)
-    // svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
     svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20))
     svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;')
   } else {
@@ -474,7 +451,6 @@ exports.draw = function (text, id, isDot) {
     } else {
       svg.attr('width', conf.width)
     }
-    // svg.attr('viewBox', svgb.getBBox().x + ' 0 '+ g.graph().width+' '+ g.graph().height);
     svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20))
   }
 
@@ -486,7 +462,6 @@ exports.draw = function (text, id, isDot) {
 
     if (subG.title !== 'undefined') {
       var clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect')
-      // log.debug('looking up: #' + id + ' #' + subG.id)
       var clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id)
 
       var xPos = clusterRects[0].x.baseVal.value
@@ -504,7 +479,6 @@ exports.draw = function (text, id, isDot) {
       if (typeof subG.title === 'undefined') {
         te.text('Undef')
       } else {
-        // te.text(subGraphs[subGraphs.length-i-1].title);
         te.text(subG.title)
       }
     }

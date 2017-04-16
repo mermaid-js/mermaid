@@ -9,26 +9,23 @@ var Logger = require('../../logger')
 var log = Logger.Log
 
 exports.addActor = function (id, name, description) {
-    // Don't allow description nulling
+  // Don't allow description nulling
   var old = actors[id]
   if (old && name === old.name && description == null) return
 
-    // Don't allow null descriptions, either
+  // Don't allow null descriptions, either
   if (description == null) description = name
 
-  actors[id] = {name: name, description: description}
+  actors[id] = { name: name, description: description }
 }
 
 exports.addMessage = function (idFrom, idTo, message, answer) {
-  messages.push({from: idFrom, to: idTo, message: message, answer: answer})
+  messages.push({ from: idFrom, to: idTo, message: message, answer: answer })
 }
 
-/**
- *
- */
 exports.addSignal = function (idFrom, idTo, message, messageType) {
   log.debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType)
-  messages.push({from: idFrom, to: idTo, message: message, type: messageType})
+  messages.push({ from: idFrom, to: idTo, message: message, type: messageType })
 }
 
 exports.getMessages = function () {
@@ -87,13 +84,13 @@ exports.PLACEMENT = {
 }
 
 exports.addNote = function (actor, placement, message) {
-  var note = {actor: actor, placement: placement, message: message}
+  var note = { actor: actor, placement: placement, message: message }
 
-    // Coerce actor into a [to, from, ...] array
+  // Coerce actor into a [to, from, ...] array
   var actors = [].concat(actor, actor)
 
   notes.push(note)
-  messages.push({from: actors[0], to: actors[1], message: message, type: exports.LINETYPE.NOTE, placement: placement})
+  messages.push({ from: actors[0], to: actors[1], message: message, type: exports.LINETYPE.NOTE, placement: placement })
 }
 
 exports.setTitle = function (titleText) {
@@ -110,7 +107,6 @@ exports.apply = function (param) {
       exports.apply(item)
     })
   } else {
-        // console.info(param);
     switch (param.type) {
       case 'addActor':
         exports.addActor(param.actor, param.actor, param.description)
@@ -128,25 +124,19 @@ exports.apply = function (param) {
         exports.addSignal(param.from, param.to, param.msg, param.signalType)
         break
       case 'loopStart':
-                // log.debug('Loop text: ',param.loopText);
         exports.addSignal(undefined, undefined, param.loopText, param.signalType)
-                // yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
         break
       case 'loopEnd':
         exports.addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'optStart':
-                // log.debug('Loop text: ',param.loopText);
         exports.addSignal(undefined, undefined, param.optText, param.signalType)
-                // yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
         break
       case 'optEnd':
         exports.addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'altStart':
-                // log.debug('Loop text: ',param.loopText);
         exports.addSignal(undefined, undefined, param.altText, param.signalType)
-                // yy.addSignal(undefined, undefined, $2, yy.LINETYPE.LOOP_START);
         break
       case 'else':
         exports.addSignal(undefined, undefined, param.altText, param.signalType)

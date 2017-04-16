@@ -33,12 +33,12 @@ exports.addVertex = function (id, text, type, style) {
   }
 
   if (typeof vertices[id] === 'undefined') {
-    vertices[id] = {id: id, styles: [], classes: []}
+    vertices[id] = { id: id, styles: [], classes: [] }
   }
   if (typeof text !== 'undefined') {
     txt = text.trim()
 
-        // strip quotes if string starts and exnds with a quote
+    // strip quotes if string starts and exnds with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1)
     }
@@ -69,13 +69,13 @@ exports.addVertex = function (id, text, type, style) {
  */
 exports.addLink = function (start, end, type, linktext) {
   log.info('Got edge...', start, end)
-  var edge = {start: start, end: end, type: undefined, text: ''}
+  var edge = { start: start, end: end, type: undefined, text: '' }
   linktext = type.text
 
   if (typeof linktext !== 'undefined') {
     edge.text = linktext.trim()
 
-        // strip quotes if string starts and exnds with a quote
+    // strip quotes if string starts and exnds with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
       edge.text = edge.text.substring(1, edge.text.length - 1)
     }
@@ -119,7 +119,7 @@ exports.updateLink = function (pos, style) {
 
 exports.addClass = function (id, style) {
   if (typeof classes[id] === 'undefined') {
-    classes[id] = {id: id, styles: []}
+    classes[id] = { id: id, styles: [] }
   }
 
   if (typeof style !== 'undefined') {
@@ -252,39 +252,39 @@ var setupToolTips = function (element) {
   var tooltipElem = d3.select('.mermaidTooltip')
   if (tooltipElem[0][0] === null) {
     tooltipElem = d3.select('body')
-            .append('div')
-            .attr('class', 'mermaidTooltip')
-            .style('opacity', 0)
+      .append('div')
+      .attr('class', 'mermaidTooltip')
+      .style('opacity', 0)
   }
 
   var svg = d3.select(element).select('svg')
 
   var nodes = svg.selectAll('g.node')
   nodes
-        .on('mouseover', function () {
-          var el = d3.select(this)
-          var title = el.attr('title')
-            // Dont try to draw a tooltip if no data is provided
-          if (title === null) {
-            return
-          }
-          var rect = this.getBoundingClientRect()
+    .on('mouseover', function () {
+      var el = d3.select(this)
+      var title = el.attr('title')
+      // Dont try to draw a tooltip if no data is provided
+      if (title === null) {
+        return
+      }
+      var rect = this.getBoundingClientRect()
 
-          tooltipElem.transition()
-                .duration(200)
-                .style('opacity', '.9')
-          tooltipElem.html(el.attr('title'))
-                .style('left', (rect.left + (rect.right - rect.left) / 2) + 'px')
-                .style('top', (rect.top - 14 + document.body.scrollTop) + 'px')
-          el.classed('hover', true)
-        })
-        .on('mouseout', function () {
-          tooltipElem.transition()
-                .duration(500)
-                .style('opacity', 0)
-          var el = d3.select(this)
-          el.classed('hover', false)
-        })
+      tooltipElem.transition()
+        .duration(200)
+        .style('opacity', '.9')
+      tooltipElem.html(el.attr('title'))
+        .style('left', (rect.left + (rect.right - rect.left) / 2) + 'px')
+        .style('top', (rect.top - 14 + document.body.scrollTop) + 'px')
+      el.classed('hover', true)
+    })
+    .on('mouseout', function () {
+      tooltipElem.transition()
+        .duration(500)
+        .style('opacity', 0)
+      var el = d3.select(this)
+      el.classed('hover', false)
+    })
 }
 funs.push(setupToolTips)
 
@@ -314,7 +314,7 @@ exports.defaultStyle = function () {
  */
 exports.addSubGraph = function (list, title) {
   function uniq (a) {
-    var prims = {'boolean': {}, 'number': {}, 'string': {}}
+    var prims = { 'boolean': {}, 'number': {}, 'string': {} }
     var objs = []
 
     return a.filter(function (item) {
@@ -330,9 +330,7 @@ exports.addSubGraph = function (list, title) {
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
 
-  var subGraph = {id: 'subGraph' + subCount, nodes: nodeList, title: title}
-// log.debug('subGraph:' + subGraph.title + subGraph.id);
-// log.debug(subGraph.nodes);
+  var subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title }
   subGraphs.push(subGraph)
   subCount = subCount + 1
   return subGraph.id
@@ -342,11 +340,9 @@ var getPosForId = function (id) {
   var i
   for (i = 0; i < subGraphs.length; i++) {
     if (subGraphs[i].id === id) {
-            // log.debug('Found pos for ',id,' ',i);
       return i
     }
   }
-    // log.debug('No pos found for ',id,' ',i);
   return -1
 }
 var secCount = -1
@@ -357,9 +353,8 @@ var indexNodes = function (id, pos) {
   if (secCount > 2000) {
     return
   }
-    // var nPos = getPosForId(subGraphs[pos].id);
   posCrossRef[secCount] = pos
-    // Check if match
+  // Check if match
   if (subGraphs[pos].id === id) {
     return {
       result: true,
@@ -371,7 +366,7 @@ var indexNodes = function (id, pos) {
   var posCount = 1
   while (count < nodes.length) {
     var childPos = getPosForId(nodes[count])
-        // Ignore regular nodes (pos will be -1)
+    // Ignore regular nodes (pos will be -1)
     if (childPos >= 0) {
       var res = indexNodes(id, childPos)
       if (res.result) {

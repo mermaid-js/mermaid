@@ -7,11 +7,8 @@ describe('when using the ganttDb', function () {
   var moment = require('moment')
 
   beforeEach(function () {
-        // gantt = require('./parser/gantt').parser;
-
     gDb = require('./ganttDb')
     gDb.clear()
-        // ex.yy.parseError = parseError;
   })
 
   it('should handle an fixed dates', function () {
@@ -180,5 +177,3 @@ describe('when using the ganttDb', function () {
     expect(tasks[2].endTime).toEqual(moment('2013-01-17', 'YYYY-MM-DD').toDate())
   })
 })
-
-// Ogiltigt id i after id

@@ -3,8 +3,6 @@ var proxyquire = require('proxyquire')
 /**
  * Created by knut on 14-11-18.
  */
-// var proxyquire = require('proxyquire');
-// var log = require('../../logger').create();
 
 var sq = require('./parser/sequenceDiagram').parser
 var NewD3
@@ -17,12 +15,7 @@ var d3 = {
     return new NewD3()
   }
 }
-// var sd = proxyquire('./sequenceRenderer', { './d3': d3 });
 var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 })
-
-//
-//
-// var sd = require('./sequenceRenderer');
 
 function addConf (conf, key, value) {
   if (value !== undefined) {
@@ -36,17 +29,12 @@ describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
     sq.yy = require('./sequenceDb')
     sq.yy.clear()
-        // parseError = function(err, hash) {
-        //    log.debug('Syntax error:' + err);
-        //    log.debug(hash);
-        // };
-        // sq.yy.parseError = parseError;
   })
   it('it should handle a sequenceDiagram defintion', function () {
     str = 'sequenceDiagram\n' +
-        'Alice->Bob:Hello Bob, how are you?\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'Bob-->Alice: I am good thanks!'
+      'Alice->Bob:Hello Bob, how are you?\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -61,10 +49,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle a sequenceDiagram definition with a title', function () {
     str = 'sequenceDiagram\n' +
-        'title: Diagram Title\n' +
-        'Alice->Bob:Hello Bob, how are you?\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'Bob-->Alice: I am good thanks!'
+      'title: Diagram Title\n' +
+      'Alice->Bob:Hello Bob, how are you?\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -81,8 +69,8 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should space in actor names', function () {
     str = 'sequenceDiagram\n' +
-        'Alice->Bob:Hello Bob, how are - you?\n' +
-        'Bob-->Alice: I am good thanks!'
+      'Alice->Bob:Hello Bob, how are - you?\n' +
+      'Bob-->Alice: I am good thanks!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -97,10 +85,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should alias participants', function () {
     str = 'sequenceDiagram\n' +
-            'participant A as Alice\n' +
-            'participant B as Bob\n' +
-            'A->B:Hello Bob, how are you?\n' +
-            'B-->A: I am good thanks!'
+      'participant A as Alice\n' +
+      'participant B as Bob\n' +
+      'A->B:Hello Bob, how are you?\n' +
+      'B-->A: I am good thanks!'
 
     sq.parse(str)
 
@@ -116,7 +104,7 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle in async messages', function () {
     var str = 'sequenceDiagram\n' +
-        'Alice-xBob:Hello Bob, how are you?'
+      'Alice-xBob:Hello Bob, how are you?'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -130,7 +118,7 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle in async dotted messages', function () {
     var str = 'sequenceDiagram\n' +
-        'Alice--xBob:Hello Bob, how are you?'
+      'Alice--xBob:Hello Bob, how are you?'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -144,7 +132,7 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle in arrow messages', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->>Bob:Hello Bob, how are you?'
+      'Alice->>Bob:Hello Bob, how are you?'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -158,7 +146,7 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle in arrow messages', function () {
     var str = 'sequenceDiagram\n' +
-          'Alice-->>Bob:Hello Bob, how are you?'
+      'Alice-->>Bob:Hello Bob, how are you?'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -172,10 +160,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle actor activation', function () {
     var str = 'sequenceDiagram\n' +
-          'Alice-->>Bob:Hello Bob, how are you?\n' +
-          'activate Bob\n' +
-          'Bob-->>Alice:Hello Alice, I\'m fine and  you?\n' +
-          'deactivate Bob'
+      'Alice-->>Bob:Hello Bob, how are you?\n' +
+      'activate Bob\n' +
+      'Bob-->>Alice:Hello Alice, I\'m fine and  you?\n' +
+      'deactivate Bob'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -194,8 +182,8 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle actor one line notation activation', function () {
     var str = 'sequenceDiagram\n' +
-          'Alice-->>+Bob:Hello Bob, how are you?\n' +
-          'Bob-->>- Alice:Hello Alice, I\'m fine and  you?'
+      'Alice-->>+Bob:Hello Bob, how are you?\n' +
+      'Bob-->>- Alice:Hello Alice, I\'m fine and  you?'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -218,10 +206,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle stacked activations', function () {
     var str = 'sequenceDiagram\n' +
-          'Alice-->>+Bob:Hello Bob, how are you?\n' +
-          'Bob-->>+Carol:Carol, let me introduce Alice?\n' +
-          'Bob-->>- Alice:Hello Alice, please meet Carol?\n' +
-          'Carol->>- Bob:Oh Bob, I\'m so happy to be here!'
+      'Alice-->>+Bob:Hello Bob, how are you?\n' +
+      'Bob-->>+Carol:Carol, let me introduce Alice?\n' +
+      'Bob-->>- Alice:Hello Alice, please meet Carol?\n' +
+      'Carol->>- Bob:Oh Bob, I\'m so happy to be here!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -250,10 +238,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle comments in a sequenceDiagram', function () {
     str = 'sequenceDiagram\n' +
-        'Alice->Bob: Hello Bob, how are you?\n' +
-        '%% Comment\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'Bob-->Alice: I am good thanks!'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -268,10 +256,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle new lines in a sequenceDiagram', function () {
     str = 'sequenceDiagram\n' +
-        'Alice->Bob: Hello Bob, how are you?\n\n' +
-        '%% Comment\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'Bob-->Alice: I am good thanks!\n'
+      'Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!\n'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -286,9 +274,9 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle semicolons', function () {
     str = 'sequenceDiagram;' +
-        'Alice->Bob: Hello Bob, how are you?;' +
-        'Note right of Bob: Bob thinks;' +
-        'Bob-->Alice: I am good thanks!;'
+      'Alice->Bob: Hello Bob, how are you?;' +
+      'Note right of Bob: Bob thinks;' +
+      'Bob-->Alice: I am good thanks!;'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -303,10 +291,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle one leading space in lines in a sequenceDiagram', function () {
     str = 'sequenceDiagram\n' +
-        ' Alice->Bob: Hello Bob, how are you?\n\n' +
-        '%% Comment\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'Bob-->Alice: I am good thanks!'
+      ' Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -321,10 +309,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle several leading spaces in lines in a sequenceDiagram', function () {
     str = 'sequenceDiagram\n' +
-        '   Alice->Bob: Hello Bob, how are you?\n\n' +
-        '%% Comment\n' +
-        'Note right of Bob: Bob thinks\n' +
-        'Bob-->Alice: I am good thanks!'
+      '   Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -339,16 +327,16 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle several leading spaces in lines in a sequenceDiagram', function () {
     str = 'sequenceDiagram\n' +
-        'participant Alice\n' +
-        'participant Bob\n' +
-        'Alice->John: Hello John, how are you?\n' +
-        '    loop Healthcheck\n' +
-        'John->John: Fight against hypochondria\n' +
-        ' end\n' +
-        'Note right of John: Rational thoughts<br/>prevail...\n' +
-        '    John-->Alice: Great!\n' +
-        '    John->Bob: How about you?\n' +
-        'Bob-->John: Jolly good!'
+      'participant Alice\n' +
+      'participant Bob\n' +
+      'Alice->John: Hello John, how are you?\n' +
+      '    loop Healthcheck\n' +
+      'John->John: Fight against hypochondria\n' +
+      ' end\n' +
+      'Note right of John: Rational thoughts<br/>prevail...\n' +
+      '    John-->Alice: Great!\n' +
+      '    John->Bob: How about you?\n' +
+      'Bob-->John: Jolly good!'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -363,8 +351,8 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle notes over a single actor', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Note over Bob: Bob thinks\n'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Note over Bob: Bob thinks\n'
 
     sq.parse(str)
 
@@ -374,9 +362,9 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle notes over multiple actors', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Note over Alice,Bob: confusion\n' +
-            'Note over Bob,Alice: resolution\n'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Note over Alice,Bob: confusion\n' +
+      'Note over Bob,Alice: resolution\n'
 
     sq.parse(str)
 
@@ -388,12 +376,12 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle loop statements a sequenceDiagram', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n\n' +
-            '%% Comment\n' +
-            'Note right of Bob: Bob thinks\n' +
-            'loop Multiple happy responses\n\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'loop Multiple happy responses\n\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -408,12 +396,12 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle opt statements a sequenceDiagram', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n\n' +
-            '%% Comment\n' +
-            'Note right of Bob: Bob thinks\n' +
-            'opt Perhaps a happy response\n\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'opt Perhaps a happy response\n\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -428,14 +416,14 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle alt statements a sequenceDiagram', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n\n' +
-            '%% Comment\n' +
-            'Note right of Bob: Bob thinks\n' +
-            'alt isWell\n\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'else isSick\n' +
-            'Bob-->Alice: Feel sick...\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'alt isWell\n\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'else isSick\n' +
+      'Bob-->Alice: Feel sick...\n' +
+      'end'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -451,16 +439,16 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle par statements a sequenceDiagram', function () {
     var str = 'sequenceDiagram\n' +
-            'par Parallel one\n' +
-            'Alice->>Bob: Hello Bob, how are you?\n' +
-            'Bob-->>Alice: I am good thanks!\n' +
-            'and Parallel two\n' +
-            'Alice->>Bob: Are you OK?\n' +
-            'Bob-->>Alice: Fine!\n' +
-            'and Parallel three\n' +
-            'Alice->>Bob: What do you think about it?\n' +
-            'Bob-->>Alice: It\'s good!\n' +
-            'end'
+      'par Parallel one\n' +
+      'Alice->>Bob: Hello Bob, how are you?\n' +
+      'Bob-->>Alice: I am good thanks!\n' +
+      'and Parallel two\n' +
+      'Alice->>Bob: Are you OK?\n' +
+      'Bob-->>Alice: Fine!\n' +
+      'and Parallel three\n' +
+      'Alice->>Bob: What do you think about it?\n' +
+      'Bob-->>Alice: It\'s good!\n' +
+      'end'
 
     sq.parse(str)
     var actors = sq.yy.getActors()
@@ -477,7 +465,7 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle special characters in signals', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: -:<>,;# comment'
+      'Alice->Bob: -:<>,;# comment'
 
     sq.parse(str)
 
@@ -486,8 +474,8 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle special characters in notes', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Note right of Bob: -:<>,;# comment'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Note right of Bob: -:<>,;# comment'
 
     sq.parse(str)
 
@@ -496,10 +484,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle special characters in loop', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'loop -:<>,;# comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'loop -:<>,;# comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -508,10 +496,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle special characters in opt', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'opt -:<>,;# comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'opt -:<>,;# comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -520,12 +508,12 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle special characters in alt', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'alt -:<>,;# comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'else ,<>:-#; comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'alt -:<>,;# comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'else ,<>:-#; comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -535,12 +523,12 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle special characters in par', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'par -:<>,;# comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'and ,<>:-#; comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'par -:<>,;# comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'and ,<>:-#; comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -550,10 +538,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle no-label loop', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'loop\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'loop\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -563,10 +551,10 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle no-label opt', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'opt # comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'opt # comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -576,12 +564,12 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle no-label alt', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'alt;' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'else # comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'alt;' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'else # comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -593,12 +581,12 @@ describe('when parsing a sequenceDiagram', function () {
   })
   it('it should handle no-label par', function () {
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'par;' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'and # comment\n' +
-            'Bob-->Alice: I am good thanks!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'par;' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'and # comment\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'end'
 
     sq.parse(str)
 
@@ -615,18 +603,12 @@ describe('when checking the bounds in a sequenceDiagram', function () {
   beforeEach(function () {
     sq.yy = require('./sequenceDb')
     sq.yy.clear()
-        // parseError = function(err, hash) {
-        //    log.debug('Syntax error:' + err);
-        //    log.debug(hash);
-        // };
-        // sq.yy.parseError = parseError;
-
     conf = {
       diagramMarginX: 50,
       diagramMarginY: 10,
       actorMargin: 50,
       width: 150,
-            // Height of actor boxes
+      // Height of actor boxes
       height: 65,
       boxMargin: 10,
       messageMargin: 40,
@@ -686,7 +668,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopx).toBe(150 + conf.boxMargin)
     expect(loop.stopy).toBe(200 + conf.boxMargin)
 
-        // Check bounds of first loop
+    // Check bounds of first loop
     var bounds = sd.bounds.getBounds()
 
     expect(bounds.startx).toBe(25)
@@ -703,7 +685,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     sd.bounds.newLoop()
     sd.bounds.insert(200, 200, 300, 300)
 
-        // Check bounds of first loop
+    // Check bounds of first loop
     var loop = sd.bounds.endLoop()
 
     expect(loop.startx).toBe(200 - conf.boxMargin)
@@ -711,7 +693,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopx).toBe(300 + conf.boxMargin)
     expect(loop.stopy).toBe(300 + conf.boxMargin)
 
-        // Check bounds of second loop
+    // Check bounds of second loop
     loop = sd.bounds.endLoop()
 
     expect(loop.startx).toBe(200 - 2 * conf.boxMargin)
@@ -719,7 +701,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopx).toBe(300 + 2 * conf.boxMargin)
     expect(loop.stopy).toBe(300 + 2 * conf.boxMargin)
 
-        // Check bounds of first loop
+    // Check bounds of first loop
     var bounds = sd.bounds.getBounds()
 
     expect(bounds.startx).toBe(100)
@@ -742,7 +724,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopx).toBe(300 + conf.boxMargin)
     expect(loop.stopy).toBe(300 + conf.boxMargin)
 
-        // Check bounds after the loop
+    // Check bounds after the loop
     var bounds = sd.bounds.getBounds()
 
     expect(bounds.startx).toBe(loop.startx)
@@ -758,20 +740,7 @@ describe('when rendering a sequenceDiagram', function () {
     sq.yy = require('./sequenceDb')
     sq.yy.clear()
 
-        // var MockBrowser = require('mock-browser').mocks.MockBrowser;
-        // var mock = new MockBrowser();
-
     delete global.mermaid_config
-
-        // and in the run-code inside some object
-        // global.document = mock.getDocument();
-        // global.window = mock.getWindow();
-
-        // parseError = function(err, hash) {
-        //    log.debug('Syntax error:' + err);
-        //    log.debug(hash);
-        // };
-        // sq.yy.parseError = parseError;
 
     NewD3 = function () {
       var o = {
@@ -808,7 +777,7 @@ describe('when rendering a sequenceDiagram', function () {
       diagramMarginY: 10,
       actorMargin: 50,
       width: 150,
-            // Height of actor boxes
+      // Height of actor boxes
       height: 65,
       boxMargin: 10,
       messageMargin: 40,
@@ -816,18 +785,13 @@ describe('when rendering a sequenceDiagram', function () {
       noteMargin: 25
     }
     sd.setConf(conf)
-        // document.body.innerHTML = '<div id="tst"></div>';
-        // document.body.innerHTML = '<svg height="30" width="200"><text id="tst" x="0" y="15" fill="red">I love SVG!</text></svg>';
-        // document.body.innerHTML = '<svg height="30" width="200"><text x="0" y="15" fill="red"><tspan x="46" id="tst">Alice thinks</tspan></text></svg>';
-        // console.log('document.body');
-        // console.log(document.querySelector('#tst').getBBox());
   });
   ['tspan', 'fo', 'old', undefined].forEach(function (textPlacement) {
     it('it should handle one actor, when textPlacement is ' + textPlacement, function () {
       sd.setConf(addConf(conf, 'textPlacement', textPlacement))
       sd.bounds.init()
       var str = 'sequenceDiagram\n' +
-            'participant Alice'
+        'participant Alice'
 
       sq.parse(str)
       sd.draw(str, 'tst')
@@ -842,8 +806,8 @@ describe('when rendering a sequenceDiagram', function () {
   it('it should handle one actor and a centered note', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'participant Alice\n' +
-            'Note over Alice: Alice thinks\n'
+      'participant Alice\n' +
+      'Note over Alice: Alice thinks\n'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -852,14 +816,14 @@ describe('when rendering a sequenceDiagram', function () {
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(conf.width)
-        // 10 comes from mock of text height
+    // 10 comes from mock of text height
     expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10)
   })
   it('it should handle one actor and a note to the left', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'participant Alice\n' +
-            'Note left of Alice: Alice thinks'
+      'participant Alice\n' +
+      'Note left of Alice: Alice thinks'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -868,14 +832,14 @@ describe('when rendering a sequenceDiagram', function () {
     expect(bounds.startx).toBe(-(conf.width / 2) - (conf.actorMargin / 2))
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(conf.width)
-        // 10 comes from mock of text height
+    // 10 comes from mock of text height
     expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10)
   })
   it('it should handle one actor and a note to the right', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'participant Alice\n' +
-            'Note right of Alice: Alice thinks'
+      'participant Alice\n' +
+      'Note right of Alice: Alice thinks'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -884,13 +848,13 @@ describe('when rendering a sequenceDiagram', function () {
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe((conf.width / 2) + (conf.actorMargin / 2) + conf.width)
-        // 10 comes from mock of text height
+    // 10 comes from mock of text height
     expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10)
   })
   it('it should handle two actors', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?'
+      'Alice->Bob: Hello Bob, how are you?'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -904,9 +868,9 @@ describe('when rendering a sequenceDiagram', function () {
   it('it should handle two actors and two centered shared notes', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Note over Alice,Bob: Looks\n' +
-            'Note over Bob,Alice: Looks back\n'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Note over Alice,Bob: Looks\n' +
+      'Note over Bob,Alice: Looks back\n'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -920,8 +884,8 @@ describe('when rendering a sequenceDiagram', function () {
   it('it should draw two actors and two messages', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Bob->Alice: Fine!'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Bob->Alice: Fine!'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -935,9 +899,9 @@ describe('when rendering a sequenceDiagram', function () {
   it('it should draw two actors notes to the right', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Note right of Bob: Bob thinks\n' +
-            'Bob->Alice: Fine!'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob->Alice: Fine!'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -954,9 +918,9 @@ describe('when rendering a sequenceDiagram', function () {
   it('it should draw two actors notes to the left', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'Note left of Alice: Bob thinks\n' +
-            'Bob->Alice: Fine!'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'Note left of Alice: Bob thinks\n' +
+      'Bob->Alice: Fine!'
 
     sq.parse(str)
     sd.draw(str, 'tst')
@@ -971,10 +935,10 @@ describe('when rendering a sequenceDiagram', function () {
   it('it should draw two loops', function () {
     sd.bounds.init()
     var str = 'sequenceDiagram\n' +
-            'Alice->Bob: Hello Bob, how are you?\n' +
-            'loop Cheers\n' +
-            'Bob->Alice: Fine!\n' +
-            'end'
+      'Alice->Bob: Hello Bob, how are you?\n' +
+      'loop Cheers\n' +
+      'Bob->Alice: Fine!\n' +
+      'end'
     sq.parse(str)
     sd.draw(str, 'tst')
 
@@ -992,11 +956,6 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
   beforeEach(function () {
     sq.yy = require('./sequenceDb')
     sq.yy.clear()
-        // parseError = function(err, hash) {
-        //    log.debug('Syntax error:' + err);
-        //    log.debug(hash);
-        // };
-        // sq.yy.parseError = parseError;
 
     NewD3 = function () {
       var o = {
@@ -1033,15 +992,15 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
       diagramMarginY: 10,
       actorMargin: 50,
       width: 150,
-            // Height of actor boxes
+      // Height of actor boxes
       height: 65,
       boxMargin: 10,
       messageMargin: 40,
       boxTextMargin: 15,
       noteMargin: 25,
       mirrorActors: true,
-            // Depending on css styling this might need adjustment
-            // Prolongs the edge of the diagram downwards
+      // Depending on css styling this might need adjustment
+      // Prolongs the edge of the diagram downwards
       bottomMarginAdj: 1
     }
     sd.setConf(conf)
@@ -1051,7 +1010,7 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
       sd.setConf(addConf(conf, 'textPlacement', textPlacement))
       sd.bounds.init()
       var str = 'sequenceDiagram\n' +
-            'participant Alice'
+        'participant Alice'
 
       sq.parse(str)
       sd.draw(str, 'tst')
