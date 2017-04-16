@@ -36,9 +36,11 @@ var gitGraphRenderer = require('./diagrams/gitGraph/gitGraphRenderer')
 var gitGraphAst = require('./diagrams/gitGraph/gitGraphAst')
 var d3 = require('./d3')
 
-window.SVGElement.prototype.getTransformToElement = window.SVGElement.prototype.getTransformToElement || function (toElement) {
-  return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM())
-}
+// https://github.com/cpettitt/dagre-d3/issues/202
+// window.SVGElement.prototype.getTransformToElement = window.SVGElement.prototype.getTransformToElement || function (toElement) {
+//   return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM())
+// }
+
 /**
  * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:
