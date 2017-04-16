@@ -3,7 +3,6 @@
     - Problem is it's for d3 v4 only
 - node console output colors like Chrome console
 - default theme doesn't work for class diagram
-- mermaidAPI.js cannot be required directly
 - compile less to css
 - don't version control generated content, move them to outside project
     - editor

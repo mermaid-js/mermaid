@@ -20,7 +20,7 @@ require([], function () {
       console.log(mermaid)
       mermaid.init()
       assert.equal(window.d3.selectAll('path')[0].length, 8,
-                'drew 8 paths')
+        'drew 8 paths')
       done()
     })
   })

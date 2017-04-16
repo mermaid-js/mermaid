@@ -5,10 +5,14 @@ var navApp = window.angular.module('navApp', [])
 
 navApp.controller('NavAppCtrl', function ($scope) {
   $scope.items = [
-    {'name': 'Ett',
-      'url': 'cases/ett.html'},
-    {'name': 'Two',
-      'url': 'cases/two.html'}
+    {
+      'name': 'Ett',
+      'url': 'cases/ett.html'
+    },
+    {
+      'name': 'Two',
+      'url': 'cases/two.html'
+    }
   ]
 
   $scope.frameUrl = 'web.html'

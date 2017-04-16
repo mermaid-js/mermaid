@@ -11,7 +11,3 @@ require('gulp-insert')
 var requireDir = require('require-dir')
 
 requireDir('./gulp/tasks')
-
-// var paths = {
-//   scripts: ['./src/**/*.js', '!**/parser/*.js']
-// }
