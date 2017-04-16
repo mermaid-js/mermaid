@@ -28,17 +28,14 @@ var detectType = function (text) {
   }
 
   if (text.match(/^\s*digraph/)) {
-        // log.debug('Detected dot syntax');
     return 'dotGraph'
   }
 
   if (text.match(/^\s*info/)) {
-        // log.debug('Detected info syntax');
     return 'info'
   }
 
   if (text.match(/^\s*gantt/)) {
-        // log.debug('Detected info syntax');
     return 'gantt'
   }
 
@@ -66,7 +63,7 @@ var cloneCssStyles = function (svg, classes) {
   var sheets = document.styleSheets
   var rule
   for (var i = 0; i < sheets.length; i++) {
-        // Avoid multiple inclusion on pages with multiple graphs
+    // Avoid multiple inclusion on pages with multiple graphs
     if (sheets[i].title !== 'mermaid-svg-internal-css') {
       try {
         var rules = sheets[i].cssRules
@@ -121,7 +118,7 @@ var cloneCssStyles = function (svg, classes) {
     s.setAttribute('type', 'text/css')
     s.setAttribute('title', 'mermaid-svg-internal-css')
     s.innerHTML = '/* <![CDATA[ */\n'
-        // Make this CSS local to this SVG
+    // Make this CSS local to this SVG
     if (defaultStyles !== '') {
       s.innerHTML += defaultStyles
     }

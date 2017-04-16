@@ -4,13 +4,8 @@
  */
 var utils = require('./utils')
 
-// var log = require('./logger').create();
 describe('when detecting chart type ', function () {
   var str
-  beforeEach(function () {
-
-  })
-
   it('should handle a graph defintion', function () {
     str = 'graph TB\nbfs1:queue'
 
@@ -40,11 +35,6 @@ describe('when detecting chart type ', function () {
 
 describe('when cloning CSS ', function () {
   beforeEach(function () {
-        // var MockBrowser = require('mock-browser').mocks.MockBrowser;
-        // var mock = new MockBrowser();
-
-        // and in the run-code inside some object
-        // global.document = mock.getDocument();
     document.body.innerHTML = ''
   })
 
@@ -56,11 +46,11 @@ describe('when cloning CSS ', function () {
     var innerStyle = styleSheet.innerHTML
     var styleArr = innerStyle.split('\n')
 
-        // Remove first and last two lines to remove the CDATA
+    // Remove first and last two lines to remove the CDATA
     expect(styleArr.length).toBeGreaterThan(2)
     var styleArrTrim = styleArr.slice(1, -2)
 
-        // Remove all empty lines
+    // Remove all empty lines
     for (var i = 0; i < styleArrTrim.length; i++) {
       if (styleArrTrim[i].trim() === '') {
         styleArrTrim.splice(i, 1)
@@ -113,7 +103,7 @@ describe('when cloning CSS ', function () {
     var svg = document.createElement('svg')
     svg.setAttribute('id', 'mermaid-01')
 
-        // Firefox throws a SecurityError when trying to access cssRules
+    // Firefox throws a SecurityError when trying to access cssRules
     document.styleSheets[document.styleSheets.length++] = {
       get cssRules () { throw new Error('SecurityError') }
     }
@@ -128,7 +118,7 @@ describe('when cloning CSS ', function () {
     svg.setAttribute('id', 'mermaid-01')
 
     utils.cloneCssStyles(svg, {})
-        // Should not create style element if not needed
+    // Should not create style element if not needed
     expect(svg.innerHTML).toBe('')
   })
 
@@ -136,9 +126,9 @@ describe('when cloning CSS ', function () {
     var svg = document.createElement('svg')
     svg.setAttribute('id', 'mermaid-01')
 
-    utils.cloneCssStyles(svg, {'default': {'styles': ['stroke:#fff', 'stroke-width:1.5px']}})
+    utils.cloneCssStyles(svg, { 'default': { 'styles': ['stroke:#fff', 'stroke-width:1.5px'] } })
     expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }'])
-        // Also verify the elements around the styling
+    // Also verify the elements around the styling
     expect(svg.innerHTML).toBe('<style type="text/css" title="mermaid-svg-internal-css">/* <![CDATA[ */\n#mermaid-01 .node>rect { stroke:#fff; stroke-width:1.5px; }\n/* ]]> */\n</style>')
   })
 
@@ -148,7 +138,7 @@ describe('when cloning CSS ', function () {
 
     addStyleToDocument('mermaid')
     utils.cloneCssStyles(svg, {})
-        // Should not create style element if not needed
+    // Should not create style element if not needed
     expect(svg.innerHTML).toBe('')
   })
 
@@ -179,7 +169,7 @@ describe('when cloning CSS ', function () {
   it('should handle a default class together with stylesheet in document with classes in SVG', function () {
     var svg = generateSVG()
     addStyleToDocument()
-    utils.cloneCssStyles(svg, {'default': {'styles': ['stroke:#ffffff', 'stroke-width:1.5px']}})
+    utils.cloneCssStyles(svg, { 'default': { 'styles': ['stroke:#ffffff', 'stroke-width:1.5px'] } })
     expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#ffffff; stroke-width:1.5px; }', '.node { stroke: #eeeeee;}', '.node-square { stroke: #bbbbbb;}'])
   })
 
@@ -187,9 +177,9 @@ describe('when cloning CSS ', function () {
     var svg = generateSVG()
     addStyleToDocument()
     utils.cloneCssStyles(svg, {
-      'default': {'styles': ['stroke:#ffffff', 'stroke-width:1.5px']},
-      'node-square': {'styles': ['fill:#eeeeee', 'stroke:#aaaaaa']},
-      'node-circle': {'styles': ['fill:#444444', 'stroke:#111111']}
+      'default': { 'styles': ['stroke:#ffffff', 'stroke-width:1.5px'] },
+      'node-square': { 'styles': ['fill:#eeeeee', 'stroke:#aaaaaa'] },
+      'node-circle': { 'styles': ['fill:#444444', 'stroke:#111111'] }
     })
     expect(stylesToArray(svg)).toEqual(['#mermaid-01 .node>rect { stroke:#ffffff; stroke-width:1.5px; }',
       '.node { stroke: #eeeeee;}',

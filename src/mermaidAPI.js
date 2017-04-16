@@ -36,11 +36,6 @@ var gitGraphRenderer = require('./diagrams/gitGraph/gitGraphRenderer')
 var gitGraphAst = require('./diagrams/gitGraph/gitGraphAst')
 var d3 = require('./d3')
 
-// https://github.com/cpettitt/dagre-d3/issues/202
-// window.SVGElement.prototype.getTransformToElement = window.SVGElement.prototype.getTransformToElement || function (toElement) {
-//   return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM())
-// }
-
 /**
  * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:
@@ -53,62 +48,62 @@ var d3 = require('./d3')
  * ```
  */
 var config = {
-    /**
-     * logLevel , decides the amount of logging to be used.
-     *    * debug: 1
-     *    * info: 2
-     *    * warn: 3
-     *    * error: 4
-     *    * fatal: 5
-     */
+  /**
+   * logLevel , decides the amount of logging to be used.
+   *    * debug: 1
+   *    * info: 2
+   *    * warn: 3
+   *    * error: 4
+   *    * fatal: 5
+   */
   logLevel: 5,
-    /**
-     * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
-     */
+  /**
+   * **cloneCssStyles** - This options controls whether or not the css rules should be copied into the generated svg
+   */
   cloneCssStyles: true,
 
-    /**
-     * **startOnLoad** - This options controls whether or mermaid starts when the page loads
-     */
+  /**
+   * **startOnLoad** - This options controls whether or mermaid starts when the page loads
+   */
   startOnLoad: true,
 
-    /**
-     * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute paths or
-     * an anchor, #. This matters if you are using base tag settings.
-     */
+  /**
+   * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute paths or
+   * an anchor, #. This matters if you are using base tag settings.
+   */
   arrowMarkerAbsolute: false,
 
-    /**
-     * ### flowchart
-     * *The object containing configurations specific for flowcharts*
-     */
+  /**
+   * ### flowchart
+   * *The object containing configurations specific for flowcharts*
+   */
   flowchart: {
-        /**
-         * **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
-         * on the edges
-         */
+    /**
+     * **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
+     * on the edges
+     */
     htmlLabels: true,
-        /**
-         * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
-         * the diagram.
-         */
+    /**
+     * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
+     * the diagram.
+     */
     useMaxWidth: true
   },
 
-    /**
-     * ###  sequenceDiagram
-     * The object containing configurations specific for sequence diagrams
-     */
+  /**
+   * ###  sequenceDiagram
+   * The object containing configurations specific for sequence diagrams
+   */
   sequenceDiagram: {
 
-        /**
-         * **diagramMarginX** - margin to the right and left of the sequence diagram
-         */
+    /**
+     * **diagramMarginX** - margin to the right and left of the sequence diagram
+     */
     diagramMarginX: 50,
 
-        /**
-         * **diagramMarginY** - margin to the over and under the sequence diagram
-         */
+    /**
+     * **diagramMarginY** - margin to the over and under the sequence diagram
+     */
     diagramMarginY: 10,
 
     /**
@@ -131,19 +126,19 @@ var config = {
      */
     boxMargin: 10,
 
-     /**
-      * **boxTextMargin** - margin around the text in loop/alt/opt boxes
-      */
+    /**
+     * **boxTextMargin** - margin around the text in loop/alt/opt boxes
+     */
     boxTextMargin: 5,
 
-     /**
+    /**
      * **noteMargin** - margin around notes
-      */
+     */
     noteMargin: 10,
 
-        /**
+    /**
      * **messageMargin** - Space between messages
-         */
+     */
     messageMargin: 35,
 
     /**
@@ -164,77 +159,77 @@ var config = {
     useMaxWidth: true
   },
 
-    /** ### gantt
-     * The object containing configurations specific for gantt diagrams*
-     */
+  /** ### gantt
+   * The object containing configurations specific for gantt diagrams*
+   */
   gantt: {
-        /**
-         * **titleTopMargin** - margin top for the text over the gantt diagram
-         */
+    /**
+     * **titleTopMargin** - margin top for the text over the gantt diagram
+     */
     titleTopMargin: 25,
 
-        /**
-         * **barHeight** - the height of the bars in the graph
-         */
+    /**
+     * **barHeight** - the height of the bars in the graph
+     */
     barHeight: 20,
 
-        /**
-         * **barGap** - the margin between the different activities in the gantt diagram
-         */
+    /**
+     * **barGap** - the margin between the different activities in the gantt diagram
+     */
     barGap: 4,
 
-        /**
-         *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
-         */
+    /**
+     *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
+     */
     topPadding: 50,
 
-        /**
-         *  **leftPadding** - the space allocated for the section name to the left of the activities.
-         */
+    /**
+     *  **leftPadding** - the space allocated for the section name to the left of the activities.
+     */
     leftPadding: 75,
 
-        /**
-         *  **gridLineStartPadding** - Vertical starting position of the grid lines
-         */
+    /**
+     *  **gridLineStartPadding** - Vertical starting position of the grid lines
+     */
     gridLineStartPadding: 35,
 
-        /**
-         *  **fontSize** - font size ...
-         */
+    /**
+     *  **fontSize** - font size ...
+     */
     fontSize: 11,
 
-        /**
-         * **fontFamily** - font family ...
-         */
+    /**
+     * **fontFamily** - font family ...
+     */
     fontFamily: '"Open-Sans", "sans-serif"',
 
-        /**
-         * **numberSectionStyles** - the number of alternating section styles
-         */
+    /**
+     * **numberSectionStyles** - the number of alternating section styles
+     */
     numberSectionStyles: 3,
 
-        /**
-         * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
-         */
+    /**
+     * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
+     */
     axisFormatter: [
 
-            // Within a day
+      // Within a day
       ['%I:%M', function (d) {
         return d.getHours()
       }],
-            // Monday a week
+      // Monday a week
       ['w. %U', function (d) {
         return d.getDay() === 1
       }],
-            // Day within a week (not monday)
+      // Day within a week (not monday)
       ['%a %d', function (d) {
         return d.getDay() && d.getDate() !== 1
       }],
-            // within a month
+      // within a month
       ['%b %d', function (d) {
         return d.getDate() !== 1
       }],
-            // Month
+      // Month
       ['%m-%y', function (d) {
         return d.getMonth()
       }]
@@ -375,12 +370,12 @@ var render = function (id, txt, cb, container) {
     container.innerHTML = ''
 
     d3.select(container).append('div')
-            .attr('id', 'd' + id)
-            .append('svg')
-            .attr('id', id)
-            .attr('width', '100%')
-            .attr('xmlns', 'http://www.w3.org/2000/svg')
-            .append('g')
+      .attr('id', 'd' + id)
+      .append('svg')
+      .attr('id', id)
+      .attr('width', '100%')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .append('g')
   } else {
     const element = document.querySelector('#' + 'd' + id)
     if (element) {
@@ -388,18 +383,16 @@ var render = function (id, txt, cb, container) {
     }
 
     d3.select('body').append('div')
-            .attr('id', 'd' + id)
-            .append('svg')
-            .attr('id', id)
-            .attr('width', '100%')
-            .attr('xmlns', 'http://www.w3.org/2000/svg')
-            .append('g')
+      .attr('id', 'd' + id)
+      .append('svg')
+      .attr('id', id)
+      .attr('width', '100%')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+      .append('g')
   }
 
   window.txt = txt
   txt = exports.encodeEntities(txt)
-    // console.warn('mermaid encode: ');
-    // console.warn(txt);
 
   var element = d3.select('#d' + id).node()
   var graphType = utils.detectType(txt)
@@ -409,10 +402,6 @@ var render = function (id, txt, cb, container) {
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       gitGraphRenderer.setConf(config.gitGraph)
       gitGraphRenderer.draw(txt, id, false)
-            // if(config.cloneCssStyles){
-                // classes = gitGraphRenderer.getClasses(txt, false);
-                // utils.cloneCssStyles(element.firstChild, classes);
-            // }
       break
     case 'graph':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
@@ -474,15 +463,11 @@ var render = function (id, txt, cb, container) {
     url = url.replace(/\)/g, '\\)')
   }
 
-    // Fix for when the base tag is used
+  // Fix for when the base tag is used
   var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g')
 
   svgCode = exports.decodeEntities(svgCode)
 
-    // console.warn('mermaid decode: ');
-    // console.warn(svgCode);
-    // var he = require('he');
-    // svgCode = he.decode(svgCode);
   if (typeof cb !== 'undefined') {
     cb(svgCode, graph.bindFunctions)
   } else {
@@ -505,9 +490,9 @@ exports.render = function (id, text, cb, containerElement) {
     }
 
     if (typeof document === 'undefined') {
-            // Todo handle rendering serverside using phantomjs
+      // Todo handle rendering serverside using phantomjs
     } else {
-            // In browser
+      // In browser
       return render(id, text, cb, containerElement)
     }
   } catch (e) {
@@ -516,7 +501,7 @@ exports.render = function (id, text, cb, containerElement) {
 }
 
 var setConf = function (cnf) {
-    // Top level initially mermaid, gflow, sequenceDiagram and gantt
+  // Top level initially mermaid, gflow, sequenceDiagram and gantt
   var lvl1Keys = Object.keys(cnf)
   var i
   for (i = 0; i < lvl1Keys.length; i++) {
@@ -540,7 +525,7 @@ var setConf = function (cnf) {
 
 exports.initialize = function (options) {
   log.debug('Initializing mermaidAPI')
-    // Update default config with options supplied at initialization
+  // Update default config with options supplied at initialization
   if (typeof options === 'object') {
     setConf(options)
   }

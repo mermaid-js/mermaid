@@ -6,22 +6,11 @@
  * Created by knut on 14-11-23.
  */
 var api = require('./mermaidAPI.js')
-// var log = require('./logger').create();
 
 describe('when using mermaidAPI and ', function () {
   describe('doing initialize ', function () {
-        // var main;
-        // var document;
-        // var window;
     beforeEach(function () {
-            // var MockBrowser = require('mock-browser').mocks.MockBrowser;
-            // var mock = new MockBrowser();
-
       delete global.mermaid_config
-
-            // and in the run-code inside some object
-            // global.document = mock.getDocument();
-            // global.window = mock.getWindow();
       document.body.innerHTML = ''
     })
 
@@ -29,7 +18,7 @@ describe('when using mermaidAPI and ', function () {
       var orgConfig = api.getConfig()
       expect(orgConfig.testLiteral).toBe(undefined)
 
-      api.initialize({'testLiteral': true})
+      api.initialize({ 'testLiteral': true })
       var config = api.getConfig()
 
       expect(config.testLiteral).toBe(true)
@@ -43,8 +32,8 @@ describe('when using mermaidAPI and ', function () {
         test2: false
       }
 
-      api.initialize({'testObject': object})
-      api.initialize({'testObject': {'test3': true}})
+      api.initialize({ 'testObject': object })
+      api.initialize({ 'testObject': { 'test3': true } })
       var config = api.getConfig()
 
       expect(config.testObject.test1).toBe(1)
@@ -55,7 +44,7 @@ describe('when using mermaidAPI and ', function () {
   })
   describe('checking validity of input ', function () {
     it('it should return false for an invalid definiton', function () {
-      global.mermaidAPI.parseError = function () {}
+      global.mermaidAPI.parseError = function () { }
       spyOn(global.mermaidAPI, 'parseError')
       var res = api.parse('this is not a mermaid diagram definition')
 

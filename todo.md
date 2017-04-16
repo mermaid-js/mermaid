@@ -5,3 +5,8 @@
 - default theme doesn't work for class diagram
 - mermaidAPI.js cannot be required directly
 - compile less to css
+- don't version control generated content, move them to outside project
+    - editor
+    - dist
+    - docs
+- what's the correct way to change logLevel as an end user?
