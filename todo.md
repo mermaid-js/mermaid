@@ -9,3 +9,6 @@
     - dist
     - docs
 - what's the correct way to change logLevel as an end user?
+- d3 v3 doesn't support 'use strict'
+    - babel-plugin-transform-remove-strict-mode
+        - need to remove it after upgrading to d3 v4
