@@ -1,40 +1,13 @@
-var gulp = require('gulp');
+require('gulp')
+require('gulp-shell')
+require('gulp-concat')
+require('gulp-uglify')
+require('gulp-ext-replace')
+require('gulp-rename')
+require('gulp-istanbul')
+require('gulp-bump')
+require('gulp-tag-version')
+require('gulp-insert')
+var requireDir = require('require-dir')
 
-
-var shell = require('gulp-shell');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var extReplace = require('gulp-ext-replace');
-var rename = require('gulp-rename');
-var istanbul = require('gulp-istanbul');
-var bump = require('gulp-bump');
-var tag_version = require('gulp-tag-version');
-
-var insert = require('gulp-insert');
-
-var requireDir = require('require-dir');
-var tasks = requireDir('./gulp/tasks');
-
-
-var paths = {
-  scripts: ['./src/**/*.js', '!**/parser/*.js']
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+requireDir('./gulp/tasks')

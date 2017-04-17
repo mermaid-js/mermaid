@@ -32,7 +32,7 @@ a pull request, we will love you forever if you include jasmine tests. We can al
 Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
 
 $ git commit -m "A brief summary of the commit
-> 
+>
 > A paragraph describing what changed and its impact."
 Coding conventions
 Start reading our code and you'll get the hang of it. We optimize for readability:
@@ -50,10 +50,10 @@ url('/images/blah.gif'), use url('../images/blah.gif').
 Fork, then:
 
 ```
-npm install
+yarn install
 ```
 
-Then the dependencies will have been installed. You use gulp and npm calls as build tools.
+Then the dependencies will have been installed. You use gulp and yarn calls as build tools.
 
 The following targets are probably interesting:
 
@@ -65,12 +65,12 @@ gulp jison
 ```
 To run the tests:
 ```
-npm run karma
+yarn run karma
 ```
 
 To build the /dist directory
 ```
-npm run dist
+yarn run dist
 ```
 
 Thanks, Knut Sveidqvist

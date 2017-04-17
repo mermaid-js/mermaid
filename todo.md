@@ -1,0 +1,14 @@
+- upgrade d3 to version 4
+- use external d3-textwrap library
+    - Problem is it's for d3 v4 only
+- node console output colors like Chrome console
+- default theme doesn't work for class diagram
+- compile less to css
+- don't version control generated content, move them to outside project
+    - editor
+    - dist
+    - docs
+- what's the correct way to change logLevel as an end user?
+- d3 v3 doesn't support 'use strict'
+    - babel-plugin-transform-remove-strict-mode
+        - need to remove it after upgrading to d3 v4

@@ -1,17 +1,18 @@
-var gulp = require('gulp');
-var bump = require('gulp-bump');
+var gulp = require('gulp')
+var bump = require('gulp-bump')
+var tagVersion = require('gulp-tag-version')
 
-gulp.task('bump', function(){
-    gulp.src('./bw.json')
-        .pipe(bump({key: "version"}))
-        .pipe(gulp.dest('./'));
-});
+gulp.task('bump', function () {
+  gulp.src('./bw.json')
+    .pipe(bump({ key: 'version' }))
+    .pipe(gulp.dest('./'))
+})
 
 // Assuming there's "version: 1.2.3" in package.json,
 // tag the last commit as "v1.2.3"//
-gulp.task('tag', function() {
-    return gulp.src(['./package.json']).pipe(tag_version());
-});
+gulp.task('tag', function () {
+  return gulp.src(['./package.json']).pipe(tagVersion())
+})
 
 /**
  * Bumping version number and tagging the repository with it.
@@ -27,22 +28,15 @@ gulp.task('tag', function() {
  * introduced a feature or made a backwards-incompatible release.
  */
 
-function inc(importance) {
-    // get all the files to bump version in
-    return gulp.src(['./package.json'])
-        // bump the version number in those files
-        .pipe(bump({type: importance}))
-        // save it back to filesystem
-        .pipe(gulp.dest('./'));
-    // commit the changed version number
-    //.pipe(git.commit('bumps package version'))
-
-    // read only one file to get the version number
-    //.pipe(filter('package.json'))
-    // **tag it in the repository**
-    //.pipe(tag_version());
+function inc (importance) {
+  // get all the files to bump version in
+  return gulp.src(['./package.json'])
+    // bump the version number in those files
+    .pipe(bump({ type: importance }))
+    // save it back to filesystem
+    .pipe(gulp.dest('./'))
 }
 
-gulp.task('patch', function() { return inc('patch'); })
-gulp.task('feature', function() { return inc('minor'); })
-gulp.task('release', function() { return inc('major'); })
+gulp.task('patch', function () { return inc('patch') })
+gulp.task('feature', function () { return inc('minor') })
+gulp.task('release', function () { return inc('major') })

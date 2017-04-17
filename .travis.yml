@@ -1,15 +1,21 @@
-    language: node_js
-    osx_image: xcode7.3
-    os:
-        - linux
-        - osx
-    sudo: false
-    node_js:
-        - "6.2"
-        - "4.4"
-        - "5.9"
-    addons:
-       code_climate:
-         repo_token: e87e6bf1c253e0555437ebd23235fdfe2749b889358e7c6d100e4ea5b4f2e091
-    after_script:
-        - cat coverage/lcov.info | codeclimate
+language: node_js
+osx_image: xcode8.1
+os:
+  - linux
+  - osx
+sudo: false
+node_js:
+  - "6.9"
+  - "7.9"
+env:
+  - CXX=g++-4.8
+addons:
+  code_climate:
+    repo_token: e87e6bf1c253e0555437ebd23235fdfe2749b889358e7c6d100e4ea5b4f2e091
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+after_script:
+  - cat coverage/lcov.info | codeclimate
