@@ -11,6 +11,25 @@ export const webConfig = () => {
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['env', {
+                  'targets': {
+                    'browsers': ['last 3 versions']
+                  }
+                }]
+              ]
+            }
+          }
+        }
+      ]
     }
   }
 }
@@ -26,6 +45,25 @@ export const nodeConfig = () => {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js',
       libraryTarget: 'commonjs2'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['env', {
+                  'targets': {
+                    'node': 4.2
+                  }
+                }]
+              ]
+            }
+          }
+        }
+      ]
     }
   }
 }

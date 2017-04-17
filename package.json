@@ -75,6 +75,8 @@
   },
   "devDependencies": {
     "async": "^2.3.0",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
     "babel-preset-env": "^1.4.0",
     "browserify": "~14.3.0",
     "clone": "^2.1.1",
@@ -114,7 +116,7 @@
     "hogan.js": "^3.0.2",
     "jasmine": "2.5.3",
     "jasmine-es6": "0.4.0",
-    "jison": "zaach/jison",
+    "jison": "^0.4.17",
     "jsdom": "^9.12.0",
     "jshint": "^2.9.4",
     "jshint-stylish": "^2.2.1",
