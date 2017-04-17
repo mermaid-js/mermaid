@@ -5,7 +5,6 @@ os:
   - osx
 sudo: false
 node_js:
-  - "4.2"
   - "6.9"
   - "7.9"
 env:
