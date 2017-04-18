@@ -109,7 +109,6 @@
     "gulp-rename": "~1.2.2",
     "gulp-shell": "^0.6.3",
     "gulp-tag-version": "^1.3.0",
-    "gulp-uglify": "~2.1.2",
     "gulp-util": "^3.0.8",
     "gulp-vartree": "^2.0.1",
     "hogan.js": "^3.0.2",
