@@ -132,7 +132,7 @@
     "mock-browser": "^0.92.14",
     "npm-check-updates": "^2.11.0",
     "npm-watch": "^0.1.8",
-    "phantomjs": "^2.1.7",
+    "phantomjs-prebuilt": "^2.1.14",
     "proxyquire": "^1.7.11",
     "proxyquire-universal": "^1.0.8",
     "proxyquireify": "^3.2.1",
