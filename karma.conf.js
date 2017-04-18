@@ -9,7 +9,7 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['browserify', 'jasmine'],
+    frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -23,17 +23,32 @@ module.exports = function (config) {
     ],
 
     preprocessors: {
-      'src/**/*.spec.js': ['browserify']
+      'src/**/*.spec.js': ['webpack']
     },
 
-    browserify: {
-      debug: true,
-      extensions: ['.js'],
-      configure: function (bundle) {
-        bundle.on('prebundle', function () {
-          bundle
-            .plugin('proxyquire-universal')
-        })
+    webpack: {
+      externals: ['fs'],
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  ['env', {
+                    'targets': {
+                      'browsers': ['last 3 versions']
+                    }
+                  }]
+                ],
+                plugins: [
+                  'transform-remove-strict-mode'
+                ]
+              }
+            }
+          }
+        ]
       }
     },
 
@@ -73,7 +88,7 @@ module.exports = function (config) {
     plugins: [
       'karma-jasmine',
       'karma-chrome-launcher',
-      'karma-browserify',
+      'karma-webpack',
       'karma-babel-preprocessor'
     ],
     // Continuous Integration mode
