@@ -26,12 +26,8 @@ module.exports = function (config) {
       'src/**/*.spec.js': ['browserify']
     },
 
-    // list of files to exclude
-    // exclude: ['src/diagrams/*.js'],
-
     browserify: {
       debug: true,
-      // plugin: ['proxyquireify/plugin']
       extensions: ['.js'],
       configure: function (bundle) {
         bundle.on('prebundle', function () {
@@ -40,8 +36,6 @@ module.exports = function (config) {
         })
       }
     },
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -61,12 +55,24 @@ module.exports = function (config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
+    customLaunchers: {
+      ChromeCanaryHeadless: {
+        base: 'ChromeCanary',
+        flags: [
+          '--headless',
+          '--disable-gpu',
+          // Without a remote debugging port, Google Chrome exits immediately.
+          '--remote-debugging-port=9222'
+        ]
+      }
+    },
+
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeCanaryHeadless'],
     plugins: [
       'karma-jasmine',
-      'karma-phantomjs-launcher',
+      'karma-chrome-launcher',
       'karma-browserify',
       'karma-babel-preprocessor'
     ],

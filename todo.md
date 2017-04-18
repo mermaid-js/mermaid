@@ -12,3 +12,5 @@
 - d3 v3 doesn't support 'use strict'
     - babel-plugin-transform-remove-strict-mode
         - need to remove it after upgrading to d3 v4
+- use headless chrome provided by karma-chrome-launcher
+- https://github.com/karma-runner/karma-chrome-launcher
