@@ -88,8 +88,7 @@ module.exports = function (config) {
     plugins: [
       'karma-jasmine',
       'karma-chrome-launcher',
-      'karma-webpack',
-      'karma-babel-preprocessor'
+      'karma-webpack'
     ],
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
