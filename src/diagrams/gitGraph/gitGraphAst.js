@@ -1,6 +1,6 @@
-var Logger = require('../../logger')
-var log = Logger.Log
-var _ = require('lodash')
+const Logger = require('../../logger')
+const log = Logger.Log
+const _ = require('lodash')
 
 var commits = {}
 var head = null
@@ -136,19 +136,18 @@ exports.reset = function (commitRef) {
 }
 
 function upsert (arr, key, newval) {
-  var match = _.find(arr, key)
-  if (match) {
-    var index = _.indexOf(arr, _.find(arr, key))
-    arr.splice(index, 1, newval)
-  } else {
+  const index = arr.indexOf(key)
+  if (index === -1) {
     arr.push(newval)
+  } else {
+    arr.splice(index, 1, newval)
   }
 }
 
 function prettyPrintCommitHistory (commitArr) {
   var commit = _.maxBy(commitArr, 'seq')
   var line = ''
-  _.each(commitArr, function (c) {
+  commitArr.forEach(function (c) {
     if (c === commit) {
       line += '\t*'
     } else {
@@ -156,8 +155,8 @@ function prettyPrintCommitHistory (commitArr) {
     }
   })
   var label = [line, commit.id, commit.seq]
-  _.each(branches, function (v, k) {
-    if (v === commit.id) label.push(k)
+  _.each(branches, function (value, key) {
+    if (value === commit.id) label.push(key)
   })
   log.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {
@@ -189,8 +188,8 @@ exports.clear = function () {
 }
 
 exports.getBranchesAsObjArray = function () {
-  var branchArr = _.map(branches, function (v, k) {
-    return { 'name': k, 'commit': commits[v] }
+  const branchArr = _.map(branches, function (value, key) {
+    return { 'name': key, 'commit': commits[value] }
   })
   return branchArr
 }
@@ -201,7 +200,7 @@ exports.getCommitsArray = function () {
   var commitArr = Object.keys(commits).map(function (key) {
     return commits[key]
   })
-  _.each(commitArr, function (o) { log.debug(o.id) })
+  commitArr.forEach(function (o) { log.debug(o.id) })
   return _.orderBy(commitArr, ['seq'], ['desc'])
 }
 exports.getCurrentBranch = function () { return curBranch }

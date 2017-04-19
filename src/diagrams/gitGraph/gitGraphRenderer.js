@@ -1,9 +1,9 @@
-var db = require('./gitGraphAst')
-var _ = require('lodash')
-var gitGraphParser = require('./parser/gitGraph')
-var d3 = require('../../d3')
-var Logger = require('../../logger')
-var log = Logger.Log
+const db = require('./gitGraphAst')
+const _ = require('lodash')
+const gitGraphParser = require('./parser/gitGraph')
+const d3 = require('../../d3')
+const Logger = require('../../logger')
+const log = Logger.Log
 
 var allCommitsDict = {}
 var branchNum
