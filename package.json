@@ -1,50 +1,34 @@
 {
   "name": "mermaid",
   "version": "7.0.0",
-  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams and gantt charts.",
+  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "src/mermaid.js",
   "keywords": [
     "diagram",
     "markdown",
     "flowchart",
     "sequence diagram",
-    "gantt"
+    "gantt",
+    "class diagram",
+    "git graph"
   ],
   "bin": {
     "mermaid": "./bin/mermaid.js"
   },
-  "watch": {
-    "lint": {
-      "patterns": [
-        "bin",
-        "gulp",
-        "lib",
-        "src",
-        "test",
-        "*.js"
-      ],
-      "extensions": "js",
-      "ignore": [
-        "src/d3.js",
-        "**/parser/*.js"
-      ]
-    }
-  },
   "scripts": {
+    "watch": "yarn build -- --watch",
     "build": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
     "dist": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.config.prod.js",
     "upgrade": "rm -rf node_modules && rm yarn.lock && yarn install && ncu -ua && yarn upgrade && yarn remove d3 && yarn add d3@3.5.17",
-    "live": "live-server ./test/examples",
     "lint": "node_modules/.bin/standard",
-    "jison": "gulp jison_legacy",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
-    "watch": "npm-watch",
-    "old_watch": "source  ./scripts/watch.sh",
-    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
-    "jasmine": "yarn run jison && node node_modules/jasmine-es6/bin/jasmine.js",
     "pretest": "yarn run jison && yarn lint",
-    "test": "yarn run tape && yarn run karma"
+    "test": "yarn run tape && yarn run karma",
+    "live": "live-server ./test/examples",
+    "jison": "gulp jison_legacy",
+    "old_watch": "source  ./scripts/watch.sh",
+    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets"
   },
   "repository": {
     "type": "git",
@@ -128,7 +112,6 @@
     "marked": "^0.3.6",
     "mock-browser": "^0.92.14",
     "npm-check-updates": "^2.11.0",
-    "npm-watch": "^0.1.8",
     "phantomjs-prebuilt": "^2.1.14",
     "require-dir": "^0.3.1",
     "rimraf": "^2.6.1",
