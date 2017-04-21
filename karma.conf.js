@@ -71,8 +71,8 @@ module.exports = function (config) {
     autoWatch: true,
 
     customLaunchers: {
-      ChromeCanaryHeadless: {
-        base: 'ChromeCanary',
+      ChromeHeadless: {
+        base: 'Chrome',
         flags: [
           '--headless',
           '--disable-gpu',
@@ -84,7 +84,7 @@ module.exports = function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeCanaryHeadless'],
+    browsers: ['ChromeHeadless'],
     plugins: [
       'karma-jasmine',
       'karma-chrome-launcher',
