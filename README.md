@@ -167,6 +167,14 @@ We recommend you installing [editor plugins](https://github.com/feross/standard#
 
     yarn test
 
+Manual test in browser:
+
+    open dist/demo/index.html
+
+Manual test in Node.js:
+
+    node dist/demo/index.js
+
 
 ## Distribtion
 
