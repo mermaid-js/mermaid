@@ -2,17 +2,8 @@ var gulp = require('gulp')
 var jasmine = require('gulp-jasmine')
 var shell = require('gulp-shell')
 var istanbul = require('gulp-istanbul')
-var jshint = require('gulp-jshint')
-var stylish = require('jshint-stylish')
 var qunit = require('gulp-qunit')
 var bower = require('gulp-bower')
-
-// Using gulp-jshint and jshint-stylish
-gulp.task('lint', function () {
-  return gulp.src(['./src/**/*.js', '!**/parser/*.js'])
-    .pipe(jshint())
-    .pipe(jshint.reporter(stylish))
-})
 
 gulp.task('test', ['coverage', 'tape', 'jasmine', 'qunit'])
 
