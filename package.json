@@ -23,12 +23,13 @@
     "lint": "node_modules/.bin/standard",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
-    "pretest": "yarn run jison && yarn lint",
     "test": "yarn run tape && yarn run karma",
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
     "old_watch": "source  ./scripts/watch.sh",
-    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets"
+    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
+    "pretest": "yarn jison && yarn lint",
+    "prepublish": "yarn build && yarn dist && yarn test"
   },
   "repository": {
     "type": "git",
