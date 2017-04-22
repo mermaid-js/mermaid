@@ -15,3 +15,5 @@
 - use headless chrome provided by karma-chrome-launcher
     - https://github.com/karma-runner/karma-chrome-launcher
 - rewrite live editor
+- Fix Travis CI
+- Fix CodeClimate
