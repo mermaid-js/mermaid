@@ -17,7 +17,7 @@ var classCnt = 0
 var conf = {
   dividerMargin: 10,
   padding: 5,
-  textHeight: 14
+  textHeight: 10
 }
 
 // Todo optimize
@@ -259,8 +259,8 @@ var drawClass = function (elem, classDef) {
 
   var methodsLine = g.append('line')      // text label for the x axis
     .attr('x1', 0)
-    .attr('y1', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height)
-    .attr('y2', conf.padding + titleHeight + 3 * conf.dividerMargin / 2 + membersBox.height)
+    .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
+    .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
 
   var methods = g.append('text')      // text label for the x axis
     .attr('x', conf.padding)
