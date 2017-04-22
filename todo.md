@@ -1,17 +1,14 @@
-- upgrade d3 to version 4
-- use external d3-textwrap library
+- Upgrade d3 to version 4
+- Use external d3-textwrap library
     - Problem is it's for d3 v4 only
-- node console output colors like Chrome console
-- default theme doesn't work for class diagram
-- don't version control generated content, move them to outside project
+- Make node console output colors like Chrome console
+- Don't version control generated content, move them to outside project
     - editor
     - docs
-- what's the correct way to change logLevel as an end user?
+- What's the correct way to change logLevel as an end user?
 - d3 v3 doesn't support 'use strict'
     - babel-plugin-transform-remove-strict-mode
         - need to remove it after upgrading to d3 v4
-- use headless chrome provided by karma-chrome-launcher
-    - https://github.com/karma-runner/karma-chrome-launcher
 - rewrite live editor
 - Fix Travis CI
 - Fix CodeClimate
