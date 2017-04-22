@@ -200,8 +200,8 @@ var drawEdge = function (elem, path, relation) {
       .attr('class', 'box')
       .attr('x', bounds.x - conf.padding / 2)
       .attr('y', bounds.y - conf.padding / 2)
-      .attr('width', bounds.width + 2 * conf.padding / 2)
-      .attr('height', bounds.height + 2 * conf.padding / 2)
+      .attr('width', bounds.width + conf.padding)
+      .attr('height', bounds.height + conf.padding)
   }
 
   edgeCount++
