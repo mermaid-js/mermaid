@@ -1,13 +1,13 @@
 import { webConfig, nodeConfig, lessConfig } from './webpack.config.base.js'
 
-const config1 = webConfig()
+const config = webConfig()
 
-const config2 = webConfig()
-config2.externals = ['fs', 'd3']
-config2.output.filename = '[name].slim.js'
+const slimConfig = webConfig()
+slimConfig.externals = ['fs', 'd3']
+slimConfig.output.filename = '[name].slim.js'
 
-const config3 = nodeConfig()
+const apiConfig = nodeConfig()
 
-const config4 = lessConfig()
+const cssConfig = lessConfig()
 
-export default [config1, config2, config3, config4]
+export default [config, slimConfig, apiConfig, cssConfig]

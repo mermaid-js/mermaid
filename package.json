@@ -26,10 +26,10 @@
     "test": "yarn run tape && yarn run karma",
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
-    "old_watch": "source  ./scripts/watch.sh",
+    "live_server": "gulp live-server",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "pretest": "yarn jison && yarn lint",
-    "prepublish": "yarn build && yarn dist && yarn test"
+    "pretest": "yarn lint",
+    "prepublishOnly": "yarn build && yarn dist && yarn test"
   },
   "repository": {
     "type": "git",
@@ -61,7 +61,7 @@
   "devDependencies": {
     "async": "^2.3.0",
     "babel-core": "^6.24.1",
-    "babel-loader": "^6.4.1",
+    "babel-loader": "^7.0.0",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "babel-preset-env": "^1.4.0",
     "clone": "^2.1.1",
