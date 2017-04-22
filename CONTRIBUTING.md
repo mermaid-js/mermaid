@@ -13,6 +13,7 @@ Some important guidlines:
 
 The issue list and the items marked with **help wanted** is a good starting point if you want to do some work.
 
+
 ## Guidelines for avoiding duplicate work
 
 Contributing is great. It is not so fun when you are done with your issue and just before you're about to push your
@@ -26,6 +27,7 @@ place to prevent this:
 
 
 ## Submitting changes
+
 Please send a GitHub Pull Request with a clear list of what you've done (read more about pull requests). When you send
 a pull request, we will love you forever if you include jasmine tests. We can always use more test coverage.
 
@@ -47,6 +49,7 @@ Also for the CDN, always use cwd-relative paths rather than root-relative paths 
 url('/images/blah.gif'), use url('../images/blah.gif').
 
 # Build instructions
+
 Fork, then:
 
 ```
@@ -63,14 +66,23 @@ for instance:
 ```
 gulp jison
 ```
+
+To build:
+
+```
+yarn build
+```
+
 To run the tests:
+
 ```
-yarn run karma
+yarn test
 ```
 
-To build the /dist directory
-```
-yarn run dist
-```
+Make sure you have Chrome browser installed. We use Chrome headless for testing.
 
-Thanks, Knut Sveidqvist
+Manual test:
+
+```
+open dist/demo/index.html
+```

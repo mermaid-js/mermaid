@@ -3,10 +3,8 @@
     - Problem is it's for d3 v4 only
 - node console output colors like Chrome console
 - default theme doesn't work for class diagram
-- compile less to css
 - don't version control generated content, move them to outside project
     - editor
-    - dist
     - docs
 - what's the correct way to change logLevel as an end user?
 - d3 v3 doesn't support 'use strict'
@@ -17,3 +15,7 @@
 - rewrite live editor
 - Fix Travis CI
 - Fix CodeClimate
+- What is live-server ?
+- Get familar with jison
+- How to generate doc?
+- webpack warning: lodash too big
