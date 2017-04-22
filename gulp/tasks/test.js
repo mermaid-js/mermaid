@@ -1,11 +1,10 @@
 var gulp = require('gulp')
 var jasmine = require('gulp-jasmine')
-var shell = require('gulp-shell')
 var istanbul = require('gulp-istanbul')
 var qunit = require('gulp-qunit')
 var bower = require('gulp-bower')
 
-gulp.task('test', ['coverage', 'tape', 'jasmine', 'qunit'])
+gulp.task('test', ['coverage', 'jasmine', 'qunit'])
 
 gulp.task('jasmine', ['jison', 'lint'], function () {
   return gulp.src(['src/**/*.spec.js'])
@@ -16,8 +15,6 @@ gulp.task('jas', function () {
   return gulp.src(['src/**/*.spec.js'])
     .pipe(jasmine({ includeStackTrace: true }))
 })
-
-gulp.task('tape', shell.task(['node_modules/.bin/tape ./test/cli_test-*.js']))
 
 gulp.task('coverage', function (cb) {
   gulp.src(['src/**/*.js', '!src/**/*.spec.js'])
