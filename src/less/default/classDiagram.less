@@ -1,23 +1,23 @@
 g.classGroup text {
-  fill:@nodeBorder;
-  stroke:none;
+  fill: @nodeBorder;
+  stroke: none;
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
 }
 
 g.classGroup rect {
-  fill:@nodeBkg;
+  fill: @nodeBkg;
   stroke: @nodeBorder;
 }
 
 g.classGroup line {
   stroke: @nodeBorder;
-  stroke-width:1;
+  stroke-width: 1;
 }
 
 svg .classLabel .box {
   stroke: none;
-  stroke-width:0;
+  stroke-width: 0;
   fill: @nodeBkg;
   opacity: 0.5;
 }
@@ -29,28 +29,33 @@ svg .classLabel .label {
 .relation {
   stroke: @nodeBorder;
   stroke-width: 1;
-  fill:none;
+  fill: none;
 }
 
-.composition{
-  fill : @nodeBorder;
+.composition {
+  fill: @nodeBorder;
   stroke: @nodeBorder;
-  stroke-width:1;
+  stroke-width: 1;
 }
+
 #compositionStart {
   .composition;
 }
+
 #compositionEnd {
   .composition;
 }
-.aggregation{
-  fill : @nodeBkg;
+
+.aggregation {
+  fill: @nodeBkg;
   stroke: @nodeBorder;
-  stroke-width:1;
+  stroke-width: 1;
 }
+
 #aggregationStart {
   .aggregation;
 }
+
 #aggregationEnd {
   .aggregation;
 }
@@ -58,12 +63,15 @@ svg .classLabel .label {
 #dependencyStart {
   .composition;
 }
+
 #dependencyEnd {
   .composition;
 }
+
 #extensionStart {
   .composition;
 }
+
 #extensionEnd {
   .composition;
 }
