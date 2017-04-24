@@ -10,9 +10,9 @@
     - babel-plugin-transform-remove-strict-mode
         - need to remove it after upgrading to d3 v4
 - rewrite live editor
-- Fix Travis CI
 - Fix CodeClimate
 - What is live-server ?
 - Get familar with jison
 - How to generate doc?
 - webpack warning: lodash too big
+- add converalls
