@@ -4,10 +4,6 @@
 var gulp = require('gulp')
 var shell = require('gulp-shell')
 var liveServer = require('live-server')
-var rename = require('gulp-rename')
-var uglify = require('gulp-uglify')
-var browserify = require('gulp-browserify')
-var extReplace = require('gulp-ext-replace')
 
 var params = {
   port: 8080, // Set the server port. Defaults to 8080.
@@ -27,18 +23,4 @@ gulp.task('watch2', ['live-server'], function () {
   return shell.task([
     'yarn build -- --watch'
   ])
-})
-
-// Basic usage
-gulp.task('watch-mermaid', function () {
-  return gulp.src('src/mermaid.js')
-    .pipe(browserify({
-      entry: 'src/mermaid.js',
-      standalone: 'mermaid'
-    }))
-    .pipe(rename('mermaid.js'))
-    .pipe(gulp.dest('./dist/'))
-    .pipe(uglify())
-    .pipe(extReplace('.min.js'))
-    .pipe(gulp.dest('./dist/'))
 })

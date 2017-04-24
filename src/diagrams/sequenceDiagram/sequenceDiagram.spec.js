@@ -1,5 +1,4 @@
 /* eslint-env jasmine */
-var proxyquire = require('proxyquire')
 /**
  * Created by knut on 14-11-18.
  */
@@ -15,7 +14,10 @@ var d3 = {
     return new NewD3()
   }
 }
-var sd = proxyquire('./sequenceRenderer', { '../../d3': d3 })
+const MyModuleInjector = require('inject-loader!./sequenceRenderer') // eslint-disable-line import/no-webpack-loader-syntax
+var sd = MyModuleInjector({
+  '../../d3': d3
+})
 
 function addConf (conf, key, value) {
   if (value !== undefined) {

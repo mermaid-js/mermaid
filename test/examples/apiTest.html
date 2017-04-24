@@ -13,9 +13,6 @@
         });
         $(function(){
             var graphDefinition = 'graph TB\na-->b';
-//            var cb = function(html){
-//                console.log(html);
-//            }
             console.log(mermaidAPI.render(graphDefinition));
             console.log(mermaidAPI.render('id',graphDefinition));
         });

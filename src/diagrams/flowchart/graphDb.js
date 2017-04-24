@@ -188,7 +188,7 @@ var setLink = function (id, linkStr) {
       var elem = d3.select(element).select('#' + id)
       if (elem !== null) {
         elem.on('click', function () {
-          window.open(linkStr, 'newTab') // jshint ignore:line
+          window.open(linkStr, 'newTab')
         })
       }
     })

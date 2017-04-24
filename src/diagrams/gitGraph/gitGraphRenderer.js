@@ -1,14 +1,14 @@
-var db = require('./gitGraphAst')
-var _ = require('lodash')
-var gitGraphParser = require('./parser/gitGraph')
-var d3 = require('../../d3')
-var Logger = require('../../logger')
-var log = Logger.Log
+const db = require('./gitGraphAst')
+const _ = require('lodash')
+const gitGraphParser = require('./parser/gitGraph')
+const d3 = require('../../d3')
+const Logger = require('../../logger')
+const log = Logger.Log
 
 var allCommitsDict = {}
 var branchNum
 var config = {
-  nodeSpacing: 75,
+  nodeSpacing: 150,
   nodeFillColor: 'yellow',
   nodeStrokeWidth: 2,
   nodeStrokeColor: 'grey',
@@ -17,12 +17,12 @@ var config = {
   lineColor: 'grey',
   leftMargin: 50,
   branchColors: ['#442f74', '#983351', '#609732', '#AA9A39'],
-  nodeRadius: 15,
+  nodeRadius: 10,
   nodeLabel: {
     width: 75,
     height: 100,
     x: -25,
-    y: 15
+    y: 0
   }
 }
 var apiConfig = {}

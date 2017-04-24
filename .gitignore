@@ -1,5 +1,4 @@
 node_modules
-#dist
 bower_components
 
 *.sublime-project
@@ -13,3 +12,4 @@ test/tmp_*
 test/fixtures/samples/*.actual*
 
 dist/*.js
+dist/*.css

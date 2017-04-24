@@ -58,11 +58,10 @@ exports.drawLabel = function (elem, txtObject) {
   }
   var polygon = elem.append('polygon')
   polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7))
-  polygon.attr('style', 'fill:#526e52;stroke:none')
+  polygon.attr('class', 'labelBox')
 
   txtObject.y = txtObject.y + txtObject.labelMargin
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin
-  txtObject.fill = 'white'
   exports.drawText(elem, txtObject)
 }
 var actorCnt = -1
@@ -137,8 +136,6 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
       .attr('y1', starty)
       .attr('x2', stopx)
       .attr('y2', stopy)
-      .attr('stroke-width', 2)
-      .attr('stroke', '#526e52')
       .attr('class', 'loopLine')
   }
   drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty)
@@ -157,7 +154,6 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
   txt.y = bounds.starty
   txt.labelMargin = 1.5 * 10 // This is the small box that says "loop"
   txt.class = 'labelText'    // Its size & position are fixed.
-  txt.fill = 'white'
 
   exports.drawLabel(g, txt)
 

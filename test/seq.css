@@ -1,11 +1,8 @@
-
 body {
     background: #fcfcfe;
     font-family: Helvetica;
 }
-.mermaid {
-    /* width:400px;*/
-}
+
 .actor {
     stroke: #CCCCFF;
     fill: #ECECFF;

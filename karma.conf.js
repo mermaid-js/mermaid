@@ -9,7 +9,7 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['browserify', 'jasmine'],
+    frameworks: ['jasmine'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -23,25 +23,34 @@ module.exports = function (config) {
     ],
 
     preprocessors: {
-      'src/**/*.spec.js': ['browserify']
+      'src/**/*.spec.js': ['webpack']
     },
 
-    // list of files to exclude
-    // exclude: ['src/diagrams/*.js'],
-
-    browserify: {
-      debug: true,
-      // plugin: ['proxyquireify/plugin']
-      extensions: ['.js'],
-      configure: function (bundle) {
-        bundle.on('prebundle', function () {
-          bundle
-            .plugin('proxyquire-universal')
-        })
+    webpack: {
+      externals: ['fs'],
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  ['env', {
+                    'targets': {
+                      'browsers': ['last 3 versions']
+                    }
+                  }]
+                ],
+                plugins: [
+                  'transform-remove-strict-mode'
+                ]
+              }
+            }
+          }
+        ]
       }
     },
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -61,14 +70,26 @@ module.exports = function (config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
+    customLaunchers: {
+      ChromeHeadless: {
+        base: 'Chrome',
+        flags: [
+          '--headless',
+          '--disable-gpu',
+          '--no-sandbox',
+          // Without a remote debugging port, Google Chrome exits immediately.
+          '--remote-debugging-port=9222'
+        ]
+      }
+    },
+
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadless'],
     plugins: [
       'karma-jasmine',
-      'karma-phantomjs-launcher',
-      'karma-browserify',
-      'karma-babel-preprocessor'
+      'karma-chrome-launcher',
+      'karma-webpack'
     ],
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

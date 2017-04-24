@@ -1,5 +1,6 @@
 import path from 'path'
 import nodeExternals from 'webpack-node-externals'
+import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
 export const webConfig = () => {
   return {
@@ -68,5 +69,42 @@ export const nodeConfig = () => {
         }
       ]
     }
+  }
+}
+
+export const lessConfig = () => {
+  return {
+    target: 'web',
+    entry: {
+      'mermaid': './src/less/default/mermaid.less',
+      'mermaid.dark': './src/less/dark/mermaid.less',
+      'mermaid.forest': './src/less/forest/mermaid.less',
+      'mermaid.neutral': './src/less/neutral/mermaid.less'
+    },
+    output: {
+      path: path.join(__dirname, './dist/'),
+      filename: '[name].css'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.less$/,
+          use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+              {
+                loader: 'css-loader'
+              },
+              {
+                loader: 'less-loader'
+              }
+            ]
+          })
+        }
+      ]
+    },
+    plugins: [
+      new ExtractTextPlugin('[name].css')
+    ]
   }
 }

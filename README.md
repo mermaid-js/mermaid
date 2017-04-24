@@ -1,6 +1,6 @@
-mermaid [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid) [![Code Climate](https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg)](https://codeclimate.com/github/knsv/mermaid)
-=======
+# mermaid [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid)
 
+[![Code Climate](https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg)](https://codeclimate.com/github/knsv/mermaid)
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Generation of diagrams and flowcharts from text in a similar manner as markdown.
@@ -108,6 +108,7 @@ end
 
 </table>
 
+
 ## Further reading
 
 * [Usage](http://knsv.github.io/mermaid/#usage)
@@ -115,6 +116,7 @@ end
 * [Sequence diagram syntax](http://knsv.github.io/mermaid/#sequence-diagrams)
 * [Mermaid client](http://knsv.github.io/mermaid/#mermaid-cli)
 * [Demos](http://knsv.github.io/mermaid/#demos)
+
 
 # Request for assistance
 
@@ -134,11 +136,58 @@ Together we could continue the work with things like:
 
 Don't hesitate to contact me if you want to get involved.
 
+
+# For contributors
+
+## Setup
+
+Make sure you have Chrome browser installed, this project uses Chrome headless to running tests.
+
+    yarn install
+
+
+## Build
+
+    yarn build
+
+If you want real time incremental build:
+
+    yarn watch
+
+
+## Lint
+
+    yarn lint
+
+We use [JavaScript Standard Style](https://github.com/feross/standard).
+We recommend you installing [editor plugins](https://github.com/feross/standard#are-there-text-editor-plugins) so you can get real time lint result.
+
+
+## Test
+
+    yarn test
+
+Manual test in browser:
+
+    open dist/demo/index.html
+
+Manual test in Node.js:
+
+    node dist/demo/index.js
+
+
+## Distribtion
+
+    yarn dist
+
+Command above generates files into the `dist` folder, then you can publish them to npmjs.org.
+
+
 # Credits
-Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing
-the graphical layout and drawing libraries! Thanks also to the
-[js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the
-sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering.
+
+Many thanks to the [d3](http://d3js.org/) and [dagre-d3](https://github.com/cpettitt/dagre-d3) projects for providing the graphical layout and drawing libraries!
+
+Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diagrams) project for usage of the grammar for the sequence diagrams. Thanks to Jessica Peter for inspiration and starting point for gantt rendering.
 
 *Mermaid was created by Knut Sveidqvist for easier documentation.*
 

@@ -1,11 +1,13 @@
-.mermaid .label { color:#333}
+.mermaid .label {
+  color: #333
+}
 
 .node rect,
 .node circle,
 .node ellipse,
 .node polygon {
   fill: @mainBkg;
-  stroke: @nodeBorder;
+  stroke: @border1;
   stroke-width: 1px;
 }
 
@@ -21,13 +23,13 @@
   background-color: @edgeLabelBackground;
 }
 
-.cluster rect{
+.cluster rect {
   fill: @secondBkg !important;
-  rx:4 !important;
+  rx: 4 !important;
   stroke: @clusterBorder !important;
   stroke-width: 1px !important;
 }
 
 .cluster text {
-  fill:@titleColor;
+  fill: @titleColor;
 }
