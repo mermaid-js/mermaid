@@ -28,7 +28,12 @@ function execPhantomjsToLoadHtmlSaveScreenshotPng (html, verify) {
 function execCmd (cmd, verify) {
   console.log('cmd: ', cmd)
   exec(cmd,
-    { env: { PATH: './node_modules/.bin' + path.delimiter + process.env.PATH } },
+    { env: {
+      PATH: './node_modules/.bin' + path.delimiter + process.env.PATH,
+
+      // https://github.com/ariya/phantomjs/issues/14376
+      QT_QPA_PLATFORM: 'offscreen'
+    } },
     function (error, stdout, stderr) {
       console.log('error:', error, '\nstdout:\n', stdout, '\nstderr:\n', stderr)
       verify(error, stdout, stderr)
