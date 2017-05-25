@@ -72,7 +72,7 @@ test.skip('sequence syntax error', function (t) {
 });
 
 ['', 'fo', 'tspan', 'old'].forEach(function (textPlacement) {
-  test('sequence svg text placelment: ' + textPlacement, function (t) {
+  test('sequence svg text placement: ' + textPlacement, function (t) {
     t.plan(2)
     const args = ['--svg',
       '--outputDir=' + testDir,
