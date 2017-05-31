@@ -60,7 +60,7 @@ export const nodeConfig = () => {
               presets: [
                 ['env', {
                   'targets': {
-                    'node': 4.2
+                    'node': '6.9'
                   }
                 }]
               ]
