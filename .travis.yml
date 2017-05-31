@@ -1,11 +1,9 @@
 sudo: required
-dist: xenial
+dist: trusty
 addons:
   apt:
-    sources:
-      - google-chrome
     packages:
-      - google-chrome-stable
+      - google-chrome-beta
   code_climate:
     repo_token: e87e6bf1c253e0555437ebd23235fdfe2749b889358e7c6d100e4ea5b4f2e091
 language: node_js
@@ -14,10 +12,14 @@ node_js:
   - "7"
 before_install:
   - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
+  - sh -e /etc/init.d/xvfb start &
+  - sleep 3
 before_script:
   - yarn build
 script:
   - yarn test
 after_script:
   - cat coverage/lcov.info | codeclimate
+cache:
+  directories:
+    - node_modules
