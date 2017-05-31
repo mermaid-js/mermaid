@@ -4,6 +4,7 @@ const path = require('path')
 const test = require('tape')
 const rimraf = require('rimraf')
 
+const localSearchPath = './node_modules/.bin' + path.delimiter + process.env.PATH
 const testDir = 'test/fixtures/samples/'.replace('/', path.sep)
 const phantomjs = 'node_modules/.bin/phantomjs '.replace('/', path.sep)
 const loadHtmlSaveScreenshotPngScripts = testDir + path.sep + 'load_html_save_screenshot_png.phantomjs'
@@ -28,7 +29,7 @@ function execPhantomjsToLoadHtmlSaveScreenshotPng (html, verify) {
 function execCmd (cmd, verify) {
   console.log('cmd: ', cmd)
   exec(cmd,
-    { env: { PATH: './node_modules/.bin' + path.delimiter + process.env.PATH } },
+    { env: Object.assign({}, process.env, { PATH: localSearchPath }) },
     function (error, stdout, stderr) {
       console.log('error:', error, '\nstdout:\n', stdout, '\nstderr:\n', stderr)
       verify(error, stdout, stderr)
@@ -72,7 +73,7 @@ test.skip('sequence syntax error', function (t) {
 });
 
 ['', 'fo', 'tspan', 'old'].forEach(function (textPlacement) {
-  test('sequence svg text placelment: ' + textPlacement, function (t) {
+  test('sequence svg text placement: ' + textPlacement, function (t) {
     t.plan(2)
     const args = ['--svg',
       '--outputDir=' + testDir,
