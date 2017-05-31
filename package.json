@@ -23,7 +23,7 @@
     "lint": "node_modules/.bin/standard",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
-    "test": "yarn run tape && yarn run karma",
+    "test": "yarn tape && yarn karma",
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
     "live_server": "gulp live-server",
