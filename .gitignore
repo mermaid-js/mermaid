@@ -2,3 +2,5 @@ node_modules
 ignored
 .idea
 .DS_Store
+test/
+dist/
