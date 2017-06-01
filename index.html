@@ -11,7 +11,7 @@
     <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print"/>
     <link href="stylesheets/mermaid.forest.css" rel="stylesheet" type="text/css"/>
     <link href="stylesheets/solarized_light.css" rel="stylesheet" type="text/css"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="javascripts/jquery-2.1.3.min.js"></script>
     <script src="javascripts/lib/mermaid.js"></script>
     <script src="javascripts/all.js" type="text/javascript"></script>
     <script src="javascripts/highlight.pack.js" type="text/javascript"></script>
@@ -194,7 +194,7 @@ https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p
 </ol>
 <p>If these things are in place mermaid listens to the page load event and when fires, when the page has loaded, it will<br>locate the graphs n the page and transform them to svg files.</p>
 <h3 id="include-mermaid-on-your-web-page-">Include mermaid on your web page:</h3>
-<pre class="css"><code><link rel="stylesheet" href="mermaid.css">
+<pre class="css"><code>&lt;link rel="stylesheet" href="mermaid.css"&gt;
 &lt;script src=&quot;mermaid.min.js&quot;&gt;&lt;/script&gt;
 &lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;</code></pre><p>Further down on your page mermaid will look for tags with <code>class=&quot;mermaid&quot;</code>. From these tags mermaid will try to<br>read the chart definiton which will be replaced with the svg chart.</p>
 <h3 id="define-a-chart-like-this-">Define a chart like this:</h3>
@@ -207,36 +207,36 @@ https://cdn.rawgit.com/knsv/mermaid/#version#/dist/mermaid.min.js</code></pre><p
     &lt;/svg&gt;
 &lt;/div&gt;</code></pre><p>An id is also added to mermaid tags without id.</p>
 <h3 id="simple-full-example-">Simple full example:</h3>
-<pre class="css"><code><!DOCTYPE html>
-<html lang="en">
+<pre class="css"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
 
-<head>
-  <meta charset="utf-8">
-  <!-- Downloaded as per http://knsv.github.io/mermaid/#installation -->
-  <!-- Stored in the same directory as html file                     -->
-  <link rel="stylesheet" href="mermaid.css">
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;!-- Downloaded as per http://knsv.github.io/mermaid/#installation --&gt;
+  &lt;!-- Stored in the same directory as html file                     --&gt;
+  &lt;link rel="stylesheet" href="mermaid.css"&gt;
 
-  <!-- Optional to use fontawesome                                   -->
-  <!-- Downloaded as per http://fontawesome.io/get-started/          -->
-  <!-- Stored in the same directory as html file                     -->
-  <script src="https://use.fontawesome.com/7065416dc9.js"></script>
+  &lt;!-- Optional to use fontawesome                                   --&gt;
+  &lt;!-- Downloaded as per http://fontawesome.io/get-started/          --&gt;
+  &lt;!-- Stored in the same directory as html file                     --&gt;
+  &lt;script src="https://use.fontawesome.com/7065416dc9.js"&gt;&lt;/script&gt;
 
-</head>
-<body>
+&lt;/head&gt;
+&lt;body&gt;
 
-  <!-- Include mermaid on your web page:                             -->
-  <script src="mermaid.min.js"></script>
-  <script>mermaid.initialize({startOnLoad:true});</script>
+  &lt;!-- Include mermaid on your web page:                             --&gt;
+  &lt;script src="mermaid.min.js"&gt;&lt;/script&gt;
+  &lt;script&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;
 
-  <div class="mermaid">
+  &lt;div class="mermaid"&gt;
   graph LR
       A --- B
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
-  </div>
+  &lt;/div&gt;
 
-</body>
-</html></code></pre><h3 id="labels-out-of-bounds">Labels out of bounds</h3>
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><h3 id="labels-out-of-bounds">Labels out of bounds</h3>
 <p>If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the<br>whole page to have been loaded (dom + assets, particularly the fonts file).</p>
 <p>$(document).load(function() {<br>    mermaid.initialize();<br>});<br>over</p>
 <p>$(document).ready(function() {<br>    mermaid.initialize();<br>});</p>
