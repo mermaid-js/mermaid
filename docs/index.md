@@ -4,7 +4,7 @@ order: 0
 ---
 mermaid
 =======
-![Alt text](img/header.png)
+![Alt text](images/header.png)
 
 Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
@@ -14,7 +14,7 @@ This is why mermaid was born, a simple markdown-like script language for generat
 
 
 
-Code examples below: 
+Code examples below:
 ```
 %% An example of a flowchart
 graph TD;
