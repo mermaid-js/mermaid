@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -122,5 +122,11 @@
     "tape": "^4.6.3",
     "webpack": "^2.6.1",
     "webpack-node-externals": "^1.6.0"
-  }
+  },
+  "files": [
+    "bin",
+    "dist",
+    "lib",
+    "src"
+  ]
 }
