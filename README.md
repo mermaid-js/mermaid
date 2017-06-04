@@ -109,6 +109,25 @@ end
 </table>
 
 
+## Installation
+
+### CDN
+
+```
+https://unpkg.com/mermaid@<version>/dist/
+```
+
+Replace `<version>` with expected version number.
+
+Example: https://unpkg.com/mermaid@7.0.3/dist/
+
+### Node.js
+
+```
+yarn add mermaid
+```
+
+
 ## Further reading
 
 * [Usage](http://knsv.github.io/mermaid/#usage)
