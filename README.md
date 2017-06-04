@@ -148,8 +148,6 @@ represent the project when answering questions and issues.
 
 Together we could continue the work with things like:
 * port the code to es6
-* improved support for webpack
-* modernizing the build
 * adding more typers of diagrams like mindmaps, ert digrams etc
 * improving existing diagrams
 
@@ -195,11 +193,12 @@ Manual test in Node.js:
     node dist/demo/index.js
 
 
-## Distribtion
+## Release
 
     yarn dist
+    npm publish
 
-Command above generates files into the `dist` folder, then you can publish them to npmjs.org.
+Command above generates files into the `dist` folder and publishes them to npmjs.org.
 
 
 # Credits
