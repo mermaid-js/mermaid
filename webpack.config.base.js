@@ -2,6 +2,15 @@ import path from 'path'
 import nodeExternals from 'webpack-node-externals'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
+const rules = [
+  {
+    parser: {
+      amd: false
+    },
+    include: /node_modules\/lodash\//
+  }
+]
+
 export const webConfig = () => {
   return {
     target: 'web',
@@ -14,7 +23,7 @@ export const webConfig = () => {
       filename: '[name].js'
     },
     module: {
-      rules: [
+      rules: rules.concat([
         {
           test: /\.js$/,
           use: {
@@ -33,7 +42,7 @@ export const webConfig = () => {
             }
           }
         }
-      ]
+      ])
     }
   }
 }
@@ -51,7 +60,7 @@ export const nodeConfig = () => {
       libraryTarget: 'commonjs2'
     },
     module: {
-      rules: [
+      rules: rules.concat([
         {
           test: /\.js$/,
           use: {
@@ -67,7 +76,7 @@ export const nodeConfig = () => {
             }
           }
         }
-      ]
+      ])
     }
   }
 }
@@ -86,7 +95,7 @@ export const lessConfig = () => {
       filename: '[name].css'
     },
     module: {
-      rules: [
+      rules: rules.concat([
         {
           test: /\.less$/,
           use: ExtractTextPlugin.extract({
@@ -101,7 +110,7 @@ export const lessConfig = () => {
             ]
           })
         }
-      ]
+      ])
     },
     plugins: [
       new ExtractTextPlugin('[name].css')
