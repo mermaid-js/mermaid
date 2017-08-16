@@ -130,11 +130,11 @@ yarn add mermaid
 
 ## Further reading
 
-* [Usage](http://knsv.github.io/mermaid/#usage)
-* [Flowchart syntax](http://knsv.github.io/mermaid/#flowcharts-basic-syntax)
-* [Sequence diagram syntax](http://knsv.github.io/mermaid/#sequence-diagrams)
-* [Mermaid client](http://knsv.github.io/mermaid/#mermaid-cli)
-* [Demos](http://knsv.github.io/mermaid/#demos)
+* [Usage](https://mermaidjs.github.io/usage.html)
+* [Flowchart syntax](https://mermaidjs.github.io/flowchart.html)
+* [Sequence diagram syntax](https://mermaidjs.github.io/sequenceDiagram.html)
+* [Mermaid CLI](https://mermaidjs.github.io/mermaidCLI.html)
+* [Demos](https://mermaidjs.github.io/demos.html)
 
 
 # Request for assistance

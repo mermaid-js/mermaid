@@ -1,5 +1,5 @@
 /** mermaid
- *  http://knsv.github.io/mermaid/
+ *  https://mermaidjs.github.io/
  *  (c) 2015 Knut Sveidqvist
  *  MIT license.
  */
@@ -192,10 +192,10 @@ graphConfig
 ending: endToken ending
       | endToken
       ;
-      
+
 endToken: NEWLINE | SPACE | EOF;
-      
-FirstStmtSeperator 
+
+FirstStmtSeperator
     : SEMI | NEWLINE | spaceList NEWLINE ;
 
 
