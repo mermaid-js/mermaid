@@ -195,6 +195,8 @@ Manual test in Node.js:
 
 ## Release
 
+Update version number in `package.json`.
+
     yarn dist
     npm publish
 
@@ -209,4 +211,6 @@ Thanks also to the [js-sequence-diagram](http://bramp.github.io/js-sequence-diag
 
 *Mermaid was created by Knut Sveidqvist for easier documentation.*
 
-Knut has not done all work by him self, here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
+*[Tyler Long](https://github.com/tylerlong) has became a collaborator since April 2017.*
+
+Here is the full list of the projects [contributors](https://github.com/knsv/mermaid/graphs/contributors).
