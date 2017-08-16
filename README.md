@@ -119,7 +119,7 @@ https://unpkg.com/mermaid@<version>/dist/
 
 Replace `<version>` with expected version number.
 
-Example: https://unpkg.com/mermaid@7.0.3/dist/
+Example: https://unpkg.com/mermaid@7.0.4/dist/
 
 ### Node.js
 
@@ -197,7 +197,6 @@ Manual test in Node.js:
 
 Update version number in `package.json`.
 
-    yarn dist
     npm publish
 
 Command above generates files into the `dist` folder and publishes them to npmjs.org.
