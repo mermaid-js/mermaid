@@ -386,6 +386,7 @@ var parser = (function () {
             loc: yyloc,
             expected: expected
           })
+          return false
         }
         if (action[0] instanceof Array && action.length > 1) {
           throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol)
