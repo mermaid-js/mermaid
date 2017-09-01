@@ -1,3 +1,2 @@
 --ignore-dir=dist
---ignore-dir=editor
 --ignore-file=match:/^yarn\.lock$/

@@ -38,8 +38,7 @@
   "standard": {
     "ignore": [
       "**/parser/*.js",
-      "dist/**/*.js",
-      "editor/**/*.js"
+      "dist/**/*.js"
     ]
   },
   "dependencies": {
