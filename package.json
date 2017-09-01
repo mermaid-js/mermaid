@@ -27,7 +27,7 @@
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
     "live_server": "gulp live-server",
-    "prepublishOnly": "yarn release && yarn test"
+    "prepublishOnly": "yarn build && yarn release && yarn test"
   },
   "repository": {
     "type": "git",

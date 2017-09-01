@@ -26,6 +26,7 @@ export const webConfig = () => {
       rules: rules.concat([
         {
           test: /\.js$/,
+          exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
             options: {
@@ -63,6 +64,7 @@ export const nodeConfig = () => {
       rules: rules.concat([
         {
           test: /\.js$/,
+          exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
             options: {
