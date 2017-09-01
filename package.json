@@ -16,18 +16,17 @@
     "mermaid": "./bin/mermaid.js"
   },
   "scripts": {
-    "watch": "yarn build -- --watch",
     "build": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
-    "dist": "node -r babel-register ./node_modules/.bin/webpack --progress --colors -p --config webpack.config.prod.js",
+    "watch": "yarn build -- --watch",
+    "dist": "yarn build -- -p --config webpack.config.prod.js",
     "upgrade": "yarn-upgrade-all && yarn remove d3 && yarn add d3@3.5.17",
     "lint": "node_modules/.bin/standard",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
     "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
-    "test": "yarn tape && yarn karma",
+    "test": "yarn lint && yarn tape && yarn karma",
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
     "live_server": "gulp live-server",
-    "pretest": "yarn lint",
     "prepublishOnly": "yarn build && yarn dist && yarn test"
   },
   "repository": {
