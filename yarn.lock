@@ -7486,9 +7486,9 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-yarn-upgrade-all@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/yarn-upgrade-all/-/yarn-upgrade-all-0.1.6.tgz#a0ab041e5635ef2ed9d6cf875427202441697d0b"
+yarn-upgrade-all@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/yarn-upgrade-all/-/yarn-upgrade-all-0.1.8.tgz#e5b243b87aa07bd19c1f5114d4c4aea68f8664f1"
   dependencies:
     chalk "^2.1.0"
 

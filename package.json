@@ -121,7 +121,7 @@
     "tape": "^4.8.0",
     "webpack": "^3.5.5",
     "webpack-node-externals": "^1.6.0",
-    "yarn-upgrade-all": "^0.1.6"
+    "yarn-upgrade-all": "^0.1.8"
   },
   "files": [
     "bin",
