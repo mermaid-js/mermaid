@@ -44,7 +44,7 @@ sequenceDiagram
     loop Healthcheck
         John->>John: Fight against hypochondria
     end
-    Note right of John: Rational thoughts <br/>prevail...
+    Note right of John: Rational thoughts &lt;br/>prevail...
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
@@ -53,6 +53,26 @@ sequenceDiagram
         </td>
         <td>
             <img src='./img/sequence.png' alt='Sequence Diagram'>
+        </td>
+    </tr>
+        <tr>
+        <td>
+            <pre>
+                <code>
+gantt
+dateFormat  YYYY-MM-DD
+title Adding GANTT diagram to mermaid
+
+section A section
+Completed task            :done,    des1, 2014-01-06,2014-01-08
+Active task               :active,  des2, 2014-01-09, 3d
+Future task               :         des3, after des2, 5d
+Future task2               :         des4, after des3, 5d
+                </code>
+            </pre>
+        </td>
+        <td>
+            <img src='./img/gantt.png' alt='Gantt Diagram'>
         </td>
     </tr>
     <tr>
@@ -77,7 +97,7 @@ classDiagram
             </pre>
         </td>
         <td>
-            <img src='./img/class-diagram.png' alt='Example 3'>
+            <img src='./img/class.png' alt='Class Diagram'>
         </td>
     </tr>
     <tr>
@@ -105,7 +125,7 @@ end
             </pre>
         </td>
         <td>
-            <img src='./img/gitgraph.mm.png' alt='Example 4'>
+            <img src='./img/git.png' alt='Git Graph'>
         </td>
     </tr>
 
