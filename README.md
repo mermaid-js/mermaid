@@ -4,6 +4,8 @@
 [![Code Climate](https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg)](https://codeclimate.com/github/knsv/mermaid)
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+![](./img/header.png)
+
 Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
 Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
@@ -27,7 +29,7 @@ graph TD;
         </td>
         <td>
             <p align="center">
-                <img src='http://www.sveido.com/mermaid/img/ex1.png' alt='Example 1'>
+                <img src='./img/flow.png' alt='Flowchart'>
             </p>
         </td>
     </tr>
@@ -42,7 +44,7 @@ sequenceDiagram
     loop Healthcheck
         John->>John: Fight against hypochondria
     end
-    Note right of John: Rational thoughts &lt;br/>prevail...
+    Note right of John: Rational thoughts <br/>prevail...
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
@@ -50,7 +52,7 @@ sequenceDiagram
             </pre>
         </td>
         <td>
-            <img src='http://www.sveido.com/mermaid/img/seq1.png' alt='Example 2'>
+            <img src='./img/sequence.png' alt='Sequence Diagram'>
         </td>
     </tr>
     <tr>
