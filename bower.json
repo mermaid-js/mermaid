@@ -1,7 +1,8 @@
 {
   "name": "mermaid",
   "authors": [
-    "knsv <knut@sveido.com>"
+    "knsv <knut@sveido.com>",
+    "Tyler Long (https://github.com/tylerlong)"
   ],
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.slim.js",
@@ -21,10 +22,17 @@
     "!dist/*",
     "!LICENSE"
   ],
-  "devDependencies": {
-    "jasmine": "~2.0.4",
-    "dagre": "0.6.2",
-    "d3": "3.3.8",
-    "dagre-d3": "0.3.3"
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "d3": "3.5.17",
+    "dagre": "^0.7.4",
+    "dagre-d3-renderer": "^0.1.6",
+    "he": "^1.1.1",
+    "lodash": "^4.17.4",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.18.1",
+    "semver": "^5.4.1",
+    "which": "^1.3.0"
   }
 }

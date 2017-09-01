@@ -18,7 +18,7 @@
   "scripts": {
     "build": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
     "watch": "yarn build -- --watch",
-    "dist": "yarn build -- -p --config webpack.config.prod.js",
+    "release": "yarn build -- -p --config webpack.config.prod.js",
     "upgrade": "yarn-upgrade-all && yarn remove d3 && yarn add d3@3.5.17",
     "lint": "node_modules/.bin/standard",
     "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
@@ -27,7 +27,7 @@
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
     "live_server": "gulp live-server",
-    "prepublishOnly": "yarn build && yarn dist && yarn test"
+    "prepublishOnly": "yarn release && yarn test"
   },
   "repository": {
     "type": "git",
@@ -60,6 +60,7 @@
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
     "clone": "^2.1.1",
     "codeclimate-test-reporter": "^0.5.0",
     "css-loader": "^0.28.7",
