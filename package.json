@@ -27,7 +27,6 @@
     "live": "live-server ./test/examples",
     "jison": "gulp jison_legacy",
     "live_server": "gulp live-server",
-    "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
     "pretest": "yarn lint",
     "prepublishOnly": "yarn build && yarn dist && yarn test"
   },
@@ -41,7 +40,6 @@
     "ignore": [
       "**/parser/*.js",
       "dist/**/*.js",
-      "docs/**/*.js",
       "editor/**/*.js"
     ]
   },

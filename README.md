@@ -75,7 +75,7 @@ classDiagram
             </pre>
         </td>
         <td>
-            <img src='./docs/img/class-diagram.png' alt='Example 3'>
+            <img src='./img/class-diagram.png' alt='Example 3'>
         </td>
     </tr>
     <tr>
@@ -103,7 +103,7 @@ end
             </pre>
         </td>
         <td>
-            <img src='./docs/img/gitgraph.mm.png' alt='Example 4'>
+            <img src='./img/gitgraph.mm.png' alt='Example 4'>
         </td>
     </tr>
 

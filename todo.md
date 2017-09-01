@@ -4,7 +4,6 @@
 - Make node console output colors like Chrome console
 - Don't version control generated content, move them to outside project
     - editor
-    - docs
 - What's the correct way to change logLevel as an end user?
 - d3 v3 doesn't support 'use strict'
     - babel-plugin-transform-remove-strict-mode
@@ -13,7 +12,6 @@
 - Fix CodeClimate
 - What is live-server ?
 - Get familar with jison
-- How to generate doc?
 - webpack warning: lodash too big
 - add converalls
 - git graph requires a blank line at the end. why?
