@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "7.0.6",
+  "version": "7.0.7",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "src/mermaid.js",
   "keywords": [
@@ -45,7 +45,7 @@
     "chalk": "^2.1.0",
     "d3": "3.5.17",
     "dagre": "^0.7.4",
-    "dagre-d3-renderer": "^0.1.6",
+    "dagre-d3-renderer": "^0.4.18",
     "he": "^1.1.1",
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
@@ -72,7 +72,7 @@
     "inject-loader": "^3.0.1",
     "jasmine": "^2.8.0",
     "jasmine-es6": "^0.4.1",
-    "jison": "^0.4.17",
+    "jison": "^0.4.18",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.0",

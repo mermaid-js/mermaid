@@ -1597,14 +1597,14 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-dagre-d3-renderer@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.1.6.tgz#97e807c4b7462d0af1d3000b7e537488648fc195"
+dagre-d3-renderer@^0.4.18:
+  version "0.4.18"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.18.tgz#27a82c183ccbeb37dd2540114bf9fd6536389060"
   dependencies:
     d3 "3.5.17"
     dagre "^0.7.4"
     graphlib "^2.1.1"
-    lodash "^4.17.4"
+    lodash "3.10.1"
 
 dagre@^0.7.4:
   version "0.7.4"
@@ -3312,7 +3312,20 @@ jison-lex@0.3.x:
     lex-parser "0.1.x"
     nomnom "1.5.2"
 
-jison@^0.4.17, jison@~0.4.15:
+jison@^0.4.18:
+  version "0.4.18"
+  resolved "https://registry.yarnpkg.com/jison/-/jison-0.4.18.tgz#c68a6a54bfe7028fa40bcfc6cc8bbd9ed291f502"
+  dependencies:
+    JSONSelect "0.4.0"
+    cjson "0.3.0"
+    ebnf-parser "0.1.10"
+    escodegen "1.3.x"
+    esprima "1.1.x"
+    jison-lex "0.3.x"
+    lex-parser "~0.1.3"
+    nomnom "1.5.2"
+
+jison@~0.4.15:
   version "0.4.17"
   resolved "https://registry.yarnpkg.com/jison/-/jison-0.4.17.tgz#bc12d46c5845e6fee89ccf35bd2a8cc73eba17f3"
   dependencies:
@@ -3724,7 +3737,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^3.10.0, lodash@^3.8.0:
+lodash@3.10.1, lodash@^3.10.0, lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
