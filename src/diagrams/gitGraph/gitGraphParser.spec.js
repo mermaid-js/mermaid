@@ -2,7 +2,6 @@
 var parser = require('./parser/gitGraph').parser
 var ast = require('./gitGraphAst.js')
 describe('when parsing a gitGraph', function () {
-  'use strict'
   beforeEach(function () {
     console.log('ast', ast)
     console.log('parser', parser)
