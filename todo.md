@@ -3,9 +3,6 @@
     - Problem is it's for d3 v4 only
 - Make node console output colors like Chrome console
 - What's the correct way to change logLevel as an end user?
-- d3 v3 doesn't support 'use strict'
-    - babel-plugin-transform-remove-strict-mode
-        - need to remove it after upgrading to d3 v4
 - Fix CodeClimate
 - What is live-server ?
 - Get familar with jison

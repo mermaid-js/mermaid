@@ -87,16 +87,15 @@ describe('when cloning CSS ', function () {
   }
 
   function addMermaidSVGwithStyleToDocument () {
-    var styleSheetCount = document.styleSheets.length
     var svg = document.createElement('svg')
     svg.setAttribute('id', 'mermaid-03')
     var s = document.createElement('style')
     s.setAttribute('type', 'text/css')
     s.setAttribute('title', 'mermaid-svg-internal-css')
     s.innerHTML = '#mermaid-05 .node2 { stroke:#eee; }\n.node-square { stroke:#bfe; }\n'
+    s.title = 'mermaid-svg-internal-css'
     svg.appendChild(s)
     document.body.appendChild(svg)
-    document.styleSheets[styleSheetCount].title = 'mermaid-svg-internal-css'
   }
 
   it('should handle errors thrown when accessing CSS rules', function () {
@@ -104,7 +103,7 @@ describe('when cloning CSS ', function () {
     svg.setAttribute('id', 'mermaid-01')
 
     // Firefox throws a SecurityError when trying to access cssRules
-    document.styleSheets[document.styleSheets.length++] = {
+    document.styleSheets[document.styleSheets.length] = {
       get cssRules () { throw new Error('SecurityError') }
     }
 

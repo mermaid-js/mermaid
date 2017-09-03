@@ -32,6 +32,7 @@ module.exports = function (config) {
         rules: [
           {
             test: /\.js$/,
+            exclude: /node_modules/,
             use: {
               loader: 'babel-loader',
               options: {
@@ -41,9 +42,6 @@ module.exports = function (config) {
                       'browsers': ['last 3 versions']
                     }
                   }]
-                ],
-                plugins: [
-                  'transform-remove-strict-mode'
                 ]
               }
             }

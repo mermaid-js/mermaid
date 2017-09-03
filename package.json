@@ -58,7 +58,6 @@
     "async": "^2.5.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015": "^6.24.1",
     "clone": "^2.1.1",
