@@ -17,7 +17,7 @@ export const webConfig = () => {
     entry: {
       mermaid: './src/mermaid.js'
     },
-    externals: 'fs',
+    externals: ['fs'],
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js'
