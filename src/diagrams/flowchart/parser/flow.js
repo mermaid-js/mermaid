@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var flow = (function(){
+var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,3],$V2=[1,5],$V3=[1,8,9,10,11,13,18,30,46,71,72,73,74,75,81,86,88,89,91,92,94,95,96,97,98],$V4=[2,2],$V5=[1,12],$V6=[1,13],$V7=[1,14],$V8=[1,15],$V9=[1,31],$Va=[1,33],$Vb=[1,22],$Vc=[1,34],$Vd=[1,24],$Ve=[1,25],$Vf=[1,26],$Vg=[1,27],$Vh=[1,28],$Vi=[1,38],$Vj=[1,40],$Vk=[1,35],$Vl=[1,39],$Vm=[1,45],$Vn=[1,44],$Vo=[1,36],$Vp=[1,37],$Vq=[1,41],$Vr=[1,42],$Vs=[1,43],$Vt=[1,8,9,10,11,13,18,30,32,46,71,72,73,74,75,81,86,88,89,91,92,94,95,96,97,98],$Vu=[1,53],$Vv=[1,52],$Vw=[1,54],$Vx=[1,72],$Vy=[1,80],$Vz=[1,81],$VA=[1,66],$VB=[1,65],$VC=[1,85],$VD=[1,84],$VE=[1,82],$VF=[1,83],$VG=[1,73],$VH=[1,68],$VI=[1,67],$VJ=[1,63],$VK=[1,75],$VL=[1,76],$VM=[1,77],$VN=[1,78],$VO=[1,79],$VP=[1,70],$VQ=[1,69],$VR=[8,9,11],$VS=[8,9,11,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64],$VT=[1,115],$VU=[8,9,10,11,13,15,18,36,38,40,42,46,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,81,86,88,89,91,92,94,95,96,97,98],$VV=[8,9,10,11,12,13,15,16,17,18,30,32,36,37,38,39,40,41,42,43,46,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,71,72,73,74,75,78,81,84,86,88,89,91,92,94,95,96,97,98],$VW=[1,117],$VX=[1,118],$VY=[8,9,10,11,13,18,30,32,46,71,72,73,74,75,81,86,88,89,91,92,94,95,96,97,98],$VZ=[8,9,10,11,12,13,15,16,17,18,30,32,37,39,41,43,46,50,51,52,53,54,56,57,58,59,60,61,62,63,64,65,71,72,73,74,75,78,81,84,86,88,89,91,92,94,95,96,97,98],$V_=[13,18,46,81,86,88,89,91,92,94,95,96,97,98],$V$=[13,18,46,49,65,81,86,88,89,91,92,94,95,96,97,98],$V01=[1,191],$V11=[1,188],$V21=[1,195],$V31=[1,192],$V41=[1,189],$V51=[1,196],$V61=[1,186],$V71=[1,187],$V81=[1,190],$V91=[1,193],$Va1=[1,194],$Vb1=[1,213],$Vc1=[8,9,11,86],$Vd1=[8,9,10,11,46,71,80,81,84,86,88,89,90,91,92];
 var parser = {trace: function trace() { },
 yy: {},
@@ -349,15 +349,18 @@ parse: function parse(input) {
         vstack.length = vstack.length - n;
         lstack.length = lstack.length - n;
     }
-    _token_stack:
-        var lex = function () {
+            function lex() {
             var token;
-            token = lexer.lex() || EOF;
+            token = tstack.pop() || lexer.lex() || EOF;
             if (typeof token !== 'number') {
+                if (token instanceof Array) {
+                    tstack = token;
+                    token = tstack.pop();
+                }
                 token = self.symbols_[token] || token;
             }
             return token;
-        };
+        }
     var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
     while (true) {
         state = stack[stack.length - 1];
@@ -369,27 +372,27 @@ parse: function parse(input) {
             }
             action = table[state] && table[state][symbol];
         }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
-                    }
+        if (typeof action === 'undefined' || !action.length || !action[0]) {
+            var errStr = '';
+            expected = [];
+            for (p in table[state]) {
+                if (this.terminals_[p] && p > TERROR) {
+                    expected.push('\'' + this.terminals_[p] + '\'');
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
-                }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
             }
+            if (lexer.showPosition) {
+                errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+            } else {
+                errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+            }
+            this.parseError(errStr, {
+                text: lexer.match,
+                token: this.terminals_[symbol] || symbol,
+                line: lexer.yylineno,
+                loc: yyloc,
+                expected: expected
+            });
+        }
         if (action[0] instanceof Array && action.length > 1) {
             throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
         }
@@ -945,9 +948,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = flow;
-exports.Parser = flow.Parser;
-exports.parse = function () { return flow.parse.apply(flow, arguments); };
+exports.parser = parser;
+exports.Parser = parser.Parser;
+exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain(args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
