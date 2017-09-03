@@ -6,8 +6,6 @@
     - mermaid.initialize({ logLevel: 1 })
 - Fix CodeClimate
 - Get familar with jison
-- webpack warning: lodash too big
 - add coveralls
 - git graph requires a blank line at the end. why?
 - Move cli to mermaid-cli project ?
-- Check this project: https://github.com/GerHobbelt/jison
