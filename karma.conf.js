@@ -3,6 +3,8 @@
 
 import { webConfig } from './webpack.config.base.js'
 
+const webpackConfig = webConfig()
+
 module.exports = function (config) {
   config.set({
 
@@ -29,8 +31,8 @@ module.exports = function (config) {
     },
 
     webpack: {
-      externals: webConfig.externals,
-      module: webConfig.module
+      externals: webpackConfig.externals,
+      module: webpackConfig.module
     },
 
     // test results reporter to use
