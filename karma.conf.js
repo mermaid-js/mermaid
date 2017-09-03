@@ -1,6 +1,8 @@
 // Karma configuration
 // Generated on Mon Nov 03 2014 07:53:38 GMT+0100 (CET)
 
+import { webConfig } from './webpack.config.base.js'
+
 module.exports = function (config) {
   config.set({
 
@@ -27,27 +29,8 @@ module.exports = function (config) {
     },
 
     webpack: {
-      externals: ['fs'],
-      module: {
-        rules: [
-          {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-              loader: 'babel-loader',
-              options: {
-                presets: [
-                  ['env', {
-                    'targets': {
-                      'browsers': ['last 3 versions']
-                    }
-                  }]
-                ]
-              }
-            }
-          }
-        ]
-      }
+      externals: webConfig.externals,
+      module: webConfig.module
     },
 
     // test results reporter to use
