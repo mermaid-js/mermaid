@@ -6,7 +6,7 @@ var filelog = require('gulp-filelog')
 gulp.task('jison', function () {
   return gulp.src('./src/**/*.jison')
     .pipe(filelog('Jison file:'))
-    .pipe(jison({ moduleType: 'commonjs' }))
+    .pipe(jison({ moduleType: 'commonjs', 'token-stack': true }))
     .pipe(gulp.dest('./src/'))
 })
 
