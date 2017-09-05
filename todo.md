@@ -11,3 +11,5 @@
 - Move cli to mermaid-cli project ?
 - remove 'fs' as dependency
 - remove 'lodash' as dependency
+    - https://github.com/lodash/babel-plugin-lodash
+    - https://www.npmjs.com/package/lodash-webpack-plugin

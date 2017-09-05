@@ -1555,14 +1555,14 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-dagre-d3-renderer@^0.4.18:
-  version "0.4.18"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.18.tgz#27a82c183ccbeb37dd2540114bf9fd6536389060"
+dagre-d3-renderer@^0.4.21:
+  version "0.4.21"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.21.tgz#80b73dd31669a2f6bccc070de1730da43fa0a983"
   dependencies:
     d3 "3.5.17"
     dagre "^0.7.4"
     graphlib "^2.1.1"
-    lodash "3.10.1"
+    lodash "^4.17.4"
 
 dagre@^0.7.4:
   version "0.7.4"
@@ -3607,7 +3607,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@3.10.1, lodash@^3.10.0, lodash@^3.8.0:
+lodash@^3.10.0, lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 

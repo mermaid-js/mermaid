@@ -192,7 +192,7 @@ Make sure you have Chrome browser installed, this project uses Chrome headless t
 
 If you want real time incremental build:
 
-    yarn watch
+    yarn build:watch
 
 
 ## Lint
