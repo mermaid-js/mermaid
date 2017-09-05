@@ -1,6 +1,7 @@
+import _ from 'lodash'
+
 const Logger = require('../../logger')
 const log = Logger.Log
-const _ = require('lodash')
 
 var commits = {}
 var head = null

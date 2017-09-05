@@ -1,5 +1,6 @@
+import _ from 'lodash'
+
 const db = require('./gitGraphAst')
-const _ = require('lodash')
 const gitGraphParser = require('./parser/gitGraph')
 const d3 = require('../../d3')
 const Logger = require('../../logger')

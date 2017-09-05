@@ -36,7 +36,8 @@ export const webConfig = () => {
                     'browsers': ['last 3 versions']
                   }
                 }]
-              ]
+              ],
+              plugins: ['lodash']
             }
           }
         }
