@@ -1562,21 +1562,21 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-dagre-d3-renderer@^0.4.21:
-  version "0.4.21"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.21.tgz#80b73dd31669a2f6bccc070de1730da43fa0a983"
+dagre-d3-renderer@^0.4.22:
+  version "0.4.22"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.22.tgz#39941bfa77e34fca5780e8efb5bb8bcb39cd4920"
   dependencies:
     d3 "3.5.17"
-    dagre "^0.7.4"
+    dagre-layout "^0.7.8"
     graphlib "^2.1.1"
     lodash "^4.17.4"
 
-dagre@^0.7.4:
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.7.4.tgz#de72f0e74a550ce11ce638f0a136fed712398022"
+dagre-layout@^0.7.8:
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/dagre-layout/-/dagre-layout-0.7.8.tgz#64db8fc624be71572b380cbe286deda7c07fbac7"
   dependencies:
-    graphlib "^1.0.5"
-    lodash "^3.10.0"
+    graphlib "^2.1.1"
+    lodash "3.10.1"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -2627,12 +2627,6 @@ graceful-fs@~1.2.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
-graphlib@^1.0.5:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-1.0.7.tgz#0cab2df0ffe6abe070b2625bfa1edb6ec967b8b1"
-  dependencies:
-    lodash "^3.10.0"
-
 graphlib@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-2.1.1.tgz#42352c52ba2f4d035cb566eb91f7395f76ebc951"
@@ -3614,7 +3608,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^3.10.0, lodash@^3.8.0:
+lodash@3.10.1, lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 

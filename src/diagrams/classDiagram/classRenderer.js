@@ -8,7 +8,7 @@ cd.yy = cDDb
 var d3 = require('../../d3')
 var Logger = require('../../logger')
 var log = Logger.Log
-var dagre = require('dagre')
+var dagre = require('dagre-layout')
 
 var idCache
 idCache = {}
