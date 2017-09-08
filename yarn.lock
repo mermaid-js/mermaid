@@ -1562,21 +1562,21 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-dagre-d3-renderer@^0.4.22:
-  version "0.4.22"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.22.tgz#39941bfa77e34fca5780e8efb5bb8bcb39cd4920"
+dagre-d3-renderer@^0.4.23:
+  version "0.4.23"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.4.23.tgz#c0cddbc9b85409e78f4fb3e6ebc45be3b4d29227"
   dependencies:
     d3 "3.5.17"
-    dagre-layout "^0.7.8"
+    dagre-layout "^0.8.0"
     graphlib "^2.1.1"
     lodash "^4.17.4"
 
-dagre-layout@^0.7.8:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/dagre-layout/-/dagre-layout-0.7.8.tgz#64db8fc624be71572b380cbe286deda7c07fbac7"
+dagre-layout@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/dagre-layout/-/dagre-layout-0.8.0.tgz#7147b6afb655602f855158dfea171db9aa98d4ff"
   dependencies:
     graphlib "^2.1.1"
-    lodash "3.10.1"
+    lodash "^4.17.4"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -3608,7 +3608,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@3.10.1, lodash@^3.8.0:
+lodash@^3.8.0:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
@@ -5705,9 +5705,9 @@ webpack-sources@^1.0.1:
     source-list-map "^2.0.0"
     source-map "~0.5.3"
 
-webpack@^3.5.5:
-  version "3.5.5"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.5.5.tgz#3226f09fc8b3e435ff781e7af34f82b68b26996c"
+webpack@^3.5.6:
+  version "3.5.6"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-3.5.6.tgz#a492fb6c1ed7f573816f90e00c8fbb5a20cc5c36"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
@@ -5850,12 +5850,6 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
-
-yarn-upgrade-all@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/yarn-upgrade-all/-/yarn-upgrade-all-0.1.8.tgz#e5b243b87aa07bd19c1f5114d4c4aea68f8664f1"
-  dependencies:
-    chalk "^2.1.0"
 
 yauzl@2.4.1:
   version "2.4.1"

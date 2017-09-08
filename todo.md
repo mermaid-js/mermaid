@@ -4,12 +4,15 @@
 - Make node console output colors like Chrome console
 - What's the correct way to change logLevel as an end user?
     - mermaid.initialize({ logLevel: 1 })
-- Fix CodeClimate
+- Replace CodeClimate with coveralls
 - Get familar with jison
-- add coveralls
 - git graph requires a blank line at the end. why?
 - Move cli to mermaid-cli project ?
-- remove 'fs' as dependency
-- remove 'lodash' as dependency
+- Remove 'fs' as dependency
+- Remove 'lodash' as dependency
     - https://github.com/lodash/babel-plugin-lodash
     - https://www.npmjs.com/package/lodash-webpack-plugin
+- Replace var with const/let
+- Replace require with import
+- Replace module.exports with export default
+- Replace karma-webpack with karma-babel
