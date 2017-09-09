@@ -1,13 +1,13 @@
-import { webConfig, nodeConfig, lessConfig } from './webpack.config.base.js'
+import nodeExternals from 'webpack-node-externals'
 
-const config = webConfig()
+import { jsConfig, lessConfig } from './webpack.config.base.js'
 
-const slimConfig = webConfig()
-slimConfig.externals = ['fs', 'd3']
-slimConfig.output.filename = '[name].slim.js'
+const config = jsConfig()
 
-const apiConfig = nodeConfig()
+const coreConfig = jsConfig()
+coreConfig.externals = [nodeExternals(), 'fs']
+coreConfig.output.filename = '[name].core.js'
 
 const cssConfig = lessConfig()
 
-export default [config, slimConfig, apiConfig, cssConfig]
+export default [config, coreConfig, cssConfig]

@@ -9,7 +9,6 @@ var log = Logger.Log
 var mermaidAPI = require('./mermaidAPI')
 var nextId = 0
 
-module.exports.mermaidAPI = mermaidAPI
 /**
  * ## init
  * Function that goes through the document to find the chart definitions in there and render them.
@@ -110,23 +109,11 @@ var init = function () {
   }
 }
 
-module.exports.init = init
-module.exports.parse = mermaidAPI.parse
-/**
- * ## version
- * Function returning version information
- * @returns {string} A string containing the version info
- */
-module.exports.version = function () {
+const version = function () {
   return 'v' + require('../package.json').version
 }
 
-/**
- * ## initialize
- * This function overrides the default configuration.
- * @param config
- */
-module.exports.initialize = function (config) {
+const initialize = function (config) {
   log.debug('Initializing mermaid')
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
@@ -139,65 +126,16 @@ module.exports.initialize = function (config) {
   mermaidAPI.initialize(config)
 }
 
-var equals = function (val, variable) {
-  if (typeof variable === 'undefined') {
-    return false
-  } else {
-    return (val === variable)
-  }
-}
-
-/**
- * Global mermaid object. Contains the functions:
- * * init
- * * initialize
- * * version
- * * parse
- * * parseError
- * * render
- */
-global.mermaid = {
-  startOnLoad: true,
-  htmlLabels: true,
-
-  init: function () {
-    init.apply(null, arguments)
-  },
-  initialize: function (config) {
-    module.exports.initialize(config)
-  },
-  version: function () {
-    return mermaidAPI.version()
-  },
-  parse: function (text) {
-    return mermaidAPI.parse(text)
-  },
-  parseError: function (err) {
-    log.debug('Mermaid Syntax error:')
-    log.debug(err)
-  },
-  render: function (id, text, callback, element) {
-    return mermaidAPI.render(id, text, callback, element)
-  }
-}
-
-/**
- * ## parseError
- * This function overrides the default configuration.
- * @param config
- */
-module.exports.parseError = global.mermaid.parseError
-
 /**
  * ##contentLoaded
  * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
  * calls init for rendering the mermaid diagrams on the page.
  */
-module.exports.contentLoaded = function () {
+const contentLoaded = function () {
   var config
   // Check state of start config mermaid namespace
   if (typeof global.mermaid_config !== 'undefined') {
-    if (equals(false, global.mermaid_config.htmlLabels)) {
+    if (global.mermaid_config.htmlLabels === false) {
       global.mermaid.htmlLabels = false
     }
   }
@@ -206,7 +144,7 @@ module.exports.contentLoaded = function () {
     // For backwards compatability reasons also check mermaid_config variable
     if (typeof global.mermaid_config !== 'undefined') {
       // Check if property startOnLoad is set
-      if (equals(true, global.mermaid_config.startOnLoad)) {
+      if (global.mermaid_config.startOnLoad === true) {
         global.mermaid.init()
       }
     } else {
@@ -232,6 +170,27 @@ if (typeof document !== 'undefined') {
    * Wait for document loaded before starting the execution
    */
   window.addEventListener('load', function () {
-    module.exports.contentLoaded()
+    contentLoaded()
   }, false)
 }
+
+const mermaid = {
+  mermaidAPI,
+  startOnLoad: true,
+  htmlLabels: true,
+
+  init,
+  initialize,
+  version,
+  parse: mermaidAPI.parse,
+
+  parseError: function (err) {
+    log.debug('Mermaid Syntax error:')
+    log.debug(err)
+  },
+  render: mermaidAPI.render,
+
+  contentLoaded
+}
+
+export default mermaid

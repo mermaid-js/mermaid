@@ -5,7 +5,9 @@
 /**
  * Created by knut on 14-11-23.
  */
-var mermaid = require('./mermaid')
+import mermaid from './mermaid'
+
+global.mermaid = mermaid
 
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {

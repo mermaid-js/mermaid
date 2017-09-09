@@ -1,5 +1,4 @@
 import path from 'path'
-import nodeExternals from 'webpack-node-externals'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
 const rules = [
@@ -11,7 +10,7 @@ const rules = [
   }
 ]
 
-export const webConfig = () => {
+export const jsConfig = () => {
   return {
     target: 'web',
     entry: {
@@ -20,7 +19,10 @@ export const webConfig = () => {
     externals: ['fs'],
     output: {
       path: path.join(__dirname, './dist/'),
-      filename: '[name].js'
+      filename: '[name].js',
+      library: 'mermaid',
+      libraryTarget: 'umd',
+      libraryExport: 'default'
     },
     module: {
       rules: rules.concat([
@@ -38,41 +40,6 @@ export const webConfig = () => {
                 }]
               ],
               plugins: ['lodash']
-            }
-          }
-        }
-      ])
-    }
-  }
-}
-
-export const nodeConfig = () => {
-  return {
-    target: 'node',
-    entry: {
-      mermaidAPI: './src/mermaidAPI.js'
-    },
-    externals: [nodeExternals()],
-    output: {
-      path: path.join(__dirname, './dist/'),
-      filename: '[name].js',
-      libraryTarget: 'commonjs2'
-    },
-    module: {
-      rules: rules.concat([
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                ['env', {
-                  'targets': {
-                    'node': '6.9'
-                  }
-                }]
-              ]
             }
           }
         }
