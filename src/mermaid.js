@@ -190,7 +190,8 @@ const mermaid = {
   },
   render: mermaidAPI.render,
 
-  contentLoaded
+  contentLoaded,
+  eventEmitter: mermaidAPI.eventEmitter
 }
 
 export default mermaid

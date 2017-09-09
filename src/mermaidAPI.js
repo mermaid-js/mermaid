@@ -10,7 +10,9 @@
  * The core of this api is the **render** function that given a graph definitionas text renders the graph/diagram and
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
- */
+*/
+import EventEmitter from 'events'
+
 var Logger = require('./logger')
 var log = Logger.Log
 
@@ -35,6 +37,8 @@ var gitGraphParser = require('./diagrams/gitGraph/parser/gitGraph')
 var gitGraphRenderer = require('./diagrams/gitGraph/gitGraphRenderer')
 var gitGraphAst = require('./diagrams/gitGraph/gitGraphAst')
 var d3 = require('./d3')
+
+module.exports.eventEmitter = new EventEmitter()
 
 /**
  * ## Configuration
@@ -281,6 +285,10 @@ var parse = function (text) {
       parser = classParser
       parser.parser.yy = classDb
       break
+  }
+
+  parser.parser.yy.parseError = (err, hash) => {
+    module.exports.eventEmitter.emit('parseError', err, hash)
   }
 
   try {
@@ -543,11 +551,13 @@ module.exports.parseError = function (err, hash) {
     log.debug(err)
   }
 }
+
 global.mermaidAPI = {
   render: module.exports.render,
   parse: module.exports.parse,
   initialize: module.exports.initialize,
   detectType: utils.detectType,
   parseError: module.exports.parseError,
-  getConfig: module.exports.getConfig
+  getConfig: module.exports.getConfig,
+  eventEmitter: module.exports.eventEmitter
 }

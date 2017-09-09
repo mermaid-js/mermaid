@@ -44,12 +44,18 @@ describe('when using mermaidAPI and ', function () {
   })
   describe('checking validity of input ', function () {
     it('it should return false for an invalid definiton', function () {
-      global.mermaidAPI.parseError = function () { }
-      spyOn(global.mermaidAPI, 'parseError')
+      const foo = {
+        parseError: () => {
+        }
+      }
+      spyOn(foo, 'parseError')
+      global.mermaidAPI.eventEmitter.on('parseError', (err, hash) => {
+        foo.parseError(err)
+      })
       var res = api.parse('this is not a mermaid diagram definition')
 
       expect(res).toBe(false)
-      expect(global.mermaidAPI.parseError).toHaveBeenCalled()
+      expect(foo.parseError).toHaveBeenCalled()
     })
     it('it should return true for a valid definiton', function () {
       spyOn(global.mermaidAPI, 'parseError')
