@@ -289,19 +289,23 @@ describe('when using mermaid and ', function () {
       expect(global.mermaid.parseError).not.toHaveBeenCalled()
     })
 
-    // todo: the following code was commented out, because digraph emits parseError infinitely
-    // I think it's a bug of the digraph
+    it('it should return false for an invalid dot definition', function () {
+      const foo = {
+        parseError: () => {
+        }
+      }
+      spyOn(foo, 'parseError')
+      mermaid.eventEmitter.on('parseError', (err, hash) => {
+        foo.parseError(err)
+      })
+      var res = mermaid.parse('digraph\n' +
+            '{\n' +
+            'a -:> b -> c -- d -> e;\n' +
+            'a -- e;\n' +
+            '}')
 
-    // it('it should return false for an invalid dot definition', function () {
-    //   spyOn(global.mermaid, 'parseError')
-    //   var res = mermaid.parse('digraph\n' +
-    //         '{\n' +
-    //         'a -:> b -> c -- d -> e;\n' +
-    //         'a -- e;\n' +
-    //         '}')
-
-    //   expect(res).toBe(false)
-    //   expect(global.mermaid.parseError).toHaveBeenCalled()
-    // })
+      expect(res).toBe(false)
+      expect(foo.parseError).toHaveBeenCalled()
+    })
   })
 })
