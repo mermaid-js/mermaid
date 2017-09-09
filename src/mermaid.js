@@ -2,13 +2,12 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
+var he = require('he')
 
 var Logger = require('./logger')
 var log = Logger.Log
 var mermaidAPI = require('./mermaidAPI')
 var nextId = 0
-
-var he = require('he')
 
 module.exports.mermaidAPI = mermaidAPI
 /**
@@ -111,14 +110,14 @@ var init = function () {
   }
 }
 
-exports.init = init
-exports.parse = mermaidAPI.parse
+module.exports.init = init
+module.exports.parse = mermaidAPI.parse
 /**
  * ## version
  * Function returning version information
  * @returns {string} A string containing the version info
  */
-exports.version = function () {
+module.exports.version = function () {
   return 'v' + require('../package.json').version
 }
 
@@ -127,7 +126,7 @@ exports.version = function () {
  * This function overrides the default configuration.
  * @param config
  */
-exports.initialize = function (config) {
+module.exports.initialize = function (config) {
   log.debug('Initializing mermaid')
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
@@ -165,7 +164,7 @@ global.mermaid = {
     init.apply(null, arguments)
   },
   initialize: function (config) {
-    exports.initialize(config)
+    module.exports.initialize(config)
   },
   version: function () {
     return mermaidAPI.version()
@@ -187,14 +186,14 @@ global.mermaid = {
  * This function overrides the default configuration.
  * @param config
  */
-exports.parseError = global.mermaid.parseError
+module.exports.parseError = global.mermaid.parseError
 
 /**
  * ##contentLoaded
  * Callback function that is called when page is loaded. This functions fetches configuration for mermaid rendering and
  * calls init for rendering the mermaid diagrams on the page.
  */
-exports.contentLoaded = function () {
+module.exports.contentLoaded = function () {
   var config
   // Check state of start config mermaid namespace
   if (typeof global.mermaid_config !== 'undefined') {
@@ -233,6 +232,6 @@ if (typeof document !== 'undefined') {
    * Wait for document loaded before starting the execution
    */
   window.addEventListener('load', function () {
-    exports.contentLoaded()
+    module.exports.contentLoaded()
   }, false)
 }
