@@ -1,8 +1,4 @@
-/**
- * Created by knut on 14-11-23.
- */
-var Logger = require('./logger')
-var log = Logger.Log
+import { Log } from './logger'
 
 /**
  * @function detectType
@@ -21,7 +17,7 @@ var log = Logger.Log
  * @param {string} text The text defining the graph
  * @returns {string} A graph definition key
  */
-var detectType = function (text) {
+export const detectType = function (text) {
   text = text.replace(/^\s*%%.*\n/g, '\n')
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequenceDiagram'
@@ -40,17 +36,16 @@ var detectType = function (text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    log.debug('Detected classDiagram syntax')
+    Log.debug('Detected classDiagram syntax')
     return 'classDiagram'
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    log.debug('Detected gitGraph syntax')
+    Log.debug('Detected gitGraph syntax')
     return 'gitGraph'
   }
   return 'graph'
 }
-exports.detectType = detectType
 
 /**
  * Copies all relevant CSS content into the graph SVG.
@@ -58,21 +53,20 @@ exports.detectType = detectType
  * @param {element} svg The root element of the SVG
  * @param {object} Hash table of class definitions from the graph definition
  */
-var cloneCssStyles = function (svg, classes) {
-  var usedStyles = ''
-  var sheets = document.styleSheets
-  var rule
-  for (var i = 0; i < sheets.length; i++) {
+export const cloneCssStyles = function (svg, classes) {
+  let usedStyles = ''
+  const sheets = document.styleSheets
+  let rule
+  for (let i = 0; i < sheets.length; i++) {
     // Avoid multiple inclusion on pages with multiple graphs
     if (sheets[i].title !== 'mermaid-svg-internal-css') {
       try {
-        var rules = sheets[i].cssRules
+        const rules = sheets[i].cssRules
         if (rules !== null) {
-          for (var j = 0; j < rules.length; j++) {
+          for (let j = 0; j < rules.length; j++) {
             rule = rules[j]
             if (typeof (rule.style) !== 'undefined') {
-              var elems
-              elems = svg.querySelectorAll(rule.selectorText)
+              const elems = svg.querySelectorAll(rule.selectorText)
               if (elems.length > 0) {
                 usedStyles += rule.selectorText + ' { ' + rule.style.cssText + '}\n'
               }
@@ -81,16 +75,15 @@ var cloneCssStyles = function (svg, classes) {
         }
       } catch (err) {
         if (typeof (rule) !== 'undefined') {
-          log.warn('Invalid CSS selector "' + rule.selectorText + '"', err)
+          Log.warn('Invalid CSS selector "' + rule.selectorText + '"', err)
         }
       }
     }
   }
 
-  var defaultStyles = ''
-  var embeddedStyles = ''
-
-  for (var className in classes) {
+  let defaultStyles = ''
+  let embeddedStyles = ''
+  for (const className in classes) {
     if (classes.hasOwnProperty(className) && typeof (className) !== 'undefined') {
       if (className === 'default') {
         if (classes.default.styles instanceof Array) {
@@ -114,7 +107,7 @@ var cloneCssStyles = function (svg, classes) {
   }
 
   if (usedStyles !== '' || defaultStyles !== '' || embeddedStyles !== '') {
-    var s = document.createElement('style')
+    const s = document.createElement('style')
     s.setAttribute('type', 'text/css')
     s.setAttribute('title', 'mermaid-svg-internal-css')
     s.innerHTML = '/* <![CDATA[ */\n'
@@ -133,8 +126,6 @@ var cloneCssStyles = function (svg, classes) {
   }
 }
 
-exports.cloneCssStyles = cloneCssStyles
-
 /**
  * @function isSubstringInArray
  * Detects whether a substring in present in a given array
@@ -142,11 +133,9 @@ exports.cloneCssStyles = cloneCssStyles
  * @param {array} arr The array to search
  * @returns {number} the array index containing the substring or -1 if not present
  **/
-var isSubstringInArray = function (str, arr) {
-  for (var i = 0; i < arr.length; i++) {
+export const isSubstringInArray = function (str, arr) {
+  for (let i = 0; i < arr.length; i++) {
     if (arr[i].match(str)) return i
   }
   return -1
 }
-
-exports.isSubstringInArray = isSubstringInArray
