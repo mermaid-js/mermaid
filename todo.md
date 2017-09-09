@@ -18,3 +18,4 @@
 - Replace karma-webpack with karma-babel
 - Webpack generate mermaid.js & mermaid.core.js
 - Stops working for mermaid-live-editor since 7.0.9
+- Change emit parseError to throw parseError

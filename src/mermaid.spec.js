@@ -9,10 +9,30 @@ import mermaid from './mermaid'
 
 global.mermaid = mermaid
 
+const validateDefinition = (text, valid) => {
+  const foo = {
+    onError: () => {
+    }
+  }
+  spyOn(foo, 'onError')
+  mermaid.eventEmitter.on('parseError', (err, hash) => {
+    foo.onError(err)
+  })
+  var res = mermaid.parse(text)
+
+  if (valid) {
+    expect(res).toBe(true)
+    expect(foo.onError).not.toHaveBeenCalled()
+  } else {
+    expect(res).toBe(false)
+    expect(foo.onError).toHaveBeenCalled()
+  }
+}
+
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {
     it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
-      global.mermaid_config = {startOnLoad: false}
+      global.mermaid_config = { startOnLoad: false }
 
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
       spyOn(global.mermaid, 'init')
@@ -22,7 +42,7 @@ describe('when using mermaid and ', function () {
 
     it('should not start rendering with mermaid.startOnLoad set to false', function () {
       global.mermaid.startOnLoad = false
-      global.mermaid_config = {startOnLoad: true}
+      global.mermaid_config = { startOnLoad: true }
 
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
       spyOn(global.mermaid, 'init')
@@ -32,7 +52,7 @@ describe('when using mermaid and ', function () {
 
     it('should start rendering with both startOnLoad set', function () {
       global.mermaid.startOnLoad = true
-      global.mermaid_config = {startOnLoad: true}
+      global.mermaid_config = { startOnLoad: true }
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
       spyOn(global.mermaid, 'init')
       mermaid.contentLoaded()
@@ -61,7 +81,7 @@ describe('when using mermaid and ', function () {
     var flowRend = require('./diagrams/flowchart/flowRenderer')
 
     beforeEach(function () {
-      global.mermaid_config = {startOnLoad: false}
+      global.mermaid_config = { startOnLoad: false }
       flow.parser.yy = graph
       graph.clear()
     })
@@ -200,112 +220,56 @@ describe('when using mermaid and ', function () {
 
   describe('checking validity of input ', function () {
     it('it should return false for an invalid definiton', function () {
-      const foo = {
-        parseError: () => {
-        }
-      }
-      spyOn(foo, 'parseError')
-      mermaid.eventEmitter.on('parseError', (err, hash) => {
-        foo.parseError(err)
-      })
-      var res = mermaid.parse('this is not a mermaid diagram definition')
-
-      expect(res).toBe(false)
-      expect(foo.parseError).toHaveBeenCalled()
+      validateDefinition('this is not a mermaid diagram definition', false)
     })
 
     it('it should return true for a valid flow definition', function () {
-      spyOn(global.mermaid, 'parseError')
-      var res = mermaid.parse('graph TD;A--x|text including URL space|B;')
-
-      expect(res).toBe(true)
-      expect(global.mermaid.parseError).not.toHaveBeenCalled()
+      validateDefinition('graph TD;A--x|text including URL space|B;', true)
     })
     it('it should return false for an invalid flow definition', function () {
-      const foo = {
-        parseError: () => {
-        }
-      }
-      spyOn(foo, 'parseError')
-      mermaid.eventEmitter.on('parseError', (err, hash) => {
-        foo.parseError(err)
-      })
-      var res = mermaid.parse('graph TQ;A--x|text including URL space|B;')
-
-      expect(res).toBe(false)
-      expect(foo.parseError).toHaveBeenCalled()
+      validateDefinition('graph TQ;A--x|text including URL space|B;', false)
     })
 
     it('it should return true for a valid sequenceDiagram definition', function () {
-      spyOn(global.mermaid, 'parseError')
       var str = 'sequenceDiagram\n' +
-                'Alice->Bob: Hello Bob, how are you?\n\n' +
-                '%% Comment\n' +
-                'Note right of Bob: Bob thinks\n' +
-                'alt isWell\n\n' +
-                'Bob-->Alice: I am good thanks!\n' +
-                'else isSick\n' +
-                'Bob-->Alice: Feel sick...\n' +
-                'end'
-      var res = mermaid.parse(str)
-
-      expect(res).toBe(true)
-      expect(global.mermaid.parseError).not.toHaveBeenCalled()
+        'Alice->Bob: Hello Bob, how are you?\n\n' +
+        '%% Comment\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'alt isWell\n\n' +
+        'Bob-->Alice: I am good thanks!\n' +
+        'else isSick\n' +
+        'Bob-->Alice: Feel sick...\n' +
+        'end'
+      validateDefinition(str, true)
     })
 
     it('it should return false for an invalid sequenceDiagram definition', function () {
-      const foo = {
-        parseError: () => {
-        }
-      }
-      spyOn(foo, 'parseError')
-      mermaid.eventEmitter.on('parseError', (err, hash) => {
-        foo.parseError(err)
-      })
       var str = 'sequenceDiagram\n' +
-                'Alice:->Bob: Hello Bob, how are you?\n\n' +
-                '%% Comment\n' +
-                'Note right of Bob: Bob thinks\n' +
-                'alt isWell\n\n' +
-                'Bob-->Alice: I am good thanks!\n' +
-                'else isSick\n' +
-                'Bob-->Alice: Feel sick...\n' +
-                'end'
-      var res = mermaid.parse(str)
-
-      expect(res).toBe(false)
-      expect(foo.parseError).toHaveBeenCalled()
+        'Alice:->Bob: Hello Bob, how are you?\n\n' +
+        '%% Comment\n' +
+        'Note right of Bob: Bob thinks\n' +
+        'alt isWell\n\n' +
+        'Bob-->Alice: I am good thanks!\n' +
+        'else isSick\n' +
+        'Bob-->Alice: Feel sick...\n' +
+        'end'
+      validateDefinition(str, false)
     })
 
     it('it should return true for a valid dot definition', function () {
-      spyOn(global.mermaid, 'parseError')
-      var res = mermaid.parse('digraph\n' +
-            '{\n' +
-            ' a -> b -> c -- d -> e;\n' +
-            ' a -- e;\n' +
-            '}')
-
-      expect(res).toBe(true)
-      expect(global.mermaid.parseError).not.toHaveBeenCalled()
+      validateDefinition('digraph\n' +
+        '{\n' +
+        ' a -> b -> c -- d -> e;\n' +
+        ' a -- e;\n' +
+        '}', true)
     })
 
     it('it should return false for an invalid dot definition', function () {
-      const foo = {
-        parseError: () => {
-        }
-      }
-      spyOn(foo, 'parseError')
-      mermaid.eventEmitter.on('parseError', (err, hash) => {
-        foo.parseError(err)
-      })
-      var res = mermaid.parse('digraph\n' +
-            '{\n' +
-            'a -:> b -> c -- d -> e;\n' +
-            'a -- e;\n' +
-            '}')
-
-      expect(res).toBe(false)
-      expect(foo.parseError).toHaveBeenCalled()
+      validateDefinition('digraph\n' +
+        '{\n' +
+        'a -:> b -> c -- d -> e;\n' +
+        'a -- e;\n' +
+        '}', false)
     })
   })
 })
