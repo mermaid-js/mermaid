@@ -8,7 +8,7 @@ var title = ''
 var Logger = require('../../logger')
 var log = Logger.Log
 
-exports.addActor = function (id, name, description) {
+module.exports.addActor = function (id, name, description) {
   // Don't allow description nulling
   var old = actors[id]
   if (old && name === old.name && description == null) return
@@ -19,38 +19,38 @@ exports.addActor = function (id, name, description) {
   actors[id] = { name: name, description: description }
 }
 
-exports.addMessage = function (idFrom, idTo, message, answer) {
+module.exports.addMessage = function (idFrom, idTo, message, answer) {
   messages.push({ from: idFrom, to: idTo, message: message, answer: answer })
 }
 
-exports.addSignal = function (idFrom, idTo, message, messageType) {
+module.exports.addSignal = function (idFrom, idTo, message, messageType) {
   log.debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType)
   messages.push({ from: idFrom, to: idTo, message: message, type: messageType })
 }
 
-exports.getMessages = function () {
+module.exports.getMessages = function () {
   return messages
 }
 
-exports.getActors = function () {
+module.exports.getActors = function () {
   return actors
 }
-exports.getActor = function (id) {
+module.exports.getActor = function (id) {
   return actors[id]
 }
-exports.getActorKeys = function () {
+module.exports.getActorKeys = function () {
   return Object.keys(actors)
 }
-exports.getTitle = function () {
+module.exports.getTitle = function () {
   return title
 }
 
-exports.clear = function () {
+module.exports.clear = function () {
   actors = {}
   messages = []
 }
 
-exports.LINETYPE = {
+module.exports.LINETYPE = {
   SOLID: 0,
   DOTTED: 1,
   NOTE: 2,
@@ -72,89 +72,89 @@ exports.LINETYPE = {
   PAR_END: 21
 }
 
-exports.ARROWTYPE = {
+module.exports.ARROWTYPE = {
   FILLED: 0,
   OPEN: 1
 }
 
-exports.PLACEMENT = {
+module.exports.PLACEMENT = {
   LEFTOF: 0,
   RIGHTOF: 1,
   OVER: 2
 }
 
-exports.addNote = function (actor, placement, message) {
+module.exports.addNote = function (actor, placement, message) {
   var note = { actor: actor, placement: placement, message: message }
 
   // Coerce actor into a [to, from, ...] array
   var actors = [].concat(actor, actor)
 
   notes.push(note)
-  messages.push({ from: actors[0], to: actors[1], message: message, type: exports.LINETYPE.NOTE, placement: placement })
+  messages.push({ from: actors[0], to: actors[1], message: message, type: module.exports.LINETYPE.NOTE, placement: placement })
 }
 
-exports.setTitle = function (titleText) {
+module.exports.setTitle = function (titleText) {
   title = titleText
 }
 
-exports.parseError = function (err, hash) {
+module.exports.parseError = function (err, hash) {
   global.mermaidAPI.parseError(err, hash)
 }
 
-exports.apply = function (param) {
+module.exports.apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
-      exports.apply(item)
+      module.exports.apply(item)
     })
   } else {
     switch (param.type) {
       case 'addActor':
-        exports.addActor(param.actor, param.actor, param.description)
+        module.exports.addActor(param.actor, param.actor, param.description)
         break
       case 'activeStart':
-        exports.addSignal(param.actor, undefined, undefined, param.signalType)
+        module.exports.addSignal(param.actor, undefined, undefined, param.signalType)
         break
       case 'activeEnd':
-        exports.addSignal(param.actor, undefined, undefined, param.signalType)
+        module.exports.addSignal(param.actor, undefined, undefined, param.signalType)
         break
       case 'addNote':
-        exports.addNote(param.actor, param.placement, param.text)
+        module.exports.addNote(param.actor, param.placement, param.text)
         break
       case 'addMessage':
-        exports.addSignal(param.from, param.to, param.msg, param.signalType)
+        module.exports.addSignal(param.from, param.to, param.msg, param.signalType)
         break
       case 'loopStart':
-        exports.addSignal(undefined, undefined, param.loopText, param.signalType)
+        module.exports.addSignal(undefined, undefined, param.loopText, param.signalType)
         break
       case 'loopEnd':
-        exports.addSignal(undefined, undefined, undefined, param.signalType)
+        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'optStart':
-        exports.addSignal(undefined, undefined, param.optText, param.signalType)
+        module.exports.addSignal(undefined, undefined, param.optText, param.signalType)
         break
       case 'optEnd':
-        exports.addSignal(undefined, undefined, undefined, param.signalType)
+        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'altStart':
-        exports.addSignal(undefined, undefined, param.altText, param.signalType)
+        module.exports.addSignal(undefined, undefined, param.altText, param.signalType)
         break
       case 'else':
-        exports.addSignal(undefined, undefined, param.altText, param.signalType)
+        module.exports.addSignal(undefined, undefined, param.altText, param.signalType)
         break
       case 'altEnd':
-        exports.addSignal(undefined, undefined, undefined, param.signalType)
+        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'setTitle':
-        exports.setTitle(param.text)
+        module.exports.setTitle(param.text)
         break
       case 'parStart':
-        exports.addSignal(undefined, undefined, param.parText, param.signalType)
+        module.exports.addSignal(undefined, undefined, param.parText, param.signalType)
         break
       case 'and':
-        exports.addSignal(undefined, undefined, param.parText, param.signalType)
+        module.exports.addSignal(undefined, undefined, param.parText, param.signalType)
         break
       case 'parEnd':
-        exports.addSignal(undefined, undefined, undefined, param.signalType)
+        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
         break
     }
   }

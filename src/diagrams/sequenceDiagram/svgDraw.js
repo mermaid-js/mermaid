@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-12-20.
  */
-exports.drawRect = function (elem, rectData) {
+module.exports.drawRect = function (elem, rectData) {
   var rectElem = elem.append('rect')
   rectElem.attr('x', rectData.x)
   rectElem.attr('y', rectData.y)
@@ -19,7 +19,7 @@ exports.drawRect = function (elem, rectData) {
   return rectElem
 }
 
-exports.drawText = function (elem, textData, width) {
+module.exports.drawText = function (elem, textData, width) {
   // Remove and ignore br:s
   var nText = textData.text.replace(/<br\/?>/ig, ' ')
 
@@ -48,7 +48,7 @@ exports.drawText = function (elem, textData, width) {
   return textElem
 }
 
-exports.drawLabel = function (elem, txtObject) {
+module.exports.drawLabel = function (elem, txtObject) {
   function genPoints (x, y, width, height, cut) {
     return x + ',' + y + ' ' +
       (x + width) + ',' + y + ' ' +
@@ -62,7 +62,7 @@ exports.drawLabel = function (elem, txtObject) {
 
   txtObject.y = txtObject.y + txtObject.labelMargin
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin
-  exports.drawText(elem, txtObject)
+  module.exports.drawText(elem, txtObject)
 }
 var actorCnt = -1
 /**
@@ -71,7 +71,7 @@ var actorCnt = -1
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-exports.drawActor = function (elem, left, verticalPos, description, conf) {
+module.exports.drawActor = function (elem, left, verticalPos, description, conf) {
   var center = left + (conf.width / 2)
   var g = elem.append('g')
   if (verticalPos === 0) {
@@ -87,7 +87,7 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
       .attr('stroke', '#999')
   }
 
-  var rect = exports.getNoteRect()
+  var rect = module.exports.getNoteRect()
   rect.x = left
   rect.y = verticalPos
   rect.fill = '#eaeaea'
@@ -96,13 +96,13 @@ exports.drawActor = function (elem, left, verticalPos, description, conf) {
   rect.class = 'actor'
   rect.rx = 3
   rect.ry = 3
-  exports.drawRect(g, rect)
+  module.exports.drawRect(g, rect)
 
   _drawTextCandidateFunc(conf)(description, g,
     rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' })
 }
 
-exports.anchorElement = function (elem) {
+module.exports.anchorElement = function (elem) {
   return elem.append('g')
 }
 /**
@@ -111,15 +111,15 @@ exports.anchorElement = function (elem) {
  * @param bounds - activation box bounds
  * @param verticalPos - precise y cooridnate of bottom activation box edge
  */
-exports.drawActivation = function (elem, bounds, verticalPos) {
-  var rect = exports.getNoteRect()
+module.exports.drawActivation = function (elem, bounds, verticalPos) {
+  var rect = module.exports.getNoteRect()
   var g = bounds.anchored
   rect.x = bounds.startx
   rect.y = bounds.starty
   rect.fill = '#f4f4f4'
   rect.width = bounds.stopx - bounds.startx
   rect.height = verticalPos - bounds.starty
-  exports.drawRect(g, rect)
+  module.exports.drawRect(g, rect)
 }
 
 /**
@@ -128,7 +128,7 @@ exports.drawActivation = function (elem, bounds, verticalPos) {
  * @param pos The position if the actor in the list of actors
  * @param description The text in the box
  */
-exports.drawLoop = function (elem, bounds, labelText, conf) {
+module.exports.drawLoop = function (elem, bounds, labelText, conf) {
   var g = elem.append('g')
   var drawLoopLine = function (startx, starty, stopx, stopy) {
     return g.append('line')
@@ -148,30 +148,30 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
     })
   }
 
-  var txt = exports.getTextObj()
+  var txt = module.exports.getTextObj()
   txt.text = labelText
   txt.x = bounds.startx
   txt.y = bounds.starty
   txt.labelMargin = 1.5 * 10 // This is the small box that says "loop"
   txt.class = 'labelText'    // Its size & position are fixed.
 
-  exports.drawLabel(g, txt)
+  module.exports.drawLabel(g, txt)
 
-  txt = exports.getTextObj()
+  txt = module.exports.getTextObj()
   txt.text = '[ ' + bounds.title + ' ]'
   txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2
   txt.y = bounds.starty + 1.5 * conf.boxMargin
   txt.anchor = 'middle'
   txt.class = 'loopText'
 
-  exports.drawText(g, txt)
+  module.exports.drawText(g, txt)
 
   if (typeof bounds.sectionTitles !== 'undefined') {
     bounds.sectionTitles.forEach(function (item, idx) {
       if (item !== '') {
         txt.text = '[ ' + item + ' ]'
         txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin
-        exports.drawText(g, txt)
+        module.exports.drawText(g, txt)
       }
     })
   }
@@ -180,7 +180,7 @@ exports.drawLoop = function (elem, bounds, labelText, conf) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-exports.insertArrowHead = function (elem) {
+module.exports.insertArrowHead = function (elem) {
   elem.append('defs').append('marker')
     .attr('id', 'arrowhead')
     .attr('refX', 5)
@@ -194,7 +194,7 @@ exports.insertArrowHead = function (elem) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-exports.insertArrowCrossHead = function (elem) {
+module.exports.insertArrowCrossHead = function (elem) {
   var defs = elem.append('defs')
   var marker = defs.append('marker')
     .attr('id', 'crosshead')
@@ -222,7 +222,7 @@ exports.insertArrowCrossHead = function (elem) {
   // this is actual shape for arrowhead
 }
 
-exports.getTextObj = function () {
+module.exports.getTextObj = function () {
   var txt = {
     x: 0,
     y: 0,
@@ -238,7 +238,7 @@ exports.getTextObj = function () {
   return txt
 }
 
-exports.getNoteRect = function () {
+module.exports.getNoteRect = function () {
   var rect = {
     x: 0,
     y: 0,

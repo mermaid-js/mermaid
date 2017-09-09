@@ -47,11 +47,11 @@ function isReachableFrom (currentCommit, otherCommit) {
   return false
 }
 
-exports.setDirection = function (dir) {
+module.exports.setDirection = function (dir) {
   direction = dir
 }
 var options = {}
-exports.setOptions = function (rawOptString) {
+module.exports.setOptions = function (rawOptString) {
   log.debug('options str', rawOptString)
   rawOptString = rawOptString && rawOptString.trim()
   rawOptString = rawOptString || '{}'
@@ -62,11 +62,11 @@ exports.setOptions = function (rawOptString) {
   }
 }
 
-exports.getOptions = function () {
+module.exports.getOptions = function () {
   return options
 }
 
-exports.commit = function (msg) {
+module.exports.commit = function (msg) {
   var commit = {
     id: getId(),
     message: msg,
@@ -79,12 +79,12 @@ exports.commit = function (msg) {
   log.debug('in pushCommit ' + commit.id)
 }
 
-exports.branch = function (name) {
+module.exports.branch = function (name) {
   branches[name] = head != null ? head.id : null
   log.debug('in createBranch')
 }
 
-exports.merge = function (otherBranch) {
+module.exports.merge = function (otherBranch) {
   var currentCommit = commits[branches[curBranch]]
   var otherCommit = commits[branches[otherBranch]]
   if (isReachableFrom(currentCommit, otherCommit)) {
@@ -110,14 +110,14 @@ exports.merge = function (otherBranch) {
   log.debug('in mergeBranch')
 }
 
-exports.checkout = function (branch) {
+module.exports.checkout = function (branch) {
   log.debug('in checkout')
   curBranch = branch
   var id = branches[curBranch]
   head = commits[id]
 }
 
-exports.reset = function (commitRef) {
+module.exports.reset = function (commitRef) {
   log.debug('in reset', commitRef)
   var ref = commitRef.split(':')[0]
   var parentCount = parseInt(commitRef.split(':')[1])
@@ -174,13 +174,13 @@ function prettyPrintCommitHistory (commitArr) {
   prettyPrintCommitHistory(commitArr)
 }
 
-exports.prettyPrint = function () {
+module.exports.prettyPrint = function () {
   log.debug(commits)
-  var node = exports.getCommitsArray()[0]
+  var node = module.exports.getCommitsArray()[0]
   prettyPrintCommitHistory([node])
 }
 
-exports.clear = function () {
+module.exports.clear = function () {
   commits = {}
   head = null
   branches = { 'master': head }
@@ -188,22 +188,22 @@ exports.clear = function () {
   seq = 0
 }
 
-exports.getBranchesAsObjArray = function () {
+module.exports.getBranchesAsObjArray = function () {
   const branchArr = _.map(branches, function (value, key) {
     return { 'name': key, 'commit': commits[value] }
   })
   return branchArr
 }
 
-exports.getBranches = function () { return branches }
-exports.getCommits = function () { return commits }
-exports.getCommitsArray = function () {
+module.exports.getBranches = function () { return branches }
+module.exports.getCommits = function () { return commits }
+module.exports.getCommitsArray = function () {
   var commitArr = Object.keys(commits).map(function (key) {
     return commits[key]
   })
   commitArr.forEach(function (o) { log.debug(o.id) })
   return _.orderBy(commitArr, ['seq'], ['desc'])
 }
-exports.getCurrentBranch = function () { return curBranch }
-exports.getDirection = function () { return direction }
-exports.getHead = function () { return head }
+module.exports.getCurrentBranch = function () { return curBranch }
+module.exports.getDirection = function () { return direction }
+module.exports.getHead = function () { return head }

@@ -11,7 +11,7 @@ var sections = []
 var tasks = []
 var currentSection = ''
 
-exports.clear = function () {
+module.exports.clear = function () {
   sections = []
   tasks = []
   currentSection = ''
@@ -22,27 +22,27 @@ exports.clear = function () {
   rawTasks = []
 }
 
-exports.setDateFormat = function (txt) {
+module.exports.setDateFormat = function (txt) {
   dateFormat = txt
 }
 
-exports.getDateFormat = function () {
+module.exports.getDateFormat = function () {
   return dateFormat
 }
-exports.setTitle = function (txt) {
+module.exports.setTitle = function (txt) {
   title = txt
 }
 
-exports.getTitle = function () {
+module.exports.getTitle = function () {
   return title
 }
 
-exports.addSection = function (txt) {
+module.exports.addSection = function (txt) {
   currentSection = txt
   sections.push(txt)
 }
 
-exports.getTasks = function () {
+module.exports.getTasks = function () {
   var allItemsPricessed = compileTasks()
   var maxDepth = 10
   var iterationCount = 0
@@ -64,7 +64,7 @@ var getStartDate = function (prevTime, dateFormat, str) {
   var afterStatement = re.exec(str.trim())
 
   if (afterStatement !== null) {
-    var task = exports.findTaskById(afterStatement[1])
+    var task = module.exports.findTaskById(afterStatement[1])
 
     if (typeof task === 'undefined') {
       var dt = new Date()
@@ -154,7 +154,7 @@ var compileData = function (prevTask, dataStr) {
   var data = ds.split(',')
 
   var task = {}
-  var df = exports.getDateFormat()
+  var df = module.exports.getDateFormat()
 
   // Get tags like active, done cand crit
   var matchFound = true
@@ -267,7 +267,7 @@ var lastTask
 var lastTaskID
 var rawTasks = []
 var taskDb = {}
-exports.addTask = function (descr, data) {
+module.exports.addTask = function (descr, data) {
   var rawTask = {
     section: currentSection,
     type: currentSection,
@@ -291,12 +291,12 @@ exports.addTask = function (descr, data) {
   taskDb[rawTask.id] = pos - 1
 }
 
-exports.findTaskById = function (id) {
+module.exports.findTaskById = function (id) {
   var pos = taskDb[id]
   return rawTasks[pos]
 }
 
-exports.addTaskOrg = function (descr, data) {
+module.exports.addTaskOrg = function (descr, data) {
   var newTask = {
     section: currentSection,
     type: currentSection,
@@ -315,14 +315,14 @@ exports.addTaskOrg = function (descr, data) {
 }
 
 var compileTasks = function () {
-  var df = exports.getDateFormat()
+  var df = module.exports.getDateFormat()
 
   var compileTask = function (pos) {
     var task = rawTasks[pos]
     var startTime = ''
     switch (rawTasks[pos].raw.startTime.type) {
       case 'prevTaskEnd':
-        var prevTask = exports.findTaskById(task.prevTaskId)
+        var prevTask = module.exports.findTaskById(task.prevTaskId)
         task.startTime = prevTask.endTime
         break
       case 'getStartDate':
@@ -353,6 +353,6 @@ var compileTasks = function () {
   return allProcessed
 }
 
-exports.parseError = function (err, hash) {
+module.exports.parseError = function (err, hash) {
   global.mermaidAPI.parseError(err, hash)
 }

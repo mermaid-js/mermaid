@@ -290,18 +290,18 @@ var parse = function (text) {
     return false
   }
 }
-exports.parse = parse
+module.exports.parse = parse
 
 /**
  * ## version
  * Function returning version information
  * @returns {string} A string containing the version info
  */
-exports.version = function () {
+module.exports.version = function () {
   return require('../package.json').version
 }
 
-exports.encodeEntities = function (text) {
+module.exports.encodeEntities = function (text) {
   var txt = text
 
   txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
@@ -327,7 +327,7 @@ exports.encodeEntities = function (text) {
   return txt
 }
 
-exports.decodeEntities = function (text) {
+module.exports.decodeEntities = function (text) {
   var txt = text
 
   txt = txt.replace(/ﬂ°°/g, function () {
@@ -392,7 +392,7 @@ var render = function (id, txt, cb, container) {
   }
 
   window.txt = txt
-  txt = exports.encodeEntities(txt)
+  txt = module.exports.encodeEntities(txt)
 
   var element = d3.select('#d' + id).node()
   var graphType = utils.detectType(txt)
@@ -447,7 +447,7 @@ var render = function (id, txt, cb, container) {
       break
     case 'info':
       config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      info.draw(txt, id, exports.version())
+      info.draw(txt, id, module.exports.version())
       if (config.cloneCssStyles) {
         utils.cloneCssStyles(element.firstChild, [])
       }
@@ -466,7 +466,7 @@ var render = function (id, txt, cb, container) {
   // Fix for when the base tag is used
   var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g')
 
-  svgCode = exports.decodeEntities(svgCode)
+  svgCode = module.exports.decodeEntities(svgCode)
 
   if (typeof cb !== 'undefined') {
     cb(svgCode, graph.bindFunctions)
@@ -482,7 +482,7 @@ var render = function (id, txt, cb, container) {
   return svgCode
 }
 
-exports.render = function (id, text, cb, containerElement) {
+module.exports.render = function (id, text, cb, containerElement) {
   try {
     if (arguments.length === 1) {
       text = id
@@ -523,7 +523,7 @@ var setConf = function (cnf) {
   }
 }
 
-exports.initialize = function (options) {
+module.exports.initialize = function (options) {
   log.debug('Initializing mermaidAPI')
   // Update default config with options supplied at initialization
   if (typeof options === 'object') {
@@ -531,11 +531,11 @@ exports.initialize = function (options) {
   }
   Logger.setLogLevel(config.logLevel)
 }
-exports.getConfig = function () {
+module.exports.getConfig = function () {
   return config
 }
 
-exports.parseError = function (err, hash) {
+module.exports.parseError = function (err, hash) {
   if (typeof mermaid !== 'undefined') {
     global.mermaid.parseError(err, hash)
   } else {
@@ -544,10 +544,10 @@ exports.parseError = function (err, hash) {
   }
 }
 global.mermaidAPI = {
-  render: exports.render,
-  parse: exports.parse,
-  initialize: exports.initialize,
+  render: module.exports.render,
+  parse: module.exports.parse,
+  initialize: module.exports.initialize,
   detectType: utils.detectType,
-  parseError: exports.parseError,
-  getConfig: exports.getConfig
+  parseError: module.exports.parseError,
+  getConfig: module.exports.getConfig
 }

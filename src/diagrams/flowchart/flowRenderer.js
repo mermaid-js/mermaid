@@ -24,7 +24,7 @@ module.exports.setConf = function (cnf) {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-exports.addVertices = function (vert, g) {
+module.exports.addVertices = function (vert, g) {
   var keys = Object.keys(vert)
 
   var styleFromStyleArr = function (styleStr, arr) {
@@ -139,7 +139,7 @@ exports.addVertices = function (vert, g) {
  * @param {Object} edges The edges to add to the graph
  * @param {Object} g The graph object
  */
-exports.addEdges = function (edges, g) {
+module.exports.addEdges = function (edges, g) {
   var cnt = 0
 
   var defaultStyle
@@ -219,7 +219,7 @@ exports.addEdges = function (edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  * @returns {object} classDef styles
  */
-exports.getClasses = function (text, isDot) {
+module.exports.getClasses = function (text, isDot) {
   var parser
   graph.clear()
   if (isDot) {
@@ -250,7 +250,7 @@ exports.getClasses = function (text, isDot) {
  * @param text
  * @param id
  */
-exports.draw = function (text, id, isDot) {
+module.exports.draw = function (text, id, isDot) {
   log.debug('Drawing flowchart')
   var parser
   graph.clear()
@@ -314,8 +314,8 @@ exports.draw = function (text, id, isDot) {
       g.setParent(subG.nodes[j], subG.id)
     }
   }
-  exports.addVertices(vert, g)
-  exports.addEdges(edges, g)
+  module.exports.addVertices(vert, g)
+  module.exports.addEdges(edges, g)
 
   // Create the renderer
   var Render = dagreD3.render

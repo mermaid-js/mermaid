@@ -42,8 +42,8 @@ module.exports.getRelations = function () {
 
 exports.addRelation = function (relation) {
   log.warn('Adding relation: ' + JSON.stringify(relation))
-  exports.addClass(relation.id1)
-  exports.addClass(relation.id2)
+  module.exports.addClass(relation.id1)
+  module.exports.addClass(relation.id2)
 
   relations.push(relation)
 }

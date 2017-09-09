@@ -38,7 +38,7 @@ var conf = {
   textPlacement: 'tspan'
 }
 
-exports.bounds = {
+module.exports.bounds = {
   data: {
     startx: undefined,
     stopx: undefined,
@@ -79,15 +79,15 @@ exports.bounds = {
         _self.updateVal(item, 'starty', starty - n * conf.boxMargin, Math.min)
         _self.updateVal(item, 'stopy', stopy + n * conf.boxMargin, Math.max)
 
-        _self.updateVal(exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min)
-        _self.updateVal(exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max)
+        _self.updateVal(module.exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min)
+        _self.updateVal(module.exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max)
 
         if (!(type === 'activation')) {
           _self.updateVal(item, 'startx', startx - n * conf.boxMargin, Math.min)
           _self.updateVal(item, 'stopx', stopx + n * conf.boxMargin, Math.max)
 
-          _self.updateVal(exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min)
-          _self.updateVal(exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max)
+          _self.updateVal(module.exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min)
+          _self.updateVal(module.exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max)
         }
       }
     }
@@ -103,10 +103,10 @@ exports.bounds = {
     _starty = Math.min(starty, stopy)
     _stopy = Math.max(starty, stopy)
 
-    this.updateVal(exports.bounds.data, 'startx', _startx, Math.min)
-    this.updateVal(exports.bounds.data, 'starty', _starty, Math.min)
-    this.updateVal(exports.bounds.data, 'stopx', _stopx, Math.max)
-    this.updateVal(exports.bounds.data, 'stopy', _stopy, Math.max)
+    this.updateVal(module.exports.bounds.data, 'startx', _startx, Math.min)
+    this.updateVal(module.exports.bounds.data, 'starty', _starty, Math.min)
+    this.updateVal(module.exports.bounds.data, 'stopx', _stopx, Math.max)
+    this.updateVal(module.exports.bounds.data, 'stopy', _stopy, Math.max)
 
     this.updateBounds(_startx, _starty, _stopx, _stopy)
   },
@@ -142,7 +142,7 @@ exports.bounds = {
     var loop = this.sequenceItems.pop()
     loop.sections = loop.sections || []
     loop.sectionTitles = loop.sectionTitles || []
-    loop.sections.push(exports.bounds.getVerticalPos())
+    loop.sections.push(module.exports.bounds.getVerticalPos())
     loop.sectionTitles.push(message)
     this.sequenceItems.push(loop)
   },
@@ -192,13 +192,13 @@ var drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
     textElem = svgDraw.drawText(g, textObj, 2 * rect.width - conf.noteMargin)
     textHeight = textElem[0][0].getBBox().height
     rectElem.attr('width', 2 * rect.width)
-    exports.bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
+    module.exports.bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
   } else {
-    exports.bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
+    module.exports.bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
   }
 
   rectElem.attr('height', textHeight + 2 * conf.noteMargin)
-  exports.bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin)
+  module.exports.bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin)
 }
 
 /**
@@ -236,16 +236,16 @@ var drawMessage = function (elem, startx, stopx, verticalPos, msg) {
       .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
       (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
 
-    exports.bounds.bumpVerticalPos(30)
+    module.exports.bounds.bumpVerticalPos(30)
     var dx = Math.max(textWidth / 2, 100)
-    exports.bounds.insert(startx - dx, exports.bounds.getVerticalPos() - 10, stopx + dx, exports.bounds.getVerticalPos())
+    module.exports.bounds.insert(startx - dx, module.exports.bounds.getVerticalPos() - 10, stopx + dx, module.exports.bounds.getVerticalPos())
   } else {
     line = g.append('line')
     line.attr('x1', startx)
     line.attr('y1', verticalPos)
     line.attr('x2', stopx)
     line.attr('y2', verticalPos)
-    exports.bounds.insert(startx, exports.bounds.getVerticalPos() - 10, stopx, exports.bounds.getVerticalPos())
+    module.exports.bounds.insert(startx, module.exports.bounds.getVerticalPos() - 10, stopx, module.exports.bounds.getVerticalPos())
   }
   // Make an SVG Container
   // Draw the line
@@ -289,11 +289,11 @@ module.exports.drawActors = function (diagram, actors, actorKeys, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawActor(diagram, actors[key].x, verticalPos, actors[key].description, conf)
-    exports.bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height)
+    module.exports.bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height)
   }
 
   // Add a margin between the actor boxes and the first arrow
-  exports.bounds.bumpVerticalPos(conf.height)
+  module.exports.bounds.bumpVerticalPos(conf.height)
 }
 
 module.exports.setConf = function (cnf) {
@@ -329,7 +329,7 @@ module.exports.draw = function (text, id) {
   sq.yy.clear()
   sq.parse(text + '\n')
 
-  exports.bounds.init()
+  module.exports.bounds.init()
   var diagram = d3.select('#' + id)
 
   var startx
@@ -348,14 +348,14 @@ module.exports.draw = function (text, id) {
   svgDraw.insertArrowCrossHead(diagram)
 
   function activeEnd (msg, verticalPos) {
-    var activationData = exports.bounds.endActivation(msg)
+    var activationData = module.exports.bounds.endActivation(msg)
     if (activationData.starty + 18 > verticalPos) {
       activationData.starty = verticalPos - 6
       verticalPos += 12
     }
     svgDraw.drawActivation(diagram, activationData, verticalPos, conf)
 
-    exports.bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
+    module.exports.bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
   }
 
   // var lastMsg
@@ -366,88 +366,88 @@ module.exports.draw = function (text, id) {
 
     switch (msg.type) {
       case sq.yy.LINETYPE.NOTE:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
 
         startx = actors[msg.from].x
         stopx = actors[msg.to].x
 
         if (msg.placement === sq.yy.PLACEMENT.RIGHTOF) {
-          drawNote(diagram, startx + (conf.width + conf.actorMargin) / 2, exports.bounds.getVerticalPos(), msg)
+          drawNote(diagram, startx + (conf.width + conf.actorMargin) / 2, module.exports.bounds.getVerticalPos(), msg)
         } else if (msg.placement === sq.yy.PLACEMENT.LEFTOF) {
-          drawNote(diagram, startx - (conf.width + conf.actorMargin) / 2, exports.bounds.getVerticalPos(), msg)
+          drawNote(diagram, startx - (conf.width + conf.actorMargin) / 2, module.exports.bounds.getVerticalPos(), msg)
         } else if (msg.to === msg.from) {
           // Single-actor over
-          drawNote(diagram, startx, exports.bounds.getVerticalPos(), msg)
+          drawNote(diagram, startx, module.exports.bounds.getVerticalPos(), msg)
         } else {
           // Multi-actor over
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin
-          drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, exports.bounds.getVerticalPos(), msg,
+          drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, module.exports.bounds.getVerticalPos(), msg,
             forceWidth)
         }
         break
       case sq.yy.LINETYPE.ACTIVE_START:
-        exports.bounds.newActivation(msg, diagram)
+        module.exports.bounds.newActivation(msg, diagram)
         break
       case sq.yy.LINETYPE.ACTIVE_END:
-        activeEnd(msg, exports.bounds.getVerticalPos())
+        activeEnd(msg, module.exports.bounds.getVerticalPos())
         break
       case sq.yy.LINETYPE.LOOP_START:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
-        exports.bounds.newLoop(msg.message)
-        exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.newLoop(msg.message)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
       case sq.yy.LINETYPE.LOOP_END:
-        loopData = exports.bounds.endLoop()
+        loopData = module.exports.bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'loop', conf)
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
         break
       case sq.yy.LINETYPE.OPT_START:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
-        exports.bounds.newLoop(msg.message)
-        exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.newLoop(msg.message)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
       case sq.yy.LINETYPE.OPT_END:
-        loopData = exports.bounds.endLoop()
+        loopData = module.exports.bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'opt', conf)
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
         break
       case sq.yy.LINETYPE.ALT_START:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
-        exports.bounds.newLoop(msg.message)
-        exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.newLoop(msg.message)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
       case sq.yy.LINETYPE.ALT_ELSE:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
-        loopData = exports.bounds.addSectionToLoop(msg.message)
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        loopData = module.exports.bounds.addSectionToLoop(msg.message)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
         break
       case sq.yy.LINETYPE.ALT_END:
-        loopData = exports.bounds.endLoop()
+        loopData = module.exports.bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'alt', conf)
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
         break
       case sq.yy.LINETYPE.PAR_START:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
-        exports.bounds.newLoop(msg.message)
-        exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.newLoop(msg.message)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
       case sq.yy.LINETYPE.PAR_AND:
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
-        loopData = exports.bounds.addSectionToLoop(msg.message)
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        loopData = module.exports.bounds.addSectionToLoop(msg.message)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
         break
       case sq.yy.LINETYPE.PAR_END:
-        loopData = exports.bounds.endLoop()
+        loopData = module.exports.bounds.endLoop()
         svgDraw.drawLoop(diagram, loopData, 'par', conf)
-        exports.bounds.bumpVerticalPos(conf.boxMargin)
+        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
         break
       default:
         try {
           // lastMsg = msg
-          exports.bounds.bumpVerticalPos(conf.messageMargin)
+          module.exports.bounds.bumpVerticalPos(conf.messageMargin)
           var fromBounds = actorFlowVerticaBounds(msg.from)
           var toBounds = actorFlowVerticaBounds(msg.to)
           var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0
@@ -455,10 +455,10 @@ module.exports.draw = function (text, id) {
           startx = fromBounds[fromIdx]
           stopx = toBounds[toIdx]
 
-          var verticalPos = exports.bounds.getVerticalPos()
+          var verticalPos = module.exports.bounds.getVerticalPos()
           drawMessage(diagram, startx, stopx, verticalPos, msg)
           var allBounds = fromBounds.concat(toBounds)
-          exports.bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
+          module.exports.bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {
           console.error('error while drawing message', e)
         }
@@ -467,11 +467,11 @@ module.exports.draw = function (text, id) {
 
   if (conf.mirrorActors) {
     // Draw actors below diagram
-    exports.bounds.bumpVerticalPos(conf.boxMargin * 2)
-    module.exports.drawActors(diagram, actors, actorKeys, exports.bounds.getVerticalPos())
+    module.exports.bounds.bumpVerticalPos(conf.boxMargin * 2)
+    module.exports.drawActors(diagram, actors, actorKeys, module.exports.bounds.getVerticalPos())
   }
 
-  var box = exports.bounds.getBounds()
+  var box = module.exports.bounds.getBounds()
 
   // Adjust line height of actor lines now that the height of the diagram is known
   log.debug('For line height fix Querying: #' + id + ' .actor-line')
