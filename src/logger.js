@@ -1,8 +1,16 @@
 import moment from 'moment'
 
+export const LEVELS = {
+  debug: 1,
+  info: 2,
+  warn: 3,
+  error: 4,
+  fatal: 5
+}
+
 const format = (level) => {
   const time = moment().format('HH:mm:ss (SSS)')
-  return `%c ${time} :%c${level}: `
+  return `${time} : ${level} : `
 }
 
 export const Log = {
@@ -13,28 +21,20 @@ export const Log = {
   fatal: () => {}
 }
 
-/**
- * logLevel , decides the amount of logging to be used.
- *    * debug: 1
- *    * info: 2
- *    * warn: 3
- *    * error: 4
- *    * fatal: 5
- */
 export const setLogLevel = function (level) {
-  if (level < 6) {
-    Log.fatal = console.log.bind(console, format('FATAL'), 'color:grey;', 'color: red;')
+  if (level <= LEVELS.fatal) {
+    Log.fatal = console.log.bind(console, '\x1b[35m', format('FATAL'))
   }
-  if (level < 5) {
-    Log.error = console.log.bind(console, format('ERROR'), 'color:grey;', 'color: red;')
+  if (level <= LEVELS.error) {
+    Log.error = console.log.bind(console, '\x1b[31m', format('ERROR'))
   }
-  if (level < 4) {
-    Log.warn = console.log.bind(console, format('WARN'), 'color:grey;', 'color: orange;')
+  if (level <= LEVELS.warn) {
+    Log.warn = console.log.bind(console, `\x1b[33m`, format('WARN'))
   }
-  if (level < 3) {
-    Log.info = console.log.bind(console, format('INFO'), 'color:grey;', 'color: info;')
+  if (level <= LEVELS.info) {
+    Log.info = console.log.bind(console, '\x1b[34m', format('INFO'))
   }
-  if (level < 2) {
-    Log.debug = console.log.bind(console, format('DEBUG'), 'color:grey;', 'color: green;')
+  if (level <= LEVELS.debug) {
+    Log.debug = console.log.bind(console, '\x1b[32m', format('DEBUG'))
   }
 }
