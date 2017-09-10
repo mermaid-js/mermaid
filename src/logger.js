@@ -9,7 +9,7 @@ export const LEVELS = {
 }
 
 const format = (level) => {
-  const time = moment().format('HH:mm:ss (SSS)')
+  const time = moment().format('HH:mm:ss.SSS')
   return `${time} : ${level} : `
 }
 
@@ -22,6 +22,11 @@ export const Log = {
 }
 
 export const setLogLevel = function (level) {
+  Log.debug = () => {}
+  Log.info = () => {}
+  Log.warn = () => {}
+  Log.error = () => {}
+  Log.fatal = () => {}
   if (level <= LEVELS.fatal) {
     Log.fatal = console.log.bind(console, '\x1b[35m', format('FATAL'))
   }
