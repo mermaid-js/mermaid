@@ -119,12 +119,12 @@ case 42:
 
         yy.addLink($$[$0-1],$$[$0].id,$$[$0].op);
         this.$={op:$$[$0-2],id:$$[$0-1]};
-    
+
 break;
 case 44:
 
         this.$={op:$$[$0-1],id:$$[$0]};
-    
+
 break;
 case 48:
 yy.addVertex($$[$0-1]);this.$=$$[$0-1];
@@ -731,12 +731,12 @@ exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
-    }
-    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
+    // if (!args[1]) {
+    //     console.log('Usage: '+args[0]+' FILE');
+    //     process.exit(1);
+    // }
+    // var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    // return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));

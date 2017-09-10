@@ -5,7 +5,7 @@ import { jsConfig, lessConfig } from './webpack.config.base'
 const config = jsConfig()
 
 const coreConfig = jsConfig()
-coreConfig.externals = [nodeExternals(), 'fs']
+coreConfig.externals = [nodeExternals()]
 coreConfig.output.filename = '[name].core.js'
 
 const cssConfig = lessConfig()

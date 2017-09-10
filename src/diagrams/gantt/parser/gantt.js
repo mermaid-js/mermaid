@@ -84,16 +84,16 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return $$[$0-1]; 
+ return $$[$0-1];
 break;
 case 2:
- this.$ = [] 
+ this.$ = []
 break;
 case 3:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
 case 4: case 5:
- this.$ = $$[$0] 
+ this.$ = $$[$0]
 break;
 case 6: case 7:
  this.$=[];
@@ -647,12 +647,12 @@ exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
-    }
-    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
+    // if (!args[1]) {
+    //     console.log('Usage: '+args[0]+' FILE');
+    //     process.exit(1);
+    // }
+    // var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    // return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));

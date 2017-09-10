@@ -84,16 +84,16 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 3:
- yy.apply($$[$0]);return $$[$0]; 
+ yy.apply($$[$0]);return $$[$0];
 break;
 case 4:
- this.$ = [] 
+ this.$ = []
 break;
 case 5:
 $$[$0-1].push($$[$0]);this.$ = $$[$0-1]
 break;
 case 6: case 7:
- this.$ = $$[$0] 
+ this.$ = $$[$0]
 break;
 case 8:
  this.$=[];
@@ -149,7 +149,7 @@ case 19:
 		this.$=$$[$0-1];
 break;
 case 21:
- this.$ = $$[$0-3].concat([{type: 'and', parText:$$[$0-1], signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
+ this.$ = $$[$0-3].concat([{type: 'and', parText:$$[$0-1], signalType: yy.LINETYPE.PAR_AND}, $$[$0]]);
 break;
 case 22:
 
@@ -164,16 +164,16 @@ case 23:
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
 case 26:
- this.$ = [$$[$0-2], $$[$0]]; 
+ this.$ = [$$[$0-2], $$[$0]];
 break;
 case 27:
- this.$ = $$[$0]; 
+ this.$ = $$[$0];
 break;
 case 28:
- this.$ = yy.PLACEMENT.LEFTOF; 
+ this.$ = yy.PLACEMENT.LEFTOF;
 break;
 case 29:
- this.$ = yy.PLACEMENT.RIGHTOF; 
+ this.$ = yy.PLACEMENT.RIGHTOF;
 break;
 case 30:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
@@ -192,22 +192,22 @@ case 33:
 this.$={type: 'addActor', actor:$$[$0]}
 break;
 case 34:
- this.$ = yy.LINETYPE.SOLID_OPEN; 
+ this.$ = yy.LINETYPE.SOLID_OPEN;
 break;
 case 35:
- this.$ = yy.LINETYPE.DOTTED_OPEN; 
+ this.$ = yy.LINETYPE.DOTTED_OPEN;
 break;
 case 36:
- this.$ = yy.LINETYPE.SOLID; 
+ this.$ = yy.LINETYPE.SOLID;
 break;
 case 37:
- this.$ = yy.LINETYPE.DOTTED; 
+ this.$ = yy.LINETYPE.DOTTED;
 break;
 case 38:
- this.$ = yy.LINETYPE.SOLID_CROSS; 
+ this.$ = yy.LINETYPE.SOLID_CROSS;
 break;
 case 39:
- this.$ = yy.LINETYPE.DOTTED_CROSS; 
+ this.$ = yy.LINETYPE.DOTTED_CROSS;
 break;
 case 40:
 this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
@@ -708,27 +708,27 @@ case 3:/* skip comments */
 break;
 case 4:/* skip comments */
 break;
-case 5: this.begin('ID'); return 10; 
+case 5: this.begin('ID'); return 10;
 break;
-case 6: this.begin('ALIAS'); return 39; 
+case 6: this.begin('ALIAS'); return 39;
 break;
-case 7: this.popState(); this.popState(); this.begin('LINE'); return 12; 
+case 7: this.popState(); this.popState(); this.begin('LINE'); return 12;
 break;
-case 8: this.popState(); this.popState(); return 5; 
+case 8: this.popState(); this.popState(); return 5;
 break;
-case 9: this.begin('LINE'); return 20; 
+case 9: this.begin('LINE'); return 20;
 break;
-case 10: this.begin('LINE'); return 22; 
+case 10: this.begin('LINE'); return 22;
 break;
-case 11: this.begin('LINE'); return 23; 
+case 11: this.begin('LINE'); return 23;
 break;
-case 12: this.begin('LINE'); return 24; 
+case 12: this.begin('LINE'); return 24;
 break;
-case 13: this.begin('LINE'); return 25; 
+case 13: this.begin('LINE'); return 25;
 break;
-case 14: this.begin('LINE'); return 27; 
+case 14: this.begin('LINE'); return 27;
 break;
-case 15: this.popState(); return 13; 
+case 15: this.popState(); return 13;
 break;
 case 16:return 21;
 break;
@@ -740,9 +740,9 @@ case 19:return 30;
 break;
 case 20:return 28;
 break;
-case 21: this.begin('ID'); return 15; 
+case 21: this.begin('ID'); return 15;
 break;
-case 22: this.begin('ID'); return 16; 
+case 22: this.begin('ID'); return 16;
 break;
 case 23:return 18;
 break;
@@ -752,7 +752,7 @@ case 25:return 33;
 break;
 case 26:return 5;
 break;
-case 27: yy_.yytext = yy_.yytext.trim(); return 39; 
+case 27: yy_.yytext = yy_.yytext.trim(); return 39;
 break;
 case 28:return 42;
 break;
@@ -797,12 +797,12 @@ exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain(args) {
-    if (!args[1]) {
-        console.log('Usage: '+args[0]+' FILE');
-        process.exit(1);
-    }
-    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-    return exports.parser.parse(source);
+    // if (!args[1]) {
+    //     console.log('Usage: '+args[0]+' FILE');
+    //     process.exit(1);
+    // }
+    // var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    // return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
