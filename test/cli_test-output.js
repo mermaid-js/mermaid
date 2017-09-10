@@ -1,7 +1,8 @@
+/* eslint-env jest */
+/* eslint-env jasmine */
 const fs = require('fs')
 const path = require('path')
 
-const test = require('tape')
 const async = require('async')
 const clone = require('clone')
 const rimraf = require('rimraf')
@@ -39,8 +40,12 @@ const multiFile = {
   ganttConfig: null
 }
 
-test('output of single png', function (t) {
-  t.plan(3)
+beforeEach(() => {
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 64000
+})
+
+test('output of single png', function (done) {
+  expect.assertions(3)
 
   const expected = ['test.mermaid.png']
 
@@ -49,14 +54,14 @@ test('output of single png', function (t) {
   opt.png = true
 
   mermaid.process(opt.files, opt, function (code) {
-    t.equal(code, 0, 'has clean exit code')
+    expect(code).toBe(0)
 
-    verifyFiles(expected, opt.outputDir, t)
+    verifyFiles(expected, opt.outputDir, done)
   })
 })
 
-test('output of multiple png', function (t) {
-  t.plan(3)
+test('output of multiple png', function (done) {
+  expect.assertions(3)
 
   const expected = ['test.mermaid.png', 'test2.mermaid.png',
     'gantt.mermaid.png', 'sequence.mermaid.png']
@@ -66,14 +71,14 @@ test('output of multiple png', function (t) {
   opt.png = true
 
   mermaid.process(opt.files, opt, function (code) {
-    t.equal(code, 0, 'has clean exit code')
+    expect(code).toBe(0)
 
-    verifyFiles(expected, opt.outputDir, t)
+    verifyFiles(expected, opt.outputDir, done)
   })
 })
 
-test('output of single svg', function (t) {
-  t.plan(3)
+test('output of single svg', function (done) {
+  expect.assertions(3)
 
   const expected = ['test.mermaid.svg']
 
@@ -82,14 +87,14 @@ test('output of single svg', function (t) {
   opt.svg = true
 
   mermaid.process(opt.files, opt, function (code) {
-    t.equal(code, 0, 'has clean exit code')
+    expect(code).toBe(0)
 
-    verifyFiles(expected, opt.outputDir, t)
+    verifyFiles(expected, opt.outputDir, done)
   })
 })
 
-test('output of multiple svg', function (t) {
-  t.plan(3)
+test('output of multiple svg', function (done) {
+  expect.assertions(3)
 
   const expected = ['test.mermaid.svg', 'test2.mermaid.svg',
     'gantt.mermaid.svg', 'sequence.mermaid.svg']
@@ -99,14 +104,14 @@ test('output of multiple svg', function (t) {
   opt.svg = true
 
   mermaid.process(opt.files, opt, function (code) {
-    t.equal(code, 0, 'has clean exit code')
+    expect(code).toBe(0)
 
-    verifyFiles(expected, opt.outputDir, t)
+    verifyFiles(expected, opt.outputDir, done)
   })
 })
 
-test('output including CSS', function (t) {
-  t.plan(5)
+test('output including CSS', function (done) {
+  expect.assertions(5)
 
   const expected = ['test.mermaid.png']
   const opt = clone(singleFile)
@@ -118,23 +123,23 @@ test('output including CSS', function (t) {
   opt2.outputDir += '_css_png'
 
   mermaid.process(opt.files, opt, function (code) {
-    t.equal(code, 0, 'has clean exit code')
+    expect(code).toBe(0)
     const filename = path.join(opt.outputDir, path.basename(expected[0]))
     const one = fs.statSync(filename)
 
     opt2.css = path.join('test', 'fixtures', 'test.css')
 
     mermaid.process(opt2.files, opt2, function (code) {
-      t.equal(code, 0, 'has clean exit code')
+      expect(code).toBe(0)
       const two = fs.statSync(filename)
-      t.notEqual(one.size, two.size)
+      expect(one.size).not.toBe(two.size)
 
-      verifyFiles(expected, opt.outputDir, t)
+      verifyFiles(expected, opt.outputDir, done)
     })
   })
 })
 
-function verifyFiles (expected, dir, t) {
+function verifyFiles (expected, dir, done) {
   async.each(
     expected, function (file, cb) {
       const filename = path.join(dir, path.basename(file))
@@ -142,12 +147,12 @@ function verifyFiles (expected, dir, t) {
         cb(err)
       })
     }, function (err) {
-      t.notOk(err, 'all files passed')
+      expect(err).toBeFalsy()
       const deleteTmps = true
       const _rimraf = deleteTmps ? rimraf : function (dir, f) { f(0) }
       _rimraf(dir, function (rmerr) {
-        t.notOk(rmerr, 'cleaned up')
-        t.end()
+        expect(rmerr).toBeFalsy()
+        done()
       })
     }
   )

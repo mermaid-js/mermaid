@@ -1,7 +1,8 @@
+/* eslint-env jest */
+/* eslint-env jasmine */
 const exec = require('child_process').exec
 const path = require('path')
 
-const test = require('tape')
 const rimraf = require('rimraf')
 
 const localSearchPath = './node_modules/.bin' + path.delimiter + process.env.PATH
@@ -36,107 +37,103 @@ function execCmd (cmd, verify) {
     })
 }
 
-function verifyNoError (t) {
+function verifyNoError (done) {
   return function (error, stdout, stderr) {
-    t.ok(!error, 'no error')
-    t.notOk(stderr, 'no stderr')
-    t.end()
+    expect(!error).toBeTruthy()
+    expect(stderr).toBeFalsy()
+    done()
   }
 }
 
-function verifyError (t) {
+function verifyError (done) {
   return function (error, stdout, stderr) {
-    t.ok(!error, 'no error')
-    t.ok(stderr, 'should get stderr')
-    t.end()
+    expect(!error).toBeTruthy()
+    expect(stderr).toBeTruthy()
+    done()
   }
 }
 
-test('mermaid cli help', function (t) {
-  t.plan(2)
+beforeEach(() => {
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 64000
+})
+
+test('mermaid cli help', function (done) {
+  expect.assertions(2)
   const args = ['--help']
-  execMermaid(args.join(' '), verifyNoError(t))
+  execMermaid(args.join(' '), verifyNoError(done))
 })
 
-test('mermaid cli help', function (t) {
-  t.plan(2)
+test('mermaid cli help', function (done) {
+  expect.assertions(2)
   const args = ['--badopt']
-  execMermaid(args.join(' '), verifyError(t))
-})
-
-test.skip('sequence syntax error', function (t) {
-  t.plan(2)
-  const args = ['--svg',
-    testDir + 'sequence_err.mmd'
-  ]
-  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(t))
+  execMermaid(args.join(' '), verifyError(done))
 });
 
 ['', 'fo', 'tspan', 'old'].forEach(function (textPlacement) {
-  test('sequence svg text placement: ' + textPlacement, function (t) {
-    t.plan(2)
+  test('sequence svg text placement: ' + textPlacement, function (done) {
+    expect.assertions(2)
     const args = ['--svg',
       '--outputDir=' + testDir,
       '--outputSuffix=' + (textPlacement ? '_' + textPlacement : '') + '.actual',
       textPlacement ? '--sequenceConfig=' + testDir + 'sequence_text_' + textPlacement + '.cfg' : '',
       testDir + 'sequence_text.mmd'
     ]
-    execMermaid(args.join(' '), verifyNoError(t))
+    execMermaid(args.join(' '), verifyNoError(done))
   })
 })
 
-test('sequence png', function (t) {
-  t.plan(2)
+test('sequence png', function (done) {
+  expect.assertions(2)
   const args = ['--png',
     testDir + 'sequence_text.mmd'
   ]
-  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(t))
+  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(done))
 })
 
-test('flowchart svg text', function (t) {
-  t.plan(2)
+test('flowchart svg text', function (done) {
+  expect.assertions(2)
   const args = ['--svg',
     '--css=dist/mermaid.css',
     '--width=500',
     testDir + 'flowchart_text.mmd'
   ]
-  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(t))
+  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(done))
 });
 
 ['svg', 'png'].forEach(function (format) {
-  test('flowchart ' + format + 'text2', function (t) {
-    t.plan(2)
+  test('flowchart ' + format + 'text2', function (done) {
+    expect.assertions(2)
     const args = ['--' + format,
       '--css=dist/mermaid.forest.css',
       '--width=500',
       testDir + 'flowchart_text2.mmd'
     ]
-    execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(t))
+    execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(done))
   })
 })
 
-test('gantt axis formatter svg', function (t) {
-  t.plan(2)
+test('gantt axis formatter svg', function (done) {
+  expect.assertions(2)
   const args = ['--svg',
     '--css=dist/mermaid.css',
     '--width=500',
     '--ganttConfig=' + testDir + 'gantt_axis_formatter.cfg',
     testDir + 'gantt_axis_formatter.mmd'
   ]
-  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(t))
+  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(done))
 })
 
-test('gitgraph sample svg', function (t) {
-  t.plan(2)
+test('gitgraph sample svg', function (done) {
+  expect.assertions(2)
   const args = ['-s', '-v',
     '--width=500',
     testDir + 'gitgraph.mmd'
   ]
-  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(t))
+  execMermaid(prependOutputArgs(args.join(' ')), verifyNoError(done))
 })
 
-test('load sample.html in phantomjs and save screenshot png', function (t) {
-  t.plan(2)
+test('load sample.html in phantomjs and save screenshot png', function (done) {
+  expect.assertions(2)
   execPhantomjsToLoadHtmlSaveScreenshotPng(testDir + 'samples.html',
-    verifyNoError(t))
+    verifyNoError(done))
 })

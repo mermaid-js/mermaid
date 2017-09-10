@@ -1,131 +1,135 @@
-const test = require('tape')
-
+/* eslint-env jest */
+/* eslint-env jasmine */
 const cliPath = '../lib/cli'
 
-test('parses multiple files', function (t) {
-  t.plan(3)
+beforeEach(() => {
+  jasmine.DEFAULT_TIMEOUT_INTERVAL = 64000
+})
+
+test('parses multiple files', function (done) {
+  expect.assertions(3)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid', 'file2.mermaid', 'file3.mermaid']
-  const expect = ['example/file1.mermaid', 'file2.mermaid', 'file3.mermaid']
+  const expected = ['example/file1.mermaid', 'file2.mermaid', 'file3.mermaid']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.equal(opt.files.length, 3, 'should have 3 parameters')
-    t.deepEqual(opt.files, expect, 'should match expected values')
+    expect(!err).toBeTruthy()
+    expect(opt.files.length).toBe(3)
+    expect(opt.files).toEqual(expected)
 
-    t.end()
+    done()
   })
 })
 
-test('defaults to png', function (t) {
-  t.plan(3)
+test('defaults to png', function (done) {
+  expect.assertions(3)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.ok(opt.png, 'png is set by default')
-    t.notOk(opt.svg, 'svg is not set by default')
+    expect(!err).toBeTruthy()
+    expect(opt.png).toBeTruthy()
+    expect(opt.svg).toBeFalsy()
 
-    t.end()
+    done()
   })
 })
 
-test('setting svg unsets png', function (t) {
-  t.plan(3)
+test('setting svg unsets png', function (done) {
+  expect.assertions(3)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-s']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.ok(opt.svg, 'svg is set when requested')
-    t.notOk(opt.png, 'png is unset when svg is set')
+    expect(!err).toBeTruthy()
+    expect(opt.svg).toBeTruthy()
+    expect(opt.png).toBeFalsy()
 
-    t.end()
+    done()
   })
 })
 
-test('setting png and svg is allowed', function (t) {
-  t.plan(3)
+test('setting png and svg is allowed', function (done) {
+  expect.assertions(3)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-s', '-p']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.ok(opt.png, 'png is set when requested')
-    t.ok(opt.svg, 'svg is set when requested')
+    expect(!err).toBeTruthy()
+    expect(opt.png).toBeTruthy()
+    expect(opt.svg).toBeTruthy()
 
-    t.end()
+    done()
   })
 })
 
-test('setting an output directory succeeds', function (t) {
-  t.plan(2)
+test('setting an output directory succeeds', function (done) {
+  expect.assertions(2)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-o', 'example/']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.equal(opt.outputDir, 'example/', 'output directory is set')
-    t.end()
+    expect(!err).toBeTruthy()
+    expect(opt.outputDir).toBe('example/')
+    done()
   })
 })
 
-test('not setting a css source file uses a default style', function (t) {
-  t.plan(2)
+test('not setting a css source file uses a default style', function (done) {
+  expect.assertions(2)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.ok(opt.css, 'css file is populated')
-    t.end()
+    expect(!err).toBeTruthy()
+    expect(opt.css).toBeTruthy()
+    done()
   })
 })
 
-test('setting a css source file succeeds', function (t) {
-  t.plan(2)
+test('setting a css source file succeeds', function (done) {
+  expect.assertions(2)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-t', 'test/fixtures/test.css']
 
   cli.parse(argv, function (err, msg, opt) {
-    t.ok(!err, 'no err')
-    t.ok(opt.css, 'css file is populated')
-    t.end()
+    expect(!err).toBeTruthy()
+    expect(opt.css).toBeTruthy()
+    done()
   })
 })
 
-test('setting an output directory incorrectly causes an error', function (t) {
-  t.plan(1)
+test('setting an output directory incorrectly causes an error', function (done) {
+  expect.assertions(1)
 
   const cli = require(cliPath)
   const argv = ['-o']
 
   cli.parse(argv, function (err) {
-    t.ok(err, 'an error is raised')
+    expect(err).toBeTruthy()
 
-    t.end()
+    done()
   })
 })
 
-test('a callback function is called after parsing', function (t) {
-  t.plan(3)
+test('a callback function is called after parsing', function (done) {
+  expect.assertions(3)
 
   const cli = require(cliPath)
   const argv = ['example/file1.mermaid']
 
   cli.parse(argv, function (err, msg, opts) {
-    t.ok(!err, 'no err')
-    t.ok(true, 'callback was called')
-    t.deepEqual(argv, opts.files, 'options are as expected')
+    expect(!err).toBeTruthy()
+    expect(true).toBeTruthy()
+    expect(argv).toEqual(opts.files)
 
-    t.end()
+    done()
   })
 })

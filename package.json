@@ -22,8 +22,8 @@
     "upgrade": "yarn upgrade --latest && yarn remove d3 && yarn add d3@3.5.17",
     "lint": "standard",
     "karma": "node -r babel-register node_modules/.bin/karma start karma.conf.js --single-run",
-    "tape": "node -r babel-register node_modules/.bin/tape test/cli_test-*.js",
-    "test": "yarn lint && yarn tape && yarn karma",
+    "jest": "jest --coverage",
+    "test": "yarn lint && yarn jest && yarn karma",
     "jison": "gulp jison",
     "prepublishOnly": "yarn build && yarn release && yarn test"
   },
@@ -69,6 +69,7 @@
     "inject-loader": "^3.0.1",
     "jasmine": "^2.8.0",
     "jasmine-es6": "^0.4.1",
+    "jest": "^21.0.2",
     "jison": "^0.4.18",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -80,7 +81,6 @@
     "rimraf": "^2.6.1",
     "standard": "^10.0.3",
     "style-loader": "^0.18.2",
-    "tape": "^4.8.0",
     "webpack": "^3.5.6",
     "webpack-node-externals": "^1.6.0"
   },
@@ -89,5 +89,8 @@
     "dist",
     "lib",
     "src"
-  ]
+  ],
+  "jest": {
+    "testRegex": "test/cli_test-.+?\\.js"
+  }
 }
