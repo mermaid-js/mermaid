@@ -7,26 +7,6 @@
  */
 var api = require('./mermaidAPI.js')
 
-const validateDefinition = (text, valid) => {
-  const foo = {
-    onError: () => {
-    }
-  }
-  spyOn(foo, 'onError')
-  global.mermaidAPI.eventEmitter.on('parseError', (err, hash) => {
-    foo.onError(err)
-  })
-  var res = api.parse(text)
-
-  if (valid) {
-    expect(res).toBe(true)
-    expect(foo.onError).not.toHaveBeenCalled()
-  } else {
-    expect(res).toBe(false)
-    expect(foo.onError).toHaveBeenCalled()
-  }
-}
-
 describe('when using mermaidAPI and ', function () {
   describe('doing initialize ', function () {
     beforeEach(function () {
@@ -63,11 +43,11 @@ describe('when using mermaidAPI and ', function () {
     })
   })
   describe('checking validity of input ', function () {
-    it('it should return false for an invalid definiton', function () {
-      validateDefinition('this is not a mermaid diagram definition', false)
+    it('it should throw for an invalid definiton', function () {
+      expect(() => global.mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow()
     })
-    it('it should return true for a valid definiton', function () {
-      validateDefinition('graph TD;A--x|text including URL space|B;', true)
+    it('it should not throw for a valid definiton', function () {
+      expect(() => global.mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow()
     })
   })
 })

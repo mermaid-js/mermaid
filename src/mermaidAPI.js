@@ -246,12 +246,6 @@ var config = {
 
 Logger.setLogLevel(config.logLevel)
 
-/**
- * ## parse
- * Function that parses a mermaid diagram definition. If parsing fails the parseError callback is called and an error is
- * thrown and
- * @param text
- */
 var parse = function (text) {
   var graphType = utils.detectType(text)
   var parser
@@ -287,16 +281,12 @@ var parse = function (text) {
       break
   }
 
-  parser.parser.yy.parseError = (err, hash) => {
-    module.exports.eventEmitter.emit('parseError', err, hash)
+  parser.parser.yy.parseError = (str, hash) => {
+    const error = { str, hash }
+    throw error
   }
 
-  try {
-    parser.parse(text)
-    return true
-  } catch (err) {
-    return false
-  }
+  parser.parse(text)
 }
 module.exports.parse = parse
 
