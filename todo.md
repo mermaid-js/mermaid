@@ -21,3 +21,5 @@
 - rewrite less code
 - Don't generate temp_* folders in test/ folder
     - Generate them into system temp folder instead
+- Replace phantomjs with Chrome headless
+- `yarn jest` is disabled
