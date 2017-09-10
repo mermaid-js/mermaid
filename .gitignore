@@ -1,14 +1,10 @@
-node_modules
-
-*.sublime-project
-*.sublime-workspace
-
 .DS_Store
-.idea
+
+node_modules
 coverage
 
 test/tmp_*
 test/fixtures/samples/*.actual*
 
 dist/*.js
-dist/*.css
+dist/themes/*.css

@@ -19,3 +19,5 @@
 - global.mermaid_config
 - rewrite logger
 - rewrite less code
+- Don't generate temp_* folders in test/ folder
+    - Generate them into system temp folder instead

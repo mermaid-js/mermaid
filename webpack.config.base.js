@@ -52,13 +52,13 @@ export const lessConfig = () => {
   return {
     target: 'web',
     entry: {
-      'mermaid': './src/less/default/mermaid.less',
+      'mermaid.default': './src/less/default/mermaid.less',
       'mermaid.dark': './src/less/dark/mermaid.less',
       'mermaid.forest': './src/less/forest/mermaid.less',
       'mermaid.neutral': './src/less/neutral/mermaid.less'
     },
     output: {
-      path: path.join(__dirname, './dist/'),
+      path: path.join(__dirname, './dist/themes'),
       filename: '[name].css'
     },
     module: {
