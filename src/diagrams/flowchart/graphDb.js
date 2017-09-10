@@ -396,3 +396,26 @@ export const indexNodes = function () {
 export const getSubGraphs = function () {
   return subGraphs
 }
+
+export default {
+  addVertex,
+  addLink,
+  updateLinkInterpolate,
+  updateLink,
+  addClass,
+  setDirection,
+  setClass,
+  getTooltip,
+  setClickEvent,
+  bindFunctions,
+  getDirection,
+  getVertices,
+  getEdges,
+  getClasses,
+  clear,
+  defaultStyle,
+  addSubGraph,
+  getDepthFirstPos,
+  indexNodes,
+  getSubGraphs
+}

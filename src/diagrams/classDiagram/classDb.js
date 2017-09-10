@@ -77,3 +77,16 @@ export const relationType = {
   COMPOSITION: 2,
   DEPENDENCY: 3
 }
+
+export default {
+  addClass,
+  clear,
+  getClass,
+  getClasses,
+  getRelations,
+  addRelation,
+  addMembers,
+  cleanupLabel,
+  lineType,
+  relationType
+}

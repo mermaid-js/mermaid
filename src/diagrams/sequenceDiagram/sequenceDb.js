@@ -152,3 +152,21 @@ export const apply = function (param) {
     }
   }
 }
+
+export default {
+  addActor,
+  addMessage,
+  addSignal,
+  getMessages,
+  getActors,
+  getActor,
+  getActorKeys,
+  getTitle,
+  clear,
+  LINETYPE,
+  ARROWTYPE,
+  PLACEMENT,
+  addNote,
+  setTitle,
+  apply
+}

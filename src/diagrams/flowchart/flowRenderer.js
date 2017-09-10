@@ -1,4 +1,4 @@
-import graph from './graphDb'
+import graphDb from './graphDb'
 import flow from './parser/flow'
 import dot from './parser/dot'
 import d3 from '../../d3'
@@ -217,18 +217,18 @@ export const addEdges = function (edges, g) {
  */
 export const getClasses = function (text, isDot) {
   var parser
-  graph.clear()
+  graphDb.clear()
   if (isDot) {
     parser = dot.parser
   } else {
     parser = flow.parser
   }
-  parser.yy = graph
+  parser.yy = graphDb
 
   // Parse the graph definition
   parser.parse(text)
 
-  var classes = graph.getClasses()
+  var classes = graphDb.getClasses()
 
   // Add default class if undefined
   if (typeof (classes.default) === 'undefined') {
@@ -249,13 +249,13 @@ export const getClasses = function (text, isDot) {
 export const draw = function (text, id, isDot) {
   logger.debug('Drawing flowchart')
   var parser
-  graph.clear()
+  graphDb.clear()
   if (isDot) {
     parser = dot.parser
   } else {
     parser = flow.parser
   }
-  parser.yy = graph
+  parser.yy = graphDb
 
   // Parse the graph definition
   try {
@@ -266,7 +266,7 @@ export const draw = function (text, id, isDot) {
 
   // Fetch the default direction, use TD if none was found
   var dir
-  dir = graph.getDirection()
+  dir = graphDb.getDirection()
   if (typeof dir === 'undefined') {
     dir = 'TD'
   }
@@ -287,17 +287,17 @@ export const draw = function (text, id, isDot) {
     })
 
   var subG
-  var subGraphs = graph.getSubGraphs()
+  var subGraphs = graphDb.getSubGraphs()
   var i = 0
   for (i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i]
-    graph.addVertex(subG.id, subG.title, 'group', undefined)
+    graphDb.addVertex(subG.id, subG.title, 'group', undefined)
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
-  var vert = graph.getVertices()
+  var vert = graphDb.getVertices()
 
-  var edges = graph.getEdges()
+  var edges = graphDb.getEdges()
 
   i = 0
   var j
@@ -430,7 +430,7 @@ export const draw = function (text, id, isDot) {
 
   element.selectAll('g.node')
     .attr('title', function () {
-      return graph.getTooltip(this.id)
+      return graphDb.getTooltip(this.id)
     })
 
   if (conf.useMaxWidth) {
@@ -451,7 +451,7 @@ export const draw = function (text, id, isDot) {
   }
 
   // Index nodes
-  graph.indexNodes('subGraph' + i)
+  graphDb.indexNodes('subGraph' + i)
 
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i]

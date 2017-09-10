@@ -1,10 +1,10 @@
 /* eslint-env jasmine */
-import ast from './gitGraphAst'
+import gitGraphAst from './gitGraphAst'
 import { parser } from './parser/gitGraph'
 
 describe('when parsing a gitGraph', function () {
   beforeEach(function () {
-    parser.yy = ast
+    parser.yy = gitGraphAst
     parser.yy.clear()
   })
   it('should handle a gitGraph defintion', function () {

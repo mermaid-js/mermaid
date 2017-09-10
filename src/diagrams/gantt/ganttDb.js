@@ -348,3 +348,16 @@ var compileTasks = function () {
   }
   return allProcessed
 }
+
+export default {
+  clear,
+  setDateFormat,
+  getDateFormat,
+  setTitle,
+  getTitle,
+  addSection,
+  getTasks,
+  addTask,
+  findTaskById,
+  addTaskOrg
+}

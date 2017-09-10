@@ -206,3 +206,23 @@ export const getCommitsArray = function () {
 export const getCurrentBranch = function () { return curBranch }
 export const getDirection = function () { return direction }
 export const getHead = function () { return head }
+
+export default {
+  setDirection,
+  setOptions,
+  getOptions,
+  commit,
+  branch,
+  merge,
+  checkout,
+  reset,
+  prettyPrint,
+  clear,
+  getBranchesAsObjArray,
+  getBranches,
+  getCommits,
+  getCommitsArray,
+  getCurrentBranch,
+  getDirection,
+  getHead
+}
