@@ -16,5 +16,6 @@
 - Replace require with import
 - Replace module.exports with export default
 - Replace karma-webpack with karma-babel
-- Webpack generate mermaid.js & mermaid.core.js
 - Stops working for mermaid-live-editor since 7.0.9
+- global.mermaid_config
+- rewrite logger

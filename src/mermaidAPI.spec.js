@@ -1,11 +1,5 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-26.
- */
-/**
- * Created by knut on 14-11-23.
- */
-var api = require('./mermaidAPI.js')
+import mermaidAPI from './mermaidAPI'
 
 describe('when using mermaidAPI and ', function () {
   describe('doing initialize ', function () {
@@ -15,16 +9,16 @@ describe('when using mermaidAPI and ', function () {
     })
 
     it('should copy a literal into the configuration', function () {
-      var orgConfig = api.getConfig()
+      var orgConfig = mermaidAPI.getConfig()
       expect(orgConfig.testLiteral).toBe(undefined)
 
-      api.initialize({ 'testLiteral': true })
-      var config = api.getConfig()
+      mermaidAPI.initialize({ 'testLiteral': true })
+      var config = mermaidAPI.getConfig()
 
       expect(config.testLiteral).toBe(true)
     })
     it('should copy a an object into the configuration', function () {
-      var orgConfig = api.getConfig()
+      var orgConfig = mermaidAPI.getConfig()
       expect(orgConfig.testObject).toBe(undefined)
 
       var object = {
@@ -32,9 +26,9 @@ describe('when using mermaidAPI and ', function () {
         test2: false
       }
 
-      api.initialize({ 'testObject': object })
-      api.initialize({ 'testObject': { 'test3': true } })
-      var config = api.getConfig()
+      mermaidAPI.initialize({ 'testObject': object })
+      mermaidAPI.initialize({ 'testObject': { 'test3': true } })
+      var config = mermaidAPI.getConfig()
 
       expect(config.testObject.test1).toBe(1)
       expect(config.testObject.test2).toBe(false)
@@ -44,10 +38,10 @@ describe('when using mermaidAPI and ', function () {
   })
   describe('checking validity of input ', function () {
     it('it should throw for an invalid definiton', function () {
-      expect(() => global.mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow()
+      expect(() => mermaidAPI.parse('this is not a mermaid diagram definition')).toThrow()
     })
     it('it should not throw for a valid definiton', function () {
-      expect(() => global.mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow()
+      expect(() => mermaidAPI.parse('graph TD;A--x|text including URL space|B;')).not.toThrow()
     })
   })
 })

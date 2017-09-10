@@ -2,11 +2,12 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
-var he = require('he')
+import he from 'he'
+
+import mermaidAPI from './mermaidAPI'
 
 var Logger = require('./logger')
 var log = Logger.Log
-var mermaidAPI = require('./mermaidAPI')
 var nextId = 0
 
 /**

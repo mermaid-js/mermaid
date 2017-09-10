@@ -242,7 +242,7 @@ var config = {
 
 Logger.setLogLevel(config.logLevel)
 
-var parse = function (text) {
+function parse (text) {
   var graphType = utils.detectType(text)
   var parser
 
@@ -284,7 +284,6 @@ var parse = function (text) {
 
   parser.parse(text)
 }
-module.exports.parse = parse
 
 /**
  * ## version
@@ -476,7 +475,7 @@ var render = function (id, txt, cb, container) {
   return svgCode
 }
 
-module.exports.render = function (id, text, cb, containerElement) {
+function render2 (id, text, cb, containerElement) {
   try {
     if (arguments.length === 1) {
       text = id
@@ -517,7 +516,7 @@ var setConf = function (cnf) {
   }
 }
 
-module.exports.initialize = function (options) {
+function initialize (options) {
   log.debug('Initializing mermaidAPI')
   // Update default config with options supplied at initialization
   if (typeof options === 'object') {
@@ -525,14 +524,17 @@ module.exports.initialize = function (options) {
   }
   Logger.setLogLevel(config.logLevel)
 }
-module.exports.getConfig = function () {
+
+function getConfig () {
   return config
 }
 
-global.mermaidAPI = {
-  render: module.exports.render,
-  parse: module.exports.parse,
-  initialize: module.exports.initialize,
+const mermaidAPI = {
+  render: render2,
+  parse,
+  initialize,
   detectType: utils.detectType,
-  getConfig: module.exports.getConfig
+  getConfig
 }
+
+export default mermaidAPI
