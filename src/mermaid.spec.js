@@ -7,51 +7,49 @@
  */
 import mermaid from './mermaid'
 
-global.mermaid = mermaid
-
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {
     it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
       global.mermaid_config = { startOnLoad: false }
 
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(global.mermaid, 'init')
+      spyOn(mermaid, 'init')
       mermaid.contentLoaded()
-      expect(global.mermaid.init).not.toHaveBeenCalled()
+      expect(mermaid.init).not.toHaveBeenCalled()
     })
 
     it('should not start rendering with mermaid.startOnLoad set to false', function () {
-      global.mermaid.startOnLoad = false
+      mermaid.startOnLoad = false
       global.mermaid_config = { startOnLoad: true }
 
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(global.mermaid, 'init')
+      spyOn(mermaid, 'init')
       mermaid.contentLoaded()
-      expect(global.mermaid.init).not.toHaveBeenCalled()
+      expect(mermaid.init).not.toHaveBeenCalled()
     })
 
     it('should start rendering with both startOnLoad set', function () {
-      global.mermaid.startOnLoad = true
+      mermaid.startOnLoad = true
       global.mermaid_config = { startOnLoad: true }
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(global.mermaid, 'init')
+      spyOn(mermaid, 'init')
       mermaid.contentLoaded()
-      expect(global.mermaid.init).toHaveBeenCalled()
+      expect(mermaid.init).toHaveBeenCalled()
     })
 
     it('should start rendering with mermaid.startOnLoad set and no mermaid_config defined', function () {
-      global.mermaid.startOnLoad = true
+      mermaid.startOnLoad = true
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(global.mermaid, 'init')
+      spyOn(mermaid, 'init')
       mermaid.contentLoaded()
-      expect(global.mermaid.init).toHaveBeenCalled()
+      expect(mermaid.init).toHaveBeenCalled()
     })
 
     it('should start rendering as a default with no changes performed', function () {
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(global.mermaid, 'init')
+      spyOn(mermaid, 'init')
       mermaid.contentLoaded()
-      expect(global.mermaid.init).toHaveBeenCalled()
+      expect(mermaid.init).toHaveBeenCalled()
     })
   })
 

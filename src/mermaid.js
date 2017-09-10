@@ -37,7 +37,7 @@ var init = function () {
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
     if (typeof arguments[0] !== 'undefined') {
-      global.mermaid.sequenceConfig = arguments[0]
+      mermaid.sequenceConfig = arguments[0]
     }
 
     nodes = arguments[1]
@@ -68,14 +68,14 @@ var init = function () {
   if (typeof global.mermaid_config !== 'undefined') {
     mermaidAPI.initialize(global.mermaid_config)
   }
-  log.debug('Start On Load before: ' + global.mermaid.startOnLoad)
-  if (typeof global.mermaid.startOnLoad !== 'undefined') {
-    log.debug('Start On Load inner: ' + global.mermaid.startOnLoad)
-    mermaidAPI.initialize({ startOnLoad: global.mermaid.startOnLoad })
+  log.debug('Start On Load before: ' + mermaid.startOnLoad)
+  if (typeof mermaid.startOnLoad !== 'undefined') {
+    log.debug('Start On Load inner: ' + mermaid.startOnLoad)
+    mermaidAPI.initialize({ startOnLoad: mermaid.startOnLoad })
   }
 
-  if (typeof global.mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.initialize({ gantt: global.mermaid.ganttConfig })
+  if (typeof mermaid.ganttConfig !== 'undefined') {
+    mermaidAPI.initialize({ gantt: mermaid.ganttConfig })
   }
 
   var txt
@@ -117,10 +117,10 @@ const initialize = function (config) {
   log.debug('Initializing mermaid')
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
-      global.mermaid.startOnLoad = config.mermaid.startOnLoad
+      mermaid.startOnLoad = config.mermaid.startOnLoad
     }
     if (typeof config.mermaid.htmlLabels !== 'undefined') {
-      global.mermaid.htmlLabels = config.mermaid.htmlLabels
+      mermaid.htmlLabels = config.mermaid.htmlLabels
     }
   }
   mermaidAPI.initialize(config)
@@ -136,30 +136,30 @@ const contentLoaded = function () {
   // Check state of start config mermaid namespace
   if (typeof global.mermaid_config !== 'undefined') {
     if (global.mermaid_config.htmlLabels === false) {
-      global.mermaid.htmlLabels = false
+      mermaid.htmlLabels = false
     }
   }
 
-  if (global.mermaid.startOnLoad) {
+  if (mermaid.startOnLoad) {
     // For backwards compatability reasons also check mermaid_config variable
     if (typeof global.mermaid_config !== 'undefined') {
       // Check if property startOnLoad is set
       if (global.mermaid_config.startOnLoad === true) {
-        global.mermaid.init()
+        mermaid.init()
       }
     } else {
       // No config found, do check API config
       config = mermaidAPI.getConfig()
       if (config.startOnLoad) {
-        global.mermaid.init()
+        mermaid.init()
       }
     }
   } else {
-    if (typeof global.mermaid.startOnLoad === 'undefined') {
+    if (typeof mermaid.startOnLoad === 'undefined') {
       log.debug('In start, no config')
       config = mermaidAPI.getConfig()
       if (config.startOnLoad) {
-        global.mermaid.init()
+        mermaid.init()
       }
     }
   }
