@@ -211,10 +211,6 @@ Manual test in browser:
 
     open dist/demo/index.html
 
-Manual test in Node.js:
-
-    node dist/demo/index.js
-
 
 ## Release
 

@@ -5,9 +5,8 @@
 import he from 'he'
 
 import mermaidAPI from './mermaidAPI'
+import { logger } from './logger'
 
-var Logger = require('./logger')
-var log = Logger.Log
 var nextId = 0
 
 /**
@@ -33,7 +32,7 @@ var nextId = 0
  */
 var init = function () {
   var conf = mermaidAPI.getConfig()
-  log.debug('Starting rendering diagrams')
+  logger.debug('Starting rendering diagrams')
   var nodes
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
@@ -50,14 +49,14 @@ var init = function () {
   var callback
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1]
-    log.debug('Callback function found')
+    logger.debug('Callback function found')
   } else {
     if (typeof conf.mermaid !== 'undefined') {
       if (typeof conf.mermaid.callback === 'function') {
         callback = conf.mermaid.callback
-        log.debug('Callback function found')
+        logger.debug('Callback function found')
       } else {
-        log.debug('No Callback function found')
+        logger.debug('No Callback function found')
       }
     }
   }
@@ -69,9 +68,9 @@ var init = function () {
   if (typeof global.mermaid_config !== 'undefined') {
     mermaidAPI.initialize(global.mermaid_config)
   }
-  log.debug('Start On Load before: ' + mermaid.startOnLoad)
+  logger.debug('Start On Load before: ' + mermaid.startOnLoad)
   if (typeof mermaid.startOnLoad !== 'undefined') {
-    log.debug('Start On Load inner: ' + mermaid.startOnLoad)
+    logger.debug('Start On Load inner: ' + mermaid.startOnLoad)
     mermaidAPI.initialize({ startOnLoad: mermaid.startOnLoad })
   }
 
@@ -115,7 +114,7 @@ const version = function () {
 }
 
 const initialize = function (config) {
-  log.debug('Initializing mermaid')
+  logger.debug('Initializing mermaid')
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad
@@ -157,7 +156,7 @@ const contentLoaded = function () {
     }
   } else {
     if (typeof mermaid.startOnLoad === 'undefined') {
-      log.debug('In start, no config')
+      logger.debug('In start, no config')
       config = mermaidAPI.getConfig()
       if (config.startOnLoad) {
         mermaid.init()

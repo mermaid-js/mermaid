@@ -1,13 +1,9 @@
-/**
- * Created by knut on 14-12-11.
- */
-var graph = require('./graphDb')
-var flow = require('./parser/flow')
-var dot = require('./parser/dot')
-var d3 = require('../../d3')
-var dagreD3 = require('dagre-d3-renderer')
-var Logger = require('../../logger')
-var log = Logger.Log
+import graph from './graphDb'
+import flow from './parser/flow'
+import dot from './parser/dot'
+import d3 from '../../d3'
+import dagreD3 from 'dagre-d3-renderer'
+import { logger } from '../../logger'
 
 var conf = {
 }
@@ -251,7 +247,7 @@ module.exports.getClasses = function (text, isDot) {
  * @param id
  */
 module.exports.draw = function (text, id, isDot) {
-  log.debug('Drawing flowchart')
+  logger.debug('Drawing flowchart')
   var parser
   graph.clear()
   if (isDot) {
@@ -265,7 +261,7 @@ module.exports.draw = function (text, id, isDot) {
   try {
     parser.parse(text)
   } catch (err) {
-    log.debug('Parsing failed')
+    logger.debug('Parsing failed')
   }
 
   // Fetch the default direction, use TD if none was found

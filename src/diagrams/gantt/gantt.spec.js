@@ -1,7 +1,4 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-18.
- */
 describe('when parsing a gantt diagram it', function () {
   var gantt
   beforeEach(function () {

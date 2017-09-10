@@ -1,6 +1,3 @@
-/**
- * Created by knut on 14-11-03.
- */
 var tests = []
 for (var file in window.__karma__.files) {
   if (window.__karma__.files.hasOwnProperty(file)) {

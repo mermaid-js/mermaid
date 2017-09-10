@@ -1,13 +1,9 @@
-/**
- * Created by knut on 14-11-23.
- */
+import svgDraw from './svgDraw'
+import { logger } from '../../logger'
+import d3 from '../../d3'
 
 var sq = require('./parser/sequenceDiagram').parser
 sq.yy = require('./sequenceDb')
-var svgDraw = require('./svgDraw')
-var d3 = require('../../d3')
-var Logger = require('../../logger')
-var log = Logger.Log
 
 var conf = {
 
@@ -474,7 +470,7 @@ module.exports.draw = function (text, id) {
   var box = module.exports.bounds.getBounds()
 
   // Adjust line height of actor lines now that the height of the diagram is known
-  log.debug('For line height fix Querying: #' + id + ' .actor-line')
+  logger.debug('For line height fix Querying: #' + id + ' .actor-line')
   var actorLines = d3.selectAll('#' + id + ' .actor-line')
   actorLines.attr('y2', box.stopy)
 

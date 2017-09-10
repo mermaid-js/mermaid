@@ -1,6 +1,3 @@
-/**
- * Created by knut on 2015-09-15.
- */
 var navApp = window.angular.module('navApp', [])
 
 navApp.controller('NavAppCtrl', function ($scope) {

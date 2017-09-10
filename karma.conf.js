@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Mon Nov 03 2014 07:53:38 GMT+0100 (CET)
 
-import { jsConfig } from './webpack.config.base.js'
+import { jsConfig } from './webpack.config.base'
 
 const webpackConfig = jsConfig()
 

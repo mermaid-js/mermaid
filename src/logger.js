@@ -8,12 +8,7 @@ export const LEVELS = {
   fatal: 5
 }
 
-const format = (level) => {
-  const time = moment().format('HH:mm:ss.SSS')
-  return `${time} : ${level} : `
-}
-
-export const Log = {
+export const logger = {
   debug: () => {},
   info: () => {},
   warn: () => {},
@@ -22,24 +17,29 @@ export const Log = {
 }
 
 export const setLogLevel = function (level) {
-  Log.debug = () => {}
-  Log.info = () => {}
-  Log.warn = () => {}
-  Log.error = () => {}
-  Log.fatal = () => {}
+  logger.debug = () => {}
+  logger.info = () => {}
+  logger.warn = () => {}
+  logger.error = () => {}
+  logger.fatal = () => {}
   if (level <= LEVELS.fatal) {
-    Log.fatal = console.log.bind(console, '\x1b[35m', format('FATAL'))
+    logger.fatal = console.log.bind(console, '\x1b[35m', format('FATAL'))
   }
   if (level <= LEVELS.error) {
-    Log.error = console.log.bind(console, '\x1b[31m', format('ERROR'))
+    logger.error = console.log.bind(console, '\x1b[31m', format('ERROR'))
   }
   if (level <= LEVELS.warn) {
-    Log.warn = console.log.bind(console, `\x1b[33m`, format('WARN'))
+    logger.warn = console.log.bind(console, `\x1b[33m`, format('WARN'))
   }
   if (level <= LEVELS.info) {
-    Log.info = console.log.bind(console, '\x1b[34m', format('INFO'))
+    logger.info = console.log.bind(console, '\x1b[34m', format('INFO'))
   }
   if (level <= LEVELS.debug) {
-    Log.debug = console.log.bind(console, '\x1b[32m', format('DEBUG'))
+    logger.debug = console.log.bind(console, '\x1b[32m', format('DEBUG'))
   }
+}
+
+const format = (level) => {
+  const time = moment().format('HH:mm:ss.SSS')
+  return `${time} : ${level} : `
 }

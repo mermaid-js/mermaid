@@ -1,6 +1,4 @@
-const d3 = require('d3')
-
-module.exports = d3;
+import d3 from 'd3'
 
 /*
  D3 Text Wrap
@@ -445,3 +443,5 @@ module.exports = d3;
     }
   }
 })()
+
+export default d3

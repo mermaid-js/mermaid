@@ -1,9 +1,5 @@
-/**
-* Created by knut on 14-11-03.
-*/
-
-var graph = require('../graphDb')
-var flow = require('./flow')
+import graph from '../graphDb'
+import flow from './flow'
 
 describe('when parsing ', function () {
   beforeEach(function () {

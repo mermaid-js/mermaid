@@ -1,14 +1,10 @@
-/**
- * Created by knut on 15-01-14.
- */
-var Logger = require('../../logger')
-var log = Logger.Log
+import { logger } from '../../logger'
 
 var message = ''
 var info = false
 
 exports.setMessage = function (txt) {
-  log.debug('Setting message to: ' + txt)
+  logger.debug('Setting message to: ' + txt)
   message = txt
 }
 

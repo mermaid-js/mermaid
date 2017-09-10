@@ -1,8 +1,5 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-23.
- */
-var utils = require('./utils')
+import utils from './utils'
 
 describe('when detecting chart type ', function () {
   var str

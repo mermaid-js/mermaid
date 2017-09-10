@@ -1,10 +1,4 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-26.
- */
-/**
- * Created by knut on 14-11-23.
- */
 import mermaid from './mermaid'
 
 describe('when using mermaid and ', function () {

@@ -11,30 +11,28 @@
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
 */
-var Logger = require('./logger')
-var log = Logger.Log
-
-var graph = require('./diagrams/flowchart/graphDb')
-var utils = require('./utils')
-var flowRenderer = require('./diagrams/flowchart/flowRenderer')
-var seq = require('./diagrams/sequenceDiagram/sequenceRenderer')
-var info = require('./diagrams/example/exampleRenderer')
-var infoParser = require('./diagrams/example/parser/example')
-var flowParser = require('./diagrams/flowchart/parser/flow')
-var dotParser = require('./diagrams/flowchart/parser/dot')
-var sequenceParser = require('./diagrams/sequenceDiagram/parser/sequenceDiagram')
-var sequenceDb = require('./diagrams/sequenceDiagram/sequenceDb')
-var infoDb = require('./diagrams/example/exampleDb')
-var gantt = require('./diagrams/gantt/ganttRenderer')
-var ganttParser = require('./diagrams/gantt/parser/gantt')
-var ganttDb = require('./diagrams/gantt/ganttDb')
-var classParser = require('./diagrams/classDiagram/parser/classDiagram')
-var classRenderer = require('./diagrams/classDiagram/classRenderer')
-var classDb = require('./diagrams/classDiagram/classDb')
-var gitGraphParser = require('./diagrams/gitGraph/parser/gitGraph')
-var gitGraphRenderer = require('./diagrams/gitGraph/gitGraphRenderer')
-var gitGraphAst = require('./diagrams/gitGraph/gitGraphAst')
-var d3 = require('./d3')
+import { logger, setLogLevel } from './logger'
+import graph from './diagrams/flowchart/graphDb'
+import utils from './utils'
+import flowRenderer from './diagrams/flowchart/flowRenderer'
+import seq from './diagrams/sequenceDiagram/sequenceRenderer'
+import info from './diagrams/example/exampleRenderer'
+import infoParser from './diagrams/example/parser/example'
+import flowParser from './diagrams/flowchart/parser/flow'
+import dotParser from './diagrams/flowchart/parser/dot'
+import sequenceParser from './diagrams/sequenceDiagram/parser/sequenceDiagram'
+import sequenceDb from './diagrams/sequenceDiagram/sequenceDb'
+import infoDb from './diagrams/example/exampleDb'
+import gantt from './diagrams/gantt/ganttRenderer'
+import ganttParser from './diagrams/gantt/parser/gantt'
+import ganttDb from './diagrams/gantt/ganttDb'
+import classParser from './diagrams/classDiagram/parser/classDiagram'
+import classRenderer from './diagrams/classDiagram/classRenderer'
+import classDb from './diagrams/classDiagram/classDb'
+import gitGraphParser from './diagrams/gitGraph/parser/gitGraph'
+import gitGraphRenderer from './diagrams/gitGraph/gitGraphRenderer'
+import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
+import d3 from './d3'
 
 /**
  * ## Configuration
@@ -240,7 +238,7 @@ var config = {
   info: {}
 }
 
-Logger.setLogLevel(config.logLevel)
+setLogLevel(config.logLevel)
 
 function parse (text) {
   var graphType = utils.detectType(text)
@@ -464,7 +462,7 @@ var render = function (id, txt, cb, container) {
   if (typeof cb !== 'undefined') {
     cb(svgCode, graph.bindFunctions)
   } else {
-    log.warn('CB = undefined!')
+    logger.warn('CB = undefined!')
   }
 
   var node = d3.select('#d' + id).node()
@@ -489,7 +487,7 @@ function render2 (id, text, cb, containerElement) {
       return render(id, text, cb, containerElement)
     }
   } catch (e) {
-    log.warn(e)
+    logger.warn(e)
   }
 }
 
@@ -503,11 +501,11 @@ var setConf = function (cnf) {
 
       var j
       for (j = 0; j < lvl2Keys.length; j++) {
-        log.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j])
+        logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j])
         if (typeof config[lvl1Keys[i]] === 'undefined') {
           config[lvl1Keys[i]] = {}
         }
-        log.debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]])
+        logger.debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]])
         config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]]
       }
     } else {
@@ -517,12 +515,12 @@ var setConf = function (cnf) {
 }
 
 function initialize (options) {
-  log.debug('Initializing mermaidAPI')
+  logger.debug('Initializing mermaidAPI')
   // Update default config with options supplied at initialization
   if (typeof options === 'object') {
     setConf(options)
   }
-  Logger.setLogLevel(config.logLevel)
+  setLogLevel(config.logLevel)
 }
 
 function getConfig () {

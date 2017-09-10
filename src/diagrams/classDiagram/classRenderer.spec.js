@@ -1,8 +1,4 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-18.
- */
-
 describe('class diagram, ', function () {
   describe('when rendering a classDiagram', function () {
     beforeEach(function () {

@@ -1,9 +1,5 @@
-/**
- * Created by knut on 15-01-14.
- */
-var moment = require('moment')
-var Logger = require('../../logger')
-var log = Logger.Log
+import moment from 'moment'
+import { logger } from '../../logger'
 
 var dateFormat = ''
 var title = ''
@@ -78,8 +74,8 @@ var getStartDate = function (prevTime, dateFormat, str) {
   if (moment(str, dateFormat.trim(), true).isValid()) {
     return moment(str, dateFormat.trim(), true).toDate()
   } else {
-    log.debug('Invalid date:' + str)
-    log.debug('With date format:' + dateFormat.trim())
+    logger.debug('Invalid date:' + str)
+    logger.debug('With date format:' + dateFormat.trim())
   }
 
   // Default date - now

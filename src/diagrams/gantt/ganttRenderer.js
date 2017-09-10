@@ -1,7 +1,9 @@
+
+import moment from 'moment'
+
+import d3 from '../../d3'
 var gantt = require('./parser/gantt').parser
 gantt.yy = require('./ganttDb')
-var d3 = require('../../d3')
-var moment = require('moment')
 
 var daysInChart
 var conf = {

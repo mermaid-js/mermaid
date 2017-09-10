@@ -19,3 +19,5 @@
 - Stops working for mermaid-live-editor since 7.0.9
 - global.mermaid_config
 - rewrite logger
+- rewrite src/d3.js
+- rewrite less code

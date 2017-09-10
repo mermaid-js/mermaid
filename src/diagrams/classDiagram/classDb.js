@@ -1,6 +1,6 @@
 
-var Logger = require('../../logger')
-var log = Logger.Log
+import { logger } from '../../logger'
+
 var relations = []
 
 var classes
@@ -41,7 +41,7 @@ module.exports.getRelations = function () {
 }
 
 exports.addRelation = function (relation) {
-  log.warn('Adding relation: ' + JSON.stringify(relation))
+  logger.warn('Adding relation: ' + JSON.stringify(relation))
   module.exports.addClass(relation.id1)
   module.exports.addClass(relation.id2)
 

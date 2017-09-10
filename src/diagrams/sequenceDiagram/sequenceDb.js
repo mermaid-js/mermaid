@@ -1,12 +1,9 @@
-/**
- * Created by knut on 14-11-19.
- */
+import { logger } from '../../logger'
+
 var actors = {}
 var messages = []
 var notes = []
 var title = ''
-var Logger = require('../../logger')
-var log = Logger.Log
 
 module.exports.addActor = function (id, name, description) {
   // Don't allow description nulling
@@ -24,7 +21,7 @@ module.exports.addMessage = function (idFrom, idTo, message, answer) {
 }
 
 module.exports.addSignal = function (idFrom, idTo, message, messageType) {
-  log.debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType)
+  logger.debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType)
   messages.push({ from: idFrom, to: idTo, message: message, type: messageType })
 }
 

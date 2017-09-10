@@ -1,7 +1,4 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-18.
- */
 describe('when using the ganttDb', function () {
   var gDb
   var moment = require('moment')

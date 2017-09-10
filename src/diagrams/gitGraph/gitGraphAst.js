@@ -1,7 +1,6 @@
 import _ from 'lodash'
 
-const Logger = require('../../logger')
-const log = Logger.Log
+import { logger } from '../../logger'
 
 var commits = {}
 var head = null
@@ -24,19 +23,19 @@ function getId () {
 }
 
 function isfastforwardable (currentCommit, otherCommit) {
-  log.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id)
+  logger.debug('Entering isfastforwardable:', currentCommit.id, otherCommit.id)
   while (currentCommit.seq <= otherCommit.seq && currentCommit !== otherCommit) {
     // only if other branch has more commits
     if (otherCommit.parent == null) break
     if (Array.isArray(otherCommit.parent)) {
-      log.debug('In merge commit:', otherCommit.parent)
+      logger.debug('In merge commit:', otherCommit.parent)
       return isfastforwardable(currentCommit, commits[otherCommit.parent[0]]) ||
         isfastforwardable(currentCommit, commits[otherCommit.parent[1]])
     } else {
       otherCommit = commits[otherCommit.parent]
     }
   }
-  log.debug(currentCommit.id, otherCommit.id)
+  logger.debug(currentCommit.id, otherCommit.id)
   return currentCommit.id === otherCommit.id
 }
 
@@ -52,13 +51,13 @@ module.exports.setDirection = function (dir) {
 }
 var options = {}
 module.exports.setOptions = function (rawOptString) {
-  log.debug('options str', rawOptString)
+  logger.debug('options str', rawOptString)
   rawOptString = rawOptString && rawOptString.trim()
   rawOptString = rawOptString || '{}'
   try {
     options = JSON.parse(rawOptString)
   } catch (e) {
-    log.error('error while parsing gitGraph options', e.message)
+    logger.error('error while parsing gitGraph options', e.message)
   }
 }
 
@@ -76,19 +75,19 @@ module.exports.commit = function (msg) {
   head = commit
   commits[commit.id] = commit
   branches[curBranch] = commit.id
-  log.debug('in pushCommit ' + commit.id)
+  logger.debug('in pushCommit ' + commit.id)
 }
 
 module.exports.branch = function (name) {
   branches[name] = head != null ? head.id : null
-  log.debug('in createBranch')
+  logger.debug('in createBranch')
 }
 
 module.exports.merge = function (otherBranch) {
   var currentCommit = commits[branches[curBranch]]
   var otherCommit = commits[branches[otherBranch]]
   if (isReachableFrom(currentCommit, otherCommit)) {
-    log.debug('Already merged')
+    logger.debug('Already merged')
     return
   }
   if (isfastforwardable(currentCommit, otherCommit)) {
@@ -106,29 +105,29 @@ module.exports.merge = function (otherBranch) {
     commits[commit.id] = commit
     branches[curBranch] = commit.id
   }
-  log.debug(branches)
-  log.debug('in mergeBranch')
+  logger.debug(branches)
+  logger.debug('in mergeBranch')
 }
 
 module.exports.checkout = function (branch) {
-  log.debug('in checkout')
+  logger.debug('in checkout')
   curBranch = branch
   var id = branches[curBranch]
   head = commits[id]
 }
 
 module.exports.reset = function (commitRef) {
-  log.debug('in reset', commitRef)
+  logger.debug('in reset', commitRef)
   var ref = commitRef.split(':')[0]
   var parentCount = parseInt(commitRef.split(':')[1])
   var commit = ref === 'HEAD' ? head : commits[branches[ref]]
-  log.debug(commit, parentCount)
+  logger.debug(commit, parentCount)
   while (parentCount > 0) {
     commit = commits[commit.parent]
     parentCount--
     if (!commit) {
       var err = 'Critical error - unique parent commit not found during reset'
-      log.error(err)
+      logger.error(err)
       throw err
     }
   }
@@ -159,7 +158,7 @@ function prettyPrintCommitHistory (commitArr) {
   _.each(branches, function (value, key) {
     if (value === commit.id) label.push(key)
   })
-  log.debug(label.join(' '))
+  logger.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {
     var newCommit = commits[commit.parent[0]]
     upsert(commitArr, commit, newCommit)
@@ -175,7 +174,7 @@ function prettyPrintCommitHistory (commitArr) {
 }
 
 module.exports.prettyPrint = function () {
-  log.debug(commits)
+  logger.debug(commits)
   var node = module.exports.getCommitsArray()[0]
   prettyPrintCommitHistory([node])
 }
@@ -201,7 +200,7 @@ module.exports.getCommitsArray = function () {
   var commitArr = Object.keys(commits).map(function (key) {
     return commits[key]
   })
-  commitArr.forEach(function (o) { log.debug(o.id) })
+  commitArr.forEach(function (o) { logger.debug(o.id) })
   return _.orderBy(commitArr, ['seq'], ['desc'])
 }
 module.exports.getCurrentBranch = function () { return curBranch }

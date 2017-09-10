@@ -1,11 +1,7 @@
-/**
- * Created by knut on 14-11-03.
- */
-var Logger = require('../../logger')
-var log = Logger.Log
-var utils = require('../../utils')
+import { logger } from '../../logger'
+import utils from '../../utils'
+import d3 from '../../d3'
 
-var d3 = require('../../d3')
 var vertices = {}
 var edges = []
 var classes = []
@@ -68,7 +64,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param linktext
  */
 exports.addLink = function (start, end, type, linktext) {
-  log.info('Got edge...', start, end)
+  logger.info('Got edge...', start, end)
   var edge = { start: start, end: end, type: undefined, text: '' }
   linktext = type.text
 

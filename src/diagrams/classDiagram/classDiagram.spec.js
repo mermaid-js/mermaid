@@ -1,7 +1,4 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-18.
- */
 describe('class diagram, ', function () {
   describe('when parsing an info graph it', function () {
     var cd, cDDb

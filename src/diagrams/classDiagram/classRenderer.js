@@ -1,14 +1,12 @@
-/**
- * Created by knut on 14-11-23.
- */
 
+import dagre from 'dagre-layout'
+
+import cDDb from './classDb'
+import d3 from '../../d3'
+import { logger } from '../../logger'
 var cd = require('./parser/classDiagram').parser
-var cDDb = require('./classDb')
+
 cd.yy = cDDb
-var d3 = require('../../d3')
-var Logger = require('../../logger')
-var log = Logger.Log
-var dagre = require('dagre-layout')
 
 var idCache
 idCache = {}
@@ -208,7 +206,7 @@ var drawEdge = function (elem, path, relation) {
 }
 
 var drawClass = function (elem, classDef) {
-  log.info('Rendering class ' + classDef)
+  logger.info('Rendering class ' + classDef)
 
   var addTspan = function (textEl, txt, isFirst) {
     var tSpan = textEl.append('tspan')
@@ -309,7 +307,7 @@ module.exports.draw = function (text, id) {
   cd.yy.clear()
   cd.parse(text)
 
-  log.info('Rendering diagram ' + text)
+  logger.info('Rendering diagram ' + text)
 
   /// / Fetch the default direction, use TD if none was found
   var diagram = d3.select('#' + id)
@@ -340,23 +338,23 @@ module.exports.draw = function (text, id) {
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     g.setNode(node.id, node)
-    log.info('Org height: ' + node.height)
+    logger.info('Org height: ' + node.height)
   }
 
   var relations = cDDb.getRelations()
   relations.forEach(function (relation) {
-    log.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation))
+    logger.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation))
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation })
   })
   dagre.layout(g)
   g.nodes().forEach(function (v) {
     if (typeof v !== 'undefined') {
-      log.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)))
+      logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)))
       d3.select('#' + v).attr('transform', 'translate(' + (g.node(v).x - (g.node(v).width / 2)) + ',' + (g.node(v).y - (g.node(v).height / 2)) + ' )')
     }
   })
   g.edges().forEach(function (e) {
-    log.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)))
+    logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)))
     drawEdge(diagram, g.edge(e), g.edge(e).relation)
   })
 

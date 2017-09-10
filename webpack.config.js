@@ -1,6 +1,6 @@
 import nodeExternals from 'webpack-node-externals'
 
-import { jsConfig, lessConfig } from './webpack.config.base.js'
+import { jsConfig, lessConfig } from './webpack.config.base'
 
 const config = jsConfig()
 

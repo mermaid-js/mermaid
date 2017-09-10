@@ -1,5 +1,6 @@
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import { jsConfig, lessConfig } from './webpack.config.base.js'
+
+import { jsConfig, lessConfig } from './webpack.config.base'
 
 const minConfig = jsConfig()
 minConfig.output.filename = '[name].min.js'

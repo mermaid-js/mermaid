@@ -1,6 +1,3 @@
-/**
- * Created by knut on 14-12-20.
- */
 module.exports.drawRect = function (elem, rectData) {
   var rectElem = elem.append('rect')
   rectElem.attr('x', rectData.x)

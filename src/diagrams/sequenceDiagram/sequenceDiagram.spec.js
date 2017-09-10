@@ -1,9 +1,6 @@
 /* eslint-env jasmine */
-/**
- * Created by knut on 14-11-18.
- */
-
 var sq = require('./parser/sequenceDiagram').parser
+
 var NewD3
 
 var d3 = {

@@ -1,4 +1,4 @@
-import { Log } from './logger'
+import { logger } from './logger'
 
 /**
  * @function detectType
@@ -36,12 +36,12 @@ export const detectType = function (text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    Log.debug('Detected classDiagram syntax')
+    logger.debug('Detected classDiagram syntax')
     return 'classDiagram'
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    Log.debug('Detected gitGraph syntax')
+    logger.debug('Detected gitGraph syntax')
     return 'gitGraph'
   }
   return 'graph'
@@ -75,7 +75,7 @@ export const cloneCssStyles = function (svg, classes) {
         }
       } catch (err) {
         if (typeof (rule) !== 'undefined') {
-          Log.warn('Invalid CSS selector "' + rule.selectorText + '"', err)
+          logger.warn('Invalid CSS selector "' + rule.selectorText + '"', err)
         }
       }
     }
@@ -138,4 +138,10 @@ export const isSubstringInArray = function (str, arr) {
     if (arr[i].match(str)) return i
   }
   return -1
+}
+
+export default {
+  detectType,
+  cloneCssStyles,
+  isSubstringInArray
 }

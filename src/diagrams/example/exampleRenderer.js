@@ -1,12 +1,8 @@
-/**
- * Created by knut on 14-12-11.
- */
-var db = require('./exampleDb')
-var exampleParser = require('./parser/example.js')
-var d3 = require('../../d3')
+import db from './exampleDb'
+import exampleParser from './parser/example.js'
+import d3 from '../../d3'
 
-var Logger = require('../../logger')
-var log = Logger.Log
+import { logger } from '../../logger'
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
@@ -17,7 +13,7 @@ exports.draw = function (txt, id, ver) {
   var parser
   parser = exampleParser.parser
   parser.yy = db
-  log.debug('Renering example diagram')
+  logger.debug('Renering example diagram')
   // Parse the graph definition
   parser.parse(txt)
 

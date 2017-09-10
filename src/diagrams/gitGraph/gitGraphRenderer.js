@@ -1,10 +1,9 @@
 import _ from 'lodash'
 
-const db = require('./gitGraphAst')
-const gitGraphParser = require('./parser/gitGraph')
-const d3 = require('../../d3')
-const Logger = require('../../logger')
-const log = Logger.Log
+import db from './gitGraphAst'
+import gitGraphParser from './parser/gitGraph'
+import d3 from '../../d3'
+import { logger } from '../../logger'
 
 var allCommitsDict = {}
 var branchNum
@@ -86,7 +85,7 @@ function getElementCoords (element, coords) {
 }
 
 function svgDrawLineForCommits (svg, fromId, toId, direction, color) {
-  log.debug('svgDrawLineForCommits: ', fromId, toId)
+  logger.debug('svgDrawLineForCommits: ', fromId, toId)
   var fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'))
   var toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'))
   switch (direction) {
@@ -162,7 +161,7 @@ function renderCommitHistory (svg, commitid, branches, direction) {
   if (_.isString(commitid)) {
     do {
       commit = allCommitsDict[commitid]
-      log.debug('in renderCommitHistory', commit.id, commit.seq)
+      logger.debug('in renderCommitHistory', commit.id, commit.seq)
       if (svg.select('#node-' + commitid).size() > 0) {
         return
       }
@@ -190,7 +189,7 @@ function renderCommitHistory (svg, commitid, branches, direction) {
 
       var branch = _.find(branches, ['commit', commit])
       if (branch) {
-        log.debug('found branch ', branch.name)
+        logger.debug('found branch ', branch.name)
         svg.select('#node-' + commit.id + ' p')
           .append('xhtml:span')
           .attr('class', 'branch-label')
@@ -211,7 +210,7 @@ function renderCommitHistory (svg, commitid, branches, direction) {
   }
 
   if (_.isArray(commitid)) {
-    log.debug('found merge commmit', commitid)
+    logger.debug('found merge commmit', commitid)
     renderCommitHistory(svg, commitid[0], branches, direction)
     branchNum++
     renderCommitHistory(svg, commitid[1], branches, direction)
@@ -242,12 +241,12 @@ exports.draw = function (txt, id, ver) {
     parser = gitGraphParser.parser
     parser.yy = db
 
-    log.debug('in gitgraph renderer', txt, id, ver)
+    logger.debug('in gitgraph renderer', txt, id, ver)
     // Parse the graph definition
     parser.parse(txt + '\n')
 
     config = _.extend(config, apiConfig, db.getOptions())
-    log.debug('effective options', config)
+    logger.debug('effective options', config)
     var direction = db.getDirection()
     allCommitsDict = db.getCommits()
     var branches = db.getBranchesAsObjArray()
@@ -269,7 +268,7 @@ exports.draw = function (txt, id, ver) {
       return (branches.length + 1) * config.branchOffset
     })
   } catch (e) {
-    log.error('Error while rendering gitgraph')
-    log.error(e.message)
+    logger.error('Error while rendering gitgraph')
+    logger.error(e.message)
   }
 }

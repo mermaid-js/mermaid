@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-var chalk = require('chalk')
-var cli = require('../lib/cli.js')
-var lib = require('../lib')
+import chalk from 'chalk'
+
+import cli from '../lib/cli'
+import lib from '../lib'
 
 cli.parse(process.argv.slice(2), function (err, message, options) {
   if (err) {
