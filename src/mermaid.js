@@ -175,23 +175,18 @@ if (typeof document !== 'undefined') {
 }
 
 const mermaid = {
-  mermaidAPI,
   startOnLoad: true,
   htmlLabels: true,
+
+  mermaidAPI,
+  parse: mermaidAPI.parse,
+  render: mermaidAPI.render,
 
   init,
   initialize,
   version,
-  parse: mermaidAPI.parse,
 
-  parseError: function (err) {
-    log.debug('Mermaid Syntax error:')
-    log.debug(err)
-  },
-  render: mermaidAPI.render,
-
-  contentLoaded,
-  eventEmitter: mermaidAPI.eventEmitter
+  contentLoaded
 }
 
 export default mermaid

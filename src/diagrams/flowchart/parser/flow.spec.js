@@ -9,9 +9,6 @@ describe('when parsing ', function () {
   beforeEach(function () {
     flow.parser.yy = require('../graphDb')
     flow.parser.yy.clear()
-        /* flow.parser.parse.parseError= function parseError(str, hash) {
-            log.debugconsole.log(str);
-        } */
   })
 
   it('should handle a nodes and edges', function () {

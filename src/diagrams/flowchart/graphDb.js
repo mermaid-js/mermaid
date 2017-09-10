@@ -400,7 +400,3 @@ exports.indexNodes = function () {
 exports.getSubGraphs = function () {
   return subGraphs
 }
-
-exports.parseError = function (err, hash) {
-  global.mermaidAPI.parseError(err, hash)
-}

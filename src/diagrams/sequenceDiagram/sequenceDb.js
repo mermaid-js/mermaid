@@ -97,10 +97,6 @@ module.exports.setTitle = function (titleText) {
   title = titleText
 }
 
-module.exports.parseError = function (err, hash) {
-  global.mermaidAPI.parseError(err, hash)
-}
-
 module.exports.apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {

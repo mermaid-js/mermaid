@@ -23,7 +23,3 @@ exports.setInfo = function (inf) {
 exports.getInfo = function () {
   return info
 }
-
-exports.parseError = function (err, hash) {
-  global.mermaidAPI.parseError(err, hash)
-}

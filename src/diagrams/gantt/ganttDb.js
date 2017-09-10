@@ -352,7 +352,3 @@ var compileTasks = function () {
   }
   return allProcessed
 }
-
-module.exports.parseError = function (err, hash) {
-  global.mermaidAPI.parseError(err, hash)
-}
