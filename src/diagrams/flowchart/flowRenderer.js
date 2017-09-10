@@ -7,7 +7,7 @@ import { logger } from '../../logger'
 
 var conf = {
 }
-module.exports.setConf = function (cnf) {
+export const setConf = function (cnf) {
   var keys = Object.keys(cnf)
   var i
   for (i = 0; i < keys.length; i++) {
@@ -20,7 +20,7 @@ module.exports.setConf = function (cnf) {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-module.exports.addVertices = function (vert, g) {
+export const addVertices = function (vert, g) {
   var keys = Object.keys(vert)
 
   var styleFromStyleArr = function (styleStr, arr) {
@@ -135,7 +135,7 @@ module.exports.addVertices = function (vert, g) {
  * @param {Object} edges The edges to add to the graph
  * @param {Object} g The graph object
  */
-module.exports.addEdges = function (edges, g) {
+export const addEdges = function (edges, g) {
   var cnt = 0
 
   var defaultStyle
@@ -215,7 +215,7 @@ module.exports.addEdges = function (edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  * @returns {object} classDef styles
  */
-module.exports.getClasses = function (text, isDot) {
+export const getClasses = function (text, isDot) {
   var parser
   graph.clear()
   if (isDot) {
@@ -246,7 +246,7 @@ module.exports.getClasses = function (text, isDot) {
  * @param text
  * @param id
  */
-module.exports.draw = function (text, id, isDot) {
+export const draw = function (text, id, isDot) {
   logger.debug('Drawing flowchart')
   var parser
   graph.clear()
@@ -310,8 +310,8 @@ module.exports.draw = function (text, id, isDot) {
       g.setParent(subG.nodes[j], subG.id)
     }
   }
-  module.exports.addVertices(vert, g)
-  module.exports.addEdges(edges, g)
+  addVertices(vert, g)
+  addEdges(edges, g)
 
   // Create the renderer
   var Render = dagreD3.render

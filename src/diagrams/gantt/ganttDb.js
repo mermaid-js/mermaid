@@ -7,7 +7,7 @@ var sections = []
 var tasks = []
 var currentSection = ''
 
-module.exports.clear = function () {
+export const clear = function () {
   sections = []
   tasks = []
   currentSection = ''
@@ -18,27 +18,27 @@ module.exports.clear = function () {
   rawTasks = []
 }
 
-module.exports.setDateFormat = function (txt) {
+export const setDateFormat = function (txt) {
   dateFormat = txt
 }
 
-module.exports.getDateFormat = function () {
+export const getDateFormat = function () {
   return dateFormat
 }
-module.exports.setTitle = function (txt) {
+export const setTitle = function (txt) {
   title = txt
 }
 
-module.exports.getTitle = function () {
+export const getTitle = function () {
   return title
 }
 
-module.exports.addSection = function (txt) {
+export const addSection = function (txt) {
   currentSection = txt
   sections.push(txt)
 }
 
-module.exports.getTasks = function () {
+export const getTasks = function () {
   var allItemsPricessed = compileTasks()
   var maxDepth = 10
   var iterationCount = 0
@@ -60,7 +60,7 @@ var getStartDate = function (prevTime, dateFormat, str) {
   var afterStatement = re.exec(str.trim())
 
   if (afterStatement !== null) {
-    var task = module.exports.findTaskById(afterStatement[1])
+    var task = findTaskById(afterStatement[1])
 
     if (typeof task === 'undefined') {
       var dt = new Date()
@@ -150,7 +150,7 @@ var compileData = function (prevTask, dataStr) {
   var data = ds.split(',')
 
   var task = {}
-  var df = module.exports.getDateFormat()
+  var df = getDateFormat()
 
   // Get tags like active, done cand crit
   var matchFound = true
@@ -263,7 +263,7 @@ var lastTask
 var lastTaskID
 var rawTasks = []
 var taskDb = {}
-module.exports.addTask = function (descr, data) {
+export const addTask = function (descr, data) {
   var rawTask = {
     section: currentSection,
     type: currentSection,
@@ -287,12 +287,12 @@ module.exports.addTask = function (descr, data) {
   taskDb[rawTask.id] = pos - 1
 }
 
-module.exports.findTaskById = function (id) {
+export const findTaskById = function (id) {
   var pos = taskDb[id]
   return rawTasks[pos]
 }
 
-module.exports.addTaskOrg = function (descr, data) {
+export const addTaskOrg = function (descr, data) {
   var newTask = {
     section: currentSection,
     type: currentSection,
@@ -311,14 +311,14 @@ module.exports.addTaskOrg = function (descr, data) {
 }
 
 var compileTasks = function () {
-  var df = module.exports.getDateFormat()
+  var df = getDateFormat()
 
   var compileTask = function (pos) {
     var task = rawTasks[pos]
     var startTime = ''
     switch (rawTasks[pos].raw.startTime.type) {
       case 'prevTaskEnd':
-        var prevTask = module.exports.findTaskById(task.prevTaskId)
+        var prevTask = findTaskById(task.prevTaskId)
         task.startTime = prevTask.endTime
         break
       case 'getStartDate':

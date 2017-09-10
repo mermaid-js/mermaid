@@ -5,7 +5,7 @@ import { jsConfig } from './webpack.config.base'
 
 const webpackConfig = jsConfig()
 
-module.exports = function (config) {
+export default function (config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)

@@ -3,19 +3,19 @@ import { logger } from '../../logger'
 var message = ''
 var info = false
 
-exports.setMessage = function (txt) {
+export const setMessage = function (txt) {
   logger.debug('Setting message to: ' + txt)
   message = txt
 }
 
-exports.getMessage = function () {
+export const getMessage = function () {
   return message
 }
 
-exports.setInfo = function (inf) {
+export const setInfo = function (inf) {
   info = inf
 }
 
-exports.getInfo = function () {
+export const getInfo = function () {
   return info
 }

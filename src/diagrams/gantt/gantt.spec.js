@@ -1,30 +1,31 @@
 /* eslint-env jasmine */
+import { parser } from './parser/gantt'
+import ganttDb from './ganttDb'
+
 describe('when parsing a gantt diagram it', function () {
-  var gantt
   beforeEach(function () {
-    gantt = require('./parser/gantt').parser
-    gantt.yy = require('./ganttDb')
+    parser.yy = ganttDb
   })
 
   it('should handle an dateFormat definition', function () {
     var str = 'gantt\ndateFormat yyyy-mm-dd'
 
-    gantt.parse(str)
+    parser.parse(str)
   })
   it('should handle an dateFormat definition', function () {
     var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
-    gantt.parse(str)
+    parser.parse(str)
   })
   it('should handle an dateFormat definition', function () {
     var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
-    gantt.parse(str)
+    parser.parse(str)
   })
   it('should handle an section definition', function () {
     var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
-    gantt.parse(str)
+    parser.parse(str)
   })
   /**
    * Beslutsflöde inligt nedan. Obs bla bla bla
@@ -44,6 +45,6 @@ describe('when parsing a gantt diagram it', function () {
       'section Documentation\n' +
       'Design jison grammar:des1, 2014-01-01, 2014-01-04'
 
-    gantt.parse(str)
+    parser.parse(str)
   })
 })

@@ -1,6 +1,6 @@
 /* eslint-env jest */
 /* eslint-env jasmine */
-const cliPath = '../lib/cli'
+import cli from '../lib/cli'
 
 beforeEach(() => {
   jasmine.DEFAULT_TIMEOUT_INTERVAL = 64000
@@ -9,7 +9,6 @@ beforeEach(() => {
 test('parses multiple files', function (done) {
   expect.assertions(3)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid', 'file2.mermaid', 'file3.mermaid']
   const expected = ['example/file1.mermaid', 'file2.mermaid', 'file3.mermaid']
 
@@ -25,7 +24,6 @@ test('parses multiple files', function (done) {
 test('defaults to png', function (done) {
   expect.assertions(3)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid']
 
   cli.parse(argv, function (err, msg, opt) {
@@ -40,7 +38,6 @@ test('defaults to png', function (done) {
 test('setting svg unsets png', function (done) {
   expect.assertions(3)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-s']
 
   cli.parse(argv, function (err, msg, opt) {
@@ -55,7 +52,6 @@ test('setting svg unsets png', function (done) {
 test('setting png and svg is allowed', function (done) {
   expect.assertions(3)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-s', '-p']
 
   cli.parse(argv, function (err, msg, opt) {
@@ -70,7 +66,6 @@ test('setting png and svg is allowed', function (done) {
 test('setting an output directory succeeds', function (done) {
   expect.assertions(2)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-o', 'example/']
 
   cli.parse(argv, function (err, msg, opt) {
@@ -83,7 +78,6 @@ test('setting an output directory succeeds', function (done) {
 test('not setting a css source file uses a default style', function (done) {
   expect.assertions(2)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid']
 
   cli.parse(argv, function (err, msg, opt) {
@@ -96,7 +90,6 @@ test('not setting a css source file uses a default style', function (done) {
 test('setting a css source file succeeds', function (done) {
   expect.assertions(2)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid', '-t', 'test/fixtures/test.css']
 
   cli.parse(argv, function (err, msg, opt) {
@@ -109,7 +102,6 @@ test('setting a css source file succeeds', function (done) {
 test('setting an output directory incorrectly causes an error', function (done) {
   expect.assertions(1)
 
-  const cli = require(cliPath)
   const argv = ['-o']
 
   cli.parse(argv, function (err) {
@@ -122,7 +114,6 @@ test('setting an output directory incorrectly causes an error', function (done) 
 test('a callback function is called after parsing', function (done) {
   expect.assertions(3)
 
-  const cli = require(cliPath)
   const argv = ['example/file1.mermaid']
 
   cli.parse(argv, function (err, msg, opts) {

@@ -33,6 +33,7 @@ import gitGraphParser from './diagrams/gitGraph/parser/gitGraph'
 import gitGraphRenderer from './diagrams/gitGraph/gitGraphRenderer'
 import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
 import d3 from './d3'
+import pkg from '../package.json'
 
 /**
  * ## Configuration
@@ -288,11 +289,11 @@ function parse (text) {
  * Function returning version information
  * @returns {string} A string containing the version info
  */
-module.exports.version = function () {
-  return require('../package.json').version
+export const version = function () {
+  return pkg.version
 }
 
-module.exports.encodeEntities = function (text) {
+export const encodeEntities = function (text) {
   var txt = text
 
   txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
@@ -318,7 +319,7 @@ module.exports.encodeEntities = function (text) {
   return txt
 }
 
-module.exports.decodeEntities = function (text) {
+export const decodeEntities = function (text) {
   var txt = text
 
   txt = txt.replace(/ﬂ°°/g, function () {
@@ -383,7 +384,7 @@ var render = function (id, txt, cb, container) {
   }
 
   window.txt = txt
-  txt = module.exports.encodeEntities(txt)
+  txt = encodeEntities(txt)
 
   var element = d3.select('#d' + id).node()
   var graphType = utils.detectType(txt)
@@ -438,7 +439,7 @@ var render = function (id, txt, cb, container) {
       break
     case 'info':
       config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      info.draw(txt, id, module.exports.version())
+      info.draw(txt, id, version())
       if (config.cloneCssStyles) {
         utils.cloneCssStyles(element.firstChild, [])
       }
@@ -457,7 +458,7 @@ var render = function (id, txt, cb, container) {
   // Fix for when the base tag is used
   var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g')
 
-  svgCode = module.exports.decodeEntities(svgCode)
+  svgCode = decodeEntities(svgCode)
 
   if (typeof cb !== 'undefined') {
     cb(svgCode, graph.bindFunctions)

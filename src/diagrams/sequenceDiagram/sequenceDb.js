@@ -5,7 +5,7 @@ var messages = []
 var notes = []
 var title = ''
 
-module.exports.addActor = function (id, name, description) {
+export const addActor = function (id, name, description) {
   // Don't allow description nulling
   var old = actors[id]
   if (old && name === old.name && description == null) return
@@ -16,38 +16,38 @@ module.exports.addActor = function (id, name, description) {
   actors[id] = { name: name, description: description }
 }
 
-module.exports.addMessage = function (idFrom, idTo, message, answer) {
+export const addMessage = function (idFrom, idTo, message, answer) {
   messages.push({ from: idFrom, to: idTo, message: message, answer: answer })
 }
 
-module.exports.addSignal = function (idFrom, idTo, message, messageType) {
+export const addSignal = function (idFrom, idTo, message, messageType) {
   logger.debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType)
   messages.push({ from: idFrom, to: idTo, message: message, type: messageType })
 }
 
-module.exports.getMessages = function () {
+export const getMessages = function () {
   return messages
 }
 
-module.exports.getActors = function () {
+export const getActors = function () {
   return actors
 }
-module.exports.getActor = function (id) {
+export const getActor = function (id) {
   return actors[id]
 }
-module.exports.getActorKeys = function () {
+export const getActorKeys = function () {
   return Object.keys(actors)
 }
-module.exports.getTitle = function () {
+export const getTitle = function () {
   return title
 }
 
-module.exports.clear = function () {
+export const clear = function () {
   actors = {}
   messages = []
 }
 
-module.exports.LINETYPE = {
+export const LINETYPE = {
   SOLID: 0,
   DOTTED: 1,
   NOTE: 2,
@@ -69,85 +69,85 @@ module.exports.LINETYPE = {
   PAR_END: 21
 }
 
-module.exports.ARROWTYPE = {
+export const ARROWTYPE = {
   FILLED: 0,
   OPEN: 1
 }
 
-module.exports.PLACEMENT = {
+export const PLACEMENT = {
   LEFTOF: 0,
   RIGHTOF: 1,
   OVER: 2
 }
 
-module.exports.addNote = function (actor, placement, message) {
+export const addNote = function (actor, placement, message) {
   var note = { actor: actor, placement: placement, message: message }
 
   // Coerce actor into a [to, from, ...] array
   var actors = [].concat(actor, actor)
 
   notes.push(note)
-  messages.push({ from: actors[0], to: actors[1], message: message, type: module.exports.LINETYPE.NOTE, placement: placement })
+  messages.push({ from: actors[0], to: actors[1], message: message, type: LINETYPE.NOTE, placement: placement })
 }
 
-module.exports.setTitle = function (titleText) {
+export const setTitle = function (titleText) {
   title = titleText
 }
 
-module.exports.apply = function (param) {
+export const apply = function (param) {
   if (param instanceof Array) {
     param.forEach(function (item) {
-      module.exports.apply(item)
+      apply(item)
     })
   } else {
     switch (param.type) {
       case 'addActor':
-        module.exports.addActor(param.actor, param.actor, param.description)
+        addActor(param.actor, param.actor, param.description)
         break
       case 'activeStart':
-        module.exports.addSignal(param.actor, undefined, undefined, param.signalType)
+        addSignal(param.actor, undefined, undefined, param.signalType)
         break
       case 'activeEnd':
-        module.exports.addSignal(param.actor, undefined, undefined, param.signalType)
+        addSignal(param.actor, undefined, undefined, param.signalType)
         break
       case 'addNote':
-        module.exports.addNote(param.actor, param.placement, param.text)
+        addNote(param.actor, param.placement, param.text)
         break
       case 'addMessage':
-        module.exports.addSignal(param.from, param.to, param.msg, param.signalType)
+        addSignal(param.from, param.to, param.msg, param.signalType)
         break
       case 'loopStart':
-        module.exports.addSignal(undefined, undefined, param.loopText, param.signalType)
+        addSignal(undefined, undefined, param.loopText, param.signalType)
         break
       case 'loopEnd':
-        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
+        addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'optStart':
-        module.exports.addSignal(undefined, undefined, param.optText, param.signalType)
+        addSignal(undefined, undefined, param.optText, param.signalType)
         break
       case 'optEnd':
-        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
+        addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'altStart':
-        module.exports.addSignal(undefined, undefined, param.altText, param.signalType)
+        addSignal(undefined, undefined, param.altText, param.signalType)
         break
       case 'else':
-        module.exports.addSignal(undefined, undefined, param.altText, param.signalType)
+        addSignal(undefined, undefined, param.altText, param.signalType)
         break
       case 'altEnd':
-        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
+        addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'setTitle':
-        module.exports.setTitle(param.text)
+        setTitle(param.text)
         break
       case 'parStart':
-        module.exports.addSignal(undefined, undefined, param.parText, param.signalType)
+        addSignal(undefined, undefined, param.parText, param.signalType)
         break
       case 'and':
-        module.exports.addSignal(undefined, undefined, param.parText, param.signalType)
+        addSignal(undefined, undefined, param.parText, param.signalType)
         break
       case 'parEnd':
-        module.exports.addSignal(undefined, undefined, undefined, param.signalType)
+        addSignal(undefined, undefined, undefined, param.signalType)
         break
     }
   }

@@ -1,7 +1,6 @@
 /* eslint-env jasmine */
 import ast from './gitGraphAst'
-
-var parser = require('./parser/gitGraph').parser
+import { parser } from './parser/gitGraph'
 
 describe('when parsing a gitGraph', function () {
   beforeEach(function () {

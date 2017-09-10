@@ -1,9 +1,10 @@
 import svgDraw from './svgDraw'
 import { logger } from '../../logger'
 import d3 from '../../d3'
+import { parser } from './parser/sequenceDiagram'
+import sequenceDb from './sequenceDb'
 
-var sq = require('./parser/sequenceDiagram').parser
-sq.yy = require('./sequenceDb')
+parser.yy = sequenceDb
 
 var conf = {
 
@@ -34,7 +35,7 @@ var conf = {
   textPlacement: 'tspan'
 }
 
-module.exports.bounds = {
+export const bounds = {
   data: {
     startx: undefined,
     stopx: undefined,
@@ -75,15 +76,15 @@ module.exports.bounds = {
         _self.updateVal(item, 'starty', starty - n * conf.boxMargin, Math.min)
         _self.updateVal(item, 'stopy', stopy + n * conf.boxMargin, Math.max)
 
-        _self.updateVal(module.exports.bounds.data, 'startx', startx - n * conf.boxMargin, Math.min)
-        _self.updateVal(module.exports.bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max)
+        _self.updateVal(bounds.data, 'startx', startx - n * conf.boxMargin, Math.min)
+        _self.updateVal(bounds.data, 'stopx', stopx + n * conf.boxMargin, Math.max)
 
         if (!(type === 'activation')) {
           _self.updateVal(item, 'startx', startx - n * conf.boxMargin, Math.min)
           _self.updateVal(item, 'stopx', stopx + n * conf.boxMargin, Math.max)
 
-          _self.updateVal(module.exports.bounds.data, 'starty', starty - n * conf.boxMargin, Math.min)
-          _self.updateVal(module.exports.bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max)
+          _self.updateVal(bounds.data, 'starty', starty - n * conf.boxMargin, Math.min)
+          _self.updateVal(bounds.data, 'stopy', stopy + n * conf.boxMargin, Math.max)
         }
       }
     }
@@ -99,15 +100,15 @@ module.exports.bounds = {
     _starty = Math.min(starty, stopy)
     _stopy = Math.max(starty, stopy)
 
-    this.updateVal(module.exports.bounds.data, 'startx', _startx, Math.min)
-    this.updateVal(module.exports.bounds.data, 'starty', _starty, Math.min)
-    this.updateVal(module.exports.bounds.data, 'stopx', _stopx, Math.max)
-    this.updateVal(module.exports.bounds.data, 'stopy', _stopy, Math.max)
+    this.updateVal(bounds.data, 'startx', _startx, Math.min)
+    this.updateVal(bounds.data, 'starty', _starty, Math.min)
+    this.updateVal(bounds.data, 'stopx', _stopx, Math.max)
+    this.updateVal(bounds.data, 'stopy', _stopy, Math.max)
 
     this.updateBounds(_startx, _starty, _stopx, _stopy)
   },
   newActivation: function (message, diagram) {
-    var actorRect = sq.yy.getActors()[message.from.actor]
+    var actorRect = parser.yy.getActors()[message.from.actor]
     var stackedSize = actorActivations(message.from.actor).length
     var x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2
     this.activations.push({
@@ -138,7 +139,7 @@ module.exports.bounds = {
     var loop = this.sequenceItems.pop()
     loop.sections = loop.sections || []
     loop.sectionTitles = loop.sectionTitles || []
-    loop.sections.push(module.exports.bounds.getVerticalPos())
+    loop.sections.push(bounds.getVerticalPos())
     loop.sectionTitles.push(message)
     this.sequenceItems.push(loop)
   },
@@ -188,13 +189,13 @@ var drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
     textElem = svgDraw.drawText(g, textObj, 2 * rect.width - conf.noteMargin)
     textHeight = textElem[0][0].getBBox().height
     rectElem.attr('width', 2 * rect.width)
-    module.exports.bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
+    bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
   } else {
-    module.exports.bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
+    bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
   }
 
   rectElem.attr('height', textHeight + 2 * conf.noteMargin)
-  module.exports.bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin)
+  bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin)
 }
 
 /**
@@ -232,20 +233,20 @@ var drawMessage = function (elem, startx, stopx, verticalPos, msg) {
       .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
       (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
 
-    module.exports.bounds.bumpVerticalPos(30)
+    bounds.bumpVerticalPos(30)
     var dx = Math.max(textWidth / 2, 100)
-    module.exports.bounds.insert(startx - dx, module.exports.bounds.getVerticalPos() - 10, stopx + dx, module.exports.bounds.getVerticalPos())
+    bounds.insert(startx - dx, bounds.getVerticalPos() - 10, stopx + dx, bounds.getVerticalPos())
   } else {
     line = g.append('line')
     line.attr('x1', startx)
     line.attr('y1', verticalPos)
     line.attr('x2', stopx)
     line.attr('y2', verticalPos)
-    module.exports.bounds.insert(startx, module.exports.bounds.getVerticalPos() - 10, stopx, module.exports.bounds.getVerticalPos())
+    bounds.insert(startx, bounds.getVerticalPos() - 10, stopx, bounds.getVerticalPos())
   }
   // Make an SVG Container
   // Draw the line
-  if (msg.type === sq.yy.LINETYPE.DOTTED || msg.type === sq.yy.LINETYPE.DOTTED_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_OPEN) {
+  if (msg.type === parser.yy.LINETYPE.DOTTED || msg.type === parser.yy.LINETYPE.DOTTED_CROSS || msg.type === parser.yy.LINETYPE.DOTTED_OPEN) {
     line.style('stroke-dasharray', ('3, 3'))
     line.attr('class', 'messageLine1')
   } else {
@@ -262,16 +263,16 @@ var drawMessage = function (elem, startx, stopx, verticalPos, msg) {
   line.attr('stroke-width', 2)
   line.attr('stroke', 'black')
   line.style('fill', 'none')     // remove any fill colour
-  if (msg.type === sq.yy.LINETYPE.SOLID || msg.type === sq.yy.LINETYPE.DOTTED) {
+  if (msg.type === parser.yy.LINETYPE.SOLID || msg.type === parser.yy.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)')
   }
 
-  if (msg.type === sq.yy.LINETYPE.SOLID_CROSS || msg.type === sq.yy.LINETYPE.DOTTED_CROSS) {
+  if (msg.type === parser.yy.LINETYPE.SOLID_CROSS || msg.type === parser.yy.LINETYPE.DOTTED_CROSS) {
     line.attr('marker-end', 'url(' + url + '#crosshead)')
   }
 }
 
-module.exports.drawActors = function (diagram, actors, actorKeys, verticalPos) {
+export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
   var i
   // Draw the actors
   for (i = 0; i < actorKeys.length; i++) {
@@ -285,14 +286,14 @@ module.exports.drawActors = function (diagram, actors, actorKeys, verticalPos) {
 
     // Draw the box with the attached line
     svgDraw.drawActor(diagram, actors[key].x, verticalPos, actors[key].description, conf)
-    module.exports.bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height)
+    bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height)
   }
 
   // Add a margin between the actor boxes and the first arrow
-  module.exports.bounds.bumpVerticalPos(conf.height)
+  bounds.bumpVerticalPos(conf.height)
 }
 
-module.exports.setConf = function (cnf) {
+export const setConf = function (cnf) {
   var keys = Object.keys(cnf)
 
   keys.forEach(function (key) {
@@ -301,14 +302,14 @@ module.exports.setConf = function (cnf) {
 }
 
 var actorActivations = function (actor) {
-  return module.exports.bounds.activations.filter(function (activation) {
+  return bounds.activations.filter(function (activation) {
     return activation.actor === actor
   })
 }
 
 var actorFlowVerticaBounds = function (actor) {
   // handle multiple stacked activations for same actor
-  var actors = sq.yy.getActors()
+  var actors = parser.yy.getActors()
   var activations = actorActivations(actor)
 
   var left = activations.reduce(function (acc, activation) { return Math.min(acc, activation.startx) }, actors[actor].x + conf.width / 2)
@@ -321,11 +322,11 @@ var actorFlowVerticaBounds = function (actor) {
  * @param text
  * @param id
  */
-module.exports.draw = function (text, id) {
-  sq.yy.clear()
-  sq.parse(text + '\n')
+export const draw = function (text, id) {
+  parser.yy.clear()
+  parser.parse(text + '\n')
 
-  module.exports.bounds.init()
+  bounds.init()
   var diagram = d3.select('#' + id)
 
   var startx
@@ -333,25 +334,25 @@ module.exports.draw = function (text, id) {
   var forceWidth
 
   // Fetch data from the parsing
-  var actors = sq.yy.getActors()
-  var actorKeys = sq.yy.getActorKeys()
-  var messages = sq.yy.getMessages()
-  var title = sq.yy.getTitle()
-  module.exports.drawActors(diagram, actors, actorKeys, 0)
+  var actors = parser.yy.getActors()
+  var actorKeys = parser.yy.getActorKeys()
+  var messages = parser.yy.getMessages()
+  var title = parser.yy.getTitle()
+  drawActors(diagram, actors, actorKeys, 0)
 
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram)
   svgDraw.insertArrowCrossHead(diagram)
 
   function activeEnd (msg, verticalPos) {
-    var activationData = module.exports.bounds.endActivation(msg)
+    var activationData = bounds.endActivation(msg)
     if (activationData.starty + 18 > verticalPos) {
       activationData.starty = verticalPos - 6
       verticalPos += 12
     }
     svgDraw.drawActivation(diagram, activationData, verticalPos, conf)
 
-    module.exports.bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
+    bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
   }
 
   // var lastMsg
@@ -361,89 +362,89 @@ module.exports.draw = function (text, id) {
     var loopData
 
     switch (msg.type) {
-      case sq.yy.LINETYPE.NOTE:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+      case parser.yy.LINETYPE.NOTE:
+        bounds.bumpVerticalPos(conf.boxMargin)
 
         startx = actors[msg.from].x
         stopx = actors[msg.to].x
 
-        if (msg.placement === sq.yy.PLACEMENT.RIGHTOF) {
-          drawNote(diagram, startx + (conf.width + conf.actorMargin) / 2, module.exports.bounds.getVerticalPos(), msg)
-        } else if (msg.placement === sq.yy.PLACEMENT.LEFTOF) {
-          drawNote(diagram, startx - (conf.width + conf.actorMargin) / 2, module.exports.bounds.getVerticalPos(), msg)
+        if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
+          drawNote(diagram, startx + (conf.width + conf.actorMargin) / 2, bounds.getVerticalPos(), msg)
+        } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
+          drawNote(diagram, startx - (conf.width + conf.actorMargin) / 2, bounds.getVerticalPos(), msg)
         } else if (msg.to === msg.from) {
           // Single-actor over
-          drawNote(diagram, startx, module.exports.bounds.getVerticalPos(), msg)
+          drawNote(diagram, startx, bounds.getVerticalPos(), msg)
         } else {
           // Multi-actor over
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin
-          drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, module.exports.bounds.getVerticalPos(), msg,
+          drawNote(diagram, (startx + stopx + conf.width - forceWidth) / 2, bounds.getVerticalPos(), msg,
             forceWidth)
         }
         break
-      case sq.yy.LINETYPE.ACTIVE_START:
-        module.exports.bounds.newActivation(msg, diagram)
+      case parser.yy.LINETYPE.ACTIVE_START:
+        bounds.newActivation(msg, diagram)
         break
-      case sq.yy.LINETYPE.ACTIVE_END:
-        activeEnd(msg, module.exports.bounds.getVerticalPos())
+      case parser.yy.LINETYPE.ACTIVE_END:
+        activeEnd(msg, bounds.getVerticalPos())
         break
-      case sq.yy.LINETYPE.LOOP_START:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
-        module.exports.bounds.newLoop(msg.message)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+      case parser.yy.LINETYPE.LOOP_START:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.newLoop(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
-      case sq.yy.LINETYPE.LOOP_END:
-        loopData = module.exports.bounds.endLoop()
+      case parser.yy.LINETYPE.LOOP_END:
+        loopData = bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'loop', conf)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
-      case sq.yy.LINETYPE.OPT_START:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
-        module.exports.bounds.newLoop(msg.message)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+      case parser.yy.LINETYPE.OPT_START:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.newLoop(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
-      case sq.yy.LINETYPE.OPT_END:
-        loopData = module.exports.bounds.endLoop()
+      case parser.yy.LINETYPE.OPT_END:
+        loopData = bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'opt', conf)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
-      case sq.yy.LINETYPE.ALT_START:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
-        module.exports.bounds.newLoop(msg.message)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+      case parser.yy.LINETYPE.ALT_START:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.newLoop(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
-      case sq.yy.LINETYPE.ALT_ELSE:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
-        loopData = module.exports.bounds.addSectionToLoop(msg.message)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+      case parser.yy.LINETYPE.ALT_ELSE:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        loopData = bounds.addSectionToLoop(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
-      case sq.yy.LINETYPE.ALT_END:
-        loopData = module.exports.bounds.endLoop()
+      case parser.yy.LINETYPE.ALT_END:
+        loopData = bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'alt', conf)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
-      case sq.yy.LINETYPE.PAR_START:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
-        module.exports.bounds.newLoop(msg.message)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+      case parser.yy.LINETYPE.PAR_START:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.newLoop(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
-      case sq.yy.LINETYPE.PAR_AND:
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
-        loopData = module.exports.bounds.addSectionToLoop(msg.message)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+      case parser.yy.LINETYPE.PAR_AND:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        loopData = bounds.addSectionToLoop(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
-      case sq.yy.LINETYPE.PAR_END:
-        loopData = module.exports.bounds.endLoop()
+      case parser.yy.LINETYPE.PAR_END:
+        loopData = bounds.endLoop()
         svgDraw.drawLoop(diagram, loopData, 'par', conf)
-        module.exports.bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
       default:
         try {
           // lastMsg = msg
-          module.exports.bounds.bumpVerticalPos(conf.messageMargin)
+          bounds.bumpVerticalPos(conf.messageMargin)
           var fromBounds = actorFlowVerticaBounds(msg.from)
           var toBounds = actorFlowVerticaBounds(msg.to)
           var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0
@@ -451,10 +452,10 @@ module.exports.draw = function (text, id) {
           startx = fromBounds[fromIdx]
           stopx = toBounds[toIdx]
 
-          var verticalPos = module.exports.bounds.getVerticalPos()
+          var verticalPos = bounds.getVerticalPos()
           drawMessage(diagram, startx, stopx, verticalPos, msg)
           var allBounds = fromBounds.concat(toBounds)
-          module.exports.bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
+          bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {
           console.error('error while drawing message', e)
         }
@@ -463,11 +464,11 @@ module.exports.draw = function (text, id) {
 
   if (conf.mirrorActors) {
     // Draw actors below diagram
-    module.exports.bounds.bumpVerticalPos(conf.boxMargin * 2)
-    module.exports.drawActors(diagram, actors, actorKeys, module.exports.bounds.getVerticalPos())
+    bounds.bumpVerticalPos(conf.boxMargin * 2)
+    drawActors(diagram, actors, actorKeys, bounds.getVerticalPos())
   }
 
-  var box = module.exports.bounds.getBounds()
+  var box = bounds.getBounds()
 
   // Adjust line height of actor lines now that the height of the diagram is known
   logger.debug('For line height fix Querying: #' + id + ' .actor-line')

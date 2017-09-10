@@ -26,7 +26,7 @@ var config = {
   }
 }
 var apiConfig = {}
-exports.setConf = function (c) {
+export const setConf = function (c) {
   apiConfig = c
 }
 
@@ -235,7 +235,7 @@ function renderLines (svg, commit, direction, branchColor) {
   }
 }
 
-exports.draw = function (txt, id, ver) {
+export const draw = function (txt, id, ver) {
   try {
     var parser
     parser = gitGraphParser.parser

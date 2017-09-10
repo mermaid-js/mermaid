@@ -1,19 +1,20 @@
+import { parser } from './parser/example'
+import exampleDb from './exampleDb'
+
 /* eslint-env jasmine */
 describe('when parsing an info graph it', function () {
-  var ex
   beforeEach(function () {
-    ex = require('./parser/example').parser
-    ex.yy = require('./exampleDb')
+    parser.yy = exampleDb
   })
 
   it('should handle an info definition', function () {
     var str = 'info\nsay: hello'
 
-    ex.parse(str)
+    parser.parse(str)
   })
   it('should handle an showMessage statement definition', function () {
     var str = 'info\nshowInfo'
 
-    ex.parse(str)
+    parser.parse(str)
   })
 })

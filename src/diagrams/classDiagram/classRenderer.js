@@ -1,12 +1,12 @@
 
 import dagre from 'dagre-layout'
 
-import cDDb from './classDb'
+import classDb from './classDb'
 import d3 from '../../d3'
 import { logger } from '../../logger'
-var cd = require('./parser/classDiagram').parser
+import { parser } from './parser/classDiagram'
 
-cd.yy = cDDb
+parser.yy = classDb
 
 var idCache
 idCache = {}
@@ -125,13 +125,13 @@ var edgeCount = 0
 var drawEdge = function (elem, path, relation) {
   var getRelationType = function (type) {
     switch (type) {
-      case cDDb.relationType.AGGREGATION:
+      case classDb.relationType.AGGREGATION:
         return 'aggregation'
-      case cDDb.relationType.EXTENSION:
+      case classDb.relationType.EXTENSION:
         return 'extension'
-      case cDDb.relationType.COMPOSITION:
+      case classDb.relationType.COMPOSITION:
         return 'composition'
-      case cDDb.relationType.DEPENDENCY:
+      case classDb.relationType.DEPENDENCY:
         return 'dependency'
     }
   }
@@ -291,7 +291,7 @@ var drawClass = function (elem, classDef) {
   return classInfo
 }
 
-module.exports.setConf = function (cnf) {
+export const setConf = function (cnf) {
   var keys = Object.keys(cnf)
 
   keys.forEach(function (key) {
@@ -303,9 +303,9 @@ module.exports.setConf = function (cnf) {
  * @param text
  * @param id
  */
-module.exports.draw = function (text, id) {
-  cd.yy.clear()
-  cd.parse(text)
+export const draw = function (text, id) {
+  parser.yy.clear()
+  parser.parse(text)
 
   logger.info('Rendering diagram ' + text)
 
@@ -328,7 +328,7 @@ module.exports.draw = function (text, id) {
     return {}
   })
 
-  var classes = cDDb.getClasses()
+  var classes = classDb.getClasses()
   var keys = Object.keys(classes)
   var i
   for (i = 0; i < keys.length; i++) {
@@ -341,7 +341,7 @@ module.exports.draw = function (text, id) {
     logger.info('Org height: ' + node.height)
   }
 
-  var relations = cDDb.getRelations()
+  var relations = classDb.getRelations()
   relations.forEach(function (relation) {
     logger.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation))
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation })

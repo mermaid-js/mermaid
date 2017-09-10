@@ -9,7 +9,7 @@ import { logger } from '../../logger'
  * @param text
  * @param id
  */
-exports.draw = function (txt, id, ver) {
+export const draw = function (txt, id, ver) {
   var parser
   parser = exampleParser.parser
   parser.yy = db

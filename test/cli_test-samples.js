@@ -1,14 +1,13 @@
 /* eslint-env jest */
 /* eslint-env jasmine */
-const exec = require('child_process').exec
-const path = require('path')
-
-const rimraf = require('rimraf')
+import path from 'path'
+import rimraf from 'rimraf'
+import { exec } from 'child_process'
 
 const localSearchPath = './node_modules/.bin' + path.delimiter + process.env.PATH
 const testDir = 'test/fixtures/samples/'.replace('/', path.sep)
 const phantomjs = 'node_modules/.bin/phantomjs '.replace('/', path.sep)
-const loadHtmlSaveScreenshotPngScripts = testDir + path.sep + 'load_html_save_screenshot_png.phantomjs'
+const loadHtmlSaveScreenshotPngScripts = testDir + path.sep + 'load_html_save_screenshot_png.js'
 
 rimraf.sync(testDir + '*.actual.*')
 

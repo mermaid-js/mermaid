@@ -1,9 +1,11 @@
 
 import moment from 'moment'
 
+import { parser } from './parser/gantt'
+import ganttDb from './ganttDb'
 import d3 from '../../d3'
-var gantt = require('./parser/gantt').parser
-gantt.yy = require('./ganttDb')
+
+parser.yy = ganttDb
 
 var daysInChart
 var conf = {
@@ -17,7 +19,7 @@ var conf = {
   fontSize: 11,
   fontFamily: '"Open-Sans", "sans-serif"'
 }
-module.exports.setConf = function (cnf) {
+export const setConf = function (cnf) {
   var keys = Object.keys(cnf)
 
   keys.forEach(function (key) {
@@ -25,9 +27,9 @@ module.exports.setConf = function (cnf) {
   })
 }
 var w
-module.exports.draw = function (text, id) {
-  gantt.yy.clear()
-  gantt.parse(text)
+export const draw = function (text, id) {
+  parser.yy.clear()
+  parser.parse(text)
 
   var elem = document.getElementById(id)
   w = elem.parentElement.offsetWidth
@@ -40,7 +42,7 @@ module.exports.draw = function (text, id) {
     w = conf.useWidth
   }
 
-  var taskArray = gantt.yy.getTasks()
+  var taskArray = parser.yy.getTasks()
 
   // Set height based on number of tasks
   var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding
@@ -85,7 +87,7 @@ module.exports.draw = function (text, id) {
   }
 
   svg.append('text')
-    .text(gantt.yy.getTitle())
+    .text(parser.yy.getTitle())
     .attr('x', w / 2)
     .attr('y', conf.titleTopMargin)
     .attr('class', 'titleText')

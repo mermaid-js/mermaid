@@ -6,6 +6,7 @@ import he from 'he'
 
 import mermaidAPI from './mermaidAPI'
 import { logger } from './logger'
+import pkg from '../package.json'
 
 var nextId = 0
 
@@ -110,7 +111,7 @@ var init = function () {
 }
 
 const version = function () {
-  return 'v' + require('../package.json').version
+  return 'v' + pkg.version
 }
 
 const initialize = function (config) {

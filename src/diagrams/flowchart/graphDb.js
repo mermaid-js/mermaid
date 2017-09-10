@@ -18,7 +18,7 @@ var funs = []
  * @param type
  * @param style
  */
-exports.addVertex = function (id, text, type, style) {
+export const addVertex = function (id, text, type, style) {
   var txt
 
   if (typeof id === 'undefined') {
@@ -63,7 +63,7 @@ exports.addVertex = function (id, text, type, style) {
  * @param type
  * @param linktext
  */
-exports.addLink = function (start, end, type, linktext) {
+export const addLink = function (start, end, type, linktext) {
   logger.info('Got edge...', start, end)
   var edge = { start: start, end: end, type: undefined, text: '' }
   linktext = type.text
@@ -89,7 +89,7 @@ exports.addLink = function (start, end, type, linktext) {
  * @param pos
  * @param interpolate
  */
-exports.updateLinkInterpolate = function (pos, interp) {
+export const updateLinkInterpolate = function (pos, interp) {
   if (pos === 'default') {
     edges.defaultInterpolate = interp
   } else {
@@ -102,7 +102,7 @@ exports.updateLinkInterpolate = function (pos, interp) {
  * @param pos
  * @param style
  */
-exports.updateLink = function (pos, style) {
+export const updateLink = function (pos, style) {
   if (pos === 'default') {
     edges.defaultStyle = style
   } else {
@@ -113,7 +113,7 @@ exports.updateLink = function (pos, style) {
   }
 }
 
-exports.addClass = function (id, style) {
+export const addClass = function (id, style) {
   if (typeof classes[id] === 'undefined') {
     classes[id] = { id: id, styles: [] }
   }
@@ -131,7 +131,7 @@ exports.addClass = function (id, style) {
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-exports.setDirection = function (dir) {
+export const setDirection = function (dir) {
   direction = dir
 }
 
@@ -139,7 +139,7 @@ exports.setDirection = function (dir) {
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-exports.setClass = function (id, className) {
+export const setClass = function (id, className) {
   if (id.indexOf(',') > 0) {
     id.split(',').forEach(function (id2) {
       if (typeof vertices[id2] !== 'undefined') {
@@ -190,7 +190,7 @@ var setLink = function (id, linkStr) {
     })
   }
 }
-exports.getTooltip = function (id) {
+export const getTooltip = function (id) {
   return tooltips[id]
 }
 
@@ -198,7 +198,7 @@ exports.getTooltip = function (id) {
  * Called by parser when a graph definition is found, stores the direction of the chart.
  * @param dir
  */
-exports.setClickEvent = function (id, functionName, link, tooltip) {
+export const setClickEvent = function (id, functionName, link, tooltip) {
   if (id.indexOf(',') > 0) {
     id.split(',').forEach(function (id2) {
       setTooltip(id2, tooltip)
@@ -212,19 +212,19 @@ exports.setClickEvent = function (id, functionName, link, tooltip) {
   }
 }
 
-exports.bindFunctions = function (element) {
+export const bindFunctions = function (element) {
   funs.forEach(function (fun) {
     fun(element)
   })
 }
-exports.getDirection = function () {
+export const getDirection = function () {
   return direction
 }
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.
  * @returns {{}|*|vertices}
  */
-exports.getVertices = function () {
+export const getVertices = function () {
   return vertices
 }
 
@@ -232,7 +232,7 @@ exports.getVertices = function () {
  * Retrieval function for fetching the found links after parsing has completed.
  * @returns {{}|*|edges}
  */
-exports.getEdges = function () {
+export const getEdges = function () {
   return edges
 }
 
@@ -240,7 +240,7 @@ exports.getEdges = function () {
  * Retrieval function for fetching the found class definitions after parsing has completed.
  * @returns {{}|*|classes}
  */
-exports.getClasses = function () {
+export const getClasses = function () {
   return classes
 }
 
@@ -287,7 +287,7 @@ funs.push(setupToolTips)
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-exports.clear = function () {
+export const clear = function () {
   vertices = {}
   classes = {}
   edges = []
@@ -301,14 +301,14 @@ exports.clear = function () {
  *
  * @returns {string}
  */
-exports.defaultStyle = function () {
+export const defaultStyle = function () {
   return 'fill:#ffa;stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;fill:#ffa;stroke: #666;'
 }
 
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-exports.addSubGraph = function (list, title) {
+export const addSubGraph = function (list, title) {
   function uniq (a) {
     var prims = { 'boolean': {}, 'number': {}, 'string': {} }
     var objs = []
@@ -343,7 +343,7 @@ var getPosForId = function (id) {
 }
 var secCount = -1
 var posCrossRef = []
-var indexNodes = function (id, pos) {
+var indexNodes2 = function (id, pos) {
   var nodes = subGraphs[pos].nodes
   secCount = secCount + 1
   if (secCount > 2000) {
@@ -364,7 +364,7 @@ var indexNodes = function (id, pos) {
     var childPos = getPosForId(nodes[count])
     // Ignore regular nodes (pos will be -1)
     if (childPos >= 0) {
-      var res = indexNodes(id, childPos)
+      var res = indexNodes2(id, childPos)
       if (res.result) {
         return {
           result: true,
@@ -383,16 +383,16 @@ var indexNodes = function (id, pos) {
   }
 }
 
-exports.getDepthFirstPos = function (pos) {
+export const getDepthFirstPos = function (pos) {
   return posCrossRef[pos]
 }
-exports.indexNodes = function () {
+export const indexNodes = function () {
   secCount = -1
   if (subGraphs.length > 0) {
-    indexNodes('none', subGraphs.length - 1, 0)
+    indexNodes2('none', subGraphs.length - 1, 0)
   }
 }
 
-exports.getSubGraphs = function () {
+export const getSubGraphs = function () {
   return subGraphs
 }

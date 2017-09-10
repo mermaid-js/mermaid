@@ -1,13 +1,12 @@
 /* eslint-env jest */
 /* eslint-env jasmine */
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import async from 'async'
+import clone from 'clone'
+import rimraf from 'rimraf'
 
-const async = require('async')
-const clone = require('clone')
-const rimraf = require('rimraf')
-
-const mermaid = require('../lib')
+import mermaidCli from '../lib'
 
 const fileTestMermaid = path.join('test', 'fixtures', 'test.mermaid')
 const isWin = /^win/.test(process.platform)
@@ -53,7 +52,7 @@ test('output of single png', function (done) {
   opt.outputDir += '_png'
   opt.png = true
 
-  mermaid.process(opt.files, opt, function (code) {
+  mermaidCli.process(opt.files, opt, function (code) {
     expect(code).toBe(0)
 
     verifyFiles(expected, opt.outputDir, done)
@@ -70,7 +69,7 @@ test('output of multiple png', function (done) {
   opt.outputDir += '_png'
   opt.png = true
 
-  mermaid.process(opt.files, opt, function (code) {
+  mermaidCli.process(opt.files, opt, function (code) {
     expect(code).toBe(0)
 
     verifyFiles(expected, opt.outputDir, done)
@@ -86,7 +85,7 @@ test('output of single svg', function (done) {
   opt.outputDir += '_svg'
   opt.svg = true
 
-  mermaid.process(opt.files, opt, function (code) {
+  mermaidCli.process(opt.files, opt, function (code) {
     expect(code).toBe(0)
 
     verifyFiles(expected, opt.outputDir, done)
@@ -103,7 +102,7 @@ test('output of multiple svg', function (done) {
   opt.outputDir += '_svg'
   opt.svg = true
 
-  mermaid.process(opt.files, opt, function (code) {
+  mermaidCli.process(opt.files, opt, function (code) {
     expect(code).toBe(0)
 
     verifyFiles(expected, opt.outputDir, done)
@@ -122,14 +121,14 @@ test('output including CSS', function (done) {
   opt2.png = true
   opt2.outputDir += '_css_png'
 
-  mermaid.process(opt.files, opt, function (code) {
+  mermaidCli.process(opt.files, opt, function (code) {
     expect(code).toBe(0)
     const filename = path.join(opt.outputDir, path.basename(expected[0]))
     const one = fs.statSync(filename)
 
     opt2.css = path.join('test', 'fixtures', 'test.css')
 
-    mermaid.process(opt2.files, opt2, function (code) {
+    mermaidCli.process(opt2.files, opt2, function (code) {
       expect(code).toBe(0)
       const two = fs.statSync(filename)
       expect(one.size).not.toBe(two.size)

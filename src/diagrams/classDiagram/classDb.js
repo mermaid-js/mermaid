@@ -14,7 +14,7 @@ classes = {
  * @param type
  * @param style
  */
-exports.addClass = function (id) {
+export const addClass = function (id) {
   if (typeof classes[id] === 'undefined') {
     classes[id] = {
       id: id,
@@ -24,31 +24,30 @@ exports.addClass = function (id) {
   }
 }
 
-exports.clear = function () {
+export const clear = function () {
   relations = []
   classes = {}
 }
 
-module.exports.getClass = function (id) {
+export const getClass = function (id) {
   return classes[id]
 }
-module.exports.getClasses = function () {
+export const getClasses = function () {
   return classes
 }
 
-module.exports.getRelations = function () {
+export const getRelations = function () {
   return relations
 }
 
-exports.addRelation = function (relation) {
+export const addRelation = function (relation) {
   logger.warn('Adding relation: ' + JSON.stringify(relation))
-  module.exports.addClass(relation.id1)
-  module.exports.addClass(relation.id2)
-
+  addClass(relation.id1)
+  addClass(relation.id2)
   relations.push(relation)
 }
 
-exports.addMembers = function (className, MembersArr) {
+export const addMembers = function (className, MembersArr) {
   var theClass = classes[className]
   if (typeof MembersArr === 'string') {
     if (MembersArr.substr(-1) === ')') {
@@ -59,7 +58,7 @@ exports.addMembers = function (className, MembersArr) {
   }
 }
 
-exports.cleanupLabel = function (label) {
+export const cleanupLabel = function (label) {
   if (label.substring(0, 1) === ':') {
     return label.substr(2).trim()
   } else {
@@ -67,12 +66,12 @@ exports.cleanupLabel = function (label) {
   }
 }
 
-exports.lineType = {
+export const lineType = {
   LINE: 0,
   DOTTED_LINE: 1
 }
 
-exports.relationType = {
+export const relationType = {
   AGGREGATION: 0,
   EXTENSION: 1,
   COMPOSITION: 2,

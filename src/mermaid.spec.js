@@ -1,5 +1,8 @@
 /* eslint-env jasmine */
 import mermaid from './mermaid'
+import graphDb from './diagrams/flowchart/graphDb'
+import flowParser from './diagrams/flowchart/parser/flow'
+import flowRenderer from './diagrams/flowchart/flowRenderer'
 
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {
@@ -48,19 +51,15 @@ describe('when using mermaid and ', function () {
   })
 
   describe('when calling addEdges ', function () {
-    var graph = require('./diagrams/flowchart/graphDb')
-    var flow = require('./diagrams/flowchart/parser/flow')
-    var flowRend = require('./diagrams/flowchart/flowRenderer')
-
     beforeEach(function () {
       global.mermaid_config = { startOnLoad: false }
-      flow.parser.yy = graph
-      graph.clear()
+      flowParser.parser.yy = graphDb
+      graphDb.clear()
     })
     it('it should handle edges with text', function () {
-      flow.parser.parse('graph TD;A-->|text ex|B;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A-->|text ex|B;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -71,13 +70,13 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
 
     it('should handle edges without text', function () {
-      flow.parser.parse('graph TD;A-->B;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A-->B;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -87,13 +86,13 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
 
     it('should handle open-ended edges', function () {
-      flow.parser.parse('graph TD;A---B;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A---B;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -103,13 +102,13 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
 
     it('should handle edges with styles defined', function () {
-      flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -120,12 +119,12 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
     it('should handle edges with interpolation defined', function () {
-      flow.parser.parse('graph TD;A---B; linkStyle 0 interpolate basis')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 interpolate basis')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -136,12 +135,12 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
     it('should handle edges with text and styles defined', function () {
-      flow.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -153,13 +152,13 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
 
     it('should set fill to "none" by default when handling edges', function () {
-      flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
 
       var mockG = {
         setEdge: function (start, end, options) {
@@ -170,13 +169,13 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
 
     it('should not set fill to none if fill is set in linkStyle', function () {
-      flow.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;')
-      flow.parser.yy.getVertices()
-      var edges = flow.parser.yy.getEdges()
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;')
+      flowParser.parser.yy.getVertices()
+      var edges = flowParser.parser.yy.getEdges()
       var mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
@@ -186,7 +185,7 @@ describe('when using mermaid and ', function () {
         }
       }
 
-      flowRend.addEdges(edges, mockG)
+      flowRenderer.addEdges(edges, mockG)
     })
   })
 
