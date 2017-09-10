@@ -1,5 +1,6 @@
 - Upgrade d3 to version 4
 - Use external d3-textwrap library
+    - rewrite src/d3.js
     - Problem is it's for d3 v4 only
 - Make node console output colors like Chrome console
 - What's the correct way to change logLevel as an end user?
@@ -13,11 +14,8 @@
     - https://github.com/lodash/babel-plugin-lodash
     - https://www.npmjs.com/package/lodash-webpack-plugin
 - Replace var with const/let
-- Replace require with import
-- Replace module.exports with export default
 - Replace karma-webpack with karma-babel
 - Stops working for mermaid-live-editor since 7.0.9
 - global.mermaid_config
 - rewrite logger
-- rewrite src/d3.js
 - rewrite less code
