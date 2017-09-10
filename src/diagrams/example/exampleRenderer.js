@@ -33,3 +33,7 @@ export const draw = function (txt, id, ver) {
   svg.attr('height', 100)
   svg.attr('width', 400)
 }
+
+export default {
+  draw
+}

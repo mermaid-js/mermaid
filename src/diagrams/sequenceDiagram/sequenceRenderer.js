@@ -501,3 +501,10 @@ export const draw = function (text, id) {
   var extraVertForTitle = title ? 40 : 0
   diagram.attr('viewBox', (box.startx - conf.diagramMarginX) + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle))
 }
+
+export default {
+  bounds,
+  drawActors,
+  setConf,
+  draw
+}

@@ -314,3 +314,17 @@ var _drawTextCandidateFunc = (function () {
       conf.textPlacement === 'old' ? byText : byTspan)
   }
 })()
+
+export default {
+  drawRect,
+  drawText,
+  drawLabel,
+  drawActor,
+  anchorElement,
+  drawActivation,
+  drawLoop,
+  insertArrowHead,
+  insertArrowCrossHead,
+  getTextObj,
+  getNoteRect
+}

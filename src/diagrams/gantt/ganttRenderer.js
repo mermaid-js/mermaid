@@ -401,3 +401,8 @@ export const draw = function (text, id) {
     return getCounts(arr)[word] || 0
   }
 }
+
+export default {
+  setConf,
+  draw
+}

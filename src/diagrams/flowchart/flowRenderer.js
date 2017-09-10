@@ -501,3 +501,11 @@ export const draw = function (text, id, isDot) {
     }
   }
 }
+
+export default {
+  setConf,
+  addVertices,
+  addEdges,
+  getClasses,
+  draw
+}

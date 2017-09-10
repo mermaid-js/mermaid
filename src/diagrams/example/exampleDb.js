@@ -19,3 +19,10 @@ export const setInfo = function (inf) {
 export const getInfo = function () {
   return info
 }
+
+export default {
+  setMessage,
+  getMessage,
+  setInfo,
+  getInfo
+}

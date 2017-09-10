@@ -272,3 +272,8 @@ export const draw = function (txt, id, ver) {
     logger.error(e.message)
   }
 }
+
+export default {
+  setConf,
+  draw
+}

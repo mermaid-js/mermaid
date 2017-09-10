@@ -362,3 +362,8 @@ export const draw = function (text, id) {
   diagram.attr('width', '100%')
   diagram.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20))
 }
+
+export default {
+  setConf,
+  draw
+}
