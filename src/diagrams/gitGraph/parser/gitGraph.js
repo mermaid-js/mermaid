@@ -84,7 +84,7 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return $$[$0-1];
+ return $$[$0-1]; 
 break;
 case 2:
 yy.setDirection($$[$0-3]); return $$[$0-1];
@@ -126,7 +126,7 @@ case 17:
 this.$=$$[$0]
 break;
 case 18:
-this.$ = $$[$0-1]+ ":" + $$[$0]
+this.$ = $$[$0-1]+ ":" + $$[$0] 
 break;
 case 19:
 this.$ = $$[$0-1]+ ":"  + yy.count; yy.count = 0
@@ -135,7 +135,7 @@ case 20:
 yy.count = 0
 break;
 case 21:
- yy.count += 1
+ yy.count += 1 
 break;
 }
 },
@@ -687,12 +687,12 @@ exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain(args) {
-    // if (!args[1]) {
-    //     console.log('Usage: '+args[0]+' FILE');
-    //     process.exit(1);
-    // }
-    // var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-    // return exports.parser.parse(source);
+    if (!args[1]) {
+        console.log('Usage: '+args[0]+' FILE');
+        process.exit(1);
+    }
+    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));

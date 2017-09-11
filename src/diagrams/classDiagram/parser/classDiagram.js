@@ -84,22 +84,22 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 5:
- this.$=$$[$0-1]+$$[$0];
+ this.$=$$[$0-1]+$$[$0]; 
 break;
 case 6:
- this.$=$$[$0];
+ this.$=$$[$0]; 
 break;
 case 7:
- yy.addRelation($$[$0]);
+ yy.addRelation($$[$0]); 
 break;
 case 8:
- $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);
+ $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
 case 12:
 /*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addMembers($$[$0-3],$$[$0-1]);
 break;
 case 13:
- this.$ = [$$[$0]];
+ this.$ = [$$[$0]]; 
 break;
 case 14:
  $$[$0].push($$[$0-1]);this.$=$$[$0];
@@ -117,28 +117,28 @@ case 18:
 /*console.log('sep found',$$[$0]);*/
 break;
 case 19:
- this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'};
+ this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
 case 20:
  this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
 case 21:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]};
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
 case 22:
- this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]}
+ this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
 case 23:
- this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]};
+ this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 24:
- this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]};
+ this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 25:
- this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]};
+ this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
 case 26:
- this.$={type1:'none',type2:'none',lineType:$$[$0]};
+ this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
 case 27:
  this.$=yy.relationType.AGGREGATION;
@@ -731,12 +731,12 @@ exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain(args) {
-    // if (!args[1]) {
-    //     console.log('Usage: '+args[0]+' FILE');
-    //     process.exit(1);
-    // }
-    // var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
-    // return exports.parser.parse(source);
+    if (!args[1]) {
+        console.log('Usage: '+args[0]+' FILE');
+        process.exit(1);
+    }
+    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));

@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "7.0.13",
+  "version": "7.0.14",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -24,7 +24,7 @@
     "karma": "node -r babel-register node_modules/.bin/karma start karma.conf.js --single-run",
     "jest": "jest --coverage --runInBand",
     "test": "yarn lint && yarn karma",
-    "jison": "gulp jison",
+    "jison": "node -r babel-register node_modules/.bin/gulp jison",
     "prepublishOnly": "yarn build && yarn release && yarn test"
   },
   "repository": {

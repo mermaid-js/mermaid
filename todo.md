@@ -9,6 +9,7 @@
 - Get familar with jison
 - git graph requires a blank line at the end. why?
 - Move cli to mermaid-cli project ?
+    - think about it
 - Remove 'lodash' as dependency
     - https://github.com/lodash/babel-plugin-lodash
     - https://www.npmjs.com/package/lodash-webpack-plugin
@@ -22,5 +23,4 @@
     - Generate them into system temp folder instead
 - Replace phantomjs with Chrome headless
 - `yarn jest` is disabled
-- Don't manually change jison generated files
-    - Removed 'fs' dependency from it
+- Travis build failed

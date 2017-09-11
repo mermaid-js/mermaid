@@ -31,7 +31,7 @@ export default function (config) {
     },
 
     webpack: {
-      externals: webpackConfig.externals,
+      node: webpackConfig.node,
       module: webpackConfig.module
     },
 

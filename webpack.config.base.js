@@ -16,6 +16,9 @@ export const jsConfig = () => {
     entry: {
       mermaid: './src/mermaid.js'
     },
+    node: {
+      fs: 'empty' // jison generated code requires 'fs'
+    },
     output: {
       path: path.join(__dirname, './dist/'),
       filename: '[name].js',
