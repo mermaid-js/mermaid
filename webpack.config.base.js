@@ -26,17 +26,22 @@ const jsRule = {
   }
 }
 
+const styleRule = { // load less to string
+  test: /\.less$/,
+  use: [
+    { loader: 'css-to-string-loader' },
+    { loader: 'css-loader' },
+    { loader: 'less-loader' }
+  ]
+}
+
 const lessRule = {
   test: /\.less$/,
   use: ExtractTextPlugin.extract({
     fallback: 'style-loader',
     use: [
-      {
-        loader: 'css-loader'
-      },
-      {
-        loader: 'less-loader'
-      }
+      { loader: 'css-loader' },
+      { loader: 'less-loader' }
     ]
   })
 }
@@ -58,7 +63,7 @@ export const jsConfig = () => {
       libraryExport: 'default'
     },
     module: {
-      rules: [lodashRule, jsRule]
+      rules: [lodashRule, jsRule, styleRule]
     }
   }
 }
