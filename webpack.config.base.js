@@ -1,5 +1,4 @@
 import path from 'path'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
 const lodashRule = {
   parser: {
@@ -26,24 +25,13 @@ const jsRule = {
   }
 }
 
-const styleRule = { // load less to string
+const lessRule = { // load less to string
   test: /\.less$/,
   use: [
     { loader: 'css-to-string-loader' },
     { loader: 'css-loader' },
     { loader: 'less-loader' }
   ]
-}
-
-const lessRule = {
-  test: /\.less$/,
-  use: ExtractTextPlugin.extract({
-    fallback: 'style-loader',
-    use: [
-      { loader: 'css-loader' },
-      { loader: 'less-loader' }
-    ]
-  })
 }
 
 export const jsConfig = () => {
@@ -63,29 +51,7 @@ export const jsConfig = () => {
       libraryExport: 'default'
     },
     module: {
-      rules: [lodashRule, jsRule, styleRule]
+      rules: [lodashRule, jsRule, lessRule]
     }
-  }
-}
-
-export const lessConfig = () => {
-  return {
-    target: 'web',
-    entry: {
-      'mermaid.default': './src/less/default/mermaid.less',
-      'mermaid.dark': './src/less/dark/mermaid.less',
-      'mermaid.forest': './src/less/forest/mermaid.less',
-      'mermaid.neutral': './src/less/neutral/mermaid.less'
-    },
-    output: {
-      path: path.join(__dirname, './dist/themes'),
-      filename: '[name].css'
-    },
-    module: {
-      rules: [lessRule]
-    },
-    plugins: [
-      new ExtractTextPlugin('[name].css')
-    ]
   }
 }

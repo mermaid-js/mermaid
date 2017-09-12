@@ -35,6 +35,8 @@ import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
 import d3 from './d3'
 import pkg from '../package.json'
 
+import forestStyle from './less/forest/mermaid.less'
+
 /**
  * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:
@@ -388,7 +390,7 @@ var render = function (id, txt, cb, container) {
 
   var element = d3.select('#d' + id).node()
   var graphType = utils.detectType(txt)
-  var classes = {}
+  // var classes = {}
   switch (graphType) {
     case 'gitGraph':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
@@ -399,52 +401,60 @@ var render = function (id, txt, cb, container) {
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       flowRenderer.setConf(config.flowchart)
       flowRenderer.draw(txt, id, false)
-      if (config.cloneCssStyles) {
-        classes = flowRenderer.getClasses(txt, false)
-        utils.cloneCssStyles(element.firstChild, classes)
-      }
+      // if (config.cloneCssStyles) {
+      //   classes = flowRenderer.getClasses(txt, false)
+      //   utils.cloneCssStyles(element.firstChild, classes)
+      // }
       break
     case 'dotGraph':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       flowRenderer.setConf(config.flowchart)
       flowRenderer.draw(txt, id, true)
-      if (config.cloneCssStyles) {
-        classes = flowRenderer.getClasses(txt, true)
-        utils.cloneCssStyles(element.firstChild, classes)
-      }
+      // if (config.cloneCssStyles) {
+      //   classes = flowRenderer.getClasses(txt, true)
+      //   utils.cloneCssStyles(element.firstChild, classes)
+      // }
       break
     case 'sequenceDiagram':
       config.sequenceDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       seq.setConf(config.sequenceDiagram)
       seq.draw(txt, id)
-      if (config.cloneCssStyles) {
-        utils.cloneCssStyles(element.firstChild, [])
-      }
+      // if (config.cloneCssStyles) {
+      //   utils.cloneCssStyles(element.firstChild, [])
+      // }
       break
     case 'gantt':
       config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       gantt.setConf(config.gantt)
       gantt.draw(txt, id)
-      if (config.cloneCssStyles) {
-        utils.cloneCssStyles(element.firstChild, [])
-      }
+      // if (config.cloneCssStyles) {
+      //   utils.cloneCssStyles(element.firstChild, [])
+      // }
       break
     case 'classDiagram':
       config.classDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       classRenderer.setConf(config.classDiagram)
       classRenderer.draw(txt, id)
-      if (config.cloneCssStyles) {
-        utils.cloneCssStyles(element.firstChild, [])
-      }
+      // if (config.cloneCssStyles) {
+      //   utils.cloneCssStyles(element.firstChild, [])
+      // }
       break
     case 'info':
       config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       info.draw(txt, id, version())
-      if (config.cloneCssStyles) {
-        utils.cloneCssStyles(element.firstChild, [])
-      }
+      // if (config.cloneCssStyles) {
+      //   utils.cloneCssStyles(element.firstChild, [])
+      // }
       break
   }
+
+  // insert inline style into svg
+  const svg = element.firstChild
+  const s = document.createElement('style')
+  // s.innerHTML = '/* <![CDATA[ */\n'
+  s.innerHTML = forestStyle
+  // s.innerHTML += '/* ]]> */\n'
+  svg.insertBefore(s, svg.firstChild)
 
   d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 
