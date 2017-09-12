@@ -35,18 +35,17 @@ import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
 import d3 from './d3'
 import pkg from '../package.json'
 
-import darkStyle from './less/dark/mermaid.less'
-import defaultStyle from './less/default/mermaid.less'
-import forestStyle from './less/forest/mermaid.less'
-import neutralStyle from './less/neutral/mermaid.less'
+import darkTheme from './less/dark/mermaid.less'
+import defaultTheme from './less/default/mermaid.less'
+import forestTheme from './less/forest/mermaid.less'
+import neutralTheme from './less/neutral/mermaid.less'
 
 const themes = {
-  dark: darkStyle,
-  default: defaultStyle,
-  forest: forestStyle,
-  neutral: neutralStyle
+  dark: darkTheme,
+  default: defaultTheme,
+  forest: forestTheme,
+  neutral: neutralTheme
 }
-const defaultTheme = forestStyle
 
 /**
  * ## Configuration
