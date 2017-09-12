@@ -100,7 +100,7 @@ describe('when cloning CSS ', function () {
     svg.setAttribute('id', 'mermaid-01')
 
     // Firefox throws a SecurityError when trying to access cssRules
-    document.styleSheets[document.styleSheets.length] = {
+    document.styleSheets[document.styleSheets.length - 1] = {
       get cssRules () { throw new Error('SecurityError') }
     }
 
