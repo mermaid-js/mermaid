@@ -1,14 +1,45 @@
 import path from 'path'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 
-const rules = [
-  {
-    parser: {
-      amd: false
-    },
-    include: /node_modules\/lodash\// // https://github.com/lodash/lodash/issues/3052
+const lodashRule = {
+  parser: {
+    amd: false
+  },
+  include: /node_modules\/lodash\// // https://github.com/lodash/lodash/issues/3052
+}
+
+const jsRule = {
+  test: /\.js$/,
+  exclude: /node_modules/,
+  use: {
+    loader: 'babel-loader',
+    options: {
+      presets: [
+        ['env', {
+          'targets': {
+            'browsers': ['last 3 versions']
+          }
+        }]
+      ],
+      plugins: ['lodash']
+    }
   }
-]
+}
+
+const lessRule = {
+  test: /\.less$/,
+  use: ExtractTextPlugin.extract({
+    fallback: 'style-loader',
+    use: [
+      {
+        loader: 'css-loader'
+      },
+      {
+        loader: 'less-loader'
+      }
+    ]
+  })
+}
 
 export const jsConfig = () => {
   return {
@@ -27,25 +58,7 @@ export const jsConfig = () => {
       libraryExport: 'default'
     },
     module: {
-      rules: rules.concat([
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                ['env', {
-                  'targets': {
-                    'browsers': ['last 3 versions']
-                  }
-                }]
-              ],
-              plugins: ['lodash']
-            }
-          }
-        }
-      ])
+      rules: [lodashRule, jsRule]
     }
   }
 }
@@ -64,22 +77,7 @@ export const lessConfig = () => {
       filename: '[name].css'
     },
     module: {
-      rules: rules.concat([
-        {
-          test: /\.less$/,
-          use: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: [
-              {
-                loader: 'css-loader'
-              },
-              {
-                loader: 'less-loader'
-              }
-            ]
-          })
-        }
-      ])
+      rules: [lessRule]
     },
     plugins: [
       new ExtractTextPlugin('[name].css')
