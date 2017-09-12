@@ -1,6 +1,3 @@
-// Karma configuration
-// Generated on Mon Nov 03 2014 07:53:38 GMT+0100 (CET)
-
 import { jsConfig } from './webpack.config.base'
 
 const webpackConfig = jsConfig()
@@ -17,13 +14,7 @@ export default function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      './src/*.spec.js',
-      './src/diagrams/flowchart/**/*.spec.js',
-      './src/diagrams/example/**/*.spec.js',
-      './src/diagrams/sequenceDiagram/**/*.spec.js',
-      './src/diagrams/classDiagram/**/*.spec.js',
-      './src/diagrams/gantt/**/*.spec.js',
-      './src/diagrams/gitGraph/**/*.spec.js'
+      './src/**/*.spec.js'
     ],
 
     preprocessors: {
@@ -70,11 +61,7 @@ export default function (config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['ChromeHeadless'],
-    plugins: [
-      'karma-jasmine',
-      'karma-chrome-launcher',
-      'karma-webpack'
-    ],
+
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false

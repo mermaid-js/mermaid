@@ -14,7 +14,6 @@
     - https://github.com/lodash/babel-plugin-lodash
     - https://www.npmjs.com/package/lodash-webpack-plugin
 - Replace var with const/let
-- Replace karma-webpack with karma-babel
 - Stops working for mermaid-live-editor since 7.0.9
 - global.mermaid_config
 - rewrite logger
