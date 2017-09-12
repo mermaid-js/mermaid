@@ -33,7 +33,6 @@ describe('when using mermaidAPI and ', function () {
       expect(config.testObject.test1).toBe(1)
       expect(config.testObject.test2).toBe(false)
       expect(config.testObject.test3).toBe(true)
-      expect(config.cloneCssStyles).toBe(orgConfig.cloneCssStyles)
     })
   })
   describe('checking validity of input ', function () {
