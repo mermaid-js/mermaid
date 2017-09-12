@@ -35,7 +35,18 @@ import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
 import d3 from './d3'
 import pkg from '../package.json'
 
+import darkStyle from './less/dark/mermaid.less'
+import defaultStyle from './less/default/mermaid.less'
 import forestStyle from './less/forest/mermaid.less'
+import neutralStyle from './less/neutral/mermaid.less'
+
+const themes = {
+  dark: darkStyle,
+  default: defaultStyle,
+  forest: forestStyle,
+  neutral: neutralStyle
+}
+const defaultTheme = forestStyle
 
 /**
  * ## Configuration
@@ -49,6 +60,8 @@ import forestStyle from './less/forest/mermaid.less'
  * ```
  */
 var config = {
+  theme: defaultTheme,
+
   /**
    * logLevel , decides the amount of logging to be used.
    *    * debug: 1
@@ -425,7 +438,7 @@ var render = function (id, txt, cb, container) {
   // insert inline style into svg
   const svg = element.firstChild
   const s = document.createElement('style')
-  s.innerHTML = forestStyle
+  s.innerHTML = themes[config.theme] || defaultTheme
   svg.insertBefore(s, svg.firstChild)
 
   d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml')
