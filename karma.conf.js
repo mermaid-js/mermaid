@@ -1,4 +1,9 @@
+import { puppeteer } from 'puppeteer/package.json'
+import ChromiumDownloader from 'puppeteer/utils/ChromiumDownloader'
+
 import { jsConfig } from './webpack.config.base'
+
+process.env.CHROMIUM_BIN = ChromiumDownloader.revisionInfo(ChromiumDownloader.currentPlatform(), puppeteer.chromium_revision).executablePath
 
 const webpackConfig = jsConfig()
 
@@ -18,12 +23,13 @@ export default function (config) {
     ],
 
     preprocessors: {
-      'src/**/*.spec.js': ['webpack']
+      'src/**/*.spec.js': ['webpack', 'sourcemap']
     },
 
     webpack: {
       node: webpackConfig.node,
-      module: webpackConfig.module
+      module: webpackConfig.module,
+      devtool: 'inline-source-map'
     },
 
     // test results reporter to use
@@ -44,23 +50,9 @@ export default function (config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
-    customLaunchers: {
-      ChromeHeadless: {
-        base: 'Chrome',
-        flags: [
-          '--incognito',
-          // '--headless',
-          '--disable-gpu',
-          '--no-sandbox',
-          // Without a remote debugging port, Google Chrome exits immediately.
-          '--remote-debugging-port=9222'
-        ]
-      }
-    },
-
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromeHeadless'],
+    browsers: ['ChromiumHeadless'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
