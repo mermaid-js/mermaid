@@ -3,9 +3,9 @@ import { parser } from './parser/sequenceDiagram'
 import sequenceDb from './sequenceDb'
 import MyModuleInjector from 'inject-loader!./sequenceRenderer' // eslint-disable-line import/no-webpack-loader-syntax
 
-var NewD3
+let NewD3
 
-var d3 = {
+const d3 = {
   select: function () {
     return new NewD3()
   },
@@ -14,7 +14,7 @@ var d3 = {
   }
 }
 
-var renderer = MyModuleInjector({
+const renderer = MyModuleInjector({
   '../../d3': d3
 })
 
@@ -25,43 +25,42 @@ function addConf (conf, key, value) {
   return conf
 }
 
-var str
 describe('when parsing a sequenceDiagram', function () {
   beforeEach(function () {
     parser.yy = sequenceDb
     parser.yy.clear()
   })
   it('it should handle a sequenceDiagram defintion', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob:Hello Bob, how are you?\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob-->Alice: I am good thanks!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle a sequenceDiagram definition with a title', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'title: Diagram Title\n' +
       'Alice->Bob:Hello Bob, how are you?\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob-->Alice: I am good thanks!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
-    var title = parser.yy.getTitle()
+    const messages = parser.yy.getMessages()
+    const title = parser.yy.getTitle()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
@@ -69,23 +68,23 @@ describe('when parsing a sequenceDiagram', function () {
     expect(title).toBe('Diagram Title')
   })
   it('it should space in actor names', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob:Hello Bob, how are - you?\n' +
       'Bob-->Alice: I am good thanks!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(2)
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
   it('it should alias participants', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'participant A as Alice\n' +
       'participant B as Bob\n' +
       'A->B:Hello Bob, how are you?\n' +
@@ -93,85 +92,85 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(Object.keys(actors)).toEqual(['A', 'B'])
     expect(actors.A.description).toBe('Alice')
     expect(actors.B.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages.length).toBe(2)
     expect(messages[0].from).toBe('A')
     expect(messages[1].from).toBe('B')
   })
   it('it should handle in async messages', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice-xBob:Hello Bob, how are you?'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(1)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.SOLID_CROSS)
   })
   it('it should handle in async dotted messages', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice--xBob:Hello Bob, how are you?'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(1)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED_CROSS)
   })
   it('it should handle in arrow messages', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->>Bob:Hello Bob, how are you?'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(1)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.SOLID)
   })
   it('it should handle in arrow messages', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice-->>Bob:Hello Bob, how are you?'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(1)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED)
   })
   it('it should handle actor activation', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice-->>Bob:Hello Bob, how are you?\n' +
       'activate Bob\n' +
       'Bob-->>Alice:Hello Alice, I\'m fine and  you?\n' +
       'deactivate Bob'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(4)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED)
@@ -182,16 +181,16 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[3].from.actor).toBe('Bob')
   })
   it('it should handle actor one line notation activation', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice-->>+Bob:Hello Bob, how are you?\n' +
       'Bob-->>- Alice:Hello Alice, I\'m fine and  you?'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(4)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED)
@@ -202,18 +201,18 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[3].from.actor).toBe('Bob')
   })
   it('it should handle stacked activations', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice-->>+Bob:Hello Bob, how are you?\n' +
       'Bob-->>+Carol:Carol, let me introduce Alice?\n' +
       'Bob-->>- Alice:Hello Alice, please meet Carol?\n' +
       'Carol->>- Bob:Oh Bob, I\'m so happy to be here!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(8)
     expect(messages[0].type).toBe(parser.yy.LINETYPE.DOTTED)
@@ -228,96 +227,96 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[7].from.actor).toBe('Carol')
   })
   it('it should handle comments in a sequenceDiagram', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob-->Alice: I am good thanks!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle new lines in a sequenceDiagram', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob-->Alice: I am good thanks!\n'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle semicolons', function () {
-    str = 'sequenceDiagram;' +
+    const str = 'sequenceDiagram;' +
       'Alice->Bob: Hello Bob, how are you?;' +
       'Note right of Bob: Bob thinks;' +
       'Bob-->Alice: I am good thanks!;'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle one leading space in lines in a sequenceDiagram', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       ' Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob-->Alice: I am good thanks!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle several leading spaces in lines in a sequenceDiagram', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       '   Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob-->Alice: I am good thanks!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(3)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle several leading spaces in lines in a sequenceDiagram', function () {
-    str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'participant Alice\n' +
       'participant Bob\n' +
       'Alice->John: Hello John, how are you?\n' +
@@ -330,43 +329,43 @@ describe('when parsing a sequenceDiagram', function () {
       'Bob-->John: Jolly good!'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(8)
     expect(messages[0].from).toBe('Alice')
     expect(messages[2].from).toBe('John')
   })
   it('it should handle notes over a single actor', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Note over Bob: Bob thinks\n'
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].from).toBe('Bob')
     expect(messages[1].to).toBe('Bob')
   })
   it('it should handle notes over multiple actors', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Note over Alice,Bob: confusion\n' +
       'Note over Bob,Alice: resolution\n'
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].from).toBe('Alice')
     expect(messages[1].to).toBe('Bob')
     expect(messages[2].from).toBe('Bob')
     expect(messages[2].to).toBe('Alice')
   })
   it('it should handle loop statements a sequenceDiagram', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
@@ -375,18 +374,18 @@ describe('when parsing a sequenceDiagram', function () {
       'end'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(5)
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
   it('it should handle opt statements a sequenceDiagram', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
@@ -395,18 +394,18 @@ describe('when parsing a sequenceDiagram', function () {
       'end'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(5)
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
   it('it should handle alt statements a sequenceDiagram', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
       'Note right of Bob: Bob thinks\n' +
@@ -417,19 +416,19 @@ describe('when parsing a sequenceDiagram', function () {
       'end'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
 
     expect(actors.Alice.description).toBe('Alice')
     actors.Bob.description = 'Bob'
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(7)
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
   it('it should handle par statements a sequenceDiagram', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'par Parallel one\n' +
       'Alice->>Bob: Hello Bob, how are you?\n' +
       'Bob-->>Alice: I am good thanks!\n' +
@@ -442,12 +441,12 @@ describe('when parsing a sequenceDiagram', function () {
       'end'
 
     parser.parse(str)
-    var actors = parser.yy.getActors()
+    const actors = parser.yy.getActors()
 
     expect(actors.Alice.description).toBe('Alice')
     expect(actors.Bob.description).toBe('Bob')
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
 
     expect(messages.length).toBe(10)
     expect(messages[0].message).toBe('Parallel one')
@@ -455,26 +454,26 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[2].from).toBe('Bob')
   })
   it('it should handle special characters in signals', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: -:<>,;# comment'
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[0].message).toBe('-:<>,')
   })
   it('it should handle special characters in notes', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Note right of Bob: -:<>,;# comment'
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('-:<>,')
   })
   it('it should handle special characters in loop', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'loop -:<>,;# comment\n' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -482,11 +481,11 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('-:<>,')
   })
   it('it should handle special characters in opt', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'opt -:<>,;# comment\n' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -494,11 +493,11 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('-:<>,')
   })
   it('it should handle special characters in alt', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'alt -:<>,;# comment\n' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -508,12 +507,12 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('-:<>,')
     expect(messages[3].message).toBe(',<>:-')
   })
   it('it should handle special characters in par', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'par -:<>,;# comment\n' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -523,12 +522,12 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('-:<>,')
     expect(messages[3].message).toBe(',<>:-')
   })
   it('it should handle no-label loop', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'loop\n' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -536,12 +535,12 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('')
     expect(messages[2].message).toBe('I am good thanks!')
   })
   it('it should handle no-label opt', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'opt # comment\n' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -549,12 +548,12 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('')
     expect(messages[2].message).toBe('I am good thanks!')
   })
   it('it should handle no-label alt', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'alt;' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -564,14 +563,14 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('')
     expect(messages[2].message).toBe('I am good thanks!')
     expect(messages[3].message).toBe('')
     expect(messages[4].message).toBe('I am good thanks!')
   })
   it('it should handle no-label par', function () {
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'par;' +
       'Bob-->Alice: I am good thanks!\n' +
@@ -581,7 +580,7 @@ describe('when parsing a sequenceDiagram', function () {
 
     parser.parse(str)
 
-    var messages = parser.yy.getMessages()
+    const messages = parser.yy.getMessages()
     expect(messages[1].message).toBe('')
     expect(messages[2].message).toBe('I am good thanks!')
     expect(messages[3].message).toBe('')
@@ -590,7 +589,7 @@ describe('when parsing a sequenceDiagram', function () {
 })
 
 describe('when checking the bounds in a sequenceDiagram', function () {
-  var conf
+  let conf
   beforeEach(function () {
     parser.yy = sequenceDb
     parser.yy.clear()
@@ -613,7 +612,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
 
     renderer.bounds.insert(100, 100, 200, 200)
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(100)
     expect(bounds.starty).toBe(100)
     expect(bounds.stopx).toBe(200)
@@ -625,7 +624,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     renderer.bounds.insert(100, 100, 200, 200)
     renderer.bounds.insert(25, 50, 300, 400)
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(25)
     expect(bounds.starty).toBe(50)
     expect(bounds.stopx).toBe(300)
@@ -638,7 +637,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     renderer.bounds.insert(25, 50, 300, 400)
     renderer.bounds.insert(125, 150, 150, 200)
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(25)
     expect(bounds.starty).toBe(50)
     expect(bounds.stopx).toBe(300)
@@ -652,7 +651,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     renderer.bounds.newLoop()
     renderer.bounds.insert(125, 150, 150, 200)
 
-    var loop = renderer.bounds.endLoop()
+    const loop = renderer.bounds.endLoop()
 
     expect(loop.startx).toBe(125 - conf.boxMargin)
     expect(loop.starty).toBe(150 - conf.boxMargin)
@@ -660,7 +659,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopy).toBe(200 + conf.boxMargin)
 
     // Check bounds of first loop
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
 
     expect(bounds.startx).toBe(25)
     expect(bounds.starty).toBe(50)
@@ -677,7 +676,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     renderer.bounds.insert(200, 200, 300, 300)
 
     // Check bounds of first loop
-    var loop = renderer.bounds.endLoop()
+    let loop = renderer.bounds.endLoop()
 
     expect(loop.startx).toBe(200 - conf.boxMargin)
     expect(loop.starty).toBe(200 - conf.boxMargin)
@@ -693,7 +692,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopy).toBe(300 + 2 * conf.boxMargin)
 
     // Check bounds of first loop
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
 
     expect(bounds.startx).toBe(100)
     expect(bounds.starty).toBe(100)
@@ -708,7 +707,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     renderer.bounds.newLoop()
     renderer.bounds.insert(50, 50, 300, 300)
 
-    var loop = renderer.bounds.endLoop()
+    const loop = renderer.bounds.endLoop()
 
     expect(loop.startx).toBe(50 - conf.boxMargin)
     expect(loop.starty).toBe(50 - conf.boxMargin)
@@ -716,7 +715,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
     expect(loop.stopy).toBe(300 + conf.boxMargin)
 
     // Check bounds after the loop
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
 
     expect(bounds.startx).toBe(loop.startx)
     expect(bounds.starty).toBe(loop.starty)
@@ -726,7 +725,7 @@ describe('when checking the bounds in a sequenceDiagram', function () {
 })
 
 describe('when rendering a sequenceDiagram', function () {
-  var conf
+  let conf
   beforeEach(function () {
     parser.yy = sequenceDb
     parser.yy.clear()
@@ -734,7 +733,7 @@ describe('when rendering a sequenceDiagram', function () {
     delete global.mermaid_config
 
     NewD3 = function () {
-      var o = {
+      const o = {
         append: function () {
           return NewD3()
         },
@@ -781,13 +780,13 @@ describe('when rendering a sequenceDiagram', function () {
     it('it should handle one actor, when textPlacement is ' + textPlacement, function () {
       renderer.setConf(addConf(conf, 'textPlacement', textPlacement))
       renderer.bounds.init()
-      var str = 'sequenceDiagram\n' +
+      const str = 'sequenceDiagram\n' +
         'participant Alice'
 
       parser.parse(str)
       renderer.draw(str, 'tst')
 
-      var bounds = renderer.bounds.getBounds()
+      const bounds = renderer.bounds.getBounds()
       expect(bounds.startx).toBe(0)
       expect(bounds.starty).toBe(0)
       expect(bounds.stopx).toBe(conf.width)
@@ -796,14 +795,14 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should handle one actor and a centered note', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'participant Alice\n' +
       'Note over Alice: Alice thinks\n'
 
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(conf.width)
@@ -812,14 +811,14 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should handle one actor and a note to the left', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'participant Alice\n' +
       'Note left of Alice: Alice thinks'
 
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(-(conf.width / 2) - (conf.actorMargin / 2))
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(conf.width)
@@ -828,14 +827,14 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should handle one actor and a note to the right', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'participant Alice\n' +
       'Note right of Alice: Alice thinks'
 
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe((conf.width / 2) + (conf.actorMargin / 2) + conf.width)
@@ -844,13 +843,13 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should handle two actors', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?'
 
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin)
@@ -858,7 +857,7 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should handle two actors and two centered shared notes', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Note over Alice,Bob: Looks\n' +
       'Note over Bob,Alice: Looks back\n'
@@ -866,7 +865,7 @@ describe('when rendering a sequenceDiagram', function () {
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin)
@@ -874,14 +873,14 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should draw two actors and two messages', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Bob->Alice: Fine!'
 
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
     expect(bounds.stopx).toBe(0 + conf.width * 2 + conf.actorMargin)
@@ -889,7 +888,7 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should draw two actors notes to the right', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Note right of Bob: Bob thinks\n' +
       'Bob->Alice: Fine!'
@@ -897,18 +896,18 @@ describe('when rendering a sequenceDiagram', function () {
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
 
-    var expStopX = conf.actorMargin + conf.width + (conf.width / 2) + conf.noteMargin + conf.width
+    const expStopX = conf.actorMargin + conf.width + (conf.width / 2) + conf.noteMargin + conf.width
 
     expect(bounds.stopx).toBe(expStopX)
     expect(bounds.stopy).toBe(2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin)
   })
   it('it should draw two actors notes to the left', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'Note left of Alice: Bob thinks\n' +
       'Bob->Alice: Fine!'
@@ -916,7 +915,7 @@ describe('when rendering a sequenceDiagram', function () {
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(-(conf.width / 2) - (conf.actorMargin / 2))
     expect(bounds.starty).toBe(0)
 
@@ -925,7 +924,7 @@ describe('when rendering a sequenceDiagram', function () {
   })
   it('it should draw two loops', function () {
     renderer.bounds.init()
-    var str = 'sequenceDiagram\n' +
+    const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n' +
       'loop Cheers\n' +
       'Bob->Alice: Fine!\n' +
@@ -933,7 +932,7 @@ describe('when rendering a sequenceDiagram', function () {
     parser.parse(str)
     renderer.draw(str, 'tst')
 
-    var bounds = renderer.bounds.getBounds()
+    const bounds = renderer.bounds.getBounds()
     expect(bounds.startx).toBe(0)
     expect(bounds.starty).toBe(0)
 
@@ -943,13 +942,13 @@ describe('when rendering a sequenceDiagram', function () {
 })
 
 describe('when rendering a sequenceDiagram with actor mirror activated', function () {
-  var conf
+  let conf
   beforeEach(function () {
     parser.yy = sequenceDb
     parser.yy.clear()
 
     NewD3 = function () {
-      var o = {
+      const o = {
         append: function () {
           return NewD3()
         },
@@ -1000,13 +999,13 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
     it('it should handle one actor, when textPlacement is' + textPlacement, function () {
       renderer.setConf(addConf(conf, 'textPlacement', textPlacement))
       renderer.bounds.init()
-      var str = 'sequenceDiagram\n' +
+      const str = 'sequenceDiagram\n' +
         'participant Alice'
 
       parser.parse(str)
       renderer.draw(str, 'tst')
 
-      var bounds = renderer.bounds.getBounds()
+      const bounds = renderer.bounds.getBounds()
       expect(bounds.startx).toBe(0)
       expect(bounds.starty).toBe(0)
       expect(bounds.stopx).toBe(conf.width)
