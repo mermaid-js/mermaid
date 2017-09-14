@@ -2,21 +2,21 @@ import _ from 'lodash'
 
 import { logger } from '../../logger'
 
-var commits = {}
-var head = null
-var branches = { 'master': head }
-var curBranch = 'master'
-var direction = 'LR'
-var seq = 0
+let commits = {}
+let head = null
+let branches = { 'master': head }
+let curBranch = 'master'
+let direction = 'LR'
+let seq = 0
 
 function getRandomInt (min, max) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
 function getId () {
-  var pool = '0123456789abcdef'
-  var id = ''
-  for (var i = 0; i < 7; i++) {
+  const pool = '0123456789abcdef'
+  let id = ''
+  for (let i = 0; i < 7; i++) {
     id += pool[getRandomInt(0, 16)]
   }
   return id
@@ -40,8 +40,8 @@ function isfastforwardable (currentCommit, otherCommit) {
 }
 
 function isReachableFrom (currentCommit, otherCommit) {
-  var currentSeq = currentCommit.seq
-  var otherSeq = otherCommit.seq
+  const currentSeq = currentCommit.seq
+  const otherSeq = otherCommit.seq
   if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit)
   return false
 }
@@ -49,7 +49,7 @@ function isReachableFrom (currentCommit, otherCommit) {
 export const setDirection = function (dir) {
   direction = dir
 }
-var options = {}
+let options = {}
 export const setOptions = function (rawOptString) {
   logger.debug('options str', rawOptString)
   rawOptString = rawOptString && rawOptString.trim()
@@ -66,7 +66,7 @@ export const getOptions = function () {
 }
 
 export const commit = function (msg) {
-  var commit = {
+  const commit = {
     id: getId(),
     message: msg,
     seq: seq++,
@@ -84,8 +84,8 @@ export const branch = function (name) {
 }
 
 export const merge = function (otherBranch) {
-  var currentCommit = commits[branches[curBranch]]
-  var otherCommit = commits[branches[otherBranch]]
+  const currentCommit = commits[branches[curBranch]]
+  const otherCommit = commits[branches[otherBranch]]
   if (isReachableFrom(currentCommit, otherCommit)) {
     logger.debug('Already merged')
     return
@@ -95,7 +95,7 @@ export const merge = function (otherBranch) {
     head = commits[branches[curBranch]]
   } else {
     // create merge commit
-    var commit = {
+    const commit = {
       id: getId(),
       message: 'merged branch ' + otherBranch + ' into ' + curBranch,
       seq: seq++,
@@ -112,21 +112,21 @@ export const merge = function (otherBranch) {
 export const checkout = function (branch) {
   logger.debug('in checkout')
   curBranch = branch
-  var id = branches[curBranch]
+  const id = branches[curBranch]
   head = commits[id]
 }
 
 export const reset = function (commitRef) {
   logger.debug('in reset', commitRef)
-  var ref = commitRef.split(':')[0]
-  var parentCount = parseInt(commitRef.split(':')[1])
-  var commit = ref === 'HEAD' ? head : commits[branches[ref]]
+  const ref = commitRef.split(':')[0]
+  let parentCount = parseInt(commitRef.split(':')[1])
+  let commit = ref === 'HEAD' ? head : commits[branches[ref]]
   logger.debug(commit, parentCount)
   while (parentCount > 0) {
     commit = commits[commit.parent]
     parentCount--
     if (!commit) {
-      var err = 'Critical error - unique parent commit not found during reset'
+      const err = 'Critical error - unique parent commit not found during reset'
       logger.error(err)
       throw err
     }
@@ -145,8 +145,8 @@ function upsert (arr, key, newval) {
 }
 
 function prettyPrintCommitHistory (commitArr) {
-  var commit = _.maxBy(commitArr, 'seq')
-  var line = ''
+  const commit = _.maxBy(commitArr, 'seq')
+  let line = ''
   commitArr.forEach(function (c) {
     if (c === commit) {
       line += '\t*'
@@ -154,19 +154,19 @@ function prettyPrintCommitHistory (commitArr) {
       line += '\t|'
     }
   })
-  var label = [line, commit.id, commit.seq]
+  const label = [line, commit.id, commit.seq]
   _.each(branches, function (value, key) {
     if (value === commit.id) label.push(key)
   })
   logger.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {
-    var newCommit = commits[commit.parent[0]]
+    const newCommit = commits[commit.parent[0]]
     upsert(commitArr, commit, newCommit)
     commitArr.push(commits[commit.parent[1]])
   } else if (commit.parent == null) {
     return
   } else {
-    var nextCommit = commits[commit.parent]
+    const nextCommit = commits[commit.parent]
     upsert(commitArr, commit, nextCommit)
   }
   commitArr = _.uniqBy(commitArr, 'id')
@@ -175,7 +175,7 @@ function prettyPrintCommitHistory (commitArr) {
 
 export const prettyPrint = function () {
   logger.debug(commits)
-  var node = getCommitsArray()[0]
+  const node = getCommitsArray()[0]
   prettyPrintCommitHistory([node])
 }
 
@@ -197,7 +197,7 @@ export const getBranchesAsObjArray = function () {
 export const getBranches = function () { return branches }
 export const getCommits = function () { return commits }
 export const getCommitsArray = function () {
-  var commitArr = Object.keys(commits).map(function (key) {
+  const commitArr = Object.keys(commits).map(function (key) {
     return commits[key]
   })
   commitArr.forEach(function (o) { logger.debug(o.id) })

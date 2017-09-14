@@ -5,9 +5,9 @@ import gitGraphParser from './parser/gitGraph'
 import d3 from '../../d3'
 import { logger } from '../../logger'
 
-var allCommitsDict = {}
-var branchNum
-var config = {
+let allCommitsDict = {}
+let branchNum
+let config = {
   nodeSpacing: 150,
   nodeFillColor: 'yellow',
   nodeStrokeWidth: 2,
@@ -25,7 +25,7 @@ var config = {
     y: 0
   }
 }
-var apiConfig = {}
+let apiConfig = {}
 export const setConf = function (c) {
   apiConfig = c
 }
@@ -53,8 +53,8 @@ function svgCreateDefs (svg) {
 
 function svgDrawLine (svg, points, colorIdx, interpolate) {
   interpolate = interpolate || 'basis'
-  var color = config.branchColors[colorIdx % config.branchColors.length]
-  var lineGen = d3.svg.line()
+  const color = config.branchColors[colorIdx % config.branchColors.length]
+  const lineGen = d3.svg.line()
     .x(function (d) {
       return Math.round(d.x)
     })
@@ -73,9 +73,9 @@ function svgDrawLine (svg, points, colorIdx, interpolate) {
 // Pass in the element and its pre-transform coords
 function getElementCoords (element, coords) {
   coords = coords || element.node().getBBox()
-  var ctm = element.node().getCTM()
-  var xn = ctm.e + coords.x * ctm.a
-  var yn = ctm.f + coords.y * ctm.d
+  const ctm = element.node().getCTM()
+  const xn = ctm.e + coords.x * ctm.a
+  const yn = ctm.f + coords.y * ctm.d
   return {
     left: xn,
     top: yn,
@@ -86,16 +86,16 @@ function getElementCoords (element, coords) {
 
 function svgDrawLineForCommits (svg, fromId, toId, direction, color) {
   logger.debug('svgDrawLineForCommits: ', fromId, toId)
-  var fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'))
-  var toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'))
+  const fromBbox = getElementCoords(svg.select('#node-' + fromId + ' circle'))
+  const toBbox = getElementCoords(svg.select('#node-' + toId + ' circle'))
   switch (direction) {
     case 'LR':
       // (toBbox)
       //  +--------
       //          + (fromBbox)
       if (fromBbox.left - toBbox.left > config.nodeSpacing) {
-        var lineStart = { x: fromBbox.left - config.nodeSpacing, y: toBbox.top + toBbox.height / 2 }
-        var lineEnd = { x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height / 2 }
+        const lineStart = { x: fromBbox.left - config.nodeSpacing, y: toBbox.top + toBbox.height / 2 }
+        const lineEnd = { x: toBbox.left + toBbox.width, y: toBbox.top + toBbox.height / 2 }
         svgDrawLine(svg, [lineStart, lineEnd], color, 'linear')
         svgDrawLine(svg, [
           { x: fromBbox.left, y: fromBbox.top + fromBbox.height / 2 },
@@ -124,8 +124,8 @@ function svgDrawLineForCommits (svg, fromId, toId, direction, color) {
       //      |
       //              +   (toBbox)
       if (toBbox.top - fromBbox.top > config.nodeSpacing) {
-        lineStart = { x: toBbox.left + toBbox.width / 2, y: fromBbox.top + fromBbox.height + config.nodeSpacing }
-        lineEnd = { x: toBbox.left + toBbox.width / 2, y: toBbox.top }
+        const lineStart = { x: toBbox.left + toBbox.width / 2, y: fromBbox.top + fromBbox.height + config.nodeSpacing }
+        const lineEnd = { x: toBbox.left + toBbox.width / 2, y: toBbox.top }
         svgDrawLine(svg, [lineStart, lineEnd], color, 'linear')
         svgDrawLine(svg, [
           { x: fromBbox.left + fromBbox.width / 2, y: fromBbox.top + fromBbox.height },
@@ -156,8 +156,8 @@ function cloneNode (svg, selector) {
 }
 
 function renderCommitHistory (svg, commitid, branches, direction) {
-  var commit
-  var numCommits = Object.keys(allCommitsDict).length
+  let commit
+  const numCommits = Object.keys(allCommitsDict).length
   if (_.isString(commitid)) {
     do {
       commit = allCommitsDict[commitid]
@@ -187,7 +187,7 @@ function renderCommitHistory (svg, commitid, branches, direction) {
         .attr('stroke', config.nodeStrokeColor)
         .attr('stroke-width', config.nodeStrokeWidth)
 
-      var branch = _.find(branches, ['commit', commit])
+      const branch = _.find(branches, ['commit', commit])
       if (branch) {
         logger.debug('found branch ', branch.name)
         svg.select('#node-' + commit.id + ' p')
@@ -237,8 +237,7 @@ function renderLines (svg, commit, direction, branchColor) {
 
 export const draw = function (txt, id, ver) {
   try {
-    var parser
-    parser = gitGraphParser.parser
+    const parser = gitGraphParser.parser
     parser.yy = db
 
     logger.debug('in gitgraph renderer', txt, id, ver)
@@ -247,15 +246,15 @@ export const draw = function (txt, id, ver) {
 
     config = _.extend(config, apiConfig, db.getOptions())
     logger.debug('effective options', config)
-    var direction = db.getDirection()
+    const direction = db.getDirection()
     allCommitsDict = db.getCommits()
-    var branches = db.getBranchesAsObjArray()
+    const branches = db.getBranchesAsObjArray()
     if (direction === 'BT') {
       config.nodeLabel.x = branches.length * config.branchOffset
       config.nodeLabel.width = '100%'
       config.nodeLabel.y = -1 * 2 * config.nodeRadius
     }
-    var svg = d3.select('#' + id)
+    const svg = d3.select('#' + id)
     svgCreateDefs(svg)
     branchNum = 1
     _.each(branches, function (v) {
