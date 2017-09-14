@@ -7,8 +7,8 @@ import d3 from '../../d3'
 
 parser.yy = ganttDb
 
-var daysInChart
-var conf = {
+let daysInChart
+const conf = {
   titleTopMargin: 25,
   barHeight: 20,
   barGap: 4,
@@ -20,18 +20,18 @@ var conf = {
   fontFamily: '"Open-Sans", "sans-serif"'
 }
 export const setConf = function (cnf) {
-  var keys = Object.keys(cnf)
+  const keys = Object.keys(cnf)
 
   keys.forEach(function (key) {
     conf[key] = cnf[key]
   })
 }
-var w
+let w
 export const draw = function (text, id) {
   parser.yy.clear()
   parser.parse(text)
 
-  var elem = document.getElementById(id)
+  const elem = document.getElementById(id)
   w = elem.parentElement.offsetWidth
 
   if (typeof w === 'undefined') {
@@ -42,25 +42,25 @@ export const draw = function (text, id) {
     w = conf.useWidth
   }
 
-  var taskArray = parser.yy.getTasks()
+  const taskArray = parser.yy.getTasks()
 
   // Set height based on number of tasks
-  var h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding
+  const h = taskArray.length * (conf.barHeight + conf.barGap) + 2 * conf.topPadding
 
   elem.setAttribute('height', '100%')
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h)
-  var svg = d3.select('#' + id)
+  const svg = d3.select('#' + id)
 
-  var startDate = d3.min(taskArray, function (d) {
+  const startDate = d3.min(taskArray, function (d) {
     return d.startTime
   })
-  var endDate = d3.max(taskArray, function (d) {
+  const endDate = d3.max(taskArray, function (d) {
     return d.endTime
   })
 
   // Set timescale
-  var timeScale = d3.time.scale()
+  const timeScale = d3.time.scale()
     .domain([d3.min(taskArray, function (d) {
       return d.startTime
     }),
@@ -69,15 +69,15 @@ export const draw = function (text, id) {
       })])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding])
 
-  var categories = []
+  let categories = []
 
   daysInChart = moment.duration(endDate - startDate).asDays()
 
-  for (var i = 0; i < taskArray.length; i++) {
+  for (let i = 0; i < taskArray.length; i++) {
     categories.push(taskArray[i].type)
   }
 
-  var catsUnfiltered = categories // for vert labels
+  const catsUnfiltered = categories // for vert labels
 
   categories = checkUnique(categories)
 
@@ -93,12 +93,12 @@ export const draw = function (text, id) {
     .attr('class', 'titleText')
 
   function makeGant (tasks, pageWidth, pageHeight) {
-    var barHeight = conf.barHeight
-    var gap = barHeight + conf.barGap
-    var topPadding = conf.topPadding
-    var leftPadding = conf.leftPadding
+    const barHeight = conf.barHeight
+    const gap = barHeight + conf.barGap
+    const topPadding = conf.topPadding
+    const leftPadding = conf.leftPadding
 
-    var colorScale = d3.scale.linear()
+    const colorScale = d3.scale.linear()
       .domain([0, categories.length])
       .range(['#00B9FA', '#F95002'])
       .interpolate(d3.interpolateHcl)
@@ -124,7 +124,7 @@ export const draw = function (text, id) {
       })
       .attr('height', theGap)
       .attr('class', function (d) {
-        for (var i = 0; i < categories.length; i++) {
+        for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             return 'section section' + (i % conf.numberSectionStyles)
           }
@@ -132,7 +132,7 @@ export const draw = function (text, id) {
         return 'section section0'
       })
 
-    var rectangles = svg.append('g')
+    const rectangles = svg.append('g')
       .selectAll('rect')
       .data(theArray)
       .enter()
@@ -151,10 +151,10 @@ export const draw = function (text, id) {
       })
       .attr('height', theBarHeight)
       .attr('class', function (d) {
-        var res = 'task '
+        const res = 'task '
 
-        var secNum = 0
-        for (var i = 0; i < categories.length; i++) {
+        let secNum = 0
+        for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             secNum = (i % conf.numberSectionStyles)
           }
@@ -189,9 +189,9 @@ export const draw = function (text, id) {
       })
       .attr('font-size', conf.fontSize)
       .attr('x', function (d) {
-        var startX = timeScale(d.startTime)
-        var endX = timeScale(d.endTime)
-        var textWidth = this.getBBox().width
+        const startX = timeScale(d.startTime)
+        const endX = timeScale(d.endTime)
+        const textWidth = this.getBBox().width
 
         // Check id text width > width of rectangle
         if (textWidth > (endX - startX)) {
@@ -209,17 +209,17 @@ export const draw = function (text, id) {
       })
       .attr('text-height', theBarHeight)
       .attr('class', function (d) {
-        var startX = timeScale(d.startTime)
-        var endX = timeScale(d.endTime)
-        var textWidth = this.getBBox().width
-        var secNum = 0
-        for (var i = 0; i < categories.length; i++) {
+        const startX = timeScale(d.startTime)
+        const endX = timeScale(d.endTime)
+        const textWidth = this.getBBox().width
+        let secNum = 0
+        for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
             secNum = (i % conf.numberSectionStyles)
           }
         }
 
-        var taskType = ''
+        let taskType = ''
         if (d.active) {
           if (d.crit) {
             taskType = 'activeCritText' + secNum
@@ -254,7 +254,7 @@ export const draw = function (text, id) {
   }
 
   function makeGrid (theSidePad, theTopPad, w, h) {
-    var pre = [
+    const pre = [
       ['.%L', function (d) {
         return d.getMilliseconds()
       }],
@@ -265,12 +265,12 @@ export const draw = function (text, id) {
       ['h1 %I:%M', function (d) {
         return d.getMinutes()
       }]]
-    var post = [
+    const post = [
       ['%Y', function () {
         return true
       }]]
 
-    var mid = [
+    let mid = [
       // Within a day
       ['%I:%M', function (d) {
         return d.getHours()
@@ -288,11 +288,11 @@ export const draw = function (text, id) {
         return d.getMonth()
       }]
     ]
-    var formatter
+    let formatter
     if (typeof conf.axisFormatter !== 'undefined') {
       mid = []
       conf.axisFormatter.forEach(function (item) {
-        var n = []
+        const n = []
         n[0] = item[0]
         n[1] = item[1]
         mid.push(n)
@@ -300,7 +300,7 @@ export const draw = function (text, id) {
     }
     formatter = pre.concat(mid).concat(post)
 
-    var xAxis = d3.svg.axis()
+    let xAxis = d3.svg.axis()
       .scale(timeScale)
       .orient('bottom')
       .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
@@ -323,10 +323,10 @@ export const draw = function (text, id) {
   }
 
   function vertLabels (theGap, theTopPad) {
-    var numOccurances = []
-    var prevGap = 0
+    const numOccurances = []
+    let prevGap = 0
 
-    for (var i = 0; i < categories.length; i++) {
+    for (let i = 0; i < categories.length; i++) {
       numOccurances[i] = [categories[i], getCount(categories[i], catsUnfiltered)]
     }
 
@@ -341,7 +341,7 @@ export const draw = function (text, id) {
       .attr('x', 10)
       .attr('y', function (d, i) {
         if (i > 0) {
-          for (var j = 0; j < i; j++) {
+          for (let j = 0; j < i; j++) {
             prevGap += numOccurances[i - 1][1]
             return d[1] * theGap / 2 + prevGap * theGap + theTopPad
           }
@@ -350,7 +350,7 @@ export const draw = function (text, id) {
         }
       })
       .attr('class', function (d) {
-        for (var i = 0; i < categories.length; i++) {
+        for (let i = 0; i < categories.length; i++) {
           if (d[0] === categories[i]) {
             return 'sectionTitle sectionTitle' + (i % conf.numberSectionStyles)
           }
@@ -360,10 +360,10 @@ export const draw = function (text, id) {
   }
 
   function drawToday (theSidePad, theTopPad, w, h) {
-    var todayG = svg.append('g')
+    const todayG = svg.append('g')
       .attr('class', 'today')
 
-    var today = new Date()
+    const today = new Date()
 
     todayG.append('line')
       .attr('x1', timeScale(today) + theSidePad)
@@ -375,9 +375,9 @@ export const draw = function (text, id) {
 
   // from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript
   function checkUnique (arr) {
-    var hash = {}
-    var result = []
-    for (var i = 0, l = arr.length; i < l; ++i) {
+    const hash = {}
+    const result = []
+    for (let i = 0, l = arr.length; i < l; ++i) {
       if (!hash.hasOwnProperty(arr[i])) { // it works with objects! in FF, at least
         hash[arr[i]] = true
         result.push(arr[i])
@@ -388,8 +388,8 @@ export const draw = function (text, id) {
 
   // from this stackexchange question: http://stackoverflow.com/questions/14227981/count-how-many-strings-in-an-array-have-duplicates-in-the-same-array
   function getCounts (arr) {
-    var i = arr.length // var to loop over
-    var obj = {} // obj to store results
+    let i = arr.length // const to loop over
+    const obj = {} // obj to store results
     while (i) {
       obj[arr[--i]] = (obj[arr[i]] || 0) + 1 // count occurrences
     }

@@ -1,11 +1,11 @@
 import moment from 'moment'
 import { logger } from '../../logger'
 
-var dateFormat = ''
-var title = ''
-var sections = []
-var tasks = []
-var currentSection = ''
+let dateFormat = ''
+let title = ''
+let sections = []
+let tasks = []
+let currentSection = ''
 
 export const clear = function () {
   sections = []
@@ -39,9 +39,9 @@ export const addSection = function (txt) {
 }
 
 export const getTasks = function () {
-  var allItemsPricessed = compileTasks()
-  var maxDepth = 10
-  var iterationCount = 0
+  let allItemsPricessed = compileTasks()
+  const maxDepth = 10
+  let iterationCount = 0
   while (!allItemsPricessed && (iterationCount < maxDepth)) {
     allItemsPricessed = compileTasks()
     iterationCount++
@@ -52,18 +52,18 @@ export const getTasks = function () {
   return tasks
 }
 
-var getStartDate = function (prevTime, dateFormat, str) {
+const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
   // Test for after
-  var re = /^after\s+([\d\w-]+)/
-  var afterStatement = re.exec(str.trim())
+  const re = /^after\s+([\d\w-]+)/
+  const afterStatement = re.exec(str.trim())
 
   if (afterStatement !== null) {
-    var task = findTaskById(afterStatement[1])
+    const task = findTaskById(afterStatement[1])
 
     if (typeof task === 'undefined') {
-      var dt = new Date()
+      const dt = new Date()
       dt.setHours(0, 0, 0, 0)
       return dt
     }
@@ -82,7 +82,7 @@ var getStartDate = function (prevTime, dateFormat, str) {
   return new Date()
 }
 
-var getEndDate = function (prevTime, dateFormat, str) {
+const getEndDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
   // Check for actual date
@@ -90,10 +90,10 @@ var getEndDate = function (prevTime, dateFormat, str) {
     return moment(str, dateFormat.trim()).toDate()
   }
 
-  var d = moment(prevTime)
+  const d = moment(prevTime)
   // Check for length
-  var re = /^([\d]+)([wdhms])/
-  var durationStatement = re.exec(str.trim())
+  const re = /^([\d]+)([wdhms])/
+  const durationStatement = re.exec(str.trim())
 
   if (durationStatement !== null) {
     switch (durationStatement[2]) {
@@ -119,8 +119,8 @@ var getEndDate = function (prevTime, dateFormat, str) {
   return d.toDate()
 }
 
-var taskCnt = 0
-var parseId = function (idStr) {
+let taskCnt = 0
+const parseId = function (idStr) {
   if (typeof idStr === 'undefined') {
     taskCnt = taskCnt + 1
     return 'task' + taskCnt
@@ -138,8 +138,8 @@ var parseId = function (idStr) {
 // endDate
 // length
 
-var compileData = function (prevTask, dataStr) {
-  var ds
+const compileData = function (prevTask, dataStr) {
+  let ds
 
   if (dataStr.substr(0, 1) === ':') {
     ds = dataStr.substr(1, dataStr.length)
@@ -147,13 +147,13 @@ var compileData = function (prevTask, dataStr) {
     ds = dataStr
   }
 
-  var data = ds.split(',')
+  const data = ds.split(',')
 
-  var task = {}
-  var df = getDateFormat()
+  const task = {}
+  const df = getDateFormat()
 
   // Get tags like active, done cand crit
-  var matchFound = true
+  let matchFound = true
   while (matchFound) {
     matchFound = false
     if (data[0].match(/^\s*active\s*$/)) {
@@ -172,8 +172,7 @@ var compileData = function (prevTask, dataStr) {
       matchFound = true
     }
   }
-  var i
-  for (i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
 
@@ -199,21 +198,20 @@ var compileData = function (prevTask, dataStr) {
   return task
 }
 
-var parseData = function (prevTaskId, dataStr) {
-  var ds
-
+const parseData = function (prevTaskId, dataStr) {
+  let ds
   if (dataStr.substr(0, 1) === ':') {
     ds = dataStr.substr(1, dataStr.length)
   } else {
     ds = dataStr
   }
 
-  var data = ds.split(',')
+  const data = ds.split(',')
 
-  var task = {}
+  const task = {}
 
   // Get tags like active, done cand crit
-  var matchFound = true
+  let matchFound = true
   while (matchFound) {
     matchFound = false
     if (data[0].match(/^\s*active\s*$/)) {
@@ -232,8 +230,7 @@ var parseData = function (prevTaskId, dataStr) {
       matchFound = true
     }
   }
-  var i
-  for (i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
 
@@ -259,19 +256,19 @@ var parseData = function (prevTaskId, dataStr) {
   return task
 }
 
-var lastTask
-var lastTaskID
-var rawTasks = []
-var taskDb = {}
+let lastTask
+let lastTaskID
+let rawTasks = []
+const taskDb = {}
 export const addTask = function (descr, data) {
-  var rawTask = {
+  const rawTask = {
     section: currentSection,
     type: currentSection,
     processed: false,
     raw: { data: data },
     task: descr
   }
-  var taskInfo = parseData(lastTaskID, data)
+  const taskInfo = parseData(lastTaskID, data)
   rawTask.raw.startTime = taskInfo.startTime
   rawTask.raw.endTime = taskInfo.endTime
   rawTask.id = taskInfo.id
@@ -280,7 +277,7 @@ export const addTask = function (descr, data) {
   rawTask.done = taskInfo.done
   rawTask.crit = taskInfo.crit
 
-  var pos = rawTasks.push(rawTask)
+  const pos = rawTasks.push(rawTask)
 
   lastTaskID = rawTask.id
   // Store cross ref
@@ -288,18 +285,18 @@ export const addTask = function (descr, data) {
 }
 
 export const findTaskById = function (id) {
-  var pos = taskDb[id]
+  const pos = taskDb[id]
   return rawTasks[pos]
 }
 
 export const addTaskOrg = function (descr, data) {
-  var newTask = {
+  const newTask = {
     section: currentSection,
     type: currentSection,
     description: descr,
     task: descr
   }
-  var taskInfo = compileData(lastTask, data)
+  const taskInfo = compileData(lastTask, data)
   newTask.startTime = taskInfo.startTime
   newTask.endTime = taskInfo.endTime
   newTask.id = taskInfo.id
@@ -310,15 +307,15 @@ export const addTaskOrg = function (descr, data) {
   tasks.push(newTask)
 }
 
-var compileTasks = function () {
-  var df = getDateFormat()
+const compileTasks = function () {
+  const df = getDateFormat()
 
-  var compileTask = function (pos) {
-    var task = rawTasks[pos]
-    var startTime = ''
+  const compileTask = function (pos) {
+    const task = rawTasks[pos]
+    let startTime = ''
     switch (rawTasks[pos].raw.startTime.type) {
       case 'prevTaskEnd':
-        var prevTask = findTaskById(task.prevTaskId)
+        const prevTask = findTaskById(task.prevTaskId)
         task.startTime = prevTask.endTime
         break
       case 'getStartDate':
@@ -339,9 +336,8 @@ var compileTasks = function () {
     return rawTasks[pos].processed
   }
 
-  var i
-  var allProcessed = true
-  for (i = 0; i < rawTasks.length; i++) {
+  let allProcessed = true
+  for (let i = 0; i < rawTasks.length; i++) {
     compileTask(i)
 
     allProcessed = allProcessed && rawTasks[i].processed
