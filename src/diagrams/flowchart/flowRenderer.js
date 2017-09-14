@@ -5,12 +5,11 @@ import d3 from '../../d3'
 import dagreD3 from 'dagre-d3-renderer'
 import { logger } from '../../logger'
 
-var conf = {
+const conf = {
 }
 export const setConf = function (cnf) {
-  var keys = Object.keys(cnf)
-  var i
-  for (i = 0; i < keys.length; i++) {
+  const keys = Object.keys(cnf)
+  for (let i = 0; i < keys.length; i++) {
     conf[keys[i]] = cnf[keys[i]]
   }
 }
@@ -21,12 +20,11 @@ export const setConf = function (cnf) {
  * @param g The graph that is to be drawn.
  */
 export const addVertices = function (vert, g) {
-  var keys = Object.keys(vert)
+  const keys = Object.keys(vert)
 
-  var styleFromStyleArr = function (styleStr, arr) {
-    var i
+  const styleFromStyleArr = function (styleStr, arr) {
     // Create a compound style definition from the style definitions found for the node in the graph definition
-    for (i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       if (typeof arr[i] !== 'undefined') {
         styleStr = styleStr + arr[i] + ';'
       }
@@ -37,15 +35,14 @@ export const addVertices = function (vert, g) {
 
   // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
   keys.forEach(function (id) {
-    var vertice = vert[id]
-    var verticeText
+    const vertice = vert[id]
+    let verticeText
 
     /**
      * Variable for storing the classes for the vertice
      * @type {string}
      */
-    var classStr = ''
-
+    let classStr = ''
     if (vertice.classes.length > 0) {
       classStr = vertice.classes.join(' ')
     }
@@ -54,7 +51,7 @@ export const addVertices = function (vert, g) {
      * Variable for storing the extracted style for the vertice
      * @type {string}
      */
-    var style = ''
+    let style = ''
     // Create a compound style definition from the style definitions found for the node in the graph definition
     style = styleFromStyleArr(style, vertice.styles)
 
@@ -65,20 +62,19 @@ export const addVertices = function (vert, g) {
       verticeText = vertice.text
     }
 
-    var labelTypeStr = ''
+    let labelTypeStr = ''
     if (conf.htmlLabels) {
       labelTypeStr = 'html'
       verticeText = verticeText.replace(/fa:fa[\w-]+/g, function (s) {
         return '<i class="fa ' + s.substring(3) + '"></i>'
       })
     } else {
-      var svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+      const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
-      var rows = verticeText.split(/<br>/)
+      const rows = verticeText.split(/<br>/)
 
-      var j = 0
-      for (j = 0; j < rows.length; j++) {
-        var tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
+      for (let j = 0; j < rows.length; j++) {
+        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
         tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve')
         tspan.setAttribute('dy', '1em')
         tspan.setAttribute('x', '1')
@@ -90,9 +86,8 @@ export const addVertices = function (vert, g) {
       verticeText = svgLabel
     }
 
-    var radious = 0
-    var _shape = ''
-
+    let radious = 0
+    let _shape = ''
     // Set the shape based parameters
     switch (vertice.type) {
       case 'round':
@@ -136,16 +131,16 @@ export const addVertices = function (vert, g) {
  * @param {Object} g The graph object
  */
 export const addEdges = function (edges, g) {
-  var cnt = 0
+  let cnt = 0
 
-  var defaultStyle
+  let defaultStyle
   if (typeof edges.defaultStyle !== 'undefined') {
     defaultStyle = edges.defaultStyle.toString().replace(/,/g, ';')
   }
 
   edges.forEach(function (edge) {
     cnt++
-    var edgeData = {}
+    const edgeData = {}
 
     // Set link type for rendering
     if (edge.type === 'arrow_open') {
@@ -154,8 +149,7 @@ export const addEdges = function (edges, g) {
       edgeData.arrowhead = 'normal'
     }
 
-    var style = ''
-
+    let style = ''
     if (typeof edge.style !== 'undefined') {
       edge.style.forEach(function (s) {
         style = style + s + ';'
@@ -216,7 +210,7 @@ export const addEdges = function (edges, g) {
  * @returns {object} classDef styles
  */
 export const getClasses = function (text, isDot) {
-  var parser
+  let parser
   graphDb.clear()
   if (isDot) {
     parser = dot.parser
@@ -228,7 +222,7 @@ export const getClasses = function (text, isDot) {
   // Parse the graph definition
   parser.parse(text)
 
-  var classes = graphDb.getClasses()
+  const classes = graphDb.getClasses()
 
   // Add default class if undefined
   if (typeof (classes.default) === 'undefined') {
@@ -248,7 +242,7 @@ export const getClasses = function (text, isDot) {
  */
 export const draw = function (text, id, isDot) {
   logger.debug('Drawing flowchart')
-  var parser
+  let parser
   graphDb.clear()
   if (isDot) {
     parser = dot.parser
@@ -265,14 +259,13 @@ export const draw = function (text, id, isDot) {
   }
 
   // Fetch the default direction, use TD if none was found
-  var dir
-  dir = graphDb.getDirection()
+  let dir = graphDb.getDirection()
   if (typeof dir === 'undefined') {
     dir = 'TD'
   }
 
   // Create the input mermaid.graph
-  var g = new dagreD3.graphlib.Graph({
+  const g = new dagreD3.graphlib.Graph({
     multigraph: true,
     compound: true
   })
@@ -286,27 +279,25 @@ export const draw = function (text, id, isDot) {
       return {}
     })
 
-  var subG
-  var subGraphs = graphDb.getSubGraphs()
-  var i = 0
-  for (i = subGraphs.length - 1; i >= 0; i--) {
+  let subG
+  const subGraphs = graphDb.getSubGraphs()
+  for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i]
     graphDb.addVertex(subG.id, subG.title, 'group', undefined)
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
-  var vert = graphDb.getVertices()
+  const vert = graphDb.getVertices()
 
-  var edges = graphDb.getEdges()
+  const edges = graphDb.getEdges()
 
-  i = 0
-  var j
+  let i = 0
   for (i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i]
 
     d3.selectAll('cluster').append('text')
 
-    for (j = 0; j < subG.nodes.length; j++) {
+    for (let j = 0; j < subG.nodes.length; j++) {
       g.setParent(subG.nodes[j], subG.id)
     }
   }
@@ -314,21 +305,21 @@ export const draw = function (text, id, isDot) {
   addEdges(edges, g)
 
   // Create the renderer
-  var Render = dagreD3.render
-  var render = new Render()
+  const Render = dagreD3.render
+  const render = new Render()
 
   // Add custom shape for rhombus type of boc (decision)
   render.shapes().question = function (parent, bbox, node) {
-    var w = bbox.width
-    var h = bbox.height
-    var s = (w + h) * 0.8
-    var points = [
+    const w = bbox.width
+    const h = bbox.height
+    const s = (w + h) * 0.8
+    const points = [
       { x: s / 2, y: 0 },
       { x: s, y: -s / 2 },
       { x: s / 2, y: -s },
       { x: 0, y: -s / 2 }
     ]
-    var shapeSvg = parent.insert('polygon', ':first-child')
+    const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
         return d.x + ',' + d.y
       }).join(' '))
@@ -343,16 +334,16 @@ export const draw = function (text, id, isDot) {
 
   // Add custom shape for box with inverted arrow on left side
   render.shapes().rect_left_inv_arrow = function (parent, bbox, node) {
-    var w = bbox.width
-    var h = bbox.height
-    var points = [
+    const w = bbox.width
+    const h = bbox.height
+    const points = [
       { x: -h / 2, y: 0 },
       { x: w, y: 0 },
       { x: w, y: -h },
       { x: -h / 2, y: -h },
       { x: 0, y: -h / 2 }
     ]
-    var shapeSvg = parent.insert('polygon', ':first-child')
+    const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
         return d.x + ',' + d.y
       }).join(' '))
@@ -365,16 +356,16 @@ export const draw = function (text, id, isDot) {
 
   // Add custom shape for box with inverted arrow on right side
   render.shapes().rect_right_inv_arrow = function (parent, bbox, node) {
-    var w = bbox.width
-    var h = bbox.height
-    var points = [
+    const w = bbox.width
+    const h = bbox.height
+    const points = [
       { x: 0, y: 0 },
       { x: w + h / 2, y: 0 },
       { x: w, y: -h / 2 },
       { x: w + h / 2, y: -h },
       { x: 0, y: -h }
     ]
-    var shapeSvg = parent.insert('polygon', ':first-child')
+    const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
         return d.x + ',' + d.y
       }).join(' '))
@@ -387,7 +378,7 @@ export const draw = function (text, id, isDot) {
 
   // Add our custom arrow - an empty arrowhead
   render.arrows().none = function normal (parent, id, edge, type) {
-    var marker = parent.append('marker')
+    const marker = parent.append('marker')
       .attr('id', id)
       .attr('viewBox', '0 0 10 10')
       .attr('refX', 9)
@@ -397,14 +388,14 @@ export const draw = function (text, id, isDot) {
       .attr('markerHeight', 6)
       .attr('orient', 'auto')
 
-    var path = marker.append('path')
+    const path = marker.append('path')
       .attr('d', 'M 0 0 L 0 0 L 0 0 z')
     dagreD3.util.applyStyle(path, edge[type + 'Style'])
   }
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
   render.arrows().normal = function normal (parent, id, edge, type) {
-    var marker = parent.append('marker')
+    const marker = parent.append('marker')
       .attr('id', id)
       .attr('viewBox', '0 0 10 10')
       .attr('refX', 9)
@@ -422,10 +413,10 @@ export const draw = function (text, id, isDot) {
   }
 
   // Set up an SVG group so that we can translate the final graph.
-  var svg = d3.select('#' + id)
+  const svg = d3.select('#' + id)
 
   // Run the renderer. This is what draws the final graph.
-  var element = d3.select('#' + id + ' g')
+  const element = d3.select('#' + id + ' g')
   render(element, g)
 
   element.selectAll('g.node')
@@ -457,14 +448,14 @@ export const draw = function (text, id, isDot) {
     subG = subGraphs[i]
 
     if (subG.title !== 'undefined') {
-      var clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect')
-      var clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id)
+      const clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect')
+      const clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id)
 
-      var xPos = clusterRects[0].x.baseVal.value
-      var yPos = clusterRects[0].y.baseVal.value
-      var width = clusterRects[0].width.baseVal.value
-      var cluster = d3.select(clusterEl[0])
-      var te = cluster.append('text')
+      const xPos = clusterRects[0].x.baseVal.value
+      const yPos = clusterRects[0].y.baseVal.value
+      const width = clusterRects[0].width.baseVal.value
+      const cluster = d3.select(clusterEl[0])
+      const te = cluster.append('text')
       te.attr('x', xPos + width / 2)
       te.attr('y', yPos + 14)
       te.attr('fill', 'black')
@@ -482,15 +473,14 @@ export const draw = function (text, id, isDot) {
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
-    var labels = document.querySelectorAll('#' + id + ' .edgeLabel .label')
-    var k
-    for (k = 0; k < labels.length; k++) {
-      var label = labels[i]
+    const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label')
+    for (let k = 0; k < labels.length; k++) {
+      const label = labels[i]
 
       // Get dimensions of label
-      var dim = label.getBBox()
+      const dim = label.getBBox()
 
-      var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rect.setAttribute('rx', 0)
       rect.setAttribute('ry', 0)
       rect.setAttribute('width', dim.width)
