@@ -1,11 +1,8 @@
 
 import { logger } from '../../logger'
 
-var relations = []
-
-var classes
-classes = {
-}
+let relations = []
+let classes = {}
 
 /**
  * Function called by parser when a node definition has been found.
@@ -48,7 +45,7 @@ export const addRelation = function (relation) {
 }
 
 export const addMembers = function (className, MembersArr) {
-  var theClass = classes[className]
+  const theClass = classes[className]
   if (typeof MembersArr === 'string') {
     if (MembersArr.substr(-1) === ')') {
       theClass.methods.push(MembersArr)

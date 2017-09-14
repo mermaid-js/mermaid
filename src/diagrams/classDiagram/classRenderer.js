@@ -8,22 +8,20 @@ import { parser } from './parser/classDiagram'
 
 parser.yy = classDb
 
-var idCache
-idCache = {}
+const idCache = {}
 
-var classCnt = 0
-var conf = {
+let classCnt = 0
+const conf = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10
 }
 
 // Todo optimize
-var getGraphId = function (label) {
-  var keys = Object.keys(idCache)
+const getGraphId = function (label) {
+  const keys = Object.keys(idCache)
 
-  var i
-  for (i = 0; i < keys.length; i++) {
+  for (let i = 0; i < keys.length; i++) {
     if (idCache[keys[i]].label === label) {
       return keys[i]
     }
@@ -35,7 +33,7 @@ var getGraphId = function (label) {
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-var insertMarkers = function (elem) {
+const insertMarkers = function (elem) {
   elem.append('defs').append('marker')
     .attr('id', 'extensionStart')
     .attr('class', 'extension')
@@ -121,9 +119,9 @@ var insertMarkers = function (elem) {
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z')
 }
 
-var edgeCount = 0
-var drawEdge = function (elem, path, relation) {
-  var getRelationType = function (type) {
+let edgeCount = 0
+const drawEdge = function (elem, path, relation) {
+  const getRelationType = function (type) {
     switch (type) {
       case classDb.relationType.AGGREGATION:
         return 'aggregation'
@@ -137,10 +135,10 @@ var drawEdge = function (elem, path, relation) {
   }
 
   // The data for our line
-  var lineData = path.points
+  const lineData = path.points
 
   // This is the accessor function we talked about above
-  var lineFunction = d3.svg.line()
+  const lineFunction = d3.svg.line()
     .x(function (d) {
       return d.x
     })
@@ -149,11 +147,11 @@ var drawEdge = function (elem, path, relation) {
     })
     .interpolate('basis')
 
-  var svgPath = elem.append('path')
+  const svgPath = elem.append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', 'edge' + edgeCount)
     .attr('class', 'relation')
-  var url = ''
+  let url = ''
   if (conf.arrowMarkerAbsolute) {
     url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search
     url = url.replace(/\(/g, '\\(')
@@ -167,23 +165,23 @@ var drawEdge = function (elem, path, relation) {
     svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')')
   }
 
-  var x, y
-  var l = path.points.length
+  let x, y
+  const l = path.points.length
   if ((l % 2) !== 0) {
-    var p1 = path.points[Math.floor(l / 2)]
-    var p2 = path.points[Math.ceil(l / 2)]
+    const p1 = path.points[Math.floor(l / 2)]
+    const p2 = path.points[Math.ceil(l / 2)]
     x = (p1.x + p2.x) / 2
     y = (p1.y + p2.y) / 2
   } else {
-    var p = path.points[Math.floor(l / 2)]
+    const p = path.points[Math.floor(l / 2)]
     x = p.x
     y = p.y
   }
 
   if (typeof relation.title !== 'undefined') {
-    var g = elem.append('g')
+    const g = elem.append('g')
       .attr('class', 'classLabel')
-    var label = g.append('text')
+    const label = g.append('text')
       .attr('class', 'label')
       .attr('x', x)
       .attr('y', y)
@@ -192,7 +190,7 @@ var drawEdge = function (elem, path, relation) {
       .text(relation.title)
 
     window.label = label
-    var bounds = label.node().getBBox()
+    const bounds = label.node().getBBox()
 
     g.insert('rect', ':first-child')
       .attr('class', 'box')
@@ -205,11 +203,11 @@ var drawEdge = function (elem, path, relation) {
   edgeCount++
 }
 
-var drawClass = function (elem, classDef) {
+const drawClass = function (elem, classDef) {
   logger.info('Rendering class ' + classDef)
 
-  var addTspan = function (textEl, txt, isFirst) {
-    var tSpan = textEl.append('tspan')
+  const addTspan = function (textEl, txt, isFirst) {
+    const tSpan = textEl.append('tspan')
       .attr('x', conf.padding)
       .text(txt)
     if (!isFirst) {
@@ -217,50 +215,49 @@ var drawClass = function (elem, classDef) {
     }
   }
 
-  var id = 'classId' + classCnt
-  var classInfo = {
+  const id = 'classId' + classCnt
+  const classInfo = {
     id: id,
     label: classDef.id,
     width: 0,
     height: 0
   }
 
-  var g = elem.append('g')
+  const g = elem.append('g')
     .attr('id', id)
     .attr('class', 'classGroup')
-  var title = g.append('text')
+  const title = g.append('text')
     .attr('x', conf.padding)
     .attr('y', conf.textHeight + conf.padding)
     .text(classDef.id)
 
-  var titleHeight = title.node().getBBox().height
+  const titleHeight = title.node().getBBox().height
 
-  var membersLine = g.append('line')      // text label for the x axis
+  const membersLine = g.append('line')      // text label for the x axis
     .attr('x1', 0)
     .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
     .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
 
-  var members = g.append('text')      // text label for the x axis
+  const members = g.append('text')      // text label for the x axis
     .attr('x', conf.padding)
     .attr('y', titleHeight + (conf.dividerMargin) + conf.textHeight)
     .attr('fill', 'white')
     .attr('class', 'classText')
 
-  var isFirst = true
-
+  let isFirst = true
   classDef.members.forEach(function (member) {
     addTspan(members, member, isFirst)
     isFirst = false
   })
 
-  var membersBox = members.node().getBBox()
+  const membersBox = members.node().getBBox()
 
-  var methodsLine = g.append('line')      // text label for the x axis
+  const methodsLine = g.append('line')      // text label for the x axis
     .attr('x1', 0)
     .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
     .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
 
-  var methods = g.append('text')      // text label for the x axis
+  const methods = g.append('text')      // text label for the x axis
     .attr('x', conf.padding)
     .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
     .attr('fill', 'white')
@@ -273,7 +270,7 @@ var drawClass = function (elem, classDef) {
     isFirst = false
   })
 
-  var classBox = g.node().getBBox()
+  const classBox = g.node().getBBox()
   g.insert('rect', ':first-child')
     .attr('x', 0)
     .attr('y', 0)
@@ -292,7 +289,7 @@ var drawClass = function (elem, classDef) {
 }
 
 export const setConf = function (cnf) {
-  var keys = Object.keys(cnf)
+  const keys = Object.keys(cnf)
 
   keys.forEach(function (key) {
     conf[key] = cnf[key]
@@ -310,11 +307,11 @@ export const draw = function (text, id) {
   logger.info('Rendering diagram ' + text)
 
   /// / Fetch the default direction, use TD if none was found
-  var diagram = d3.select('#' + id)
+  const diagram = d3.select('#' + id)
   insertMarkers(diagram)
 
   // Layout graph, Create a new directed graph
-  var g = new dagre.graphlib.Graph({
+  const g = new dagre.graphlib.Graph({
     multigraph: true
   })
 
@@ -328,12 +325,11 @@ export const draw = function (text, id) {
     return {}
   })
 
-  var classes = classDb.getClasses()
-  var keys = Object.keys(classes)
-  var i
-  for (i = 0; i < keys.length; i++) {
-    var classDef = classes[keys[i]]
-    var node = drawClass(diagram, classDef)
+  const classes = classDb.getClasses()
+  const keys = Object.keys(classes)
+  for (let i = 0; i < keys.length; i++) {
+    const classDef = classes[keys[i]]
+    const node = drawClass(diagram, classDef)
     // Add nodes to the graph. The first argument is the node id. The second is
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
@@ -341,7 +337,7 @@ export const draw = function (text, id) {
     logger.info('Org height: ' + node.height)
   }
 
-  var relations = classDb.getRelations()
+  const relations = classDb.getRelations()
   relations.forEach(function (relation) {
     logger.info('tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation))
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), { relation: relation })

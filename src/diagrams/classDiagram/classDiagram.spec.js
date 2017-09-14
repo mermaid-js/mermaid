@@ -9,7 +9,7 @@ describe('class diagram, ', function () {
     })
 
     it('should handle relation definitions', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
 'Class01 <|-- Class02\n' +
 'Class03 *-- Class04\n' +
 'Class05 o-- Class06\n' +
@@ -19,7 +19,7 @@ describe('class diagram, ', function () {
       parser.parse(str)
     })
     it('should handle relation definition of different types and directions', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
 'Class11 <|.. Class12\n' +
 'Class13 --> Class14\n' +
 'Class15 ..> Class16\n' +
@@ -30,7 +30,7 @@ describe('class diagram, ', function () {
     })
 
     it('should handle cardinality and labels', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
 'Class01 "1" *-- "many" Class02 : contains\n' +
 'Class03 o-- Class04 : aggregation\n' +
 'Class05 --> "1" Class06'
@@ -38,7 +38,7 @@ describe('class diagram, ', function () {
       parser.parse(str)
     })
     it('should handle class definitions', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
 'class Car\n' +
 'Driver -- Car : drives >\n' +
 'Car *-- Wheel : have 4 >\n' +
@@ -48,7 +48,7 @@ describe('class diagram, ', function () {
     })
 
     it('should handle method statements', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
 'Object <|-- ArrayList\n' +
 'Object : equals()\n' +
 'ArrayList : Object[] elementData\n' +
@@ -57,7 +57,7 @@ describe('class diagram, ', function () {
       parser.parse(str)
     })
     it('should handle parsing of method statements  grouped by brackets', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
 'class Dummy {\n' +
 'String data\n' +
 '  void methods()\n' +
@@ -72,7 +72,7 @@ describe('class diagram, ', function () {
     })
 
     it('should handle parsing of separators', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                 'class Foo1 {\n' +
                 '  You can use\n' +
                 '  several lines\n' +
@@ -110,12 +110,12 @@ describe('class diagram, ', function () {
       parser.yy.clear()
     })
     it('should handle relation definitions EXTENSION', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                         'Class01 <|-- Class02'
 
       parser.parse(str)
 
-      var relations = parser.yy.getRelations()
+      const relations = parser.yy.getRelations()
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01')
       expect(parser.yy.getClass('Class02').id).toBe('Class02')
@@ -124,12 +124,12 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE)
     })
     it('should handle relation definitions AGGREGATION and dotted line', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                         'Class01 o.. Class02'
 
       parser.parse(str)
 
-      var relations = parser.yy.getRelations()
+      const relations = parser.yy.getRelations()
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01')
       expect(parser.yy.getClass('Class02').id).toBe('Class02')
@@ -138,12 +138,12 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.lineType).toBe(classDb.lineType.DOTTED_LINE)
     })
     it('should handle relation definitions COMPOSITION on both sides', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                        'Class01 *--* Class02'
 
       parser.parse(str)
 
-      var relations = parser.yy.getRelations()
+      const relations = parser.yy.getRelations()
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01')
       expect(parser.yy.getClass('Class02').id).toBe('Class02')
@@ -152,12 +152,12 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE)
     })
     it('should handle relation definitions no types', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                         'Class01 -- Class02'
 
       parser.parse(str)
 
-      var relations = parser.yy.getRelations()
+      const relations = parser.yy.getRelations()
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01')
       expect(parser.yy.getClass('Class02').id).toBe('Class02')
@@ -166,12 +166,12 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE)
     })
     it('should handle relation definitions with type only on right side', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                        'Class01 --|> Class02'
 
       parser.parse(str)
 
-      var relations = parser.yy.getRelations()
+      const relations = parser.yy.getRelations()
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01')
       expect(parser.yy.getClass('Class02').id).toBe('Class02')
@@ -181,7 +181,7 @@ describe('class diagram, ', function () {
     })
 
     it('should handle multiple classes and relation definitions', function () {
-      var str = 'classDiagram\n' +
+      const str = 'classDiagram\n' +
                         'Class01 <|-- Class02\n' +
                         'Class03 *-- Class04\n' +
                         'Class05 o-- Class06\n' +
@@ -190,7 +190,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str)
 
-      var relations = parser.yy.getRelations()
+      const relations = parser.yy.getRelations()
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01')
       expect(parser.yy.getClass('Class10').id).toBe('Class10')
