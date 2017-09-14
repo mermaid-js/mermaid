@@ -58,7 +58,7 @@ const themes = {
  * });
  * ```
  */
-var config = {
+const config = {
   theme: defaultTheme,
 
   /**
@@ -251,8 +251,8 @@ var config = {
 setLogLevel(config.logLevel)
 
 function parse (text) {
-  var graphType = utils.detectType(text)
-  var parser
+  const graphType = utils.detectType(text)
+  let parser
 
   switch (graphType) {
     case 'gitGraph':
@@ -303,21 +303,21 @@ export const version = function () {
 }
 
 export const encodeEntities = function (text) {
-  var txt = text
+  let txt = text
 
   txt = txt.replace(/style.*:\S*#.*;/g, function (s) {
-    var innerTxt = s.substring(0, s.length - 1)
+    const innerTxt = s.substring(0, s.length - 1)
     return innerTxt
   })
   txt = txt.replace(/classDef.*:\S*#.*;/g, function (s) {
-    var innerTxt = s.substring(0, s.length - 1)
+    const innerTxt = s.substring(0, s.length - 1)
     return innerTxt
   })
 
   txt = txt.replace(/#\w+;/g, function (s) {
-    var innerTxt = s.substring(1, s.length - 1)
+    const innerTxt = s.substring(1, s.length - 1)
 
-    var isInt = /^\+?\d+$/.test(innerTxt)
+    const isInt = /^\+?\d+$/.test(innerTxt)
     if (isInt) {
       return 'ﬂ°°' + innerTxt + '¶ß'
     } else {
@@ -329,7 +329,7 @@ export const encodeEntities = function (text) {
 }
 
 export const decodeEntities = function (text) {
-  var txt = text
+  let txt = text
 
   txt = txt.replace(/ﬂ°°/g, function () {
     return '&#'
@@ -352,8 +352,8 @@ export const decodeEntities = function (text) {
  *      startOnLoad:true
  *  });
  *  $(function(){
- *      var graphDefinition = 'graph TB\na-->b';
- *      var cb = function(svgGraph){
+ *      const graphDefinition = 'graph TB\na-->b';
+ *      const cb = function(svgGraph){
  *          console.log(svgGraph);
  *      };
  *      mermaidAPI.render('id1',graphDefinition,cb);
@@ -366,7 +366,7 @@ export const decodeEntities = function (text) {
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
-var render = function (id, txt, cb, container) {
+const render = function (id, txt, cb, container) {
   if (typeof container !== 'undefined') {
     container.innerHTML = ''
 
@@ -395,8 +395,8 @@ var render = function (id, txt, cb, container) {
   window.txt = txt
   txt = encodeEntities(txt)
 
-  var element = d3.select('#d' + id).node()
-  var graphType = utils.detectType(txt)
+  const element = d3.select('#d' + id).node()
+  const graphType = utils.detectType(txt)
   switch (graphType) {
     case 'gitGraph':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
@@ -449,7 +449,7 @@ svg {
 
   d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 
-  var url = ''
+  let url = ''
   if (config.arrowMarkerAbsolute) {
     url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search
     url = url.replace(/\(/g, '\\(')
@@ -457,7 +457,7 @@ svg {
   }
 
   // Fix for when the base tag is used
-  var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g')
+  let svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g')
 
   svgCode = decodeEntities(svgCode)
 
@@ -467,7 +467,7 @@ svg {
     logger.warn('CB = undefined!')
   }
 
-  var node = d3.select('#d' + id).node()
+  const node = d3.select('#d' + id).node()
   if (node !== null && typeof node.remove === 'function') {
     d3.select('#d' + id).node().remove()
   }
@@ -493,16 +493,14 @@ function render2 (id, text, cb, containerElement) {
   }
 }
 
-var setConf = function (cnf) {
+const setConf = function (cnf) {
   // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  var lvl1Keys = Object.keys(cnf)
-  var i
-  for (i = 0; i < lvl1Keys.length; i++) {
+  const lvl1Keys = Object.keys(cnf)
+  for (let i = 0; i < lvl1Keys.length; i++) {
     if (typeof cnf[lvl1Keys[i]] === 'object') {
-      var lvl2Keys = Object.keys(cnf[lvl1Keys[i]])
+      const lvl2Keys = Object.keys(cnf[lvl1Keys[i]])
 
-      var j
-      for (j = 0; j < lvl2Keys.length; j++) {
+      for (let j = 0; j < lvl2Keys.length; j++) {
         logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j])
         if (typeof config[lvl1Keys[i]] === 'undefined') {
           config[lvl1Keys[i]] = {}

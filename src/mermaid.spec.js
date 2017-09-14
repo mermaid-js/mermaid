@@ -59,9 +59,9 @@ describe('when using mermaid and ', function () {
     it('it should handle edges with text', function () {
       flowParser.parser.parse('graph TD;A-->|text ex|B;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -76,9 +76,9 @@ describe('when using mermaid and ', function () {
     it('should handle edges without text', function () {
       flowParser.parser.parse('graph TD;A-->B;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -92,9 +92,9 @@ describe('when using mermaid and ', function () {
     it('should handle open-ended edges', function () {
       flowParser.parser.parse('graph TD;A---B;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -108,9 +108,9 @@ describe('when using mermaid and ', function () {
     it('should handle edges with styles defined', function () {
       flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -124,9 +124,9 @@ describe('when using mermaid and ', function () {
     it('should handle edges with interpolation defined', function () {
       flowParser.parser.parse('graph TD;A---B; linkStyle 0 interpolate basis')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -140,9 +140,9 @@ describe('when using mermaid and ', function () {
     it('should handle edges with text and styles defined', function () {
       flowParser.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -158,9 +158,9 @@ describe('when using mermaid and ', function () {
     it('should set fill to "none" by default when handling edges', function () {
       flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
+      const edges = flowParser.parser.yy.getEdges()
 
-      var mockG = {
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -175,8 +175,8 @@ describe('when using mermaid and ', function () {
     it('should not set fill to none if fill is set in linkStyle', function () {
       flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;')
       flowParser.parser.yy.getVertices()
-      var edges = flowParser.parser.yy.getEdges()
-      var mockG = {
+      const edges = flowParser.parser.yy.getEdges()
+      const mockG = {
         setEdge: function (start, end, options) {
           expect(start).toBe('A')
           expect(end).toBe('B')
@@ -202,7 +202,7 @@ describe('when using mermaid and ', function () {
     })
 
     it('it should not throw for a valid sequenceDiagram definition', function () {
-      var text = 'sequenceDiagram\n' +
+      const text = 'sequenceDiagram\n' +
         'Alice->Bob: Hello Bob, how are you?\n\n' +
         '%% Comment\n' +
         'Note right of Bob: Bob thinks\n' +
@@ -215,7 +215,7 @@ describe('when using mermaid and ', function () {
     })
 
     it('it should throw for an invalid sequenceDiagram definition', function () {
-      var text = 'sequenceDiagram\n' +
+      const text = 'sequenceDiagram\n' +
         'Alice:->Bob: Hello Bob, how are you?\n\n' +
         '%% Comment\n' +
         'Note right of Bob: Bob thinks\n' +
