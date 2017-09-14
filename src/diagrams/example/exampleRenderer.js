@@ -10,17 +10,16 @@ import { logger } from '../../logger'
  * @param id
  */
 export const draw = function (txt, id, ver) {
-  var parser
-  parser = exampleParser.parser
+  const parser = exampleParser.parser
   parser.yy = db
   logger.debug('Renering example diagram')
   // Parse the graph definition
   parser.parse(txt)
 
   // Fetch the default direction, use TD if none was found
-  var svg = d3.select('#' + id)
+  const svg = d3.select('#' + id)
 
-  var g = svg.append('g')
+  const g = svg.append('g')
 
   g.append('text')      // text label for the x axis
     .attr('x', 100)

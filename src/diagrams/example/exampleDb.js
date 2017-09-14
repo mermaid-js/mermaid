@@ -1,7 +1,7 @@
 import { logger } from '../../logger'
 
-var message = ''
-var info = false
+let message = ''
+let info = false
 
 export const setMessage = function (txt) {
   logger.debug('Setting message to: ' + txt)

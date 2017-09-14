@@ -8,13 +8,11 @@ describe('when parsing an info graph it', function () {
   })
 
   it('should handle an info definition', function () {
-    var str = 'info\nsay: hello'
-
+    const str = 'info\nsay: hello'
     parser.parse(str)
   })
   it('should handle an showMessage statement definition', function () {
-    var str = 'info\nshowInfo'
-
+    const str = 'info\nshowInfo'
     parser.parse(str)
   })
 })
