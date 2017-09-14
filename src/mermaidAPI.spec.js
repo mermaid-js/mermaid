@@ -9,26 +9,26 @@ describe('when using mermaidAPI and ', function () {
     })
 
     it('should copy a literal into the configuration', function () {
-      var orgConfig = mermaidAPI.getConfig()
+      const orgConfig = mermaidAPI.getConfig()
       expect(orgConfig.testLiteral).toBe(undefined)
 
       mermaidAPI.initialize({ 'testLiteral': true })
-      var config = mermaidAPI.getConfig()
+      const config = mermaidAPI.getConfig()
 
       expect(config.testLiteral).toBe(true)
     })
     it('should copy a an object into the configuration', function () {
-      var orgConfig = mermaidAPI.getConfig()
+      const orgConfig = mermaidAPI.getConfig()
       expect(orgConfig.testObject).toBe(undefined)
 
-      var object = {
+      const object = {
         test1: 1,
         test2: false
       }
 
       mermaidAPI.initialize({ 'testObject': object })
       mermaidAPI.initialize({ 'testObject': { 'test3': true } })
-      var config = mermaidAPI.getConfig()
+      const config = mermaidAPI.getConfig()
 
       expect(config.testObject.test1).toBe(1)
       expect(config.testObject.test2).toBe(false)
