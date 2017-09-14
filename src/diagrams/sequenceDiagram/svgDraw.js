@@ -1,5 +1,5 @@
 export const drawRect = function (elem, rectData) {
-  var rectElem = elem.append('rect')
+  const rectElem = elem.append('rect')
   rectElem.attr('x', rectData.x)
   rectElem.attr('y', rectData.y)
   rectElem.attr('fill', rectData.fill)
@@ -18,9 +18,9 @@ export const drawRect = function (elem, rectData) {
 
 export const drawText = function (elem, textData, width) {
   // Remove and ignore br:s
-  var nText = textData.text.replace(/<br\/?>/ig, ' ')
+  const nText = textData.text.replace(/<br\/?>/ig, ' ')
 
-  var textElem = elem.append('text')
+  const textElem = elem.append('text')
   textElem.attr('x', textData.x)
   textElem.attr('y', textData.y)
   textElem.style('text-anchor', textData.anchor)
@@ -29,7 +29,7 @@ export const drawText = function (elem, textData, width) {
     textElem.attr('class', textData.class)
   }
 
-  var span = textElem.append('tspan')
+  const span = textElem.append('tspan')
   span.attr('x', textData.x + textData.textMargin * 2)
   span.attr('fill', textData.fill)
   span.text(nText)
@@ -53,7 +53,7 @@ export const drawLabel = function (elem, txtObject) {
       (x + width - cut * 1.2) + ',' + (y + height) + ' ' +
       (x) + ',' + (y + height)
   }
-  var polygon = elem.append('polygon')
+  const polygon = elem.append('polygon')
   polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7))
   polygon.attr('class', 'labelBox')
 
@@ -61,7 +61,7 @@ export const drawLabel = function (elem, txtObject) {
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin
   drawText(elem, txtObject)
 }
-var actorCnt = -1
+let actorCnt = -1
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -69,8 +69,8 @@ var actorCnt = -1
  * @param description The text in the box
  */
 export const drawActor = function (elem, left, verticalPos, description, conf) {
-  var center = left + (conf.width / 2)
-  var g = elem.append('g')
+  const center = left + (conf.width / 2)
+  const g = elem.append('g')
   if (verticalPos === 0) {
     actorCnt++
     g.append('line')
@@ -84,7 +84,7 @@ export const drawActor = function (elem, left, verticalPos, description, conf) {
       .attr('stroke', '#999')
   }
 
-  var rect = getNoteRect()
+  const rect = getNoteRect()
   rect.x = left
   rect.y = verticalPos
   rect.fill = '#eaeaea'
@@ -109,8 +109,8 @@ export const anchorElement = function (elem) {
  * @param verticalPos - precise y cooridnate of bottom activation box edge
  */
 export const drawActivation = function (elem, bounds, verticalPos) {
-  var rect = getNoteRect()
-  var g = bounds.anchored
+  const rect = getNoteRect()
+  const g = bounds.anchored
   rect.x = bounds.startx
   rect.y = bounds.starty
   rect.fill = '#f4f4f4'
@@ -126,8 +126,8 @@ export const drawActivation = function (elem, bounds, verticalPos) {
  * @param description The text in the box
  */
 export const drawLoop = function (elem, bounds, labelText, conf) {
-  var g = elem.append('g')
-  var drawLoopLine = function (startx, starty, stopx, stopy) {
+  const g = elem.append('g')
+  const drawLoopLine = function (startx, starty, stopx, stopy) {
     return g.append('line')
       .attr('x1', startx)
       .attr('y1', starty)
@@ -145,7 +145,7 @@ export const drawLoop = function (elem, bounds, labelText, conf) {
     })
   }
 
-  var txt = getTextObj()
+  let txt = getTextObj()
   txt.text = labelText
   txt.x = bounds.startx
   txt.y = bounds.starty
@@ -192,8 +192,8 @@ export const insertArrowHead = function (elem) {
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 export const insertArrowCrossHead = function (elem) {
-  var defs = elem.append('defs')
-  var marker = defs.append('marker')
+  const defs = elem.append('defs')
+  const marker = defs.append('marker')
     .attr('id', 'crosshead')
     .attr('markerWidth', 15)
     .attr('markerHeight', 8)
@@ -220,7 +220,7 @@ export const insertArrowCrossHead = function (elem) {
 }
 
 export const getTextObj = function () {
-  var txt = {
+  const txt = {
     x: 0,
     y: 0,
     'fill': 'black',
@@ -236,7 +236,7 @@ export const getTextObj = function () {
 }
 
 export const getNoteRect = function () {
-  var rect = {
+  const rect = {
     x: 0,
     y: 0,
     fill: '#EDF2AE',
@@ -250,9 +250,9 @@ export const getNoteRect = function () {
   return rect
 }
 
-var _drawTextCandidateFunc = (function () {
+const _drawTextCandidateFunc = (function () {
   function byText (content, g, x, y, width, height, textAttrs) {
-    var text = g.append('text')
+    const text = g.append('text')
       .attr('x', x + width / 2).attr('y', y + height / 2 + 5)
       .style('text-anchor', 'middle')
       .text(content)
@@ -260,7 +260,7 @@ var _drawTextCandidateFunc = (function () {
   }
 
   function byTspan (content, g, x, y, width, height, textAttrs) {
-    var text = g.append('text')
+    const text = g.append('text')
       .attr('x', x + width / 2).attr('y', y)
       .style('text-anchor', 'middle')
     text.append('tspan')
@@ -272,7 +272,7 @@ var _drawTextCandidateFunc = (function () {
         x: x + width / 2, y: y, width: width, height: height
       }, 0)
       // vertical aligment after d3textwrap expans tspan to multiple tspans
-      var tspans = text.selectAll('tspan')
+      let tspans = text.selectAll('tspan')
       if (tspans.length > 0 && tspans[0].length > 0) {
         tspans = tspans[0]
         // set y of <text> to the mid y of the first line
@@ -285,12 +285,12 @@ var _drawTextCandidateFunc = (function () {
   }
 
   function byFo (content, g, x, y, width, height, textAttrs) {
-    var s = g.append('switch')
-    var f = s.append('foreignObject')
+    const s = g.append('switch')
+    const f = s.append('foreignObject')
       .attr('x', x).attr('y', y)
       .attr('width', width).attr('height', height)
 
-    var text = f.append('div').style('display', 'table')
+    const text = f.append('div').style('display', 'table')
       .style('height', '100%').style('width', '100%')
 
     text.append('div').style('display', 'table-cell')
@@ -302,7 +302,7 @@ var _drawTextCandidateFunc = (function () {
   }
 
   function _setTextAttrs (toText, fromTextAttrsDict) {
-    for (var key in fromTextAttrsDict) {
+    for (const key in fromTextAttrsDict) {
       if (fromTextAttrsDict.hasOwnProperty(key)) {
         toText.attr(key, fromTextAttrsDict[key])
       }

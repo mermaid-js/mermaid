@@ -1,13 +1,13 @@
 import { logger } from '../../logger'
 
-var actors = {}
-var messages = []
-var notes = []
-var title = ''
+let actors = {}
+let messages = []
+const notes = []
+let title = ''
 
 export const addActor = function (id, name, description) {
   // Don't allow description nulling
-  var old = actors[id]
+  const old = actors[id]
   if (old && name === old.name && description == null) return
 
   // Don't allow null descriptions, either
@@ -81,10 +81,10 @@ export const PLACEMENT = {
 }
 
 export const addNote = function (actor, placement, message) {
-  var note = { actor: actor, placement: placement, message: message }
+  const note = { actor: actor, placement: placement, message: message }
 
   // Coerce actor into a [to, from, ...] array
-  var actors = [].concat(actor, actor)
+  const actors = [].concat(actor, actor)
 
   notes.push(note)
   messages.push({ from: actors[0], to: actors[1], message: message, type: LINETYPE.NOTE, placement: placement })

@@ -6,7 +6,7 @@ import sequenceDb from './sequenceDb'
 
 parser.yy = sequenceDb
 
-var conf = {
+const conf = {
 
   diagramMarginX: 50,
   diagramMarginY: 30,
@@ -65,13 +65,13 @@ export const bounds = {
     }
   },
   updateBounds: function (startx, starty, stopx, stopy) {
-    var _self = this
-    var cnt = 0
+    const _self = this
+    let cnt = 0
     function updateFn (type) {
       return function updateItemBounds (item) {
         cnt++
         // The loop sequenceItems is a stack so the biggest margins in the beginning of the sequenceItems
-        var n = _self.sequenceItems.length - cnt + 1
+        const n = _self.sequenceItems.length - cnt + 1
 
         _self.updateVal(item, 'starty', starty - n * conf.boxMargin, Math.min)
         _self.updateVal(item, 'stopy', stopy + n * conf.boxMargin, Math.max)
@@ -93,12 +93,10 @@ export const bounds = {
     this.activations.forEach(updateFn('activation'))
   },
   insert: function (startx, starty, stopx, stopy) {
-    var _startx, _starty, _stopx, _stopy
-
-    _startx = Math.min(startx, stopx)
-    _stopx = Math.max(startx, stopx)
-    _starty = Math.min(starty, stopy)
-    _stopy = Math.max(starty, stopy)
+    const _startx = Math.min(startx, stopx)
+    const _stopx = Math.max(startx, stopx)
+    const _starty = Math.min(starty, stopy)
+    const _stopy = Math.max(starty, stopy)
 
     this.updateVal(bounds.data, 'startx', _startx, Math.min)
     this.updateVal(bounds.data, 'starty', _starty, Math.min)
@@ -108,9 +106,9 @@ export const bounds = {
     this.updateBounds(_startx, _starty, _stopx, _stopy)
   },
   newActivation: function (message, diagram) {
-    var actorRect = parser.yy.getActors()[message.from.actor]
-    var stackedSize = actorActivations(message.from.actor).length
-    var x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2
+    const actorRect = parser.yy.getActors()[message.from.actor]
+    const stackedSize = actorActivations(message.from.actor).length
+    const x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2
     this.activations.push({
       startx: x,
       starty: this.verticalPos + 2,
@@ -122,21 +120,21 @@ export const bounds = {
   },
   endActivation: function (message) {
     // find most recent activation for given actor
-    var lastActorActivationIdx = this.activations
+    const lastActorActivationIdx = this.activations
       .map(function (activation) { return activation.actor })
       .lastIndexOf(message.from.actor)
-    var activation = this.activations.splice(lastActorActivationIdx, 1)[0]
+    const activation = this.activations.splice(lastActorActivationIdx, 1)[0]
     return activation
   },
   newLoop: function (title) {
     this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title })
   },
   endLoop: function () {
-    var loop = this.sequenceItems.pop()
+    const loop = this.sequenceItems.pop()
     return loop
   },
   addSectionToLoop: function (message) {
-    var loop = this.sequenceItems.pop()
+    const loop = this.sequenceItems.pop()
     loop.sections = loop.sections || []
     loop.sectionTitles = loop.sectionTitles || []
     loop.sections.push(bounds.getVerticalPos())
@@ -161,17 +159,17 @@ export const bounds = {
  * @param pos The position if the actor in the liost of actors
  * @param description The text in the box
  */
-var drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
-  var rect = svgDraw.getNoteRect()
+const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
+  const rect = svgDraw.getNoteRect()
   rect.x = startx
   rect.y = verticalPos
   rect.width = forceWidth || conf.width
   rect.class = 'note'
 
-  var g = elem.append('g')
-  var rectElem = svgDraw.drawRect(g, rect)
+  let g = elem.append('g')
+  const rectElem = svgDraw.drawRect(g, rect)
 
-  var textObj = svgDraw.getTextObj()
+  const textObj = svgDraw.getTextObj()
   textObj.x = startx - 4
   textObj.y = verticalPos - 13
   textObj.textMargin = conf.noteMargin
@@ -179,9 +177,9 @@ var drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
   textObj.text = msg.message
   textObj.class = 'noteText'
 
-  var textElem = svgDraw.drawText(g, textObj, rect.width - conf.noteMargin)
+  let textElem = svgDraw.drawText(g, textObj, rect.width - conf.noteMargin)
 
-  var textHeight = textElem[0][0].getBBox().height
+  let textHeight = textElem[0][0].getBBox().height
   if (!forceWidth && textHeight > conf.width) {
     textElem.remove()
     g = elem.append('g')
@@ -207,34 +205,32 @@ var drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
  * @param txtCenter
  * @param msg
  */
-var drawMessage = function (elem, startx, stopx, verticalPos, msg) {
-  var g = elem.append('g')
-  var txtCenter = startx + (stopx - startx) / 2
+const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
+  const g = elem.append('g')
+  const txtCenter = startx + (stopx - startx) / 2
 
-  var textElem = g.append('text')      // text label for the x axis
+  const textElem = g.append('text')      // text label for the x axis
     .attr('x', txtCenter)
     .attr('y', verticalPos - 7)
     .style('text-anchor', 'middle')
     .attr('class', 'messageText')
     .text(msg.message)
 
-  var textWidth
-
+  let textWidth
   if (typeof textElem[0][0].getBBox !== 'undefined') {
     textWidth = textElem[0][0].getBBox().width
   } else {
     textWidth = textElem[0][0].getBoundingClientRect()
   }
 
-  var line
-
+  let line
   if (startx === stopx) {
     line = g.append('path')
       .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
       (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
 
     bounds.bumpVerticalPos(30)
-    var dx = Math.max(textWidth / 2, 100)
+    const dx = Math.max(textWidth / 2, 100)
     bounds.insert(startx - dx, bounds.getVerticalPos() - 10, stopx + dx, bounds.getVerticalPos())
   } else {
     line = g.append('line')
@@ -253,7 +249,7 @@ var drawMessage = function (elem, startx, stopx, verticalPos, msg) {
     line.attr('class', 'messageLine0')
   }
 
-  var url = ''
+  let url = ''
   if (conf.arrowMarkerAbsolute) {
     url = window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search
     url = url.replace(/\(/g, '\\(')
@@ -273,10 +269,9 @@ var drawMessage = function (elem, startx, stopx, verticalPos, msg) {
 }
 
 export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
-  var i
   // Draw the actors
-  for (i = 0; i < actorKeys.length; i++) {
-    var key = actorKeys[i]
+  for (let i = 0; i < actorKeys.length; i++) {
+    const key = actorKeys[i]
 
     // Add some rendering data to the object
     actors[key].x = i * conf.actorMargin + i * conf.width
@@ -294,26 +289,26 @@ export const drawActors = function (diagram, actors, actorKeys, verticalPos) {
 }
 
 export const setConf = function (cnf) {
-  var keys = Object.keys(cnf)
+  const keys = Object.keys(cnf)
 
   keys.forEach(function (key) {
     conf[key] = cnf[key]
   })
 }
 
-var actorActivations = function (actor) {
+const actorActivations = function (actor) {
   return bounds.activations.filter(function (activation) {
     return activation.actor === actor
   })
 }
 
-var actorFlowVerticaBounds = function (actor) {
+const actorFlowVerticaBounds = function (actor) {
   // handle multiple stacked activations for same actor
-  var actors = parser.yy.getActors()
-  var activations = actorActivations(actor)
+  const actors = parser.yy.getActors()
+  const activations = actorActivations(actor)
 
-  var left = activations.reduce(function (acc, activation) { return Math.min(acc, activation.startx) }, actors[actor].x + conf.width / 2)
-  var right = activations.reduce(function (acc, activation) { return Math.max(acc, activation.stopx) }, actors[actor].x + conf.width / 2)
+  const left = activations.reduce(function (acc, activation) { return Math.min(acc, activation.startx) }, actors[actor].x + conf.width / 2)
+  const right = activations.reduce(function (acc, activation) { return Math.max(acc, activation.stopx) }, actors[actor].x + conf.width / 2)
   return [left, right]
 }
 
@@ -327,17 +322,17 @@ export const draw = function (text, id) {
   parser.parse(text + '\n')
 
   bounds.init()
-  var diagram = d3.select('#' + id)
+  const diagram = d3.select('#' + id)
 
-  var startx
-  var stopx
-  var forceWidth
+  let startx
+  let stopx
+  let forceWidth
 
   // Fetch data from the parsing
-  var actors = parser.yy.getActors()
-  var actorKeys = parser.yy.getActorKeys()
-  var messages = parser.yy.getMessages()
-  var title = parser.yy.getTitle()
+  const actors = parser.yy.getActors()
+  const actorKeys = parser.yy.getActorKeys()
+  const messages = parser.yy.getMessages()
+  const title = parser.yy.getTitle()
   drawActors(diagram, actors, actorKeys, 0)
 
   // The arrow head definition is attached to the svg once
@@ -345,7 +340,7 @@ export const draw = function (text, id) {
   svgDraw.insertArrowCrossHead(diagram)
 
   function activeEnd (msg, verticalPos) {
-    var activationData = bounds.endActivation(msg)
+    const activationData = bounds.endActivation(msg)
     if (activationData.starty + 18 > verticalPos) {
       activationData.starty = verticalPos - 6
       verticalPos += 12
@@ -355,12 +350,11 @@ export const draw = function (text, id) {
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
   }
 
-  // var lastMsg
+  // const lastMsg
 
   // Draw the messages/signals
   messages.forEach(function (msg) {
-    var loopData
-
+    let loopData
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
         bounds.bumpVerticalPos(conf.boxMargin)
@@ -445,16 +439,16 @@ export const draw = function (text, id) {
         try {
           // lastMsg = msg
           bounds.bumpVerticalPos(conf.messageMargin)
-          var fromBounds = actorFlowVerticaBounds(msg.from)
-          var toBounds = actorFlowVerticaBounds(msg.to)
-          var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0
-          var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1
+          const fromBounds = actorFlowVerticaBounds(msg.from)
+          const toBounds = actorFlowVerticaBounds(msg.to)
+          const fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0
+          const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1
           startx = fromBounds[fromIdx]
           stopx = toBounds[toIdx]
 
-          var verticalPos = bounds.getVerticalPos()
+          const verticalPos = bounds.getVerticalPos()
           drawMessage(diagram, startx, stopx, verticalPos, msg)
-          var allBounds = fromBounds.concat(toBounds)
+          const allBounds = fromBounds.concat(toBounds)
           bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {
           console.error('error while drawing message', e)
@@ -468,20 +462,19 @@ export const draw = function (text, id) {
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos())
   }
 
-  var box = bounds.getBounds()
+  const box = bounds.getBounds()
 
   // Adjust line height of actor lines now that the height of the diagram is known
   logger.debug('For line height fix Querying: #' + id + ' .actor-line')
-  var actorLines = d3.selectAll('#' + id + ' .actor-line')
+  const actorLines = d3.selectAll('#' + id + ' .actor-line')
   actorLines.attr('y2', box.stopy)
 
-  var height = box.stopy - box.starty + 2 * conf.diagramMarginY
-
+  let height = box.stopy - box.starty + 2 * conf.diagramMarginY
   if (conf.mirrorActors) {
     height = height - conf.boxMargin + conf.bottomMarginAdj
   }
 
-  var width = (box.stopx - box.startx) + (2 * conf.diagramMarginX)
+  const width = (box.stopx - box.startx) + (2 * conf.diagramMarginX)
 
   if (title) {
     diagram.append('text')
@@ -498,7 +491,7 @@ export const draw = function (text, id) {
     diagram.attr('height', height)
     diagram.attr('width', width)
   }
-  var extraVertForTitle = title ? 40 : 0
+  const extraVertForTitle = title ? 40 : 0
   diagram.attr('viewBox', (box.startx - conf.diagramMarginX) + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle))
 }
 
