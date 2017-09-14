@@ -1,10 +1,6 @@
 .DS_Store
 
-node_modules
-coverage
-
-test/tmp_*
-test/fixtures/samples/*.actual*
+node_modules/
+coverage/
 
 dist/*.js
-dist/themes/*.css

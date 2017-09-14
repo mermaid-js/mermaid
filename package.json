@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "7.0.18",
+  "version": "7.1.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -12,9 +12,6 @@
     "class diagram",
     "git graph"
   ],
-  "bin": {
-    "mermaid": "./bin/mermaid.js"
-  },
   "scripts": {
     "build": "node -r babel-register ./node_modules/.bin/webpack --progress --colors",
     "build:watch": "yarn build --watch",
@@ -22,7 +19,6 @@
     "upgrade": "yarn upgrade --latest && yarn remove d3 && yarn add d3@3.5.17",
     "lint": "standard",
     "karma": "node -r babel-register node_modules/.bin/karma start karma.conf.js --single-run",
-    "jest": "jest --coverage --runInBand",
     "test": "yarn lint && yarn karma",
     "jison": "node -r babel-register node_modules/.bin/gulp jison",
     "prepublishOnly": "yarn build && yarn release && yarn test"
@@ -40,26 +36,19 @@
     ]
   },
   "dependencies": {
-    "chalk": "^2.1.0",
     "d3": "3.5.17",
     "dagre-d3-renderer": "^0.4.24",
     "dagre-layout": "^0.8.0",
     "he": "^1.1.1",
     "lodash": "^4.17.4",
-    "minimist": "^1.2.0",
-    "mkdirp": "^0.5.1",
-    "moment": "^2.18.1",
-    "semver": "^5.4.1",
-    "which": "^1.3.0"
+    "moment": "^2.18.1"
   },
   "devDependencies": {
-    "async": "^2.5.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-lodash": "^3.2.11",
     "babel-preset-env": "^1.6.0",
     "babel-preset-es2015": "^6.24.1",
-    "clone": "^2.1.1",
     "codeclimate-test-reporter": "^0.5.0",
     "css-loader": "^0.28.7",
     "css-to-string-loader": "^0.1.3",
@@ -70,7 +59,6 @@
     "inject-loader": "^3.0.1",
     "jasmine": "^2.8.0",
     "jasmine-es6": "^0.4.1",
-    "jest": "^21.0.2",
     "jison": "^0.4.18",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -79,21 +67,14 @@
     "karma-webpack": "^2.0.4",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
-    "phantomjs-prebuilt": "^2.1.15",
     "puppeteer": "^0.10.2",
-    "rimraf": "^2.6.2",
     "standard": "^10.0.3",
     "style-loader": "^0.18.2",
     "webpack": "^3.5.6",
     "webpack-node-externals": "^1.6.0"
   },
   "files": [
-    "bin",
     "dist",
-    "lib",
     "src"
-  ],
-  "jest": {
-    "testRegex": "test/cli_test-.+?\\.js"
-  }
+  ]
 }

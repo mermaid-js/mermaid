@@ -5,21 +5,18 @@
 - Make node console output colors like Chrome console
 - What's the correct way to change logLevel as an end user?
     - mermaid.initialize({ logLevel: 1 })
-- Replace CodeClimate with coveralls
+- Replace CodeClimate with coveralls ?
 - Get familar with jison
 - git graph requires a blank line at the end. why?
-- Move cli to mermaid-cli project ?
-    - think about it
 - Remove 'lodash' as dependency
     - https://github.com/lodash/babel-plugin-lodash
     - https://www.npmjs.com/package/lodash-webpack-plugin
 - Replace var with const/let
-- Stops working for mermaid-live-editor since 7.0.9
 - global.mermaid_config
 - rewrite logger
 - rewrite less code
-- Don't generate temp_* folders in test/ folder
-    - Generate them into system temp folder instead
-- Replace phantomjs with Chrome headless
-- `yarn jest` is disabled
-- Travis build failed
+- d3 is possible to work with jsdom only.
+    - need to mock window size
+    - so mermaid could work without a browser at all
+    - But how to mesure font size? it's a problem.
+- Setup code coverage

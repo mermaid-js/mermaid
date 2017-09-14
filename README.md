@@ -4,7 +4,7 @@
 [![Code Climate](https://codeclimate.com/github/knsv/mermaid/badges/gpa.svg)](https://codeclimate.com/github/knsv/mermaid)
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-![](./img/header.png)
+![banner](./img/header.png)
 
 Generation of diagrams and flowcharts from text in a similar manner as markdown.
 
@@ -142,7 +142,7 @@ https://unpkg.com/mermaid@<version>/dist/
 
 Replace `<version>` with expected version number.
 
-Example: https://unpkg.com/mermaid@7.0.4/dist/
+Example: https://unpkg.com/mermaid@7.1.0/dist/
 
 ### Node.js
 
@@ -151,13 +151,16 @@ yarn add mermaid
 ```
 
 
-## Further reading
+## Documentation
 
-* [Usage](https://mermaidjs.github.io/usage.html)
-* [Flowchart syntax](https://mermaidjs.github.io/flowchart.html)
-* [Sequence diagram syntax](https://mermaidjs.github.io/sequenceDiagram.html)
-* [Mermaid CLI](https://mermaidjs.github.io/mermaidCLI.html)
-* [Demos](https://mermaidjs.github.io/demos.html)
+https://mermaidjs.github.io
+
+
+## Sibling projects
+
+- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
+- [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
+- [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 
 
 # Request for assistance
@@ -170,7 +173,6 @@ As part of this team you would get write access to the repository and would
 represent the project when answering questions and issues.
 
 Together we could continue the work with things like:
-* port the code to es6
 * adding more typers of diagrams like mindmaps, ert digrams etc
 * improving existing diagrams
 
@@ -213,6 +215,8 @@ Manual test in browser:
 
 
 ## Release
+
+For those who have the permission to do so:
 
 Update version number in `package.json`.
 
