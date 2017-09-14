@@ -2,15 +2,15 @@ import { logger } from '../../logger'
 import utils from '../../utils'
 import d3 from '../../d3'
 
-var vertices = {}
-var edges = []
-var classes = []
-var subGraphs = []
-var tooltips = {}
-var subCount = 0
-var direction
+let vertices = {}
+let edges = []
+let classes = []
+let subGraphs = []
+let tooltips = {}
+let subCount = 0
+let direction
 // Functions to be run after graph rendering
-var funs = []
+let funs = []
 /**
  * Function called by parser when a node definition has been found
  * @param id
@@ -19,7 +19,7 @@ var funs = []
  * @param style
  */
 export const addVertex = function (id, text, type, style) {
-  var txt
+  let txt
 
   if (typeof id === 'undefined') {
     return
@@ -65,7 +65,7 @@ export const addVertex = function (id, text, type, style) {
  */
 export const addLink = function (start, end, type, linktext) {
   logger.info('Got edge...', start, end)
-  var edge = { start: start, end: end, type: undefined, text: '' }
+  const edge = { start: start, end: end, type: undefined, text: '' }
   linktext = type.text
 
   if (typeof linktext !== 'undefined') {
@@ -153,19 +153,19 @@ export const setClass = function (id, className) {
   }
 }
 
-var setTooltip = function (id, tooltip) {
+const setTooltip = function (id, tooltip) {
   if (typeof tooltip !== 'undefined') {
     tooltips[id] = tooltip
   }
 }
 
-var setClickFun = function (id, functionName) {
+const setClickFun = function (id, functionName) {
   if (typeof functionName === 'undefined') {
     return
   }
   if (typeof vertices[id] !== 'undefined') {
     funs.push(function (element) {
-      var elem = d3.select(element).select('#' + id)
+      const elem = d3.select(element).select('#' + id)
       if (elem !== null) {
         elem.on('click', function () {
           window[functionName](id)
@@ -175,13 +175,13 @@ var setClickFun = function (id, functionName) {
   }
 }
 
-var setLink = function (id, linkStr) {
+const setLink = function (id, linkStr) {
   if (typeof linkStr === 'undefined') {
     return
   }
   if (typeof vertices[id] !== 'undefined') {
     funs.push(function (element) {
-      var elem = d3.select(element).select('#' + id)
+      const elem = d3.select(element).select('#' + id)
       if (elem !== null) {
         elem.on('click', function () {
           window.open(linkStr, 'newTab')
@@ -244,8 +244,8 @@ export const getClasses = function () {
   return classes
 }
 
-var setupToolTips = function (element) {
-  var tooltipElem = d3.select('.mermaidTooltip')
+const setupToolTips = function (element) {
+  let tooltipElem = d3.select('.mermaidTooltip')
   if (tooltipElem[0][0] === null) {
     tooltipElem = d3.select('body')
       .append('div')
@@ -253,18 +253,18 @@ var setupToolTips = function (element) {
       .style('opacity', 0)
   }
 
-  var svg = d3.select(element).select('svg')
+  const svg = d3.select(element).select('svg')
 
-  var nodes = svg.selectAll('g.node')
+  const nodes = svg.selectAll('g.node')
   nodes
     .on('mouseover', function () {
-      var el = d3.select(this)
-      var title = el.attr('title')
+      const el = d3.select(this)
+      const title = el.attr('title')
       // Dont try to draw a tooltip if no data is provided
       if (title === null) {
         return
       }
-      var rect = this.getBoundingClientRect()
+      const rect = this.getBoundingClientRect()
 
       tooltipElem.transition()
         .duration(200)
@@ -278,7 +278,7 @@ var setupToolTips = function (element) {
       tooltipElem.transition()
         .duration(500)
         .style('opacity', 0)
-      var el = d3.select(this)
+      const el = d3.select(this)
       el.classed('hover', false)
     })
 }
@@ -310,11 +310,11 @@ export const defaultStyle = function () {
  */
 export const addSubGraph = function (list, title) {
   function uniq (a) {
-    var prims = { 'boolean': {}, 'number': {}, 'string': {} }
-    var objs = []
+    const prims = { 'boolean': {}, 'number': {}, 'string': {} }
+    const objs = []
 
     return a.filter(function (item) {
-      var type = typeof item
+      const type = typeof item
       if (item === ' ') {
         return false
       }
@@ -322,29 +322,28 @@ export const addSubGraph = function (list, title) {
     })
   }
 
-  var nodeList = []
+  let nodeList = []
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
 
-  var subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title }
+  const subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title }
   subGraphs.push(subGraph)
   subCount = subCount + 1
   return subGraph.id
 }
 
-var getPosForId = function (id) {
-  var i
-  for (i = 0; i < subGraphs.length; i++) {
+const getPosForId = function (id) {
+  for (let i = 0; i < subGraphs.length; i++) {
     if (subGraphs[i].id === id) {
       return i
     }
   }
   return -1
 }
-var secCount = -1
-var posCrossRef = []
-var indexNodes2 = function (id, pos) {
-  var nodes = subGraphs[pos].nodes
+let secCount = -1
+const posCrossRef = []
+const indexNodes2 = function (id, pos) {
+  const nodes = subGraphs[pos].nodes
   secCount = secCount + 1
   if (secCount > 2000) {
     return
@@ -358,13 +357,13 @@ var indexNodes2 = function (id, pos) {
     }
   }
 
-  var count = 0
-  var posCount = 1
+  let count = 0
+  let posCount = 1
   while (count < nodes.length) {
-    var childPos = getPosForId(nodes[count])
+    const childPos = getPosForId(nodes[count])
     // Ignore regular nodes (pos will be -1)
     if (childPos >= 0) {
-      var res = indexNodes2(id, childPos)
+      const res = indexNodes2(id, childPos)
       if (res.result) {
         return {
           result: true,

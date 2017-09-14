@@ -8,22 +8,22 @@ describe('when parsing a gantt diagram it', function () {
   })
 
   it('should handle an dateFormat definition', function () {
-    var str = 'gantt\ndateFormat yyyy-mm-dd'
+    const str = 'gantt\ndateFormat yyyy-mm-dd'
 
     parser.parse(str)
   })
   it('should handle an dateFormat definition', function () {
-    var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
     parser.parse(str)
   })
   it('should handle an dateFormat definition', function () {
-    var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
     parser.parse(str)
   })
   it('should handle an section definition', function () {
-    var str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
     parser.parse(str)
   })
@@ -39,7 +39,7 @@ describe('when parsing a gantt diagram it', function () {
    * params bapa - a unique bapap
    */
   it('should handle a task definition', function () {
-    var str = 'gantt\n' +
+    const str = 'gantt\n' +
       'dateFormat yyyy-mm-dd\n' +
       'title Adding gantt diagram functionality to mermaid\n' +
       'section Documentation\n' +
