@@ -8,7 +8,7 @@ import mermaidAPI from './mermaidAPI'
 import { logger } from './logger'
 import pkg from '../package.json'
 
-var nextId = 0
+let nextId = 0
 
 /**
  * ## init
@@ -31,10 +31,10 @@ var nextId = 0
  * Renders the mermaid diagrams
  * @param nodes a css selector or an array of nodes
  */
-var init = function () {
-  var conf = mermaidAPI.getConfig()
+const init = function () {
+  const conf = mermaidAPI.getConfig()
   logger.debug('Starting rendering diagrams')
-  var nodes
+  let nodes
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
     if (typeof arguments[0] !== 'undefined') {
@@ -47,7 +47,7 @@ var init = function () {
   }
 
   // if last argument is a function this is the callback function
-  var callback
+  let callback
   if (typeof arguments[arguments.length - 1] === 'function') {
     callback = arguments[arguments.length - 1]
     logger.debug('Callback function found')
@@ -79,17 +79,10 @@ var init = function () {
     mermaidAPI.initialize({ gantt: mermaid.ganttConfig })
   }
 
-  var txt
-  var insertSvg = function (svgCode, bindFunctions) {
-    element.innerHTML = svgCode
-    if (typeof callback !== 'undefined') {
-      callback(id)
-    }
-    bindFunctions(element)
-  }
+  let txt
 
-  for (var i = 0; i < nodes.length; i++) {
-    var element = nodes[i]
+  for (let i = 0; i < nodes.length; i++) {
+    const element = nodes[i]
 
     /*! Check if previously processed */
     if (!element.getAttribute('data-processed')) {
@@ -98,7 +91,7 @@ var init = function () {
       continue
     }
 
-    var id = 'mermaidChart' + nextId++
+    const id = 'mermaidChart' + nextId++
 
     // Fetch the graph definition including tags
     txt = element.innerHTML
@@ -106,7 +99,13 @@ var init = function () {
     // transforms the html to pure text
     txt = he.decode(txt).trim()
 
-    mermaidAPI.render(id, txt, insertSvg, element)
+    mermaidAPI.render(id, txt, (svgCode, bindFunctions) => {
+      element.innerHTML = svgCode
+      if (typeof callback !== 'undefined') {
+        callback(id)
+      }
+      bindFunctions(element)
+    }, element)
   }
 }
 
@@ -133,7 +132,7 @@ const initialize = function (config) {
  * calls init for rendering the mermaid diagrams on the page.
  */
 const contentLoaded = function () {
-  var config
+  let config
   // Check state of start config mermaid namespace
   if (typeof global.mermaid_config !== 'undefined') {
     if (global.mermaid_config.htmlLabels === false) {
