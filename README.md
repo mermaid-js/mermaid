@@ -12,31 +12,22 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-The code below would render the following image
-<table>
-    <tr><th>Code</th><th>Rendered diagram</th></tr>
-    <tr>
-        <td>
-            <pre>
-                <code>
+
+### Flowchart
+
+```
 graph TD;
     A-->B;
     A-->C;
     B-->D;
     C-->D;
-                </code>
-            </pre>
-        </td>
-        <td>
-            <p align="center">
-                <img src='./img/flow.png' alt='Flowchart'>
-            </p>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <pre>
-                <code>
+```
+![Flowchart](./img/flow.png)
+
+
+### Sequence diagram
+
+```
 sequenceDiagram
     participant Alice
     participant Bob
@@ -44,21 +35,17 @@ sequenceDiagram
     loop Healthcheck
         John->>John: Fight against hypochondria
     end
-    Note right of John: Rational thoughts &lt;br/>prevail...
+    Note right of John: Rational thoughts <br/>prevail...
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
-                </code>
-            </pre>
-        </td>
-        <td>
-            <img src='./img/sequence.png' alt='Sequence Diagram'>
-        </td>
-    </tr>
-        <tr>
-        <td>
-            <pre>
-                <code>
+```
+![Sequence diagram](./img/sequence.png)
+
+
+### Gantt diagram
+
+```
 gantt
 dateFormat  YYYY-MM-DD
 title Adding GANTT diagram to mermaid
@@ -68,68 +55,54 @@ Completed task            :done,    des1, 2014-01-06,2014-01-08
 Active task               :active,  des2, 2014-01-09, 3d
 Future task               :         des3, after des2, 5d
 Future task2               :         des4, after des3, 5d
-                </code>
-            </pre>
-        </td>
-        <td>
-            <img src='./img/gantt.png' alt='Gantt Diagram'>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <pre>
-                <code>
+```
+![Gantt diagram](./img/gantt.png)
+
+
+### Class diagram - experimental
+
+```
 classDiagram
-    Class01 &lt;|-- AveryLongClass : Cool
-    Class03 *-- Class04
-    Class05 o-- Class06
-    Class07 .. Class08
-    Class09 --> C2 : Where am i?
-    Class09 --* C3
-    Class09 --|> Class07
-    Class07 : equals()
-    Class07 : Object[] elementData
-    Class01 : size()
-    Class01 : int chimp
-    Class01 : int gorilla
-    Class08 &lt;--> C2: Cool label
-                </code>
-            </pre>
-        </td>
-        <td>
-            <img src='./img/class.png' alt='Class Diagram'>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <pre>
-                <code>
-gitGraph :
+Class01 <|-- AveryLongClass : Cool
+Class03 *-- Class04
+Class05 o-- Class06
+Class07 .. Class08
+Class09 --> C2 : Where am i?
+Class09 --* C3
+Class09 --|> Class07
+Class07 : equals()
+Class07 : Object[] elementData
+Class01 : size()
+Class01 : int chimp
+Class01 : int gorilla
+Class08 <--> C2: Cool label
+```
+![Class diagram](./img/class.png)
+
+
+### Git graph - experimental
+
+```
+gitGraph:
 options
 {
-    "key": "value",
-    "nodeWidth": 150,
-    "nodeSpacing" : 150
+    "nodeSpacing": 150,
+    "nodeRadius": 10
 }
 end
-    commit
-    branch newbranch
-    checkout newbranch
-    commit
-    commit
-    checkout master
-    commit
-    commit
-    merge newbranch
-                </code>
-            </pre>
-        </td>
-        <td>
-            <img src='./img/git.png' alt='Git Graph'>
-        </td>
-    </tr>
+commit
+branch newbranch
+checkout newbranch
+commit
+commit
+checkout master
+commit
+commit
+merge newbranch
 
-</table>
+```
+
+![Git graph](./img/git.png)
 
 
 ## Installation
