@@ -59,7 +59,7 @@ Future task2               :         des4, after des3, 5d
 ![Gantt diagram](./img/gantt.png)
 
 
-### Class diagram - experimental
+### Class diagram - :exclamation: experimental
 
 ```
 classDiagram
@@ -80,7 +80,7 @@ Class08 <--> C2: Cool label
 ![Class diagram](./img/class.png)
 
 
-### Git graph - experimental
+### Git graph - :exclamation: experimental
 
 ```
 gitGraph:
