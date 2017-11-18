@@ -12,18 +12,16 @@ describe('when parsing a gantt diagram it', function () {
 
     parser.parse(str)
   })
-  it('should handle a dateFormat definition', function () {
-    const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
-
-    parser.parse(str)
-  })
-  it('should handle a dateFormat definition', function () {
+  it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
     parser.parse(str)
   })
   it('should handle a section definition', function () {
-    const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
+    const str = 'gantt\n' +
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'section Documentation'
 
     parser.parse(str)
   })
