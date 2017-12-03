@@ -14,6 +14,8 @@ B --> C{Let me think}
 C -->|One| D[Laptop]
 C -->|Two| E[iPhone]
 C -->|Three| F[Car]
+click A "index.html#link-clicked" "link test"
+click B testClick "click test"
   </div>
 
   <hr/>
@@ -101,5 +103,18 @@ Class08 <--> C2: Cool label
   <script>
     mermaid.initialize({startOnLoad: true, theme: 'forest'});
   </script>
+  <script>
+    function testClick(nodeId) {
+      console.log("clicked", nodeId);
+      var originalBgColor = document.querySelector('body').style.backgroundColor;
+      document.querySelector('body').style.backgroundColor = 'yellow';
+      setTimeout(function() {
+        document.querySelector('body').style.backgroundColor = originalBgColor;
+      }, 100);
+
+    }
+
+  </script>
+
 </body>
 </html>
