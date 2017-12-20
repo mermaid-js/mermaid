@@ -14,11 +14,7 @@ const jsRule = {
     loader: 'babel-loader',
     options: {
       presets: [
-        ['env', {
-          'targets': {
-            'browsers': ['last 3 versions']
-          }
-        }]
+        'env'
       ],
       plugins: ['lodash']
     }
@@ -52,6 +48,7 @@ export const jsConfig = () => {
     },
     module: {
       rules: [lodashRule, jsRule, lessRule]
-    }
+    },
+    devtool: 'source-map'
   }
 }

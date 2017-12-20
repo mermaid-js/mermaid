@@ -4,3 +4,4 @@ node_modules/
 coverage/
 
 dist/*.js
+dist/*.map
