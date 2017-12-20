@@ -19,3 +19,4 @@
     - so mermaid could work without a browser at all
     - But how to mesure font size? it's a problem.
 - Setup code coverage
+- Create a desktop client

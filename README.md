@@ -184,7 +184,7 @@ We recommend you installing [editor plugins](https://github.com/feross/standard#
 
 Manual test in browser:
 
-    open dist/demo/index.html
+    open dist/index.html
 
 
 ## Release
