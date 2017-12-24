@@ -290,7 +290,9 @@ const _drawTextCandidateFunc = (function () {
       .attr('x', x).attr('y', y)
       .attr('width', width).attr('height', height)
 
-    const text = f.append('div').style('display', 'table')
+    const text = f.append('div')
+      .attr('xmlns', 'http://www.w3.org/1999/xhtml')
+      .style('display', 'table')
       .style('height', '100%').style('width', '100%')
 
     text.append('div').style('display', 'table-cell')
