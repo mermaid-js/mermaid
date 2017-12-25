@@ -134,6 +134,7 @@ https://mermaidjs.github.io
 - [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
 - [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
+- [mermaid Parcel demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
 
 # Request for assistance
