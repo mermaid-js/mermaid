@@ -101,20 +101,17 @@ Class08 <--> C2: Cool label
   </div>
   <script src="./mermaid.js"></script>
   <script>
-    mermaid.initialize({startOnLoad: true, theme: 'forest'});
+    mermaid.initialize({ theme: 'forest' });
   </script>
   <script>
     function testClick(nodeId) {
-      console.log("clicked", nodeId);
-      var originalBgColor = document.querySelector('body').style.backgroundColor;
-      document.querySelector('body').style.backgroundColor = 'yellow';
+      console.log("clicked", nodeId)
+      var originalBgColor = document.querySelector('body').style.backgroundColor
+      document.querySelector('body').style.backgroundColor = 'yellow'
       setTimeout(function() {
-        document.querySelector('body').style.backgroundColor = originalBgColor;
-      }, 100);
-
+        document.querySelector('body').style.backgroundColor = originalBgColor
+      }, 100)
     }
-
   </script>
-
 </body>
 </html>

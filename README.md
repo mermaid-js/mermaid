@@ -164,10 +164,6 @@ Make sure you have Chrome browser installed, this project uses Chrome headless t
 
 ## Build
 
-    yarn build
-
-If you want real time incremental build:
-
     yarn build:watch
 
 
