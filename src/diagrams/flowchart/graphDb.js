@@ -204,11 +204,13 @@ export const setClickEvent = function (id, functionName, link, tooltip) {
       setTooltip(id2, tooltip)
       setClickFun(id2, functionName)
       setLink(id2, link)
+      setClass(id, 'clickable')
     })
   } else {
     setTooltip(id, tooltip)
     setClickFun(id, functionName)
     setLink(id, link)
+    setClass(id, 'clickable')
   }
 }
 
