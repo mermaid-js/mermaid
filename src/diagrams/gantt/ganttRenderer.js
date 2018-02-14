@@ -289,13 +289,12 @@ export const draw = function (text, id) {
       }]
     ]
     let formatter
-    let xAxis
-    if (typeof conf.axisFormatter === 'string') {
-      xAxis = d3.svg.axis()
+    let xAxis = d3.svg.axis()
       .scale(timeScale)
       .orient('bottom')
       .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-      .tickFormat(d3.time.format(conf.axisFormatter))
+    if (typeof conf.axisFormatter === 'string') {
+      xAxis = xAxis.tickFormat(d3.time.format(conf.axisFormatter))
     } else {
       if (typeof conf.axisFormatter !== 'undefined') {
         mid = []
@@ -308,11 +307,7 @@ export const draw = function (text, id) {
       }
       formatter = pre.concat(mid).concat(post)
 
-      xAxis = d3.svg.axis()
-        .scale(timeScale)
-        .orient('bottom')
-        .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-        .tickFormat(d3.time.format.multi(formatter))
+      xAxis = xAxis.tickFormat(d3.time.format.multi(formatter))
     }
 
     if (daysInChart > 7 && daysInChart < 230) {
