@@ -33,6 +33,7 @@ end
   <div class="mermaid">
 gantt
 dateFormat  YYYY-MM-DD
+axisFormat  %m/%d(%Y)
 title Adding GANTT diagram to mermaid
 
 section A section
@@ -102,9 +103,6 @@ Class08 <--> C2: Cool label
   <script src="./mermaid.js"></script>
   <script>
     mermaid.initialize({ theme: 'forest' });
-    mermaid.ganttConfig = {
-      axisFormatter: "%m/%d (%Y)"
-    };
   </script>
   <script>
     function testClick(nodeId) {

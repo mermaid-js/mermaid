@@ -293,7 +293,9 @@ export const draw = function (text, id) {
       .scale(timeScale)
       .orient('bottom')
       .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-    if (typeof conf.axisFormatter === 'string') {
+    if (parser.yy.getAxisFormat() !== '') {
+      xAxis = xAxis.tickFormat(d3.time.format(parser.yy.getAxisFormat()))
+    } else if (typeof conf.axisFormatter === 'string') {
       xAxis = xAxis.tickFormat(d3.time.format(conf.axisFormatter))
     } else {
       if (typeof conf.axisFormatter !== 'undefined') {
