@@ -289,22 +289,28 @@ export const draw = function (text, id) {
       }]
     ]
     let formatter
-    if (typeof conf.axisFormatter !== 'undefined') {
-      mid = []
-      conf.axisFormatter.forEach(function (item) {
-        const n = []
-        n[0] = item[0]
-        n[1] = item[1]
-        mid.push(n)
-      })
-    }
-    formatter = pre.concat(mid).concat(post)
-
     let xAxis = d3.svg.axis()
       .scale(timeScale)
       .orient('bottom')
       .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-      .tickFormat(d3.time.format.multi(formatter))
+    if (parser.yy.getAxisFormat() !== '') {
+      xAxis = xAxis.tickFormat(d3.time.format(parser.yy.getAxisFormat()))
+    } else if (typeof conf.axisFormatter === 'string') {
+      xAxis = xAxis.tickFormat(d3.time.format(conf.axisFormatter))
+    } else {
+      if (typeof conf.axisFormatter !== 'undefined') {
+        mid = []
+        conf.axisFormatter.forEach(function (item) {
+          const n = []
+          n[0] = item[0]
+          n[1] = item[1]
+          mid.push(n)
+        })
+      }
+      formatter = pre.concat(mid).concat(post)
+
+      xAxis = xAxis.tickFormat(d3.time.format.multi(formatter))
+    }
 
     if (daysInChart > 7 && daysInChart < 230) {
       xAxis = xAxis.ticks(d3.time.monday.range)
