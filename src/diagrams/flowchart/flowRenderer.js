@@ -163,7 +163,12 @@ export const addEdges = function (edges, g) {
           }
           break
         case 'dotted':
-          style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;'
+          style = 'stroke-dasharray:3;'
+          if (typeof defaultStyle !== 'undefined') {
+            style += defaultStyle
+          } else {
+            style += 'stroke: #333; fill:none;stroke-width:2px;'
+          }
           break
         case 'thick':
           style = 'stroke: #333; stroke-width: 3.5px;fill:none'
