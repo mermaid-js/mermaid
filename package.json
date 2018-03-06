@@ -21,7 +21,8 @@
     "karma": "node -r babel-register node_modules/.bin/karma start karma.conf.js",
     "test": "yarn lint && yarn karma",
     "jison": "node -r babel-register node_modules/.bin/gulp jison",
-    "prepublishOnly": "yarn build && yarn release && yarn test"
+    "prepublishOnly": "yarn build && yarn release && yarn test",
+    "prepush": "yarn test"
   },
   "repository": {
     "type": "git",
@@ -56,6 +57,7 @@
     "gulp": "^3.9.1",
     "gulp-filelog": "^0.4.1",
     "gulp-jison": "^1.2.0",
+    "husky": "^0.14.3",
     "inject-loader": "^3.0.1",
     "jasmine": "2.99.0",
     "jasmine-es6": "^0.4.3",
