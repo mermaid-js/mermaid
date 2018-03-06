@@ -1,9 +1,8 @@
-import { puppeteer } from 'puppeteer/package.json'
-import ChromiumDownloader from 'puppeteer/utils/ChromiumDownloader'
+import puppeteer from 'puppeteer'
 
 import { jsConfig } from './webpack.config.base'
 
-process.env.CHROMIUM_BIN = ChromiumDownloader.revisionInfo(ChromiumDownloader.currentPlatform(), puppeteer.chromium_revision).executablePath
+process.env.CHROME_BIN = puppeteer.executablePath()
 
 const webpackConfig = jsConfig()
 
@@ -53,7 +52,7 @@ export default function (config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['ChromiumHeadless'],
+    browsers: ['ChromeHeadless'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
