@@ -60,7 +60,7 @@ export const draw = function (text, id) {
   })
 
   // Set timescale
-  const timeScale = d3.time.scale()
+  const timeScale = d3.scaleTime()
     .domain([d3.min(taskArray, function (d) {
       return d.startTime
     }),
@@ -98,7 +98,7 @@ export const draw = function (text, id) {
     const topPadding = conf.topPadding
     const leftPadding = conf.leftPadding
 
-    const colorScale = d3.scale.linear()
+    const colorScale = d3.scaleLinear()
       .domain([0, categories.length])
       .range(['#00B9FA', '#F95002'])
       .interpolate(d3.interpolateHcl)
@@ -300,20 +300,20 @@ export const draw = function (text, id) {
     }
     formatter = pre.concat(mid).concat(post)
 
-    let xAxis = d3.svg.axis()
-      .scale(timeScale)
-      .orient('bottom')
-      .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-      .tickFormat(d3.time.format.multi(formatter))
+    // let xAxis = d3.svg.axis()
+    //   .scale(timeScale)
+    //   .orient('bottom')
+    //   .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
+    //   .tickFormat(d3.time.format.multi(formatter))
 
-    if (daysInChart > 7 && daysInChart < 230) {
-      xAxis = xAxis.ticks(d3.time.monday.range)
-    }
+    // if (daysInChart > 7 && daysInChart < 230) {
+    //   xAxis = xAxis.ticks(d3.timeMonday.range)
+    // }
 
     svg.append('g')
       .attr('class', 'grid')
       .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-      .call(xAxis)
+      // .call(xAxis) // todo: fix this instead of commentting out
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')
