@@ -1650,8 +1650,8 @@ caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
   resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000813.tgz#e0a1c603f8880ad787b2a35652b2733f32a5e29a"
 
 caniuse-lite@^1.0.30000792:
-  version "1.0.30000812"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000812.tgz#d173b686b49bc941fa18ff2e7e533048e20ed92c"
+  version "1.0.30000813"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000813.tgz#7b25e27fdfb8d133f3c932b01f77452140fcc6c9"
 
 caseless@~0.11.0:
   version "0.11.0"
@@ -2294,14 +2294,7 @@ dagre-d3-renderer@0.4.25:
     graphlib "^2.1.1"
     lodash "^4.17.4"
 
-dagre-layout@0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/dagre-layout/-/dagre-layout-0.8.0.tgz#7147b6afb655602f855158dfea171db9aa98d4ff"
-  dependencies:
-    graphlib "^2.1.1"
-    lodash "^4.17.4"
-
-dagre-layout@^0.8.0:
+dagre-layout@^0.8.0, dagre-layout@^0.8.6:
   version "0.8.6"
   resolved "https://registry.yarnpkg.com/dagre-layout/-/dagre-layout-0.8.6.tgz#2c41ed2ed22db7bcded7fedfe420a63c060187c5"
   dependencies:
@@ -4715,7 +4708,7 @@ jasmine-es6@^0.4.3:
     jasmine "^2.5.2"
     node-promise-es6 "^0.3.2"
 
-jasmine@^2.5.2, jasmine@^2.99.0:
+jasmine@2.99.0, jasmine@^2.5.2:
   version "2.99.0"
   resolved "https://registry.yarnpkg.com/jasmine/-/jasmine-2.99.0.tgz#8ca72d102e639b867c6489856e0e18a9c7aa42b7"
   dependencies:
