@@ -5,3 +5,5 @@ coverage/
 
 dist/*.js
 dist/*.map
+
+yarn-error.log
