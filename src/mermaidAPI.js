@@ -489,7 +489,7 @@ function render2 (id, text, cb, containerElement) {
       return render(id, text, cb, containerElement)
     }
   } catch (e) {
-    logger.warn(e)
+    logger.error(e)
   }
 }
 

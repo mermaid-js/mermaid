@@ -38,7 +38,7 @@ export const getRelations = function () {
 }
 
 export const addRelation = function (relation) {
-  logger.warn('Adding relation: ' + JSON.stringify(relation))
+  logger.debug('Adding relation: ' + JSON.stringify(relation))
   addClass(relation.id1)
   addClass(relation.id2)
   relations.push(relation)
