@@ -1,5 +1,6 @@
 
 import dagre from 'dagre-layout'
+import graphlib from 'graphlibrary'
 
 import classDb from './classDb'
 import d3 from '../../d3'
@@ -311,7 +312,7 @@ export const draw = function (text, id) {
   insertMarkers(diagram)
 
   // Layout graph, Create a new directed graph
-  const g = new dagre.graphlib.Graph({
+  const g = new graphlib.Graph({
     multigraph: true
   })
 

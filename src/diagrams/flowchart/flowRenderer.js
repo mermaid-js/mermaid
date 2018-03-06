@@ -1,3 +1,5 @@
+import graphlib from 'graphlibrary'
+
 import graphDb from './graphDb'
 import flow from './parser/flow'
 import dot from './parser/dot'
@@ -265,7 +267,7 @@ export const draw = function (text, id, isDot) {
   }
 
   // Create the input mermaid.graph
-  const g = new dagreD3.graphlib.Graph({
+  const g = new graphlib.Graph({
     multigraph: true,
     compound: true
   })

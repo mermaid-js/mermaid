@@ -39,6 +39,7 @@
     "d3": "3.5.17",
     "dagre-d3-renderer": "0.4.25",
     "dagre-layout": "^0.8.6",
+    "graphlibrary": "^2.2.0",
     "he": "^1.1.1",
     "lodash": "^4.17.5",
     "moment": "^2.21.0"
