@@ -32,6 +32,7 @@ const lessRule = { // load less to string
 
 export const jsConfig = () => {
   return {
+    mode: 'development',
     target: 'web',
     entry: {
       mermaid: './src/mermaid.js'

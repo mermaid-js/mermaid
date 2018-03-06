@@ -150,7 +150,7 @@ export const drawLoop = function (elem, bounds, labelText, conf) {
   txt.x = bounds.startx
   txt.y = bounds.starty
   txt.labelMargin = 1.5 * 10 // This is the small box that says "loop"
-  txt.class = 'labelText'    // Its size & position are fixed.
+  txt.class = 'labelText' // Its size & position are fixed.
 
   drawLabel(g, txt)
 

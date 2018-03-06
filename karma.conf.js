@@ -27,6 +27,7 @@ export default function (config) {
     },
 
     webpack: {
+      mode: 'development',
       node: webpackConfig.node,
       module: webpackConfig.module,
       devtool: 'inline-source-map'
@@ -56,6 +57,6 @@ export default function (config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   })
 }

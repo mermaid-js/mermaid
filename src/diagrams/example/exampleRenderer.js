@@ -21,7 +21,7 @@ export const draw = function (txt, id, ver) {
 
   const g = svg.append('g')
 
-  g.append('text')      // text label for the x axis
+  g.append('text') // text label for the x axis
     .attr('x', 100)
     .attr('y', 40)
     .attr('class', 'version')

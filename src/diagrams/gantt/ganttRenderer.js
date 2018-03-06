@@ -64,9 +64,9 @@ export const draw = function (text, id) {
     .domain([d3.min(taskArray, function (d) {
       return d.startTime
     }),
-      d3.max(taskArray, function (d) {
-        return d.endTime
-      })])
+    d3.max(taskArray, function (d) {
+      return d.endTime
+    })])
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding])
 
   let categories = []

@@ -209,7 +209,7 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
   const g = elem.append('g')
   const txtCenter = startx + (stopx - startx) / 2
 
-  const textElem = g.append('text')      // text label for the x axis
+  const textElem = g.append('text') // text label for the x axis
     .attr('x', txtCenter)
     .attr('y', verticalPos - 7)
     .style('text-anchor', 'middle')
@@ -258,7 +258,7 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
 
   line.attr('stroke-width', 2)
   line.attr('stroke', 'black')
-  line.style('fill', 'none')     // remove any fill colour
+  line.style('fill', 'none') // remove any fill colour
   if (msg.type === parser.yy.LINETYPE.SOLID || msg.type === parser.yy.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)')
   }

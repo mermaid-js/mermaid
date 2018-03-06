@@ -64,7 +64,7 @@ const init = function () {
   nodes = nodes === undefined ? document.querySelectorAll('.mermaid')
     : typeof nodes === 'string' ? document.querySelectorAll(nodes)
       : nodes instanceof window.Node ? [nodes]
-        : nodes  // Last case  - sequence config was passed pick next
+        : nodes // Last case  - sequence config was passed pick next
 
   if (typeof global.mermaid_config !== 'undefined') {
     mermaidAPI.initialize(global.mermaid_config)

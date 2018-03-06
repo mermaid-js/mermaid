@@ -233,12 +233,12 @@ const drawClass = function (elem, classDef) {
 
   const titleHeight = title.node().getBBox().height
 
-  const membersLine = g.append('line')      // text label for the x axis
+  const membersLine = g.append('line') // text label for the x axis
     .attr('x1', 0)
     .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
     .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
 
-  const members = g.append('text')      // text label for the x axis
+  const members = g.append('text') // text label for the x axis
     .attr('x', conf.padding)
     .attr('y', titleHeight + (conf.dividerMargin) + conf.textHeight)
     .attr('fill', 'white')
@@ -252,12 +252,12 @@ const drawClass = function (elem, classDef) {
 
   const membersBox = members.node().getBBox()
 
-  const methodsLine = g.append('line')      // text label for the x axis
+  const methodsLine = g.append('line') // text label for the x axis
     .attr('x1', 0)
     .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
     .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
 
-  const methods = g.append('text')      // text label for the x axis
+  const methods = g.append('text') // text label for the x axis
     .attr('x', conf.padding)
     .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
     .attr('fill', 'white')
