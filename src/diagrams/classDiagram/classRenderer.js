@@ -139,14 +139,14 @@ const drawEdge = function (elem, path, relation) {
   const lineData = path.points
 
   // This is the accessor function we talked about above
-  const lineFunction = d3.svg.line()
+  const lineFunction = d3.line()
     .x(function (d) {
       return d.x
     })
     .y(function (d) {
       return d.y
     })
-    .interpolate('basis')
+    .curve(d3.curveBasis)
 
   const svgPath = elem.append('path')
     .attr('d', lineFunction(lineData))
