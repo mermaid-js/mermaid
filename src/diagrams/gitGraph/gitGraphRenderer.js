@@ -52,16 +52,19 @@ function svgCreateDefs (svg) {
 }
 
 function svgDrawLine (svg, points, colorIdx, interpolate) {
-  interpolate = interpolate || 'basis'
+  let curve = d3.curveBasis
+  if (interpolate === 'linear') {
+    curve = d3.curveLinear
+  }
   const color = config.branchColors[colorIdx % config.branchColors.length]
-  const lineGen = d3.svg.line()
+  const lineGen = d3.line()
     .x(function (d) {
       return Math.round(d.x)
     })
     .y(function (d) {
       return Math.round(d.y)
     })
-    .interpolate(interpolate)
+    .curve(curve)
 
   svg
     .append('svg:path')
