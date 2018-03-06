@@ -16,7 +16,7 @@
     "build": "webpack --progress --colors",
     "build:watch": "yarn build --watch",
     "release": "yarn build -p --config webpack.config.prod.babel.js",
-    "upgrade": "yarn-upgrade-all && yarn remove d3 dagre-d3-renderer less jasmine && yarn add d3@3.5.17 dagre-d3-renderer@0.4.25 && yarn add --dev less@2.7.3 jasmine@2.99.0",
+    "upgrade": "yarn-upgrade-all && yarn remove less jasmine && yarn add --dev less@2.7.3 jasmine@2.99.0",
     "lint": "standard",
     "karma": "node -r babel-register node_modules/.bin/karma start karma.conf.js",
     "test": "yarn lint && yarn karma",
@@ -37,8 +37,9 @@
     ]
   },
   "dependencies": {
-    "d3": "3.5.17",
-    "dagre-d3-renderer": "0.4.25",
+    "d3": "^4.13.0",
+    "d3-textwrap": "^2.0.2",
+    "dagre-d3-renderer": "^0.5.1",
     "dagre-layout": "^0.8.6",
     "graphlibrary": "^2.2.0",
     "he": "^1.1.1",
