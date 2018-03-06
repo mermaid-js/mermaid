@@ -300,11 +300,9 @@ export const draw = function (text, id) {
     }
     formatter = pre.concat(mid).concat(post)
 
-    // let xAxis = d3.svg.axis()
-    //   .scale(timeScale)
-    //   .orient('bottom')
-    //   .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-    //   .tickFormat(d3.time.format.multi(formatter))
+    let xAxis = d3.axisBottom(timeScale)
+      .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
+      // .tickFormat(d3.time.format.multi(formatter))
 
     // if (daysInChart > 7 && daysInChart < 230) {
     //   xAxis = xAxis.ticks(d3.timeMonday.range)
@@ -313,7 +311,7 @@ export const draw = function (text, id) {
     svg.append('g')
       .attr('class', 'grid')
       .attr('transform', 'translate(' + theSidePad + ', ' + (h - 50) + ')')
-      // .call(xAxis) // todo: fix this instead of commentting out
+      .call(xAxis)
       .selectAll('text')
       .style('text-anchor', 'middle')
       .attr('fill', '#000')

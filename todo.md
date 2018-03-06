@@ -1,22 +1,12 @@
-- Upgrade d3 to version 4
-- Use external d3-textwrap library
-    - rewrite src/d3.js
-    - Problem is it's for d3 v4 only
-- Make node console output colors like Chrome console
-- What's the correct way to change logLevel as an end user?
-    - mermaid.initialize({ logLevel: 1 })
+- Fix d3-textwrap code
 - Replace CodeClimate with coveralls ?
 - Get familar with jison
 - git graph requires a blank line at the end. why?
-- Remove 'lodash' as dependency
-    - https://github.com/lodash/babel-plugin-lodash
-    - https://www.npmjs.com/package/lodash-webpack-plugin
 - global.mermaid_config
 - rewrite logger
 - rewrite less code
-- d3 is possible to work with jsdom only.
-    - need to mock window size
-    - so mermaid could work without a browser at all
-    - But how to mesure font size? it's a problem.
 - Setup code coverage
 - Create a desktop client
+- fix gantt diagram xAxis issue
+- Fix sequence diagram node label position issue
+- Fix flowchart interpolate/curve issue
