@@ -530,6 +530,8 @@ function getConfig () {
 const mermaidAPI = {
   render: render2,
   parse,
+  sequenceDb,
+  graph,
   initialize,
   detectType: utils.detectType,
   getConfig
