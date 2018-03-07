@@ -1,4 +1,3 @@
-- Fix d3-textwrap code
 - Replace CodeClimate with coveralls ?
 - Get familar with jison
 - git graph requires a blank line at the end. why?
@@ -7,6 +6,11 @@
 - rewrite less code
 - Setup code coverage
 - Create a desktop client
-- fix gantt diagram xAxis issue
 - Fix sequence diagram node label position issue
+    - caused by d3-textwrap?
+        - remove textwrap feature?
 - Fix flowchart interpolate/curve issue
+    - not a common feature so dist/index.html cannot reproduce this issue
+- Support customization of gantt diagram xAxis format
+    - https://github.com/d3/d3-time-format#api-reference
+    - https://bl.ocks.org/wboykinm/34627426d84f3242e0e6ecb2339e9065

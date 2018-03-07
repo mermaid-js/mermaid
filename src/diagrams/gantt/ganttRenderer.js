@@ -1,9 +1,9 @@
-
 import moment from 'moment'
 
 import { parser } from './parser/gantt'
 import ganttDb from './ganttDb'
 import d3 from '../../d3'
+import { logger } from '../../logger'
 
 parser.yy = ganttDb
 
@@ -254,59 +254,32 @@ export const draw = function (text, id) {
   }
 
   function makeGrid (theSidePad, theTopPad, w, h) {
-    const pre = [
-      ['.%L', function (d) {
-        return d.getMilliseconds()
-      }],
-      [':%S', function (d) {
-        return d.getSeconds()
-      }],
-      // Within a hour
-      ['h1 %I:%M', function (d) {
-        return d.getMinutes()
-      }]]
-    const post = [
-      ['%Y', function () {
-        return true
-      }]]
+    const formatMillisecond = d3.timeFormat('.%L')
+    const formatSecond = d3.timeFormat(':%S')
+    const formatMinute = d3.timeFormat('%I:%M')
+    const formatHour = d3.timeFormat('%I %p')
+    const formatDay = d3.timeFormat('%Y-%m-%d')
+    const formatWeek = d3.timeFormat('%Y-%m-%d')
+    const formatMonth = d3.timeFormat('%b-%Y')
+    const formatYear = d3.timeFormat('%Y')
 
-    let mid = [
-      // Within a day
-      ['%I:%M', function (d) {
-        return d.getHours()
-      }],
-      // Day within a week (not monday)
-      ['%a %d', function (d) {
-        return d.getDay() && d.getDate() !== 1
-      }],
-      // within a month
-      ['%b %d', function (d) {
-        return d.getDate() !== 1
-      }],
-      // Month
-      ['%B', function (d) {
-        return d.getMonth()
-      }]
-    ]
-    let formatter
-    if (typeof conf.axisFormatter !== 'undefined') {
-      mid = []
-      conf.axisFormatter.forEach(function (item) {
-        const n = []
-        n[0] = item[0]
-        n[1] = item[1]
-        mid.push(n)
-      })
+    const multiFormat = date => {
+      return (d3.timeSecond(date) < date ? formatMillisecond
+        : d3.timeMinute(date) < date ? formatSecond
+          : d3.timeHour(date) < date ? formatMinute
+            : d3.timeDay(date) < date ? formatHour
+              : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
+                : d3.timeYear(date) < date ? formatMonth
+                  : formatYear)(date)
     }
-    formatter = pre.concat(mid).concat(post)
+
+    // todo: if (typeof conf.axisFormatter !== 'undefined')
 
     let xAxis = d3.axisBottom(timeScale)
-      .tickSize(-h + theTopPad + conf.gridLineStartPadding, 0, 0)
-      // .tickFormat(d3.time.format.multi(formatter))
+      .tickSize(-h + theTopPad + conf.gridLineStartPadding)
+      .tickFormat(multiFormat)
 
-    // if (daysInChart > 7 && daysInChart < 230) {
-    //   xAxis = xAxis.ticks(d3.timeMonday.range)
-    // }
+    logger.debug(daysInChart) // just to pass lint
 
     svg.append('g')
       .attr('class', 'grid')
