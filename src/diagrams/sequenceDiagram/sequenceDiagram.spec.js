@@ -15,7 +15,7 @@ const d3 = {
 }
 
 const renderer = MyModuleInjector({
-  '../../d3': d3
+  'd3': d3
 })
 
 function addConf (conf, key, value) {

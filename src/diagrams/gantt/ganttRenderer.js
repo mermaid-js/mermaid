@@ -1,8 +1,8 @@
 import moment from 'moment'
+import * as d3 from 'd3'
 
 import { parser } from './parser/gantt'
 import ganttDb from './ganttDb'
-import d3 from '../../d3'
 import { logger } from '../../logger'
 
 parser.yy = ganttDb

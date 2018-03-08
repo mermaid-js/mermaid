@@ -1,8 +1,8 @@
 import _ from 'lodash'
+import * as d3 from 'd3'
 
 import db from './gitGraphAst'
 import gitGraphParser from './parser/gitGraph'
-import d3 from '../../d3'
 import { logger } from '../../logger'
 
 let allCommitsDict = {}

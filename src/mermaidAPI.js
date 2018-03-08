@@ -11,6 +11,8 @@
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
 */
+import * as d3 from 'd3'
+
 import { logger, setLogLevel } from './logger'
 import graph from './diagrams/flowchart/graphDb'
 import utils from './utils'
@@ -32,7 +34,6 @@ import classDb from './diagrams/classDiagram/classDb'
 import gitGraphParser from './diagrams/gitGraph/parser/gitGraph'
 import gitGraphRenderer from './diagrams/gitGraph/gitGraphRenderer'
 import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
-import d3 from './d3'
 import pkg from '../package.json'
 
 import darkTheme from './less/dark/mermaid.less'

@@ -1,9 +1,8 @@
-
 import dagre from 'dagre-layout'
 import graphlib from 'graphlibrary'
+import * as d3 from 'd3'
 
 import classDb from './classDb'
-import d3 from '../../d3'
 import { logger } from '../../logger'
 import { parser } from './parser/classDiagram'
 

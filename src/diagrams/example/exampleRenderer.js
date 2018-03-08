@@ -1,7 +1,7 @@
+import * as d3 from 'd3'
+
 import db from './exampleDb'
 import exampleParser from './parser/example.js'
-import d3 from '../../d3'
-
 import { logger } from '../../logger'
 
 /**

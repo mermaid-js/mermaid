@@ -1,6 +1,7 @@
+import * as d3 from 'd3'
+
 import { logger } from '../../logger'
 import utils from '../../utils'
-import d3 from '../../d3'
 
 let vertices = {}
 let edges = []

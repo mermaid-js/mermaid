@@ -1,6 +1,7 @@
+import * as d3 from 'd3'
+
 import svgDraw from './svgDraw'
 import { logger } from '../../logger'
-import d3 from '../../d3'
 import { parser } from './parser/sequenceDiagram'
 import sequenceDb from './sequenceDb'
 

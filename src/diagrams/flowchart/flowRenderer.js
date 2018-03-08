@@ -1,9 +1,9 @@
 import graphlib from 'graphlibrary'
+import * as d3 from 'd3'
 
 import graphDb from './graphDb'
 import flow from './parser/flow'
 import dot from './parser/dot'
-import d3 from '../../d3'
 import dagreD3 from 'dagre-d3-renderer'
 import { logger } from '../../logger'
 
