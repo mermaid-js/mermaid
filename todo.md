@@ -12,3 +12,5 @@
 - Support customization of gantt diagram xAxis format
     - https://github.com/d3/d3-time-format#api-reference
     - https://bl.ocks.org/wboykinm/34627426d84f3242e0e6ecb2339e9065
+- Upgrade jasmine to latest version or replace it
+- Upgrade less to latest version or replace it
