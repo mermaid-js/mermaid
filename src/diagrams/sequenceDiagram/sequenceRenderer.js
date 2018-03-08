@@ -216,12 +216,7 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
     .attr('class', 'messageText')
     .text(msg.message)
 
-  let textWidth
-  if (typeof textElem[0][0].getBBox !== 'undefined') {
-    textWidth = textElem[0][0].getBBox().width
-  } else {
-    textWidth = textElem[0][0].getBoundingClientRect()
-  }
+  let textWidth = (textElem._groups || textElem)[0][0].getBBox().width
 
   let line
   if (startx === stopx) {
@@ -451,7 +446,7 @@ export const draw = function (text, id) {
           const allBounds = fromBounds.concat(toBounds)
           bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {
-          console.error('error while drawing message', e)
+          logger.error('error while drawing message', e)
         }
     }
   })
