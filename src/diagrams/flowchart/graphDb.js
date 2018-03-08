@@ -248,7 +248,7 @@ export const getClasses = function () {
 
 const setupToolTips = function (element) {
   let tooltipElem = d3.select('.mermaidTooltip')
-  if (tooltipElem[0][0] === null) {
+  if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
     tooltipElem = d3.select('body')
       .append('div')
       .attr('class', 'mermaidTooltip')
