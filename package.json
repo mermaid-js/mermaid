@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "d3": "^4.13.0",
-    "d3-textwrap": "^2.0.2",
     "dagre-d3-renderer": "^0.5.1",
     "dagre-layout": "^0.8.6",
     "graphlibrary": "^2.2.0",

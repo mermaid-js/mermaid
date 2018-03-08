@@ -7,8 +7,6 @@
 - Setup code coverage
 - Create a desktop client
 - Fix sequence diagram node label position issue
-    - caused by d3-textwrap?
-        - remove textwrap feature?
 - Fix flowchart interpolate/curve issue
     - not a common feature so dist/index.html cannot reproduce this issue
 - Support customization of gantt diagram xAxis format

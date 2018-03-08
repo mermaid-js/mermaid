@@ -33,14 +33,6 @@ export const drawText = function (elem, textData, width) {
   span.attr('x', textData.x + textData.textMargin * 2)
   span.attr('fill', textData.fill)
   span.text(nText)
-  if (typeof textElem.textwrap !== 'undefined') {
-    textElem.textwrap({
-      x: textData.x, // bounding box is 300 pixels from the left
-      y: textData.y, // bounding box is 400 pixels from the top
-      width: width, // bounding box is 500 pixels across
-      height: 1800 // bounding box is 600 pixels tall
-    }, textData.textMargin)
-  }
 
   return textElem
 }
@@ -61,6 +53,7 @@ export const drawLabel = function (elem, txtObject) {
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin
   drawText(elem, txtObject)
 }
+
 let actorCnt = -1
 /**
  * Draws an actor in the diagram with the attaced line
@@ -265,22 +258,8 @@ const _drawTextCandidateFunc = (function () {
       .style('text-anchor', 'middle')
     text.append('tspan')
       .attr('x', x + width / 2).attr('dy', '0')
-      .text(content)
+      .text(content) // todo: fix position y
 
-    if (typeof (text.textwrap) !== 'undefined') {
-      text.textwrap({ // d3textwrap
-        x: x + width / 2, y: y, width: width, height: height
-      }, 0)
-      // vertical aligment after d3textwrap expans tspan to multiple tspans
-      let tspans = text.selectAll('tspan')
-      if (tspans.length > 0 && tspans[0].length > 0) {
-        tspans = tspans[0]
-        // set y of <text> to the mid y of the first line
-        text.attr('y', y + (height / 2.0 - text[0][0].getBBox().height * (1 - 1.0 / tspans.length) / 2.0))
-          .attr('dominant-baseline', 'central')
-          .attr('alignment-baseline', 'central')
-      }
-    }
     _setTextAttrs(text, textAttrs)
   }
 
