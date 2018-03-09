@@ -1,23 +1,16 @@
 import path from 'path'
 
-const lodashRule = {
+const amdRule = {
   parser: {
-    amd: false
-  },
-  include: /node_modules\/lodash\// // https://github.com/lodash/lodash/issues/3052
+    amd: false // https://github.com/lodash/lodash/issues/3052
+  }
 }
 
 const jsRule = {
   test: /\.js$/,
   exclude: /node_modules/,
   use: {
-    loader: 'babel-loader',
-    options: {
-      presets: [
-        'env'
-      ],
-      plugins: ['lodash']
-    }
+    loader: 'babel-loader'
   }
 }
 
@@ -48,7 +41,7 @@ export const jsConfig = () => {
       libraryExport: 'default'
     },
     module: {
-      rules: [lodashRule, jsRule, scssRule]
+      rules: [amdRule, jsRule, scssRule]
     },
     devtool: 'source-map'
   }

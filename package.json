@@ -48,7 +48,6 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
-    "babel-plugin-lodash": "^3.3.2",
     "babel-preset-env": "^1.6.1",
     "css-loader": "^0.28.10",
     "css-to-string-loader": "^0.1.3",
@@ -60,6 +59,7 @@
     "inject-loader": "^3.0.1",
     "jasmine": "2.99.0",
     "jasmine-es6": "^0.4.3",
+    "jest": "^22.4.2",
     "jison": "^0.4.18",
     "karma": "^2.0.0",
     "karma-chrome-launcher": "^2.2.0",
