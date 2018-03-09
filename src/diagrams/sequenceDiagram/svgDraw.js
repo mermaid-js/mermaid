@@ -258,7 +258,11 @@ const _drawTextCandidateFunc = (function () {
       .style('text-anchor', 'middle')
     text.append('tspan')
       .attr('x', x + width / 2).attr('dy', '0')
-      .text(content) // todo: fix position y
+      .text(content)
+
+    text.attr('y', y + height / 2.0)
+      .attr('dominant-baseline', 'central')
+      .attr('alignment-baseline', 'central')
 
     _setTextAttrs(text, textAttrs)
   }
