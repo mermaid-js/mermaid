@@ -176,10 +176,8 @@ export const addEdges = function (edges, g) {
 
     if (typeof edge.interpolate !== 'undefined') {
       edgeData.lineInterpolate = edge.interpolate
-    } else {
-      if (typeof edges.defaultInterpolate !== 'undefined') {
-        edgeData.lineInterpolate = edges.defaultInterpolate
-      }
+    } else if (typeof edges.defaultInterpolate !== 'undefined') {
+      edgeData.lineInterpolate = edges.defaultInterpolate
     }
 
     if (typeof edge.text === 'undefined') {
