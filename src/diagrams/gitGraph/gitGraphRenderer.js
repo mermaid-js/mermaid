@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import db from './gitGraphAst'
 import gitGraphParser from './parser/gitGraph'
 import { logger } from '../../logger'
+import { interpolateToCurve } from '../../utils'
 
 let allCommitsDict = {}
 let branchNum
@@ -52,10 +53,7 @@ function svgCreateDefs (svg) {
 }
 
 function svgDrawLine (svg, points, colorIdx, interpolate) {
-  let curve = d3.curveBasis
-  if (interpolate === 'linear') {
-    curve = d3.curveLinear
-  }
+  const curve = interpolateToCurve(interpolate, d3.curveBasis)
   const color = config.branchColors[colorIdx % config.branchColors.length]
   const lineGen = d3.line()
     .x(function (d) {
@@ -73,6 +71,7 @@ function svgDrawLine (svg, points, colorIdx, interpolate) {
     .style('stroke-width', config.lineStrokeWidth)
     .style('fill', 'none')
 }
+
 // Pass in the element and its pre-transform coords
 function getElementCoords (element, coords) {
   coords = coords || element.node().getBBox()

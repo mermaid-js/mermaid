@@ -1,4 +1,4 @@
-import { logger } from './logger'
+import * as d3 from 'd3'
 
 /**
  * @function detectType
@@ -36,12 +36,10 @@ export const detectType = function (text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    logger.debug('Detected classDiagram syntax')
     return 'classDiagram'
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    logger.debug('Detected gitGraph syntax')
     return 'gitGraph'
   }
   return 'graph'
@@ -61,7 +59,17 @@ export const isSubstringInArray = function (str, arr) {
   return -1
 }
 
+const interpolates = {
+  basis: d3.curveBasis,
+  linear: d3.curveLinear,
+  cardinal: d3.curveCardinal
+}
+export const interpolateToCurve = (interpolate, defaultCurve) => {
+  return interpolates[interpolate] || defaultCurve
+}
+
 export default {
   detectType,
-  isSubstringInArray
+  isSubstringInArray,
+  interpolateToCurve
 }
