@@ -1,4 +1,3 @@
-- Replace CodeClimate with coveralls ?
 - Get familar with jison
 - git graph requires a blank line at the end. why?
 - global.mermaid_config
