@@ -1,6 +1,5 @@
 - Get familar with jison
 - git graph requires a blank line at the end. why?
-- global.mermaid_config
 - rewrite logger
 - rewrite less code
 - Setup code coverage

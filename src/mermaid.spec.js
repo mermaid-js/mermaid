@@ -6,19 +6,8 @@ import flowRenderer from './diagrams/flowchart/flowRenderer'
 
 describe('when using mermaid and ', function () {
   describe('when detecting chart type ', function () {
-    it('should not start rendering with mermaid_config.startOnLoad set to false', function () {
-      global.mermaid_config = { startOnLoad: false }
-
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(mermaid, 'init')
-      mermaid.contentLoaded()
-      expect(mermaid.init).not.toHaveBeenCalled()
-    })
-
     it('should not start rendering with mermaid.startOnLoad set to false', function () {
       mermaid.startOnLoad = false
-      global.mermaid_config = { startOnLoad: true }
-
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
       spyOn(mermaid, 'init')
       mermaid.contentLoaded()
@@ -27,14 +16,13 @@ describe('when using mermaid and ', function () {
 
     it('should start rendering with both startOnLoad set', function () {
       mermaid.startOnLoad = true
-      global.mermaid_config = { startOnLoad: true }
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
       spyOn(mermaid, 'init')
       mermaid.contentLoaded()
       expect(mermaid.init).toHaveBeenCalled()
     })
 
-    it('should start rendering with mermaid.startOnLoad set and no mermaid_config defined', function () {
+    it('should start rendering with mermaid.startOnLoad', function () {
       mermaid.startOnLoad = true
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
       spyOn(mermaid, 'init')
@@ -52,7 +40,6 @@ describe('when using mermaid and ', function () {
 
   describe('when calling addEdges ', function () {
     beforeEach(function () {
-      global.mermaid_config = { startOnLoad: false }
       flowParser.parser.yy = graphDb
       graphDb.clear()
     })

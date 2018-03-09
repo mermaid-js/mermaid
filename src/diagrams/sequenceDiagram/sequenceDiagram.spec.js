@@ -730,8 +730,6 @@ describe('when rendering a sequenceDiagram', function () {
     parser.yy = sequenceDb
     parser.yy.clear()
 
-    delete global.mermaid_config
-
     NewD3 = function () {
       const o = {
         append: function () {

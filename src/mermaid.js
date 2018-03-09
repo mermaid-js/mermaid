@@ -66,9 +66,6 @@ const init = function () {
       : nodes instanceof window.Node ? [nodes]
         : nodes // Last case  - sequence config was passed pick next
 
-  if (typeof global.mermaid_config !== 'undefined') {
-    mermaidAPI.initialize(global.mermaid_config)
-  }
   logger.debug('Start On Load before: ' + mermaid.startOnLoad)
   if (typeof mermaid.startOnLoad !== 'undefined') {
     logger.debug('Start On Load inner: ' + mermaid.startOnLoad)
@@ -133,26 +130,12 @@ const initialize = function (config) {
  */
 const contentLoaded = function () {
   let config
-  // Check state of start config mermaid namespace
-  if (typeof global.mermaid_config !== 'undefined') {
-    if (global.mermaid_config.htmlLabels === false) {
-      mermaid.htmlLabels = false
-    }
-  }
 
   if (mermaid.startOnLoad) {
-    // For backwards compatability reasons also check mermaid_config variable
-    if (typeof global.mermaid_config !== 'undefined') {
-      // Check if property startOnLoad is set
-      if (global.mermaid_config.startOnLoad === true) {
-        mermaid.init()
-      }
-    } else {
-      // No config found, do check API config
-      config = mermaidAPI.getConfig()
-      if (config.startOnLoad) {
-        mermaid.init()
-      }
+    // No config found, do check API config
+    config = mermaidAPI.getConfig()
+    if (config.startOnLoad) {
+      mermaid.init()
     }
   } else {
     if (typeof mermaid.startOnLoad === 'undefined') {

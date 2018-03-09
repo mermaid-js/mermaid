@@ -4,7 +4,6 @@ import mermaidAPI from './mermaidAPI'
 describe('when using mermaidAPI and ', function () {
   describe('doing initialize ', function () {
     beforeEach(function () {
-      delete global.mermaid_config
       document.body.innerHTML = ''
     })
 
