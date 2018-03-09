@@ -7,8 +7,8 @@
 .node circle,
 .node ellipse,
 .node polygon {
-  fill: @mainBkg;
-  stroke: @nodeBorder;
+  fill: $mainBkg;
+  stroke: $nodeBorder;
   stroke-width: 1px;
 }
 
@@ -17,25 +17,25 @@
 }
 
 .arrowheadPath {
-  fill: @arrowheadColor;
+  fill: $arrowheadColor;
 }
 
 .edgePath .path {
-  stroke: @lineColor;
+  stroke: $lineColor;
   stroke-width: 1.5px;
 }
 
 .edgeLabel {
-  background-color: @edgeLabelBackground;
+  background-color: $edgeLabelBackground;
 }
 
 .cluster rect {
-  fill: @secondBkg !important;
+  fill: $secondBkg !important;
   rx: 4 !important;
-  stroke: @clusterBorder !important;
+  stroke: $clusterBorder !important;
   stroke-width: 1px !important;
 }
 
 .cluster text {
-  fill: @titleColor;
+  fill: $titleColor;
 }

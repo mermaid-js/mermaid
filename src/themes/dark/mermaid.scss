@@ -3,6 +3,7 @@
 @import "sequenceDiagram";
 @import "gantt";
 @import "classDiagram";
+@import "gitGraph";
 .node text {
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
@@ -15,8 +16,8 @@ div.mermaidTooltip {
   padding: 2px;
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 12px;
-  background: @secondBkg;
-  border: 1px solid @border2;
+  background: $secondBkg;
+  border: 1px solid $border2;
   border-radius: 2px;
   pointer-events: none;
   z-index: 100;

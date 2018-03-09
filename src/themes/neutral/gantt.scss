@@ -6,33 +6,33 @@
 }
 
 .section0 {
-  fill: @sectionBkgColor;
+  fill: $sectionBkgColor;
 }
 
 .section2 {
-  fill: @sectionBkgColor2;
+  fill: $sectionBkgColor2;
 }
 
 .section1,
 .section3 {
-  fill: @altSectionBkgColor;
+  fill: $altSectionBkgColor;
   opacity: 0.2;
 }
 
 .sectionTitle0 {
-  fill: @titleColor;
+  fill: $titleColor;
 }
 
 .sectionTitle1 {
-  fill: @titleColor;
+  fill: $titleColor;
 }
 
 .sectionTitle2 {
-  fill: @titleColor;
+  fill: $titleColor;
 }
 
 .sectionTitle3 {
-  fill: @titleColor;
+  fill: $titleColor;
 }
 
 .sectionTitle {
@@ -45,7 +45,7 @@
 /* Grid and axis */
 
 .grid .tick {
-  stroke: @gridColor;
+  stroke: $gridColor;
   opacity: 0.3;
   shape-rendering: crispEdges;
 }
@@ -59,7 +59,7 @@
 
 .today {
   fill: none;
-  stroke: @todayLineColor;
+  stroke: $todayLineColor;
   stroke-width: 2px;
 }
 
@@ -79,13 +79,13 @@
 }
 
 .taskTextOutsideRight {
-  fill: @taskTextDarkColor;
+  fill: $taskTextDarkColor;
   text-anchor: start;
   font-size: 11px;
 }
 
 .taskTextOutsideLeft {
-  fill: @taskTextDarkColor;
+  fill: $taskTextDarkColor;
   text-anchor: end;
   font-size: 11px;
 }
@@ -97,26 +97,26 @@
 .taskText1,
 .taskText2,
 .taskText3 {
-  fill: @taskTextColor;
+  fill: $taskTextColor;
 }
 
 .task0,
 .task1,
 .task2,
 .task3 {
-  fill: @taskBkgColor;
-  stroke: @taskBorderColor;
+  fill: $taskBkgColor;
+  stroke: $taskBorderColor;
 }
 
 .taskTextOutside0,
 .taskTextOutside2,
 {
-  fill: @taskTextOutsideColor;
+  fill: $taskTextOutsideColor;
 }
 
 .taskTextOutside1,
 .taskTextOutside3 {
-  fill: @taskTextOutsideColor;
+  fill: $taskTextOutsideColor;
 }
 
 
@@ -126,15 +126,15 @@
 .active1,
 .active2,
 .active3 {
-  fill: @activeTaskBkgColor;
-  stroke: @activeTaskBorderColor;
+  fill: $activeTaskBkgColor;
+  stroke: $activeTaskBorderColor;
 }
 
 .activeText0,
 .activeText1,
 .activeText2,
 .activeText3 {
-  fill: @taskTextDarkColor !important;
+  fill: $taskTextDarkColor !important;
 }
 
 
@@ -144,8 +144,8 @@
 .done1,
 .done2,
 .done3 {
-  stroke: @doneTaskBorderColor;
-  fill: @doneTaskBkgColor;
+  stroke: $doneTaskBorderColor;
+  fill: $doneTaskBkgColor;
   stroke-width: 2;
 }
 
@@ -153,7 +153,7 @@
 .doneText1,
 .doneText2,
 .doneText3 {
-  fill: @taskTextDarkColor !important;
+  fill: $taskTextDarkColor !important;
 }
 
 
@@ -163,8 +163,8 @@
 .crit1,
 .crit2,
 .crit3 {
-  stroke: @critBorderColor;
-  fill: @critBkgColor;
+  stroke: $critBorderColor;
+  fill: $critBkgColor;
   stroke-width: 2;
 }
 
@@ -172,8 +172,8 @@
 .activeCrit1,
 .activeCrit2,
 .activeCrit3 {
-  stroke: @critBorderColor;
-  fill: @activeTaskBkgColor;
+  stroke: $critBorderColor;
+  fill: $activeTaskBkgColor;
   stroke-width: 2;
 }
 
@@ -181,8 +181,8 @@
 .doneCrit1,
 .doneCrit2,
 .doneCrit3 {
-  stroke: @critBorderColor;
-  fill: @doneTaskBkgColor;
+  stroke: $critBorderColor;
+  fill: $doneTaskBkgColor;
   stroke-width: 2;
   cursor: pointer; //shape-rendering: crispEdges;
 }
@@ -191,18 +191,18 @@
 .doneCritText1,
 .doneCritText2,
 .doneCritText3 {
-  fill: @taskTextDarkColor !important;
+  fill: $taskTextDarkColor !important;
 }
 
 .activeCritText0,
 .activeCritText1,
 .activeCritText2,
 .activeCritText3 {
-  fill: @taskTextDarkColor !important;
+  fill: $taskTextDarkColor !important;
 }
 
 .titleText {
   text-anchor: middle;
   font-size: 18px;
-  fill: @taskTextDarkColor;
+  fill: $taskTextDarkColor;
 }

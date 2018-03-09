@@ -21,12 +21,12 @@ const jsRule = {
   }
 }
 
-const lessRule = { // load less to string
-  test: /\.less$/,
+const scssRule = { // load scss to string
+  test: /\.scss$/,
   use: [
     { loader: 'css-to-string-loader' },
     { loader: 'css-loader' },
-    { loader: 'less-loader' }
+    { loader: 'sass-loader' }
   ]
 }
 
@@ -48,7 +48,7 @@ export const jsConfig = () => {
       libraryExport: 'default'
     },
     module: {
-      rules: [lodashRule, jsRule, lessRule]
+      rules: [lodashRule, jsRule, scssRule]
     },
     devtool: 'source-map'
   }

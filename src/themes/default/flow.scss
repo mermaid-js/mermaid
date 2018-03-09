@@ -1,13 +1,13 @@
 .mermaid .label {
-  color: @darkTextColor
+  color: #333
 }
 
 .node rect,
 .node circle,
 .node ellipse,
 .node polygon {
-  fill: @mainBkg;
-  stroke: @border1;
+  fill: $mainBkg;
+  stroke: $border1;
   stroke-width: 1px;
 }
 
@@ -16,24 +16,24 @@
 }
 
 .arrowheadPath {
-  fill: @arrowheadColor;
+  fill: $arrowheadColor;
 }
 
 .edgePath .path {
-  stroke: @lineColor;
+  stroke: $lineColor;
 }
 
 .edgeLabel {
-  background-color: @edgeLabelBackground;
+  background-color: $edgeLabelBackground;
 }
 
 .cluster rect {
-  fill: @secondBkg !important;
+  fill: $secondBkg !important;
   rx: 4 !important;
-  stroke: @clusterBorder !important;
+  stroke: $clusterBorder !important;
   stroke-width: 1px !important;
 }
 
 .cluster text {
-  fill: @titleColor;
+  fill: $titleColor;
 }
