@@ -1,22 +1,7 @@
 /* eslint-env jasmine */
 import { parser } from './parser/sequenceDiagram'
 import sequenceDb from './sequenceDb'
-import MyModuleInjector from 'inject-loader!./sequenceRenderer' // eslint-disable-line import/no-webpack-loader-syntax
-
-let NewD3
-
-const d3 = {
-  select: function () {
-    return new NewD3()
-  },
-  selectAll: function () {
-    return new NewD3()
-  }
-}
-
-const renderer = MyModuleInjector({
-  'd3': d3
-})
+import renderer from './sequenceRenderer'
 
 function addConf (conf, key, value) {
   if (value !== undefined) {
@@ -730,36 +715,6 @@ describe('when rendering a sequenceDiagram', function () {
     parser.yy = sequenceDb
     parser.yy.clear()
 
-    NewD3 = function () {
-      const o = {
-        append: function () {
-          return NewD3()
-        },
-        attr: function () {
-          return this
-        },
-        style: function () {
-          return this
-        },
-        text: function () {
-          return this
-        },
-        0: {
-          0: {
-            getBBox: function () {
-              return {
-                height: 10,
-                width: 20
-              }
-            }
-          }
-
-        }
-      }
-
-      return o
-    }
-
     conf = {
       diagramMarginX: 50,
       diagramMarginY: 10,
@@ -944,36 +899,6 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
   beforeEach(function () {
     parser.yy = sequenceDb
     parser.yy.clear()
-
-    NewD3 = function () {
-      const o = {
-        append: function () {
-          return NewD3()
-        },
-        attr: function () {
-          return this
-        },
-        style: function () {
-          return this
-        },
-        text: function () {
-          return this
-        },
-        0: {
-          0: {
-            getBBox: function () {
-              return {
-                height: 10,
-                width: 20
-              }
-            }
-          }
-
-        }
-      }
-
-      return o
-    }
 
     conf = {
       diagramMarginX: 50,
