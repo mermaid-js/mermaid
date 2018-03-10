@@ -3,4 +3,6 @@ language: node_js
 node_js:
   - "8"
 script:
-  - yarn test
+  - yarn test --coverage
+after_success:
+  - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
