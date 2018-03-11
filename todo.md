@@ -1,6 +1,5 @@
 - Get familar with jison
 - git graph requires a blank line at the end. why?
-- Setup code coverage
 - Create a desktop client
 - Support customization of gantt diagram xAxis format
     - https://github.com/d3/d3-time-format#api-reference
@@ -8,3 +7,4 @@
 - Flowchart interpolate is useless because there is no rendering code using it
 - Rewrite SCSS code to reduce duplication
     - No global CSS. Should limit the CSS to mermaid charts only
+- Remove gulp, add jison commands to readme file
