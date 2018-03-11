@@ -432,7 +432,7 @@ const render = function (id, txt, cb, container) {
   s.innerHTML = scope(themes[config.theme] || defaultTheme, `#${id}`)
   svg.insertBefore(s, svg.firstChild)
 
-  d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml')
+  d3.select('#' + id).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 
   let url = ''
   if (config.arrowMarkerAbsolute) {
