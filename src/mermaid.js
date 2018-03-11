@@ -7,8 +7,6 @@ import he from 'he'
 import mermaidAPI from './mermaidAPI'
 import { logger } from './logger'
 
-let nextId = 0
-
 /**
  * ## init
  * Function that goes through the document to find the chart definitions in there and render them.
@@ -87,7 +85,7 @@ const init = function () {
       continue
     }
 
-    const id = 'mermaidChart' + nextId++
+    const id = `mermaid-${Date.now()}`
 
     // Fetch the graph definition including tags
     txt = element.innerHTML
