@@ -3,13 +3,14 @@ import * as d3 from 'd3'
 import db from './exampleDb'
 import exampleParser from './parser/example.js'
 import { logger } from '../../logger'
+import { version } from '../../../package.json'
 
 /**
  * Draws a an info picture in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
  */
-export const draw = function (txt, id, ver) {
+export const draw = function (txt, id) {
   const parser = exampleParser.parser
   parser.yy = db
   logger.debug('Renering example diagram')
@@ -27,7 +28,7 @@ export const draw = function (txt, id, ver) {
     .attr('class', 'version')
     .attr('font-size', '32px')
     .style('text-anchor', 'middle')
-    .text('mermaid ' + ver)
+    .text('mermaid ' + version)
 
   svg.attr('height', 100)
   svg.attr('width', 400)

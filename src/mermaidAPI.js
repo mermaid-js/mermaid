@@ -35,7 +35,6 @@ import classDb from './diagrams/classDiagram/classDb'
 import gitGraphParser from './diagrams/gitGraph/parser/gitGraph'
 import gitGraphRenderer from './diagrams/gitGraph/gitGraphRenderer'
 import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
-import pkg from '../package.json'
 
 import darkTheme from './themes/dark/index.scss'
 import defaultTheme from './themes/default/index.scss'
@@ -295,15 +294,6 @@ function parse (text) {
   parser.parse(text)
 }
 
-/**
- * ## version
- * Function returning version information
- * @returns {string} A string containing the version info
- */
-export const version = function () {
-  return pkg.version
-}
-
 export const encodeEntities = function (text) {
   let txt = text
 
@@ -432,7 +422,7 @@ const render = function (id, txt, cb, container) {
       break
     case 'info':
       config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      info.draw(txt, id, version())
+      info.draw(txt, id)
       break
   }
 

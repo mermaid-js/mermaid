@@ -6,7 +6,6 @@ import he from 'he'
 
 import mermaidAPI from './mermaidAPI'
 import { logger } from './logger'
-import pkg from '../package.json'
 
 let nextId = 0
 
@@ -106,10 +105,6 @@ const init = function () {
   }
 }
 
-const version = function () {
-  return 'v' + pkg.version
-}
-
 const initialize = function (config) {
   logger.debug('Initializing mermaid')
   if (typeof config.mermaid !== 'undefined') {
@@ -167,7 +162,6 @@ const mermaid = {
 
   init,
   initialize,
-  version,
 
   contentLoaded
 }
