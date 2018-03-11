@@ -470,24 +470,6 @@ const render = function (id, txt, cb, container) {
   return svgCode
 }
 
-function render2 (id, text, cb, containerElement) {
-  try {
-    if (arguments.length === 1) {
-      text = id
-      id = 'mermaidId0'
-    }
-
-    if (typeof document === 'undefined') {
-      // Todo handle rendering serverside using phantomjs
-    } else {
-      // In browser
-      return render(id, text, cb, containerElement)
-    }
-  } catch (e) {
-    logger.error(e)
-  }
-}
-
 const setConf = function (cnf) {
   // Top level initially mermaid, gflow, sequenceDiagram and gantt
   const lvl1Keys = Object.keys(cnf)
@@ -523,7 +505,7 @@ function getConfig () {
 }
 
 const mermaidAPI = {
-  render: render2,
+  render,
   parse,
   initialize,
   detectType: utils.detectType,
