@@ -53,3 +53,5 @@ $doneTaskBorderColor: $lineColor;
 $critBkgColor: $critical;
 $critBorderColor: darken($critBkgColor, 10%);
 $todayLineColor: $critBkgColor;
+
+@import '../mermaid';

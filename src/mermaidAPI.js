@@ -36,10 +36,10 @@ import gitGraphRenderer from './diagrams/gitGraph/gitGraphRenderer'
 import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
 import pkg from '../package.json'
 
-import darkTheme from './themes/dark/mermaid.scss'
-import defaultTheme from './themes/default/mermaid.scss'
-import forestTheme from './themes/forest/mermaid.scss'
-import neutralTheme from './themes/neutral/mermaid.scss'
+import darkTheme from './themes/dark/index.scss'
+import defaultTheme from './themes/default/index.scss'
+import forestTheme from './themes/forest/index.scss'
+import neutralTheme from './themes/neutral/index.scss'
 
 const themes = {
   dark: darkTheme,

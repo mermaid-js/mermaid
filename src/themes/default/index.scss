@@ -1,15 +1,14 @@
-$mainBkg: #cde498;
-$secondBkg: #cdffb2;
-$lineColor: #1a3318;
-$lineColor: green;
-$border1: #13540c;
-$border2: #6eaa49;
-$arrowheadColor: green;
+$mainBkg: #ECECFF;
+$secondBkg: #ffffde;
+$lineColor: #333333;
+$border1: #CCCCFF;
+$border2: #aaaa33;
+$arrowheadColor: #333333;
 
 /* Flowchart variables */
 
 $nodeBkg: $mainBkg;
-$nodeBorder: $border1;
+$nodeBorder: #9370DB;
 $clusterBkg: $secondBkg;
 $clusterBorder: $border2;
 $defaultLinkColor: $lineColor;
@@ -25,28 +24,29 @@ $actorLineColor: grey;
 $signalColor: #333;
 $signalTextColor: #333;
 $labelBoxBkgColor: $actorBkg;
-$labelBoxBorderColor: #326932;
+$labelBoxBorderColor: $actorBorder;
 $labelTextColor: $actorTextColor;
 $noteBorderColor: $border2;
 $noteBkgColor: #fff5ad;
 
 /* Gantt chart variables */
 
-$sectionBkgColor: #6eaa49;
-;
+$sectionBkgColor: rgba(102, 102, 255, 0.49);
 $altSectionBkgColor: white;
-$sectionBkgColor2: #6eaa49;
-$taskBorderColor: $border1;
-$taskBkgColor: #487e3a;
+$sectionBkgColor2: #fff400;
+$taskBorderColor: #534fbc;
+$taskBkgColor: #8a90dd;
 $taskTextLightColor: white;
 $taskTextColor: $taskTextLightColor;
 $taskTextDarkColor: black;
 $taskTextOutsideColor: $taskTextDarkColor;
-$activeTaskBorderColor: $taskBorderColor;
-$activeTaskBkgColor: $mainBkg;
+$activeTaskBorderColor: #534fbc;
+$activeTaskBkgColor: #bfc7ff;
 $gridColor: lightgrey;
 $doneTaskBkgColor: lightgrey;
 $doneTaskBorderColor: grey;
 $critBorderColor: #ff8888;
 $critBkgColor: red;
 $todayLineColor: red;
+
+@import '../mermaid';
