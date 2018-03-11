@@ -7135,6 +7135,10 @@ schema-utils@^0.4.2:
     ajv "^6.1.0"
     ajv-keywords "^3.1.0"
 
+scope-css@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/scope-css/-/scope-css-1.0.5.tgz#9a40a959231ecf683dbef3dedae6a26ab091e1fd"
+
 scoped-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/scoped-regex/-/scoped-regex-1.0.0.tgz#a346bb1acd4207ae70bd7c0c7ca9e566b6baddb8"

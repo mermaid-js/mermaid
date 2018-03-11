@@ -12,6 +12,7 @@
  * somewhere in the page or something completely different.
 */
 import * as d3 from 'd3'
+import scope from 'scope-css'
 
 import { logger, setLogLevel } from './logger'
 import graph from './diagrams/flowchart/graphDb'
@@ -438,7 +439,7 @@ const render = function (id, txt, cb, container) {
   // insert inline style into svg
   const svg = element.firstChild
   const s = document.createElement('style')
-  s.innerHTML = themes[config.theme] || defaultTheme
+  s.innerHTML = scope(themes[config.theme] || defaultTheme, `#${id}`)
   svg.insertBefore(s, svg.firstChild)
 
   d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml')

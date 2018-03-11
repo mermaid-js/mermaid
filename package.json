@@ -42,7 +42,8 @@
     "graphlibrary": "^2.2.0",
     "he": "^1.1.1",
     "lodash": "^4.17.5",
-    "moment": "^2.21.0"
+    "moment": "^2.21.0",
+    "scope-css": "^1.0.5"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
