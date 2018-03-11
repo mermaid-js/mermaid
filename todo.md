@@ -7,4 +7,3 @@
 - Flowchart interpolate is useless because there is no rendering code using it
 - Rewrite SCSS code to reduce duplication
     - No global CSS. Should limit the CSS to mermaid charts only
-- Remove gulp, add jison commands to readme file
