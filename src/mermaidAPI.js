@@ -438,14 +438,7 @@ const render = function (id, txt, cb, container) {
   // insert inline style into svg
   const svg = element.firstChild
   const s = document.createElement('style')
-  const cs = window.getComputedStyle(svg)
-  s.innerHTML = `
-  ${themes[config.theme] || defaultTheme}
-svg {
-  color: ${cs.color};
-  font: ${cs.font};
-}
-  `
+  s.innerHTML = themes[config.theme] || defaultTheme
   svg.insertBefore(s, svg.firstChild)
 
   d3.select('#d' + id).selectAll('foreignobject div').attr('xmlns', 'http://www.w3.org/1999/xhtml')
