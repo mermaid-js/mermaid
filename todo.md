@@ -4,6 +4,5 @@
 - Support customization of gantt diagram xAxis format
     - https://github.com/d3/d3-time-format#api-reference
     - https://bl.ocks.org/wboykinm/34627426d84f3242e0e6ecb2339e9065
-- Flowchart interpolate is useless because there is no rendering code using it
-- Rewrite SCSS code to reduce duplication
-    - No global CSS. Should limit the CSS to mermaid charts only
+    - Some one created a great PR: https://github.com/knsv/mermaid/pull/624
+- Flowchart `interpolate` is useless because there is no rendering code using it
