@@ -6,3 +6,5 @@
     - https://bl.ocks.org/wboykinm/34627426d84f3242e0e6ecb2339e9065
     - Some one created a great PR: https://github.com/knsv/mermaid/pull/624
 - Flowchart `interpolate` is useless because there is no rendering code using it
+- mermaid live editor saved svg file has different font-size.
+    - Should not have removed this part: https://github.com/knsv/mermaid/pull/577#issuecomment-372116281

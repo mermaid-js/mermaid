@@ -428,9 +428,19 @@ const render = function (id, txt, cb, container) {
 
   // insert inline style into svg
   const svg = element.firstChild
-  const s = document.createElement('style')
-  s.innerHTML = scope(themes[config.theme] || defaultTheme, `#${id}`)
-  svg.insertBefore(s, svg.firstChild)
+  const firstChild = svg.firstChild
+
+  const style1 = document.createElement('style')
+  style1.innerHTML = scope(themes[config.theme] || defaultTheme, `#${id}`)
+  svg.insertBefore(style1, firstChild)
+
+  const style2 = document.createElement('style')
+  const cs = window.getComputedStyle(svg)
+  style2.innerHTML = `#${id} {
+    color: ${cs.color};
+    font: ${cs.font};
+  }`
+  svg.insertBefore(style2, firstChild)
 
   d3.select('#' + id).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 
