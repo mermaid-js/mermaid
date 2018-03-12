@@ -1,10 +1,9 @@
 - Get familar with jison
 - git graph requires a blank line at the end. why?
 - Create a desktop client
+- Flowchart `interpolate` is useless because there is no rendering code using it
+- Each type of diagram should have its own set of CSS.
 - Support customization of gantt diagram xAxis format
     - https://github.com/d3/d3-time-format#api-reference
     - https://bl.ocks.org/wboykinm/34627426d84f3242e0e6ecb2339e9065
     - Some one created a great PR: https://github.com/knsv/mermaid/pull/624
-- Flowchart `interpolate` is useless because there is no rendering code using it
-- mermaid live editor saved svg file has different font-size.
-    - Should not have removed this part: https://github.com/knsv/mermaid/pull/577#issuecomment-372116281
