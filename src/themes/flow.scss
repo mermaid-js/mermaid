@@ -31,11 +31,24 @@
 
 .cluster rect {
   fill: $secondBkg !important;
-  rx: 4 !important;
   stroke: $clusterBorder !important;
   stroke-width: 1px !important;
 }
 
 .cluster text {
   fill: $titleColor;
+}
+
+div.mermaidTooltip {
+  position: absolute;
+  text-align: center;
+  max-width: 200px;
+  padding: 2px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 12px;
+  background: $secondBkg;
+  border: 1px solid $border2;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 100;
 }
