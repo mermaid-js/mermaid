@@ -104,7 +104,7 @@ const config = {
    * ###  sequenceDiagram
    * The object containing configurations specific for sequence diagrams
    */
-  sequenceDiagram: {
+  sequence: {
 
     /**
      * **diagramMarginX** - margin to the right and left of the sequence diagram
@@ -244,8 +244,8 @@ const config = {
       }]
     ]
   },
-  classDiagram: {},
-  gitGraph: {},
+  class: {},
+  git: {},
   example: {}
 }
 
@@ -256,7 +256,7 @@ function parse (text) {
   let parser
 
   switch (graphType) {
-    case 'gitGraph':
+    case 'git':
       parser = gitGraphParser
       parser.parser.yy = gitGraphAst
       break
@@ -264,11 +264,11 @@ function parse (text) {
       parser = flowParser
       parser.parser.yy = flowDb
       break
-    case 'dotGraph':
+    case 'dot':
       parser = dotParser
       parser.parser.yy = flowDb
       break
-    case 'sequenceDiagram':
+    case 'sequence':
       parser = sequenceParser
       parser.parser.yy = sequenceDb
       break
@@ -280,7 +280,7 @@ function parse (text) {
       parser = ganttParser
       parser.parser.yy = ganttDb
       break
-    case 'classDiagram':
+    case 'class':
       parser = classParser
       parser.parser.yy = classDb
       break
@@ -390,9 +390,9 @@ const render = function (id, txt, cb, container) {
   const element = d3.select('#d' + id).node()
   const graphType = utils.detectType(txt)
   switch (graphType) {
-    case 'gitGraph':
+    case 'git':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      gitGraphRenderer.setConf(config.gitGraph)
+      gitGraphRenderer.setConf(config.git)
       gitGraphRenderer.draw(txt, id, false)
       break
     case 'flowchart':
@@ -400,14 +400,14 @@ const render = function (id, txt, cb, container) {
       flowRenderer.setConf(config.flowchart)
       flowRenderer.draw(txt, id, false)
       break
-    case 'dotGraph':
+    case 'dot':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       flowRenderer.setConf(config.flowchart)
       flowRenderer.draw(txt, id, true)
       break
-    case 'sequenceDiagram':
-      config.sequenceDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      sequenceRenderer.setConf(config.sequenceDiagram)
+    case 'sequence':
+      config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      sequenceRenderer.setConf(config.sequence)
       sequenceRenderer.draw(txt, id)
       break
     case 'gantt':
@@ -415,9 +415,9 @@ const render = function (id, txt, cb, container) {
       ganttRenderer.setConf(config.gantt)
       ganttRenderer.draw(txt, id)
       break
-    case 'classDiagram':
-      config.classDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      classRenderer.setConf(config.classDiagram)
+    case 'class':
+      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      classRenderer.setConf(config.class)
       classRenderer.draw(txt, id)
       break
     case 'example':

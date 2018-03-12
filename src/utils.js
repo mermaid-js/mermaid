@@ -20,11 +20,11 @@ import * as d3 from 'd3'
 export const detectType = function (text) {
   text = text.replace(/^\s*%%.*\n/g, '\n')
   if (text.match(/^\s*sequenceDiagram/)) {
-    return 'sequenceDiagram'
+    return 'sequence'
   }
 
   if (text.match(/^\s*digraph/)) {
-    return 'dotGraph'
+    return 'dot'
   }
 
   if (text.match(/^\s*info/)) {
@@ -36,11 +36,11 @@ export const detectType = function (text) {
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    return 'classDiagram'
+    return 'class'
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    return 'gitGraph'
+    return 'git'
   }
   return 'flowchart'
 }

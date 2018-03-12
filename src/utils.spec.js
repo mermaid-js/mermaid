@@ -21,7 +21,7 @@ describe('when detecting chart type ', function () {
   it('should handle a graph defintion for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue'
     const type = utils.detectType(str)
-    expect(type).toBe('gitGraph')
+    expect(type).toBe('git')
   })
 })
 
