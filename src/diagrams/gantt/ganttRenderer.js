@@ -1,13 +1,10 @@
-import moment from 'moment'
 import * as d3 from 'd3'
 
 import { parser } from './parser/gantt'
 import ganttDb from './ganttDb'
-import { logger } from '../../logger'
 
 parser.yy = ganttDb
 
-let daysInChart
 const conf = {
   titleTopMargin: 25,
   barHeight: 20,
@@ -52,13 +49,6 @@ export const draw = function (text, id) {
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h)
   const svg = d3.select('#' + id)
 
-  const startDate = d3.min(taskArray, function (d) {
-    return d.startTime
-  })
-  const endDate = d3.max(taskArray, function (d) {
-    return d.endTime
-  })
-
   // Set timescale
   const timeScale = d3.scaleTime()
     .domain([d3.min(taskArray, function (d) {
@@ -70,8 +60,6 @@ export const draw = function (text, id) {
     .rangeRound([0, w - conf.leftPadding - conf.rightPadding])
 
   let categories = []
-
-  daysInChart = moment.duration(endDate - startDate).asDays()
 
   for (let i = 0; i < taskArray.length; i++) {
     categories.push(taskArray[i].type)
@@ -254,32 +242,9 @@ export const draw = function (text, id) {
   }
 
   function makeGrid (theSidePad, theTopPad, w, h) {
-    const formatMillisecond = d3.timeFormat('.%L')
-    const formatSecond = d3.timeFormat(':%S')
-    const formatMinute = d3.timeFormat('%I:%M')
-    const formatHour = d3.timeFormat('%I %p')
-    const formatDay = d3.timeFormat('%Y-%m-%d')
-    const formatWeek = d3.timeFormat('%Y-%m-%d')
-    const formatMonth = d3.timeFormat('%b-%Y')
-    const formatYear = d3.timeFormat('%Y')
-
-    const multiFormat = date => {
-      return (d3.timeSecond(date) < date ? formatMillisecond
-        : d3.timeMinute(date) < date ? formatSecond
-          : d3.timeHour(date) < date ? formatMinute
-            : d3.timeDay(date) < date ? formatHour
-              : d3.timeMonth(date) < date ? (d3.timeWeek(date) < date ? formatDay : formatWeek)
-                : d3.timeYear(date) < date ? formatMonth
-                  : formatYear)(date)
-    }
-
-    // todo: if (typeof conf.axisFormatter !== 'undefined')
-
     let xAxis = d3.axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(multiFormat)
-
-    logger.debug(daysInChart) // just to pass lint
+      .tickFormat(d3.timeFormat(conf.axisFormat || '%Y-%m-%d'))
 
     svg.append('g')
       .attr('class', 'grid')

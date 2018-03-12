@@ -219,30 +219,9 @@ const config = {
     numberSectionStyles: 3,
 
     /**
-     * **axisFormatter** - formatting of the axis, this might need adjustment to match your locale and preferences
+     * **axisFormat** - datetime format of the axis, this might need adjustment to match your locale and preferences
      */
-    axisFormatter: [
-      // Within a day
-      ['%I:%M', function (d) {
-        return d.getHours()
-      }],
-      // Monday a week
-      ['w. %U', function (d) {
-        return d.getDay() === 1
-      }],
-      // Day within a week (not monday)
-      ['%a %d', function (d) {
-        return d.getDay() && d.getDate() !== 1
-      }],
-      // within a month
-      ['%b %d', function (d) {
-        return d.getDate() !== 1
-      }],
-      // Month
-      ['%m-%y', function (d) {
-        return d.getMonth()
-      }]
-    ]
+    axisFormat: '%Y-%m-%d'
   },
   class: {},
   git: {},
