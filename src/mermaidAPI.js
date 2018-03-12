@@ -18,15 +18,15 @@ import { logger, setLogLevel } from './logger'
 import flowDb from './diagrams/flowchart/flowDb'
 import utils from './utils'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
-import seq from './diagrams/sequenceDiagram/sequenceRenderer'
-import example from './diagrams/example/exampleRenderer'
+import sequenceRenderer from './diagrams/sequenceDiagram/sequenceRenderer'
+import exampleRenderer from './diagrams/example/exampleRenderer'
 import exampleParser from './diagrams/example/parser/example'
 import flowParser from './diagrams/flowchart/parser/flow'
 import dotParser from './diagrams/flowchart/parser/dot'
 import sequenceParser from './diagrams/sequenceDiagram/parser/sequenceDiagram'
 import sequenceDb from './diagrams/sequenceDiagram/sequenceDb'
 import exampleDb from './diagrams/example/exampleDb'
-import gantt from './diagrams/gantt/ganttRenderer'
+import ganttRenderer from './diagrams/gantt/ganttRenderer'
 import ganttParser from './diagrams/gantt/parser/gantt'
 import ganttDb from './diagrams/gantt/ganttDb'
 import classParser from './diagrams/classDiagram/parser/classDiagram'
@@ -260,7 +260,7 @@ function parse (text) {
       parser = gitGraphParser
       parser.parser.yy = gitGraphAst
       break
-    case 'graph':
+    case 'flowchart':
       parser = flowParser
       parser.parser.yy = flowDb
       break
@@ -395,7 +395,7 @@ const render = function (id, txt, cb, container) {
       gitGraphRenderer.setConf(config.gitGraph)
       gitGraphRenderer.draw(txt, id, false)
       break
-    case 'graph':
+    case 'flowchart':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       flowRenderer.setConf(config.flowchart)
       flowRenderer.draw(txt, id, false)
@@ -407,13 +407,13 @@ const render = function (id, txt, cb, container) {
       break
     case 'sequenceDiagram':
       config.sequenceDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      seq.setConf(config.sequenceDiagram)
-      seq.draw(txt, id)
+      sequenceRenderer.setConf(config.sequenceDiagram)
+      sequenceRenderer.draw(txt, id)
       break
     case 'gantt':
       config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      gantt.setConf(config.gantt)
-      gantt.draw(txt, id)
+      ganttRenderer.setConf(config.gantt)
+      ganttRenderer.draw(txt, id)
       break
     case 'classDiagram':
       config.classDiagram.arrowMarkerAbsolute = config.arrowMarkerAbsolute
@@ -422,7 +422,7 @@ const render = function (id, txt, cb, container) {
       break
     case 'example':
       config.example.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      example.draw(txt, id)
+      exampleRenderer.draw(txt, id)
       break
   }
 
@@ -508,7 +508,6 @@ const mermaidAPI = {
   render,
   parse,
   initialize,
-  detectType: utils.detectType,
   getConfig
 }
 

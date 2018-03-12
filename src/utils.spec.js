@@ -5,18 +5,18 @@ describe('when detecting chart type ', function () {
   it('should handle a graph defintion', function () {
     const str = 'graph TB\nbfs1:queue'
     const type = utils.detectType(str)
-    expect(type).toBe('graph')
+    expect(type).toBe('flowchart')
   })
   it('should handle a graph defintion with leading spaces', function () {
     const str = '    graph TB\nbfs1:queue'
     const type = utils.detectType(str)
-    expect(type).toBe('graph')
+    expect(type).toBe('flowchart')
   })
 
   it('should handle a graph defintion with leading spaces and newline', function () {
     const str = '  \n  graph TB\nbfs1:queue'
     const type = utils.detectType(str)
-    expect(type).toBe('graph')
+    expect(type).toBe('flowchart')
   })
   it('should handle a graph defintion for gitGraph', function () {
     const str = '  \n  gitGraph TB:\nbfs1:queue'
