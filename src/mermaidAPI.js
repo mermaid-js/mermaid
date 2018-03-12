@@ -15,7 +15,7 @@ import * as d3 from 'd3'
 import scope from 'scope-css'
 
 import { logger, setLogLevel } from './logger'
-import graph from './diagrams/flowchart/graphDb'
+import flowDb from './diagrams/flowchart/flowDb'
 import utils from './utils'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
 import seq from './diagrams/sequenceDiagram/sequenceRenderer'
@@ -262,11 +262,11 @@ function parse (text) {
       break
     case 'graph':
       parser = flowParser
-      parser.parser.yy = graph
+      parser.parser.yy = flowDb
       break
     case 'dotGraph':
       parser = dotParser
-      parser.parser.yy = graph
+      parser.parser.yy = flowDb
       break
     case 'sequenceDiagram':
       parser = sequenceParser
@@ -457,7 +457,7 @@ const render = function (id, txt, cb, container) {
   svgCode = decodeEntities(svgCode)
 
   if (typeof cb !== 'undefined') {
-    cb(svgCode, graph.bindFunctions)
+    cb(svgCode, flowDb.bindFunctions)
   } else {
     logger.warn('CB = undefined!')
   }

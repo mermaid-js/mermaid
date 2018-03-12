@@ -1,6 +1,6 @@
 /* eslint-env jasmine */
 import mermaid from './mermaid'
-import graphDb from './diagrams/flowchart/graphDb'
+import flowDb from './diagrams/flowchart/flowDb'
 import flowParser from './diagrams/flowchart/parser/flow'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
 
@@ -40,8 +40,8 @@ describe('when using mermaid and ', function () {
 
   describe('when calling addEdges ', function () {
     beforeEach(function () {
-      flowParser.parser.yy = graphDb
-      graphDb.clear()
+      flowParser.parser.yy = flowDb
+      flowDb.clear()
     })
     it('it should handle edges with text', function () {
       flowParser.parser.parse('graph TD;A-->|text ex|B;')

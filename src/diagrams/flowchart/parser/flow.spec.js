@@ -1,9 +1,9 @@
-import graphDb from '../graphDb'
+import flowDb from '../flowDb'
 import flow from './flow'
 
 describe('when parsing ', function () {
   beforeEach(function () {
-    flow.parser.yy = graphDb
+    flow.parser.yy = flowDb
     flow.parser.yy.clear()
   })
 
@@ -469,42 +469,42 @@ describe('when parsing ', function () {
 
   describe('it should handle interaction, ', function () {
     it('it should be possible to use click to a callback', function () {
-      spyOn(graphDb, 'setClickEvent')
+      spyOn(flowDb, 'setClickEvent')
       const res = flow.parser.parse('graph TD\nA-->B\nclick A callback')
 
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(graphDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined, undefined)
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined, undefined)
     })
 
     it('it should be possible to use click to a callback with toolip', function () {
-      spyOn(graphDb, 'setClickEvent')
+      spyOn(flowDb, 'setClickEvent')
       const res = flow.parser.parse('graph TD\nA-->B\nclick A callback "tooltip"')
 
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(graphDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined, 'tooltip')
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined, 'tooltip')
     })
 
     it('should handle interaction - click to a link', function () {
-      spyOn(graphDb, 'setClickEvent')
+      spyOn(flowDb, 'setClickEvent')
       const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html"')
 
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(graphDb.setClickEvent).toHaveBeenCalledWith('A', undefined, 'click.html', undefined)
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', undefined, 'click.html', undefined)
     })
     it('should handle interaction - click to a link with tooltip', function () {
-      spyOn(graphDb, 'setClickEvent')
+      spyOn(flowDb, 'setClickEvent')
       const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip"')
 
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(graphDb.setClickEvent).toHaveBeenCalledWith('A', undefined, 'click.html', 'tooltip')
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', undefined, 'click.html', 'tooltip')
     })
   })
 
