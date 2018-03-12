@@ -19,13 +19,13 @@ import graph from './diagrams/flowchart/graphDb'
 import utils from './utils'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
 import seq from './diagrams/sequenceDiagram/sequenceRenderer'
-import info from './diagrams/example/exampleRenderer'
-import infoParser from './diagrams/example/parser/example'
+import example from './diagrams/example/exampleRenderer'
+import exampleParser from './diagrams/example/parser/example'
 import flowParser from './diagrams/flowchart/parser/flow'
 import dotParser from './diagrams/flowchart/parser/dot'
 import sequenceParser from './diagrams/sequenceDiagram/parser/sequenceDiagram'
 import sequenceDb from './diagrams/sequenceDiagram/sequenceDb'
-import infoDb from './diagrams/example/exampleDb'
+import exampleDb from './diagrams/example/exampleDb'
 import gantt from './diagrams/gantt/ganttRenderer'
 import ganttParser from './diagrams/gantt/parser/gantt'
 import ganttDb from './diagrams/gantt/ganttDb'
@@ -246,7 +246,7 @@ const config = {
   },
   classDiagram: {},
   gitGraph: {},
-  info: {}
+  example: {}
 }
 
 setLogLevel(config.logLevel)
@@ -272,9 +272,9 @@ function parse (text) {
       parser = sequenceParser
       parser.parser.yy = sequenceDb
       break
-    case 'info':
-      parser = infoParser
-      parser.parser.yy = infoDb
+    case 'example':
+      parser = exampleParser
+      parser.parser.yy = exampleDb
       break
     case 'gantt':
       parser = ganttParser
@@ -420,9 +420,9 @@ const render = function (id, txt, cb, container) {
       classRenderer.setConf(config.classDiagram)
       classRenderer.draw(txt, id)
       break
-    case 'info':
-      config.info.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      info.draw(txt, id)
+    case 'example':
+      config.example.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      example.draw(txt, id)
       break
   }
 

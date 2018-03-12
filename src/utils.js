@@ -28,7 +28,7 @@ export const detectType = function (text) {
   }
 
   if (text.match(/^\s*info/)) {
-    return 'info'
+    return 'example'
   }
 
   if (text.match(/^\s*gantt/)) {
