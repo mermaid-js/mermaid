@@ -19,6 +19,7 @@
 \%%[^\n]*               /* skip comments */
 "gantt"     	        return 'gantt';
 "dateFormat"\s[^#\n;]+  return 'dateFormat';
+"axisFormat"\s[^#\n;]+  return 'axisFormat';
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
 "title"\s[^#\n;]+       return 'title';
 "section"\s[^#:\n;]+    return 'section';
@@ -54,6 +55,7 @@ line
 
 statement
 	: 'dateFormat' {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
+  | 'axisFormat' {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
 	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
 	| section {yy.addSection($1.substr(8));$$=$1.substr(8);}
 	| taskTxt taskData {yy.addTask($1,$2);$$='task';}

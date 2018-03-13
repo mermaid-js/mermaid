@@ -2,6 +2,7 @@ import moment from 'moment'
 import { logger } from '../../logger'
 
 let dateFormat = ''
+let axisFormat = ''
 let title = ''
 let sections = []
 let tasks = []
@@ -16,6 +17,14 @@ export const clear = function () {
   lastTask = undefined
   lastTaskID = undefined
   rawTasks = []
+}
+
+export const setAxisFormat = function (txt) {
+  axisFormat = txt
+}
+
+export const getAxisFormat = function () {
+  return axisFormat
 }
 
 export const setDateFormat = function (txt) {
@@ -342,6 +351,8 @@ const compileTasks = function () {
 export default {
   clear,
   setDateFormat,
+  setAxisFormat,
+  getAxisFormat,
   setTitle,
   getTitle,
   addSection,

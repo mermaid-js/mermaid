@@ -244,7 +244,7 @@ export const draw = function (text, id) {
   function makeGrid (theSidePad, theTopPad, w, h) {
     let xAxis = d3.axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(d3.timeFormat(conf.axisFormat || '%Y-%m-%d'))
+      .tickFormat(d3.timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'))
 
     svg.append('g')
       .attr('class', 'grid')
