@@ -180,7 +180,7 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
 
   let textElem = svgDraw.drawText(g, textObj, rect.width - conf.noteMargin)
 
-  let textHeight = textElem[0][0].getBBox().height
+  let textHeight = (textElem._groups || textElem)[0][0].getBBox().height
   if (!forceWidth && textHeight > conf.width) {
     textElem.remove()
     g = elem.append('g')

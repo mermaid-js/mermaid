@@ -3,7 +3,5 @@
 - Create a desktop client
 - Flowchart `interpolate` is useless because there is no rendering code using it
 - Each type of diagram should have its own set of CSS.
-- Support customization of gantt diagram xAxis format
-    - https://github.com/d3/d3-time-format#api-reference
-    - https://bl.ocks.org/wboykinm/34627426d84f3242e0e6ecb2339e9065
+- Support customization of gantt diagram xAxis format using diagram code
     - Some one created a great PR: https://github.com/knsv/mermaid/pull/624
