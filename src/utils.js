@@ -23,10 +23,6 @@ export const detectType = function (text) {
     return 'sequence'
   }
 
-  if (text.match(/^\s*info/)) {
-    return 'example'
-  }
-
   if (text.match(/^\s*gantt/)) {
     return 'gantt'
   }

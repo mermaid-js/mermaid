@@ -19,12 +19,9 @@ import flowDb from './diagrams/flowchart/flowDb'
 import utils from './utils'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
 import sequenceRenderer from './diagrams/sequenceDiagram/sequenceRenderer'
-import exampleRenderer from './diagrams/example/exampleRenderer'
-import exampleParser from './diagrams/example/parser/example'
 import flowParser from './diagrams/flowchart/parser/flow'
 import sequenceParser from './diagrams/sequenceDiagram/parser/sequenceDiagram'
 import sequenceDb from './diagrams/sequenceDiagram/sequenceDb'
-import exampleDb from './diagrams/example/exampleDb'
 import ganttRenderer from './diagrams/gantt/ganttRenderer'
 import ganttParser from './diagrams/gantt/parser/gantt'
 import ganttDb from './diagrams/gantt/ganttDb'
@@ -216,8 +213,7 @@ const config = {
     axisFormat: '%Y-%m-%d'
   },
   class: {},
-  git: {},
-  example: {}
+  git: {}
 }
 
 setLogLevel(config.logLevel)
@@ -238,10 +234,6 @@ function parse (text) {
     case 'sequence':
       parser = sequenceParser
       parser.parser.yy = sequenceDb
-      break
-    case 'example':
-      parser = exampleParser
-      parser.parser.yy = exampleDb
       break
     case 'gantt':
       parser = ganttParser
@@ -381,10 +373,6 @@ const render = function (id, txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       classRenderer.setConf(config.class)
       classRenderer.draw(txt, id)
-      break
-    case 'example':
-      config.example.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      exampleRenderer.draw(txt, id)
       break
   }
 
