@@ -205,7 +205,7 @@ const config = {
     /**
      * **numberSectionStyles** - the number of alternating section styles
      */
-    numberSectionStyles: 3,
+    numberSectionStyles: 4,
 
     /**
      * **axisFormat** - datetime format of the axis, this might need adjustment to match your locale and preferences
