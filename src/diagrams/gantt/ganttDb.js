@@ -22,9 +22,6 @@ export const setDateFormat = function (txt) {
   dateFormat = txt
 }
 
-export const getDateFormat = function () {
-  return dateFormat
-}
 export const setTitle = function (txt) {
   title = txt
 }
@@ -150,7 +147,6 @@ const compileData = function (prevTask, dataStr) {
   const data = ds.split(',')
 
   const task = {}
-  const df = getDateFormat()
 
   // Get tags like active, done cand crit
   let matchFound = true
@@ -180,17 +176,17 @@ const compileData = function (prevTask, dataStr) {
     case 1:
       task.id = parseId()
       task.startTime = prevTask.endTime
-      task.endTime = getEndDate(task.startTime, df, data[0])
+      task.endTime = getEndDate(task.startTime, dateFormat, data[0])
       break
     case 2:
       task.id = parseId()
-      task.startTime = getStartDate(undefined, df, data[0])
-      task.endTime = getEndDate(task.startTime, df, data[1])
+      task.startTime = getStartDate(undefined, dateFormat, data[0])
+      task.endTime = getEndDate(task.startTime, dateFormat, data[1])
       break
     case 3:
       task.id = parseId(data[0])
-      task.startTime = getStartDate(undefined, df, data[1])
-      task.endTime = getEndDate(task.startTime, df, data[2])
+      task.startTime = getStartDate(undefined, dateFormat, data[1])
+      task.endTime = getEndDate(task.startTime, dateFormat, data[2])
       break
     default:
   }
@@ -308,8 +304,6 @@ export const addTaskOrg = function (descr, data) {
 }
 
 const compileTasks = function () {
-  const df = getDateFormat()
-
   const compileTask = function (pos) {
     const task = rawTasks[pos]
     let startTime = ''
@@ -319,7 +313,7 @@ const compileTasks = function () {
         task.startTime = prevTask.endTime
         break
       case 'getStartDate':
-        startTime = getStartDate(undefined, df, rawTasks[pos].raw.startTime.startData)
+        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData)
         if (startTime) {
           rawTasks[pos].startTime = startTime
         }
@@ -327,7 +321,7 @@ const compileTasks = function () {
     }
 
     if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, df, rawTasks[pos].raw.endTime.data)
+      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
       }
@@ -348,7 +342,6 @@ const compileTasks = function () {
 export default {
   clear,
   setDateFormat,
-  getDateFormat,
   setTitle,
   getTitle,
   addSection,
