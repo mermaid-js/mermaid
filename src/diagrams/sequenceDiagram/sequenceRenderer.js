@@ -186,7 +186,7 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
     g = elem.append('g')
 
     textElem = svgDraw.drawText(g, textObj, 2 * rect.width - conf.noteMargin)
-    textHeight = textElem[0][0].getBBox().height
+    textHeight = (textElem._groups || textElem)[0][0].getBBox().height
     rectElem.attr('width', 2 * rect.width)
     bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
   } else {
