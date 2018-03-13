@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.0.0-alpha.5",
+  "version": "8.0.0-alpha.6",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -63,7 +63,7 @@
     "sass-loader": "^6.0.7",
     "standard": "^11.0.0",
     "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.10",
+    "webpack-cli": "^2.0.11",
     "webpack-node-externals": "^1.6.0",
     "yarn-upgrade-all": "^0.3.0"
   },
