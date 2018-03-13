@@ -36,16 +36,9 @@ import gitGraphParser from './diagrams/gitGraph/parser/gitGraph'
 import gitGraphRenderer from './diagrams/gitGraph/gitGraphRenderer'
 import gitGraphAst from './diagrams/gitGraph/gitGraphAst'
 
-import darkTheme from './themes/dark/index.scss'
-import defaultTheme from './themes/default/index.scss'
-import forestTheme from './themes/forest/index.scss'
-import neutralTheme from './themes/neutral/index.scss'
-
-const themes = {
-  dark: darkTheme,
-  default: defaultTheme,
-  forest: forestTheme,
-  neutral: neutralTheme
+const themes = {}
+for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
+  themes[themeName] = require(`./themes/${themeName}/index.scss`)
 }
 
 /**
@@ -60,7 +53,7 @@ const themes = {
  * ```
  */
 const config = {
-  theme: defaultTheme,
+  theme: themes.default,
 
   /**
    * logLevel , decides the amount of logging to be used.
@@ -410,7 +403,7 @@ const render = function (id, txt, cb, container) {
   const firstChild = svg.firstChild
 
   const style1 = document.createElement('style')
-  style1.innerHTML = scope(themes[config.theme] || defaultTheme, `#${id}`)
+  style1.innerHTML = scope(themes[config.theme] || themes.default, `#${id}`)
   svg.insertBefore(style1, firstChild)
 
   const style2 = document.createElement('style')
