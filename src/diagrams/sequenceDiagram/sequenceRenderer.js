@@ -154,6 +154,23 @@ export const bounds = {
   }
 }
 
+const _drawLongText = (text, x, y, g, width) => {
+  let textHeight = 0
+  const lines = text.split(/<br\/?>/ig)
+  for (const line of lines) {
+    const textObj = svgDraw.getTextObj()
+    textObj.x = x
+    textObj.y = y + textHeight
+    textObj.textMargin = conf.noteMargin
+    textObj.dy = '1em'
+    textObj.text = line
+    textObj.class = 'noteText'
+    const textElem = svgDraw.drawText(g, textObj, width)
+    textHeight += (textElem._groups || textElem)[0][0].getBBox().height
+  }
+  return textHeight
+}
+
 /**
  * Draws an actor in the diagram with the attaced line
  * @param center - The center of the the actor
@@ -170,29 +187,9 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
   let g = elem.append('g')
   const rectElem = svgDraw.drawRect(g, rect)
 
-  const textObj = svgDraw.getTextObj()
-  textObj.x = startx - 4
-  textObj.y = verticalPos + 24
-  textObj.textMargin = conf.noteMargin
-  textObj.dy = '1em'
-  textObj.text = msg.message
-  textObj.class = 'noteText'
+  const textHeight = _drawLongText(msg.message, startx - 4, verticalPos + 24, g, rect.width - conf.noteMargin)
 
-  let textElem = svgDraw.drawText(g, textObj, rect.width - conf.noteMargin)
-
-  let textHeight = (textElem._groups || textElem)[0][0].getBBox().height
-  if (!forceWidth && textHeight > conf.width) {
-    textElem.remove()
-    g = elem.append('g')
-
-    textElem = svgDraw.drawText(g, textObj, 2 * rect.width - conf.noteMargin)
-    textHeight = (textElem._groups || textElem)[0][0].getBBox().height
-    rectElem.attr('width', 2 * rect.width)
-    bounds.insert(startx, verticalPos, startx + 2 * rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
-  } else {
-    bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
-  }
-
+  bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight)
   rectElem.attr('height', textHeight + 2 * conf.noteMargin)
   bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin)
 }
