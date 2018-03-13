@@ -22,7 +22,6 @@ import sequenceRenderer from './diagrams/sequenceDiagram/sequenceRenderer'
 import exampleRenderer from './diagrams/example/exampleRenderer'
 import exampleParser from './diagrams/example/parser/example'
 import flowParser from './diagrams/flowchart/parser/flow'
-import dotParser from './diagrams/flowchart/parser/dot'
 import sequenceParser from './diagrams/sequenceDiagram/parser/sequenceDiagram'
 import sequenceDb from './diagrams/sequenceDiagram/sequenceDb'
 import exampleDb from './diagrams/example/exampleDb'
@@ -236,10 +235,6 @@ function parse (text) {
       parser = flowParser
       parser.parser.yy = flowDb
       break
-    case 'dot':
-      parser = dotParser
-      parser.parser.yy = flowDb
-      break
     case 'sequence':
       parser = sequenceParser
       parser.parser.yy = sequenceDb
@@ -371,11 +366,6 @@ const render = function (id, txt, cb, container) {
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       flowRenderer.setConf(config.flowchart)
       flowRenderer.draw(txt, id, false)
-      break
-    case 'dot':
-      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      flowRenderer.setConf(config.flowchart)
-      flowRenderer.draw(txt, id, true)
       break
     case 'sequence':
       config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute

@@ -23,10 +23,6 @@ export const detectType = function (text) {
     return 'sequence'
   }
 
-  if (text.match(/^\s*digraph/)) {
-    return 'dot'
-  }
-
   if (text.match(/^\s*info/)) {
     return 'example'
   }

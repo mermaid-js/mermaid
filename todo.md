@@ -2,4 +2,3 @@
 - git graph requires a blank line at the end. why?
 - Create a desktop client
 - Flowchart `interpolate` is useless because there is no rendering code using it
-- Each type of diagram should have its own set of CSS.

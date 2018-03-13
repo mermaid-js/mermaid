@@ -3,7 +3,6 @@ import * as d3 from 'd3'
 
 import flowDb from './flowDb'
 import flow from './parser/flow'
-import dot from './parser/dot'
 import dagreD3 from 'dagre-d3-renderer'
 import { logger } from '../../logger'
 
@@ -209,14 +208,9 @@ export const addEdges = function (edges, g) {
  * Returns the all the styles from classDef statements in the graph definition.
  * @returns {object} classDef styles
  */
-export const getClasses = function (text, isDot) {
-  let parser
+export const getClasses = function (text) {
   flowDb.clear()
-  if (isDot) {
-    parser = dot.parser
-  } else {
-    parser = flow.parser
-  }
+  const parser = flow.parser
   parser.yy = flowDb
 
   // Parse the graph definition
@@ -240,15 +234,10 @@ export const getClasses = function (text, isDot) {
  * @param text
  * @param id
  */
-export const draw = function (text, id, isDot) {
+export const draw = function (text, id) {
   logger.debug('Drawing flowchart')
-  let parser
   flowDb.clear()
-  if (isDot) {
-    parser = dot.parser
-  } else {
-    parser = flow.parser
-  }
+  const parser = flow.parser
   parser.yy = flowDb
 
   // Parse the graph definition

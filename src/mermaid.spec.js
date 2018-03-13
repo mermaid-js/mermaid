@@ -213,23 +213,5 @@ describe('when using mermaid and ', function () {
         'end'
       expect(() => mermaid.parse(text)).toThrow()
     })
-
-    it('it should not throw for a valid dot definition', function () {
-      const text = 'digraph\n' +
-        '{\n' +
-        ' a -> b -> c -- d -> e;\n' +
-        ' a -- e;\n' +
-        '}'
-      expect(() => mermaid.parse(text)).not.toThrow()
-    })
-
-    it('it should throw for an invalid dot definition', function () {
-      const text = 'digraph\n' +
-        '{\n' +
-        'a -:> b -> c -- d -> e;\n' +
-        'a -- e;\n' +
-        '}'
-      expect(() => mermaid.parse(text)).toThrow()
-    })
   })
 })
