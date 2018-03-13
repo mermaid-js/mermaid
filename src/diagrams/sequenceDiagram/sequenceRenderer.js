@@ -172,7 +172,7 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
 
   const textObj = svgDraw.getTextObj()
   textObj.x = startx - 4
-  textObj.y = verticalPos - 13
+  textObj.y = verticalPos + 24
   textObj.textMargin = conf.noteMargin
   textObj.dy = '1em'
   textObj.text = msg.message
