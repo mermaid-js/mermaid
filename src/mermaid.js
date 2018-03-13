@@ -91,7 +91,7 @@ const init = function () {
     txt = element.innerHTML
 
     // transforms the html to pure text
-    txt = he.decode(txt).trim()
+    txt = he.decode(txt).trim().replace(/<br>/ig, '<br/>')
 
     mermaidAPI.render(id, txt, (svgCode, bindFunctions) => {
       element.innerHTML = svgCode
