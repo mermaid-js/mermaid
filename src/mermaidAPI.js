@@ -385,7 +385,7 @@ const render = function (id, txt, cb, container) {
   if (graphType === 'flowchart') {
     const classes = flowRenderer.getClasses(txt)
     for (const className in classes) {
-      style += `\n.${className} rect,.${className} polygon,.${className} circle,.${className} ellipse{${classes[className].styles.join(' !important;')} !important;}`
+      style += `\n.${className} > * { ${classes[className].styles.join(' !important; ')} !important; }`
     }
   }
 
