@@ -380,8 +380,17 @@ const render = function (id, txt, cb, container) {
   const svg = element.firstChild
   const firstChild = svg.firstChild
 
+  // classDef
+  let style = themes[config.theme] || themes.default
+  if (graphType === 'flowchart') {
+    const classes = flowRenderer.getClasses(txt)
+    for (const className in classes) {
+      style += `\n.${className} rect,.${className} polygon,.${className} circle,.${className} ellipse{${classes[className].styles.join(' !important;')} !important;}`
+    }
+  }
+
   const style1 = document.createElement('style')
-  style1.innerHTML = scope(themes[config.theme] || themes.default, `#${id}`)
+  style1.innerHTML = scope(style, `#${id}`)
   svg.insertBefore(style1, firstChild)
 
   const style2 = document.createElement('style')
