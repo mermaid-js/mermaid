@@ -50,6 +50,7 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  */
 const config = {
   theme: 'default',
+  themeCSS: undefined,
 
   /**
    * logLevel , decides the amount of logging to be used.
@@ -380,8 +381,15 @@ const render = function (id, txt, cb, container) {
   const svg = element.firstChild
   const firstChild = svg.firstChild
 
+  // pre-defined theme
+  let style = config.theme !== undefined ? themes[config.theme] : ''
+
+  // user provided theme CSS
+  if (config.themeCSS !== undefined) {
+    style += `\n${config.themeCSS}`
+  }
+
   // classDef
-  let style = themes[config.theme] || themes.default
   if (graphType === 'flowchart') {
     const classes = flowRenderer.getClasses(txt)
     for (const className in classes) {
