@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,23],$Vf=[1,24],$Vg=[1,4,5,10,15,16,18,20,21,22,23,24,25,27,28,39],$Vh=[1,32],$Vi=[4,5,10,15,16,18,20,21,22,23,25,28,39],$Vj=[4,5,10,15,16,18,20,21,22,23,25,27,28,39],$Vk=[37,38,39];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,23],$Vf=[1,24],$Vg=[1,4,5,10,15,16,18,20,21,22,23,25,27,28,29,40],$Vh=[1,32],$Vi=[4,5,10,15,16,18,20,21,22,23,25,29,40],$Vj=[4,5,10,15,16,18,20,21,22,23,25,28,29,40],$Vk=[4,5,10,15,16,18,20,21,22,23,25,27,29,40],$Vl=[38,39,40];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"participant":10,"actor":11,"AS":12,"restOfLine":13,"signal":14,"activate":15,"deactivate":16,"note_statement":17,"title":18,"text2":19,"loop":20,"end":21,"opt":22,"alt":23,"else":24,"par":25,"par_sections":26,"and":27,"note":28,"placement":29,"over":30,"actor_pair":31,"spaceList":32,",":33,"left_of":34,"right_of":35,"signaltype":36,"+":37,"-":38,"ACTOR":39,"SOLID_OPEN_ARROW":40,"DOTTED_OPEN_ARROW":41,"SOLID_ARROW":42,"DOTTED_ARROW":43,"SOLID_CROSS":44,"DOTTED_CROSS":45,"TXT":46,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",10:"participant",12:"AS",13:"restOfLine",15:"activate",16:"deactivate",18:"title",20:"loop",21:"end",22:"opt",23:"alt",24:"else",25:"par",27:"and",28:"note",30:"over",33:",",34:"left_of",35:"right_of",37:"+",38:"-",39:"ACTOR",40:"SOLID_OPEN_ARROW",41:"DOTTED_OPEN_ARROW",42:"SOLID_ARROW",43:"DOTTED_ARROW",44:"SOLID_CROSS",45:"DOTTED_CROSS",46:"TXT"},
-productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,5],[9,3],[9,2],[9,3],[9,3],[9,2],[9,3],[9,4],[9,4],[9,7],[9,4],[26,1],[26,4],[17,4],[17,4],[32,2],[32,1],[31,3],[31,1],[29,1],[29,1],[14,5],[14,5],[14,4],[11,1],[36,1],[36,1],[36,1],[36,1],[36,1],[36,1],[19,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"participant":10,"actor":11,"AS":12,"restOfLine":13,"signal":14,"activate":15,"deactivate":16,"note_statement":17,"title":18,"text2":19,"loop":20,"end":21,"opt":22,"alt":23,"else_sections":24,"par":25,"par_sections":26,"and":27,"else":28,"note":29,"placement":30,"over":31,"actor_pair":32,"spaceList":33,",":34,"left_of":35,"right_of":36,"signaltype":37,"+":38,"-":39,"ACTOR":40,"SOLID_OPEN_ARROW":41,"DOTTED_OPEN_ARROW":42,"SOLID_ARROW":43,"DOTTED_ARROW":44,"SOLID_CROSS":45,"DOTTED_CROSS":46,"TXT":47,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",10:"participant",12:"AS",13:"restOfLine",15:"activate",16:"deactivate",18:"title",20:"loop",21:"end",22:"opt",23:"alt",25:"par",27:"and",28:"else",29:"note",31:"over",34:",",35:"left_of",36:"right_of",38:"+",39:"-",40:"ACTOR",41:"SOLID_OPEN_ARROW",42:"DOTTED_OPEN_ARROW",43:"SOLID_ARROW",44:"DOTTED_ARROW",45:"SOLID_CROSS",46:"DOTTED_CROSS",47:"TXT"},
+productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,5],[9,3],[9,2],[9,3],[9,3],[9,2],[9,3],[9,4],[9,4],[9,4],[9,4],[26,1],[26,4],[24,1],[24,4],[17,4],[17,4],[33,2],[33,1],[32,3],[32,1],[30,1],[30,1],[14,5],[14,5],[14,4],[11,1],[37,1],[37,1],[37,1],[37,1],[37,1],[37,1],[19,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -128,16 +128,11 @@ break;
 case 18:
 
 		// Alt start
-		$$[$0-4].unshift({type: 'altStart', altText:$$[$0-5], signalType: yy.LINETYPE.ALT_START});
-		// Content in alt is already in $$[$0-4]
-		// Else
-		$$[$0-4].push({type: 'else', altText:$$[$0-2], signalType: yy.LINETYPE.ALT_ELSE});
-		// Content in other alt
-		$$[$0-4] = $$[$0-4].concat($$[$0-1]);
+		$$[$0-1].unshift({type: 'altStart', altText:$$[$0-2], signalType: yy.LINETYPE.ALT_START});
+		// Content in alt is already in $$[$0-1]
 		// End
-		$$[$0-4].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
-
-		this.$=$$[$0-4];
+		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
+		this.$=$$[$0-1];
 break;
 case 19:
 
@@ -151,11 +146,14 @@ break;
 case 21:
  this.$ = $$[$0-3].concat([{type: 'and', parText:$$[$0-1], signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 22:
+case 23:
+ this.$ = $$[$0-3].concat([{type: 'else', altText:$$[$0-1], signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
+break;
+case 24:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 23:
+case 25:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -163,59 +161,59 @@ case 23:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 26:
+case 28:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 27:
+case 29:
  this.$ = $$[$0]; 
 break;
-case 28:
+case 30:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 29:
+case 31:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 30:
+case 32:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 31:
+case 33:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 32:
+case 34:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 33:
+case 35:
 this.$={type: 'addActor', actor:$$[$0]}
 break;
-case 34:
+case 36:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 35:
+case 37:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 36:
+case 38:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 37:
+case 39:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 38:
+case 40:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 39:
+case 41:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 40:
+case 42:
 this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,10,15,16,18,20,22,23,25,28,39],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,28:$Ve,39:$Vf},o($Vg,[2,5]),{9:25,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,28:$Ve,39:$Vf},o($Vg,[2,7]),o($Vg,[2,8]),{11:26,39:$Vf},{5:[1,27]},{11:28,39:$Vf},{11:29,39:$Vf},{5:[1,30]},{19:31,46:$Vh},{13:[1,33]},{13:[1,34]},{13:[1,35]},{13:[1,36]},{36:37,40:[1,38],41:[1,39],42:[1,40],43:[1,41],44:[1,42],45:[1,43]},{29:44,30:[1,45],34:[1,46],35:[1,47]},o([5,12,33,40,41,42,43,44,45,46],[2,33]),o($Vg,[2,6]),{5:[1,49],12:[1,48]},o($Vg,[2,11]),{5:[1,50]},{5:[1,51]},o($Vg,[2,14]),{5:[1,52]},{5:[2,40]},o($Vi,$V3,{7:53}),o($Vi,$V3,{7:54}),o([4,5,10,15,16,18,20,22,23,24,25,28,39],$V3,{7:55}),o($Vj,$V3,{26:56,7:57}),{11:60,37:[1,58],38:[1,59],39:$Vf},o($Vk,[2,34]),o($Vk,[2,35]),o($Vk,[2,36]),o($Vk,[2,37]),o($Vk,[2,38]),o($Vk,[2,39]),{11:61,39:$Vf},{11:63,31:62,39:$Vf},{39:[2,28]},{39:[2,29]},{13:[1,64]},o($Vg,[2,10]),o($Vg,[2,12]),o($Vg,[2,13]),o($Vg,[2,15]),{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,65],22:$Vb,23:$Vc,25:$Vd,28:$Ve,39:$Vf},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,66],22:$Vb,23:$Vc,25:$Vd,28:$Ve,39:$Vf},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,24:[1,67],25:$Vd,28:$Ve,39:$Vf},{21:[1,68]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,20],22:$Vb,23:$Vc,25:$Vd,27:[1,69],28:$Ve,39:$Vf},{11:70,39:$Vf},{11:71,39:$Vf},{19:72,46:$Vh},{19:73,46:$Vh},{19:74,46:$Vh},{33:[1,75],46:[2,27]},{5:[1,76]},o($Vg,[2,16]),o($Vg,[2,17]),{13:[1,77]},o($Vg,[2,19]),{13:[1,78]},{19:79,46:$Vh},{19:80,46:$Vh},{5:[2,32]},{5:[2,22]},{5:[2,23]},{11:81,39:$Vf},o($Vg,[2,9]),o($Vi,$V3,{7:82}),o($Vj,$V3,{7:57,26:83}),{5:[2,30]},{5:[2,31]},{46:[2,26]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,84],22:$Vb,23:$Vc,25:$Vd,28:$Ve,39:$Vf},{21:[2,21]},o($Vg,[2,18])],
-defaultActions: {5:[2,1],6:[2,2],32:[2,40],46:[2,28],47:[2,29],72:[2,32],73:[2,22],74:[2,23],79:[2,30],80:[2,31],81:[2,26],83:[2,21]},
+table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,10,15,16,18,20,22,23,25,29,40],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},o($Vg,[2,5]),{9:25,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},o($Vg,[2,7]),o($Vg,[2,8]),{11:26,40:$Vf},{5:[1,27]},{11:28,40:$Vf},{11:29,40:$Vf},{5:[1,30]},{19:31,47:$Vh},{13:[1,33]},{13:[1,34]},{13:[1,35]},{13:[1,36]},{37:37,41:[1,38],42:[1,39],43:[1,40],44:[1,41],45:[1,42],46:[1,43]},{30:44,31:[1,45],35:[1,46],36:[1,47]},o([5,12,34,41,42,43,44,45,46,47],[2,35]),o($Vg,[2,6]),{5:[1,49],12:[1,48]},o($Vg,[2,11]),{5:[1,50]},{5:[1,51]},o($Vg,[2,14]),{5:[1,52]},{5:[2,42]},o($Vi,$V3,{7:53}),o($Vi,$V3,{7:54}),o($Vj,$V3,{24:55,7:56}),o($Vk,$V3,{26:57,7:58}),{11:61,38:[1,59],39:[1,60],40:$Vf},o($Vl,[2,36]),o($Vl,[2,37]),o($Vl,[2,38]),o($Vl,[2,39]),o($Vl,[2,40]),o($Vl,[2,41]),{11:62,40:$Vf},{11:64,32:63,40:$Vf},{40:[2,30]},{40:[2,31]},{13:[1,65]},o($Vg,[2,10]),o($Vg,[2,12]),o($Vg,[2,13]),o($Vg,[2,15]),{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,66],22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,67],22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},{21:[1,68]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,22],22:$Vb,23:$Vc,25:$Vd,28:[1,69],29:$Ve,40:$Vf},{21:[1,70]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,20],22:$Vb,23:$Vc,25:$Vd,27:[1,71],29:$Ve,40:$Vf},{11:72,40:$Vf},{11:73,40:$Vf},{19:74,47:$Vh},{19:75,47:$Vh},{19:76,47:$Vh},{34:[1,77],47:[2,29]},{5:[1,78]},o($Vg,[2,16]),o($Vg,[2,17]),o($Vg,[2,18]),{13:[1,79]},o($Vg,[2,19]),{13:[1,80]},{19:81,47:$Vh},{19:82,47:$Vh},{5:[2,34]},{5:[2,24]},{5:[2,25]},{11:83,40:$Vf},o($Vg,[2,9]),o($Vj,$V3,{7:56,24:84}),o($Vk,$V3,{7:58,26:85}),{5:[2,32]},{5:[2,33]},{47:[2,28]},{21:[2,23]},{21:[2,21]}],
+defaultActions: {5:[2,1],6:[2,2],32:[2,42],46:[2,30],47:[2,31],74:[2,34],75:[2,24],76:[2,25],81:[2,32],82:[2,33],83:[2,28],84:[2,23],85:[2,21]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -706,7 +704,7 @@ case 4:/* skip comments */
 break;
 case 5: this.begin('ID'); return 10; 
 break;
-case 6: this.begin('ALIAS'); return 39; 
+case 6: this.begin('ALIAS'); return 40; 
 break;
 case 7: this.popState(); this.popState(); this.begin('LINE'); return 12; 
 break;
@@ -718,7 +716,7 @@ case 10: this.begin('LINE'); return 22;
 break;
 case 11: this.begin('LINE'); return 23; 
 break;
-case 12: this.begin('LINE'); return 24; 
+case 12: this.begin('LINE'); return 28; 
 break;
 case 13: this.begin('LINE'); return 25; 
 break;
@@ -728,13 +726,13 @@ case 15: this.popState(); return 13;
 break;
 case 16:return 21;
 break;
-case 17:return 34;
+case 17:return 35;
 break;
-case 18:return 35;
+case 18:return 36;
 break;
-case 19:return 30;
+case 19:return 31;
 break;
-case 20:return 28;
+case 20:return 29;
 break;
 case 21: this.begin('ID'); return 15; 
 break;
@@ -744,29 +742,29 @@ case 23:return 18;
 break;
 case 24:return 6;
 break;
-case 25:return 33;
+case 25:return 34;
 break;
 case 26:return 5;
 break;
-case 27: yy_.yytext = yy_.yytext.trim(); return 39; 
+case 27: yy_.yytext = yy_.yytext.trim(); return 40; 
 break;
-case 28:return 42;
+case 28:return 43;
 break;
-case 29:return 43;
+case 29:return 44;
 break;
-case 30:return 40;
+case 30:return 41;
 break;
-case 31:return 41;
+case 31:return 42;
 break;
-case 32:return 44;
+case 32:return 45;
 break;
-case 33:return 45;
+case 33:return 46;
 break;
-case 34:return 46;
+case 34:return 47;
 break;
-case 35:return 37;
+case 35:return 38;
 break;
-case 36:return 38;
+case 36:return 39;
 break;
 case 37:return 5;
 break;

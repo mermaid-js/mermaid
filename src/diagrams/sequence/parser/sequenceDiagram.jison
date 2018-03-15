@@ -104,18 +104,13 @@ statement
 		$3.unshift({type: 'optStart', optText:$2, signalType: yy.LINETYPE.OPT_START});
 		$3.push({type: 'optEnd', optText:$2, signalType: yy.LINETYPE.OPT_END});
 		$$=$3;}
-	| alt restOfLine document else restOfLine document end
+	| alt restOfLine else_sections end
 	{
 		// Alt start
 		$3.unshift({type: 'altStart', altText:$2, signalType: yy.LINETYPE.ALT_START});
 		// Content in alt is already in $3
-		// Else
-		$3.push({type: 'else', altText:$5, signalType: yy.LINETYPE.ALT_ELSE});
-		// Content in other alt
-		$3 = $3.concat($6);
 		// End
 		$3.push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
-
 		$$=$3;}
 	| par restOfLine par_sections end
 	{
@@ -131,6 +126,12 @@ par_sections
 	: document
 	| document and restOfLine par_sections
 	{ $$ = $1.concat([{type: 'and', parText:$3, signalType: yy.LINETYPE.PAR_AND}, $4]); }
+	;
+
+else_sections
+	: document
+	| document else restOfLine else_sections
+	{ $$ = $1.concat([{type: 'else', altText:$3, signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
 	;
 
 note_statement
