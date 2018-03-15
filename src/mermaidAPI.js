@@ -382,7 +382,10 @@ const render = function (id, txt, cb, container) {
   const firstChild = svg.firstChild
 
   // pre-defined theme
-  let style = config.theme !== undefined ? themes[config.theme] : ''
+  let style = themes[config.theme]
+  if (style === undefined) {
+    style = ''
+  }
 
   // user provided theme CSS
   if (config.themeCSS !== undefined) {
@@ -441,7 +444,7 @@ const setConf = function (cnf) {
   // Top level initially mermaid, gflow, sequenceDiagram and gantt
   const lvl1Keys = Object.keys(cnf)
   for (let i = 0; i < lvl1Keys.length; i++) {
-    if (typeof cnf[lvl1Keys[i]] === 'object') {
+    if (typeof cnf[lvl1Keys[i]] === 'object' && cnf[lvl1Keys[i]] != null) {
       const lvl2Keys = Object.keys(cnf[lvl1Keys[i]])
 
       for (let j = 0; j < lvl2Keys.length; j++) {
