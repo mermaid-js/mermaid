@@ -422,7 +422,7 @@ describe('when parsing a sequenceDiagram', function () {
       'else isSick\n' +
       'Bob-->Alice: Feel sick...\n' +
       'else default\n' +
-      'Bob-->Alice: :-)\n' +      
+      'Bob-->Alice: :-)\n' +
       'end'
     parser.parse(str)
     const messages = parser.yy.getMessages()
