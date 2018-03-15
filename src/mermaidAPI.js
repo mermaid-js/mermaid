@@ -49,7 +49,7 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  * ```
  */
 const config = {
-  theme: themes.default,
+  theme: 'default',
 
   /**
    * logLevel , decides the amount of logging to be used.
