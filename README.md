@@ -157,8 +157,6 @@ Don't hesitate to contact me if you want to get involved.
 
 ## Setup
 
-Make sure you have Chrome browser installed, this project uses Chrome headless to running tests.
-
     yarn install
 
 
