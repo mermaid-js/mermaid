@@ -349,7 +349,7 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[2].from).toBe('Bob')
     expect(messages[2].to).toBe('Alice')
   })
-  it('it should handle loop statements a sequenceDiagram', function () {
+  it('it should handle loop statements', function () {
     const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
@@ -369,7 +369,7 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
-  it('it should handle opt statements a sequenceDiagram', function () {
+  it('it should handle opt statements', function () {
     const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
@@ -389,7 +389,7 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
-  it('it should handle alt statements a sequenceDiagram', function () {
+  it('it should handle alt statements', function () {
     const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +
       '%% Comment\n' +
@@ -411,6 +411,30 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages.length).toBe(7)
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
+  })
+  it('it should handle alt statements with multiple elses', function () {
+    const str = 'sequenceDiagram\n' +
+      'Alice->Bob: Hello Bob, how are you?\n\n' +
+      '%% Comment\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'alt isWell\n\n' +
+      'Bob-->Alice: I am good thanks!\n' +
+      'else isSick\n' +
+      'Bob-->Alice: Feel sick...\n' +
+      'else default\n' +
+      'Bob-->Alice: :-)\n' +
+      'end'
+    parser.parse(str)
+    const messages = parser.yy.getMessages()
+    expect(messages.length).toBe(9)
+    expect(messages[1].from).toBe('Bob')
+    expect(messages[2].type).toBe(parser.yy.LINETYPE.ALT_START)
+    expect(messages[3].from).toBe('Bob')
+    expect(messages[4].type).toBe(parser.yy.LINETYPE.ALT_ELSE)
+    expect(messages[5].from).toBe('Bob')
+    expect(messages[6].type).toBe(parser.yy.LINETYPE.ALT_ELSE)
+    expect(messages[7].from).toBe('Bob')
+    expect(messages[8].type).toBe(parser.yy.LINETYPE.ALT_END)
   })
   it('it should handle par statements a sequenceDiagram', function () {
     const str = 'sequenceDiagram\n' +
