@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.0.0-beta.2",
+  "version": "8.0.0-beta.3",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -19,7 +19,7 @@
     "upgrade": "yarn-upgrade-all",
     "lint": "standard",
     "test": "yarn lint && jest",
-    "test:tdd": "yarn lint && jest --watch",
+    "test:watch": "jest --watch",
     "jison": "node -r babel-register node_modules/.bin/gulp jison",
     "prepublishOnly": "yarn build && yarn release && yarn test",
     "prepush": "yarn test"
