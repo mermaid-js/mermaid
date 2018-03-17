@@ -9,9 +9,9 @@
 <body>
   <div class="mermaid">
 graph TB
-subgraph One
-	a1-->a2
-end
+	subgraph One
+		a1-->a2
+	end
   </div>
   <div class="mermaid">
       graph LR
@@ -143,6 +143,7 @@ Class08 <--> C2: Cool label
       theme: 'forest',
       themeCSS: '.node rect { fill: red; }',
       logLevel: 3,
+      flowchart: { curve: 'basis' },
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
     });

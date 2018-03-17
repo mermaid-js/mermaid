@@ -87,7 +87,9 @@ const config = {
      * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
      * the diagram.
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    curve: 'linear'
   },
 
   /**

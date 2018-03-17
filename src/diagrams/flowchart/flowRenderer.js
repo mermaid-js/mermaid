@@ -5,6 +5,7 @@ import flowDb from './flowDb'
 import flow from './parser/flow'
 import dagreD3 from 'dagre-d3-renderer'
 import { logger } from '../../logger'
+import { interpolateToCurve } from '../../utils'
 
 const conf = {
 }
@@ -174,9 +175,11 @@ export const addEdges = function (edges, g) {
     edgeData.style = style
 
     if (typeof edge.interpolate !== 'undefined') {
-      edgeData.lineInterpolate = edge.interpolate
+      edgeData.curve = interpolateToCurve(edge.interpolate, d3.curveLinear)
     } else if (typeof edges.defaultInterpolate !== 'undefined') {
-      edgeData.lineInterpolate = edges.defaultInterpolate
+      edgeData.curve = interpolateToCurve(edges.defaultInterpolate, d3.curveLinear)
+    } else {
+      edgeData.curve = interpolateToCurve(conf.curve, d3.curveLinear)
     }
 
     if (typeof edge.text === 'undefined') {

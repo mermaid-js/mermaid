@@ -1,8 +1,7 @@
 - Get familar with jison
 - git graph requires a blank line at the end. why?
 - Create a desktop client
-- Flowchart `interpolate` is useless because there is no rendering code using it
-
+- Replace all `lineInterpolate` with `curve`
 
 I have the feeling that the flowchart DSL is not very readable or expressive despite it is short.
 And it is too limited for complicated requirements such as: https://github.com/knsv/mermaid/issues/592
