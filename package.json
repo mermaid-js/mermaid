@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.0.0-beta.5",
+  "version": "8.0.0-beta.6",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "d3": "^4.13.0",
-    "dagre-d3-renderer": "^0.5.1",
+    "dagre-d3-renderer": "^0.5.3",
     "dagre-layout": "^0.8.6",
     "graphlibrary": "^2.2.0",
     "he": "^1.1.1",

@@ -318,7 +318,7 @@ export const addSubGraph = function (list, title) {
 
     return a.filter(function (item) {
       const type = typeof item
-      if (item === ' ') {
+      if (item.trim() === '') {
         return false
       }
       if (type in prims) { return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true) } else { return objs.indexOf(item) >= 0 ? false : objs.push(item) }
@@ -329,7 +329,7 @@ export const addSubGraph = function (list, title) {
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
 
-  const subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title }
+  const subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title.trim() }
   subGraphs.push(subGraph)
   subCount = subCount + 1
   return subGraph.id
