@@ -118,7 +118,7 @@ describe('when using mermaid and ', function () {
           expect(start).toBe('A')
           expect(end).toBe('B')
           expect(options.arrowhead).toBe('none')
-          expect(options.lineInterpolate).toBe('basis')
+          expect(options.curve).toBe('basis') // mocked as string
         }
       }
 

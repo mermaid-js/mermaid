@@ -32,3 +32,7 @@ export const select = function () {
 export const selectAll = function () {
   return new NewD3()
 }
+
+export const curveBasis = 'basis'
+export const curveLinear = 'linear'
+export const curveCardinal = 'cardinal'
