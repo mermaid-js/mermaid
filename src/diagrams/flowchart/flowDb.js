@@ -166,7 +166,7 @@ const setClickFun = function (id, functionName) {
   }
   if (typeof vertices[id] !== 'undefined') {
     funs.push(function (element) {
-      const elem = d3.select(element).select('#' + id)
+      const elem = d3.select(element).select(`[id="${id}"]`)
       if (elem !== null) {
         elem.on('click', function () {
           window[functionName](id)
@@ -182,7 +182,7 @@ const setLink = function (id, linkStr) {
   }
   if (typeof vertices[id] !== 'undefined') {
     funs.push(function (element) {
-      const elem = d3.select(element).select('#' + id)
+      const elem = d3.select(element).select(`[id="${id}"]`)
       if (elem !== null) {
         elem.on('click', function () {
           window.open(linkStr, 'newTab')

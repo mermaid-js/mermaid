@@ -315,7 +315,7 @@ export const draw = function (text, id) {
   parser.parse(text + '\n')
 
   bounds.init()
-  const diagram = d3.select('#' + id)
+  const diagram = d3.select(`[id="${id}"]`)
 
   let startx
   let stopx

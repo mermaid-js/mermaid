@@ -47,7 +47,7 @@ export const draw = function (text, id) {
   elem.setAttribute('height', '100%')
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h)
-  const svg = d3.select('#' + id)
+  const svg = d3.select(`[id="${id}"]`)
 
   // Set timescale
   const timeScale = d3.scaleTime()

@@ -307,7 +307,7 @@ export const draw = function (text, id) {
   logger.info('Rendering diagram ' + text)
 
   /// / Fetch the default direction, use TD if none was found
-  const diagram = d3.select('#' + id)
+  const diagram = d3.select(`[id="${id}"]`)
   insertMarkers(diagram)
 
   // Layout graph, Create a new directed graph

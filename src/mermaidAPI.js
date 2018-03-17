@@ -412,7 +412,7 @@ const render = function (id, txt, cb, container) {
   }`
   svg.insertBefore(style2, firstChild)
 
-  d3.select('#' + id).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml')
+  d3.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 
   let url = ''
   if (config.arrowMarkerAbsolute) {

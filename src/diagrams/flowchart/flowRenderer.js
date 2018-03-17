@@ -391,7 +391,7 @@ export const draw = function (text, id) {
   }
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = d3.select('#' + id)
+  const svg = d3.select(`[id="${id}"]`)
 
   // Run the renderer. This is what draws the final graph.
   const element = d3.select('#' + id + ' g')

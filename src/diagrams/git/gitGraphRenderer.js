@@ -256,7 +256,7 @@ export const draw = function (txt, id, ver) {
       config.nodeLabel.width = '100%'
       config.nodeLabel.y = -1 * 2 * config.nodeRadius
     }
-    const svg = d3.select('#' + id)
+    const svg = d3.select(`[id="${id}"]`)
     svgCreateDefs(svg)
     branchNum = 1
     _.each(branches, function (v) {

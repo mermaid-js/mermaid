@@ -8,6 +8,21 @@
 </head>
 <body>
   <div class="mermaid">
+      graph LR
+      456ac9b0d15a8b7f1e71073221059886[1051 AAA fa:fa-check]
+      f7f580e11d00a75814d2ded41fe8e8fe[1141 BBB fa:fa-check]
+      81dc9bdb52d04dc20036dbd8313ed055[1234 CCC fa:fa-check]
+      456ac9b0d15a8b7f1e71073221059886 -->|Node| f7f580e11d00a75814d2ded41fe8e8fe
+      f7f580e11d00a75814d2ded41fe8e8fe -->|Node| 81dc9bdb52d04dc20036dbd8313ed055
+      click 456ac9b0d15a8b7f1e71073221059886 "/admin/user/view?id=1051" "AAA
+      6000"
+      click f7f580e11d00a75814d2ded41fe8e8fe "/admin/user/view?id=1141" "BBB
+      600"
+      click 81dc9bdb52d04dc20036dbd8313ed055 "/admin/user/view?id=1234" "CCC
+      3000"
+      style 456ac9b0d15a8b7f1e71073221059886 fill:#f9f,stroke:#333,stroke-width:4px
+  </div>
+  <div class="mermaid">
 graph TD
 A[Christmas] -->|Get money| B(Go shopping)
 B --> C{Let me think}
@@ -39,7 +54,7 @@ Alice->John: Maybe
 end
 par this happens in parallel
 Alice -->> Bob: Parallel message 1
-and 
+and
 Alice -->> John: Parallel message 2
 end
   </div>
