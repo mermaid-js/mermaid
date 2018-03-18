@@ -51,13 +51,12 @@ export const isSubstringInArray = function (str, arr) {
   return -1
 }
 
-const interpolates = {
-  basis: d3.curveBasis,
-  linear: d3.curveLinear,
-  cardinal: d3.curveCardinal
-}
 export const interpolateToCurve = (interpolate, defaultCurve) => {
-  return interpolates[interpolate] || defaultCurve
+  if (!interpolate) {
+    return defaultCurve
+  }
+  const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`
+  return d3[curveName] || defaultCurve
 }
 
 export default {
