@@ -364,7 +364,12 @@ const render = function (id, txt, cb, container) {
       break
     case 'sequence':
       config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      sequenceRenderer.setConf(config.sequence)
+      if (config.sequenceDiagram) { // backwards compatibility
+        sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram))
+        console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.')
+      } else {
+        sequenceRenderer.setConf(config.sequence)
+      }
       sequenceRenderer.draw(txt, id)
       break
     case 'gantt':
