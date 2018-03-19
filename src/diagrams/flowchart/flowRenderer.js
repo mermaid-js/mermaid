@@ -456,7 +456,7 @@ export const draw = function (text, id) {
   if (!conf.htmlLabels) {
     const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label')
     for (let k = 0; k < labels.length; k++) {
-      const label = labels[i]
+      const label = labels[k]
 
       // Get dimensions of label
       const dim = label.getBBox()
