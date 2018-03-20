@@ -409,19 +409,19 @@ export const draw = function (text, id) {
     // Center the graph
     svg.attr('height', '100%')
     svg.attr('width', conf.width)
-    svg.attr('viewBox', '0 0 ' + (g.graph().width + 40) + ' ' + (g.graph().height + 40))
-    svg.attr('style', 'max-width:' + (g.graph().width + 40) + 'px;')
+    svg.attr('viewBox', '0 0 ' + (g.graph().width + 64) + ' ' + (g.graph().height + 64))
+    svg.attr('style', 'max-width:' + (g.graph().width + 64) + 'px;')
   } else {
     // Center the graph
-    svg.attr('height', g.graph().height)
+    svg.attr('height', g.graph().height + 64)
     if (typeof conf.width === 'undefined') {
-      svg.attr('width', g.graph().width)
+      svg.attr('width', g.graph().width + 64)
     } else {
       svg.attr('width', conf.width)
     }
-    svg.attr('viewBox', '0 0 ' + (g.graph().width + 40) + ' ' + (g.graph().height + 40))
+    svg.attr('viewBox', '0 0 ' + (g.graph().width + 64) + ' ' + (g.graph().height + 64))
   }
-  svg.select('g').attr('transform', 'translate(20, 20)')
+  svg.select('g').attr('transform', 'translate(32, 32)')
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i)
