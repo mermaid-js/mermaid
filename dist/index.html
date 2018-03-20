@@ -8,6 +8,16 @@
 </head>
 <body>
   <div class="mermaid">
+    graph TD
+      A-->B
+      A-->C
+      A-->Z
+      A-->Y
+      B-->Y
+      Z-->Y
+      Y-->A
+  </div>
+  <div class="mermaid">
       graph TD
       9e122290_1ec3_e711_8c5a_005056ad0002("fa:fa-creative-commons My System | Test Environment")
       82072290_1ec3_e711_8c5a_005056ad0002("fa:fa-cogs Shared Business Logic Server:Service 1")
@@ -208,7 +218,7 @@ Class08 <--> C2: Cool label
       theme: 'forest',
       // themeCSS: '.node rect { fill: red; }',
       logLevel: 3,
-      flowchart: { curve: 'basis' },
+      flowchart: { curve: 'linear' },
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
       // sequenceDiagram: { actorMargin: 300 } // deprecated

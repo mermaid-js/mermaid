@@ -409,8 +409,8 @@ export const draw = function (text, id) {
     // Center the graph
     svg.attr('height', '100%')
     svg.attr('width', conf.width)
-    svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20))
-    svg.attr('style', 'max-width:' + (g.graph().width + 20) + 'px;')
+    svg.attr('viewBox', '0 0 ' + (g.graph().width + 40) + ' ' + (g.graph().height + 40))
+    svg.attr('style', 'max-width:' + (g.graph().width + 40) + 'px;')
   } else {
     // Center the graph
     svg.attr('height', g.graph().height)
@@ -419,8 +419,9 @@ export const draw = function (text, id) {
     } else {
       svg.attr('width', conf.width)
     }
-    svg.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20))
+    svg.attr('viewBox', '0 0 ' + (g.graph().width + 40) + ' ' + (g.graph().height + 40))
   }
+  svg.select('g').attr('transform', 'translate(20, 20)')
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i)
