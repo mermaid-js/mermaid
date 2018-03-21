@@ -293,7 +293,7 @@ export const draw = function (text, id) {
   render.shapes().question = function (parent, bbox, node) {
     const w = bbox.width
     const h = bbox.height
-    const s = (w + h) * 0.8
+    const s = (w + h) * 0.9
     const points = [
       { x: s / 2, y: 0 },
       { x: s, y: -s / 2 },
