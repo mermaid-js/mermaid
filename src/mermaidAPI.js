@@ -351,38 +351,6 @@ const render = function (id, txt, cb, container) {
 
   const element = d3.select('#d' + id).node()
   const graphType = utils.detectType(txt)
-  switch (graphType) {
-    case 'git':
-      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      gitGraphRenderer.setConf(config.git)
-      gitGraphRenderer.draw(txt, id, false)
-      break
-    case 'flowchart':
-      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      flowRenderer.setConf(config.flowchart)
-      flowRenderer.draw(txt, id, false)
-      break
-    case 'sequence':
-      config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      if (config.sequenceDiagram) { // backwards compatibility
-        sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram))
-        console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.')
-      } else {
-        sequenceRenderer.setConf(config.sequence)
-      }
-      sequenceRenderer.draw(txt, id)
-      break
-    case 'gantt':
-      config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      ganttRenderer.setConf(config.gantt)
-      ganttRenderer.draw(txt, id)
-      break
-    case 'class':
-      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
-      classRenderer.setConf(config.class)
-      classRenderer.draw(txt, id)
-      break
-  }
 
   // insert inline style into svg
   const svg = element.firstChild
@@ -418,6 +386,39 @@ const render = function (id, txt, cb, container) {
     font: ${cs.font};
   }`
   svg.insertBefore(style2, firstChild)
+
+  switch (graphType) {
+    case 'git':
+      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      gitGraphRenderer.setConf(config.git)
+      gitGraphRenderer.draw(txt, id, false)
+      break
+    case 'flowchart':
+      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      flowRenderer.setConf(config.flowchart)
+      flowRenderer.draw(txt, id, false)
+      break
+    case 'sequence':
+      config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      if (config.sequenceDiagram) { // backwards compatibility
+        sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram))
+        console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.')
+      } else {
+        sequenceRenderer.setConf(config.sequence)
+      }
+      sequenceRenderer.draw(txt, id)
+      break
+    case 'gantt':
+      config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      ganttRenderer.setConf(config.gantt)
+      ganttRenderer.draw(txt, id)
+      break
+    case 'class':
+      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      classRenderer.setConf(config.class)
+      classRenderer.draw(txt, id)
+      break
+  }
 
   d3.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml')
 
