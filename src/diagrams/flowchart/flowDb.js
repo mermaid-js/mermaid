@@ -176,6 +176,23 @@ const setClickFun = function (id, functionName) {
   }
 }
 
+const setContextmenuFun = function (id, functionName) {
+  if (typeof functionName === 'undefined') {
+    return
+  }
+  if (typeof vertices[id] !== 'undefined') {
+    funs.push(function (element) {
+      const elem = d3.select(element).select(`[id="${id}"]`)
+      if (elem !== null) {
+        elem.on('contextmenu', function () {
+          d3.event.preventDefault()
+          window[functionName](id)
+        })
+      }
+    })
+  }
+}
+
 const setLink = function (id, linkStr) {
   if (typeof linkStr === 'undefined') {
     return
@@ -196,8 +213,11 @@ export const getTooltip = function (id) {
 }
 
 /**
- * Called by parser when a graph definition is found, stores the direction of the chart.
- * @param dir
+ * Called by parser when a click definition is found
+ * @param id
+ * @param functionName
+ * @param link
+ * @param tooltip
  */
 export const setClickEvent = function (id, functionName, link, tooltip) {
   if (id.indexOf(',') > 0) {
@@ -205,12 +225,29 @@ export const setClickEvent = function (id, functionName, link, tooltip) {
       setTooltip(id2, tooltip)
       setClickFun(id2, functionName)
       setLink(id2, link)
-      setClass(id, 'clickable')
+      setClass(id2, 'clickable')
     })
   } else {
     setTooltip(id, tooltip)
     setClickFun(id, functionName)
     setLink(id, link)
+    setClass(id, 'clickable')
+  }
+}
+
+/**
+ * Called by parser when a contextmenu definition is found
+ * @param id
+ * @param functionName
+ */
+export const setContextmenuEvent = function (id, functionName) {
+  if (id.indexOf(',') > 0) {
+    id.split(',').forEach(function (id2) {
+      setContextmenuFun(id2, functionName)
+      setClass(id2, 'clickable')
+    })
+  } else {
+    setContextmenuFun(id, functionName)
     setClass(id, 'clickable')
   }
 }
@@ -409,6 +446,7 @@ export default {
   setClass,
   getTooltip,
   setClickEvent,
+  setContextmenuEvent,
   bindFunctions,
   getDirection,
   getVertices,

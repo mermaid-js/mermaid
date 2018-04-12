@@ -20,6 +20,7 @@
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
+"contextmenu"         return 'CONTEXTMENU';
 "graph"               return 'GRAPH';
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
@@ -225,6 +226,8 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
+    | contextmenuStatement separator
+    {$$=[];}
     | subgraph text separator document end
     {$$=yy.addSubGraph($4,$2);}
     | subgraph separator document end
@@ -375,7 +378,7 @@ commentText: commentToken
 
 
 keywords
-    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
+    : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | CONTEXTMENU | GRAPH | DIR | subgraph | end | DOWN | UP;
 
 
 textNoTags: textNoTagsToken
@@ -400,6 +403,10 @@ clickStatement
     | CLICK SPACE alphaNum SPACE alphaNum SPACE STR {$$ = $1;yy.setClickEvent($3,        $5, undefined, $7)       ;}
     | CLICK SPACE alphaNum SPACE STR                {$$ = $1;yy.setClickEvent($3, undefined,        $5, undefined);}
     | CLICK SPACE alphaNum SPACE STR SPACE STR      {$$ = $1;yy.setClickEvent($3, undefined,        $5, $7       );}
+    ;
+
+contextmenuStatement
+    : CONTEXTMENU SPACE alphaNum SPACE alphaNum     {$$ = $1;yy.setContextmenuEvent($3,        $5);}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
