@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.0.0-rc.7",
+  "version": "8.0.0-rc.8",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [

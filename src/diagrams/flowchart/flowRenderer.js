@@ -406,8 +406,11 @@ export const draw = function (text, id) {
     })
 
   const padding = 8
-  svg.attr('width', g.maxX - g.minX + padding * 2)
-  svg.attr('height', g.maxY - g.minY + padding * 2)
+  const width = g.maxX - g.minX + padding * 2
+  const height = g.maxY - g.minY + padding * 2
+  svg.attr('width', '100%')
+  svg.attr('style', `max-width: ${width}px;`)
+  svg.attr('viewBox', `0 0 ${width} ${height}`)
   svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`)
 
   // Index nodes
