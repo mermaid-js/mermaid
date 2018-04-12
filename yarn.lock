@@ -2202,9 +2202,9 @@ d3@^4.13.0:
     d3-voronoi "1.1.2"
     d3-zoom "1.7.1"
 
-dagre-d3-renderer@^0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.5.6.tgz#cf85c18e0ee4dba62b69b0697c28d638237bbc89"
+dagre-d3-renderer@^0.5.8:
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/dagre-d3-renderer/-/dagre-d3-renderer-0.5.8.tgz#aa071bb71d3c4d67426925906f3f6ddead49c1a3"
   dependencies:
     dagre-layout "^0.8.8"
     lodash "^4.17.5"

@@ -405,23 +405,10 @@ export const draw = function (text, id) {
       return flowDb.getTooltip(this.id)
     })
 
-  if (conf.useMaxWidth) {
-    // Center the graph
-    svg.attr('height', '100%')
-    svg.attr('width', conf.width)
-    svg.attr('viewBox', '0 0 ' + (g.graph().width + 64) + ' ' + (g.graph().height + 64))
-    svg.attr('style', 'max-width:' + (g.graph().width + 64) + 'px;')
-  } else {
-    // Center the graph
-    svg.attr('height', g.graph().height + 64)
-    if (typeof conf.width === 'undefined') {
-      svg.attr('width', g.graph().width + 64)
-    } else {
-      svg.attr('width', conf.width)
-    }
-    svg.attr('viewBox', '0 0 ' + (g.graph().width + 64) + ' ' + (g.graph().height + 64))
-  }
-  svg.select('g').attr('transform', 'translate(32, 32)')
+  const padding = 8
+  svg.attr('width', g.maxX - g.minX + padding * 2)
+  svg.attr('height', g.maxY - g.minY + padding * 2)
+  svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`)
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i)

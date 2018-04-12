@@ -83,11 +83,6 @@ const config = {
      * on the edges
      */
     htmlLabels: true,
-    /**
-     * **useMaxWidth** - Flag for setting whether or not a all available width should be used for
-     * the diagram.
-     */
-    useMaxWidth: true,
 
     curve: 'linear'
   },
