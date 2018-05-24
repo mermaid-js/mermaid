@@ -1,4 +1,11 @@
-export const drawRect = function (elem, rectData) {
+import { generateId } from '../../utils'
+
+export const drawRect = function (elem, rectData, conf = {}) {
+  if (conf.rect && conf.rect.attrs) {
+    // override any rect properties with configuration
+    Object.assign(rectData, conf.rect.attrs)
+  }
+
   const rectElem = elem.append('rect')
   rectElem.attr('x', rectData.x)
   rectElem.attr('y', rectData.y)
@@ -8,6 +15,44 @@ export const drawRect = function (elem, rectData) {
   rectElem.attr('height', rectData.height)
   rectElem.attr('rx', rectData.rx)
   rectElem.attr('ry', rectData.ry)
+
+  if (conf.rect && conf.rect.dropShadow) {
+    if (typeof conf.dropShadow !== 'object') {
+      conf.dropShadow = {}
+    }
+    const dropShadowOptions = Object.assign({
+      x: '-70%',
+      y: '-4%',
+      dx: '2',
+      dy: '1',
+      width: '200%',
+      height: '200%',
+      stdDeviation: '2',
+      filterUnits: 'objectBoundingBox'
+    }, conf.dropShadow)
+    const defsElm = elem.append('defs')
+    const filterElm = defsElm.append('filter')
+    const filterId = generateId('mermaid-rect-')
+    filterElm.attr('id', filterId)
+    filterElm.attr('width', dropShadowOptions.width)
+    filterElm.attr('height', dropShadowOptions.height)
+    filterElm.attr('filterUnits', dropShadowOptions.filterUnits)
+
+    const feOffsetElm = filterElm.append('feOffset')
+    feOffsetElm.attr('result', 'offsetblur')
+    feOffsetElm.attr('dx', dropShadowOptions.dx)
+    feOffsetElm.attr('dy', dropShadowOptions.dy)
+
+    const feGaussianBlurElm = filterElm.append('feGaussianBlur')
+    feGaussianBlurElm.attr('in', 'SourceAlpha')
+    feGaussianBlurElm.attr('stdDeviation', dropShadowOptions.stdDeviation)
+
+    const feMergeElm = filterElm.append('feMerge')
+    feMergeElm.append('feMergeNode')
+    const feMergeNodeElm2 = feMergeElm.append('feMergeNode')
+    feMergeNodeElm2.attr('in', 'SourceGraphic')
+    rectElem.attr('filter', `url(#${filterId})`)
+  }
 
   if (typeof rectData.class !== 'undefined') {
     rectElem.attr('class', rectData.class)
@@ -86,7 +131,7 @@ export const drawActor = function (elem, left, verticalPos, description, conf) {
   rect.class = 'actor'
   rect.rx = 3
   rect.ry = 3
-  drawRect(g, rect)
+  drawRect(g, rect, conf)
 
   _drawTextCandidateFunc(conf)(description, g,
     rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' })
@@ -101,7 +146,7 @@ export const anchorElement = function (elem) {
  * @param bounds - activation box bounds
  * @param verticalPos - precise y cooridnate of bottom activation box edge
  */
-export const drawActivation = function (elem, bounds, verticalPos) {
+export const drawActivation = function (elem, bounds, verticalPos, conf) {
   const rect = getNoteRect()
   const g = bounds.anchored
   rect.x = bounds.startx
@@ -109,7 +154,7 @@ export const drawActivation = function (elem, bounds, verticalPos) {
   rect.fill = '#f4f4f4'
   rect.width = bounds.stopx - bounds.startx
   rect.height = verticalPos - bounds.starty
-  drawRect(g, rect)
+  drawRect(g, rect, conf)
 }
 
 /**
@@ -216,7 +261,6 @@ export const getTextObj = function () {
   const txt = {
     x: 0,
     y: 0,
-    'fill': 'black',
     'text-anchor': 'start',
     style: '#666',
     width: 100,
