@@ -8,7 +8,7 @@ import { parser } from './parser/classDiagram'
 
 parser.yy = classDb
 
-const idCache = {}
+let idCache = {}
 
 let classCnt = 0
 const conf = {
@@ -314,6 +314,9 @@ export const draw = function (text, id) {
   const g = new graphlib.Graph({
     multigraph: true
   })
+  // Reset cache, otherwise second call to this function will raise error.
+  idCache = {}
+  classCnt = 0
 
   // Set an object for the graph label
   g.setGraph({
