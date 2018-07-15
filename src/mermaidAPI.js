@@ -49,6 +49,17 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  * ```
  */
 const config = {
+
+/** theme , the CSS style sheet
+  *
+  * **theme** - Choose one of the built-in themes: default, forest, dark or neutral. To disable any pre-defined mermaid theme, use "null".
+  * **themeCSS** - Use your own CSS. This overrides **theme**.
+  *```
+  * "theme": "forest",
+  * "themeCSS": ".node rect { fill: red; }"
+  *```
+  */
+
   theme: 'default',
   themeCSS: undefined,
 
