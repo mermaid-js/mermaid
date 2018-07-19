@@ -92,9 +92,9 @@ describe('when parsing ', function () {
 
     const vert = flow.parser.yy.getVertices()
     const edges = flow.parser.yy.getEdges()
-    const direction = flow.parser.yy.getDirection()
+    const directionP = flow.parser.yy.getDirection()
 
-    expect(direction).toBe('TB')
+    expect(directionP).toBe('TB')
 
     expect(vert['A'].id).toBe('A')
     expect(vert['B'].id).toBe('B')
