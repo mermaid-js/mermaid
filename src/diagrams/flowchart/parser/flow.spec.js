@@ -33,15 +33,12 @@ describe('when parsing ', function () {
     expect(subgraph.title).toBe('One')
   })
 
-  it('should handle angle bracket \' > \' as direction LR', function () {
+  var directionChecker = function(parseStr, dirStr) {
     const res = flow.parser.parse('graph >;A-->B;')
-
     const vert = flow.parser.yy.getVertices()
     const edges = flow.parser.yy.getEdges()
     const direction = flow.parser.yy.getDirection()
-
     expect(direction).toBe('LR')
-
     expect(vert['A'].id).toBe('A')
     expect(vert['B'].id).toBe('B')
     expect(edges.length).toBe(1)
@@ -49,60 +46,22 @@ describe('when parsing ', function () {
     expect(edges[0].end).toBe('B')
     expect(edges[0].type).toBe('arrow')
     expect(edges[0].text).toBe('')
+  }
+
+  it('should handle angle bracket \' > \' as direction LR', function () {
+    directionChecker('graph >;A--B;', 'LR')
   })
 
   it('should handle angle bracket \' < \' as direction RL', function () {
-    const res = flow.parser.parse('graph <;A-->B;')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-    const direction = flow.parser.yy.getDirection()
-
-    expect(direction).toBe('RL')
-
-    expect(vert['A'].id).toBe('A')
-    expect(vert['B'].id).toBe('B')
-    expect(edges.length).toBe(1)
-    expect(edges[0].start).toBe('A')
-    expect(edges[0].end).toBe('B')
-    expect(edges[0].type).toBe('arrow')
-    expect(edges[0].text).toBe('')
+    directionChecker('graph <;A-->B;', 'RL')
   })
 
   it('should handle caret \' ^ \' as direction BT', function () {
-    const res = flow.parser.parse('graph ^;A-->B;')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-    const direction = flow.parser.yy.getDirection()
-
-    expect(direction).toBe('BT')
-
-    expect(vert['A'].id).toBe('A')
-    expect(vert['B'].id).toBe('B')
-    expect(edges.length).toBe(1)
-    expect(edges[0].start).toBe('A')
-    expect(edges[0].end).toBe('B')
-    expect(edges[0].type).toBe('arrow')
-    expect(edges[0].text).toBe('')
+    directionChecker('graph ^;A-->B;', 'BT')
   })
 
   it('should handle lower-case \'v\' as direction TB', function () {
-    const res = flow.parser.parse('graph v;A-->B;')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-    const directionP = flow.parser.yy.getDirection()
-
-    expect(directionP).toBe('TB')
-
-    expect(vert['A'].id).toBe('A')
-    expect(vert['B'].id).toBe('B')
-    expect(edges.length).toBe(1)
-    expect(edges[0].start).toBe('A')
-    expect(edges[0].end).toBe('B')
-    expect(edges[0].type).toBe('arrow')
-    expect(edges[0].text).toBe('')
+    directionChecker('graph v;A-->B;', 'TB')
   })
 
   it('should handle a nodes and edges and a space between link and node', function () {
