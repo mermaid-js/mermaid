@@ -95,8 +95,11 @@ break;
 case 8:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
+case 11:
+ yy.addComponent($$[$0-1]); 
+break;
 case 12:
-/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addMembers($$[$0-3],$$[$0-1]);
+/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addComponent($$[$0-3]);
 break;
 case 13:
  this.$ = [$$[$0]]; 
@@ -105,7 +108,7 @@ case 14:
  $$[$0].push($$[$0-1]);this.$=$$[$0];
 break;
 case 15:
-/*console.log('Rel found',$$[$0]);*/
+/*console.log('Rel found',$$[$0]);*/yy.addComponent($$[$0]);
 break;
 case 16:
 yy.addMembers($$[$0-1],yy.cleanupLabel($$[$0]));

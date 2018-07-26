@@ -141,12 +141,12 @@ statement
     : relationStatement       { yy.addRelation($1); }
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | componentStatement
-    | stereotypeStatement
+    | stereotypeStatement 
     ;
 
 componentStatement
-    : COMPONENT componentName
-    | COMPONENT componentName STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addMembers($2,$4);}
+    : COMPONENT componentName { yy.addComponent($1); }
+    | COMPONENT componentName STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addComponent($2);}
     ;
 
 members
@@ -155,7 +155,7 @@ members
     ;
 
 stereotypeStatement
-    : componentName {/*console.log('Rel found',$1);*/}
+    : componentName {/*console.log('Rel found',$1);*/yy.addComponent($1);}
     | componentName LABEL {yy.addMembers($1,yy.cleanupLabel($2));}
     | MEMBER {console.warn('Member',$1);}
     | SEPARATOR {/*console.log('sep found',$1);*/}
