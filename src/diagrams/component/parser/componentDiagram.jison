@@ -13,6 +13,7 @@
 \n+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
 "componentDiagram"          return 'COMPONENT_DIAGRAM';
+\s+                     /* skip whitespace */
 [\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
 <struct>\}           { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */

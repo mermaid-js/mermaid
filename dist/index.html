@@ -333,18 +333,22 @@ Class08 <--> C2: Cool label
 
   <div class="mermaid">
 componentDiagram
-Component01 <|-- AVeryLongComponent : Cool
-Component03 *-- Component04
-Component05 o-- Component06
-Component07 .. Component08
-Component09 --> C2 : Where am i?
-Component09 --* C3
-Component09 --|> Component07
-Component01 : component
-Component07 : framework
-Component08 : application
-Component09 : datastore
-Component08 <--> C2: Cool label
+
+UserPrograms : user
+Libraries : user
+SystemCallInterface : kernel
+
+UserPrograms <--> Libraries
+UserPrograms <--> SystemCallInterface : trap
+Libraries <--> SystemCallInterface : trap
+
+File : kernel
+FileSubsystem: kernel
+ProcessControl : kernel
+InterProcessCommuniction : kernel
+Scheduler : kernel
+MemoryManagement : kernel
+BufferCache : kernel
   </div>
 
   <script src="./mermaid.js"></script>

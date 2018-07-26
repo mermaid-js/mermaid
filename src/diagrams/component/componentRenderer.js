@@ -208,7 +208,6 @@ const drawComponent = function (elem, componentDef) {
 
   const addTspan = function (textEl, txt, isFirst) {
     const tSpan = textEl.append('tspan')
-      // .attr('x', conf.padding)
       .text(txt)
     if (!isFirst) {
       tSpan.attr('dy', conf.textHeight)
@@ -241,6 +240,7 @@ const drawComponent = function (elem, componentDef) {
   const titleHeight = title.node().getBBox().height
   const titleWidth = title.node().getBBox().width
   const titleXCenter = titleWidth / 2.0
+  let maxWidth = titleWidth
   const stereotypes = g.append('text') // extra text for stereotypes
     .attr('x', 0)
     .attr('y', titleHeight - conf.textHeight + 2 * conf.padding)
@@ -248,17 +248,31 @@ const drawComponent = function (elem, componentDef) {
     .attr('fill', 'white')
   let isFirst = true
   let fillFactor = 0
+  let tspans = []
+  let tspanwidths = []
   componentDef.stereotypes.forEach(function (stereotype) {
     const tspan = addTspan(stereotypes, '<<' + stereotype + '>>', isFirst)
+    tspans.push(tspan)
     const tspanwidth = tspan.node().getBBox().width
+    tspanwidths.push(tspanwidth)
     const startx = conf.padding + titleXCenter - (tspanwidth / 2.0)
+    maxWidth = Math.max(maxWidth, tspanwidth)
     tspan.attr('x', startx)
     fillFactor += conf.textHeight
     isFirst = false
   })
 
-  // ## Adjust for stereotype offsets
+  // ## Adjust for inner text sizes
   title.attr('y', conf.textHeight + conf.padding + fillFactor) // offset if component exists
+  if (maxWidth > titleWidth) {
+    const maxXCenter = maxWidth / 2.0
+    for (let i = 0; i < tspans.length; i++) {
+      const startx = conf.padding + maxXCenter - (tspanwidths[i] / 2.0)
+      tspans[i].attr('x', startx)
+    }
+    const adjustedX = conf.padding + maxXCenter - (titleWidth / 2.0)
+    title.attr('x', adjustedX)
+  }
 
   // ## Add a pseudobox so we can grab the width and height
   isFirst = true

@@ -12,12 +12,13 @@ let components = {}
  * @param style
  */
 export const addComponent = function (id) {
-  if (typeof components[id] === 'undefined') {
+  if (!componentExists(id)) {
     components[id] = {
       id: id,
       stereotypes: []
     }
   }
+  return components[id]
 }
 
 export const clear = function () {
@@ -25,6 +26,9 @@ export const clear = function () {
   components = {}
 }
 
+export const componentExists = function (id) {
+  return typeof components[id] !== 'undefined'
+}
 export const getComponent = function (id) {
   return components[id]
 }
@@ -44,7 +48,8 @@ export const addRelation = function (relation) {
 }
 
 export const addMembers = function (componentName, MembersArr) {
-  const theComponent = components[componentName]
+  logger.info('adding members to component ' + componentName)
+  const theComponent = componentExists(componentName) ? getComponent(componentName) : addComponent(componentName)
   if (typeof MembersArr === 'string') {
     theComponent.stereotypes.push(MembersArr)
   }
