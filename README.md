@@ -104,6 +104,26 @@ merge newbranch
 
 ![Git graph](./img/git.png)
 
+### Component diagram - :exclamation: experimental
+
+```
+componentDiagram
+Component01 <|-- AveryLongComponent : Cool
+Component03 *-- Component04
+Component05 o-- Component06
+Component07 .. Component08
+Component09 --> C2 : Where am i?
+Component09 --* C3
+Component09 --|> Component07
+Component07 : equals()
+Component07 : Object[] elementData
+Component01 : size()
+Component01 : int chimp
+Component01 : int gorilla
+Component08 <--> C2: Cool label
+```
+![Component diagram](./img/component.png)
+
 
 ## Installation
 

@@ -31,6 +31,9 @@ import classDb from './diagrams/class/classDb'
 import gitGraphRenderer from './diagrams/git/gitGraphRenderer'
 import gitGraphParser from './diagrams/git/parser/gitGraph'
 import gitGraphAst from './diagrams/git/gitGraphAst'
+import componentRenderer from './diagrams/component/componentRenderer'
+import componentParser from './diagrams/component/parser/componentDiagram'
+import componentDb from './diagrams/component/componentDb'
 
 const themes = {}
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -211,7 +214,8 @@ const config = {
     axisFormat: '%Y-%m-%d'
   },
   class: {},
-  git: {}
+  git: {},
+  component: {}
 }
 
 setLogLevel(config.logLevel)
@@ -240,6 +244,10 @@ function parse (text) {
     case 'class':
       parser = classParser
       parser.parser.yy = classDb
+      break
+    case 'component':
+      parser = componentParser
+      parser.parser.yy = componentDb
       break
   }
 
@@ -412,6 +420,11 @@ const render = function (id, txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       classRenderer.setConf(config.class)
       classRenderer.draw(txt, id)
+      break
+    case 'component':
+      config.component.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      componentRenderer.setConf(config.component)
+      componentRenderer.draw(txt, id)
       break
   }
 

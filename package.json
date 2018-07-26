@@ -1,7 +1,7 @@
 {
   "name": "mermaid",
   "version": "8.0.0-rc.8",
-  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
+  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts, git graphs, and component diagrams.",
   "main": "dist/mermaid.core.js",
   "keywords": [
     "diagram",
@@ -10,7 +10,8 @@
     "sequence diagram",
     "gantt",
     "class diagram",
-    "git graph"
+    "git graph",
+    "component diagram"
   ],
   "scripts": {
     "build": "webpack --progress --colors",

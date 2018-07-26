@@ -1,0 +1,84 @@
+g.componentGroup text {
+  fill: $nodeBorder;
+  stroke: none;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+g.componentGroup tspan {
+  font-size: 8px;
+  font-weight: bold;
+}
+
+g.componentGroup rect {
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
+}
+
+g.componentGroup line {
+  stroke: $nodeBorder;
+  stroke-width: 1;
+}
+
+.componentLabel .box {
+  stroke: none;
+  stroke-width: 0;
+  fill: $nodeBkg;
+  opacity: 0.5;
+}
+
+.componentLabel .label {
+  fill: $nodeBorder;
+  font-size: 10px;
+}
+
+.relation {
+  stroke: $nodeBorder;
+  stroke-width: 1;
+  fill: none;
+}
+
+@mixin composition {
+  fill: $nodeBorder;
+  stroke: $nodeBorder;
+  stroke-width: 1;
+}
+
+#compositionStart {
+  @include composition;
+}
+
+#compositionEnd {
+  @include composition;
+}
+
+@mixin aggregation {
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
+  stroke-width: 1;
+}
+
+#aggregationStart {
+  @include aggregation;
+}
+
+#aggregationEnd {
+  @include aggregation;
+}
+
+#dependencyStart {
+  @include composition;
+}
+
+#dependencyEnd {
+  @include composition;
+}
+
+#extensionStart {
+  @include composition;
+}
+
+#extensionEnd {
+  @include composition;
+}
