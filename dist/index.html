@@ -346,41 +346,40 @@ I --> M
   </div>
 
   <div class="mermaid">
-componentDiagram # UNIX System Architecture (BACH1986)
+componentDiagram # UNIX System Architecture (simplified BACH1986)
 
 UP { user } : User Programs
 LIB { user } : Libraries
 SCI { kernel } : System Call Interface
-UP <--> LIB
-UP <--> SCI : trap
-LIB <--> SCI : trap
+UP --|> LIB
+UP --|> SCI : trap
+LIB --|> SCI : trap
 
-FS { kernel subsystem } : File Subsystem
-BUF { kernel } : Buffer Cache
-CHAR { kernel } : Device Drivers (Character)
-BLK { kernel } : Device Drivers (Block)
-FS <--> SCI
-FS <--> CHAR
-FS <--> BUF
-BLK <--> BUF
+FS { kernel subsystem } : File
+SCI --|> FS
 
-PCS { kernel subsystem } : Process Control Subsystem
-IPC { kernel } : Inter-Process Communication
-SCHD { kernel } : Scheduler
-MM { kernel } : Memory Management
-PCS <--> FS
-PCS <--> SCI
-IPC .. PCS
-SCHD .. PCS
-MM .. PCS
+DEV { kernel } : Device Drivers
+FS --|> DEV : buffer cache for block
+
+PCS { kernel subsystem } : Process Control
+DEPS { kernel process control } : IPC, Scheduler, Memory
+DEPS ..o PCS
+SCI --|> PCS
+PCS <|--|> FS
 
 HWC { kernel } : Hardware Control
 HW { hardware } : Hardware
-HWC <--> CHAR
-HWC <--> BLK
-HWC <--> PCS
-HW <--> HWC : direct
+PCS --|> HWC
+DEV --|> HWC
+HWC --|> HW : direct
   </div>
+IPC { kernel }
+SCHD { kernel }
+MM { kernel }
+IPC ..o PCS
+SCHD ..o PCS
+MM ..o PCS
+
 
   <script src="./mermaid.js"></script>
   <script>

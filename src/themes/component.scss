@@ -40,7 +40,7 @@ g.componentGroup line {
 }
 
 @mixin composition {
-  fill: $nodeBorder;
+  fill: $nodeBkg;
   stroke: $nodeBorder;
   stroke-width: 1;
 }

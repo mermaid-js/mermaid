@@ -133,6 +133,18 @@ const drawEdge = function (elem, path, relation) {
         return 'dependency'
     }
   }
+  const getLineType = function (type) {
+    switch (type) {
+      case componentDb.lineType.LINE:
+        return 'fill:none'
+      case componentDb.lineType.DOTTED_LINE:
+        return 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;'
+      /*
+      case componentDb.lineType.THICK:
+        return 'stroke: #333; stroke-width: 3.5px;fill:none'
+      */
+    }
+  }
 
   // The data for our line
   const lineData = path.points
@@ -163,6 +175,9 @@ const drawEdge = function (elem, path, relation) {
   }
   if (relation.relation.type2 !== 'none') {
     svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')')
+  }
+  if (relation.relation.lineType !== 'none') {
+    svgPath.attr('style', getLineType(relation.relation.lineType))
   }
 
   let x, y
