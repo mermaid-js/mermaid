@@ -331,6 +331,8 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
   </div>
 
+  <hr/>
+
   <div class="mermaid">
 componentDiagram # Test Components
 component F
@@ -344,6 +346,8 @@ H --> K
 I --> L
 I --> M
   </div>
+
+  <hr/>
 
   <div class="mermaid">
 componentDiagram # UNIX System Architecture (simplified BACH1986)
@@ -373,13 +377,28 @@ PCS --|> HWC
 DEV --|> HWC
 HWC --|> HW : direct
   </div>
-IPC { kernel }
-SCHD { kernel }
-MM { kernel }
-IPC ..o PCS
-SCHD ..o PCS
-MM ..o PCS
 
+  <hr/>
+
+  <div class="mermaid">
+componentDiagram # Docker Architecture
+
+DOCK { engine } : Docker Engine
+
+C1 { container } : Apache
+C2 { container } : Kestrel
+C3 { container } : MongoDB
+KERN { kernel } : Linux Kernel
+HWD : Hardware
+
+DOCK .. C1 : containerd
+DOCK .. C2 : containerd
+DOCK .. C3 : containerd
+C1 .. KERN : runC
+C2 .. KERN : runC
+C3 .. KERN : runC
+KERN --|> HWD
+ </div>
 
   <script src="./mermaid.js"></script>
   <script>
