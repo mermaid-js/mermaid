@@ -12,6 +12,8 @@
 \%\%[^\n]*            /* do nothing */
 \n+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
+\#[^\n]*                /* skip comments */
+\%%[^\n]*               /* skip comments */
 "componentDiagram"          return 'COMPONENT_DIAGRAM';
 \s+                     /* skip whitespace */
 [\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
@@ -26,7 +28,7 @@
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
 
-
+"#"                   return 'COMMENT';
 \s*\<\|               return 'EXTENSION';
 \s*\|\>               return 'EXTENSION';
 \s*\>                 return 'DEPENDENCY';
@@ -144,15 +146,15 @@ statement
     ;
 
 componentStatement
-    : COMPONENT componentName { console.log('componentStatement: componentName='+$2); yy.addComponent($2); }
-    | COMPONENT componentName LABEL { console.log('componentStatement: componentName='+$2+' label='+$3); yy.addComponent($2, $3); }
-    | COMPONENT componentName STRUCT_START stereotypes STRUCT_STOP { console.log('componentStatement: componentName='+$2+' stereotypes=' + $4); yy.addComponent($2); yy.addStereotypes($2,$4); }
-    | COMPONENT componentName STRUCT_START stereotypes STRUCT_STOP LABEL { console.log('componentStatement: componentName='+$2+' stereotypes=' + $4); yy.addComponent($2, $6); yy.addStereotypes($2,$4); }
+    : COMPONENT componentName { /* console.log('componentStatement: componentName='+$2); */ yy.addComponent($2); }
+    | COMPONENT componentName LABEL { /* console.log('componentStatement: componentName='+$2+' label='+$3); */ yy.addComponent($2, $3); }
+    | COMPONENT componentName STRUCT_START stereotypes STRUCT_STOP { /* console.log('componentStatement: componentName='+$2+' stereotypes=' + $4); */ yy.addComponent($2); yy.addStereotypes($2,$4); }
+    | COMPONENT componentName STRUCT_START stereotypes STRUCT_STOP LABEL { /* console.log('componentStatement: componentName='+$2+' stereotypes=' + $4); */ yy.addComponent($2, $6); yy.addStereotypes($2,$4); }
     ;
 
 bareComponentStatement
-    : componentName { console.log('bareComponentStatement: componentName='+$1); yy.addComponent($1); }
-    | componentName LABEL { console.log('bareComponentStatement: componentName='+$1); yy.addComponent($1, $2); }
+    : componentName { /* console.log('bareComponentStatement: componentName='+$1); */ yy.addComponent($1); }
+    | componentName LABEL { /* console.log('bareComponentStatement: componentName='+$1); */ yy.addComponent($1, $2); }
     | componentName STRUCT_START stereotypes STRUCT_STOP { yy.addComponent($1); yy.addStereotypes($1,$3); }
     | componentName STRUCT_START stereotypes STRUCT_STOP LABEL { yy.addComponent($1, $5); yy.addStereotypes($1,$3); }
     ;

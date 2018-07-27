@@ -332,28 +332,54 @@ Class08 <--> C2: Cool label
   </div>
 
   <div class="mermaid">
-componentDiagram
-
+componentDiagram # Test Components
 component F
 component G : TestLabel
 component TestComponent { teststereotype }
 component TestComponent2 { teststereotype } : TestLabel2
+G --> H
+G --> I
+H --> J
+H --> K
+I --> L
+I --> M
+  </div>
 
-UserPrograms { user }
-Libraries { user }
-SystemCallInterface { kernel }
-UserPrograms <--> Libraries
-UserPrograms <--> SystemCallInterface : trap
-Libraries <--> SystemCallInterface : trap
+  <div class="mermaid">
+componentDiagram # UNIX System Architecture (BACH1986)
 
-File FS { kernel subsystem }
-ProcessControl { kernel subsystem }
-InterProcessCommunication { kernel }
-FS <--> SystemCallInterface
-component FS { subsystem }
-Scheduler { kernel }
-MemoryManagement { kernel }
-BufferCache { kernel }
+UP { user } : User Programs
+LIB { user } : Libraries
+SCI { kernel } : System Call Interface
+UP <--> LIB
+UP <--> SCI : trap
+LIB <--> SCI : trap
+
+FS { kernel subsystem } : File Subsystem
+BUF { kernel } : Buffer Cache
+CHAR { kernel } : Device Drivers (Character)
+BLK { kernel } : Device Drivers (Block)
+FS <--> SCI
+FS <--> CHAR
+FS <--> BUF
+BLK <--> BUF
+
+PCS { kernel subsystem } : Process Control Subsystem
+IPC { kernel } : Inter-Process Communication
+SCHD { kernel } : Scheduler
+MM { kernel } : Memory Management
+PCS <--> FS
+PCS <--> SCI
+IPC .. PCS
+SCHD .. PCS
+MM .. PCS
+
+HWC { kernel } : Hardware Control
+HW { hardware } : Hardware
+HWC <--> CHAR
+HWC <--> BLK
+HWC <--> PCS
+HW <--> HWC : direct
   </div>
 
   <script src="./mermaid.js"></script>

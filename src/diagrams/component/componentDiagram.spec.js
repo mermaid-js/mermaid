@@ -47,6 +47,28 @@ describe('component diagram, ', function () {
       parser.parse(str)
     })
 
+    it('should handle an inline comment', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy # this is a comment'
+
+      parser.parse(str)
+    })
+
+    it('should handle an inline pct comment', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy %% this is a comment'
+
+      parser.parse(str)
+    })
+
+    it('should handle an inline comment with another line', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy # this is a comment\n' +
+'component Dumber'
+
+      parser.parse(str)
+    })
+
     it('should handle a single component with no stereotype statement', function () {
       const str = 'componentDiagram\n' +
 'component Dummy'

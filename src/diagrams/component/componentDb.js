@@ -13,7 +13,7 @@ let components = {}
  */
 export const addComponent = function (id, label) {
   if (!componentExists(id)) {
-    console.log('adding component name=' + id + ' label=' + label)
+    // console.log('adding component name=' + id + ' label=' + label)
     components[id] = {
       id: id,
       label: cleanupLabel(label),
@@ -50,9 +50,9 @@ export const addRelation = function (relation) {
 }
 
 export const addStereotypes = function (componentName, StereotypesArr) {
-  logger.info('adding members to component ' + componentName)
+  logger.debug('adding members to component ' + componentName)
   const theComponent = componentExists(componentName) ? getComponent(componentName) : addComponent(componentName)
-  console.log('adding members to component name=' + componentName + ' found obj=' + theComponent + ' with StereotypesArr=' + StereotypesArr + ' type=' + typeof StereotypesArr)
+  // console.log('adding members to component name=' + componentName + ' found obj=' + theComponent + ' with StereotypesArr=' + StereotypesArr + ' type=' + typeof StereotypesArr)
   if (typeof StereotypesArr === 'string') {
     theComponent.stereotypes.push(StereotypesArr)
   } else {
