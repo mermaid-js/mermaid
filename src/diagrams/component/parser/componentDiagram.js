@@ -72,12 +72,12 @@
   }
 */
 var componentDiagram = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,12],$V2=[1,13],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[6,8],$V7=[1,26],$V8=[1,27],$V9=[1,28],$Va=[1,29],$Vb=[1,30],$Vc=[1,31],$Vd=[6,8,13,17,23,26,27,28,29,30,31],$Ve=[6,8,13,17,23,26,27,28,29,30,31,45,46,47],$Vf=[23,45,46,47],$Vg=[23,30,31,45,46,47],$Vh=[23,26,27,28,29,45,46,47],$Vi=[6,8,13],$Vj=[1,46];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,13],$V2=[1,14],$V3=[1,15],$V4=[6,8],$V5=[1,25],$V6=[1,26],$V7=[1,27],$V8=[1,28],$V9=[1,29],$Va=[1,30],$Vb=[6,8,13,17,22,25,26,27,28,29,30],$Vc=[6,8,13,17,22,25,26,27,28,29,30,44,45,46],$Vd=[1,38],$Ve=[22,44,45,46],$Vf=[22,29,30,44,45,46],$Vg=[22,25,26,27,28,44,45,46],$Vh=[6,8,13];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"COMPONENT_DIAGRAM":5,"NEWLINE":6,"statements":7,"EOF":8,"statement":9,"componentName":10,"alphaNumToken":11,"relationStatement":12,"LABEL":13,"componentStatement":14,"stereotypeStatement":15,"COMPONENT":16,"STRUCT_START":17,"members":18,"STRUCT_STOP":19,"MEMBER":20,"SEPARATOR":21,"relation":22,"STR":23,"relationType":24,"lineType":25,"AGGREGATION":26,"EXTENSION":27,"COMPOSITION":28,"DEPENDENCY":29,"LINE":30,"DOTTED_LINE":31,"commentToken":32,"textToken":33,"graphCodeTokens":34,"textNoTagsToken":35,"TAGSTART":36,"TAGEND":37,"==":38,"--":39,"PCT":40,"DEFAULT":41,"SPACE":42,"MINUS":43,"keywords":44,"UNICODE_TEXT":45,"NUM":46,"ALPHA":47,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"COMPONENT_DIAGRAM",6:"NEWLINE",8:"EOF",13:"LABEL",16:"COMPONENT",17:"STRUCT_START",19:"STRUCT_STOP",20:"MEMBER",21:"SEPARATOR",23:"STR",26:"AGGREGATION",27:"EXTENSION",28:"COMPOSITION",29:"DEPENDENCY",30:"LINE",31:"DOTTED_LINE",34:"graphCodeTokens",36:"TAGSTART",37:"TAGEND",38:"==",39:"--",40:"PCT",41:"DEFAULT",42:"SPACE",43:"MINUS",44:"keywords",45:"UNICODE_TEXT",46:"NUM",47:"ALPHA"},
-productions_: [0,[3,1],[4,4],[7,1],[7,3],[10,2],[10,1],[9,1],[9,2],[9,1],[9,1],[14,2],[14,5],[18,1],[18,2],[15,1],[15,2],[15,1],[15,1],[12,3],[12,4],[12,4],[12,5],[22,3],[22,2],[22,2],[22,1],[24,1],[24,1],[24,1],[24,1],[25,1],[25,1],[32,1],[32,1],[33,1],[33,1],[33,1],[33,1],[33,1],[33,1],[33,1],[35,1],[35,1],[35,1],[35,1],[11,1],[11,1],[11,1]],
+symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"COMPONENT_DIAGRAM":5,"NEWLINE":6,"statements":7,"EOF":8,"statement":9,"componentName":10,"alphaNumToken":11,"relationStatement":12,"LABEL":13,"componentStatement":14,"bareComponentStatement":15,"COMPONENT":16,"STRUCT_START":17,"stereotypes":18,"STRUCT_STOP":19,"STEREOTYPE":20,"relation":21,"STR":22,"relationType":23,"lineType":24,"AGGREGATION":25,"EXTENSION":26,"COMPOSITION":27,"DEPENDENCY":28,"LINE":29,"DOTTED_LINE":30,"commentToken":31,"textToken":32,"graphCodeTokens":33,"textNoTagsToken":34,"TAGSTART":35,"TAGEND":36,"==":37,"--":38,"PCT":39,"DEFAULT":40,"SPACE":41,"MINUS":42,"keywords":43,"UNICODE_TEXT":44,"NUM":45,"ALPHA":46,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"COMPONENT_DIAGRAM",6:"NEWLINE",8:"EOF",13:"LABEL",16:"COMPONENT",17:"STRUCT_START",19:"STRUCT_STOP",20:"STEREOTYPE",22:"STR",25:"AGGREGATION",26:"EXTENSION",27:"COMPOSITION",28:"DEPENDENCY",29:"LINE",30:"DOTTED_LINE",33:"graphCodeTokens",35:"TAGSTART",36:"TAGEND",37:"==",38:"--",39:"PCT",40:"DEFAULT",41:"SPACE",42:"MINUS",43:"keywords",44:"UNICODE_TEXT",45:"NUM",46:"ALPHA"},
+productions_: [0,[3,1],[4,4],[7,1],[7,3],[10,2],[10,1],[9,1],[9,2],[9,1],[9,1],[14,2],[14,3],[14,5],[14,6],[15,1],[15,2],[15,4],[15,5],[18,1],[18,2],[12,3],[12,4],[12,4],[12,5],[21,3],[21,2],[21,2],[21,1],[23,1],[23,1],[23,1],[23,1],[24,1],[24,1],[31,1],[31,1],[32,1],[32,1],[32,1],[32,1],[32,1],[32,1],[32,1],[34,1],[34,1],[34,1],[34,1],[11,1],[11,1],[11,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -96,75 +96,81 @@ case 8:
  $$[$0-1].title =  yy.cleanupLabel($$[$0]); yy.addRelation($$[$0-1]);        
 break;
 case 11:
- yy.addComponent($$[$0-1]); 
+ console.log('componentStatement: componentName='+$$[$0]); yy.addComponent($$[$0]); 
 break;
 case 12:
-/*console.log($$[$0-3],JSON.stringify($$[$0-1]));*/yy.addComponent($$[$0-3]);
+ console.log('componentStatement: componentName='+$$[$0-1]+' label='+$$[$0]); yy.addComponent($$[$0-1], $$[$0]); 
 break;
 case 13:
- this.$ = [$$[$0]]; 
+ console.log('componentStatement: componentName='+$$[$0-3]+' stereotypes=' + $$[$0-1]); yy.addComponent($$[$0-3]); yy.addStereotypes($$[$0-3],$$[$0-1]); 
 break;
 case 14:
- $$[$0].push($$[$0-1]);this.$=$$[$0];
+ console.log('componentStatement: componentName='+$$[$0-4]+' stereotypes=' + $$[$0-2]); yy.addComponent($$[$0-4], $$[$0]); yy.addStereotypes($$[$0-4],$$[$0-2]); 
 break;
 case 15:
-/*console.log('Rel found',$$[$0]);*/yy.addComponent($$[$0]);
+ console.log('bareComponentStatement: componentName='+$$[$0]); yy.addComponent($$[$0]); 
 break;
 case 16:
-yy.addMembers($$[$0-1],yy.cleanupLabel($$[$0]));
+ console.log('bareComponentStatement: componentName='+$$[$0-1]); yy.addComponent($$[$0-1], $$[$0]); 
 break;
 case 17:
-console.warn('Member',$$[$0]);
+ yy.addComponent($$[$0-3]); yy.addStereotypes($$[$0-3],$$[$0-1]); 
 break;
 case 18:
-/*console.log('sep found',$$[$0]);*/
+ yy.addComponent($$[$0-4], $$[$0]); yy.addStereotypes($$[$0-4],$$[$0-2]); 
 break;
 case 19:
- this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
+ this.$ = [$$[$0]]; 
 break;
 case 20:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
+ $$[$0].push($$[$0-1]);this.$=$$[$0]; 
 break;
 case 21:
- this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
+ this.$ = {'id1':$$[$0-2],'id2':$$[$0], relation:$$[$0-1], relationTitle1:'none', relationTitle2:'none'}; 
 break;
 case 22:
- this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-1], relationTitle1:$$[$0-2], relationTitle2:'none'}
 break;
 case 23:
- this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
+ this.$ = {id1:$$[$0-3], id2:$$[$0], relation:$$[$0-2], relationTitle1:'none', relationTitle2:$$[$0-1]}; 
 break;
 case 24:
- this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
+ this.$ = {id1:$$[$0-4], id2:$$[$0], relation:$$[$0-2], relationTitle1:$$[$0-3], relationTitle2:$$[$0-1]} 
 break;
 case 25:
- this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
+ this.$={type1:$$[$0-2],type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 26:
- this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
+ this.$={type1:'none',type2:$$[$0],lineType:$$[$0-1]}; 
 break;
 case 27:
- this.$=yy.relationType.AGGREGATION;
+ this.$={type1:$$[$0-1],type2:'none',lineType:$$[$0]}; 
 break;
 case 28:
- this.$=yy.relationType.EXTENSION;
+ this.$={type1:'none',type2:'none',lineType:$$[$0]}; 
 break;
 case 29:
- this.$=yy.relationType.COMPOSITION;
+ this.$=yy.relationType.AGGREGATION;
 break;
 case 30:
- this.$=yy.relationType.DEPENDENCY;
+ this.$=yy.relationType.EXTENSION;
 break;
 case 31:
-this.$=yy.lineType.LINE;
+ this.$=yy.relationType.COMPOSITION;
 break;
 case 32:
+ this.$=yy.relationType.DEPENDENCY;
+break;
+case 33:
+this.$=yy.lineType.LINE;
+break;
+case 34:
 this.$=yy.lineType.DOTTED_LINE;
 break;
 }
 },
-table: [{3:1,4:2,5:[1,3]},{1:[3]},{1:[2,1]},{6:[1,4]},{7:5,9:6,10:10,11:14,12:7,14:8,15:9,16:$V0,20:$V1,21:$V2,45:$V3,46:$V4,47:$V5},{8:[1,18]},{6:[1,19],8:[2,3]},o($V6,[2,7],{13:[1,20]}),o($V6,[2,9]),o($V6,[2,10]),o($V6,[2,15],{22:21,24:24,25:25,13:[1,23],23:[1,22],26:$V7,27:$V8,28:$V9,29:$Va,30:$Vb,31:$Vc}),{10:32,11:14,45:$V3,46:$V4,47:$V5},o($V6,[2,17]),o($V6,[2,18]),o($Vd,[2,6],{11:14,10:33,45:$V3,46:$V4,47:$V5}),o($Ve,[2,46]),o($Ve,[2,47]),o($Ve,[2,48]),{1:[2,2]},{7:34,9:6,10:10,11:14,12:7,14:8,15:9,16:$V0,20:$V1,21:$V2,45:$V3,46:$V4,47:$V5},o($V6,[2,8]),{10:35,11:14,23:[1,36],45:$V3,46:$V4,47:$V5},{22:37,24:24,25:25,26:$V7,27:$V8,28:$V9,29:$Va,30:$Vb,31:$Vc},o($V6,[2,16]),{25:38,30:$Vb,31:$Vc},o($Vf,[2,26],{24:39,26:$V7,27:$V8,28:$V9,29:$Va}),o($Vg,[2,27]),o($Vg,[2,28]),o($Vg,[2,29]),o($Vg,[2,30]),o($Vh,[2,31]),o($Vh,[2,32]),o($V6,[2,11],{17:[1,40]}),o($Vd,[2,5]),{8:[2,4]},o($Vi,[2,19]),{10:41,11:14,45:$V3,46:$V4,47:$V5},{10:42,11:14,23:[1,43],45:$V3,46:$V4,47:$V5},o($Vf,[2,25],{24:44,26:$V7,27:$V8,28:$V9,29:$Va}),o($Vf,[2,24]),{18:45,20:$Vj},o($Vi,[2,21]),o($Vi,[2,20]),{10:47,11:14,45:$V3,46:$V4,47:$V5},o($Vf,[2,23]),{19:[1,48]},{18:49,19:[2,13],20:$Vj},o($Vi,[2,22]),o($V6,[2,12]),{19:[2,14]}],
-defaultActions: {2:[2,1],18:[2,2],34:[2,4],49:[2,14]},
+table: [{3:1,4:2,5:[1,3]},{1:[3]},{1:[2,1]},{6:[1,4]},{7:5,9:6,10:10,11:12,12:7,14:8,15:9,16:$V0,44:$V1,45:$V2,46:$V3},{8:[1,16]},{6:[1,17],8:[2,3]},o($V4,[2,7],{13:[1,18]}),o($V4,[2,9]),o($V4,[2,10]),o($V4,[2,15],{21:19,23:23,24:24,13:[1,21],17:[1,22],22:[1,20],25:$V5,26:$V6,27:$V7,28:$V8,29:$V9,30:$Va}),{10:31,11:12,44:$V1,45:$V2,46:$V3},o($Vb,[2,6],{11:12,10:32,44:$V1,45:$V2,46:$V3}),o($Vc,[2,48]),o($Vc,[2,49]),o($Vc,[2,50]),{1:[2,2]},{7:33,9:6,10:10,11:12,12:7,14:8,15:9,16:$V0,44:$V1,45:$V2,46:$V3},o($V4,[2,8]),{10:34,11:12,22:[1,35],44:$V1,45:$V2,46:$V3},{21:36,23:23,24:24,25:$V5,26:$V6,27:$V7,28:$V8,29:$V9,30:$Va},o($V4,[2,16]),{18:37,20:$Vd},{24:39,29:$V9,30:$Va},o($Ve,[2,28],{23:40,25:$V5,26:$V6,27:$V7,28:$V8}),o($Vf,[2,29]),o($Vf,[2,30]),o($Vf,[2,31]),o($Vf,[2,32]),o($Vg,[2,33]),o($Vg,[2,34]),o($V4,[2,11],{13:[1,41],17:[1,42]}),o($Vb,[2,5]),{8:[2,4]},o($Vh,[2,21]),{10:43,11:12,44:$V1,45:$V2,46:$V3},{10:44,11:12,22:[1,45],44:$V1,45:$V2,46:$V3},{19:[1,46]},{18:47,19:[2,19],20:$Vd},o($Ve,[2,27],{23:48,25:$V5,26:$V6,27:$V7,28:$V8}),o($Ve,[2,26]),o($V4,[2,12]),{18:49,20:$Vd},o($Vh,[2,23]),o($Vh,[2,22]),{10:50,11:12,44:$V1,45:$V2,46:$V3},o($V4,[2,17],{13:[1,51]}),{19:[2,20]},o($Ve,[2,25]),{19:[1,52]},o($Vh,[2,24]),o($V4,[2,18]),o($V4,[2,13],{13:[1,53]}),o($V4,[2,14])],
+defaultActions: {2:[2,1],16:[2,2],33:[2,4],47:[2,20]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -656,7 +662,7 @@ case 6: /*console.log('Ending struct');*/this.popState(); return 19;
 break;
 case 7:/* nothing */
 break;
-case 8: /*console.log('lex-member: ' + yy_.yytext);*/  return "MEMBER";
+case 8: /*console.log('lex-stereotype: ' + yy_.yytext);*/  return "STEREOTYPE";
 break;
 case 9:return 16;
 break;
@@ -666,45 +672,45 @@ case 11:this.popState();
 break;
 case 12:return "STR";
 break;
-case 13:return 27;
+case 13:return 26;
 break;
-case 14:return 27;
+case 14:return 26;
 break;
-case 15:return 29;
+case 15:return 28;
 break;
-case 16:return 29;
+case 16:return 28;
 break;
-case 17:return 28;
+case 17:return 27;
 break;
-case 18:return 26;
+case 18:return 25;
 break;
-case 19:return 30;
+case 19:return 29;
 break;
-case 20:return 31;
+case 20:return 30;
 break;
 case 21:return 13;
 break;
-case 22:return 43;
+case 22:return 42;
 break;
 case 23:return 'DOT';
 break;
 case 24:return 'PLUS';
 break;
-case 25:return 40;
+case 25:return 39;
 break;
 case 26:return 'EQUALS';
 break;
 case 27:return 'EQUALS';
 break;
-case 28:return 47;
+case 28:return 46;
 break;
 case 29:return 'PUNCTUATION';
 break;
-case 30:return 46;
+case 30:return 45;
 break;
-case 31:return 45;
+case 31:return 44;
 break;
-case 32:return 42;
+case 32:return 41;
 break;
 case 33:return 8;
 break;

@@ -234,7 +234,7 @@ const drawComponent = function (elem, componentDef) {
   const title = g.append('text')
     .attr('x', conf.padding)
     .attr('y', conf.textHeight + conf.padding)
-    .text(componentDef.id)
+    .text(typeof componentDef.label === 'undefined' ? componentDef.id : componentDef.label)
 
   // ## Next we add in the stereotype(s)
   const titleHeight = title.node().getBBox().height

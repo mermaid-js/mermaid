@@ -334,22 +334,26 @@ Class08 <--> C2: Cool label
   <div class="mermaid">
 componentDiagram
 
-UserPrograms : user
-Libraries : user
-SystemCallInterface : kernel
+component F
+component G : TestLabel
+component TestComponent { teststereotype }
+component TestComponent2 { teststereotype } : TestLabel2
 
+UserPrograms { user }
+Libraries { user }
+SystemCallInterface { kernel }
 UserPrograms <--> Libraries
 UserPrograms <--> SystemCallInterface : trap
 Libraries <--> SystemCallInterface : trap
 
-FS
-File : kernel
-FileSubsystem: kernel
-ProcessControl : kernel
-InterProcessCommuniction : kernel
-Scheduler : kernel
-MemoryManagement : kernel
-BufferCache : kernel
+File FS { kernel subsystem }
+ProcessControl { kernel subsystem }
+InterProcessCommunication { kernel }
+FS <--> SystemCallInterface
+component FS { subsystem }
+Scheduler { kernel }
+MemoryManagement { kernel }
+BufferCache { kernel }
   </div>
 
   <script src="./mermaid.js"></script>

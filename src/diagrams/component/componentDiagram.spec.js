@@ -47,14 +47,81 @@ describe('component diagram, ', function () {
       parser.parse(str)
     })
 
-    it('should handle stereotype statements', function () {
+    it('should handle a single component with no stereotype statement', function () {
       const str = 'componentDiagram\n' +
-'component Car\n' +
-'framework\n' +
-'application'
+'component Dummy'
 
       parser.parse(str)
     })
+
+    it('should handle a single component with no stereotype statement and a label', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy : DummyLabel'
+
+      parser.parse(str)
+    })
+
+    it('should handle a bare component with no label', function () {
+      const str = 'componentDiagram\n' +
+'Dummy'
+
+      parser.parse(str)
+    })
+
+    it('should handle a bare component with a label', function () {
+      const str = 'componentDiagram\n' +
+'Dummy : DummyLabel'
+
+      parser.parse(str)
+    })
+
+    it('should handle a bare component with a stereotype', function () {
+      const str = 'componentDiagram\n' +
+'Dummy { datastore }'
+
+      parser.parse(str)
+    })
+
+    it('should handle a bare component with a stereotype and a label', function () {
+      const str = 'componentDiagram\n' +
+'Dummy { datastore } : DummyLabel'
+
+      parser.parse(str)
+    })
+
+    it('should handle a single component with one stereotype statement', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy { datastore }'
+
+      parser.parse(str)
+    })
+
+    it('should handle a single component with one stereotype statement and a label', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy { datastore } : DummyLabel'
+
+      parser.parse(str)
+    })
+
+    it('should handle a single component with one stereotype statement on several lines', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy {\n' +
+'  datastore\n' +
+'}'
+
+      parser.parse(str)
+    })
+
+    it('should handle a single component with mulitple stereotypes', function () {
+      const str = 'componentDiagram\n' +
+'component Dummy {\n' +
+'  datastore\n' +
+'  application\n' +
+'}'
+
+      parser.parse(str)
+    })
+
     it('should handle parsing of stereotype statements grouped by brackets', function () {
       const str = 'componentDiagram\n' +
 'component Dummy {\n' +

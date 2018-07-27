@@ -17,7 +17,7 @@
 [\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
 <struct>\}           { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
-<struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+<struct>[^\{\}\n]*     { /*console.log('lex-stereotype: ' + yytext);*/  return "STEREOTYPE";}
 
 
 
@@ -131,7 +131,6 @@ statements
     | statement NEWLINE statements
     ;
 
-
 componentName
     : alphaNumToken componentName { $$=$1+$2; }
     | alphaNumToken { $$=$1; }
@@ -141,24 +140,26 @@ statement
     : relationStatement       { yy.addRelation($1); }
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | componentStatement
-    | stereotypeStatement 
+    | bareComponentStatement
     ;
 
 componentStatement
-    : COMPONENT componentName { yy.addComponent($1); }
-    | COMPONENT componentName STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addComponent($2);}
+    : COMPONENT componentName { console.log('componentStatement: componentName='+$2); yy.addComponent($2); }
+    | COMPONENT componentName LABEL { console.log('componentStatement: componentName='+$2+' label='+$3); yy.addComponent($2, $3); }
+    | COMPONENT componentName STRUCT_START stereotypes STRUCT_STOP { console.log('componentStatement: componentName='+$2+' stereotypes=' + $4); yy.addComponent($2); yy.addStereotypes($2,$4); }
+    | COMPONENT componentName STRUCT_START stereotypes STRUCT_STOP LABEL { console.log('componentStatement: componentName='+$2+' stereotypes=' + $4); yy.addComponent($2, $6); yy.addStereotypes($2,$4); }
     ;
 
-members
-    : MEMBER { $$ = [$1]; }
-    | MEMBER members { $2.push($1);$$=$2;}
+bareComponentStatement
+    : componentName { console.log('bareComponentStatement: componentName='+$1); yy.addComponent($1); }
+    | componentName LABEL { console.log('bareComponentStatement: componentName='+$1); yy.addComponent($1, $2); }
+    | componentName STRUCT_START stereotypes STRUCT_STOP { yy.addComponent($1); yy.addStereotypes($1,$3); }
+    | componentName STRUCT_START stereotypes STRUCT_STOP LABEL { yy.addComponent($1, $5); yy.addStereotypes($1,$3); }
     ;
 
-stereotypeStatement
-    : componentName {/*console.log('Rel found',$1);*/yy.addComponent($1);}
-    | componentName LABEL {yy.addMembers($1,yy.cleanupLabel($2));}
-    | MEMBER {console.warn('Member',$1);}
-    | SEPARATOR {/*console.log('sep found',$1);*/}
+stereotypes
+    : STEREOTYPE { $$ = [$1]; }
+    | STEREOTYPE stereotypes { $2.push($1);$$=$2; }
     ;
 
 relationStatement

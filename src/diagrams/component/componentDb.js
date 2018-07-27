@@ -11,10 +11,12 @@ let components = {}
  * @param type
  * @param style
  */
-export const addComponent = function (id) {
+export const addComponent = function (id, label) {
   if (!componentExists(id)) {
+    console.log('adding component name=' + id + ' label=' + label)
     components[id] = {
       id: id,
+      label: cleanupLabel(label),
       stereotypes: []
     }
   }
@@ -47,19 +49,24 @@ export const addRelation = function (relation) {
   relations.push(relation)
 }
 
-export const addMembers = function (componentName, MembersArr) {
+export const addStereotypes = function (componentName, StereotypesArr) {
   logger.info('adding members to component ' + componentName)
   const theComponent = componentExists(componentName) ? getComponent(componentName) : addComponent(componentName)
-  if (typeof MembersArr === 'string') {
-    theComponent.stereotypes.push(MembersArr)
+  console.log('adding members to component name=' + componentName + ' found obj=' + theComponent + ' with StereotypesArr=' + StereotypesArr + ' type=' + typeof StereotypesArr)
+  if (typeof StereotypesArr === 'string') {
+    theComponent.stereotypes.push(StereotypesArr)
+  } else {
+    theComponent.stereotypes = StereotypesArr
   }
 }
 
 export const cleanupLabel = function (label) {
-  if (label.substring(0, 1) === ':') {
-    return label.substr(2).trim()
-  } else {
-    return label.trim()
+  if (typeof label !== 'undefined') {
+    if (label.substring(0, 1) === ':') {
+      return label.substr(2).trim()
+    } else {
+      return label.trim()
+    }
   }
 }
 
@@ -82,7 +89,7 @@ export default {
   getComponents,
   getRelations,
   addRelation,
-  addMembers,
+  addStereotypes,
   cleanupLabel,
   lineType,
   relationType
