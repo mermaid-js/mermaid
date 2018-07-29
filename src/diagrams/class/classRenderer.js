@@ -165,41 +165,115 @@ const drawEdge = function (elem, path, relation) {
     svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')')
   }
 
-  let x, y
   const l = path.points.length
-  if ((l % 2) !== 0) {
-    const p1 = path.points[Math.floor(l / 2)]
-    const p2 = path.points[Math.ceil(l / 2)]
-    x = (p1.x + p2.x) / 2
-    y = (p1.y + p2.y) / 2
-  } else {
-    const p = path.points[Math.floor(l / 2)]
-    x = p.x
-    y = p.y
+  // title
+  {
+    let x, y
+    if ((l % 2) !== 0) {
+      const p1 = path.points[Math.floor(l / 2)]
+      const p2 = path.points[Math.ceil(l / 2)]
+      x = (p1.x + p2.x) / 2
+      y = (p1.y + p2.y) / 2
+    } else {
+      const p = path.points[Math.floor(l / 2)]
+      x = p.x
+      y = p.y
+    }
+
+    if (typeof relation.title !== 'undefined') {
+      const g = elem.append('g')
+        .attr('class', 'classLabel')
+      const label = g.append('text')
+        .attr('class', 'label')
+        .attr('x', x)
+        .attr('y', y)
+        .attr('fill', 'red')
+        .attr('text-anchor', 'middle')
+        .text(relation.title)
+
+      window.label = label
+      const bounds = label.node().getBBox()
+
+      g.insert('rect', ':first-child')
+        .attr('class', 'box')
+        .attr('x', bounds.x - conf.padding / 2)
+        .attr('y', bounds.y - conf.padding / 2)
+        .attr('width', bounds.width + conf.padding)
+        .attr('height', bounds.height + conf.padding)
+    }
   }
 
-  if (typeof relation.title !== 'undefined') {
-    const g = elem.append('g')
-      .attr('class', 'classLabel')
-    const label = g.append('text')
-      .attr('class', 'label')
-      .attr('x', x)
-      .attr('y', y)
-      .attr('fill', 'red')
-      .attr('text-anchor', 'middle')
-      .text(relation.title)
-
-    window.label = label
-    const bounds = label.node().getBBox()
-
-    g.insert('rect', ':first-child')
-      .attr('class', 'box')
-      .attr('x', bounds.x - conf.padding / 2)
-      .attr('y', bounds.y - conf.padding / 2)
-      .attr('width', bounds.width + conf.padding)
-      .attr('height', bounds.height + conf.padding)
+  const normalize = function (point, scale) {
+    var norm = Math.sqrt(point.x * point.x + point.y * point.y);
+    if (norm != 0) { // as3 return 0,0 for a point of zero length
+      point.x = scale * point.x / norm;
+      point.y = scale * point.y / norm;
+    }
+    return point
   }
+  // relation title 1
+  {
+    const p = path.points[0]
+    const nextPoint = path.points[1]
 
+    let direction = {x: nextPoint.x - p.x, y: nextPoint.y - p.y}
+    normalize(direction, 10)
+    const offsettedPoint = {x: p.x + direction.x, y: p.y + direction.y }
+
+    if (relation.relationTitle1 !== "none") {
+      const g = elem.append('g')
+        .attr('class', 'classLabel')
+      const label = g.append('text')
+        .attr('class', 'label')
+        .attr('x', offsettedPoint.x)
+        .attr('y', offsettedPoint.y)
+        .attr('fill', 'red')
+        .attr('text-anchor', 'middle')
+        .text(relation.relationTitle1)
+
+      window.label = label
+      const bounds = label.node().getBBox()
+
+      g.insert('rect', ':first-child')
+        .attr('class', 'box')
+        .attr('x', bounds.x - conf.padding / 2)
+        .attr('y', bounds.y - conf.padding / 2)
+        .attr('width', bounds.width + conf.padding)
+        .attr('height', bounds.height + conf.padding)
+    }
+  }
+  
+  // relation title 2
+  {
+    const p = path.points[l - 1]
+    const previousPoint = path.points[l - 2]
+
+    let direction = {x: previousPoint.x - p.x, y: previousPoint.y - p.y}
+    normalize(direction, 5)
+    const offsettedPoint = {x: p.x + direction.x, y: p.y + direction.y }
+
+    if (relation.relationTitle2 !== 'none') {
+      const g = elem.append('g')
+        .attr('class', 'classLabel')
+      const label = g.append('text')
+        .attr('class', 'label')
+        .attr('x', offsettedPoint.x)
+        .attr('y', offsettedPoint.y)
+        .attr('fill', 'red')
+        .attr('text-anchor', 'middle')
+        .text(relation.relationTitle2)
+
+      window.label = label
+      const bounds = label.node().getBBox()
+
+      g.insert('rect', ':first-child')
+        .attr('class', 'box')
+        .attr('x', bounds.x - conf.padding / 2)
+        .attr('y', bounds.y - conf.padding / 2)
+        .attr('width', bounds.width + conf.padding)
+        .attr('height', bounds.height + conf.padding)
+    }
+  }
   edgeCount++
 }
 
