@@ -33,7 +33,9 @@ const conf = {
   activationWidth: 10,
 
   // text placement as: tspan | fo | old only text as before
-  textPlacement: 'tspan'
+  textPlacement: 'tspan',
+
+  showSequenceNumbers: false
 }
 
 export const bounds = {
@@ -203,7 +205,7 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
  * @param txtCenter
  * @param msg
  */
-const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
+const drawMessage = function (elem, startx, stopx, verticalPos, msg, nodeIndex) {
   const g = elem.append('g')
   const txtCenter = startx + (stopx - startx) / 2
 
@@ -258,6 +260,18 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
 
   if (msg.type === parser.yy.LINETYPE.SOLID_CROSS || msg.type === parser.yy.LINETYPE.DOTTED_CROSS) {
     line.attr('marker-end', 'url(' + url + '#crosshead)')
+  }
+
+  // add node number
+  if (conf.showSequenceNumbers) {
+    line.attr('marker-start', 'url(' + url + '#nodenumber)')
+    g.append('text')
+      .attr('x', startx - 4)
+      .attr('y', verticalPos + 5)
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', '16px')
+      .attr('class', 'nodeNumber')
+      .text(nodeIndex + 1)
   }
 }
 
@@ -331,6 +345,7 @@ export const draw = function (text, id) {
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram)
   svgDraw.insertArrowCrossHead(diagram)
+  svgDraw.insertNodeNumber(diagram)
 
   function activeEnd (msg, verticalPos) {
     const activationData = bounds.endActivation(msg)
@@ -346,7 +361,7 @@ export const draw = function (text, id) {
   // const lastMsg
 
   // Draw the messages/signals
-  messages.forEach(function (msg) {
+  messages.forEach(function (msg, nodeIndex) {
     let loopData
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
@@ -440,7 +455,7 @@ export const draw = function (text, id) {
           stopx = toBounds[toIdx]
 
           const verticalPos = bounds.getVerticalPos()
-          drawMessage(diagram, startx, stopx, verticalPos, msg)
+          drawMessage(diagram, startx, stopx, verticalPos, msg, nodeIndex)
           const allBounds = fromBounds.concat(toBounds)
           bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {

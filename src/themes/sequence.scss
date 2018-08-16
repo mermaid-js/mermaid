@@ -29,6 +29,14 @@ text.actor {
   fill: $signalColor;
 }
 
+.nodeNumber {
+  fill: $nodeNumberColor;
+}
+
+#nodenumber {
+  fill: $signalColor;
+}
+
 #crosshead path {
   fill: $signalColor !important;
   stroke: $signalColor !important;
