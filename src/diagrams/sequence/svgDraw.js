@@ -324,7 +324,7 @@ export default {
   drawActivation,
   drawLoop,
   insertArrowHead,
-  insertSequencNumber,
+  insertSequenceNumber,
   insertArrowCrossHead,
   getTextObj,
   getNoteRect
