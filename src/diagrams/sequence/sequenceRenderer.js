@@ -363,7 +363,7 @@ export const draw = function (text, id) {
   // const lastMsg
 
   // Draw the messages/signals
-  let sequenceIndex = 1;
+  let sequenceIndex = 1
   messages.forEach(function (msg) {
     let loopData
     switch (msg.type) {
@@ -467,11 +467,11 @@ export const draw = function (text, id) {
     }
     // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
     if ([
-      parser.yy.LINETYPE.SOLID_OPEN, 
-      parser.yy.LINETYPE.DOTTED_OPEN, 
-      parser.yy.LINETYPE.SOLID, 
-      parser.yy.LINETYPE.DOTTED, 
-      parser.yy.LINETYPE.SOLID_CROSS, 
+      parser.yy.LINETYPE.SOLID_OPEN,
+      parser.yy.LINETYPE.DOTTED_OPEN,
+      parser.yy.LINETYPE.SOLID,
+      parser.yy.LINETYPE.DOTTED,
+      parser.yy.LINETYPE.SOLID_CROSS,
       parser.yy.LINETYPE.DOTTED_CROSS
     ].includes(msg.type)) {
       sequenceIndex++
