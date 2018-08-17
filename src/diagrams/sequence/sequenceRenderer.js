@@ -205,7 +205,7 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
  * @param txtCenter
  * @param msg
  */
-const drawMessage = function (elem, startx, stopx, verticalPos, msg, nodeIndex) {
+const drawMessage = function (elem, startx, stopx, verticalPos, msg, sequenceIndex) {
   const g = elem.append('g')
   const txtCenter = startx + (stopx - startx) / 2
 
@@ -272,9 +272,8 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg, nodeIndex) 
       .attr('font-size', '16px')
       .attr('text-anchor', 'middle')
       .attr('textLength', '16px')
-      .attr('lengthAdjust', '0')
       .attr('class', 'sequenceNumber')
-      .text(nodeIndex + 1)
+      .text(sequenceIndex)
   }
 }
 
@@ -364,7 +363,8 @@ export const draw = function (text, id) {
   // const lastMsg
 
   // Draw the messages/signals
-  messages.forEach(function (msg, nodeIndex) {
+  let sequenceIndex = 1;
+  messages.forEach(function (msg) {
     let loopData
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
@@ -458,12 +458,23 @@ export const draw = function (text, id) {
           stopx = toBounds[toIdx]
 
           const verticalPos = bounds.getVerticalPos()
-          drawMessage(diagram, startx, stopx, verticalPos, msg, nodeIndex)
+          drawMessage(diagram, startx, stopx, verticalPos, msg, sequenceIndex)
           const allBounds = fromBounds.concat(toBounds)
           bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {
           logger.error('error while drawing message', e)
         }
+    }
+    // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
+    if ([
+      parser.yy.LINETYPE.SOLID_OPEN, 
+      parser.yy.LINETYPE.DOTTED_OPEN, 
+      parser.yy.LINETYPE.SOLID, 
+      parser.yy.LINETYPE.DOTTED, 
+      parser.yy.LINETYPE.SOLID_CROSS, 
+      parser.yy.LINETYPE.DOTTED_CROSS
+    ].includes(msg.type)) {
+      sequenceIndex++
     }
   })
 
