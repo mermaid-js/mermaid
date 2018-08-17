@@ -153,7 +153,12 @@ const config = {
      * **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
      * available space if not the absolute space required is used
      */
-    useMaxWidth: true
+    useMaxWidth: true,
+
+    /**
+     * **rightAngles** - this will display arrows that start and begin at the same node as right angles, rather than a curve
+     */
+    rightAngles: false
   },
 
   /** ### gantt
