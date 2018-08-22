@@ -73,3 +73,8 @@ text.actor {
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
 }
+
+.activation {
+  fill: $activationBkgColor;
+  stroke: $activationBorderColor;
+}

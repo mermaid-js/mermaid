@@ -106,7 +106,7 @@ export const drawActivation = function (elem, bounds, verticalPos) {
   const g = bounds.anchored
   rect.x = bounds.startx
   rect.y = bounds.starty
-  rect.fill = '#f4f4f4'
+  rect.class = 'activation'
   rect.width = bounds.stopx - bounds.startx
   rect.height = verticalPos - bounds.starty
   drawRect(g, rect)
