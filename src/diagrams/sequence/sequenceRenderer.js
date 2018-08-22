@@ -219,7 +219,7 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
   let line
   if (startx === stopx) {
     if (conf.rightAngles) {
-      line = g.append('path').attr('d', `M  ${startx},${verticalPos} H ${startx + 75} V ${verticalPos + 25} H ${startx}`)
+      line = g.append('path').attr('d', `M  ${startx},${verticalPos} H ${startx + (conf.width/2)} V ${verticalPos + 25} H ${startx}`)
     } else {
       line = g.append('path')
         .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
