@@ -195,7 +195,7 @@ export const insertSequenceNumber = function (elem) {
     .append('circle')
     .attr('cx', 15)
     .attr('cy', 15)
-    .attr('r', 7)
+    .attr('r', 6)
     // .style("fill", '#f00');
 }
 /**

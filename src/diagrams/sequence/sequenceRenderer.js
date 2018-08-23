@@ -266,10 +266,10 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg, sequenceInd
   if (conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)')
     g.append('text')
-      .attr('x', startx - 1)
-      .attr('y', verticalPos + 5)
+      .attr('x', startx)
+      .attr('y', verticalPos + 4)
       .attr('font-family', 'sans-serif')
-      .attr('font-size', '16px')
+      .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
       .attr('textLength', '16px')
       .attr('class', 'sequenceNumber')
