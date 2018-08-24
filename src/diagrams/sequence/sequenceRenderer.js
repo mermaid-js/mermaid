@@ -338,7 +338,7 @@ export const draw = function (text, id) {
       activationData.starty = verticalPos - 6
       verticalPos += 12
     }
-    svgDraw.drawActivation(diagram, activationData, verticalPos, conf)
+    svgDraw.drawActivation(diagram, activationData, verticalPos, conf, actorActivations(msg.from.actor).length)
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
   }
