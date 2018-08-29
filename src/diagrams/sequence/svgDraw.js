@@ -106,7 +106,7 @@ export const drawActivation = function (elem, bounds, verticalPos, conf, actorAc
   const g = bounds.anchored
   rect.x = bounds.startx
   rect.y = bounds.starty
-  rect.class = 'activation' + actorActivations
+  rect.class = 'activation' + (actorActivations % 3) // Will evaluate to 0, 1 or 2
   rect.width = bounds.stopx - bounds.startx
   rect.height = verticalPos - bounds.starty
   drawRect(g, rect)
