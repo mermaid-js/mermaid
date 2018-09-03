@@ -31,6 +31,18 @@ const getGraphId = function (label) {
 }
 
 /**
+ * List of basic shapes used for paths
+ * @namespace
+ */
+const shapes = {
+  diamond: 'M 18,7 L9,13 L1,7 L9,1 Z',
+  thinArrowLeft: 'M 5,7 L9,13 L1,7 L9,1 Z',
+  thinArrowRight: 'M 18,7 L9,13 L14,7 L9,1 Z',
+  triangleLeft: 'M 1,7 L18,13 V 1 Z',
+  triangleRight: 'M 1,1 V 13 L18,7 Z'
+}
+
+/**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 const insertMarkers = function (elem) {
@@ -43,80 +55,84 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 1,7 L18,13 V 1 Z')
+    .attr('d', shapes.triangleLeft)
 
   elem.append('defs').append('marker')
     .attr('id', 'extensionEnd')
+    .attr('class', 'extension')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 1,1 V 13 L18,7 Z') // this is actual shape for arrowhead
+    .attr('d', shapes.triangleRight) // this is actual shape for arrowhead
 
   elem.append('defs').append('marker')
     .attr('id', 'compositionStart')
-    .attr('class', 'extension')
+    .attr('class', 'composition')
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', shapes.diamond)
 
   elem.append('defs').append('marker')
     .attr('id', 'compositionEnd')
+    .attr('class', 'composition')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', shapes.diamond)
 
   elem.append('defs').append('marker')
     .attr('id', 'aggregationStart')
-    .attr('class', 'extension')
+    .attr('class', 'aggregation')
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', shapes.diamond)
 
   elem.append('defs').append('marker')
     .attr('id', 'aggregationEnd')
+    .attr('class', 'aggregation')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', shapes.diamond)
 
   elem.append('defs').append('marker')
     .attr('id', 'dependencyStart')
-    .attr('class', 'extension')
+    .attr('class', 'dependency')
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', shapes.thinArrowLeft)
 
   elem.append('defs').append('marker')
     .attr('id', 'dependencyEnd')
+    .attr('class', 'dependency')
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z')
+    .attr('d', shapes.thinArrowRight)
 }
 
 let edgeCount = 0

@@ -374,14 +374,6 @@ const render = function (id, txt, cb, container) {
   style1.innerHTML = scope(style, `#${id}`)
   svg.insertBefore(style1, firstChild)
 
-  const style2 = document.createElement('style')
-  const cs = window.getComputedStyle(svg)
-  style2.innerHTML = `#${id} {
-    color: ${cs.color};
-    font: ${cs.font};
-  }`
-  svg.insertBefore(style2, firstChild)
-
   switch (graphType) {
     case 'git':
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute
