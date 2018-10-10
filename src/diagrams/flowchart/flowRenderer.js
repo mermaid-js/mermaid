@@ -105,6 +105,12 @@ export const addVertices = function (vert, g) {
       case 'odd':
         _shape = 'rect_left_inv_arrow'
         break
+      case 'trapezoid':
+        _shape = 'trapezoid'
+        break
+      case 'inv_trapezoid':
+        _shape = 'inv_trapezoid'
+        break
       case 'odd_right':
         _shape = 'rect_left_inv_arrow'
         break
@@ -323,6 +329,48 @@ export const draw = function (text, id) {
       { x: w, y: -h },
       { x: -h / 2, y: -h },
       { x: 0, y: -h / 2 }
+    ]
+    const shapeSvg = parent.insert('polygon', ':first-child')
+      .attr('points', points.map(function (d) {
+        return d.x + ',' + d.y
+      }).join(' '))
+      .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')')
+    node.intersect = function (point) {
+      return dagreD3.intersect.polygon(node, points, point)
+    }
+    return shapeSvg
+  }
+
+  // Add custom shape for box with inverted arrow on left side
+  render.shapes().trapezoid = function (parent, bbox, node) {
+    const w = bbox.width
+    const h = bbox.height
+    const points = [
+      { x: -h / 2, y: 0 },
+      { x: w + h / 2, y: 0 },
+      { x: w, y: -h },
+      { x: 0, y: -h }
+    ]
+    const shapeSvg = parent.insert('polygon', ':first-child')
+      .attr('points', points.map(function (d) {
+        return d.x + ',' + d.y
+      }).join(' '))
+      .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')')
+    node.intersect = function (point) {
+      return dagreD3.intersect.polygon(node, points, point)
+    }
+    return shapeSvg
+  }
+
+  // Add custom shape for box with inverted arrow on left side
+  render.shapes().inv_trapezoid = function (parent, bbox, node) {
+    const w = bbox.width
+    const h = bbox.height
+    const points = [
+      { x: 0, y: 0 },
+      { x: w, y: 0 },
+      { x: w + h / 2, y: -h },
+      { x: -h / 2, y: -h }
     ]
     const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
