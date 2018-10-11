@@ -346,10 +346,10 @@ export const draw = function (text, id) {
     const w = bbox.width
     const h = bbox.height
     const points = [
-      { x: -h / 2, y: 0 },
-      { x: w + h / 2, y: 0 },
-      { x: w, y: -h },
-      { x: 0, y: -h }
+      { x: - 2 * h / 6, y: 0 },
+      { x: w + 2 * h / 6, y: 0 },
+      { x: w - h / 6, y: -h },
+      { x: h / 6, y: -h }
     ]
     const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
@@ -367,10 +367,10 @@ export const draw = function (text, id) {
     const w = bbox.width
     const h = bbox.height
     const points = [
-      { x: 0, y: 0 },
-      { x: w, y: 0 },
-      { x: w + h / 2, y: -h },
-      { x: -h / 2, y: -h }
+      { x: h / 6, y: 0 },
+      { x: w - h / 6, y: 0 },
+      { x: w + 2 * h / 6, y: -h },
+      { x: - 2 * h / 6, y: -h }
     ]
     const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
