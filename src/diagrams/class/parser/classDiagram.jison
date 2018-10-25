@@ -127,6 +127,7 @@ graphConfig
 
 statements
     : statement
+    | statement NEWLINE
     | statement NEWLINE statements
     ;
 
@@ -144,8 +145,8 @@ statement
     ;
 
 classStatement
-    : CLASS className
-    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addMembers($2,$4);}
+    : CLASS className         {yy.addClass($2);}
+    | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addClass($2);yy.addMembers($2,$4);}
     ;
 
 members
@@ -155,7 +156,7 @@ members
 
 methodStatement
     : className {/*console.log('Rel found',$1);*/}
-    | className LABEL {yy.addMembers($1,yy.cleanupLabel($2));}
+    | className LABEL {yy.addMember($1,yy.cleanupLabel($2));}
     | MEMBER {console.warn('Member',$1);}
     | SEPARATOR {/*console.log('sep found',$1);*/}
     ;

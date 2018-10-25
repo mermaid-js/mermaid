@@ -44,14 +44,21 @@ export const addRelation = function (relation) {
   relations.push(relation)
 }
 
-export const addMembers = function (className, MembersArr) {
+export const addMember = function (className, member) {
   const theClass = classes[className]
-  if (typeof MembersArr === 'string') {
-    if (MembersArr.substr(-1) === ')') {
-      theClass.methods.push(MembersArr)
+  if (typeof member === 'string') {
+    if (member.substr(-1) === ')') {
+      theClass.methods.push(member)
     } else {
-      theClass.members.push(MembersArr)
+      theClass.members.push(member)
     }
+  }
+}
+
+export const addMembers = function (className, MembersArr) {
+  console.log(className, MembersArr)
+  if (Array.isArray(MembersArr)) {
+    MembersArr.forEach(member => addMember(className, member))
   }
 }
 
@@ -82,6 +89,7 @@ export default {
   getClasses,
   getRelations,
   addRelation,
+  addMember,
   addMembers,
   cleanupLabel,
   lineType,

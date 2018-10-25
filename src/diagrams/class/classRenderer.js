@@ -10,7 +10,6 @@ parser.yy = classDb
 
 const idCache = {}
 
-let classCnt = 0
 const conf = {
   dividerMargin: 10,
   padding: 5,
@@ -215,7 +214,7 @@ const drawClass = function (elem, classDef) {
     }
   }
 
-  const id = 'classId' + classCnt
+  const id = 'classId' + classDef.id
   const classInfo = {
     id: id,
     label: classDef.id,
@@ -284,7 +283,6 @@ const drawClass = function (elem, classDef) {
   classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin
 
   idCache[id] = classInfo
-  classCnt++
   return classInfo
 }
 
