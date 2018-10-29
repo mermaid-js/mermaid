@@ -68,7 +68,6 @@ export const addVertices = function (vert, g) {
     if (conf.htmlLabels) {
       labelTypeStr = 'html';
       // todo: stöd för regex grupp
-      var oldRegex = /fa:fa[\w-]+/g;
       var newRegex = /(fa(?:|[lrsb])):(fa[\w-]+)/g
       verticeText = verticeText.replace(newRegex, function (s, b, c) {
         return '<i class="' + b + ' ' + c + '"></i>';
