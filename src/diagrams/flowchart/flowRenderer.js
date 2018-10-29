@@ -70,8 +70,8 @@ export const addVertices = function (vert, g) {
       // todo: stöd för regex grupp
       var oldRegex = /fa:fa[\w-]+/g;
       var newRegex = /(fa(?:|[lrsb])):(fa[\w-]+)/g
-      verticeText = verticeText.replace(newRegex, function (s) {
-        return '<i class="fa ' + s.substring(3) + '"></i>'
+      verticeText = verticeText.replace(newRegex, function (s, b, c) {
+        return '<i class="' + b + ' ' + c + '"></i>';
       });
 
       
