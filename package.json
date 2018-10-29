@@ -63,8 +63,8 @@
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.7",
     "standard": "^11.0.1",
-    "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.12",
+    "webpack": "^4.23.1",
+    "webpack-cli": "^3.1.2",
     "webpack-node-externals": "^1.6.0",
     "yarn-upgrade-all": "^0.3.0"
   },

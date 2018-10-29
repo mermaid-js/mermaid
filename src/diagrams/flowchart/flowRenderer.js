@@ -66,10 +66,15 @@ export const addVertices = function (vert, g) {
 
     let labelTypeStr = ''
     if (conf.htmlLabels) {
-      labelTypeStr = 'html'
-      verticeText = verticeText.replace(/fa:fa[\w-]+/g, function (s) {
+      labelTypeStr = 'html';
+      // todo: stöd för regex grupp
+      var oldRegex = /fa:fa[\w-]+/g;
+      var newRegex = /(fa(?:|[lrsb])):(fa[\w-]+)/g
+      verticeText = verticeText.replace(newRegex, function (s) {
         return '<i class="fa ' + s.substring(3) + '"></i>'
-      })
+      });
+
+      
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
