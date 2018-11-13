@@ -15,7 +15,7 @@ text.actor {
 .messageLine0 {
   stroke-width: 1.5;
   stroke-dasharray: '2 2';
-  marker-end: 'url(#arrowhead)';
+  marker-end: url(#arrowhead);
   stroke: $signalColor;
 }
 
@@ -57,7 +57,7 @@ text.actor {
 .loopLine {
   stroke-width: 2;
   stroke-dasharray: '2 2';
-  marker-end: 'url(#arrowhead)';
+  marker-end: url(#arrowhead);
   stroke: $labelBoxBorderColor;
 }
 
