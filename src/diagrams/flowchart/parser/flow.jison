@@ -16,6 +16,7 @@
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
+"subGraphStyle"       return 'SUBGRAPHSTYLE';
 "interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
@@ -219,6 +220,8 @@ statement
     {$$=[];}
     | linkStyleStatement separator
     {$$=[];}
+    | subGraphStyleStatement separator
+    {$$=[];}
     | classDefStatement separator
     {$$=[];}
     | classStatement separator
@@ -421,6 +424,13 @@ linkStyleStatement
           {$$ = $1;yy.updateLinkInterpolate($3,$7);}
     | LINKSTYLE SPACE NUM SPACE INTERPOLATE SPACE alphaNum
           {$$ = $1;yy.updateLinkInterpolate($3,$7);}
+    ;
+
+subGraphStyleStatement
+    : SUBGRAPHSTYLE SPACE DEFAULT SPACE stylesOpt
+          {$$ = $1;yy.updateSubGraph($3,$5);}
+    | SUBGRAPHSTYLE SPACE NUM SPACE stylesOpt
+          {$$ = $1;yy.updateSubGraph($3,$5);}
     ;
 
 commentStatement: PCT PCT commentText;

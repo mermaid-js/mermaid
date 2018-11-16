@@ -114,6 +114,23 @@ export const updateLink = function (pos, style) {
   }
 }
 
+/**
+ * Updates a subGraph with a style
+ * @param pos
+ * @param style
+ */
+export const updateSubGraph = function (pos, style) {
+  style = style.map(function (s) { return s + '!important' })
+  if (pos === 'default') {
+    subGraphs.defaultStyle = style
+  } else {
+    if (utils.isSubstringInArray('fill', style) === -1) {
+      style.push('fill:none!important')
+    }
+    subGraphs[pos].style = style
+  }
+}
+
 export const addClass = function (id, style) {
   if (typeof classes[id] === 'undefined') {
     classes[id] = { id: id, styles: [] }
@@ -404,6 +421,7 @@ export default {
   addLink,
   updateLinkInterpolate,
   updateLink,
+  updateSubGraph,
   addClass,
   setDirection,
   setClass,

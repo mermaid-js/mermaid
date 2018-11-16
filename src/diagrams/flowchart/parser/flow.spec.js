@@ -33,6 +33,12 @@ describe('when parsing ', function () {
     expect(subgraph.title).toBe('One')
   })
 
+  it('should handle subGraph with style ', function () {
+    const res = flow.parser.parse('graph TD\nsubgraph SG0\nA-->B\nend\nsubGraphStyle 0 stroke-width:5px;')
+    const subGraphs = flow.parser.yy.getSubGraphs()
+    expect(subGraphs[0].style).toEqual(['stroke-width:5px!important', 'fill:none!important'])
+  })
+
   it('should handle angle bracket ' > ' as direction LR', function () {
     const res = flow.parser.parse('graph >;A-->B;')
 
