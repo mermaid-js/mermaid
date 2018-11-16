@@ -99,19 +99,32 @@ export const updateLinkInterpolate = function (pos, interp) {
 }
 
 /**
+ * Updates a style
+ * @param pos
+ * @param style
+ * @param important if we need to append !imporant on the sytles
+ */
+const updateStyle = function (list, pos, style, important = false) {
+  if (important) {
+    style = style.map(s => s + '!important')
+  }
+  if (pos === 'default') {
+    list.defaultStyle = style
+  } else {
+    if (utils.isSubstringInArray('fill', style) === -1) {
+      style.push('fill:none' + (important ? '!important' : ''))
+    }
+    list[pos].style = style
+  }
+}
+
+/**
  * Updates a link with a style
  * @param pos
  * @param style
  */
 export const updateLink = function (pos, style) {
-  if (pos === 'default') {
-    edges.defaultStyle = style
-  } else {
-    if (utils.isSubstringInArray('fill', style) === -1) {
-      style.push('fill:none')
-    }
-    edges[pos].style = style
-  }
+  updateStyle(edges, pos, style)
 }
 
 /**
@@ -120,15 +133,7 @@ export const updateLink = function (pos, style) {
  * @param style
  */
 export const updateSubGraph = function (pos, style) {
-  style = style.map(function (s) { return s + '!important' })
-  if (pos === 'default') {
-    subGraphs.defaultStyle = style
-  } else {
-    if (utils.isSubstringInArray('fill', style) === -1) {
-      style.push('fill:none!important')
-    }
-    subGraphs[pos].style = style
-  }
+  updateStyle(subGraphs, pos, style, true)
 }
 
 export const addClass = function (id, style) {
