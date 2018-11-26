@@ -17,6 +17,8 @@ const conf = {
   width: 150,
   // Height of actor boxes
   height: 65,
+  actorFontSize: 14,
+  actorFontFamily: '"Open-Sans", "sans-serif"',
   // Margin around loop boxes
   boxMargin: 10,
   boxTextMargin: 5,

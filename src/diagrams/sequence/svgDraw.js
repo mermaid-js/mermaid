@@ -89,7 +89,7 @@ export const drawActor = function (elem, left, verticalPos, description, conf) {
   drawRect(g, rect)
 
   _drawTextCandidateFunc(conf)(description, g,
-    rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' })
+    rect.x, rect.y, rect.width, rect.height, { 'class': 'actor' }, conf)
 }
 
 export const anchorElement = function (elem) {
@@ -252,22 +252,30 @@ const _drawTextCandidateFunc = (function () {
     _setTextAttrs(text, textAttrs)
   }
 
-  function byTspan (content, g, x, y, width, height, textAttrs) {
-    const text = g.append('text')
-      .attr('x', x + width / 2).attr('y', y)
-      .style('text-anchor', 'middle')
-    text.append('tspan')
-      .attr('x', x + width / 2).attr('dy', '0')
-      .text(content)
+  function byTspan (content, g, x, y, width, height, textAttrs, conf) {
+    const { actorFontSize, actorFontFamily } = conf
 
-    text.attr('y', y + height / 2.0)
-      .attr('dominant-baseline', 'central')
-      .attr('alignment-baseline', 'central')
+    const lines = content.split(/<br\/?>/ig)
+    for (let i = 0; i < lines.length; i++) {
+      const dy = (i * actorFontSize) - (actorFontSize * (lines.length - 1) / 2)
+      const text = g.append('text')
+        .attr('x', x + width / 2).attr('y', y)
+        .style('text-anchor', 'middle')
+        .style('font-size', actorFontSize)
+        .style('font-family', actorFontFamily)
+      text.append('tspan')
+        .attr('x', x + width / 2).attr('dy', dy)
+        .text(lines[i])
 
-    _setTextAttrs(text, textAttrs)
+      text.attr('y', y + height / 2.0)
+        .attr('dominant-baseline', 'central')
+        .attr('alignment-baseline', 'central')
+
+      _setTextAttrs(text, textAttrs)
+    }
   }
 
-  function byFo (content, g, x, y, width, height, textAttrs) {
+  function byFo (content, g, x, y, width, height, textAttrs, conf) {
     const s = g.append('switch')
     const f = s.append('foreignObject')
       .attr('x', x).attr('y', y)
@@ -280,7 +288,7 @@ const _drawTextCandidateFunc = (function () {
       .style('text-align', 'center').style('vertical-align', 'middle')
       .text(content)
 
-    byTspan(content, s, x, y, width, height, textAttrs)
+    byTspan(content, s, x, y, width, height, textAttrs, conf)
     _setTextAttrs(text, textAttrs)
   }
 
