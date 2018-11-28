@@ -181,14 +181,7 @@ const setLink = function (id, linkStr) {
     return
   }
   if (typeof vertices[id] !== 'undefined') {
-    funs.push(function (element) {
-      const elem = d3.select(element).select(`[id="${id}"]`)
-      if (elem !== null) {
-        elem.on('click', function () {
-          window.open(linkStr, 'newTab')
-        })
-      }
-    })
+    vertices[id].link = linkStr
   }
 }
 export const getTooltip = function (id) {
