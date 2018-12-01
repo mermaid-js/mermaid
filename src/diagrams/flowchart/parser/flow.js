@@ -271,16 +271,16 @@ case 112:
 this.$ = $$[$0-4];yy.setClass($$[$0-2], $$[$0]);
 break;
 case 113:
-this.$ = $$[$0-4];yy.setClickEvent($$[$0-2],        $$[$0], undefined, undefined);
+this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], $$[$0], undefined);
 break;
 case 114:
-this.$ = $$[$0-6];yy.setClickEvent($$[$0-4],        $$[$0-2], undefined, $$[$0])       ;
+this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], $$[$0-2], $$[$0])       ;
 break;
 case 115:
-this.$ = $$[$0-4];yy.setClickEvent($$[$0-2], undefined,        $$[$0], undefined);
+this.$ = $$[$0-4];yy.setLink($$[$0-2], $$[$0], undefined);
 break;
 case 116:
-this.$ = $$[$0-6];yy.setClickEvent($$[$0-4], undefined,        $$[$0-2], $$[$0]       );
+this.$ = $$[$0-6];yy.setLink($$[$0-4], $$[$0-2], $$[$0]       );
 break;
 case 117:
 this.$ = $$[$0-4];yy.addVertex($$[$0-2],undefined,undefined,$$[$0]);

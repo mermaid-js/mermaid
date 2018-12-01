@@ -137,27 +137,24 @@ export const setDirection = function (dir) {
 }
 
 /**
- * Called by parser when a graph definition is found, stores the direction of the chart.
- * @param dir
+ * Called by parser when a special node is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param className Class to add
  */
-export const setClass = function (id, className) {
-  if (id.indexOf(',') > 0) {
-    id.split(',').forEach(function (id2) {
-      if (typeof vertices[id2] !== 'undefined') {
-        vertices[id2].classes.push(className)
-      }
-    })
-  } else {
+export const setClass = function (ids, className) {
+  ids.split(',').forEach(function (id) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className)
     }
-  }
+  })
 }
 
-const setTooltip = function (id, tooltip) {
-  if (typeof tooltip !== 'undefined') {
-    tooltips[id] = tooltip
-  }
+const setTooltip = function (ids, tooltip) {
+  ids.split(',').forEach(function (id) {
+    if (typeof tooltip !== 'undefined') {
+      tooltips[id] = tooltip
+    }
+  })
 }
 
 const setClickFun = function (id, functionName) {
@@ -176,36 +173,35 @@ const setClickFun = function (id, functionName) {
   }
 }
 
-const setLink = function (id, linkStr) {
-  if (typeof linkStr === 'undefined') {
-    return
-  }
-  if (typeof vertices[id] !== 'undefined') {
-    vertices[id].link = linkStr
-  }
+/**
+ * Called by parser when a link is found. Adds the URL to the vertex data.
+ * @param ids Comma separated list of ids
+ * @param linkStr URL to create a link for
+ * @param tooltip Tooltip for the clickable element
+ */
+export const setLink = function (ids, linkStr, tooltip) {
+  ids.split(',').forEach(function (id) {
+    if (typeof vertices[id] !== 'undefined') {
+      vertices[id].link = linkStr
+    }
+  })
+  setTooltip(ids, tooltip)
+  setClass(ids, 'clickable')
 }
 export const getTooltip = function (id) {
   return tooltips[id]
 }
 
 /**
- * Called by parser when a graph definition is found, stores the direction of the chart.
- * @param dir
+ * Called by parser when a click definition is found. Registers an event handler.
+ * @param ids Comma separated list of ids
+ * @param functionName Function to be called on click
+ * @param tooltip Tooltip for the clickable element
  */
-export const setClickEvent = function (id, functionName, link, tooltip) {
-  if (id.indexOf(',') > 0) {
-    id.split(',').forEach(function (id2) {
-      setTooltip(id2, tooltip)
-      setClickFun(id2, functionName)
-      setLink(id2, link)
-      setClass(id, 'clickable')
-    })
-  } else {
-    setTooltip(id, tooltip)
-    setClickFun(id, functionName)
-    setLink(id, link)
-    setClass(id, 'clickable')
-  }
+export const setClickEvent = function (ids, functionName, tooltip) {
+  ids.split(',').forEach(function (id) { setClickFun(id, functionName) })
+  setTooltip(ids, tooltip)
+  setClass(ids, 'clickable')
 }
 
 export const bindFunctions = function (element) {
@@ -402,6 +398,7 @@ export default {
   setClass,
   getTooltip,
   setClickEvent,
+  setLink,
   bindFunctions,
   getDirection,
   getVertices,
