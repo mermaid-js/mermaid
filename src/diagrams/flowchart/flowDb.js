@@ -42,6 +42,7 @@ export const addVertex = function (id, text, type, style) {
 
     vertices[id].text = txt
   }
+  
   if (typeof type !== 'undefined') {
     vertices[id].type = type
   }
