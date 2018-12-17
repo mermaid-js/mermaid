@@ -73,7 +73,7 @@
 */
 var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,12],$V2=[1,13],$V3=[1,15],$V4=[1,16],$V5=[1,17],$V6=[6,8],$V7=[1,26],$V8=[1,27],$V9=[1,28],$Va=[1,29],$Vb=[1,30],$Vc=[1,31],$Vd=[6,8,13,17,23,26,27,28,29,30,31],$Ve=[6,8,13,17,23,26,27,28,29,30,31,45,46,47],$Vf=[23,45,46,47],$Vg=[23,30,31,45,46,47],$Vh=[23,26,27,28,29,45,46,47],$Vi=[6,8,13],$Vj=[1,46];
-var parser = {trace: function trace() { },
+var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"mermaidDoc":3,"graphConfig":4,"CLASS_DIAGRAM":5,"NEWLINE":6,"statements":7,"EOF":8,"statement":9,"className":10,"alphaNumToken":11,"relationStatement":12,"LABEL":13,"classStatement":14,"methodStatement":15,"CLASS":16,"STRUCT_START":17,"members":18,"STRUCT_STOP":19,"MEMBER":20,"SEPARATOR":21,"relation":22,"STR":23,"relationType":24,"lineType":25,"AGGREGATION":26,"EXTENSION":27,"COMPOSITION":28,"DEPENDENCY":29,"LINE":30,"DOTTED_LINE":31,"commentToken":32,"textToken":33,"graphCodeTokens":34,"textNoTagsToken":35,"TAGSTART":36,"TAGEND":37,"==":38,"--":39,"PCT":40,"DEFAULT":41,"SPACE":42,"MINUS":43,"keywords":44,"UNICODE_TEXT":45,"NUM":46,"ALPHA":47,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"CLASS_DIAGRAM",6:"NEWLINE",8:"EOF",13:"LABEL",16:"CLASS",17:"STRUCT_START",19:"STRUCT_STOP",20:"MEMBER",21:"SEPARATOR",23:"STR",26:"AGGREGATION",27:"EXTENSION",28:"COMPOSITION",29:"DEPENDENCY",30:"LINE",31:"DOTTED_LINE",34:"graphCodeTokens",36:"TAGSTART",37:"TAGEND",38:"==",39:"--",40:"PCT",41:"DEFAULT",42:"SPACE",43:"MINUS",44:"keywords",45:"UNICODE_TEXT",46:"NUM",47:"ALPHA"},
@@ -162,7 +162,7 @@ break;
 },
 table: [{3:1,4:2,5:[1,3]},{1:[3]},{1:[2,1]},{6:[1,4]},{7:5,9:6,10:10,11:14,12:7,14:8,15:9,16:$V0,20:$V1,21:$V2,45:$V3,46:$V4,47:$V5},{8:[1,18]},{6:[1,19],8:[2,3]},o($V6,[2,7],{13:[1,20]}),o($V6,[2,9]),o($V6,[2,10]),o($V6,[2,15],{22:21,24:24,25:25,13:[1,23],23:[1,22],26:$V7,27:$V8,28:$V9,29:$Va,30:$Vb,31:$Vc}),{10:32,11:14,45:$V3,46:$V4,47:$V5},o($V6,[2,17]),o($V6,[2,18]),o($Vd,[2,6],{11:14,10:33,45:$V3,46:$V4,47:$V5}),o($Ve,[2,46]),o($Ve,[2,47]),o($Ve,[2,48]),{1:[2,2]},{7:34,9:6,10:10,11:14,12:7,14:8,15:9,16:$V0,20:$V1,21:$V2,45:$V3,46:$V4,47:$V5},o($V6,[2,8]),{10:35,11:14,23:[1,36],45:$V3,46:$V4,47:$V5},{22:37,24:24,25:25,26:$V7,27:$V8,28:$V9,29:$Va,30:$Vb,31:$Vc},o($V6,[2,16]),{25:38,30:$Vb,31:$Vc},o($Vf,[2,26],{24:39,26:$V7,27:$V8,28:$V9,29:$Va}),o($Vg,[2,27]),o($Vg,[2,28]),o($Vg,[2,29]),o($Vg,[2,30]),o($Vh,[2,31]),o($Vh,[2,32]),o($V6,[2,11],{17:[1,40]}),o($Vd,[2,5]),{8:[2,4]},o($Vi,[2,19]),{10:41,11:14,45:$V3,46:$V4,47:$V5},{10:42,11:14,23:[1,43],45:$V3,46:$V4,47:$V5},o($Vf,[2,25],{24:44,26:$V7,27:$V8,28:$V9,29:$Va}),o($Vf,[2,24]),{18:45,20:$Vj},o($Vi,[2,21]),o($Vi,[2,20]),{10:47,11:14,45:$V3,46:$V4,47:$V5},o($Vf,[2,23]),{19:[1,48]},{18:49,19:[2,13],20:$Vj},o($Vi,[2,22]),o($V6,[2,12]),{19:[2,14]}],
 defaultActions: {2:[2,1],18:[2,2],34:[2,4],49:[2,14]},
-parseError: function parseError(str, hash) {
+parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
@@ -454,7 +454,7 @@ showPosition:function () {
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
+test_match:function(match, indexed_rule) {
         var token,
             lines,
             backup;
@@ -584,7 +584,7 @@ next:function () {
     },
 
 // return next match that has a token
-lex:function lex() {
+lex:function lex () {
         var r = this.next();
         if (r) {
             return r;
@@ -594,12 +594,12 @@ lex:function lex() {
     },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
+begin:function begin (condition) {
         this.conditionStack.push(condition);
     },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState() {
+popState:function popState () {
         var n = this.conditionStack.length - 1;
         if (n > 0) {
             return this.conditionStack.pop();
@@ -609,7 +609,7 @@ popState:function popState() {
     },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
+_currentRules:function _currentRules () {
         if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
             return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
         } else {
@@ -618,7 +618,7 @@ _currentRules:function _currentRules() {
     },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
+topState:function topState (n) {
         n = this.conditionStack.length - 1 - Math.abs(n || 0);
         if (n >= 0) {
             return this.conditionStack[n];
@@ -628,7 +628,7 @@ topState:function topState(n) {
     },
 
 // alias for begin(condition)
-pushState:function pushState(condition) {
+pushState:function pushState (condition) {
         this.begin(condition);
     },
 
@@ -726,7 +726,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
+exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);

@@ -73,7 +73,7 @@
 */
 var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[2,3],$V1=[1,7],$V2=[7,12,15,17,19,20,21],$V3=[7,11,12,15,17,19,20,21],$V4=[2,20],$V5=[1,32];
-var parser = {trace: function trace() { },
+var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"start":3,"GG":4,":":5,"document":6,"EOF":7,"DIR":8,"options":9,"body":10,"OPT":11,"NL":12,"line":13,"statement":14,"COMMIT":15,"commit_arg":16,"BRANCH":17,"ID":18,"CHECKOUT":19,"MERGE":20,"RESET":21,"reset_arg":22,"STR":23,"HEAD":24,"reset_parents":25,"CARET":26,"$accept":0,"$end":1},
 terminals_: {2:"error",4:"GG",5:":",7:"EOF",8:"DIR",11:"OPT",12:"NL",15:"COMMIT",17:"BRANCH",18:"ID",19:"CHECKOUT",20:"MERGE",21:"RESET",23:"STR",24:"HEAD",26:"CARET"},
@@ -141,7 +141,7 @@ break;
 },
 table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3],8:[1,4]},{6:5,7:$V0,9:6,12:$V1},{5:[1,8]},{7:[1,9]},o($V2,[2,7],{10:10,11:[1,11]}),o($V3,[2,6]),{6:12,7:$V0,9:6,12:$V1},{1:[2,1]},{7:[2,4],12:[1,15],13:13,14:14,15:[1,16],17:[1,17],19:[1,18],20:[1,19],21:[1,20]},o($V3,[2,5]),{7:[1,21]},o($V2,[2,8]),{12:[1,22]},o($V2,[2,10]),{12:[2,16],16:23,23:[1,24]},{18:[1,25]},{18:[1,26]},{18:[1,27]},{18:[1,30],22:28,24:[1,29]},{1:[2,2]},o($V2,[2,9]),{12:[2,11]},{12:[2,17]},{12:[2,12]},{12:[2,13]},{12:[2,14]},{12:[2,15]},{12:$V4,25:31,26:$V5},{12:$V4,25:33,26:$V5},{12:[2,18]},{12:$V4,25:34,26:$V5},{12:[2,19]},{12:[2,21]}],
 defaultActions: {9:[2,1],21:[2,2],23:[2,11],24:[2,17],25:[2,12],26:[2,13],27:[2,14],28:[2,15],31:[2,18],33:[2,19],34:[2,21]},
-parseError: function parseError(str, hash) {
+parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
@@ -432,7 +432,7 @@ showPosition:function () {
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
+test_match:function(match, indexed_rule) {
         var token,
             lines,
             backup;
@@ -562,7 +562,7 @@ next:function () {
     },
 
 // return next match that has a token
-lex:function lex() {
+lex:function lex () {
         var r = this.next();
         if (r) {
             return r;
@@ -572,12 +572,12 @@ lex:function lex() {
     },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
+begin:function begin (condition) {
         this.conditionStack.push(condition);
     },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState() {
+popState:function popState () {
         var n = this.conditionStack.length - 1;
         if (n > 0) {
             return this.conditionStack.pop();
@@ -587,7 +587,7 @@ popState:function popState() {
     },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
+_currentRules:function _currentRules () {
         if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
             return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
         } else {
@@ -596,7 +596,7 @@ _currentRules:function _currentRules() {
     },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
+topState:function topState (n) {
         n = this.conditionStack.length - 1 - Math.abs(n || 0);
         if (n >= 0) {
             return this.conditionStack[n];
@@ -606,7 +606,7 @@ topState:function topState(n) {
     },
 
 // alias for begin(condition)
-pushState:function pushState(condition) {
+pushState:function pushState (condition) {
         this.begin(condition);
     },
 
@@ -682,7 +682,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
+exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);

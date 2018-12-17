@@ -19,7 +19,7 @@
     "lint": "standard",
     "test": "yarn lint && jest",
     "test:watch": "jest --watch",
-    "jison": "node -r babel-register node_modules/.bin/gulp jison",
+    "jison": "node -r @babel/register node_modules/.bin/gulp jison",
     "prepublishOnly": "yarn build && yarn release && yarn test",
     "prepush": "yarn test"
   },
