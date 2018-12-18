@@ -220,9 +220,13 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
 
   let line
   if (startx === stopx) {
-    line = g.append('path')
-      .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
-      (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
+    if (conf.rightAngles) {
+      line = g.append('path').attr('d', `M  ${startx},${verticalPos} H ${startx + (conf.width / 2)} V ${verticalPos + 25} H ${startx}`)
+    } else {
+      line = g.append('path')
+        .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
+        (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
+    }
 
     bounds.bumpVerticalPos(30)
     const dx = Math.max(textWidth / 2, 100)
