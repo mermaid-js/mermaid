@@ -101,12 +101,12 @@ export const anchorElement = function (elem) {
  * @param bounds - activation box bounds
  * @param verticalPos - precise y cooridnate of bottom activation box edge
  */
-export const drawActivation = function (elem, bounds, verticalPos) {
+export const drawActivation = function (elem, bounds, verticalPos, conf, actorActivations) {
   const rect = getNoteRect()
   const g = bounds.anchored
   rect.x = bounds.startx
   rect.y = bounds.starty
-  rect.fill = '#f4f4f4'
+  rect.class = 'activation' + (actorActivations % 3) // Will evaluate to 0, 1 or 2
   rect.width = bounds.stopx - bounds.startx
   rect.height = verticalPos - bounds.starty
   drawRect(g, rect)
