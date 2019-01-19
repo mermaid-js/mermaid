@@ -1,7 +1,5 @@
-/* eslint-env jest */
+/* eslint-env jasmine */
 import utils from './utils'
-
-jest.mock('d3', () => ({ curveMockBasis: 'mockBasis' }))
 
 describe('when detecting chart type ', function () {
   it('should handle a graph defintion', function () {
@@ -59,11 +57,11 @@ describe('when converting an interpolate to a curve', function () {
   const defaultCurve = 'linear'
   it('should return the defualt curve because the interpolate is falsy', function () {
     const result = utils.interpolateToCurve('', defaultCurve)
-    expect(result).toEqual(defaultCurve)
+    expect(result).toEqual('linear')
   })
   it('should return the d3 curve name, because the interpolate is found in d3', function () {
-    const result = utils.interpolateToCurve('mockBasis', undefined)
-    expect(result).toEqual('mockBasis')
+    const result = utils.interpolateToCurve('basis', undefined)
+    expect(result).toEqual('basis')
   })
   it('should return the default curve name because the interpolate is not in d3[]', function () {
     const result = utils.interpolateToCurve('curveUnknown', defaultCurve)
