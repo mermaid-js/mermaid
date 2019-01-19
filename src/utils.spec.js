@@ -42,34 +42,29 @@ describe('when detecting chart type ', function () {
 
 describe('when finding substring in array ', function () {
   it('should return the array index that contains the substring', function () {
-    const arr = [ 'stroke:val1', 'fill:val2' ]
+    const arr = ['stroke:val1', 'fill:val2']
     const result = utils.isSubstringInArray('fill', arr)
     expect(result).toEqual(1)
   })
   it('should return -1 if the substring is not found in the array', function () {
-    const arr = [ 'stroke:val1', 'stroke-width:val2' ]
+    const arr = ['stroke:val1', 'stroke-width:val2']
     const result = utils.isSubstringInArray('fill', arr)
     expect(result).toEqual(-1)
   })
 })
 
 describe('when converting an interpolate to a curve', function () {
+  const defaultCurve = 'linear'
   it('should return the defualt curve because the interpolate is falsy', function () {
-    const interpolate = ''
-    const defaultCurve = ''
-    const result = utils.interpolateToCurve(interpolate, defaultCurve)
-    expect(result).toEqual(defaultCurve)
+    const result = utils.interpolateToCurve('', defaultCurve)
+    expect(result).toEqual('linear')
   })
   it('should return the d3 curve name, because the interpolate is found in d3', function () {
-    const interpolate = 'basis'
-    const defaultCurve = undefined
-    const result = utils.interpolateToCurve(interpolate, defaultCurve)
+    const result = utils.interpolateToCurve('basis', undefined)
     expect(result).toEqual('basis')
   })
   it('should return the default curve name because the interpolate is not in d3[]', function () {
-    const interpolate = 'curveUnknown'
-    const defaultCurve = 'curveBasis'
-    const result = utils.interpolateToCurve(interpolate, defaultCurve)
+    const result = utils.interpolateToCurve('curveUnknown', defaultCurve)
     expect(result).toEqual(defaultCurve)
   })
 })
