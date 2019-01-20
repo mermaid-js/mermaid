@@ -5,9 +5,8 @@ import { LEVELS, logger, setLogLevel } from './logger'
 const mockTime = '00:00:00.00'
 jest.mock('moment', () => () => ({ format: () => mockTime }))
 
-const levelArray = Object.keys(LEVELS)
-const minLevel = Math.min.apply(Math, Object.values(LEVELS))
-const maxLevel = Math.max.apply(Math, Object.values(LEVELS))
+const levelNames = Object.keys(LEVELS)
+
 const expectedColors = {
   debug: '\x1b[32m',
   info: '\x1b[34m',
@@ -16,35 +15,48 @@ const expectedColors = {
   fatal: '\x1b[35m'
 }
 
+// A function to test that the logger object contains a function for each level
+// and that when calling that function it returns a value of undefined
 const expectAllLevelsToEqualFunctions = function () {
   // for each function in the logger object
-  for (let i = 0; i < levelArray.length; i++) {
+  for (let i = 0; i < levelNames.length; i++) {
     // check that it's a function
-    expect(typeof logger[levelArray[i]]).toEqual('function')
+    expect(typeof logger[levelNames[i]]).toEqual('function')
     // call the function and ensure it doesn't return anything
-    expect(logger[levelArray[i]]()).toEqual(undefined)
+    expect(logger[levelNames[i]]()).toEqual(undefined)
   }
 }
 
+// A function for testing the setLogLevel function.
+// it will:
+// - set each function in logger to undefined
+// - call setLogLevel
+// - test that each function in logger is set to atleast an empty function.
+// - test that only the functions with the log level and above are set by
+//   check if the mocked console.log.bind function was called.
 const testSetLogLevel = function (level) {
+  const levelValues = Object.values(LEVELS)
+  const minLevel = Math.min.apply(Math, levelValues)
+  const maxLevel = Math.max.apply(Math, levelValues)
   // cap the level entered to the minimum and maximum levels
   const cappedLevel = Math.min(Math.max(level, minLevel), maxLevel + 1)
-  const numberOfLevelFunctionsInitialized = levelArray.length - cappedLevel
+  const numberOfLevelFunctionsInitialized = levelNames.length - cappedLevel
+
   // set each function in the logger object to undefined
-  for (let i = 0; i < levelArray.length; i++) {
-    logger[levelArray[i]] = undefined
+  for (let i = 0; i < levelNames.length; i++) {
+    logger[levelNames[i]] = undefined
   }
   setLogLevel(level)
   expectAllLevelsToEqualFunctions()
-  // expect(console.log.bind).toHaveBeenCalledTimes(numberOfLevelFunctionsInitialized + 1)
+  // check that mocked versions of console.log.bind was called for the proper functions
   for (let i = 1; i <= numberOfLevelFunctionsInitialized; i++) {
-    const reverseIndex = levelArray.length - i
+    const reverseIndex = levelNames.length - i
     // expect each function that is set to console.log.bind to have been
     expect(console.log.bind).toHaveBeenNthCalledWith(
       i,
       console,
-      expectedColors[levelArray[reverseIndex]],
-      `${mockTime} : ${levelArray[reverseIndex].toUpperCase()} : `
+      expectedColors[levelNames[reverseIndex]],
+      `${mockTime} : ${levelNames[reverseIndex].toUpperCase()} : `
     )
   }
 }
@@ -69,19 +81,9 @@ describe('when using logger', function () {
       console.log.bind.mockClear()
     })
 
-    // Create a test for each log level
-    for (let i = 0; i < levelArray.length; i++) {
-      // compile list of function names for the test description
-      let functionNames = [ `.${levelArray[i]}()` ]
-      for (let x = i + 1; x < levelArray.length; x++) {
-        functionNames.push(`.${levelArray[i]}()`)
-      }
-      it(`${levelArray[i]}, should set ${functionNames.join(
-        ', '
-      )} to a mocked version of console.log.bind`, function () {
-        testSetLogLevel(LEVELS[levelArray[i]])
-      })
-    }
+    it.each(levelNames)('%s, should set funcs >= to a mocked version of console.log.bind', function (level) {
+      testSetLogLevel(LEVELS[level])
+    })
 
     it('a value higher than the maximum level, should reinitialize all functions but not set any of the functions', function () {
       testSetLogLevel(Number.MAX_VALUE)
