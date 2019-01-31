@@ -157,7 +157,7 @@ const compileData = function (prevTask, dataStr) {
 
   const task = {}
 
-  // Get tags like active, done cand crit
+  // Get tags like active, done, crit and milestone
   let matchFound = true
   while (matchFound) {
     matchFound = false
@@ -173,6 +173,11 @@ const compileData = function (prevTask, dataStr) {
     }
     if (data[0].match(/^\s*crit\s*$/)) {
       task.crit = true
+      data.shift(1)
+      matchFound = true
+    }
+    if (data[0].match(/^\s*milestone\s*$/)) {
+      task.milestone = true
       data.shift(1)
       matchFound = true
     }
@@ -215,7 +220,7 @@ const parseData = function (prevTaskId, dataStr) {
 
   const task = {}
 
-  // Get tags like active, done cand crit
+  // Get tags like active, done, crit and milestone
   let matchFound = true
   while (matchFound) {
     matchFound = false
@@ -231,6 +236,11 @@ const parseData = function (prevTaskId, dataStr) {
     }
     if (data[0].match(/^\s*crit\s*$/)) {
       task.crit = true
+      data.shift(1)
+      matchFound = true
+    }
+    if (data[0].match(/^\s*milestone\s*$/)) {
+      task.milestone = true
       data.shift(1)
       matchFound = true
     }
@@ -281,6 +291,7 @@ export const addTask = function (descr, data) {
   rawTask.active = taskInfo.active
   rawTask.done = taskInfo.done
   rawTask.crit = taskInfo.crit
+  rawTask.milestone = taskInfo.milestone
 
   const pos = rawTasks.push(rawTask)
 
@@ -308,6 +319,7 @@ export const addTaskOrg = function (descr, data) {
   newTask.active = taskInfo.active
   newTask.done = taskInfo.done
   newTask.crit = taskInfo.crit
+  newTask.milestone = taskInfo.milestone
   lastTask = newTask
   tasks.push(newTask)
 }
