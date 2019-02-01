@@ -1,4 +1,5 @@
 /* eslint-env jasmine */
+/* eslint-disable no-eval */
 import { parser } from './parser/gantt'
 import ganttDb from './ganttDb'
 import moment from 'moment'
@@ -54,79 +55,32 @@ describe('when parsing a gantt diagram it', function () {
     expect(tasks[0].id).toEqual('des1')
     expect(tasks[0].task).toEqual('Design jison grammar')
   })
-  it('should handle a milestone task', function () {
-    const str = 'gantt\n' +
-      'dateFormat YYYY-MM-DD\n' +
-      'title Adding gantt diagram functionality to mermaid\n' +
-      'section Documentation\n' +
-      'test task:milestone, 2014-01-01, 2014-01-04'
+  it.each`
+    tags                     | milestone | done     | crit     | active
+    ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
+    ${'done'}                | ${false}  | ${true}  | ${false} | ${false}
+    ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
+    ${'active'}              | ${false}  | ${false} | ${false} | ${true}
+    ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
+    `('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  const str = 'gantt\n' +
+        'dateFormat YYYY-MM-DD\n' +
+        'title Adding gantt diagram functionality to mermaid\n' +
+        'section Documentation\n' +
+        'test task:' + tags + ', 2014-01-01, 2014-01-04'
 
-    parser.parse(str)
+  const allowedTags = ['active', 'done', 'crit', 'milestone']
 
-    const tasks = parser.yy.getTasks()
-    expect(tasks[0].milestone).toBeTruthy()
-    expect(tasks[0].done).toBeFalsy()
-    expect(tasks[0].crit).toBeFalsy()
-    expect(tasks[0].active).toBeFalsy()
+  parser.parse(str)
+
+  const tasks = parser.yy.getTasks()
+
+  allowedTags.forEach(function (t) {
+    if (eval(t)) {
+      expect(tasks[0][t]).toBeTruthy()
+    } else {
+      expect(tasks[0][t]).toBeFalsy()
+    }
   })
-  it('should handle a done task', function () {
-    const str = 'gantt\n' +
-      'dateFormat YYYY-MM-DD\n' +
-      'title Adding gantt diagram functionality to mermaid\n' +
-      'section Documentation\n' +
-      'test task:done, 2014-01-01, 2014-01-04'
-
-    parser.parse(str)
-
-    const tasks = parser.yy.getTasks()
-    expect(tasks[0].milestone).toBeFalsy()
-    expect(tasks[0].done).toBeTruthy()
-    expect(tasks[0].crit).toBeFalsy()
-    expect(tasks[0].active).toBeFalsy()
-  })
-  it('should handle a critical task', function () {
-    const str = 'gantt\n' +
-      'dateFormat YYYY-MM-DD\n' +
-      'title Adding gantt diagram functionality to mermaid\n' +
-      'section Documentation\n' +
-      'test task:crit, 2014-01-01, 2014-01-04'
-
-    parser.parse(str)
-
-    const tasks = parser.yy.getTasks()
-    expect(tasks[0].milestone).toBeFalsy()
-    expect(tasks[0].done).toBeFalsy()
-    expect(tasks[0].crit).toBeTruthy()
-    expect(tasks[0].active).toBeFalsy()
-  })
-  it('should handle an active task', function () {
-    const str = 'gantt\n' +
-      'dateFormat YYYY-MM-DD\n' +
-      'title Adding gantt diagram functionality to mermaid\n' +
-      'section Documentation\n' +
-      'test task:active, 2014-01-01, 2014-01-04'
-
-    parser.parse(str)
-
-    const tasks = parser.yy.getTasks()
-    expect(tasks[0].milestone).toBeFalsy()
-    expect(tasks[0].done).toBeFalsy()
-    expect(tasks[0].crit).toBeFalsy()
-    expect(tasks[0].active).toBeTruthy()
-  })
-  it('should handle task with multiple tags', function () {
-    const str = 'gantt\n' +
-      'dateFormat YYYY-MM-DD\n' +
-      'title Adding gantt diagram functionality to mermaid\n' +
-      'section Documentation\n' +
-      'test task:crit,milestone,done, 2014-01-01, 2014-01-04'
-
-    parser.parse(str)
-
-    const tasks = parser.yy.getTasks()
-    expect(tasks[0].milestone).toBeTruthy()
-    expect(tasks[0].done).toBeTruthy()
-    expect(tasks[0].crit).toBeTruthy()
-    expect(tasks[0].active).toBeFalsy()
-  })
+})
 })
