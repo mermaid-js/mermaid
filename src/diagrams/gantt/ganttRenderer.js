@@ -98,7 +98,7 @@ export const draw = function (text, id) {
   }
 
   function drawRects (theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
-    //draw background rects covering the entire width of the graph, these form the section rows.
+    // Draw background rects covering the entire width of the graph, these form the section rows.
     svg.append('g')
       .selectAll('rect')
       .data(theArray)
@@ -121,7 +121,7 @@ export const draw = function (text, id) {
         return 'section section0'
       })
 
-    //draw the rects representing the tasks
+    // Draw the rects representing the tasks
     const rectangles = svg.append('g')
       .selectAll('rect')
       .data(theArray)
@@ -132,7 +132,7 @@ export const draw = function (text, id) {
       .attr('ry', 3)
       .attr('x', function (d) {
         if (d.milestone) {
-          return timeScale(d.startTime) + theSidePad + (0.5 * (timeScale(d.endTime) - timeScale(d.startTime))) - (0.5* theBarHeight)
+          return timeScale(d.startTime) + theSidePad + (0.5 * (timeScale(d.endTime) - timeScale(d.startTime))) - (0.5 * theBarHeight)
         }
         return timeScale(d.startTime) + theSidePad
       })
@@ -146,9 +146,9 @@ export const draw = function (text, id) {
         return (timeScale(d.endTime) - timeScale(d.startTime))
       })
       .attr('height', theBarHeight)
-      .attr('transform-origin', function(d, i) {
-        return (timeScale(d.startTime) + theSidePad + 0.5 * (timeScale(d.endTime) - timeScale(d.startTime))).toString() + 'px ' + (i * theGap + theTopPad + 0.5* theBarHeight).toString() + 'px'
-      } )
+      .attr('transform-origin', function (d, i) {
+        return (timeScale(d.startTime) + theSidePad + 0.5 * (timeScale(d.endTime) - timeScale(d.startTime))).toString() + 'px ' + (i * theGap + theTopPad + 0.5 * theBarHeight).toString() + 'px'
+      })
       .attr('class', function (d) {
         const res = 'task'
 
@@ -186,8 +186,8 @@ export const draw = function (text, id) {
 
         return res + milestone + ' task' + secNum
       })
-    
-    //Append task labels
+
+    // Append task labels
     rectangles.append('text')
       .text(function (d) {
         return d.task
@@ -197,7 +197,7 @@ export const draw = function (text, id) {
         let startX = timeScale(d.startTime)
         let endX = timeScale(d.endTime)
         if (d.milestone) {
-          startX += (0.5 * (timeScale(d.endTime) - timeScale(d.startTime))) - (0.5* theBarHeight)
+          startX += (0.5 * (timeScale(d.endTime) - timeScale(d.startTime))) - (0.5 * theBarHeight)
         }
         if (d.milestone) {
           endX = startX + theBarHeight
