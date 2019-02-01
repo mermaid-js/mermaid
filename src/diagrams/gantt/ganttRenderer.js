@@ -98,6 +98,7 @@ export const draw = function (text, id) {
   }
 
   function drawRects (theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
+    //draw background rects covering the entire width of the graph, these form the section rows.
     svg.append('g')
       .selectAll('rect')
       .data(theArray)
@@ -120,6 +121,7 @@ export const draw = function (text, id) {
         return 'section section0'
       })
 
+    //draw the rects representing the tasks
     const rectangles = svg.append('g')
       .selectAll('rect')
       .data(theArray)
@@ -129,17 +131,26 @@ export const draw = function (text, id) {
       .attr('rx', 3)
       .attr('ry', 3)
       .attr('x', function (d) {
+        if (d.milestone) {
+          return timeScale(d.startTime) + theSidePad + (0.5 * (timeScale(d.endTime) - timeScale(d.startTime))) - (0.5* theBarHeight)
+        }
         return timeScale(d.startTime) + theSidePad
       })
       .attr('y', function (d, i) {
         return i * theGap + theTopPad
       })
       .attr('width', function (d) {
+        if (d.milestone) {
+          return theBarHeight
+        }
         return (timeScale(d.endTime) - timeScale(d.startTime))
       })
       .attr('height', theBarHeight)
+      .attr('transform-origin', function(d, i) {
+        return (timeScale(d.startTime) + theSidePad + 0.5 * (timeScale(d.endTime) - timeScale(d.startTime))).toString() + 'px ' + (i * theGap + theTopPad + 0.5* theBarHeight).toString() + 'px'
+      } )
       .attr('class', function (d) {
-        const res = 'task '
+        const res = 'task'
 
         let secNum = 0
         for (let i = 0; i < categories.length; i++) {
@@ -148,37 +159,49 @@ export const draw = function (text, id) {
           }
         }
 
+        let milestone = ''
+        if (d.milestone) {
+          milestone = ' milestone'
+        }
+
         if (d.active) {
           if (d.crit) {
-            return res + ' activeCrit' + secNum
+            return res + milestone + ' activeCrit' + secNum
           } else {
-            return res + ' active' + secNum
+            return res + milestone + ' active' + secNum
           }
         }
 
         if (d.done) {
           if (d.crit) {
-            return res + ' doneCrit' + secNum
+            return res + milestone + ' doneCrit' + secNum
           } else {
-            return res + ' done' + secNum
+            return res + milestone + ' done' + secNum
           }
         }
 
         if (d.crit) {
-          return res + ' crit' + secNum
+          return res + milestone + ' crit' + secNum
         }
 
-        return res + ' task' + secNum
+        return res + milestone + ' task' + secNum
       })
-
+    
+    //Append task labels
     rectangles.append('text')
       .text(function (d) {
         return d.task
       })
       .attr('font-size', conf.fontSize)
       .attr('x', function (d) {
-        const startX = timeScale(d.startTime)
-        const endX = timeScale(d.endTime)
+        let startX = timeScale(d.startTime)
+        let endX = timeScale(d.endTime)
+        if (d.milestone) {
+          startX += (0.5 * (timeScale(d.endTime) - timeScale(d.startTime))) - (0.5* theBarHeight)
+        }
+        if (d.milestone) {
+          endX = startX + theBarHeight
+        }
         const textWidth = this.getBBox().width
 
         // Check id text width > width of rectangle
@@ -198,7 +221,10 @@ export const draw = function (text, id) {
       .attr('text-height', theBarHeight)
       .attr('class', function (d) {
         const startX = timeScale(d.startTime)
-        const endX = timeScale(d.endTime)
+        let endX = timeScale(d.endTime)
+        if (d.milestone) {
+          endX = startX + theBarHeight
+        }
         const textWidth = this.getBBox().width
         let secNum = 0
         for (let i = 0; i < categories.length; i++) {
@@ -226,6 +252,10 @@ export const draw = function (text, id) {
           if (d.crit) {
             taskType = taskType + ' critText' + secNum
           }
+        }
+
+        if (d.milestone) {
+          taskType += ' milestoneText'
         }
 
         // Check id text width > width of rectangle
