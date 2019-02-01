@@ -158,30 +158,8 @@ const compileData = function (prevTask, dataStr) {
   const task = {}
 
   // Get tags like active, done, crit and milestone
-  let matchFound = true
-  while (matchFound) {
-    matchFound = false
-    if (data[0].match(/^\s*active\s*$/)) {
-      task.active = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*done\s*$/)) {
-      task.done = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*crit\s*$/)) {
-      task.crit = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*milestone\s*$/)) {
-      task.milestone = true
-      data.shift(1)
-      matchFound = true
-    }
-  }
+  getTaskTags(data, task)
+
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
@@ -221,30 +199,8 @@ const parseData = function (prevTaskId, dataStr) {
   const task = {}
 
   // Get tags like active, done, crit and milestone
-  let matchFound = true
-  while (matchFound) {
-    matchFound = false
-    if (data[0].match(/^\s*active\s*$/)) {
-      task.active = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*done\s*$/)) {
-      task.done = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*crit\s*$/)) {
-      task.crit = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*milestone\s*$/)) {
-      task.milestone = true
-      data.shift(1)
-      matchFound = true
-    }
-  }
+  getTaskTags(data, task)
+
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
@@ -372,4 +328,31 @@ export default {
   addTask,
   findTaskById,
   addTaskOrg
+}
+
+function getTaskTags (data, task) {
+  let matchFound = true
+  while (matchFound) {
+    matchFound = false
+    if (data[0].match(/^\s*active\s*$/)) {
+      task.active = true
+      data.shift(1)
+      matchFound = true
+    }
+    if (data[0].match(/^\s*done\s*$/)) {
+      task.done = true
+      data.shift(1)
+      matchFound = true
+    }
+    if (data[0].match(/^\s*crit\s*$/)) {
+      task.crit = true
+      data.shift(1)
+      matchFound = true
+    }
+    if (data[0].match(/^\s*milestone\s*$/)) {
+      task.milestone = true
+      data.shift(1)
+      matchFound = true
+    }
+  }
 }
