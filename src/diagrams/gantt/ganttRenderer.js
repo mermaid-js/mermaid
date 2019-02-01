@@ -159,32 +159,31 @@ export const draw = function (text, id) {
           }
         }
 
-        let milestone = ''
-        if (d.milestone) {
-          milestone = ' milestone'
-        }
-
+        let taskClass = ''
         if (d.active) {
-          if (d.crit) {
-            return res + milestone + ' activeCrit' + secNum
-          } else {
-            return res + milestone + ' active' + secNum
-          }
+          taskClass = ' active'
+        } else if (d.done) {
+          taskClass = ' done'
         }
-
-        if (d.done) {
-          if (d.crit) {
-            return res + milestone + ' doneCrit' + secNum
-          } else {
-            return res + milestone + ' done' + secNum
-          }
-        }
-
         if (d.crit) {
-          return res + milestone + ' crit' + secNum
+          if (taskClass.length > 0) {
+            taskClass += 'Crit'
+          } else {
+            taskClass = ' crit'
+          }
         }
 
-        return res + milestone + ' task' + secNum
+        if (taskClass.length === 0) {
+          taskClass = ' task'
+        }
+
+        if (d.milestone) {
+          taskClass = ' milestone' + taskClass
+        }
+
+        taskClass += secNum
+
+        return res + taskClass
       })
 
     // Append task labels
