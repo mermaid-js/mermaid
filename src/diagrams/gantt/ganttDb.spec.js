@@ -6,151 +6,48 @@ describe('when using the ganttDb', function () {
     ganttDb.clear()
   })
 
-  it('should handle an fixed dates', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2013-01-12')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 12))
-    expect(tasks[0].id).toEqual('id1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-  it('should handle duration (days) instead of fixed date to determine end date', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2d')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3))
-    expect(tasks[0].id).toEqual('id1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-  it('should handle duration (hours) instead of fixed date to determine end date', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2h')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 2))
-    expect(tasks[0].id).toEqual('id1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-  it('should handle duration (minutes) instead of fixed date to determine end date', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2m')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 0, 2))
-    expect(tasks[0].id).toEqual('id1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-  it('should handle duration (seconds) instead of fixed date to determine end date', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2s')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 0, 0, 2))
-    expect(tasks[0].id).toEqual('id1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-  it('should handle duration (weeks) instead of fixed date to determine end date', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2w')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 15))
-    expect(tasks[0].id).toEqual('id1')
-    expect(tasks[0].task).toEqual('test1')
-  })
+  it.each`
+    testName                                                                             | section     | taskName   | taskData                       | expStartDate            | expEndDate                       | expId      | expTask
+    ${'should handle fixed dates'}                                                       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2013-01-12'} | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'id1'}   | ${'test1'}
+    ${'should handle duration (days) instead of fixed date to determine end date'}       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2d'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 3)}          | ${'id1'}   | ${'test1'}
+    ${'should handle duration (hours) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2h'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 2)}       | ${'id1'}   | ${'test1'}
+    ${'should handle duration (minutes) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2m'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 2)}    | ${'id1'}   | ${'test1'}
+    ${'should handle duration (seconds) instead of fixed date to determine end date'}    | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2s'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 1, 0, 0, 2)} | ${'id1'}   | ${'test1'}
+    ${'should handle duration (weeks) instead of fixed date to determine end date'}      | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2w'}         | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 15)}         | ${'id1'}   | ${'test1'}
+    ${'should handle fixed dates without id'}                                            | ${'testa1'} | ${'test1'} | ${'2013-01-01,2013-01-12'}     | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'task1'} | ${'test1'}
+    ${'should handle duration instead of a fixed date to determine end date without id'} | ${'testa1'} | ${'test1'} | ${'2013-01-01,4d'}             | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 5)}          | ${'task1'} | ${'test1'}
+`('$testName', ({ section, taskName, taskData, expStartDate, expEndDate, expId, expTask }) => {
+  ganttDb.setDateFormat('YYYY-MM-DD')
+  ganttDb.addSection(section)
+  ganttDb.addTask(taskName, taskData)
+  const tasks = ganttDb.getTasks()
+  expect(tasks[0].startTime).toEqual(expStartDate)
+  expect(tasks[0].endTime).toEqual(expEndDate)
+  expect(tasks[0].id).toEqual(expId)
+  expect(tasks[0].task).toEqual(expTask)
+})
 
-  it('should handle relative start date based on id', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2w')
-    ganttDb.addTask('test2', 'id2,after id1,1d')
+  it.each`
+  section     | taskName1  | taskName2  | taskData1              | taskData2             | expStartDate2                                  | expEndDate2              | expId2     | expTask2
+  ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id1,1d'} | ${new Date(2013, 0, 15)}                       | ${undefined}                      | ${'id2'}   | ${'test2'}
+  ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'id2,after id3,1d'} | ${new Date((new Date()).setHours(0, 0, 0, 0))} | ${undefined}                      | ${'id2'}   | ${'test2'}
+  ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'after id1,1d'}     | ${new Date(2013, 0, 15)}                       | ${undefined}                      | ${'task1'} | ${'test2'}
+  ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2013-01-26'}       | ${new Date(2013, 0, 15)}                       | ${new Date(2013, 0, 26)} | ${'task1'} | ${'test2'}
+  ${'testa1'} | ${'test1'} | ${'test2'} | ${'id1,2013-01-01,2w'} | ${'2d'}               | ${new Date(2013, 0, 15)}                       | ${new Date(2013, 0, 17)} | ${'task1'} | ${'test2'}
+`('$testName', ({ section, taskName1, taskName2, taskData1, taskData2, expStartDate2, expEndDate2, expId2, expTask2 }) => {
+  ganttDb.setDateFormat('YYYY-MM-DD')
+  ganttDb.addSection(section)
+  ganttDb.addTask(taskName1, taskData1)
+  ganttDb.addTask(taskName2, taskData2)
+  const tasks = ganttDb.getTasks()
+  expect(tasks[1].startTime).toEqual(expStartDate2)
+  if (!expEndDate2 === undefined) {
+    expect(tasks[1].endTime).toEqual(expEndDate2)
+  }
+  expect(tasks[1].id).toEqual(expId2)
+  expect(tasks[1].task).toEqual(expTask2)
+})
 
-    const tasks = ganttDb.getTasks()
-
-    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
-    expect(tasks[1].id).toEqual('id2')
-    expect(tasks[1].task).toEqual('test2')
-  })
-
-  it('should handle relative start date based on id when id is invalid', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2w')
-    ganttDb.addTask('test2', 'id2,after id3,1d')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[1].startTime).toEqual(new Date((new Date()).setHours(0, 0, 0, 0)))
-    expect(tasks[1].id).toEqual('id2')
-    expect(tasks[1].task).toEqual('test2')
-  })
-
-  it('should handle fixed dates without id', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', '2013-01-01,2013-01-12')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 12))
-    expect(tasks[0].id).toEqual('task1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-
-  it('should handle duration instead of a fixed date to determine end date without id', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', '2013-01-01,4d')
-    const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
-    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 5))
-    expect(tasks[0].id).toEqual('task1')
-    expect(tasks[0].task).toEqual('test1')
-  })
-
-  it('should handle relative start date of a fixed date to determine end date without id', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2w')
-    ganttDb.addTask('test2', 'after id1,1d')
-
-    const tasks = ganttDb.getTasks()
-
-    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
-    expect(tasks[1].id).toEqual('task1')
-    expect(tasks[1].task).toEqual('test2')
-  })
-  it('should handle a new task with only an end date as definition', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2w')
-    ganttDb.addTask('test2', '2013-01-26')
-
-    const tasks = ganttDb.getTasks()
-
-    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
-    expect(tasks[1].endTime).toEqual(new Date(2013, 0, 26))
-    expect(tasks[1].id).toEqual('task1')
-    expect(tasks[1].task).toEqual('test2')
-  })
-  it('should handle a new task with only an end date as definition', function () {
-    ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.addSection('testa1')
-    ganttDb.addTask('test1', 'id1,2013-01-01,2w')
-    ganttDb.addTask('test2', '2d')
-
-    const tasks = ganttDb.getTasks()
-
-    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
-    expect(tasks[1].endTime).toEqual(new Date(2013, 0, 17))
-    expect(tasks[1].id).toEqual('task1')
-    expect(tasks[1].task).toEqual('test2')
-  })
   it('should handle relative start date based on id regardless of sections', function () {
     ganttDb.setDateFormat('YYYY-MM-DD')
     ganttDb.addSection('testa1')
