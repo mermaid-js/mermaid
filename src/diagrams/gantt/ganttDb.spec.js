@@ -1,5 +1,4 @@
 /* eslint-env jasmine */
-import moment from 'moment'
 import ganttDb from './ganttDb'
 
 describe('when using the ganttDb', function () {
@@ -12,8 +11,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2013-01-01,2013-01-12')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-12', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 12))
     expect(tasks[0].id).toEqual('id1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -22,8 +21,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2013-01-01,2d')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-03', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 3))
     expect(tasks[0].id).toEqual('id1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -32,8 +31,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2013-01-01,2h')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-01 2:00', 'YYYY-MM-DD hh:mm').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 2))
     expect(tasks[0].id).toEqual('id1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -42,8 +41,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2013-01-01,2m')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-01 00:02', 'YYYY-MM-DD hh:mm').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 0, 2))
     expect(tasks[0].id).toEqual('id1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -52,8 +51,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2013-01-01,2s')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-01 00:00:02', 'YYYY-MM-DD hh:mm:ss').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 1, 0, 0, 2))
     expect(tasks[0].id).toEqual('id1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -62,8 +61,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2013-01-01,2w')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 15))
     expect(tasks[0].id).toEqual('id1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -76,7 +75,7 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks()
 
-    expect(tasks[1].startTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
     expect(tasks[1].id).toEqual('id2')
     expect(tasks[1].task).toEqual('test2')
   })
@@ -97,8 +96,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', '2013-01-01,2013-01-12')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-12', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 12))
     expect(tasks[0].id).toEqual('task1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -108,8 +107,8 @@ describe('when using the ganttDb', function () {
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', '2013-01-01,4d')
     const tasks = ganttDb.getTasks()
-    expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-05', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2013, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2013, 0, 5))
     expect(tasks[0].id).toEqual('task1')
     expect(tasks[0].task).toEqual('test1')
   })
@@ -122,7 +121,7 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks()
 
-    expect(tasks[1].startTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
     expect(tasks[1].id).toEqual('task1')
     expect(tasks[1].task).toEqual('test2')
   })
@@ -134,8 +133,8 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks()
 
-    expect(tasks[1].startTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
-    expect(tasks[1].endTime).toEqual(moment('2013-01-26', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
+    expect(tasks[1].endTime).toEqual(new Date(2013, 0, 26))
     expect(tasks[1].id).toEqual('task1')
     expect(tasks[1].task).toEqual('test2')
   })
@@ -147,8 +146,8 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks()
 
-    expect(tasks[1].startTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
-    expect(tasks[1].endTime).toEqual(moment('2013-01-17', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 15))
+    expect(tasks[1].endTime).toEqual(new Date(2013, 0, 17))
     expect(tasks[1].id).toEqual('task1')
     expect(tasks[1].task).toEqual('test2')
   })
@@ -162,14 +161,14 @@ describe('when using the ganttDb', function () {
 
     const tasks = ganttDb.getTasks()
 
-    expect(tasks[1].startTime).toEqual(moment('2013-01-17', 'YYYY-MM-DD').toDate())
-    expect(tasks[1].endTime).toEqual(moment('2013-01-18', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].startTime).toEqual(new Date(2013, 0, 17))
+    expect(tasks[1].endTime).toEqual(new Date(2013, 0, 18))
     expect(tasks[1].id).toEqual('id2')
     expect(tasks[1].task).toEqual('test2')
 
     expect(tasks[2].id).toEqual('id3')
     expect(tasks[2].task).toEqual('test3')
-    expect(tasks[2].startTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
-    expect(tasks[2].endTime).toEqual(moment('2013-01-17', 'YYYY-MM-DD').toDate())
+    expect(tasks[2].startTime).toEqual(new Date(2013, 0, 15))
+    expect(tasks[2].endTime).toEqual(new Date(2013, 0, 17))
   })
 })

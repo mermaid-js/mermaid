@@ -1,8 +1,7 @@
 /* eslint-env jasmine */
 /* eslint-disable no-eval */
-import { parser } from './parser/gantt'
-import ganttDb from './ganttDb'
-import moment from 'moment'
+import { parser } from './gantt'
+import ganttDb from '../ganttDb'
 
 describe('when parsing a gantt diagram it', function () {
   beforeEach(function () {
@@ -50,8 +49,8 @@ describe('when parsing a gantt diagram it', function () {
 
     const tasks = parser.yy.getTasks()
 
-    expect(tasks[0].startTime).toEqual(moment('2014-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2014-01-04', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].startTime).toEqual(new Date(2014, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2014, 0, 4))
     expect(tasks[0].id).toEqual('des1')
     expect(tasks[0].task).toEqual('Design jison grammar')
   })
