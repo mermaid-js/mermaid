@@ -64,13 +64,19 @@ export const getTasks = function () {
 }
 
 const getNextValidDate = function (date, dateFormat, excludes) {
-  const excludeWeekends = excludes.indexOf('weekend') >= 0 || excludes.indexOf('weekends') >= 0;
+  const excludeWeekends = excludes.indexOf('weekend') >= 0 || excludes.indexOf('weekends') >= 0
   const trimmedDateFormat = dateFormat.trim()
-  let mDate = moment.isMoment(date) ? date : (moment.isDate(date) ? moment(date) : moment(date, dateFormat, true));
-  while ((excludeWeekends && mDate.isoWeekday() >= 6) || (excludes.indexOf(mDate.format(trimmedDateFormat)) >= 0)) {
+  let mDate = moment.isMoment(date) ? date : (moment.isDate(date) ? moment(date) : moment(date, dateFormat, true))
+
+  const isInvalidDate = function (d) {
+    return (excludeWeekends && d.isoWeekday() >= 6) || (excludes.indexOf(d.format(trimmedDateFormat)) >= 0)
+  }
+
+  while (isInvalidDate(mDate)) {
     mDate = mDate.add(1, 'd')
   }
-  return mDate.toDate();
+
+  return mDate.toDate()
 }
 
 const getStartDate = function (prevTime, dateFormat, excludes, str) {
@@ -86,15 +92,15 @@ const getStartDate = function (prevTime, dateFormat, excludes, str) {
     if (typeof task === 'undefined') {
       const dt = new Date()
       dt.setHours(0, 0, 0, 0)
-      //return getNextValidDate(dt, dateFormat, excludes)
+      // return getNextValidDate(dt, dateFormat, excludes)
       return dt
     }
-    //return getNextValidDate(task.endTime, dateFormat, excludes)
+    // return getNextValidDate(task.endTime, dateFormat, excludes)
     return task.endTime
   }
 
   // Check for actual date set
-  let mDate = moment(str, dateFormat.trim(), true);
+  let mDate = moment(str, dateFormat.trim(), true)
   if (mDate.isValid()) {
     return getNextValidDate(mDate, dateFormat, excludes)
   } else {
@@ -110,9 +116,9 @@ const getEndDate = function (prevTime, dateFormat, excludes, str) {
   str = str.trim()
 
   // Check for actual date
-  let mDate = moment(str, dateFormat.trim(), true);
+  let mDate = moment(str, dateFormat.trim(), true)
   if (mDate.isValid()) {
-    //return getNextValidDate(mDate, dateFormat, excludes)
+    // return getNextValidDate(mDate, dateFormat, excludes)
     return mDate.toDate()
   }
 
