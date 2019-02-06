@@ -92,10 +92,8 @@ const getStartDate = function (prevTime, dateFormat, excludes, str) {
     if (typeof task === 'undefined') {
       const dt = new Date()
       dt.setHours(0, 0, 0, 0)
-      // return getNextValidDate(dt, dateFormat, excludes)
       return dt
     }
-    // return getNextValidDate(task.endTime, dateFormat, excludes)
     return task.endTime
   }
 
@@ -118,7 +116,6 @@ const getEndDate = function (prevTime, dateFormat, excludes, str) {
   // Check for actual date
   let mDate = moment(str, dateFormat.trim(), true)
   if (mDate.isValid()) {
-    // return getNextValidDate(mDate, dateFormat, excludes)
     return mDate.toDate()
   }
 
