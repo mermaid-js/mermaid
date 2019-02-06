@@ -172,4 +172,18 @@ describe('when using the ganttDb', function () {
     expect(tasks[2].startTime).toEqual(moment('2013-01-15', 'YYYY-MM-DD').toDate())
     expect(tasks[2].endTime).toEqual(moment('2013-01-17', 'YYYY-MM-DD').toDate())
   })
+  it('should ignore weekends', function () {
+    ganttDb.setDateFormat('YYYY-MM-DD')
+    ganttDb.setExcludes('weekends 2019-02-06')
+    ganttDb.addSection('testa1')
+    ganttDb.addTask('test1', 'id1,2019-02-01,1d')
+    ganttDb.addTask('test2', 'id2,after id1,3d')
+
+    const tasks = ganttDb.getTasks()
+
+    expect(tasks[1].startTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].endTime).toEqual(moment('2019-02-07', 'YYYY-MM-DD').toDate())
+    expect(tasks[1].id).toEqual('id2')
+    expect(tasks[1].task).toEqual('test2')
+  })
 })

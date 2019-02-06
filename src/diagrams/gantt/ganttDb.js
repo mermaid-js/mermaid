@@ -3,6 +3,7 @@ import { logger } from '../../logger'
 
 let dateFormat = ''
 let axisFormat = ''
+let excludes = []
 let title = ''
 let sections = []
 let tasks = []
@@ -29,6 +30,10 @@ export const getAxisFormat = function () {
 
 export const setDateFormat = function (txt) {
   dateFormat = txt
+}
+
+export const setExcludes = function (txt) {
+  excludes = txt.split(' ')
 }
 
 export const setTitle = function (txt) {
@@ -58,7 +63,17 @@ export const getTasks = function () {
   return tasks
 }
 
-const getStartDate = function (prevTime, dateFormat, str) {
+const getNextValidDate = function (date, dateFormat, excludes) {
+  const excludeWeekends = excludes.indexOf('weekend') >= 0 || excludes.indexOf('weekends') >= 0;
+  const trimmedDateFormat = dateFormat.trim()
+  let mDate = moment.isMoment(date) ? date : (moment.isDate(date) ? moment(date) : moment(date, dateFormat, true));
+  while ((excludeWeekends && mDate.isoWeekday() >= 6) || (excludes.indexOf(mDate.format(trimmedDateFormat)) >= 0)) {
+    mDate = mDate.add(1, 'd')
+  }
+  return mDate.toDate();
+}
+
+const getStartDate = function (prevTime, dateFormat, excludes, str) {
   str = str.trim()
 
   // Test for after
@@ -71,29 +86,34 @@ const getStartDate = function (prevTime, dateFormat, str) {
     if (typeof task === 'undefined') {
       const dt = new Date()
       dt.setHours(0, 0, 0, 0)
+      //return getNextValidDate(dt, dateFormat, excludes)
       return dt
     }
+    //return getNextValidDate(task.endTime, dateFormat, excludes)
     return task.endTime
   }
 
   // Check for actual date set
-  if (moment(str, dateFormat.trim(), true).isValid()) {
-    return moment(str, dateFormat.trim(), true).toDate()
+  let mDate = moment(str, dateFormat.trim(), true);
+  if (mDate.isValid()) {
+    return getNextValidDate(mDate, dateFormat, excludes)
   } else {
     logger.debug('Invalid date:' + str)
     logger.debug('With date format:' + dateFormat.trim())
   }
 
   // Default date - now
-  return new Date()
+  return getNextValidDate(new Date(), dateFormat, excludes)
 }
 
-const getEndDate = function (prevTime, dateFormat, str) {
+const getEndDate = function (prevTime, dateFormat, excludes, str) {
   str = str.trim()
 
   // Check for actual date
-  if (moment(str, dateFormat.trim(), true).isValid()) {
-    return moment(str, dateFormat.trim()).toDate()
+  let mDate = moment(str, dateFormat.trim(), true);
+  if (mDate.isValid()) {
+    //return getNextValidDate(mDate, dateFormat, excludes)
+    return mDate.toDate()
   }
 
   const d = moment(prevTime)
@@ -119,10 +139,9 @@ const getEndDate = function (prevTime, dateFormat, str) {
         d.add(durationStatement[1], 'weeks')
         break
     }
-    return d.toDate()
   }
   // Default date - now
-  return d.toDate()
+  return getNextValidDate(d, dateFormat, excludes)
 }
 
 let taskCnt = 0
@@ -185,17 +204,17 @@ const compileData = function (prevTask, dataStr) {
     case 1:
       task.id = parseId()
       task.startTime = prevTask.endTime
-      task.endTime = getEndDate(task.startTime, dateFormat, data[0])
+      task.endTime = getEndDate(task.startTime, dateFormat, excludes, data[0])
       break
     case 2:
       task.id = parseId()
-      task.startTime = getStartDate(undefined, dateFormat, data[0])
-      task.endTime = getEndDate(task.startTime, dateFormat, data[1])
+      task.startTime = getStartDate(undefined, dateFormat, excludes, data[0])
+      task.endTime = getEndDate(task.startTime, dateFormat, excludes, data[1])
       break
     case 3:
       task.id = parseId(data[0])
-      task.startTime = getStartDate(undefined, dateFormat, data[1])
-      task.endTime = getEndDate(task.startTime, dateFormat, data[2])
+      task.startTime = getStartDate(undefined, dateFormat, excludes, data[1])
+      task.endTime = getEndDate(task.startTime, dateFormat, excludes, data[2])
       break
     default:
   }
@@ -322,7 +341,7 @@ const compileTasks = function () {
         task.startTime = prevTask.endTime
         break
       case 'getStartDate':
-        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData)
+        startTime = getStartDate(undefined, dateFormat, excludes, rawTasks[pos].raw.startTime.startData)
         if (startTime) {
           rawTasks[pos].startTime = startTime
         }
@@ -330,7 +349,7 @@ const compileTasks = function () {
     }
 
     if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
+      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, excludes, rawTasks[pos].raw.endTime.data)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
       }
@@ -359,5 +378,6 @@ export default {
   getTasks,
   addTask,
   findTaskById,
-  addTaskOrg
+  addTaskOrg,
+  setExcludes
 }

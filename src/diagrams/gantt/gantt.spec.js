@@ -17,10 +17,16 @@ describe('when parsing a gantt diagram it', function () {
 
     parser.parse(str)
   })
+  it('should handle an excludes definition', function () {
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01'
+
+    parser.parse(str)
+  })
   it('should handle a section definition', function () {
     const str = 'gantt\n' +
       'dateFormat yyyy-mm-dd\n' +
       'title Adding gantt diagram functionality to mermaid\n' +
+      'excludes weekdays 2019-02-01\n' +
       'section Documentation'
 
     parser.parse(str)
