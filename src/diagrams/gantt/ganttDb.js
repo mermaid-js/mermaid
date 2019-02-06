@@ -63,19 +63,17 @@ export const getTasks = function () {
   return tasks
 }
 
+const isInvalidDate = function (date, dateFormat, excludes) {
+  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0)
+    return true;
+  return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
+}
+
 const getNextValidDate = function (date, dateFormat, excludes) {
-  const excludeWeekends = excludes.indexOf('weekend') >= 0 || excludes.indexOf('weekends') >= 0
-  const trimmedDateFormat = dateFormat.trim()
-  let mDate = moment.isMoment(date) ? date : (moment.isDate(date) ? moment(date) : moment(date, dateFormat, true))
-
-  const isInvalidDate = function (d) {
-    return (excludeWeekends && d.isoWeekday() >= 6) || (excludes.indexOf(d.format(trimmedDateFormat)) >= 0)
-  }
-
-  while (isInvalidDate(mDate)) {
+  let mDate = moment(date, dateFormat, true)
+  while (isInvalidDate(mDate, dateFormat, excludes)) {
     mDate = mDate.add(1, 'd')
   }
-
   return mDate.toDate()
 }
 
