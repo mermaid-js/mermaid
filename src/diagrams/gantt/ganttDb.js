@@ -64,9 +64,10 @@ export const getTasks = function () {
 }
 
 const isInvalidDate = function (date, dateFormat, excludes) {
-  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0)
-    return true;
-  return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
+  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
+    return true
+  }
+  return excludes.indexOf(date.format(dateFormat.trim())) >= 0
 }
 
 const getNextValidDate = function (date, dateFormat, excludes) {
