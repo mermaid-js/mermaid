@@ -22,6 +22,8 @@
 
 **Merged pull requests:**
 
+- Adding weekend ignore do Gantt [\$314] (https://github.com/knsv/mermaid/issues/314)
+
 - Adding init argument to the global API [\#137](https://github.com/knsv/mermaid/pull/137) ([bollwyvl](https://github.com/bollwyvl))
 
 - Add description of manual calling of init [\#136](https://github.com/knsv/mermaid/pull/136) ([bollwyvl](https://github.com/bollwyvl))
