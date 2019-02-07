@@ -208,6 +208,5 @@ describe('when using the ganttDb', function () {
     expect(tasks[4].endTime).toEqual(moment('2019-02-21', 'YYYY-MM-DD').toDate())
     expect(tasks[4].id).toEqual('id5')
     expect(tasks[4].task).toEqual('test5')
-    
   })
 })

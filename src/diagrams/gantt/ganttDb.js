@@ -74,7 +74,7 @@ const isInvalidDate = function (date, dateFormat, excludes) {
 }
 
 const fixTaskDates = function (task, dateFormat, excludes) {
-  if (excludes.length && ! task.manualEndTime) {
+  if (excludes.length && !task.manualEndTime) {
     let startTime = moment(task.startTime).add(1, 'd')
     let endTime = moment(task.endTime)
     while (startTime.date() <= endTime.date()) {
@@ -233,7 +233,7 @@ const compileData = function (prevTask, dataStr) {
 
   if (endTimeData) {
     task.endTime = getEndDate(task.startTime, dateFormat, endTimeData)
-    task.manualEndTime = endTimeData == moment(task.endTime).format(dateFormat.trim())
+    task.manualEndTime = endTimeData === moment(task.endTime).format(dateFormat.trim())
     fixTaskDates(task, dateFormat, excludes)
   }
 
@@ -371,8 +371,8 @@ const compileTasks = function () {
       rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
-        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data == moment(rawTasks[pos].endTime).format(dateFormat.trim());
-        fixTaskDates(rawTasks[pos], dateFormat, excludes);
+        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data === moment(rawTasks[pos].endTime).format(dateFormat.trim())
+        fixTaskDates(rawTasks[pos], dateFormat, excludes)
       }
     }
 
