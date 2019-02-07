@@ -33,7 +33,7 @@ export const setDateFormat = function (txt) {
 }
 
 export const setExcludes = function (txt) {
-  excludes = txt.split(' ')
+  excludes = txt.toLowerCase().split(/[\s,]+/)
 }
 
 export const setTitle = function (txt) {
@@ -67,18 +67,27 @@ const isInvalidDate = function (date, dateFormat, excludes) {
   if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
     return true
   }
+  if (excludes.indexOf(date.format('dddd').toLowerCase()) >= 0) {
+    return true
+  }
   return excludes.indexOf(date.format(dateFormat.trim())) >= 0
 }
 
-const getNextValidDate = function (date, dateFormat, excludes) {
-  let mDate = moment(date, dateFormat, true)
-  while (isInvalidDate(mDate, dateFormat, excludes)) {
-    mDate = mDate.add(1, 'd')
+const fixTaskDates = function (task, dateFormat, excludes) {
+  if (excludes.length && ! task.manualEndTime) {
+    let startTime = moment(task.startTime).add(1, 'd')
+    let endTime = moment(task.endTime)
+    while (startTime.date() <= endTime.date()) {
+      if (isInvalidDate(startTime, dateFormat, excludes)) {
+        endTime.add(1, 'd')
+      }
+      startTime.add(1, 'd')
+    }
+    task.endTime = endTime.toDate()
   }
-  return mDate.toDate()
 }
 
-const getStartDate = function (prevTime, dateFormat, excludes, str) {
+const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
   // Test for after
@@ -99,17 +108,17 @@ const getStartDate = function (prevTime, dateFormat, excludes, str) {
   // Check for actual date set
   let mDate = moment(str, dateFormat.trim(), true)
   if (mDate.isValid()) {
-    return getNextValidDate(mDate, dateFormat, excludes)
+    return mDate.toDate()
   } else {
     logger.debug('Invalid date:' + str)
     logger.debug('With date format:' + dateFormat.trim())
   }
 
   // Default date - now
-  return getNextValidDate(new Date(), dateFormat, excludes)
+  return new Date()
 }
 
-const getEndDate = function (prevTime, dateFormat, excludes, str) {
+const getEndDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
   // Check for actual date
@@ -143,7 +152,7 @@ const getEndDate = function (prevTime, dateFormat, excludes, str) {
     }
   }
   // Default date - now
-  return getNextValidDate(d, dateFormat, excludes)
+  return d.toDate()
 }
 
 let taskCnt = 0
@@ -202,23 +211,30 @@ const compileData = function (prevTask, dataStr) {
     data[i] = data[i].trim()
   }
 
+  let endTimeData = ''
   switch (data.length) {
     case 1:
       task.id = parseId()
       task.startTime = prevTask.endTime
-      task.endTime = getEndDate(task.startTime, dateFormat, excludes, data[0])
+      endTimeData = data[0]
       break
     case 2:
       task.id = parseId()
-      task.startTime = getStartDate(undefined, dateFormat, excludes, data[0])
-      task.endTime = getEndDate(task.startTime, dateFormat, excludes, data[1])
+      task.startTime = getStartDate(undefined, dateFormat, data[0])
+      endTimeData = data[1]
       break
     case 3:
       task.id = parseId(data[0])
-      task.startTime = getStartDate(undefined, dateFormat, excludes, data[1])
-      task.endTime = getEndDate(task.startTime, dateFormat, excludes, data[2])
+      task.startTime = getStartDate(undefined, dateFormat, data[1])
+      endTimeData = data[2]
       break
     default:
+  }
+
+  if (endTimeData) {
+    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData)
+    task.manualEndTime = endTimeData == moment(task.endTime).format(dateFormat.trim())
+    fixTaskDates(task, dateFormat, excludes)
   }
 
   return task
@@ -291,6 +307,7 @@ export const addTask = function (descr, data) {
     section: currentSection,
     type: currentSection,
     processed: false,
+    manualEndTime: false,
     raw: { data: data },
     task: descr
   }
@@ -343,7 +360,7 @@ const compileTasks = function () {
         task.startTime = prevTask.endTime
         break
       case 'getStartDate':
-        startTime = getStartDate(undefined, dateFormat, excludes, rawTasks[pos].raw.startTime.startData)
+        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData)
         if (startTime) {
           rawTasks[pos].startTime = startTime
         }
@@ -351,9 +368,11 @@ const compileTasks = function () {
     }
 
     if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, excludes, rawTasks[pos].raw.endTime.data)
+      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
+        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data == moment(rawTasks[pos].endTime).format(dateFormat.trim());
+        fixTaskDates(rawTasks[pos], dateFormat, excludes);
       }
     }
 

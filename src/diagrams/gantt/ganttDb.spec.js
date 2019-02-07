@@ -174,16 +174,40 @@ describe('when using the ganttDb', function () {
   })
   it('should ignore weekends', function () {
     ganttDb.setDateFormat('YYYY-MM-DD')
-    ganttDb.setExcludes('weekends 2019-02-06')
+    ganttDb.setExcludes('weekends 2019-02-06,friday')
     ganttDb.addSection('testa1')
     ganttDb.addTask('test1', 'id1,2019-02-01,1d')
-    ganttDb.addTask('test2', 'id2,after id1,3d')
+    ganttDb.addTask('test2', 'id2,after id1,2d')
+    ganttDb.addTask('test3', 'id3,after id2,7d')
+    ganttDb.addTask('test4', 'id4,2019-02-01,2019-02-20') // Fixed endTime
+    ganttDb.addTask('test5', 'id5,after id4,1d')
 
     const tasks = ganttDb.getTasks()
+
+    expect(tasks[0].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].endTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].id).toEqual('id1')
+    expect(tasks[0].task).toEqual('test1')
 
     expect(tasks[1].startTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate())
     expect(tasks[1].endTime).toEqual(moment('2019-02-07', 'YYYY-MM-DD').toDate())
     expect(tasks[1].id).toEqual('id2')
     expect(tasks[1].task).toEqual('test2')
+
+    expect(tasks[2].startTime).toEqual(moment('2019-02-07', 'YYYY-MM-DD').toDate())
+    expect(tasks[2].endTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate())
+    expect(tasks[2].id).toEqual('id3')
+    expect(tasks[2].task).toEqual('test3')
+
+    expect(tasks[3].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate())
+    expect(tasks[3].endTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate())
+    expect(tasks[3].id).toEqual('id4')
+    expect(tasks[3].task).toEqual('test4')
+
+    expect(tasks[4].startTime).toEqual(moment('2019-02-20', 'YYYY-MM-DD').toDate())
+    expect(tasks[4].endTime).toEqual(moment('2019-02-21', 'YYYY-MM-DD').toDate())
+    expect(tasks[4].id).toEqual('id5')
+    expect(tasks[4].task).toEqual('test5')
+    
   })
 })
