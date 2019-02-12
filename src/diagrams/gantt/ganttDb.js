@@ -75,17 +75,20 @@ const isInvalidDate = function (date, dateFormat, excludes) {
 
 const checkTaskDates = function (task, dateFormat, excludes) {
   if (!excludes.length || task.manualEndTime) return
-  fixTaskDates(task, dateFormat, excludes)
+  let startTime = moment(task.startTime, dateFormat, true)
+  startTime.add(1, 'd')
+  let endTime = moment(task.endTime, dateFormat, true)
+  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes)
+  task.endTime = endTime.toDate()
+  task.renderEndTime = renderEndTime
 }
 
-const fixTaskDates = function (task, dateFormat, excludes) {
-  let startTime = moment(task.startTime)
-  startTime.add(1, 'd')
-  let endTime = moment(task.endTime)
+const fixTaskDates = function (startTime, endTime, dateFormat, excludes) {
   let invalid = false
+  let renderEndTime = null
   while (startTime.date() <= endTime.date()) {
     if (!invalid) {
-      task.renderEndTime = endTime.toDate()
+      renderEndTime = endTime.toDate()
     }
     invalid = isInvalidDate(startTime, dateFormat, excludes)
     if (invalid) {
@@ -93,7 +96,7 @@ const fixTaskDates = function (task, dateFormat, excludes) {
     }
     startTime.add(1, 'd')
   }
-  task.endTime = endTime.toDate()
+  return renderEndTime
 }
 
 const getStartDate = function (prevTime, dateFormat, str) {
