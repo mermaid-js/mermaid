@@ -78,8 +78,13 @@ const fixTaskDates = function (task, dateFormat, excludes) {
   let startTime = moment(task.startTime)
   startTime.add(1, 'd')
   let endTime = moment(task.endTime)
+  let invalid = false
   while (startTime.date() <= endTime.date()) {
-    if (isInvalidDate(startTime, dateFormat, excludes)) {
+    if (!invalid) {
+      task.renderEndTime = endTime.toDate()
+    }
+    invalid = isInvalidDate(startTime, dateFormat, excludes)
+    if (invalid) {
       endTime.add(1, 'd')
     }
     startTime.add(1, 'd')
@@ -308,6 +313,7 @@ export const addTask = function (descr, data) {
     type: currentSection,
     processed: false,
     manualEndTime: false,
+    renderEndTime: null,
     raw: { data: data },
     task: descr
   }
