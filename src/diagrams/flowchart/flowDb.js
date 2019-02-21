@@ -87,12 +87,14 @@ export const addLink = function (start, end, type, linktext) {
  * @param pos
  * @param interpolate
  */
-export const updateLinkInterpolate = function (pos, interp) {
-  if (pos === 'default') {
-    edges.defaultInterpolate = interp
-  } else {
-    edges[pos].interpolate = interp
-  }
+export const updateLinkInterpolate = function (positions, interp) {
+  positions.forEach(function (pos) {
+    if (pos === 'default') {
+      edges.defaultInterpolate = interp
+    } else {
+      edges[pos].interpolate = interp
+    }
+  })
 }
 
 /**
@@ -100,15 +102,17 @@ export const updateLinkInterpolate = function (pos, interp) {
  * @param pos
  * @param style
  */
-export const updateLink = function (pos, style) {
-  if (pos === 'default') {
-    edges.defaultStyle = style
-  } else {
-    if (utils.isSubstringInArray('fill', style) === -1) {
-      style.push('fill:none')
+export const updateLink = function (positions, style) {
+  positions.forEach(function (pos) {
+    if (pos === 'default') {
+      edges.defaultStyle = style
+    } else {
+      if (utils.isSubstringInArray('fill', style) === -1) {
+        style.push('fill:none')
+      }
+      edges[pos].style = style
     }
-    edges[pos].style = style
-  }
+  })
 }
 
 export const addClass = function (id, style) {

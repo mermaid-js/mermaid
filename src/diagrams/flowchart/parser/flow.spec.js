@@ -428,6 +428,28 @@ describe('when parsing ', function () {
     expect(edges[0].type).toBe('arrow')
   })
 
+  it('should handle multi-numbered style definitons with more then 1 digit in a row', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B1\n' +
+        'A-->B2\n' +
+        'A-->B3\n' +
+        'A-->B4\n' +
+        'A-->B5\n' +
+        'A-->B6\n' +
+        'A-->B7\n' +
+        'A-->B8\n' +
+        'A-->B9\n' +
+        'A-->B10\n' +
+        'A-->B11\n' +
+        'A-->B12\n' +
+        'linkStyle 10,11 stroke-width:1px;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].type).toBe('arrow')
+  })
+
   it('should handle line interpolation default definitions', function () {
     const res = flow.parser.parse('graph TD\n' +
         'A-->B\n' +
@@ -453,6 +475,19 @@ describe('when parsing ', function () {
     expect(edges[1].interpolate).toBe('cardinal')
   })
 
+  it('should handle line interpolation multi-numbered definitions', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0,1 interpolate basis')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].interpolate).toBe('basis')
+    expect(edges[1].interpolate).toBe('basis')
+  })
+
   it('should handle line interpolation default with style', function () {
     const res = flow.parser.parse('graph TD\n' +
         'A-->B\n' +
@@ -476,6 +511,19 @@ describe('when parsing ', function () {
 
     expect(edges[0].interpolate).toBe('basis')
     expect(edges[1].interpolate).toBe('cardinal')
+  })
+
+  it('should handle line interpolation multi-numbered with style', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0,1 interpolate basis stroke-width:1px;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].interpolate).toBe('basis')
+    expect(edges[1].interpolate).toBe('basis')
   })
 
   describe('it should handle interaction, ', function () {
