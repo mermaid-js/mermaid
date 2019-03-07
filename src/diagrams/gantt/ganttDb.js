@@ -1,5 +1,8 @@
 import moment from 'moment'
-import { logger } from '../../logger'
+import {
+  logger
+} from '../../logger'
+import * as d3 from 'd3'
 
 let dateFormat = ''
 let axisFormat = ''
@@ -7,11 +10,13 @@ let title = ''
 let sections = []
 let tasks = []
 let currentSection = ''
+let funs = []
 
 export const clear = function () {
   sections = []
   tasks = []
   currentSection = ''
+  funs = []
   title = ''
   taskCnt = 0
   lastTask = undefined
@@ -242,18 +247,33 @@ const parseData = function (prevTaskId, dataStr) {
   switch (data.length) {
     case 1:
       task.id = parseId()
-      task.startTime = { type: 'prevTaskEnd', id: prevTaskId }
-      task.endTime = { data: data[0] }
+      task.startTime = {
+        type: 'prevTaskEnd',
+        id: prevTaskId
+      }
+      task.endTime = {
+        data: data[0]
+      }
       break
     case 2:
       task.id = parseId()
-      task.startTime = { type: 'getStartDate', startData: data[0] }
-      task.endTime = { data: data[1] }
+      task.startTime = {
+        type: 'getStartDate',
+        startData: data[0]
+      }
+      task.endTime = {
+        data: data[1]
+      }
       break
     case 3:
       task.id = parseId(data[0])
-      task.startTime = { type: 'getStartDate', startData: data[1] }
-      task.endTime = { data: data[2] }
+      task.startTime = {
+        type: 'getStartDate',
+        startData: data[1]
+      }
+      task.endTime = {
+        data: data[2]
+      }
       break
     default:
   }
@@ -270,8 +290,13 @@ export const addTask = function (descr, data) {
     section: currentSection,
     type: currentSection,
     processed: false,
-    raw: { data: data },
-    task: descr
+    raw: {
+      data: data
+    },
+    task: descr,
+    link: undefined,
+    /* The link the rectangle will href to */
+    classes: []
   }
   const taskInfo = parseData(lastTaskID, data)
   rawTask.raw.startTime = taskInfo.startTime
@@ -299,7 +324,10 @@ export const addTaskOrg = function (descr, data) {
     section: currentSection,
     type: currentSection,
     description: descr,
-    task: descr
+    task: descr,
+    link: undefined,
+    /* The link the rectangle will href to */
+    classes: []
   }
   const taskInfo = compileData(lastTask, data)
   newTask.startTime = taskInfo.startTime
@@ -348,6 +376,85 @@ const compileTasks = function () {
   return allProcessed
 }
 
+/**
+ * Called by parser when a link is found. Adds the URL to the vertex data.
+ * @param ids Comma separated list of ids
+ * @param linkStr URL to create a link for
+ */
+export const setLink = function (ids, linkStr) {
+  ids.split(',').forEach(function (id) {
+    let rawTask = findTaskById(id)
+    if (typeof rawTask !== 'undefined') {
+      rawTask.link = linkStr
+    }
+  })
+  setClass(ids, 'clickable')
+}
+
+/**
+ * Called by parser when a special node is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param className Class to add
+ */
+export const setClass = function (ids, className) {
+  ids.split(',').forEach(function (id) {
+    let rawTask = findTaskById(id)
+    if (typeof rawTask !== 'undefined') {
+      rawTask.classes.push(className)
+    }
+  })
+}
+
+const setClickFun = function (id, functionName, functionArgs) {
+  if (typeof functionName === 'undefined') {
+    return
+  }
+  let rawTask = findTaskById(id)
+  if (typeof rawTask !== 'undefined') {
+    funs.push(function (element) {
+      const elem = d3.select(element).select(`[id="${id}"]`)
+      if (elem !== null) {
+        elem.on('click', function () {
+          console.log('test')
+          window[functionName](id, ...functionArgs)
+        })
+      }
+    })
+    funs.push(function (element) {
+      const elem = d3.select(element).select(`[id="${id}-text"]`)
+      if (elem !== null) {
+        elem.on('click', function () {
+          console.log('test')
+          window[functionName](id, ...functionArgs)
+        })
+      }
+    })
+  }
+}
+
+/**
+ * Called by parser when a click definition is found. Registers an event handler.
+ * @param ids Comma separated list of ids
+ * @param functionName Function to be called on click
+ * @param functionArgs Function args the function should be called with
+ */
+export const setClickEvent = function (ids, functionName, functionArgs) {
+  ids.split(',').forEach(function (id) {
+    setClickFun(id, functionName, functionArgs)
+  })
+  setClass(ids, 'clickable')
+}
+
+/**
+ * Binds all functions previously added to fun (specified through click) to the element
+ * @param element
+ */
+export const bindFunctions = function (element) {
+  funs.forEach(function (fun) {
+    fun(element)
+  })
+}
+
 export default {
   clear,
   setDateFormat,
@@ -359,5 +466,8 @@ export default {
   getTasks,
   addTask,
   findTaskById,
-  addTaskOrg
+  addTaskOrg,
+  setClickEvent,
+  setLink,
+  bindFunctions
 }
