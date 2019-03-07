@@ -78,8 +78,8 @@ statement
   ;
 
 clickStatement
-    : click callbackname callbackarguments     {$$ = $1;yy.setClickEvent($2, $3);}
-    | click STR callbackname callbackarguments {$$ = $1;yy.setLink($2);yy.setClickEvent($3, $4);}
-    | click STR                                {$$ = $1;yy.setLink($2);}
+    : click STR callbackname callbackarguments     {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | click STR STR callbackname callbackarguments {$$ = $1;yy.setLink($2, $3);yy.setClickEvent($2, $4, $5);}
+    | click STR STR                                {$$ = $1;yy.setLink($2, $3);}
     ;
 %%
