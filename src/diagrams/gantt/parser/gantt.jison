@@ -9,7 +9,6 @@
 
 /* string is used to detect blocks that are surrounded by double quotes. */
 /* copied from /src/diagrams/flowchart/parser/flow.jison */
-%x string
 %x click
 %x href
 %x callbackname
@@ -25,7 +24,7 @@
 <href>[\s\n]            this.popState();    /* e.g. return https://example.com for 'href https://example.com' */
 <href>[^\s\n]*          return 'href';      /* the specified word must not contain whitespace */
 
-"call"                  this.begin("callbackname");
+"call"[\s]+             this.begin("callbackname");
 <callbackname>\(        this.popState(); this.begin("callbackargs");
 <callbackname>[^(]*     return 'callbackname';
 <callbackargs>\)        this.popState();
