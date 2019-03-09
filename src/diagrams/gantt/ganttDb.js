@@ -294,8 +294,6 @@ export const addTask = function (descr, data) {
       data: data
     },
     task: descr,
-    /* The link the rectangle will href to */
-    link: undefined,
     classes: []
   }
   const taskInfo = parseData(lastTaskID, data)
@@ -325,8 +323,6 @@ export const addTaskOrg = function (descr, data) {
     type: currentSection,
     description: descr,
     task: descr,
-    /* The link the rectangle will href to */
-    link: undefined,
     classes: []
   }
   const taskInfo = compileData(lastTask, data)
@@ -385,7 +381,7 @@ export const setLink = function (ids, linkStr) {
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id)
     if (typeof rawTask !== 'undefined') {
-      rawTask.link = linkStr
+      pushFun(id, ()=>{window.open(linkStr, "_self")})
     }
   })
   setClass(ids, 'clickable')
@@ -412,24 +408,32 @@ const setClickFun = function (id, functionName, functionArgs) {
   }
   let rawTask = findTaskById(id)
   if (typeof rawTask !== 'undefined') {
-    funs.push(function (element) {
-      const elem = d3.select(element).select(`[id="${id}"]`)
-      if (elem !== null) {
-        elem.on('click', function () {
-          window[functionName](id, ...functionArgs)
-        })
-      }
-    })
-    funs.push(function (element) {
-      const elem = d3.select(element).select(`[id="${id}-text"]`)
-      if (elem !== null) {
-        elem.on('click', function () {
-          console.log('test')
-          window[functionName](id, ...functionArgs)
-        })
-      }
-    })
+    pushFun(id, () => {window[functionName](id, ...functionArgs)})
   }
+}
+
+/**
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * @param id The task's id
+ * @param callbackFunction A function to be executed when clicked on the task or the task's text
+ */
+const pushFun = function (id, callbackFunction){
+  funs.push(function (element) {
+    const elem = d3.select(element).select(`[id="${id}"]`)
+    if (elem !== null) {
+      elem.on('click', function () {
+        callbackFunction()
+      })
+    }
+  })
+  funs.push(function (element) {
+    const elem = d3.select(element).select(`[id="${id}-text"]`)
+    if (elem !== null) {
+      elem.on('click', function () {
+        callbackFunction()
+      })
+    }
+  })
 }
 
 /**
