@@ -142,6 +142,11 @@ export const draw = function (text, id) {
       .attr('class', function (d) {
         const res = 'task '
 
+        let classStr = ''
+        if (d.classes.length > 0) {
+          classStr = d.classes.join(' ')
+        }
+
         let secNum = 0
         for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
@@ -151,25 +156,25 @@ export const draw = function (text, id) {
 
         if (d.active) {
           if (d.crit) {
-            return res + ' activeCrit' + secNum
+            return res + classStr + ' activeCrit' + secNum
           } else {
-            return res + ' active' + secNum
+            return res + classStr + ' active' + secNum
           }
         }
 
         if (d.done) {
           if (d.crit) {
-            return res + ' doneCrit' + secNum
+            return res + classStr + ' doneCrit' + secNum
           } else {
-            return res + ' done' + secNum
+            return res + classStr + ' done' + secNum
           }
         }
 
         if (d.crit) {
-          return res + ' crit' + secNum
+          return res + classStr + ' crit' + secNum
         }
 
-        return res + ' task' + secNum
+        return res + classStr + ' task' + secNum
       })
 
     rectangles.append('a').attr('href', function (d) {
@@ -206,6 +211,13 @@ export const draw = function (text, id) {
         const startX = timeScale(d.startTime)
         const endX = timeScale(d.endTime)
         const textWidth = this.getBBox().width
+
+
+        let classStr = ''
+        if (d.classes.length > 0) {
+          classStr = d.classes.join(' ')
+        }
+
         let secNum = 0
         for (let i = 0; i < categories.length; i++) {
           if (d.type === categories[i]) {
@@ -237,12 +249,12 @@ export const draw = function (text, id) {
         // Check id text width > width of rectangle
         if (textWidth > (endX - startX)) {
           if (endX + textWidth + 1.5 * conf.leftPadding > w) {
-            return 'taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType
+            return classStr + ' taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType
           } else {
-            return 'taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType
+            return classStr + ' taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType
           }
         } else {
-          return 'taskText taskText' + secNum + ' ' + taskType
+          return classStr + ' taskText taskText' + secNum + ' ' + taskType
         }
       })
   }

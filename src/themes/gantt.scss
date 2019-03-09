@@ -90,6 +90,12 @@
   font-size: 11px;
 }
 
+.task.clickable {
+  cursor: pointer;
+}
+.taskText.clickable {
+  cursor: pointer;
+}
 
 /* Specific task settings for the sections*/
 
