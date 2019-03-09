@@ -294,8 +294,8 @@ export const addTask = function (descr, data) {
       data: data
     },
     task: descr,
-    link: undefined,
     /* The link the rectangle will href to */
+    link: undefined,
     classes: []
   }
   const taskInfo = parseData(lastTaskID, data)
@@ -325,8 +325,8 @@ export const addTaskOrg = function (descr, data) {
     type: currentSection,
     description: descr,
     task: descr,
-    link: undefined,
     /* The link the rectangle will href to */
+    link: undefined,
     classes: []
   }
   const taskInfo = compileData(lastTask, data)

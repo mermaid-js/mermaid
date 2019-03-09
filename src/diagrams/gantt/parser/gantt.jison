@@ -13,8 +13,9 @@
 /* a valid callback looks like this: callback(example_callback_arg) */
 /* callback prefix: callback( */
 /* callback suffix: ) */
-%x callback
+%x href
 %x callbackname
+%x callbackargs
 %%
 
 [\n]+                   return 'NL';
@@ -25,11 +26,16 @@
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return 'STR';
-"call"\s                   this.begin("callbackname");
-<callbackname>\(        this.popState(); this.begin("callback");
-<callbackname>[^(]+     return 'callbackname';
-<callback>[)]            this.popState();
-<callback>[^)]*         return 'callbackarguments';
+
+"href"\s+               this.begin("href");
+<href>[\s\n]            this.popState();
+<href>[^\s\n]*          return 'href';
+
+"call"\s+               this.begin("callbackname");
+<callbackname>\(        this.popState(); this.begin("callbackargs");
+<callbackname>[^(]*     return 'callbackname';
+<callbackargs>\)        this.popState();
+<callbackargs>[^)]*     return 'callbackargs';
 
 "click"                 return 'click';
 "gantt"                 return 'gantt';
@@ -78,8 +84,17 @@ statement
   ;
 
 clickStatement
-    : click STR callbackname callbackarguments     {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | click STR STR callbackname callbackarguments {$$ = $1;yy.setLink($2, $3);yy.setClickEvent($2, $4, $5);}
-    | click STR STR                                {$$ = $1;yy.setLink($2, $3);}
+    : click STR callbackname callbackargs       {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | click STR callbackname callbackargs href  {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setLink($2,$5);}
+    | click STR href callbackname callbackargs  {$$ = $1;yy.setClickEvent($2, $4, $5);yy.setLink($2,$3);}
+    | click STR href                            {$$ = $1;yy.setLink($2, $3);}
+    ;
+
+
+clickStatementDebug
+    : click STR callbackname callbackargs  {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4;}
+    | click STR callbackname callbackargs href {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4 + ' ' + $5;}
+    | click STR href callbackname callbackargs {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4 + ' ' + $5;}
+    | click STR href  {$$=$1+' ' + $2 + ' ' + $3;}
     ;
 %%
