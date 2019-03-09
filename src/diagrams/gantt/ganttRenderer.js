@@ -212,7 +212,6 @@ export const draw = function (text, id) {
         const endX = timeScale(d.endTime)
         const textWidth = this.getBBox().width
 
-
         let classStr = ''
         if (d.classes.length > 0) {
           classStr = d.classes.join(' ')
