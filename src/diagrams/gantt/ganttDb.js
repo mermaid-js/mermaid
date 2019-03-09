@@ -406,6 +406,7 @@ export const setClass = function (ids, className) {
 }
 
 const setClickFun = function (id, functionName, functionArgs) {
+  functionArgs = functionArgs.split(',')
   if (typeof functionName === 'undefined') {
     return
   }
@@ -415,7 +416,6 @@ const setClickFun = function (id, functionName, functionArgs) {
       const elem = d3.select(element).select(`[id="${id}"]`)
       if (elem !== null) {
         elem.on('click', function () {
-          console.log('test')
           window[functionName](id, ...functionArgs)
         })
       }
