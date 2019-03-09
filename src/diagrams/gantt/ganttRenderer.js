@@ -177,12 +177,9 @@ export const draw = function (text, id) {
         return res + classStr + ' task' + secNum
       })
 
-    rectangles.append('a').attr('href', function (d) {
-      /* All rectangles are clickable. If d.link is not specified, '' is returned */
-      return d.link
-    })
-      .attr('id', function (d) { return d.id + '-text' })
+    rectangles
       .append('text')
+      .attr('id', function (d) { return d.id + '-text' })
       .text(function (d) {
         return d.task
       })
