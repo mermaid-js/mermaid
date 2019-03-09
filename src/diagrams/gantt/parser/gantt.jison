@@ -10,9 +10,7 @@
 /* string is used to detect blocks that are surrounded by double quotes. */
 /* copied from /src/diagrams/flowchart/parser/flow.jison */
 %x string
-/* a valid callback looks like this: callback(example_callback_arg) */
-/* callback prefix: callback( */
-/* callback suffix: ) */
+%x click
 %x href
 %x callbackname
 %x callbackargs
@@ -22,29 +20,28 @@
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
 \%%[^\n]*               /* skip comments */
-/* Strings are used to detect tooltips */
-["]                     this.begin("string");
-<string>["]             this.popState();
-<string>[^"]*           return 'STR';
 
-"href"\s+               this.begin("href");
-<href>[\s\n]            this.popState();
-<href>[^\s\n]*          return 'href';
+"href"[\s]+             this.begin("href"); /* return the next word after 'href' */
+<href>[\s\n]            this.popState();    /* e.g. return https://example.com for 'href https://example.com' */
+<href>[^\s\n]*          return 'href';      /* the specified word must not contain whitespace */
 
-"call"\s+               this.begin("callbackname");
+"call"                  this.begin("callbackname");
 <callbackname>\(        this.popState(); this.begin("callbackargs");
 <callbackname>[^(]*     return 'callbackname';
 <callbackargs>\)        this.popState();
 <callbackargs>[^)]*     return 'callbackargs';
 
-"click"                 return 'click';
+"click"[\s]+            this.begin("click");
+<click>[\s\n]           this.popState();
+<click>[^\s\n]*         return 'click';
+
 "gantt"                 return 'gantt';
 "dateFormat"\s[^#\n;]+  return 'dateFormat';
 "axisFormat"\s[^#\n;]+  return 'axisFormat';
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
 "title"\s[^#\n;]+       return 'title';
 "section"\s[^#:\n;]+    return 'section';
-[^#:()\n;]+               return 'taskTxt';
+[^#:()\n;]+             return 'taskTxt';
 ":"[^#\n;]+             return 'taskData';
 ":"                     return ':';
 <<EOF>>                 return 'EOF';
@@ -84,17 +81,16 @@ statement
   ;
 
 clickStatement
-    : click STR callbackname callbackargs       {$$ = $1;yy.setClickEvent($2, $3, $4);}
-    | click STR callbackname callbackargs href  {$$ = $1;yy.setClickEvent($2, $3, $4);yy.setLink($2,$5);}
-    | click STR href callbackname callbackargs  {$$ = $1;yy.setClickEvent($2, $4, $5);yy.setLink($2,$3);}
-    | click STR href                            {$$ = $1;yy.setLink($2, $3);}
+    : click callbackname callbackargs       {$$ = $1;yy.setClickEvent($1, $2, $3);}
+    | click callbackname callbackargs href  {$$ = $1;yy.setClickEvent($1, $2, $3);yy.setLink($1,$4);}
+    | click href callbackname callbackargs  {$$ = $1;yy.setClickEvent($1, $3, $4);yy.setLink($1,$2);}
+    | click href                            {$$ = $1;yy.setLink($1, $2);}
     ;
 
-
 clickStatementDebug
-    : click STR callbackname callbackargs  {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4;}
-    | click STR callbackname callbackargs href {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4 + ' ' + $5;}
-    | click STR href callbackname callbackargs {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4 + ' ' + $5;}
-    | click STR href  {$$=$1+' ' + $2 + ' ' + $3;}
+    : click callbackname callbackargs  {$$=$1+' ' + $2 + ' ' + $3;}
+    | click callbackname callbackargs href {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4;}
+    | click href callbackname callbackargs {$$=$1+' ' + $2 + ' ' + $3 + ' ' + $4;}
+    | click href  {$$=$1+' ' + $2;}
     ;
 %%
