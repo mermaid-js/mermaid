@@ -381,7 +381,7 @@ export const setLink = function (ids, linkStr) {
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id)
     if (typeof rawTask !== 'undefined') {
-      pushFun(id, ()=>{window.open(linkStr, "_self")})
+      pushFun(id, () => { window.open(linkStr, '_self') })
     }
   })
   setClass(ids, 'clickable')
@@ -408,7 +408,7 @@ const setClickFun = function (id, functionName, functionArgs) {
   }
   let rawTask = findTaskById(id)
   if (typeof rawTask !== 'undefined') {
-    pushFun(id, () => {window[functionName](id, ...functionArgs)})
+    pushFun(id, () => { window[functionName](id, ...functionArgs) })
   }
 }
 
@@ -417,7 +417,7 @@ const setClickFun = function (id, functionName, functionArgs) {
  * @param id The task's id
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
-const pushFun = function (id, callbackFunction){
+const pushFun = function (id, callbackFunction) {
   funs.push(function (element) {
     const elem = d3.select(element).select(`[id="${id}"]`)
     if (elem !== null) {
