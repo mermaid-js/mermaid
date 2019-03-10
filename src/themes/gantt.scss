@@ -66,7 +66,6 @@
 
 /* Task styling */
 
-
 /* Default task */
 
 .task {
@@ -95,6 +94,8 @@
 }
 .taskText.clickable {
   cursor: pointer;
+  fill: $taskTextClickableColor !important;
+  font-weight: bold;
 }
 
 /* Specific task settings for the sections*/
@@ -115,7 +116,7 @@
 }
 
 .taskTextOutside0,
-.taskTextOutside2,
+.taskTextOutside2
 {
   fill: $taskTextOutsideColor;
 }

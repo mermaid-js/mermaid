@@ -47,6 +47,7 @@ $taskTextLightColor: white;
 $taskTextColor: $taskTextLightColor;
 $taskTextDarkColor: $text;
 $taskTextOutsideColor: $taskTextDarkColor;
+$taskTextClickableColor: #003163;
 $activeTaskBorderColor: $taskBorderColor;
 $activeTaskBkgColor: $mainBkg;
 $gridColor: lighten($border1, 30%);
