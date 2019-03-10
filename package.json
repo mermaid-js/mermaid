@@ -15,6 +15,7 @@
   "scripts": {
     "build": "webpack --progress --colors",
     "build:watch": "yarn build --watch",
+    "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
     "release": "yarn build -p --config webpack.config.prod.babel.js",
     "lint": "standard",
     "test": "yarn lint && jest",
@@ -42,6 +43,7 @@
     "graphlibrary": "^2.2.0",
     "he": "^1.2.0",
     "lodash": "^4.17.11",
+    "minify": "^4.1.1",
     "moment": "^2.23.0",
     "scope-css": "^1.2.1"
   },
