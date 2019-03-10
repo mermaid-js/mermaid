@@ -20,9 +20,9 @@
 \#[^\n]*                /* skip comments */
 \%%[^\n]*               /* skip comments */
 
-"href"[\s]+             this.begin("href"); /* return the next word after 'href' */
-<href>[\s\n]            this.popState();    /* e.g. return https://example.com for 'href https://example.com' */
-<href>[^\s\n]*          return 'href';      /* the specified word must not contain whitespace */
+"href"[\s]+["]          this.begin("href"); /* return the next double quoted word after 'href' */
+<href>["]               this.popState();    /* e.g. return https://example.com for 'href "https://example.com"' */
+<href>[^"]*             return 'href';
 
 "call"[\s]+             this.begin("callbackname");
 <callbackname>\(        this.popState(); this.begin("callbackargs");
