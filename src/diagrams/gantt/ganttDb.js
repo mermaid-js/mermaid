@@ -402,13 +402,28 @@ export const setClass = function (ids, className) {
 }
 
 const setClickFun = function (id, functionName, functionArgs) {
-  functionArgs = functionArgs.split(',')
   if (typeof functionName === 'undefined') {
     return
   }
+
+  let argList = []
+  if (typeof functionArgs === 'string') {
+    /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+    for (let i = 0; i < argList.length; i++) {
+      let item = argList[i].trim()
+      /* Removes all double quotes at the start and end of an argument */
+      /* This preserves all starting and ending whitespace inside */
+      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        item = item.substr(1, item.length - 2)
+      }
+      argList[i] = item
+    }
+  }
+
   let rawTask = findTaskById(id)
   if (typeof rawTask !== 'undefined') {
-    pushFun(id, () => { window[functionName](id, ...functionArgs) })
+    pushFun(id, () => { window[functionName](...argList) })
   }
 }
 
