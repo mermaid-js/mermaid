@@ -59,7 +59,7 @@ that id.
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
 "title"\s[^#\n;]+       return 'title';
 "section"\s[^#:\n;]+    return 'section';
-[^#:()\n;]+             return 'taskTxt';
+[^#:\n;]+             return 'taskTxt';
 ":"[^#\n;]+             return 'taskData';
 ":"                     return ':';
 <<EOF>>                 return 'EOF';
