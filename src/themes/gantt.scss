@@ -89,10 +89,23 @@
   font-size: 11px;
 }
 
+/* Special case clickable */
 .task.clickable {
   cursor: pointer;
 }
 .taskText.clickable {
+  cursor: pointer;
+  fill: $taskTextClickableColor !important;
+  font-weight: bold;
+}
+
+.taskTextOutsideLeft.clickable {
+  cursor: pointer;
+  fill: $taskTextClickableColor !important;
+  font-weight: bold;
+}
+
+.taskTextOutsideRight.clickable {
   cursor: pointer;
   fill: $taskTextClickableColor !important;
   font-weight: bold;
