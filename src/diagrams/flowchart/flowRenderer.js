@@ -74,7 +74,7 @@ export const addVertices = function (vert, g) {
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
-      const rows = verticeText.split(/<br>/)
+      const rows = verticeText.split(/<br[\/]{0,1}>/)
 
       for (let j = 0; j < rows.length; j++) {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
