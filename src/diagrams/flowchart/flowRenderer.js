@@ -203,7 +203,7 @@ export const addEdges = function (edges, g) {
           edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>'
         } else {
           edgeData.labelType = 'text'
-          edgeData.style = 'stroke: #333; stroke-width: 1.5px;fill:none'
+          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none'
           edgeData.label = edge.text.replace(/<br>/g, '\n')
         }
       } else {
