@@ -67,6 +67,7 @@ export const addVertices = function (vert, g, svgId) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = { label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`) }
       vertexNode = addHtmlLabel(svg, node).node()
+      vertexNode.parentNode.removeChild(vertexNode)
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
@@ -120,8 +121,6 @@ export const addVertices = function (vert, g, svgId) {
         break
       case 'group':
         _shape = 'rect'
-        // Since we use svg labels, we need to create a text node, see #367
-        vertexNode = document.createElementNS('http://www.w3.org/2000/svg', 'text')
         break
       default:
         _shape = 'rect'
@@ -420,6 +419,7 @@ export const draw = function (text, id) {
   // Index nodes
   flowDb.indexNodes('subGraph' + i)
 
+  // reposition labels
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i]
 
@@ -431,19 +431,9 @@ export const draw = function (text, id) {
       const yPos = clusterRects[0].y.baseVal.value
       const width = clusterRects[0].width.baseVal.value
       const cluster = d3.select(clusterEl[0])
-      const te = cluster.append('text')
-      te.attr('x', xPos + width / 2)
-      te.attr('y', yPos + 14)
-      te.attr('fill', 'black')
-      te.attr('stroke', 'none')
+      const te = cluster.select('.label')
+      te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`)
       te.attr('id', id + 'Text')
-      te.style('text-anchor', 'middle')
-
-      if (typeof subG.title === 'undefined') {
-        te.text('Undef')
-      } else {
-        te.text(subG.title)
-      }
     }
   }
 
