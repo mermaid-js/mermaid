@@ -8,7 +8,7 @@ import { parser } from './parser/classDiagram'
 
 parser.yy = classDb
 
-const idCache = {}
+let idCache = {}
 
 let classCnt = 0
 const conf = {
@@ -301,6 +301,7 @@ export const setConf = function (cnf) {
  * @param id
  */
 export const draw = function (text, id) {
+  idCache = {}
   parser.yy.clear()
   parser.parse(text)
 
