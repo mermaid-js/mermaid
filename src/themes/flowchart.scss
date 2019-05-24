@@ -30,9 +30,9 @@
 }
 
 .cluster rect {
-  fill: $secondBkg !important;
-  stroke: $clusterBorder !important;
-  stroke-width: 1px !important;
+  fill: $secondBkg;
+  stroke: $clusterBorder;
+  stroke-width: 1px;
 }
 
 .cluster text {

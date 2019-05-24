@@ -31,7 +31,32 @@ describe('when parsing ', function () {
     expect(subgraph.nodes[0]).toBe('a1')
     expect(subgraph.nodes[1]).toBe('a2')
     expect(subgraph.title).toBe('One')
+    expect(subgraph.id).toBe('One')
   })
+
+  it('should handle subgraph with multiple words in title', function () {
+    const res = flow.parser.parse('graph TB\nsubgraph "Some Title"\n\ta1-->a2\nend')
+    const subgraphs = flow.parser.yy.getSubGraphs()
+    expect(subgraphs.length).toBe(1)
+    const subgraph = subgraphs[0]
+    expect(subgraph.nodes.length).toBe(2)
+    expect(subgraph.nodes[0]).toBe('a1')
+    expect(subgraph.nodes[1]).toBe('a2')
+    expect(subgraph.title).toBe('Some Title')
+    expect(subgraph.id).toBe('subGraph0')
+  });
+
+  it('should handle subgraph with id and title notation', function () {
+    const res = flow.parser.parse('graph TB\nsubgraph some-id[Some Title]\n\ta1-->a2\nend')
+    const subgraphs = flow.parser.yy.getSubGraphs()
+    expect(subgraphs.length).toBe(1)
+    const subgraph = subgraphs[0]
+    expect(subgraph.nodes.length).toBe(2)
+    expect(subgraph.nodes[0]).toBe('a1')
+    expect(subgraph.nodes[1]).toBe('a2')
+    expect(subgraph.title).toBe('Some Title')
+    expect(subgraph.id).toBe('some-id')
+  });
 
   it("should handle angle bracket ' > ' as direction LR", function () {
     const res = flow.parser.parse('graph >;A-->B;')
