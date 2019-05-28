@@ -225,10 +225,14 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph text separator document end
-    {$$=yy.addSubGraph($4,$2);}
+    | subgraph SPACE alphaNum SQS text SQE separator document end
+    {$$=yy.addSubGraph($3,$8,$5);}
+    | subgraph SPACE STR separator document end
+    {$$=yy.addSubGraph(undefined,$5,$3);}
+    | subgraph SPACE alphaNum separator document end
+    {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
-    {$$=yy.addSubGraph($3,undefined);}
+    {$$=yy.addSubGraph(undefined,$3,undefined);}
     ;
 
 separator: NEWLINE | SEMI | EOF ;

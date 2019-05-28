@@ -272,7 +272,7 @@ export const draw = function (text, id) {
   const subGraphs = flowDb.getSubGraphs()
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i]
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined)
+    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes)
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition

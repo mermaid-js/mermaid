@@ -207,6 +207,35 @@ graph TB
 	end
   </div>
   <div class="mermaid">
+  graph TB
+  A
+  B
+  subgraph foo[Foo SubGraph]
+    C
+    D
+  end
+  subgraph bar[Bar SubGraph]
+    E
+    F
+  end
+  G
+
+  A-->B
+  B-->C
+  C-->D
+  B-->D
+  D-->E
+  E-->A
+  E-->F
+  F-->D
+  F-->G
+  B-->G
+  G-->D
+
+  style foo fill:#F99,stroke-width:2px,stroke:#F0F
+  style bar fill:#999,stroke-width:10px,stroke:#0F0
+  </div>
+  <div class="mermaid">
       graph LR
       456ac9b0d15a8b7f1e71073221059886[1051 AAA fa:fa-check]
       f7f580e11d00a75814d2ded41fe8e8fe[1141 BBB fa:fa-check]
