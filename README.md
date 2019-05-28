@@ -147,7 +147,7 @@ As part of this team you would get write access to the repository and would
 represent the project when answering questions and issues.
 
 Together we could continue the work with things like:
-* adding more typers of diagrams like mindmaps, ert digrams etc
+* adding more types of diagrams like mindmaps, ert diagrams etc
 * improving existing diagrams
 
 Don't hesitate to contact me if you want to get involved.
