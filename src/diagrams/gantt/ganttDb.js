@@ -3,6 +3,7 @@ import { logger } from '../../logger'
 
 let dateFormat = ''
 let axisFormat = ''
+let excludes = []
 let title = ''
 let sections = []
 let tasks = []
@@ -29,6 +30,10 @@ export const getAxisFormat = function () {
 
 export const setDateFormat = function (txt) {
   dateFormat = txt
+}
+
+export const setExcludes = function (txt) {
+  excludes = txt.toLowerCase().split(/[\s,]+/)
 }
 
 export const setTitle = function (txt) {
@@ -58,6 +63,42 @@ export const getTasks = function () {
   return tasks
 }
 
+const isInvalidDate = function (date, dateFormat, excludes) {
+  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
+    return true
+  }
+  if (excludes.indexOf(date.format('dddd').toLowerCase()) >= 0) {
+    return true
+  }
+  return excludes.indexOf(date.format(dateFormat.trim())) >= 0
+}
+
+const checkTaskDates = function (task, dateFormat, excludes) {
+  if (!excludes.length || task.manualEndTime) return
+  let startTime = moment(task.startTime, dateFormat, true)
+  startTime.add(1, 'd')
+  let endTime = moment(task.endTime, dateFormat, true)
+  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes)
+  task.endTime = endTime.toDate()
+  task.renderEndTime = renderEndTime
+}
+
+const fixTaskDates = function (startTime, endTime, dateFormat, excludes) {
+  let invalid = false
+  let renderEndTime = null
+  while (startTime.date() <= endTime.date()) {
+    if (!invalid) {
+      renderEndTime = endTime.toDate()
+    }
+    invalid = isInvalidDate(startTime, dateFormat, excludes)
+    if (invalid) {
+      endTime.add(1, 'd')
+    }
+    startTime.add(1, 'd')
+  }
+  return renderEndTime
+}
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
@@ -77,8 +118,9 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set
-  if (moment(str, dateFormat.trim(), true).isValid()) {
-    return moment(str, dateFormat.trim(), true).toDate()
+  let mDate = moment(str, dateFormat.trim(), true)
+  if (mDate.isValid()) {
+    return mDate.toDate()
   } else {
     logger.debug('Invalid date:' + str)
     logger.debug('With date format:' + dateFormat.trim())
@@ -92,8 +134,9 @@ const getEndDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
   // Check for actual date
-  if (moment(str, dateFormat.trim(), true).isValid()) {
-    return moment(str, dateFormat.trim()).toDate()
+  let mDate = moment(str, dateFormat.trim(), true)
+  if (mDate.isValid()) {
+    return mDate.toDate()
   }
 
   const d = moment(prevTime)
@@ -119,7 +162,6 @@ const getEndDate = function (prevTime, dateFormat, str) {
         d.add(durationStatement[1], 'weeks')
         break
     }
-    return d.toDate()
   }
   // Default date - now
   return d.toDate()
@@ -181,23 +223,30 @@ const compileData = function (prevTask, dataStr) {
     data[i] = data[i].trim()
   }
 
+  let endTimeData = ''
   switch (data.length) {
     case 1:
       task.id = parseId()
       task.startTime = prevTask.endTime
-      task.endTime = getEndDate(task.startTime, dateFormat, data[0])
+      endTimeData = data[0]
       break
     case 2:
       task.id = parseId()
       task.startTime = getStartDate(undefined, dateFormat, data[0])
-      task.endTime = getEndDate(task.startTime, dateFormat, data[1])
+      endTimeData = data[1]
       break
     case 3:
       task.id = parseId(data[0])
       task.startTime = getStartDate(undefined, dateFormat, data[1])
-      task.endTime = getEndDate(task.startTime, dateFormat, data[2])
+      endTimeData = data[2]
       break
     default:
+  }
+
+  if (endTimeData) {
+    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData)
+    task.manualEndTime = endTimeData === moment(task.endTime).format(dateFormat.trim())
+    checkTaskDates(task, dateFormat, excludes)
   }
 
   return task
@@ -270,6 +319,8 @@ export const addTask = function (descr, data) {
     section: currentSection,
     type: currentSection,
     processed: false,
+    manualEndTime: false,
+    renderEndTime: null,
     raw: { data: data },
     task: descr
   }
@@ -333,6 +384,8 @@ const compileTasks = function () {
       rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
+        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data === moment(rawTasks[pos].endTime).format(dateFormat.trim())
+        checkTaskDates(rawTasks[pos], dateFormat, excludes)
       }
     }
 
@@ -359,5 +412,6 @@ export default {
   getTasks,
   addTask,
   findTaskById,
-  addTaskOrg
+  addTaskOrg,
+  setExcludes
 }

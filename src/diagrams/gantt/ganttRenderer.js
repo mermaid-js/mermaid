@@ -135,7 +135,7 @@ export const draw = function (text, id) {
         return i * theGap + theTopPad
       })
       .attr('width', function (d) {
-        return (timeScale(d.endTime) - timeScale(d.startTime))
+        return (timeScale(d.renderEndTime || d.endTime) - timeScale(d.startTime))
       })
       .attr('height', theBarHeight)
       .attr('class', function (d) {
@@ -178,7 +178,7 @@ export const draw = function (text, id) {
       .attr('font-size', conf.fontSize)
       .attr('x', function (d) {
         const startX = timeScale(d.startTime)
-        const endX = timeScale(d.endTime)
+        const endX = timeScale(d.renderEndTime || d.endTime)
         const textWidth = this.getBBox().width
 
         // Check id text width > width of rectangle
