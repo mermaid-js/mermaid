@@ -12,23 +12,13 @@ const contentLoaded = function () {
     const graphBase64 = document.location.href.substr(pos)
     const graphObj = JSON.parse(Base64.decode(graphBase64))
     // const graph = 'hello'
-    console.log(graphObj.code)
+    console.log(graphObj)
     const div = document.createElement('div')
     div.id = 'block'
     div.className = 'mermaid'
     div.innerHTML = graphObj.code
     document.getElementsByTagName('body')[0].appendChild(div)
-    global.mermaid.initialize({
-      theme: 'neutral',
-      themeCSS: '.node rect { fill: red; }',
-      htmlLabels: false,
-      // logLevel: 3,
-      // flowchart: { curve: 'linear' },
-      // gantt: { axisFormat: '%m/%d/%Y' },
-      // sequence: { actorMargin: 50 },
-      // sequenceDiagram: { actorMargin: 300 } // deprecated
-      startOnLoad: false
-    })
+    global.mermaid.initialize(graphObj.mermaid)
     global.mermaid.init()
   }
 }
