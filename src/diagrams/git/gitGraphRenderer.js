@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import * as d3 from 'd3'
+import assign from 'lodash.assign'
 
 import db from './gitGraphAst'
 import gitGraphParser from './parser/gitGraph'
@@ -160,7 +160,7 @@ function cloneNode (svg, selector) {
 function renderCommitHistory (svg, commitid, branches, direction) {
   let commit
   const numCommits = Object.keys(allCommitsDict).length
-  if (_.isString(commitid)) {
+  if (typeof commitid === 'string') {
     do {
       commit = allCommitsDict[commitid]
       logger.debug('in renderCommitHistory', commit.id, commit.seq)
@@ -189,7 +189,13 @@ function renderCommitHistory (svg, commitid, branches, direction) {
         .attr('stroke', config.nodeStrokeColor)
         .attr('stroke-width', config.nodeStrokeWidth)
 
-      const branch = _.find(branches, ['commit', commit])
+      let branch
+      for (let branchName in branches) {
+        if (branches[branchName].commit === commit) {
+          branch = branches[branchName]
+          break
+        }
+      }
       if (branch) {
         logger.debug('found branch ', branch.name)
         svg.select('#node-' + commit.id + ' p')
@@ -211,7 +217,7 @@ function renderCommitHistory (svg, commitid, branches, direction) {
     } while (commitid && allCommitsDict[commitid])
   }
 
-  if (_.isArray(commitid)) {
+  if (Array.isArray(commitid)) {
     logger.debug('found merge commmit', commitid)
     renderCommitHistory(svg, commitid[0], branches, direction)
     branchNum++
@@ -223,11 +229,11 @@ function renderCommitHistory (svg, commitid, branches, direction) {
 function renderLines (svg, commit, direction, branchColor) {
   branchColor = branchColor || 0
   while (commit.seq > 0 && !commit.lineDrawn) {
-    if (_.isString(commit.parent)) {
+    if (typeof commit.parent === 'string') {
       svgDrawLineForCommits(svg, commit.id, commit.parent, direction, branchColor)
       commit.lineDrawn = true
       commit = allCommitsDict[commit.parent]
-    } else if (_.isArray(commit.parent)) {
+    } else if (Array.isArray(commit.parent)) {
       svgDrawLineForCommits(svg, commit.id, commit.parent[0], direction, branchColor)
       svgDrawLineForCommits(svg, commit.id, commit.parent[1], direction, branchColor + 1)
       renderLines(svg, allCommitsDict[commit.parent[1]], direction, branchColor + 1)
@@ -246,7 +252,7 @@ export const draw = function (txt, id, ver) {
     // Parse the graph definition
     parser.parse(txt + '\n')
 
-    config = _.extend(config, apiConfig, db.getOptions())
+    config = assign(config, apiConfig, db.getOptions())
     logger.debug('effective options', config)
     const direction = db.getDirection()
     allCommitsDict = db.getCommits()
@@ -259,11 +265,12 @@ export const draw = function (txt, id, ver) {
     const svg = d3.select(`[id="${id}"]`)
     svgCreateDefs(svg)
     branchNum = 1
-    _.each(branches, function (v) {
+    for (let branch in branches) {
+      const v = branches[branch]
       renderCommitHistory(svg, v.commit.id, branches, direction)
       renderLines(svg, v.commit, direction)
       branchNum++
-    })
+    }
     svg.attr('height', function () {
       if (direction === 'BT') return Object.keys(allCommitsDict).length * config.nodeSpacing
       return (branches.length + 1) * config.branchOffset

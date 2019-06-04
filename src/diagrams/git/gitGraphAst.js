@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import maxBy from 'lodash.maxby'
+import orderBy from 'lodash.orderby'
+import uniqBy from 'lodash.uniqby'
 
 import { logger } from '../../logger'
 
@@ -145,7 +147,7 @@ function upsert (arr, key, newval) {
 }
 
 function prettyPrintCommitHistory (commitArr) {
-  const commit = _.maxBy(commitArr, 'seq')
+  const commit = maxBy(commitArr, 'seq')
   let line = ''
   commitArr.forEach(function (c) {
     if (c === commit) {
@@ -155,9 +157,9 @@ function prettyPrintCommitHistory (commitArr) {
     }
   })
   const label = [line, commit.id, commit.seq]
-  _.each(branches, function (value, key) {
-    if (value === commit.id) label.push(key)
-  })
+  for (let branch in branches) {
+    if (branches[branch] === commit.id) label.push(branch)
+  }
   logger.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {
     const newCommit = commits[commit.parent[0]]
@@ -169,7 +171,7 @@ function prettyPrintCommitHistory (commitArr) {
     const nextCommit = commits[commit.parent]
     upsert(commitArr, commit, nextCommit)
   }
-  commitArr = _.uniqBy(commitArr, 'id')
+  commitArr = uniqBy(commitArr, 'id')
   prettyPrintCommitHistory(commitArr)
 }
 
@@ -188,9 +190,10 @@ export const clear = function () {
 }
 
 export const getBranchesAsObjArray = function () {
-  const branchArr = _.map(branches, function (value, key) {
-    return { 'name': key, 'commit': commits[value] }
-  })
+  const branchArr = []
+  for (let branch in branches) {
+    branchArr.push({ name: branch, commit: commits[branches[branch]] })
+  }
   return branchArr
 }
 
@@ -201,7 +204,7 @@ export const getCommitsArray = function () {
     return commits[key]
   })
   commitArr.forEach(function (o) { logger.debug(o.id) })
-  return _.orderBy(commitArr, ['seq'], ['desc'])
+  return orderBy(commitArr, ['seq'], ['desc'])
 }
 export const getCurrentBranch = function () { return curBranch }
 export const getDirection = function () { return direction }
