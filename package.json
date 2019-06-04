@@ -41,10 +41,7 @@
     "dagre-layout": "^0.8.8",
     "graphlibrary": "^2.2.0",
     "he": "^1.2.0",
-    "lodash.assign": "^4.2.0",
-    "lodash.maxby": "^4.6.0",
-    "lodash.orderby": "^4.6.0",
-    "lodash.uniqby": "^4.7.0",
+    "lodash": "^4.17.5",
     "moment-mini": "^2.22.1",
     "scope-css": "^1.2.1"
   },

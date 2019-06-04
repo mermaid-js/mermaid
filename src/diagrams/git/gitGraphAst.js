@@ -1,6 +1,4 @@
-import maxBy from 'lodash.maxby'
-import orderBy from 'lodash.orderby'
-import uniqBy from 'lodash.uniqby'
+import _ from 'lodash'
 
 import { logger } from '../../logger'
 
@@ -147,7 +145,7 @@ function upsert (arr, key, newval) {
 }
 
 function prettyPrintCommitHistory (commitArr) {
-  const commit = maxBy(commitArr, 'seq')
+  const commit = _.maxBy(commitArr, 'seq')
   let line = ''
   commitArr.forEach(function (c) {
     if (c === commit) {
@@ -171,7 +169,7 @@ function prettyPrintCommitHistory (commitArr) {
     const nextCommit = commits[commit.parent]
     upsert(commitArr, commit, nextCommit)
   }
-  commitArr = uniqBy(commitArr, 'id')
+  commitArr = _.uniqBy(commitArr, 'id')
   prettyPrintCommitHistory(commitArr)
 }
 
@@ -204,7 +202,7 @@ export const getCommitsArray = function () {
     return commits[key]
   })
   commitArr.forEach(function (o) { logger.debug(o.id) })
-  return orderBy(commitArr, ['seq'], ['desc'])
+  return _.orderBy(commitArr, ['seq'], ['desc'])
 }
 export const getCurrentBranch = function () { return curBranch }
 export const getDirection = function () { return direction }

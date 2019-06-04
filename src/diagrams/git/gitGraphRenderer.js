@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-import assign from 'lodash.assign'
+import _ from 'lodash'
 
 import db from './gitGraphAst'
 import gitGraphParser from './parser/gitGraph'
@@ -252,7 +252,7 @@ export const draw = function (txt, id, ver) {
     // Parse the graph definition
     parser.parse(txt + '\n')
 
-    config = assign(config, apiConfig, db.getOptions())
+    config = _.assign(config, apiConfig, db.getOptions())
     logger.debug('effective options', config)
     const direction = db.getDirection()
     allCommitsDict = db.getCommits()
