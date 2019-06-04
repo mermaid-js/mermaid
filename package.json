@@ -42,7 +42,7 @@
     "graphlibrary": "^2.2.0",
     "he": "^1.2.0",
     "lodash": "^4.17.11",
-    "moment": "^2.23.0",
+    "moment-mini": "^2.22.1",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {
@@ -62,6 +62,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.6.0",
     "jison": "^0.4.18",
+    "moment": "^2.23.0",
     "node-sass": "^4.11.0",
     "sass-loader": "^7.1.0",
     "standard": "^12.0.1",

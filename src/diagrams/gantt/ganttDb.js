@@ -1,4 +1,4 @@
-import moment from 'moment'
+import moment from 'moment-mini'
 import { logger } from '../../logger'
 
 let dateFormat = ''
