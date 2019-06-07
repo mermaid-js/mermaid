@@ -12,6 +12,7 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
+**Mermaid was nomiated and won the JS Open Source Awards (2019) in the catory The most existing use of technology!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintin the project.**
 
 ### Flowchart
 
