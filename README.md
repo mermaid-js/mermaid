@@ -14,6 +14,22 @@ This is why mermaid was born, a simple markdown-like script language for generat
 
 **Mermaid was nomiated and won the JS Open Source Awards (2019) in the catory The most existing use of technology!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintin the project.**
 
+### Are you someone who wants to take an active role in improving mermaid?
+
+Look at the list of areas we need help with:
+
+* Development - help solving issues
+* Development - work with the build environment, with JS we keep updating the tools we use
+* Development - new diagram types
+* Development - Handling Pull Requests
+* Test - testing in connection with realeases, regression testing 
+* Test - verification of fixed issues
+* Test - test of pull requests and verification testing
+* Release management - more of a PL role, make roadmap for the project, coordinating the work 
+* Release management - classification and monitoring of incoming issues 
+
+If you think lending a hand to one or more of these areas would be fun, please send an email tp knsv@sveido.com!
+
 ### Flowchart
 
 ```
