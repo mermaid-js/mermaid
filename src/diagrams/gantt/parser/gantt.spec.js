@@ -1,10 +1,12 @@
 /* eslint-env jasmine */
-import { parser } from './parser/gantt'
-import ganttDb from './ganttDb'
+/* eslint-disable no-eval */
+import { parser } from './gantt'
+import ganttDb from '../ganttDb'
 
 describe('when parsing a gantt diagram it', function () {
   beforeEach(function () {
     parser.yy = ganttDb
+    parser.yy.clear()
   })
 
   it('should handle a dateFormat definition', function () {
@@ -44,11 +46,46 @@ describe('when parsing a gantt diagram it', function () {
    */
   it('should handle a task definition', function () {
     const str = 'gantt\n' +
-      'dateFormat yyyy-mm-dd\n' +
+      'dateFormat YYYY-MM-DD\n' +
       'title Adding gantt diagram functionality to mermaid\n' +
       'section Documentation\n' +
       'Design jison grammar:des1, 2014-01-01, 2014-01-04'
 
     parser.parse(str)
+
+    const tasks = parser.yy.getTasks()
+
+    expect(tasks[0].startTime).toEqual(new Date(2014, 0, 1))
+    expect(tasks[0].endTime).toEqual(new Date(2014, 0, 4))
+    expect(tasks[0].id).toEqual('des1')
+    expect(tasks[0].task).toEqual('Design jison grammar')
   })
+  it.each`
+    tags                     | milestone | done     | crit     | active
+    ${'milestone'}           | ${true}   | ${false} | ${false} | ${false}
+    ${'done'}                | ${false}  | ${true}  | ${false} | ${false}
+    ${'crit'}                | ${false}  | ${false} | ${true}  | ${false}
+    ${'active'}              | ${false}  | ${false} | ${false} | ${true}
+    ${'crit,milestone,done'} | ${true}   | ${true}  | ${true}  | ${false}
+    `('should handle a task with tags $tags', ({ tags, milestone, done, crit, active }) => {
+  const str = 'gantt\n' +
+        'dateFormat YYYY-MM-DD\n' +
+        'title Adding gantt diagram functionality to mermaid\n' +
+        'section Documentation\n' +
+        'test task:' + tags + ', 2014-01-01, 2014-01-04'
+
+  const allowedTags = ['active', 'done', 'crit', 'milestone']
+
+  parser.parse(str)
+
+  const tasks = parser.yy.getTasks()
+
+  allowedTags.forEach(function (t) {
+    if (eval(t)) {
+      expect(tasks[0][t]).toBeTruthy()
+    } else {
+      expect(tasks[0][t]).toBeFalsy()
+    }
+  })
+})
 })
