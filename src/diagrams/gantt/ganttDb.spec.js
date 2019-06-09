@@ -1,5 +1,5 @@
 /* eslint-env jasmine */
-import moment from 'moment'
+import moment from 'moment-mini'
 import ganttDb from './ganttDb'
 
 describe('when using the ganttDb', function () {
