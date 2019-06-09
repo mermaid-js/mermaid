@@ -217,9 +217,9 @@ const drawEdge = function (elem, path, relation) {
     const p = path.points[0]
     const nextPoint = path.points[1]
 
-    let direction = {x: nextPoint.x - p.x, y: nextPoint.y - p.y}
+    let direction = { x: nextPoint.x - p.x, y: nextPoint.y - p.y }
     normalize(direction, 10)
-    const offsettedPoint = {x: p.x + direction.x, y: p.y + direction.y}
+    const offsettedPoint = { x: p.x + direction.x, y: p.y + direction.y }
 
     writeLabel(offsettedPoint.x, offsettedPoint.y, relation.relationTitle1)
   }
@@ -228,9 +228,9 @@ const drawEdge = function (elem, path, relation) {
     const p = path.points[l - 1]
     const previousPoint = path.points[l - 2]
 
-    let direction = {x: previousPoint.x - p.x, y: previousPoint.y - p.y}
+    let direction = { x: previousPoint.x - p.x, y: previousPoint.y - p.y }
     normalize(direction, 10)
-    const offsettedPoint = {x: p.x + direction.x, y: p.y + direction.y}
+    const offsettedPoint = { x: p.x + direction.x, y: p.y + direction.y }
 
     writeLabel(offsettedPoint.x, offsettedPoint.y, relation.relationTitle2)
   }
