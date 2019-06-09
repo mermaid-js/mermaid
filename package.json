@@ -15,6 +15,7 @@
   "scripts": {
     "build": "webpack --progress --colors",
     "build:watch": "yarn build --watch",
+    "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
     "release": "yarn build -p --config webpack.config.prod.babel.js",
     "lint": "standard",
     "e2e": "yarn lint && jest e2e --config e2e/jest.config.js",
@@ -27,7 +28,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/knsv/mermaid"
+    "url": "https://github.com/abzicht/mermaid"
   },
   "author": "Knut Sveidqvist",
   "license": "MIT",
@@ -46,8 +47,9 @@
     "dagre-layout": "^0.8.8",
     "graphlibrary": "^2.2.0",
     "he": "^1.2.0",
-    "lodash": "^4.17.5",
     "moment-mini": "^2.22.1",
+    "lodash": "^4.17.11",
+    "minify": "^4.1.1",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {

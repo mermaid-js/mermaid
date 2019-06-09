@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14,15,16],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14,15,17,19],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,15],$V7=[1,16];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"axisFormat":12,"excludes":13,"title":14,"section":15,"taskTxt":16,"taskData":17,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"axisFormat",13:"excludes",14:"title",15:"section",16:"taskTxt",17:"taskData"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,2]],
+symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"axisFormat":12,"excludes":13,"title":14,"section":15,"clickStatement":16,"taskTxt":17,"taskData":18,"click":19,"callbackname":20,"callbackargs":21,"href":22,"clickStatementDebug":23,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"axisFormat",13:"excludes",14:"title",15:"section",17:"taskTxt",18:"taskData",19:"click",20:"callbackname",21:"callbackargs",22:"href"},
+productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,2],[16,2],[16,3],[16,3],[16,4],[16,3],[16,4],[16,2],[23,2],[23,3],[23,3],[23,4],[23,3],[23,4],[23,2]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -113,12 +113,42 @@ break;
 case 12:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 13:
+case 14:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
+break;
+case 15:
+this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
+break;
+case 16:
+this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
+break;
+case 17:
+this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
+break;
+case 18:
+this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
+break;
+case 19:
+this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
+break;
+case 20:
+this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
+break;
+case 21:
+this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
+break;
+case 22: case 28:
+this.$=$$[$0-1] + ' ' + $$[$0];
+break;
+case 23: case 24: case 26:
+this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
+break;
+case 25: case 27:
+this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:15,11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),{17:[1,16]},o($V0,[2,4]),o($V0,[2,13])],
+table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:14,17:$V6,19:$V7},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:17,11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:14,17:$V6,19:$V7},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),o($V0,[2,13]),{18:[1,18]},{20:[1,19],22:[1,20]},o($V0,[2,4]),o($V0,[2,14]),o($V0,[2,15],{21:[1,21],22:[1,22]}),o($V0,[2,21],{20:[1,23]}),o($V0,[2,16],{22:[1,24]}),o($V0,[2,17]),o($V0,[2,19],{21:[1,25]}),o($V0,[2,18]),o($V0,[2,20])],
 defaultActions: {},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
@@ -596,8 +626,6 @@ stateStackSize:function stateStackSize() {
     },
 options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-	// Pre-lexer code can go here
-
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:return 10;
@@ -608,34 +636,58 @@ case 2:/* skip comments */
 break;
 case 3:/* skip comments */
 break;
-case 4:return 4;
+case 4:this.begin("href");
 break;
-case 5:return 11;
+case 5:this.popState();
 break;
-case 6:return 12;
+case 6:return 22;
 break;
-case 7:return 13;
+case 7:this.begin("callbackname");
 break;
-case 8:return 'date';
+case 8:this.popState();
 break;
-case 9:return 14;
+case 9:this.popState(); this.begin("callbackargs");
 break;
-case 10:return 15;
+case 10:return 20;
 break;
-case 11:return 16;
+case 11:this.popState();
 break;
-case 12:return 17;
+case 12:return 21;
 break;
-case 13:return ':';
+case 13:this.begin("click");
 break;
-case 14:return 6;
+case 14:this.popState();
 break;
-case 15:return 'INVALID';
+case 15:return 19;
+break;
+case 16:return 4;
+break;
+case 17:return 11;
+break;
+case 18:return 12;
+break;
+case 19:return 13;
+break;
+case 20:return 'date';
+break;
+case 21:return 14;
+break;
+case 22:return 15;
+break;
+case 23:return 17;
+break;
+case 24:return 18;
+break;
+case 25:return ':';
+break;
+case 26:return 6;
+break;
+case 27:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"callbackargs":{"rules":[11,12],"inclusive":false},"callbackname":{"rules":[8,9,10],"inclusive":false},"href":{"rules":[5,6],"inclusive":false},"click":{"rules":[14,15],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,7,13,16,17,18,19,20,21,22,23,24,25,26,27],"inclusive":true}}
 });
 return lexer;
 })();

@@ -318,6 +318,13 @@ Describe gantt syntax               :active, a1, after des1, 3d
 Add gantt diagram to demo page      :after a1  , 20h
 Add another diagram to demo page    :doc1, after a1  , 48h
 
+section Clickable
+Visit mermaidjs               :active, cl1, 2014-01-07,2014-01-10
+Calling a Callback (look at the console log) :cl2, after cl1, 3d
+
+click cl1 href "https://mermaidjs.github.io/"
+click cl2 call ganttTestClick("test", test, test)
+
 section Last section
 Describe gantt syntax               :after doc1, 3d
 Add gantt diagram to demo page      : 20h
@@ -376,6 +383,11 @@ Class08 <--> C2: Cool label
     });
   </script>
   <script>
+    function ganttTestClick(a, b, c){
+      console.log("a:", a)
+      console.log("b:", b)
+      console.log("c:", c)
+    }
     function testClick(nodeId) {
       console.log("clicked", nodeId)
       var originalBgColor = document.querySelector('body').style.backgroundColor

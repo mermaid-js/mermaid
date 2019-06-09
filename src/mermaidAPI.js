@@ -447,6 +447,7 @@ const render = function (id, txt, cb, container) {
 
   if (typeof cb !== 'undefined') {
     cb(svgCode, flowDb.bindFunctions)
+    cb(svgCode, ganttDb.bindFunctions)
   } else {
     logger.warn('CB = undefined!')
   }
