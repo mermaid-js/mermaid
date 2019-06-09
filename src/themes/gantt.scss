@@ -188,6 +188,13 @@
   shape-rendering: crispEdges;
 }
 
+.milestone {
+  transform: rotate(45deg) scale(0.8,0.8);
+}
+
+.milestoneText {
+  font-style: italic;
+}
 .doneCritText0,
 .doneCritText1,
 .doneCritText2,

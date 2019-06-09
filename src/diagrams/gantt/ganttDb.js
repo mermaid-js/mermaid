@@ -8,6 +8,7 @@ let title = ''
 let sections = []
 let tasks = []
 let currentSection = ''
+const tags = ['active', 'done', 'crit', 'milestone']
 
 export const clear = function () {
   sections = []
@@ -199,26 +200,9 @@ const compileData = function (prevTask, dataStr) {
 
   const task = {}
 
-  // Get tags like active, done cand crit
-  let matchFound = true
-  while (matchFound) {
-    matchFound = false
-    if (data[0].match(/^\s*active\s*$/)) {
-      task.active = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*done\s*$/)) {
-      task.done = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*crit\s*$/)) {
-      task.crit = true
-      data.shift(1)
-      matchFound = true
-    }
-  }
+  // Get tags like active, done, crit and milestone
+  getTaskTags(data, task, tags)
+
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
@@ -264,26 +248,9 @@ const parseData = function (prevTaskId, dataStr) {
 
   const task = {}
 
-  // Get tags like active, done cand crit
-  let matchFound = true
-  while (matchFound) {
-    matchFound = false
-    if (data[0].match(/^\s*active\s*$/)) {
-      task.active = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*done\s*$/)) {
-      task.done = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*crit\s*$/)) {
-      task.crit = true
-      data.shift(1)
-      matchFound = true
-    }
-  }
+  // Get tags like active, done, crit and milestone
+  getTaskTags(data, task, tags)
+
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
@@ -332,6 +299,7 @@ export const addTask = function (descr, data) {
   rawTask.active = taskInfo.active
   rawTask.done = taskInfo.done
   rawTask.crit = taskInfo.crit
+  rawTask.milestone = taskInfo.milestone
 
   const pos = rawTasks.push(rawTask)
 
@@ -359,6 +327,7 @@ export const addTaskOrg = function (descr, data) {
   newTask.active = taskInfo.active
   newTask.done = taskInfo.done
   newTask.crit = taskInfo.crit
+  newTask.milestone = taskInfo.milestone
   lastTask = newTask
   tasks.push(newTask)
 }
@@ -414,4 +383,20 @@ export default {
   findTaskById,
   addTaskOrg,
   setExcludes
+}
+
+function getTaskTags (data, task, tags) {
+  let matchFound = true
+  while (matchFound) {
+    matchFound = false
+    tags.forEach(function (t) {
+      const pattern = '^\\s*' + t + '\\s*$'
+      const regex = new RegExp(pattern)
+      if (data[0].match(regex)) {
+        task[t] = true
+        data.shift(1)
+        matchFound = true
+      }
+    })
+  }
 }
