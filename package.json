@@ -18,6 +18,7 @@
     "release": "yarn build -p --config webpack.config.prod.babel.js",
     "lint": "standard",
     "e2e": "yarn lint && jest e2e --config e2e/jest.config.js",
+    "dev": "yarn lint && webpack-dev-server --config webpack.config.e2e.js",
     "test": "yarn lint && jest src",
     "test:watch": "jest --watch src",
     "jison": "node -r @babel/register node_modules/.bin/gulp jison",

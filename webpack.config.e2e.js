@@ -28,7 +28,8 @@ module.exports = {
   target: 'web',
   entry: {
     mermaid: './src/mermaid.js',
-    e2e: './e2e/platform/viewer.js'
+    e2e: './e2e/platform/viewer.js',
+    'bundle-test': './e2e/platform/bundle-test.js'
   },
   node: {
     fs: 'empty' // jison generated code requires 'fs'
