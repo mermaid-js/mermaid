@@ -46,8 +46,8 @@
     "dagre-layout": "^0.8.8",
     "graphlibrary": "^2.2.0",
     "he": "^1.2.0",
-    "lodash": "^4.17.11",
-    "moment": "^2.23.0",
+    "lodash": "^4.17.5",
+    "moment-mini": "^2.22.1",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {
@@ -70,6 +70,7 @@
     "jest-image-snapshot": "^2.8.2",
     "jest-puppeteer": "^4.2.0",
     "jison": "^0.4.18",
+    "moment": "^2.23.0",
     "node-sass": "^4.11.0",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
@@ -81,8 +82,7 @@
     "yarn-upgrade-all": "^0.5.0"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "yarn-upgrade-all": {
     "ignore": [
