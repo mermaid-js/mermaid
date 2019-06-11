@@ -71,7 +71,7 @@ export const addVertices = function (vert, g, svgId) {
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
-      const rows = vertexText.split(/<br>/)
+      const rows = verticeText.split(/<br[/]{0,1}>/)
 
       for (let j = 0; j < rows.length; j++) {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
@@ -198,6 +198,7 @@ export const addEdges = function (edges, g) {
           edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>'
         } else {
           edgeData.labelType = 'text'
+          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none'
           edgeData.label = edge.text.replace(/<br>/g, '\n')
         }
       } else {
