@@ -1,9 +1,9 @@
-import * as d3 from 'd3';
-import dagre from 'dagre-layout';
-import graphlib from 'graphlibrary';
-import { logger } from '../../logger';
-import classDb from './classDb';
-import { parser } from './parser/classDiagram';
+import * as d3 from 'd3'
+import dagre from 'dagre-layout'
+import graphlib from 'graphlibrary'
+import { logger } from '../../logger'
+import classDb from './classDb'
+import { parser } from './parser/classDiagram'
 
 parser.yy = classDb
 
