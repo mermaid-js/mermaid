@@ -1,9 +1,9 @@
-import * as d3 from 'd3'
-import dagre from 'dagre-layout'
-import graphlib from 'graphlibrary'
-import { logger } from '../../logger'
-import classDb from './classDb'
-import { parser } from './parser/classDiagram'
+import * as d3 from 'd3';
+import dagre from 'dagre-layout';
+import graphlib from 'graphlibrary';
+import { logger } from '../../logger';
+import classDb from './classDb';
+import { parser } from './parser/classDiagram';
 
 parser.yy = classDb
 
@@ -150,7 +150,7 @@ const drawEdge = function (elem, path, relation) {
     }
   }
 
-  path.points = path.points.filter(p => !Number.isNaN(p))
+  path.points = path.points.filter(p => !Number.isNaN(p.y))
 
   // The data for our line
   const lineData = path.points
