@@ -1,17 +1,22 @@
-import moment from 'moment'
+import moment from 'moment-mini'
 import { logger } from '../../logger'
+import * as d3 from 'd3'
 
 let dateFormat = ''
 let axisFormat = ''
+let excludes = []
 let title = ''
 let sections = []
 let tasks = []
 let currentSection = ''
+const tags = ['active', 'done', 'crit', 'milestone']
+let funs = []
 
 export const clear = function () {
   sections = []
   tasks = []
   currentSection = ''
+  funs = []
   title = ''
   taskCnt = 0
   lastTask = undefined
@@ -29,6 +34,10 @@ export const getAxisFormat = function () {
 
 export const setDateFormat = function (txt) {
   dateFormat = txt
+}
+
+export const setExcludes = function (txt) {
+  excludes = txt.toLowerCase().split(/[\s,]+/)
 }
 
 export const setTitle = function (txt) {
@@ -58,6 +67,42 @@ export const getTasks = function () {
   return tasks
 }
 
+const isInvalidDate = function (date, dateFormat, excludes) {
+  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
+    return true
+  }
+  if (excludes.indexOf(date.format('dddd').toLowerCase()) >= 0) {
+    return true
+  }
+  return excludes.indexOf(date.format(dateFormat.trim())) >= 0
+}
+
+const checkTaskDates = function (task, dateFormat, excludes) {
+  if (!excludes.length || task.manualEndTime) return
+  let startTime = moment(task.startTime, dateFormat, true)
+  startTime.add(1, 'd')
+  let endTime = moment(task.endTime, dateFormat, true)
+  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes)
+  task.endTime = endTime.toDate()
+  task.renderEndTime = renderEndTime
+}
+
+const fixTaskDates = function (startTime, endTime, dateFormat, excludes) {
+  let invalid = false
+  let renderEndTime = null
+  while (startTime.date() <= endTime.date()) {
+    if (!invalid) {
+      renderEndTime = endTime.toDate()
+    }
+    invalid = isInvalidDate(startTime, dateFormat, excludes)
+    if (invalid) {
+      endTime.add(1, 'd')
+    }
+    startTime.add(1, 'd')
+  }
+  return renderEndTime
+}
+
 const getStartDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
@@ -77,8 +122,9 @@ const getStartDate = function (prevTime, dateFormat, str) {
   }
 
   // Check for actual date set
-  if (moment(str, dateFormat.trim(), true).isValid()) {
-    return moment(str, dateFormat.trim(), true).toDate()
+  let mDate = moment(str, dateFormat.trim(), true)
+  if (mDate.isValid()) {
+    return mDate.toDate()
   } else {
     logger.debug('Invalid date:' + str)
     logger.debug('With date format:' + dateFormat.trim())
@@ -92,8 +138,9 @@ const getEndDate = function (prevTime, dateFormat, str) {
   str = str.trim()
 
   // Check for actual date
-  if (moment(str, dateFormat.trim(), true).isValid()) {
-    return moment(str, dateFormat.trim()).toDate()
+  let mDate = moment(str, dateFormat.trim(), true)
+  if (mDate.isValid()) {
+    return mDate.toDate()
   }
 
   const d = moment(prevTime)
@@ -119,7 +166,6 @@ const getEndDate = function (prevTime, dateFormat, str) {
         d.add(durationStatement[1], 'weeks')
         break
     }
-    return d.toDate()
   }
   // Default date - now
   return d.toDate()
@@ -157,47 +203,37 @@ const compileData = function (prevTask, dataStr) {
 
   const task = {}
 
-  // Get tags like active, done cand crit
-  let matchFound = true
-  while (matchFound) {
-    matchFound = false
-    if (data[0].match(/^\s*active\s*$/)) {
-      task.active = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*done\s*$/)) {
-      task.done = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*crit\s*$/)) {
-      task.crit = true
-      data.shift(1)
-      matchFound = true
-    }
-  }
+  // Get tags like active, done, crit and milestone
+  getTaskTags(data, task, tags)
+
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
 
+  let endTimeData = ''
   switch (data.length) {
     case 1:
       task.id = parseId()
       task.startTime = prevTask.endTime
-      task.endTime = getEndDate(task.startTime, dateFormat, data[0])
+      endTimeData = data[0]
       break
     case 2:
       task.id = parseId()
       task.startTime = getStartDate(undefined, dateFormat, data[0])
-      task.endTime = getEndDate(task.startTime, dateFormat, data[1])
+      endTimeData = data[1]
       break
     case 3:
       task.id = parseId(data[0])
       task.startTime = getStartDate(undefined, dateFormat, data[1])
-      task.endTime = getEndDate(task.startTime, dateFormat, data[2])
+      endTimeData = data[2]
       break
     default:
+  }
+
+  if (endTimeData) {
+    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData)
+    task.manualEndTime = endTimeData === moment(task.endTime).format(dateFormat.trim())
+    checkTaskDates(task, dateFormat, excludes)
   }
 
   return task
@@ -215,26 +251,9 @@ const parseData = function (prevTaskId, dataStr) {
 
   const task = {}
 
-  // Get tags like active, done cand crit
-  let matchFound = true
-  while (matchFound) {
-    matchFound = false
-    if (data[0].match(/^\s*active\s*$/)) {
-      task.active = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*done\s*$/)) {
-      task.done = true
-      data.shift(1)
-      matchFound = true
-    }
-    if (data[0].match(/^\s*crit\s*$/)) {
-      task.crit = true
-      data.shift(1)
-      matchFound = true
-    }
-  }
+  // Get tags like active, done, crit and milestone
+  getTaskTags(data, task, tags)
+
   for (let i = 0; i < data.length; i++) {
     data[i] = data[i].trim()
   }
@@ -242,18 +261,33 @@ const parseData = function (prevTaskId, dataStr) {
   switch (data.length) {
     case 1:
       task.id = parseId()
-      task.startTime = { type: 'prevTaskEnd', id: prevTaskId }
-      task.endTime = { data: data[0] }
+      task.startTime = {
+        type: 'prevTaskEnd',
+        id: prevTaskId
+      }
+      task.endTime = {
+        data: data[0]
+      }
       break
     case 2:
       task.id = parseId()
-      task.startTime = { type: 'getStartDate', startData: data[0] }
-      task.endTime = { data: data[1] }
+      task.startTime = {
+        type: 'getStartDate',
+        startData: data[0]
+      }
+      task.endTime = {
+        data: data[1]
+      }
       break
     case 3:
       task.id = parseId(data[0])
-      task.startTime = { type: 'getStartDate', startData: data[1] }
-      task.endTime = { data: data[2] }
+      task.startTime = {
+        type: 'getStartDate',
+        startData: data[1]
+      }
+      task.endTime = {
+        data: data[2]
+      }
       break
     default:
   }
@@ -270,8 +304,11 @@ export const addTask = function (descr, data) {
     section: currentSection,
     type: currentSection,
     processed: false,
+    manualEndTime: false,
+    renderEndTime: null,
     raw: { data: data },
-    task: descr
+    task: descr,
+    classes: []
   }
   const taskInfo = parseData(lastTaskID, data)
   rawTask.raw.startTime = taskInfo.startTime
@@ -281,6 +318,7 @@ export const addTask = function (descr, data) {
   rawTask.active = taskInfo.active
   rawTask.done = taskInfo.done
   rawTask.crit = taskInfo.crit
+  rawTask.milestone = taskInfo.milestone
 
   const pos = rawTasks.push(rawTask)
 
@@ -299,7 +337,8 @@ export const addTaskOrg = function (descr, data) {
     section: currentSection,
     type: currentSection,
     description: descr,
-    task: descr
+    task: descr,
+    classes: []
   }
   const taskInfo = compileData(lastTask, data)
   newTask.startTime = taskInfo.startTime
@@ -308,6 +347,7 @@ export const addTaskOrg = function (descr, data) {
   newTask.active = taskInfo.active
   newTask.done = taskInfo.done
   newTask.crit = taskInfo.crit
+  newTask.milestone = taskInfo.milestone
   lastTask = newTask
   tasks.push(newTask)
 }
@@ -333,6 +373,8 @@ const compileTasks = function () {
       rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
+        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data === moment(rawTasks[pos].endTime).format(dateFormat.trim())
+        checkTaskDates(rawTasks[pos], dateFormat, excludes)
       }
     }
 
@@ -348,6 +390,108 @@ const compileTasks = function () {
   return allProcessed
 }
 
+/**
+ * Called by parser when a link is found. Adds the URL to the vertex data.
+ * @param ids Comma separated list of ids
+ * @param linkStr URL to create a link for
+ */
+export const setLink = function (ids, linkStr) {
+  ids.split(',').forEach(function (id) {
+    let rawTask = findTaskById(id)
+    if (typeof rawTask !== 'undefined') {
+      pushFun(id, () => { window.open(linkStr, '_self') })
+    }
+  })
+  setClass(ids, 'clickable')
+}
+
+/**
+ * Called by parser when a special node is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param className Class to add
+ */
+export const setClass = function (ids, className) {
+  ids.split(',').forEach(function (id) {
+    let rawTask = findTaskById(id)
+    if (typeof rawTask !== 'undefined') {
+      rawTask.classes.push(className)
+    }
+  })
+}
+
+const setClickFun = function (id, functionName, functionArgs) {
+  if (typeof functionName === 'undefined') {
+    return
+  }
+
+  let argList = []
+  if (typeof functionArgs === 'string') {
+    /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+    for (let i = 0; i < argList.length; i++) {
+      let item = argList[i].trim()
+      /* Removes all double quotes at the start and end of an argument */
+      /* This preserves all starting and ending whitespace inside */
+      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        item = item.substr(1, item.length - 2)
+      }
+      argList[i] = item
+    }
+  }
+
+  let rawTask = findTaskById(id)
+  if (typeof rawTask !== 'undefined') {
+    pushFun(id, () => { window[functionName](...argList) })
+  }
+}
+
+/**
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * @param id The task's id
+ * @param callbackFunction A function to be executed when clicked on the task or the task's text
+ */
+const pushFun = function (id, callbackFunction) {
+  funs.push(function (element) {
+    const elem = d3.select(element).select(`[id="${id}"]`)
+    if (elem !== null) {
+      elem.on('click', function () {
+        callbackFunction()
+      })
+    }
+  })
+  funs.push(function (element) {
+    const elem = d3.select(element).select(`[id="${id}-text"]`)
+    if (elem !== null) {
+      elem.on('click', function () {
+        callbackFunction()
+      })
+    }
+  })
+}
+
+/**
+ * Called by parser when a click definition is found. Registers an event handler.
+ * @param ids Comma separated list of ids
+ * @param functionName Function to be called on click
+ * @param functionArgs Function args the function should be called with
+ */
+export const setClickEvent = function (ids, functionName, functionArgs) {
+  ids.split(',').forEach(function (id) {
+    setClickFun(id, functionName, functionArgs)
+  })
+  setClass(ids, 'clickable')
+}
+
+/**
+ * Binds all functions previously added to fun (specified through click) to the element
+ * @param element
+ */
+export const bindFunctions = function (element) {
+  funs.forEach(function (fun) {
+    fun(element)
+  })
+}
+
 export default {
   clear,
   setDateFormat,
@@ -359,5 +503,25 @@ export default {
   getTasks,
   addTask,
   findTaskById,
-  addTaskOrg
+  addTaskOrg,
+  setExcludes,
+  setClickEvent,
+  setLink,
+  bindFunctions
+}
+
+function getTaskTags (data, task, tags) {
+  let matchFound = true
+  while (matchFound) {
+    matchFound = false
+    tags.forEach(function (t) {
+      const pattern = '^\\s*' + t + '\\s*$'
+      const regex = new RegExp(pattern)
+      if (data[0].match(regex)) {
+        task[t] = true
+        data.shift(1)
+        matchFound = true
+      }
+    })
+  }
 }

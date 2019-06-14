@@ -7,6 +7,7 @@ let vertices = {}
 let edges = []
 let classes = []
 let subGraphs = []
+let subGraphLookup = {}
 let tooltips = {}
 let subCount = 0
 let direction
@@ -18,8 +19,9 @@ let funs = []
  * @param text
  * @param type
  * @param style
+ * @param classes
  */
-export const addVertex = function (id, text, type, style) {
+export const addVertex = function (id, text, type, style, classes) {
   let txt
 
   if (typeof id === 'undefined') {
@@ -49,6 +51,13 @@ export const addVertex = function (id, text, type, style) {
     if (style !== null) {
       style.forEach(function (s) {
         vertices[id].styles.push(s)
+      })
+    }
+  }
+  if (typeof classes !== 'undefined') {
+    if (classes !== null) {
+      classes.forEach(function (s) {
+        vertices[id].classes.push(s)
       })
     }
   }
@@ -87,12 +96,14 @@ export const addLink = function (start, end, type, linktext) {
  * @param pos
  * @param interpolate
  */
-export const updateLinkInterpolate = function (pos, interp) {
-  if (pos === 'default') {
-    edges.defaultInterpolate = interp
-  } else {
-    edges[pos].interpolate = interp
-  }
+export const updateLinkInterpolate = function (positions, interp) {
+  positions.forEach(function (pos) {
+    if (pos === 'default') {
+      edges.defaultInterpolate = interp
+    } else {
+      edges[pos].interpolate = interp
+    }
+  })
 }
 
 /**
@@ -100,15 +111,17 @@ export const updateLinkInterpolate = function (pos, interp) {
  * @param pos
  * @param style
  */
-export const updateLink = function (pos, style) {
-  if (pos === 'default') {
-    edges.defaultStyle = style
-  } else {
-    if (utils.isSubstringInArray('fill', style) === -1) {
-      style.push('fill:none')
+export const updateLink = function (positions, style) {
+  positions.forEach(function (pos) {
+    if (pos === 'default') {
+      edges.defaultStyle = style
+    } else {
+      if (utils.isSubstringInArray('fill', style) === -1) {
+        style.push('fill:none')
+      }
+      edges[pos].style = style
     }
-    edges[pos].style = style
-  }
+  })
 }
 
 export const addClass = function (id, style) {
@@ -142,6 +155,10 @@ export const setClass = function (ids, className) {
   ids.split(',').forEach(function (id) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className)
+    }
+
+    if (typeof subGraphLookup[id] !== 'undefined') {
+      subGraphLookup[id].classes.push(className)
     }
   })
 }
@@ -283,6 +300,7 @@ export const clear = function () {
   funs = []
   funs.push(setupToolTips)
   subGraphs = []
+  subGraphLookup = {}
   subCount = 0
   tooltips = []
 }
@@ -297,7 +315,7 @@ export const defaultStyle = function () {
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-export const addSubGraph = function (list, title) {
+export const addSubGraph = function (id, list, title) {
   function uniq (a) {
     const prims = { 'boolean': {}, 'number': {}, 'string': {} }
     const objs = []
@@ -315,10 +333,13 @@ export const addSubGraph = function (list, title) {
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
 
-  const subGraph = { id: 'subGraph' + subCount, nodes: nodeList, title: title.trim() }
-  subGraphs.push(subGraph)
+  id = id || ('subGraph' + subCount)
+  title = title || ''
   subCount = subCount + 1
-  return subGraph.id
+  const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] }
+  subGraphs.push(subGraph)
+  subGraphLookup[id] = subGraph
+  return id
 }
 
 const getPosForId = function (id) {

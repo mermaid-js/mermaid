@@ -31,7 +31,32 @@ describe('when parsing ', function () {
     expect(subgraph.nodes[0]).toBe('a1')
     expect(subgraph.nodes[1]).toBe('a2')
     expect(subgraph.title).toBe('One')
+    expect(subgraph.id).toBe('One')
   })
+
+  it('should handle subgraph with multiple words in title', function () {
+    const res = flow.parser.parse('graph TB\nsubgraph "Some Title"\n\ta1-->a2\nend')
+    const subgraphs = flow.parser.yy.getSubGraphs()
+    expect(subgraphs.length).toBe(1)
+    const subgraph = subgraphs[0]
+    expect(subgraph.nodes.length).toBe(2)
+    expect(subgraph.nodes[0]).toBe('a1')
+    expect(subgraph.nodes[1]).toBe('a2')
+    expect(subgraph.title).toBe('Some Title')
+    expect(subgraph.id).toBe('subGraph0')
+  });
+
+  it('should handle subgraph with id and title notation', function () {
+    const res = flow.parser.parse('graph TB\nsubgraph some-id[Some Title]\n\ta1-->a2\nend')
+    const subgraphs = flow.parser.yy.getSubGraphs()
+    expect(subgraphs.length).toBe(1)
+    const subgraph = subgraphs[0]
+    expect(subgraph.nodes.length).toBe(2)
+    expect(subgraph.nodes[0]).toBe('a1')
+    expect(subgraph.nodes[1]).toBe('a2')
+    expect(subgraph.title).toBe('Some Title')
+    expect(subgraph.id).toBe('some-id')
+  });
 
   it("should handle angle bracket ' > ' as direction LR", function () {
     const res = flow.parser.parse('graph >;A-->B;')
@@ -428,6 +453,28 @@ describe('when parsing ', function () {
     expect(edges[0].type).toBe('arrow')
   })
 
+  it('should handle multi-numbered style definitons with more then 1 digit in a row', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B1\n' +
+        'A-->B2\n' +
+        'A-->B3\n' +
+        'A-->B4\n' +
+        'A-->B5\n' +
+        'A-->B6\n' +
+        'A-->B7\n' +
+        'A-->B8\n' +
+        'A-->B9\n' +
+        'A-->B10\n' +
+        'A-->B11\n' +
+        'A-->B12\n' +
+        'linkStyle 10,11 stroke-width:1px;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].type).toBe('arrow')
+  })
+
   it('should handle line interpolation default definitions', function () {
     const res = flow.parser.parse('graph TD\n' +
         'A-->B\n' +
@@ -453,6 +500,19 @@ describe('when parsing ', function () {
     expect(edges[1].interpolate).toBe('cardinal')
   })
 
+  it('should handle line interpolation multi-numbered definitions', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0,1 interpolate basis')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].interpolate).toBe('basis')
+    expect(edges[1].interpolate).toBe('basis')
+  })
+
   it('should handle line interpolation default with style', function () {
     const res = flow.parser.parse('graph TD\n' +
         'A-->B\n' +
@@ -476,6 +536,19 @@ describe('when parsing ', function () {
 
     expect(edges[0].interpolate).toBe('basis')
     expect(edges[1].interpolate).toBe('cardinal')
+  })
+
+  it('should handle line interpolation multi-numbered with style', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0,1 interpolate basis stroke-width:1px;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].interpolate).toBe('basis')
+    expect(edges[1].interpolate).toBe('basis')
   })
 
   describe('it should handle interaction, ', function () {

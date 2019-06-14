@@ -155,9 +155,9 @@ function prettyPrintCommitHistory (commitArr) {
     }
   })
   const label = [line, commit.id, commit.seq]
-  _.each(branches, function (value, key) {
-    if (value === commit.id) label.push(key)
-  })
+  for (let branch in branches) {
+    if (branches[branch] === commit.id) label.push(branch)
+  }
   logger.debug(label.join(' '))
   if (Array.isArray(commit.parent)) {
     const newCommit = commits[commit.parent[0]]
@@ -188,9 +188,10 @@ export const clear = function () {
 }
 
 export const getBranchesAsObjArray = function () {
-  const branchArr = _.map(branches, function (value, key) {
-    return { 'name': key, 'commit': commits[value] }
-  })
+  const branchArr = []
+  for (let branch in branches) {
+    branchArr.push({ name: branch, commit: commits[branches[branch]] })
+  }
   return branchArr
 }
 

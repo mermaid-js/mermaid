@@ -66,7 +66,6 @@
 
 /* Task styling */
 
-
 /* Default task */
 
 .task {
@@ -90,6 +89,27 @@
   font-size: 11px;
 }
 
+/* Special case clickable */
+.task.clickable {
+  cursor: pointer;
+}
+.taskText.clickable {
+  cursor: pointer;
+  fill: $taskTextClickableColor !important;
+  font-weight: bold;
+}
+
+.taskTextOutsideLeft.clickable {
+  cursor: pointer;
+  fill: $taskTextClickableColor !important;
+  font-weight: bold;
+}
+
+.taskTextOutsideRight.clickable {
+  cursor: pointer;
+  fill: $taskTextClickableColor !important;
+  font-weight: bold;
+}
 
 /* Specific task settings for the sections*/
 
@@ -109,7 +129,7 @@
 }
 
 .taskTextOutside0,
-.taskTextOutside2,
+.taskTextOutside2
 {
   fill: $taskTextOutsideColor;
 }
@@ -188,6 +208,13 @@
   shape-rendering: crispEdges;
 }
 
+.milestone {
+  transform: rotate(45deg) scale(0.8,0.8);
+}
+
+.milestoneText {
+  font-style: italic;
+}
 .doneCritText0,
 .doneCritText1,
 .doneCritText2,

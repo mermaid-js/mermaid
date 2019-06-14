@@ -1,4 +1,4 @@
-import moment from 'moment'
+import moment from 'moment-mini'
 
 export const LEVELS = {
   debug: 1,

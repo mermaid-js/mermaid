@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import flowDb from './flowDb'
 import flow from './parser/flow'
 import dagreD3 from 'dagre-d3-renderer'
+import addHtmlLabel from 'dagre-d3-renderer/lib/label/add-html-label.js'
 import { logger } from '../../logger'
 import { interpolateToCurve } from '../../utils'
 
@@ -21,7 +22,8 @@ export const setConf = function (cnf) {
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
-export const addVertices = function (vert, g) {
+export const addVertices = function (vert, g, svgId) {
+  const svg = d3.select(`[id="${svgId}"]`)
   const keys = Object.keys(vert)
 
   const styleFromStyleArr = function (styleStr, arr) {
@@ -35,46 +37,41 @@ export const addVertices = function (vert, g) {
     return styleStr
   }
 
-  // Iterate through each item in the vertice object (containing all the vertices found) in the graph definition
+  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function (id) {
-    const vertice = vert[id]
-    let verticeText
+    const vertex = vert[id]
 
     /**
-     * Variable for storing the classes for the vertice
+     * Variable for storing the classes for the vertex
      * @type {string}
      */
     let classStr = ''
-    if (vertice.classes.length > 0) {
-      classStr = vertice.classes.join(' ')
+    if (vertex.classes.length > 0) {
+      classStr = vertex.classes.join(' ')
     }
 
     /**
-     * Variable for storing the extracted style for the vertice
+     * Variable for storing the extracted style for the vertex
      * @type {string}
      */
     let style = ''
     // Create a compound style definition from the style definitions found for the node in the graph definition
-    style = styleFromStyleArr(style, vertice.styles)
+    style = styleFromStyleArr(style, vertex.styles)
 
-    // Use vertice id as text in the box if no text is provided by the graph definition
-    if (typeof vertice.text === 'undefined') {
-      verticeText = vertice.id
-    } else {
-      verticeText = vertice.text
-    }
+    // Use vertex id as text in the box if no text is provided by the graph definition
+    let vertexText = vertex.text !== undefined ? vertex.text : vertex.id
 
-    let labelTypeStr = ''
+    // We create a SVG label, either by delegating to addHtmlLabel or manually
+    let vertexNode
     if (conf.htmlLabels) {
-      labelTypeStr = 'html'
-      verticeText = verticeText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`)
-      if (vertice.link) {
-        verticeText = '<a href="' + vertice.link + '" rel="noopener">' + verticeText + '</a>'
-      }
+      // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
+      const node = { label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`) }
+      vertexNode = addHtmlLabel(svg, node).node()
+      vertexNode.parentNode.removeChild(vertexNode)
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
-      const rows = verticeText.split(/<br>/)
+      const rows = vertexText.split(/<br[/]{0,1}>/)
 
       for (let j = 0; j < rows.length; j++) {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan')
@@ -84,22 +81,22 @@ export const addVertices = function (vert, g) {
         tspan.textContent = rows[j]
         svgLabel.appendChild(tspan)
       }
+      vertexNode = svgLabel
+    }
 
-      labelTypeStr = 'svg'
-      if (vertice.link) {
-        const link = document.createElementNS('http://www.w3.org/2000/svg', 'a')
-        link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertice.link)
-        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener')
-        verticeText = link
-      } else {
-        verticeText = svgLabel
-      }
+    // If the node has a link, we wrap it in a SVG link
+    if (vertex.link) {
+      const link = document.createElementNS('http://www.w3.org/2000/svg', 'a')
+      link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link)
+      link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener')
+      link.appendChild(vertexNode)
+      vertexNode = link
     }
 
     let radious = 0
     let _shape = ''
     // Set the shape based parameters
-    switch (vertice.type) {
+    switch (vertex.type) {
       case 'round':
         radious = 5
         _shape = 'rect'
@@ -124,14 +121,12 @@ export const addVertices = function (vert, g) {
         break
       case 'group':
         _shape = 'rect'
-        // Need to create a text node if using svg labels, see #367
-        verticeText = conf.htmlLabels ? '' : document.createElementNS('http://www.w3.org/2000/svg', 'text')
         break
       default:
         _shape = 'rect'
     }
     // Add the node
-    g.setNode(vertice.id, { labelType: labelTypeStr, shape: _shape, label: verticeText, rx: radious, ry: radious, 'class': classStr, style: style, id: vertice.id })
+    g.setNode(vertex.id, { labelType: 'svg', shape: _shape, label: vertexNode, rx: radious, ry: radious, 'class': classStr, style: style, id: vertex.id })
   })
 }
 
@@ -203,7 +198,7 @@ export const addEdges = function (edges, g) {
           edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>'
         } else {
           edgeData.labelType = 'text'
-          edgeData.style = 'stroke: #333; stroke-width: 1.5px;fill:none'
+          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none'
           edgeData.label = edge.text.replace(/<br>/g, '\n')
         }
       } else {
@@ -272,7 +267,7 @@ export const draw = function (text, id) {
   const subGraphs = flowDb.getSubGraphs()
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i]
-    flowDb.addVertex(subG.id, subG.title, 'group', undefined)
+    flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes)
   }
 
   // Fetch the verices/nodes and edges/links from the parsed graph definition
@@ -290,7 +285,7 @@ export const draw = function (text, id) {
       g.setParent(subG.nodes[j], subG.id)
     }
   }
-  addVertices(vert, g)
+  addVertices(vert, g, id)
   addEdges(edges, g)
 
   // Create the renderer
@@ -424,6 +419,7 @@ export const draw = function (text, id) {
   // Index nodes
   flowDb.indexNodes('subGraph' + i)
 
+  // reposition labels
   for (i = 0; i < subGraphs.length; i++) {
     subG = subGraphs[i]
 
@@ -435,19 +431,9 @@ export const draw = function (text, id) {
       const yPos = clusterRects[0].y.baseVal.value
       const width = clusterRects[0].width.baseVal.value
       const cluster = d3.select(clusterEl[0])
-      const te = cluster.append('text')
-      te.attr('x', xPos + width / 2)
-      te.attr('y', yPos + 14)
-      te.attr('fill', 'black')
-      te.attr('stroke', 'none')
+      const te = cluster.select('.label')
+      te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`)
       te.attr('id', id + 'Text')
-      te.style('text-anchor', 'middle')
-
-      if (typeof subG.title === 'undefined') {
-        te.text('Undef')
-      } else {
-        te.text(subG.title)
-      }
     }
   }
 

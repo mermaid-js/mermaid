@@ -225,10 +225,14 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph text separator document end
-    {$$=yy.addSubGraph($4,$2);}
+    | subgraph SPACE alphaNum SQS text SQE separator document end
+    {$$=yy.addSubGraph($3,$8,$5);}
+    | subgraph SPACE STR separator document end
+    {$$=yy.addSubGraph(undefined,$5,$3);}
+    | subgraph SPACE alphaNum separator document end
+    {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
-    {$$=yy.addSubGraph($3,undefined);}
+    {$$=yy.addSubGraph(undefined,$3,undefined);}
     ;
 
 separator: NEWLINE | SEMI | EOF ;
@@ -410,20 +414,26 @@ styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
 
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
-          {$$ = $1;yy.updateLink($3,$5);}
-    | LINKSTYLE SPACE NUM SPACE stylesOpt
+          {$$ = $1;yy.updateLink([$3],$5);}
+    | LINKSTYLE SPACE numList SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
-          {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
-    | LINKSTYLE SPACE NUM SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.updateLinkInterpolate([$3],$7);yy.updateLink([$3],$9);}
+    | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
           {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
     | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
-          {$$ = $1;yy.updateLinkInterpolate($3,$7);}
-    | LINKSTYLE SPACE NUM SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $1;yy.updateLinkInterpolate([$3],$7);}
+    | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
           {$$ = $1;yy.updateLinkInterpolate($3,$7);}
     ;
 
 commentStatement: PCT PCT commentText;
+
+numList: NUM
+        {$$ = [$1]}
+    | numList COMMA NUM
+        {$1.push($3);$$ = $1;}
+    ;
 
 stylesOpt: style
         {$$ = [$1]}

@@ -8,7 +8,10 @@ const amdRule = {
 
 const jsRule = {
   test: /\.js$/,
-  exclude: /node_modules/,
+  include: [
+    path.resolve(__dirname, './src'),
+    path.resolve(__dirname, './node_modules/dagre-d3-renderer/lib')
+  ],
   use: {
     loader: 'babel-loader'
   }
