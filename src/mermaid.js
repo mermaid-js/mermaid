@@ -104,7 +104,7 @@ const init = function () {
 }
 
 const initialize = function (config) {
-  logger.debug('Initializing mermaid')
+  logger.debug('Initializing mermaid ')
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad

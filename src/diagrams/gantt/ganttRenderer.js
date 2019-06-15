@@ -165,24 +165,22 @@ export const draw = function (text, id) {
           }
         }
 
-        let taskClass = classStr
+        let taskClass = ''
         if (d.active) {
           if (d.crit) {
             taskClass += ' activeCrit'
           } else {
-            taskClass = 'active'
+            taskClass = ' active'
           }
         } else if (d.done) {
           if (d.crit) {
             taskClass = ' doneCrit'
           } else {
-            taskClass = 'done'
+            taskClass = ' done'
           }
-        }
-
-        if (d.crit) {
-          if (taskClass.length > 0) {
-            taskClass += 'crit'
+        } else {
+          if (d.crit) {
+            taskClass += ' crit'
           }
         }
 
@@ -191,10 +189,12 @@ export const draw = function (text, id) {
         }
 
         if (d.milestone) {
-          taskClass = ' milestone' + taskClass
+          taskClass = ' milestone ' + taskClass
         }
 
         taskClass += secNum
+
+        taskClass += ' ' + classStr
 
         return res + taskClass
       })

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Mermaid Quick Test Page</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+</head>
+<body>
+    <div class="mermaid">info
+      showInfo
+    </div>
+  <script src="./mermaid.js"></script>
+  <script>
+    mermaid.initialize({
+      theme: 'forest',
+      // themeCSS: '.node rect { fill: red; }',
+      logLevel: 1,
+      flowchart: { curve: 'linear' },
+      gantt: { axisFormat: '%m/%d/%Y' },
+      sequence: { actorMargin: 50 },
+      // sequenceDiagram: { actorMargin: 300 } // deprecated
+    });
+  </script>
+  <script>
+    function ganttTestClick(a, b, c){
+      console.log("a:", a)
+      console.log("b:", b)
+      console.log("c:", c)
+    }
+    function testClick(nodeId) {
+      console.log("clicked", nodeId)
+      var originalBgColor = document.querySelector('body').style.backgroundColor
+      document.querySelector('body').style.backgroundColor = 'yellow'
+      setTimeout(function() {
+        document.querySelector('body').style.backgroundColor = originalBgColor
+      }, 100)
+    }
+  </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import { logger } from './logger'
 
 /**
  * @function detectType
@@ -19,6 +20,7 @@ import * as d3 from 'd3'
  */
 export const detectType = function (text) {
   text = text.replace(/^\s*%%.*\n/g, '\n')
+  logger.debug('Detecting diagram type based on the text ' + text)
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence'
   }
@@ -34,6 +36,11 @@ export const detectType = function (text) {
   if (text.match(/^\s*gitGraph/)) {
     return 'git'
   }
+
+  if (text.match(/^\s*info/)) {
+    return 'info'
+  }
+
   return 'flowchart'
 }
 

@@ -13,6 +13,7 @@
 */
 import * as d3 from 'd3'
 import scope from 'scope-css'
+import pkg from '../package.json'
 
 import { logger, setLogLevel } from './logger'
 import utils from './utils'
@@ -31,6 +32,9 @@ import classDb from './diagrams/class/classDb'
 import gitGraphRenderer from './diagrams/git/gitGraphRenderer'
 import gitGraphParser from './diagrams/git/parser/gitGraph'
 import gitGraphAst from './diagrams/git/gitGraphAst'
+import infoRenderer from './diagrams/info/infoRenderer'
+import infoParser from './diagrams/info/parser/info'
+import infoDb from './diagrams/info/infoDb'
 
 const themes = {}
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -236,6 +240,7 @@ function parse (text) {
   const graphType = utils.detectType(text)
   let parser
 
+  logger.debug('Type ' + graphType)
   switch (graphType) {
     case 'git':
       parser = gitGraphParser
@@ -256,6 +261,11 @@ function parse (text) {
     case 'class':
       parser = classParser
       parser.parser.yy = classDb
+      break
+    case 'info':
+      logger.debug('info info info')
+      parser = infoParser
+      parser.parser.yy = infoDb
       break
   }
 
@@ -429,6 +439,11 @@ const render = function (id, txt, cb, container) {
       classRenderer.setConf(config.class)
       classRenderer.draw(txt, id)
       break
+    case 'info':
+      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      infoRenderer.setConf(config.class)
+      infoRenderer.draw(txt, id, pkg.version)
+      break
   }
 
   d3.select(`[id="${id}"]`).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml')
@@ -482,7 +497,7 @@ const setConf = function (cnf) {
 }
 
 function initialize (options) {
-  logger.debug('Initializing mermaidAPI')
+  logger.debug('Initializing mermaidAPI ', pkg.version)
   // Update default config with options supplied at initialization
   if (typeof options === 'object') {
     setConf(options)
