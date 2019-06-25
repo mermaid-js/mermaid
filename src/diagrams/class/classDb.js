@@ -56,7 +56,6 @@ export const addMember = function (className, member) {
 }
 
 export const addMembers = function (className, MembersArr) {
-  console.log(className, MembersArr)
   if (Array.isArray(MembersArr)) {
     MembersArr.forEach(member => addMember(className, member))
   }
