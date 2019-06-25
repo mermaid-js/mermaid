@@ -7,3 +7,4 @@ dist/*.js
 dist/*.map
 
 yarn-error.log
+.npmrc
