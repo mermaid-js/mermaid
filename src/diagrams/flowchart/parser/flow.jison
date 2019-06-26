@@ -280,6 +280,14 @@ vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
     | alphaNum INVTRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
+    | alphaNum TRAPSTART text INVTRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
+    | alphaNum TRAPSTART text INVTRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
+    | alphaNum INVTRAPSTART text TRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
+    | alphaNum INVTRAPSTART text TRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
 /*  | alphaNum SQS text TAGSTART
         {$$ = $1;yy.addVertex($1,$3,'odd_right');}
     | alphaNum SQS text TAGSTART spaceList

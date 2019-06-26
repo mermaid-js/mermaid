@@ -110,6 +110,12 @@ export const addVertices = function (vert, g, svgId) {
       case 'odd':
         _shape = 'rect_left_inv_arrow'
         break
+      case 'lean_right':
+        _shape = 'lean_right'
+        break
+      case 'lean_left':
+        _shape = 'lean_left'
+        break
       case 'trapezoid':
         _shape = 'trapezoid'
         break
@@ -345,11 +351,53 @@ export const draw = function (text, id) {
   }
 
   // Add custom shape for box with inverted arrow on left side
+  render.shapes().lean_right = function (parent, bbox, node) {
+    const w = bbox.width
+    const h = bbox.height
+    const points = [
+      { x: -2 * h / 6, y: 0 },
+      { x: w - h / 6, y: 0 },
+      { x: w + 2 * h / 6, y: -h },
+      { x: h / 6, y: -h }
+    ]
+    const shapeSvg = parent.insert('polygon', ':first-child')
+      .attr('points', points.map(function (d) {
+        return d.x + ',' + d.y
+      }).join(' '))
+      .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')')
+    node.intersect = function (point) {
+      return dagreD3.intersect.polygon(node, points, point)
+    }
+    return shapeSvg
+  }
+
+  // Add custom shape for box with inverted arrow on left side
+  render.shapes().lean_left = function (parent, bbox, node) {
+    const w = bbox.width
+    const h = bbox.height
+    const points = [
+      { x: 2 * h / 6, y: 0 },
+      { x: w + h / 6, y: 0 },
+      { x: w - 2 * h / 6, y: -h },
+      { x: -h / 6, y: -h }
+    ]
+    const shapeSvg = parent.insert('polygon', ':first-child')
+      .attr('points', points.map(function (d) {
+        return d.x + ',' + d.y
+      }).join(' '))
+      .attr('transform', 'translate(' + (-w / 2) + ',' + (h * 2 / 4) + ')')
+    node.intersect = function (point) {
+      return dagreD3.intersect.polygon(node, points, point)
+    }
+    return shapeSvg
+  }
+
+  // Add custom shape for box with inverted arrow on left side
   render.shapes().trapezoid = function (parent, bbox, node) {
     const w = bbox.width
     const h = bbox.height
     const points = [
-      { x: - 2 * h / 6, y: 0 },
+      { x: -2 * h / 6, y: 0 },
       { x: w + 2 * h / 6, y: 0 },
       { x: w - h / 6, y: -h },
       { x: h / 6, y: -h }
@@ -373,7 +421,7 @@ export const draw = function (text, id) {
       { x: h / 6, y: 0 },
       { x: w - h / 6, y: 0 },
       { x: w + 2 * h / 6, y: -h },
-      { x: - 2 * h / 6, y: -h }
+      { x: -2 * h / 6, y: -h }
     ]
     const shapeSvg = parent.insert('polygon', ':first-child')
       .attr('points', points.map(function (d) {
