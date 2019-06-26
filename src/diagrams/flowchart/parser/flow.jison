@@ -66,10 +66,12 @@
 \%                    return 'PCT';
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
-"\\"                  return 'BACKSLASH';
-"/"                   return 'SLASH';
 [A-Za-z]+             return 'ALPHA';
-[!"#$%&'*+,-.`?_]  return 'PUNCTUATION';
+"\\]"                 return 'TRAPEND';
+"[/"                  return 'TRAPSTART';
+"/]"                 return 'INVTRAPEND';
+"[\\"                  return 'INVTRAPSTART';
+[!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|
@@ -270,14 +272,14 @@ vertex:  alphaNum SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
     | alphaNum TAGEND text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum SQS SLASH SQS text SQE BACKSLASH SQE
-        {$$ = $1;yy.addVertex($1,$5,'trapezoid');}
-    | alphaNum SQS SLASH SQS text SQE BACKSLASH SQE spaceList
-        {$$ = $1;yy.addVertex($1,$5,'trapezoid');}
-    | alphaNum SQS BACKSLASH SQS text SQE SLASH SQE
-        {$$ = $1;yy.addVertex($1,$5,'inv_trapezoid');}
-    | alphaNum SQS BACKSLASH SQS text SQE SLASH SQE spaceList
-        {$$ = $1;yy.addVertex($1,$5,'inv_trapezoid');}
+    | alphaNum TRAPSTART text TRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
+    | alphaNum TRAPSTART text TRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
+    | alphaNum INVTRAPSTART text INVTRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
+    | alphaNum INVTRAPSTART text INVTRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
 /*  | alphaNum SQS text TAGSTART
         {$$ = $1;yy.addVertex($1,$3,'odd_right');}
     | alphaNum SQS text TAGSTART spaceList
@@ -466,7 +468,7 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : ALPHA | PUNCTUATION | SLASH | BACKSLASH | UNICODE_TEXT | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+alphaNumToken  : ALPHA | PUNCTUATION | UNICODE_TEXT | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
 
-graphCodeTokens:  PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAG_START | TAG_END | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
+graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%
