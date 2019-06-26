@@ -15,7 +15,6 @@ text.actor {
 .messageLine0 {
   stroke-width: 1.5;
   stroke-dasharray: '2 2';
-  marker-end: 'url(#arrowhead)';
   stroke: $signalColor;
 }
 
@@ -50,14 +49,13 @@ text.actor {
 }
 
 .loopText {
-  fill: $labelTextColor;
+  fill: $loopTextColor;
   stroke: none;
 }
 
 .loopLine {
   stroke-width: 2;
   stroke-dasharray: '2 2';
-  marker-end: 'url(#arrowhead)';
   stroke: $labelBoxBorderColor;
 }
 
@@ -72,4 +70,19 @@ text.actor {
   stroke: none;
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 14px;
+}
+
+.activation0 {
+  fill: $activationBkgColor;
+  stroke: $activationBorderColor;
+}
+
+.activation1 {
+  fill: $activationBkgColor;
+  stroke: $activationBorderColor;
+}
+
+.activation2 {
+  fill: $activationBkgColor;
+  stroke: $activationBorderColor;
 }

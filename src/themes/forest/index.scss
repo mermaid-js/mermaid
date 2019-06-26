@@ -27,8 +27,11 @@ $signalTextColor: #333;
 $labelBoxBkgColor: $actorBkg;
 $labelBoxBorderColor: #326932;
 $labelTextColor: $actorTextColor;
+$loopTextColor: $actorTextColor;
 $noteBorderColor: $border2;
 $noteBkgColor: #fff5ad;
+$activationBorderColor: #666;
+$activationBkgColor: #f4f4f4;
 
 /* Gantt chart variables */
 
@@ -41,6 +44,7 @@ $taskTextLightColor: white;
 $taskTextColor: $taskTextLightColor;
 $taskTextDarkColor: black;
 $taskTextOutsideColor: $taskTextDarkColor;
+$taskTextClickableColor: #003163;
 $activeTaskBorderColor: $taskBorderColor;
 $activeTaskBkgColor: $mainBkg;
 $gridColor: lightgrey;

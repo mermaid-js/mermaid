@@ -31,9 +31,34 @@ describe('when parsing ', function () {
     expect(subgraph.nodes[0]).toBe('a1')
     expect(subgraph.nodes[1]).toBe('a2')
     expect(subgraph.title).toBe('One')
+    expect(subgraph.id).toBe('One')
   })
 
-  it('should handle angle bracket ' > ' as direction LR', function () {
+  it('should handle subgraph with multiple words in title', function () {
+    const res = flow.parser.parse('graph TB\nsubgraph "Some Title"\n\ta1-->a2\nend')
+    const subgraphs = flow.parser.yy.getSubGraphs()
+    expect(subgraphs.length).toBe(1)
+    const subgraph = subgraphs[0]
+    expect(subgraph.nodes.length).toBe(2)
+    expect(subgraph.nodes[0]).toBe('a1')
+    expect(subgraph.nodes[1]).toBe('a2')
+    expect(subgraph.title).toBe('Some Title')
+    expect(subgraph.id).toBe('subGraph0')
+  });
+
+  it('should handle subgraph with id and title notation', function () {
+    const res = flow.parser.parse('graph TB\nsubgraph some-id[Some Title]\n\ta1-->a2\nend')
+    const subgraphs = flow.parser.yy.getSubGraphs()
+    expect(subgraphs.length).toBe(1)
+    const subgraph = subgraphs[0]
+    expect(subgraph.nodes.length).toBe(2)
+    expect(subgraph.nodes[0]).toBe('a1')
+    expect(subgraph.nodes[1]).toBe('a2')
+    expect(subgraph.title).toBe('Some Title')
+    expect(subgraph.id).toBe('some-id')
+  });
+
+  it("should handle angle bracket ' > ' as direction LR", function () {
     const res = flow.parser.parse('graph >;A-->B;')
 
     const vert = flow.parser.yy.getVertices()
@@ -51,7 +76,7 @@ describe('when parsing ', function () {
     expect(edges[0].text).toBe('')
   })
 
-  it('should handle angle bracket ' < ' as direction RL', function () {
+  it("should handle angle bracket ' < ' as direction RL", function () {
     const res = flow.parser.parse('graph <;A-->B;')
 
     const vert = flow.parser.yy.getVertices()
@@ -69,7 +94,7 @@ describe('when parsing ', function () {
     expect(edges[0].text).toBe('')
   })
 
-  it('should handle caret ' ^ ' as direction BT', function () {
+  it("should handle caret ' ^ ' as direction BT", function () {
     const res = flow.parser.parse('graph ^;A-->B;')
 
     const vert = flow.parser.yy.getVertices()
@@ -428,6 +453,28 @@ describe('when parsing ', function () {
     expect(edges[0].type).toBe('arrow')
   })
 
+  it('should handle multi-numbered style definitons with more then 1 digit in a row', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B1\n' +
+        'A-->B2\n' +
+        'A-->B3\n' +
+        'A-->B4\n' +
+        'A-->B5\n' +
+        'A-->B6\n' +
+        'A-->B7\n' +
+        'A-->B8\n' +
+        'A-->B9\n' +
+        'A-->B10\n' +
+        'A-->B11\n' +
+        'A-->B12\n' +
+        'linkStyle 10,11 stroke-width:1px;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].type).toBe('arrow')
+  })
+
   it('should handle line interpolation default definitions', function () {
     const res = flow.parser.parse('graph TD\n' +
         'A-->B\n' +
@@ -451,6 +498,19 @@ describe('when parsing ', function () {
 
     expect(edges[0].interpolate).toBe('basis')
     expect(edges[1].interpolate).toBe('cardinal')
+  })
+
+  it('should handle line interpolation multi-numbered definitions', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0,1 interpolate basis')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].interpolate).toBe('basis')
+    expect(edges[1].interpolate).toBe('basis')
   })
 
   it('should handle line interpolation default with style', function () {
@@ -478,6 +538,19 @@ describe('when parsing ', function () {
     expect(edges[1].interpolate).toBe('cardinal')
   })
 
+  it('should handle line interpolation multi-numbered with style', function () {
+    const res = flow.parser.parse('graph TD\n' +
+        'A-->B\n' +
+        'A-->C\n' +
+        'linkStyle 0,1 interpolate basis stroke-width:1px;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges[0].interpolate).toBe('basis')
+    expect(edges[1].interpolate).toBe('basis')
+  })
+
   describe('it should handle interaction, ', function () {
     it('it should be possible to use click to a callback', function () {
       spyOn(flowDb, 'setClickEvent')
@@ -486,7 +559,7 @@ describe('when parsing ', function () {
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined, undefined)
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined)
     })
 
     it('it should be possible to use click to a callback with toolip', function () {
@@ -496,26 +569,26 @@ describe('when parsing ', function () {
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', undefined, 'tooltip')
+      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', 'callback', 'tooltip')
     })
 
     it('should handle interaction - click to a link', function () {
-      spyOn(flowDb, 'setClickEvent')
+      spyOn(flowDb, 'setLink')
       const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html"')
 
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', undefined, 'click.html', undefined)
+      expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', undefined)
     })
     it('should handle interaction - click to a link with tooltip', function () {
-      spyOn(flowDb, 'setClickEvent')
+      spyOn(flowDb, 'setLink')
       const res = flow.parser.parse('graph TD\nA-->B\nclick A "click.html" "tooltip"')
 
       const vert = flow.parser.yy.getVertices()
       const edges = flow.parser.yy.getEdges()
 
-      expect(flowDb.setClickEvent).toHaveBeenCalledWith('A', undefined, 'click.html', 'tooltip')
+      expect(flowDb.setLink).toHaveBeenCalledWith('A', 'click.html', 'tooltip')
     })
   })
 

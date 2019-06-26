@@ -12,6 +12,23 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
+**Mermaid was nomiated and won the JS Open Source Awards (2019) in the catory The most existing use of technology!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintin the project.**
+
+### Are you someone who wants to take an active role in improving mermaid?
+
+Look at the list of areas we need help with:
+
+* Development - help solving issues
+* Development - work with the build environment, with JS we keep updating the tools we use
+* Development - new diagram types
+* Development - Handling Pull Requests
+* Test - testing in connection with realeases, regression testing 
+* Test - verification of fixed issues
+* Test - test of pull requests and verification testing
+* Release management - more of a PL role, make roadmap for the project, coordinating the work 
+* Release management - classification and monitoring of incoming issues 
+
+If you think lending a hand to one or more of these areas would be fun, please send an email tp knsv@sveido.com!
 
 ### Flowchart
 
@@ -35,7 +52,7 @@ sequenceDiagram
     loop Healthcheck
         John->>John: Fight against hypochondria
     end
-    Note right of John: Rational thoughts <br/>prevail...
+    Note right of John: Rational thoughts <br/>prevail!
     John-->>Alice: Great!
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
@@ -49,6 +66,7 @@ sequenceDiagram
 gantt
 dateFormat  YYYY-MM-DD
 title Adding GANTT diagram to mermaid
+excludes weekdays 2014-01-10
 
 section A section
 Completed task            :done,    des1, 2014-01-06,2014-01-08
@@ -147,7 +165,7 @@ As part of this team you would get write access to the repository and would
 represent the project when answering questions and issues.
 
 Together we could continue the work with things like:
-* adding more typers of diagrams like mindmaps, ert digrams etc
+* adding more types of diagrams like mindmaps, ert diagrams etc
 * improving existing diagrams
 
 Don't hesitate to contact me if you want to get involved.

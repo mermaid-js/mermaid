@@ -17,6 +17,8 @@ const conf = {
   width: 150,
   // Height of actor boxes
   height: 65,
+  actorFontSize: 14,
+  actorFontFamily: '"Open-Sans", "sans-serif"',
   // Margin around loop boxes
   boxMargin: 10,
   boxTextMargin: 5,
@@ -218,9 +220,13 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
 
   let line
   if (startx === stopx) {
-    line = g.append('path')
-      .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
-      (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
+    if (conf.rightAngles) {
+      line = g.append('path').attr('d', `M  ${startx},${verticalPos} H ${startx + (conf.width / 2)} V ${verticalPos + 25} H ${startx}`)
+    } else {
+      line = g.append('path')
+        .attr('d', 'M ' + startx + ',' + verticalPos + ' C ' + (startx + 60) + ',' + (verticalPos - 10) + ' ' + (startx + 60) + ',' +
+        (verticalPos + 30) + ' ' + startx + ',' + (verticalPos + 20))
+    }
 
     bounds.bumpVerticalPos(30)
     const dx = Math.max(textWidth / 2, 100)
@@ -338,7 +344,7 @@ export const draw = function (text, id) {
       activationData.starty = verticalPos - 6
       verticalPos += 12
     }
-    svgDraw.drawActivation(diagram, activationData, verticalPos, conf)
+    svgDraw.drawActivation(diagram, activationData, verticalPos, conf, actorActivations(msg.from.actor).length)
 
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos)
   }

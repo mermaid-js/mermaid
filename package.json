@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.0.0-rc.8",
+  "version": "8.1.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -15,12 +15,14 @@
   "scripts": {
     "build": "webpack --progress --colors",
     "build:watch": "yarn build --watch",
+    "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
     "release": "yarn build -p --config webpack.config.prod.babel.js",
-    "upgrade": "yarn-upgrade-all",
     "lint": "standard",
-    "test": "yarn lint && jest",
-    "test:watch": "jest --watch",
-    "jison": "node -r babel-register node_modules/.bin/gulp jison",
+    "e2e": "yarn lint && jest e2e --config e2e/jest.config.js",
+    "dev": "yarn lint && webpack-dev-server --config webpack.config.e2e.js",
+    "test": "yarn lint && jest src",
+    "test:watch": "jest --watch src",
+    "jison": "node -r @babel/register node_modules/.bin/gulp jison",
     "prepublishOnly": "yarn build && yarn release && yarn test",
     "prepush": "yarn test"
   },
@@ -34,47 +36,59 @@
     "ignore": [
       "**/parser/*.js",
       "dist/**/*.js"
+    ],
+    "globals": [
+      "page"
     ]
   },
   "dependencies": {
-    "d3": "^4.13.0",
+    "d3": "^5.7.0",
     "dagre-d3-renderer": "^0.5.8",
     "dagre-layout": "^0.8.8",
     "graphlibrary": "^2.2.0",
-    "he": "^1.1.1",
-    "lodash": "^4.17.5",
-    "moment": "^2.21.0",
-    "scope-css": "^1.0.5"
+    "he": "^1.2.0",
+    "moment-mini": "^2.22.1",
+    "lodash": "^4.17.11",
+    "minify": "^4.1.1",
+    "scope-css": "^1.2.1"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.6.1",
-    "coveralls": "^3.0.0",
-    "css-loader": "^0.28.11",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/register": "^7.0.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "babel-loader": "^8.0.4",
+    "coveralls": "^3.0.2",
+    "css-loader": "^2.0.1",
     "css-to-string-loader": "^0.1.3",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-filelog": "^0.4.1",
     "gulp-jison": "^1.2.0",
-    "husky": "^0.14.3",
+    "husky": "^1.2.1",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^22.4.2",
+    "jest": "^23.6.0",
+    "jest-environment-puppeteer": "^4.2.0",
+    "jest-image-snapshot": "^2.8.2",
+    "jest-puppeteer": "^4.2.0",
     "jison": "^0.4.18",
-    "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.7",
-    "standard": "^11.0.1",
-    "webpack": "^4.1.1",
-    "webpack-cli": "^2.0.12",
-    "webpack-node-externals": "^1.6.0",
-    "yarn-upgrade-all": "^0.3.0"
+    "moment": "^2.23.0",
+    "node-sass": "^4.11.0",
+    "puppeteer": "^1.17.0",
+    "sass-loader": "^7.1.0",
+    "standard": "^12.0.1",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.4.1",
+    "webpack-node-externals": "^1.7.2",
+    "yarn-upgrade-all": "^0.5.0"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
-  "jest": {
-    "moduleNameMapper": {
-      "\\.(css|scss)$": "identity-obj-proxy"
-    }
+  "yarn-upgrade-all": {
+    "ignore": [
+      "babel-core"
+    ]
   }
 }

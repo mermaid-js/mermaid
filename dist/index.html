@@ -208,6 +208,35 @@ graph TB
 	end
   </div>
   <div class="mermaid">
+  graph TB
+  A
+  B
+  subgraph foo[Foo SubGraph]
+    C
+    D
+  end
+  subgraph bar[Bar SubGraph]
+    E
+    F
+  end
+  G
+
+  A-->B
+  B-->C
+  C-->D
+  B-->D
+  D-->E
+  E-->A
+  E-->F
+  F-->D
+  F-->G
+  B-->G
+  G-->D
+
+  style foo fill:#F99,stroke-width:2px,stroke:#F0F
+  style bar fill:#999,stroke-width:10px,stroke:#0F0
+  </div>
+  <div class="mermaid">
       graph LR
       456ac9b0d15a8b7f1e71073221059886[1051 AAA fa:fa-check]
       f7f580e11d00a75814d2ded41fe8e8fe[1141 BBB fa:fa-check]
@@ -239,6 +268,9 @@ class A someclass;
 
   <div class="mermaid">
 sequenceDiagram
+participant Alice
+participant Bob
+participant John as John<br/>Second Line
 Alice ->> Bob: Hello Bob, how are you?
 Bob-->>John: How about you John?
 Bob--x Alice: I am good thanks!
@@ -266,6 +298,7 @@ gantt
 dateFormat  YYYY-MM-DD
 axisFormat  %d/%m
 title Adding GANTT diagram to mermaid
+excludes weekdays 2014-01-10
 
 section A section
 Completed task            :done,    des1, 2014-01-06,2014-01-08
@@ -285,6 +318,13 @@ section Documentation
 Describe gantt syntax               :active, a1, after des1, 3d
 Add gantt diagram to demo page      :after a1  , 20h
 Add another diagram to demo page    :doc1, after a1  , 48h
+
+section Clickable
+Visit mermaidjs               :active, cl1, 2014-01-07,2014-01-10
+Calling a Callback (look at the console log) :cl2, after cl1, 3d
+
+click cl1 href "https://mermaidjs.github.io/"
+click cl2 call ganttTestClick("test", test, test)
 
 section Last section
 Describe gantt syntax               :after doc1, 3d
@@ -318,11 +358,11 @@ merge newbranch
   <div class="mermaid">
 classDiagram
 Class01 <|-- AveryLongClass : Cool
-Class03 *-- Class04
-Class05 o-- Class06
+Class03 "0" *-- "0..n" Class04
+Class05 "1" o-- "many" Class06
 Class07 .. Class08
-Class09 --> C2 : Where am i?
-Class09 --* C3
+Class09 "many" --> "1" C2  : Where am i?
+Class09 "0" --* "1..n" C3
 Class09 --|> Class07
 Class07 : equals()
 Class07 : Object[] elementData
@@ -344,6 +384,11 @@ Class08 <--> C2: Cool label
     });
   </script>
   <script>
+    function ganttTestClick(a, b, c){
+      console.log("a:", a)
+      console.log("b:", b)
+      console.log("c:", c)
+    }
     function testClick(nodeId) {
       console.log("clicked", nodeId)
       var originalBgColor = document.querySelector('body').style.backgroundColor
