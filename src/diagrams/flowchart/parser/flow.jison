@@ -35,29 +35,46 @@
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
-"<"                   return 'TAGSTART';
-">"                   return 'TAGEND';
-"^"                   return 'UP';
-"v"                   return 'DOWN';
 \s*\-\-[x]\s*            return 'ARROW_CROSS';
+\s*[x]\-\-[x]\s*         return 'DOUBLE_ARROW_CROSS';
 \s*\-\-\>\s*             return 'ARROW_POINT';
+\s*\<\-\-\>\s*           return 'DOUBLE_ARROW_POINT';
 \s*\-\-[o]\s*            return 'ARROW_CIRCLE';
+\s*[o]\-\-[o]\s*         return 'DOUBLE_ARROW_CIRCLE';
 \s*\-\-\-\s*             return 'ARROW_OPEN';
 \s*\-\.\-[x]\s*          return 'DOTTED_ARROW_CROSS';
+\s*[x]\-\.\-[x]\s*       return 'DOUBLE_DOTTED_ARROW_CROSS';
 \s*\-\.\-\>\s*           return 'DOTTED_ARROW_POINT';
+\s*\<\-\.\-\>\s*         return 'DOUBLE_DOTTED_ARROW_POINT';
 \s*\-\.\-[o]\s*          return 'DOTTED_ARROW_CIRCLE';
+\s*[o]\-\.\-[o]\s*       return 'DOUBLE_DOTTED_ARROW_CIRCLE';
 \s*\-\.\-\s*             return 'DOTTED_ARROW_OPEN';
 \s*.\-[x]\s*             return 'DOTTED_ARROW_CROSS';
+\s*[x].\-[x]\s*          return 'DOUBLE_DOTTED_ARROW_CROSS';
 \s*\.\-\>\s*             return 'DOTTED_ARROW_POINT';
+\s*\<\.\-\>\s*           return 'DOUBLE_DOTTED_ARROW_POINT';
 \s*\.\-[o]\s*            return 'DOTTED_ARROW_CIRCLE';
+\s*[o]\.\-[o]\s*         return 'DOUBLE_DOTTED_ARROW_CIRCLE';
 \s*\.\-\s*               return 'DOTTED_ARROW_OPEN';
 \s*\=\=[x]\s*            return 'THICK_ARROW_CROSS';
+\s*[x]\=\=[x]\s*         return 'DOUBLE_THICK_ARROW_CROSS';
 \s*\=\=\>\s*             return 'THICK_ARROW_POINT';
+\s*\<\=\=\>\s*           return 'DOUBLE_THICK_ARROW_POINT';
 \s*\=\=[o]\s*            return 'THICK_ARROW_CIRCLE';
+\s*[o]\=\=[o]\s*         return 'DOUBLE_THICK_ARROW_CIRCLE';
 \s*\=\=[\=]\s*           return 'THICK_ARROW_OPEN';
 \s*\-\-\s*               return '--';
 \s*\-\.\s*               return '-.';
 \s*\=\=\s*               return '==';
+\s*\<\-\-\s*             return 'START_DOUBLE_ARROW_POINT';
+\s*\[x]\-\-\s*           return 'START_DOUBLE_ARROW_CROSS';
+\s*\[o]\-\-\s*           return 'START_DOUBLE_ARROW_CIRCLE';
+\s*\<\-\.\s*             return 'START_DOUBLE_DOTTED_ARROW_POINT';
+\s*\[x]\-\.\s*           return 'START_DOUBLE_DOTTED_ARROW_CROSS';
+\s*\[o]\-\.\s*           return 'START_DOUBLE_DOTTED_ARROW_CIRCLE';
+\s*\<\=\=\s*             return 'START_DOUBLE_THICK_ARROW_POINT';
+\s*\[x]\=\=\s*           return 'START_DOUBLE_THICK_ARROW_CROSS';
+\s*\[o]\=\=\s*           return 'START_DOUBLE_THICK_ARROW_CIRCLE';
 "(-"                  return '(-';
 "-)"                  return '-)';
 \-                    return 'MINUS';
@@ -66,6 +83,10 @@
 \%                    return 'PCT';
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
+"<"                   return 'TAGSTART';
+">"                   return 'TAGEND';
+"^"                   return 'UP';
+"v"                   return 'DOWN';
 [A-Za-z]+             return 'ALPHA';
 [!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
@@ -306,6 +327,8 @@ link: linkStatement arrowText
     {$$ = $1;}
     | '--' text ARROW_POINT
         {$$ = {"type":"arrow","stroke":"normal","text":$2};}
+    | 'START_DOUBLE_ARROW_POINT' text ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"normal","text":$2};}
     | '--' text ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"normal","text":$2};}
     | '--' text ARROW_CROSS
