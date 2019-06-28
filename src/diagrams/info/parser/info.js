@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10,12];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"info":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"showInfo":10,"message":11,"say":12,"TXT":13,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"info",6:"EOF",9:"NL",10:"showInfo",12:"say",13:"TXT"},
-productions_: [0,[3,3],[5,0],[5,2],[7,1],[7,1],[8,1],[8,1],[11,2]],
+symbols_: {"error":2,"start":3,"info":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"showInfo":10,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"info",6:"EOF",9:"NL",10:"showInfo"},
+productions_: [0,[3,3],[5,0],[5,2],[7,1],[7,1],[8,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -92,15 +92,9 @@ break;
 case 6:
  yy.setInfo(true);  
 break;
-case 7:
- yy.setMessage($$[$0]);  
-break;
-case 8:
- this.$ = $$[$0-1].substring(1).trim().replace(/\\n/gm, "\n"); 
-break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8],11:9,12:[1,10]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,7]),{13:[1,11]},o($V0,[2,8])],
+table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),o($V0,[2,6])],
 defaultActions: {4:[2,1]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
@@ -585,20 +579,18 @@ case 0:return 4    ;
 break;
 case 1:return 9      ;
 break;
-case 2:return 'space'
+case 2:return 'space';
 break;
 case 3:return 10;
 break;
-case 4:return 12     ;
+case 4:return 6     ;
 break;
-case 5:return 6     ;
-break;
-case 6:return 13 ;
+case 5:return 'TXT' ;
 break;
 }
 },
-rules: [/^(?:info\b)/i,/^(?:[\s\n\r]+)/i,/^(?:[\s]+)/i,/^(?:showInfo\b)/i,/^(?:say\b)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
+rules: [/^(?:info\b)/i,/^(?:[\s\n\r]+)/i,/^(?:[\s]+)/i,/^(?:showInfo\b)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5],"inclusive":true}}
 });
 return lexer;
 })();
