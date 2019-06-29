@@ -8,3 +8,4 @@ dist/*.map
 
 yarn-error.log
 .npmrc
+token
