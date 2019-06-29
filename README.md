@@ -1,8 +1,10 @@
-# mermaid
-
 [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid)
 [![Coverage Status](https://coveralls.io/repos/github/knsv/mermaid/badge.svg?branch=master)](https://coveralls.io/github/knsv/mermaid?branch=master)
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+# mermaid
+
+🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866) #866
 
 ![banner](./img/header.png)
 
@@ -12,23 +14,7 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-**Mermaid was nomiated and won the JS Open Source Awards (2019) in the catory The most existing use of technology!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintin the project.**
-
-### Are you someone who wants to take an active role in improving mermaid?
-
-Look at the list of areas we need help with:
-
-* Development - help solving issues
-* Development - work with the build environment, with JS we keep updating the tools we use
-* Development - new diagram types
-* Development - Handling Pull Requests
-* Test - testing in connection with realeases, regression testing 
-* Test - verification of fixed issues
-* Test - test of pull requests and verification testing
-* Release management - more of a PL role, make roadmap for the project, coordinating the work 
-* Release management - classification and monitoring of incoming issues 
-
-If you think lending a hand to one or more of these areas would be fun, please send an email tp knsv@sveido.com!
+**Mermaid was nomiated and won the JS Open Source Awards (2019) in the catory The most existing use of technology!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 ### Flowchart
 
