@@ -73,7 +73,7 @@
 */
 var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,23],$Vf=[1,24],$Vg=[1,4,5,10,15,16,18,20,21,22,23,25,27,28,29,40],$Vh=[1,32],$Vi=[4,5,10,15,16,18,20,21,22,23,25,29,40],$Vj=[4,5,10,15,16,18,20,21,22,23,25,28,29,40],$Vk=[4,5,10,15,16,18,20,21,22,23,25,27,29,40],$Vl=[38,39,40];
-var parser = {trace: function trace() { },
+var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"participant":10,"actor":11,"AS":12,"restOfLine":13,"signal":14,"activate":15,"deactivate":16,"note_statement":17,"title":18,"text2":19,"loop":20,"end":21,"opt":22,"alt":23,"else_sections":24,"par":25,"par_sections":26,"and":27,"else":28,"note":29,"placement":30,"over":31,"actor_pair":32,"spaceList":33,",":34,"left_of":35,"right_of":36,"signaltype":37,"+":38,"-":39,"ACTOR":40,"SOLID_OPEN_ARROW":41,"DOTTED_OPEN_ARROW":42,"SOLID_ARROW":43,"DOTTED_ARROW":44,"SOLID_CROSS":45,"DOTTED_CROSS":46,"TXT":47,"$accept":0,"$end":1},
 terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",10:"participant",12:"AS",13:"restOfLine",15:"activate",16:"deactivate",18:"title",20:"loop",21:"end",22:"opt",23:"alt",25:"par",27:"and",28:"else",29:"note",31:"over",34:",",35:"left_of",36:"right_of",38:"+",39:"-",40:"ACTOR",41:"SOLID_OPEN_ARROW",42:"DOTTED_OPEN_ARROW",43:"SOLID_ARROW",44:"DOTTED_ARROW",45:"SOLID_CROSS",46:"DOTTED_CROSS",47:"TXT"},
@@ -214,7 +214,7 @@ break;
 },
 table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,10,15,16,18,20,22,23,25,29,40],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},o($Vg,[2,5]),{9:25,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},o($Vg,[2,7]),o($Vg,[2,8]),{11:26,40:$Vf},{5:[1,27]},{11:28,40:$Vf},{11:29,40:$Vf},{5:[1,30]},{19:31,47:$Vh},{13:[1,33]},{13:[1,34]},{13:[1,35]},{13:[1,36]},{37:37,41:[1,38],42:[1,39],43:[1,40],44:[1,41],45:[1,42],46:[1,43]},{30:44,31:[1,45],35:[1,46],36:[1,47]},o([5,12,34,41,42,43,44,45,46,47],[2,35]),o($Vg,[2,6]),{5:[1,49],12:[1,48]},o($Vg,[2,11]),{5:[1,50]},{5:[1,51]},o($Vg,[2,14]),{5:[1,52]},{5:[2,42]},o($Vi,$V3,{7:53}),o($Vi,$V3,{7:54}),o($Vj,$V3,{24:55,7:56}),o($Vk,$V3,{26:57,7:58}),{11:61,38:[1,59],39:[1,60],40:$Vf},o($Vl,[2,36]),o($Vl,[2,37]),o($Vl,[2,38]),o($Vl,[2,39]),o($Vl,[2,40]),o($Vl,[2,41]),{11:62,40:$Vf},{11:64,32:63,40:$Vf},{40:[2,30]},{40:[2,31]},{13:[1,65]},o($Vg,[2,10]),o($Vg,[2,12]),o($Vg,[2,13]),o($Vg,[2,15]),{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,66],22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,67],22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},{21:[1,68]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,22],22:$Vb,23:$Vc,25:$Vd,28:[1,69],29:$Ve,40:$Vf},{21:[1,70]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,20],22:$Vb,23:$Vc,25:$Vd,27:[1,71],29:$Ve,40:$Vf},{11:72,40:$Vf},{11:73,40:$Vf},{19:74,47:$Vh},{19:75,47:$Vh},{19:76,47:$Vh},{34:[1,77],47:[2,29]},{5:[1,78]},o($Vg,[2,16]),o($Vg,[2,17]),o($Vg,[2,18]),{13:[1,79]},o($Vg,[2,19]),{13:[1,80]},{19:81,47:$Vh},{19:82,47:$Vh},{5:[2,34]},{5:[2,24]},{5:[2,25]},{11:83,40:$Vf},o($Vg,[2,9]),o($Vj,$V3,{7:56,24:84}),o($Vk,$V3,{7:58,26:85}),{5:[2,32]},{5:[2,33]},{47:[2,28]},{21:[2,23]},{21:[2,21]}],
 defaultActions: {5:[2,1],6:[2,2],32:[2,42],46:[2,30],47:[2,31],74:[2,34],75:[2,24],76:[2,25],81:[2,32],82:[2,33],83:[2,28],84:[2,23],85:[2,21]},
-parseError: function parseError(str, hash) {
+parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
@@ -506,7 +506,7 @@ showPosition:function () {
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
+test_match:function(match, indexed_rule) {
         var token,
             lines,
             backup;
@@ -636,7 +636,7 @@ next:function () {
     },
 
 // return next match that has a token
-lex:function lex() {
+lex:function lex () {
         var r = this.next();
         if (r) {
             return r;
@@ -646,12 +646,12 @@ lex:function lex() {
     },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
+begin:function begin (condition) {
         this.conditionStack.push(condition);
     },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState() {
+popState:function popState () {
         var n = this.conditionStack.length - 1;
         if (n > 0) {
             return this.conditionStack.pop();
@@ -661,7 +661,7 @@ popState:function popState() {
     },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
+_currentRules:function _currentRules () {
         if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
             return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
         } else {
@@ -670,7 +670,7 @@ _currentRules:function _currentRules() {
     },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
+topState:function topState (n) {
         n = this.conditionStack.length - 1 - Math.abs(n || 0);
         if (n >= 0) {
             return this.conditionStack[n];
@@ -680,7 +680,7 @@ topState:function topState(n) {
     },
 
 // alias for begin(condition)
-pushState:function pushState(condition) {
+pushState:function pushState (condition) {
         this.begin(condition);
     },
 
@@ -790,7 +790,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain(args) {
+exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);

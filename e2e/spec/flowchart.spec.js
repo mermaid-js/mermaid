@@ -27,6 +27,19 @@ describe('Flowcart', () => {
     {})
   })
 
+  it('should render a simple flowchart with trapezoid and inverse trapezoid vertex options.', async () => {
+    await imgSnapshotTest(page, `
+    graph TD
+      A[/Christmas\\]
+      A -->|Get money| B[\\Go shopping/]
+      B --> C{Let me thinksssss<br/>ssssssssssssssssssssss<br/>sssssssssssssssssssssssssss}
+      C -->|One| D[/Laptop/]
+      C -->|Two| E[\\iPhone\\]
+      C -->|Three| F[Car]
+      `,
+    {})
+  })
+
   it('should render a flowchart full of circles', async () => {
     await imgSnapshotTest(page, `
     graph LR
