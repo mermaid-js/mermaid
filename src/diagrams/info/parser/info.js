@@ -73,7 +73,7 @@
 */
 var parser = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,9,10];
-var parser = {trace: function trace () { },
+var parser = {trace: function trace() { },
 yy: {},
 symbols_: {"error":2,"start":3,"info":4,"document":5,"EOF":6,"line":7,"statement":8,"NL":9,"showInfo":10,"$accept":0,"$end":1},
 terminals_: {2:"error",4:"info",6:"EOF",9:"NL",10:"showInfo"},
@@ -96,7 +96,7 @@ break;
 },
 table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:6,9:[1,7],10:[1,8]},{1:[2,1]},o($V0,[2,3]),o($V0,[2,4]),o($V0,[2,5]),o($V0,[2,6])],
 defaultActions: {4:[2,1]},
-parseError: function parseError (str, hash) {
+parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
@@ -387,7 +387,7 @@ showPosition:function () {
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function(match, indexed_rule) {
+test_match:function (match, indexed_rule) {
         var token,
             lines,
             backup;
@@ -517,7 +517,7 @@ next:function () {
     },
 
 // return next match that has a token
-lex:function lex () {
+lex:function lex() {
         var r = this.next();
         if (r) {
             return r;
@@ -527,12 +527,12 @@ lex:function lex () {
     },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin (condition) {
+begin:function begin(condition) {
         this.conditionStack.push(condition);
     },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState () {
+popState:function popState() {
         var n = this.conditionStack.length - 1;
         if (n > 0) {
             return this.conditionStack.pop();
@@ -542,7 +542,7 @@ popState:function popState () {
     },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules () {
+_currentRules:function _currentRules() {
         if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
             return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
         } else {
@@ -551,7 +551,7 @@ _currentRules:function _currentRules () {
     },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState (n) {
+topState:function topState(n) {
         n = this.conditionStack.length - 1 - Math.abs(n || 0);
         if (n >= 0) {
             return this.conditionStack[n];
@@ -561,7 +561,7 @@ topState:function topState (n) {
     },
 
 // alias for begin(condition)
-pushState:function pushState (condition) {
+pushState:function pushState(condition) {
         this.begin(condition);
     },
 
@@ -607,7 +607,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = parser;
 exports.Parser = parser.Parser;
 exports.parse = function () { return parser.parse.apply(parser, arguments); };
-exports.main = function commonjsMain (args) {
+exports.main = function commonjsMain(args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
