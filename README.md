@@ -4,7 +4,7 @@
 
 # mermaid
 
-🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866) #866
+**🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
 
 ![banner](./img/header.png)
 
