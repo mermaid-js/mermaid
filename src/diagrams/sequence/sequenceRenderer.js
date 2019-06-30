@@ -35,7 +35,9 @@ const conf = {
   activationWidth: 10,
 
   // text placement as: tspan | fo | old only text as before
-  textPlacement: 'tspan'
+  textPlacement: 'tspan',
+
+  showSequenceNumbers: false
 }
 
 export const bounds = {
@@ -205,7 +207,7 @@ const drawNote = function (elem, startx, verticalPos, msg, forceWidth) {
  * @param txtCenter
  * @param msg
  */
-const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
+const drawMessage = function (elem, startx, stopx, verticalPos, msg, sequenceIndex) {
   const g = elem.append('g')
   const txtCenter = startx + (stopx - startx) / 2
 
@@ -264,6 +266,20 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg) {
 
   if (msg.type === parser.yy.LINETYPE.SOLID_CROSS || msg.type === parser.yy.LINETYPE.DOTTED_CROSS) {
     line.attr('marker-end', 'url(' + url + '#crosshead)')
+  }
+
+  // add node number
+  if (conf.showSequenceNumbers) {
+    line.attr('marker-start', 'url(' + url + '#sequencenumber)')
+    g.append('text')
+      .attr('x', startx)
+      .attr('y', verticalPos + 4)
+      .attr('font-family', 'sans-serif')
+      .attr('font-size', '12px')
+      .attr('text-anchor', 'middle')
+      .attr('textLength', '16px')
+      .attr('class', 'sequenceNumber')
+      .text(sequenceIndex)
   }
 }
 
@@ -337,6 +353,7 @@ export const draw = function (text, id) {
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram)
   svgDraw.insertArrowCrossHead(diagram)
+  svgDraw.insertSequenceNumber(diagram)
 
   function activeEnd (msg, verticalPos) {
     const activationData = bounds.endActivation(msg)
@@ -352,6 +369,7 @@ export const draw = function (text, id) {
   // const lastMsg
 
   // Draw the messages/signals
+  let sequenceIndex = 1
   messages.forEach(function (msg) {
     let loopData
     switch (msg.type) {
@@ -446,12 +464,23 @@ export const draw = function (text, id) {
           stopx = toBounds[toIdx]
 
           const verticalPos = bounds.getVerticalPos()
-          drawMessage(diagram, startx, stopx, verticalPos, msg)
+          drawMessage(diagram, startx, stopx, verticalPos, msg, sequenceIndex)
           const allBounds = fromBounds.concat(toBounds)
           bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos)
         } catch (e) {
           logger.error('error while drawing message', e)
         }
+    }
+    // Increment sequence counter if msg.type is a line (and not another event like activation or note, etc)
+    if ([
+      parser.yy.LINETYPE.SOLID_OPEN,
+      parser.yy.LINETYPE.DOTTED_OPEN,
+      parser.yy.LINETYPE.SOLID,
+      parser.yy.LINETYPE.DOTTED,
+      parser.yy.LINETYPE.SOLID_CROSS,
+      parser.yy.LINETYPE.DOTTED_CROSS
+    ].includes(msg.type)) {
+      sequenceIndex++
     }
   })
 

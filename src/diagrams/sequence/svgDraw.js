@@ -182,6 +182,23 @@ export const insertArrowHead = function (elem) {
     .attr('d', 'M 0,0 V 4 L6,2 Z') // this is actual shape for arrowhead
 }
 /**
+ * Setup node number. The result is appended to the svg.
+ */
+export const insertSequenceNumber = function (elem) {
+  elem.append('defs').append('marker')
+    .attr('id', 'sequencenumber')
+    .attr('refX', 15)
+    .attr('refY', 15)
+    .attr('markerWidth', 60)
+    .attr('markerHeight', 40)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('cx', 15)
+    .attr('cy', 15)
+    .attr('r', 6)
+    // .style("fill", '#f00');
+}
+/**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 export const insertArrowCrossHead = function (elem) {
@@ -315,6 +332,7 @@ export default {
   drawActivation,
   drawLoop,
   insertArrowHead,
+  insertSequenceNumber,
   insertArrowCrossHead,
   getTextObj,
   getNoteRect

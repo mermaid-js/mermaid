@@ -28,6 +28,14 @@ text.actor {
   fill: $signalColor;
 }
 
+.sequenceNumber {
+  fill: $sequenceNumberColor;
+}
+
+#sequencenumber {
+  fill: $signalColor;
+}
+
 #crosshead path {
   fill: $signalColor !important;
   stroke: $signalColor !important;
