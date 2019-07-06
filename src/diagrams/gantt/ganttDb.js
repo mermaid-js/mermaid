@@ -22,6 +22,9 @@ export const clear = function () {
   lastTask = undefined
   lastTaskID = undefined
   rawTasks = []
+  dateFormat = ''
+  axisFormat = ''
+  excludes = []
 }
 
 export const setAxisFormat = function (txt) {
