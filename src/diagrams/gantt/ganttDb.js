@@ -39,8 +39,16 @@ export const setDateFormat = function (txt) {
   dateFormat = txt
 }
 
+export const getDateFormat = function () {
+  return dateFormat
+}
+
 export const setExcludes = function (txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/)
+}
+
+export const getExcludes = function () {
+  return excludes
 }
 
 export const setTitle = function (txt) {
@@ -54,6 +62,10 @@ export const getTitle = function () {
 export const addSection = function (txt) {
   currentSection = txt
   sections.push(txt)
+}
+
+export const getSections = function () {
+  return sections
 }
 
 export const getTasks = function () {
@@ -498,16 +510,19 @@ export const bindFunctions = function (element) {
 export default {
   clear,
   setDateFormat,
+  getDateFormat,
   setAxisFormat,
   getAxisFormat,
   setTitle,
   getTitle,
   addSection,
+  getSections,
   getTasks,
   addTask,
   findTaskById,
   addTaskOrg,
   setExcludes,
+  getExcludes,
   setClickEvent,
   setLink,
   bindFunctions
