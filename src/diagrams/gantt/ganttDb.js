@@ -11,6 +11,7 @@ let tasks = []
 let currentSection = ''
 const tags = ['active', 'done', 'crit', 'milestone']
 let funs = []
+let inclusiveEndDates = false
 
 export const clear = function () {
   sections = []
@@ -25,6 +26,7 @@ export const clear = function () {
   dateFormat = ''
   axisFormat = ''
   excludes = []
+  inclusiveEndDates = false
 }
 
 export const setAxisFormat = function (txt) {
@@ -35,8 +37,9 @@ export const getAxisFormat = function () {
   return axisFormat
 }
 
-export const setDateFormat = function (txt) {
+export const setDateFormat = function (txt, inclusive) {
   dateFormat = txt
+  inclusiveEndDates = inclusive || false // make sure it's not undefined
 }
 
 export const getDateFormat = function () {
@@ -149,12 +152,16 @@ const getStartDate = function (prevTime, dateFormat, str) {
   return new Date()
 }
 
-const getEndDate = function (prevTime, dateFormat, str) {
+const getEndDate = function (prevTime, dateFormat, str, inclusive) {
+  inclusive = inclusive || false
   str = str.trim()
 
   // Check for actual date
   let mDate = moment(str, dateFormat.trim(), true)
   if (mDate.isValid()) {
+    if (inclusive) {
+      mDate.add(1, 'd')
+    }
     return mDate.toDate()
   }
 
