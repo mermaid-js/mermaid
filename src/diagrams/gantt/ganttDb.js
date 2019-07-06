@@ -253,8 +253,8 @@ const compileData = function (prevTask, dataStr) {
   }
 
   if (endTimeData) {
-    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData)
-    task.manualEndTime = endTimeData === moment(task.endTime).format(dateFormat.trim())
+    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates)
+    task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid()
     checkTaskDates(task, dateFormat, excludes)
   }
 
@@ -392,10 +392,10 @@ const compileTasks = function () {
     }
 
     if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
+      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data, inclusiveEndDates)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
-        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data === moment(rawTasks[pos].endTime).format(dateFormat.trim())
+        rawTasks[pos].manualEndTime = moment(rawTasks[pos].raw.endTime.data, 'YYYY-MM-DD', true).isValid()
         checkTaskDates(rawTasks[pos], dateFormat, excludes)
       }
     }
