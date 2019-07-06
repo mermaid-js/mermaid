@@ -151,7 +151,7 @@ describe('when using the ganttDb', function () {
 
   describe('when setting inclusive end dates', function () {
     beforeEach(function () {
-      ganttDb.setDateFormat('YYYY-MM-DD', false)
+      ganttDb.setDateFormat('YYYY-MM-DD', true)
       ganttDb.addTask('test1', 'id1,2019-02-01,1d')
       ganttDb.addTask('test2', 'id2,2019-02-01,2019-02-03')
     })
