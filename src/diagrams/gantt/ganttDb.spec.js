@@ -7,6 +7,29 @@ describe('when using the ganttDb', function () {
     ganttDb.clear()
   })
 
+  describe('when calling the clear function', function () {
+    beforeEach(function () {
+      ganttDb.setDateFormat('YYYY-MM-DD')
+      ganttDb.setExcludes('weekends 2019-02-06,friday')
+      ganttDb.addSection('weekends skip test')
+      ganttDb.addTask('test1', 'id1,2019-02-01,1d')
+      ganttDb.addTask('test2', 'id2,after id1,2d')
+      ganttDb.clear()
+    })
+
+    it.each`
+      fn                | expected
+      ${'getTasks'}     | ${[]}
+      ${'getTitle'}     | ${''}
+      ${'getDateFormat'}| ${''}
+      ${'getAxisFormat'}| ${''}
+      ${'getExcludes'}  | ${[]}
+      ${'getSections'}  | ${[]}
+    `('should clear $fn', ({ fn, expected }) => {
+  expect(ganttDb[ fn ]()).toEqual(expected)
+})
+  })
+
   it.each`
     testName                                                                             | section     | taskName   | taskData                       | expStartDate            | expEndDate                       | expId      | expTask
     ${'should handle fixed dates'}                                                       | ${'testa1'} | ${'test1'} | ${'id1,2013-01-01,2013-01-12'} | ${new Date(2013, 0, 1)} | ${new Date(2013, 0, 12)}         | ${'id1'}   | ${'test1'}
