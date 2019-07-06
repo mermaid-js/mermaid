@@ -125,4 +125,26 @@ describe('when using the ganttDb', function () {
     expect(tasks[6].id).toEqual('id7')
     expect(tasks[6].task).toEqual('test7')
   })
+
+  describe('when setting inclusive end dates', function () {
+    beforeEach(function () {
+      ganttDb.setDateFormat('YYYY-MM-DD', false)
+      ganttDb.addTask('test1', 'id1,2019-02-01,1d')
+      ganttDb.addTask('test2', 'id2,2019-02-01,2019-02-03')
+    })
+    it('should automatically add one day to all end dates', function () {
+      const tasks = ganttDb.getTasks()
+      expect(tasks[0].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate())
+      expect(tasks[0].endTime).toEqual(moment('2019-02-02', 'YYYY-MM-DD').toDate())
+      expect(tasks[0].id).toEqual('id1')
+      expect(tasks[0].task).toEqual('test1')
+
+      expect(tasks[1].startTime).toEqual(moment('2019-02-01', 'YYYY-MM-DD').toDate())
+      expect(tasks[1].endTime).toEqual(moment('2019-02-04', 'YYYY-MM-DD').toDate())
+      expect(tasks[3].renderEndTime).toBeNull() // Fixed end
+      expect(tasks[1].manualEndTime).toBeTruthy()
+      expect(tasks[1].id).toEqual('id2')
+      expect(tasks[1].task).toEqual('test2')
+    })
+  })
 })
