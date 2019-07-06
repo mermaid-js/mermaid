@@ -14,6 +14,12 @@ describe('when parsing a gantt diagram it', function () {
 
     parser.parse(str)
   })
+
+  it('should handle a dateFormat definition with inclusivity specified', function () {
+    const str = 'gantt\ndateFormat yyyy-mm-dd inclusive'
+
+    parser.parse(str)
+  })
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
