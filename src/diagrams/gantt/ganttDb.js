@@ -37,9 +37,16 @@ export const getAxisFormat = function () {
   return axisFormat
 }
 
-export const setDateFormat = function (txt, inclusive) {
+export const setDateFormat = function (txt) {
   dateFormat = txt
-  inclusiveEndDates = inclusive || false // make sure it's not undefined
+}
+
+export const enableInclusiveEndDates = function () {
+  inclusiveEndDates = true
+}
+
+export const endDatesAreInclusive = function () {
+  return inclusiveEndDates
 }
 
 export const getDateFormat = function () {
@@ -518,6 +525,8 @@ export default {
   clear,
   setDateFormat,
   getDateFormat,
+  enableInclusiveEndDates,
+  endDatesAreInclusive,
   setAxisFormat,
   getAxisFormat,
   setTitle,
