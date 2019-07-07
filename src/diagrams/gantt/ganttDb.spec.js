@@ -18,13 +18,14 @@ describe('when using the ganttDb', function () {
     })
 
     it.each`
-      fn                | expected
-      ${'getTasks'}     | ${[]}
-      ${'getTitle'}     | ${''}
-      ${'getDateFormat'}| ${''}
-      ${'getAxisFormat'}| ${''}
-      ${'getExcludes'}  | ${[]}
-      ${'getSections'}  | ${[]}
+      fn                        | expected
+      ${'getTasks'}             | ${[]}
+      ${'getTitle'}             | ${''}
+      ${'getDateFormat'}        | ${''}
+      ${'getAxisFormat'}        | ${''}
+      ${'getExcludes'}          | ${[]}
+      ${'getSections'}          | ${[]}
+      ${'endDatesAreInclusive'} | ${false}
     `('should clear $fn', ({ fn, expected }) => {
   expect(ganttDb[ fn ]()).toEqual(expected)
 })
@@ -151,7 +152,8 @@ describe('when using the ganttDb', function () {
 
   describe('when setting inclusive end dates', function () {
     beforeEach(function () {
-      ganttDb.setDateFormat('YYYY-MM-DD', true)
+      ganttDb.setDateFormat('YYYY-MM-DD')
+      ganttDb.enableInclusiveEndDates()
       ganttDb.addTask('test1', 'id1,2019-02-01,1d')
       ganttDb.addTask('test2', 'id2,2019-02-01,2019-02-03')
     })
