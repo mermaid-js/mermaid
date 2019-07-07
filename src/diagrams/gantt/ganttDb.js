@@ -159,6 +159,30 @@ const getStartDate = function (prevTime, dateFormat, str) {
   return new Date()
 }
 
+const durationToDate = function (durationStatement, relativeTime) {
+  if (durationStatement !== null) {
+    switch (durationStatement[2]) {
+      case 's':
+        relativeTime.add(durationStatement[1], 'seconds')
+        break
+      case 'm':
+        relativeTime.add(durationStatement[1], 'minutes')
+        break
+      case 'h':
+        relativeTime.add(durationStatement[1], 'hours')
+        break
+      case 'd':
+        relativeTime.add(durationStatement[1], 'days')
+        break
+      case 'w':
+        relativeTime.add(durationStatement[1], 'weeks')
+        break
+    }
+  }
+  // Default date - now
+  return relativeTime.toDate()
+}
+
 const getEndDate = function (prevTime, dateFormat, str, inclusive) {
   inclusive = inclusive || false
   str = str.trim()
@@ -172,32 +196,10 @@ const getEndDate = function (prevTime, dateFormat, str, inclusive) {
     return mDate.toDate()
   }
 
-  const d = moment(prevTime)
-  // Check for length
-  const re = /^([\d]+)([wdhms])/
-  const durationStatement = re.exec(str.trim())
-
-  if (durationStatement !== null) {
-    switch (durationStatement[2]) {
-      case 's':
-        d.add(durationStatement[1], 'seconds')
-        break
-      case 'm':
-        d.add(durationStatement[1], 'minutes')
-        break
-      case 'h':
-        d.add(durationStatement[1], 'hours')
-        break
-      case 'd':
-        d.add(durationStatement[1], 'days')
-        break
-      case 'w':
-        d.add(durationStatement[1], 'weeks')
-        break
-    }
-  }
-  // Default date - now
-  return d.toDate()
+  return durationToDate(
+    /^([\d]+)([wdhms])/.exec(str.trim()),
+    moment(prevTime)
+  )
 }
 
 let taskCnt = 0
