@@ -10,6 +10,7 @@ describe('when using the ganttDb', function () {
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD')
+      ganttDb.enableInclusiveEndDates()
       ganttDb.setExcludes('weekends 2019-02-06,friday')
       ganttDb.addSection('weekends skip test')
       ganttDb.addTask('test1', 'id1,2019-02-01,1d')
