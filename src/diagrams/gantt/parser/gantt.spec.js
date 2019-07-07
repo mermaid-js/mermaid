@@ -15,8 +15,8 @@ describe('when parsing a gantt diagram it', function () {
     parser.parse(str)
   })
 
-  it('should handle a dateFormat definition with inclusivity specified', function () {
-    const str = 'gantt\ndateFormat yyyy-mm-dd inclusive'
+  it('should handle a inclusive end date definition', function () {
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ninclusiveEndDates'
 
     parser.parse(str)
   })
