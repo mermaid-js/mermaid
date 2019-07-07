@@ -543,7 +543,8 @@ export default {
   getExcludes,
   setClickEvent,
   setLink,
-  bindFunctions
+  bindFunctions,
+  durationToDate
 }
 
 function getTaskTags (data, task, tags) {
