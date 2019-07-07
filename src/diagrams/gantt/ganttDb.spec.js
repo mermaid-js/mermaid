@@ -7,6 +7,16 @@ describe('when using the ganttDb', function () {
     ganttDb.clear()
   })
 
+  describe('when using relative times', function () {
+    it.each`
+      diff                | date                      | expected
+      ${' 1d'}            | ${moment('2019-01-01')}   | ${moment('2019-01-02').toDate()}
+      ${' 1w'}            | ${moment('2019-01-01')}   | ${moment('2019-01-08').toDate()}
+    `('should add $diff to $date resulting in $expected', ({ diff, date, expected }) => {
+  expect(ganttDb.durationToDate(diff, date)).toEqual(expected)
+})
+  })
+
   describe('when calling the clear function', function () {
     beforeEach(function () {
       ganttDb.setDateFormat('YYYY-MM-DD')
