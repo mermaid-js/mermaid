@@ -770,6 +770,19 @@ describe('when rendering a sequenceDiagram', function () {
       expect(bounds.stopy).toBe(conf.height)
     })
   })
+  it('it should handle same actor with different whitespace properly', function () {
+    renderer.bounds.init()
+
+    const str = 'sequenceDiagram\n' +
+      'participant Alice\n' +
+      'participant Alice \n' +
+      'participant Alice  \n'
+
+    parser.parse(str)
+
+    const actors = parser.yy.getActors()
+    expect(Object.keys(actors)).toEqual(['Alice'])
+  })
   it('it should handle one actor and a centered note', function () {
     renderer.bounds.init()
     const str = 'sequenceDiagram\n' +
