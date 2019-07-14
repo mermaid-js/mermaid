@@ -18,10 +18,13 @@ let funs = []
 
 const sanitize = text => {
   let txt = text
-  txt = txt.replace(/<br>/g, '#br#')
-  txt = txt.replace(/<br\S*\/>/g, '#br#')
-  txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  txt = txt.replace(/#br#/g, '<br/>')
+  if (config.securityLevel === 'strict') {
+    txt = txt.replace(/<br>/g, '#br#')
+    txt = txt.replace(/<br\S*\/>/g, '#br#')
+    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    txt = txt.replace(/#br#/g, '<br/>')
+  }
+
   return txt
 }
 
@@ -184,7 +187,7 @@ const setTooltip = function (ids, tooltip) {
 }
 
 const setClickFun = function (id, functionName) {
-  if (config.strictSecurity) {
+  if (config.securityLevel === 'strict') {
     return
   }
   if (typeof functionName === 'undefined') {

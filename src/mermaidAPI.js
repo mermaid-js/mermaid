@@ -1,15 +1,11 @@
 /**
- * ---
- * title: mermaidAPI
- * order: 5
- * ---
- * # mermaidAPI
  * This is the api to be used when handling the integration with the web page instead of using the default integration
  * (mermaid.js).
  *
  * The core of this api is the **render** function that given a graph definitionas text renders the graph/diagram and
  * returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
  * somewhere in the page or something completely different.
+ * @name mermaidAPI
 */
 import * as d3 from 'd3'
 import scope from 'scope-css'
@@ -42,7 +38,6 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
 }
 
 /**
- * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:
  * ```
  * mermaid.initialize({
@@ -51,6 +46,7 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  *   }
  * });
  * ```
+ * @name Configuration
  */
 const config = {
 
@@ -68,175 +64,205 @@ const config = {
   themeCSS: undefined,
 
   /**
-   * logLevel , decides the amount of logging to be used.
+   * This option decides the amount of logging to be used.
    *    * debug: 1
    *    * info: 2
    *    * warn: 3
    *    * error: 4
-   *    * fatal: 5
+   *    * fatal: (**default**) 5
    */
   logLevel: 5,
 
   /**
-   * **strictSecurity** A boolean flag setting the level of trust to be used on the parsed diagrams. When set to true the click functionality is disabled.
+   * Sets the level of trust to be used on the parsed diagrams.
+   *  * **true**: (**default**) tags in text are encoded, click functionality is disabeled
+   *  * **false**: tags in text are allowed, click functionality is enabled
    */
-  strictSecurity: false,
+  securityLevel: 'strict',
 
   /**
-   * **startOnLoad** - This options controls whether or mermaid starts when the page loads
+   * This options controls whether or mermaid starts when the page loads
+   * **Default value true**.
    */
   startOnLoad: true,
 
   /**
-   * **arrowMarkerAbsolute** - This options controls whether or arrow markers in html code will be absolute paths or
+   * This options controls whether or arrow markers in html code will be absolute paths or
    * an anchor, #. This matters if you are using base tag settings.
+   * **Default value false**.
    */
   arrowMarkerAbsolute: false,
 
   /**
-   * ### flowchart
-   * *The object containing configurations specific for flowcharts*
+   * The object containing configurations specific for flowcharts
    */
   flowchart: {
     /**
-     * **htmlLabels** - Flag for setting whether or not a html tag should be used for rendering labels
-     * on the edges
+     * Flag for setting whether or not a html tag should be used for rendering labels
+     * on the edges.
+     * **Default value true**.
      */
     htmlLabels: true,
 
+    /**
+     * **Default value linear**.
+     */
     curve: 'linear'
   },
 
   /**
-   * ###  sequenceDiagram
    * The object containing configurations specific for sequence diagrams
    */
   sequence: {
 
     /**
-     * **diagramMarginX** - margin to the right and left of the sequence diagram
+     * margin to the right and left of the sequence diagram
+     * **Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * **diagramMarginY** - margin to the over and under the sequence diagram
+     * margin to the over and under the sequence diagram.
+     * **Default value 10**.
      */
     diagramMarginY: 10,
 
     /**
-     * **actorMargin** - Margin between actors
+     * Margin between actors.
+     * **Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * **width** - Width of actor boxes
+     * Width of actor boxes
+     * **Default value 150**.
      */
     width: 150,
 
     /**
-     * **height** - Height of actor boxes
+     * Height of actor boxes
+     * **Default value 65**.
      */
     height: 65,
 
     /**
-     * **boxMargin** - Margin around loop boxes
+     * Margin around loop boxes
+     * **Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * **boxTextMargin** - margin around the text in loop/alt/opt boxes
+     * margin around the text in loop/alt/opt boxes
+     * **Default value 5**.
      */
     boxTextMargin: 5,
 
     /**
-     * **noteMargin** - margin around notes
+     * margin around notes.
+     * **Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * **messageMargin** - Space between messages
+     * Space between messages.
+     * **Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * **mirrorActors** - mirror actors under diagram
+     * mirror actors under diagram.
+     * **Default value true**.
      */
     mirrorActors: true,
 
     /**
-     * **bottomMarginAdj** - Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards
+     * Depending on css styling this might need adjustment.
+     * Prolongs the edge of the diagram downwards.
+     * **Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * **useMaxWidth** - when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used
+     * when this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     * **Default value true**.
      */
     useMaxWidth: true,
 
     /**
-     * **rightAngles** - this will display arrows that start and begin at the same node as right angles, rather than a curve
+     * This will display arrows that start and begin at the same node as right angles, rather than a curve
+     * **Default value false**.
      */
     rightAngles: false,
     /**
-     * **showSequenceNumbers** - this will show the node numbers
+     * This will show the node numbers
+     * **Default value false**.
      */
     showSequenceNumbers: false
 
   },
 
-  /** ### gantt
+  /**
    * The object containing configurations specific for gantt diagrams*
    */
   gantt: {
     /**
-     * **titleTopMargin** - margin top for the text over the gantt diagram
+     * Margin top for the text over the gantt diagram
+     * **Default value 25**.
      */
     titleTopMargin: 25,
 
     /**
-     * **barHeight** - the height of the bars in the graph
+     * The height of the bars in the graph
+     * **Default value 20**.
      */
     barHeight: 20,
 
     /**
-     * **barGap** - the margin between the different activities in the gantt diagram
+     * The margin between the different activities in the gantt diagram.
+     * **Default value 4**.
      */
     barGap: 4,
 
     /**
-     *  **topPadding** - margin between title and gantt diagram and between axis and gantt diagram.
+     *  Margin between title and gantt diagram and between axis and gantt diagram.
+     * **Default value 50**.
      */
     topPadding: 50,
 
     /**
-     *  **leftPadding** - the space allocated for the section name to the left of the activities.
+     *  The space allocated for the section name to the left of the activities.
+     * **Default value 75**.
      */
     leftPadding: 75,
 
     /**
-     *  **gridLineStartPadding** - Vertical starting position of the grid lines
+     *  Vertical starting position of the grid lines.
+     * **Default value 35**.
      */
     gridLineStartPadding: 35,
 
     /**
-     *  **fontSize** - font size ...
+     *  Font size ...
+     * **Default value 11**.
      */
     fontSize: 11,
 
     /**
-     * **fontFamily** - font family ...
+     * font family ...
+     * **Default value '"Open-Sans", "sans-serif"'**.
      */
     fontFamily: '"Open-Sans", "sans-serif"',
 
     /**
-     * **numberSectionStyles** - the number of alternating section styles
+     * The number of alternating section styles.
+     * **Default value 4**.
      */
     numberSectionStyles: 4,
 
     /**
-     * **axisFormat** - datetime format of the axis, this might need adjustment to match your locale and preferences
+     * Datetime format of the axis, this might need adjustment to match your locale and preferences
+     * **Default value '%Y-%m-%d'**.
      */
     axisFormat: '%Y-%m-%d'
   },
@@ -330,10 +356,9 @@ export const decodeEntities = function (text) {
   return txt
 }
 /**
- * ##render
  * Function that renders an svg with a graph from a chart definition. Usage example below.
  *
- * ```
+ * ```js
  * mermaidAPI.initialize({
  *      startOnLoad:true
  *  });

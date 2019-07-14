@@ -1,5 +1,10 @@
 import flowDb from '../flowDb'
 import flow from './flow'
+import { setConfig } from '../../../config'
+
+setConfig({
+  securityLevel: 'strict',
+})
 
 describe('when parsing ', function () {
   beforeEach(function () {

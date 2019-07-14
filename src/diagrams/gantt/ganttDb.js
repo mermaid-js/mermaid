@@ -455,7 +455,7 @@ export const setClass = function (ids, className) {
 }
 
 const setClickFun = function (id, functionName, functionArgs) {
-  if (config.strictSecurity) {
+  if (config.securityLevel === 'strict') {
     return
   }
   if (typeof functionName === 'undefined') {

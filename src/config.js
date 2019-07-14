@@ -1,4 +1,6 @@
-let config
+let config = {
+  securityLevel: 'strict'
+}
 
 export const setConfig = conf => {
   config = conf
