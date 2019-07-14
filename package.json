@@ -46,10 +46,11 @@
     "dagre-d3-renderer": "^0.5.8",
     "dagre-layout": "^0.8.8",
     "graphlibrary": "^2.2.0",
+    "gulp-print": "^5.0.2",
     "he": "^1.2.0",
-    "moment-mini": "^2.22.1",
     "lodash": "^4.17.11",
     "minify": "^4.1.1",
+    "moment-mini": "^2.22.1",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {
@@ -63,7 +64,6 @@
     "css-loader": "^2.0.1",
     "css-to-string-loader": "^0.1.3",
     "gulp": "^4.0.0",
-    "gulp-filelog": "^0.4.1",
     "gulp-jison": "^1.2.0",
     "husky": "^1.2.1",
     "identity-obj-proxy": "^3.0.0",
