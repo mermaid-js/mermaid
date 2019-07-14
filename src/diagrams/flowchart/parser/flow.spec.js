@@ -1,5 +1,10 @@
 import flowDb from '../flowDb'
 import flow from './flow'
+import { setConfig } from '../../../config'
+
+setConfig({
+  securityLevel: 'strict',
+})
 
 describe('when parsing ', function () {
   beforeEach(function () {
@@ -1333,7 +1338,7 @@ describe('when parsing ', function () {
       const edges = flow.parser.yy.getEdges()
 
       expect(vert['C'].type).toBe('round')
-      expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br> -  ÅÄÖ')
+      expect(vert['C'].text).toBe('Chimpansen hoppar åäö  <br/> -  ÅÄÖ')
     })
         // xit('it should handle åäö, minus and space and br',function(){
         //    const res = flow.parser.parse('graph TD; A[Object&#40;foo,bar&#41;]-->B(Thing);');
@@ -1460,7 +1465,7 @@ describe('when parsing ', function () {
 
     expect(edges.length).toBe(0)
     expect(vert['a'].type).toBe('diamond')
-    expect(vert['a'].text).toBe('A <br> end')
+    expect(vert['a'].text).toBe('A <br/> end')
   })
   it('should handle a single round node with html in it', function () {
         // Silly but syntactically correct
@@ -1471,7 +1476,7 @@ describe('when parsing ', function () {
 
     expect(edges.length).toBe(0)
     expect(vert['a'].type).toBe('round')
-    expect(vert['a'].text).toBe('A <br> end')
+    expect(vert['a'].text).toBe('A <br/> end')
   })
   it('should handle a single node with alphanumerics starting on a char', function () {
         // Silly but syntactically correct
@@ -1573,7 +1578,7 @@ describe('when parsing ', function () {
   })
 
   describe('special characters should be be handled.', function () {
-    const charTest = function (char) {
+    const charTest = function (char, result) {
       const res = flow.parser.parse('graph TD;A(' + char + ')-->B;')
 
       const vert = flow.parser.yy.getVertices()
@@ -1581,7 +1586,11 @@ describe('when parsing ', function () {
 
       expect(vert['A'].id).toBe('A')
       expect(vert['B'].id).toBe('B')
-      expect(vert['A'].text).toBe(char)
+      if(result){
+        expect(vert['A'].text).toBe(result)
+      }else{
+        expect(vert['A'].text).toBe(char)
+      }
     }
 
     it('it should be able to parse a \'.\'', function () {
@@ -1614,15 +1623,18 @@ describe('when parsing ', function () {
     })
 
     it('it should be able to parse a \'<\'', function () {
-      charTest('<')
+      charTest('<','&lt;')
     })
 
     it('it should be able to parse a \'>\'', function () {
-      charTest('>')
+      charTest('>','&gt;')
     })
 
     it('it should be able to parse a \'=\'', function () {
       charTest('=')
+    })
+    it('it should be able to parse a \'&\'', function () {
+      charTest('&')
     })
   })
 

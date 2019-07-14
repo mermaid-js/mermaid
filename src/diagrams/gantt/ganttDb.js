@@ -1,7 +1,9 @@
 import moment from 'moment-mini'
 import { logger } from '../../logger'
 import * as d3 from 'd3'
+import { getConfig } from '../../config'
 
+const config = getConfig()
 let dateFormat = ''
 let axisFormat = ''
 let excludes = []
@@ -62,10 +64,12 @@ export const getExcludes = function () {
 }
 
 export const setTitle = function (txt) {
+  console.log('Setting title ', txt)
   title = txt
 }
 
 export const getTitle = function () {
+  console.log('Title is ', title)
   return title
 }
 
@@ -451,6 +455,9 @@ export const setClass = function (ids, className) {
 }
 
 const setClickFun = function (id, functionName, functionArgs) {
+  if (config.securityLevel === 'strict') {
+    return
+  }
   if (typeof functionName === 'undefined') {
     return
   }
