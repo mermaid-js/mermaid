@@ -2,7 +2,9 @@ import * as d3 from 'd3'
 
 import { logger } from '../../logger'
 import utils from '../../utils'
+import { getConfig } from '../../config'
 
+const config = getConfig()
 let vertices = {}
 let edges = []
 let classes = []
@@ -13,6 +15,16 @@ let subCount = 0
 let direction
 // Functions to be run after graph rendering
 let funs = []
+
+const sanitize = text => {
+  let txt = text
+  txt = txt.replace(/<br>/g, '#br#')
+  txt = txt.replace(/<br\S*\/>/g, '#br#')
+  txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  txt = txt.replace(/#br#/g, '<br/>')
+  return txt
+}
+
 /**
  * Function called by parser when a node definition has been found
  * @param id
@@ -35,7 +47,7 @@ export const addVertex = function (id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] }
   }
   if (typeof text !== 'undefined') {
-    txt = text.trim()
+    txt = sanitize(text.trim())
 
     // strip quotes if string starts and exnds with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
@@ -76,7 +88,7 @@ export const addLink = function (start, end, type, linktext) {
   linktext = type.text
 
   if (typeof linktext !== 'undefined') {
-    edge.text = linktext.trim()
+    edge.text = sanitize(linktext.trim())
 
     // strip quotes if string starts and exnds with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
@@ -172,6 +184,9 @@ const setTooltip = function (ids, tooltip) {
 }
 
 const setClickFun = function (id, functionName) {
+  if (config.strictSecurity) {
+    return
+  }
   if (typeof functionName === 'undefined') {
     return
   }
@@ -335,6 +350,7 @@ export const addSubGraph = function (id, list, title) {
 
   id = id || ('subGraph' + subCount)
   title = title || ''
+  title = sanitize(title)
   subCount = subCount + 1
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] }
   subGraphs.push(subGraph)

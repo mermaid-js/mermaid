@@ -14,7 +14,7 @@
 import * as d3 from 'd3'
 import scope from 'scope-css'
 import pkg from '../package.json'
-
+import { setConfig } from './config'
 import { logger, setLogLevel } from './logger'
 import utils from './utils'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
@@ -76,6 +76,11 @@ const config = {
    *    * fatal: 5
    */
   logLevel: 5,
+
+  /**
+   * **strictSecurity** A boolean flag setting the level of trust to be used on the parsed diagrams. When set to true the click functionality is disabled.
+   */
+  strictSecurity: false,
 
   /**
    * **startOnLoad** - This options controls whether or mermaid starts when the page loads
@@ -240,6 +245,7 @@ const config = {
 }
 
 setLogLevel(config.logLevel)
+setConfig(config)
 
 function parse (text) {
   const graphType = utils.detectType(text)
