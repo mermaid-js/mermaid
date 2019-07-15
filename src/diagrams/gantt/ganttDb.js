@@ -1,7 +1,9 @@
 import moment from 'moment-mini'
 import { logger } from '../../logger'
 import * as d3 from 'd3'
+import { getConfig } from '../../config'
 
+const config = getConfig()
 let dateFormat = ''
 let axisFormat = ''
 let excludes = []
@@ -11,6 +13,7 @@ let tasks = []
 let currentSection = ''
 const tags = ['active', 'done', 'crit', 'milestone']
 let funs = []
+let inclusiveEndDates = false
 
 export const clear = function () {
   sections = []
@@ -22,6 +25,10 @@ export const clear = function () {
   lastTask = undefined
   lastTaskID = undefined
   rawTasks = []
+  dateFormat = ''
+  axisFormat = ''
+  excludes = []
+  inclusiveEndDates = false
 }
 
 export const setAxisFormat = function (txt) {
@@ -36,21 +43,43 @@ export const setDateFormat = function (txt) {
   dateFormat = txt
 }
 
+export const enableInclusiveEndDates = function () {
+  inclusiveEndDates = true
+}
+
+export const endDatesAreInclusive = function () {
+  return inclusiveEndDates
+}
+
+export const getDateFormat = function () {
+  return dateFormat
+}
+
 export const setExcludes = function (txt) {
   excludes = txt.toLowerCase().split(/[\s,]+/)
 }
 
+export const getExcludes = function () {
+  return excludes
+}
+
 export const setTitle = function (txt) {
+  console.log('Setting title ', txt)
   title = txt
 }
 
 export const getTitle = function () {
+  console.log('Title is ', title)
   return title
 }
 
 export const addSection = function (txt) {
   currentSection = txt
   sections.push(txt)
+}
+
+export const getSections = function () {
+  return sections
 }
 
 export const getTasks = function () {
@@ -134,41 +163,47 @@ const getStartDate = function (prevTime, dateFormat, str) {
   return new Date()
 }
 
-const getEndDate = function (prevTime, dateFormat, str) {
+const durationToDate = function (durationStatement, relativeTime) {
+  if (durationStatement !== null) {
+    switch (durationStatement[2]) {
+      case 's':
+        relativeTime.add(durationStatement[1], 'seconds')
+        break
+      case 'm':
+        relativeTime.add(durationStatement[1], 'minutes')
+        break
+      case 'h':
+        relativeTime.add(durationStatement[1], 'hours')
+        break
+      case 'd':
+        relativeTime.add(durationStatement[1], 'days')
+        break
+      case 'w':
+        relativeTime.add(durationStatement[1], 'weeks')
+        break
+    }
+  }
+  // Default date - now
+  return relativeTime.toDate()
+}
+
+const getEndDate = function (prevTime, dateFormat, str, inclusive) {
+  inclusive = inclusive || false
   str = str.trim()
 
   // Check for actual date
   let mDate = moment(str, dateFormat.trim(), true)
   if (mDate.isValid()) {
+    if (inclusive) {
+      mDate.add(1, 'd')
+    }
     return mDate.toDate()
   }
 
-  const d = moment(prevTime)
-  // Check for length
-  const re = /^([\d]+)([wdhms])/
-  const durationStatement = re.exec(str.trim())
-
-  if (durationStatement !== null) {
-    switch (durationStatement[2]) {
-      case 's':
-        d.add(durationStatement[1], 'seconds')
-        break
-      case 'm':
-        d.add(durationStatement[1], 'minutes')
-        break
-      case 'h':
-        d.add(durationStatement[1], 'hours')
-        break
-      case 'd':
-        d.add(durationStatement[1], 'days')
-        break
-      case 'w':
-        d.add(durationStatement[1], 'weeks')
-        break
-    }
-  }
-  // Default date - now
-  return d.toDate()
+  return durationToDate(
+    /^([\d]+)([wdhms])/.exec(str.trim()),
+    moment(prevTime)
+  )
 }
 
 let taskCnt = 0
@@ -231,8 +266,8 @@ const compileData = function (prevTask, dataStr) {
   }
 
   if (endTimeData) {
-    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData)
-    task.manualEndTime = endTimeData === moment(task.endTime).format(dateFormat.trim())
+    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates)
+    task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid()
     checkTaskDates(task, dateFormat, excludes)
   }
 
@@ -370,10 +405,10 @@ const compileTasks = function () {
     }
 
     if (rawTasks[pos].startTime) {
-      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data)
+      rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, dateFormat, rawTasks[pos].raw.endTime.data, inclusiveEndDates)
       if (rawTasks[pos].endTime) {
         rawTasks[pos].processed = true
-        rawTasks[pos].manualEndTime = rawTasks[pos].raw.endTime.data === moment(rawTasks[pos].endTime).format(dateFormat.trim())
+        rawTasks[pos].manualEndTime = moment(rawTasks[pos].raw.endTime.data, 'YYYY-MM-DD', true).isValid()
         checkTaskDates(rawTasks[pos], dateFormat, excludes)
       }
     }
@@ -420,6 +455,9 @@ export const setClass = function (ids, className) {
 }
 
 const setClickFun = function (id, functionName, functionArgs) {
+  if (config.securityLevel === 'strict') {
+    return
+  }
   if (typeof functionName === 'undefined') {
     return
   }
@@ -495,19 +533,25 @@ export const bindFunctions = function (element) {
 export default {
   clear,
   setDateFormat,
+  getDateFormat,
+  enableInclusiveEndDates,
+  endDatesAreInclusive,
   setAxisFormat,
   getAxisFormat,
   setTitle,
   getTitle,
   addSection,
+  getSections,
   getTasks,
   addTask,
   findTaskById,
   addTaskOrg,
   setExcludes,
+  getExcludes,
   setClickEvent,
   setLink,
-  bindFunctions
+  bindFunctions,
+  durationToDate
 }
 
 function getTaskTags (data, task, tags) {

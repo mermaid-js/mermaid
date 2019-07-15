@@ -72,12 +72,12 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14,15,17,19],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,15],$V7=[1,16];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[6,8,10,11,12,13,14,15,16,18,20],$V1=[1,9],$V2=[1,10],$V3=[1,11],$V4=[1,12],$V5=[1,13],$V6=[1,14],$V7=[1,16],$V8=[1,17];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"axisFormat":12,"excludes":13,"title":14,"section":15,"clickStatement":16,"taskTxt":17,"taskData":18,"click":19,"callbackname":20,"callbackargs":21,"href":22,"clickStatementDebug":23,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"axisFormat",13:"excludes",14:"title",15:"section",17:"taskTxt",18:"taskData",19:"click",20:"callbackname",21:"callbackargs",22:"href"},
-productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,2],[16,2],[16,3],[16,3],[16,4],[16,3],[16,4],[16,2],[23,2],[23,3],[23,3],[23,4],[23,3],[23,4],[23,2]],
+symbols_: {"error":2,"start":3,"gantt":4,"document":5,"EOF":6,"line":7,"SPACE":8,"statement":9,"NL":10,"dateFormat":11,"inclusiveEndDates":12,"axisFormat":13,"excludes":14,"title":15,"section":16,"clickStatement":17,"taskTxt":18,"taskData":19,"click":20,"callbackname":21,"callbackargs":22,"href":23,"clickStatementDebug":24,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"gantt",6:"EOF",8:"SPACE",10:"NL",11:"dateFormat",12:"inclusiveEndDates",13:"axisFormat",14:"excludes",15:"title",16:"section",18:"taskTxt",19:"taskData",20:"click",21:"callbackname",22:"callbackargs",23:"href"},
+productions_: [0,[3,3],[5,0],[5,2],[7,2],[7,1],[7,1],[7,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,1],[9,2],[17,2],[17,3],[17,3],[17,4],[17,3],[17,4],[17,2],[24,2],[24,3],[24,3],[24,4],[24,3],[24,4],[24,2]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -102,53 +102,56 @@ case 8:
 yy.setDateFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
 case 9:
-yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
+yy.enableInclusiveEndDates();this.$=$$[$0].substr(18);
 break;
 case 10:
-yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
+yy.setAxisFormat($$[$0].substr(11));this.$=$$[$0].substr(11);
 break;
 case 11:
-yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+yy.setExcludes($$[$0].substr(9));this.$=$$[$0].substr(9);
 break;
 case 12:
+yy.setTitle($$[$0].substr(6));this.$=$$[$0].substr(6);
+break;
+case 13:
 yy.addSection($$[$0].substr(8));this.$=$$[$0].substr(8);
 break;
-case 14:
+case 15:
 yy.addTask($$[$0-1],$$[$0]);this.$='task';
 break;
-case 15:
+case 16:
 this.$ = $$[$0-1];yy.setClickEvent($$[$0-1], $$[$0], null);
 break;
-case 16:
+case 17:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], $$[$0]);
 break;
-case 17:
+case 18:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0-1], null);yy.setLink($$[$0-2],$$[$0]);
 break;
-case 18:
+case 19:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-2], $$[$0-1]);yy.setLink($$[$0-3],$$[$0]);
 break;
-case 19:
+case 20:
 this.$ = $$[$0-2];yy.setClickEvent($$[$0-2], $$[$0], null);yy.setLink($$[$0-2],$$[$0-1]);
 break;
-case 20:
+case 21:
 this.$ = $$[$0-3];yy.setClickEvent($$[$0-3], $$[$0-1], $$[$0]);yy.setLink($$[$0-3],$$[$0-2]);
 break;
-case 21:
+case 22:
 this.$ = $$[$0-1];yy.setLink($$[$0-1], $$[$0]);
 break;
-case 22: case 28:
+case 23: case 29:
 this.$=$$[$0-1] + ' ' + $$[$0];
 break;
-case 23: case 24: case 26:
+case 24: case 25: case 27:
 this.$=$$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
-case 25: case 27:
+case 26: case 28:
 this.$=$$[$0-3] + ' ' + $$[$0-2] + ' ' + $$[$0-1] + ' ' + $$[$0];
 break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:14,17:$V6,19:$V7},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:17,11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:14,17:$V6,19:$V7},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),o($V0,[2,13]),{18:[1,18]},{20:[1,19],22:[1,20]},o($V0,[2,4]),o($V0,[2,14]),o($V0,[2,15],{21:[1,21],22:[1,22]}),o($V0,[2,21],{20:[1,23]}),o($V0,[2,16],{22:[1,24]}),o($V0,[2,17]),o($V0,[2,19],{21:[1,25]}),o($V0,[2,18]),o($V0,[2,20])],
+table: [{3:1,4:[1,2]},{1:[3]},o($V0,[2,2],{5:3}),{6:[1,4],7:5,8:[1,6],9:7,10:[1,8],11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6,17:15,18:$V7,20:$V8},o($V0,[2,7],{1:[2,1]}),o($V0,[2,3]),{9:18,11:$V1,12:$V2,13:$V3,14:$V4,15:$V5,16:$V6,17:15,18:$V7,20:$V8},o($V0,[2,5]),o($V0,[2,6]),o($V0,[2,8]),o($V0,[2,9]),o($V0,[2,10]),o($V0,[2,11]),o($V0,[2,12]),o($V0,[2,13]),o($V0,[2,14]),{19:[1,19]},{21:[1,20],23:[1,21]},o($V0,[2,4]),o($V0,[2,15]),o($V0,[2,16],{22:[1,22],23:[1,23]}),o($V0,[2,22],{21:[1,24]}),o($V0,[2,17],{23:[1,25]}),o($V0,[2,18]),o($V0,[2,20],{22:[1,26]}),o($V0,[2,19]),o($V0,[2,21])],
 defaultActions: {},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
@@ -640,7 +643,7 @@ case 4:this.begin("href");
 break;
 case 5:this.popState();
 break;
-case 6:return 22;
+case 6:return 23;
 break;
 case 7:this.begin("callbackname");
 break;
@@ -648,17 +651,17 @@ case 8:this.popState();
 break;
 case 9:this.popState(); this.begin("callbackargs");
 break;
-case 10:return 20;
+case 10:return 21;
 break;
 case 11:this.popState();
 break;
-case 12:return 21;
+case 12:return 22;
 break;
 case 13:this.begin("click");
 break;
 case 14:this.popState();
 break;
-case 15:return 19;
+case 15:return 20;
 break;
 case 16:return 4;
 break;
@@ -668,26 +671,28 @@ case 18:return 12;
 break;
 case 19:return 13;
 break;
-case 20:return 'date';
+case 20:return 14;
 break;
-case 21:return 14;
+case 21:return 'date';
 break;
 case 22:return 15;
 break;
-case 23:return 17;
+case 23:return 16;
 break;
 case 24:return 18;
 break;
-case 25:return ':';
+case 25:return 19;
 break;
-case 26:return 6;
+case 26:return ':';
 break;
-case 27:return 'INVALID';
+case 27:return 6;
+break;
+case 28:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"callbackargs":{"rules":[11,12],"inclusive":false},"callbackname":{"rules":[8,9,10],"inclusive":false},"href":{"rules":[5,6],"inclusive":false},"click":{"rules":[14,15],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,7,13,16,17,18,19,20,21,22,23,24,25,26,27],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:href[\s]+["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:call[\s]+)/i,/^(?:\([\s]*\))/i,/^(?:\()/i,/^(?:[^(]*)/i,/^(?:\))/i,/^(?:[^)]*)/i,/^(?:click[\s]+)/i,/^(?:[\s\n])/i,/^(?:[^\s\n]*)/i,/^(?:gantt\b)/i,/^(?:dateFormat\s[^#\n;]+)/i,/^(?:inclusiveEndDates\b)/i,/^(?:axisFormat\s[^#\n;]+)/i,/^(?:excludes\s[^#\n;]+)/i,/^(?:\d\d\d\d-\d\d-\d\d\b)/i,/^(?:title\s[^#\n;]+)/i,/^(?:section\s[^#:\n;]+)/i,/^(?:[^#:\n;]+)/i,/^(?::[^#\n;]+)/i,/^(?::)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"callbackargs":{"rules":[11,12],"inclusive":false},"callbackname":{"rules":[8,9,10],"inclusive":false},"href":{"rules":[5,6],"inclusive":false},"click":{"rules":[14,15],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,7,13,16,17,18,19,20,21,22,23,24,25,26,27,28],"inclusive":true}}
 });
 return lexer;
 })();

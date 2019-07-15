@@ -3,6 +3,12 @@
 import { parser } from './gantt'
 import ganttDb from '../ganttDb'
 
+const parserFnConstructor = (str) => {
+  return () => {
+    parser.parse(str)
+  }
+}
+
 describe('when parsing a gantt diagram it', function () {
   beforeEach(function () {
     parser.yy = ganttDb
@@ -12,17 +18,23 @@ describe('when parsing a gantt diagram it', function () {
   it('should handle a dateFormat definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd'
 
-    parser.parse(str)
+    expect(parserFnConstructor(str)).not.toThrow()
+  })
+
+  it('should handle a inclusive end date definition', function () {
+    const str = 'gantt\ndateFormat yyyy-mm-dd\ninclusiveEndDates'
+
+     expect(parserFnConstructor(str)).not.toThrow()
   })
   it('should handle a title definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid'
 
-    parser.parse(str)
+     expect(parserFnConstructor(str)).not.toThrow()
   })
   it('should handle an excludes definition', function () {
     const str = 'gantt\ndateFormat yyyy-mm-dd\ntitle Adding gantt diagram functionality to mermaid\nexcludes weekdays 2019-02-01'
 
-    parser.parse(str)
+     expect(parserFnConstructor(str)).not.toThrow()
   })
   it('should handle a section definition', function () {
     const str = 'gantt\n' +
@@ -31,7 +43,7 @@ describe('when parsing a gantt diagram it', function () {
       'excludes weekdays 2019-02-01\n' +
       'section Documentation'
 
-    parser.parse(str)
+     expect(parserFnConstructor(str)).not.toThrow()
   })
   /**
    * Beslutsflöde inligt nedan. Obs bla bla bla
@@ -51,7 +63,7 @@ describe('when parsing a gantt diagram it', function () {
       'section Documentation\n' +
       'Design jison grammar:des1, 2014-01-01, 2014-01-04'
 
-    parser.parse(str)
+     expect(parserFnConstructor(str)).not.toThrow()
 
     const tasks = parser.yy.getTasks()
 
@@ -76,7 +88,7 @@ describe('when parsing a gantt diagram it', function () {
 
   const allowedTags = ['active', 'done', 'crit', 'milestone']
 
-  parser.parse(str)
+   expect(parserFnConstructor(str)).not.toThrow()
 
   const tasks = parser.yy.getTasks()
 

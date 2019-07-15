@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var parser = (function(){
+var sequenceDiagram = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,23],$Vf=[1,24],$Vg=[1,4,5,10,15,16,18,20,21,22,23,25,27,28,29,40],$Vh=[1,32],$Vi=[4,5,10,15,16,18,20,21,22,23,25,29,40],$Vj=[4,5,10,15,16,18,20,21,22,23,25,28,29,40],$Vk=[4,5,10,15,16,18,20,21,22,23,25,27,29,40],$Vl=[38,39,40];
 var parser = {trace: function trace () { },
 yy: {},
@@ -252,18 +252,15 @@ parse: function parse(input) {
         vstack.length = vstack.length - n;
         lstack.length = lstack.length - n;
     }
-            function lex() {
+    _token_stack:
+        var lex = function () {
             var token;
-            token = tstack.pop() || lexer.lex() || EOF;
+            token = lexer.lex() || EOF;
             if (typeof token !== 'number') {
-                if (token instanceof Array) {
-                    tstack = token;
-                    token = tstack.pop();
-                }
                 token = self.symbols_[token] || token;
             }
             return token;
-        }
+        };
     var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
     while (true) {
         state = stack[stack.length - 1];
@@ -275,27 +272,27 @@ parse: function parse(input) {
             }
             action = table[state] && table[state][symbol];
         }
-        if (typeof action === 'undefined' || !action.length || !action[0]) {
-            var errStr = '';
-            expected = [];
-            for (p in table[state]) {
-                if (this.terminals_[p] && p > TERROR) {
-                    expected.push('\'' + this.terminals_[p] + '\'');
+                    if (typeof action === 'undefined' || !action.length || !action[0]) {
+                var errStr = '';
+                expected = [];
+                for (p in table[state]) {
+                    if (this.terminals_[p] && p > TERROR) {
+                        expected.push('\'' + this.terminals_[p] + '\'');
+                    }
                 }
+                if (lexer.showPosition) {
+                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+                } else {
+                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+                }
+                this.parseError(errStr, {
+                    text: lexer.match,
+                    token: this.terminals_[symbol] || symbol,
+                    line: lexer.yylineno,
+                    loc: yyloc,
+                    expected: expected
+                });
             }
-            if (lexer.showPosition) {
-                errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-            } else {
-                errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
-            }
-            this.parseError(errStr, {
-                text: lexer.match,
-                token: this.terminals_[symbol] || symbol,
-                line: lexer.yylineno,
-                loc: yyloc,
-                expected: expected
-            });
-        }
         if (action[0] instanceof Array && action.length > 1) {
             throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
         }
@@ -704,7 +701,7 @@ case 4:/* skip comments */
 break;
 case 5: this.begin('ID'); return 10; 
 break;
-case 6: this.begin('ALIAS'); return 40; 
+case 6: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 40; 
 break;
 case 7: this.popState(); this.popState(); this.begin('LINE'); return 12; 
 break;
@@ -787,9 +784,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = parser;
-exports.Parser = parser.Parser;
-exports.parse = function () { return parser.parse.apply(parser, arguments); };
+exports.parser = sequenceDiagram;
+exports.Parser = sequenceDiagram.Parser;
+exports.parse = function () { return sequenceDiagram.parse.apply(sequenceDiagram, arguments); };
 exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');

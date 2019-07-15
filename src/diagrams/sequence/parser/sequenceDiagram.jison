@@ -27,7 +27,7 @@
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*  /* skip comments */
 \%%[^\n]*                        /* skip comments */
 "participant"     { this.begin('ID'); return 'participant'; }
-<ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)  { this.begin('ALIAS'); return 'ACTOR'; }
+<ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)  { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"       { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)       { this.popState(); this.popState(); return 'NL'; }
 "loop"            { this.begin('LINE'); return 'loop'; }

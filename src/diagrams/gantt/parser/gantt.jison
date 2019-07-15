@@ -55,6 +55,7 @@ that id.
 
 "gantt"                 return 'gantt';
 "dateFormat"\s[^#\n;]+  return 'dateFormat';
+"inclusiveEndDates"			return 'inclusiveEndDates';
 "axisFormat"\s[^#\n;]+  return 'axisFormat';
 "excludes"\s[^#\n;]+    return 'excludes';
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
@@ -91,9 +92,10 @@ line
 	;
 
 statement
-  : 'dateFormat' {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
-  | 'axisFormat' {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
-  | 'excludes' {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
+  : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
+	| inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
+  | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
+  | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
   | title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
   | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
   | clickStatement
