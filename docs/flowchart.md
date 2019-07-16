@@ -6,6 +6,10 @@ This statement declares a new graph and the direction of the graph layout.
 
 This declares a graph oriented from top to bottom.
 
+```
+graph TD
+    Start --> Stop
+```
 ```mermaid
 graph TD
     Start --> Stop
@@ -22,6 +26,10 @@ Possible directions are:
 
 * TD - same as TB
 
+```
+graph LR
+    Start --> Stop
+```
 ```mermaid
 graph LR
     Start --> Stop
@@ -30,6 +38,11 @@ graph LR
 ## Nodes & shapes
 
 ### A node (default)
+
+```
+graph LR
+    id
+```
 
 ```mermaid
 graph LR
@@ -43,6 +56,10 @@ It is also possible to set text in the box that differs from the id. If this is 
 found for the node that will be used. Also if you define edges for the node later on, you can omit text definitions. The
 one previously defined will be used when rendering the box.
 
+```
+graph LR
+    id1[This is the text in the box]
+```
 ```mermaid
 graph LR
     id1[This is the text in the box]
@@ -51,6 +68,10 @@ graph LR
 
 ### A node with round edges
 
+```
+graph LR
+    id1(This is the text in the box)
+```
 ```mermaid
 graph LR
     id1(This is the text in the box)
@@ -58,6 +79,10 @@ graph LR
 
 ### A node in the form of a circle
 
+```
+graph LR
+    id1((This is the text in the circle))
+```
 ```mermaid
 graph LR
     id1((This is the text in the circle))
@@ -65,6 +90,10 @@ graph LR
 
 ### A node in an asymetric shape
 
+```
+graph LR
+    id1>This is the text in the box]
+```
 ```mermaid
 graph LR
     id1>This is the text in the box]
@@ -73,6 +102,10 @@ Currently only the shape above is possible and not its mirror. *This might chang
 
 ### A node (rhombus)
 
+```
+graph LR
+    id1{This is the text in the box}
+```
 ```mermaid
 graph LR
     id1{This is the text in the box}
@@ -84,6 +117,10 @@ Nodes can be connected with links/edges. It is possible to have different types 
 
 ### A link with arrow head
 
+```
+graph LR
+    A-->B
+```
 ```mermaid
 graph LR
     A-->B
@@ -91,6 +128,10 @@ graph LR
 
 ### An open link
 
+```
+graph LR
+    A --- B
+```
 ```mermaid
 graph LR
     A --- B
@@ -98,6 +139,10 @@ graph LR
 
 ### Text on links
 
+```
+graph LR
+    A-- This is the text ---B
+```
 ```mermaid
 graph LR
     A-- This is the text ---B
@@ -105,6 +150,10 @@ graph LR
 
 or
 
+```
+graph LR
+    A---|This is the text|B
+```
 ```mermaid
 graph LR
     A---|This is the text|B
@@ -112,6 +161,10 @@ graph LR
 
 ### A link with arrow head and text
 
+```
+graph LR
+    A-->|text|B
+```
 ```mermaid
 graph LR
     A-->|text|B
@@ -119,6 +172,10 @@ graph LR
 
 or
 
+```
+graph LR
+    A-- text -->B
+```
 ```mermaid
 graph LR
     A-- text -->B
@@ -126,6 +183,10 @@ graph LR
 
 ### Dotted link
 
+```
+graph LR;
+   A-.->B;
+```
 ```mermaid
 graph LR;
    A-.->B;
@@ -133,6 +194,10 @@ graph LR;
 
 ### Dotted link with text
 
+```
+graph LR
+   A-. text .-> B
+```
 ```mermaid
 graph LR
    A-. text .-> B
@@ -140,6 +205,10 @@ graph LR
 
 ### Thick link
 
+```
+graph LR
+   A ==> B
+```
 ```mermaid
 graph LR
    A ==> B
@@ -147,6 +216,10 @@ graph LR
 
 ### Thick link with text
 
+```
+graph LR
+   A == text ==> B
+```
 ```mermaid
 graph LR
    A == text ==> B
@@ -156,6 +229,10 @@ graph LR
 
 It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
 
+```
+graph LR
+    id1["This is the (text) in the box"]
+```
 ```mermaid
 graph LR
     id1["This is the (text) in the box"]
@@ -165,6 +242,10 @@ graph LR
 
 It is possible to escape characters using the syntax examplified here.
 
+```
+    graph LR
+        A["A double quote:#quot;"] -->B["A dec char:#9829;"]
+```
 ```mermaid
     graph LR
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
@@ -180,6 +261,19 @@ end
 
 An example below:
 
+```
+graph TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+ ```
 ```mermaid
 graph TB
     c1-->a2
@@ -197,7 +291,7 @@ graph TB
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab.
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using securityLevel='strict'
 
 ```
 click nodeId callback
@@ -252,6 +346,12 @@ linkStyle 3 stroke:#ff3,stroke-width:4px;
 
 It is possible to apply specific styles such as a thicker border or a different background color to a node.
 
+```
+graph LR
+    id1(Start)-->id2(Stop)
+    style id1 fill:#f9f,stroke:#333,stroke-width:4px
+    style id2 fill:#ccf,stroke:#f66,stroke-width:2px,stroke-dasharray: 5, 5
+```
 ```mermaid
 graph LR
     id1(Start)-->id2(Stop)
@@ -310,6 +410,12 @@ graph LR;
     B-->D;
     class A cssClass;
 ```
+```mermaid
+graph LR;
+    A-->B[AAA<span>BBB</span>];
+    B-->D;
+    class A cssClass;
+```
 
 
 ### Default class
@@ -327,6 +433,13 @@ It is possible to add icons from fontawesome.
 
 The icons are acessed via the syntax fa:#icon class name#.
 
+```
+graph TD
+    B["fa:fa-twitter for peace"]
+    B-->C[fa:fa-ban forbidden]
+    B-->D(fa:fa-spinner);
+    B-->E(A fa:fa-camera-retro perhaps?);
+```
 ```mermaid
 graph TD
     B["fa:fa-twitter for peace"]
@@ -343,6 +456,14 @@ graph TD
 * A single space is allowed between vertices and the link. However there should not be any space between a vertex and its text and a link and its text. The old syntax of graph declaration will also work and hence this new feature is optional and is introduce to improve readability.
 
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
+
+```
+graph LR
+    A[Hard edge] -->|Link text| B(Round edge)
+    B --> C{Decision}
+    C -->|One| D[Result one]
+    C -->|Two| E[Result two]
+```
 
 ```mermaid
 graph LR

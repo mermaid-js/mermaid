@@ -4,6 +4,11 @@
 
 Mermaid can render sequence diagrams.
 
+```
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+```
 ```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
@@ -19,6 +24,13 @@ rendered in order of appearance in the diagram source text. Sometimes you might 
 different order than how they appear in the first message. It is possible to specify the actor's order of
 appearance by doing the following:
 
+```
+sequenceDiagram
+    participant John
+    participant Alice
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+```
 ```mermaid
 sequenceDiagram
     participant John
@@ -31,6 +43,13 @@ sequenceDiagram
 
 The actor can have a convenient identifier and a descriptive label.
 
+```
+sequenceDiagram
+    participant A as Alice
+    participant J as John
+    A->>J: Hello John, how are you?
+    J->>A: Great!
+```
 ```mermaid
 sequenceDiagram
     participant A as Alice
@@ -63,6 +82,13 @@ Type | Description
 
 It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:
 
+```
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    activate John
+    John-->>Alice: Great!
+    deactivate John
+```
 ```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
@@ -73,6 +99,11 @@ sequenceDiagram
 
 There is also a shortcut notation by appending `+`/`-` suffix to the message arrow:
 
+```
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    John-->>-Alice: Great!
+```
 ```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
@@ -81,6 +112,13 @@ sequenceDiagram
 
 Activations can be stacked for same actor:
 
+```
+sequenceDiagram
+    Alice->>+John: Hello John, how are you?
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    John-->>-Alice: I feel great!
+```
 ```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
@@ -97,6 +135,11 @@ Note [ right of | left of | over ] [Actor]: Text in note content
 
 See the example below:
 
+```
+sequenceDiagram
+    participant John
+    Note right of John: Text in note
+```
 ```mermaid
 sequenceDiagram
     participant John
@@ -105,6 +148,11 @@ sequenceDiagram
 
 It is also possible to create notes spanning two participants:
 
+```
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    Note over Alice,John: A typical interaction
+```
 ```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
@@ -124,6 +172,13 @@ end
 
 See the example below:
 
+```
+sequenceDiagram
+    Alice->John: Hello John, how are you?
+    loop Every minute
+        John-->Alice: Great!
+    end
+```
 ```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
@@ -155,6 +210,18 @@ end
 
 See the example below:
 
+```
+sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    alt is sick
+        Bob->>Alice: Not so good :(
+    else is well
+        Bob->>Alice: Feeling fresh like a daisy
+    end
+    opt Extra response
+        Bob->>Alice: Thanks for asking
+    end
+```
 ```mermaid
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you?

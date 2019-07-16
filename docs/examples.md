@@ -1,7 +1,17 @@
-# Demos
-
-
 ## Basic sequence diagram
+
+```
+sequenceDiagram
+    Alice ->> Bob: Hello Bob, how are you?
+    Bob-->>John: How about you John?
+    Bob--x Alice: I am good thanks!
+    Bob-x John: I am good thanks!
+    Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
+
+    Bob-->Alice: Checking with John...
+    Alice->John: Yes... John, how are you?
+```
+
 
 ```mermaid
 sequenceDiagram
@@ -33,7 +43,7 @@ graph LR
 graph TB
     sq[Square shape] --> ci((Circle shape))
 
-    subgraph A subgraph
+    subgraph A
         od>Odd shape]-- Two line<br/>edge comment --> ro
         di{Diamond with <br/> line break} -.-> ro(Rounded<br>square<br>shape)
         di==>ro2(Rounded square shape)
