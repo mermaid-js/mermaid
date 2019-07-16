@@ -20,7 +20,7 @@ const sanitize = text => {
   let txt = text
   if (config.securityLevel === 'strict') {
     txt = txt.replace(/<br>/g, '#br#')
-    txt = txt.replace(/<br\S*\/>/g, '#br#')
+    txt = txt.replace(/<br\S*?\/>/g, '#br#')
     txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
     txt = txt.replace(/#br#/g, '<br/>')
   }

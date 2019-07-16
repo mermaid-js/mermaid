@@ -96,8 +96,14 @@ $(document).ready(function() {
 });
 ```
 
-Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration
-in mermaid uses the window.load event to start rendering.
+Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration in mermaid uses the window.load event to start rendering. Also note that when rendering the width of lebale sare calucated of what width it bening meassured at the time.
+
+If your page has other fonts in its body those might be used instead of the mermaid font. Specifying the font in your styling is a workaround for this. 
+```
+    div.mermaid {
+        font-family: 'trebuchet ms', verdana, arial;
+    }
+```
 
 ### Calling `mermaid.init`
 
