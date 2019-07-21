@@ -195,11 +195,11 @@ const setClickFun = function (id, functionName) {
   }
   if (typeof vertices[id] !== 'undefined') {
     funs.push(function (element) {
-      const elem = d3.select(element).select(`[id="${id}"]`)
+      const elem = document.querySelector(`[id="${id}"]`)
       if (elem !== null) {
-        elem.on('click', function () {
-          window[functionName](id)
-        })
+        elem.addEventListener("click", function(){
+          window[functionName](id);
+          }, false);
       }
     })
   }
