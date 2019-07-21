@@ -111,6 +111,19 @@ graph LR
     id1{This is the text in the box}
 ```
 
+### 1
+
+```mermaid
+graph TD
+    A[/Christmas\]
+```
+### 2
+
+```mermaid
+graph TD
+    B[\Go shopping/]
+```
+
 ## Links between nodes
 
 Nodes can be connected with links/edges. It is possible to have different types of links or attach a text string to a link.

@@ -13,13 +13,7 @@
 </head>
 <body>
   <div class="mermaid">
-    gantt
-      title Exclusive end dates <strong>If bold then xss</strong> (Manual date should end on 3d)
-      dateFormat YYYY-MM-DD
-      axisFormat %d
-      section Section1
-       2 Days: 1, 2019-01-01,2d
-       Manual Date: 2, 2019-01-01,2019-01-03
+    info
   </div>
   <img src=xss.png />
     <div class="mermaid">
@@ -38,13 +32,14 @@ graph TB
   </div>
   <div class="mermaid">
 graph TD
-A[Christmas] -->|Get money| B(Go shopping)
-B --> C{Let me think}
+A[Click on] -->|Get happines| BBBB(Clickable)
+BBBB --> C{Let me think}
 C -->|One| D[Laptop]
 C -->|Two| E[iPhone]
 C -->|Three| F[Car]
 click A "index.html#link-clicked" "link test"
-click B testClick "click test"
+click BBBB testClick "click test"
+click C "javascript:alert" "link test"
 classDef someclass fill:#f96;
 class A someclass;
   </div>
@@ -101,6 +96,7 @@ Class08 <--> C2: Cool label
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
       // sequenceDiagram: { actorMargin: 300 } // deprecated
+      securityLevel:'loose'
     });
   </script>
   <script>
