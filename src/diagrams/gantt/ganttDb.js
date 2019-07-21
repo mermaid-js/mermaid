@@ -1,6 +1,5 @@
 import moment from 'moment-mini'
 import { logger } from '../../logger'
-import * as d3 from 'd3'
 import { getConfig } from '../../config'
 
 const config = getConfig()
@@ -430,7 +429,11 @@ const compileTasks = function () {
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
  */
-export const setLink = function (ids, linkStr) {
+export const setLink = function (ids, _linkStr) {
+  let linkStr = _linkStr
+  if (config.securityLevel === 'strict') {
+    linkStr = _linkStr.replace(/javascript:.*/g, '')
+  }
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id)
     if (typeof rawTask !== 'undefined') {
@@ -490,17 +493,24 @@ const setClickFun = function (id, functionName, functionArgs) {
  */
 const pushFun = function (id, callbackFunction) {
   funs.push(function (element) {
-    const elem = d3.select(element).select(`[id="${id}"]`)
+    // const elem = d3.select(element).select(`[id="${id}"]`)
+    const elem = document.querySelector(`[id="${id}"]`)
+    console.log('id', id)
     if (elem !== null) {
-      elem.on('click', function () {
+      console.log('id2', id)
+      elem.addEventListener('click', function () {
+        console.log('id3 - click', id)
         callbackFunction()
       })
     }
   })
   funs.push(function (element) {
-    const elem = d3.select(element).select(`[id="${id}-text"]`)
+    // const elem = d3.select(element).select(`[id="${id}-text"]`)
+    const elem = document.querySelector(`[id="${id}-text"]`)
     if (elem !== null) {
-      elem.on('click', function () {
+      console.log('id4', id)
+
+      elem.addEventListener('click', function () {
         callbackFunction()
       })
     }

@@ -201,6 +201,7 @@ export const draw = function (text, id) {
 
     // Append task labels
     rectangles.append('text')
+      .attr('id', function (d) { return d.id + '-text' })
       .text(function (d) {
         return d.task
       })

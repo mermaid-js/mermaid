@@ -43,7 +43,50 @@ click C "javascript:alert" "link test"
 classDef someclass fill:#f96;
 class A someclass;
   </div>
-
+  <div class="mermaid">
+    graph LR;
+    alert`md5_salt`-->B;
+    click alert`md5_salt` eval "Tooltip for a callback"
+    click B "javascript:alert`salt`" "This is a tooltip for a link"
+  </div>
+  <div class="mermaid">
+    gantt
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d/%m
+    title Adding GANTT diagram to mermaid
+    excludes weekdays 2014-01-10
+    
+    section A section
+    Completed task            :done,    des1, 2014-01-06,2014-01-08
+    Active task               :active,  des2, 2014-01-09, 3d
+    Future task               :         des3, after des2, 5d
+    Future task2               :         des4, after des3, 5d
+    
+    section Critical tasks
+    Completed task in the critical line :crit, done, 2014-01-06,24h
+    Implement parser and jison          :crit, done, after des1, 2d
+    Create tests for parser             :crit, active, 3d
+    Future task in critical line        :crit, 5d
+    Create tests for renderer           :2d
+    Add to mermaid                      :1d
+    
+    section Documentation
+    Describe gantt syntax               :active, a1, after des1, 3d
+    Add gantt diagram to demo page      :after a1  , 20h
+    Add another diagram to demo page    :doc1, after a1  , 48h
+    
+    section Clickable
+    Visit mermaidjs               :active, cl1, 2014-01-07,2014-01-10
+    Calling a Callback (look at the console log) :cl2, after cl1, 3d
+    
+    click cl1 href "javascript:alert`salt`"
+    click cl2 call ganttTestClick("test", test, test)
+    
+    section Last section
+    Describe gantt syntax               :after doc1, 3d
+    Add gantt diagram to demo page      : 20h
+    Add another diagram to demo page    : 48h
+      </div>
   <div class="mermaid">
 sequenceDiagram
 participant "Alice"
@@ -87,6 +130,7 @@ Class08 <--> C2: Cool label
   </div>
 
   <script src="./mermaid.js"></script>
+  <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@8.2.1/dist/mermaid.min.js"></script> -->
   <script>
     mermaid.initialize({
       theme: 'forest',
@@ -96,7 +140,7 @@ Class08 <--> C2: Cool label
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
       // sequenceDiagram: { actorMargin: 300 } // deprecated
-      securityLevel:'loose'
+      securityLevel:'strict'
     });
   </script>
   <script>
