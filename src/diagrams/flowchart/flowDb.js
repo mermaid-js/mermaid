@@ -197,9 +197,9 @@ const setClickFun = function (id, functionName) {
     funs.push(function (element) {
       const elem = document.querySelector(`[id="${id}"]`)
       if (elem !== null) {
-        elem.addEventListener("click", function(){
-          window[functionName](id);
-          }, false);
+        elem.addEventListener('click', function () {
+          window[functionName](id)
+        }, false)
       }
     })
   }

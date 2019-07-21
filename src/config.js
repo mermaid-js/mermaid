@@ -22,7 +22,6 @@ const setConf = function (cnf) {
   }
 }
 
-
 export const setConfig = conf => {
   setConf(conf)
 }
