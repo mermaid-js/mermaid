@@ -504,7 +504,6 @@ const pushFun = function (id, callbackFunction) {
     // const elem = d3.select(element).select(`[id="${id}-text"]`)
     const elem = document.querySelector(`[id="${id}-text"]`)
     if (elem !== null) {
-
       elem.addEventListener('click', function () {
         callbackFunction()
       })
