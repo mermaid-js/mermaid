@@ -1,4 +1,5 @@
 import moment from 'moment-mini'
+import { sanitizeUrl } from '@braintree/sanitize-url'
 import { logger } from '../../logger'
 import { getConfig } from '../../config'
 
@@ -63,12 +64,10 @@ export const getExcludes = function () {
 }
 
 export const setTitle = function (txt) {
-  console.log('Setting title ', txt)
   title = txt
 }
 
 export const getTitle = function () {
-  console.log('Title is ', title)
   return title
 }
 
@@ -432,7 +431,7 @@ const compileTasks = function () {
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr
   if (config.securityLevel === 'strict') {
-    linkStr = _linkStr.replace(/javascript:.*/g, '')
+    linkStr = sanitizeUrl(_linkStr)
   }
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id)
@@ -495,11 +494,8 @@ const pushFun = function (id, callbackFunction) {
   funs.push(function (element) {
     // const elem = d3.select(element).select(`[id="${id}"]`)
     const elem = document.querySelector(`[id="${id}"]`)
-    console.log('id', id)
     if (elem !== null) {
-      console.log('id2', id)
       elem.addEventListener('click', function () {
-        console.log('id3 - click', id)
         callbackFunction()
       })
     }
@@ -508,7 +504,6 @@ const pushFun = function (id, callbackFunction) {
     // const elem = d3.select(element).select(`[id="${id}-text"]`)
     const elem = document.querySelector(`[id="${id}-text"]`)
     if (elem !== null) {
-      console.log('id4', id)
 
       elem.addEventListener('click', function () {
         callbackFunction()

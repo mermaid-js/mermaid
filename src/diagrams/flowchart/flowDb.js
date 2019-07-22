@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-
+import { sanitizeUrl } from '@braintree/sanitize-url'
 import { logger } from '../../logger'
 import utils from '../../utils'
 import { getConfig } from '../../config'
@@ -22,6 +22,7 @@ const sanitize = text => {
     txt = txt.replace(/<br>/g, '#br#')
     txt = txt.replace(/<br\S*?\/>/g, '#br#')
     txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    txt = txt.replace(/=/g, '&equals;')
     txt = txt.replace(/#br#/g, '<br/>')
   }
 
@@ -215,7 +216,7 @@ export const setLink = function (ids, linkStr, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof vertices[id] !== 'undefined') {
       if (config.securityLevel === 'strict') {
-        vertices[id].link = linkStr.replace(/javascript:.*/g, '')
+        vertices[id].link = sanitizeUrl(linkStr) //.replace(/javascript:.*/g, '')
       } else {
         vertices[id].link = linkStr
       }

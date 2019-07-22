@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 
 import flowDb from './flowDb'
 import flow from './parser/flow'
+import { getConfig } from '../../config'
 import dagreD3 from 'dagre-d3-renderer'
 import addHtmlLabel from 'dagre-d3-renderer/lib/label/add-html-label.js'
 import { logger } from '../../logger'
@@ -63,7 +64,7 @@ export const addVertices = function (vert, g, svgId) {
 
     // We create a SVG label, either by delegating to addHtmlLabel or manually
     let vertexNode
-    if (conf.htmlLabels) {
+    if (getConfig().flowchart.htmlLabels) {
       // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
       const node = { label: vertexText.replace(/fa[lrsb]?:fa-[\w-]+/g, s => `<i class='${s.replace(':', ' ')}'></i>`) }
       vertexNode = addHtmlLabel(svg, node).node()
@@ -205,7 +206,7 @@ export const addEdges = function (edges, g) {
       edgeData.arrowheadStyle = 'fill: #333'
       if (typeof edge.style === 'undefined') {
         edgeData.labelpos = 'c'
-        if (conf.htmlLabels) {
+        if (getConfig().flowchart.htmlLabels) {
           edgeData.labelType = 'html'
           edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>'
         } else {
@@ -534,7 +535,7 @@ export const draw = function (text, id) {
   }
 
   // Add label rects for non html labels
-  if (!conf.htmlLabels) {
+  if (!getConfig().flowchart.htmlLabels) {
     const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label')
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k]

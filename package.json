@@ -44,6 +44,7 @@
     ]
   },
   "dependencies": {
+    "@braintree/sanitize-url": "^3.1.0",
     "d3": "^5.7.0",
     "dagre-d3-renderer": "^0.5.8",
     "dagre-layout": "^0.8.8",

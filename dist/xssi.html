@@ -10,10 +10,30 @@
     alert(x + ' cause an xss attack');
   }
 </script>
+<style>
+.label text { fill: red}
+</style>
 </head>
 <body>
   <div class="mermaid">
     info
+  </div>
+  <div class="mermaid">
+    graph LR;
+    alert`xss`-->B;
+    click B "javaSc
+ript:alert`salt`" "This is a tooltip for a link"
+  </div>
+  <div class="mermaid">
+    graph LR;
+    alert`xss`-->B;
+    click B "java
+script:alert`xss`" "This is a tooltip for a link"
+  </div>
+  <div class="mermaid">
+    graph LR;
+    alert`base64`-->B;
+    click B "data:image/png;base64,HNjcmlwdD5hbGVydCgiSGVsbG8iKTs8L3NjcmlwdD4="
   </div>
   <img src=xss.png />
     <div class="mermaid">
@@ -37,7 +57,7 @@ BBBB --> C{Let me think}
 C -->|One| D[Laptop]
 C -->|Two| E[iPhone]
 C -->|Three| F[Car]
-click A "index.html#link-clicked" "link test"
+click A "http://localhost:9000/index.html#link-clicked" "link test"
 click BBBB testClick "click test"
 click C "javascript:alert" "link test"
 classDef someclass fill:#f96;
@@ -128,6 +148,25 @@ Class01 : int chimp
 Class01 : int gorilla
 Class08 <--> C2: Cool label
   </div>
+  <div class="mermaid">
+    graph LR
+
+    SavePropertyController --> SavePropertyCommand
+    SavePropertyCommand --> SavePropertyCommandHandler
+    SavePropertyCommandHandler --> EventElastica[elastica.postupdate]
+    SavePropertyCommandHandler --> EventProperty[property.postdisable]
+    
+    SavePropertyController --> Exceptions
+    Exceptions --> ExceptionList(SecurityException<br/>EmptyRequestBodyException<br/>Throwable)
+    
+    classDef Ui fill:#FFFFFF
+    classDef object fill:#1E98EC
+    classDef event fill:#ECB11E
+    
+    class EventElastica,EventProperty event
+    class SavePropertyCommand,SavePropertyCommandHandler object
+    class SavePropertyController Ui
+  </div>
 
   <script src="./mermaid.js"></script>
   <!-- <script src="//cdn.jsdelivr.net/npm/mermaid@8.2.1/dist/mermaid.min.js"></script> -->
@@ -135,12 +174,13 @@ Class08 <--> C2: Cool label
     mermaid.initialize({
       theme: 'forest',
       // themeCSS: '.node rect { fill: red; }',
-      logLevel: 3,
-      flowchart: { curve: 'linear' },
+      logLevel: 4,
+      flowchart: { htmlLabels: false, curve: 'linear' },
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
       // sequenceDiagram: { actorMargin: 300 } // deprecated
-      securityLevel:'strict'
+      securityLevel:'strict',
+      
     });
   </script>
   <script>
