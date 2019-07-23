@@ -1508,6 +1508,17 @@ describe('when parsing ', function () {
     expect(edges.length).toBe(0)
     expect(vert['i-d'].styles.length).toBe(0)
   })
+  fit('should handle a single node with alphanumerics containing a underscore sign', function () {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;i_d;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges.length).toBe(0)
+    expect(vert['i_d'].styles.length).toBe(0)
+  })
+  
     // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
   it('should handle styles for vertices', function () {
     const res = flow.parser.parse('graph TD;style Q background:#fff;')
