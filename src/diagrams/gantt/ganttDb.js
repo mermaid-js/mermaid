@@ -1,6 +1,6 @@
 import moment from 'moment-mini'
+import { sanitizeUrl } from '@braintree/sanitize-url'
 import { logger } from '../../logger'
-import * as d3 from 'd3'
 import { getConfig } from '../../config'
 
 const config = getConfig()
@@ -64,12 +64,10 @@ export const getExcludes = function () {
 }
 
 export const setTitle = function (txt) {
-  console.log('Setting title ', txt)
   title = txt
 }
 
 export const getTitle = function () {
-  console.log('Title is ', title)
   return title
 }
 
@@ -430,7 +428,11 @@ const compileTasks = function () {
  * @param ids Comma separated list of ids
  * @param linkStr URL to create a link for
  */
-export const setLink = function (ids, linkStr) {
+export const setLink = function (ids, _linkStr) {
+  let linkStr = _linkStr
+  if (config.securityLevel === 'strict') {
+    linkStr = sanitizeUrl(_linkStr)
+  }
   ids.split(',').forEach(function (id) {
     let rawTask = findTaskById(id)
     if (typeof rawTask !== 'undefined') {
@@ -490,17 +492,19 @@ const setClickFun = function (id, functionName, functionArgs) {
  */
 const pushFun = function (id, callbackFunction) {
   funs.push(function (element) {
-    const elem = d3.select(element).select(`[id="${id}"]`)
+    // const elem = d3.select(element).select(`[id="${id}"]`)
+    const elem = document.querySelector(`[id="${id}"]`)
     if (elem !== null) {
-      elem.on('click', function () {
+      elem.addEventListener('click', function () {
         callbackFunction()
       })
     }
   })
   funs.push(function (element) {
-    const elem = d3.select(element).select(`[id="${id}-text"]`)
+    // const elem = d3.select(element).select(`[id="${id}-text"]`)
+    const elem = document.querySelector(`[id="${id}-text"]`)
     if (elem !== null) {
-      elem.on('click', function () {
+      elem.addEventListener('click', function () {
         callbackFunction()
       })
     }

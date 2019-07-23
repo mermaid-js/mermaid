@@ -55,6 +55,23 @@ Would end up like this:
 
 An id is also added to mermaid tags without id.
 
+### To enable click event and tags in nodes
+
+In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced wich sets the level of trust to be used on the parsed diagrams.
+
+* **true**: (default) tags in text are encoded, click functionality is disabled
+* false: tags in text are allowed, click functionality is enabledClosed issues: 
+
+⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
+
+If your application is taking resposibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
+
+```javascript
+    mermaidAPI.initialize({
+        securityLevel: 'loose'
+    });
+```
+
 ### Simple full example:
 
 ```html
@@ -96,8 +113,14 @@ $(document).ready(function() {
 });
 ```
 
-Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration
-in mermaid uses the window.load event to start rendering.
+Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration in mermaid uses the window.load event to start rendering. Also note that when rendering the width of lebale sare calucated of what width it bening meassured at the time.
+
+If your page has other fonts in its body those might be used instead of the mermaid font. Specifying the font in your styling is a workaround for this. 
+```
+    div.mermaid {
+        font-family: 'trebuchet ms', verdana, arial;
+    }
+```
 
 ### Calling `mermaid.init`
 

@@ -10,7 +10,7 @@
 import * as d3 from 'd3'
 import scope from 'scope-css'
 import pkg from '../package.json'
-import { setConfig } from './config'
+import { setConfig, getConfig } from './config'
 import { logger, setLogLevel } from './logger'
 import utils from './utils'
 import flowRenderer from './diagrams/flowchart/flowRenderer'
@@ -534,16 +534,19 @@ const setConf = function (cnf) {
 
 function initialize (options) {
   logger.debug('Initializing mermaidAPI ', pkg.version)
+
   // Update default config with options supplied at initialization
   if (typeof options === 'object') {
     setConf(options)
   }
+  setConfig(config)
   setLogLevel(config.logLevel)
 }
 
-function getConfig () {
-  return config
-}
+// function getConfig () {
+//   console.warn('get config')
+//   return config
+// }
 
 const mermaidAPI = {
   render,

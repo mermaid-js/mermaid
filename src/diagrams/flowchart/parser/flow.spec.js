@@ -1631,7 +1631,7 @@ describe('when parsing ', function () {
     })
 
     it('it should be able to parse a \'=\'', function () {
-      charTest('=')
+      charTest('=','&equals;')
     })
     it('it should be able to parse a \'&\'', function () {
       charTest('&')

@@ -4,6 +4,23 @@
 
 # mermaid
 
+## Special note regarding version 8.2
+
+In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced wich sets the level of trust to be used on the parsed diagrams.
+
+* **true**: (default) tags in text are encoded, click functionality is disabled
+* false: tags in text are allowed, click functionality is enabledClosed issues: 
+
+⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
+
+If your application is taking resposibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
+
+```javascript
+    mermaidAPI.initialize({
+        securityLevel: 'loose'
+    });
+```
+
 **🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
 
 ![banner](./img/header.png)

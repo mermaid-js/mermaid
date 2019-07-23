@@ -1,5 +1,5 @@
 import * as d3 from 'd3'
-
+import { sanitizeUrl } from '@braintree/sanitize-url'
 import { logger } from '../../logger'
 import utils from '../../utils'
 import { getConfig } from '../../config'
@@ -20,8 +20,9 @@ const sanitize = text => {
   let txt = text
   if (config.securityLevel === 'strict') {
     txt = txt.replace(/<br>/g, '#br#')
-    txt = txt.replace(/<br\S*\/>/g, '#br#')
+    txt = txt.replace(/<br\S*?\/>/g, '#br#')
     txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    txt = txt.replace(/=/g, '&equals;')
     txt = txt.replace(/#br#/g, '<br/>')
   }
 
@@ -195,11 +196,11 @@ const setClickFun = function (id, functionName) {
   }
   if (typeof vertices[id] !== 'undefined') {
     funs.push(function (element) {
-      const elem = d3.select(element).select(`[id="${id}"]`)
+      const elem = document.querySelector(`[id="${id}"]`)
       if (elem !== null) {
-        elem.on('click', function () {
+        elem.addEventListener('click', function () {
           window[functionName](id)
-        })
+        }, false)
       }
     })
   }
@@ -214,7 +215,11 @@ const setClickFun = function (id, functionName) {
 export const setLink = function (ids, linkStr, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof vertices[id] !== 'undefined') {
-      vertices[id].link = linkStr
+      if (config.securityLevel === 'strict') {
+        vertices[id].link = sanitizeUrl(linkStr) // .replace(/javascript:.*/g, '')
+      } else {
+        vertices[id].link = linkStr
+      }
     }
   })
   setTooltip(ids, tooltip)
