@@ -1696,6 +1696,12 @@ describe('when parsing ', function () {
     const vertices = flow.parser.yy.getVertices()
     const classes = flow.parser.yy.getClasses()
 
+    expect(classes['exClass'].styles.length).toBe(2)
+    expect(vertices['b'].classes[0]).toBe('exClass')
+    expect(classes['exClass'].styles[0]).toBe('background:#bbb')
+    expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
+  })
+
   it('should be possible to apply a class to a vertex directly : usecase A[text].class ', function () {
     let statement = ''
 
@@ -1712,6 +1718,7 @@ describe('when parsing ', function () {
     expect(classes['exClass'].styles[0]).toBe('background:#bbb')
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
   })
+
   it('should be possible to apply a class to a vertex directly : usecase A[text].class-->B[test2] ', function () {
     let statement = ''
 
@@ -1728,6 +1735,17 @@ describe('when parsing ', function () {
     expect(classes['exClass'].styles[0]).toBe('background:#bbb')
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
   })
+
+  it('should be possible to apply a class to a vertex directly 2', function () {
+    let statement = ''
+
+    statement = statement + 'graph TD;' + '\n'
+    statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
+    statement = statement + 'a-->b[1 a a text!.].exClass;' + '\n'
+
+    const res = flow.parser.parse(statement)
+    const vertices = flow.parser.yy.getVertices()
+    const classes = flow.parser.yy.getClasses()
 
     expect(classes['exClass'].styles.length).toBe(2)
     expect(vertices['b'].classes[0]).toBe('exClass')
