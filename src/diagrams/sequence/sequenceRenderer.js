@@ -138,6 +138,13 @@ export const bounds = {
     const loop = this.sequenceItems.pop()
     return loop
   },
+  newRect: function (color) {
+    this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, color: color })
+  },
+  endRect: function () {
+    const rect = this.sequenceItems.pop()
+    return rect
+  },
   addSectionToLoop: function (message) {
     const loop = this.sequenceItems.pop()
     loop.sections = loop.sections || []
@@ -408,6 +415,25 @@ export const draw = function (text, id) {
         loopData = bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'loop', conf)
+        bounds.bumpVerticalPos(conf.boxMargin)
+        break
+      case parser.yy.LINETYPE.RECT_START:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.newRect(msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+        break
+      case parser.yy.LINETYPE.RECT_END:
+        const rectData = bounds.endRect()
+        svgDraw.drawRect(diagram, {
+          x: rectData.startx,
+          y: rectData.starty,
+          width: rectData.stopx - rectData.startx,
+          height: rectData.stopy - rectData.starty,
+          fill: rectData.color,
+          class: 'rect',
+          rx: 0,
+          ry: 0
+        }, true)
         bounds.bumpVerticalPos(conf.boxMargin)
         break
       case parser.yy.LINETYPE.OPT_START:

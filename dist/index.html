@@ -305,12 +305,16 @@ sequenceDiagram
 participant Alice
 participant Bob
 participant John as John<br/>Second Line
+rect rgb(200, 220, 100)
+rect rgb(200, 255, 200)
 Alice ->> Bob: Hello Bob, how are you?
 Bob-->>John: How about you John?
+end
 Bob--x Alice: I am good thanks!
 Bob-x John: I am good thanks!
 Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
 Bob-->Alice: Checking with John...
+end
 alt either this
 Alice->>John: Yes
 else or this
@@ -322,6 +326,9 @@ par this happens in parallel
 Alice -->> Bob: Parallel message 1
 and
 Alice -->> John: Parallel message 2
+end
+loop awesome
+A -> B: foo
 end
   </div>
 

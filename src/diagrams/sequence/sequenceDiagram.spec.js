@@ -369,6 +369,28 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
+  it('it should handle rect statements', function () {
+    const str = `
+      sequenceDiagram
+        Alice->Bob: Hello Bob, how are you?
+        %% Comment
+        Note right of Bob: Bob thinks
+        rect rgb(200, 255, 200)
+        Bob-->Alice: I am good thanks
+        end
+    `
+
+    parser.parse(str)
+    const actors = parser.yy.getActors()
+    expect(actors.Alice.description).toBe('Alice')
+    actors.Bob.description = 'Bob'
+
+    const messages = parser.yy.getMessages()
+
+    expect(messages.length).toBe(5)
+    expect(messages[0].from).toBe('Alice')
+    expect(messages[1].from).toBe('Bob')
+  })
   it('it should handle opt statements', function () {
     const str = 'sequenceDiagram\n' +
       'Alice->Bob: Hello Bob, how are you?\n\n' +

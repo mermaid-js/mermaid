@@ -1,5 +1,8 @@
-export const drawRect = function (elem, rectData) {
+export const drawRect = function (elem, rectData, insertBeforeLastChild) {
   const rectElem = elem.append('rect')
+  if (insertBeforeLastChild) {
+    rectElem.lower()
+  }
   rectElem.attr('x', rectData.x)
   rectElem.attr('y', rectData.y)
   rectElem.attr('fill', rectData.fill)
