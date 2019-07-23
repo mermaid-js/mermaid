@@ -79,6 +79,7 @@
 "-)"                  return '-)';
 \-                    return 'MINUS';
 "."                   return 'DOT';
+[\_]                  return 'UNDERSCORE';
 \+                    return 'PLUS';
 \%                    return 'PCT';
 "="                   return 'EQUALS';
@@ -263,79 +264,71 @@ statement
 separator: NEWLINE | SEMI | EOF ;
 
 verticeStatement:
-     vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-     | vertex
+    vertex link vertex
+        { yy.addLink($1,$3,$2);$$ = [$1,$3];}  
+    | vertex link vertex DOT idString
+       { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
+    | vertex DOT idString link vertex 
+       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
+    | vertex DOT idString link vertex DOT idString
+       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}   
+    |vertex
         {$$ = [$1];}
+    |vertex DOT idString
+        {$$ = [$1];yy.setClass($1,$3)}    
     ;
 
-vertex:  alphaNum SQS text SQE
+vertex:  idString SQS text SQE 
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    |  alphaNum SQS text SQE spaceList
+    |  idString SQS text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    | alphaNum PS PS text PE PE
+    | idString PS PS text PE PE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum PS PS text PE PE spaceList
+    | idString PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum '(-' text '-)'
+    | idString '(-' text '-)'
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | alphaNum '(-' text '-)' spaceList
+    | idString '(-' text '-)' spaceList
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | alphaNum PS text PE
+    | idString PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum PS text PE spaceList
+    | idString PS text PE spaceList
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP
+    | idString DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP spaceList
+    | idString DIAMOND_START text DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum TAGEND text SQE
+    | idString TAGEND text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TAGEND text SQE spaceList
+    | idString TAGEND text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TRAPSTART text TRAPEND
+    | idString TRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
-    | alphaNum TRAPSTART text TRAPEND spaceList
+    | idString TRAPSTART text TRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
-    | alphaNum INVTRAPSTART text INVTRAPEND
+    | idString INVTRAPSTART text INVTRAPEND
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
-    | alphaNum INVTRAPSTART text INVTRAPEND spaceList
+    | idString INVTRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
-    | alphaNum TRAPSTART text INVTRAPEND
+    | idString TRAPSTART text INVTRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_right');}
-    | alphaNum TRAPSTART text INVTRAPEND spaceList
+    | idString TRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'lean_right');}
-    | alphaNum INVTRAPSTART text TRAPEND
+    | idString INVTRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-    | alphaNum INVTRAPSTART text TRAPEND spaceList
+    | idString INVTRAPSTART text TRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-/*  | alphaNum SQS text TAGSTART
+/*  | idString SQS text TAGSTART
         {$$ = $1;yy.addVertex($1,$3,'odd_right');}
-    | alphaNum SQS text TAGSTART spaceList
+    | idString SQS text TAGSTART spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
-    | alphaNum
+    | idString
         {$$ = $1;yy.addVertex($1);}
-    | alphaNum spaceList
+    | idString spaceList
         {$$ = $1;yy.addVertex($1);}
     ;
 
-alphaNum
-    : alphaNumStatement
-    {$$=$1;}
-    | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
-    ;
 
-alphaNumStatement
-    : DIR
-        {$$=$1;}
-    | alphaNumToken
-        {$$=$1;}
-    | DOWN
-        {$$='v';}
-    | MINUS
-        {$$='-';}
-    ;
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
@@ -533,7 +526,34 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : ALPHA | PUNCTUATION | UNICODE_TEXT | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+idString
+    :idStringToken
+    {$$=$1}
+    | idString idStringToken
+    {$$=$1+''+$2}
+    ;
+
+alphaNum
+    : alphaNumStatement
+    {$$=$1;}
+    | alphaNum alphaNumStatement
+    {$$=$1+''+$2;}
+    ;
+
+alphaNumStatement
+    : DIR
+        {$$=$1;}
+    | alphaNumToken
+        {$$=$1;}
+    | DOWN
+        {$$='v';}
+    | MINUS
+        {$$='-';}
+    ;
+
+alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS |MINUS| DOWN |EQUALS | MULT | BRKT ;
 
 graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%
