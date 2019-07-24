@@ -31,7 +31,7 @@
 <ALIAS>"as"       { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)       { this.popState(); this.popState(); return 'NL'; }
 "loop"            { this.begin('LINE'); return 'loop'; }
-"rect"			  { this.begin('LINE'); return 'rect'; }
+"rect"            { this.begin('LINE'); return 'rect'; }
 "opt"             { this.begin('LINE'); return 'opt'; }
 "alt"             { this.begin('LINE'); return 'alt'; }
 "else"            { this.begin('LINE'); return 'else'; }

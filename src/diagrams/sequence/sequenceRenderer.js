@@ -413,7 +413,7 @@ export const draw = function (text, id) {
       case parser.yy.LINETYPE.RECT_START:
         bounds.bumpVerticalPos(conf.boxMargin)
         bounds.newLoop(undefined, msg.message)
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
+        bounds.bumpVerticalPos(conf.boxMargin)
         break
       case parser.yy.LINETYPE.RECT_END:
         const rectData = bounds.endLoop()

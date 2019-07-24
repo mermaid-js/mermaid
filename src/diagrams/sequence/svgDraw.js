@@ -1,6 +1,5 @@
 export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect')
-
   rectElem.attr('x', rectData.x)
   rectElem.attr('y', rectData.y)
   rectElem.attr('fill', rectData.fill)

@@ -369,13 +369,13 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
-  it('it should handle rect statements', function () {
+  it.only('it should add a rect around sequence', function () {
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
         %% Comment
-        Note right of Bob: Bob thinks
         rect rgb(200, 255, 200)
+        Note right of Bob: Bob thinks
         Bob-->Alice: I am good thanks
         end
     `
@@ -386,10 +386,39 @@ describe('when parsing a sequenceDiagram', function () {
     actors.Bob.description = 'Bob'
 
     const messages = parser.yy.getMessages()
+    expect(messages[1].type).toEqual(parser.yy.LINETYPE.RECT_START)
+    expect(messages[1].message).toBe('rgb(200, 255, 200)')
+    expect(messages[2].type).toEqual(parser.yy.LINETYPE.NOTE)
+    expect(messages[3].type).toEqual(parser.yy.LINETYPE.DOTTED_OPEN)
+    expect(messages[4].type).toEqual(parser.yy.LINETYPE.RECT_END)
+  })
 
-    expect(messages.length).toBe(5)
-    expect(messages[0].from).toBe('Alice')
-    expect(messages[1].from).toBe('Bob')
+  it.only('it should allow for nested rects', function () {
+    const str = `
+      sequenceDiagram
+        Alice->Bob: Hello Bob, how are you?
+        %% Comment
+        rect rgb(200, 255, 200)
+        rect rgb(0, 0, 0)
+        Note right of Bob: Bob thinks
+        end
+        Bob-->Alice: I am good thanks
+        end
+    `
+    parser.parse(str)
+    const actors = parser.yy.getActors()
+    expect(actors.Alice.description).toBe('Alice')
+    actors.Bob.description = 'Bob'
+
+    const messages = parser.yy.getMessages()
+    expect(messages[1].type).toEqual(parser.yy.LINETYPE.RECT_START)
+    expect(messages[1].message).toBe('rgb(200, 255, 200)')
+    expect(messages[2].type).toEqual(parser.yy.LINETYPE.RECT_START)
+    expect(messages[2].message).toBe('rgb(0, 0, 0)')
+    expect(messages[3].type).toEqual(parser.yy.LINETYPE.NOTE)
+    expect(messages[4].type).toEqual(parser.yy.LINETYPE.RECT_END)
+    expect(messages[5].type).toEqual(parser.yy.LINETYPE.DOTTED_OPEN)
+    expect(messages[6].type).toEqual(parser.yy.LINETYPE.RECT_END)
   })
   it('it should handle opt statements', function () {
     const str = 'sequenceDiagram\n' +
