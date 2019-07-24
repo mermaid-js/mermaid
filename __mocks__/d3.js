@@ -1,21 +1,16 @@
 /* eslint-env jest */
 let NewD3 = function () {
+  function returnThis () {
+    return this
+  }
   return {
     append: function () {
       return NewD3()
     },
-    lower: function () {
-      return this
-    },
-    attr: function () {
-      return this
-    },
-    style: function () {
-      return this
-    },
-    text: function () {
-      return this
-    },
+    lower: returnThis,
+    attr: returnThis,
+    style: returnThis,
+    text: returnThis,
     0: {
       0: {
         getBBox: function () {
