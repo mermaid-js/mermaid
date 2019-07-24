@@ -417,7 +417,7 @@ export const draw = function (text, id) {
         break
       case parser.yy.LINETYPE.RECT_END:
         const rectData = bounds.endLoop()
-        svgDraw.drawBackgroundRect(diagram, rectData);
+        svgDraw.drawBackgroundRect(diagram, rectData)
         bounds.bumpVerticalPos(conf.boxMargin)
         break
       case parser.yy.LINETYPE.OPT_START:

@@ -1,4 +1,4 @@
-
+/* eslint-env jest */
 let NewD3 = function () {
   return {
     append: function () {
@@ -41,9 +41,9 @@ export const curveCardinal = 'cardinal'
 export const MockD3 = (name, parent) => {
   const children = []
   const elem = {
-      get __children () { return children },
-      get __name () { return name },
-      get __parent () { return parent }
+    get __children () { return children },
+    get __name () { return name },
+    get __parent () { return parent }
   }
   elem.append = (name) => {
     const mockElem = MockD3(name, elem)
