@@ -369,7 +369,7 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[0].from).toBe('Alice')
     expect(messages[1].from).toBe('Bob')
   })
-  it.only('it should add a rect around sequence', function () {
+  it('it should add a rect around sequence', function () {
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
@@ -393,7 +393,7 @@ describe('when parsing a sequenceDiagram', function () {
     expect(messages[4].type).toEqual(parser.yy.LINETYPE.RECT_END)
   })
 
-  it.only('it should allow for nested rects', function () {
+  it('it should allow for nested rects', function () {
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, how are you?
