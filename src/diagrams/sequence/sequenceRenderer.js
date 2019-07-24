@@ -131,19 +131,12 @@ export const bounds = {
     const activation = this.activations.splice(lastActorActivationIdx, 1)[0]
     return activation
   },
-  newLoop: function (title) {
-    this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title })
+  newLoop: function (title, fill) {
+    this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title, fill: fill })
   },
   endLoop: function () {
     const loop = this.sequenceItems.pop()
     return loop
-  },
-  newRect: function (color) {
-    this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, color: color })
-  },
-  endRect: function () {
-    const rect = this.sequenceItems.pop()
-    return rect
   },
   addSectionToLoop: function (message) {
     const loop = this.sequenceItems.pop()
@@ -419,21 +412,12 @@ export const draw = function (text, id) {
         break
       case parser.yy.LINETYPE.RECT_START:
         bounds.bumpVerticalPos(conf.boxMargin)
-        bounds.newRect(msg.message)
+        bounds.newLoop(undefined, msg.message)
         bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin)
         break
       case parser.yy.LINETYPE.RECT_END:
-        const rectData = bounds.endRect()
-        svgDraw.drawRect(diagram, {
-          x: rectData.startx,
-          y: rectData.starty,
-          width: rectData.stopx - rectData.startx,
-          height: rectData.stopy - rectData.starty,
-          fill: rectData.color,
-          class: 'rect',
-          rx: 0,
-          ry: 0
-        }, true)
+        const rectData = bounds.endLoop()
+        svgDraw.drawBackgroundRect(diagram, rectData);
         bounds.bumpVerticalPos(conf.boxMargin)
         break
       case parser.yy.LINETYPE.OPT_START:

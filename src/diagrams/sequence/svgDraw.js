@@ -1,8 +1,6 @@
-export const drawRect = function (elem, rectData, insertBeforeLastChild) {
+export const drawRect = function (elem, rectData) {
   const rectElem = elem.append('rect')
-  if (insertBeforeLastChild) {
-    rectElem.lower()
-  }
+
   rectElem.attr('x', rectData.x)
   rectElem.attr('y', rectData.y)
   rectElem.attr('fill', rectData.fill)
@@ -170,6 +168,22 @@ export const drawLoop = function (elem, bounds, labelText, conf) {
   }
 }
 
+
+/**
+ * Draws a background rectangle
+ * @param color - The fill color for the background
+ */
+export const drawBackgroundRect = function (elem, bounds) {
+  const rectElem = drawRect(elem, {
+    x: bounds.startx,
+    y: bounds.starty,
+    width: bounds.stopx - bounds.startx,
+    height: bounds.stopy - bounds.starty,
+    fill: bounds.fill,
+    class: 'rect'
+  });
+  rectElem.lower();
+}
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
@@ -334,6 +348,7 @@ export default {
   anchorElement,
   drawActivation,
   drawLoop,
+  drawBackgroundRect,
   insertArrowHead,
   insertSequenceNumber,
   insertArrowCrossHead,

@@ -1,3 +1,4 @@
+
 let NewD3 = function () {
   return {
     append: function () {
@@ -36,3 +37,22 @@ export const selectAll = function () {
 export const curveBasis = 'basis'
 export const curveLinear = 'linear'
 export const curveCardinal = 'cardinal'
+
+export const MockD3 = (name, parent) => {
+  const children = []
+  const elem = {
+      get __children () { return children },
+      get __name () { return name },
+      get __parent () { return parent }
+  }
+  elem.append = (name) => {
+    const mockElem = MockD3(name, elem)
+    children.push(mockElem)
+    return mockElem
+  }
+  elem.lower = jest.fn(() => elem)
+  elem.attr = jest.fn(() => elem)
+  elem.text = jest.fn(() => elem)
+  elem.style = jest.fn(() => elem)
+  return elem
+}
