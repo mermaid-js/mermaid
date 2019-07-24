@@ -4,6 +4,9 @@ let NewD3 = function () {
     append: function () {
       return NewD3()
     },
+    lower: function () {
+      return this
+    },
     attr: function () {
       return this
     },

@@ -980,6 +980,24 @@ describe('when rendering a sequenceDiagram', function () {
     expect(bounds.stopx).toBe(0 + conf.width * 2 + conf.actorMargin)
     expect(bounds.stopy).toBe(0 + 2 * conf.messageMargin + conf.height + 3 * conf.boxMargin + conf.boxTextMargin)
   })
+  it('it should draw background rect', function () {
+    renderer.bounds.init()
+    const str = `
+      sequenceDiagram
+        Alice->Bob: Hello Bob, are you alright?
+        rect rgb(0, 0, 0)
+          Bob->Alice: I feel surrounded by darkness
+        end
+    `
+    parser.parse(str)
+    renderer.draw(str, 'tst')
+    const bounds = renderer.bounds.getBounds()
+    expect(bounds.startx).toBe(0)
+    expect(bounds.starty).toBe(0)
+
+    expect(bounds.stopx).toBe(0 + conf.width * 2 + conf.actorMargin)
+    expect(bounds.stopy).toBe(0 + 2 * conf.messageMargin + conf.height + 3 * conf.boxMargin)
+  })
 })
 
 describe('when rendering a sequenceDiagram with actor mirror activated', function () {
