@@ -1508,6 +1508,17 @@ describe('when parsing ', function () {
     expect(edges.length).toBe(0)
     expect(vert['i-d'].styles.length).toBe(0)
   })
+  fit('should handle a single node with alphanumerics containing a underscore sign', function () {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;i_d;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges.length).toBe(0)
+    expect(vert['i_d'].styles.length).toBe(0)
+  })
+  
     // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
   it('should handle styles for vertices', function () {
     const res = flow.parser.parse('graph TD;style Q background:#fff;')
@@ -1682,6 +1693,73 @@ describe('when parsing ', function () {
     const classes = flow.parser.yy.getClasses()
 
     expect(classes['exClass'].styles.length).toBe(2)
+    expect(classes['exClass'].styles[0]).toBe('background:#bbb')
+    expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
+  })
+  it('should be possible to apply a class to a vertex directly', function () {
+    let statement = ''
+
+    statement = statement + 'graph TD;' + '\n'
+    statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
+    statement = statement + 'a-->b[test].exClass;' + '\n'
+
+    const res = flow.parser.parse(statement)
+    const vertices = flow.parser.yy.getVertices()
+    const classes = flow.parser.yy.getClasses()
+
+    expect(classes['exClass'].styles.length).toBe(2)
+    expect(vertices['b'].classes[0]).toBe('exClass')
+    expect(classes['exClass'].styles[0]).toBe('background:#bbb')
+    expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
+  })
+
+  it('should be possible to apply a class to a vertex directly : usecase A[text].class ', function () {
+    let statement = ''
+
+    statement = statement + 'graph TD;' + '\n'
+    statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
+    statement = statement + 'b[test].exClass;' + '\n'
+
+    const res = flow.parser.parse(statement)
+    const vertices = flow.parser.yy.getVertices()
+    const classes = flow.parser.yy.getClasses()
+
+    expect(classes['exClass'].styles.length).toBe(2)
+    expect(vertices['b'].classes[0]).toBe('exClass')
+    expect(classes['exClass'].styles[0]).toBe('background:#bbb')
+    expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
+  })
+
+  it('should be possible to apply a class to a vertex directly : usecase A[text].class-->B[test2] ', function () {
+    let statement = ''
+
+    statement = statement + 'graph TD;' + '\n'
+    statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
+    statement = statement + 'A[test].exClass-->B[test2];' + '\n'
+
+    const res = flow.parser.parse(statement)
+    const vertices = flow.parser.yy.getVertices()
+    const classes = flow.parser.yy.getClasses()
+
+    expect(classes['exClass'].styles.length).toBe(2)
+    expect(vertices['A'].classes[0]).toBe('exClass')
+    expect(classes['exClass'].styles[0]).toBe('background:#bbb')
+    expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
+  })
+
+  it('should be possible to apply a class to a vertex directly 2', function () {
+    let statement = ''
+
+    statement = statement + 'graph TD;' + '\n'
+    statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
+    statement = statement + 'a-->b[1 a a text!.].exClass;' + '\n'
+
+    const res = flow.parser.parse(statement)
+    const vertices = flow.parser.yy.getVertices()
+    const classes = flow.parser.yy.getClasses()
+
+    expect(classes['exClass'].styles.length).toBe(2)
+    expect(vertices['b'].classes[0]).toBe('exClass')
     expect(classes['exClass'].styles[0]).toBe('background:#bbb')
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
   })
