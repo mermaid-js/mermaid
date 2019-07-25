@@ -31,6 +31,7 @@
 <ALIAS>"as"       { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
 <ALIAS>(?:)       { this.popState(); this.popState(); return 'NL'; }
 "loop"            { this.begin('LINE'); return 'loop'; }
+"rect"            { this.begin('LINE'); return 'rect'; }
 "opt"             { this.begin('LINE'); return 'opt'; }
 "alt"             { this.begin('LINE'); return 'alt'; }
 "else"            { this.begin('LINE'); return 'else'; }
@@ -98,6 +99,11 @@ statement
 	{
 		$3.unshift({type: 'loopStart', loopText:$2, signalType: yy.LINETYPE.LOOP_START});
 		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
+		$$=$3;}
+	| 'rect' restOfLine document end
+	{
+		$3.unshift({type: 'rectStart', color:$2, signalType: yy.LINETYPE.RECT_START });
+		$3.push({type: 'rectEnd', color:$2, signalType: yy.LINETYPE.RECT_END });
 		$$=$3;}
 	| opt restOfLine document end
 	{

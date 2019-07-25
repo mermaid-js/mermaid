@@ -168,6 +168,21 @@ export const drawLoop = function (elem, bounds, labelText, conf) {
 }
 
 /**
+ * Draws a background rectangle
+ * @param color - The fill color for the background
+ */
+export const drawBackgroundRect = function (elem, bounds) {
+  const rectElem = drawRect(elem, {
+    x: bounds.startx,
+    y: bounds.starty,
+    width: bounds.stopx - bounds.startx,
+    height: bounds.stopy - bounds.starty,
+    fill: bounds.fill,
+    class: 'rect'
+  })
+  rectElem.lower()
+}
+/**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 export const insertArrowHead = function (elem) {
@@ -331,6 +346,7 @@ export default {
   anchorElement,
   drawActivation,
   drawLoop,
+  drawBackgroundRect,
   insertArrowHead,
   insertSequenceNumber,
   insertArrowCrossHead,

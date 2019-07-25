@@ -71,13 +71,13 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var sequenceDiagram = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,23],$Vf=[1,24],$Vg=[1,4,5,10,15,16,18,20,21,22,23,25,27,28,29,40],$Vh=[1,32],$Vi=[4,5,10,15,16,18,20,21,22,23,25,29,40],$Vj=[4,5,10,15,16,18,20,21,22,23,25,28,29,40],$Vk=[4,5,10,15,16,18,20,21,22,23,25,27,29,40],$Vl=[38,39,40];
+var parser = (function(){
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[2,4],$V4=[1,9],$V5=[1,11],$V6=[1,12],$V7=[1,14],$V8=[1,15],$V9=[1,17],$Va=[1,18],$Vb=[1,19],$Vc=[1,20],$Vd=[1,21],$Ve=[1,22],$Vf=[1,24],$Vg=[1,25],$Vh=[1,4,5,10,15,16,18,20,21,22,23,24,26,28,29,30,41],$Vi=[1,33],$Vj=[4,5,10,15,16,18,20,21,22,23,24,26,30,41],$Vk=[4,5,10,15,16,18,20,21,22,23,24,26,29,30,41],$Vl=[4,5,10,15,16,18,20,21,22,23,24,26,28,30,41],$Vm=[39,40,41];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"participant":10,"actor":11,"AS":12,"restOfLine":13,"signal":14,"activate":15,"deactivate":16,"note_statement":17,"title":18,"text2":19,"loop":20,"end":21,"opt":22,"alt":23,"else_sections":24,"par":25,"par_sections":26,"and":27,"else":28,"note":29,"placement":30,"over":31,"actor_pair":32,"spaceList":33,",":34,"left_of":35,"right_of":36,"signaltype":37,"+":38,"-":39,"ACTOR":40,"SOLID_OPEN_ARROW":41,"DOTTED_OPEN_ARROW":42,"SOLID_ARROW":43,"DOTTED_ARROW":44,"SOLID_CROSS":45,"DOTTED_CROSS":46,"TXT":47,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",10:"participant",12:"AS",13:"restOfLine",15:"activate",16:"deactivate",18:"title",20:"loop",21:"end",22:"opt",23:"alt",25:"par",27:"and",28:"else",29:"note",31:"over",34:",",35:"left_of",36:"right_of",38:"+",39:"-",40:"ACTOR",41:"SOLID_OPEN_ARROW",42:"DOTTED_OPEN_ARROW",43:"SOLID_ARROW",44:"DOTTED_ARROW",45:"SOLID_CROSS",46:"DOTTED_CROSS",47:"TXT"},
-productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,5],[9,3],[9,2],[9,3],[9,3],[9,2],[9,3],[9,4],[9,4],[9,4],[9,4],[26,1],[26,4],[24,1],[24,4],[17,4],[17,4],[33,2],[33,1],[32,3],[32,1],[30,1],[30,1],[14,5],[14,5],[14,4],[11,1],[37,1],[37,1],[37,1],[37,1],[37,1],[37,1],[19,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"SD":6,"document":7,"line":8,"statement":9,"participant":10,"actor":11,"AS":12,"restOfLine":13,"signal":14,"activate":15,"deactivate":16,"note_statement":17,"title":18,"text2":19,"loop":20,"end":21,"rect":22,"opt":23,"alt":24,"else_sections":25,"par":26,"par_sections":27,"and":28,"else":29,"note":30,"placement":31,"over":32,"actor_pair":33,"spaceList":34,",":35,"left_of":36,"right_of":37,"signaltype":38,"+":39,"-":40,"ACTOR":41,"SOLID_OPEN_ARROW":42,"DOTTED_OPEN_ARROW":43,"SOLID_ARROW":44,"DOTTED_ARROW":45,"SOLID_CROSS":46,"DOTTED_CROSS":47,"TXT":48,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",6:"SD",10:"participant",12:"AS",13:"restOfLine",15:"activate",16:"deactivate",18:"title",20:"loop",21:"end",22:"rect",23:"opt",24:"alt",26:"par",28:"and",29:"else",30:"note",32:"over",35:",",36:"left_of",37:"right_of",39:"+",40:"-",41:"ACTOR",42:"SOLID_OPEN_ARROW",43:"DOTTED_OPEN_ARROW",44:"SOLID_ARROW",45:"DOTTED_ARROW",46:"SOLID_CROSS",47:"DOTTED_CROSS",48:"TXT"},
+productions_: [0,[3,2],[3,2],[3,2],[7,0],[7,2],[8,2],[8,1],[8,1],[9,5],[9,3],[9,2],[9,3],[9,3],[9,2],[9,3],[9,4],[9,4],[9,4],[9,4],[9,4],[27,1],[27,4],[25,1],[25,4],[17,4],[17,4],[34,2],[34,1],[33,3],[33,1],[31,1],[31,1],[14,5],[14,5],[14,4],[11,1],[38,1],[38,1],[38,1],[38,1],[38,1],[38,1],[19,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -121,11 +121,17 @@ case 16:
 break;
 case 17:
 
+		$$[$0-1].unshift({type: 'rectStart', color:$$[$0-2], signalType: yy.LINETYPE.RECT_START });
+		$$[$0-1].push({type: 'rectEnd', color:$$[$0-2], signalType: yy.LINETYPE.RECT_END });
+		this.$=$$[$0-1];
+break;
+case 18:
+
 		$$[$0-1].unshift({type: 'optStart', optText:$$[$0-2], signalType: yy.LINETYPE.OPT_START});
 		$$[$0-1].push({type: 'optEnd', optText:$$[$0-2], signalType: yy.LINETYPE.OPT_END});
 		this.$=$$[$0-1];
 break;
-case 18:
+case 19:
 
 		// Alt start
 		$$[$0-1].unshift({type: 'altStart', altText:$$[$0-2], signalType: yy.LINETYPE.ALT_START});
@@ -134,7 +140,7 @@ case 18:
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 19:
+case 20:
 
 		// Parallel start
 		$$[$0-1].unshift({type: 'parStart', parText:$$[$0-2], signalType: yy.LINETYPE.PAR_START});
@@ -143,17 +149,17 @@ case 19:
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 21:
+case 22:
  this.$ = $$[$0-3].concat([{type: 'and', parText:$$[$0-1], signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
 break;
-case 23:
+case 24:
  this.$ = $$[$0-3].concat([{type: 'else', altText:$$[$0-1], signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
-case 24:
+case 25:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 25:
+case 26:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -161,59 +167,59 @@ case 25:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 28:
+case 29:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 29:
+case 30:
  this.$ = $$[$0]; 
 break;
-case 30:
+case 31:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 31:
+case 32:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 32:
+case 33:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 33:
+case 34:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 34:
+case 35:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 35:
+case 36:
 this.$={type: 'addActor', actor:$$[$0]}
 break;
-case 36:
+case 37:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 37:
+case 38:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 38:
+case 39:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 39:
+case 40:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 40:
+case 41:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 41:
+case 42:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
-case 42:
+case 43:
 this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,10,15,16,18,20,22,23,25,29,40],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},o($Vg,[2,5]),{9:25,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},o($Vg,[2,7]),o($Vg,[2,8]),{11:26,40:$Vf},{5:[1,27]},{11:28,40:$Vf},{11:29,40:$Vf},{5:[1,30]},{19:31,47:$Vh},{13:[1,33]},{13:[1,34]},{13:[1,35]},{13:[1,36]},{37:37,41:[1,38],42:[1,39],43:[1,40],44:[1,41],45:[1,42],46:[1,43]},{30:44,31:[1,45],35:[1,46],36:[1,47]},o([5,12,34,41,42,43,44,45,46,47],[2,35]),o($Vg,[2,6]),{5:[1,49],12:[1,48]},o($Vg,[2,11]),{5:[1,50]},{5:[1,51]},o($Vg,[2,14]),{5:[1,52]},{5:[2,42]},o($Vi,$V3,{7:53}),o($Vi,$V3,{7:54}),o($Vj,$V3,{24:55,7:56}),o($Vk,$V3,{26:57,7:58}),{11:61,38:[1,59],39:[1,60],40:$Vf},o($Vl,[2,36]),o($Vl,[2,37]),o($Vl,[2,38]),o($Vl,[2,39]),o($Vl,[2,40]),o($Vl,[2,41]),{11:62,40:$Vf},{11:64,32:63,40:$Vf},{40:[2,30]},{40:[2,31]},{13:[1,65]},o($Vg,[2,10]),o($Vg,[2,12]),o($Vg,[2,13]),o($Vg,[2,15]),{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,66],22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,67],22:$Vb,23:$Vc,25:$Vd,29:$Ve,40:$Vf},{21:[1,68]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,22],22:$Vb,23:$Vc,25:$Vd,28:[1,69],29:$Ve,40:$Vf},{21:[1,70]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:22,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,20],22:$Vb,23:$Vc,25:$Vd,27:[1,71],29:$Ve,40:$Vf},{11:72,40:$Vf},{11:73,40:$Vf},{19:74,47:$Vh},{19:75,47:$Vh},{19:76,47:$Vh},{34:[1,77],47:[2,29]},{5:[1,78]},o($Vg,[2,16]),o($Vg,[2,17]),o($Vg,[2,18]),{13:[1,79]},o($Vg,[2,19]),{13:[1,80]},{19:81,47:$Vh},{19:82,47:$Vh},{5:[2,34]},{5:[2,24]},{5:[2,25]},{11:83,40:$Vf},o($Vg,[2,9]),o($Vj,$V3,{7:56,24:84}),o($Vk,$V3,{7:58,26:85}),{5:[2,32]},{5:[2,33]},{47:[2,28]},{21:[2,23]},{21:[2,21]}],
-defaultActions: {5:[2,1],6:[2,2],32:[2,42],46:[2,30],47:[2,31],74:[2,34],75:[2,24],76:[2,25],81:[2,32],82:[2,33],83:[2,28],84:[2,23],85:[2,21]},
+table: [{3:1,4:$V0,5:$V1,6:$V2},{1:[3]},{3:5,4:$V0,5:$V1,6:$V2},{3:6,4:$V0,5:$V1,6:$V2},o([1,4,5,10,15,16,18,20,22,23,24,26,30,41],$V3,{7:7}),{1:[2,1]},{1:[2,2]},{1:[2,3],4:$V4,5:$V5,8:8,9:10,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,26:$Ve,30:$Vf,41:$Vg},o($Vh,[2,5]),{9:26,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,22:$Vb,23:$Vc,24:$Vd,26:$Ve,30:$Vf,41:$Vg},o($Vh,[2,7]),o($Vh,[2,8]),{11:27,41:$Vg},{5:[1,28]},{11:29,41:$Vg},{11:30,41:$Vg},{5:[1,31]},{19:32,48:$Vi},{13:[1,34]},{13:[1,35]},{13:[1,36]},{13:[1,37]},{13:[1,38]},{38:39,42:[1,40],43:[1,41],44:[1,42],45:[1,43],46:[1,44],47:[1,45]},{31:46,32:[1,47],36:[1,48],37:[1,49]},o([5,12,35,42,43,44,45,46,47,48],[2,36]),o($Vh,[2,6]),{5:[1,51],12:[1,50]},o($Vh,[2,11]),{5:[1,52]},{5:[1,53]},o($Vh,[2,14]),{5:[1,54]},{5:[2,43]},o($Vj,$V3,{7:55}),o($Vj,$V3,{7:56}),o($Vj,$V3,{7:57}),o($Vk,$V3,{25:58,7:59}),o($Vl,$V3,{27:60,7:61}),{11:64,39:[1,62],40:[1,63],41:$Vg},o($Vm,[2,37]),o($Vm,[2,38]),o($Vm,[2,39]),o($Vm,[2,40]),o($Vm,[2,41]),o($Vm,[2,42]),{11:65,41:$Vg},{11:67,33:66,41:$Vg},{41:[2,31]},{41:[2,32]},{13:[1,68]},o($Vh,[2,10]),o($Vh,[2,12]),o($Vh,[2,13]),o($Vh,[2,15]),{4:$V4,5:$V5,8:8,9:10,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,69],22:$Vb,23:$Vc,24:$Vd,26:$Ve,30:$Vf,41:$Vg},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,70],22:$Vb,23:$Vc,24:$Vd,26:$Ve,30:$Vf,41:$Vg},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[1,71],22:$Vb,23:$Vc,24:$Vd,26:$Ve,30:$Vf,41:$Vg},{21:[1,72]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,23],22:$Vb,23:$Vc,24:$Vd,26:$Ve,29:[1,73],30:$Vf,41:$Vg},{21:[1,74]},{4:$V4,5:$V5,8:8,9:10,10:$V6,11:23,14:13,15:$V7,16:$V8,17:16,18:$V9,20:$Va,21:[2,21],22:$Vb,23:$Vc,24:$Vd,26:$Ve,28:[1,75],30:$Vf,41:$Vg},{11:76,41:$Vg},{11:77,41:$Vg},{19:78,48:$Vi},{19:79,48:$Vi},{19:80,48:$Vi},{35:[1,81],48:[2,30]},{5:[1,82]},o($Vh,[2,16]),o($Vh,[2,17]),o($Vh,[2,18]),o($Vh,[2,19]),{13:[1,83]},o($Vh,[2,20]),{13:[1,84]},{19:85,48:$Vi},{19:86,48:$Vi},{5:[2,35]},{5:[2,25]},{5:[2,26]},{11:87,41:$Vg},o($Vh,[2,9]),o($Vk,$V3,{7:59,25:88}),o($Vl,$V3,{7:61,27:89}),{5:[2,33]},{5:[2,34]},{48:[2,29]},{21:[2,24]},{21:[2,22]}],
+defaultActions: {5:[2,1],6:[2,2],33:[2,43],48:[2,31],49:[2,32],78:[2,35],79:[2,25],80:[2,26],85:[2,33],86:[2,34],87:[2,29],88:[2,24],89:[2,22]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -252,15 +258,18 @@ parse: function parse(input) {
         vstack.length = vstack.length - n;
         lstack.length = lstack.length - n;
     }
-    _token_stack:
-        var lex = function () {
+            function lex() {
             var token;
-            token = lexer.lex() || EOF;
+            token = tstack.pop() || lexer.lex() || EOF;
             if (typeof token !== 'number') {
+                if (token instanceof Array) {
+                    tstack = token;
+                    token = tstack.pop();
+                }
                 token = self.symbols_[token] || token;
             }
             return token;
-        };
+        }
     var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
     while (true) {
         state = stack[stack.length - 1];
@@ -272,27 +281,27 @@ parse: function parse(input) {
             }
             action = table[state] && table[state][symbol];
         }
-                    if (typeof action === 'undefined' || !action.length || !action[0]) {
-                var errStr = '';
-                expected = [];
-                for (p in table[state]) {
-                    if (this.terminals_[p] && p > TERROR) {
-                        expected.push('\'' + this.terminals_[p] + '\'');
-                    }
+        if (typeof action === 'undefined' || !action.length || !action[0]) {
+            var errStr = '';
+            expected = [];
+            for (p in table[state]) {
+                if (this.terminals_[p] && p > TERROR) {
+                    expected.push('\'' + this.terminals_[p] + '\'');
                 }
-                if (lexer.showPosition) {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
-                } else {
-                    errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
-                }
-                this.parseError(errStr, {
-                    text: lexer.match,
-                    token: this.terminals_[symbol] || symbol,
-                    line: lexer.yylineno,
-                    loc: yyloc,
-                    expected: expected
-                });
             }
+            if (lexer.showPosition) {
+                errStr = 'Parse error on line ' + (yylineno + 1) + ':\n' + lexer.showPosition() + '\nExpecting ' + expected.join(', ') + ', got \'' + (this.terminals_[symbol] || symbol) + '\'';
+            } else {
+                errStr = 'Parse error on line ' + (yylineno + 1) + ': Unexpected ' + (symbol == EOF ? 'end of input' : '\'' + (this.terminals_[symbol] || symbol) + '\'');
+            }
+            this.parseError(errStr, {
+                text: lexer.match,
+                token: this.terminals_[symbol] || symbol,
+                line: lexer.yylineno,
+                loc: yyloc,
+                expected: expected
+            });
+        }
         if (action[0] instanceof Array && action.length > 1) {
             throw new Error('Parse Error: multiple actions possible at state: ' + state + ', token: ' + symbol);
         }
@@ -701,7 +710,7 @@ case 4:/* skip comments */
 break;
 case 5: this.begin('ID'); return 10; 
 break;
-case 6: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 40; 
+case 6: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 41; 
 break;
 case 7: this.popState(); this.popState(); this.begin('LINE'); return 12; 
 break;
@@ -713,64 +722,66 @@ case 10: this.begin('LINE'); return 22;
 break;
 case 11: this.begin('LINE'); return 23; 
 break;
-case 12: this.begin('LINE'); return 28; 
+case 12: this.begin('LINE'); return 24; 
 break;
-case 13: this.begin('LINE'); return 25; 
+case 13: this.begin('LINE'); return 29; 
 break;
-case 14: this.begin('LINE'); return 27; 
+case 14: this.begin('LINE'); return 26; 
 break;
-case 15: this.popState(); return 13; 
+case 15: this.begin('LINE'); return 28; 
 break;
-case 16:return 21;
+case 16: this.popState(); return 13; 
 break;
-case 17:return 35;
+case 17:return 21;
 break;
 case 18:return 36;
 break;
-case 19:return 31;
+case 19:return 37;
 break;
-case 20:return 29;
+case 20:return 32;
 break;
-case 21: this.begin('ID'); return 15; 
+case 21:return 30;
 break;
-case 22: this.begin('ID'); return 16; 
+case 22: this.begin('ID'); return 15; 
 break;
-case 23:return 18;
+case 23: this.begin('ID'); return 16; 
 break;
-case 24:return 6;
+case 24:return 18;
 break;
-case 25:return 34;
+case 25:return 6;
 break;
-case 26:return 5;
+case 26:return 35;
 break;
-case 27: yy_.yytext = yy_.yytext.trim(); return 40; 
+case 27:return 5;
 break;
-case 28:return 43;
+case 28: yy_.yytext = yy_.yytext.trim(); return 41; 
 break;
 case 29:return 44;
 break;
-case 30:return 41;
+case 30:return 45;
 break;
 case 31:return 42;
 break;
-case 32:return 45;
+case 32:return 43;
 break;
 case 33:return 46;
 break;
 case 34:return 47;
 break;
-case 35:return 38;
+case 35:return 48;
 break;
 case 36:return 39;
 break;
-case 37:return 5;
+case 37:return 40;
 break;
-case 38:return 'INVALID';
+case 38:return 5;
+break;
+case 39:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[2,3,15],"inclusive":false},"ALIAS":{"rules":[2,3,7,8],"inclusive":false},"ID":{"rules":[2,3,6],"inclusive":false},"INITIAL":{"rules":[0,1,3,4,5,9,10,11,12,13,14,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
+rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"LINE":{"rules":[2,3,16],"inclusive":false},"ALIAS":{"rules":[2,3,7,8],"inclusive":false},"ID":{"rules":[2,3,6],"inclusive":false},"INITIAL":{"rules":[0,1,3,4,5,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39],"inclusive":true}}
 });
 return lexer;
 })();
@@ -784,9 +795,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = sequenceDiagram;
-exports.Parser = sequenceDiagram.Parser;
-exports.parse = function () { return sequenceDiagram.parse.apply(sequenceDiagram, arguments); };
+exports.parser = parser;
+exports.Parser = parser.Parser;
+exports.parse = function () { return parser.parse.apply(parser, arguments); };
 exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');

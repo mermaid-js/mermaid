@@ -66,7 +66,9 @@ export const LINETYPE = {
   ACTIVE_END: 18,
   PAR_START: 19,
   PAR_AND: 20,
-  PAR_END: 21
+  PAR_END: 21,
+  RECT_START: 22,
+  RECT_END: 23
 }
 
 export const ARROWTYPE = {
@@ -120,6 +122,12 @@ export const apply = function (param) {
         addSignal(undefined, undefined, param.loopText, param.signalType)
         break
       case 'loopEnd':
+        addSignal(undefined, undefined, undefined, param.signalType)
+        break
+      case 'rectStart':
+        addSignal(undefined, undefined, param.color, param.signalType)
+        break
+      case 'rectEnd':
         addSignal(undefined, undefined, undefined, param.signalType)
         break
       case 'optStart':

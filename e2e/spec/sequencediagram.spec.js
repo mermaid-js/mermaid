@@ -32,4 +32,90 @@ describe('Sequencediagram', () => {
       `,
     {})
   })
+  describe('background rects', async () => {
+    it('should render a single and nested rects', async () => {
+      await imgSnapshotTest(page, `
+        sequenceDiagram
+          participant A
+          participant B
+          participant C
+          participant D
+          participant E
+          participant G
+
+          A ->>+ B: Task 1
+          rect rgb(178, 102, 255)
+            B ->>+ C: Task 2
+            C -->>- B: Return
+          end
+          
+          A ->> D: Task 3
+          rect rgb(0, 128, 255)
+            D ->>+ E: Task 4
+            rect rgb(0, 204, 0)
+            E ->>+ G: Task 5
+            G -->>- E: Return
+            end
+            E ->> E: Task 6
+          end
+          D -->> A: Complete
+      `, {})
+    })
+    it('should render rect around and inside loops', async () => {
+      await imgSnapshotTest(page, `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            loop check C
+              C ->> C: Every 10 seconds
+            end
+          end
+          A ->> B: 2
+          loop check D
+            C ->> D: 3
+            rect rgb(153, 153, 255)
+            D -->> D: 5
+            D --> C: 4
+            end
+          end
+      `, {})
+    })
+    it('should render rect around and inside alts', async () => {
+      await imgSnapshotTest(page, `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            alt yes
+              C ->> C: 1
+            else no
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+          B ->> A: Return
+      `, {})
+    })
+    it('should render rect around and inside opts', async () => {
+      await imgSnapshotTest(page, `
+        sequenceDiagram
+          A ->> B: 1
+          rect rgb(204, 0, 102)
+            opt maybe
+              C -->> D: Do something
+              rect rgb(0, 204, 204)
+                C ->> C: 0
+              end
+            end
+          end
+
+          opt possibly
+            rect rgb(0, 204, 204)
+              C ->> C: 0
+            end
+          end
+          B ->> A: Return
+      `, {})
+    })
+  })
 })

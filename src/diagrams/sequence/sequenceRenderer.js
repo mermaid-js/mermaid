@@ -131,8 +131,8 @@ export const bounds = {
     const activation = this.activations.splice(lastActorActivationIdx, 1)[0]
     return activation
   },
-  newLoop: function (title) {
-    this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title })
+  newLoop: function (title, fill) {
+    this.sequenceItems.push({ startx: undefined, starty: this.verticalPos, stopx: undefined, stopy: undefined, title: title, fill: fill })
   },
   endLoop: function () {
     const loop = this.sequenceItems.pop()
@@ -408,6 +408,16 @@ export const draw = function (text, id) {
         loopData = bounds.endLoop()
 
         svgDraw.drawLoop(diagram, loopData, 'loop', conf)
+        bounds.bumpVerticalPos(conf.boxMargin)
+        break
+      case parser.yy.LINETYPE.RECT_START:
+        bounds.bumpVerticalPos(conf.boxMargin)
+        bounds.newLoop(undefined, msg.message)
+        bounds.bumpVerticalPos(conf.boxMargin)
+        break
+      case parser.yy.LINETYPE.RECT_END:
+        const rectData = bounds.endLoop()
+        svgDraw.drawBackgroundRect(diagram, rectData)
         bounds.bumpVerticalPos(conf.boxMargin)
         break
       case parser.yy.LINETYPE.OPT_START:
