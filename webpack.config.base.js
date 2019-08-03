@@ -6,6 +6,15 @@ const amdRule = {
   }
 }
 
+const jisonRule = {
+  test: /\.jison$/,
+  use: {
+    loader: path.resolve(__dirname, './jisonLoader'),
+    options: {
+      'token-stack': true
+    }
+  }
+}
 const jsRule = {
   test: /\.js$/,
   include: [
@@ -33,6 +42,9 @@ export const jsConfig = () => {
     entry: {
       mermaid: './src/mermaid.js'
     },
+    resolve: {
+      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
+    },
     node: {
       fs: 'empty' // jison generated code requires 'fs'
     },
@@ -44,7 +56,7 @@ export const jsConfig = () => {
       libraryExport: 'default'
     },
     module: {
-      rules: [amdRule, jsRule, scssRule]
+      rules: [amdRule, jsRule, scssRule, jisonRule]
     },
     devtool: 'source-map'
   }

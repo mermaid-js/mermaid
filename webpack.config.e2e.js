@@ -8,6 +8,16 @@ const jsRule = {
   }
 }
 
+const jisonRule = {
+  test: /\.jison$/,
+  use: {
+    loader: path.resolve(__dirname, './jisonLoader'),
+    options: {
+      'token-stack': true
+    }
+  }
+}
+
 const amdRule = {
   parser: {
     amd: false // https://github.com/lodash/lodash/issues/3052
@@ -31,6 +41,9 @@ module.exports = {
     e2e: './e2e/platform/viewer.js',
     'bundle-test': './e2e/platform/bundle-test.js'
   },
+  resolve: {
+    extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
+  },
   node: {
     fs: 'empty' // jison generated code requires 'fs'
   },
@@ -50,7 +63,7 @@ module.exports = {
     port: 9000
   },
   module: {
-    rules: [amdRule, jsRule, scssRule]
+    rules: [amdRule, jsRule, scssRule, jisonRule]
   },
   externals: {
     mermaid: 'mermaid'
