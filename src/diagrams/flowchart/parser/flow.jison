@@ -251,8 +251,6 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph SPACE text separator document end
-    { debugger; $$=[]}
     | subgraph SPACE alphaNum SQS text SQE separator document end
     {$$=yy.addSubGraph($3,$8,$5);}
     | subgraph SPACE STR separator document end
