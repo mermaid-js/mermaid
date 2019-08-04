@@ -3,7 +3,7 @@
  */
 import * as d3 from 'd3'
 import db from './infoDb'
-import infoParser from './parser/info.js'
+import infoParser from './parser/info'
 import { logger } from '../../logger'
 
 const conf = {
