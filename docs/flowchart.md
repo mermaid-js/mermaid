@@ -111,13 +111,13 @@ graph LR
     id1{This is the text in the box}
 ```
 
-### Trapeziod
+### Trapezoid
 
 ```mermaid
 graph TD
     A[/Christmas\]
 ```
-### Trapeziod alt
+### Trapezoid alt
 
 ```mermaid
 graph TD
