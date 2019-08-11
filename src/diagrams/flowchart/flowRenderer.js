@@ -228,6 +228,7 @@ export const addEdges = function (edges, g) {
  * @returns {object} classDef styles
  */
 export const getClasses = function (text) {
+  logger.info('Extracting classes')
   flowDb.clear()
   const parser = flow.parser
   parser.yy = flowDb
@@ -243,7 +244,7 @@ export const getClasses = function (text) {
  * @param id
  */
 export const draw = function (text, id) {
-  logger.debug('Drawing flowchart')
+  logger.info('Drawing flowchart')
   flowDb.clear()
   const parser = flow.parser
   parser.yy = flowDb

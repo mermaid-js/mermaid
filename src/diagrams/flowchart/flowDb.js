@@ -18,7 +18,7 @@ let funs = []
 
 const sanitize = text => {
   let txt = text
-  if (config.securityLevel === 'strict') {
+  if (config.securityLevel !== 'loose') {
     txt = txt.replace(/<br>/g, '#br#')
     txt = txt.replace(/<br\S*?\/>/g, '#br#')
     txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -182,13 +182,13 @@ export const setClass = function (ids, className) {
 const setTooltip = function (ids, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = tooltip
+      tooltips[id] = sanitize(tooltip)
     }
   })
 }
 
 const setClickFun = function (id, functionName) {
-  if (config.securityLevel === 'strict') {
+  if (config.securityLevel !== 'loose') {
     return
   }
   if (typeof functionName === 'undefined') {
@@ -215,7 +215,7 @@ const setClickFun = function (id, functionName) {
 export const setLink = function (ids, linkStr, tooltip) {
   ids.split(',').forEach(function (id) {
     if (typeof vertices[id] !== 'undefined') {
-      if (config.securityLevel === 'strict') {
+      if (config.securityLevel !== 'loose') {
         vertices[id].link = sanitizeUrl(linkStr) // .replace(/javascript:.*/g, '')
       } else {
         vertices[id].link = linkStr

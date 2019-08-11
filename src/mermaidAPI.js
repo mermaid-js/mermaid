@@ -497,10 +497,17 @@ const render = function (id, txt, cb, container) {
   svgCode = decodeEntities(svgCode)
 
   if (typeof cb !== 'undefined') {
-    cb(svgCode, flowDb.bindFunctions)
-    cb(svgCode, ganttDb.bindFunctions)
+    switch(graphType) {
+      case 'flowchart':
+        cb(svgCode, flowDb.bindFunctions)
+        break;
+      case 'gantt':
+        cb(svgCode, ganttDb.bindFunctions)
+        break;
+        default:
+    }
   } else {
-    logger.warn('CB = undefined!')
+    logger.debug('CB = undefined!')
   }
 
   const node = d3.select('#d' + id).node()

@@ -430,7 +430,7 @@ const compileTasks = function () {
  */
 export const setLink = function (ids, _linkStr) {
   let linkStr = _linkStr
-  if (config.securityLevel === 'strict') {
+  if (config.securityLevel !== 'loose') {
     linkStr = sanitizeUrl(_linkStr)
   }
   ids.split(',').forEach(function (id) {
@@ -457,7 +457,7 @@ export const setClass = function (ids, className) {
 }
 
 const setClickFun = function (id, functionName, functionArgs) {
-  if (config.securityLevel === 'strict') {
+  if (config.securityLevel !== 'loose') {
     return
   }
   if (typeof functionName === 'undefined') {
