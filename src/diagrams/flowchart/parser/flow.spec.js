@@ -27,54 +27,6 @@ describe('when parsing ', function () {
     expect(edges[0].text).toBe('')
   })
 
-  it('should handle subgraph with tab indentation', function () {
-    const res = flow.parser.parse('graph TB\nsubgraph One\n\ta1-->a2\nend')
-    const subgraphs = flow.parser.yy.getSubGraphs()
-    expect(subgraphs.length).toBe(1)
-    const subgraph = subgraphs[0]
-    expect(subgraph.nodes.length).toBe(2)
-    expect(subgraph.nodes[0]).toBe('a1')
-    expect(subgraph.nodes[1]).toBe('a2')
-    expect(subgraph.title).toBe('One')
-    expect(subgraph.id).toBe('One')
-  })
-
-  it('should handle subgraph with multiple words in title', function () {
-    const res = flow.parser.parse('graph TB\nsubgraph "Some Title"\n\ta1-->a2\nend')
-    const subgraphs = flow.parser.yy.getSubGraphs()
-    expect(subgraphs.length).toBe(1)
-    const subgraph = subgraphs[0]
-    expect(subgraph.nodes.length).toBe(2)
-    expect(subgraph.nodes[0]).toBe('a1')
-    expect(subgraph.nodes[1]).toBe('a2')
-    expect(subgraph.title).toBe('Some Title')
-    expect(subgraph.id).toBe('subGraph0')
-  });
-
-  it('should handle subgraph with id and title notation', function () {
-    const res = flow.parser.parse('graph TB\nsubgraph some-id[Some Title]\n\ta1-->a2\nend')
-    const subgraphs = flow.parser.yy.getSubGraphs()
-    expect(subgraphs.length).toBe(1)
-    const subgraph = subgraphs[0]
-    expect(subgraph.nodes.length).toBe(2)
-    expect(subgraph.nodes[0]).toBe('a1')
-    expect(subgraph.nodes[1]).toBe('a2')
-    expect(subgraph.title).toBe('Some Title')
-    expect(subgraph.id).toBe('some-id')
-  });
-
-  xit('should handle subgraph without id and space in title', function () {
-    const res = flow.parser.parse('graph TB\nsubgraph Some Title\n\ta1-->a2\nend')
-    const subgraphs = flow.parser.yy.getSubGraphs()
-    expect(subgraphs.length).toBe(1)
-    const subgraph = subgraphs[0]
-    expect(subgraph.nodes.length).toBe(2)
-    expect(subgraph.nodes[0]).toBe('a1')
-    expect(subgraph.nodes[1]).toBe('a2')
-    expect(subgraph.title).toBe('Some Title')
-    expect(subgraph.id).toBe('some-id')
-  });
-
   it("should handle angle bracket ' > ' as direction LR", function () {
     const res = flow.parser.parse('graph >;A-->B;')
 
@@ -384,53 +336,6 @@ describe('when parsing ', function () {
 
     expect(edges[0].type).toBe('arrow_circle')
   })
-  it('should handle subgraphs', function () {
-    const res = flow.parser.parse('graph TD;A-->B;subgraph myTitle;c-->d;end;')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-
-    expect(edges[0].type).toBe('arrow')
-  })
-
-  it('should handle subgraphs', function () {
-    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\n\n c-->d \nend\n')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-
-    expect(edges[0].type).toBe('arrow')
-  })
-
-  it('should handle nested subgraphs', function () {
-    const str = 'graph TD\n' +
-            'A-->B\n' +
-            'subgraph myTitle\n\n' +
-            ' c-->d \n\n' +
-            ' subgraph inner\n\n   e-->f \n end \n\n' +
-            ' subgraph inner\n\n   h-->i \n end \n\n' +
-            'end\n'
-    const res = flow.parser.parse(str)
-  })
-
-  it('should handle subgraphs', function () {
-    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-->d\nend;')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-
-    expect(edges[0].type).toBe('arrow')
-  })
-
-  it('should handle subgraphs', function () {
-    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\nc-- text -->d\nd-->e\n end;')
-
-    const vert = flow.parser.yy.getVertices()
-    const edges = flow.parser.yy.getEdges()
-
-    expect(edges[0].type).toBe('arrow')
-  })
-
   it('should handle classDefs with style in classes', function () {
     const res = flow.parser.parse('graph TD\nA-->B\nclassDef exClass font-style:bold;')
 
@@ -449,7 +354,7 @@ describe('when parsing ', function () {
     expect(edges[0].type).toBe('arrow')
   })
 
-  it('should handle style definitons with more then 1 digit in a row', function () {
+  it('should handle style definitions with more then 1 digit in a row', function () {
     const res = flow.parser.parse('graph TD\n' +
         'A-->B1\n' +
         'A-->B2\n' +
@@ -613,10 +518,10 @@ describe('when parsing ', function () {
     describe('point', function () {
       it('should handle double edged nodes and edges', function () {
         const res = flow.parser.parse('graph TD;\nA<-->B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -627,10 +532,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text', function () {
         const res = flow.parser.parse('graph TD;\nA<-- text -->B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -642,10 +547,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes and edges on thick arrows', function () {
         const res = flow.parser.parse('graph TD;\nA<==>B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -657,10 +562,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text on thick arrows', function () {
         const res = flow.parser.parse('graph TD;\nA<== text ==>B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -672,10 +577,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes and edges on dotted arrows', function () {
         const res = flow.parser.parse('graph TD;\nA<-.->B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -687,10 +592,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text on dotted arrows', function () {
         const res = flow.parser.parse('graph TD;\nA<-. text .->B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -704,10 +609,10 @@ describe('when parsing ', function () {
     describe('cross', function () {
       it('should handle double edged nodes and edges', function () {
         const res = flow.parser.parse('graph TD;\nA x--x B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -718,10 +623,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text', function () {
         const res = flow.parser.parse('graph TD;\nA x-- text --x B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -733,10 +638,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes and edges on thick arrows', function () {
         const res = flow.parser.parse('graph TD;\nA x==x B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -748,10 +653,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text on thick arrows', function () {
         const res = flow.parser.parse('graph TD;\nA x== text ==x B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -763,10 +668,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes and edges on dotted arrows', function () {
         const res = flow.parser.parse('graph TD;\nA x-.-x B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -778,10 +683,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text on dotted arrows', function () {
         const res = flow.parser.parse('graph TD;\nA x-. text .-x B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -795,10 +700,10 @@ describe('when parsing ', function () {
     describe('circle', function () {
       it('should handle double edged nodes and edges', function () {
         const res = flow.parser.parse('graph TD;\nA o--o B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -809,10 +714,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text', function () {
         const res = flow.parser.parse('graph TD;\nA o-- text --o B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -824,10 +729,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes and edges on thick arrows', function () {
         const res = flow.parser.parse('graph TD;\nA o==o B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -839,10 +744,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text on thick arrows', function () {
         const res = flow.parser.parse('graph TD;\nA o== text ==o B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -854,10 +759,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes and edges on dotted arrows', function () {
         const res = flow.parser.parse('graph TD;\nA o-.-o B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -869,10 +774,10 @@ describe('when parsing ', function () {
       })
       it('should handle double edged nodes with text on dotted arrows', function () {
         const res = flow.parser.parse('graph TD;\nA o-. text .-o B;')
-    
+
         const vert = flow.parser.yy.getVertices()
         const edges = flow.parser.yy.getEdges()
-    
+
         expect(vert['A'].id).toBe('A')
         expect(vert['B'].id).toBe('B')
         expect(edges.length).toBe(1)
@@ -1530,7 +1435,7 @@ describe('when parsing ', function () {
     expect(edges.length).toBe(0)
     expect(vert['i_d'].styles.length).toBe(0)
   })
-  
+
     // log.debug(flow.parser.parse('graph TD;style Q background:#fff;'));
   it('should handle styles for vertices', function () {
     const res = flow.parser.parse('graph TD;style Q background:#fff;')

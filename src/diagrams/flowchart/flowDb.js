@@ -357,6 +357,7 @@ export const addSubGraph = function (id, list, title) {
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
 
   id = id || ('subGraph' + subCount)
+  id = 's' + id
   title = title || ''
   title = sanitize(title)
   subCount = subCount + 1
