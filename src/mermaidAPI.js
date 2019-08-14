@@ -497,14 +497,14 @@ const render = function (id, txt, cb, container) {
   svgCode = decodeEntities(svgCode)
 
   if (typeof cb !== 'undefined') {
-    switch(graphType) {
+    switch (graphType) {
       case 'flowchart':
         cb(svgCode, flowDb.bindFunctions)
-        break;
+        break
       case 'gantt':
         cb(svgCode, ganttDb.bindFunctions)
-        break;
-        default:
+        break
+      default:
     }
   } else {
     logger.debug('CB = undefined!')
