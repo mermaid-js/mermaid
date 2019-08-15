@@ -5,15 +5,29 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Mermaid Quick Test Page</title>
   <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+  <style>
+    body {
+      font-family: 'trebuchet ms', verdana, arial;
+    }
+  </style>
 </head>
 <body>
-  <div id="FirstLine" class="mermaid">
+  <div class="mermaid">
     graph TD
-    A[Christmas] -->|Get money| B(Go shopping)
-    subgraph 1test["Text"]
-    A
-    end
-</div>
+      A[Christmas] -->|Get money| B(Go shopping)
+      subgraph 1test["id starting with number"]
+      A
+      end
+      style 1test fill:#F99,stroke-width:2px,stroke:#F0F
+  </div>
+  <div class="mermaid">
+    graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      subgraph test["id starting with number"]
+      A
+      end
+      style test fill:#F99,stroke-width:2px,stroke:#F0F
+  </div>
   <script src="./mermaid.js"></script>
   <script>
      function showFullFirstSquad(elemName) {
