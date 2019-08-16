@@ -251,12 +251,12 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph SPACE alphaNum SQS text SQE separator document end
+    | subgraph SPACE text SQS text SQE separator document end
     {$$=yy.addSubGraph($3,$8,$5);}
-    | subgraph SPACE STR separator document end
-    {$$=yy.addSubGraph(undefined,$5,$3);}
-    | subgraph SPACE alphaNum separator document end
+    | subgraph SPACE text separator document end
     {$$=yy.addSubGraph($3,$5,$3);}
+    // | subgraph SPACE text separator document end
+    // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
     ;
@@ -265,20 +265,20 @@ separator: NEWLINE | SEMI | EOF ;
 
 verticeStatement:
     vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}  
+        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
     | vertex link vertex DOT idString
        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
-    | vertex DOT idString link vertex 
+    | vertex DOT idString link vertex
        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
     | vertex DOT idString link vertex DOT idString
-       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}   
+       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
     |vertex
         {$$ = [$1];}
     |vertex DOT idString
-        {$$ = [$1];yy.setClass($1,$3)}    
+        {$$ = [$1];yy.setClass($1,$3)}
     ;
 
-vertex:  idString SQS text SQE 
+vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
     |  idString SQS text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'square');}
@@ -403,25 +403,25 @@ linkStatement: ARROW_POINT
     | DOTTED_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"dotted"};}
     | DOUBLE_DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}        
+        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}
     | DOTTED_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"dotted"};}
     | DOUBLE_DOTTED_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}        
+        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}
     | DOTTED_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"dotted"};}
     | THICK_ARROW_POINT
         {$$ = {"type":"arrow","stroke":"thick"};}
     | DOUBLE_THICK_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"thick"};}        
+        {$$ = {"type":"double_arrow_point","stroke":"thick"};}
     | THICK_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"thick"};}
     | DOUBLE_THICK_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}        
+        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}
     | THICK_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"thick"};}
     | DOUBLE_THICK_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}        
+        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}
     | THICK_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"thick"};}
         ;

@@ -37,15 +37,17 @@ const sanitize = text => {
  * @param style
  * @param classes
  */
-export const addVertex = function (id, text, type, style, classes) {
+export const addVertex = function (_id, text, type, style, classes) {
   let txt
-
+  let id = _id
   if (typeof id === 'undefined') {
     return
   }
   if (id.trim().length === 0) {
     return
   }
+
+  if (id[0].match(/\d/)) id = 's' + id
 
   if (typeof vertices[id] === 'undefined') {
     vertices[id] = { id: id, styles: [], classes: [] }
@@ -86,8 +88,13 @@ export const addVertex = function (id, text, type, style, classes) {
  * @param type
  * @param linktext
  */
-export const addLink = function (start, end, type, linktext) {
+export const addLink = function (_start, _end, type, linktext) {
+  let start = _start
+  let end = _end
+  if (start[0].match(/\d/)) start = 's' + start
+  if (end[0].match(/\d/)) end = 's' + end
   logger.info('Got edge...', start, end)
+
   const edge = { start: start, end: end, type: undefined, text: '' }
   linktext = type.text
 
@@ -338,7 +345,12 @@ export const defaultStyle = function () {
 /**
  * Clears the internal graph db so that a new graph can be parsed.
  */
-export const addSubGraph = function (id, list, title) {
+export const addSubGraph = function (_id, list, _title) {
+  let id = _id
+  let title = _title
+  if (_id === _title && _title.match(/\s/)) {
+    id = undefined
+  }
   function uniq (a) {
     const prims = { 'boolean': {}, 'number': {}, 'string': {} }
     const objs = []
@@ -357,6 +369,7 @@ export const addSubGraph = function (id, list, title) {
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
 
   id = id || ('subGraph' + subCount)
+  if (id[0].match(/\d/)) id = 's' + id
   title = title || ''
   title = sanitize(title)
   subCount = subCount + 1
