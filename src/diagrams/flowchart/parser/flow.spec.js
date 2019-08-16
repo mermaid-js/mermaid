@@ -1413,7 +1413,7 @@ describe('when parsing ', function () {
     const edges = flow.parser.yy.getEdges()
 
     expect(edges.length).toBe(0)
-    expect(vert['1id'].styles.length).toBe(0)
+    expect(vert['s1id'].styles.length).toBe(0)
   })
   it('should handle a single node with alphanumerics containing a minus sign', function () {
         // Silly but syntactically correct
