@@ -505,6 +505,7 @@ const render = function (id, txt, cb, container) {
         cb(svgCode, ganttDb.bindFunctions)
         break
       default:
+        cb(svgCode)
     }
   } else {
     logger.debug('CB = undefined!')
