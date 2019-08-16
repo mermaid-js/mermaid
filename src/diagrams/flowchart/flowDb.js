@@ -88,8 +88,13 @@ export const addVertex = function (_id, text, type, style, classes) {
  * @param type
  * @param linktext
  */
-export const addLink = function (start, end, type, linktext) {
+export const addLink = function (_start, _end, type, linktext) {
+  let start = _start
+  let end = _end
+  if (start[0].match(/\d/)) start = 's' + start
+  if (end[0].match(/\d/)) end = 's' + end
   logger.info('Got edge...', start, end)
+
   const edge = { start: start, end: end, type: undefined, text: '' }
   linktext = type.text
 
