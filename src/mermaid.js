@@ -98,7 +98,7 @@ const init = function () {
       if (typeof callback !== 'undefined') {
         callback(id)
       }
-      bindFunctions(element)
+      if (bindFunctions) bindFunctions(element)
     }, element)
   }
 }
