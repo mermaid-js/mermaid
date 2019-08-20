@@ -105,7 +105,7 @@ const config = {
     htmlLabels: true,
 
     /**
-     * **Default value linear**.
+     * How mermaid renders curves for flowcharts. Possibel values are basis, linear and cardinal. **Default value linear**.
      */
     curve: 'linear'
   },
@@ -301,6 +301,8 @@ function parse (text) {
       break
     case 'info':
       logger.debug('info info info')
+      console.warn('In API', pkg.version)
+
       parser = infoParser
       parser.parser.yy = infoDb
       break

@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import mermaid from '../../dist/mermaid.core'
+import mermaid2 from '../../src/mermaid'
 
 /**
  * ##contentLoaded
@@ -37,9 +37,8 @@ const contentLoadedApi = function () {
     // div.innerHTML = graphObj.code
     document.getElementsByTagName('body')[0].appendChild(div)
     global.mermaid.initialize(graphObj.mermaid)
-    console.log('apa')
 
-    mermaid.render('newid', graphObj.code, (svgCode, bindFunctions) => {
+    mermaid2.render('newid', graphObj.code, (svgCode, bindFunctions) => {
       div.innerHTML = svgCode
 
       bindFunctions(div)

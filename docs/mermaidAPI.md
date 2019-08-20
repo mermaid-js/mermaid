@@ -69,7 +69,7 @@ on the edges.
 
 ### curve
 
-**Default value linear**.
+How mermaid renders curves for flowcharts. Possibel values are basis, linear and cardinal. **Default value linear**.
 
 ## sequence
 
