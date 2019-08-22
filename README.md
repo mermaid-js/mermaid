@@ -13,7 +13,7 @@ In version 8.2 a security improvement was introduced. A securityLevel configurat
 
 ⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
-If your application is taking resposibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
+If your application is taking responsibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
 
 ```javascript
     mermaidAPI.initialize({
@@ -31,7 +31,7 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-**Mermaid was nomiated and won the JS Open Source Awards (2019) in the category _The most exciting use of technology_!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+**Mermaid was nominated and won the JS Open Source Awards (2019) in the category _The most exciting use of technology_!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 ### Flowchart
 
