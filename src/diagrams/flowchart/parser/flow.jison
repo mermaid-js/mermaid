@@ -31,6 +31,7 @@
 "BR"                  return 'DIR';
 [0-9]+                 return 'NUM';
 \#                    return 'BRKT';
+":::"                 return 'STYLE_SEPARATOR';
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
@@ -266,15 +267,15 @@ separator: NEWLINE | SEMI | EOF ;
 verticeStatement:
     vertex link vertex
         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-    | vertex link vertex DOT idString
+    | vertex link vertex STYLE_SEPARATOR idString
        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
-    | vertex DOT idString link vertex
+    | vertex STYLE_SEPARATOR idString link vertex
        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
-    | vertex DOT idString link vertex DOT idString
+    | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
     |vertex
         {$$ = [$1];}
-    |vertex DOT idString
+    |vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
 
@@ -553,7 +554,7 @@ alphaNumStatement
 
 alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
 
-idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS |MINUS| DOWN |EQUALS | MULT | BRKT ;
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION;
 
 graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%

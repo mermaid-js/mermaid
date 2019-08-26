@@ -22,11 +22,12 @@
   </div>
   <div class="mermaid">
     graph TD
-      A[Christmas] -->|Get money| B(Go shopping)
+      A.a[Christmas]:::someclass -->|Get money| B(Go shopping):::someclass
       subgraph test["id starting with number"]
-      A
+      A.a
       end
       style test fill:#F99,stroke-width:2px,stroke:#F0F
+      classDef someclass fill:#f96;
   </div>
   <div class="mermaid">
       graph TD

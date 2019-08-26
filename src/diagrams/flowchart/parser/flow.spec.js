@@ -1618,7 +1618,7 @@ describe('when parsing ', function () {
 
     statement = statement + 'graph TD;' + '\n'
     statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
-    statement = statement + 'a-->b[test].exClass;' + '\n'
+    statement = statement + 'a-->b[test]:::exClass;' + '\n'
 
     const res = flow.parser.parse(statement)
     const vertices = flow.parser.yy.getVertices()
@@ -1635,7 +1635,7 @@ describe('when parsing ', function () {
 
     statement = statement + 'graph TD;' + '\n'
     statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
-    statement = statement + 'b[test].exClass;' + '\n'
+    statement = statement + 'b[test]:::exClass;' + '\n'
 
     const res = flow.parser.parse(statement)
     const vertices = flow.parser.yy.getVertices()
@@ -1652,7 +1652,7 @@ describe('when parsing ', function () {
 
     statement = statement + 'graph TD;' + '\n'
     statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
-    statement = statement + 'A[test].exClass-->B[test2];' + '\n'
+    statement = statement + 'A[test]:::exClass-->B[test2];' + '\n'
 
     const res = flow.parser.parse(statement)
     const vertices = flow.parser.yy.getVertices()
@@ -1669,7 +1669,7 @@ describe('when parsing ', function () {
 
     statement = statement + 'graph TD;' + '\n'
     statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
-    statement = statement + 'a-->b[1 a a text!.].exClass;' + '\n'
+    statement = statement + 'a-->b[1 a a text!.]:::exClass;' + '\n'
 
     const res = flow.parser.parse(statement)
     const vertices = flow.parser.yy.getVertices()
