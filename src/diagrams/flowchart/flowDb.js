@@ -61,6 +61,10 @@ export const addVertex = function (_id, text, type, style, classes) {
     }
 
     vertices[id].text = txt
+  } else {
+    if (!vertices[id].text) {
+      vertices[id].text = _id
+    }
   }
   if (typeof type !== 'undefined') {
     vertices[id].type = type
@@ -175,7 +179,9 @@ export const setDirection = function (dir) {
  * @param className Class to add
  */
 export const setClass = function (ids, className) {
-  ids.split(',').forEach(function (id) {
+  ids.split(',').forEach(function (_id) {
+    let id = _id
+    if (_id[0].match(/\d/)) id = 's' + id
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className)
     }

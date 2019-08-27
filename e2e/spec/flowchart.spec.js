@@ -40,6 +40,20 @@ describe('Flowcart', () => {
     {})
   })
 
+  it('should style nodes via a class.', async () => {
+    await imgSnapshotTest(page, `
+    graph TD
+      1A --> 1B
+      1B --> 1C
+      1C --> D
+      1C --> E
+
+      classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
+      class 1A,1B,D,E processHead
+      `,
+    {})
+  })
+
   it('should render a flowchart full of circles', async () => {
     await imgSnapshotTest(page, `
     graph LR
@@ -139,6 +153,16 @@ describe('Flowcart', () => {
     await imgSnapshotTest(page, `
     graph TB
       subgraph One
+        a1-->a2
+      end
+      `,
+    {})
+  })
+
+  it('should render subgraphs with a title startign with a digit', async () => {
+    await imgSnapshotTest(page, `
+    graph TB
+      subgraph 2Two
         a1-->a2
       end
       `,
