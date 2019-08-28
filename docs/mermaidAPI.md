@@ -42,7 +42,14 @@ These are the default options which can be overridden with the initialization ca
 
 theme , the CSS style sheet
 
-**theme** - Choose one of the built-in themes: default, forest, dark or neutral. To disable any pre-defined mermaid theme, use "null".
+**theme** - Choose one of the built-in themes:
+- default
+- forest
+- dark
+- neutral
+
+To disable any pre-defined mermaid theme, use "null".
+
 **themeCSS** - Use your own CSS. This overrides **theme**.
 
     "theme": "forest",
@@ -88,7 +95,10 @@ on the edges.
 
 ### curve
 
-How mermaid renders curves for flowcharts. Possibel values are basis, linear and cardinal. **Default value linear**.
+How mermaid renders curves for flowcharts. Possibel values are
+- basis
+- linear (**default**)
+- cardinal
 
 ## sequence
 
@@ -96,7 +106,7 @@ The object containing configurations specific for sequence diagrams
 
 ### diagramMarginX
 
-margin to the right and left of the sequence diagram
+margin to the right and left of the sequence diagram.
 **Default value 50**.
 
 ### diagramMarginY
@@ -217,7 +227,8 @@ The number of alternating section styles.
 
 ### axisFormat
 
-Datetime format of the axis, this might need adjustment to match your locale and preferences
+Datetime format of the axis. This might need adjustment to match your locale and preferences
+
 **Default value '%Y-%m-%d'**.
 
 ## render
