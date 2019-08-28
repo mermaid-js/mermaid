@@ -258,7 +258,7 @@ mermaidAPI.initialize({
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
 
-## mermaidAPI defaults
+## mermaidAPI configuration defaults
 ```
 
 <script>
