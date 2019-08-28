@@ -264,18 +264,28 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
-verticeStatement:
-    vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-    | vertex link vertex STYLE_SEPARATOR idString
-       { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
-    | vertex STYLE_SEPARATOR idString link vertex
-       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
-    | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
-       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
-    |vertex
+// verticeStatement:
+//     vertex link vertex
+//         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
+//     | vertex link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
+//     | vertex STYLE_SEPARATOR idString link vertex
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
+//     | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
+//     |vertex
+//         {$$ = [$1];}
+//     |vertex STYLE_SEPARATOR idString
+//         {$$ = [$1];yy.setClass($1,$3)}
+//    ;
+
+verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
+    |node { $$ = $1 }
+    ;
+
+node: vertex
         {$$ = [$1];}
-    |vertex STYLE_SEPARATOR idString
+    | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
 
