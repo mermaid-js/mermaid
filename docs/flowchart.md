@@ -304,7 +304,7 @@ graph TB
 
 ## Interaction
 
-It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using securityLevel='strict'
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
 ```
 click nodeId callback
@@ -340,6 +340,32 @@ graph LR;
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
+Beginners tip with a full example using interactive links in html context:
+```
+<body>
+  <div class="mermaid">
+    graph LR;
+    	A-->B;
+    	click A callback "Tooltip"
+    	click B "http://www.github.com" "This is a link"
+  </div>
+  <script>
+  	var callback = function(){
+        alert('A callback was triggered');
+    }
+    var config = {
+      startOnLoad:true,
+      flowchart:{
+        useMaxWidth:true,
+        htmlLabels:true,
+        curve:'cardinal',
+      },
+      securityLevel:'loose',
+    };
+    mermaid.initialize(config);
+  </script>
+</body>
+```
 
 ## Styling and classes
 
