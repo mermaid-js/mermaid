@@ -340,7 +340,7 @@ graph LR;
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
-Beginners tip with a full example using interactive links in html context:
+Beginners tip, a full example using interactive links in a html context:
 ```
 <body>
   <div class="mermaid">
@@ -349,6 +349,7 @@ Beginners tip with a full example using interactive links in html context:
     	click A callback "Tooltip"
     	click B "http://www.github.com" "This is a link"
   </div>
+  
   <script>
   	var callback = function(){
         alert('A callback was triggered');
@@ -362,6 +363,7 @@ Beginners tip with a full example using interactive links in html context:
       },
       securityLevel:'loose',
     };
+    
     mermaid.initialize(config);
   </script>
 </body>
