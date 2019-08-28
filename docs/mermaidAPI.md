@@ -12,7 +12,7 @@ In addition to the render function, a number of behavioral configuration options
 
 ## Configuration
 
-These are the default options which can be overridden with the initialization call as shown below:
+These are the default options which can be overridden with the initialization call like so:
 
 *Example 1:*
 
@@ -38,6 +38,8 @@ These are the default options which can be overridden with the initialization ca
     mermaid.initialize(config); 
   </script>
 ```
+A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
+
 
 ## theme
 
