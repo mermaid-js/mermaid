@@ -1158,6 +1158,15 @@ describe('when parsing ', function () {
     expect(vert['A'].type).toBe('square')
     expect(vert['A'].text).toBe('chimpansen hoppar')
   })
+  it('should handle text including _ in vertices', function () {
+    const res = flow.parser.parse('graph TD;A[chimpansen_hoppar] --> C;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(vert['A'].type).toBe('square')
+    expect(vert['A'].text).toBe('chimpansen_hoppar')
+  })
 
   it('should handle quoted text in vertices ', function () {
     const res = flow.parser.parse('graph TD;A["chimpansen hoppar ()[]"] --> C;')
@@ -1604,6 +1613,22 @@ describe('when parsing ', function () {
     statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
     statement = statement + 'a-->b;' + '\n'
     statement = statement + 'class a exClass;'
+
+    const res = flow.parser.parse(statement)
+
+    const classes = flow.parser.yy.getClasses()
+
+    expect(classes['exClass'].styles.length).toBe(2)
+    expect(classes['exClass'].styles[0]).toBe('background:#bbb')
+    expect(classes['exClass'].styles[1]).toBe('border:1px solid red')
+  })
+  it('should be possible to apply a class to a vertex with an id containing _', function () {
+    let statement = ''
+
+    statement = statement + 'graph TD;' + '\n'
+    statement = statement + 'classDef exClass background:#bbb,border:1px solid red;' + '\n'
+    statement = statement + 'a_a-->b_b;' + '\n'
+    statement = statement + 'class a_a exClass;'
 
     const res = flow.parser.parse(statement)
 
