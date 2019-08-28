@@ -5,9 +5,10 @@
 This is the api to be used when handling the integration with the web page instead of using the default integration
 (mermaid.js).
 
-The core of this api is the **render** function that given a graph definitionas text renders the graph/diagram and
-returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
-somewhere in the page or something completely different.
+The core of this api is the [**render**](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render) function which, given a graph definition as text, renders the graph/diagram and returns an svg element for the graph.
+
+It is is then up to the user of the API to make use of the svg, either insert it
+somewhere in the page or do something completely different.
 
 ## Configuration
 
@@ -256,3 +257,51 @@ mermaidAPI.initialize({
 -   `container`  selector to element in which a div with the graph temporarily will be inserted. In one is
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
+
+## mermaidAPI defaults
+```
+
+<script>
+    var config = {
+      theme:'default',
+      logLevel:'fatal',
+      securityLevel:'strict',
+      startOnLoad:true,
+      arrowMarkerAbsolute:false,
+      
+      flowchart:{
+        htmlLabels:false,
+        curve:'linear',
+      },
+      sequence:{
+        diagramMarginX:50,
+        diagramMarginY:10,
+        actorMargin:50,
+        width:150,
+        height:65,
+        boxMargin:10,
+        boxTextMargin:5,
+        noteMargin:10,
+        messageMargin:35,
+        mirrorActors:true,
+        bottomMarginAdj:1,
+        useMaxWidth:true,
+        rightAngles:false,
+        showSequenceNumbers:false,
+      },
+      gantt:{
+        titleTopMargin:25,
+        barHeight:20,
+        barGap:4,
+        topPadding:50,
+        leftPadding:75,
+        gridLineStartPadding:35,
+        fontSize:11,
+        fontFamily:'"Open-Sans", "sans-serif"',
+        numberSectionStyles:4,
+        axisFormat:'%Y-%m-%d',
+      }
+    };
+    mermaid.initialize(config); 
+  </script>
+ ```
