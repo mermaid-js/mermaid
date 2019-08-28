@@ -217,14 +217,14 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg, sequenceInd
   const breaklines = msg.message.split(/<br\/?>/ig)
   for (const breakline of breaklines) {
     textElem = g.append('text') // text label for the x axis
-    .attr('x', txtCenter)
-    .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
-    .style('text-anchor', 'middle')
-    .attr('class', 'messageText')
-    .text(breakline.trim())
+      .attr('x', txtCenter)
+      .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
+      .style('text-anchor', 'middle')
+      .attr('class', 'messageText')
+      .text(breakline.trim())
     counterBreaklines++
   }
-  const offsetLineCounter = counterBreaklines-1
+  const offsetLineCounter = counterBreaklines - 1
   const totalOffset = offsetLineCounter * breaklineOffset
 
   let textWidth = (textElem._groups || textElem)[0][0].getBBox().width
@@ -239,7 +239,7 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg, sequenceInd
         (verticalPos + 30 + totalOffset) + ' ' + startx + ',' + (verticalPos + 20 + totalOffset))
     }
 
-    bounds.bumpVerticalPos(30+totalOffset)
+    bounds.bumpVerticalPos(30 + totalOffset)
     const dx = Math.max(textWidth / 2, 100)
     bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + totalOffset)
   } else {
@@ -248,7 +248,7 @@ const drawMessage = function (elem, startx, stopx, verticalPos, msg, sequenceInd
     line.attr('y1', verticalPos)
     line.attr('x2', stopx)
     line.attr('y2', verticalPos)
-    bounds.insert(startx, bounds.getVerticalPos() - 10 + totalOffset, stopx, bounds.getVerticalPos()) + totalOffset
+    bounds.insert(startx, bounds.getVerticalPos() - 10 + totalOffset, stopx, bounds.getVerticalPos() + totalOffset)
   }
   // Make an SVG Container
   // Draw the line
