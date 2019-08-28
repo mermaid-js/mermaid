@@ -11,13 +11,31 @@ somewhere in the page or something completely different.
 
 ## Configuration
 
-These are the default options which can be overridden with the initialization call as in the example below:
+These are the default options which can be overridden with the initialization call as shown below:
+*Example 1:*
 
     mermaid.initialize({
       flowchart:{
          htmlLabels: false
       }
     });
+
+*Example 2:*
+```
+  <script>
+    var config = {
+      startOnLoad:true,
+      flowchart:{
+        useMaxWidth:true,
+        htmlLabels:true,
+        curve:'cardinal',
+      },
+      
+      securityLevel:'loose',
+    };
+    mermaid.initialize(config); 
+  </script>
+```
 
 ## theme
 
