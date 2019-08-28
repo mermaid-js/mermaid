@@ -12,6 +12,7 @@ somewhere in the page or something completely different.
 ## Configuration
 
 These are the default options which can be overridden with the initialization call as shown below:
+
 *Example 1:*
 
     mermaid.initialize({
