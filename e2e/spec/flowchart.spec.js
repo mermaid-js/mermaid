@@ -149,6 +149,12 @@ describe('Flowcart', () => {
     {})
   })
 
+  it('should render labels with numbers at the start', async () => {
+    await imgSnapshotTest(page, `
+    graph TB;subgraph "number as labels";1;end;
+      `,
+    {})
+  })
   it('should render subgraphs', async () => {
     await imgSnapshotTest(page, `
     graph TB

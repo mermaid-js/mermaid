@@ -38,6 +38,7 @@ const sanitize = text => {
  * @param classes
  */
 export const addVertex = function (_id, text, type, style, classes) {
+  console.log('called with',_id);
   let txt
   let id = _id
   if (typeof id === 'undefined') {
@@ -373,6 +374,9 @@ export const addSubGraph = function (_id, list, _title) {
   let nodeList = []
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list))
+  for(let i=0;i<nodeList.length;i++){
+    if(nodeList[i][0].match(/\d/)) nodeList[i] = 's' + nodeList[i];
+  }
 
   id = id || ('subGraph' + subCount)
   if (id[0].match(/\d/)) id = 's' + id

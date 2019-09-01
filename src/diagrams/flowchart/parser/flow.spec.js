@@ -1414,6 +1414,27 @@ describe('when parsing ', function () {
     expect(edges.length).toBe(0)
     expect(vert['id1'].styles.length).toBe(0)
   })
+  it('should handle a single node with a single digit', function () {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;1;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges.length).toBe(0)
+    expect(vert['s1'].text).toBe('1')
+  })
+  it('should handle a single node with a single digit in a subgraph', function () {
+    // Silly but syntactically correct
+
+    const res = flow.parser.parse('graph TD;subgraph "hello";1;end;')
+
+    const vert = flow.parser.yy.getVertices()
+    const edges = flow.parser.yy.getEdges()
+
+    expect(edges.length).toBe(0)
+    expect(vert['s1'].text).toBe('1')
+  })
   it('should handle a single node with alphanumerics starting on a num', function () {
         // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;1id;')
