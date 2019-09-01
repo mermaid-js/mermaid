@@ -38,7 +38,6 @@ const sanitize = text => {
  * @param classes
  */
 export const addVertex = function (_id, text, type, style, classes) {
-  console.log('called with',_id);
   let txt
   let id = _id
   if (typeof id === 'undefined') {

@@ -29,7 +29,7 @@
 "BT"                  return 'DIR';
 "TD"                  return 'DIR';
 "BR"                  return 'DIR';
-[0-9]+                { console.log('got NUM'); return 'NUM';}
+[0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
 ":::"                 return 'STYLE_SEPARATOR';
 ":"                   return 'COLON';
@@ -280,11 +280,11 @@ separator: NEWLINE | SEMI | EOF ;
 //    ;
 
 verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
-    |node { console.log('A node', $1);$$ = $1 }
+    |node { $$ = $1 }
     ;
 
 node: vertex
-        { console.log('A vertex', $1);$$ = [$1];}
+        { $$ = [$1];}
     | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
