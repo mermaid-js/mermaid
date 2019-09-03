@@ -200,7 +200,9 @@ const setTooltip = function (ids, tooltip) {
   })
 }
 
-const setClickFun = function (id, functionName) {
+const setClickFun = function (_id, functionName) {
+  let id = _id
+  if (_id[0].match(/\d/)) id = 's' + id
   if (config.securityLevel !== 'loose') {
     return
   }
@@ -226,7 +228,9 @@ const setClickFun = function (id, functionName) {
  * @param tooltip Tooltip for the clickable element
  */
 export const setLink = function (ids, linkStr, tooltip) {
-  ids.split(',').forEach(function (id) {
+  ids.split(',').forEach(function (_id) {
+    let id = _id
+    if (_id[0].match(/\d/)) id = 's' + id
     if (typeof vertices[id] !== 'undefined') {
       if (config.securityLevel !== 'loose') {
         vertices[id].link = sanitizeUrl(linkStr) // .replace(/javascript:.*/g, '')
