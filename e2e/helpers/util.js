@@ -12,6 +12,10 @@ export const mermaidUrl = (graphStr, options, api) => {
     url = 'http://localhost:9000/xss.html?graph=' + graphStr
   }
 
+  if (options.listUrl) {
+    console.log(options.listId, ' ', url)
+  }
+
   return url
 }
 
