@@ -27,14 +27,21 @@ export const addVertices = function (vert, g, svgId) {
   const svg = d3.select(`[id="${svgId}"]`)
   const keys = Object.keys(vert)
 
-  const styleFromStyleArr = function (styleStr, arr) {
+  const styleFromStyleArr = function (styleStr, arr, { label }) {
+    if (!label) {
     // Create a compound style definition from the style definitions found for the node in the graph definition
-    for (let i = 0; i < arr.length; i++) {
-      if (typeof arr[i] !== 'undefined') {
-        styleStr = styleStr + arr[i] + ';'
+      for (let i = 0; i < arr.length; i++) {
+        if (typeof arr[i] !== 'undefined') {
+          styleStr = styleStr + arr[i] + ';'
+        }
+      }
+    } else {
+      for (let i = 0; i < arr.length; i++) {
+        if (typeof arr[i] !== 'undefined') {
+          if (arr[i].match('^color:')) styleStr = styleStr + arr[i] + ';'
+        }
       }
     }
-
     return styleStr
   }
 
@@ -57,7 +64,9 @@ export const addVertices = function (vert, g, svgId) {
      */
     let style = ''
     // Create a compound style definition from the style definitions found for the node in the graph definition
-    style = styleFromStyleArr(style, vertex.styles)
+    style = styleFromStyleArr(style, vertex.styles, { label: false })
+    let labelStyle = ''
+    labelStyle = styleFromStyleArr(labelStyle, vertex.styles, { label: true })
 
     // Use vertex id as text in the box if no text is provided by the graph definition
     let vertexText = vertex.text !== undefined ? vertex.text : vertex.id
@@ -139,7 +148,7 @@ export const addVertices = function (vert, g, svgId) {
         _shape = 'rect'
     }
     // Add the node
-    g.setNode(vertex.id, { labelType: 'svg', shape: _shape, label: vertexNode, rx: radious, ry: radious, 'class': classStr, style: style, id: vertex.id })
+    g.setNode(vertex.id, { labelType: 'svg', labelStyle: labelStyle, shape: _shape, label: vertexNode, rx: radious, ry: radious, 'class': classStr, style: style, id: vertex.id })
   })
 }
 

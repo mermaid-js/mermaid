@@ -20,6 +20,7 @@ const contentLoaded = function () {
     div.innerHTML = graphObj.code
     document.getElementsByTagName('body')[0].appendChild(div)
     global.mermaid.initialize(graphObj.mermaid)
+    // console.log('graphObj.mermaid', graphObj.mermaid)
     global.mermaid.init()
   }
 }
@@ -30,7 +31,6 @@ const contentLoadedApi = function () {
     const graphBase64 = document.location.href.substr(pos)
     const graphObj = JSON.parse(Base64.decode(graphBase64))
     // const graph = 'hello'
-    console.log(graphObj)
     const div = document.createElement('div')
     div.id = 'block'
     div.className = 'mermaid'
@@ -57,6 +57,7 @@ if (typeof document !== 'undefined') {
         this.console.log('Using api')
         contentLoadedApi()
       } else {
+        this.console.log('Not using api')
         contentLoaded()
       }
     },

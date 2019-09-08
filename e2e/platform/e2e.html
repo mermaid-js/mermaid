@@ -10,6 +10,8 @@
   <body>
     <script src="./mermaid.js"></script>
     <script>
+      // Notice startOnLoad=false
+      // This prevents default handling in mermaid from render before the e2e logic is applied
       mermaid.initialize({
         startOnLoad: false,
         useMaxWidth: true,

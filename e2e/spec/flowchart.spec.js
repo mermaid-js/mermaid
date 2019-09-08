@@ -308,17 +308,18 @@ describe('Flowcart', () => {
     {})
   })
 
-  fit('should render color of styled nodes', async () => {
+  it('should render color of styled nodes', async () => {
     await imgSnapshotTest(page, `
       graph LR
         foo-->bar
 
+        classDef foo fill:lightblue,color:green,stroke:#FF9E2C,font-weight:bold
         style foo fill:#F99,stroke-width:2px,stroke:#F0F
-        style bar fill:#999,color: #ffffff, stroke-width:10px,stroke:#0F0
+        style bar fill:#999,color: #00ff00, stroke-width:10px,stroke:#0F0
       `,
     {
-      listUrl: true,
-      listId: 'color'
+      listUrl: false,
+      listId: 'color styling',
       logLevel: 0
     })
   })
