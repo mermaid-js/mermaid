@@ -106,7 +106,7 @@ export const draw = (txt, id, ver) => {
       .text(parser.yy.getTitle())
       .attr('x', 0)
       .attr('y', -(h - 50) / 2)
-      .attr('class', 'titleText')
+      .attr('class', 'pieTitleText')
   } catch (e) {
     logger.error('Error while rendering info diagram')
     logger.error(e.message)
