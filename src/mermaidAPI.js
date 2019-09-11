@@ -34,6 +34,9 @@ import gitGraphAst from './diagrams/git/gitGraphAst'
 import infoRenderer from './diagrams/info/infoRenderer'
 import infoParser from './diagrams/info/parser/info'
 import infoDb from './diagrams/info/infoDb'
+import pieRenderer from './diagrams/pie/pieRenderer'
+import pieParser from './diagrams/pie/parser/pie'
+import pieDb from './diagrams/pie/pieDb'
 
 const themes = {}
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -338,6 +341,11 @@ function parse (text) {
       parser = infoParser
       parser.parser.yy = infoDb
       break
+    case 'pie':
+      logger.debug('pie')
+      parser = pieParser
+      parser.parser.yy = pieDb
+      break
   }
 
   parser.parser.yy.parseError = (str, hash) => {
@@ -513,6 +521,11 @@ const render = function (id, txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
       infoRenderer.setConf(config.class)
       infoRenderer.draw(txt, id, pkg.version)
+      break
+    case 'pie':
+      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute
+      pieRenderer.setConf(config.class)
+      pieRenderer.draw(txt, id, pkg.version)
       break
   }
 
