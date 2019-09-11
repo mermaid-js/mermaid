@@ -4,5 +4,6 @@ node_js:
   - "10"
 script:
   - yarn test --coverage
+  - yarn e2e
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
