@@ -2,6 +2,11 @@ dist: trusty
 language: node_js
 node_js:
   - "10"
+cache:
+  # cache both npm modules and Cypress binary
+  directories:
+    - ~/.npm
+    - ~/.cache
 script:
   - yarn test --coverage
   - yarn e2e
