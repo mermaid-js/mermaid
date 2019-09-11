@@ -40,6 +40,9 @@ export const detectType = function (text) {
   if (text.match(/^\s*info/)) {
     return 'info'
   }
+  if (text.match(/^\s*pie/)) {
+    return 'pie'
+  }
 
   return 'flowchart'
 }
