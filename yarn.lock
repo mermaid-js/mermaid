@@ -1150,7 +1150,7 @@
 
 "@cypress/listr-verbose-renderer@0.4.1":
   version "0.4.1"
-  resolved "http://pacman01.inkclub.local:4873/@cypress%2flistr-verbose-renderer/-/listr-verbose-renderer-0.4.1.tgz#a77492f4b11dcc7c446a34b3e28721afd33c642a"
+  resolved "https://registry.yarnpkg.com/@cypress/listr-verbose-renderer/-/listr-verbose-renderer-0.4.1.tgz#a77492f4b11dcc7c446a34b3e28721afd33c642a"
   dependencies:
     chalk "^1.1.3"
     cli-cursor "^1.0.2"
@@ -1159,26 +1159,26 @@
 
 "@cypress/xvfb@1.2.4":
   version "1.2.4"
-  resolved "http://pacman01.inkclub.local:4873/@cypress%2fxvfb/-/xvfb-1.2.4.tgz#2daf42e8275b39f4aa53c14214e557bd14e7748a"
+  resolved "https://registry.yarnpkg.com/@cypress/xvfb/-/xvfb-1.2.4.tgz#2daf42e8275b39f4aa53c14214e557bd14e7748a"
   dependencies:
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
 "@hapi/address@2.x.x":
   version "2.1.1"
-  resolved "http://pacman01.inkclub.local:4873/@hapi%2faddress/-/address-2.1.1.tgz#61395b5ed94c4cb19c2dc4c85969cff3d40d583f"
+  resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.1.tgz#61395b5ed94c4cb19c2dc4c85969cff3d40d583f"
 
 "@hapi/bourne@1.x.x":
   version "1.3.2"
-  resolved "http://pacman01.inkclub.local:4873/@hapi%2fbourne/-/bourne-1.3.2.tgz#0a7095adea067243ce3283e1b56b8a8f453b242a"
+  resolved "https://registry.yarnpkg.com/@hapi/bourne/-/bourne-1.3.2.tgz#0a7095adea067243ce3283e1b56b8a8f453b242a"
 
 "@hapi/hoek@8.x.x":
   version "8.2.4"
-  resolved "http://pacman01.inkclub.local:4873/@hapi%2fhoek/-/hoek-8.2.4.tgz#684a14f4ca35d46f44abc87dfc696e5e4fe8a020"
+  resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-8.2.4.tgz#684a14f4ca35d46f44abc87dfc696e5e4fe8a020"
 
 "@hapi/joi@^15.0.3":
   version "15.1.1"
-  resolved "http://pacman01.inkclub.local:4873/@hapi%2fjoi/-/joi-15.1.1.tgz#c675b8a71296f02833f8d6d243b34c57b8ce19d7"
+  resolved "https://registry.yarnpkg.com/@hapi/joi/-/joi-15.1.1.tgz#c675b8a71296f02833f8d6d243b34c57b8ce19d7"
   dependencies:
     "@hapi/address" "2.x.x"
     "@hapi/bourne" "1.x.x"
@@ -1187,31 +1187,31 @@
 
 "@hapi/topo@3.x.x":
   version "3.1.3"
-  resolved "http://pacman01.inkclub.local:4873/@hapi%2ftopo/-/topo-3.1.3.tgz#c7a02e0d936596d29f184e6d7fdc07e8b5efce11"
+  resolved "https://registry.yarnpkg.com/@hapi/topo/-/topo-3.1.3.tgz#c7a02e0d936596d29f184e6d7fdc07e8b5efce11"
   dependencies:
     "@hapi/hoek" "8.x.x"
 
 "@nodelib/fs.scandir@2.1.2":
   version "2.1.2"
-  resolved "http://pacman01.inkclub.local:4873/@nodelib%2ffs.scandir/-/fs.scandir-2.1.2.tgz#1f981cd5b83e85cfdeb386fc693d4baab392fa54"
+  resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.2.tgz#1f981cd5b83e85cfdeb386fc693d4baab392fa54"
   dependencies:
     "@nodelib/fs.stat" "2.0.2"
     run-parallel "^1.1.9"
 
 "@nodelib/fs.stat@2.0.2", "@nodelib/fs.stat@^2.0.1":
   version "2.0.2"
-  resolved "http://pacman01.inkclub.local:4873/@nodelib%2ffs.stat/-/fs.stat-2.0.2.tgz#2762aea8fe78ea256860182dcb52d61ee4b8fda6"
+  resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-2.0.2.tgz#2762aea8fe78ea256860182dcb52d61ee4b8fda6"
 
 "@nodelib/fs.walk@^1.2.1":
   version "1.2.3"
-  resolved "http://pacman01.inkclub.local:4873/@nodelib%2ffs.walk/-/fs.walk-1.2.3.tgz#a555dc256acaf00c62b0db29529028dd4d4cb141"
+  resolved "https://registry.yarnpkg.com/@nodelib/fs.walk/-/fs.walk-1.2.3.tgz#a555dc256acaf00c62b0db29529028dd4d4cb141"
   dependencies:
     "@nodelib/fs.scandir" "2.1.2"
     fastq "^1.6.0"
 
 "@oclif/color@^0.0.0":
   version "0.0.0"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fcolor/-/color-0.0.0.tgz#54939bbd16d1387511bf1a48ccda1a417248e6a9"
+  resolved "https://registry.yarnpkg.com/@oclif/color/-/color-0.0.0.tgz#54939bbd16d1387511bf1a48ccda1a417248e6a9"
   dependencies:
     ansi-styles "^3.2.1"
     supports-color "^5.4.0"
@@ -1219,7 +1219,7 @@
 
 "@oclif/command@1.5.16":
   version "1.5.16"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fcommand/-/command-1.5.16.tgz#88b578d37e981034303effbcbdd73c332a6f5543"
+  resolved "https://registry.yarnpkg.com/@oclif/command/-/command-1.5.16.tgz#88b578d37e981034303effbcbdd73c332a6f5543"
   dependencies:
     "@oclif/errors" "^1.2.2"
     "@oclif/parser" "^3.7.3"
@@ -1228,7 +1228,7 @@
 
 "@oclif/command@^1.5.13", "@oclif/command@^1.5.3":
   version "1.5.19"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fcommand/-/command-1.5.19.tgz#13f472450eb83bd6c6871a164c03eadb5e1a07ed"
+  resolved "https://registry.yarnpkg.com/@oclif/command/-/command-1.5.19.tgz#13f472450eb83bd6c6871a164c03eadb5e1a07ed"
   dependencies:
     "@oclif/config" "^1"
     "@oclif/errors" "^1.2.2"
@@ -1239,7 +1239,7 @@
 
 "@oclif/config@^1":
   version "1.13.3"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fconfig/-/config-1.13.3.tgz#1b13e18d0e4242ddbd9cbd100f0eec819aa2bf8c"
+  resolved "https://registry.yarnpkg.com/@oclif/config/-/config-1.13.3.tgz#1b13e18d0e4242ddbd9cbd100f0eec819aa2bf8c"
   dependencies:
     "@oclif/parser" "^3.8.0"
     debug "^4.1.1"
@@ -1247,7 +1247,7 @@
 
 "@oclif/errors@^1.2.2":
   version "1.2.2"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2ferrors/-/errors-1.2.2.tgz#9d8f269b15f13d70aa93316fed7bebc24688edc2"
+  resolved "https://registry.yarnpkg.com/@oclif/errors/-/errors-1.2.2.tgz#9d8f269b15f13d70aa93316fed7bebc24688edc2"
   dependencies:
     clean-stack "^1.3.0"
     fs-extra "^7.0.0"
@@ -1257,11 +1257,11 @@
 
 "@oclif/linewrap@^1.0.0":
   version "1.0.0"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2flinewrap/-/linewrap-1.0.0.tgz#aedcb64b479d4db7be24196384897b5000901d91"
+  resolved "https://registry.yarnpkg.com/@oclif/linewrap/-/linewrap-1.0.0.tgz#aedcb64b479d4db7be24196384897b5000901d91"
 
 "@oclif/parser@^3.7.3", "@oclif/parser@^3.8.0", "@oclif/parser@^3.8.3":
   version "3.8.4"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fparser/-/parser-3.8.4.tgz#1a90fc770a42792e574fb896325618aebbe8c9e4"
+  resolved "https://registry.yarnpkg.com/@oclif/parser/-/parser-3.8.4.tgz#1a90fc770a42792e574fb896325618aebbe8c9e4"
   dependencies:
     "@oclif/linewrap" "^1.0.0"
     chalk "^2.4.2"
@@ -1269,7 +1269,7 @@
 
 "@oclif/plugin-help@^2":
   version "2.2.1"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fplugin-help/-/plugin-help-2.2.1.tgz#cb4d23e453b19340b07c48fb299948b7c74366d3"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-help/-/plugin-help-2.2.1.tgz#cb4d23e453b19340b07c48fb299948b7c74366d3"
   dependencies:
     "@oclif/command" "^1.5.13"
     chalk "^2.4.1"
@@ -1282,7 +1282,7 @@
 
 "@oclif/plugin-not-found@^1.2":
   version "1.2.3"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fplugin-not-found/-/plugin-not-found-1.2.3.tgz#00f9e7a0a793a5e2f616d8280075f4592de8f079"
+  resolved "https://registry.yarnpkg.com/@oclif/plugin-not-found/-/plugin-not-found-1.2.3.tgz#00f9e7a0a793a5e2f616d8280075f4592de8f079"
   dependencies:
     "@oclif/color" "^0.0.0"
     "@oclif/command" "^1.5.3"
@@ -1292,11 +1292,11 @@
 
 "@oclif/screen@^1.0.3":
   version "1.0.4"
-  resolved "http://pacman01.inkclub.local:4873/@oclif%2fscreen/-/screen-1.0.4.tgz#b740f68609dfae8aa71c3a6cab15d816407ba493"
+  resolved "https://registry.yarnpkg.com/@oclif/screen/-/screen-1.0.4.tgz#b740f68609dfae8aa71c3a6cab15d816407ba493"
 
 "@percy/agent@~0":
   version "0.11.0"
-  resolved "http://pacman01.inkclub.local:4873/@percy%2fagent/-/agent-0.11.0.tgz#70fa19c2649298ac318fce181713e366d5f687e0"
+  resolved "https://registry.yarnpkg.com/@percy/agent/-/agent-0.11.0.tgz#70fa19c2649298ac318fce181713e366d5f687e0"
   dependencies:
     "@oclif/command" "1.5.16"
     "@oclif/config" "^1"
@@ -1319,7 +1319,7 @@
 
 "@percy/cypress@^2.0.1":
   version "2.0.1"
-  resolved "http://pacman01.inkclub.local:4873/@percy%2fcypress/-/cypress-2.0.1.tgz#65b2277d26d2ee6195af80a6d18b046fce60accd"
+  resolved "https://registry.yarnpkg.com/@percy/cypress/-/cypress-2.0.1.tgz#65b2277d26d2ee6195af80a6d18b046fce60accd"
   dependencies:
     "@percy/agent" "~0"
     axios "^0.19.0"
@@ -1585,7 +1585,7 @@ ansi-colors@^3.0.0:
 
 ansi-escapes@^1.0.0:
   version "1.4.0"
-  resolved "http://pacman01.inkclub.local:4873/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"
+  resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-1.4.0.tgz#d3a8a83b319aa67793662b13e761c7911422306e"
 
 ansi-escapes@^3.0.0:
   version "3.0.0"
@@ -1593,7 +1593,7 @@ ansi-escapes@^3.0.0:
 
 ansi-escapes@^3.1.0:
   version "3.2.0"
-  resolved "http://pacman01.inkclub.local:4873/ansi-escapes/-/ansi-escapes-3.2.0.tgz#8780b98ff9dbf5638152d1f1fe5c1d7b4442976b"
+  resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-3.2.0.tgz#8780b98ff9dbf5638152d1f1fe5c1d7b4442976b"
 
 ansi-html@0.0.7, ansi-html@^0.0.7:
   version "0.0.7"
@@ -1627,7 +1627,7 @@ ansi-styles@~1.0.0:
 
 ansicolors@~0.3.2:
   version "0.3.2"
-  resolved "http://pacman01.inkclub.local:4873/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
+  resolved "https://registry.yarnpkg.com/ansicolors/-/ansicolors-0.3.2.tgz#665597de86a9ffe3aa9bfbe6cae5c6ea426b4979"
 
 anymatch@^2.0.0:
   version "2.0.0"
@@ -1658,7 +1658,7 @@ aproba@^1.1.1:
 
 arch@2.1.1:
   version "2.1.1"
-  resolved "http://pacman01.inkclub.local:4873/arch/-/arch-2.1.1.tgz#8f5c2731aa35a30929221bb0640eed65175ec84e"
+  resolved "https://registry.yarnpkg.com/arch/-/arch-2.1.1.tgz#8f5c2731aa35a30929221bb0640eed65175ec84e"
 
 are-we-there-yet@~1.1.2:
   version "1.1.4"
@@ -1722,7 +1722,7 @@ array-union@^1.0.1:
 
 array-union@^2.1.0:
   version "2.1.0"
-  resolved "http://pacman01.inkclub.local:4873/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
+  resolved "https://registry.yarnpkg.com/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
 
 array-uniq@^1.0.1:
   version "1.0.3"
@@ -1790,7 +1790,7 @@ async-limiter@~1.0.0:
 
 async@2.6.1:
   version "2.6.1"
-  resolved "http://pacman01.inkclub.local:4873/async/-/async-2.6.1.tgz#b245a23ca71930044ec53fa46aa00a3e87c6a610"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.1.tgz#b245a23ca71930044ec53fa46aa00a3e87c6a610"
   dependencies:
     lodash "^4.17.10"
 
@@ -1806,7 +1806,7 @@ async@^2.1.4:
 
 async@~1.0.0:
   version "1.0.0"
-  resolved "http://pacman01.inkclub.local:4873/async/-/async-1.0.0.tgz#f8fc04ca3a13784ade9e1641af98578cfbd647a9"
+  resolved "https://registry.yarnpkg.com/async/-/async-1.0.0.tgz#f8fc04ca3a13784ade9e1641af98578cfbd647a9"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -1826,14 +1826,14 @@ aws4@^1.8.0:
 
 axios@^0.18.1:
   version "0.18.1"
-  resolved "http://pacman01.inkclub.local:4873/axios/-/axios-0.18.1.tgz#ff3f0de2e7b5d180e757ad98000f1081b87bcea3"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.18.1.tgz#ff3f0de2e7b5d180e757ad98000f1081b87bcea3"
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
 
 axios@^0.19.0:
   version "0.19.0"
-  resolved "http://pacman01.inkclub.local:4873/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.0.tgz#8e09bff3d9122e133f7b8101c8fbdd00ed3d2ab8"
   dependencies:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
@@ -2027,7 +2027,7 @@ base64-js@^1.0.2:
 
 base64-js@^1.2.3:
   version "1.3.1"
-  resolved "http://pacman01.inkclub.local:4873/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
 
 base@^0.11.1:
   version "0.11.2"
@@ -2067,15 +2067,15 @@ block-stream@*:
 
 bluebird-retry@^0.11.0:
   version "0.11.0"
-  resolved "http://pacman01.inkclub.local:4873/bluebird-retry/-/bluebird-retry-0.11.0.tgz#1289ab22cbbc3a02587baad35595351dd0c1c047"
+  resolved "https://registry.yarnpkg.com/bluebird-retry/-/bluebird-retry-0.11.0.tgz#1289ab22cbbc3a02587baad35595351dd0c1c047"
 
 bluebird@3.5.0:
   version "3.5.0"
-  resolved "http://pacman01.inkclub.local:4873/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
 
 bluebird@3.5.5, bluebird@^3.5.0:
   version "3.5.5"
-  resolved "http://pacman01.inkclub.local:4873/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.5.tgz#a8d0afd73251effbbd5fe384a77d73003c17a71f"
 
 bluebird@^3.5.1:
   version "3.5.3"
@@ -2087,7 +2087,7 @@ bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
 
 body-parser@1.19.0, body-parser@^1.18.3:
   version "1.19.0"
-  resolved "http://pacman01.inkclub.local:4873/body-parser/-/body-parser-1.19.0.tgz#96b2709e57c9c4e09a6fd66a8fd979844f69f08a"
+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.19.0.tgz#96b2709e57c9c4e09a6fd66a8fd979844f69f08a"
   dependencies:
     bytes "3.1.0"
     content-type "~1.0.4"
@@ -2169,7 +2169,7 @@ braces@^2.3.2:
 
 braces@^3.0.1:
   version "3.0.2"
-  resolved "http://pacman01.inkclub.local:4873/braces/-/braces-3.0.2.tgz#3454e1a462ee8d599e236df336cd9ea4f8afe107"
+  resolved "https://registry.yarnpkg.com/braces/-/braces-3.0.2.tgz#3454e1a462ee8d599e236df336cd9ea4f8afe107"
   dependencies:
     fill-range "^7.0.1"
 
@@ -2264,7 +2264,7 @@ bser@^2.0.0:
 
 buffer-crc32@~0.2.3:
   version "0.2.13"
-  resolved "http://pacman01.inkclub.local:4873/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
+  resolved "https://registry.yarnpkg.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
 
 buffer-equal@^1.0.0:
   version "1.0.0"
@@ -2353,7 +2353,7 @@ cached-path-relative@^1.0.0:
 
 cachedir@1.3.0:
   version "1.3.0"
-  resolved "http://pacman01.inkclub.local:4873/cachedir/-/cachedir-1.3.0.tgz#5e01928bf2d95b5edd94b0942188246740e0dbc4"
+  resolved "https://registry.yarnpkg.com/cachedir/-/cachedir-1.3.0.tgz#5e01928bf2d95b5edd94b0942188246740e0dbc4"
   dependencies:
     os-homedir "^1.0.1"
 
@@ -2429,7 +2429,7 @@ capture-exit@^1.2.0:
 
 cardinal@^2.1.1:
   version "2.1.1"
-  resolved "http://pacman01.inkclub.local:4873/cardinal/-/cardinal-2.1.1.tgz#7cc1055d822d212954d07b085dea251cc7bc5505"
+  resolved "https://registry.yarnpkg.com/cardinal/-/cardinal-2.1.1.tgz#7cc1055d822d212954d07b085dea251cc7bc5505"
   dependencies:
     ansicolors "~0.3.2"
     redeyed "~2.1.0"
@@ -2506,7 +2506,7 @@ chardet@^0.4.0:
 
 check-more-types@2.24.0:
   version "2.24.0"
-  resolved "http://pacman01.inkclub.local:4873/check-more-types/-/check-more-types-2.24.0.tgz#1420ffb10fd444dcfc79b43891bbfffd32a84600"
+  resolved "https://registry.yarnpkg.com/check-more-types/-/check-more-types-2.24.0.tgz#1420ffb10fd444dcfc79b43891bbfffd32a84600"
 
 chokidar@^2.0.2:
   version "2.0.4"
@@ -2593,15 +2593,15 @@ clean-css@4.2.x, clean-css@^4.1.6:
 
 clean-stack@^1.3.0:
   version "1.3.0"
-  resolved "http://pacman01.inkclub.local:4873/clean-stack/-/clean-stack-1.3.0.tgz#9e821501ae979986c46b1d66d2d432db2fd4ae31"
+  resolved "https://registry.yarnpkg.com/clean-stack/-/clean-stack-1.3.0.tgz#9e821501ae979986c46b1d66d2d432db2fd4ae31"
 
 clean-stack@^2.0.0:
   version "2.2.0"
-  resolved "http://pacman01.inkclub.local:4873/clean-stack/-/clean-stack-2.2.0.tgz#ee8472dbb129e727b31e8a10a427dee9dfe4008b"
+  resolved "https://registry.yarnpkg.com/clean-stack/-/clean-stack-2.2.0.tgz#ee8472dbb129e727b31e8a10a427dee9dfe4008b"
 
 cli-cursor@^1.0.2:
   version "1.0.2"
-  resolved "http://pacman01.inkclub.local:4873/cli-cursor/-/cli-cursor-1.0.2.tgz#64da3f7d56a54412e59794bd62dc35295e8f2987"
+  resolved "https://registry.yarnpkg.com/cli-cursor/-/cli-cursor-1.0.2.tgz#64da3f7d56a54412e59794bd62dc35295e8f2987"
   dependencies:
     restore-cursor "^1.0.1"
 
@@ -2613,18 +2613,18 @@ cli-cursor@^2.1.0:
 
 cli-spinners@^0.1.2:
   version "0.1.2"
-  resolved "http://pacman01.inkclub.local:4873/cli-spinners/-/cli-spinners-0.1.2.tgz#bb764d88e185fb9e1e6a2a1f19772318f605e31c"
+  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-0.1.2.tgz#bb764d88e185fb9e1e6a2a1f19772318f605e31c"
 
 cli-truncate@^0.2.1:
   version "0.2.1"
-  resolved "http://pacman01.inkclub.local:4873/cli-truncate/-/cli-truncate-0.2.1.tgz#9f15cfbb0705005369216c626ac7d05ab90dd574"
+  resolved "https://registry.yarnpkg.com/cli-truncate/-/cli-truncate-0.2.1.tgz#9f15cfbb0705005369216c626ac7d05ab90dd574"
   dependencies:
     slice-ansi "0.0.4"
     string-width "^1.0.1"
 
 cli-ux@^4.9.0:
   version "4.9.3"
-  resolved "http://pacman01.inkclub.local:4873/cli-ux/-/cli-ux-4.9.3.tgz#4c3e070c1ea23eef010bbdb041192e0661be84ce"
+  resolved "https://registry.yarnpkg.com/cli-ux/-/cli-ux-4.9.3.tgz#4c3e070c1ea23eef010bbdb041192e0661be84ce"
   dependencies:
     "@oclif/errors" "^1.2.2"
     "@oclif/linewrap" "^1.0.0"
@@ -2742,11 +2742,11 @@ colors@0.5.x:
 
 colors@1.0.x:
   version "1.0.3"
-  resolved "http://pacman01.inkclub.local:4873/colors/-/colors-1.0.3.tgz#0433f44d809680fdeb60ed260f1b0c262e82a40b"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.0.3.tgz#0433f44d809680fdeb60ed260f1b0c262e82a40b"
 
 colors@^1.3.2:
   version "1.3.3"
-  resolved "http://pacman01.inkclub.local:4873/colors/-/colors-1.3.3.tgz#39e005d546afe01e01f9c4ca8fa50f686a01205d"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.3.3.tgz#39e005d546afe01e01f9c4ca8fa50f686a01205d"
 
 combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.7"
@@ -2764,7 +2764,7 @@ commander@2, commander@^2.19.0:
 
 commander@2.15.1:
   version "2.15.1"
-  resolved "http://pacman01.inkclub.local:4873/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.15.1.tgz#df46e867d0fc2aec66a34662b406a9ccafff5b0f"
 
 commander@2.17.x, commander@~2.17.1:
   version "2.17.1"
@@ -2776,7 +2776,7 @@ commander@^2.11.0, commander@^2.9.0:
 
 common-tags@1.8.0:
   version "1.8.0"
-  resolved "http://pacman01.inkclub.local:4873/common-tags/-/common-tags-1.8.0.tgz#8e3153e542d4a39e9b10554434afaaf98956a937"
+  resolved "https://registry.yarnpkg.com/common-tags/-/common-tags-1.8.0.tgz#8e3153e542d4a39e9b10554434afaaf98956a937"
 
 commondir@^1.0.1:
   version "1.0.1"
@@ -2924,7 +2924,7 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
 
 cors@^2.8.4:
   version "2.8.5"
-  resolved "http://pacman01.inkclub.local:4873/cors/-/cors-2.8.5.tgz#eac11da51592dd86b9f06f6e7ac293b3df875d29"
+  resolved "https://registry.yarnpkg.com/cors/-/cors-2.8.5.tgz#eac11da51592dd86b9f06f6e7ac293b3df875d29"
   dependencies:
     object-assign "^4"
     vary "^1"
@@ -3080,7 +3080,7 @@ cwd@^0.10.0:
 
 cycle@1.0.x:
   version "1.0.3"
-  resolved "http://pacman01.inkclub.local:4873/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
+  resolved "https://registry.yarnpkg.com/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
 
 cyclist@~0.2.2:
   version "0.2.2"
@@ -3088,7 +3088,7 @@ cyclist@~0.2.2:
 
 cypress@3.4.0:
   version "3.4.0"
-  resolved "http://pacman01.inkclub.local:4873/cypress/-/cypress-3.4.0.tgz#8053ee107eb6309f26abd57e882d05578bdc3391"
+  resolved "https://registry.yarnpkg.com/cypress/-/cypress-3.4.0.tgz#8053ee107eb6309f26abd57e882d05578bdc3391"
   dependencies:
     "@cypress/listr-verbose-renderer" "0.4.1"
     "@cypress/xvfb" "1.2.4"
@@ -3368,7 +3368,7 @@ data-urls@^1.0.0:
 
 date-fns@^1.27.2:
   version "1.30.1"
-  resolved "http://pacman01.inkclub.local:4873/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
 
 date-now@^0.1.4:
   version "0.1.4"
@@ -3390,7 +3390,7 @@ debug@2.6.9, debug@^2.1.2, debug@^2.3.3, debug@^2.6.6, debug@^2.6.9:
 
 debug@3.2.6, debug@^3.2.5, debug@^3.2.6:
   version "3.2.6"
-  resolved "http://pacman01.inkclub.local:4873/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   dependencies:
     ms "^2.1.1"
 
@@ -3440,7 +3440,7 @@ deep-is@~0.1.3:
 
 deepmerge@^4.0.0:
   version "4.0.0"
-  resolved "http://pacman01.inkclub.local:4873/deepmerge/-/deepmerge-4.0.0.tgz#3e3110ca29205f120d7cb064960a39c3d2087c09"
+  resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.0.0.tgz#3e3110ca29205f120d7cb064960a39c3d2087c09"
 
 default-gateway@^4.2.0:
   version "4.2.0"
@@ -3580,7 +3580,7 @@ diffie-hellman@^5.0.0:
 
 dir-glob@^3.0.1:
   version "3.0.1"
-  resolved "http://pacman01.inkclub.local:4873/dir-glob/-/dir-glob-3.0.1.tgz#56dbf73d992a4a93ba1584f4534063fd2e41717f"
+  resolved "https://registry.yarnpkg.com/dir-glob/-/dir-glob-3.0.1.tgz#56dbf73d992a4a93ba1584f4534063fd2e41717f"
   dependencies:
     path-type "^4.0.0"
 
@@ -3715,7 +3715,7 @@ duplexer2@^0.1.2, duplexer2@~0.1.0:
 
 duplexer@~0.1.1:
   version "0.1.1"
-  resolved "http://pacman01.inkclub.local:4873/duplexer/-/duplexer-0.1.1.tgz#ace6ff808c1ce66b57d1ebf97977acb02334cfc1"
+  resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.1.tgz#ace6ff808c1ce66b57d1ebf97977acb02334cfc1"
 
 duplexify@^3.4.2, duplexify@^3.6.0:
   version "3.6.1"
@@ -3751,7 +3751,7 @@ electron-to-chromium@^1.3.92:
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
-  resolved "http://pacman01.inkclub.local:4873/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
+  resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
 
 elliptic@^6.0.0:
   version "6.4.1"
@@ -3771,7 +3771,7 @@ elliptic@^6.0.0:
 
 emoji-regex@^7.0.1:
   version "7.0.3"
-  resolved "http://pacman01.inkclub.local:4873/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
+  resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
 
 emoji-regex@^8.0.0:
   version "8.0.0"
@@ -3854,7 +3854,7 @@ es-to-primitive@^1.1.1:
 
 es6-promise-pool@^2.5.0:
   version "2.5.0"
-  resolved "http://pacman01.inkclub.local:4873/es6-promise-pool/-/es6-promise-pool-2.5.0.tgz#147c612b36b47f105027f9d2bf54a598a99d9ccb"
+  resolved "https://registry.yarnpkg.com/es6-promise-pool/-/es6-promise-pool-2.5.0.tgz#147c612b36b47f105027f9d2bf54a598a99d9ccb"
 
 es6-promise@^4.0.3:
   version "4.2.6"
@@ -4085,7 +4085,7 @@ etag@~1.8.1:
 
 event-stream@=3.3.4:
   version "3.3.4"
-  resolved "http://pacman01.inkclub.local:4873/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
+  resolved "https://registry.yarnpkg.com/event-stream/-/event-stream-3.3.4.tgz#4ab4c9a0f5a54db9338b4c34d86bfce8f4b35571"
   dependencies:
     duplexer "~0.1.1"
     from "~0"
@@ -4136,7 +4136,7 @@ execa@0.10.0, execa@^0.10.0:
 
 execa@0.11.0:
   version "0.11.0"
-  resolved "http://pacman01.inkclub.local:4873/execa/-/execa-0.11.0.tgz#0b3c71daf9b9159c252a863cd981af1b4410d97a"
+  resolved "https://registry.yarnpkg.com/execa/-/execa-0.11.0.tgz#0b3c71daf9b9159c252a863cd981af1b4410d97a"
   dependencies:
     cross-spawn "^6.0.0"
     get-stream "^4.0.0"
@@ -4172,13 +4172,13 @@ execa@^1.0.0:
 
 executable@4.1.1:
   version "4.1.1"
-  resolved "http://pacman01.inkclub.local:4873/executable/-/executable-4.1.1.tgz#41532bff361d3e57af4d763b70582db18f5d133c"
+  resolved "https://registry.yarnpkg.com/executable/-/executable-4.1.1.tgz#41532bff361d3e57af4d763b70582db18f5d133c"
   dependencies:
     pify "^2.2.0"
 
 exit-hook@^1.0.0:
   version "1.1.1"
-  resolved "http://pacman01.inkclub.local:4873/exit-hook/-/exit-hook-1.1.1.tgz#f05ca233b48c05d54fff07765df8507e95c02ff8"
+  resolved "https://registry.yarnpkg.com/exit-hook/-/exit-hook-1.1.1.tgz#f05ca233b48c05d54fff07765df8507e95c02ff8"
 
 exit@^0.1.2:
   version "0.1.2"
@@ -4231,7 +4231,7 @@ expect@^23.6.0:
 
 express@^4.16.3, express@^4.17.0:
   version "4.17.1"
-  resolved "http://pacman01.inkclub.local:4873/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
+  resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
   dependencies:
     accepts "~1.3.7"
     array-flatten "1.1.1"
@@ -4310,7 +4310,7 @@ extglob@^2.0.4:
 
 extract-stack@^1.0.0:
   version "1.0.0"
-  resolved "http://pacman01.inkclub.local:4873/extract-stack/-/extract-stack-1.0.0.tgz#b97acaf9441eea2332529624b732fc5a1c8165fa"
+  resolved "https://registry.yarnpkg.com/extract-stack/-/extract-stack-1.0.0.tgz#b97acaf9441eea2332529624b732fc5a1c8165fa"
 
 extract-zip@1.6.7, extract-zip@^1.6.6:
   version "1.6.7"
@@ -4327,7 +4327,7 @@ extsprintf@1.3.0, extsprintf@^1.2.0:
 
 eyes@0.1.x:
   version "0.1.8"
-  resolved "http://pacman01.inkclub.local:4873/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
+  resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
 
 fast-deep-equal@^1.0.0:
   version "1.0.0"
@@ -4339,7 +4339,7 @@ fast-deep-equal@^2.0.1:
 
 fast-glob@^3.0.3:
   version "3.0.4"
-  resolved "http://pacman01.inkclub.local:4873/fast-glob/-/fast-glob-3.0.4.tgz#d484a41005cb6faeb399b951fd1bd70ddaebb602"
+  resolved "https://registry.yarnpkg.com/fast-glob/-/fast-glob-3.0.4.tgz#d484a41005cb6faeb399b951fd1bd70ddaebb602"
   dependencies:
     "@nodelib/fs.stat" "^2.0.1"
     "@nodelib/fs.walk" "^1.2.1"
@@ -4354,7 +4354,7 @@ fast-json-stable-stringify@^2.0.0:
 
 fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.4:
   version "2.0.6"
-  resolved "http://pacman01.inkclub.local:4873/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
+  resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
 fastparse@^1.1.1:
   version "1.1.2"
@@ -4362,7 +4362,7 @@ fastparse@^1.1.1:
 
 fastq@^1.6.0:
   version "1.6.0"
-  resolved "http://pacman01.inkclub.local:4873/fastq/-/fastq-1.6.0.tgz#4ec8a38f4ac25f21492673adb7eae9cfef47d1c2"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.6.0.tgz#4ec8a38f4ac25f21492673adb7eae9cfef47d1c2"
   dependencies:
     reusify "^1.0.0"
 
@@ -4392,7 +4392,7 @@ fd-slicer@~1.0.1:
 
 fd-slicer@~1.1.0:
   version "1.1.0"
-  resolved "http://pacman01.inkclub.local:4873/fd-slicer/-/fd-slicer-1.1.0.tgz#25c7c89cb1f9077f8891bbe61d8f390eae256f1e"
+  resolved "https://registry.yarnpkg.com/fd-slicer/-/fd-slicer-1.1.0.tgz#25c7c89cb1f9077f8891bbe61d8f390eae256f1e"
   dependencies:
     pend "~1.2.0"
 
@@ -4402,7 +4402,7 @@ figgy-pudding@^3.1.0, figgy-pudding@^3.5.1:
 
 figures@^1.7.0:
   version "1.7.0"
-  resolved "http://pacman01.inkclub.local:4873/figures/-/figures-1.7.0.tgz#cbe1e3affcf1cd44b80cadfed28dc793a9701d2e"
+  resolved "https://registry.yarnpkg.com/figures/-/figures-1.7.0.tgz#cbe1e3affcf1cd44b80cadfed28dc793a9701d2e"
   dependencies:
     escape-string-regexp "^1.0.5"
     object-assign "^4.1.0"
@@ -4452,7 +4452,7 @@ fill-range@^4.0.0:
 
 fill-range@^7.0.1:
   version "7.0.1"
-  resolved "http://pacman01.inkclub.local:4873/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"
+  resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"
   dependencies:
     to-regex-range "^5.0.1"
 
@@ -4546,7 +4546,7 @@ flush-write-stream@^1.0.0, flush-write-stream@^1.0.2:
 
 follow-redirects@1.5.10:
   version "1.5.10"
-  resolved "http://pacman01.inkclub.local:4873/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
   dependencies:
     debug "=3.1.0"
 
@@ -4582,7 +4582,7 @@ foreach@^2.0.5:
 
 foreachasync@^3.0.0:
   version "3.0.0"
-  resolved "http://pacman01.inkclub.local:4873/foreachasync/-/foreachasync-3.0.0.tgz#5502987dc8714be3392097f32e0071c9dee07cf6"
+  resolved "https://registry.yarnpkg.com/foreachasync/-/foreachasync-3.0.0.tgz#5502987dc8714be3392097f32e0071c9dee07cf6"
 
 forever-agent@~0.6.1:
   version "0.6.1"
@@ -4619,7 +4619,7 @@ from2@^2.1.0:
 
 from@~0:
   version "0.1.7"
-  resolved "http://pacman01.inkclub.local:4873/from/-/from-0.1.7.tgz#83c60afc58b9c56997007ed1a768b3ab303a44fe"
+  resolved "https://registry.yarnpkg.com/from/-/from-0.1.7.tgz#83c60afc58b9c56997007ed1a768b3ab303a44fe"
 
 fs-exists-sync@^0.1.0:
   version "0.1.0"
@@ -4627,7 +4627,7 @@ fs-exists-sync@^0.1.0:
 
 fs-extra@5.0.0:
   version "5.0.0"
-  resolved "http://pacman01.inkclub.local:4873/fs-extra/-/fs-extra-5.0.0.tgz#414d0110cdd06705734d055652c5411260c31abd"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-5.0.0.tgz#414d0110cdd06705734d055652c5411260c31abd"
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^4.0.0"
@@ -4635,7 +4635,7 @@ fs-extra@5.0.0:
 
 fs-extra@^7.0.0:
   version "7.0.1"
-  resolved "http://pacman01.inkclub.local:4873/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^4.0.0"
@@ -4723,7 +4723,7 @@ gaze@^1.0.0:
 
 generic-pool@^3.7.1:
   version "3.7.1"
-  resolved "http://pacman01.inkclub.local:4873/generic-pool/-/generic-pool-3.7.1.tgz#36fe5bb83e7e0e032e5d32cd05dc00f5ff119aa8"
+  resolved "https://registry.yarnpkg.com/generic-pool/-/generic-pool-3.7.1.tgz#36fe5bb83e7e0e032e5d32cd05dc00f5ff119aa8"
 
 get-caller-file@^1.0.1:
   version "1.0.2"
@@ -4761,7 +4761,7 @@ get-value@^2.0.3, get-value@^2.0.6:
 
 getos@3.1.1:
   version "3.1.1"
-  resolved "http://pacman01.inkclub.local:4873/getos/-/getos-3.1.1.tgz#967a813cceafee0156b0483f7cffa5b3eff029c5"
+  resolved "https://registry.yarnpkg.com/getos/-/getos-3.1.1.tgz#967a813cceafee0156b0483f7cffa5b3eff029c5"
   dependencies:
     async "2.6.1"
 
@@ -4818,7 +4818,7 @@ glob-parent@^3.1.0:
 
 glob-parent@^5.0.0:
   version "5.0.0"
-  resolved "http://pacman01.inkclub.local:4873/glob-parent/-/glob-parent-5.0.0.tgz#1dc99f0f39b006d3e92c2c284068382f0c20e954"
+  resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.0.0.tgz#1dc99f0f39b006d3e92c2c284068382f0c20e954"
   dependencies:
     is-glob "^4.0.1"
 
@@ -4839,7 +4839,7 @@ glob-stream@^6.1.0:
 
 glob@7.1.3, glob@^7.0.0, glob@~7.1.1:
   version "7.1.3"
-  resolved "http://pacman01.inkclub.local:4873/glob/-/glob-7.1.3.tgz#3960832d3f1574108342dafd3a67b332c0969df1"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.3.tgz#3960832d3f1574108342dafd3a67b332c0969df1"
   dependencies:
     fs.realpath "^1.0.0"
     inflight "^1.0.4"
@@ -4872,7 +4872,7 @@ glob@^7.1.3:
 
 global-dirs@^0.1.0:
   version "0.1.1"
-  resolved "http://pacman01.inkclub.local:4873/global-dirs/-/global-dirs-0.1.1.tgz#b319c0dd4607f353f3be9cca4c72fc148c49f445"
+  resolved "https://registry.yarnpkg.com/global-dirs/-/global-dirs-0.1.1.tgz#b319c0dd4607f353f3be9cca4c72fc148c49f445"
   dependencies:
     ini "^1.3.4"
 
@@ -4910,7 +4910,7 @@ globals@^9.18.0:
 
 globby@^10.0.1:
   version "10.0.1"
-  resolved "http://pacman01.inkclub.local:4873/globby/-/globby-10.0.1.tgz#4782c34cb75dd683351335c5829cc3420e606b22"
+  resolved "https://registry.yarnpkg.com/globby/-/globby-10.0.1.tgz#4782c34cb75dd683351335c5829cc3420e606b22"
   dependencies:
     "@types/glob" "^7.1.1"
     array-union "^2.1.0"
@@ -5002,7 +5002,7 @@ has-flag@^1.0.0:
 
 has-flag@^2.0.0:
   version "2.0.0"
-  resolved "http://pacman01.inkclub.local:4873/has-flag/-/has-flag-2.0.0.tgz#e8207af1cc7b30d446cc70b734b5e8be18f88d51"
+  resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-2.0.0.tgz#e8207af1cc7b30d446cc70b734b5e8be18f88d51"
 
 has-flag@^3.0.0:
   version "3.0.0"
@@ -5258,7 +5258,7 @@ husky@^1.2.1:
 
 hyperlinker@^1.0.0:
   version "1.0.0"
-  resolved "http://pacman01.inkclub.local:4873/hyperlinker/-/hyperlinker-1.0.0.tgz#23dc9e38a206b208ee49bc2d6c8ef47027df0c0e"
+  resolved "https://registry.yarnpkg.com/hyperlinker/-/hyperlinker-1.0.0.tgz#23dc9e38a206b208ee49bc2d6c8ef47027df0c0e"
 
 iconv-lite@0.4, iconv-lite@0.4.24, iconv-lite@^0.4.17, iconv-lite@^0.4.4:
   version "0.4.24"
@@ -5306,7 +5306,7 @@ ignore@^4.0.2:
 
 ignore@^5.1.1:
   version "5.1.4"
-  resolved "http://pacman01.inkclub.local:4873/ignore/-/ignore-5.1.4.tgz#84b7b3dbe64552b6ef0eca99f6743dbec6d97adf"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-5.1.4.tgz#84b7b3dbe64552b6ef0eca99f6743dbec6d97adf"
 
 import-fresh@^2.0.0:
   version "2.0.0"
@@ -5345,7 +5345,7 @@ indent-string@^2.1.0:
 
 indent-string@^3.0.0, indent-string@^3.2.0:
   version "3.2.0"
-  resolved "http://pacman01.inkclub.local:4873/indent-string/-/indent-string-3.2.0.tgz#4a5fd6d27cc332f37e5419a504dbb837105c9289"
+  resolved "https://registry.yarnpkg.com/indent-string/-/indent-string-3.2.0.tgz#4a5fd6d27cc332f37e5419a504dbb837105c9289"
 
 indexof@0.0.1:
   version "0.0.1"
@@ -5507,7 +5507,7 @@ is-callable@^1.1.1, is-callable@^1.1.3:
 
 is-ci@1.2.1, is-ci@^1.0.10, is-ci@^1.2.1:
   version "1.2.1"
-  resolved "http://pacman01.inkclub.local:4873/is-ci/-/is-ci-1.2.1.tgz#e3779c8ee17fccf428488f6e281187f2e632841c"
+  resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-1.2.1.tgz#e3779c8ee17fccf428488f6e281187f2e632841c"
   dependencies:
     ci-info "^1.5.0"
 
@@ -5623,7 +5623,7 @@ is-glob@^4.0.0:
 
 is-glob@^4.0.1:
   version "4.0.1"
-  resolved "http://pacman01.inkclub.local:4873/is-glob/-/is-glob-4.0.1.tgz#7567dbe9f2f5e2467bc77ab83c4a29482407a5dc"
+  resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.1.tgz#7567dbe9f2f5e2467bc77ab83c4a29482407a5dc"
   dependencies:
     is-extglob "^2.1.1"
 
@@ -5633,7 +5633,7 @@ is-hexadecimal@^1.0.0:
 
 is-installed-globally@0.1.0:
   version "0.1.0"
-  resolved "http://pacman01.inkclub.local:4873/is-installed-globally/-/is-installed-globally-0.1.0.tgz#0dfd98f5a9111716dd535dda6492f67bf3d25a80"
+  resolved "https://registry.yarnpkg.com/is-installed-globally/-/is-installed-globally-0.1.0.tgz#0dfd98f5a9111716dd535dda6492f67bf3d25a80"
   dependencies:
     global-dirs "^0.1.0"
     is-path-inside "^1.0.0"
@@ -5660,7 +5660,7 @@ is-number@^4.0.0:
 
 is-number@^7.0.0:
   version "7.0.0"
-  resolved "http://pacman01.inkclub.local:4873/is-number/-/is-number-7.0.0.tgz#7535345b896734d5f80c4d06c50955527a14f12b"
+  resolved "https://registry.yarnpkg.com/is-number/-/is-number-7.0.0.tgz#7535345b896734d5f80c4d06c50955527a14f12b"
 
 is-odd@^2.0.0:
   version "2.0.0"
@@ -5680,7 +5680,7 @@ is-path-in-cwd@^2.0.0:
 
 is-path-inside@^1.0.0:
   version "1.0.1"
-  resolved "http://pacman01.inkclub.local:4873/is-path-inside/-/is-path-inside-1.0.1.tgz#8ef5b7de50437a3fdca6b4e865ef7aa55cb48036"
+  resolved "https://registry.yarnpkg.com/is-path-inside/-/is-path-inside-1.0.1.tgz#8ef5b7de50437a3fdca6b4e865ef7aa55cb48036"
   dependencies:
     path-is-inside "^1.0.1"
 
@@ -6353,7 +6353,7 @@ json5@^2.1.0:
 
 jsonfile@^4.0.0:
   version "4.0.0"
-  resolved "http://pacman01.inkclub.local:4873/jsonfile/-/jsonfile-4.0.0.tgz#8771aae0799b64076b76640fca058f9c10e33ecb"
+  resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-4.0.0.tgz#8771aae0799b64076b76640fca058f9c10e33ecb"
   optionalDependencies:
     graceful-fs "^4.1.6"
 
@@ -6383,7 +6383,7 @@ jsprim@^1.2.2:
 
 jssha@^2.1.0:
   version "2.3.1"
-  resolved "http://pacman01.inkclub.local:4873/jssha/-/jssha-2.3.1.tgz#147b2125369035ca4b2f7d210dc539f009b3de9a"
+  resolved "https://registry.yarnpkg.com/jssha/-/jssha-2.3.1.tgz#147b2125369035ca4b2f7d210dc539f009b3de9a"
 
 jsx-ast-utils@^2.0.1:
   version "2.0.1"
@@ -6431,7 +6431,7 @@ kleur@^3.0.2:
 
 lazy-ass@1.6.0:
   version "1.6.0"
-  resolved "http://pacman01.inkclub.local:4873/lazy-ass/-/lazy-ass-1.6.0.tgz#7999655e8646c17f089fdd187d150d3324d54513"
+  resolved "https://registry.yarnpkg.com/lazy-ass/-/lazy-ass-1.6.0.tgz#7999655e8646c17f089fdd187d150d3324d54513"
 
 lazy-cache@^0.2.3:
   version "0.2.7"
@@ -6496,11 +6496,11 @@ lex-parser@0.1.x, lex-parser@~0.1.3:
 
 listr-silent-renderer@^1.1.1:
   version "1.1.1"
-  resolved "http://pacman01.inkclub.local:4873/listr-silent-renderer/-/listr-silent-renderer-1.1.1.tgz#924b5a3757153770bf1a8e3fbf74b8bbf3f9242e"
+  resolved "https://registry.yarnpkg.com/listr-silent-renderer/-/listr-silent-renderer-1.1.1.tgz#924b5a3757153770bf1a8e3fbf74b8bbf3f9242e"
 
 listr-update-renderer@^0.2.0:
   version "0.2.0"
-  resolved "http://pacman01.inkclub.local:4873/listr-update-renderer/-/listr-update-renderer-0.2.0.tgz#ca80e1779b4e70266807e8eed1ad6abe398550f9"
+  resolved "https://registry.yarnpkg.com/listr-update-renderer/-/listr-update-renderer-0.2.0.tgz#ca80e1779b4e70266807e8eed1ad6abe398550f9"
   dependencies:
     chalk "^1.1.3"
     cli-truncate "^0.2.1"
@@ -6513,7 +6513,7 @@ listr-update-renderer@^0.2.0:
 
 listr-verbose-renderer@^0.4.0:
   version "0.4.1"
-  resolved "http://pacman01.inkclub.local:4873/listr-verbose-renderer/-/listr-verbose-renderer-0.4.1.tgz#8206f4cf6d52ddc5827e5fd14989e0e965933a35"
+  resolved "https://registry.yarnpkg.com/listr-verbose-renderer/-/listr-verbose-renderer-0.4.1.tgz#8206f4cf6d52ddc5827e5fd14989e0e965933a35"
   dependencies:
     chalk "^1.1.3"
     cli-cursor "^1.0.2"
@@ -6522,7 +6522,7 @@ listr-verbose-renderer@^0.4.0:
 
 listr@0.12.0:
   version "0.12.0"
-  resolved "http://pacman01.inkclub.local:4873/listr/-/listr-0.12.0.tgz#6bce2c0f5603fa49580ea17cd6a00cc0e5fa451a"
+  resolved "https://registry.yarnpkg.com/listr/-/listr-0.12.0.tgz#6bce2c0f5603fa49580ea17cd6a00cc0e5fa451a"
   dependencies:
     chalk "^1.1.3"
     cli-truncate "^0.2.1"
@@ -6610,7 +6610,7 @@ locate-path@^3.0.0:
 
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
-  resolved "http://pacman01.inkclub.local:4873/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
+  resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
 
 lodash.assign@^4.2.0:
   version "4.2.0"
@@ -6630,7 +6630,7 @@ lodash.mergewith@^4.6.0:
 
 lodash.once@^4.1.1:
   version "4.1.1"
-  resolved "http://pacman01.inkclub.local:4873/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
+  resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
 
 lodash.sortby@^4.7.0:
   version "4.7.0"
@@ -6642,20 +6642,20 @@ lodash.tail@^4.1.1:
 
 lodash.template@^4.4.0:
   version "4.5.0"
-  resolved "http://pacman01.inkclub.local:4873/lodash.template/-/lodash.template-4.5.0.tgz#f976195cf3f347d0d5f52483569fe8031ccce8ab"
+  resolved "https://registry.yarnpkg.com/lodash.template/-/lodash.template-4.5.0.tgz#f976195cf3f347d0d5f52483569fe8031ccce8ab"
   dependencies:
     lodash._reinterpolate "^3.0.0"
     lodash.templatesettings "^4.0.0"
 
 lodash.templatesettings@^4.0.0:
   version "4.2.0"
-  resolved "http://pacman01.inkclub.local:4873/lodash.templatesettings/-/lodash.templatesettings-4.2.0.tgz#e481310f049d3cf6d47e912ad09313b154f0fb33"
+  resolved "https://registry.yarnpkg.com/lodash.templatesettings/-/lodash.templatesettings-4.2.0.tgz#e481310f049d3cf6d47e912ad09313b154f0fb33"
   dependencies:
     lodash._reinterpolate "^3.0.0"
 
 lodash@4.17.11:
   version "4.17.11"
-  resolved "http://pacman01.inkclub.local:4873/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.3.0, lodash@~4.17.10:
   version "4.17.13"
@@ -6663,7 +6663,7 @@ lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4,
 
 lodash@^4.17.13:
   version "4.17.15"
-  resolved "http://pacman01.inkclub.local:4873/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
 
 log-driver@^1.2.7:
   version "1.2.7"
@@ -6671,19 +6671,19 @@ log-driver@^1.2.7:
 
 log-symbols@2.2.0:
   version "2.2.0"
-  resolved "http://pacman01.inkclub.local:4873/log-symbols/-/log-symbols-2.2.0.tgz#5740e1c5d6f0dfda4ad9323b5332107ef6b4c40a"
+  resolved "https://registry.yarnpkg.com/log-symbols/-/log-symbols-2.2.0.tgz#5740e1c5d6f0dfda4ad9323b5332107ef6b4c40a"
   dependencies:
     chalk "^2.0.1"
 
 log-symbols@^1.0.2:
   version "1.0.2"
-  resolved "http://pacman01.inkclub.local:4873/log-symbols/-/log-symbols-1.0.2.tgz#376ff7b58ea3086a0f09facc74617eca501e1a18"
+  resolved "https://registry.yarnpkg.com/log-symbols/-/log-symbols-1.0.2.tgz#376ff7b58ea3086a0f09facc74617eca501e1a18"
   dependencies:
     chalk "^1.0.0"
 
 log-update@^1.0.2:
   version "1.0.2"
-  resolved "http://pacman01.inkclub.local:4873/log-update/-/log-update-1.0.2.tgz#19929f64c4093d2d2e7075a1dad8af59c296b8d1"
+  resolved "https://registry.yarnpkg.com/log-update/-/log-update-1.0.2.tgz#19929f64c4093d2d2e7075a1dad8af59c296b8d1"
   dependencies:
     ansi-escapes "^1.0.0"
     cli-cursor "^1.0.2"
@@ -6761,7 +6761,7 @@ map-obj@^1.0.0, map-obj@^1.0.1:
 
 map-stream@~0.1.0:
   version "0.1.0"
-  resolved "http://pacman01.inkclub.local:4873/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
+  resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
 
 map-visit@^1.0.0:
   version "1.0.0"
@@ -6896,7 +6896,7 @@ merge-stream@^1.0.1:
 
 merge2@^1.2.3:
   version "1.2.4"
-  resolved "http://pacman01.inkclub.local:4873/merge2/-/merge2-1.2.4.tgz#c9269589e6885a60cf80605d9522d4b67ca646e3"
+  resolved "https://registry.yarnpkg.com/merge2/-/merge2-1.2.4.tgz#c9269589e6885a60cf80605d9522d4b67ca646e3"
 
 merge@^1.2.0:
   version "1.2.1"
@@ -6962,7 +6962,7 @@ micromatch@^3.1.4:
 
 micromatch@^4.0.2:
   version "4.0.2"
-  resolved "http://pacman01.inkclub.local:4873/micromatch/-/micromatch-4.0.2.tgz#4fcb0999bf9fbc2fcbdd212f6d629b9a56c39259"
+  resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.2.tgz#4fcb0999bf9fbc2fcbdd212f6d629b9a56c39259"
   dependencies:
     braces "^3.0.1"
     picomatch "^2.0.5"
@@ -7131,7 +7131,7 @@ moment-mini@^2.22.1:
 
 moment@2.24.0, moment@^2.23.0:
   version "2.24.0"
-  resolved "http://pacman01.inkclub.local:4873/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -7534,7 +7534,7 @@ once@^1.3.0, once@^1.3.1, once@^1.3.2, once@^1.4.0:
 
 onetime@^1.0.0:
   version "1.1.0"
-  resolved "http://pacman01.inkclub.local:4873/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
+  resolved "https://registry.yarnpkg.com/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
 
 onetime@^2.0.0:
   version "2.0.1"
@@ -7568,7 +7568,7 @@ optionator@^0.8.1, optionator@^0.8.2:
 
 ora@^0.2.3:
   version "0.2.3"
-  resolved "http://pacman01.inkclub.local:4873/ora/-/ora-0.2.3.tgz#37527d220adcd53c39b73571d754156d5db657a4"
+  resolved "https://registry.yarnpkg.com/ora/-/ora-0.2.3.tgz#37527d220adcd53c39b73571d754156d5db657a4"
   dependencies:
     chalk "^1.1.1"
     cli-cursor "^1.0.2"
@@ -7671,7 +7671,7 @@ p-locate@^3.0.0:
 
 p-map@^1.1.1:
   version "1.2.0"
-  resolved "http://pacman01.inkclub.local:4873/p-map/-/p-map-1.2.0.tgz#e4e94f311eabbc8633a1e79908165fca26241b6b"
+  resolved "https://registry.yarnpkg.com/p-map/-/p-map-1.2.0.tgz#e4e94f311eabbc8633a1e79908165fca26241b6b"
 
 p-map@^2.0.0:
   version "2.1.0"
@@ -7790,7 +7790,7 @@ pascalcase@^0.1.1:
 
 password-prompt@^1.0.7:
   version "1.1.2"
-  resolved "http://pacman01.inkclub.local:4873/password-prompt/-/password-prompt-1.1.2.tgz#85b2f93896c5bd9e9f2d6ff0627fa5af3dc00923"
+  resolved "https://registry.yarnpkg.com/password-prompt/-/password-prompt-1.1.2.tgz#85b2f93896c5bd9e9f2d6ff0627fa5af3dc00923"
   dependencies:
     ansi-escapes "^3.1.0"
     cross-spawn "^6.0.5"
@@ -7819,7 +7819,7 @@ path-is-absolute@^1.0.0, path-is-absolute@^1.0.1:
 
 path-is-inside@^1.0.1, path-is-inside@^1.0.2:
   version "1.0.2"
-  resolved "http://pacman01.inkclub.local:4873/path-is-inside/-/path-is-inside-1.0.2.tgz#365417dede44430d1c11af61027facf074bdfc53"
+  resolved "https://registry.yarnpkg.com/path-is-inside/-/path-is-inside-1.0.2.tgz#365417dede44430d1c11af61027facf074bdfc53"
 
 path-key@^2.0.0, path-key@^2.0.1:
   version "2.0.1"
@@ -7869,11 +7869,11 @@ path-type@^3.0.0:
 
 path-type@^4.0.0:
   version "4.0.0"
-  resolved "http://pacman01.inkclub.local:4873/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
+  resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
 
 pause-stream@0.0.11:
   version "0.0.11"
-  resolved "http://pacman01.inkclub.local:4873/pause-stream/-/pause-stream-0.0.11.tgz#fe5a34b0cbce12b5aa6a2b403ee2e73b602f1445"
+  resolved "https://registry.yarnpkg.com/pause-stream/-/pause-stream-0.0.11.tgz#fe5a34b0cbce12b5aa6a2b403ee2e73b602f1445"
   dependencies:
     through "~2.3"
 
@@ -7893,7 +7893,7 @@ pend@~1.2.0:
 
 percy-client@^3.0.3:
   version "3.0.13"
-  resolved "http://pacman01.inkclub.local:4873/percy-client/-/percy-client-3.0.13.tgz#86f48ac39bca8474a02917cea1756978d0214b83"
+  resolved "https://registry.yarnpkg.com/percy-client/-/percy-client-3.0.13.tgz#86f48ac39bca8474a02917cea1756978d0214b83"
   dependencies:
     base64-js "^1.2.3"
     bluebird "^3.5.1"
@@ -7911,7 +7911,7 @@ performance-now@^2.1.0:
 
 picomatch@^2.0.5:
   version "2.0.7"
-  resolved "http://pacman01.inkclub.local:4873/picomatch/-/picomatch-2.0.7.tgz#514169d8c7cd0bdbeecc8a2609e34a7163de69f6"
+  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.0.7.tgz#514169d8c7cd0bdbeecc8a2609e34a7163de69f6"
 
 pify@^2.0.0, pify@^2.2.0:
   version "2.3.0"
@@ -8145,7 +8145,7 @@ prr@~1.0.1:
 
 ps-tree@1.2.0:
   version "1.2.0"
-  resolved "http://pacman01.inkclub.local:4873/ps-tree/-/ps-tree-1.2.0.tgz#5e7425b89508736cdd4f2224d028f7bb3f722ebd"
+  resolved "https://registry.yarnpkg.com/ps-tree/-/ps-tree-1.2.0.tgz#5e7425b89508736cdd4f2224d028f7bb3f722ebd"
   dependencies:
     event-stream "=3.3.4"
 
@@ -8208,7 +8208,7 @@ punycode@^2.1.0:
 
 puppeteer@^1.13.0:
   version "1.19.0"
-  resolved "http://pacman01.inkclub.local:4873/puppeteer/-/puppeteer-1.19.0.tgz#e3b7b448c2c97933517078d7a2c53687361bebea"
+  resolved "https://registry.yarnpkg.com/puppeteer/-/puppeteer-1.19.0.tgz#e3b7b448c2c97933517078d7a2c53687361bebea"
   dependencies:
     debug "^4.1.0"
     extract-zip "^1.6.6"
@@ -8261,7 +8261,7 @@ querystringify@^2.1.1:
 
 ramda@0.24.1:
   version "0.24.1"
-  resolved "http://pacman01.inkclub.local:4873/ramda/-/ramda-0.24.1.tgz#c3b7755197f35b8dc3502228262c4c91ddb6b857"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.24.1.tgz#c3b7755197f35b8dc3502228262c4c91ddb6b857"
 
 randomatic@^1.1.3:
   version "1.1.7"
@@ -8464,7 +8464,7 @@ redent@^1.0.0:
 
 redeyed@~2.1.0:
   version "2.1.1"
-  resolved "http://pacman01.inkclub.local:4873/redeyed/-/redeyed-2.1.1.tgz#8984b5815d99cb220469c99eeeffe38913e6cc0b"
+  resolved "https://registry.yarnpkg.com/redeyed/-/redeyed-2.1.1.tgz#8984b5815d99cb220469c99eeeffe38913e6cc0b"
   dependencies:
     esprima "~4.0.0"
 
@@ -8494,7 +8494,7 @@ regenerator-runtime@^0.11.0:
 
 regenerator-runtime@^0.13.1:
   version "0.13.3"
-  resolved "http://pacman01.inkclub.local:4873/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
 
 regenerator-transform@^0.13.3:
   version "0.13.3"
@@ -8706,7 +8706,7 @@ replace-ext@1.0.0, replace-ext@^1.0.0:
 
 request-progress@3.0.0:
   version "3.0.0"
-  resolved "http://pacman01.inkclub.local:4873/request-progress/-/request-progress-3.0.0.tgz#4ca754081c7fec63f505e4faa825aa06cd669dbe"
+  resolved "https://registry.yarnpkg.com/request-progress/-/request-progress-3.0.0.tgz#4ca754081c7fec63f505e4faa825aa06cd669dbe"
   dependencies:
     throttleit "^1.0.0"
 
@@ -8718,7 +8718,7 @@ request-promise-core@1.1.1:
 
 request-promise-core@1.1.2:
   version "1.1.2"
-  resolved "http://pacman01.inkclub.local:4873/request-promise-core/-/request-promise-core-1.1.2.tgz#339f6aababcafdb31c799ff158700336301d3346"
+  resolved "https://registry.yarnpkg.com/request-promise-core/-/request-promise-core-1.1.2.tgz#339f6aababcafdb31c799ff158700336301d3346"
   dependencies:
     lodash "^4.17.11"
 
@@ -8732,7 +8732,7 @@ request-promise-native@^1.0.5:
 
 request-promise@^4.2.2:
   version "4.2.4"
-  resolved "http://pacman01.inkclub.local:4873/request-promise/-/request-promise-4.2.4.tgz#1c5ed0d71441e38ad58c7ce4ea4ea5b06d54b310"
+  resolved "https://registry.yarnpkg.com/request-promise/-/request-promise-4.2.4.tgz#1c5ed0d71441e38ad58c7ce4ea4ea5b06d54b310"
   dependencies:
     bluebird "^3.5.0"
     request-promise-core "1.1.2"
@@ -8832,7 +8832,7 @@ resolve@^1.3.2, resolve@^1.5.0, resolve@^1.6.0, resolve@^1.8.1:
 
 restore-cursor@^1.0.1:
   version "1.0.1"
-  resolved "http://pacman01.inkclub.local:4873/restore-cursor/-/restore-cursor-1.0.1.tgz#34661f46886327fed2991479152252df92daa541"
+  resolved "https://registry.yarnpkg.com/restore-cursor/-/restore-cursor-1.0.1.tgz#34661f46886327fed2991479152252df92daa541"
   dependencies:
     exit-hook "^1.0.0"
     onetime "^1.0.0"
@@ -8850,11 +8850,11 @@ ret@~0.1.10:
 
 retry-axios@^1.0.1:
   version "1.0.1"
-  resolved "http://pacman01.inkclub.local:4873/retry-axios/-/retry-axios-1.0.1.tgz#c1e465126416d8aee7a0a2d4be28401cc0135029"
+  resolved "https://registry.yarnpkg.com/retry-axios/-/retry-axios-1.0.1.tgz#c1e465126416d8aee7a0a2d4be28401cc0135029"
 
 reusify@^1.0.0:
   version "1.0.4"
-  resolved "http://pacman01.inkclub.local:4873/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
+  resolved "https://registry.yarnpkg.com/reusify/-/reusify-1.0.4.tgz#90da382b1e126efc02146e90845a88db12925d76"
 
 rimraf@2, rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6.2, rimraf@^2.6.3, rimraf@~2.6.2:
   version "2.6.3"
@@ -8885,7 +8885,7 @@ run-node@^1.0.0:
 
 run-parallel@^1.1.2, run-parallel@^1.1.9:
   version "1.1.9"
-  resolved "http://pacman01.inkclub.local:4873/run-parallel/-/run-parallel-1.1.9.tgz#c9dd3a7cf9f4b2c4b6244e173a6ed866e61dd679"
+  resolved "https://registry.yarnpkg.com/run-parallel/-/run-parallel-1.1.9.tgz#c9dd3a7cf9f4b2c4b6244e173a6ed866e61dd679"
 
 run-queue@^1.0.0, run-queue@^1.0.3:
   version "1.0.3"
@@ -8903,7 +8903,7 @@ rx@^4.1.0:
 
 rxjs@^5.0.0-beta.11, rxjs@^5.5.2:
   version "5.5.12"
-  resolved "http://pacman01.inkclub.local:4873/rxjs/-/rxjs-5.5.12.tgz#6fa61b8a77c3d793dbaf270bee2f43f652d741cc"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.12.tgz#6fa61b8a77c3d793dbaf270bee2f43f652d741cc"
   dependencies:
     symbol-observable "1.0.1"
 
@@ -9026,7 +9026,7 @@ semver@^5.5.0:
 
 semver@^5.6.0:
   version "5.7.1"
-  resolved "http://pacman01.inkclub.local:4873/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.1.tgz#a954f931aeba508d307bbf069eff0c01c96116f7"
 
 semver@^6.0.0:
   version "6.1.1"
@@ -9187,11 +9187,11 @@ slash@^2.0.0:
 
 slash@^3.0.0:
   version "3.0.0"
-  resolved "http://pacman01.inkclub.local:4873/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
+  resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
 
 slice-ansi@0.0.4:
   version "0.0.4"
-  resolved "http://pacman01.inkclub.local:4873/slice-ansi/-/slice-ansi-0.0.4.tgz#edbf8903f66f7ce2f8eafd6ceed65e264c831b35"
+  resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-0.0.4.tgz#edbf8903f66f7ce2f8eafd6ceed65e264c831b35"
 
 slice-ansi@1.0.0:
   version "1.0.0"
@@ -9372,7 +9372,7 @@ split-string@^3.0.1, split-string@^3.0.2:
 
 split@0.3:
   version "0.3.3"
-  resolved "http://pacman01.inkclub.local:4873/split/-/split-0.3.3.tgz#cd0eea5e63a211dfff7eb0f091c4133e2d0dd28f"
+  resolved "https://registry.yarnpkg.com/split/-/split-0.3.3.tgz#cd0eea5e63a211dfff7eb0f091c4133e2d0dd28f"
   dependencies:
     through "2"
 
@@ -9402,7 +9402,7 @@ ssri@^6.0.0:
 
 stack-trace@0.0.x:
   version "0.0.10"
-  resolved "http://pacman01.inkclub.local:4873/stack-trace/-/stack-trace-0.0.10.tgz#547c70b347e8d32b4e108ea1a2a159e5fdde19c0"
+  resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.10.tgz#547c70b347e8d32b4e108ea1a2a159e5fdde19c0"
 
 stack-utils@^1.0.1:
   version "1.0.2"
@@ -9433,7 +9433,7 @@ standard@^12.0.1:
 
 start-server-and-test@^1.10.0:
   version "1.10.0"
-  resolved "http://pacman01.inkclub.local:4873/start-server-and-test/-/start-server-and-test-1.10.0.tgz#a7cd88932a52b42bc9de184430a498338e426c0b"
+  resolved "https://registry.yarnpkg.com/start-server-and-test/-/start-server-and-test-1.10.0.tgz#a7cd88932a52b42bc9de184430a498338e426c0b"
   dependencies:
     bluebird "3.5.5"
     check-more-types "2.24.0"
@@ -9466,7 +9466,7 @@ stdout-stream@^1.4.0:
 
 stealthy-require@^1.1.0, stealthy-require@^1.1.1:
   version "1.1.1"
-  resolved "http://pacman01.inkclub.local:4873/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
+  resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
 
 stream-array@^1.1.2:
   version "1.1.2"
@@ -9490,7 +9490,7 @@ stream-combiner2@^1.1.1:
 
 stream-combiner@~0.0.4:
   version "0.0.4"
-  resolved "http://pacman01.inkclub.local:4873/stream-combiner/-/stream-combiner-0.0.4.tgz#4d5e433c185261dde623ca3f44c586bcf5c4ad14"
+  resolved "https://registry.yarnpkg.com/stream-combiner/-/stream-combiner-0.0.4.tgz#4d5e433c185261dde623ca3f44c586bcf5c4ad14"
   dependencies:
     duplexer "~0.1.1"
 
@@ -9517,7 +9517,7 @@ stream-shift@^1.0.0:
 
 stream-to-observable@^0.1.0:
   version "0.1.0"
-  resolved "http://pacman01.inkclub.local:4873/stream-to-observable/-/stream-to-observable-0.1.0.tgz#45bf1d9f2d7dc09bed81f1c307c430e68b84cffe"
+  resolved "https://registry.yarnpkg.com/stream-to-observable/-/stream-to-observable-0.1.0.tgz#45bf1d9f2d7dc09bed81f1c307c430e68b84cffe"
 
 strict-uri-encode@^1.0.0:
   version "1.1.0"
@@ -9551,7 +9551,7 @@ string-width@^2.0.0, string-width@^2.1.0, string-width@^2.1.1:
 
 string-width@^3.0.0:
   version "3.1.0"
-  resolved "http://pacman01.inkclub.local:4873/string-width/-/string-width-3.1.0.tgz#22767be21b62af1081574306f69ac51b62203961"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-3.1.0.tgz#22767be21b62af1081574306f69ac51b62203961"
   dependencies:
     emoji-regex "^7.0.1"
     is-fullwidth-code-point "^2.0.0"
@@ -9684,7 +9684,7 @@ supports-color@^6.0.0, supports-color@^6.1.0:
 
 supports-hyperlinks@^1.0.1:
   version "1.0.1"
-  resolved "http://pacman01.inkclub.local:4873/supports-hyperlinks/-/supports-hyperlinks-1.0.1.tgz#71daedf36cc1060ac5100c351bb3da48c29c0ef7"
+  resolved "https://registry.yarnpkg.com/supports-hyperlinks/-/supports-hyperlinks-1.0.1.tgz#71daedf36cc1060ac5100c351bb3da48c29c0ef7"
   dependencies:
     has-flag "^2.0.0"
     supports-color "^5.0.0"
@@ -9785,7 +9785,7 @@ throat@^4.0.0:
 
 throttleit@^1.0.0:
   version "1.0.0"
-  resolved "http://pacman01.inkclub.local:4873/throttleit/-/throttleit-1.0.0.tgz#9e785836daf46743145a5984b6268d828528ac6c"
+  resolved "https://registry.yarnpkg.com/throttleit/-/throttleit-1.0.0.tgz#9e785836daf46743145a5984b6268d828528ac6c"
 
 through2-filter@^2.0.0:
   version "2.0.0"
@@ -9835,7 +9835,7 @@ tiny-lr@^1.1.0:
 
 tmp@0.1.0:
   version "0.1.0"
-  resolved "http://pacman01.inkclub.local:4873/tmp/-/tmp-0.1.0.tgz#ee434a4e22543082e294ba6201dcc6eafefa2877"
+  resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.1.0.tgz#ee434a4e22543082e294ba6201dcc6eafefa2877"
   dependencies:
     rimraf "^2.6.3"
 
@@ -9883,7 +9883,7 @@ to-regex-range@^2.1.0:
 
 to-regex-range@^5.0.1:
   version "5.0.1"
-  resolved "http://pacman01.inkclub.local:4873/to-regex-range/-/to-regex-range-5.0.1.tgz#1648c44aae7c8d988a326018ed72f5b4dd0392e4"
+  resolved "https://registry.yarnpkg.com/to-regex-range/-/to-regex-range-5.0.1.tgz#1648c44aae7c8d988a326018ed72f5b4dd0392e4"
   dependencies:
     is-number "^7.0.0"
 
@@ -9914,7 +9914,7 @@ topo@3.x.x:
 
 tough-cookie@>=2.3.3, tough-cookie@^2.3.3, tough-cookie@^2.3.4:
   version "2.5.0"
-  resolved "http://pacman01.inkclub.local:4873/tough-cookie/-/tough-cookie-2.5.0.tgz#cd9fb2a0aa1d5a12b473bd9fb96fa3dcff65ade2"
+  resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.5.0.tgz#cd9fb2a0aa1d5a12b473bd9fb96fa3dcff65ade2"
   dependencies:
     psl "^1.1.28"
     punycode "^2.1.1"
@@ -9938,7 +9938,7 @@ tree-kill@^1.2.1:
 
 treeify@^1.1.0:
   version "1.1.0"
-  resolved "http://pacman01.inkclub.local:4873/treeify/-/treeify-1.1.0.tgz#4e31c6a463accd0943879f30667c4fdaff411bb8"
+  resolved "https://registry.yarnpkg.com/treeify/-/treeify-1.1.0.tgz#4e31c6a463accd0943879f30667c4fdaff411bb8"
 
 trim-lines@^1.0.0:
   version "1.1.2"
@@ -9980,7 +9980,7 @@ try-to-catch@^1.0.2:
 
 tslib@^1, tslib@^1.9.3:
   version "1.10.0"
-  resolved "http://pacman01.inkclub.local:4873/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
 
 tslib@^1.9.0:
   version "1.9.3"
@@ -10161,7 +10161,7 @@ unist-util-visit@^1.0.0, unist-util-visit@^1.1.0, unist-util-visit@^1.3.0:
 
 universalify@^0.1.0:
   version "0.1.2"
-  resolved "http://pacman01.inkclub.local:4873/universalify/-/universalify-0.1.2.tgz#b646f69be3942dabcecc9d6639c80dc105efaa66"
+  resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.2.tgz#b646f69be3942dabcecc9d6639c80dc105efaa66"
 
 unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
@@ -10205,7 +10205,7 @@ url-parse@^1.4.3:
 
 url@0.11.0, url@^0.11.0:
   version "0.11.0"
-  resolved "http://pacman01.inkclub.local:4873/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
+  resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
@@ -10397,7 +10397,7 @@ w3c-hr-time@^1.0.1:
 
 wait-on@3.3.0:
   version "3.3.0"
-  resolved "http://pacman01.inkclub.local:4873/wait-on/-/wait-on-3.3.0.tgz#9940981d047a72a9544a97b8b5fca45b2170a082"
+  resolved "https://registry.yarnpkg.com/wait-on/-/wait-on-3.3.0.tgz#9940981d047a72a9544a97b8b5fca45b2170a082"
   dependencies:
     "@hapi/joi" "^15.0.3"
     core-js "^2.6.5"
@@ -10425,7 +10425,7 @@ wait-port@^0.2.2:
 
 walk@^2.3.14:
   version "2.3.14"
-  resolved "http://pacman01.inkclub.local:4873/walk/-/walk-2.3.14.tgz#60ec8631cfd23276ae1e7363ce11d626452e1ef3"
+  resolved "https://registry.yarnpkg.com/walk/-/walk-2.3.14.tgz#60ec8631cfd23276ae1e7363ce11d626452e1ef3"
   dependencies:
     foreachasync "^3.0.0"
 
@@ -10631,13 +10631,13 @@ wide-align@^1.1.0:
 
 widest-line@^2.0.1:
   version "2.0.1"
-  resolved "http://pacman01.inkclub.local:4873/widest-line/-/widest-line-2.0.1.tgz#7438764730ec7ef4381ce4df82fb98a53142a3fc"
+  resolved "https://registry.yarnpkg.com/widest-line/-/widest-line-2.0.1.tgz#7438764730ec7ef4381ce4df82fb98a53142a3fc"
   dependencies:
     string-width "^2.1.1"
 
 winston@^2.0.0:
   version "2.4.4"
-  resolved "http://pacman01.inkclub.local:4873/winston/-/winston-2.4.4.tgz#a01e4d1d0a103cf4eada6fc1f886b3110d71c34b"
+  resolved "https://registry.yarnpkg.com/winston/-/winston-2.4.4.tgz#a01e4d1d0a103cf4eada6fc1f886b3110d71c34b"
   dependencies:
     async "~1.0.0"
     colors "1.0.x"
@@ -10669,7 +10669,7 @@ wrap-ansi@^2.0.0:
 
 wrap-ansi@^4.0.0:
   version "4.0.0"
-  resolved "http://pacman01.inkclub.local:4873/wrap-ansi/-/wrap-ansi-4.0.0.tgz#b3570d7c70156159a2d42be5cc942e957f7b1131"
+  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-4.0.0.tgz#b3570d7c70156159a2d42be5cc942e957f7b1131"
   dependencies:
     ansi-styles "^3.2.0"
     string-width "^2.1.1"
@@ -10813,7 +10813,7 @@ yarn-upgrade-all@^0.5.0:
 
 yauzl@2.10.0:
   version "2.10.0"
-  resolved "http://pacman01.inkclub.local:4873/yauzl/-/yauzl-2.10.0.tgz#c7eb17c93e112cb1086fa6d8e51fb0667b79a5f9"
+  resolved "https://registry.yarnpkg.com/yauzl/-/yauzl-2.10.0.tgz#c7eb17c93e112cb1086fa6d8e51fb0667b79a5f9"
   dependencies:
     buffer-crc32 "~0.2.3"
     fd-slicer "~1.1.0"
