@@ -4,11 +4,12 @@ const { toMatchImageSnapshot } = require('jest-image-snapshot')
 
 expect.extend({ toMatchImageSnapshot })
 
-describe('Sequencediagram', () => {
-  it('should render a simple info diagrams', () => {
-    imgSnapshotTest(`
-    info
-       showInfo
+describe('Pie Chart simple', () => {
+  it('should render a simple Pie chart diagram', async () => {
+    await imgSnapshotTest(page, `
+    pie
+    "Ash" : 40
+    "Bat" : 50
       `,
     {})
   })
