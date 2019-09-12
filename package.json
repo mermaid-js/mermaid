@@ -51,11 +51,15 @@
     "dagre-d3-renderer": "^0.5.8",
     "dagre-layout": "^0.8.8",
     "documentation": "^12.0.1",
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "graphlibrary": "^2.2.0",
     "he": "^1.2.0",
     "lodash": "^4.17.11",
     "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
+    "prettier": "^1.18.2",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {
