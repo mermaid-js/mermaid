@@ -18,7 +18,7 @@
     "build:watch": "yarn build --watch",
     "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
     "release": "yarn build -p --config webpack.config.prod.babel.js",
-    "lint": "standard",
+    "lint": "eslint src",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "percy exec -- cypress run",
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
