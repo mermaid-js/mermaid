@@ -1,195 +1,200 @@
 /* eslint-env jasmine */
-import mermaid from './mermaid'
-import flowDb from './diagrams/flowchart/flowDb'
-import flowParser from './diagrams/flowchart/parser/flow'
-import flowRenderer from './diagrams/flowchart/flowRenderer'
+import mermaid from './mermaid';
+import flowDb from './diagrams/flowchart/flowDb';
+import flowParser from './diagrams/flowchart/parser/flow';
+import flowRenderer from './diagrams/flowchart/flowRenderer';
 
-describe('when using mermaid and ', function () {
-  describe('when detecting chart type ', function () {
-    it('should not start rendering with mermaid.startOnLoad set to false', function () {
-      mermaid.startOnLoad = false
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(mermaid, 'init')
-      mermaid.contentLoaded()
-      expect(mermaid.init).not.toHaveBeenCalled()
-    })
+describe('when using mermaid and ', function() {
+  describe('when detecting chart type ', function() {
+    it('should not start rendering with mermaid.startOnLoad set to false', function() {
+      mermaid.startOnLoad = false;
+      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+      spyOn(mermaid, 'init');
+      mermaid.contentLoaded();
+      expect(mermaid.init).not.toHaveBeenCalled();
+    });
 
-    it('should start rendering with both startOnLoad set', function () {
-      mermaid.startOnLoad = true
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(mermaid, 'init')
-      mermaid.contentLoaded()
-      expect(mermaid.init).toHaveBeenCalled()
-    })
+    it('should start rendering with both startOnLoad set', function() {
+      mermaid.startOnLoad = true;
+      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+      spyOn(mermaid, 'init');
+      mermaid.contentLoaded();
+      expect(mermaid.init).toHaveBeenCalled();
+    });
 
-    it('should start rendering with mermaid.startOnLoad', function () {
-      mermaid.startOnLoad = true
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(mermaid, 'init')
-      mermaid.contentLoaded()
-      expect(mermaid.init).toHaveBeenCalled()
-    })
+    it('should start rendering with mermaid.startOnLoad', function() {
+      mermaid.startOnLoad = true;
+      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+      spyOn(mermaid, 'init');
+      mermaid.contentLoaded();
+      expect(mermaid.init).toHaveBeenCalled();
+    });
 
-    it('should start rendering as a default with no changes performed', function () {
-      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>'
-      spyOn(mermaid, 'init')
-      mermaid.contentLoaded()
-      expect(mermaid.init).toHaveBeenCalled()
-    })
-  })
+    it('should start rendering as a default with no changes performed', function() {
+      document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
+      spyOn(mermaid, 'init');
+      mermaid.contentLoaded();
+      expect(mermaid.init).toHaveBeenCalled();
+    });
+  });
 
-  describe('when calling addEdges ', function () {
-    beforeEach(function () {
-      flowParser.parser.yy = flowDb
-      flowDb.clear()
-    })
-    it('it should handle edges with text', function () {
-      flowParser.parser.parse('graph TD;A-->|text ex|B;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
-
-      const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('normal')
-          expect(options.label.match('text ex')).toBeTruthy()
-        }
-      }
-
-      flowRenderer.addEdges(edges, mockG)
-    })
-
-    it('should handle edges without text', function () {
-      flowParser.parser.parse('graph TD;A-->B;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+  describe('when calling addEdges ', function() {
+    beforeEach(function() {
+      flowParser.parser.yy = flowDb;
+      flowDb.clear();
+    });
+    it('it should handle edges with text', function() {
+      flowParser.parser.parse('graph TD;A-->|text ex|B;');
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('normal')
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('normal');
+          expect(options.label.match('text ex')).toBeTruthy();
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
+      flowRenderer.addEdges(edges, mockG);
+    });
 
-    it('should handle open-ended edges', function () {
-      flowParser.parser.parse('graph TD;A---B;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+    it('should handle edges without text', function() {
+      flowParser.parser.parse('graph TD;A-->B;');
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('none')
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('normal');
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
+      flowRenderer.addEdges(edges, mockG);
+    });
 
-    it('should handle edges with styles defined', function () {
-      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+    it('should handle open-ended edges', function() {
+      flowParser.parser.parse('graph TD;A---B;');
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('none')
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;')
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('none');
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
-    it('should handle edges with interpolation defined', function () {
-      flowParser.parser.parse('graph TD;A---B; linkStyle 0 interpolate basis')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+      flowRenderer.addEdges(edges, mockG);
+    });
+
+    it('should handle edges with styles defined', function() {
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('none')
-          expect(options.curve).toBe('basis') // mocked as string
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('none');
+          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
-    it('should handle edges with text and styles defined', function () {
-      flowParser.parser.parse('graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+      flowRenderer.addEdges(edges, mockG);
+    });
+    it('should handle edges with interpolation defined', function() {
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 interpolate basis');
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('none')
-          expect(options.label.match('the text')).toBeTruthy()
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;')
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('none');
+          expect(options.curve).toBe('basis'); // mocked as string
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
-
-    it('should set fill to "none" by default when handling edges', function () {
-      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+      flowRenderer.addEdges(edges, mockG);
+    });
+    it('should handle edges with text and styles defined', function() {
+      flowParser.parser.parse(
+        'graph TD;A---|the text|B; linkStyle 0 stroke:val1,stroke-width:val2;'
+      );
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
 
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('none')
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;')
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('none');
+          expect(options.label.match('the text')).toBeTruthy();
+          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
+      flowRenderer.addEdges(edges, mockG);
+    });
 
-    it('should not set fill to none if fill is set in linkStyle', function () {
-      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;')
-      flowParser.parser.yy.getVertices()
-      const edges = flowParser.parser.yy.getEdges()
+    it('should set fill to "none" by default when handling edges', function() {
+      flowParser.parser.parse('graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2;');
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
+
       const mockG = {
-        setEdge: function (start, end, options) {
-          expect(start).toBe('A')
-          expect(end).toBe('B')
-          expect(options.arrowhead).toBe('none')
-          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:blue;')
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('none');
+          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:none;');
         }
-      }
+      };
 
-      flowRenderer.addEdges(edges, mockG)
-    })
-  })
+      flowRenderer.addEdges(edges, mockG);
+    });
 
-  describe('checking validity of input ', function () {
-    it('it should throw for an invalid definiton', function () {
-      expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow()
-    })
+    it('should not set fill to none if fill is set in linkStyle', function() {
+      flowParser.parser.parse(
+        'graph TD;A---B; linkStyle 0 stroke:val1,stroke-width:val2,fill:blue;'
+      );
+      flowParser.parser.yy.getVertices();
+      const edges = flowParser.parser.yy.getEdges();
+      const mockG = {
+        setEdge: function(start, end, options) {
+          expect(start).toBe('A');
+          expect(end).toBe('B');
+          expect(options.arrowhead).toBe('none');
+          expect(options.style).toBe('stroke:val1;stroke-width:val2;fill:blue;');
+        }
+      };
 
-    it('it should not throw for a valid flow definition', function () {
-      expect(() => mermaid.parse('graph TD;A--x|text including URL space|B;')).not.toThrow()
-    })
-    it('it should throw for an invalid flow definition', function () {
-      expect(() => mermaid.parse('graph TQ;A--x|text including URL space|B;')).toThrow()
-    })
+      flowRenderer.addEdges(edges, mockG);
+    });
+  });
 
-    it('it should not throw for a valid sequenceDiagram definition', function () {
-      const text = 'sequenceDiagram\n' +
+  describe('checking validity of input ', function() {
+    it('it should throw for an invalid definiton', function() {
+      expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();
+    });
+
+    it('it should not throw for a valid flow definition', function() {
+      expect(() => mermaid.parse('graph TD;A--x|text including URL space|B;')).not.toThrow();
+    });
+    it('it should throw for an invalid flow definition', function() {
+      expect(() => mermaid.parse('graph TQ;A--x|text including URL space|B;')).toThrow();
+    });
+
+    it('it should not throw for a valid sequenceDiagram definition', function() {
+      const text =
+        'sequenceDiagram\n' +
         'Alice->Bob: Hello Bob, how are you?\n\n' +
         '%% Comment\n' +
         'Note right of Bob: Bob thinks\n' +
@@ -197,12 +202,13 @@ describe('when using mermaid and ', function () {
         'Bob-->Alice: I am good thanks!\n' +
         'else isSick\n' +
         'Bob-->Alice: Feel sick...\n' +
-        'end'
-      expect(() => mermaid.parse(text)).not.toThrow()
-    })
+        'end';
+      expect(() => mermaid.parse(text)).not.toThrow();
+    });
 
-    it('it should throw for an invalid sequenceDiagram definition', function () {
-      const text = 'sequenceDiagram\n' +
+    it('it should throw for an invalid sequenceDiagram definition', function() {
+      const text =
+        'sequenceDiagram\n' +
         'Alice:->Bob: Hello Bob, how are you?\n\n' +
         '%% Comment\n' +
         'Note right of Bob: Bob thinks\n' +
@@ -210,8 +216,8 @@ describe('when using mermaid and ', function () {
         'Bob-->Alice: I am good thanks!\n' +
         'else isSick\n' +
         'Bob-->Alice: Feel sick...\n' +
-        'end'
-      expect(() => mermaid.parse(text)).toThrow()
-    })
-  })
-})
+        'end';
+      expect(() => mermaid.parse(text)).toThrow();
+    });
+  });
+});

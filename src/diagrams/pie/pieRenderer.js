@@ -1,83 +1,87 @@
 /**
  * Created by AshishJ on 11-09-2019.
  */
-import * as d3 from 'd3'
-import pieData from './pieDb'
-import pieParser from './parser/pie'
-import { logger } from '../../logger'
+import * as d3 from 'd3';
+import pieData from './pieDb';
+import pieParser from './parser/pie';
+import { logger } from '../../logger';
 
-const conf = {
-}
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf)
+const conf = {};
+export const setConf = function(cnf) {
+  const keys = Object.keys(cnf);
 
-  keys.forEach(function (key) {
-    conf[key] = cnf[key]
-  })
-}
+  keys.forEach(function(key) {
+    conf[key] = cnf[key];
+  });
+};
 
 /**
  * Draws a Pie Chart with the data given in text.
  * @param text
  * @param id
  */
-let w
+let w;
 export const draw = (txt, id, ver) => {
   try {
-    const parser = pieParser.parser
-    parser.yy = pieData
-    logger.debug('Rendering info diagram\n' + txt)
+    const parser = pieParser.parser;
+    parser.yy = pieData;
+    logger.debug('Rendering info diagram\n' + txt);
     // Parse the Pie Chart definition
-    parser.yy.clear()
-    parser.parse(txt)
-    logger.debug('Parsed info diagram')
-    const elem = document.getElementById(id)
-    w = elem.parentElement.offsetWidth
+    parser.yy.clear();
+    parser.parse(txt);
+    logger.debug('Parsed info diagram');
+    const elem = document.getElementById(id);
+    w = elem.parentElement.offsetWidth;
 
     if (typeof w === 'undefined') {
-      w = 1200
+      w = 1200;
     }
 
     if (typeof conf.useWidth !== 'undefined') {
-      w = conf.useWidth
+      w = conf.useWidth;
     }
-    const h = 450
-    elem.setAttribute('height', '100%')
+    const h = 450;
+    elem.setAttribute('height', '100%');
     // Set viewBox
-    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h)
+    elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
 
     // Fetch the default direction, use TD if none was found
 
-    var width = w// 450
-    var height = 450
-    var margin = 40
+    var width = w; // 450
+    var height = 450;
+    var margin = 40;
 
-    var radius = Math.min(width, height) / 2 - margin
+    var radius = Math.min(width, height) / 2 - margin;
 
-    var svg = d3.select('#' + id).append('svg')
+    var svg = d3
+      .select('#' + id)
+      .append('svg')
       .attr('width', width)
       .attr('height', height)
       .append('g')
-      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')')
+      .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-    var data = pieData.getSections()
-    logger.info(data)
+    var data = pieData.getSections();
+    logger.info(data);
 
     // set the color scale
-    var color = d3.scaleOrdinal()
+    var color = d3
+      .scaleOrdinal()
       .domain(data)
-      .range(d3.schemeSet2)
+      .range(d3.schemeSet2);
 
     // Compute the position of each group on the pie:
-    var pie = d3.pie()
-      .value(function (d) { return d.value })
-    var dataReady = pie(d3.entries(data))
+    var pie = d3.pie().value(function(d) {
+      return d.value;
+    });
+    var dataReady = pie(d3.entries(data));
     // Now I know that group A goes from 0 degrees to x degrees and so on.
 
     // shape helper to build arcs:
-    var arcGenerator = d3.arc()
+    var arcGenerator = d3
+      .arc()
       .innerRadius(0)
-      .outerRadius(radius)
+      .outerRadius(radius);
 
     // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
     svg
@@ -86,10 +90,12 @@ export const draw = (txt, id, ver) => {
       .enter()
       .append('path')
       .attr('d', arcGenerator)
-      .attr('fill', function (d) { return (color(d.data.key)) })
+      .attr('fill', function(d) {
+        return color(d.data.key);
+      })
       .attr('stroke', 'black')
       .style('stroke-width', '2px')
-      .style('opacity', 0.7)
+      .style('opacity', 0.7);
 
     // Now add the annotation. Use the centroid method to get the best coordinates
     svg
@@ -97,23 +103,28 @@ export const draw = (txt, id, ver) => {
       .data(dataReady)
       .enter()
       .append('text')
-      .text(function (d) { return d.data.key })
-      .attr('transform', function (d) { return 'translate(' + arcGenerator.centroid(d) + ')' })
+      .text(function(d) {
+        return d.data.key;
+      })
+      .attr('transform', function(d) {
+        return 'translate(' + arcGenerator.centroid(d) + ')';
+      })
       .style('text-anchor', 'middle')
-      .style('font-size', 17)
+      .style('font-size', 17);
 
-    svg.append('text')
+    svg
+      .append('text')
       .text(parser.yy.getTitle())
       .attr('x', 0)
       .attr('y', -(h - 50) / 2)
-      .attr('class', 'pieTitleText')
+      .attr('class', 'pieTitleText');
   } catch (e) {
-    logger.error('Error while rendering info diagram')
-    logger.error(e.message)
+    logger.error('Error while rendering info diagram');
+    logger.error(e.message);
   }
-}
+};
 
 export default {
   setConf,
   draw
-}
+};
