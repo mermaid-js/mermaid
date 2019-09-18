@@ -1562,6 +1562,7 @@ describe('when parsing ', function() {
       } else {
         expect(vert['A'].text).toBe(char);
       }
+      flow.parser.yy.clear();
     };
 
     it("it should be able to parse a '.'", function() {
@@ -1763,5 +1764,28 @@ describe('when parsing ', function() {
     expect(classes['exClass'].styles[1]).toBe('border:1px solid red');
     expect(vertices['a'].classes[0]).toBe('exClass');
     expect(vertices['b'].classes[0]).toBe('exClass');
+  });
+
+  it('should be possible to use direction in node ids', function() {
+    let statement = '';
+
+    statement = statement + 'graph TD;' + '\n';
+    statement = statement + '  node1TB\n';
+
+    const res = flow.parser.parse(statement);
+    const vertices = flow.parser.yy.getVertices();
+    console.log(vertices);
+    const classes = flow.parser.yy.getClasses();
+    expect(vertices['node1TB'].id).toBe('node1TB');
+  });
+  it('should be possible to use direction in node ids', function() {
+    let statement = '';
+
+    statement = statement + 'graph TD;A--x|text including URL space|B;';
+    const res = flow.parser.parse(statement);
+    const vertices = flow.parser.yy.getVertices();
+    console.log(vertices);
+    const classes = flow.parser.yy.getClasses();
+    expect(vertices['A'].id).toBe('A');
   });
 });

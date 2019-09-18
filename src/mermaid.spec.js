@@ -181,6 +181,10 @@ describe('when using mermaid and ', function() {
   });
 
   describe('checking validity of input ', function() {
+    beforeEach(function() {
+      flowParser.parser.yy = flowDb;
+      flowDb.clear();
+    });
     it('it should throw for an invalid definiton', function() {
       expect(() => mermaid.parse('this is not a mermaid diagram definition')).toThrow();
     });

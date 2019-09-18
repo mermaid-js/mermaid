@@ -7,7 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
-
+%x dir
 %%
 \%\%[^\n]*            /* do nothing */
 ["]                     this.begin("string");
@@ -20,15 +20,19 @@
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
-"graph"               return 'GRAPH';
+"graph"      {if(yy.lex.firstGraph()){this.begin("dir");console.log('First graph')}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
-"LR"                  return 'DIR';
-"RL"                  return 'DIR';
-"TB"                  return 'DIR';
-"BT"                  return 'DIR';
-"TD"                  return 'DIR';
-"BR"                  return 'DIR';
+<dir>\s*"LR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"RL"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TB"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BT"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TD"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"<"              {   this.popState();  return 'DIR'; }
+<dir>\s*">"              {   this.popState();  return 'DIR'; }
+<dir>\s*"^"              {   this.popState();  return 'DIR'; }
+<dir>\s*"v"              {   this.popState();  return 'DIR'; }
 [0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
 ":::"                 return 'STYLE_SEPARATOR';
@@ -204,16 +208,16 @@ line
 graphConfig
     : SPACE graphConfig
     | NEWLINE graphConfig
-    | GRAPH SPACE DIR FirstStmtSeperator
-        { yy.setDirection($3);$$ = $3;}
-    | GRAPH SPACE TAGEND FirstStmtSeperator
-        { yy.setDirection("LR");$$ = $3;}
-    | GRAPH SPACE TAGSTART FirstStmtSeperator
-        { yy.setDirection("RL");$$ = $3;}
-    | GRAPH SPACE UP FirstStmtSeperator
-        { yy.setDirection("BT");$$ = $3;}
-    | GRAPH SPACE DOWN FirstStmtSeperator
-        { yy.setDirection("TB");$$ = $3;}
+    | GRAPH DIR FirstStmtSeperator
+        { yy.setDirection($2);$$ = $2;}
+    // | GRAPH SPACE TAGEND FirstStmtSeperator
+    //     { yy.setDirection("LR");$$ = $3;}
+    // | GRAPH SPACE TAGSTART FirstStmtSeperator
+    //     { yy.setDirection("RL");$$ = $3;}
+    // | GRAPH SPACE UP FirstStmtSeperator
+    //     { yy.setDirection("BT");$$ = $3;}
+    // | GRAPH SPACE DOWN FirstStmtSeperator
+    //     { yy.setDirection("TB");$$ = $3;}
     ;
 
 ending: endToken ending

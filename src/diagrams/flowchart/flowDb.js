@@ -12,6 +12,7 @@ let subGraphs = [];
 let subGraphLookup = {};
 let tooltips = {};
 let subCount = 0;
+let firstGraphFlag = true;
 let direction;
 // Functions to be run after graph rendering
 let funs = [];
@@ -171,6 +172,18 @@ export const addClass = function(id, style) {
  */
 export const setDirection = function(dir) {
   direction = dir;
+  if (direction.match(/.*</)) {
+    direction = 'RL';
+  }
+  if (direction.match(/.*\^/)) {
+    direction = 'BT';
+  }
+  if (direction.match(/.*>/)) {
+    direction = 'LR';
+  }
+  if (direction.match(/.*v/)) {
+    direction = 'TB';
+  }
 };
 
 /**
@@ -353,6 +366,7 @@ export const clear = function() {
   subGraphLookup = {};
   subCount = 0;
   tooltips = [];
+  firstGraphFlag = true;
 };
 /**
  *
@@ -470,6 +484,14 @@ export const getSubGraphs = function() {
   return subGraphs;
 };
 
+export const firstGraph = () => {
+  if (firstGraphFlag) {
+    firstGraphFlag = false;
+    return true;
+  }
+  return false;
+};
+
 export default {
   addVertex,
   addLink,
@@ -491,5 +513,8 @@ export default {
   addSubGraph,
   getDepthFirstPos,
   indexNodes,
-  getSubGraphs
+  getSubGraphs,
+  lex: {
+    firstGraph
+  }
 };
