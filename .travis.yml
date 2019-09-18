@@ -5,6 +5,7 @@ node_js:
 cache:
   npm: false
 script:
+  - yarn build
   - yarn test --coverage
   - yarn e2e
 after_success:
