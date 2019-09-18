@@ -1,10 +1,11 @@
 /// <reference types="Cypress" />
 
-import { imgSnapshotTest} from '../../helpers/util';
+import { imgSnapshotTest } from '../../helpers/util';
 
 context('Aliasing', () => {
   it('should render a simple sequence diagrams', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
       sequenceDiagram
         participant Alice
         participant Bob
@@ -27,11 +28,14 @@ context('Aliasing', () => {
         and
         Alice -->> John: Parallel message 2
         end
-      `, {})
-  })
+      `,
+      {}
+    );
+  });
   context('background rects', () => {
     it('should render a single and nested rects', () => {
-      imgSnapshotTest(`
+      imgSnapshotTest(
+        `
         sequenceDiagram
           participant A
           participant B
@@ -56,10 +60,13 @@ context('Aliasing', () => {
             E ->> E: Task 6
           end
           D -->> A: Complete
-      `, {})
-    })
+      `,
+        {}
+      );
+    });
     it('should render rect around and inside loops', () => {
-      imgSnapshotTest(`
+      imgSnapshotTest(
+        `
         sequenceDiagram
           A ->> B: 1
           rect rgb(204, 0, 102)
@@ -75,10 +82,13 @@ context('Aliasing', () => {
             D --> C: 4
             end
           end
-      `, {})
-    })
+      `,
+        {}
+      );
+    });
     it('should render rect around and inside alts', () => {
-      imgSnapshotTest(`
+      imgSnapshotTest(
+        `
         sequenceDiagram
           A ->> B: 1
           rect rgb(204, 0, 102)
@@ -91,10 +101,13 @@ context('Aliasing', () => {
             end
           end
           B ->> A: Return
-      `, {})
-    })
+      `,
+        {}
+      );
+    });
     it('should render rect around and inside opts', () => {
-      imgSnapshotTest(`
+      imgSnapshotTest(
+        `
         sequenceDiagram
           A ->> B: 1
           rect rgb(204, 0, 102)
@@ -112,7 +125,9 @@ context('Aliasing', () => {
             end
           end
           B ->> A: Return
-      `, {})
-    })
-  })
-})
+      `,
+        {}
+      );
+    });
+  });
+});

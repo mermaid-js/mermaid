@@ -1,20 +1,22 @@
 /* eslint-env jest */
-import { imgSnapshotTest} from '../../helpers/util'
-
+import { imgSnapshotTest } from '../../helpers/util';
 
 describe('Flowcart', () => {
   it('should render a simple flowchart', () => {
-    imgSnapshotTest(`graph TD
+    imgSnapshotTest(
+      `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me think}
       C -->|One| D[Laptop]
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-    {})
-  })
+      {}
+    );
+  });
   it('should render a simple flowchart with line breaks', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TD
       A[Christmas] -->|Get money| B(Go shopping)
       B --> C{Let me thinksssss<br/>ssssssssssssssssssssss<br/>sssssssssssssssssssssssssss}
@@ -22,11 +24,13 @@ describe('Flowcart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[Car]
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render a simple flowchart with trapezoid and inverse trapezoid vertex options.', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TD
       A[/Christmas\\]
       A -->|Get money| B[\\Go shopping/]
@@ -35,11 +39,13 @@ describe('Flowcart', () => {
       C -->|Two| E[\\iPhone\\]
       C -->|Three| F[Car]
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should style nodes via a class.', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TD
       1A --> 1B
       1B --> 1C
@@ -49,11 +55,13 @@ describe('Flowcart', () => {
       classDef processHead fill:#888888,color:white,font-weight:bold,stroke-width:3px,stroke:#001f3f
       class 1A,1B,D,E processHead
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render a flowchart full of circles', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph LR
       47(SAM.CommonFA.FMESummary)-->48(SAM.CommonFA.CommonFAFinanceBudget)
       37(SAM.CommonFA.BudgetSubserviceLineVolume)-->48(SAM.CommonFA.CommonFAFinanceBudget)
@@ -76,10 +84,12 @@ describe('Flowcart', () => {
       35(SAM.CommonFA.PopulationFME)-->39(SAM.CommonFA.ChargeDetails)
       36(SAM.CommonFA.PremetricCost)-->39(SAM.CommonFA.ChargeDetails)
       `,
-    {})
-  })
+      {}
+    );
+  });
   it('should render a flowchart full of icons', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TD
       9e122290_1ec3_e711_8c5a_005056ad0002("fa:fa-creative-commons My System | Test Environment")
       82072290_1ec3_e711_8c5a_005056ad0002("fa:fa-cogs Shared Business Logic Server:Service 1")
@@ -144,37 +154,45 @@ describe('Flowcart', () => {
       9a072290_1ec3_e711_8c5a_005056ad0002-->d6072290_1ec3_e711_8c5a_005056ad0002
       9a072290_1ec3_e711_8c5a_005056ad0002-->71082290_1ec3_e711_8c5a_005056ad0002
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render labels with numbers at the start', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TB;subgraph "number as labels";1;end;
       `,
-    {})
-  })
+      {}
+    );
+  });
   it('should render subgraphs', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TB
       subgraph One
         a1-->a2
       end
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render subgraphs with a title startign with a digit', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TB
       subgraph 2Two
         a1-->a2
       end
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render styled subgraphs', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     graph TB
       A
       B
@@ -203,11 +221,13 @@ describe('Flowcart', () => {
       style foo fill:#F99,stroke-width:2px,stroke:#F0F
       style bar fill:#999,stroke-width:10px,stroke:#0F0
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render a flowchart with ling sames and class definitoins', () => {
-    imgSnapshotTest(`graph LR
+    imgSnapshotTest(
+      `graph LR
       sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["
 
       提交申请
@@ -303,11 +323,13 @@ describe('Flowcart', () => {
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4DA958A0-26D9-4D47-93A7-70F39FD7D51A;
       sid-7CE72B24-E0C1-46D3-8132-8BA66BE05AA7-->sid-4FC27B48-A6F9-460A-A675-021F5854FE22;
       `,
-    {})
-  })
+      {}
+    );
+  });
 
   it('should render color of styled nodes', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
       graph LR
         foo-->bar
 
@@ -315,10 +337,11 @@ describe('Flowcart', () => {
         style foo fill:#F99,stroke-width:2px,stroke:#F0F
         style bar fill:#999,color: #00ff00, stroke-width:10px,stroke:#0F0
       `,
-    {
-      listUrl: false,
-      listId: 'color styling',
-      logLevel: 0
-    })
-  })
-})
+      {
+        listUrl: false,
+        listId: 'color styling',
+        logLevel: 0
+      }
+    );
+  });
+});

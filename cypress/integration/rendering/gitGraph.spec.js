@@ -1,9 +1,10 @@
 /* eslint-env jest */
-import { imgSnapshotTest } from '../../helpers/util.js'
+import { imgSnapshotTest } from '../../helpers/util.js';
 
 describe('Sequencediagram', () => {
   it('should render a simple git graph', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     gitGraph:
       options
       {
@@ -21,6 +22,7 @@ describe('Sequencediagram', () => {
       commit
       merge newbranch
       `,
-    {})
-  })
-})
+      {}
+    );
+  });
+});

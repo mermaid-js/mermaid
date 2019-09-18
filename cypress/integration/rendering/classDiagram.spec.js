@@ -1,9 +1,10 @@
 /* eslint-env jest */
-import { imgSnapshotTest} from '../../helpers/util'
+import { imgSnapshotTest } from '../../helpers/util';
 
 describe('Sequencediagram', () => {
   it('should render a simple class diagrams', () => {
-    imgSnapshotTest(`
+    imgSnapshotTest(
+      `
     classDiagram
       Class01 <|-- AveryLongClass : Cool
       Class03 *-- Class04
@@ -19,7 +20,8 @@ describe('Sequencediagram', () => {
       Class01 : int gorilla
       Class08 <--> C2: Cool label
       `,
-    {})
-    cy.get('svg')
-  })
-})
+      {}
+    );
+    cy.get('svg');
+  });
+});
