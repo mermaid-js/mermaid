@@ -647,7 +647,7 @@ export default mermaidAPI;
  *     arrowMarkerAbsolute:false,
  *
  *     flowchart:{
- *       htmlLabels:false,
+ *       htmlLabels:true,
  *       curve:'linear',
  *     },
  *     sequence:{

@@ -280,7 +280,7 @@ mermaidAPI.initialize({
     arrowMarkerAbsolute:false,
 
     flowchart:{
-      htmlLabels:false,
+      htmlLabels:true,
       curve:'linear',
     },
     sequence:{
