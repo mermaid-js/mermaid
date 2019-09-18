@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   transform: {
@@ -10,4 +10,4 @@ module.exports = {
     '\\.(css|scss)$': 'identity-obj-proxy'
   },
   moduleFileExtensions: ['js', 'json', 'jsx', 'ts', 'tsx', 'node', 'jison']
-}
+};
