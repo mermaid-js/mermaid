@@ -316,6 +316,7 @@ function parse(text) {
       parser.parser.yy = gitGraphAst;
       break;
     case 'flowchart':
+      flowDb.clear();
       parser = flowParser;
       parser.parser.yy = flowDb;
       break;
