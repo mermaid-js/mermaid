@@ -48,7 +48,7 @@ function svgCreateDefs(svg) {
     .attr('x', config.nodeLabel.x)
     .attr('y', config.nodeLabel.y)
     .attr('class', 'node-label')
-    .attr('requiredFeatures', 'http://www.w3.org/TR/SVG11/feature#Extensibility')
+    .attr('requiredFeatures', 'https://www.w3.org/TR/SVG11/feature#Extensibility')
     .append('p')
     .html('');
 }

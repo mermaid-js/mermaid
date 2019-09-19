@@ -1,5 +1,5 @@
 /** mermaid
- *  http://knsv.github.io/mermaid/
+ *  https://knsv.github.io/mermaid
  *  (c) 2015 Knut Sveidqvist
  *  MIT license.
  */
