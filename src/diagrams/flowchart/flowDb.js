@@ -283,7 +283,7 @@ export const bindFunctions = function(element) {
   });
 };
 export const getDirection = function() {
-  return direction;
+  return direction.trim();
 };
 /**
  * Retrieval function for fetching the found nodes after parsing has completed.

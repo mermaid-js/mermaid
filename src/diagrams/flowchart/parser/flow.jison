@@ -20,7 +20,7 @@
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
-"graph"      {if(yy.lex.firstGraph()){this.begin("dir");console.log('First graph')}  return 'GRAPH';}
+"graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
 <dir>\s*"LR"             {   this.popState();  return 'DIR'; }
