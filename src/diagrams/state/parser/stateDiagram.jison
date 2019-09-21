@@ -14,8 +14,10 @@
 
 // Special states for recognizing aliases
 %x ID
+%x STATE
 %x ALIAS
 %x SCALE
+%x struct
 
 // A special state for grabbing text up to the first comment/newline
 %x LINE
@@ -24,16 +26,23 @@
 
 [\n]+                            return 'NL';
 \s+                              /* skip all whitespace */
-<ID,ALIAS,LINE>((?!\n)\s)+       /* skip same-line whitespace */
-<INITIAL,ID,ALIAS,LINE>\#[^\n]*  /* skip comments */
+<ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
+<INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
 \%%[^\n]*                        /* skip comments */
 
 "scale"\s+            { this.pushState('SCALE'); console.log('Got scale', yytext);return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
-"state"\s+            { this.begin('LINE'); return 'state'; }
-"note"\s+           { this.begin('LINE'); return 'note'; }
+"state"\s+            { this.pushState('STATE'); }
+<STATE>[^\n\s\{]+      {console.log('COMPOSIT_STATE', yytext);return 'COMPOSIT_STATE';}
+<STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
+<struct>\}           { console.log('Ending struct'); this.popState(); return 'STRUCT_STOP';}}
+<struct>[\n]              /* nothing */
+// <struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+
+
+<INITIAL,struct>"note"\s+           { this.begin('LINE'); return 'note'; }
 "stateDiagram"\s+           { console.log('Got state diagram', yytext,'#');return 'SD'; }
 "hide empty description"    { console.log('HIDE_EMPTY', yytext,'#');return 'HIDE_EMPTY'; }
 // "participant"     { this.begin('ID'); return 'participant'; }
@@ -45,11 +54,11 @@
 // "and"             { this.begin('LINE'); return 'and'; }
 // <LINE>[^#\n;]*    { this.popState(); return 'restOfLine'; }
 // "end"             return 'end';
-"[*]"                   { console.log('EDGE_STATE=',yytext); return 'EDGE_STATE';}
-[^:\n\s\-]+                { console.log('ID=',yytext); return 'ID';}
-\s*":"[^\+\->:\n,;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
-"left of"         return 'left_of';
-"right of"        return 'right_of';
+<INITIAL,struct>"[*]"                   { console.log('EDGE_STATE=',yytext); return 'EDGE_STATE';}
+<INITIAL,struct>[^:\n\s\-]+                { console.log('ID=',yytext); return 'ID';}
+<INITIAL,struct>\s*":"[^\+\->:\n,;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
+<INITIAL,struct>"left of"         return 'left_of';
+<INITIAL,struct>"right of"        return 'right_of';
 // "over"            return 'over';
 // "note"            return 'note';
 // "activate"        { this.begin('ID'); return 'activate'; }
@@ -59,7 +68,7 @@
 // ","               return ',';
 // ";"               return 'NL';
 // [^\+\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
-"-->"             return '-->';
+<INITIAL,struct>"-->"             return '-->';
 // "--"             return '--';
 // ":"[^#\n;]+       return 'TXT';
 <<EOF>>           return 'NL';
@@ -86,15 +95,17 @@ document
 
 line
 	: SPACE statement { console.log('here');$$ = $2 }
-	| statement {console.log('there'); $$ = $1 }
+	| statement {console.log('line', $1); $$ = $1 }
 	| NL { $$=[];}
 	;
 
 statement
 	: idStatement DESCR
 	| idStatement '-->' idStatement
+	| idStatement '-->' idStatement DESCR
     | HIDE_EMPTY
     | scale WIDTH
+    | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     ;
 
 idStatement

@@ -59,6 +59,27 @@ describe('state diagram, ', function() {
       parser.parse(str);
     });
 
+    it('description after second state', function() {
+      const str = `stateDiagram\n
+        scale 350 width
+        [*] --> State1 : This is the description
+        State1 --> [*]
+      `;
+
+      parser.parse(str);
+    });
+    it('should handle state statements', function() {
+      const str = `stateDiagram\n
+        state Configuring {
+          [*] --> NewValueSelection
+          NewValueSelection --> NewValuePreview : EvNewValue
+          NewValuePreview --> NewValueSelection : EvNewValueRejected
+          NewValuePreview --> NewValueSelection : EvNewValueSaved1
+        }
+      `;
+
+      parser.parse(str);
+    });
     xit('should handle relation definitions', function() {
       const str = `stateDiagram\n
         state Configuring {
