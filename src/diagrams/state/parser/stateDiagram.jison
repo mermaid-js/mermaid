@@ -38,8 +38,8 @@
 
 <INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
 <STATE>["]                   this.begin("STATE_STRING");
-<STATE>"as"\s*         {this.popState('STATE_ID');return "AS";}
-<STATE_ID>[^\n]         {this.popState('STATE_ID');return "ID";}
+<STATE>"as"\s*         {this.popState();this.pushState('STATE_ID');return "AS";}
+<STATE_ID>[^\n]*         {this.popState();console.log('ID');return "ID";}
 <STATE_STRING>["]              this.popState();
 <STATE_STRING>[^"]*         { console.log('Long description:', yytext);return "STATE_DESCR";}
 <STATE>[^\n\s\{]+      {console.log('COMPOSIT_STATE', yytext);return 'COMPOSIT_STATE';}
