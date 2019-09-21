@@ -15,6 +15,8 @@
 // Special states for recognizing aliases
 %x ID
 %x STATE
+%x STATE_STRING
+%x STATE_ID
 %x ALIAS
 %x SCALE
 %x struct
@@ -35,6 +37,11 @@
 <SCALE>\s+"width"     {this.popState();}
 
 <INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
+<STATE>["]                   this.begin("STATE_STRING");
+<STATE>"as"\s*         {this.popState('STATE_ID');return "AS";}
+<STATE_ID>[^\n]         {this.popState('STATE_ID');return "ID";}
+<STATE_STRING>["]              this.popState();
+<STATE_STRING>[^"]*         { console.log('Long description:', yytext);return "STATE_DESCR";}
 <STATE>[^\n\s\{]+      {console.log('COMPOSIT_STATE', yytext);return 'COMPOSIT_STATE';}
 <STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
 <struct>\}           { console.log('Ending struct'); this.popState(); return 'STRUCT_STOP';}}
@@ -106,6 +113,7 @@ statement
     | HIDE_EMPTY
     | scale WIDTH
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
+    | STATE_DESCR AS ID
     ;
 
 idStatement

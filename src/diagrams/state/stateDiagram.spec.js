@@ -121,29 +121,36 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    // it('should handle relation definitions', function() {
-    //   const str = `stateDiagram\n
-    //     scale 600 width
+    it('should handle state deifintions with separation of id', function() {
+      const str = `stateDiagram\n
+        state "Long state description" as state1
+        `;
 
-    //     [*] --> State1
-    //     State1 --> State2 : Succeeded
-    //     State1 --> [*] : Aborted
-    //     State2 --> State3 : Succeeded
-    //     State2 --> [*] : Aborted
-    //     state State3 {
-    //       state "Accumulate Enough Data\nLong State Name" as long1
-    //       long1 : Just a test
-    //       [*] --> long1
-    //       long1 --> long1 : New Data
-    //       long1 --> ProcessData : Enough Data
-    //     }
-    //     State3 --> State3 : Failed
-    //     State3 --> [*] : Succeeded / Save Result
-    //     State3 --> [*] : Aborted
-    //   `;
+      parser.parse(str);
+    });
+    it('should State definition with quotes', function() {
+      const str = `stateDiagram\n
+        scale 600 width
 
-    //   parser.parse(str);
-    // });
+        [*] --> State1
+        State1 --> State2 : Succeeded
+        State1 --> [*] : Aborted
+        State2 --> State3 : Succeeded
+        State2 --> [*] : Aborted
+        state State3 {
+          state "Accumulate Enough Data\nLong State Name" as long1
+          long1 : Just a test
+          [*] --> long1
+          long1 --> long1 : New Data
+          long1 --> ProcessData : Enough Data
+        }
+        State3 --> State3 : Failed
+        State3 --> [*] : Succeeded / Save Result
+        State3 --> [*] : Aborted
+      `;
+
+      parser.parse(str);
+    });
     // it('should handle relation definitions', function() {
     //   const str = `stateDiagram\n
     //     state fork_state <<fork>>
