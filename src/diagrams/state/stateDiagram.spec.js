@@ -80,7 +80,7 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    xit('should handle relation definitions', function() {
+    it('should handle recursive state definitions', function() {
       const str = `stateDiagram\n
         state Configuring {
           [*] --> NewValueSelection
@@ -89,14 +89,14 @@ describe('state diagram, ', function() {
           NewValuePreview --> NewValueSelection : EvNewValueSaved
 
           state NewValuePreview {
-          State1 -> State2
+          State1 --> State2
           }
         }
       `;
 
       parser.parse(str);
     });
-    xit('should handle relation definitions', function() {
+    it('should handle multiple recursive state definitions', function() {
       const str = `stateDiagram\n
         scale 350 width
         [*] --> NotShooting
@@ -114,7 +114,7 @@ describe('state diagram, ', function() {
           NewValuePreview --> NewValueSelection : EvNewValueSaved
 
           state NewValuePreview {
-          State1 -> State2
+          State1 --> State2
           }
         }
       `;

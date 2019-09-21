@@ -34,7 +34,7 @@
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
-"state"\s+            { this.pushState('STATE'); }
+<INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
 <STATE>[^\n\s\{]+      {console.log('COMPOSIT_STATE', yytext);return 'COMPOSIT_STATE';}
 <STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
 <struct>\}           { console.log('Ending struct'); this.popState(); return 'STRUCT_STOP';}}
