@@ -151,23 +151,23 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    // it('should handle relation definitions', function() {
-    //   const str = `stateDiagram\n
-    //     state fork_state <<fork>>
-    //     [*] --> fork_state
-    //     fork_state --> State2
-    //     fork_state --> State3
+    it('should handle fork statements', function() {
+      const str = `stateDiagram\n
+        state fork_state <<fork>>
+        [*] --> fork_state
+        fork_state --> State2
+        fork_state --> State3
 
-    //     state join_state <<join>>
-    //     State2 --> join_state
-    //     State3 --> join_state
-    //     join_state --> State4
-    //     State4 --> [*]
-    //   `;
+        state join_state <<join>>
+        State2 --> join_state
+        State3 --> join_state
+        join_state --> State4
+        State4 --> [*]
+      `;
 
-    //   parser.parse(str);
-    // });
-    // it('should handle relation definitions', function() {
+      parser.parse(str);
+    });
+    // it('should handle concurrent state', function() {
     //   const str = `stateDiagram\n
     //     [*] --> Active
 

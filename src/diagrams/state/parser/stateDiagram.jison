@@ -15,6 +15,7 @@
 // Special states for recognizing aliases
 %x ID
 %x STATE
+%x FORK_STATE
 %x STATE_STRING
 %x STATE_ID
 %x ALIAS
@@ -37,6 +38,8 @@
 <SCALE>\s+"width"     {this.popState();}
 
 <INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
+<STATE>.*"<<fork>>"                   {this.popState();console.log('Fork: ',yytext);return 'FORK';}
+<STATE>.*"<<join>>"                   {this.popState();console.log('Join: ',yytext);return 'JOIN';}
 <STATE>["]                   this.begin("STATE_STRING");
 <STATE>"as"\s*         {this.popState();this.pushState('STATE_ID');return "AS";}
 <STATE_ID>[^\n]*         {this.popState();console.log('ID');return "ID";}
@@ -114,6 +117,8 @@ statement
     | scale WIDTH
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     | STATE_DESCR AS ID
+    | FORK
+    | JOIN
     ;
 
 idStatement
