@@ -167,27 +167,43 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    // it('should handle concurrent state', function() {
-    //   const str = `stateDiagram\n
-    //     [*] --> Active
+    it('should handle concurrent state', function() {
+      const str = `stateDiagram\n
+        [*] --> Active
 
-    //     state Active {
-    //       [*] -> NumLockOff
-    //       NumLockOff --> NumLockOn : EvNumLockPressed
-    //       NumLockOn --> NumLockOff : EvNumLockPressed
-    //       --
-    //       [*] -> CapsLockOff
-    //       CapsLockOff --> CapsLockOn : EvCapsLockPressed
-    //       CapsLockOn --> CapsLockOff : EvCapsLockPressed
-    //       --
-    //       [*] -> ScrollLockOff
-    //       ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
-    //       ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
-    //   `;
+        state Active {
+          [*] --> NumLockOff
+          NumLockOff --> NumLockOn : EvNumLockPressed
+          NumLockOn --> NumLockOff : EvNumLockPressed
+          --
+          [*] --> CapsLockOff
+          CapsLockOff --> CapsLockOn : EvCapsLockPressed
+          CapsLockOn --> CapsLockOff : EvCapsLockPressed
+          --
+          [*] --> ScrollLockOff
+          ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+          ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        }
+      `;
 
-    //   parser.parse(str);
-    // });
-    // it('should handle relation definitions', function() {
+      parser.parse(str);
+    });
+    it('should handle concurrent state', function() {
+      const str = `stateDiagram\n
+        [*] --> Active
+
+        state Active {
+          [*] --> NumLockOff
+          --
+          [*] --> CapsLockOff
+          --
+          [*] --> ScrollLockOff
+        }
+      `;
+
+      parser.parse(str);
+    });
+    // it('should handle arrow directions definitions', function() {
     //   const str = `stateDiagram\n
     //     [*] -up-> First
     //     First -right-> Second
@@ -197,22 +213,22 @@ describe('state diagram, ', function() {
 
     //   parser.parse(str);
     // });
-    // it('should handle relation definitions', function() {
-    //   const str = `stateDiagram\n
-    //     [*] --> Active
-    //     Active --> Inactive
+    it('should handle note statements', function() {
+      const str = `stateDiagram\n
+        [*] --> Active
+        Active --> Inactive
 
-    //     note left of Active : this is a short\nnote
+        note left of Active : this is a short<br/>note
 
-    //     note right of Inactive
-    //       A note can also
-    //       be defined on
-    //       several lines
-    //     end note
-    //   `;
+        note right of Inactive
+          A note can also
+          be defined on
+          several lines
+        end note
+      `;
 
-    //   parser.parse(str);
-    // });
+      parser.parse(str);
+    });
     // it('should handle relation definitions', function() {
     //   const str = `stateDiagram\n
     //     state foo

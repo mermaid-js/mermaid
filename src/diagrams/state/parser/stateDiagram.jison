@@ -20,6 +20,9 @@
 %x STATE_ID
 %x ALIAS
 %x SCALE
+%x NOTE
+%x NOTE_ID
+%x NOTE_TEXT
 %x struct
 
 // A special state for grabbing text up to the first comment/newline
@@ -49,11 +52,15 @@
 <STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
 <struct>\}           { console.log('Ending struct'); this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
-// <struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
+<INITIAL,struct>"note"\s+           { this.begin('NOTE'); return 'note'; }
+<NOTE>"left of"                     { this.popState();this.pushState('NOTE_ID');console.log('Got dir');return 'left_of';}
+<NOTE>"right of"                    { this.popState();this.pushState('NOTE_ID');return 'right_of';}
+<NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');console.log('Got ID for note', yytext);return 'ID';}
+<NOTE_TEXT>\s*":"[^\+\-:\n,;]+       { this.popState();console.log('Got NOTE_TEXT for note',yytext);return 'NOTE_TEXT';}
+<NOTE_TEXT>\s*[^\+\-:,;]+"end note"       { this.popState();console.log('Got NOTE_TEXT for note',yytext);return 'NOTE_TEXT';}
 
-<INITIAL,struct>"note"\s+           { this.begin('LINE'); return 'note'; }
-"stateDiagram"\s+           { console.log('Got state diagram', yytext,'#');return 'SD'; }
+"stateDiagram"\s+                   { console.log('Got state diagram', yytext,'#');return 'SD'; }
 "hide empty description"    { console.log('HIDE_EMPTY', yytext,'#');return 'HIDE_EMPTY'; }
 // "participant"     { this.begin('ID'); return 'participant'; }
 // <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)  { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
@@ -67,8 +74,6 @@
 <INITIAL,struct>"[*]"                   { console.log('EDGE_STATE=',yytext); return 'EDGE_STATE';}
 <INITIAL,struct>[^:\n\s\-]+                { console.log('ID=',yytext); return 'ID';}
 <INITIAL,struct>\s*":"[^\+\->:\n,;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
-<INITIAL,struct>"left of"         return 'left_of';
-<INITIAL,struct>"right of"        return 'right_of';
 // "over"            return 'over';
 // "note"            return 'note';
 // "activate"        { this.begin('ID'); return 'activate'; }
@@ -79,6 +84,7 @@
 // ";"               return 'NL';
 // [^\+\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
 <INITIAL,struct>"-->"             return '-->';
+<struct>"--"        return 'CONCURRENT';
 // "--"             return '--';
 // ":"[^#\n;]+       return 'TXT';
 <<EOF>>           return 'NL';
@@ -119,11 +125,18 @@ statement
     | STATE_DESCR AS ID
     | FORK
     | JOIN
+    | CONCURRENT
+    | note notePosition ID NOTE_TEXT
     ;
 
 idStatement
     : ID
     | EDGE_STATE
+    ;
+
+notePosition
+    : left_of
+    | right_of
     ;
 // statement
 // 	: 'participant' actor 'AS' restOfLine 'NL' {$2.description=$4; $$=$2;}
