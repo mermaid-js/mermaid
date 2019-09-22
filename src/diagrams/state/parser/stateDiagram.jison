@@ -23,6 +23,8 @@
 %x NOTE
 %x NOTE_ID
 %x NOTE_TEXT
+%x FLOATING_NOTE
+%x FLOATING_NOTE_ID
 %x struct
 
 // A special state for grabbing text up to the first comment/newline
@@ -45,17 +47,23 @@
 <STATE>.*"<<join>>"                   {this.popState();console.log('Join: ',yytext);return 'JOIN';}
 <STATE>["]                   this.begin("STATE_STRING");
 <STATE>"as"\s*         {this.popState();this.pushState('STATE_ID');return "AS";}
-<STATE_ID>[^\n]*         {this.popState();console.log('ID');return "ID";}
+<STATE_ID>[^\n\{]*         {this.popState();console.log('STATE_ID', yytext);return "ID";}
 <STATE_STRING>["]              this.popState();
 <STATE_STRING>[^"]*         { console.log('Long description:', yytext);return "STATE_DESCR";}
 <STATE>[^\n\s\{]+      {console.log('COMPOSIT_STATE', yytext);return 'COMPOSIT_STATE';}
-<STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
+<STATE>\n      {this.popState();}
+<INITIAL,STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
 <struct>\}           { console.log('Ending struct'); this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
 
 <INITIAL,struct>"note"\s+           { this.begin('NOTE'); return 'note'; }
 <NOTE>"left of"                     { this.popState();this.pushState('NOTE_ID');console.log('Got dir');return 'left_of';}
 <NOTE>"right of"                    { this.popState();this.pushState('NOTE_ID');return 'right_of';}
+<NOTE>\"                            { this.popState();this.pushState('FLOATING_NOTE');}
+<FLOATING_NOTE>\s*"as"\s*       {this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";}
+<FLOATING_NOTE>["]         /**/
+<FLOATING_NOTE>[^"]*         { console.log('Floating note text: ', yytext);return "NOTE_TEXT";}
+<FLOATING_NOTE_ID>[^\n]*         {this.popState();console.log('Floating note ID', yytext);return "ID";}
 <NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');console.log('Got ID for note', yytext);return 'ID';}
 <NOTE_TEXT>\s*":"[^\+\-:\n,;]+       { this.popState();console.log('Got NOTE_TEXT for note',yytext);return 'NOTE_TEXT';}
 <NOTE_TEXT>\s*[^\+\-:,;]+"end note"       { this.popState();console.log('Got NOTE_TEXT for note',yytext);return 'NOTE_TEXT';}
@@ -72,7 +80,7 @@
 // <LINE>[^#\n;]*    { this.popState(); return 'restOfLine'; }
 // "end"             return 'end';
 <INITIAL,struct>"[*]"                   { console.log('EDGE_STATE=',yytext); return 'EDGE_STATE';}
-<INITIAL,struct>[^:\n\s\-]+                { console.log('ID=',yytext); return 'ID';}
+<INITIAL,struct>[^:\n\s\-\{]+                { console.log('=>ID=',yytext); return 'ID';}
 <INITIAL,struct>\s*":"[^\+\->:\n,;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
 // "over"            return 'over';
 // "note"            return 'note';
@@ -121,12 +129,15 @@ statement
 	| idStatement '-->' idStatement DESCR
     | HIDE_EMPTY
     | scale WIDTH
+    | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     | STATE_DESCR AS ID
+    | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     | FORK
     | JOIN
     | CONCURRENT
     | note notePosition ID NOTE_TEXT
+    | note NOTE_TEXT AS ID
     ;
 
 idStatement

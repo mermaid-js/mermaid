@@ -128,6 +128,20 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
+    it('should handle state deifintions with separation of id', function() {
+      const str = `stateDiagram
+      state "Not Shooting State" as NotShooting {
+        state "Idle mode" as Idle
+        state "Configuring mode" as Configuring
+        [*] --> Idle
+        Idle --> Configuring : EvConfig
+        Configuring --> Idle : EvConfig
+      }
+        `;
+
+      parser.parse(str);
+    });
+
     it('should State definition with quotes', function() {
       const str = `stateDiagram\n
         scale 600 width
@@ -229,30 +243,38 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
-    // it('should handle relation definitions', function() {
-    //   const str = `stateDiagram\n
-    //     state foo
-    //     note "This is a floating note" as N1
-    //   `;
+    it('should handle floating notes', function() {
+      const str = `stateDiagram
+        foo: bar
+        note "This is a floating note" as N1
+      `;
 
-    //   parser.parse(str);
-    // });
-    // it('should handle relation definitions', function() {
-    //   const str = `stateDiagram\n
-    //     [*] --> NotShooting
+      parser.parse(str);
+    });
+    it('should handle floating notes', function() {
+      const str = `stateDiagram\n
+        state foo
+        note "This is a floating note" as N1
+      `;
 
-    //     state "Not Shooting State" as NotShooting {
-    //       state "Idle mode" as Idle
-    //       state "Configuring mode" as Configuring
-    //       [*] --> Idle
-    //       Idle --> Configuring : EvConfig
-    //       Configuring --> Idle : EvConfig
-    //     }
+      parser.parse(str);
+    });
+    it('should handle notes for composit states', function() {
+      const str = `stateDiagram\n
+        [*] --> NotShooting
 
-    //     note right of NotShooting : This is a note on a composite state
-    //   `;
+        state "Not Shooting State" as NotShooting {
+          state "Idle mode" as Idle
+          state "Configuring mode" as Configuring
+          [*] --> Idle
+          Idle --> Configuring : EvConfig
+          Configuring --> Idle : EvConfig
+        }
 
-    //   parser.parse(str);
-    // });
+        note right of NotShooting : This is a note on a composite state
+      `;
+
+      parser.parse(str);
+    });
   });
 });
