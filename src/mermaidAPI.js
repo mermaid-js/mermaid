@@ -426,7 +426,7 @@ const render = function(id, txt, cb, container) {
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
-      .attr('xmlns', 'https://www.w3.org/2000/svg')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
       .append('g');
   } else {
     const element = document.querySelector('#' + 'd' + id);
@@ -440,7 +440,7 @@ const render = function(id, txt, cb, container) {
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
-      .attr('xmlns', 'https://www.w3.org/2000/svg')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
       .append('g');
   }
 
@@ -535,7 +535,7 @@ const render = function(id, txt, cb, container) {
 
   d3.select(`[id="${id}"]`)
     .selectAll('foreignobject > *')
-    .attr('xmlns', 'https://www.w3.org/1999/xhtml');
+    .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
   let url = '';
   if (config.arrowMarkerAbsolute) {
