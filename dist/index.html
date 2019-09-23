@@ -14,6 +14,9 @@
 </head>
 <body>
   <div class="mermaid">
+    info
+  </div>
+  <div class="mermaid">
     gantt
       title Exclusive end dates (Manual date should end on 3d)
       dateFormat YYYY-MM-DD
@@ -305,12 +308,16 @@ sequenceDiagram
 participant Alice
 participant Bob
 participant John as John<br/>Second Line
+rect rgb(200, 220, 100)
+rect rgb(200, 255, 200)
 Alice ->> Bob: Hello Bob, how are you?
 Bob-->>John: How about you John?
+end
 Bob--x Alice: I am good thanks!
 Bob-x John: I am good thanks!
 Note right of John: Bob thinks a long<br/>long time, so long<br/>that the text does<br/>not fit on a row.
 Bob-->Alice: Checking with John...
+end
 alt either this
 Alice->>John: Yes
 else or this
@@ -411,7 +418,7 @@ Class08 <--> C2: Cool label
       theme: 'forest',
       // themeCSS: '.node rect { fill: red; }',
       logLevel: 3,
-      flowchart: { curve: 'linear' },
+      flowchart: { curve: 'basis' },
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },
       // sequenceDiagram: { actorMargin: 300 } // deprecated

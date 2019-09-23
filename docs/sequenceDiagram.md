@@ -235,6 +235,43 @@ sequenceDiagram
     end
 ```
 
+## Background Highlighting
+It is possible to highlight flows by providing colored background rects. This is done by the notation
+
+The colors are defined using rgb and rgba syntax.
+```
+rect rgb(0, 255, 0)
+... content ...
+end
+```
+```
+rect rgba(0, 0, 255, .1)
+... content ...
+end
+```
+
+See the examples below:
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant John
+
+    rect rgb(191, 223, 255)
+    note right of Alice: Alice calls John.
+    Alice->>+John: Hello John, how are you?
+    rect rgb(200, 150, 255)
+    Alice->>+John: John, can you hear me?
+    John-->>-Alice: Hi Alice, I can hear you!
+    end
+    John-->>-Alice: I feel great!
+    end
+    Alice ->>+ John: Did you want to go to the game tonight?
+    John -->>- Alice: Yeah! See you there.
+
+```
+
+
 
 ## Styling
 
@@ -369,3 +406,4 @@ Param | Description | Default value
 --- | --- | ---
 mirrorActor | Turns on/off the rendering of actors below the diagram as well as above it | false
 bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists. | 1
+

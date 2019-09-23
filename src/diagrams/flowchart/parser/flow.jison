@@ -7,7 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
-
+%x dir
 %%
 \%\%[^\n]*            /* do nothing */
 ["]                     this.begin("string");
@@ -20,17 +20,22 @@
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
-"graph"               return 'GRAPH';
+"graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
-"LR"                  return 'DIR';
-"RL"                  return 'DIR';
-"TB"                  return 'DIR';
-"BT"                  return 'DIR';
-"TD"                  return 'DIR';
-"BR"                  return 'DIR';
-[0-9]+                 return 'NUM';
+<dir>\s*"LR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"RL"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TB"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BT"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TD"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"<"              {   this.popState();  return 'DIR'; }
+<dir>\s*">"              {   this.popState();  return 'DIR'; }
+<dir>\s*"^"              {   this.popState();  return 'DIR'; }
+<dir>\s*"v"              {   this.popState();  return 'DIR'; }
+[0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
+":::"                 return 'STYLE_SEPARATOR';
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
@@ -79,6 +84,7 @@
 "-)"                  return '-)';
 \-                    return 'MINUS';
 "."                   return 'DOT';
+[\_]                  return 'UNDERSCORE';
 \+                    return 'PLUS';
 \%                    return 'PCT';
 "="                   return 'EQUALS';
@@ -202,16 +208,16 @@ line
 graphConfig
     : SPACE graphConfig
     | NEWLINE graphConfig
-    | GRAPH SPACE DIR FirstStmtSeperator
-        { yy.setDirection($3);$$ = $3;}
-    | GRAPH SPACE TAGEND FirstStmtSeperator
-        { yy.setDirection("LR");$$ = $3;}
-    | GRAPH SPACE TAGSTART FirstStmtSeperator
-        { yy.setDirection("RL");$$ = $3;}
-    | GRAPH SPACE UP FirstStmtSeperator
-        { yy.setDirection("BT");$$ = $3;}
-    | GRAPH SPACE DOWN FirstStmtSeperator
-        { yy.setDirection("TB");$$ = $3;}
+    | GRAPH DIR FirstStmtSeperator
+        { yy.setDirection($2);$$ = $2;}
+    // | GRAPH SPACE TAGEND FirstStmtSeperator
+    //     { yy.setDirection("LR");$$ = $3;}
+    // | GRAPH SPACE TAGSTART FirstStmtSeperator
+    //     { yy.setDirection("RL");$$ = $3;}
+    // | GRAPH SPACE UP FirstStmtSeperator
+    //     { yy.setDirection("BT");$$ = $3;}
+    // | GRAPH SPACE DOWN FirstStmtSeperator
+    //     { yy.setDirection("TB");$$ = $3;}
     ;
 
 ending: endToken ending
@@ -239,7 +245,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    {$$=$1}
+    { $$=$1}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -250,92 +256,94 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph SPACE alphaNum SQS text SQE separator document end
+    | subgraph SPACE text SQS text SQE separator document end
     {$$=yy.addSubGraph($3,$8,$5);}
-    | subgraph SPACE STR separator document end
-    {$$=yy.addSubGraph(undefined,$5,$3);}
-    | subgraph SPACE alphaNum separator document end
+    | subgraph SPACE text separator document end
     {$$=yy.addSubGraph($3,$5,$3);}
+    // | subgraph SPACE text separator document end
+    // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
     ;
 
 separator: NEWLINE | SEMI | EOF ;
 
-verticeStatement:
-     vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-     | vertex
-        {$$ = [$1];}
+// verticeStatement:
+//     vertex link vertex
+//         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
+//     | vertex link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
+//     | vertex STYLE_SEPARATOR idString link vertex
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
+//     | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
+//     |vertex
+//         {$$ = [$1];}
+//     |vertex STYLE_SEPARATOR idString
+//         {$$ = [$1];yy.setClass($1,$3)}
+//    ;
+
+verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
+    |node { $$ = $1 }
     ;
 
-vertex:  alphaNum SQS text SQE
+node: vertex
+        { $$ = [$1];}
+    | vertex STYLE_SEPARATOR idString
+        {$$ = [$1];yy.setClass($1,$3)}
+    ;
+
+vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    |  alphaNum SQS text SQE spaceList
+    |  idString SQS text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    | alphaNum PS PS text PE PE
+    | idString PS PS text PE PE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum PS PS text PE PE spaceList
+    | idString PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum '(-' text '-)'
+    | idString '(-' text '-)'
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | alphaNum '(-' text '-)' spaceList
+    | idString '(-' text '-)' spaceList
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | alphaNum PS text PE
+    | idString PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum PS text PE spaceList
+    | idString PS text PE spaceList
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP
+    | idString DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP spaceList
+    | idString DIAMOND_START text DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum TAGEND text SQE
+    | idString TAGEND text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TAGEND text SQE spaceList
+    | idString TAGEND text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TRAPSTART text TRAPEND
+    | idString TRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
-    | alphaNum TRAPSTART text TRAPEND spaceList
+    | idString TRAPSTART text TRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
-    | alphaNum INVTRAPSTART text INVTRAPEND
+    | idString INVTRAPSTART text INVTRAPEND
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
-    | alphaNum INVTRAPSTART text INVTRAPEND spaceList
+    | idString INVTRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
-    | alphaNum TRAPSTART text INVTRAPEND
+    | idString TRAPSTART text INVTRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_right');}
-    | alphaNum TRAPSTART text INVTRAPEND spaceList
+    | idString TRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'lean_right');}
-    | alphaNum INVTRAPSTART text TRAPEND
+    | idString INVTRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-    | alphaNum INVTRAPSTART text TRAPEND spaceList
+    | idString INVTRAPSTART text TRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-/*  | alphaNum SQS text TAGSTART
+/*  | idString SQS text TAGSTART
         {$$ = $1;yy.addVertex($1,$3,'odd_right');}
-    | alphaNum SQS text TAGSTART spaceList
+    | idString SQS text TAGSTART spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
-    | alphaNum
+    | idString
         {$$ = $1;yy.addVertex($1);}
-    | alphaNum spaceList
+    | idString spaceList
         {$$ = $1;yy.addVertex($1);}
     ;
 
-alphaNum
-    : alphaNumStatement
-    {$$=$1;}
-    | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
-    ;
 
-alphaNumStatement
-    : DIR
-        {$$=$1;}
-    | alphaNumToken
-        {$$=$1;}
-    | DOWN
-        {$$='v';}
-    | MINUS
-        {$$='-';}
-    ;
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
@@ -410,25 +418,25 @@ linkStatement: ARROW_POINT
     | DOTTED_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"dotted"};}
     | DOUBLE_DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}        
+        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}
     | DOTTED_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"dotted"};}
     | DOUBLE_DOTTED_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}        
+        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}
     | DOTTED_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"dotted"};}
     | THICK_ARROW_POINT
         {$$ = {"type":"arrow","stroke":"thick"};}
     | DOUBLE_THICK_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"thick"};}        
+        {$$ = {"type":"double_arrow_point","stroke":"thick"};}
     | THICK_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"thick"};}
     | DOUBLE_THICK_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}        
+        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}
     | THICK_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"thick"};}
     | DOUBLE_THICK_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}        
+        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}
     | THICK_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"thick"};}
         ;
@@ -533,7 +541,34 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : ALPHA | PUNCTUATION | UNICODE_TEXT | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+idString
+    :idStringToken
+    {$$=$1}
+    | idString idStringToken
+    {$$=$1+''+$2}
+    ;
+
+alphaNum
+    : alphaNumStatement
+    {$$=$1;}
+    | alphaNum alphaNumStatement
+    {$$=$1+''+$2;}
+    ;
+
+alphaNumStatement
+    : DIR
+        {$$=$1;}
+    | alphaNumToken
+        {$$=$1;}
+    | DOWN
+        {$$='v';}
+    | MINUS
+        {$$='-';}
+    ;
+
+alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
+
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION;
 
 graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%

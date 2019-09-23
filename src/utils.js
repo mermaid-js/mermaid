@@ -1,5 +1,5 @@
-import * as d3 from 'd3'
-import { logger } from './logger'
+import * as d3 from 'd3';
+import { logger } from './logger';
 
 /**
  * @function detectType
@@ -18,31 +18,34 @@ import { logger } from './logger'
  * @param {string} text The text defining the graph
  * @returns {string} A graph definition key
  */
-export const detectType = function (text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n')
-  logger.debug('Detecting diagram type based on the text ' + text)
+export const detectType = function(text) {
+  text = text.replace(/^\s*%%.*\n/g, '\n');
+  logger.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
-    return 'sequence'
+    return 'sequence';
   }
 
   if (text.match(/^\s*gantt/)) {
-    return 'gantt'
+    return 'gantt';
   }
 
   if (text.match(/^\s*classDiagram/)) {
-    return 'class'
+    return 'class';
   }
 
   if (text.match(/^\s*gitGraph/)) {
-    return 'git'
+    return 'git';
   }
 
   if (text.match(/^\s*info/)) {
-    return 'info'
+    return 'info';
+  }
+  if (text.match(/^\s*pie/)) {
+    return 'pie';
   }
 
-  return 'flowchart'
-}
+  return 'flowchart';
+};
 
 /**
  * @function isSubstringInArray
@@ -51,23 +54,23 @@ export const detectType = function (text) {
  * @param {array} arr The array to search
  * @returns {number} the array index containing the substring or -1 if not present
  **/
-export const isSubstringInArray = function (str, arr) {
+export const isSubstringInArray = function(str, arr) {
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i].match(str)) return i
+    if (arr[i].match(str)) return i;
   }
-  return -1
-}
+  return -1;
+};
 
 export const interpolateToCurve = (interpolate, defaultCurve) => {
   if (!interpolate) {
-    return defaultCurve
+    return defaultCurve;
   }
-  const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`
-  return d3[curveName] || defaultCurve
-}
+  const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
+  return d3[curveName] || defaultCurve;
+};
 
 export default {
   detectType,
   isSubstringInArray,
   interpolateToCurve
-}
+};
