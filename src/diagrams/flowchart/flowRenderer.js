@@ -83,13 +83,13 @@ export const addVertices = function(vert, g, svgId) {
       vertexNode = addHtmlLabel(svg, node).node();
       vertexNode.parentNode.removeChild(vertexNode);
     } else {
-      const svgLabel = document.createElementNS('https://www.w3.org/2000/svg', 'text');
+      const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 
       const rows = vertexText.split(/<br[/]{0,1}>/);
 
       for (let j = 0; j < rows.length; j++) {
-        const tspan = document.createElementNS('https://www.w3.org/2000/svg', 'tspan');
-        tspan.setAttributeNS('https://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
+        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
         tspan.setAttribute('dy', '1em');
         tspan.setAttribute('x', '1');
         tspan.textContent = rows[j];
@@ -100,9 +100,9 @@ export const addVertices = function(vert, g, svgId) {
 
     // If the node has a link, we wrap it in a SVG link
     if (vertex.link) {
-      const link = document.createElementNS('https://www.w3.org/2000/svg', 'a');
-      link.setAttributeNS('https://www.w3.org/2000/svg', 'href', vertex.link);
-      link.setAttributeNS('https://www.w3.org/2000/svg', 'rel', 'noopener');
+      const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+      link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
+      link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
       link.appendChild(vertexNode);
       vertexNode = link;
     }
@@ -609,7 +609,7 @@ export const draw = function(text, id) {
       // Get dimensions of label
       const dim = label.getBBox();
 
-      const rect = document.createElementNS('https://www.w3.org/2000/svg', 'rect');
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('rx', 0);
       rect.setAttribute('ry', 0);
       rect.setAttribute('width', dim.width);
