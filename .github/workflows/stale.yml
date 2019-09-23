@@ -1,0 +1,22 @@
+name: Mark or close stale issues and PRs
+
+on:
+  schedule:
+  - cron: "0 * * * *"
+
+jobs:
+  stale:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/stale@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        stale-issue-message: 'This issue has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you are still interested in it, and it is still relevant, you can comment or remove the label to revive it.'
+        stale-pr-message: 'This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. If you are still interested in it, and it is still relevant, you can comment or remove the label to revive it.'
+        exempt-issue-label: 'Area: Security'
+        stale-issue-label: 'Status: Wontfix'
+        stale-pr-label: 'Status: Wontfix'
+        days-before-stale: 60
+        days-before-close: 14
