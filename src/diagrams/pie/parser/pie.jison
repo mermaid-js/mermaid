@@ -1,5 +1,5 @@
 /** mermaid
- *  http://knsv.github.io/mermaid/
+ *  https://knsv.github.io/mermaid
  *  (c) 2015 Knut Sveidqvist
  *  MIT license.
  */
@@ -48,10 +48,10 @@ line
 	;
 
 statement
-	:  STR VALUE { 
+	:  STR VALUE {
 		console.log('str:'+$1+' value: '+$2)
 		yy.addSection($1,yy.cleanupValue($2));  }
-	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}	
+	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
 	;
 
 %%
