@@ -1,14 +1,13 @@
-name: Mark or close stale issues and PRs
+name: Mark stale issues and pull requests
 
 on:
   schedule:
-  - cron: "40 * * * *"
+  - cron: "0 * * * *"
 
 jobs:
   stale:
 
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/stale@v1
       with:
