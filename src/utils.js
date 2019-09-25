@@ -33,6 +33,10 @@ export const detectType = function(text) {
     return 'class';
   }
 
+  if (text.match(/^\s*stateDiagram/)) {
+    return 'state';
+  }
+
   if (text.match(/^\s*gitGraph/)) {
     return 'git';
   }

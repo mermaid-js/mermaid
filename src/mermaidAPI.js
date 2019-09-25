@@ -28,6 +28,9 @@ import ganttDb from './diagrams/gantt/ganttDb';
 import classRenderer from './diagrams/class/classRenderer';
 import classParser from './diagrams/class/parser/classDiagram';
 import classDb from './diagrams/class/classDb';
+import stateRenderer from './diagrams/state/stateRenderer';
+import stateParser from './diagrams/state/parser/stateDiagram';
+import stateDb from './diagrams/state/stateDb';
 import gitGraphRenderer from './diagrams/git/gitGraphRenderer';
 import gitGraphParser from './diagrams/git/parser/gitGraph';
 import gitGraphAst from './diagrams/git/gitGraphAst';
@@ -332,6 +335,10 @@ function parse(text) {
       parser = classParser;
       parser.parser.yy = classDb;
       break;
+    case 'state':
+      parser = stateParser;
+      parser.parser.yy = stateDb;
+      break;
     case 'info':
       logger.debug('info info info');
       console.warn('In API', pkg.version);
@@ -521,6 +528,11 @@ const render = function(id, txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       classRenderer.setConf(config.class);
       classRenderer.draw(txt, id);
+      break;
+    case 'state':
+      // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+      stateRenderer.setConf(config.state);
+      stateRenderer.draw(txt, id);
       break;
     case 'info':
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

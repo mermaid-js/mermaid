@@ -1,7 +1,7 @@
 import { logger } from '../../logger';
 
 let relations = [];
-let classes = {};
+let states = {};
 
 /**
  * Function called by parser when a node definition has been found.
@@ -10,26 +10,25 @@ let classes = {};
  * @param type
  * @param style
  */
-export const addClass = function(id) {
-  if (typeof classes[id] === 'undefined') {
-    classes[id] = {
+export const addState = function(id) {
+  if (typeof states[id] === 'undefined') {
+    states[id] = {
       id: id,
-      methods: [],
-      members: []
+      descriptions: []
     };
   }
 };
 
 export const clear = function() {
   relations = [];
-  classes = {};
+  states = {};
 };
 
-export const getClass = function(id) {
-  return classes[id];
+export const getState = function(id) {
+  return states[id];
 };
-export const getClasses = function() {
-  return classes;
+export const getstates = function() {
+  return states;
 };
 
 export const getRelations = function() {
@@ -38,18 +37,18 @@ export const getRelations = function() {
 
 export const addRelation = function(relation) {
   logger.debug('Adding relation: ' + JSON.stringify(relation));
-  addClass(relation.id1);
-  addClass(relation.id2);
+  addState(relation.id1);
+  addState(relation.id2);
   relations.push(relation);
 };
 
 export const addMember = function(className, member) {
-  const theClass = classes[className];
+  const theState = states[className];
   if (typeof member === 'string') {
     if (member.substr(-1) === ')') {
-      theClass.methods.push(member);
+      theState.methods.push(member);
     } else {
-      theClass.members.push(member);
+      theState.members.push(member);
     }
   }
 };
@@ -81,10 +80,10 @@ export const relationType = {
 };
 
 export default {
-  addClass,
+  addState,
   clear,
-  getClass,
-  getClasses,
+  getState,
+  getstates,
   getRelations,
   addRelation,
   addMember,
