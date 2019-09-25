@@ -3,6 +3,9 @@ import { logger } from '../../logger';
 let relations = [];
 let states = {};
 
+let startCnt = 0;
+let endCnt = 0;
+
 /**
  * Function called by parser when a node definition has been found.
  * @param id
@@ -10,11 +13,12 @@ let states = {};
  * @param type
  * @param style
  */
-export const addState = function(id) {
+export const addState = function(id, type) {
   if (typeof states[id] === 'undefined') {
     states[id] = {
       id: id,
-      descriptions: []
+      descriptions: [],
+      type
     };
   }
 };
@@ -27,19 +31,35 @@ export const clear = function() {
 export const getState = function(id) {
   return states[id];
 };
-export const getstates = function() {
+export const getStates = function() {
   return states;
 };
 
 export const getRelations = function() {
+  // const relations1 = [{ id1: 'start1', id2: 'state1' }, { id1: 'state1', id2: 'exit1' }];
+  // return relations;
   return relations;
 };
 
-export const addRelation = function(relation) {
-  logger.debug('Adding relation: ' + JSON.stringify(relation));
-  addState(relation.id1);
-  addState(relation.id2);
-  relations.push(relation);
+export const addRelation = function(_id1, _id2) {
+  let id1 = _id1;
+  let id2 = _id2;
+  let type1 = 'default';
+  let type2 = 'default';
+  if (_id1 === '[*]') {
+    startCnt++;
+    id1 = 'start' + startCnt;
+    type1 = 'start';
+  }
+  if (_id2 === '[*]') {
+    endCnt++;
+    id2 = 'end' + startCnt;
+    type2 = 'end';
+  }
+  console.log(id1, id2);
+  addState(id1, type1);
+  addState(id2, type2);
+  relations.push({ id1, id2 });
 };
 
 export const addMember = function(className, member) {
@@ -83,7 +103,7 @@ export default {
   addState,
   clear,
   getState,
-  getstates,
+  getStates,
   getRelations,
   addRelation,
   addMember,

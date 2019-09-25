@@ -406,21 +406,7 @@ export const draw = function(text, id) {
     return {};
   });
 
-  // const states = stateDb.getStates();
-  const states = {
-    start1: {
-      id: 'start1',
-      type: 'start'
-    },
-    state1: {
-      id: 'state1',
-      type: 'default'
-    },
-    exit: {
-      id: 'exit1',
-      type: 'end'
-    }
-  };
+  const states = stateDb.getStates();
   const keys = Object.keys(states);
   total = keys.length;
   for (let i = 0; i < keys.length; i++) {
@@ -433,8 +419,7 @@ export const draw = function(text, id) {
     logger.info('Org height: ' + node.height);
   }
 
-  // const relations = stateDb.getRelations();
-  const relations = [{ id1: 'start1', id2: 'state1' }, { id1: 'state1', id2: 'exit1' }];
+  const relations = stateDb.getRelations();
   relations.forEach(function(relation) {
     logger.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)

@@ -70,31 +70,11 @@
 
 "stateDiagram"\s+                   { console.log('Got state diagram', yytext,'#');return 'SD'; }
 "hide empty description"    { console.log('HIDE_EMPTY', yytext,'#');return 'HIDE_EMPTY'; }
-// "participant"     { this.begin('ID'); return 'participant'; }
-// <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)  { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
-// <ALIAS>"as"       { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
-// <ALIAS>(?:)       { this.popState(); this.popState(); return 'NL'; }
-// "<<fork>>"            { this.begin('LINE'); return 'else'; }
-// "<<join>>"             { this.begin('LINE'); return 'par'; }
-// "and"             { this.begin('LINE'); return 'and'; }
-// <LINE>[^#\n;]*    { this.popState(); return 'restOfLine'; }
-// "end"             return 'end';
 <INITIAL,struct>"[*]"                   { console.log('EDGE_STATE=',yytext); return 'EDGE_STATE';}
 <INITIAL,struct>[^:\n\s\-\{]+                { console.log('=>ID=',yytext); return 'ID';}
 <INITIAL,struct>\s*":"[^\+\->:\n,;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
-// "over"            return 'over';
-// "note"            return 'note';
-// "activate"        { this.begin('ID'); return 'activate'; }
-// "deactivate"      { this.begin('ID'); return 'deactivate'; }
-// "title"           return 'title';
-// "stateDiagram" return 'SD';
-// ","               return ',';
-// ";"               return 'NL';
-// [^\+\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
 <INITIAL,struct>"-->"             return '-->';
 <struct>"--"        return 'CONCURRENT';
-// "--"             return '--';
-// ":"[^#\n;]+       return 'TXT';
 <<EOF>>           return 'NL';
 .                 return 'INVALID';
 
@@ -125,7 +105,7 @@ line
 
 statement
 	: idStatement DESCR
-	| idStatement '-->' idStatement
+	| idStatement '-->' idStatement {yy.addRelation($1, $3);}
 	| idStatement '-->' idStatement DESCR
     | HIDE_EMPTY
     | scale WIDTH
@@ -141,8 +121,8 @@ statement
     ;
 
 idStatement
-    : ID
-    | EDGE_STATE
+    : ID {$$=$1;}
+    | EDGE_STATE {$$=$1;}
     ;
 
 notePosition
