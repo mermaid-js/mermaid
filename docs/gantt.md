@@ -26,8 +26,6 @@ gantt
     Task in sec      :2014-01-12  , 12d
     another task      : 24d
 ```
-
-
 ## Syntax
 
 ```
@@ -106,7 +104,11 @@ Tbd
 
 ### Date format
 
-Tbd
+The default date format is YYYY-MM-DD. You can define your ``dateFormat``. For example:
+
+```
+dateFormat YYYY MM DD
+```
 
 
 ### Diagram definition
