@@ -106,7 +106,7 @@ Tbd
 
 ### Date format
 
-Tbd
+The default date format is YYYY-MM-DD
 
 
 ### Diagram definition
