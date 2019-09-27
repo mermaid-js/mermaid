@@ -439,5 +439,18 @@ Class08 <--> C2: Cool label
       }, 100)
     }
   </script>
+  <script>
+     const testLineEndings = (test, input) => {
+       try {
+         mermaid.render(test, input, () => {});
+       } catch (err) { 
+         console.error("Error in %s:\n\n%s", test, err);
+       }
+     };
+
+     testLineEndings("CR", "graph LR\rsubgraph CR\rA --> B\rend");
+     testLineEndings("LF", "graph LR\nsubgraph LF\nA --> B\nend");
+     testLineEndings("CRLF", "graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend");
+  </script>
 </body>
 </html>

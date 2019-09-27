@@ -169,7 +169,7 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-\n+                   return 'NEWLINE';
+(\r|\n|\r\n)+         return 'NEWLINE';
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
