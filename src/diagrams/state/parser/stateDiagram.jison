@@ -106,7 +106,7 @@ line
 statement
 	: idStatement DESCR
 	| idStatement '-->' idStatement {yy.addRelation($1, $3);}
-	| idStatement '-->' idStatement DESCR
+	| idStatement '-->' idStatement DESCR {yy.addRelation($1, $3, $4.substr(1).trim());}
     | HIDE_EMPTY
     | scale WIDTH
     | COMPOSIT_STATE

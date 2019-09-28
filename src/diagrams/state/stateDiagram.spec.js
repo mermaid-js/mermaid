@@ -306,5 +306,23 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
+    xit('should handle if statements', function() {
+      const str = `stateDiagram\n
+      [*] --> "Order Submitted"
+      if "Payment Accepted" then
+        -->[yes] "Pack products"
+        --> "Send parcel"
+        -right-> (*)
+      else
+        ->[no] "Send error message"
+        -->[Cancel Order] [*]
+      endif
+        }
+
+        note right of NotShooting : This is a note on a composite state
+      `;
+
+      parser.parse(str);
+    });
   });
 });

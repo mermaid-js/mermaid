@@ -4,6 +4,7 @@ import graphlib from 'graphlibrary';
 import { logger } from '../../logger';
 import stateDb from './stateDb';
 import { parser } from './parser/stateDiagram';
+import utils from '../../utils';
 
 parser.yy = stateDb;
 
@@ -136,7 +137,7 @@ const insertMarkers = function(elem) {
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 };
 const drawStart = function(elem, stateDef) {
   logger.info('Rendering class ' + stateDef);
@@ -285,48 +286,67 @@ const drawEdge = function(elem, path, relation) {
     url = url.replace(/\)/g, '\\)');
   }
 
-  svgPath.attr(
-    'marker-start',
-    'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'Start' + ')'
-  );
+  // svgPath.attr(
+  //   'marker-start',
+  //   'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'Start' + ')'
+  // );
   svgPath.attr(
     'marker-end',
     'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'End' + ')'
   );
 
-  let x, y;
-  const l = path.points.length;
-  if (l % 2 !== 0 && l > 1) {
-    const p1 = path.points[Math.floor(l / 2)];
-    const p2 = path.points[Math.ceil(l / 2)];
-    x = (p1.x + p2.x) / 2;
-    y = (p1.y + p2.y) / 2;
-  } else {
-    const p = path.points[Math.floor(l / 2)];
-    x = p.x;
-    y = p.y;
-  }
+  // Figure ou where to put the label given the points
+  // let x, y;
+  // const l = path.points.length;
+  // if (l % 2 !== 0 && l > 1) {
+  //   const p1 = path.points[Math.floor(l / 2)];
+  //   const p2 = path.points[Math.ceil(l / 2)];
+  //   x = (p1.x + p2.x) / 2;
+  //   y = (p1.y + p2.y) / 2;
+  // } else {
+  //   const p = path.points[Math.floor(l / 2)];
+  //   x = p.x;
+  //   y = p.y;
+  // }
+
+  // console.log('calcLabelPosition', utils);
 
   if (typeof relation.title !== 'undefined') {
     const g = elem.append('g').attr('class', 'classLabel');
     const label = g
       .append('text')
       .attr('class', 'label')
-      .attr('x', x)
-      .attr('y', y)
       .attr('fill', 'red')
       .attr('text-anchor', 'middle')
       .text(relation.title);
 
-    window.label = label;
-    const bounds = label.node().getBBox();
+    const { x, y } = utils.calcLabelPosition(path.points);
+    label.attr('x', x).attr('y', y);
 
+    const bounds = label.node().getBBox();
     g.insert('rect', ':first-child')
       .attr('class', 'box')
       .attr('x', bounds.x - conf.padding / 2)
       .attr('y', bounds.y - conf.padding / 2)
       .attr('width', bounds.width + conf.padding)
       .attr('height', bounds.height + conf.padding);
+
+    // Debug points
+    // path.points.forEach(point => {
+    //   g.append('circle')
+    //     .style('stroke', 'red')
+    //     .style('fill', 'red')
+    //     .attr('r', 1)
+    //     .attr('cx', point.x)
+    //     .attr('cy', point.y);
+    // });
+
+    // g.append('circle')
+    //   .style('stroke', 'blue')
+    //   .style('fill', 'blue')
+    //   .attr('r', 1)
+    //   .attr('cx', x)
+    //   .attr('cy', y);
   }
 
   edgeCount++;
@@ -338,7 +358,7 @@ const drawEdge = function(elem, path, relation) {
  * @param {*} stateDef
  */
 const drawState = function(elem, stateDef) {
-  logger.info('Rendering class ' + stateDef);
+  // logger.info('Rendering class ' + stateDef);
 
   const addTspan = function(textEl, txt, isFirst) {
     const tSpan = textEl
@@ -416,14 +436,11 @@ export const draw = function(text, id) {
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     graph.setNode(node.id, node);
-    logger.info('Org height: ' + node.height);
+    // logger.info('Org height: ' + node.height);
   }
 
   const relations = stateDb.getRelations();
   relations.forEach(function(relation) {
-    logger.info(
-      'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
-    );
     graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
       relation: relation
     });

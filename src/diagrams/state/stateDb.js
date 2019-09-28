@@ -41,7 +41,7 @@ export const getRelations = function() {
   return relations;
 };
 
-export const addRelation = function(_id1, _id2) {
+export const addRelation = function(_id1, _id2, title) {
   let id1 = _id1;
   let id2 = _id2;
   let type1 = 'default';
@@ -56,10 +56,10 @@ export const addRelation = function(_id1, _id2) {
     id2 = 'end' + startCnt;
     type2 = 'end';
   }
-  console.log(id1, id2);
+  console.log(id1, id2, title);
   addState(id1, type1);
   addState(id2, type2);
-  relations.push({ id1, id2 });
+  relations.push({ id1, id2, title });
 };
 
 export const addMember = function(className, member) {
