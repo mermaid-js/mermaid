@@ -571,11 +571,20 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
+  const conf = getConfig().flowchart;
+
   const padding = 8;
   const width = g.maxX - g.minX + padding * 2;
   const height = g.maxY - g.minY + padding * 2;
-  svg.attr('width', '100%');
-  svg.attr('style', `max-width: ${width}px;`);
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', `max-width: ${width}px;`);
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
   svg.attr('viewBox', `0 0 ${width} ${height}`);
   svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`);
 
@@ -601,7 +610,7 @@ export const draw = function(text, id) {
   }
 
   // Add label rects for non html labels
-  if (!getConfig().flowchart.htmlLabels) {
+  if (!conf.htmlLabels) {
     const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
