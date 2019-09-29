@@ -104,14 +104,14 @@ line
 	;
 
 statement
-	: idStatement DESCR
+	: idStatement DESCR {yy.addState($1, 'default');yy.addDescription($1, $2.trim());}
 	| idStatement '-->' idStatement {yy.addRelation($1, $3);}
 	| idStatement '-->' idStatement DESCR {yy.addRelation($1, $3, $4.substr(1).trim());}
     | HIDE_EMPTY
     | scale WIDTH
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
-    | STATE_DESCR AS ID
+    | STATE_DESCR AS ID {yy.addState($3, 'default');yy.addDescription($3, $1);}
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     | FORK
     | JOIN

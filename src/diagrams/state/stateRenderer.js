@@ -222,6 +222,63 @@ const drawSimpleState = (g, stateDef) => {
 
   return state;
 };
+/**
+ * Draws a state with descriptions
+ * @param {*} g
+ * @param {*} stateDef
+ */
+const drawDescrState = (g, stateDef) => {
+  const addTspan = function(textEl, txt, isFirst) {
+    const tSpan = textEl
+      .append('tspan')
+      .attr('x', 2 * conf.padding)
+      .text(txt);
+    if (!isFirst) {
+      tSpan.attr('dy', conf.textHeight);
+    }
+  };
+  const title = g
+    .append('text')
+    .attr('x', 2 * conf.padding)
+    .attr('y', conf.textHeight + 1.5 * conf.padding)
+    .attr('font-size', 24)
+    .attr('class', 'state-title')
+    .text(stateDef.id);
+
+  const titleHeight = title.node().getBBox().height;
+
+  const description = g
+    .append('text') // text label for the x axis
+    .attr('x', conf.padding)
+    .attr('y', titleHeight + conf.padding * 0.2 + conf.dividerMargin + conf.textHeight)
+    .attr('fill', 'white')
+    .attr('class', 'state-description');
+
+  let isFirst = true;
+  stateDef.descriptions.forEach(function(descr) {
+    addTspan(description, descr, isFirst);
+    isFirst = false;
+  });
+
+  const descrLine = g
+    .append('line') // text label for the x axis
+    .attr('x1', conf.padding)
+    .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
+    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
+    .attr('class', 'descr-divider');
+  const descrBox = description.node().getBBox();
+  descrLine.attr('x2', descrBox.width + 3 * conf.padding);
+  // const classBox = title.node().getBBox();
+
+  g.insert('rect', ':first-child')
+    .attr('x', conf.padding)
+    .attr('y', conf.padding)
+    .attr('width', descrBox.width + 2 * conf.padding)
+    .attr('height', descrBox.height + titleHeight + 2 * conf.padding)
+    .attr('rx', '5');
+
+  return g;
+};
 const drawEndState = g => {
   g.append('circle')
     .style('stroke', 'black')
@@ -286,30 +343,10 @@ const drawEdge = function(elem, path, relation) {
     url = url.replace(/\)/g, '\\)');
   }
 
-  // svgPath.attr(
-  //   'marker-start',
-  //   'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'Start' + ')'
-  // );
   svgPath.attr(
     'marker-end',
     'url(' + url + '#' + getRelationType(stateDb.relationType.DEPENDENCY) + 'End' + ')'
   );
-
-  // Figure ou where to put the label given the points
-  // let x, y;
-  // const l = path.points.length;
-  // if (l % 2 !== 0 && l > 1) {
-  //   const p1 = path.points[Math.floor(l / 2)];
-  //   const p2 = path.points[Math.ceil(l / 2)];
-  //   x = (p1.x + p2.x) / 2;
-  //   y = (p1.y + p2.y) / 2;
-  // } else {
-  //   const p = path.points[Math.floor(l / 2)];
-  //   x = p.x;
-  //   y = p.y;
-  // }
-
-  // console.log('calcLabelPosition', utils);
 
   if (typeof relation.title !== 'undefined') {
     const g = elem.append('g').attr('class', 'classLabel');
@@ -360,16 +397,6 @@ const drawEdge = function(elem, path, relation) {
 const drawState = function(elem, stateDef) {
   // logger.info('Rendering class ' + stateDef);
 
-  const addTspan = function(textEl, txt, isFirst) {
-    const tSpan = textEl
-      .append('tspan')
-      .attr('x', conf.padding)
-      .text(txt);
-    if (!isFirst) {
-      tSpan.attr('dy', conf.textHeight);
-    }
-  };
-
   const id = stateDef.id;
   const stateInfo = {
     id: id,
@@ -385,7 +412,9 @@ const drawState = function(elem, stateDef) {
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
-  if (stateDef.type === 'default') drawSimpleState(g, stateDef);
+  if (stateDef.type === 'default' && stateDef.descriptions.length === 0)
+    drawSimpleState(g, stateDef);
+  if (stateDef.type === 'default' && stateDef.descriptions.length > 0) drawDescrState(g, stateDef);
 
   const stateBox = g.node().getBBox();
 

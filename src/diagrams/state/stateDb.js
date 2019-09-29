@@ -62,15 +62,14 @@ export const addRelation = function(_id1, _id2, title) {
   relations.push({ id1, id2, title });
 };
 
-export const addMember = function(className, member) {
-  const theState = states[className];
-  if (typeof member === 'string') {
-    if (member.substr(-1) === ')') {
-      theState.methods.push(member);
-    } else {
-      theState.members.push(member);
-    }
+export const addDescription = function(id, _descr) {
+  const theState = states[id];
+  let descr = _descr;
+  if (descr[0] === ':') {
+    descr = descr.substr(1).trim();
   }
+
+  theState.descriptions.push(descr);
 };
 
 export const addMembers = function(className, MembersArr) {
@@ -106,7 +105,7 @@ export default {
   getStates,
   getRelations,
   addRelation,
-  addMember,
+  addDescription,
   addMembers,
   cleanupLabel,
   lineType,

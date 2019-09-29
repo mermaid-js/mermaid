@@ -42,4 +42,16 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render state descriptions', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+        state "Long state description" as XState1
+        state "Another Long state description" as XState2
+        XState2 : New line
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
 });
