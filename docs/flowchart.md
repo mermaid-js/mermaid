@@ -4,7 +4,7 @@
 
 This statement declares a new graph and the direction of the graph layout.
 
-This declares a graph oriented from top to bottom.
+This declares a graph oriented from top to bottom (`TD` or `TB`).
 
 ```
 graph TD
@@ -15,7 +15,16 @@ graph TD
     Start --> Stop
 ```
 
-This declares a graph oriented from left to right.
+This declares a graph oriented from left to right (`LR`).
+
+```
+graph LR
+    Start --> Stop
+```
+```mermaid
+graph LR
+    Start --> Stop
+```
 
 Possible directions are:
 
@@ -26,14 +35,6 @@ Possible directions are:
 
 * TD - same as TB
 
-```
-graph LR
-    Start --> Stop
-```
-```mermaid
-graph LR
-    Start --> Stop
-```
 
 ## Nodes & shapes
 
