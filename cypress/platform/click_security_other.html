@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Mermaid Quick Test Page</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+</head>
+<body>
+  <div id="FirstLine" class="mermaid">
+    graph TB
+      Function-->URL
+      click Function clickByFlow "Add a div"
+      click URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+</div>
+<div id="FirstLine" class="mermaid">
+  graph TB
+    1Function-->2URL
+    click 1Function clickByFlow "Add a div"
+    click 2URL "http://localhost:9000/webpackUsage.html" "Visit <strong>mermaid docs</strong>"
+</div>
+
+<div class="mermaid">
+    gantt
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d/%m
+    title Adding GANTT diagram to mermaid
+    excludes weekdays 2014-01-10
+
+    section A section
+    Completed task            :done,    des1, 2014-01-06,2014-01-08
+    Active task               :active,  des2, 2014-01-09, 3d
+    Future task               :         des3, after des2, 5d
+    Future task2               :         des4, after des3, 5d
+
+    section Critical tasks
+    Completed task in the critical line :crit, done, 2014-01-06,24h
+    Implement parser and jison          :crit, done, after des1, 2d
+    Create tests for parser             :crit, active, 3d
+    Future task in critical line        :crit, 5d
+    Create tests for renderer           :2d
+    Add to mermaid                      :1d
+
+    section Documentation
+    Describe gantt syntax               :active, a1, after des1, 3d
+    Add gantt diagram to demo page      :after a1  , 20h
+    Add another diagram to demo page    :doc1, after a1  , 48h
+
+    section Clickable
+    Visit mermaidjs               :active, cl1, 2014-01-07,2014-01-10
+    Calling a Callback (look at the console log) :cl2, after cl1, 3d
+
+    click cl1 href "http://localhost:9000/webpackUsage.html"
+    click cl2 call clickByGantt("test", test, test)
+
+    section Last section
+    Describe gantt syntax               :after doc1, 3d
+    Add gantt diagram to demo page      : 20h
+    Add another diagram to demo page    : 48h
+      </div>
+
+  <script src="./mermaid.js"></script>
+  <script>
+  function clickByFlow(elemName) {
+    const div = document.createElement('div')
+    div.className = 'created-by-click'
+    div.style = 'padding: 20px; background: green; color: white;'
+    div.innerText = 'Clicked By Flow'
+
+    document.getElementsByTagName('body')[0].appendChild(div)
+  }
+  function clickByGantt(elemName) {
+    const div = document.createElement('div')
+    div.className = 'created-by-gant-click'
+    div.style = 'padding: 20px; background: green; color: white;'
+    div.innerText = 'Clicked By Gant'
+
+    document.getElementsByTagName('body')[0].appendChild(div)
+  }
+  mermaid.initialize({ startOnLoad: true, securityLevel: 'strct', logLevel: 1 });
+  </script>
+</body>
+</html>

@@ -1,7 +1,11 @@
-node_modules/*
-bower_components/
-*.sublime-project
-*.sublime-workspace
 .DS_Store
-.idea
-coverage
+
+node_modules/
+coverage/
+
+dist/*.js
+dist/*.map
+
+yarn-error.log
+.npmrc
+token

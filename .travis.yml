@@ -1,9 +1,12 @@
-    language: node_js
-    sudo: false
-    node_js:
-        - "4.2"
-    addons:
-       code_climate:
-         repo_token: e87e6bf1c253e0555437ebd23235fdfe2749b889358e7c6d100e4ea5b4f2e091
-    after_script:
-        - cat coverage/lcov.info | codeclimate
+dist: trusty
+language: node_js
+node_js:
+  - "10"
+cache:
+  npm: false
+script:
+  - yarn build
+  - yarn test --coverage
+  - yarn e2e
+after_success:
+  - cat ./coverage/lcov.info | ./node_modules/.bin/coveralls

@@ -1,5 +1,5 @@
 /** mermaid
- *  http://knsv.github.io/mermaid/
+ *  https://mermaidjs.github.io/
  *  (c) 2015 Knut Sveidqvist
  *  MIT license.
  */
@@ -7,7 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
-
+%x dir
 %%
 \%\%[^\n]*            /* do nothing */
 ["]                     this.begin("string");
@@ -16,30 +16,44 @@
 "style"               return 'STYLE';
 "default"             return 'DEFAULT';
 "linkStyle"           return 'LINKSTYLE';
+"interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
-"graph"               return 'GRAPH';
+"graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
-"LR"                  return 'DIR';
-"RL"                  return 'DIR';
-"TB"                  return 'DIR';
-"BT"                  return 'DIR';
-"TD"                  return 'DIR';
-"BR"                  return 'DIR';
-[0-9]+                 return 'NUM';
+<dir>\s*"LR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"RL"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TB"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BT"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TD"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"<"              {   this.popState();  return 'DIR'; }
+<dir>\s*">"              {   this.popState();  return 'DIR'; }
+<dir>\s*"^"              {   this.popState();  return 'DIR'; }
+<dir>\s*"v"              {   this.popState();  return 'DIR'; }
+[0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
+":::"                 return 'STYLE_SEPARATOR';
 ":"                   return 'COLON';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
-"<"                   return 'TAGSTART';
-">"                   return 'TAGEND';
-"^"                   return 'UP';
-"v"                   return 'DOWN';
 \s*\-\-[x]\s*            return 'ARROW_CROSS';
 \s*\-\-\>\s*             return 'ARROW_POINT';
+\s*\<\-\-\>\s*           return 'DOUBLE_ARROW_POINT';
+\s*[x]\-\-[x]\s*         return 'DOUBLE_ARROW_CROSS';
+\s*[o]\-\-[o]\s*         return 'DOUBLE_ARROW_CIRCLE';
+\s*[o]\.\-[o]\s*         return 'DOUBLE_DOTTED_ARROW_CIRCLE';
+\s*\<\=\=\>\s*           return 'DOUBLE_THICK_ARROW_POINT';
+\s*[o]\=\=[o]\s*         return 'DOUBLE_THICK_ARROW_CIRCLE';
+\s*[x]\=\=[x]\s*         return 'DOUBLE_THICK_ARROW_CROSS';
+\s*[x].\-[x]\s*          return 'DOUBLE_DOTTED_ARROW_CROSS';
+\s*[x]\-\.\-[x]\s*       return 'DOUBLE_DOTTED_ARROW_CROSS';
+\s*\<\.\-\>\s*           return 'DOUBLE_DOTTED_ARROW_POINT';
+\s*\<\-\.\-\>\s*         return 'DOUBLE_DOTTED_ARROW_POINT';
+\s*[o]\-\.\-[o]\s*       return 'DOUBLE_DOTTED_ARROW_CIRCLE';
 \s*\-\-[o]\s*            return 'ARROW_CIRCLE';
 \s*\-\-\-\s*             return 'ARROW_OPEN';
 \s*\-\.\-[x]\s*          return 'DOTTED_ARROW_CROSS';
@@ -54,6 +68,15 @@
 \s*\=\=\>\s*             return 'THICK_ARROW_POINT';
 \s*\=\=[o]\s*            return 'THICK_ARROW_CIRCLE';
 \s*\=\=[\=]\s*           return 'THICK_ARROW_OPEN';
+\s*\<\-\-\s*             return 'START_DOUBLE_ARROW_POINT';
+\s*[x]\-\-\s*            return 'START_DOUBLE_ARROW_CROSS';
+\s*[o]\-\-\s*            return 'START_DOUBLE_ARROW_CIRCLE';
+\s*\<\-\.\s*             return 'START_DOUBLE_DOTTED_ARROW_POINT';
+\s*[x]\-\.\s*            return 'START_DOUBLE_DOTTED_ARROW_CROSS';
+\s*[o]\-\.\s*            return 'START_DOUBLE_DOTTED_ARROW_CIRCLE';
+\s*\<\=\=\s*             return 'START_DOUBLE_THICK_ARROW_POINT';
+\s*[x]\=\=\s*            return 'START_DOUBLE_THICK_ARROW_CROSS';
+\s*[o]\=\=\s*            return 'START_DOUBLE_THICK_ARROW_CIRCLE';
 \s*\-\-\s*               return '--';
 \s*\-\.\s*               return '-.';
 \s*\=\=\s*               return '==';
@@ -61,11 +84,20 @@
 "-)"                  return '-)';
 \-                    return 'MINUS';
 "."                   return 'DOT';
+[\_]                  return 'UNDERSCORE';
 \+                    return 'PLUS';
 \%                    return 'PCT';
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
+"<"                   return 'TAGSTART';
+">"                   return 'TAGEND';
+"^"                   return 'UP';
+"v"                   return 'DOWN';
 [A-Za-z]+             return 'ALPHA';
+"\\]"                 return 'TRAPEND';
+"[/"                  return 'TRAPSTART';
+"/]"                 return 'INVTRAPEND';
+"[\\"                  return 'INVTRAPSTART';
 [!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -137,7 +169,7 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-\n+                   return 'NEWLINE';
+(\r|\n|\r\n)+         return 'NEWLINE';
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
@@ -176,25 +208,25 @@ line
 graphConfig
     : SPACE graphConfig
     | NEWLINE graphConfig
-    | GRAPH SPACE DIR FirstStmtSeperator
-        { yy.setDirection($3);$$ = $3;}
-    | GRAPH SPACE TAGEND FirstStmtSeperator
-        { yy.setDirection("LR");$$ = $3;}
-    | GRAPH SPACE TAGSTART FirstStmtSeperator
-        { yy.setDirection("RL");$$ = $3;}
-    | GRAPH SPACE UP FirstStmtSeperator
-        { yy.setDirection("BT");$$ = $3;}
-    | GRAPH SPACE DOWN FirstStmtSeperator
-        { yy.setDirection("TB");$$ = $3;}
+    | GRAPH DIR FirstStmtSeperator
+        { yy.setDirection($2);$$ = $2;}
+    // | GRAPH SPACE TAGEND FirstStmtSeperator
+    //     { yy.setDirection("LR");$$ = $3;}
+    // | GRAPH SPACE TAGSTART FirstStmtSeperator
+    //     { yy.setDirection("RL");$$ = $3;}
+    // | GRAPH SPACE UP FirstStmtSeperator
+    //     { yy.setDirection("BT");$$ = $3;}
+    // | GRAPH SPACE DOWN FirstStmtSeperator
+    //     { yy.setDirection("TB");$$ = $3;}
     ;
 
 ending: endToken ending
       | endToken
       ;
-      
+
 endToken: NEWLINE | SPACE | EOF;
-      
-FirstStmtSeperator 
+
+FirstStmtSeperator
     : SEMI | NEWLINE | spaceList NEWLINE ;
 
 
@@ -213,7 +245,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    {$$=$1}
+    { $$=$1}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -224,72 +256,94 @@ statement
     {$$=[];}
     | clickStatement separator
     {$$=[];}
-    | subgraph  text separator document end
-    {$$=yy.addSubGraph($4,$2);}
+    | subgraph SPACE text SQS text SQE separator document end
+    {$$=yy.addSubGraph($3,$8,$5);}
+    | subgraph SPACE text separator document end
+    {$$=yy.addSubGraph($3,$5,$3);}
+    // | subgraph SPACE text separator document end
+    // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
-    {$$=yy.addSubGraph($3,undefined);}
+    {$$=yy.addSubGraph(undefined,$3,undefined);}
     ;
 
 separator: NEWLINE | SEMI | EOF ;
 
-verticeStatement:
-     vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-     | vertex
-        {$$ = [$1];}
+// verticeStatement:
+//     vertex link vertex
+//         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
+//     | vertex link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
+//     | vertex STYLE_SEPARATOR idString link vertex
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
+//     | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
+//     |vertex
+//         {$$ = [$1];}
+//     |vertex STYLE_SEPARATOR idString
+//         {$$ = [$1];yy.setClass($1,$3)}
+//    ;
+
+verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
+    |node { $$ = $1 }
     ;
 
-vertex:  alphaNum SQS text SQE
+node: vertex
+        { $$ = [$1];}
+    | vertex STYLE_SEPARATOR idString
+        {$$ = [$1];yy.setClass($1,$3)}
+    ;
+
+vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    |  alphaNum SQS text SQE spaceList
+    |  idString SQS text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    | alphaNum PS PS text PE PE
+    | idString PS PS text PE PE
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum PS PS text PE PE spaceList
+    | idString PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | alphaNum '(-' text '-)'
+    | idString '(-' text '-)'
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | alphaNum '(-' text '-)' spaceList
+    | idString '(-' text '-)' spaceList
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | alphaNum PS text PE
+    | idString PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum PS text PE spaceList
+    | idString PS text PE spaceList
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP
+    | idString DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum DIAMOND_START text DIAMOND_STOP spaceList
+    | idString DIAMOND_START text DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | alphaNum TAGEND text SQE
+    | idString TAGEND text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | alphaNum TAGEND text SQE spaceList
+    | idString TAGEND text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-/*  | alphaNum SQS text TAGSTART
+    | idString TRAPSTART text TRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
+    | idString TRAPSTART text TRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
+    | idString INVTRAPSTART text INVTRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
+    | idString INVTRAPSTART text INVTRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
+    | idString TRAPSTART text INVTRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
+    | idString TRAPSTART text INVTRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
+    | idString INVTRAPSTART text TRAPEND
+        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
+    | idString INVTRAPSTART text TRAPEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
+/*  | idString SQS text TAGSTART
         {$$ = $1;yy.addVertex($1,$3,'odd_right');}
-    | alphaNum SQS text TAGSTART spaceList
+    | idString SQS text TAGSTART spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
-    | alphaNum
+    | idString
         {$$ = $1;yy.addVertex($1);}
-    | alphaNum spaceList
+    | idString spaceList
         {$$ = $1;yy.addVertex($1);}
     ;
 
-alphaNum
-    : alphaNumStatement
-    {$$=$1;}
-    | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
-    ;
 
-alphaNumStatement
-    : DIR
-        {$$=$1;}
-    | alphaNumToken
-        {$$=$1;}
-    | DOWN
-        {$$='v';}
-    | MINUS
-        {$$='-';}
-    ;
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
@@ -301,52 +355,88 @@ link: linkStatement arrowText
     {$$ = $1;}
     | '--' text ARROW_POINT
         {$$ = {"type":"arrow","stroke":"normal","text":$2};}
+    | 'START_DOUBLE_ARROW_POINT' text ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"normal","text":$2};}
     | '--' text ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"normal","text":$2};}
+    | 'START_DOUBLE_ARROW_CIRCLE' text ARROW_CIRCLE
+        {$$ = {"type":"double_arrow_circle","stroke":"normal","text":$2};}
     | '--' text ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"normal","text":$2};}
+    | 'START_DOUBLE_ARROW_CROSS' text ARROW_CROSS
+        {$$ = {"type":"double_arrow_cross","stroke":"normal","text":$2};}
     | '--' text ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"normal","text":$2};}
     | '-.' text DOTTED_ARROW_POINT
         {$$ = {"type":"arrow","stroke":"dotted","text":$2};}
+    | 'START_DOUBLE_DOTTED_ARROW_POINT' text DOTTED_ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"dotted","text":$2};}
     | '-.' text DOTTED_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"dotted","text":$2};}
+    | 'START_DOUBLE_DOTTED_ARROW_CIRCLE' text DOTTED_ARROW_CIRCLE
+        {$$ = {"type":"double_arrow_circle","stroke":"dotted","text":$2};}
     | '-.' text DOTTED_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"dotted","text":$2};}
+    | 'START_DOUBLE_DOTTED_ARROW_CROSS' text DOTTED_ARROW_CROSS
+        {$$ = {"type":"double_arrow_cross","stroke":"dotted","text":$2};}
     | '-.' text DOTTED_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"dotted","text":$2};}
     | '==' text THICK_ARROW_POINT
         {$$ = {"type":"arrow","stroke":"thick","text":$2};}
+    | 'START_DOUBLE_THICK_ARROW_POINT' text THICK_ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"thick","text":$2};}
     | '==' text THICK_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"thick","text":$2};}
+    | 'START_DOUBLE_THICK_ARROW_CIRCLE' text THICK_ARROW_CIRCLE
+        {$$ = {"type":"double_arrow_circle","stroke":"thick","text":$2};}
     | '==' text THICK_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"thick","text":$2};}
+    | 'START_DOUBLE_THICK_ARROW_CROSS' text THICK_ARROW_CROSS
+        {$$ = {"type":"double_arrow_cross","stroke":"thick","text":$2};}
     | '==' text THICK_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"thick","text":$2};}
     ;
 
 linkStatement: ARROW_POINT
         {$$ = {"type":"arrow","stroke":"normal"};}
+    | DOUBLE_ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"normal"};}
     | ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"normal"};}
+    | DOUBLE_ARROW_CIRCLE
+        {$$ = {"type":"double_arrow_circle","stroke":"normal"};}
     | ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"normal"};}
+    | DOUBLE_ARROW_CROSS
+        {$$ = {"type":"double_arrow_cross","stroke":"normal"};}
     | ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"normal"};}
     | DOTTED_ARROW_POINT
         {$$ = {"type":"arrow","stroke":"dotted"};}
+    | DOUBLE_DOTTED_ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"dotted"};}
     | DOTTED_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"dotted"};}
+    | DOUBLE_DOTTED_ARROW_CIRCLE
+        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}
     | DOTTED_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"dotted"};}
+    | DOUBLE_DOTTED_ARROW_CROSS
+        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}
     | DOTTED_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"dotted"};}
     | THICK_ARROW_POINT
         {$$ = {"type":"arrow","stroke":"thick"};}
+    | DOUBLE_THICK_ARROW_POINT
+        {$$ = {"type":"double_arrow_point","stroke":"thick"};}
     | THICK_ARROW_CIRCLE
         {$$ = {"type":"arrow_circle","stroke":"thick"};}
+    | DOUBLE_THICK_ARROW_CIRCLE
+        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}
     | THICK_ARROW_CROSS
         {$$ = {"type":"arrow_cross","stroke":"thick"};}
+    | DOUBLE_THICK_ARROW_CROSS
+        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}
     | THICK_ARROW_OPEN
         {$$ = {"type":"arrow_open","stroke":"thick"};}
         ;
@@ -395,10 +485,10 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
     ;
 
 clickStatement
-    : CLICK SPACE alphaNum SPACE alphaNum           {$$ = $1;yy.setClickEvent($3,        $5, undefined, undefined);}
-    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR {$$ = $1;yy.setClickEvent($3,        $5, undefined, $7)       ;}
-    | CLICK SPACE alphaNum SPACE STR                {$$ = $1;yy.setClickEvent($3, undefined,        $5, undefined);}
-    | CLICK SPACE alphaNum SPACE STR SPACE STR      {$$ = $1;yy.setClickEvent($3, undefined,        $5, $7       );}
+    : CLICK SPACE alphaNum SPACE alphaNum           {$$ = $1;yy.setClickEvent($3, $5, undefined);}
+    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR {$$ = $1;yy.setClickEvent($3, $5, $7)       ;}
+    | CLICK SPACE alphaNum SPACE STR                {$$ = $1;yy.setLink($3, $5, undefined);}
+    | CLICK SPACE alphaNum SPACE STR SPACE STR      {$$ = $1;yy.setLink($3, $5, $7       );}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
@@ -409,12 +499,26 @@ styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
 
 linkStyleStatement
     : LINKSTYLE SPACE DEFAULT SPACE stylesOpt
+          {$$ = $1;yy.updateLink([$3],$5);}
+    | LINKSTYLE SPACE numList SPACE stylesOpt
           {$$ = $1;yy.updateLink($3,$5);}
-    | LINKSTYLE SPACE NUM SPACE stylesOpt
-          {$$ = $1;yy.updateLink($3,$5);}
+    | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.updateLinkInterpolate([$3],$7);yy.updateLink([$3],$9);}
+    | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum SPACE stylesOpt
+          {$$ = $1;yy.updateLinkInterpolate($3,$7);yy.updateLink($3,$9);}
+    | LINKSTYLE SPACE DEFAULT SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $1;yy.updateLinkInterpolate([$3],$7);}
+    | LINKSTYLE SPACE numList SPACE INTERPOLATE SPACE alphaNum
+          {$$ = $1;yy.updateLinkInterpolate($3,$7);}
     ;
 
 commentStatement: PCT PCT commentText;
+
+numList: NUM
+        {$$ = [$1]}
+    | numList COMMA NUM
+        {$1.push($3);$$ = $1;}
+    ;
 
 stylesOpt: style
         {$$ = [$1]}
@@ -437,7 +541,34 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
-alphaNumToken  : ALPHA | PUNCTUATION | UNICODE_TEXT | NUM | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT ;
+idString
+    :idStringToken
+    {$$=$1}
+    | idString idStringToken
+    {$$=$1+''+$2}
+    ;
 
-graphCodeTokens:  PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAG_START | TAG_END | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
+alphaNum
+    : alphaNumStatement
+    {$$=$1;}
+    | alphaNum alphaNumStatement
+    {$$=$1+''+$2;}
+    ;
+
+alphaNumStatement
+    : DIR
+        {$$=$1;}
+    | alphaNumToken
+        {$$=$1;}
+    | DOWN
+        {$$='v';}
+    | MINUS
+        {$$='-';}
+    ;
+
+alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
+
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION;
+
+graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
 %%

@@ -1,151 +1,213 @@
-/**
- * Created by knut on 15-01-14.
- */
-var moment = require('moment');
-import * as Logger from '../../logger';
-var log = new Logger.Log();
+import moment from 'moment-mini';
+import { sanitizeUrl } from '@braintree/sanitize-url';
+import { logger } from '../../logger';
+import { getConfig } from '../../config';
 
+const config = getConfig();
+let dateFormat = '';
+let axisFormat = '';
+let excludes = [];
+let title = '';
+let sections = [];
+let tasks = [];
+let currentSection = '';
+const tags = ['active', 'done', 'crit', 'milestone'];
+let funs = [];
+let inclusiveEndDates = false;
 
-var dateFormat = '';
-var title = '';
-var sections = [];
-var tasks = [];
-var currentSection = '';
-
-exports.clear = function(){
-    sections = [];
-    tasks = [];
-    currentSection = '';
-    title = '';
-    taskCnt = 0;
-    lastTask = undefined;
-    lastTaskID = undefined;
-    rawTasks = [];
+export const clear = function() {
+  sections = [];
+  tasks = [];
+  currentSection = '';
+  funs = [];
+  title = '';
+  taskCnt = 0;
+  lastTask = undefined;
+  lastTaskID = undefined;
+  rawTasks = [];
+  dateFormat = '';
+  axisFormat = '';
+  excludes = [];
+  inclusiveEndDates = false;
 };
 
-exports.setDateFormat = function(txt){
-    dateFormat = txt;
+export const setAxisFormat = function(txt) {
+  axisFormat = txt;
 };
 
-exports.getDateFormat = function(){
-    return dateFormat;
-};
-exports.setTitle = function(txt){
-    title = txt;
+export const getAxisFormat = function() {
+  return axisFormat;
 };
 
-exports.getTitle = function(){
-    return title;
+export const setDateFormat = function(txt) {
+  dateFormat = txt;
 };
 
-exports.addSection = function(txt){
-    currentSection = txt;
-    sections.push(txt);
+export const enableInclusiveEndDates = function() {
+  inclusiveEndDates = true;
 };
 
+export const endDatesAreInclusive = function() {
+  return inclusiveEndDates;
+};
 
-exports.getTasks=function(){
-    var allItemsPricessed = compileTasks();
-    var maxDepth = 10;
-    var iterationCount = 0;
-    while(!allItemsPricessed && (iterationCount < maxDepth)){
-        allItemsPricessed = compileTasks();
-        iterationCount++;
+export const getDateFormat = function() {
+  return dateFormat;
+};
+
+export const setExcludes = function(txt) {
+  excludes = txt.toLowerCase().split(/[\s,]+/);
+};
+
+export const getExcludes = function() {
+  return excludes;
+};
+
+export const setTitle = function(txt) {
+  title = txt;
+};
+
+export const getTitle = function() {
+  return title;
+};
+
+export const addSection = function(txt) {
+  currentSection = txt;
+  sections.push(txt);
+};
+
+export const getSections = function() {
+  return sections;
+};
+
+export const getTasks = function() {
+  let allItemsPricessed = compileTasks();
+  const maxDepth = 10;
+  let iterationCount = 0;
+  while (!allItemsPricessed && iterationCount < maxDepth) {
+    allItemsPricessed = compileTasks();
+    iterationCount++;
+  }
+
+  tasks = rawTasks;
+
+  return tasks;
+};
+
+const isInvalidDate = function(date, dateFormat, excludes) {
+  if (date.isoWeekday() >= 6 && excludes.indexOf('weekends') >= 0) {
+    return true;
+  }
+  if (excludes.indexOf(date.format('dddd').toLowerCase()) >= 0) {
+    return true;
+  }
+  return excludes.indexOf(date.format(dateFormat.trim())) >= 0;
+};
+
+const checkTaskDates = function(task, dateFormat, excludes) {
+  if (!excludes.length || task.manualEndTime) return;
+  let startTime = moment(task.startTime, dateFormat, true);
+  startTime.add(1, 'd');
+  let endTime = moment(task.endTime, dateFormat, true);
+  let renderEndTime = fixTaskDates(startTime, endTime, dateFormat, excludes);
+  task.endTime = endTime.toDate();
+  task.renderEndTime = renderEndTime;
+};
+
+const fixTaskDates = function(startTime, endTime, dateFormat, excludes) {
+  let invalid = false;
+  let renderEndTime = null;
+  while (startTime.date() <= endTime.date()) {
+    if (!invalid) {
+      renderEndTime = endTime.toDate();
     }
-
-    tasks = rawTasks;
-
-    //var i;
-    //for(i=10000;i<tasks.length;i++){
-    //    tasks[i].startTime = moment(tasks[i].startTime).format(dateFormat);
-    //    tasks[i].endTime = moment(tasks[i].endTime).format(dateFormat);
-    //}
-
-    return tasks;
+    invalid = isInvalidDate(startTime, dateFormat, excludes);
+    if (invalid) {
+      endTime.add(1, 'd');
+    }
+    startTime.add(1, 'd');
+  }
+  return renderEndTime;
 };
 
+const getStartDate = function(prevTime, dateFormat, str) {
+  str = str.trim();
 
-var getStartDate = function(prevTime, dateFormat, str){
-    //console.log('Deciding start date:'+JSON.stringify(str));
-    //log.debug('Deciding start date:'+str);
-    //log.debug('with dateformat:'+dateFormat);
+  // Test for after
+  const re = /^after\s+([\d\w-]+)/;
+  const afterStatement = re.exec(str.trim());
 
-    str = str.trim();
+  if (afterStatement !== null) {
+    const task = findTaskById(afterStatement[1]);
 
-    // Test for after
-    var re = /^after\s+([\d\w\-]+)/;
-    var afterStatement = re.exec(str.trim());
-
-    if(afterStatement!==null){
-        var task = exports.findTaskById(afterStatement[1]);
-
-        if(typeof task === 'undefined'){
-            var dt = new Date();
-            dt.setHours(0,0,0,0);
-            return dt;
-            //return undefined;
-        }
-        return task.endTime;
+    if (typeof task === 'undefined') {
+      const dt = new Date();
+      dt.setHours(0, 0, 0, 0);
+      return dt;
     }
+    return task.endTime;
+  }
 
-    // Check for actual date set
-    if(moment(str,dateFormat.trim(),true).isValid()){
-        return moment(str,dateFormat.trim(),true).toDate();
-    }else{
-        log.debug('Invalid date:'+str);
-        log.debug('With date format:'+dateFormat.trim());
-        //log.debug('----');
-    }
+  // Check for actual date set
+  let mDate = moment(str, dateFormat.trim(), true);
+  if (mDate.isValid()) {
+    return mDate.toDate();
+  } else {
+    logger.debug('Invalid date:' + str);
+    logger.debug('With date format:' + dateFormat.trim());
+  }
 
-    // Default date - now
-    return new Date();
+  // Default date - now
+  return new Date();
 };
 
-var getEndDate = function(prevTime, dateFormat, str){
-    str = str.trim();
-
-    // Check for actual date
-    if(moment(str,dateFormat.trim(),true).isValid()){
-
-        return moment(str,dateFormat.trim()).toDate();
+const durationToDate = function(durationStatement, relativeTime) {
+  if (durationStatement !== null) {
+    switch (durationStatement[2]) {
+      case 's':
+        relativeTime.add(durationStatement[1], 'seconds');
+        break;
+      case 'm':
+        relativeTime.add(durationStatement[1], 'minutes');
+        break;
+      case 'h':
+        relativeTime.add(durationStatement[1], 'hours');
+        break;
+      case 'd':
+        relativeTime.add(durationStatement[1], 'days');
+        break;
+      case 'w':
+        relativeTime.add(durationStatement[1], 'weeks');
+        break;
     }
-
-    var d = moment(prevTime);
-    // Check for length
-    var re = /^([\d]+)([wdhms])/;
-    var durationStatement = re.exec(str.trim());
-
-    if(durationStatement!== null){
-        switch(durationStatement[2]){
-            case 's':
-                d.add(durationStatement[1], 'seconds');
-                break;
-            case 'm':
-                d.add(durationStatement[1], 'minutes');
-                break;
-            case 'h':
-                d.add(durationStatement[1], 'hours');
-                break;
-            case 'd':
-                d.add(durationStatement[1], 'days');
-                break;
-            case 'w':
-                d.add(durationStatement[1], 'weeks');
-                break;
-        }
-        return d.toDate();
-    }
-    // Default date - now
-    return d.toDate();
+  }
+  // Default date - now
+  return relativeTime.toDate();
 };
 
-var taskCnt = 0;
-var parseId = function(idStr){
-    if(typeof idStr === 'undefined'){
-        taskCnt = taskCnt + 1;
-        return 'task'+taskCnt;
+const getEndDate = function(prevTime, dateFormat, str, inclusive) {
+  inclusive = inclusive || false;
+  str = str.trim();
+
+  // Check for actual date
+  let mDate = moment(str, dateFormat.trim(), true);
+  if (mDate.isValid()) {
+    if (inclusive) {
+      mDate.add(1, 'd');
     }
-    return idStr;
+    return mDate.toDate();
+  }
+
+  return durationToDate(/^([\d]+)([wdhms])/.exec(str.trim()), moment(prevTime));
+};
+
+let taskCnt = 0;
+const parseId = function(idStr) {
+  if (typeof idStr === 'undefined') {
+    taskCnt = taskCnt + 1;
+    return 'task' + taskCnt;
+  }
+  return idStr;
 };
 // id, startDate, endDate
 // id, startDate, length
@@ -158,241 +220,366 @@ var parseId = function(idStr){
 // endDate
 // length
 
-var compileData = function(prevTask, dataStr){
-    var ds;
+const compileData = function(prevTask, dataStr) {
+  let ds;
 
-    if(dataStr.substr(0,1) === ':'){
-        ds = dataStr.substr(1,dataStr.length);
-    }
-    else{
-        ds=dataStr;
-    }
+  if (dataStr.substr(0, 1) === ':') {
+    ds = dataStr.substr(1, dataStr.length);
+  } else {
+    ds = dataStr;
+  }
 
-    var data = ds.split(',');
+  const data = ds.split(',');
 
+  const task = {};
 
-    var task = {};
-    var df = exports.getDateFormat();
+  // Get tags like active, done, crit and milestone
+  getTaskTags(data, task, tags);
 
+  for (let i = 0; i < data.length; i++) {
+    data[i] = data[i].trim();
+  }
 
-    // Get tags like active, done cand crit
-    var matchFound = true;
-    while(matchFound){
-        matchFound = false;
-        if(data[0].match(/^\s*active\s*$/)){
-            task.active = true;
-            data.shift(1);
-            matchFound = true;
+  let endTimeData = '';
+  switch (data.length) {
+    case 1:
+      task.id = parseId();
+      task.startTime = prevTask.endTime;
+      endTimeData = data[0];
+      break;
+    case 2:
+      task.id = parseId();
+      task.startTime = getStartDate(undefined, dateFormat, data[0]);
+      endTimeData = data[1];
+      break;
+    case 3:
+      task.id = parseId(data[0]);
+      task.startTime = getStartDate(undefined, dateFormat, data[1]);
+      endTimeData = data[2];
+      break;
+    default:
+  }
 
-        }
-        if(data[0].match(/^\s*done\s*$/)){
-            task.done = true;
-            data.shift(1);
-            matchFound = true;
-        }
-        if(data[0].match(/^\s*crit\s*$/)){
-            task.crit = true;
-            data.shift(1);
-            matchFound = true;
-        }
-    }
-    var i;
-    for(i=0;i<data.length;i++){
-        data[i] = data[i].trim();
-    }
+  if (endTimeData) {
+    task.endTime = getEndDate(task.startTime, dateFormat, endTimeData, inclusiveEndDates);
+    task.manualEndTime = moment(endTimeData, 'YYYY-MM-DD', true).isValid();
+    checkTaskDates(task, dateFormat, excludes);
+  }
 
-
-    switch(data.length){
-        case 1:
-            task.id = parseId();
-            task.startTime = prevTask.endTime;
-            task.endTime   = getEndDate(task.startTime, df, data[0]);
-            break;
-        case 2:
-            task.id = parseId();
-            task.startTime = getStartDate(undefined, df, data[0]);
-            task.endTime   = getEndDate(task.startTime, df, data[1]);
-            break;
-        case 3:
-            task.id = parseId(data[0]);
-            task.startTime = getStartDate(undefined, df, data[1]);
-            task.endTime   = getEndDate(task.startTime, df, data[2]);
-            break;
-        default:
-
-    }
-
-    return task;
+  return task;
 };
 
-var parseData = function(prevTaskId, dataStr){
-    var ds;
+const parseData = function(prevTaskId, dataStr) {
+  let ds;
+  if (dataStr.substr(0, 1) === ':') {
+    ds = dataStr.substr(1, dataStr.length);
+  } else {
+    ds = dataStr;
+  }
 
-    if(dataStr.substr(0,1) === ':'){
-        ds = dataStr.substr(1,dataStr.length);
-    }
-    else{
-        ds=dataStr;
-    }
+  const data = ds.split(',');
 
-    var data = ds.split(',');
+  const task = {};
 
+  // Get tags like active, done, crit and milestone
+  getTaskTags(data, task, tags);
 
-    var task = {};
+  for (let i = 0; i < data.length; i++) {
+    data[i] = data[i].trim();
+  }
 
-    // Get tags like active, done cand crit
-    var matchFound = true;
-    while(matchFound){
-        matchFound = false;
-        if(data[0].match(/^\s*active\s*$/)){
-            task.active = true;
-            data.shift(1);
-            matchFound = true;
+  switch (data.length) {
+    case 1:
+      task.id = parseId();
+      task.startTime = {
+        type: 'prevTaskEnd',
+        id: prevTaskId
+      };
+      task.endTime = {
+        data: data[0]
+      };
+      break;
+    case 2:
+      task.id = parseId();
+      task.startTime = {
+        type: 'getStartDate',
+        startData: data[0]
+      };
+      task.endTime = {
+        data: data[1]
+      };
+      break;
+    case 3:
+      task.id = parseId(data[0]);
+      task.startTime = {
+        type: 'getStartDate',
+        startData: data[1]
+      };
+      task.endTime = {
+        data: data[2]
+      };
+      break;
+    default:
+  }
 
+  return task;
+};
+
+let lastTask;
+let lastTaskID;
+let rawTasks = [];
+const taskDb = {};
+export const addTask = function(descr, data) {
+  const rawTask = {
+    section: currentSection,
+    type: currentSection,
+    processed: false,
+    manualEndTime: false,
+    renderEndTime: null,
+    raw: { data: data },
+    task: descr,
+    classes: []
+  };
+  const taskInfo = parseData(lastTaskID, data);
+  rawTask.raw.startTime = taskInfo.startTime;
+  rawTask.raw.endTime = taskInfo.endTime;
+  rawTask.id = taskInfo.id;
+  rawTask.prevTaskId = lastTaskID;
+  rawTask.active = taskInfo.active;
+  rawTask.done = taskInfo.done;
+  rawTask.crit = taskInfo.crit;
+  rawTask.milestone = taskInfo.milestone;
+
+  const pos = rawTasks.push(rawTask);
+
+  lastTaskID = rawTask.id;
+  // Store cross ref
+  taskDb[rawTask.id] = pos - 1;
+};
+
+export const findTaskById = function(id) {
+  const pos = taskDb[id];
+  return rawTasks[pos];
+};
+
+export const addTaskOrg = function(descr, data) {
+  const newTask = {
+    section: currentSection,
+    type: currentSection,
+    description: descr,
+    task: descr,
+    classes: []
+  };
+  const taskInfo = compileData(lastTask, data);
+  newTask.startTime = taskInfo.startTime;
+  newTask.endTime = taskInfo.endTime;
+  newTask.id = taskInfo.id;
+  newTask.active = taskInfo.active;
+  newTask.done = taskInfo.done;
+  newTask.crit = taskInfo.crit;
+  newTask.milestone = taskInfo.milestone;
+  lastTask = newTask;
+  tasks.push(newTask);
+};
+
+const compileTasks = function() {
+  const compileTask = function(pos) {
+    const task = rawTasks[pos];
+    let startTime = '';
+    switch (rawTasks[pos].raw.startTime.type) {
+      case 'prevTaskEnd':
+        const prevTask = findTaskById(task.prevTaskId);
+        task.startTime = prevTask.endTime;
+        break;
+      case 'getStartDate':
+        startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData);
+        if (startTime) {
+          rawTasks[pos].startTime = startTime;
         }
-        if(data[0].match(/^\s*done\s*$/)){
-            task.done = true;
-            data.shift(1);
-            matchFound = true;
-        }
-        if(data[0].match(/^\s*crit\s*$/)){
-            task.crit = true;
-            data.shift(1);
-            matchFound = true;
-        }
-    }
-    var i;
-    for(i=0;i<data.length;i++){
-        data[i] = data[i].trim();
+        break;
     }
 
-
-    switch(data.length){
-        case 1:
-            task.id = parseId();
-            task.startTime = {type: 'prevTaskEnd', id:prevTaskId};
-            task.endTime   = {data: data[0]};
-            break;
-        case 2:
-            task.id = parseId();
-            task.startTime = {type:'getStartDate',startData:data[0]};
-            task.endTime   = {data: data[1]};
-            break;
-        case 3:
-            task.id = parseId(data[0]);
-            task.startTime = {type:'getStartDate',startData: data[1]};
-            task.endTime   = {data: data[2]};
-            break;
-        default:
-
+    if (rawTasks[pos].startTime) {
+      rawTasks[pos].endTime = getEndDate(
+        rawTasks[pos].startTime,
+        dateFormat,
+        rawTasks[pos].raw.endTime.data,
+        inclusiveEndDates
+      );
+      if (rawTasks[pos].endTime) {
+        rawTasks[pos].processed = true;
+        rawTasks[pos].manualEndTime = moment(
+          rawTasks[pos].raw.endTime.data,
+          'YYYY-MM-DD',
+          true
+        ).isValid();
+        checkTaskDates(rawTasks[pos], dateFormat, excludes);
+      }
     }
 
-    return task;
+    return rawTasks[pos].processed;
+  };
+
+  let allProcessed = true;
+  for (let i = 0; i < rawTasks.length; i++) {
+    compileTask(i);
+
+    allProcessed = allProcessed && rawTasks[i].processed;
+  }
+  return allProcessed;
 };
 
-
-
-var lastTask;
-var lastTaskID;
-var rawTasks = [];
-var taskDb = {};
-exports.addTask = function(descr,data){
-    var rawTask = {
-        section:currentSection,
-        type:currentSection,
-        processed:false,
-        raw:{data:data},
-        task:descr
-    };
-    var taskInfo = parseData(lastTaskID, data);
-    rawTask.raw.startTime  = taskInfo.startTime;
-    rawTask.raw.endTime    = taskInfo.endTime;
-    rawTask.id         = taskInfo.id;
-    rawTask.prevTaskId = lastTaskID;
-    rawTask.active     = taskInfo.active;
-    rawTask.done       = taskInfo.done;
-    rawTask.crit       = taskInfo.crit;
-
-    var pos = rawTasks.push(rawTask);
-
-    lastTaskID = rawTask.id;
-    // Store cross ref
-    taskDb[rawTask.id]= pos-1;
-
-};
-
-
-exports.findTaskById = function(id) {
-    //var i;
-    //for(i=0;i<tasks.length;i++){
-    //    if(tasks[i].id === id){
-    //        return tasks[i];
-    //    }
-    //}
-
-    var pos = taskDb[id];
-    return rawTasks[pos];
-};
-
-exports.addTaskOrg = function(descr,data){
-
-    var newTask = {
-        section:currentSection,
-        type:currentSection,
-        description:descr,
-        task:descr
-    };
-    var taskInfo = compileData(lastTask, data);
-    newTask.startTime = taskInfo.startTime;
-    newTask.endTime   = taskInfo.endTime;
-    newTask.id        = taskInfo.id;
-    newTask.active    = taskInfo.active;
-    newTask.done      = taskInfo.done;
-    newTask.crit      = taskInfo.crit;
-    lastTask = newTask;
-    tasks.push(newTask);
-};
-
-var compileTasks=function(){
-    var df = exports.getDateFormat();
-
-    var compileTask = function(pos){
-        var task = rawTasks[pos];
-        var startTime = '';
-        switch(rawTasks[pos].raw.startTime.type){
-            case 'prevTaskEnd':
-                var prevTask = exports.findTaskById(task.prevTaskId);
-                task.startTime = prevTask.endTime;
-                break;
-            case 'getStartDate':
-                startTime = getStartDate(undefined, df, rawTasks[pos].raw.startTime.startData);
-                if(startTime){
-                    rawTasks[pos].startTime = startTime;
-                }
-                break;
-        }
-
-        if(rawTasks[pos].startTime){
-            rawTasks[pos].endTime = getEndDate(rawTasks[pos].startTime, df, rawTasks[pos].raw.endTime.data);
-            if(rawTasks[pos].endTime){
-                rawTasks[pos].processed = true;
-            }
-        }
-
-        return rawTasks[pos].processed;
-
-    };
-
-    var i;
-    var allProcessed = true;
-    for(i=0;i<rawTasks.length;i++){
-        compileTask(i);
-
-        allProcessed = allProcessed && rawTasks[i].processed;
+/**
+ * Called by parser when a link is found. Adds the URL to the vertex data.
+ * @param ids Comma separated list of ids
+ * @param linkStr URL to create a link for
+ */
+export const setLink = function(ids, _linkStr) {
+  let linkStr = _linkStr;
+  if (config.securityLevel !== 'loose') {
+    linkStr = sanitizeUrl(_linkStr);
+  }
+  ids.split(',').forEach(function(id) {
+    let rawTask = findTaskById(id);
+    if (typeof rawTask !== 'undefined') {
+      pushFun(id, () => {
+        window.open(linkStr, '_self');
+      });
     }
-    return allProcessed;
+  });
+  setClass(ids, 'clickable');
 };
 
-exports.parseError = function(err,hash){
-    global.mermaidAPI.parseError(err,hash);
+/**
+ * Called by parser when a special node is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param className Class to add
+ */
+export const setClass = function(ids, className) {
+  ids.split(',').forEach(function(id) {
+    let rawTask = findTaskById(id);
+    if (typeof rawTask !== 'undefined') {
+      rawTask.classes.push(className);
+    }
+  });
 };
+
+const setClickFun = function(id, functionName, functionArgs) {
+  if (config.securityLevel !== 'loose') {
+    return;
+  }
+  if (typeof functionName === 'undefined') {
+    return;
+  }
+
+  let argList = [];
+  if (typeof functionArgs === 'string') {
+    /* Splits functionArgs by ',', ignoring all ',' in double quoted strings */
+    argList = functionArgs.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    for (let i = 0; i < argList.length; i++) {
+      let item = argList[i].trim();
+      /* Removes all double quotes at the start and end of an argument */
+      /* This preserves all starting and ending whitespace inside */
+      if (item.charAt(0) === '"' && item.charAt(item.length - 1) === '"') {
+        item = item.substr(1, item.length - 2);
+      }
+      argList[i] = item;
+    }
+  }
+
+  let rawTask = findTaskById(id);
+  if (typeof rawTask !== 'undefined') {
+    pushFun(id, () => {
+      window[functionName](...argList);
+    });
+  }
+};
+
+/**
+ * The callbackFunction is executed in a click event bound to the task with the specified id or the task's assigned text
+ * @param id The task's id
+ * @param callbackFunction A function to be executed when clicked on the task or the task's text
+ */
+const pushFun = function(id, callbackFunction) {
+  funs.push(function(element) {
+    // const elem = d3.select(element).select(`[id="${id}"]`)
+    const elem = document.querySelector(`[id="${id}"]`);
+    if (elem !== null) {
+      elem.addEventListener('click', function() {
+        callbackFunction();
+      });
+    }
+  });
+  funs.push(function(element) {
+    // const elem = d3.select(element).select(`[id="${id}-text"]`)
+    const elem = document.querySelector(`[id="${id}-text"]`);
+    if (elem !== null) {
+      elem.addEventListener('click', function() {
+        callbackFunction();
+      });
+    }
+  });
+};
+
+/**
+ * Called by parser when a click definition is found. Registers an event handler.
+ * @param ids Comma separated list of ids
+ * @param functionName Function to be called on click
+ * @param functionArgs Function args the function should be called with
+ */
+export const setClickEvent = function(ids, functionName, functionArgs) {
+  ids.split(',').forEach(function(id) {
+    setClickFun(id, functionName, functionArgs);
+  });
+  setClass(ids, 'clickable');
+};
+
+/**
+ * Binds all functions previously added to fun (specified through click) to the element
+ * @param element
+ */
+export const bindFunctions = function(element) {
+  funs.forEach(function(fun) {
+    fun(element);
+  });
+};
+
+export default {
+  clear,
+  setDateFormat,
+  getDateFormat,
+  enableInclusiveEndDates,
+  endDatesAreInclusive,
+  setAxisFormat,
+  getAxisFormat,
+  setTitle,
+  getTitle,
+  addSection,
+  getSections,
+  getTasks,
+  addTask,
+  findTaskById,
+  addTaskOrg,
+  setExcludes,
+  getExcludes,
+  setClickEvent,
+  setLink,
+  bindFunctions,
+  durationToDate
+};
+
+function getTaskTags(data, task, tags) {
+  let matchFound = true;
+  while (matchFound) {
+    matchFound = false;
+    tags.forEach(function(t) {
+      const pattern = '^\\s*' + t + '\\s*$';
+      const regex = new RegExp(pattern);
+      if (data[0].match(regex)) {
+        task[t] = true;
+        data.shift(1);
+        matchFound = true;
+      }
+    });
+  }
+}

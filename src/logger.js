@@ -1,97 +1,45 @@
-/**
- * #logger
- * logger = require('logger').create()
- * logger.info("blah")
- * => [2011-3-3T20:24:4.810 info (5021)] blah
- * logger.debug("boom")
- * =>
- * logger.level = Logger.levels.debug
- * logger.debug(function() { return "booom" })
- * => [2011-3-3T20:24:4.810 error (5021)] booom
- */
+import moment from 'moment-mini';
 
-const LEVELS = {
-    debug: 1,
-    info: 2,
-    warn: 3,
-    error: 4,
-    fatal: 5,
-    default: 5
+export const LEVELS = {
+  debug: 1,
+  info: 2,
+  warn: 3,
+  error: 4,
+  fatal: 5
 };
 
-let defaultLevel = LEVELS.error;
-
-exports.setLogLevel = function (level) {
-    defaultLevel = level;
+export const logger = {
+  debug: () => {},
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+  fatal: () => {}
 };
 
-function formatTime(timestamp) {
-    var hh = timestamp.getUTCHours();
-    var mm = timestamp.getUTCMinutes();
-    var ss = timestamp.getSeconds();
-    var ms = timestamp.getMilliseconds();
-    // If you were building a timestamp instead of a duration, you would uncomment the following line to get 12-hour (not 24) time
-    // if (hh > 12) {hh = hh % 12;}
-    // These lines ensure you have two-digits
-    if (hh < 10) {
-        hh = '0' + hh;
-    }
-    if (mm < 10) {
-        mm = '0' + mm;
-    }
-    if (ss < 10) {
-        ss = '0' + ss;
-    }
-    if (ms < 100) {
-        ms = '0' + ms;
-    }
-    if (ms < 10) {
-        ms = '00' + ms;
-    }
-    // This formats your string to HH:MM:SS
-    var t = hh + ':' + mm + ':' + ss + ' (' + ms + ')';
-    return t;
-}
+export const setLogLevel = function(level) {
+  logger.debug = () => {};
+  logger.info = () => {};
+  logger.warn = () => {};
+  logger.error = () => {};
+  logger.fatal = () => {};
+  if (level <= LEVELS.fatal) {
+    logger.fatal = console.log.bind(console, '\x1b[35m', format('FATAL'));
+  }
+  if (level <= LEVELS.error) {
+    logger.error = console.log.bind(console, '\x1b[31m', format('ERROR'));
+  }
+  if (level <= LEVELS.warn) {
+    logger.warn = console.log.bind(console, `\x1b[33m`, format('WARN'));
+  }
+  if (level <= LEVELS.info) {
+    logger.info = console.log.bind(console, '\x1b[34m', format('INFO'));
+  }
+  if (level <= LEVELS.debug) {
+    logger.debug = console.log.bind(console, '\x1b[32m', format('DEBUG'));
+  }
+};
 
-
-class Log {
-    constructor(level) {
-        this.level = level;
-    }
-
-    log(str, level) {
-        let logLevel = this.level;
-        if(typeof logLevel === 'undefined'){
-            logLevel = defaultLevel;
-        }
-        if (logLevel <= level) {
-            if (typeof console !== 'undefined') { //eslint-disable-line no-console
-                if (typeof console.log !== 'undefined') { //eslint-disable-line no-console
-                    return console.log('[' + formatTime(new Date()) + '] ' + str); //eslint-disable-line no-console
-                }
-            }
-        }
-    }
-
-    trace(str) {
-        this.log(str, LEVELS.trace);
-    }
-
-    debug(str) {
-        this.log(str, LEVELS.debug);
-    }
-
-    info(str) {
-        this.log(str, LEVELS.info);
-    }
-
-    warn(str) {
-        this.log(str, LEVELS.warn);
-    }
-
-    error(str) {
-        this.log(str, LEVELS.error);
-    }
-}
-
-exports.Log = Log;
+const format = level => {
+  const time = moment().format('HH:mm:ss.SSS');
+  return `${time} : ${level} : `;
+};

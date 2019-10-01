@@ -1,0 +1,58 @@
+.label {
+  font-family: 'trebuchet ms', verdana, arial;
+  color: #333;
+}
+
+.label text {
+  fill: #333;
+}
+
+.node rect,
+.node circle,
+.node ellipse,
+.node polygon {
+  fill: $mainBkg;
+  stroke: $nodeBorder;
+  stroke-width: 1px;
+}
+
+.node.clickable {
+  cursor: pointer;
+}
+
+.arrowheadPath {
+  fill: $arrowheadColor;
+}
+
+.edgePath .path {
+  stroke: $lineColor;
+  stroke-width: 1.5px;
+}
+
+.edgeLabel {
+  background-color: $edgeLabelBackground;
+}
+
+.cluster rect {
+  fill: $secondBkg;
+  stroke: $clusterBorder;
+  stroke-width: 1px;
+}
+
+.cluster text {
+  fill: $titleColor;
+}
+
+div.mermaidTooltip {
+  position: absolute;
+  text-align: center;
+  max-width: 200px;
+  padding: 2px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-size: 12px;
+  background: $secondBkg;
+  border: 1px solid $border2;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 100;
+}
