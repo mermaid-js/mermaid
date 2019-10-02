@@ -1,11 +1,20 @@
 /* eslint-env jasmine */
 import gitGraphAst from './gitGraphAst';
 import { parser } from './parser/gitGraph';
+import randomString from 'crypto-random-string';
+import cryptoRandomString from 'crypto-random-string';
+
+jest.mock('crypto-random-string');
 
 describe('when parsing a gitGraph', function() {
+  let i = 0;
   beforeEach(function() {
     parser.yy = gitGraphAst;
     parser.yy.clear();
+    cryptoRandomString.mockImplementation(() => {
+      i = i + 1;
+      return String(i);
+    });
   });
   it('should handle a gitGraph defintion', function() {
     const str = 'gitGraph:\n' + 'commit\n';
@@ -223,5 +232,33 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['master']);
 
     parser.yy.prettyPrint();
+  });
+
+  it('it should generate a secure random ID for commits', () => {
+    const str = 'gitGraph:\n' + 'commit\n' + 'commit\n';
+    const EXPECTED_LENGTH = 7;
+    const EXPECTED_CHARACTERS = '0123456789abcdef';
+
+    let idCount = 0;
+    randomString.mockImplementation(options => {
+      if (
+        options.length === EXPECTED_LENGTH &&
+        options.characters === EXPECTED_CHARACTERS &&
+        Object.keys(options).length === 2
+      ) {
+        const id = `abcdef${idCount}`;
+        idCount += 1;
+        return id;
+      }
+      return 'unexpected-ID';
+    });
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+
+    expect(Object.keys(commits)).toEqual(['abcdef0', 'abcdef1']);
+    Object.keys(commits).forEach(key => {
+      expect(commits[key].id).toEqual(key);
+    });
   });
 });
