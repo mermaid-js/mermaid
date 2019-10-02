@@ -89,30 +89,52 @@
 start
 	: SPACE start
 	| NL start
-	| SD document { return $2; }
+	| SD document { console.warn('Root document', $2); return $2; }
 	;
 
 document
 	: /* empty */ { $$ = [] }
-	| document line {$1.push($2);$$ = $1}
+	| document line {
+        if($2!='nl'){
+            $1.push($2);$$ = $1
+        }
+        console.warn('Got document',$1, $2);
+    }
 	;
 
 line
-	: SPACE statement { console.log('here');$$ = $2 }
-	| statement {console.log('line', $1); $$ = $1 }
-	| NL { $$=[];}
+	: SPACE statement { console.warn('here');$$ = $2 }
+	| statement {console.warn('line', $1); $$ = $1 }
+	| NL { console.warn('NL'); $$='nl';}
 	;
 
 statement
-	: idStatement DESCR {yy.addState($1, 'default');yy.addDescription($1, $2.trim());}
-	| idStatement '-->' idStatement {yy.addRelation($1, $3);}
-	| idStatement '-->' idStatement DESCR {yy.addRelation($1, $3, $4.substr(1).trim());}
+	: idStatement DESCR { $$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
+	| idStatement '-->' idStatement
+    {
+        /*console.warn('got id', $1);yy.addRelation($1, $3);*/
+        $$={ stmt: 'relation', state1: { stmt: 'state', id: $1, type: 'default', description: '' }, state2:{ stmt: 'state', id: $3 ,type: 'default', description: ''}};
+    }
+	| idStatement '-->' idStatement DESCR
+    {
+        /*yy.addRelation($1, $3, $4.substr(1).trim());*/
+        $$={ stmt: 'relation', state1: { stmt: 'state', id: $1, type: 'default', description: '' }, state2:{ stmt: 'state', id: $3 ,type: 'default', description: ''}, description: $4.substr(1).trim()};
+    }
     | HIDE_EMPTY
     | scale WIDTH
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
-    | STATE_DESCR AS ID {yy.addState($3, 'default');yy.addDescription($3, $1);}
+    {
+        console.warn('Adding document for state without id ', $3);
+        // yy.addDocument('noId');
+        $$={ stmt: 'state', id: 'noId', type: 'default', description: '', doc: $3 }
+    }
+    | STATE_DESCR AS ID { $$={id: $3, type: 'default', description: $1.trim()};}
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
+    {
+         //console.warn('Adding document for state with id ', $3, $4); yy.addDocument($3);
+         $$={ stmt: 'state', id: $3, type: 'default', description: $1, doc: $5 }
+    }
     | FORK
     | JOIN
     | CONCURRENT
@@ -129,112 +151,5 @@ notePosition
     : left_of
     | right_of
     ;
-// statement
-// 	: 'participant' actor 'AS' restOfLine 'NL' {$2.description=$4; $$=$2;}
-// 	| 'participant' actor 'NL' {$$=$2;}
-// 	| signal 'NL'
-// 	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
-// 	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
-// 	| note_statement 'NL'
-// 	| title text2 'NL' {$$=[{type:'setTitle', text:$2}]}
-// 	| 'loop' restOfLine document end
-// 	{
-// 		$3.unshift({type: 'loopStart', loopText:$2, signalType: yy.LINETYPE.LOOP_START});
-// 		$3.push({type: 'loopEnd', loopText:$2, signalType: yy.LINETYPE.LOOP_END});
-// 		$$=$3;}
-// 	| 'rect' restOfLine document end
-// 	{
-// 		$3.unshift({type: 'rectStart', color:$2, signalType: yy.LINETYPE.RECT_START });
-// 		$3.push({type: 'rectEnd', color:$2, signalType: yy.LINETYPE.RECT_END });
-// 		$$=$3;}
-// 	| opt restOfLine document end
-// 	{
-// 		$3.unshift({type: 'optStart', optText:$2, signalType: yy.LINETYPE.OPT_START});
-// 		$3.push({type: 'optEnd', optText:$2, signalType: yy.LINETYPE.OPT_END});
-// 		$$=$3;}
-// 	| alt restOfLine else_sections end
-// 	{
-// 		// Alt start
-// 		$3.unshift({type: 'altStart', altText:$2, signalType: yy.LINETYPE.ALT_START});
-// 		// Content in alt is already in $3
-// 		// End
-// 		$3.push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
-// 		$$=$3;}
-// 	| par restOfLine par_sections end
-// 	{
-// 		// Parallel start
-// 		$3.unshift({type: 'parStart', parText:$2, signalType: yy.LINETYPE.PAR_START});
-// 		// Content in par is already in $3
-// 		// End
-// 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
-// 		$$=$3;}
-// 	;
-
-// par_sections
-// 	: document
-// 	| document and restOfLine par_sections
-// 	{ $$ = $1.concat([{type: 'and', parText:$3, signalType: yy.LINETYPE.PAR_AND}, $4]); }
-// 	;
-
-// else_sections
-// 	: document
-// 	| document else restOfLine else_sections
-// 	{ $$ = $1.concat([{type: 'else', altText:$3, signalType: yy.LINETYPE.ALT_ELSE}, $4]); }
-// 	;
-
-// note_statement
-// 	: 'note' placement actor text2
-// 	{
-// 		$$ = [$3, {type:'addNote', placement:$2, actor:$3.actor, text:$4}];}
-// 	| 'note' 'over' actor_pair text2
-// 	{
-// 		// Coerce actor_pair into a [to, from, ...] array
-// 		$2 = [].concat($3, $3).slice(0, 2);
-// 		$2[0] = $2[0].actor;
-// 		$2[1] = $2[1].actor;
-// 		$$ = [$3, {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$2.slice(0, 2), text:$4}];}
-// 	;
-
-// spaceList
-//     : SPACE spaceList
-//     | SPACE
-//     ;
-// actor_pair
-// 	: actor ',' actor   { $$ = [$1, $3]; }
-// 	| actor             { $$ = $1; }
-// 	;
-
-// placement
-// 	: 'left_of'   { $$ = yy.PLACEMENT.LEFTOF; }
-// 	| 'right_of'  { $$ = yy.PLACEMENT.RIGHTOF; }
-// 	;
-
-// signal
-// 	: actor signaltype '+' actor text2
-// 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
-// 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $4}
-// 	             ]}
-// 	| actor signaltype '-' actor text2
-// 	{ $$ = [$1,$4,{type: 'addMessage', from:$1.actor, to:$4.actor, signalType:$2, msg:$5},
-// 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $1}
-// 	             ]}
-// 	| actor signaltype actor text2
-// 	{ $$ = [$1,$3,{type: 'addMessage', from:$1.actor, to:$3.actor, signalType:$2, msg:$4}]}
-// 	;
-
-// actor
-// 	: ACTOR {$$={type: 'addActor', actor:$1}}
-// 	;
-
-// signaltype
-// 	: SOLID_OPEN_ARROW  { $$ = yy.LINETYPE.SOLID_OPEN; }
-// 	| DOTTED_OPEN_ARROW { $$ = yy.LINETYPE.DOTTED_OPEN; }
-// 	| SOLID_ARROW       { $$ = yy.LINETYPE.SOLID; }
-// 	| DOTTED_ARROW      { $$ = yy.LINETYPE.DOTTED; }
-// 	| SOLID_CROSS       { $$ = yy.LINETYPE.SOLID_CROSS; }
-// 	| DOTTED_CROSS      { $$ = yy.LINETYPE.DOTTED_CROSS; }
-// 	;
-
-// text2: TXT {$$ = $1.substring(1).trim().replace(/\\n/gm, "\n");} ;
 
 %%

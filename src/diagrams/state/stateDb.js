@@ -1,7 +1,18 @@
 import { logger } from '../../logger';
 
-let relations = [];
-let states = {};
+const newDoc = () => {
+  return {
+    relations: [],
+    states: {},
+    documents: {}
+  };
+};
+
+let documents = {
+  root: newDoc()
+};
+
+let currentDocument = documents.root;
 
 let startCnt = 0;
 let endCnt = 0;
@@ -14,8 +25,9 @@ let endCnt = 0;
  * @param style
  */
 export const addState = function(id, type) {
-  if (typeof states[id] === 'undefined') {
-    states[id] = {
+  console.warn('Add state', id);
+  if (typeof currentDocument.states[id] === 'undefined') {
+    currentDocument.states[id] = {
       id: id,
       descriptions: [],
       type
@@ -24,21 +36,30 @@ export const addState = function(id, type) {
 };
 
 export const clear = function() {
-  relations = [];
-  states = {};
+  documents = {
+    root: newDoc()
+  };
 };
 
 export const getState = function(id) {
-  return states[id];
+  return currentDocument.states[id];
+};
+export const addDocument = id => {
+  console.warn(currentDocument, documents);
+  currentDocument.documents[id] = newDoc();
+  currentDocument.documents[id].parent = currentDocument;
+  currentDocument = currentDocument.documents[id];
 };
 export const getStates = function() {
-  return states;
+  return currentDocument.states;
 };
-
+export const logDocuments = function() {
+  console.warn('Documents = ', documents);
+};
 export const getRelations = function() {
   // const relations1 = [{ id1: 'start1', id2: 'state1' }, { id1: 'state1', id2: 'exit1' }];
   // return relations;
-  return relations;
+  return currentDocument.relations;
 };
 
 export const addRelation = function(_id1, _id2, title) {
@@ -59,23 +80,17 @@ export const addRelation = function(_id1, _id2, title) {
   console.log(id1, id2, title);
   addState(id1, type1);
   addState(id2, type2);
-  relations.push({ id1, id2, title });
+  currentDocument.relations.push({ id1, id2, title });
 };
 
 export const addDescription = function(id, _descr) {
-  const theState = states[id];
+  const theState = currentDocument.states[id];
   let descr = _descr;
   if (descr[0] === ':') {
     descr = descr.substr(1).trim();
   }
 
   theState.descriptions.push(descr);
-};
-
-export const addMembers = function(className, MembersArr) {
-  if (Array.isArray(MembersArr)) {
-    MembersArr.forEach(member => addMember(className, member));
-  }
 };
 
 export const cleanupLabel = function(label) {
@@ -106,8 +121,9 @@ export default {
   getRelations,
   addRelation,
   addDescription,
-  addMembers,
   cleanupLabel,
   lineType,
-  relationType
+  relationType,
+  logDocuments,
+  addDocument
 };

@@ -49,6 +49,23 @@ describe('State diagram', () => {
         state "Long state description" as XState1
         state "Another Long state description" as XState2
         XState2 : New line
+        XState1 --> XState2
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
+  it('should render composit states', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+      [*] --> NotShooting
+
+      state NotShooting {
+        [*] --> Idle
+        Idle --> Configuring : EvConfig
+        Configuring --> Idle : EvConfig
+      }
       `,
       { logLevel: 0 }
     );

@@ -42,94 +42,6 @@ const insertMarkers = function(elem) {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'extensionStart')
-    .attr('class', 'extension')
-    .attr('refX', 0)
-    .attr('refY', 7)
-    .attr('markerWidth', 190)
-    .attr('markerHeight', 240)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 1,7 L18,13 V 1 Z');
-
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'extensionEnd')
-    .attr('refX', 19)
-    .attr('refY', 7)
-    .attr('markerWidth', 20)
-    .attr('markerHeight', 28)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
-
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'compositionStart')
-    .attr('class', 'extension')
-    .attr('refX', 0)
-    .attr('refY', 7)
-    .attr('markerWidth', 190)
-    .attr('markerHeight', 240)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'compositionEnd')
-    .attr('refX', 19)
-    .attr('refY', 7)
-    .attr('markerWidth', 20)
-    .attr('markerHeight', 28)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'aggregationStart')
-    .attr('class', 'extension')
-    .attr('refX', 0)
-    .attr('refY', 7)
-    .attr('markerWidth', 190)
-    .attr('markerHeight', 240)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'aggregationEnd')
-    .attr('refX', 19)
-    .attr('refY', 7)
-    .attr('markerWidth', 20)
-    .attr('markerHeight', 28)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-
-  elem
-    .append('defs')
-    .append('marker')
-    .attr('id', 'dependencyStart')
-    .attr('class', 'extension')
-    .attr('refX', 0)
-    .attr('refY', 7)
-    .attr('markerWidth', 190)
-    .attr('markerHeight', 240)
-    .attr('orient', 'auto')
-    .append('path')
-    .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
-
-  elem
-    .append('defs')
-    .append('marker')
     .attr('id', 'dependencyEnd')
     .attr('refX', 19)
     .attr('refY', 7)
@@ -434,6 +346,7 @@ const drawState = function(elem, stateDef) {
 export const draw = function(text, id) {
   parser.yy.clear();
   parser.parse(text);
+  stateDb.logDocuments();
   logger.info('Rendering diagram ' + text);
 
   // /// / Fetch the default direction, use TD if none was found
@@ -442,10 +355,11 @@ export const draw = function(text, id) {
 
   // // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
-    multigraph: false
+    multigraph: false,
+    compound: true
   });
 
-  // // Set an object for the graph label
+  // Set an object for the graph label
   graph.setGraph({
     isMultiGraph: false
   });
@@ -457,22 +371,41 @@ export const draw = function(text, id) {
 
   const states = stateDb.getStates();
   const keys = Object.keys(states);
+
   total = keys.length;
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
     const node = drawState(diagram, stateDef);
+    // const nodeAppendix = drawStartState(diagram, stateDef);
+
     // Add nodes to the graph. The first argument is the node id. The second is
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     graph.setNode(node.id, node);
+    // graph.setNode(node.id + 'note', nodeAppendix);
+
+    // let parent = 'p1';
+    // if (node.id === 'XState1') {
+    //   parent = 'p2';
+    // }
+
+    // graph.setParent(node.id, parent);
+    // graph.setParent(node.id + 'note', parent);
+
     // logger.info('Org height: ' + node.height);
   }
 
+  console.info('Count=', graph.nodeCount());
   const relations = stateDb.getRelations();
   relations.forEach(function(relation) {
     graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
+      relation: relation,
+      width: 38
+    });
+    console.warn(getGraphId(relation.id1), getGraphId(relation.id2), {
       relation: relation
     });
+    // graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
   });
   dagre.layout(graph);
   graph.nodes().forEach(function(v) {
