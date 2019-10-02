@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import randomString from 'crypto-random-string';
 
 import { logger } from '../../logger';
 
@@ -9,17 +10,11 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
 function getId() {
-  const pool = '0123456789abcdef';
-  let id = '';
-  for (let i = 0; i < 7; i++) {
-    id += pool[getRandomInt(0, 16)];
-  }
-  return id;
+  return randomString({
+    length: 7,
+    characters: '0123456789abcdef'
+  });
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
