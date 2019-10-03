@@ -206,7 +206,7 @@ const addIdAndBox = (g, stateDef) => {
   const title = g
     .append('text')
     .attr('x', 2 * conf.padding)
-    .attr('y', -5)
+    .attr('y', -15)
     .attr('font-size', 24)
     .attr('class', 'state-title')
     .text(stateDef.id);
@@ -219,7 +219,7 @@ const addIdAndBox = (g, stateDef) => {
   //   isFirst = false;
   // });
 
-  const lineY = 3;
+  const lineY = -9;
   const descrLine = g
     .append('line') // text label for the x axis
     .attr('x1', 0)
@@ -229,14 +229,14 @@ const addIdAndBox = (g, stateDef) => {
   // const descrBox = description.node().getBBox();
   const graphBox = g.node().getBBox();
   title.attr('x', graphBox.width / 2 - title.node().getBBox().width / 2);
-  descrLine.attr('x2', graphBox.width);
+  descrLine.attr('x2', graphBox.width + conf.padding);
   // const classBox = title.node().getBBox();
   console.warn('Box', graphBox, stateDef);
   g.insert('rect', ':first-child')
     .attr('x', graphBox.x)
-    .attr('y', -5 - conf.textHeight - conf.padding)
-    .attr('width', graphBox.width)
-    .attr('height', graphBox.height + 5 + conf.textHeight + conf.padding)
+    .attr('y', -15 - conf.textHeight - conf.padding)
+    .attr('width', graphBox.width + conf.padding)
+    .attr('height', graphBox.height + 3 + conf.textHeight)
     .attr('rx', '5');
   // g.insert('rect', ':first-child')
   //   .attr('x', conf.padding)
@@ -412,13 +412,16 @@ export const draw = function(text, id) {
   // // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     multigraph: false,
-    compound: true
+    // compound: true,
+    // acyclicer: 'greedy',
+    rankdir: 'RL'
   });
 
-  // Set an object for the graph label
-  graph.setGraph({
-    isMultiGraph: false
-  });
+  // // Set an object for the graph label
+  // graph.setGraph({
+  //   isMultiGraph: false,
+  //   rankdir: 'RL'
+  // });
 
   // // Default to assigning a new object as a label for each new edge.
   graph.setDefaultEdgeLabel(function() {
@@ -428,11 +431,11 @@ export const draw = function(text, id) {
   const rootDoc = stateDb.getRootDoc();
   const n = renderDoc2(rootDoc, diagram);
 
-  console.warn(graph, graph.graph().getBBox);
+  const bounds = diagram.node().getBBox();
 
   diagram.attr('height', '100%');
   diagram.attr('width', '100%');
-  diagram.attr('viewBox', '0 0 ' + 400 + ' ' + 600);
+  diagram.attr('viewBox', '0 0 ' + bounds.width + ' ' + (bounds.height + 50));
 };
 const getLabelWidth = text => {
   return text ? text.length * 5.02 : 1;
@@ -440,15 +443,27 @@ const getLabelWidth = text => {
 
 const renderDoc2 = (doc, diagram, parentId) => {
   // // Layout graph, Create a new directed graph
-  const graph = new graphlib.Graph({
-    multigraph: false,
-    compound: false
-  });
+  const graph = new graphlib.Graph({});
 
   // Set an object for the graph label
-  graph.setGraph({
-    isMultiGraph: false
-  });
+  if (parentId)
+    graph.setGraph({
+      rankdir: 'LR',
+      multigraph: false,
+      compound: false,
+      // acyclicer: 'greedy',
+      rankdir: 'LR',
+      ranker: 'tight-tree'
+      // isMultiGraph: false
+    });
+  else {
+    graph.setGraph({
+      rankdir: 'TB',
+      // acyclicer: 'greedy'
+      ranker: 'longest-path'
+      // isMultiGraph: false
+    });
+  }
 
   // // Default to assigning a new object as a label for each new edge.
   graph.setDefaultEdgeLabel(function() {
@@ -477,8 +492,8 @@ const renderDoc2 = (doc, diagram, parentId) => {
       sub = addIdAndBox(sub, stateDef);
       let boxBounds = sub.node().getBBox();
       node.width = boxBounds.width;
-      node.height = boxBounds.height;
-      transformationLog[stateDef.id] = { y: 20 };
+      node.height = boxBounds.height + 10;
+      transformationLog[stateDef.id] = { y: 35 };
       // node.x = boxBounds.y;
       // node.y = boxBounds.x;
     } else {

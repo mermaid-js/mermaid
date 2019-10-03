@@ -74,4 +74,32 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render multiple composit states', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+      [*]-->TV
+      state TV {
+        [*] --> Off: Off to start with
+        On --> Off : Turn off
+        Off --> On : Turn on
+      }
+      state Console {
+        [*] --> Off2: Off to start with
+        On2--> Off2 : Turn off
+        Off2 --> On2 : Turn on
+        On2-->Playing
+
+        state Playing {
+          Alive --> Dead
+          Dead-->Alive
+         }
+      }
+      TV--> Console
+      Console --> TV
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
 });
