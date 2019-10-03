@@ -79,6 +79,7 @@ If your application is taking resposibility for the diagram source security you 
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="mermaid.min.css">
 </head>
 <body>
   <div class="mermaid">
