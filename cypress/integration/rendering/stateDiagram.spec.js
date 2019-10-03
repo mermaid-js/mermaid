@@ -59,12 +59,15 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
       stateDiagram
-      [*] --> NotShooting
+      [*] --> NotShooting: Pacifist
+      NotShooting --> A
+      NotShooting --> B
+      NotShooting --> C
 
       state NotShooting {
-        [*] --> Idle
+        [*] --> Idle: Yet another long long öong öong öong label
         Idle --> Configuring : EvConfig
-        Configuring --> Idle : EvConfig
+        Configuring --> Idle : EvConfig  EvConfig EvConfig  EvConfig EvConfig
       }
       `,
       { logLevel: 0 }

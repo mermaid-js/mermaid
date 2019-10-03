@@ -89,7 +89,7 @@
 start
 	: SPACE start
 	| NL start
-	| SD document { console.warn('Root document', $2); return $2; }
+	| SD document { console.warn('Root document', $2); yy.setRootDoc($2);return $2; }
 	;
 
 document
@@ -98,14 +98,14 @@ document
         if($2!='nl'){
             $1.push($2);$$ = $1
         }
-        console.warn('Got document',$1, $2);
+        // console.warn('Got document',$1, $2);
     }
 	;
 
 line
-	: SPACE statement { console.warn('here');$$ = $2 }
-	| statement {console.warn('line', $1); $$ = $1 }
-	| NL { console.warn('NL'); $$='nl';}
+	: SPACE statement { $$ = $2 }
+	| statement { $$ = $1 }
+	| NL { $$='nl';}
 	;
 
 statement
@@ -125,9 +125,9 @@ statement
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
-        console.warn('Adding document for state without id ', $3);
+        console.warn('Adding document for state without id ', $1);
         // yy.addDocument('noId');
-        $$={ stmt: 'state', id: 'noId', type: 'default', description: '', doc: $3 }
+        $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
     | STATE_DESCR AS ID { $$={id: $3, type: 'default', description: $1.trim()};}
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP

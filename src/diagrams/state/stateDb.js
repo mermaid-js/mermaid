@@ -1,5 +1,33 @@
 import { logger } from '../../logger';
 
+let rootDoc = [];
+const setRootDoc = o => {
+  console.warn('Setting root doc', o);
+  rootDoc = o;
+};
+
+const getRootDoc = () => rootDoc;
+
+const extract = doc => {
+  const res = { states: [], relations: [] };
+  clear();
+  doc.forEach(item => {
+    if (item.stmt === 'state') {
+      // if (item.doc) {
+      //   addState(item.id, 'composit');
+      //   addDocument(item.id);
+      //   extract(item.doc);
+      //   currentDocument = currentDocument.parent;
+      // } else {
+      addState(item.id, item.type, item.doc);
+      // }
+    }
+    if (item.stmt === 'relation') {
+      addRelation(item.state1.id, item.state2.id, item.description);
+    }
+  });
+};
+
 const newDoc = () => {
   return {
     relations: [],
@@ -24,14 +52,22 @@ let endCnt = 0;
  * @param type
  * @param style
  */
-export const addState = function(id, type) {
+export const addState = function(id, type, doc) {
   console.warn('Add state', id);
   if (typeof currentDocument.states[id] === 'undefined') {
     currentDocument.states[id] = {
       id: id,
       descriptions: [],
-      type
+      type,
+      doc
     };
+  } else {
+    if (!currentDocument.states[id].doc) {
+      currentDocument.states[id].doc = doc;
+    }
+    if (!currentDocument.states[id].type) {
+      currentDocument.states[id].type = type;
+    }
   }
 };
 
@@ -39,6 +75,7 @@ export const clear = function() {
   documents = {
     root: newDoc()
   };
+  currentDocument = documents.root;
 };
 
 export const getState = function(id) {
@@ -125,5 +162,8 @@ export default {
   lineType,
   relationType,
   logDocuments,
-  addDocument
+  addDocument,
+  getRootDoc,
+  setRootDoc,
+  extract
 };

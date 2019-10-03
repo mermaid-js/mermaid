@@ -20,6 +20,8 @@ const conf = {
   textHeight: 10
 };
 
+const transformationLog = {};
+
 export const setConf = function(cnf) {};
 
 // Todo optimize
@@ -191,6 +193,60 @@ const drawDescrState = (g, stateDef) => {
 
   return g;
 };
+const addIdAndBox = (g, stateDef) => {
+  const addTspan = function(textEl, txt, isFirst) {
+    const tSpan = textEl
+      .append('tspan')
+      .attr('x', 2 * conf.padding)
+      .text(txt);
+    if (!isFirst) {
+      tSpan.attr('dy', conf.textHeight);
+    }
+  };
+  const title = g
+    .append('text')
+    .attr('x', 2 * conf.padding)
+    .attr('y', -5)
+    .attr('font-size', 24)
+    .attr('class', 'state-title')
+    .text(stateDef.id);
+
+  const titleHeight = title.node().getBBox().height;
+
+  // let isFirst = true;
+  // stateDef.descriptions.forEach(function(descr) {
+  //   addTspan(description, descr, isFirst);
+  //   isFirst = false;
+  // });
+
+  const lineY = 3;
+  const descrLine = g
+    .append('line') // text label for the x axis
+    .attr('x1', 0)
+    .attr('y1', lineY)
+    .attr('y2', lineY)
+    .attr('class', 'descr-divider');
+  // const descrBox = description.node().getBBox();
+  const graphBox = g.node().getBBox();
+  title.attr('x', graphBox.width / 2 - title.node().getBBox().width / 2);
+  descrLine.attr('x2', graphBox.width);
+  // const classBox = title.node().getBBox();
+  console.warn('Box', graphBox, stateDef);
+  g.insert('rect', ':first-child')
+    .attr('x', graphBox.x)
+    .attr('y', -5 - conf.textHeight - conf.padding)
+    .attr('width', graphBox.width)
+    .attr('height', graphBox.height + 5 + conf.textHeight + conf.padding)
+    .attr('rx', '5');
+  // g.insert('rect', ':first-child')
+  //   .attr('x', conf.padding)
+  //   .attr('y', conf.padding)
+  //   .attr('width', descrBox.width + 2 * conf.padding)
+  //   .attr('height', descrBox.height + titleHeight + 2 * conf.padding)
+  //   .attr('rx', '5');
+
+  return g;
+};
 const drawEndState = g => {
   g.append('circle')
     .style('stroke', 'black')
@@ -268,10 +324,8 @@ const drawEdge = function(elem, path, relation) {
       .attr('fill', 'red')
       .attr('text-anchor', 'middle')
       .text(relation.title);
-
     const { x, y } = utils.calcLabelPosition(path.points);
     label.attr('x', x).attr('y', y);
-
     const bounds = label.node().getBBox();
     g.insert('rect', ':first-child')
       .attr('class', 'box')
@@ -279,7 +333,6 @@ const drawEdge = function(elem, path, relation) {
       .attr('y', bounds.y - conf.padding / 2)
       .attr('width', bounds.width + conf.padding)
       .attr('height', bounds.height + conf.padding);
-
     // Debug points
     // path.points.forEach(point => {
     //   g.append('circle')
@@ -289,7 +342,6 @@ const drawEdge = function(elem, path, relation) {
     //     .attr('cx', point.x)
     //     .attr('cy', point.y);
     // });
-
     // g.append('circle')
     //   .style('stroke', 'blue')
     //   .style('fill', 'blue')
@@ -306,8 +358,8 @@ const drawEdge = function(elem, path, relation) {
  * @param {*} elem
  * @param {*} stateDef
  */
-const drawState = function(elem, stateDef) {
-  // logger.info('Rendering class ' + stateDef);
+const drawState = function(elem, stateDef, graph, doc) {
+  console.warn('Rendering class ', stateDef);
 
   const id = stateDef.id;
   const stateInfo = {
@@ -327,9 +379,13 @@ const drawState = function(elem, stateDef) {
   if (stateDef.type === 'default' && stateDef.descriptions.length === 0)
     drawSimpleState(g, stateDef);
   if (stateDef.type === 'default' && stateDef.descriptions.length > 0) drawDescrState(g, stateDef);
+  // if (stateDef.type === 'default' && stateDef.doc) {
+  //   // renderDoc(stateDef.doc, graph, elem);
+  //   drawSimpleState(g, stateDef);
+  //   renderDoc(stateDef.doc, graph, g, id);
+  // }
 
   const stateBox = g.node().getBBox();
-
   stateInfo.width = stateBox.width + 2 * conf.padding;
   stateInfo.height = stateBox.height + 2 * conf.padding;
 
@@ -369,19 +425,75 @@ export const draw = function(text, id) {
     return {};
   });
 
+  const rootDoc = stateDb.getRootDoc();
+  const n = renderDoc2(rootDoc, diagram);
+
+  console.warn(graph, graph.graph().getBBox);
+
+  diagram.attr('height', '100%');
+  diagram.attr('width', '100%');
+  diagram.attr('viewBox', '0 0 ' + 400 + ' ' + 600);
+};
+const getLabelWidth = text => {
+  return text ? text.length * 5.02 : 1;
+};
+
+const renderDoc2 = (doc, diagram, parentId) => {
+  // // Layout graph, Create a new directed graph
+  const graph = new graphlib.Graph({
+    multigraph: false,
+    compound: false
+  });
+
+  // Set an object for the graph label
+  graph.setGraph({
+    isMultiGraph: false
+  });
+
+  // // Default to assigning a new object as a label for each new edge.
+  graph.setDefaultEdgeLabel(function() {
+    return {};
+  });
+
+  stateDb.extract(doc);
   const states = stateDb.getStates();
+  const relations = stateDb.getRelations();
+
   const keys = Object.keys(states);
+  console.warn('rendering doc 2', states, relations);
 
   total = keys.length;
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
-    const node = drawState(diagram, stateDef);
+    console.warn('keys[i]', keys[i]);
+    let node;
+    if (stateDef.doc) {
+      let sub = diagram
+        .append('g')
+        .attr('id', stateDef.id)
+        .attr('class', 'classGroup');
+      node = renderDoc2(stateDef.doc, sub, stateDef.id);
+
+      sub = addIdAndBox(sub, stateDef);
+      let boxBounds = sub.node().getBBox();
+      node.width = boxBounds.width;
+      node.height = boxBounds.height;
+      transformationLog[stateDef.id] = { y: 20 };
+      // node.x = boxBounds.y;
+      // node.y = boxBounds.x;
+    } else {
+      node = drawState(diagram, stateDef, graph);
+    }
     // const nodeAppendix = drawStartState(diagram, stateDef);
 
     // Add nodes to the graph. The first argument is the node id. The second is
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     graph.setNode(node.id, node);
+    // if (parentId) {
+    //   console.warn('apa1 P>', node.id, parentId);
+    //   // graph.setParent(node.id, parentId);
+    // }
     // graph.setNode(node.id + 'note', nodeAppendix);
 
     // let parent = 'p1';
@@ -396,8 +508,104 @@ export const draw = function(text, id) {
   }
 
   console.info('Count=', graph.nodeCount());
-  const relations = stateDb.getRelations();
   relations.forEach(function(relation) {
+    console.warn('Rendering edge', relation);
+    graph.setEdge(relation.id1, relation.id2, {
+      relation: relation,
+      width: getLabelWidth(relation.title),
+      height: 16,
+      labelpos: 'c'
+    });
+    console.warn(getGraphId(relation.id1), relation.id2, {
+      relation: relation
+    });
+    // graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
+  });
+
+  dagre.layout(graph);
+
+  graph.nodes().forEach(function(v) {
+    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+      console.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      d3.select('#' + v).attr(
+        'transform',
+        'translate(' +
+          (graph.node(v).x - graph.node(v).width / 2) +
+          ',' +
+          (graph.node(v).y +
+            (transformationLog[v] ? transformationLog[v].y : 0) -
+            graph.node(v).height / 2) +
+          ' )'
+      );
+    }
+  });
+  let stateBox = diagram.node().getBBox();
+  console.warn('Node before labels ', stateBox.width);
+
+  graph.edges().forEach(function(e) {
+    if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
+      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+      drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
+    }
+  });
+
+  stateBox = diagram.node().getBBox();
+  console.warn('Node after labels ', stateBox.width);
+  const stateInfo = {
+    id: parentId ? parentId : 'root',
+    label: parentId ? parentId : 'root',
+    width: 0,
+    height: 0
+  };
+
+  stateInfo.width = stateBox.width + 2 * conf.padding;
+  stateInfo.height = stateBox.height + 2 * conf.padding;
+
+  console.warn('Doc rendered', stateInfo, graph);
+  return stateInfo;
+};
+const renderDoc = (doc, graph, diagram, parentId) => {
+  stateDb.extract(doc);
+  const states = stateDb.getStates();
+  const relations = stateDb.getRelations();
+
+  const keys = Object.keys(states);
+  console.warn('rendering doc', states, relations);
+
+  total = keys.length;
+  for (let i = 0; i < keys.length; i++) {
+    const stateDef = states[keys[i]];
+    console.warn('keys[i]', keys[i]);
+    if (stateDef.doc) {
+      renderDoc(stateDef.doc, graph, diagram, stateDef.id);
+    }
+    const node = drawState(diagram, stateDef, graph);
+    // const nodeAppendix = drawStartState(diagram, stateDef);
+
+    // Add nodes to the graph. The first argument is the node id. The second is
+    // metadata about the node. In this case we're going to add labels to each of
+    // our nodes.
+    graph.setNode(node.id, node);
+    if (parentId) {
+      console.warn('Setting parent', parentId);
+      graph.setParent(node.id, parentId);
+    }
+    // graph.setNode(node.id + 'note', nodeAppendix);
+
+    // let parent = 'p1';
+    // if (node.id === 'XState1') {
+    //   parent = 'p2';
+    // }
+
+    // graph.setParent(node.id, parent);
+    // graph.setParent(node.id + 'note', parent);
+
+    // logger.info('Org height: ' + node.height);
+  }
+
+  console.info('Count=', graph.nodeCount());
+  relations.forEach(function(relation) {
+    console.warn('Rendering edge', relation);
     graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
       relation: relation,
       width: 38
@@ -407,30 +615,8 @@ export const draw = function(text, id) {
     });
     // graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
   });
-  dagre.layout(graph);
-  graph.nodes().forEach(function(v) {
-    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      logger.debug('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-      d3.select('#' + v).attr(
-        'transform',
-        'translate(' +
-          (graph.node(v).x - graph.node(v).width / 2) +
-          ',' +
-          (graph.node(v).y - graph.node(v).height / 2) +
-          ' )'
-      );
-    }
-  });
-  graph.edges().forEach(function(e) {
-    if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
-      drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
-    }
-  });
 
-  diagram.attr('height', '100%');
-  diagram.attr('width', '100%');
-  diagram.attr('viewBox', '0 0 ' + (graph.graph().width + 20) + ' ' + (graph.graph().height + 20));
+  console.warn('Doc rendered');
 };
 
 export default {
