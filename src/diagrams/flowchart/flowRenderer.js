@@ -362,15 +362,16 @@ export const draw = function(text, id) {
   };
 
   render.shapes().hexagon = function(parent, bbox, node) {
-    const q = 7;
-    const w = (q / (q - 2)) * bbox.width;
+    const f = 4;
     const h = bbox.height;
+    const m = h / 4;
+    const w = bbox.width + 2 * m;
     const points = [
-      { x: w / q, y: 0 },
-      { x: (w * (q - 1)) / q, y: 0 },
+      { x: m, y: 0 },
+      { x: w - m, y: 0 },
       { x: w, y: -h / 2 },
-      { x: (w * (q - 1)) / q, y: -h },
-      { x: w / q, y: -h },
+      { x: w - m, y: -h },
+      { x: m, y: -h },
       { x: 0, y: -h / 2 }
     ];
     const shapeSvg = parent
@@ -385,7 +386,7 @@ export const draw = function(text, id) {
       )
       .attr('rx', 5)
       .attr('ry', 5)
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
+      .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
     node.intersect = function(point) {
       return dagreD3.intersect.polygon(node, points, point);
     };
