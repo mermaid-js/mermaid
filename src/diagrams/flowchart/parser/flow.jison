@@ -313,6 +313,10 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | idString DIAMOND_START text DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
+    | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
+        {$$ = $1;yy.addVertex($1,$4,'hexagon');}
+    | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP spaceList
+        {$$ = $1;yy.addVertex($1,$4,'hexagon');}
     | idString TAGEND text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
     | idString TAGEND text SQE spaceList

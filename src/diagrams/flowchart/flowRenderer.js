@@ -121,6 +121,9 @@ export const addVertices = function(vert, g, svgId) {
       case 'diamond':
         _shape = 'question';
         break;
+      case 'hexagon':
+        _shape = 'hexagon';
+        break;
       case 'odd':
         _shape = 'rect_left_inv_arrow';
         break;
@@ -337,6 +340,37 @@ export const draw = function(text, id) {
       { x: s / 2, y: 0 },
       { x: s, y: -s / 2 },
       { x: s / 2, y: -s },
+      { x: 0, y: -s / 2 }
+    ];
+    const shapeSvg = parent
+      .insert('polygon', ':first-child')
+      .attr(
+        'points',
+        points
+          .map(function(d) {
+            return d.x + ',' + d.y;
+          })
+          .join(' ')
+      )
+      .attr('rx', 5)
+      .attr('ry', 5)
+      .attr('transform', 'translate(' + -s / 2 + ',' + (s * 2) / 4 + ')');
+    node.intersect = function(point) {
+      return dagreD3.intersect.polygon(node, points, point);
+    };
+    return shapeSvg;
+  };
+
+  render.shapes().hexagon = function(parent, bbox, node) {
+    const w = bbox.width;
+    const h = bbox.height;
+    const s = (w + h) * 0.9;
+    const points = [
+      { x: s / 4, y: 0 },
+      { x: (3 * s) / 4, y: 0 },
+      { x: s, y: -s / 2 },
+      { x: (3 * s) / 4, y: -s },
+      { x: s / 4, y: -s },
       { x: 0, y: -s / 2 }
     ];
     const shapeSvg = parent
