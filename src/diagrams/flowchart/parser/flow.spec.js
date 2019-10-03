@@ -1391,6 +1391,16 @@ describe('when parsing ', function() {
     expect(edges.length).toBe(0);
     expect(vert['a'].type).toBe('diamond');
   });
+  it('should handle a single diamond node with whitespace after it', function() {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;a{A}   ;');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(0);
+    expect(vert['a'].type).toBe('diamond');
+  });
   it('should handle a single diamond node with html in it', function() {
     // Silly but syntactically correct
     const res = flow.parser.parse('graph TD;a{A <br> end};');
