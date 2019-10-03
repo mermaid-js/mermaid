@@ -342,19 +342,7 @@ export const draw = function(text, id) {
       { x: s / 2, y: -s },
       { x: 0, y: -s / 2 }
     ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('rx', 5)
-      .attr('ry', 5)
-      .attr('transform', 'translate(' + -s / 2 + ',' + (s * 2) / 4 + ')');
+    const shapeSvg = insertPolygonShape(parent, s, s, points);
     node.intersect = function(point) {
       return dagreD3.intersect.polygon(node, points, point);
     };
@@ -374,19 +362,7 @@ export const draw = function(text, id) {
       { x: m, y: -h },
       { x: 0, y: -h / 2 }
     ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('rx', 5)
-      .attr('ry', 5)
-      .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
+    const shapeSvg = insertPolygonShape(parent, w, h, points);
     node.intersect = function(point) {
       return dagreD3.intersect.polygon(node, points, point);
     };
@@ -655,6 +631,22 @@ export const draw = function(text, id) {
     }
   }
 };
+
+function insertPolygonShape(parent, w, h, points) {
+  return parent
+    .insert('polygon', ':first-child')
+    .attr(
+      'points',
+      points
+        .map(function(d) {
+          return d.x + ',' + d.y;
+        })
+        .join(' ')
+    )
+    .attr('rx', 5)
+    .attr('ry', 5)
+    .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
+}
 
 export default {
   setConf,
