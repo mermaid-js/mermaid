@@ -1,12 +1,13 @@
 /* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util';
 
-describe('Sequencediagram', () => {
-  it('should render a simple class diagrams', () => {
+describe('Class diagram', () => {
+  it('should render a simple class diagram', () => {
     imgSnapshotTest(
       `
     classDiagram
       Class01 <|-- AveryLongClass : Cool
+      <<interface>> Class01
       Class03 *-- Class04
       Class05 o-- Class06
       Class07 .. Class08
@@ -19,6 +20,11 @@ describe('Sequencediagram', () => {
       Class01 : int chimp
       Class01 : int gorilla
       Class08 <--> C2: Cool label
+      Class10 {
+        <<service>>
+        int id
+        test()
+      }
       `,
       {}
     );
