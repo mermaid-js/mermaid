@@ -264,9 +264,6 @@ const drawClass = function(elem, classDef) {
     .attr('y', conf.textHeight + conf.padding)
     .attr('x', 0);
 
-  // TODO: remove testing code
-  classDef.annotations = ['interface', 'injected'];
-
   // add annotations
   let isFirst = true;
   classDef.annotations.forEach(function(member) {
@@ -276,11 +273,12 @@ const drawClass = function(elem, classDef) {
   });
 
   // add class title
-  title
+  const classTitle = title
     .append('tspan')
     .text(classDef.id)
-    .attr('class', 'title')
-    .attr('dy', conf.textHeight);
+    .attr('class', 'title');
+
+  if (!isFirst) classTitle.attr('dy', conf.textHeight);
 
   const titleHeight = title.node().getBBox().height;
 
@@ -334,7 +332,6 @@ const drawClass = function(elem, classDef) {
 
   // Center title
   title.node().childNodes.forEach(function(x) {
-    console.dir(x.getBBox());
     x.setAttribute('x', (classBox.width + 2 * conf.padding - x.getBBox().width) / 2);
   });
 

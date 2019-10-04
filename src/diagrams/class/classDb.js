@@ -44,6 +44,10 @@ export const addRelation = function(relation) {
   relations.push(relation);
 };
 
+export const addAnnotation = function(className, annotation) {
+  classes[className].annotations.push(annotation);
+};
+
 export const addMember = function(className, member) {
   const theClass = classes[className];
   if (typeof member === 'string') {
@@ -86,6 +90,7 @@ export default {
   clear,
   getClass,
   getClasses,
+  addAnnotation,
   getRelations,
   addRelation,
   addMember,
