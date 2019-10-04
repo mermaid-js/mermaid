@@ -7,7 +7,7 @@ describe('Class diagram', () => {
       `
     classDiagram
       Class01 <|-- AveryLongClass : Cool
-      <<interface>> Class01
+      &lt;&lt;interface&gt;&gt; Class01
       Class03 *-- Class04
       Class05 o-- Class06
       Class07 .. Class08
@@ -21,7 +21,7 @@ describe('Class diagram', () => {
       Class01 : int gorilla
       Class08 <--> C2: Cool label
       class Class10 {
-        <<service>>
+        &lt;&lt;service&gt;&gt;
         int id
         test()
       }
