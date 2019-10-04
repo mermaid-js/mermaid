@@ -6,9 +6,6 @@ let classes = {};
 /**
  * Function called by parser when a node definition has been found.
  * @param id
- * @param text
- * @param type
- * @param style
  */
 export const addClass = function(id) {
   if (typeof classes[id] === 'undefined') {
@@ -51,10 +48,13 @@ export const addAnnotation = function(className, annotation) {
 export const addMember = function(className, member) {
   const theClass = classes[className];
   if (typeof member === 'string') {
-    if (member.substr(-1) === ')') {
-      theClass.methods.push(member);
+    const memberString = member.trim();
+    if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
+      theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+    } else if (memberString.endsWith(')')) {
+      theClass.methods.push(memberString);
     } else {
-      theClass.members.push(member);
+      theClass.members.push(memberString);
     }
   }
 };
