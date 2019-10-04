@@ -2,6 +2,7 @@
 
 node_modules/
 coverage/
+.idea/
 
 dist/*.js
 dist/*.map

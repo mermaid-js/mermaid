@@ -261,9 +261,26 @@ const drawClass = function(elem, classDef) {
     .attr('class', 'classGroup');
   const title = g
     .append('text')
-    .attr('x', conf.padding)
     .attr('y', conf.textHeight + conf.padding)
-    .text(classDef.id);
+    .attr('x', 0);
+
+  // TODO: remove testing code
+  classDef.annotations = ['interface', 'injected'];
+
+  // add annotations
+  let isFirst = true;
+  classDef.annotations.forEach(function(member) {
+    const titleText2 = title.append('tspan').text('«' + member + '»');
+    if (!isFirst) titleText2.attr('dy', conf.textHeight);
+    isFirst = false;
+  });
+
+  // add class title
+  title
+    .append('tspan')
+    .text(classDef.id)
+    .attr('class', 'title')
+    .attr('dy', conf.textHeight);
 
   const titleHeight = title.node().getBBox().height;
 
@@ -280,7 +297,7 @@ const drawClass = function(elem, classDef) {
     .attr('fill', 'white')
     .attr('class', 'classText');
 
-  let isFirst = true;
+  isFirst = true;
   classDef.members.forEach(function(member) {
     addTspan(members, member, isFirst);
     isFirst = false;
@@ -314,6 +331,12 @@ const drawClass = function(elem, classDef) {
     .attr('y', 0)
     .attr('width', classBox.width + 2 * conf.padding)
     .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
+
+  // Center title
+  title.node().childNodes.forEach(function(x) {
+    console.dir(x.getBBox());
+    x.setAttribute('x', (classBox.width + 2 * conf.padding - x.getBBox().width) / 2);
+  });
 
   membersLine.attr('x2', classBox.width + 2 * conf.padding);
   methodsLine.attr('x2', classBox.width + 2 * conf.padding);

@@ -15,7 +15,8 @@ export const addClass = function(id) {
     classes[id] = {
       id: id,
       methods: [],
-      members: []
+      members: [],
+      annotations: []
     };
   }
 };
