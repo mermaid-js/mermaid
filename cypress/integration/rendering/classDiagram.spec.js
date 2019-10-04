@@ -20,7 +20,7 @@ describe('Class diagram', () => {
       Class01 : int chimp
       Class01 : int gorilla
       Class08 <--> C2: Cool label
-      Class10 {
+      class Class10 {
         <<service>>
         int id
         test()
