@@ -13,6 +13,21 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a states with descriptions including multi-line descriptions', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    State1: This a a single line description
+    State2: This a a multi line description
+    State2: here comes the multi part
+    [*] --> State1
+    State1 --> State2
+    State2 --> [*]
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
   it('should render a simple state diagrams', () => {
     imgSnapshotTest(
       `

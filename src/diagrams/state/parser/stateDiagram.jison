@@ -109,7 +109,7 @@ line
 	;
 
 statement
-	: idStatement DESCR { $$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
+	: idStatement DESCR { console.warn('got id and descr', $1, $2.trim());$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
 	| idStatement '-->' idStatement
     {
         /*console.warn('got id', $1);yy.addRelation($1, $3);*/
