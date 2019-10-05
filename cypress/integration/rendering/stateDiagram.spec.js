@@ -79,11 +79,15 @@ describe('State diagram', () => {
       `
       stateDiagram
       [*]-->TV
+
       state TV {
         [*] --> Off: Off to start with
         On --> Off : Turn off
         Off --> On : Turn on
       }
+
+      TV--> Console : KarlMartin
+
       state Console {
         [*] --> Off2: Off to start with
         On2--> Off2 : Turn off
@@ -95,8 +99,6 @@ describe('State diagram', () => {
           Dead-->Alive
          }
       }
-      TV--> Console
-      Console --> TV
       `,
       { logLevel: 0 }
     );

@@ -16,27 +16,6 @@ describe('state diagram, ', function() {
       `;
 
       parser.parse(str);
-      expect(stateDb.getRelations()).toEqual([
-        { id1: 'start1', id2: 'State1' },
-        { id1: 'State1', id2: 'end1' }
-      ]);
-      expect(stateDb.getStates()).toEqual({
-        State1: {
-          id: 'State1',
-          type: 'default',
-          descriptions: []
-        },
-        end1: {
-          id: 'end1',
-          type: 'end',
-          descriptions: []
-        },
-        start1: {
-          id: 'start1',
-          type: 'start',
-          descriptions: []
-        }
-      });
     });
     it('simple', function() {
       const str = `stateDiagram\n
