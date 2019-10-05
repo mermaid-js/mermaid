@@ -2,7 +2,6 @@ import { addVertices } from './flowRenderer';
 import { setConfig } from '../../config';
 
 setConfig({
-  securityLevel: 'strict',
   flowchart: {
     htmlLabels: false
   }
