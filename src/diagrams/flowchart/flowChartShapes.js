@@ -54,7 +54,7 @@ function rect_left_inv_arrow(parent, bbox, node) {
   return shapeSvg;
 }
 
-function lean_right (parent, bbox, node) {
+function lean_right(parent, bbox, node) {
   const w = bbox.width;
   const h = bbox.height;
   const points = [

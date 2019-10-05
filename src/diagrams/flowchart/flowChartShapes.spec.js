@@ -18,20 +18,14 @@ describe('flowchart shapes', function() {
       function(w, h) {
         return w + h / 2;
       },
-      function(w, h) {
-        return h;
-      }
+      useHeight
     ],
-    [
-      'rect_left_inv_arrow',
-      5,
-      function(w) {
-        return w;
-      },
-      function(w, h) {
-        return h;
-      }
-    ]
+    ['rect_left_inv_arrow', 5, useWidth, useHeight],
+    ['rect_right_inv_arrow', 5, useWidth, useHeight],
+    ['lean_right', 4, useWidth, useHeight],
+    ['lean_left', 4, useWidth, useHeight],
+    ['trapezoid', 4, useWidth, useHeight],
+    ['inv_trapezoid', 4, useWidth, useHeight]
   ].forEach(function([shapeType, expectedPointCount, getW, getH]) {
     it(`should add a ${shapeType} shape that renders a properly translated polygon element`, function() {
       const mockRender = MockRender();
@@ -86,4 +80,12 @@ function MockSvg(tag, ...args) {
       return this;
     }
   };
+}
+
+function useWidth(w, h) {
+  return w;
+}
+
+function useHeight(w, h) {
+  return h;
 }
