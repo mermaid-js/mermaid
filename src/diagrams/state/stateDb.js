@@ -11,16 +11,10 @@ const getRootDoc = () => rootDoc;
 const extract = doc => {
   const res = { states: [], relations: [] };
   clear();
+
   doc.forEach(item => {
     if (item.stmt === 'state') {
-      // if (item.doc) {
-      //   addState(item.id, 'composit');
-      //   addDocument(item.id);
-      //   extract(item.doc);
-      //   currentDocument = currentDocument.parent;
-      // } else {
       addState(item.id, item.type, item.doc);
-      // }
     }
     if (item.stmt === 'relation') {
       addRelation(item.state1.id, item.state2.id, item.description);
@@ -81,12 +75,7 @@ export const clear = function() {
 export const getState = function(id) {
   return currentDocument.states[id];
 };
-export const addDocument = id => {
-  console.warn(currentDocument, documents);
-  currentDocument.documents[id] = newDoc();
-  currentDocument.documents[id].parent = currentDocument;
-  currentDocument = currentDocument.documents[id];
-};
+
 export const getStates = function() {
   return currentDocument.states;
 };
@@ -94,8 +83,6 @@ export const logDocuments = function() {
   console.warn('Documents = ', documents);
 };
 export const getRelations = function() {
-  // const relations1 = [{ id1: 'start1', id2: 'state1' }, { id1: 'state1', id2: 'exit1' }];
-  // return relations;
   return currentDocument.relations;
 };
 
@@ -162,7 +149,6 @@ export default {
   lineType,
   relationType,
   logDocuments,
-  addDocument,
   getRootDoc,
   setRootDoc,
   extract

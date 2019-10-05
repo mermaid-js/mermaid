@@ -126,7 +126,6 @@ statement
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
         console.warn('Adding document for state without id ', $1);
-        // yy.addDocument('noId');
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
     | STATE_DESCR AS ID { $$={id: $3, type: 'default', description: $1.trim()};}

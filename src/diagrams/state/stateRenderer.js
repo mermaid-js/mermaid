@@ -61,7 +61,6 @@ const insertMarkers = function(elem) {
 export const draw = function(text, id) {
   parser.yy.clear();
   parser.parse(text);
-  stateDb.logDocuments();
   logger.info('Rendering diagram ' + text);
 
   // /// / Fetch the default direction, use TD if none was found
@@ -124,7 +123,7 @@ const renderDoc = (doc, diagram, parentId) => {
     });
   }
 
-  // // Default to assigning a new object as a label for each new edge.
+  // Default to assigning a new object as a label for each new edge.
   graph.setDefaultEdgeLabel(function() {
     return {};
   });
@@ -146,15 +145,13 @@ const renderDoc = (doc, diagram, parentId) => {
         .append('g')
         .attr('id', stateDef.id)
         .attr('class', 'classGroup');
-      node = renderDoc2(stateDef.doc, sub, stateDef.id);
+      node = renderDoc(stateDef.doc, sub, stateDef.id);
 
       sub = addIdAndBox(sub, stateDef);
       let boxBounds = sub.node().getBBox();
       node.width = boxBounds.width;
       node.height = boxBounds.height + 10;
       transformationLog[stateDef.id] = { y: 35 };
-      // node.x = boxBounds.y;
-      // node.y = boxBounds.x;
     } else {
       node = drawState(diagram, stateDef, graph);
     }
@@ -163,21 +160,6 @@ const renderDoc = (doc, diagram, parentId) => {
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     graph.setNode(node.id, node);
-    // if (parentId) {
-    //   console.warn('apa1 P>', node.id, parentId);
-    //   // graph.setParent(node.id, parentId);
-    // }
-    // graph.setNode(node.id + 'note', nodeAppendix);
-
-    // let parent = 'p1';
-    // if (node.id === 'XState1') {
-    //   parent = 'p2';
-    // }
-
-    // graph.setParent(node.id, parent);
-    // graph.setParent(node.id + 'note', parent);
-
-    // logger.info('Org height: ' + node.height);
   }
 
   console.info('Count=', graph.nodeCount());
@@ -192,7 +174,6 @@ const renderDoc = (doc, diagram, parentId) => {
     console.warn(getGraphId(relation.id1), relation.id2, {
       relation: relation
     });
-    // graph.setEdge(getGraphId(relation.id1), getGraphId(relation.id2));
   });
 
   dagre.layout(graph);
