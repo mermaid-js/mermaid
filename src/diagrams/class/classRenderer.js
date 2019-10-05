@@ -255,10 +255,13 @@ const drawClass = function(elem, classDef) {
     height: 0
   };
 
+  // add class group
   const g = elem
     .append('g')
     .attr('id', id)
     .attr('class', 'classGroup');
+
+  // add title
   const title = g
     .append('text')
     .attr('y', conf.textHeight + conf.padding)
@@ -278,6 +281,7 @@ const drawClass = function(elem, classDef) {
     .text(classDef.id)
     .attr('class', 'title');
 
+  // If class has annotations the title needs to have an offset of the text height
   if (!isFirst) classTitle.attr('dy', conf.textHeight);
 
   const titleHeight = title.node().getBBox().height;
@@ -324,21 +328,25 @@ const drawClass = function(elem, classDef) {
   });
 
   const classBox = g.node().getBBox();
-  g.insert('rect', ':first-child')
+  const rect = g
+    .insert('rect', ':first-child')
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', classBox.width + 2 * conf.padding)
     .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
 
+  const rectWidth = rect.node().getBBox().width;
+
   // Center title
+  // We subtract the width of each text element from the class box width and divide it by 2
   title.node().childNodes.forEach(function(x) {
-    x.setAttribute('x', (classBox.width + 2 * conf.padding - x.getBBox().width) / 2);
+    x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
   });
 
-  membersLine.attr('x2', classBox.width + 2 * conf.padding);
-  methodsLine.attr('x2', classBox.width + 2 * conf.padding);
+  membersLine.attr('x2', rectWidth);
+  methodsLine.attr('x2', rectWidth);
 
-  classInfo.width = classBox.width + 2 * conf.padding;
+  classInfo.width = rectWidth;
   classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
   idCache[id] = classInfo;
