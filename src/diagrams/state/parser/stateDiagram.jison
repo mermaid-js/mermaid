@@ -143,7 +143,9 @@ statement
     | JOIN {
         $$={ stmt: 'state', id: $1, type: 'join' }
     }
-    | CONCURRENT
+    | CONCURRENT {
+        $$={ stmt: 'state', id: yy.getDividerId(), type: 'divider' }
+    }
     | note notePosition ID NOTE_TEXT
     {
         console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);

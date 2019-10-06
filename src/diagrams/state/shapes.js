@@ -26,6 +26,20 @@ export const drawStartState = g =>
     .attr('cy', conf.padding + 5);
 
 /**
+ * Draws a start state as a black circle
+ */
+export const drawDivider = g =>
+  g
+    .append('line')
+    .style('stroke', 'grey')
+    .style('stroke-dasharray', '3')
+    .attr('x1', 10)
+    .attr('class', 'divider')
+    .attr('x2', 20)
+    .attr('y1', 20)
+    .attr('y2', 20);
+
+/**
  * Draws a an end state as a black circle
  */
 export const drawSimpleState = (g, stateDef) => {
@@ -276,6 +290,7 @@ export const drawState = function(elem, stateDef, graph, doc) {
   if (stateDef.type === 'end') drawEndState(g);
   if (stateDef.type === 'fork' || stateDef.type === 'join') drawForkJoinState(g);
   if (stateDef.type === 'note') drawNote(stateDef.note.text, g);
+  if (stateDef.type === 'divider') drawDivider(g);
   if (stateDef.type === 'default' && stateDef.descriptions.length === 0)
     drawSimpleState(g, stateDef);
   if (stateDef.type === 'default' && stateDef.descriptions.length > 0) drawDescrState(g, stateDef);

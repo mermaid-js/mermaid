@@ -133,6 +133,12 @@ export const lineType = {
   DOTTED_LINE: 1
 };
 
+let dividerCnt = 0;
+const getDividerId = () => {
+  dividerCnt++;
+  return 'divider-id-' + dividerCnt;
+};
+
 export const relationType = {
   AGGREGATION: 0,
   EXTENSION: 1,
@@ -147,6 +153,7 @@ export default {
   getStates,
   getRelations,
   addRelation,
+  getDividerId,
   // addDescription,
   cleanupLabel,
   lineType,

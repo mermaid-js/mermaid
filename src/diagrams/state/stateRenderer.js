@@ -224,10 +224,28 @@ const renderDoc = (doc, diagram, parentId) => {
             graph.node(v).height / 2) +
           ' )'
       );
+      d3.select('#' + v).attr('data-x-shift', graph.node(v).x - graph.node(v).width / 2);
+      const dividers = document.querySelectorAll('#' + v + ' .divider');
+      dividers.forEach(divider => {
+        const parent = divider.parentElement;
+        let pWidth = 0;
+        let pShift = 0;
+        if (parent) {
+          if (parent.parentElement) pWidth = parent.parentElement.getBBox().width;
+
+          pShift = parseInt(parent.getAttribute('data-x-shift'), 10);
+          if (Number.isNaN(pShift)) {
+            pShift = 0;
+          }
+        }
+        divider.setAttribute('x1', 0 - pShift);
+        divider.setAttribute('x2', pWidth - pShift);
+      });
     } else {
       console.warn('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     }
   });
+
   let stateBox = diagram.node().getBBox();
   console.warn('Node before labels ', stateBox.width);
 
