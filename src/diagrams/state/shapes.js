@@ -205,16 +205,15 @@ const _drawLongText = (_text, x, y, g) => {
 
     if (txt.length > 0) {
       const span = textElem.append('tspan');
+      span.text(txt);
       const textBounds = span.node().getBBox();
       textHeight += textBounds.height;
       span.attr('x', x + conf.noteMargin);
-      span.attr('y', y + textHeight + 1.75 * conf.noteMargin);
-      span.text(txt);
-
-      textWidth = Math.max(textBounds.width, textWidth);
+      span.attr('y', y + textHeight + 1.25* conf.noteMargin);
+      // textWidth = Math.max(textBounds.width, textWidth);
     }
   }
-  return { textWidth, textHeight };
+  return { textWidth: textElem.node().getBBox().width, textHeight };
 };
 
 /**
@@ -226,6 +225,7 @@ const _drawLongText = (_text, x, y, g) => {
 
 export const drawNote = (text, g) => {
   g.attr('class', 'note');
+  console.warn('Text of note', text);
   const note = g
     .append('rect')
     .attr('x', 0)
@@ -233,7 +233,7 @@ export const drawNote = (text, g) => {
   const rectElem = g.append('g');
 
   const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
-
+  console.warn('Text of note', text, textWidth);
   note.attr('height', textHeight + 2 * conf.noteMargin);
   note.attr('width', textWidth + conf.noteMargin * 2);
 

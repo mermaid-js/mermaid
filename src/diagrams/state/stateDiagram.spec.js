@@ -8,7 +8,7 @@ describe('state diagram, ', function() {
       parser.yy = stateDb;
     });
 
-    fit('super simple', function() {
+    it('super simple', function() {
       const str = `
       stateDiagram
         [*] --> State1
@@ -58,7 +58,7 @@ describe('state diagram, ', function() {
         scale 350 width
         [*] --> State1
         State1 --> [*]
-        State1 : this is a string
+        State1 : this is a string with - in it
         State1 : this is another string
 
         State1 --> State2
@@ -71,7 +71,16 @@ describe('state diagram, ', function() {
     it('description after second state', function() {
       const str = `stateDiagram\n
         scale 350 width
-        [*] --> State1 : This is the description
+        [*] --> State1 : This is the description with - in it
+        State1 --> [*]
+      `;
+
+      parser.parse(str);
+    });
+    it('shall handle descriptions inkluding minus signs', function() {
+      const str = `stateDiagram\n
+        scale 350 width
+        [*] --> State1 : This is the description +-!
         State1 --> [*]
       `;
 

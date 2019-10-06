@@ -31,10 +31,10 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
     stateDiagram
-    State1: The state with a note
+    State1: The state with a note with minus - and plus + in it
     note left of State1
       Important information! You can write
-      notes.
+      notes with . and  in them.
     end note
       `,
       { logLevel: 0 }
@@ -45,12 +45,13 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
     stateDiagram
-    State1: The state with a note
+    State1: The state with a note +,-
     note right of State1
-      Important information! You can write
+      Important information! You can write +,-
       notes.
     end note
-    State1 --> State2
+    State1 --> State2 : With +,-
+    note left of State2 : This is the note +,-<br/>
       `,
       { logLevel: 0 }
     );
