@@ -113,7 +113,8 @@ const renderDoc = (doc, diagram, parentId) => {
       compound: true,
       // acyclicer: 'greedy',
       rankdir: 'LR',
-      ranker: 'tight-tree'
+      ranker: 'tight-tree',
+      ranksep: '20'
       // isMultiGraph: false
     });
   else {
@@ -139,13 +140,11 @@ const renderDoc = (doc, diagram, parentId) => {
   const relations = stateDb.getRelations();
 
   const keys = Object.keys(states);
-  console.warn('rendering doc 2', states, relations);
 
   total = keys.length;
   let first = true;
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
-    console.warn('keys[i]', keys[i]);
 
     let node;
     if (stateDef.doc) {
@@ -162,9 +161,7 @@ const renderDoc = (doc, diagram, parentId) => {
         node.width = boxBounds.width;
         node.height = boxBounds.height + 10;
         transformationLog[stateDef.id] = { y: 35 };
-        console.warn('Here2');
       } else {
-        console.warn('Here');
         // sub = addIdAndBox(sub, stateDef);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;
@@ -177,7 +174,6 @@ const renderDoc = (doc, diagram, parentId) => {
 
     if (stateDef.note) {
       // Draw note note
-      console.warn('Def=', stateDef);
       const noteDef = {
         descriptions: [],
         id: stateDef.id + '-note',
@@ -205,27 +201,23 @@ const renderDoc = (doc, diagram, parentId) => {
     }
   }
 
-  console.info('Count=', graph.nodeCount());
+  logger.info('Count=', graph.nodeCount());
   relations.forEach(function(relation) {
-    console.warn('Rendering edge', relation);
     graph.setEdge(relation.id1, relation.id2, {
       relation: relation,
       width: getLabelWidth(relation.title),
       height: 16,
       labelpos: 'c'
     });
-    console.warn(getGraphId(relation.id1), relation.id2, {
-      relation: relation
-    });
   });
 
   dagre.layout(graph);
 
-  console.warn('Graph after layout', graph.nodes());
+  logger.debug('Graph after layout', graph.nodes());
 
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      console.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      logger.debug('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
       d3.select('#' + v).attr(
         'transform',
         'translate(' +
@@ -254,12 +246,11 @@ const renderDoc = (doc, diagram, parentId) => {
         divider.setAttribute('x2', pWidth - pShift);
       });
     } else {
-      console.warn('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      logger.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     }
   });
 
   let stateBox = diagram.node().getBBox();
-  console.warn('Node before labels ', stateBox.width);
 
   graph.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
@@ -269,7 +260,6 @@ const renderDoc = (doc, diagram, parentId) => {
   });
 
   stateBox = diagram.node().getBBox();
-  console.warn('Node after labels ', stateBox.width);
   const stateInfo = {
     id: parentId ? parentId : 'root',
     label: parentId ? parentId : 'root',
@@ -280,7 +270,7 @@ const renderDoc = (doc, diagram, parentId) => {
   stateInfo.width = stateBox.width + 2 * conf.padding;
   stateInfo.height = stateBox.height + 2 * conf.padding;
 
-  console.warn('Doc rendered', stateInfo, graph);
+  logger.info('Doc rendered', stateInfo, graph);
   return stateInfo;
 };
 

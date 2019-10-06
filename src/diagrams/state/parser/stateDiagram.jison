@@ -38,7 +38,7 @@
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
 \%%[^\n]*                        /* skip comments */
 
-"scale"\s+            { this.pushState('SCALE'); console.log('Got scale', yytext);return 'scale'; }
+"scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
 <SCALE>\s+"width"     {this.popState();}
 
@@ -49,33 +49,33 @@
 <STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Join: ',yytext);return 'JOIN';}
 <STATE>["]                   this.begin("STATE_STRING");
 <STATE>"as"\s*         {this.popState();this.pushState('STATE_ID');return "AS";}
-<STATE_ID>[^\n\{]*         {this.popState();console.log('STATE_ID', yytext);return "ID";}
+<STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}
 <STATE_STRING>["]              this.popState();
-<STATE_STRING>[^"]*         { console.log('Long description:', yytext);return "STATE_DESCR";}
-<STATE>[^\n\s\{]+      {console.log('COMPOSIT_STATE', yytext);return 'COMPOSIT_STATE';}
+<STATE_STRING>[^"]*         { /*console.log('Long description:', yytext);*/return "STATE_DESCR";}
+<STATE>[^\n\s\{]+      {/*console.log('COMPOSIT_STATE', yytext);*/return 'COMPOSIT_STATE';}
 <STATE>\n      {this.popState();}
-<INITIAL,STATE>\{               {this.popState();this.pushState('struct'); console.log('begin struct', yytext);return 'STRUCT_START';}
-<struct>\}           { console.log('Ending struct'); this.popState(); return 'STRUCT_STOP';}}
+<INITIAL,STATE>\{               {this.popState();this.pushState('struct'); /*console.log('begin struct', yytext);*/return 'STRUCT_START';}
+<struct>\}           { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
 
 <INITIAL,struct>"note"\s+           { this.begin('NOTE'); return 'note'; }
-<NOTE>"left of"                     { this.popState();this.pushState('NOTE_ID');console.log('Got dir');return 'left_of';}
+<NOTE>"left of"                     { this.popState();this.pushState('NOTE_ID');return 'left_of';}
 <NOTE>"right of"                    { this.popState();this.pushState('NOTE_ID');return 'right_of';}
 <NOTE>\"                            { this.popState();this.pushState('FLOATING_NOTE');}
 <FLOATING_NOTE>\s*"as"\s*       {this.popState();this.pushState('FLOATING_NOTE_ID');return "AS";}
 <FLOATING_NOTE>["]         /**/
-<FLOATING_NOTE>[^"]*         { console.log('Floating note text: ', yytext);return "NOTE_TEXT";}
-<FLOATING_NOTE_ID>[^\n]*         {this.popState();console.log('Floating note ID', yytext);return "ID";}
-<NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');console.log('Got ID for note', yytext);return 'ID';}
-<NOTE_TEXT>\s*":"[^:\n;]+       { this.popState();console.log('Got NOTE_TEXT for note',yytext);yytext = yytext.substr(2).trim();return 'NOTE_TEXT';}
-<NOTE_TEXT>\s*[^:;]+"end note"       { this.popState();console.log('Got NOTE_TEXT for note',yytext);yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
+<FLOATING_NOTE>[^"]*         { /*console.log('Floating note text: ', yytext);*/return "NOTE_TEXT";}
+<FLOATING_NOTE_ID>[^\n]*         {this.popState();/*console.log('Floating note ID', yytext);*/return "ID";}
+<NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');/*console.log('Got ID for note', yytext);*/return 'ID';}
+<NOTE_TEXT>\s*":"[^:\n;]+       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.substr(2).trim();return 'NOTE_TEXT';}
+<NOTE_TEXT>\s*[^:;]+"end note"       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
 
-"stateDiagram"\s+                   { console.log('Got state diagram', yytext,'#');return 'SD'; }
-"hide empty description"    { console.log('HIDE_EMPTY', yytext,'#');return 'HIDE_EMPTY'; }
-<INITIAL,struct>"[*]"                   { console.log('EDGE_STATE=',yytext); return 'EDGE_STATE';}
-<INITIAL,struct>[^:\n\s\-\{]+                { console.log('=>ID=',yytext); return 'ID';}
-// <INITIAL,struct>\s*":"[^\+\->:\n;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
-<INITIAL,struct>\s*":"[^:\n;]+      { yytext = yytext.trim(); console.log('Descr = ', yytext); return 'DESCR'; }
+"stateDiagram"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
+"hide empty description"    { /*console.log('HIDE_EMPTY', yytext,'#');*/return 'HIDE_EMPTY'; }
+<INITIAL,struct>"[*]"                   { /*console.log('EDGE_STATE=',yytext);*/ return 'EDGE_STATE';}
+<INITIAL,struct>[^:\n\s\-\{]+                { /*console.log('=>ID=',yytext);*/ return 'ID';}
+// <INITIAL,struct>\s*":"[^\+\->:\n;]+      { yytext = yytext.trim(); /*console.log('Descr = ', yytext);*/ return 'DESCR'; }
+<INITIAL,struct>\s*":"[^:\n;]+      { yytext = yytext.trim(); /*console.log('Descr = ', yytext);*/ return 'DESCR'; }
 <INITIAL,struct>"-->"             return '-->';
 <struct>"--"        return 'CONCURRENT';
 <<EOF>>           return 'NL';
@@ -92,7 +92,7 @@
 start
 	: SPACE start
 	| NL start
-	| SD document { console.warn('Root document', $2); yy.setRootDoc($2);return $2; }
+	| SD document { /*console.warn('Root document', $2);*/ yy.setRootDoc($2);return $2; }
 	;
 
 document
@@ -112,7 +112,7 @@ line
 	;
 
 statement
-	: idStatement DESCR { console.warn('got id and descr', $1, $2.trim());$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
+	: idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
 	| idStatement '-->' idStatement
     {
         /*console.warn('got id', $1);yy.addRelation($1, $3);*/
@@ -128,7 +128,7 @@ statement
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
-        console.warn('Adding document for state without id ', $1);
+        /* console.warn('Adding document for state without id ', $1);*/
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
     | STATE_DESCR AS ID { $$={id: $3, type: 'default', description: $1.trim()};}
@@ -148,7 +148,7 @@ statement
     }
     | note notePosition ID NOTE_TEXT
     {
-        console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);
+        /*console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);*/
         $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
     }
     | note NOTE_TEXT AS ID

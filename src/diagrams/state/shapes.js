@@ -3,8 +3,6 @@ import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
 
-console.warn('ID cache', idCache);
-
 // TODO Move conf object to main conf in mermaidAPI
 const conf = {
   dividerMargin: 10,
@@ -249,7 +247,6 @@ const _drawLongText = (_text, x, y, g) => {
 
 export const drawNote = (text, g) => {
   g.attr('class', 'note');
-  console.warn('Text of note', text);
   const note = g
     .append('rect')
     .attr('x', 0)
@@ -257,7 +254,6 @@ export const drawNote = (text, g) => {
   const rectElem = g.append('g');
 
   const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
-  console.warn('Text of note', text, textWidth);
   note.attr('height', textHeight + 2 * conf.noteMargin);
   note.attr('width', textWidth + conf.noteMargin * 2);
 
@@ -271,8 +267,6 @@ export const drawNote = (text, g) => {
  * @param {*} stateDef
  */
 export const drawState = function(elem, stateDef, graph, doc) {
-  console.warn('Rendering class ', stateDef);
-
   const id = stateDef.id;
   const stateInfo = {
     id: id,

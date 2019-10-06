@@ -2,7 +2,7 @@ import { logger } from '../../logger';
 
 let rootDoc = [];
 const setRootDoc = o => {
-  console.warn('Setting root doc', o);
+  logger.info('Setting root doc', o);
   rootDoc = o;
 };
 
@@ -47,7 +47,6 @@ let endCnt = 0;
  * @param style
  */
 export const addState = function(id, type, doc, descr, note) {
-  console.warn('Add state', id);
   if (typeof currentDocument.states[id] === 'undefined') {
     currentDocument.states[id] = {
       id: id,
@@ -83,7 +82,7 @@ export const getStates = function() {
   return currentDocument.states;
 };
 export const logDocuments = function() {
-  console.warn('Documents = ', documents);
+  logger.info('Documents = ', documents);
 };
 export const getRelations = function() {
   return currentDocument.relations;
@@ -104,7 +103,6 @@ export const addRelation = function(_id1, _id2, title) {
     id2 = 'end' + startCnt;
     type2 = 'end';
   }
-  console.log(id1, id2, title);
   addState(id1, type1);
   addState(id2, type2);
   currentDocument.relations.push({ id1, id2, title });
