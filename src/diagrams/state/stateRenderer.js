@@ -61,7 +61,7 @@ const insertMarkers = function(elem) {
 export const draw = function(text, id) {
   parser.yy.clear();
   parser.parse(text);
-  logger.info('Rendering diagram ' + text);
+  logger.warn('Rendering diagram ' + text);
 
   // /// / Fetch the default direction, use TD if none was found
   const diagram = d3.select(`[id='${id}']`);

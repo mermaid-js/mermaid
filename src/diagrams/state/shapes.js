@@ -168,6 +168,16 @@ const drawEndState = g => {
     .attr('cx', conf.padding + 7)
     .attr('cy', conf.padding + 7);
 };
+const drawForkJoinState = g => {
+  return g
+    .append('rect')
+    .style('stroke', 'black')
+    .style('fill', 'black')
+    .attr('width', 70)
+    .attr('height', 7)
+    .attr('x', conf.padding)
+    .attr('y', conf.padding);
+};
 
 export const drawText = function(elem, textData, width) {
   // Remove and ignore br:s
@@ -209,7 +219,7 @@ const _drawLongText = (_text, x, y, g) => {
       const textBounds = span.node().getBBox();
       textHeight += textBounds.height;
       span.attr('x', x + conf.noteMargin);
-      span.attr('y', y + textHeight + 1.25* conf.noteMargin);
+      span.attr('y', y + textHeight + 1.25 * conf.noteMargin);
       // textWidth = Math.max(textBounds.width, textWidth);
     }
   }
@@ -264,6 +274,7 @@ export const drawState = function(elem, stateDef, graph, doc) {
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
+  if (stateDef.type === 'fork' || stateDef.type === 'join') drawForkJoinState(g);
   if (stateDef.type === 'note') drawNote(stateDef.note.text, g);
   if (stateDef.type === 'default' && stateDef.descriptions.length === 0)
     drawSimpleState(g, stateDef);
