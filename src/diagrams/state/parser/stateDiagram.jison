@@ -66,7 +66,7 @@
 <FLOATING_NOTE_ID>[^\n]*         {this.popState();console.log('Floating note ID', yytext);return "ID";}
 <NOTE_ID>\s*[^:\n\s\-]+                { this.popState();this.pushState('NOTE_TEXT');console.log('Got ID for note', yytext);return 'ID';}
 <NOTE_TEXT>\s*":"[^\+\-:\n,;]+       { this.popState();console.log('Got NOTE_TEXT for note',yytext);return 'NOTE_TEXT';}
-<NOTE_TEXT>\s*[^\+\-:,;]+"end note"       { this.popState();console.log('Got NOTE_TEXT for note',yytext);return 'NOTE_TEXT';}
+<NOTE_TEXT>\s*[^\+\-:,;]+"end note"       { this.popState();console.log('Got NOTE_TEXT for note',yytext);yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
 
 "stateDiagram"\s+                   { console.log('Got state diagram', yytext,'#');return 'SD'; }
 "hide empty description"    { console.log('HIDE_EMPTY', yytext,'#');return 'HIDE_EMPTY'; }
@@ -138,6 +138,10 @@ statement
     | JOIN
     | CONCURRENT
     | note notePosition ID NOTE_TEXT
+    {
+        console.warn('got NOTE, position: ', $2.trim(), 'id = ', $3.trim(), 'note: ', $4);
+        $$={ stmt: 'state', id: $3.trim(), note:{position: $2.trim(), text: $4.trim()}};
+    }
     | note NOTE_TEXT AS ID
     ;
 

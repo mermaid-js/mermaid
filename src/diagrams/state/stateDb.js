@@ -14,7 +14,7 @@ const extract = doc => {
 
   doc.forEach(item => {
     if (item.stmt === 'state') {
-      addState(item.id, item.type, item.doc, item.description);
+      addState(item.id, item.type, item.doc, item.description, item.note);
     }
     if (item.stmt === 'relation') {
       addRelation(item.state1.id, item.state2.id, item.description);
@@ -46,14 +46,15 @@ let endCnt = 0;
  * @param type
  * @param style
  */
-export const addState = function(id, type, doc, descr) {
+export const addState = function(id, type, doc, descr, note) {
   console.warn('Add state', id);
   if (typeof currentDocument.states[id] === 'undefined') {
     currentDocument.states[id] = {
       id: id,
       descriptions: [],
       type,
-      doc
+      doc,
+      note
     };
   } else {
     if (!currentDocument.states[id].doc) {
@@ -64,6 +65,7 @@ export const addState = function(id, type, doc, descr) {
     }
   }
   if (descr) addDescription(id, descr.trim());
+  if (note) currentDocument.states[id].note = note;
 };
 
 export const clear = function() {

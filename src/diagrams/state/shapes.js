@@ -9,7 +9,8 @@ console.warn('ID cache', idCache);
 const conf = {
   dividerMargin: 10,
   padding: 5,
-  textHeight: 10
+  textHeight: 10,
+  noteMargin: 10
 };
 
 /**
@@ -168,6 +169,77 @@ const drawEndState = g => {
     .attr('cy', conf.padding + 7);
 };
 
+export const drawText = function(elem, textData, width) {
+  // Remove and ignore br:s
+  const nText = textData.text.replace(/<br\/?>/gi, ' ');
+
+  const textElem = elem.append('text');
+  textElem.attr('x', textData.x);
+  textElem.attr('y', textData.y);
+  textElem.style('text-anchor', textData.anchor);
+  textElem.attr('fill', textData.fill);
+  if (typeof textData.class !== 'undefined') {
+    textElem.attr('class', textData.class);
+  }
+
+  const span = textElem.append('tspan');
+  span.attr('x', textData.x + textData.textMargin * 2);
+  span.attr('fill', textData.fill);
+  span.text(nText);
+
+  return textElem;
+};
+
+const _drawLongText = (_text, x, y, g) => {
+  let textHeight = 0;
+  let textWidth = 0;
+  const textElem = g.append('text');
+  textElem.style('text-anchor', 'start');
+  textElem.attr('class', 'noteText');
+
+  let text = _text.replace(/\r\n/g, '<br/>');
+  text = text.replace(/\n/g, '<br/>');
+  const lines = text.split(/<br\/?>/gi);
+  for (const line of lines) {
+    const txt = line.trim();
+
+    if (txt.length > 0) {
+      const span = textElem.append('tspan');
+      const textBounds = span.node().getBBox();
+      textHeight += textBounds.height;
+      span.attr('x', x + conf.noteMargin);
+      span.attr('y', y + textHeight + 1.75 * conf.noteMargin);
+      span.text(txt);
+
+      textWidth = Math.max(textBounds.width, textWidth);
+    }
+  }
+  return { textWidth, textHeight };
+};
+
+/**
+ * Draws an actor in the diagram with the attaced line
+ * @param center - The center of the the actor
+ * @param pos The position if the actor in the liost of actors
+ * @param description The text in the box
+ */
+
+export const drawNote = (text, g) => {
+  g.attr('class', 'note');
+  const note = g
+    .append('rect')
+    .attr('x', 0)
+    .attr('y', conf.padding);
+  const rectElem = g.append('g');
+
+  const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
+
+  note.attr('height', textHeight + 2 * conf.noteMargin);
+  note.attr('width', textWidth + conf.noteMargin * 2);
+
+  return note;
+};
+
 /**
  * Starting point for drawing a state. The function finds out the specifics
  * about the state and renders with approprtiate function.
@@ -192,6 +264,7 @@ export const drawState = function(elem, stateDef, graph, doc) {
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
+  if (stateDef.type === 'note') drawNote(stateDef.note.text, g);
   if (stateDef.type === 'default' && stateDef.descriptions.length === 0)
     drawSimpleState(g, stateDef);
   if (stateDef.type === 'default' && stateDef.descriptions.length > 0) drawDescrState(g, stateDef);

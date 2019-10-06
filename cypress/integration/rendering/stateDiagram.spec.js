@@ -13,6 +13,49 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a state with a note', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    State1: The state with a note
+    note right of State1
+      Important information! You can write
+      notes.
+    end note
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
+  it('should render a state with on the left side when so specified', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    State1: The state with a note
+    note left of State1
+      Important information! You can write
+      notes.
+    end note
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
+  it('should render a state with a note together with another state', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    State1: The state with a note
+    note right of State1
+      Important information! You can write
+      notes.
+    end note
+    State1 --> State2
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
   it('should render a states with descriptions including multi-line descriptions', () => {
     imgSnapshotTest(
       `

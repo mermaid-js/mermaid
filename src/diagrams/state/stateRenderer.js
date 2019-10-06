@@ -6,7 +6,7 @@ import stateDb from './stateDb';
 import { parser } from './parser/stateDiagram';
 import utils from '../../utils';
 import idCache from './id-cache';
-import { drawState, addIdAndBox, drawEdge } from './shapes';
+import { drawState, addIdAndBox, drawEdge, drawNote } from './shapes';
 
 parser.yy = stateDb;
 
@@ -70,7 +70,7 @@ export const draw = function(text, id) {
   // // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     multigraph: false,
-    // compound: true,
+    compound: true,
     // acyclicer: 'greedy',
     rankdir: 'RL'
   });
@@ -93,7 +93,7 @@ export const draw = function(text, id) {
 
   diagram.attr('height', '100%');
   diagram.attr('width', '100%');
-  diagram.attr('viewBox', '0 0 ' + bounds.width + ' ' + (bounds.height + 50));
+  diagram.attr('viewBox', '0 0 ' + bounds.width * 2 + ' ' + (bounds.height + 50));
 };
 const getLabelWidth = text => {
   return text ? text.length * 5.02 : 1;
@@ -101,15 +101,17 @@ const getLabelWidth = text => {
 
 const renderDoc = (doc, diagram, parentId) => {
   // // Layout graph, Create a new directed graph
-  const graph = new graphlib.Graph({});
+  const graph = new graphlib.Graph({
+    compound: true
+  });
 
   // Set an object for the graph label
   if (parentId)
     graph.setGraph({
       rankdir: 'LR',
       multigraph: false,
-      compound: false,
-      // acyclicer: 'greedy',
+      compound: true,
+      acyclicer: 'greedy',
       rankdir: 'LR',
       ranker: 'tight-tree'
       // isMultiGraph: false
@@ -117,8 +119,12 @@ const renderDoc = (doc, diagram, parentId) => {
   else {
     graph.setGraph({
       rankdir: 'TB',
-      // acyclicer: 'greedy'
-      ranker: 'longest-path'
+      compound: true,
+      // isCompound: true,
+      // acyclicer: 'greedy',
+      // ranker: 'longest-path'
+      ranker: 'tight-tree'
+      // ranker: 'network-simplex'
       // isMultiGraph: false
     });
   }
@@ -139,6 +145,7 @@ const renderDoc = (doc, diagram, parentId) => {
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
     console.warn('keys[i]', keys[i]);
+
     let node;
     if (stateDef.doc) {
       let sub = diagram
@@ -156,10 +163,34 @@ const renderDoc = (doc, diagram, parentId) => {
       node = drawState(diagram, stateDef, graph);
     }
 
-    // Add nodes to the graph. The first argument is the node id. The second is
-    // metadata about the node. In this case we're going to add labels to each of
-    // our nodes.
-    graph.setNode(node.id, node);
+    if (stateDef.note) {
+      // Draw note note
+      console.warn('Def=', stateDef);
+      const noteDef = {
+        descriptions: [],
+        id: stateDef.id + '-note',
+        note: stateDef.note,
+        type: 'note'
+      };
+      const note = drawState(diagram, noteDef, graph);
+
+      // graph.setNode(node.id, node);
+      if (stateDef.note.position === 'left of') {
+        graph.setNode(node.id + '-note', note);
+        graph.setNode(node.id, node);
+      } else {
+        graph.setNode(node.id, node);
+        graph.setNode(node.id + '-note', note);
+      }
+      // graph.setNode(node.id);
+      graph.setParent(node.id, node.id + '-group');
+      graph.setParent(node.id + '-note', node.id + '-group');
+    } else {
+      // Add nodes to the graph. The first argument is the node id. The second is
+      // metadata about the node. In this case we're going to add labels to each of
+      // our nodes.
+      graph.setNode(node.id, node);
+    }
   }
 
   console.info('Count=', graph.nodeCount());
@@ -178,6 +209,8 @@ const renderDoc = (doc, diagram, parentId) => {
 
   dagre.layout(graph);
 
+  console.warn('Graph after layout', graph.nodes());
+
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       console.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
@@ -191,6 +224,8 @@ const renderDoc = (doc, diagram, parentId) => {
             graph.node(v).height / 2) +
           ' )'
       );
+    } else {
+      console.warn('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     }
   });
   let stateBox = diagram.node().getBBox();
