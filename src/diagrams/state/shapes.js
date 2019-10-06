@@ -36,8 +36,8 @@ export const drawDivider = g =>
     .attr('x1', 10)
     .attr('class', 'divider')
     .attr('x2', 20)
-    .attr('y1', 20)
-    .attr('y2', 20);
+    .attr('y1', 0)
+    .attr('y2', 0);
 
 /**
  * Draws a an end state as a black circle

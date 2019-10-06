@@ -109,9 +109,9 @@ const renderDoc = (doc, diagram, parentId) => {
   if (parentId)
     graph.setGraph({
       rankdir: 'LR',
-      multigraph: false,
+      // multigraph: false,
       compound: true,
-      acyclicer: 'greedy',
+      // acyclicer: 'greedy',
       rankdir: 'LR',
       ranker: 'tight-tree'
       // isMultiGraph: false
@@ -142,6 +142,7 @@ const renderDoc = (doc, diagram, parentId) => {
   console.warn('rendering doc 2', states, relations);
 
   total = keys.length;
+  let first = true;
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
     console.warn('keys[i]', keys[i]);
@@ -154,11 +155,22 @@ const renderDoc = (doc, diagram, parentId) => {
         .attr('class', 'classGroup');
       node = renderDoc(stateDef.doc, sub, stateDef.id);
 
-      sub = addIdAndBox(sub, stateDef);
-      let boxBounds = sub.node().getBBox();
-      node.width = boxBounds.width;
-      node.height = boxBounds.height + 10;
-      transformationLog[stateDef.id] = { y: 35 };
+      if (first) {
+        first = false;
+        sub = addIdAndBox(sub, stateDef);
+        let boxBounds = sub.node().getBBox();
+        node.width = boxBounds.width;
+        node.height = boxBounds.height + 10;
+        transformationLog[stateDef.id] = { y: 35 };
+        console.warn('Here2');
+      } else {
+        console.warn('Here');
+        // sub = addIdAndBox(sub, stateDef);
+        let boxBounds = sub.node().getBBox();
+        node.width = boxBounds.width;
+        node.height = boxBounds.height;
+        // transformationLog[stateDef.id] = { y: 35 };
+      }
     } else {
       node = drawState(diagram, stateDef, graph);
     }
