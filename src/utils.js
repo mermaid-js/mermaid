@@ -120,9 +120,59 @@ const calcLabelPosition = points => {
   return p;
 };
 
+const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
+  let prevPoint;
+  let totalDistance = 0;
+  if (points[0] !== initialPosition) {
+    points = points.reverse();
+  }
+  points.forEach(point => {
+    totalDistance += distance(point, prevPoint);
+    prevPoint = point;
+  });
+
+  // Traverse only 25 total distance along points to find cardinality point
+  const distanceToCardinalityPoint = 25;
+
+  let remainingDistance = distanceToCardinalityPoint;
+  let center;
+  prevPoint = undefined;
+  points.forEach(point => {
+    if (prevPoint && !center) {
+      const vectorDistance = distance(point, prevPoint);
+      if (vectorDistance < remainingDistance) {
+        remainingDistance -= vectorDistance;
+      } else {
+        // The point is remainingDistance from prevPoint in the vector between prevPoint and point
+        // Calculate the coordinates
+        const distanceRatio = remainingDistance / vectorDistance;
+        if (distanceRatio <= 0) center = prevPoint;
+        if (distanceRatio >= 1) center = { x: point.x, y: point.y };
+        if (distanceRatio > 0 && distanceRatio < 1) {
+          center = {
+            x: (1 - distanceRatio) * prevPoint.x + distanceRatio * point.x,
+            y: (1 - distanceRatio) * prevPoint.y + distanceRatio * point.y
+          };
+        }
+      }
+    }
+    prevPoint = point;
+  });
+  // if relation is present (Arrows will be added), change cardinality point off-set distance (d)
+  let d = isRelationTypePresent ? 10 : 5;
+  //Calculate Angle for x and y axis
+  let angle = Math.atan2(points[0].y - center.y, points[0].x - center.x);
+  let cardinalityPosition = { x: 0, y: 0 };
+  //Calculation cardinality position using angle, center point on the line/curve but pendicular and with offset-distance
+  cardinalityPosition.x = Math.sin(angle) * d + (points[0].x + center.x) / 2;
+  cardinalityPosition.y = -Math.cos(angle) * d + (points[0].y + center.y) / 2;
+  return cardinalityPosition;
+};
+
 export default {
   detectType,
   isSubstringInArray,
   interpolateToCurve,
-  calcLabelPosition
+  calcLabelPosition,
+  calcCardinalityPosition
 };
