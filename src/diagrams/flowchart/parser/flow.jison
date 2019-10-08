@@ -7,7 +7,7 @@
 /* lexical grammar */
 %lex
 %x string
-
+%x dir
 %%
 \%\%[^\n]*            /* do nothing */
 ["]                     this.begin("string");
@@ -20,16 +20,20 @@
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
-"graph"               return 'GRAPH';
+"graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
-"LR"                  return 'DIR';
-"RL"                  return 'DIR';
-"TB"                  return 'DIR';
-"BT"                  return 'DIR';
-"TD"                  return 'DIR';
-"BR"                  return 'DIR';
-[0-9]+                 return 'NUM';
+<dir>\s*"LR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"RL"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TB"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BT"             {   this.popState();  return 'DIR'; }
+<dir>\s*"TD"             {   this.popState();  return 'DIR'; }
+<dir>\s*"BR"             {   this.popState();  return 'DIR'; }
+<dir>\s*"<"              {   this.popState();  return 'DIR'; }
+<dir>\s*">"              {   this.popState();  return 'DIR'; }
+<dir>\s*"^"              {   this.popState();  return 'DIR'; }
+<dir>\s*"v"              {   this.popState();  return 'DIR'; }
+[0-9]+                { return 'NUM';}
 \#                    return 'BRKT';
 ":::"                 return 'STYLE_SEPARATOR';
 ":"                   return 'COLON';
@@ -165,7 +169,7 @@
 "{"                   return 'DIAMOND_START'
 "}"                   return 'DIAMOND_STOP'
 "\""                  return 'QUOTE';
-\n+                   return 'NEWLINE';
+(\r|\n|\r\n)+         return 'NEWLINE';
 \s                    return 'SPACE';
 <<EOF>>               return 'EOF';
 
@@ -204,16 +208,16 @@ line
 graphConfig
     : SPACE graphConfig
     | NEWLINE graphConfig
-    | GRAPH SPACE DIR FirstStmtSeperator
-        { yy.setDirection($3);$$ = $3;}
-    | GRAPH SPACE TAGEND FirstStmtSeperator
-        { yy.setDirection("LR");$$ = $3;}
-    | GRAPH SPACE TAGSTART FirstStmtSeperator
-        { yy.setDirection("RL");$$ = $3;}
-    | GRAPH SPACE UP FirstStmtSeperator
-        { yy.setDirection("BT");$$ = $3;}
-    | GRAPH SPACE DOWN FirstStmtSeperator
-        { yy.setDirection("TB");$$ = $3;}
+    | GRAPH DIR FirstStmtSeperator
+        { yy.setDirection($2);$$ = $2;}
+    // | GRAPH SPACE TAGEND FirstStmtSeperator
+    //     { yy.setDirection("LR");$$ = $3;}
+    // | GRAPH SPACE TAGSTART FirstStmtSeperator
+    //     { yy.setDirection("RL");$$ = $3;}
+    // | GRAPH SPACE UP FirstStmtSeperator
+    //     { yy.setDirection("BT");$$ = $3;}
+    // | GRAPH SPACE DOWN FirstStmtSeperator
+    //     { yy.setDirection("TB");$$ = $3;}
     ;
 
 ending: endToken ending
@@ -241,7 +245,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    {$$=$1}
+    { $$=$1}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -264,18 +268,28 @@ statement
 
 separator: NEWLINE | SEMI | EOF ;
 
-verticeStatement:
-    vertex link vertex
-        { yy.addLink($1,$3,$2);$$ = [$1,$3];}
-    | vertex link vertex STYLE_SEPARATOR idString
-       { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
-    | vertex STYLE_SEPARATOR idString link vertex
-       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
-    | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
-       { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
-    |vertex
-        {$$ = [$1];}
-    |vertex STYLE_SEPARATOR idString
+// verticeStatement:
+//     vertex link vertex
+//         { yy.addLink($1,$3,$2);$$ = [$1,$3];}
+//     | vertex link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$3,$2);$$ = [$1,$3];yy.setClass($3,$5);}
+//     | vertex STYLE_SEPARATOR idString link vertex
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($1,$3);}
+//     | vertex STYLE_SEPARATOR idString link vertex STYLE_SEPARATOR idString
+//        { yy.addLink($1,$5,$4);$$ = [$1,$5];yy.setClass($5,$7);yy.setClass($1,$3);}
+//     |vertex
+//         {$$ = [$1];}
+//     |vertex STYLE_SEPARATOR idString
+//         {$$ = [$1];yy.setClass($1,$3)}
+//    ;
+
+verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
+    |node { $$ = $1 }
+    ;
+
+node: vertex
+        { $$ = [$1];}
+    | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
 

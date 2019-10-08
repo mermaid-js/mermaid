@@ -1,38 +1,38 @@
-import * as d3 from 'd3'
-import dagre from 'dagre-layout'
-import graphlib from 'graphlibrary'
-import { logger } from '../../logger'
-import classDb from './classDb'
-import { parser } from './parser/classDiagram'
+import * as d3 from 'd3';
+import dagre from 'dagre-layout';
+import graphlib from 'graphlibrary';
+import { logger } from '../../logger';
+import classDb from './classDb';
+import { parser } from './parser/classDiagram';
 
-parser.yy = classDb
+parser.yy = classDb;
 
-const idCache = {}
+const idCache = {};
 
-let classCnt = 0
+let classCnt = 0;
 const conf = {
   dividerMargin: 10,
   padding: 5,
   textHeight: 10
-}
+};
 
 // Todo optimize
-const getGraphId = function (label) {
-  const keys = Object.keys(idCache)
+const getGraphId = function(label) {
+  const keys = Object.keys(idCache);
 
   for (let i = 0; i < keys.length; i++) {
     if (idCache[keys[i]].label === label) {
-      return keys[i]
+      return keys[i];
     }
   }
 
-  return undefined
-}
+  return undefined;
+};
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-const insertMarkers = function (elem) {
+const insertMarkers = function(elem) {
   elem
     .append('defs')
     .append('marker')
@@ -44,7 +44,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 1,7 L18,13 V 1 Z')
+    .attr('d', 'M 1,7 L18,13 V 1 Z');
 
   elem
     .append('defs')
@@ -56,7 +56,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 1,1 V 13 L18,7 Z') // this is actual shape for arrowhead
+    .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 
   elem
     .append('defs')
@@ -69,7 +69,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
   elem
     .append('defs')
@@ -81,7 +81,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
   elem
     .append('defs')
@@ -94,7 +94,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
   elem
     .append('defs')
@@ -106,7 +106,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 
   elem
     .append('defs')
@@ -119,7 +119,7 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 240)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z')
+    .attr('d', 'M 5,7 L9,13 L1,7 L9,1 Z');
 
   elem
     .append('defs')
@@ -131,96 +131,86 @@ const insertMarkers = function (elem) {
     .attr('markerHeight', 28)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z')
-}
+    .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+};
 
-let edgeCount = 0
-let total = 0
-const drawEdge = function (elem, path, relation) {
-  const getRelationType = function (type) {
+let edgeCount = 0;
+let total = 0;
+const drawEdge = function(elem, path, relation) {
+  const getRelationType = function(type) {
     switch (type) {
       case classDb.relationType.AGGREGATION:
-        return 'aggregation'
+        return 'aggregation';
       case classDb.relationType.EXTENSION:
-        return 'extension'
+        return 'extension';
       case classDb.relationType.COMPOSITION:
-        return 'composition'
+        return 'composition';
       case classDb.relationType.DEPENDENCY:
-        return 'dependency'
+        return 'dependency';
     }
-  }
+  };
 
-  path.points = path.points.filter(p => !Number.isNaN(p.y))
+  path.points = path.points.filter(p => !Number.isNaN(p.y));
 
   // The data for our line
-  const lineData = path.points
+  const lineData = path.points;
 
   // This is the accessor function we talked about above
   const lineFunction = d3
     .line()
-    .x(function (d) {
-      return d.x
+    .x(function(d) {
+      return d.x;
     })
-    .y(function (d) {
-      return d.y
+    .y(function(d) {
+      return d.y;
     })
-    .curve(d3.curveBasis)
+    .curve(d3.curveBasis);
 
   const svgPath = elem
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', 'edge' + edgeCount)
-    .attr('class', 'relation')
-  let url = ''
+    .attr('class', 'relation');
+  let url = '';
   if (conf.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
       '//' +
       window.location.host +
       window.location.pathname +
-      window.location.search
-    url = url.replace(/\(/g, '\\(')
-    url = url.replace(/\)/g, '\\)')
+      window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
   }
 
   if (relation.relation.type1 !== 'none') {
     svgPath.attr(
       'marker-start',
-      'url(' +
-        url +
-        '#' +
-        getRelationType(relation.relation.type1) +
-        'Start' +
-        ')'
-    )
+      'url(' + url + '#' + getRelationType(relation.relation.type1) + 'Start' + ')'
+    );
   }
   if (relation.relation.type2 !== 'none') {
     svgPath.attr(
       'marker-end',
-      'url(' +
-        url +
-        '#' +
-        getRelationType(relation.relation.type2) +
-        'End' +
-        ')'
-    )
+      'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')'
+    );
   }
 
-  let x, y
-  const l = path.points.length
+  let x, y;
+  const l = path.points.length;
   if (l % 2 !== 0 && l > 1) {
-    const p1 = path.points[Math.floor(l / 2)]
-    const p2 = path.points[Math.ceil(l / 2)]
-    x = (p1.x + p2.x) / 2
-    y = (p1.y + p2.y) / 2
+    const p1 = path.points[Math.floor(l / 2)];
+    const p2 = path.points[Math.ceil(l / 2)];
+    x = (p1.x + p2.x) / 2;
+    y = (p1.y + p2.y) / 2;
   } else {
-    const p = path.points[Math.floor(l / 2)]
-    x = p.x
-    y = p.y
+    const p = path.points[Math.floor(l / 2)];
+    x = p.x;
+    y = p.y;
   }
 
   if (typeof relation.title !== 'undefined') {
-    const g = elem.append('g').attr('class', 'classLabel')
+    const g = elem.append('g').attr('class', 'classLabel');
     const label = g
       .append('text')
       .attr('class', 'label')
@@ -228,189 +218,205 @@ const drawEdge = function (elem, path, relation) {
       .attr('y', y)
       .attr('fill', 'red')
       .attr('text-anchor', 'middle')
-      .text(relation.title)
+      .text(relation.title);
 
-    window.label = label
-    const bounds = label.node().getBBox()
+    window.label = label;
+    const bounds = label.node().getBBox();
 
     g.insert('rect', ':first-child')
       .attr('class', 'box')
       .attr('x', bounds.x - conf.padding / 2)
       .attr('y', bounds.y - conf.padding / 2)
       .attr('width', bounds.width + conf.padding)
-      .attr('height', bounds.height + conf.padding)
+      .attr('height', bounds.height + conf.padding);
   }
 
-  edgeCount++
-}
+  edgeCount++;
+};
 
-const drawClass = function (elem, classDef) {
-  logger.info('Rendering class ' + classDef)
+const drawClass = function(elem, classDef) {
+  logger.info('Rendering class ' + classDef);
 
-  const addTspan = function (textEl, txt, isFirst) {
+  const addTspan = function(textEl, txt, isFirst) {
     const tSpan = textEl
       .append('tspan')
       .attr('x', conf.padding)
-      .text(txt)
+      .text(txt);
     if (!isFirst) {
-      tSpan.attr('dy', conf.textHeight)
+      tSpan.attr('dy', conf.textHeight);
     }
-  }
+  };
 
-  const id = 'classId' + (classCnt % total)
+  const id = 'classId' + (classCnt % total);
   const classInfo = {
     id: id,
     label: classDef.id,
     width: 0,
     height: 0
-  }
+  };
 
+  // add class group
   const g = elem
     .append('g')
     .attr('id', id)
-    .attr('class', 'classGroup')
+    .attr('class', 'classGroup');
+
+  // add title
   const title = g
     .append('text')
-    .attr('x', conf.padding)
     .attr('y', conf.textHeight + conf.padding)
-    .text(classDef.id)
+    .attr('x', 0);
 
-  const titleHeight = title.node().getBBox().height
+  // add annotations
+  let isFirst = true;
+  classDef.annotations.forEach(function(member) {
+    const titleText2 = title.append('tspan').text('«' + member + '»');
+    if (!isFirst) titleText2.attr('dy', conf.textHeight);
+    isFirst = false;
+  });
+
+  // add class title
+  const classTitle = title
+    .append('tspan')
+    .text(classDef.id)
+    .attr('class', 'title');
+
+  // If class has annotations the title needs to have an offset of the text height
+  if (!isFirst) classTitle.attr('dy', conf.textHeight);
+
+  const titleHeight = title.node().getBBox().height;
 
   const membersLine = g
     .append('line') // text label for the x axis
     .attr('x1', 0)
     .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
-    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
+    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2);
 
   const members = g
     .append('text') // text label for the x axis
     .attr('x', conf.padding)
     .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
     .attr('fill', 'white')
-    .attr('class', 'classText')
+    .attr('class', 'classText');
 
-  let isFirst = true
-  classDef.members.forEach(function (member) {
-    addTspan(members, member, isFirst)
-    isFirst = false
-  })
+  isFirst = true;
+  classDef.members.forEach(function(member) {
+    addTspan(members, member, isFirst);
+    isFirst = false;
+  });
 
-  const membersBox = members.node().getBBox()
+  const membersBox = members.node().getBBox();
 
   const methodsLine = g
     .append('line') // text label for the x axis
     .attr('x1', 0)
-    .attr(
-      'y1',
-      conf.padding + titleHeight + conf.dividerMargin + membersBox.height
-    )
-    .attr(
-      'y2',
-      conf.padding + titleHeight + conf.dividerMargin + membersBox.height
-    )
+    .attr('y1', conf.padding + titleHeight + conf.dividerMargin + membersBox.height)
+    .attr('y2', conf.padding + titleHeight + conf.dividerMargin + membersBox.height);
 
   const methods = g
     .append('text') // text label for the x axis
     .attr('x', conf.padding)
-    .attr(
-      'y',
-      titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight
-    )
+    .attr('y', titleHeight + 2 * conf.dividerMargin + membersBox.height + conf.textHeight)
     .attr('fill', 'white')
-    .attr('class', 'classText')
+    .attr('class', 'classText');
 
-  isFirst = true
+  isFirst = true;
 
-  classDef.methods.forEach(function (method) {
-    addTspan(methods, method, isFirst)
-    isFirst = false
-  })
+  classDef.methods.forEach(function(method) {
+    addTspan(methods, method, isFirst);
+    isFirst = false;
+  });
 
-  const classBox = g.node().getBBox()
-  g.insert('rect', ':first-child')
+  const classBox = g.node().getBBox();
+  const rect = g
+    .insert('rect', ':first-child')
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', classBox.width + 2 * conf.padding)
-    .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin)
+    .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
 
-  membersLine.attr('x2', classBox.width + 2 * conf.padding)
-  methodsLine.attr('x2', classBox.width + 2 * conf.padding)
+  const rectWidth = rect.node().getBBox().width;
 
-  classInfo.width = classBox.width + 2 * conf.padding
-  classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin
+  // Center title
+  // We subtract the width of each text element from the class box width and divide it by 2
+  title.node().childNodes.forEach(function(x) {
+    x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
+  });
 
-  idCache[id] = classInfo
-  classCnt++
-  return classInfo
-}
+  membersLine.attr('x2', rectWidth);
+  methodsLine.attr('x2', rectWidth);
 
-export const setConf = function (cnf) {
-  const keys = Object.keys(cnf)
+  classInfo.width = rectWidth;
+  classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
-  keys.forEach(function (key) {
-    conf[key] = cnf[key]
-  })
-}
+  idCache[id] = classInfo;
+  classCnt++;
+  return classInfo;
+};
+
+export const setConf = function(cnf) {
+  const keys = Object.keys(cnf);
+
+  keys.forEach(function(key) {
+    conf[key] = cnf[key];
+  });
+};
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
  */
-export const draw = function (text, id) {
-  parser.yy.clear()
-  parser.parse(text)
+export const draw = function(text, id) {
+  parser.yy.clear();
+  parser.parse(text);
 
-  logger.info('Rendering diagram ' + text)
+  logger.info('Rendering diagram ' + text);
 
   /// / Fetch the default direction, use TD if none was found
-  const diagram = d3.select(`[id='${id}']`)
-  insertMarkers(diagram)
+  const diagram = d3.select(`[id='${id}']`);
+  insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph
   const g = new graphlib.Graph({
     multigraph: true
-  })
+  });
 
   // Set an object for the graph label
   g.setGraph({
     isMultiGraph: true
-  })
+  });
 
   // Default to assigning a new object as a label for each new edge.
-  g.setDefaultEdgeLabel(function () {
-    return {}
-  })
+  g.setDefaultEdgeLabel(function() {
+    return {};
+  });
 
-  const classes = classDb.getClasses()
-  const keys = Object.keys(classes)
-  total = keys.length
+  const classes = classDb.getClasses();
+  const keys = Object.keys(classes);
+  total = keys.length;
   for (let i = 0; i < keys.length; i++) {
-    const classDef = classes[keys[i]]
-    const node = drawClass(diagram, classDef)
+    const classDef = classes[keys[i]];
+    const node = drawClass(diagram, classDef);
     // Add nodes to the graph. The first argument is the node id. The second is
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
-    g.setNode(node.id, node)
-    logger.info('Org height: ' + node.height)
+    g.setNode(node.id, node);
+    logger.info('Org height: ' + node.height);
   }
 
-  const relations = classDb.getRelations()
-  relations.forEach(function (relation) {
+  const relations = classDb.getRelations();
+  relations.forEach(function(relation) {
     logger.info(
-      'tjoho' +
-        getGraphId(relation.id1) +
-        getGraphId(relation.id2) +
-        JSON.stringify(relation)
-    )
+      'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
+    );
     g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
       relation: relation
-    })
-  })
-  dagre.layout(g)
-  g.nodes().forEach(function (v) {
+    });
+  });
+  dagre.layout(g);
+  g.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
-      logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)))
+      logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
       d3.select('#' + v).attr(
         'transform',
         'translate(' +
@@ -418,27 +424,22 @@ export const draw = function (text, id) {
           ',' +
           (g.node(v).y - g.node(v).height / 2) +
           ' )'
-      )
+      );
     }
-  })
-  g.edges().forEach(function (e) {
+  });
+  g.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof g.edge(e) !== 'undefined') {
-      logger.debug(
-        'Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e))
-      )
-      drawEdge(diagram, g.edge(e), g.edge(e).relation)
+      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(g.edge(e)));
+      drawEdge(diagram, g.edge(e), g.edge(e).relation);
     }
-  })
+  });
 
-  diagram.attr('height', '100%')
-  diagram.attr('width', '100%')
-  diagram.attr(
-    'viewBox',
-    '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20)
-  )
-}
+  diagram.attr('height', '100%');
+  diagram.attr('width', '100%');
+  diagram.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+};
 
 export default {
   setConf,
   draw
-}
+};

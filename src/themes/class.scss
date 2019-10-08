@@ -3,6 +3,10 @@ g.classGroup text {
   stroke: none;
   font-family: 'trebuchet ms', verdana, arial;
   font-size: 10px;
+
+  .title {
+    font-weight: bolder;
+  }
 }
 
 g.classGroup rect {

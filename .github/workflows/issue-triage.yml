@@ -1,0 +1,14 @@
+name: Apply triage label to new issue
+
+on: 
+  issues:
+    types: [opened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: andymckay/labeler@1.0
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        labels: "Status: Triage"

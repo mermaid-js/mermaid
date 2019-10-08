@@ -190,8 +190,9 @@ Don't hesitate to contact me if you want to get involved.
 
     yarn lint
 
-We use [JavaScript Standard Style](https://github.com/feross/standard).
-We recommend you installing [editor plugins](https://github.com/feross/standard#are-there-text-editor-plugins) so you can get real time lint result.
+We use [eslint](https://eslint.org/).
+We recommend you installing [editor plugins](https://eslint.org/docs/user-guide/integrations) so you can get real time lint result.
+
 
 
 ## Test

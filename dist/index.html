@@ -399,6 +399,7 @@ merge newbranch
   <div class="mermaid">
 classDiagram
 Class01 <|-- AveryLongClass : Cool
+&lt;&lt;interface&gt;&gt; Class01
 Class03 "0" *-- "0..n" Class04
 Class05 "1" o-- "many" Class06
 Class07 .. Class08
@@ -411,6 +412,11 @@ Class01 : size()
 Class01 : int chimp
 Class01 : int gorilla
 Class08 <--> C2: Cool label
+class Class10 {
+  &lt;&lt;service&gt;&gt;
+  int id
+  size()
+}
   </div>
   <script src="./mermaid.js"></script>
   <script>
@@ -438,6 +444,19 @@ Class08 <--> C2: Cool label
         document.querySelector('body').style.backgroundColor = originalBgColor
       }, 100)
     }
+  </script>
+  <script>
+     const testLineEndings = (test, input) => {
+       try {
+         mermaid.render(test, input, () => {});
+       } catch (err) {
+         console.error("Error in %s:\n\n%s", test, err);
+       }
+     };
+
+     testLineEndings("CR", "graph LR\rsubgraph CR\rA --> B\rend");
+     testLineEndings("LF", "graph LR\nsubgraph LF\nA --> B\nend");
+     testLineEndings("CRLF", "graph LR\r\nsubgraph CRLF\r\nA --> B\r\nend");
   </script>
 </body>
 </html>

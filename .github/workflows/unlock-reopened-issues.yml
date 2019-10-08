@@ -1,0 +1,13 @@
+name: Unlock reopened issue
+
+on: 
+  issues:
+    types: [reopened]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: Dunning-Kruger/unlock-issues@v1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"

@@ -2,32 +2,66 @@
 
 ## mermaidAPI
 
-This is the api to be used when handling the integration with the web page instead of using the default integration
-(mermaid.js).
+This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
 
-The core of this api is the **render** function that given a graph definitionas text renders the graph/diagram and
-returns a svg element for the graph. It is is then up to the user of the API to make use of the svg, either insert it
-somewhere in the page or something completely different.
+The core of this api is the [**render**][1] function which, given a graph
+definition as text, renders the graph/diagram and returns an svg element for the graph.
+
+It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
+
+In addition to the render function, a number of behavioral configuration options are available.
 
 ## Configuration
 
-These are the default options which can be overridden with the initialization call as in the example below:
+These are the default options which can be overridden with the initialization call like so:
+**Example 1:**
 
-    mermaid.initialize({
-      flowchart:{
-         htmlLabels: false
-      }
-    });
+<pre>
+mermaid.initialize({
+  flowchart:{
+     htmlLabels: false
+  }
+});
+</pre>
+
+**Example 2:**
+
+<pre>
+ <script>
+  var config = {
+    startOnLoad:true,
+    flowchart:{
+      useMaxWidth:true,
+      htmlLabels:true,
+      curve:'cardinal',
+    },
+
+    securityLevel:'loose',
+  };
+  mermaid.initialize(config);
+</script>
+
+</pre>
+A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
 
 ## theme
 
 theme , the CSS style sheet
 
-**theme** - Choose one of the built-in themes: default, forest, dark or neutral. To disable any pre-defined mermaid theme, use "null".
+**theme** - Choose one of the built-in themes:
+
+-   default
+-   forest
+-   dark
+-   neutral.
+    To disable any pre-defined mermaid theme, use "null".
+
 **themeCSS** - Use your own CSS. This overrides **theme**.
 
-    "theme": "forest",
-    "themeCSS": ".node rect { fill: red; }"
+<pre>
+ "theme": "forest",
+ "themeCSS": ".node rect { fill: red; }"
+</pre>
 
 ## logLevel
 
@@ -43,8 +77,8 @@ This option decides the amount of logging to be used.
 
 Sets the level of trust to be used on the parsed diagrams.
 
--   **true**: (**default**) tags in text are encoded, click functionality is disabeled
--   **false**: tags in text are allowed, click functionality is enabled
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabled
+-   **loose**: tags in text are allowed, click functionality is enabled
 
 ## startOnLoad
 
@@ -69,7 +103,11 @@ on the edges.
 
 ### curve
 
-How mermaid renders curves for flowcharts. Possibel values are basis, linear and cardinal. **Default value linear**.
+How mermaid renders curves for flowcharts. Possible values are
+
+-   basis
+-   linear **default**
+-   cardinal
 
 ## sequence
 
@@ -77,7 +115,7 @@ The object containing configurations specific for sequence diagrams
 
 ### diagramMarginX
 
-margin to the right and left of the sequence diagram
+margin to the right and left of the sequence diagram.
 **Default value 50**.
 
 ### diagramMarginY
@@ -198,7 +236,7 @@ The number of alternating section styles.
 
 ### axisFormat
 
-Datetime format of the axis, this might need adjustment to match your locale and preferences
+Datetime format of the axis. This might need adjustment to match your locale and preferences
 **Default value '%Y-%m-%d'**.
 
 ## render
@@ -226,3 +264,57 @@ mermaidAPI.initialize({
 -   `container`  selector to element in which a div with the graph temporarily will be inserted. In one is
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
+
+## 
+
+## mermaidAPI configuration defaults
+
+<pre>
+
+<script>
+  var config = {
+    theme:'default',
+    logLevel:'fatal',
+    securityLevel:'strict',
+    startOnLoad:true,
+    arrowMarkerAbsolute:false,
+
+    flowchart:{
+      htmlLabels:true,
+      curve:'linear',
+    },
+    sequence:{
+      diagramMarginX:50,
+      diagramMarginY:10,
+      actorMargin:50,
+      width:150,
+      height:65,
+      boxMargin:10,
+      boxTextMargin:5,
+      noteMargin:10,
+      messageMargin:35,
+      mirrorActors:true,
+      bottomMarginAdj:1,
+      useMaxWidth:true,
+      rightAngles:false,
+      showSequenceNumbers:false,
+    },
+    gantt:{
+      titleTopMargin:25,
+      barHeight:20,
+      barGap:4,
+      topPadding:50,
+      leftPadding:75,
+      gridLineStartPadding:35,
+      fontSize:11,
+      fontFamily:'"Open-Sans", "sans-serif"',
+      numberSectionStyles:4,
+      axisFormat:'%Y-%m-%d',
+    }
+  };
+  mermaid.initialize(config);
+</script>
+
+</pre>
+
+[1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render

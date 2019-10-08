@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/knsv/mermaid.svg?branch=master)](https://travis-ci.org/knsv/mermaid)
 [![Coverage Status](https://coveralls.io/repos/github/knsv/mermaid/badge.svg?branch=master)](https://coveralls.io/github/knsv/mermaid?branch=master)
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 
 # mermaid
 
@@ -9,16 +10,16 @@
 In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced which sets the level of trust to be used on the parsed diagrams.
 
 * **`strict`**: (default) tags in text are encoded, click functionality is disabled
-* `loose`: tags in text are allowed, click functionality is enabledClosed issues:
+* `loose`: tags in text are allowed, click functionality is enabled
 
 ⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
-If your application is taking resposibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
+If your application is taking responsibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
 
 ```javascript
-    mermaidAPI.initialize({
-        securityLevel: 'loose'
-    });
+mermaidAPI.initialize({
+    securityLevel: 'loose'
+});
 ```
 
 **🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
@@ -31,7 +32,7 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-**Mermaid was nomiated and won the JS Open Source Awards (2019) in the category _The most exciting use of technology_!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+**Mermaid was nominated and won the JS Open Source Awards (2019) in the category _The most exciting use of technology_!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 ### Flowchart
 
@@ -75,7 +76,7 @@ section A section
 Completed task            :done,    des1, 2014-01-06,2014-01-08
 Active task               :active,  des2, 2014-01-09, 3d
 Future task               :         des3, after des2, 5d
-Future task2               :         des4, after des3, 5d
+Future task2              :         des4, after des3, 5d
 ```
 ![Gantt diagram](./img/gantt.png)
 
@@ -85,6 +86,7 @@ Future task2               :         des4, after des3, 5d
 ```
 classDiagram
 Class01 <|-- AveryLongClass : Cool
+<<interface>> Class01
 Class03 *-- Class04
 Class05 o-- Class06
 Class07 .. Class08
@@ -97,6 +99,11 @@ Class01 : size()
 Class01 : int chimp
 Class01 : int gorilla
 Class08 <--> C2: Cool label
+class Class10 {
+  <<service>>
+  int id
+  size()
+}
 ```
 ![Class diagram](./img/class.png)
 
@@ -130,9 +137,7 @@ merge newbranch
 
 ### CDN
 
-```
-https://unpkg.com/mermaid@<version>/dist/
-```
+    https://unpkg.com/mermaid@<version>/dist/
 
 Replace `<version>` with expected version number.
 
@@ -140,9 +145,7 @@ Example: https://unpkg.com/mermaid@7.1.0/dist/
 
 ### Node.js
 
-```
-yarn add mermaid
-```
+    yarn add mermaid
 
 
 ## Documentation
@@ -190,8 +193,8 @@ Don't hesitate to contact me if you want to get involved.
 
     yarn lint
 
-We use [JavaScript Standard Style](https://github.com/feross/standard).
-We recommend you installing [editor plugins](https://github.com/feross/standard#are-there-text-editor-plugins) so you can get real time lint result.
+We use [eslint](https://eslint.org/).
+We recommend you installing [editor plugins](https://eslint.org/docs/user-guide/integrations) so you can get real time lint result.
 
 
 ## Test
