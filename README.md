@@ -86,6 +86,7 @@ Future task2              :         des4, after des3, 5d
 ```
 classDiagram
 Class01 <|-- AveryLongClass : Cool
+<<interface>> Class01
 Class03 *-- Class04
 Class05 o-- Class06
 Class07 .. Class08
@@ -98,6 +99,11 @@ Class01 : size()
 Class01 : int chimp
 Class01 : int gorilla
 Class08 <--> C2: Cool label
+class Class10 {
+  <<service>>
+  int id
+  size()
+}
 ```
 ![Class diagram](./img/class.png)
 

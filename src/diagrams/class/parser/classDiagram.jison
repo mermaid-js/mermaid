@@ -21,6 +21,8 @@
 
 
 "class"               return 'CLASS';
+"<<"                  return 'ANNOTATION_START';
+">>"                  return 'ANNOTATION_END';
 ["]                   this.begin("string");
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
@@ -131,7 +133,6 @@ statements
     | statement NEWLINE statements
     ;
 
-
 className
     : alphaNumToken className { $$=$1+$2; }
     | alphaNumToken { $$=$1; }
@@ -142,11 +143,16 @@ statement
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | classStatement
     | methodStatement
+    | annotationStatement
     ;
 
 classStatement
     : CLASS className         {yy.addClass($2);}
     | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addClass($2);yy.addMembers($2,$4);}
+    ;
+
+annotationStatement
+    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
     ;
 
 members
