@@ -3,6 +3,7 @@ import dagre from 'dagre-layout';
 import graphlib from 'graphlibrary';
 import { logger } from '../../logger';
 import classDb from './classDb';
+import utils from '../../utils';
 import { parser } from './parser/classDiagram';
 
 parser.yy = classDb;
@@ -198,15 +199,38 @@ const drawEdge = function(elem, path, relation) {
 
   let x, y;
   const l = path.points.length;
+  // Calculate Label position
+  let labalPosition = utils.calcLabelPosition(path.points);
+  x = labalPosition.x;
+  y = labalPosition.y;
+
+  let p1_card_x,
+    p1_card_y,
+    p1_card_padd_x = conf.padding * 2,
+    p1_card_padd_y = conf.padding;
+  let p2_card_x,
+    p2_card_y,
+    p2_card_padd_x = conf.padding * 2,
+    p2_card_padd_y = -conf.padding / 2;
   if (l % 2 !== 0 && l > 1) {
-    const p1 = path.points[Math.floor(l / 2)];
-    const p2 = path.points[Math.ceil(l / 2)];
-    x = (p1.x + p2.x) / 2;
-    y = (p1.y + p2.y) / 2;
-  } else {
-    const p = path.points[Math.floor(l / 2)];
-    x = p.x;
-    y = p.y;
+    let cardinality_1_point = utils.calcCardinalityPosition(
+      relation.relation.type1 !== 'none',
+      path.points,
+      path.points[0]
+    );
+    let cardinality_2_point = utils.calcCardinalityPosition(
+      relation.relation.type2 !== 'none',
+      path.points,
+      path.points[l - 1]
+    );
+
+    logger.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
+    logger.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
+
+    p1_card_x = cardinality_1_point.x;
+    p1_card_y = cardinality_1_point.y;
+    p2_card_x = cardinality_2_point.x;
+    p2_card_y = cardinality_2_point.y;
   }
 
   if (typeof relation.title !== 'undefined') {
@@ -229,6 +253,30 @@ const drawEdge = function(elem, path, relation) {
       .attr('y', bounds.y - conf.padding / 2)
       .attr('width', bounds.width + conf.padding)
       .attr('height', bounds.height + conf.padding);
+  }
+
+  logger.info('Rendering relation ' + JSON.stringify(relation));
+  if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
+    const g = elem.append('g').attr('class', 'cardinality');
+    const label = g
+      .append('text')
+      .attr('class', 'type1')
+      .attr('x', p1_card_x)
+      .attr('y', p1_card_y)
+      .attr('fill', 'black')
+      .attr('font-size', '6')
+      .text(relation.relationTitle1);
+  }
+  if (typeof relation.relationTitle2 !== 'undefined' && relation.relationTitle2 !== 'none') {
+    const g = elem.append('g').attr('class', 'cardinality');
+    const label = g
+      .append('text')
+      .attr('class', 'type2')
+      .attr('x', p2_card_x)
+      .attr('y', p2_card_y)
+      .attr('fill', 'black')
+      .attr('font-size', '6')
+      .text(relation.relationTitle2);
   }
 
   edgeCount++;
