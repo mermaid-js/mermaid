@@ -262,5 +262,25 @@ describe('class diagram, ', function() {
       expect(testClass.methods.length).toBe(1);
       expect(testClass.annotations[0]).toBe('interface');
     });
+
+    it('should add bracket members in right order', function() {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.members.length).toBe(2);
+      expect(testClass.methods.length).toBe(2);
+      expect(testClass.members[0]).toBe('int : test');
+      expect(testClass.members[1]).toBe('string : foo');
+      expect(testClass.methods[0]).toBe('test()');
+      expect(testClass.methods[1]).toBe('foo()');
+    });
   });
 });
