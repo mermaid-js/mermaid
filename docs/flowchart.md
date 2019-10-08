@@ -239,6 +239,19 @@ graph LR
    A == text ==> B
 ```
 
+### Chaining of links
+
+It is possible declare many links in the same line as per below:
+```
+graph LR
+   A -- text --> B -- text2 --> C
+```
+```mermaid
+graph LR
+   A -- text --> B -- text2 --> C
+```
+
+
 ## Special characters that break syntax
 
 It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
@@ -350,7 +363,7 @@ Beginners tip, a full example using interactive links in a html context:
     	click A callback "Tooltip"
     	click B "http://www.github.com" "This is a link"
   </div>
-  
+
   <script>
   	var callback = function(){
         alert('A callback was triggered');
@@ -364,7 +377,7 @@ Beginners tip, a full example using interactive links in a html context:
       },
       securityLevel:'loose',
     };
-    
+
     mermaid.initialize(config);
   </script>
 </body>
