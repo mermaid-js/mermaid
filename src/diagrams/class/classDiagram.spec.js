@@ -207,5 +207,60 @@ describe('class diagram, ', function() {
       expect(relations[3].relation.type2).toBe('none');
       expect(relations[3].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
+
+    it('should handle class annotations', function() {
+      const str = 'classDiagram\n' + 'class Class1\n' + '<<interface>> Class1';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.annotations.length).toBe(1);
+      expect(testClass.members.length).toBe(0);
+      expect(testClass.methods.length).toBe(0);
+      expect(testClass.annotations[0]).toBe('interface');
+    });
+
+    it('should handle class annotations with members and methods', function() {
+      const str =
+        'classDiagram\n' +
+        'class Class1\n' +
+        'Class1 : int test\n' +
+        'Class1 : test()\n' +
+        '<<interface>> Class1';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.annotations.length).toBe(1);
+      expect(testClass.members.length).toBe(1);
+      expect(testClass.methods.length).toBe(1);
+      expect(testClass.annotations[0]).toBe('interface');
+    });
+
+    it('should handle class annotations in brackets', function() {
+      const str = 'classDiagram\n' + 'class Class1 {\n' + '<<interface>>\n' + '}';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.annotations.length).toBe(1);
+      expect(testClass.members.length).toBe(0);
+      expect(testClass.methods.length).toBe(0);
+      expect(testClass.annotations[0]).toBe('interface');
+    });
+
+    it('should handle class annotations in brackets with members and methods', function() {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        '<<interface>>\n' +
+        'int : test\n' +
+        'test()\n' +
+        '}';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.annotations.length).toBe(1);
+      expect(testClass.members.length).toBe(1);
+      expect(testClass.methods.length).toBe(1);
+      expect(testClass.annotations[0]).toBe('interface');
+    });
   });
 });
