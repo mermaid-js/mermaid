@@ -230,44 +230,80 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   const g = elem.append('g');
   const txtCenter = startx + (stopx - startx) / 2;
 
-  let textElem
-  let counterBreaklines = 0
-  let breaklineOffset = 17
-  const breaklines = msg.message.split(/<br\/?>/ig)
+  let textElem;
+  let counterBreaklines = 0;
+  let breaklineOffset = 17;
+  const breaklines = msg.message.split(/<br\/?>/gi);
   for (const breakline of breaklines) {
-    textElem = g.append('text') // text label for the x axis
+    textElem = g
+      .append('text') // text label for the x axis
       .attr('x', txtCenter)
       .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
       .style('text-anchor', 'middle')
       .attr('class', 'messageText')
-      .text(breakline.trim())
-    counterBreaklines++
+      .text(breakline.trim());
+    counterBreaklines++;
   }
-  const offsetLineCounter = counterBreaklines - 1
-  const totalOffset = offsetLineCounter * breaklineOffset
+  const offsetLineCounter = counterBreaklines - 1;
+  const totalOffset = offsetLineCounter * breaklineOffset;
 
   let textWidth = (textElem._groups || textElem)[0][0].getBBox().width;
 
   let line;
   if (startx === stopx) {
     if (conf.rightAngles) {
-      line = g.append('path').attr('d', `M  ${startx},${verticalPos + totalOffset} H ${startx + (conf.width / 2)} V ${verticalPos + 25 + totalOffset} H ${startx}`)
+      line = g
+        .append('path')
+        .attr(
+          'd',
+          `M  ${startx},${verticalPos + totalOffset} H ${startx + conf.width / 2} V ${verticalPos +
+            25 +
+            totalOffset} H ${startx}`
+        );
     } else {
-      line = g.append('path')
-        .attr('d', 'M ' + startx + ',' + (verticalPos + totalOffset) + ' C ' + (startx + 60) + ',' + (verticalPos - 10 + totalOffset) + ' ' + (startx + 60) + ',' +
-        (verticalPos + 30 + totalOffset) + ' ' + startx + ',' + (verticalPos + 20 + totalOffset))
+      line = g
+        .append('path')
+        .attr(
+          'd',
+          'M ' +
+            startx +
+            ',' +
+            (verticalPos + totalOffset) +
+            ' C ' +
+            (startx + 60) +
+            ',' +
+            (verticalPos - 10 + totalOffset) +
+            ' ' +
+            (startx + 60) +
+            ',' +
+            (verticalPos + 30 + totalOffset) +
+            ' ' +
+            startx +
+            ',' +
+            (verticalPos + 20 + totalOffset)
+        );
     }
 
-    bounds.bumpVerticalPos(30 + totalOffset)
-    const dx = Math.max(textWidth / 2, 100)
-    bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + totalOffset)
+    bounds.bumpVerticalPos(30 + totalOffset);
+    const dx = Math.max(textWidth / 2, 100);
+    bounds.insert(
+      startx - dx,
+      bounds.getVerticalPos() - 10 + totalOffset,
+      stopx + dx,
+      bounds.getVerticalPos() + totalOffset
+    );
   } else {
-    line = g.append('line')
-    line.attr('x1', startx)
-    line.attr('y1', verticalPos)
-    line.attr('x2', stopx)
-    line.attr('y2', verticalPos)
-    bounds.insert(startx, bounds.getVerticalPos() - 10 + totalOffset, stopx, bounds.getVerticalPos() + totalOffset)
+    line = g.append('line');
+    line.attr('x1', startx);
+    line.attr('y1', verticalPos);
+    line.attr('x2', stopx);
+    line.attr('y2', verticalPos);
+    bounds.insert(
+      startx,
+      bounds.getVerticalPos() - 10 + totalOffset,
+      stopx,
+      bounds.getVerticalPos() + totalOffset
+    );
   }
   // Make an SVG Container
   // Draw the line
