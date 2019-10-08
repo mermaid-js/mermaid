@@ -112,6 +112,17 @@ graph LR
     id1{This is the text in the box}
 ```
 
+### A hexagon node
+
+```
+graph LR
+    id1{{This is the text in the box}}
+```
+```mermaid
+graph LR
+    id1{{This is the text in the box}}
+```
+
 ### Trapezoid
 
 ```mermaid
@@ -350,7 +361,7 @@ Beginners tip, a full example using interactive links in a html context:
     	click A callback "Tooltip"
     	click B "http://www.github.com" "This is a link"
   </div>
-  
+
   <script>
   	var callback = function(){
         alert('A callback was triggered');
@@ -364,7 +375,7 @@ Beginners tip, a full example using interactive links in a html context:
       },
       securityLevel:'loose',
     };
-    
+
     mermaid.initialize(config);
   </script>
 </body>
