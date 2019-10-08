@@ -112,6 +112,17 @@ graph LR
     id1{This is the text in the box}
 ```
 
+### A hexagon node
+
+```
+graph LR
+    id1{{This is the text in the box}}
+```
+```mermaid
+graph LR
+    id1{{This is the text in the box}}
+```
+
 ### Trapezoid
 
 ```mermaid
