@@ -92,12 +92,15 @@ export const draw = function(text, id) {
 
   const bounds = diagram.node().getBBox();
 
-  // diagram.attr('height', '100%');
+  diagram.attr('height', '100%');
   // diagram.attr('width', 'fit-content');
-  diagram.attr('style', 'width: fit-content;');
+  diagram.attr('style', `max-width: ${bounds.width * 1.5 + conf.padding * 2};`);
   diagram.attr(
     'viewBox',
-    '0 0 ' + (bounds.width + conf.padding * 2) + ' ' + (bounds.height + conf.padding * 2)
+    `${conf.padding * -1} ${conf.padding * -1} ` +
+      (bounds.width * 1.5 + conf.padding * 2) +
+      ' ' +
+      (bounds.height * 1.5 + conf.padding * 2)
   );
 };
 const getLabelWidth = text => {

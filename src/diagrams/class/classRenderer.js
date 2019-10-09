@@ -323,6 +323,8 @@ const drawClass = function(elem, classDef) {
     isFirst = false;
   });
 
+  console.warn('classDef.id', classDef.id);
+  console.warn('isFirst', isFirst);
   // add class title
   const classTitle = title
     .append('tspan')
@@ -346,6 +348,7 @@ const drawClass = function(elem, classDef) {
     .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
     .attr('fill', 'white')
     .attr('class', 'classText');
+  console.warn(classDef.id, titleHeight, conf.dividerMargin, conf.textHeight);
 
   isFirst = true;
   classDef.members.forEach(function(member) {
@@ -483,8 +486,8 @@ export const draw = function(text, id) {
   });
 
   diagram.attr('height', '100%');
-  diagram.attr('width', '100%');
-  diagram.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+  diagram.attr('width', `${g.graph().width * 1.5 + 20}`);
+  diagram.attr('viewBox', '-10 -10 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
 };
 
 export default {
