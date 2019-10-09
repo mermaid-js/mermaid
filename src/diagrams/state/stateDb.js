@@ -1,7 +1,40 @@
 import { logger } from '../../logger';
 
-let relations = [];
-let states = {};
+let rootDoc = [];
+const setRootDoc = o => {
+  logger.info('Setting root doc', o);
+  rootDoc = o;
+};
+
+const getRootDoc = () => rootDoc;
+
+const extract = doc => {
+  const res = { states: [], relations: [] };
+  clear();
+
+  doc.forEach(item => {
+    if (item.stmt === 'state') {
+      addState(item.id, item.type, item.doc, item.description, item.note);
+    }
+    if (item.stmt === 'relation') {
+      addRelation(item.state1.id, item.state2.id, item.description);
+    }
+  });
+};
+
+const newDoc = () => {
+  return {
+    relations: [],
+    states: {},
+    documents: {}
+  };
+};
+
+let documents = {
+  root: newDoc()
+};
+
+let currentDocument = documents.root;
 
 let startCnt = 0;
 let endCnt = 0;
@@ -13,32 +46,46 @@ let endCnt = 0;
  * @param type
  * @param style
  */
-export const addState = function(id, type) {
-  if (typeof states[id] === 'undefined') {
-    states[id] = {
+export const addState = function(id, type, doc, descr, note) {
+  if (typeof currentDocument.states[id] === 'undefined') {
+    currentDocument.states[id] = {
       id: id,
       descriptions: [],
-      type
+      type,
+      doc,
+      note
     };
+  } else {
+    if (!currentDocument.states[id].doc) {
+      currentDocument.states[id].doc = doc;
+    }
+    if (!currentDocument.states[id].type) {
+      currentDocument.states[id].type = type;
+    }
   }
+  if (descr) addDescription(id, descr.trim());
+  if (note) currentDocument.states[id].note = note;
 };
 
 export const clear = function() {
-  relations = [];
-  states = {};
+  documents = {
+    root: newDoc()
+  };
+  currentDocument = documents.root;
 };
 
 export const getState = function(id) {
-  return states[id];
-};
-export const getStates = function() {
-  return states;
+  return currentDocument.states[id];
 };
 
+export const getStates = function() {
+  return currentDocument.states;
+};
+export const logDocuments = function() {
+  logger.info('Documents = ', documents);
+};
 export const getRelations = function() {
-  // const relations1 = [{ id1: 'start1', id2: 'state1' }, { id1: 'state1', id2: 'exit1' }];
-  // return relations;
-  return relations;
+  return currentDocument.relations;
 };
 
 export const addRelation = function(_id1, _id2, title) {
@@ -56,26 +103,19 @@ export const addRelation = function(_id1, _id2, title) {
     id2 = 'end' + startCnt;
     type2 = 'end';
   }
-  console.log(id1, id2, title);
   addState(id1, type1);
   addState(id2, type2);
-  relations.push({ id1, id2, title });
+  currentDocument.relations.push({ id1, id2, title });
 };
 
-export const addDescription = function(id, _descr) {
-  const theState = states[id];
+const addDescription = function(id, _descr) {
+  const theState = currentDocument.states[id];
   let descr = _descr;
   if (descr[0] === ':') {
     descr = descr.substr(1).trim();
   }
 
   theState.descriptions.push(descr);
-};
-
-export const addMembers = function(className, MembersArr) {
-  if (Array.isArray(MembersArr)) {
-    MembersArr.forEach(member => addMember(className, member));
-  }
 };
 
 export const cleanupLabel = function(label) {
@@ -89,6 +129,12 @@ export const cleanupLabel = function(label) {
 export const lineType = {
   LINE: 0,
   DOTTED_LINE: 1
+};
+
+let dividerCnt = 0;
+const getDividerId = () => {
+  dividerCnt++;
+  return 'divider-id-' + dividerCnt;
 };
 
 export const relationType = {
@@ -105,9 +151,13 @@ export default {
   getStates,
   getRelations,
   addRelation,
-  addDescription,
-  addMembers,
+  getDividerId,
+  // addDescription,
   cleanupLabel,
   lineType,
-  relationType
+  relationType,
+  logDocuments,
+  getRootDoc,
+  setRootDoc,
+  extract
 };
