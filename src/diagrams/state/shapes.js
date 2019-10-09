@@ -82,7 +82,8 @@ export const drawDescrState = (g, stateDef) => {
     .attr('class', 'state-title')
     .text(stateDef.id);
 
-  const titleHeight = title.node().getBBox().height;
+  const titleBox = title.node().getBBox();
+  const titleHeight = titleBox.height;
 
   const description = g
     .append('text') // text label for the x axis
@@ -104,13 +105,16 @@ export const drawDescrState = (g, stateDef) => {
     .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
     .attr('class', 'descr-divider');
   const descrBox = description.node().getBBox();
-  descrLine.attr('x2', descrBox.width + 3 * conf.padding);
+  console.warn(descrBox.width, titleBox.width);
+  const width = Math.max(descrBox.width, titleBox.width);
+
+  descrLine.attr('x2', width + 3 * conf.padding);
   // const classBox = title.node().getBBox();
 
   g.insert('rect', ':first-child')
     .attr('x', conf.padding)
     .attr('y', conf.padding)
-    .attr('width', descrBox.width + 2 * conf.padding)
+    .attr('width', width + 2 * conf.padding)
     .attr('height', descrBox.height + titleHeight + 2 * conf.padding)
     .attr('rx', '5');
 

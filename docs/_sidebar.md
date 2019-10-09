@@ -9,6 +9,7 @@
 - Diagrams
 
   - [Flowchart](flowchart.md)
+  - [State diagram](stateDiagram.md)
   - [Sequence diagram](sequenceDiagram.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)

@@ -73,6 +73,7 @@ export const draw = function(text, id) {
     compound: true,
     // acyclicer: 'greedy',
     rankdir: 'RL'
+    // ranksep: '20'
   });
 
   // // Set an object for the graph label
@@ -91,9 +92,13 @@ export const draw = function(text, id) {
 
   const bounds = diagram.node().getBBox();
 
-  diagram.attr('height', '100%');
-  diagram.attr('width', '100%');
-  diagram.attr('viewBox', '0 0 ' + bounds.width * 2 + ' ' + (bounds.height + 50));
+  // diagram.attr('height', '100%');
+  // diagram.attr('width', 'fit-content');
+  diagram.attr('style', 'width: fit-content;');
+  diagram.attr(
+    'viewBox',
+    '0 0 ' + (bounds.width + conf.padding * 2) + ' ' + (bounds.height + conf.padding * 2)
+  );
 };
 const getLabelWidth = text => {
   return text ? text.length * 5.02 : 1;
@@ -124,6 +129,7 @@ const renderDoc = (doc, diagram, parentId) => {
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
+      ranksep: '20',
       ranker: 'tight-tree'
       // ranker: 'network-simplex'
       // isMultiGraph: false
@@ -155,7 +161,7 @@ const renderDoc = (doc, diagram, parentId) => {
       node = renderDoc(stateDef.doc, sub, stateDef.id);
 
       if (first) {
-        first = false;
+        // first = false;
         sub = addIdAndBox(sub, stateDef);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;

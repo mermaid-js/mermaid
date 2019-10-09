@@ -13,6 +13,17 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a single state with short descr', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+      state "A long long name" as long1
+      state "A" as longlonglongid
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
   it('should render a state with a note', () => {
     imgSnapshotTest(
       `
@@ -145,7 +156,7 @@ describe('State diagram', () => {
         Off --> On : Turn on
       }
 
-      TV--> Console : KarlMartin
+      TV--> Console
 
       state Console {
         [*] --> Off2: Off to start with

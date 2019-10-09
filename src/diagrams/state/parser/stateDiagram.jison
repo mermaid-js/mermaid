@@ -112,7 +112,8 @@ line
 	;
 
 statement
-	: idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
+	: idStatement { /*console.warn('got id and descr', $1);*/$$={ stmt: 'state', id: $1, type: 'default', description: ''};}
+	| idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
 	| idStatement '-->' idStatement
     {
         /*console.warn('got id', $1);yy.addRelation($1, $3);*/
@@ -128,10 +129,11 @@ statement
     | COMPOSIT_STATE
     | COMPOSIT_STATE STRUCT_START document STRUCT_STOP
     {
+
         /* console.warn('Adding document for state without id ', $1);*/
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
-    | STATE_DESCR AS ID { $$={id: $3, type: 'default', description: $1.trim()};}
+    | STATE_DESCR AS ID { $$={stmt: 'state', id: $3, type: 'default', description: $1.trim()};}
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     {
          //console.warn('Adding document for state with id ', $3, $4); yy.addDocument($3);
