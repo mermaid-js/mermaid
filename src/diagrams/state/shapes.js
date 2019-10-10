@@ -158,11 +158,29 @@ export const addIdAndBox = (g, stateDef) => {
   title.attr('x', graphBox.width / 2 - title.node().getBBox().width / 2);
   descrLine.attr('x2', graphBox.width + conf.padding);
 
+  // White color
+  g.insert('rect', ':first-child')
+    .attr('x', graphBox.x)
+    .attr('y', lineY)
+    .attr('style', 'fill: white; border-bottom: 1px')
+    .attr('width', graphBox.width + conf.padding)
+    .attr('height', graphBox.height + 3 + conf.textHeight - 17)
+    .attr('rx', '0');
+
+  // Title background
   g.insert('rect', ':first-child')
     .attr('x', graphBox.x)
     .attr('y', -15 - conf.textHeight - conf.padding)
     .attr('width', graphBox.width + conf.padding)
-    .attr('height', graphBox.height + 3 + conf.textHeight)
+    .attr('height', 30)
+    .attr('rx', '5');
+
+  // Full background
+  g.insert('rect', ':first-child')
+    .attr('x', graphBox.x)
+    .attr('y', -15 - conf.textHeight - conf.padding)
+    .attr('width', graphBox.width + conf.padding)
+    .attr('height', graphBox.height + 3 + conf.textHeight + 10)
     .attr('rx', '5');
 
   return g;
@@ -184,13 +202,21 @@ const drawEndState = g => {
     .attr('cx', conf.padding + 7)
     .attr('cy', conf.padding + 7);
 };
-const drawForkJoinState = g => {
+const drawForkJoinState = (g, stateDef) => {
+  let width = 70;
+  let height = 7;
+
+  if (Math.PI > 3 || stateDef.parentId) {
+    let tmp = width;
+    width = height;
+    height = tmp;
+  }
   return g
     .append('rect')
     .style('stroke', 'black')
     .style('fill', 'black')
-    .attr('width', 70)
-    .attr('height', 7)
+    .attr('width', width)
+    .attr('height', height)
     .attr('x', conf.padding)
     .attr('y', conf.padding);
 };
@@ -286,7 +312,7 @@ export const drawState = function(elem, stateDef, graph, doc) {
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
-  if (stateDef.type === 'fork' || stateDef.type === 'join') drawForkJoinState(g);
+  if (stateDef.type === 'fork' || stateDef.type === 'join') drawForkJoinState(g, stateDef);
   if (stateDef.type === 'note') drawNote(stateDef.note.text, g);
   if (stateDef.type === 'divider') drawDivider(g);
   if (stateDef.type === 'default' && stateDef.descriptions.length === 0)

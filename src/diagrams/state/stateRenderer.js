@@ -152,6 +152,10 @@ const renderDoc = (doc, diagram, parentId) => {
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
 
+    if (parentId) {
+      stateDef.parentId = parentId;
+    }
+
     let node;
     if (stateDef.doc) {
       let sub = diagram
