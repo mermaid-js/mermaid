@@ -420,8 +420,30 @@ class Class10 {
   </div>
   <div class="mermaid">
     stateDiagram
-      s1
+      State1
       </div>
+
+      <hr>
+      <div class="mermaid">
+        stateDiagram
+        [*] --> First
+        state First {
+            [*] --> second
+            second --> [*]
+        }
+          </div>
+  <div class="mermaid">
+    stateDiagram
+        State1: The state with a note
+        note right of State1
+            Important information! You can write
+            notes.
+        end note
+        State1 --> State2
+        note left of State2 : This is the note to the left.
+      </div>
+
+
   <script src="./mermaid.js"></script>
   <script>
     mermaid.initialize({

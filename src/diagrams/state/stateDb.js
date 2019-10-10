@@ -38,6 +38,7 @@ let currentDocument = documents.root;
 
 let startCnt = 0;
 let endCnt = 0;
+let stateCnt = 0;
 
 /**
  * Function called by parser when a node definition has been found.

@@ -206,7 +206,7 @@ const drawForkJoinState = (g, stateDef) => {
   let width = 70;
   let height = 7;
 
-  if (Math.PI > 3 || stateDef.parentId) {
+  if (stateDef.parentId) {
     let tmp = width;
     width = height;
     height = tmp;
@@ -296,6 +296,8 @@ export const drawNote = (text, g) => {
  * @param {*} elem
  * @param {*} stateDef
  */
+
+let cnt = 0;
 export const drawState = function(elem, stateDef, graph, doc) {
   const id = stateDef.id;
   const stateInfo = {

@@ -94,7 +94,7 @@ export const draw = function(text, id) {
 
   diagram.attr('height', '100%');
   // diagram.attr('width', 'fit-content');
-  diagram.attr('style', `max-width: ${bounds.width * 1.5 + conf.padding * 2};`);
+  diagram.attr('style', `width: ${bounds.width * 3 + conf.padding * 2};`);
   diagram.attr(
     'viewBox',
     `${conf.padding * -1} ${conf.padding * -1} ` +
@@ -152,6 +152,7 @@ const renderDoc = (doc, diagram, parentId) => {
 
   total = keys.length;
   let first = true;
+
   for (let i = 0; i < keys.length; i++) {
     const stateDef = states[keys[i]];
 
@@ -227,11 +228,12 @@ const renderDoc = (doc, diagram, parentId) => {
   dagre.layout(graph);
 
   logger.debug('Graph after layout', graph.nodes());
+  const svgElem = diagram.node();
 
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      logger.debug('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-      d3.select('#' + v).attr(
+      logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+      d3.select('#' + svgElem.id + ' #' + v).attr(
         'transform',
         'translate(' +
           (graph.node(v).x - graph.node(v).width / 2) +
@@ -241,15 +243,17 @@ const renderDoc = (doc, diagram, parentId) => {
             graph.node(v).height / 2) +
           ' )'
       );
-      d3.select('#' + v).attr('data-x-shift', graph.node(v).x - graph.node(v).width / 2);
-      const dividers = document.querySelectorAll('#' + v + ' .divider');
+      d3.select('#' + svgElem.id + ' #' + v).attr(
+        'data-x-shift',
+        graph.node(v).x - graph.node(v).width / 2
+      );
+      const dividers = document.querySelectorAll('#' + svgElem.id + ' #' + v + ' .divider');
       dividers.forEach(divider => {
         const parent = divider.parentElement;
         let pWidth = 0;
         let pShift = 0;
         if (parent) {
           if (parent.parentElement) pWidth = parent.parentElement.getBBox().width;
-
           pShift = parseInt(parent.getAttribute('data-x-shift'), 10);
           if (Number.isNaN(pShift)) {
             pShift = 0;
@@ -263,7 +267,7 @@ const renderDoc = (doc, diagram, parentId) => {
     }
   });
 
-  let stateBox = diagram.node().getBBox();
+  let stateBox = svgElem.getBBox();
 
   graph.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
@@ -272,7 +276,8 @@ const renderDoc = (doc, diagram, parentId) => {
     }
   });
 
-  stateBox = diagram.node().getBBox();
+  stateBox = svgElem.getBBox();
+  console.warn('Diagram node', svgElem.id);
   const stateInfo = {
     id: parentId ? parentId : 'root',
     label: parentId ? parentId : 'root',
