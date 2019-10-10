@@ -74,7 +74,7 @@ export const addMember = function(className, member) {
       theClass.annotations.push(memberString.substring(2, memberString.length - 2));
     } else if (memberString.endsWith(')')) {
       theClass.methods.push(memberString);
-    } else {
+    } else if (memberString) {
       theClass.members.push(memberString);
     }
   }
