@@ -84,6 +84,10 @@ This is what a rendering test looks like:
 
 Finally, if it is not in the documentation, no one will now about it and then **no one will use it**. Wouldn't that be sad? With all effort that was put into the feature?
 
+The docs are located in the docs folder and are ofc written in markdown. Just pick the right section and start typing. If you want to add to the structure as in adding a new section and new file you do that via the _navbar.md.
+
+The changes in master is reflected in http://knsv.github.io/mermaid/ once released the updates are commited to https://mermaidjs.github.io/#/
+
 ## Last words
 
 Don't get daunted if it is hard in the beginning. We have a great community with only enouraging words. So if you get stuck, ask for help and hints in the slack forum. If you want to show off something good, show it off there.
