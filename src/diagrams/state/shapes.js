@@ -41,6 +41,7 @@ export const drawSimpleState = (g, stateDef) => {
     .attr('x', 2 * getConfig().state.padding)
     .attr('y', getConfig().state.textHeight + 2 * getConfig().state.padding)
     .attr('font-size', getConfig().state.fontSize)
+    .attr('class', 'state-title')
     .text(stateDef.id);
 
   const classBox = state.node().getBBox();
@@ -90,7 +91,6 @@ export const drawDescrState = (g, stateDef) => {
         getConfig().state.dividerMargin +
         getConfig().state.textHeight
     )
-    .attr('fill', 'white')
     .attr('class', 'state-description');
 
   let isFirst = true;
@@ -163,7 +163,7 @@ export const addIdAndBox = (g, stateDef) => {
   g.insert('rect', ':first-child')
     .attr('x', graphBox.x)
     .attr('y', lineY)
-    .attr('style', 'fill: white; border-bottom: 1px')
+    .attr('class', 'composit')
     .attr('width', graphBox.width + getConfig().state.padding)
     .attr(
       'height',
@@ -293,7 +293,7 @@ const _drawLongText = (_text, x, y, g) => {
  */
 
 export const drawNote = (text, g) => {
-  g.attr('class', 'note');
+  g.attr('class', 'state-note');
   const note = g
     .append('rect')
     .attr('x', 0)
@@ -327,7 +327,7 @@ export const drawState = function(elem, stateDef, graph, doc) {
   const g = elem
     .append('g')
     .attr('id', id)
-    .attr('class', 'classGroup');
+    .attr('class', 'stateGroup');
 
   if (stateDef.type === 'start') drawStartState(g);
   if (stateDef.type === 'end') drawEndState(g);
@@ -382,7 +382,7 @@ export const drawEdge = function(elem, path, relation) {
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', 'edge' + edgeCount)
-    .attr('class', 'relation');
+    .attr('class', 'transition');
   let url = '';
   if (getConfig().state.arrowMarkerAbsolute) {
     url =
@@ -401,7 +401,7 @@ export const drawEdge = function(elem, path, relation) {
   );
 
   if (typeof relation.title !== 'undefined') {
-    const g = elem.append('g').attr('class', 'classLabel');
+    const g = elem.append('g').attr('class', 'stateLabel');
     const label = g
       .append('text')
       .attr('class', 'label')

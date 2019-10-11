@@ -166,7 +166,7 @@ const renderDoc = (doc, diagram, parentId) => {
       let sub = diagram
         .append('g')
         .attr('id', stateDef.id)
-        .attr('class', 'classGroup');
+        .attr('class', 'stateGroup');
       node = renderDoc(stateDef.doc, sub, stateDef.id);
 
       if (first) {
