@@ -2,14 +2,9 @@ import * as d3 from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
+import { getConfig, conf } from '../../config';
 
-// TODO Move conf object to main conf in mermaidAPI
-const conf = {
-  dividerMargin: 10,
-  padding: 5,
-  textHeight: 10,
-  noteMargin: 10
-};
+// let conf;
 
 /**
  * Draws a start state as a black circle
@@ -19,9 +14,9 @@ export const drawStartState = g =>
     .append('circle')
     .style('stroke', 'black')
     .style('fill', 'black')
-    .attr('r', 5)
-    .attr('cx', conf.padding + 5)
-    .attr('cy', conf.padding + 5);
+    .attr('r', getConfig().state.sizeUnit)
+    .attr('cx', getConfig().state.padding + getConfig().state.sizeUnit)
+    .attr('cy', getConfig().state.padding + getConfig().state.sizeUnit);
 
 /**
  * Draws a start state as a black circle
@@ -31,9 +26,9 @@ export const drawDivider = g =>
     .append('line')
     .style('stroke', 'grey')
     .style('stroke-dasharray', '3')
-    .attr('x1', 10)
+    .attr('x1', getConfig().state.textHeight)
     .attr('class', 'divider')
-    .attr('x2', 20)
+    .attr('x2', getConfig().state.textHeight * 2)
     .attr('y1', 0)
     .attr('y2', 0);
 
@@ -43,18 +38,18 @@ export const drawDivider = g =>
 export const drawSimpleState = (g, stateDef) => {
   const state = g
     .append('text')
-    .attr('x', 2 * conf.padding)
-    .attr('y', conf.textHeight + 2 * conf.padding)
-    .attr('font-size', 24)
+    .attr('x', 2 * getConfig().state.padding)
+    .attr('y', getConfig().state.textHeight + 2 * getConfig().state.padding)
+    .attr('font-size', getConfig().state.fontSize)
     .text(stateDef.id);
 
   const classBox = state.node().getBBox();
   g.insert('rect', ':first-child')
-    .attr('x', conf.padding)
-    .attr('y', conf.padding)
-    .attr('width', classBox.width + 2 * conf.padding)
-    .attr('height', classBox.height + 2 * conf.padding)
-    .attr('rx', '5');
+    .attr('x', getConfig().state.padding)
+    .attr('y', getConfig().state.padding)
+    .attr('width', classBox.width + 2 * getConfig().state.padding)
+    .attr('height', classBox.height + 2 * getConfig().state.padding)
+    .attr('rx', getConfig().state.radius);
 
   return state;
 };
@@ -68,17 +63,17 @@ export const drawDescrState = (g, stateDef) => {
   const addTspan = function(textEl, txt, isFirst) {
     const tSpan = textEl
       .append('tspan')
-      .attr('x', 2 * conf.padding)
+      .attr('x', 2 * getConfig().state.padding)
       .text(txt);
     if (!isFirst) {
-      tSpan.attr('dy', conf.textHeight);
+      tSpan.attr('dy', getConfig().state.textHeight);
     }
   };
   const title = g
     .append('text')
-    .attr('x', 2 * conf.padding)
-    .attr('y', conf.textHeight + 1.5 * conf.padding)
-    .attr('font-size', 24)
+    .attr('x', 2 * getConfig().state.padding)
+    .attr('y', getConfig().state.textHeight + 1.5 * getConfig().state.padding)
+    .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
     .text(stateDef.id);
 
@@ -87,8 +82,14 @@ export const drawDescrState = (g, stateDef) => {
 
   const description = g
     .append('text') // text label for the x axis
-    .attr('x', conf.padding)
-    .attr('y', titleHeight + conf.padding * 0.2 + conf.dividerMargin + conf.textHeight)
+    .attr('x', getConfig().state.padding)
+    .attr(
+      'y',
+      titleHeight +
+        getConfig().state.padding * 0.2 +
+        getConfig().state.dividerMargin +
+        getConfig().state.textHeight
+    )
     .attr('fill', 'white')
     .attr('class', 'state-description');
 
@@ -100,23 +101,23 @@ export const drawDescrState = (g, stateDef) => {
 
   const descrLine = g
     .append('line') // text label for the x axis
-    .attr('x1', conf.padding)
-    .attr('y1', conf.padding + titleHeight + conf.dividerMargin / 2)
-    .attr('y2', conf.padding + titleHeight + conf.dividerMargin / 2)
+    .attr('x1', getConfig().state.padding)
+    .attr('y1', getConfig().state.padding + titleHeight + getConfig().state.dividerMargin / 2)
+    .attr('y2', getConfig().state.padding + titleHeight + getConfig().state.dividerMargin / 2)
     .attr('class', 'descr-divider');
   const descrBox = description.node().getBBox();
   console.warn(descrBox.width, titleBox.width);
   const width = Math.max(descrBox.width, titleBox.width);
 
-  descrLine.attr('x2', width + 3 * conf.padding);
+  descrLine.attr('x2', width + 3 * getConfig().state.padding);
   // const classBox = title.node().getBBox();
 
   g.insert('rect', ':first-child')
-    .attr('x', conf.padding)
-    .attr('y', conf.padding)
-    .attr('width', width + 2 * conf.padding)
-    .attr('height', descrBox.height + titleHeight + 2 * conf.padding)
-    .attr('rx', '5');
+    .attr('x', getConfig().state.padding)
+    .attr('y', getConfig().state.padding)
+    .attr('width', width + 2 * getConfig().state.padding)
+    .attr('height', descrBox.height + titleHeight + 2 * getConfig().state.padding)
+    .attr('rx', getConfig().state.radius);
 
   return g;
 };
@@ -130,23 +131,23 @@ export const addIdAndBox = (g, stateDef) => {
   const addTspan = function(textEl, txt, isFirst) {
     const tSpan = textEl
       .append('tspan')
-      .attr('x', 2 * conf.padding)
+      .attr('x', 2 * getConfig().state.padding)
       .text(txt);
     if (!isFirst) {
-      tSpan.attr('dy', conf.textHeight);
+      tSpan.attr('dy', getConfig().state.textHeight);
     }
   };
   const title = g
     .append('text')
-    .attr('x', 2 * conf.padding)
-    .attr('y', -15)
-    .attr('font-size', 24)
+    .attr('x', 2 * getConfig().state.padding)
+    .attr('y', getConfig().state.titleShift)
+    .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
     .text(stateDef.id);
 
   const titleHeight = title.node().getBBox().height;
 
-  const lineY = -9;
+  const lineY = 1 - getConfig().state.textHeight;
   const descrLine = g
     .append('line') // text label for the x axis
     .attr('x1', 0)
@@ -156,32 +157,42 @@ export const addIdAndBox = (g, stateDef) => {
 
   const graphBox = g.node().getBBox();
   title.attr('x', graphBox.width / 2 - title.node().getBBox().width / 2);
-  descrLine.attr('x2', graphBox.width + conf.padding);
+  descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   // White color
   g.insert('rect', ':first-child')
     .attr('x', graphBox.x)
     .attr('y', lineY)
     .attr('style', 'fill: white; border-bottom: 1px')
-    .attr('width', graphBox.width + conf.padding)
-    .attr('height', graphBox.height + 3 + conf.textHeight - 17)
+    .attr('width', graphBox.width + getConfig().state.padding)
+    .attr(
+      'height',
+      graphBox.height + getConfig().state.textHeight + getConfig().state.titleShift + 1
+    )
     .attr('rx', '0');
 
   // Title background
   g.insert('rect', ':first-child')
     .attr('x', graphBox.x)
-    .attr('y', -15 - conf.textHeight - conf.padding)
-    .attr('width', graphBox.width + conf.padding)
-    .attr('height', 30)
-    .attr('rx', '5');
+    .attr(
+      'y',
+      getConfig().state.titleShift - getConfig().state.textHeight - getConfig().state.padding
+    )
+    .attr('width', graphBox.width + getConfig().state.padding)
+    // Just needs to be higher then the descr line, will be clipped by the white color box
+    .attr('height', getConfig().state.textHeight * 3)
+    .attr('rx', getConfig().state.radius);
 
   // Full background
   g.insert('rect', ':first-child')
     .attr('x', graphBox.x)
-    .attr('y', -15 - conf.textHeight - conf.padding)
-    .attr('width', graphBox.width + conf.padding)
-    .attr('height', graphBox.height + 3 + conf.textHeight + 10)
-    .attr('rx', '5');
+    .attr(
+      'y',
+      getConfig().state.titleShift - getConfig().state.textHeight - getConfig().state.padding
+    )
+    .attr('width', graphBox.width + getConfig().state.padding)
+    .attr('height', graphBox.height + 3 + 2 * getConfig().state.textHeight)
+    .attr('rx', getConfig().state.radius);
 
   return g;
 };
@@ -190,21 +201,27 @@ const drawEndState = g => {
   g.append('circle')
     .style('stroke', 'black')
     .style('fill', 'white')
-    .attr('r', 7)
-    .attr('cx', conf.padding + 7)
-    .attr('cy', conf.padding + 7);
+    .attr('r', getConfig().state.sizeUnit + getConfig().state.miniPadding)
+    .attr(
+      'cx',
+      getConfig().state.padding + getConfig().state.sizeUnit + getConfig().state.miniPadding
+    )
+    .attr(
+      'cy',
+      getConfig().state.padding + getConfig().state.sizeUnit + getConfig().state.miniPadding
+    );
 
   return g
     .append('circle')
     .style('stroke', 'black')
     .style('fill', 'black')
-    .attr('r', 5)
-    .attr('cx', conf.padding + 7)
-    .attr('cy', conf.padding + 7);
+    .attr('r', getConfig().state.sizeUnit)
+    .attr('cx', getConfig().state.padding + getConfig().state.sizeUnit + 2)
+    .attr('cy', getConfig().state.padding + getConfig().state.sizeUnit + 2);
 };
 const drawForkJoinState = (g, stateDef) => {
-  let width = 70;
-  let height = 7;
+  let width = getConfig().state.forkWidth;
+  let height = getConfig().state.forkHeight;
 
   if (stateDef.parentId) {
     let tmp = width;
@@ -217,8 +234,8 @@ const drawForkJoinState = (g, stateDef) => {
     .style('fill', 'black')
     .attr('width', width)
     .attr('height', height)
-    .attr('x', conf.padding)
-    .attr('y', conf.padding);
+    .attr('x', getConfig().state.padding)
+    .attr('y', getConfig().state.padding);
 };
 
 export const drawText = function(elem, textData, width) {
@@ -260,8 +277,8 @@ const _drawLongText = (_text, x, y, g) => {
       span.text(txt);
       const textBounds = span.node().getBBox();
       textHeight += textBounds.height;
-      span.attr('x', x + conf.noteMargin);
-      span.attr('y', y + textHeight + 1.25 * conf.noteMargin);
+      span.attr('x', x + getConfig().state.noteMargin);
+      span.attr('y', y + textHeight + 1.25 * getConfig().state.noteMargin);
       // textWidth = Math.max(textBounds.width, textWidth);
     }
   }
@@ -280,12 +297,12 @@ export const drawNote = (text, g) => {
   const note = g
     .append('rect')
     .attr('x', 0)
-    .attr('y', conf.padding);
+    .attr('y', getConfig().state.padding);
   const rectElem = g.append('g');
 
   const { textWidth, textHeight } = _drawLongText(text, 0, 0, rectElem);
-  note.attr('height', textHeight + 2 * conf.noteMargin);
-  note.attr('width', textWidth + conf.noteMargin * 2);
+  note.attr('height', textHeight + 2 * getConfig().state.noteMargin);
+  note.attr('width', textWidth + getConfig().state.noteMargin * 2);
 
   return note;
 };
@@ -322,8 +339,8 @@ export const drawState = function(elem, stateDef, graph, doc) {
   if (stateDef.type === 'default' && stateDef.descriptions.length > 0) drawDescrState(g, stateDef);
 
   const stateBox = g.node().getBBox();
-  stateInfo.width = stateBox.width + 2 * conf.padding;
-  stateInfo.height = stateBox.height + 2 * conf.padding;
+  stateInfo.width = stateBox.width + 2 * getConfig().state.padding;
+  stateInfo.height = stateBox.height + 2 * getConfig().state.padding;
 
   idCache.set(id, stateInfo);
   // stateCnt++;
@@ -367,7 +384,7 @@ export const drawEdge = function(elem, path, relation) {
     .attr('id', 'edge' + edgeCount)
     .attr('class', 'relation');
   let url = '';
-  if (conf.arrowMarkerAbsolute) {
+  if (getConfig().state.arrowMarkerAbsolute) {
     url =
       window.location.protocol +
       '//' +
@@ -396,10 +413,10 @@ export const drawEdge = function(elem, path, relation) {
     const bounds = label.node().getBBox();
     g.insert('rect', ':first-child')
       .attr('class', 'box')
-      .attr('x', bounds.x - conf.padding / 2)
-      .attr('y', bounds.y - conf.padding / 2)
-      .attr('width', bounds.width + conf.padding)
-      .attr('height', bounds.height + conf.padding);
+      .attr('x', bounds.x - getConfig().state.padding / 2)
+      .attr('y', bounds.y - getConfig().state.padding / 2)
+      .attr('width', bounds.width + getConfig().state.padding)
+      .attr('height', bounds.height + getConfig().state.padding);
     // Debug points
     // path.points.forEach(point => {
     //   g.append('circle')

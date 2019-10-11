@@ -302,7 +302,28 @@ const config = {
     axisFormat: '%Y-%m-%d'
   },
   class: {},
-  git: {}
+  git: {},
+  state: {
+    dividerMargin: 10,
+    sizeUnit: 5,
+    padding: 5,
+    textHeight: 10,
+    titleShift: -15,
+    noteMargin: 10,
+    forkWidth: 70,
+    forkHeight: 7,
+    // Used
+    padding: 5,
+    miniPadding: 2,
+    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
+    // layout. This might need updating if/when switching font
+    fontSizeFactor: 5.02,
+    fontSize: 24,
+    labelHeight: 16,
+    edgeLengthFactor: '20',
+    compositTitleSize: 35,
+    radius: 5
+  }
 };
 
 setLogLevel(config.logLevel);

@@ -7,17 +7,24 @@ import { parser } from './parser/stateDiagram';
 import utils from '../../utils';
 import idCache from './id-cache';
 import { drawState, addIdAndBox, drawEdge, drawNote } from './shapes';
+import { getConfig } from '../../config';
 
 parser.yy = stateDb;
 
 let total = 0;
 
 // TODO Move conf object to main conf in mermaidAPI
-const conf = {
-  dividerMargin: 10,
-  padding: 5,
-  textHeight: 10
-};
+let conf;
+// {
+//   // Used
+//   padding: 5,
+//   // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
+//   // layout. This might need updating if/when switching font
+//   fontSizeFactor: 5.02,
+//   labelHeight: 16,
+//   edgeLengthFactor: '20',
+//   compositTitleSize: 35
+// };
 
 const transformationLog = {};
 
@@ -59,9 +66,10 @@ const insertMarkers = function(elem) {
  * @param id
  */
 export const draw = function(text, id) {
+  conf = getConfig().state;
   parser.yy.clear();
   parser.parse(text);
-  logger.warn('Rendering diagram ' + text);
+  logger.debug('Rendering diagram ' + text);
 
   // /// / Fetch the default direction, use TD if none was found
   const diagram = d3.select(`[id='${id}']`);
@@ -76,12 +84,6 @@ export const draw = function(text, id) {
     // ranksep: '20'
   });
 
-  // // Set an object for the graph label
-  // graph.setGraph({
-  //   isMultiGraph: false,
-  //   rankdir: 'RL'
-  // });
-
   // // Default to assigning a new object as a label for each new edge.
   graph.setDefaultEdgeLabel(function() {
     return {};
@@ -93,7 +95,6 @@ export const draw = function(text, id) {
   const bounds = diagram.node().getBBox();
 
   diagram.attr('height', '100%');
-  // diagram.attr('width', 'fit-content');
   diagram.attr('style', `width: ${bounds.width * 3 + conf.padding * 2};`);
   diagram.attr(
     'viewBox',
@@ -104,7 +105,7 @@ export const draw = function(text, id) {
   );
 };
 const getLabelWidth = text => {
-  return text ? text.length * 5.02 : 1;
+  return text ? text.length * conf.fontSizeFactor : 1;
 };
 
 const renderDoc = (doc, diagram, parentId) => {
@@ -122,7 +123,7 @@ const renderDoc = (doc, diagram, parentId) => {
       // acyclicer: 'greedy',
       rankdir: 'LR',
       ranker: 'tight-tree',
-      ranksep: '20'
+      ranksep: conf.edgeLengthFactor
       // isMultiGraph: false
     });
   else {
@@ -132,7 +133,7 @@ const renderDoc = (doc, diagram, parentId) => {
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
-      ranksep: '20',
+      ranksep: conf.edgeLengthFactor,
       ranker: 'tight-tree'
       // ranker: 'network-simplex'
       // isMultiGraph: false
@@ -173,14 +174,14 @@ const renderDoc = (doc, diagram, parentId) => {
         sub = addIdAndBox(sub, stateDef);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;
-        node.height = boxBounds.height + 10;
-        transformationLog[stateDef.id] = { y: 35 };
+        node.height = boxBounds.height + 2 * conf.padding;
+        transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       } else {
         // sub = addIdAndBox(sub, stateDef);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;
         node.height = boxBounds.height;
-        // transformationLog[stateDef.id] = { y: 35 };
+        // transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       }
     } else {
       node = drawState(diagram, stateDef, graph);
@@ -220,7 +221,7 @@ const renderDoc = (doc, diagram, parentId) => {
     graph.setEdge(relation.id1, relation.id2, {
       relation: relation,
       width: getLabelWidth(relation.title),
-      height: 16,
+      height: conf.labelHeight,
       labelpos: 'c'
     });
   });

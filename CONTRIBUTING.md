@@ -1,6 +1,6 @@
 # Contributing
 
-So you whant to help? That's great!
+So you want to help? That's great!
 
 ![Image of happy people jumping with excitement](https://media.giphy.com/media/BlVnrxJgTGsUw/giphy.gif)
 
