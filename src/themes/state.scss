@@ -1,7 +1,6 @@
 g.stateGroup text {
   fill: $nodeBorder;
   stroke: none;
-  font-family: 'trebuchet ms', verdana, arial;
   font-size: 10px;
 
 }
@@ -38,7 +37,6 @@ g.stateGroup line {
   text {
     fill: black;
     stroke: none;
-    font-family: 'trebuchet ms', verdana, arial;
     font-size: 10px;
   }
 }
@@ -50,7 +48,8 @@ g.stateGroup line {
   opacity: 0.5;
 }
 
-.stateLabel .label {
+.stateLabel text {
   fill: $labelColor;
   font-size: 10px;
+  font-weight: bold;
 }

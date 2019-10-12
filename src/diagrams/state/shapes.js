@@ -404,8 +404,6 @@ export const drawEdge = function(elem, path, relation) {
     const g = elem.append('g').attr('class', 'stateLabel');
     const label = g
       .append('text')
-      .attr('class', 'label')
-      .attr('fill', 'red')
       .attr('text-anchor', 'middle')
       .text(relation.title);
     const { x, y } = utils.calcLabelPosition(path.points);
