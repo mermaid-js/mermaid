@@ -2,6 +2,13 @@ g.stateGroup text {
   fill: $nodeBorder;
   stroke: none;
   font-size: 10px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+}
+g.stateGroup text {
+  fill: $nodeBorder;
+  stroke: none;
+  font-size: 10px;
 
 }
 g.stateGroup .state-title {

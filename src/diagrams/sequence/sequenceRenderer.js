@@ -382,6 +382,7 @@ export const setConf = function(cnf) {
   keys.forEach(function(key) {
     conf[key] = cnf[key];
   });
+  conf.actorFontFamily = cnf.fontFamily;
 };
 
 const actorActivations = function(actor) {

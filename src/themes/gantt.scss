@@ -1,5 +1,10 @@
 /** Section styling */
 
+.mermaid-main-font {
+  font-family: "trebuchet ms", verdana, arial;
+  font-family: var(--mermaid-font-family);
+}
+
 .section {
   stroke: none;
   opacity: 0.2;
@@ -39,6 +44,9 @@
   text-anchor: start;
   font-size: 11px;
   text-height: 14px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+
 }
 
 
@@ -75,12 +83,18 @@
 .taskText {
   text-anchor: middle;
   font-size: 11px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+
 }
 
 .taskTextOutsideRight {
   fill: $taskTextDarkColor;
   text-anchor: start;
   font-size: 11px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+
 }
 
 .taskTextOutsideLeft {
@@ -233,4 +247,6 @@
   text-anchor: middle;
   font-size: 18px;
   fill: $taskTextDarkColor;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
 }

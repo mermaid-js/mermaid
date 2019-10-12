@@ -309,10 +309,18 @@ export const draw = function(text, id) {
           if (endX + textWidth + 1.5 * conf.leftPadding > w) {
             return classStr + ' taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
           } else {
-            return classStr + ' taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType;
+            return (
+              classStr +
+              ' taskTextOutsideRight taskTextOutside' +
+              secNum +
+              ' ' +
+              taskType +
+              ' width-' +
+              textWidth
+            );
           }
         } else {
-          return classStr + ' taskText taskText' + secNum + ' ' + taskType;
+          return classStr + ' taskText taskText' + secNum + ' ' + taskType + ' width-' + textWidth;
         }
       });
   }
