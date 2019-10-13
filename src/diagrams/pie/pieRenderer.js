@@ -110,6 +110,7 @@ export const draw = (txt, id, ver) => {
         return 'translate(' + arcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
+      .attr('class', 'slice')
       .style('font-size', 17);
 
     svg

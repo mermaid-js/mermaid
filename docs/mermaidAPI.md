@@ -63,6 +63,10 @@ theme , the CSS style sheet
  "themeCSS": ".node rect { fill: red; }"
 </pre>
 
+## fontFamily
+
+**fontFamily** The font to be used for the rendered diagrams. Default value is \\"trebuchet ms\\", verdana, arial;
+
 ## logLevel
 
 This option decides the amount of logging to be used.
