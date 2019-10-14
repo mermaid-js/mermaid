@@ -65,7 +65,7 @@ describe('the flowchart renderer', function() {
       'color:#ccc;text-align:center;'
     ]
   ].forEach(function([style, expectedStyle, expectedLabelStyle]) {
-    fit(`should add the styles to style and/or labelStyle for style ${style}`, function() {
+    it(`should add the styles to style and/or labelStyle for style ${style}`, function() {
       const addedNodes = [];
       const mockG = {
         setNode: function(id, object) {
