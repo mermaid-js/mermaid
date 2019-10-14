@@ -36,9 +36,10 @@ export const addVertices = function(vert, g, svgId) {
         }
       }
     } else {
+      // create the style definition for the text, if property is a text-property
       for (let i = 0; i < arr.length; i++) {
         if (typeof arr[i] !== 'undefined') {
-          if (arr[i].match('^color:')) styleStr = styleStr + arr[i] + ';';
+          if (arr[i].match('^color:|^text-align:')) styleStr = styleStr + arr[i] + ';';
         }
       }
     }
