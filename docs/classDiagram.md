@@ -1,6 +1,7 @@
 # Class diagrams
 
-> In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects.
+> "In software engineering, a class diagram in the Unified Modeling Language (UML) is a type of static structure diagram that describes the structure of a system by showing the system's classes, their attributes, operations (or methods), and the relationships among objects."
+ Wikipedia
 
 The class diagram is the main building block of object-oriented modeling. It is used for general conceptual modeling of the structure of the application, and for detailed modeling translating the models into programming code. Class diagrams can also be used for data modeling. The classes in a class diagram represent both the main elements, interactions in the application, and the classes to be programmed.
 
@@ -60,8 +61,8 @@ Mermaid can render class diagrams.
 ### Class
 
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
-A single instance of a class in the diagram contain three compartments:
- - The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized.
+A single instance of a class in the diagram contains three compartments:
+ - The top compartment contains the name of the class. It is printed in bold and centered, and the first letter is capitalized. It may also contain optional annotation text describing the nature of the class.
  - The middle compartment contains the attributes of the class. They are left-aligned and the first letter is lowercase.
  - The bottom compartment contains the operations the class can execute. They are also left-aligned and the first letter is lowercase.
 
@@ -84,8 +85,8 @@ classDiagram
 ## Define a class
 
 There are two ways to define a class:
-- Explicity defining a class using keyword **class** like `class Animal`. This define the Animal class
-- Define a two classes via a **relationship** between them `Vehicle <|-- Car`. This defines two classes Vehicle and Car along with their relationship.
+- Explicitly defining a class using keyword **class** like `class Animal`. This defines the Animal class
+- Define two classes via a **relationship** between them `Vehicle <|-- Car`. This defines two classes Vehicle and Car along with their relationship.
 
 ```
 classDiagram
@@ -97,7 +98,7 @@ classDiagram
     class Animal
     Vehicle <|-- Car
 ```
-## Defining Members of class
+## Defining Members of a class
 
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
 
@@ -109,10 +110,10 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 - `#`	Protected
 - `~`	Package
 
-Mermaid distinguishes between attributes and functions/methods based on if **paranthesis** `()` are present on not. The one with `()` are treated as functions/mehtods, and others as attributes.
+Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The one with `()` are treated as functions/methods, and others as attributes.
 
-There are two ways to defines members of a class, and regardless of the whichever syntax is used to defien the members, the output will still be same. The two different ways are :
-- Associate a member of a class using **:** followed by member name, useful to define one member at a time. For example: 
+There are two ways to define the members of a class, and regardless of the whichever syntax is used to define the members, the output will still be same. The two different ways are :
+- Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example: 
 
  ```
   class BankAccount
@@ -130,7 +131,7 @@ There are two ways to defines members of a class, and regardless of the whicheve
     BankAccount : +withdrawl(amount)
 ```
 
-- Associate a memebers of class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
+- Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 ```
 class BankAccount{
     +String onwer
@@ -164,7 +165,7 @@ o--  | Aggregation
 -->  | Association
 --   | Link 
 
-<!---..>  Dependency--->
+<!--- TODO ..>  Dependency--->
 ```
 classDiagram
 classA <|-- classB
@@ -186,7 +187,7 @@ classI <.. classJ
 classK .. classL
 
 ```
-We can use the arrow heads in the opposite directions as well :
+We can use the arrowheads in opposite directions as well :
 ```
 classDiagram
 classA --|> classB
@@ -228,7 +229,7 @@ classE o-- classF : association
 
 ```
 ## Cardinality / Multiplicity on relations
-Multiplity or cardinality in class diagrams indicate the number of instances of one class linked to one instance of the other class. For example, one company will have one or more employees, but each employee works for just one company.
+Multiplicity or cardinality in class diagrams indicates the number of instances of one class linked to one instance of the other class. For example, one company will have one or more employees, but each employee works for just one company.
 
 Multiplicity notations are placed near the ends of an association. 
 
@@ -260,14 +261,14 @@ classDiagram
 ```
 ## Annotations on classes 
 
-It is possible to annotate class with a specific marker text which is like meta-data for the class, giving a clear indication about its nature. Some common annotations examples could be:
+It is possible to annotate classes with a specific marker text which is like meta-data for the class, giving a clear indication about its nature. Some common annotations examples could be:
 - `<<Interface>>`   To represent an Interface class
-- `<<abstract`      To represent an abstrat class
+- `<<abstract>>`      To represent an abstract class
 - `<<Service>>`     To represent a service class
 - `<<enumeration>>` To represent an enum
 
-Annotations are defined within opening `<<` and closing `>>`. There are two ways to add an annotation to a class :
-- In a ***separate line*** after a class is a defined. For example:
+Annotations are defined within the opening `<<` and closing `>>`. There are two ways to add an annotation to a class and regardless of the syntax used output will be same. The two ways are :
+- In a ***separate line*** after a class is defined. For example:
 ```
 classDiagram
 class Shape
@@ -290,6 +291,15 @@ class Shape{
     noOfVertices
     draw()
 }
+class Color{
+    <<enumeration>>
+    RED
+    BLUE
+    GREEN
+    WHITE
+    BLACK
+}
+
 ```
 
 ```mermaid
@@ -298,13 +308,21 @@ class Shape
 <<interface>> Shape
 Shape : noOfVertices
 Shape : draw()
+class Color{
+    <<enumeration>>
+    RED
+    BLUE
+    GREEN
+    WHITE
+    BLACK
+}
 ```
 
 
 
 ## Styling
 
-Styling of the a class diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/class.scss
+Styling of the class diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/class.scss
 
 ### Styling Classes used
 
