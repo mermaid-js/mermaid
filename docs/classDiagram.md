@@ -16,16 +16,16 @@ Mermaid can render class diagrams.
       Animal : +String gender
       Animal: +isMammal()
       Animal: +mate()
-      Duck{
+      class Duck{
           +String beakColor
           +swim()
           +quack()
       }
-      Fish{
+      class Fish{
           -int sizeInFeet
           -canEat()
       }
-      Zebra{
+      class Zebra{
           +bool is_wild
           +run()
       }
@@ -304,10 +304,11 @@ class Color{
 
 ```mermaid
 classDiagram
-class Shape
-<<interface>> Shape
-Shape : noOfVertices
-Shape : draw()
+class Shape{
+    <<interface>>
+    noOfVertices
+    draw()
+}
 class Color{
     <<enumeration>>
     RED
