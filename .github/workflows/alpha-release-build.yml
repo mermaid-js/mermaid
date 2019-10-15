@@ -1,0 +1,34 @@
+name: Build alpha release package
+
+on: push
+#on:
+#  push:
+#    branches:
+#      - 'release/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Yarn
+      run: npm i yarn --global
+
+    - name: Install Packages
+      run: yarn install
+
+    - name: Build
+      run: yarn build
+
+    - name: Test
+      run: yarn test
+
+    - name: E2E Test
+      run: yarn e2e
