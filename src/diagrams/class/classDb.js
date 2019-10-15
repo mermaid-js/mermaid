@@ -80,9 +80,10 @@ export const addMember = function(className, member) {
   }
 };
 
-export const addMembers = function(className, MembersArr) {
-  if (Array.isArray(MembersArr)) {
-    MembersArr.forEach(member => addMember(className, member));
+export const addMembers = function(className, members) {
+  if (Array.isArray(members)) {
+    members.reverse();
+    members.forEach(member => addMember(className, member));
   }
 };
 
