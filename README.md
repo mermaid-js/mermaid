@@ -192,7 +192,7 @@ Don't hesitate to contact me if you want to get involved.
 
 
 # For contributors
-
+Detailed information about contributing can be found in the [Contribution guide](CONTRIBUTING.md)
 ## Setup
 
     yarn install
