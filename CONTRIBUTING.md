@@ -8,7 +8,7 @@ Here are a few things to know to get you started on the right path.
 
 ## Committing code
 
-We make all changes via pull requests. As we have many pull requests from deveöopers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
+We make all changes via pull requests. As we have many pull requests from developers new to mermaid, the current approach is to have *knsv, Knut Sveidqvist* as a main reviewer of changes and merging pull requests. More precisely like this:
 
 * Large changes reviewed by knsv or other developer asked to review by knsv
 * Smaller low-risk changes like dependecies, documentation etc can be nerged by active collaborators
