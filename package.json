@@ -83,7 +83,7 @@
     "jest-puppeteer": "^4.2.0",
     "jison": "^0.4.18",
     "moment": "^2.23.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
     "start-server-and-test": "^1.10.0",
