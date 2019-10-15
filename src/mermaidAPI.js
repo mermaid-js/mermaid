@@ -463,6 +463,10 @@ const render = function(id, txt, cb, container) {
       .attr('xmlns', 'http://www.w3.org/2000/svg')
       .append('g');
   } else {
+    const existingSvg = document.getElementById(id);
+    if (existingSvg) {
+      existingSvg.remove();
+    }
     const element = document.querySelector('#' + 'd' + id);
     if (element) {
       element.innerHTML = '';
