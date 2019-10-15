@@ -2,7 +2,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 describe('Flowcart', () => {
-  it('should render a simple flowchart', () => {
+  it('should render a simple flowchart no htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -11,7 +11,19 @@ describe('Flowcart', () => {
       C -->|Two| E[iPhone]
       C -->|Three| F[fa:fa-car Car]
       `,
-      {}
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('should render a simple flowchart with htmlLabels', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { htmlLabels: true } }
     );
   });
   it('should render a simple flowchart with line breaks', () => {

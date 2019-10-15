@@ -93,9 +93,12 @@ const config = {
    *  "themeCSS": ".node rect { fill: red; }"
    * </pre>
    */
-
   theme: 'default',
   themeCSS: undefined,
+  /**
+   * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
+   */
+  fontFamily: '"trebuchet ms", verdana, arial;',
 
   /**
    * This option decides the amount of logging to be used.
@@ -452,6 +455,7 @@ const render = function(id, txt, cb, container) {
     d3.select(container)
       .append('div')
       .attr('id', 'd' + id)
+      .attr('style', 'font-family: ' + config.fontFamily)
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
@@ -492,6 +496,14 @@ const render = function(id, txt, cb, container) {
   // user provided theme CSS
   if (config.themeCSS !== undefined) {
     style += `\n${config.themeCSS}`;
+  }
+  // user provided theme CSS
+  if (config.fontFamily !== undefined) {
+    style += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+  }
+  // user provided theme CSS
+  if (config.altFontFamily !== undefined) {
+    style += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
   }
 
   // classDef

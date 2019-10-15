@@ -6,7 +6,14 @@
 @import 'pie';
 @import 'state';
 
-.composit {
-  fill: white;
-  border-bottom: 1px
+// .composit {
+//   fill: white;
+//   border-bottom: 1px
+// }
+
+:root {
+  --mermaid-font-family: '"trebuchet ms", verdana, arial';
+  --mermaid-font-family: "Comic Sans MS", "Comic Sans", cursive;
+  // --mermaid-alt-font-family: '"Lucida Console", Monaco, monospace';
 }
+
