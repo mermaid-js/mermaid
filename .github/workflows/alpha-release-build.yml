@@ -14,7 +14,7 @@ jobs:
         node-version: [10.x]
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
@@ -38,7 +38,8 @@ jobs:
 
     - name: Publish
       run: |
-        VERSION=$(echo ${{github.ref}} | tail -c +9)
+        # VERSION=$(echo ${{github.ref}} | tail -c +20)
+        VERSION=8.4.0
         echo $VERSION
         npm version --no-git-tag-version $VERSION
         npm login --registry=https://npm.pkg.github.com/
