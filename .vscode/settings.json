@@ -4,5 +4,5 @@
   "typescript.validate.enable": false,
   "javascript.validate.enable": false,
   "editor.formatOnSave": false,
-  "standard.enable": true
+  "editor.snippetSuggestions": "top"
 }

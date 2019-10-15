@@ -56,6 +56,10 @@
   stroke: $gridColor;
   opacity: 0.3;
   shape-rendering: crispEdges;
+  text {
+    font-family: 'trebuchet ms', verdana, arial;
+    font-family: var(--mermaid-font-family);
+  }
 }
 
 .grid path {

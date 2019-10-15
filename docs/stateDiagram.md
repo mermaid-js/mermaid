@@ -189,7 +189,7 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
 
 Sometimes nothing says it better then a postit note. That is also the case in state diagrams.
 
-Here you canb choose to put the onte to the right or to the left of a node.
+Here you can't choose to put the onte to the right or to the left of a node.
 
 ```
     stateDiagram
@@ -216,6 +216,25 @@ Here you canb choose to put the onte to the right or to the left of a node.
 ## Concurrency
 
 As in plantUml you can specify concurrency using the -- symbol.
+```
+    stateDiagram
+        [*] --> Active
+
+        state Active {
+            [*] --> NumLockOff
+            NumLockOff --> NumLockOn : EvNumLockPressed
+            NumLockOn --> NumLockOff : EvNumLockPressed
+            --
+            [*] --> CapsLockOff
+            CapsLockOff --> CapsLockOn : EvCapsLockPressed
+            CapsLockOn --> CapsLockOff : EvCapsLockPressed
+            --
+            [*] --> ScrollLockOff
+            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        }
+```
+
 
 ```mermaid
     stateDiagram

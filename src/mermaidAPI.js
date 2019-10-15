@@ -95,6 +95,7 @@ const config = {
    */
   theme: 'default',
   themeCSS: undefined,
+
   /**
    * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
    */
