@@ -37,5 +37,6 @@ jobs:
         npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN
         npm set registry https://npm.pkg.github.com/knsv
         json -I -f package.json -e 'this.name="@knsv/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
+        json -I -f package.json -e 'this.repository="git://github.com/knsv/mermaid"' # Repo url needs to have a specific format too
         npm publish
 
