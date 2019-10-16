@@ -11,12 +11,12 @@
 %%
 \%\%[^\n]*            /* do nothing */
 \n+                   return 'NEWLINE';
-\s+                     /* skip whitespace */
-"classDiagram"          return 'CLASS_DIAGRAM';
-[\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
-<struct>\}           { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
-<struct>[\n]              /* nothing */
-<struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+\s+                   /* skip whitespace */
+"classDiagram"        return 'CLASS_DIAGRAM';
+[\{]                  { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START'; }
+<struct>\}            { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP'; }
+<struct>[\n]          /* nothing */
+<struct>[^\{\}\n]*    { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
 
 

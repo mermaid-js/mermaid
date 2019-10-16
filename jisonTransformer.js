@@ -1,4 +1,4 @@
-const { Generator } = require('jison')
+const { Generator } = require('jison-gho')
 
 module.exports = {
   process (source, filename, config, transformOptions) {

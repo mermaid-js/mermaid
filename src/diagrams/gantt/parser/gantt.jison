@@ -16,7 +16,7 @@
 [\n]+                   return 'NL';
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
-\%%[^\n]*               /* skip comments */
+\%"%"[^\n]*               /* skip comments */
 
 /*
 ---interactivity command---

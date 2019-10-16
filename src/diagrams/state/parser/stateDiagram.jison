@@ -36,7 +36,7 @@
 \s+                              /* skip all whitespace */
 <ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
-\%%[^\n]*                        /* skip comments */
+\%"%"[^\n]*                        /* skip comments */
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -55,7 +55,7 @@
 <STATE>[^\n\s\{]+      {/*console.log('COMPOSIT_STATE', yytext);*/return 'COMPOSIT_STATE';}
 <STATE>\n      {this.popState();}
 <INITIAL,STATE>\{               {this.popState();this.pushState('struct'); /*console.log('begin struct', yytext);*/return 'STRUCT_START';}
-<struct>\}           { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';}}
+<struct>\}           { /*console.log('Ending struct');*/ this.popState(); return 'STRUCT_STOP';}
 <struct>[\n]              /* nothing */
 
 <INITIAL,struct>"note"\s+           { this.begin('NOTE'); return 'note'; }

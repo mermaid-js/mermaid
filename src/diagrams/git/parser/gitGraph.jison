@@ -4,7 +4,7 @@
  * gitGraph:
  *  commit
  *  commit
- *  branch 
+ *  branch
  */
 %lex
 
@@ -17,7 +17,7 @@
 (\r?\n)+                           return 'NL';
 \s+                             /* skip all whitespace */
 \#[^\n]*                        /* skip comments */
-\%%[^\n]*                       /* skip comments */
+\%"%"[^\n]*                       /* skip comments */
 "gitGraph"                      return 'GG';
 "commit"                        return 'COMMIT';
 "branch"                        return 'BRANCH';
