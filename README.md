@@ -147,6 +147,20 @@ Example: https://unpkg.com/mermaid@7.1.0/dist/
 
     yarn add mermaid
 
+### Preview builds
+Preview builds are created automatically for each release. They can be found in the [GitHub registry](https://github.com/knsv/mermaid/packages).
+Make sure to configure npm to use the GitHub package registry. Steps for that can be found [here](https://help.github.com/en/articles/configuring-npm-for-use-with-github-package-registry).
+
+If you want to get the latest preview for the next release
+```
+yarn add @knsv/mermaid
+```
+
+
+If you want to get the latest preview for a specific version
+```
+yarn add @knsv/mermaid@<version>
+```
 
 ## Documentation
 
