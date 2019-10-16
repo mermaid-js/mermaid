@@ -26,8 +26,9 @@ jobs:
 
     - name: Publish
       run: |
-        # VERSION=$(echo ${{github.ref}} | tail -c +20)-preview
-        VERSION=8.4.0-preview
+        # VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
+        PREVIEW_VERSION=$(git rev-list --count --first-parent HEAD)
+        VERSION=8.4.0-preview.$PREVIEW_VERSION
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION
         npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN
