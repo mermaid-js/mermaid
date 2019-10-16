@@ -24,25 +24,13 @@ jobs:
     - name: Install Packages
       run: yarn install
 
-    - name: Build
-      run: yarn build
-
-    #- name: Test
-    #  run: yarn test
-
-    #- name: E2E Test
-    #  run: yarn e2e
-
-    #- name: E2E Test
-    #  run: yarn e2e
-
     - name: Publish
       run: |
-        # VERSION=$(echo ${{github.ref}} | tail -c +20)
-        VERSION=8.4.0
+        # VERSION=$(echo ${{github.ref}} | tail -c +20)-preview
+        VERSION=8.4.0-preview
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION
         npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN
         npm set registry https://npm.pkg.github.com/knsv
-        npm publish --tag alpha --dry-run
+        npm publish --dry-run
 
