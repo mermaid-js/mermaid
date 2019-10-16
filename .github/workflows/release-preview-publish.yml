@@ -21,6 +21,9 @@ jobs:
     - name: Install Yarn
       run: npm i yarn --global
 
+    - name: Install Json
+      run: npm i json --global
+
     - name: Install Packages
       run: yarn install
 
@@ -33,5 +36,6 @@ jobs:
         npm version --no-git-tag-version --allow-same-version $VERSION
         npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN
         npm set registry https://npm.pkg.github.com/knsv
+        json -I -f package.json -e 'this.name="@knsv/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
         npm publish
 
