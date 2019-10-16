@@ -43,7 +43,6 @@ jobs:
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION
         npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN
-        npm login --registry=https://npm.pkg.github.com/
-        npm config set registry https://npm.pkg.github.com/knsv
+        npm set registry https://npm.pkg.github.com/knsv
         npm publish --tag alpha --dry-run
 
