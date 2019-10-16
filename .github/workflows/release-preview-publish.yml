@@ -1,4 +1,4 @@
-name: Build alpha release package
+name: Publish release preview package
 
 on: push
 #on:
@@ -7,7 +7,7 @@ on: push
 #      - 'release/**'
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -33,5 +33,5 @@ jobs:
         npm version --no-git-tag-version --allow-same-version $VERSION
         npm set //npm.pkg.github.com/:_authToken $GITHUB_TOKEN
         npm set registry https://npm.pkg.github.com/knsv
-        npm publish --dry-run
+        npm publish
 
