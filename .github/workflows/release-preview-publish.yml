@@ -1,0 +1,40 @@
+name: Publish release preview package
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Yarn
+      run: npm i yarn --global
+
+    - name: Install Json
+      run: npm i json --global
+
+    - name: Install Packages
+      run: yarn install
+
+    - name: Publish
+      run: |
+        PREVIEW_VERSION=$(git rev-list --count --first-parent HEAD)
+        VERSION=$(echo ${{github.ref}} | tail -c +20)-preview.$PREVIEW_VERSION
+        echo $VERSION
+        npm version --no-git-tag-version --allow-same-version $VERSION
+        npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
+        npm set registry https://npm.pkg.github.com/knsv
+        json -I -f package.json -e 'this.name="@knsv/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
+        json -I -f package.json -e 'this.repository="git://github.com/knsv/mermaid"' # Repo url needs to have a specific format too
+        npm publish
+
