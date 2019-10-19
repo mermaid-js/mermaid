@@ -101,7 +101,7 @@ export const draw = function(text, id) {
     `${conf.padding * -1} ${conf.padding * -1} ` +
       (bounds.width * 1.5 + conf.padding * 2) +
       ' ' +
-      (bounds.height * 1.5 + conf.padding * 2)
+      (bounds.height + conf.padding * 5)
   );
 };
 const getLabelWidth = text => {

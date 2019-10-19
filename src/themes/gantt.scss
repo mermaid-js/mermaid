@@ -86,10 +86,12 @@
 
 .taskText {
   text-anchor: middle;
-  font-size: 11px;
   font-family: 'trebuchet ms', verdana, arial;
   font-family: var(--mermaid-font-family);
+}
 
+.taskText:not([font-size]) {
+  font-size: 11px;
 }
 
 .taskTextOutsideRight {
