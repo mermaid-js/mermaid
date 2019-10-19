@@ -11,6 +11,7 @@
   - [Flowchart](flowchart.md)
   - [Sequence diagram](sequenceDiagram.md)
   - [Class Diagram](classDiagram.md)
+  - [State Diagram](stateDiagram.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
 - Guide

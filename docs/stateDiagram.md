@@ -1,8 +1,9 @@
 # State diagrams
 
-> A state diagram is a type of diagram used in computer science and related fields to describe the behavior of systems. State diagrams require that the system described is composed of a finite number of states; sometimes, this is indeed the case, while at other times this is a reasonable abstraction.
+> "A state diagram is a type of diagram used in computer science and related fields to describe the behavior of systems. State diagrams require that the system described is composed of a finite number of states; sometimes, this is indeed the case, while at other times this is a reasonable abstraction." Wikipedia
 
-Mermaid can render state diagrams with a syntax derived from plantUml, this to make the diagrams easier to use.
+Mermaid can render state diagrams. The syntax tries to be compliant with the syntax used in plantUml as this will make it easier for users to
+share diagrams between mermaid and plantUml.
 
 ```
 stateDiagram
@@ -24,6 +25,7 @@ stateDiagram
     Moving --> Crash
     Crash --> [*]
 ```
+In state diagrams systems are described in terms of its states and how the systems state can change to another state via a transitions. The example diagram above shows three states **Still**, **Moving** and **Crash**. You start in the state of Still. From Still you can change the state to Moving. In Moving you can change the state either back to Still or to Crash. There is no transition from Still to Crash.
 
 ## States
 
@@ -38,7 +40,7 @@ stateDiagram
     s1
 ```
 
-Another way is by using the state key word as per below:
+Another way is by using the state keyword with a description as per below:
 ```
 stateDiagram
     state "This ia state decription" as s2
@@ -47,12 +49,24 @@ stateDiagram
 stateDiagram
     state "This ia state decription" as s2
 ```
+
+Another way to define a state with a description is to define the state id followed by a colon and the description:
+```
+stateDiagram
+    s2 : This ia state decription
+```
+```mermaid
+stateDiagram
+    s2 : This ia state decription
+```
+
 
 ## Transitions
 
 Transitions are path/edges when one state passes into another. This is represented using text arrow, "-->".
 
-Transitions from and to states that are not defined implicitly defines these states.
+When you define a transition between two states and the states are not already defined the undefined states are defined with the id
+from the transition. You can later add descriptions to states defined this way.
 
 ```
 stateDiagram
@@ -63,7 +77,7 @@ stateDiagram
     s1 --> s2
 ```
 
-It is possieblt to add text to a transition.
+It is possible to add text to a transition. To describe what it represents.
 
 ```
 stateDiagram
@@ -74,7 +88,9 @@ stateDiagram
     s1 --> s2: A transition
 ```
 
-There are two special states indicating the start of the diagram and the stop of the diagram. These are written with the [*] syntax.
+## Start and end
+
+There are two special states indicating the start and stop of the diagram. These are written with the [*] syntax and the direction of the transition to it defines it either as a start or a stop state.
 
 ```
 stateDiagram
@@ -90,9 +106,10 @@ stateDiagram
 
 ## Composit states
 
-In a real world use of state diagrams you often end up with diagrams that are multi-dimensional as one state can have several internal states.
+In a real world use of state diagrams you often end up with diagrams that are multi-dimensional as one state can
+have several internal states. These are called composit states in this terminology.
 
-In order to define a composit state you need to use the state keyword as per below:
+In order to define a composit state you need to use the state keyword followed by and id and the body of the composit state between {}. See the example below:
 
 ```
 stateDiagram
@@ -116,6 +133,44 @@ You can do this in several layers:
 ```
 stateDiagram
     [*] --> First
+
+    state First {
+        [*] --> Second
+
+        state Second {
+            [*] --> second
+            second --> Third
+
+            state Third {
+                [*] --> third
+                third --> [*]
+            }
+        }
+    }
+```
+```mermaid
+stateDiagram
+    [*] --> First
+
+    state First {
+        [*] --> Second
+        state Second {
+            [*] --> second
+            second --> Third
+
+            state Third {
+                [*] --> third
+                third --> [*]
+            }
+        }
+    }
+```
+
+You can also define transitions also between composit states:
+
+```
+stateDiagram
+    [*] --> First
     First --> Second
     First --> Third
 
@@ -150,8 +205,9 @@ stateDiagram
         [*] --> thi
         thi --> [*]
     }
-
 ```
+
+*You can not define transitions between internal states belonging to different composit states*
 
 ## Forks
 
@@ -187,9 +243,9 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
 
 ## Notes
 
-Sometimes nothing says it better then a postit note. That is also the case in state diagrams.
+Sometimes nothing says it better then a Post-it note. That is also the case in state diagrams.
 
-Here you can't choose to put the onte to the right or to the left of a node.
+Here you can choose to put the note to the *right of* or to the *left of* a node.
 
 ```
     stateDiagram
@@ -257,30 +313,4 @@ As in plantUml you can specify concurrency using the -- symbol.
 
 ## Styling
 
-Styling of the a sequence diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/sequence.scss
-
-### Classes used (TB Written)
-
-Class        | Description
----          | ---
-Fakenote         | Styles for the note box.
-FakenoteText     | Styles for the text on in the note boxes.
-
-
-
-
-## Configuration
-
-Is it possible to adjust the margins etc for the stateDiagram ... TB written
-
-```javascript
-mermaid.stateConfig = {
-};
-```
-
-### Possible configuration params:
-
-Param | Description | Default value
---- | --- | ---
-TBS | Turns on/off the rendering of actors below the diagram as well as above it | false
-
+Styling of the a state diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/state.scss
