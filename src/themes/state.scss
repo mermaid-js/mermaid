@@ -59,4 +59,6 @@ g.stateGroup line {
   fill: $labelColor;
   font-size: 10px;
   font-weight: bold;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
 }
