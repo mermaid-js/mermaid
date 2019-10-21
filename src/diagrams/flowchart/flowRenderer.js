@@ -1,11 +1,11 @@
-import graphlib from 'graphlibrary';
+import graphlib from 'graphlib';
 import * as d3 from 'd3';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
 import { getConfig } from '../../config';
-import dagreD3 from 'dagre-d3-renderer';
-import addHtmlLabel from 'dagre-d3-renderer/lib/label/add-html-label.js';
+import dagreD3 from 'dagre-d3';
+import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve } from '../../utils';
 import flowChartShapes from './flowChartShapes';

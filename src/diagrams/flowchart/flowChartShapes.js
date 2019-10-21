@@ -1,4 +1,4 @@
-import dagreD3 from 'dagre-d3-renderer';
+import dagreD3 from 'dagre-d3';
 
 function question(parent, bbox, node) {
   const w = bbox.width;
