@@ -48,6 +48,20 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a transition descrions with new lines', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+
+      [*] --> S1
+      S1 --> S2: long line using<br/>should work
+      S1 --> S3: long line using <br>should work
+      S1 --> S4: long line using \\nshould work
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
   it('should render a state with a note', () => {
     imgSnapshotTest(
       `

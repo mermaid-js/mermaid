@@ -350,6 +350,12 @@ export const drawState = function(elem, stateDef, graph, doc) {
   return stateInfo;
 };
 
+const getRows = s => {
+  let str = s.replace(/<br\/?>/gi, '#br#');
+  str = str.replace(/\\n/g, '#br#');
+  return str.split('#br#');
+};
+
 let edgeCount = 0;
 export const drawEdge = function(elem, path, relation) {
   const getRelationType = function(type) {
@@ -404,20 +410,49 @@ export const drawEdge = function(elem, path, relation) {
   );
 
   if (typeof relation.title !== 'undefined') {
-    const g = elem.append('g').attr('class', 'stateLabel');
-    const label = g
-      .append('text')
-      .attr('text-anchor', 'middle')
-      .text(relation.title);
+    const label = elem.append('g').attr('class', 'stateLabel');
+
     const { x, y } = utils.calcLabelPosition(path.points);
-    label.attr('x', x).attr('y', y);
+
+    const rows = getRows(relation.title);
+
+    console.warn(rows);
+
+    let titleHeight = 0;
+    const titleRows = [];
+    for (let i = 0; i <= rows.length; i++) {
+      const title = label
+        .append('text')
+        .attr('text-anchor', 'middle')
+        .text(rows[i])
+        .attr('x', x)
+        .attr('y', y + titleHeight);
+
+      if (titleHeight === 0) {
+        const titleBox = title.node().getBBox();
+        titleHeight = titleBox.height;
+        console.warn('apa', rows.length * titleHeight);
+      }
+      titleRows.push(title);
+    }
+
+    if (rows.length > 1) {
+    const heightAdj = rows.length * titleHeight * 0.25;
+
+    titleRows.forEach((title, i) => title.attr('y', y + i * titleHeight - heightAdj));
+    }
+
     const bounds = label.node().getBBox();
-    g.insert('rect', ':first-child')
+    label
+      .insert('rect', ':first-child')
       .attr('class', 'box')
       .attr('x', bounds.x - getConfig().state.padding / 2)
       .attr('y', bounds.y - getConfig().state.padding / 2)
       .attr('width', bounds.width + getConfig().state.padding)
       .attr('height', bounds.height + getConfig().state.padding);
+
+    //label.attr('transform', '0 -' + (bounds.y / 2));
+
     // Debug points
     // path.points.forEach(point => {
     //   g.append('circle')

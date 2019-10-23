@@ -108,6 +108,14 @@ const getLabelWidth = text => {
   return text ? text.length * conf.fontSizeFactor : 1;
 };
 
+/* TODO: REMOVE DUPLICATION, SEE SHAPES */
+const getRows = s => {
+  if (!s) return 1;
+  let str = s.replace(/<br\/?>/gi, '#br#');
+  str = str.replace(/\\n/g, '#br#');
+  return str.split('#br#');
+};
+
 const renderDoc = (doc, diagram, parentId) => {
   // // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
@@ -221,7 +229,7 @@ const renderDoc = (doc, diagram, parentId) => {
     graph.setEdge(relation.id1, relation.id2, {
       relation: relation,
       width: getLabelWidth(relation.title),
-      height: conf.labelHeight,
+      height: conf.labelHeight * getRows(relation.title).length,
       labelpos: 'c'
     });
   });
