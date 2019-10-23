@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
-import dagre from 'dagre-layout';
-import graphlib from 'graphlibrary';
+import dagre from 'dagre';
+import graphlib from 'graphlib';
 import { logger } from '../../logger';
 import classDb from './classDb';
 import utils from '../../utils';
