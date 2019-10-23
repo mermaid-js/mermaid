@@ -76,7 +76,7 @@ export const drawDescrState = (g, stateDef) => {
     .attr('y', getConfig().state.textHeight + 1.5 * getConfig().state.padding)
     .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
-    .text(stateDef.id);
+    .text(stateDef.descriptions[0]);
 
   const titleBox = title.node().getBBox();
   const titleHeight = titleBox.height;
@@ -94,8 +94,12 @@ export const drawDescrState = (g, stateDef) => {
     .attr('class', 'state-description');
 
   let isFirst = true;
+  let isSecond = true;
   stateDef.descriptions.forEach(function(descr) {
-    addTspan(description, descr, isFirst);
+    if (!isFirst) {
+      addTspan(description, descr, isSecond);
+      isSecond = false;
+    }
     isFirst = false;
   });
 

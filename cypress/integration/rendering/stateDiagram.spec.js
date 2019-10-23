@@ -13,6 +13,30 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a long descriptions instead of id when available', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+
+      [*] --> S1
+      state "Some long name" as S1
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
+  it('should render a long descriptions with additional descriptions', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+
+      [*] --> S1
+      state "Some long name" as S1: The description
+      `,
+      { logLevel: 0 }
+    );
+    cy.get('svg');
+  });
   it('should render a single state with short descr', () => {
     imgSnapshotTest(
       `
