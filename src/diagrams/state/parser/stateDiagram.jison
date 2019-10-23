@@ -43,10 +43,10 @@
 <SCALE>\s+"width"     {this.popState();}
 
 <INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
-<STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); console.warn('Fork Fork: ',yytext);return 'FORK';}
-<STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Join: ',yytext);return 'JOIN';}
-<STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Fork: ',yytext);return 'FORK';}
-<STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Join: ',yytext);return 'JOIN';}
+<STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
+<STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
+<STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
+<STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
 <STATE>["]                   this.begin("STATE_STRING");
 <STATE>"as"\s*         {this.popState();this.pushState('STATE_ID');return "AS";}
 <STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}

@@ -366,8 +366,6 @@ function parse(text) {
       break;
     case 'info':
       logger.debug('info info info');
-      console.warn('In API', pkg.version);
-
       parser = infoParser;
       parser.parser.yy = infoDb;
       break;

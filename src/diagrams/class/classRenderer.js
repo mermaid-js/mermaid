@@ -323,8 +323,6 @@ const drawClass = function(elem, classDef) {
     isFirst = false;
   });
 
-  console.warn('classDef.id', classDef.id);
-  console.warn('isFirst', isFirst);
   // add class title
   const classTitle = title
     .append('tspan')
@@ -348,7 +346,6 @@ const drawClass = function(elem, classDef) {
     .attr('y', titleHeight + conf.dividerMargin + conf.textHeight)
     .attr('fill', 'white')
     .attr('class', 'classText');
-  console.warn(classDef.id, titleHeight, conf.dividerMargin, conf.textHeight);
 
   isFirst = true;
   classDef.members.forEach(function(member) {

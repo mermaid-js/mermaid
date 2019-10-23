@@ -278,7 +278,7 @@ const renderDoc = (doc, diagram, parentId) => {
   });
 
   stateBox = svgElem.getBBox();
-  console.warn('Diagram node', svgElem.id);
+
   const stateInfo = {
     id: parentId ? parentId : 'root',
     label: parentId ? parentId : 'root',

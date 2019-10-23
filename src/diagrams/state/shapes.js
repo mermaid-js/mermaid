@@ -106,7 +106,6 @@ export const drawDescrState = (g, stateDef) => {
     .attr('y2', getConfig().state.padding + titleHeight + getConfig().state.dividerMargin / 2)
     .attr('class', 'descr-divider');
   const descrBox = description.node().getBBox();
-  console.warn(descrBox.width, titleBox.width);
   const width = Math.max(descrBox.width, titleBox.width);
 
   descrLine.attr('x2', width + 3 * getConfig().state.padding);
