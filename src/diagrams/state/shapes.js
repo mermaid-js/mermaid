@@ -436,9 +436,9 @@ export const drawEdge = function(elem, path, relation) {
     }
 
     if (rows.length > 1) {
-    const heightAdj = rows.length * titleHeight * 0.25;
+      const heightAdj = rows.length * titleHeight * 0.25;
 
-    titleRows.forEach((title, i) => title.attr('y', y + i * titleHeight - heightAdj));
+      titleRows.forEach((title, i) => title.attr('y', y + i * titleHeight - heightAdj));
     }
 
     const bounds = label.node().getBBox();

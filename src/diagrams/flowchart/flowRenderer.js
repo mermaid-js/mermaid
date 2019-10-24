@@ -276,7 +276,7 @@ export const getClasses = function(text) {
  * @param text
  * @param id
  */
-export const draw = function (text, id) {
+export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
   const parser = flow.parser;
@@ -308,7 +308,7 @@ export const draw = function (text, id) {
         marginx: 8,
         marginy: 8
       })
-      .setDefaultEdgeLabel(function () {
+      .setDefaultEdgeLabel(function() {
         return {};
       });
   } else {
@@ -321,7 +321,7 @@ export const draw = function (text, id) {
         marginx: 20,
         marginy: 20
       })
-      .setDefaultEdgeLabel(function () {
+      .setDefaultEdgeLabel(function() {
         return {};
       });
   }
@@ -403,7 +403,7 @@ export const draw = function (text, id) {
   const element = d3.select('#' + id + ' g');
   render(element, g);
 
-  element.selectAll('g.node').attr('title', function () {
+  element.selectAll('g.node').attr('title', function() {
     return flowDb.getTooltip(this.id);
   });
 
@@ -414,37 +414,44 @@ export const draw = function (text, id) {
     const svgBounds = svg.node().getBBox();
     const width = svgBounds.width + padding * 2;
     const height = svgBounds.height + padding * 2;
-    logger.debug(`new ViewBox 0 0 ${width} ${height}`, `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`);
+    logger.debug(
+      `new ViewBox 0 0 ${width} ${height}`,
+      `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
+    );
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
+    if (conf.useMaxWidth) {
+      svg.attr('width', '100%');
+      svg.attr('style', `max-width: ${width}px;`);
+    } else {
+      svg.attr('height', height);
+      svg.attr('width', width);
+    }
+
+    svg.attr('viewBox', `0 0 ${width} ${height}`);
+    svg
+      .select('g')
+      .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
   } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
+    const width = g.maxX - g.minX + padding * 2;
+    const height = g.maxY - g.minY + padding * 2;
+
+    if (conf.useMaxWidth) {
+      svg.attr('width', '100%');
+      svg.attr('style', `max-width: ${width}px;`);
+    } else {
+      svg.attr('height', height);
+      svg.attr('width', width);
+    }
+
+    logger.debug(
+      `Org ViewBox 0 0 ${width} ${height}`,
+      `translate(${padding - g.minX}, ${padding - g.minY})\n${location.href}`
+    );
+
+    svg.attr('viewBox', `0 0 ${width} ${height}`);
+    svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`);
+    // svg.select('g').attr('transform', `translate(${padding - minX}, ${padding - minY})`);
   }
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg.select('g').attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
-
-} else {
-  const width = g.maxX - g.minX + padding * 2;
-  const height = g.maxY - g.minY + padding * 2;
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
-
-  logger.debug(`Org ViewBox 0 0 ${width} ${height}`, `translate(${padding - g.minX}, ${padding - g.minY})\n${location.href}`)
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`);
-  // svg.select('g').attr('transform', `translate(${padding - minX}, ${padding - minY})`);
-}
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
 
