@@ -416,7 +416,7 @@ export const drawEdge = function(elem, path, relation) {
 
     const rows = getRows(relation.title);
 
-    console.warn(rows);
+    // console.warn(rows);
 
     let titleHeight = 0;
     const titleRows = [];
@@ -431,7 +431,6 @@ export const drawEdge = function(elem, path, relation) {
       if (titleHeight === 0) {
         const titleBox = title.node().getBBox();
         titleHeight = titleBox.height;
-        console.warn('apa', rows.length * titleHeight);
       }
       titleRows.push(title);
     }
