@@ -7,13 +7,14 @@ describe('State diagram', () => {
       `
     stateDiagram
     State1: The state with a note
+    note right of State1
+      Important information! You\ncan write
+      notes with multiple lines...
+      Here is another line...
+      And another line...
+    end note
     `,
       {}
     );
   });
 });
-    // note right of State1
-    //   Important information! You\ncan write
-    //   notes with multiple lines...
-    //   Here is another line...
-    // end note
