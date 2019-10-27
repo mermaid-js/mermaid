@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
-import { getConfig, conf } from '../../config';
+import { getConfig } from '../../config';
 
 // let conf;
 
@@ -131,15 +131,15 @@ export const drawDescrState = (g, stateDef) => {
  */
 export const addIdAndBox = (g, stateDef) => {
   // TODO Move hardcodings to conf
-  const addTspan = function(textEl, txt, isFirst) {
-    const tSpan = textEl
-      .append('tspan')
-      .attr('x', 2 * getConfig().state.padding)
-      .text(txt);
-    if (!isFirst) {
-      tSpan.attr('dy', getConfig().state.textHeight);
-    }
-  };
+  // const addTspan = function(textEl, txt, isFirst) {
+  //   const tSpan = textEl
+  //     .append('tspan')
+  //     .attr('x', 2 * getConfig().state.padding)
+  //     .text(txt);
+  //   if (!isFirst) {
+  //     tSpan.attr('dy', getConfig().state.textHeight);
+  //   }
+  // };
   const title = g
     .append('text')
     .attr('x', 2 * getConfig().state.padding)
@@ -148,7 +148,7 @@ export const addIdAndBox = (g, stateDef) => {
     .attr('class', 'state-title')
     .text(stateDef.id);
 
-  const titleHeight = title.node().getBBox().height;
+  const titleBox = title.node().getBBox();
 
   const lineY = 1 - getConfig().state.textHeight;
   const descrLine = g
@@ -159,7 +159,7 @@ export const addIdAndBox = (g, stateDef) => {
     .attr('class', 'descr-divider');
 
   const graphBox = g.node().getBBox();
-  title.attr('x', graphBox.width / 2 - title.node().getBBox().width / 2);
+  title.attr('x', graphBox.width / 2 - titleBox.width / 2);
   descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   // White color
@@ -241,7 +241,7 @@ const drawForkJoinState = (g, stateDef) => {
     .attr('y', getConfig().state.padding);
 };
 
-export const drawText = function(elem, textData, width) {
+export const drawText = function(elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(/<br\/?>/gi, ' ');
 
@@ -264,7 +264,7 @@ export const drawText = function(elem, textData, width) {
 
 const _drawLongText = (_text, x, y, g) => {
   let textHeight = 0;
-  let textWidth = 0;
+
   const textElem = g.append('text');
   textElem.style('text-anchor', 'start');
   textElem.attr('class', 'noteText');
@@ -317,8 +317,7 @@ export const drawNote = (text, g) => {
  * @param {*} stateDef
  */
 
-let cnt = 0;
-export const drawState = function(elem, stateDef, graph, doc) {
+export const drawState = function(elem, stateDef) {
   const id = stateDef.id;
   const stateInfo = {
     id: id,

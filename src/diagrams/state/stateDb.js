@@ -9,7 +9,7 @@ const setRootDoc = o => {
 const getRootDoc = () => rootDoc;
 
 const extract = doc => {
-  const res = { states: [], relations: [] };
+  // const res = { states: [], relations: [] };
   clear();
 
   doc.forEach(item => {
@@ -37,8 +37,8 @@ let documents = {
 let currentDocument = documents.root;
 
 let startCnt = 0;
-let endCnt = 0;
-let stateCnt = 0;
+let endCnt = 0; // eslint-disable-line
+// let stateCnt = 0;
 
 /**
  * Function called by parser when a node definition has been found.

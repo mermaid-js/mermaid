@@ -317,7 +317,6 @@ const config = {
     forkWidth: 70,
     forkHeight: 7,
     // Used
-    padding: 5,
     miniPadding: 2,
     // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
     // layout. This might need updating if/when switching font

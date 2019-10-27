@@ -21,7 +21,7 @@ export const setConf = function(cnf) {
  * @param id
  */
 let w;
-export const draw = (txt, id, ver) => {
+export const draw = (txt, id) => {
   try {
     const parser = pieParser.parser;
     parser.yy = pieData;

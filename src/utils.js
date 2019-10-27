@@ -122,7 +122,7 @@ const calcLabelPosition = points => {
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
   let prevPoint;
-  let totalDistance = 0;
+  let totalDistance = 0; // eslint-disable-line
   if (points[0] !== initialPosition) {
     points = points.reverse();
   }
