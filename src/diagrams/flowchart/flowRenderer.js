@@ -376,7 +376,7 @@ export const draw = function(text, id) {
   };
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
-  render.arrows().normal = function normal(parent, id, edge, type) {
+  render.arrows().normal = function normal(parent, id) {
     const marker = parent
       .append('marker')
       .attr('id', id)

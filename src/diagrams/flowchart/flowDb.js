@@ -223,7 +223,7 @@ const setClickFun = function(_id, functionName) {
     return;
   }
   if (typeof vertices[id] !== 'undefined') {
-    funs.push(function(element) {
+    funs.push(function() {
       const elem = document.querySelector(`[id="${id}"]`);
       if (elem !== null) {
         elem.addEventListener(
@@ -395,7 +395,7 @@ export const addSubGraph = function(_id, list, _title) {
         return false;
       }
       if (type in prims) {
-        return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+        return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true); // eslint-disable-line
       } else {
         return objs.indexOf(item) >= 0 ? false : objs.push(item);
       }

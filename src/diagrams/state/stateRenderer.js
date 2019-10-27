@@ -4,14 +4,11 @@ import graphlib from 'graphlib';
 import { logger } from '../../logger';
 import stateDb from './stateDb';
 import { parser } from './parser/stateDiagram';
-import utils from '../../utils';
-import idCache from './id-cache';
-import { drawState, addIdAndBox, drawEdge, drawNote } from './shapes';
+// import idCache from './id-cache';
+import { drawState, addIdAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 
 parser.yy = stateDb;
-
-let total = 0;
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
@@ -28,20 +25,20 @@ let conf;
 
 const transformationLog = {};
 
-export const setConf = function(cnf) {};
+export const setConf = function() {};
 
 // Todo optimize
-const getGraphId = function(label) {
-  const keys = idCache.keys();
+// const getGraphId = function(label) {
+//   const keys = idCache.keys();
 
-  for (let i = 0; i < keys.length; i++) {
-    if (idCache.get(keys[i]).label === label) {
-      return keys[i];
-    }
-  }
+//   for (let i = 0; i < keys.length; i++) {
+//     if (idCache.get(keys[i]).label === label) {
+//       return keys[i];
+//     }
+//   }
 
-  return undefined;
-};
+//   return undefined;
+// };
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
@@ -90,7 +87,7 @@ export const draw = function(text, id) {
   });
 
   const rootDoc = stateDb.getRootDoc();
-  const n = renderDoc(rootDoc, diagram);
+  renderDoc(rootDoc, diagram);
 
   const bounds = diagram.node().getBBox();
 
@@ -129,7 +126,6 @@ const renderDoc = (doc, diagram, parentId) => {
       // multigraph: false,
       compound: true,
       // acyclicer: 'greedy',
-      rankdir: 'LR',
       ranker: 'tight-tree',
       ranksep: conf.edgeLengthFactor
       // isMultiGraph: false
@@ -159,7 +155,6 @@ const renderDoc = (doc, diagram, parentId) => {
 
   const keys = Object.keys(states);
 
-  total = keys.length;
   let first = true;
 
   for (let i = 0; i < keys.length; i++) {

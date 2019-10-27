@@ -16,7 +16,7 @@ export const drawRect = function(elem, rectData) {
   return rectElem;
 };
 
-export const drawText = function(elem, textData, width) {
+export const drawText = function(elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(/<br\/?>/gi, ' ');
 
@@ -374,7 +374,7 @@ const _drawTextCandidateFunc = (function() {
 
   function _setTextAttrs(toText, fromTextAttrsDict) {
     for (const key in fromTextAttrsDict) {
-      if (fromTextAttrsDict.hasOwnProperty(key)) {
+      if (fromTextAttrsDict.hasOwnProperty(key)) { // eslint-disable-line
         toText.attr(key, fromTextAttrsDict[key]);
       }
     }

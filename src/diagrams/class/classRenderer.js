@@ -204,14 +204,12 @@ const drawEdge = function(elem, path, relation) {
   x = labalPosition.x;
   y = labalPosition.y;
 
-  let p1_card_x,
-    p1_card_y,
-    p1_card_padd_x = conf.padding * 2,
-    p1_card_padd_y = conf.padding;
-  let p2_card_x,
-    p2_card_y,
-    p2_card_padd_x = conf.padding * 2,
-    p2_card_padd_y = -conf.padding / 2;
+  let p1_card_x, p1_card_y;
+  // p1_card_padd_x = conf.padding * 2,
+  // p1_card_padd_y = conf.padding;
+  let p2_card_x, p2_card_y;
+  // p2_card_padd_x = conf.padding * 2,
+  // p2_card_padd_y = -conf.padding / 2;
   if (l % 2 !== 0 && l > 1) {
     let cardinality_1_point = utils.calcCardinalityPosition(
       relation.relation.type1 !== 'none',
@@ -258,8 +256,7 @@ const drawEdge = function(elem, path, relation) {
   logger.info('Rendering relation ' + JSON.stringify(relation));
   if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
-    const label = g
-      .append('text')
+    g.append('text')
       .attr('class', 'type1')
       .attr('x', p1_card_x)
       .attr('y', p1_card_y)
@@ -269,8 +266,7 @@ const drawEdge = function(elem, path, relation) {
   }
   if (typeof relation.relationTitle2 !== 'undefined' && relation.relationTitle2 !== 'none') {
     const g = elem.append('g').attr('class', 'cardinality');
-    const label = g
-      .append('text')
+    g.append('text')
       .attr('class', 'type2')
       .attr('x', p2_card_x)
       .attr('y', p2_card_y)
