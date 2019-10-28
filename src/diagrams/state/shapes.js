@@ -272,17 +272,22 @@ const _drawLongText = (_text, x, y, g) => {
   let text = _text.replace(/\r\n/g, '<br/>');
   text = text.replace(/\n/g, '<br/>');
   const lines = text.split(/<br\/?>/gi);
+
+  let tHeight = 1.25 * getConfig().state.noteMargin;
   for (const line of lines) {
     const txt = line.trim();
 
     if (txt.length > 0) {
       const span = textElem.append('tspan');
       span.text(txt);
-      const textBounds = span.node().getBBox();
-      textHeight += textBounds.height;
+      if (tHeight === 0) {
+        const textBounds = span.node().getBBox();
+        tHeight += textBounds.height;
+      }
+      // console.warn('textBounds', textBounds);
+      textHeight += tHeight;
       span.attr('x', x + getConfig().state.noteMargin);
       span.attr('y', y + textHeight + 1.25 * getConfig().state.noteMargin);
-      // textWidth = Math.max(textBounds.width, textWidth);
     }
   }
   return { textWidth: textElem.node().getBBox().width, textHeight };

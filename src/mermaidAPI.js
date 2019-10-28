@@ -310,7 +310,7 @@ const config = {
   state: {
     dividerMargin: 10,
     sizeUnit: 5,
-    padding: 5,
+    padding: 8,
     textHeight: 10,
     titleShift: -15,
     noteMargin: 10,
