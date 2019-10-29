@@ -44,7 +44,7 @@ Mermaid can render class diagrams.
           +String beakColor
           +swim()
           +quack()
-       }
+      }
       class Fish{
           -int sizeInFeet
           -canEat()
@@ -69,7 +69,7 @@ A single instance of a class in the diagram contains three compartments:
 ```
 classDiagram
     class BankAccount
-    BankAccount : +String onwer
+    BankAccount : +String owner
     BankAccount : +Bigdecimal balance
     BankAccount : +deposit(amount)
     BankAccount : +withdrawl(amount)
@@ -77,7 +77,7 @@ classDiagram
 ```mermaid
 classDiagram
     class BankAccount
-    BankAccount : +String onwer
+    BankAccount : +String owner
     BankAccount : +BigDecimal balance
     BankAccount : +deposit(amount)
     BankAccount : +withdrawl(amount)
@@ -98,6 +98,9 @@ classDiagram
     class Animal
     Vehicle <|-- Car
 ```
+
+Naming convention: a class name should be composed of alphanumeric (unicode allowed) and underscore characters.
+
 ## Defining Members of a class
 
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
@@ -117,7 +120,7 @@ There are two ways to define the members of a class, and regardless of the which
 
  ```
   class BankAccount
-  BankAccount : +String onwer
+  BankAccount : +String owner
   BankAccount : +BigDecimal balance
   BankAccount : +deposit(amount)
   BankAccount : +withdrawl(amount)
@@ -125,7 +128,7 @@ There are two ways to define the members of a class, and regardless of the which
   ```mermaid
     classDiagram
     class BankAccount
-    BankAccount : +String onwer
+    BankAccount : +String owner
     BankAccount : +BigDecimal balance
     BankAccount : +deposit(amount)
     BankAccount : +withdrawl(amount)
@@ -134,7 +137,7 @@ There are two ways to define the members of a class, and regardless of the which
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 ```
 class BankAccount{
-    +String onwer
+    +String owner
     +BigDecimal balance
     +deposit(amount)
     +withdrawl(amount)
@@ -143,7 +146,7 @@ class BankAccount{
 ```mermaid
     classDiagram
     class BankAccount{
-        +String onwer
+        +String owner
         +BigDecimal balance
         +deposit(amount)
         +withdrawl(amount)
