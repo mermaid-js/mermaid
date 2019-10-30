@@ -64,7 +64,7 @@ describe('class diagram, ', function() {
     it('should handle parsing of method statements  grouped by brackets', function() {
       const str =
         'classDiagram\n' +
-        'class Dummy {\n' +
+        'class Dummy_Class {\n' +
         'String data\n' +
         '  void methods()\n' +
         '}\n' +
