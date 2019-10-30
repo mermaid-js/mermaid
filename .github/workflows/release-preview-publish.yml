@@ -33,8 +33,8 @@ jobs:
         echo $VERSION
         npm version --no-git-tag-version --allow-same-version $VERSION
         npm set //npm.pkg.github.com/:_authToken ${{ secrets.GITHUB_TOKEN }}
-        npm set registry https://npm.pkg.github.com/knsv
-        json -I -f package.json -e 'this.name="@knsv/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
-        json -I -f package.json -e 'this.repository="git://github.com/knsv/mermaid"' # Repo url needs to have a specific format too
+        npm set registry https://npm.pkg.github.com/mermaid-js
+        json -I -f package.json -e 'this.name="@mermaid-js/mermaid"' # Package name needs to be set to a scoped one because GitHub registry requires this
+        json -I -f package.json -e 'this.repository="git://github.com/mermaid-js/mermaid"' # Repo url needs to have a specific format too
         npm publish
 
