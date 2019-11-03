@@ -27,6 +27,9 @@ jobs:
       run: |
         yarn test --coverage
         cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
+      with:
+        COVERALLS_SERVICE_NAME: ${{ secrets.COVERALLS_SERVICE_NAME }}
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
     - name: Run E2E Tests
       run: yarn e2e
