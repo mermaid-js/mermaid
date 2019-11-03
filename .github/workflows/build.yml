@@ -33,3 +33,5 @@ jobs:
 
     - name: Run E2E Tests
       run: yarn e2e
+      env:
+        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
