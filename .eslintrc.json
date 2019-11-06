@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "node": true
   },
   "parserOptions": {
       "ecmaFeatures": {
@@ -10,7 +11,7 @@
       },
       "sourceType": "module"
   },
-  "extends": ["prettier"],
+  "extends": ["prettier", "eslint:recommended"],
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": ["error"]

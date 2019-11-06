@@ -514,11 +514,12 @@ export const draw = function(text, id) {
         bounds.newLoop(undefined, msg.message);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
-      case parser.yy.LINETYPE.RECT_END:
+      case parser.yy.LINETYPE.RECT_END: {
         const rectData = bounds.endLoop();
         svgDraw.drawBackgroundRect(diagram, rectData);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
+      }
       case parser.yy.LINETYPE.OPT_START:
         bounds.bumpVerticalPos(conf.boxMargin);
         bounds.newLoop(msg.message);

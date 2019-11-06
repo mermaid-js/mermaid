@@ -43,10 +43,10 @@
 <SCALE>\s+"width"     {this.popState();}
 
 <INITIAL,struct>"state"\s+            { this.pushState('STATE'); }
-<STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); console.warn('Fork Fork: ',yytext);return 'FORK';}
-<STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Join: ',yytext);return 'JOIN';}
-<STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Fork: ',yytext);return 'FORK';}
-<STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();console.warn('Fork Join: ',yytext);return 'JOIN';}
+<STATE>.*"<<fork>>"                   {this.popState();yytext=yytext.slice(0,-8).trim(); /*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
+<STATE>.*"<<join>>"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
+<STATE>.*"[[fork]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Fork: ',yytext);*/return 'FORK';}
+<STATE>.*"[[join]]"                   {this.popState();yytext=yytext.slice(0,-8).trim();/*console.warn('Fork Join: ',yytext);*/return 'JOIN';}
 <STATE>["]                   this.begin("STATE_STRING");
 <STATE>"as"\s*         {this.popState();this.pushState('STATE_ID');return "AS";}
 <STATE_ID>[^\n\{]*         {this.popState();/* console.log('STATE_ID', yytext);*/return "ID";}
@@ -133,7 +133,17 @@ statement
         /* console.warn('Adding document for state without id ', $1);*/
         $$={ stmt: 'state', id: $1, type: 'default', description: '', doc: $3 }
     }
-    | STATE_DESCR AS ID { $$={stmt: 'state', id: $3, type: 'default', description: $1.trim()};}
+    | STATE_DESCR AS ID {
+        var id=$3;
+        var description = $1.trim();
+        if($3.match(':')){
+            var parts = $3.split(':');
+            id=parts[0];
+            description = [description, parts[1]];
+        }
+        $$={stmt: 'state', id: id, type: 'default', description: description};
+
+    }
     | STATE_DESCR AS ID STRUCT_START document STRUCT_STOP
     {
          //console.warn('Adding document for state with id ', $3, $4); yy.addDocument($3);

@@ -387,10 +387,11 @@ const compileTasks = function() {
     const task = rawTasks[pos];
     let startTime = '';
     switch (rawTasks[pos].raw.startTime.type) {
-      case 'prevTaskEnd':
+      case 'prevTaskEnd': {
         const prevTask = findTaskById(task.prevTaskId);
         task.startTime = prevTask.endTime;
         break;
+      }
       case 'getStartDate':
         startTime = getStartDate(undefined, dateFormat, rawTasks[pos].raw.startTime.startData);
         if (startTime) {
@@ -501,7 +502,7 @@ const setClickFun = function(id, functionName, functionArgs) {
  * @param callbackFunction A function to be executed when clicked on the task or the task's text
  */
 const pushFun = function(id, callbackFunction) {
-  funs.push(function(element) {
+  funs.push(function() {
     // const elem = d3.select(element).select(`[id="${id}"]`)
     const elem = document.querySelector(`[id="${id}"]`);
     if (elem !== null) {
@@ -510,7 +511,7 @@ const pushFun = function(id, callbackFunction) {
       });
     }
   });
-  funs.push(function(element) {
+  funs.push(function() {
     // const elem = d3.select(element).select(`[id="${id}-text"]`)
     const elem = document.querySelector(`[id="${id}-text"]`);
     if (elem !== null) {

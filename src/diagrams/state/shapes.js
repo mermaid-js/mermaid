@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
-import { getConfig, conf } from '../../config';
+import { getConfig } from '../../config';
 
 // let conf;
 
@@ -76,7 +76,7 @@ export const drawDescrState = (g, stateDef) => {
     .attr('y', getConfig().state.textHeight + 1.5 * getConfig().state.padding)
     .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
-    .text(stateDef.id);
+    .text(stateDef.descriptions[0]);
 
   const titleBox = title.node().getBBox();
   const titleHeight = titleBox.height;
@@ -94,8 +94,12 @@ export const drawDescrState = (g, stateDef) => {
     .attr('class', 'state-description');
 
   let isFirst = true;
+  let isSecond = true;
   stateDef.descriptions.forEach(function(descr) {
-    addTspan(description, descr, isFirst);
+    if (!isFirst) {
+      addTspan(description, descr, isSecond);
+      isSecond = false;
+    }
     isFirst = false;
   });
 
@@ -106,7 +110,6 @@ export const drawDescrState = (g, stateDef) => {
     .attr('y2', getConfig().state.padding + titleHeight + getConfig().state.dividerMargin / 2)
     .attr('class', 'descr-divider');
   const descrBox = description.node().getBBox();
-  console.warn(descrBox.width, titleBox.width);
   const width = Math.max(descrBox.width, titleBox.width);
 
   descrLine.attr('x2', width + 3 * getConfig().state.padding);
@@ -128,15 +131,15 @@ export const drawDescrState = (g, stateDef) => {
  */
 export const addIdAndBox = (g, stateDef) => {
   // TODO Move hardcodings to conf
-  const addTspan = function(textEl, txt, isFirst) {
-    const tSpan = textEl
-      .append('tspan')
-      .attr('x', 2 * getConfig().state.padding)
-      .text(txt);
-    if (!isFirst) {
-      tSpan.attr('dy', getConfig().state.textHeight);
-    }
-  };
+  // const addTspan = function(textEl, txt, isFirst) {
+  //   const tSpan = textEl
+  //     .append('tspan')
+  //     .attr('x', 2 * getConfig().state.padding)
+  //     .text(txt);
+  //   if (!isFirst) {
+  //     tSpan.attr('dy', getConfig().state.textHeight);
+  //   }
+  // };
   const title = g
     .append('text')
     .attr('x', 2 * getConfig().state.padding)
@@ -145,7 +148,7 @@ export const addIdAndBox = (g, stateDef) => {
     .attr('class', 'state-title')
     .text(stateDef.id);
 
-  const titleHeight = title.node().getBBox().height;
+  const titleBox = title.node().getBBox();
 
   const lineY = 1 - getConfig().state.textHeight;
   const descrLine = g
@@ -156,7 +159,7 @@ export const addIdAndBox = (g, stateDef) => {
     .attr('class', 'descr-divider');
 
   const graphBox = g.node().getBBox();
-  title.attr('x', graphBox.width / 2 - title.node().getBBox().width / 2);
+  title.attr('x', graphBox.width / 2 - titleBox.width / 2);
   descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   // White color
@@ -238,7 +241,7 @@ const drawForkJoinState = (g, stateDef) => {
     .attr('y', getConfig().state.padding);
 };
 
-export const drawText = function(elem, textData, width) {
+export const drawText = function(elem, textData) {
   // Remove and ignore br:s
   const nText = textData.text.replace(/<br\/?>/gi, ' ');
 
@@ -261,7 +264,7 @@ export const drawText = function(elem, textData, width) {
 
 const _drawLongText = (_text, x, y, g) => {
   let textHeight = 0;
-  let textWidth = 0;
+
   const textElem = g.append('text');
   textElem.style('text-anchor', 'start');
   textElem.attr('class', 'noteText');
@@ -269,17 +272,22 @@ const _drawLongText = (_text, x, y, g) => {
   let text = _text.replace(/\r\n/g, '<br/>');
   text = text.replace(/\n/g, '<br/>');
   const lines = text.split(/<br\/?>/gi);
+
+  let tHeight = 1.25 * getConfig().state.noteMargin;
   for (const line of lines) {
     const txt = line.trim();
 
     if (txt.length > 0) {
       const span = textElem.append('tspan');
       span.text(txt);
-      const textBounds = span.node().getBBox();
-      textHeight += textBounds.height;
+      if (tHeight === 0) {
+        const textBounds = span.node().getBBox();
+        tHeight += textBounds.height;
+      }
+      // console.warn('textBounds', textBounds);
+      textHeight += tHeight;
       span.attr('x', x + getConfig().state.noteMargin);
       span.attr('y', y + textHeight + 1.25 * getConfig().state.noteMargin);
-      // textWidth = Math.max(textBounds.width, textWidth);
     }
   }
   return { textWidth: textElem.node().getBBox().width, textHeight };
@@ -314,8 +322,7 @@ export const drawNote = (text, g) => {
  * @param {*} stateDef
  */
 
-let cnt = 0;
-export const drawState = function(elem, stateDef, graph, doc) {
+export const drawState = function(elem, stateDef) {
   const id = stateDef.id;
   const stateInfo = {
     id: id,
@@ -345,6 +352,12 @@ export const drawState = function(elem, stateDef, graph, doc) {
   idCache.set(id, stateInfo);
   // stateCnt++;
   return stateInfo;
+};
+
+const getRows = s => {
+  let str = s.replace(/<br\/?>/gi, '#br#');
+  str = str.replace(/\\n/g, '#br#');
+  return str.split('#br#');
 };
 
 let edgeCount = 0;
@@ -401,20 +414,48 @@ export const drawEdge = function(elem, path, relation) {
   );
 
   if (typeof relation.title !== 'undefined') {
-    const g = elem.append('g').attr('class', 'stateLabel');
-    const label = g
-      .append('text')
-      .attr('text-anchor', 'middle')
-      .text(relation.title);
+    const label = elem.append('g').attr('class', 'stateLabel');
+
     const { x, y } = utils.calcLabelPosition(path.points);
-    label.attr('x', x).attr('y', y);
+
+    const rows = getRows(relation.title);
+
+    // console.warn(rows);
+
+    let titleHeight = 0;
+    const titleRows = [];
+    for (let i = 0; i <= rows.length; i++) {
+      const title = label
+        .append('text')
+        .attr('text-anchor', 'middle')
+        .text(rows[i])
+        .attr('x', x)
+        .attr('y', y + titleHeight);
+
+      if (titleHeight === 0) {
+        const titleBox = title.node().getBBox();
+        titleHeight = titleBox.height;
+      }
+      titleRows.push(title);
+    }
+
+    if (rows.length > 1) {
+      const heightAdj = rows.length * titleHeight * 0.25;
+
+      titleRows.forEach((title, i) => title.attr('y', y + i * titleHeight - heightAdj));
+    }
+
     const bounds = label.node().getBBox();
-    g.insert('rect', ':first-child')
+    label
+      .insert('rect', ':first-child')
       .attr('class', 'box')
       .attr('x', bounds.x - getConfig().state.padding / 2)
       .attr('y', bounds.y - getConfig().state.padding / 2)
       .attr('width', bounds.width + getConfig().state.padding)
       .attr('height', bounds.height + getConfig().state.padding);
+
+    //label.attr('transform', '0 -' + (bounds.y / 2));
+
     // Debug points
     // path.points.forEach(point => {
     //   g.append('circle')

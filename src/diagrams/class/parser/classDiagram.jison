@@ -163,7 +163,7 @@ members
 methodStatement
     : className {/*console.log('Rel found',$1);*/}
     | className LABEL {yy.addMember($1,yy.cleanupLabel($2));}
-    | MEMBER {console.warn('Member',$1);}
+    | MEMBER {/*console.warn('Member',$1);*/}
     | SEPARATOR {/*console.log('sep found',$1);*/}
     ;
 

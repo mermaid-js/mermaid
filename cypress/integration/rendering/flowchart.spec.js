@@ -2,7 +2,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 describe('Flowcart', () => {
-  it('should render a simple flowchart no htmlLabels', () => {
+  it('1: should render a simple flowchart no htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -14,7 +14,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-  it('should render a simple flowchart with htmlLabels', () => {
+  it('2: should render a simple flowchart with htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -26,7 +26,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: true } }
     );
   });
-  it('should render a simple flowchart with line breaks', () => {
+  it('3: should render a simple flowchart with line breaks', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -40,7 +40,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render a simple flowchart with trapezoid and inverse trapezoid vertex options.', () => {
+  it('4: should render a simple flowchart with trapezoid and inverse trapezoid vertex options.', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -55,7 +55,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should style nodes via a class.', () => {
+  it('4: should style nodes via a class.', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -71,7 +71,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render a flowchart full of circles', () => {
+  it('5: should render a flowchart full of circles', () => {
     imgSnapshotTest(
       `
     graph LR
@@ -99,7 +99,7 @@ describe('Flowcart', () => {
       {}
     );
   });
-  it('should render a flowchart full of icons', () => {
+  it('6: should render a flowchart full of icons', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -170,7 +170,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render labels with numbers at the start', () => {
+  it('7: should render labels with numbers at the start', () => {
     imgSnapshotTest(
       `
     graph TB;subgraph "number as labels";1;end;
@@ -178,7 +178,7 @@ describe('Flowcart', () => {
       {}
     );
   });
-  it('should render subgraphs', () => {
+  it('8: should render subgraphs', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -190,7 +190,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render subgraphs with a title startign with a digit', () => {
+  it('9: should render subgraphs with a title startign with a digit', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -202,7 +202,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render styled subgraphs', () => {
+  it('10: should render styled subgraphs', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -237,7 +237,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render a flowchart with ling sames and class definitoins', () => {
+  it('11: should render a flowchart with ling sames and class definitoins', () => {
     imgSnapshotTest(
       `graph LR
       sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["
@@ -339,7 +339,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('should render color of styled nodes', () => {
+  it('12: should render color of styled nodes', () => {
     imgSnapshotTest(
       `
       graph LR

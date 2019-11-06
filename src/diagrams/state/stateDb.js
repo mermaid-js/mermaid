@@ -9,7 +9,7 @@ const setRootDoc = o => {
 const getRootDoc = () => rootDoc;
 
 const extract = doc => {
-  const res = { states: [], relations: [] };
+  // const res = { states: [], relations: [] };
   clear();
 
   doc.forEach(item => {
@@ -37,8 +37,8 @@ let documents = {
 let currentDocument = documents.root;
 
 let startCnt = 0;
-let endCnt = 0;
-let stateCnt = 0;
+let endCnt = 0; // eslint-disable-line
+// let stateCnt = 0;
 
 /**
  * Function called by parser when a node definition has been found.
@@ -64,7 +64,14 @@ export const addState = function(id, type, doc, descr, note) {
       currentDocument.states[id].type = type;
     }
   }
-  if (descr) addDescription(id, descr.trim());
+  if (descr) {
+    if (typeof descr === 'string') addDescription(id, descr.trim());
+
+    if (typeof descr === 'object') {
+      descr.forEach(des => addDescription(id, des.trim()));
+    }
+  }
+
   if (note) currentDocument.states[id].note = note;
 };
 
