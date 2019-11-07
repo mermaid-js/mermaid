@@ -24,4 +24,3 @@
 - I'm a n00b
   - [overview](n00b-overview.md)
   - [Getting started - easier](n00b-gettingStarted.md)
-  - [Three web server examples](n00b-webServers.md)
