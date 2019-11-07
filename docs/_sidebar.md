@@ -14,8 +14,14 @@
   - [State Diagram](stateDiagram.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
+
 - Guide
 
   - [Development](development.md)
   - [mermaidAPI](mermaidAPI.md)
   - [Changelog](CHANGELOG.md)
+
+- I'm a n00b
+  - [overview](n00b-overview.md)
+  - [Getting started - easier](n00b-gettingStarted.md)
+  - [Three web server examples](n00b-webServers.md)
