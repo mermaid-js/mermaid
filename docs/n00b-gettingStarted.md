@@ -70,7 +70,7 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 
 This example can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
-We do not need to install anything on the server, apart from a normal file of html which can be reached by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer).
+We do not need to install anything on the server, apart from a normal file of html to be reached by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer). So if you want to really simplify things when testing this out, don't use a web server at all but just create the file locally and drag it into your browser window. It is the browser which does all the work of rendering mermaid!
 
 Through the html file, we give the web browser three instructions inside the html code it retrieves:
 1. a reference for fetching the online mermaid renderer, in essence a javascript.
@@ -137,9 +137,7 @@ All this is done in the html `<body>` section of the web page.
   </body>
 </html>
 ```
-Save this to a file and fetch it with a browser from the web server.
-
-Voila!
+Save this to a html file and fetch it with a browser from the web server and voila!
 
 ---
 
@@ -148,7 +146,7 @@ Voila!
   
 - We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code. In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page, i.e. running `mermaid.initialize()`, as all `<div>` tags may not have loaded when `mermaid.min.js` runs.
 
-- In the example above, the `mermaid.min.js` is called using an absolute path. Even worse, it includes the mermaid version number which of course will change as time goes by. However the example makes it easy to understand what is going on, even though it is doomed in a way we do not want in a production environment. When going from testing mermaid out to getting serious with it, I would suggest one of the following approaches for calling `mermaid.min.js`:
+- In the example above, `mermaid.min.js` is called using an absolute path. Even worse, the example includes the mermaid version number which of course will change as time goes by. However, the example makes it easy to understand what is going on - even though it is doomed in a way we do not want in a production environment. When going from testing mermaid out to getting serious with it, I would suggest one of the following approaches for calling `mermaid.min.js`:
   
   1. One
   2. Two
