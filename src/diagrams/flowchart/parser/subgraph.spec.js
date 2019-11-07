@@ -83,7 +83,7 @@ describe('when parsing subgraphs', function() {
     const subgraph = subgraphs[0];
     expect(subgraph.nodes.length).toBe(1);
     expect(subgraph.nodes[0]).toBe('A');
-    expect(subgraph.id).toBe('s1test');
+    expect(subgraph.id).toBe('mermaid-dom-id-1test');
   });
 
   it('should handle subgraphs1', function() {

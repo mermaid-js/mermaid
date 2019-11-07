@@ -4,7 +4,7 @@ import { logger } from '../../logger';
 import utils from '../../utils';
 import { getConfig } from '../../config';
 
-const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id';
+const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 
 const config = getConfig();
 let vertices = {};
