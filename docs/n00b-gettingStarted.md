@@ -77,7 +77,7 @@ Through the html file, we give the web browser three instructions inside the htm
 2. the mermaid code we want to diagram.
 3. the `mermaid.initialize()` command to start the rendering process
 
-All this is done in the html `<body>` section of the web page.
+All this is done in the html `<body>` section of the web page. This is what needs to go into the html file:
 
 
 
@@ -89,7 +89,7 @@ All this is done in the html `<body>` section of the web page.
 </body>
 ```
 
-2. The embedded mermaid code is similarly placed in a `<script>` tag:
+2. The embedded mermaid code is similarly placed in a `<div>` tag:
 
 ```
 <body>
@@ -103,7 +103,7 @@ All this is done in the html `<body>` section of the web page.
 </body>
 ```
 
-3. When initializing mermaid, it starts to render the content of all the `<div class="mermaid">` tags it can find in the html body. This is done like so:
+3. When initializing mermaid using `mermaid.initialize()`, it takes all the `<div class="mermaid">` tags it can find in the html body and starts to render them. This is done like so:
 
 ```
 <body>
@@ -137,7 +137,7 @@ All this is done in the html `<body>` section of the web page.
   </body>
 </html>
 ```
-Save this to a html file and fetch it with a browser from the web server and voila!
+Save this to a html file and fetch it with a browser from the web server (or just drag it into your web browser window) and voila!
 
 ---
 
