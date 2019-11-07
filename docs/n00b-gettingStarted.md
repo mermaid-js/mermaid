@@ -148,7 +148,7 @@ Voila!
   
 - We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code. In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page, i.e. running `mermaid.initialize()`, as all `<div>` tags may not have loaded when `mermaid.min.js` runs.
 
-- In the example above, the `mermaid.min.js` is called using an absolute path. Even worse, it includes the mermaid version number, which will of course change as time goes by. However the example makes it easy to understand what is going on, even though it is doomed in a way we do not want in a production environment. When going from testing mermaid out to getting serious with it, I would suggest one of the following approaches for calling `mermaid.min.js`:
+- In the example above, the `mermaid.min.js` is called using an absolute path. Even worse, it includes the mermaid version number which will of course change as time goes by. However the example makes it easy to understand what is going on, even though it is doomed in a way we do not want in a production environment. When going from testing mermaid out to getting serious with it, I would suggest one of the following approaches for calling `mermaid.min.js`:
   
   1. One
   2. Two
