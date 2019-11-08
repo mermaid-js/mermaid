@@ -2,7 +2,7 @@
 
 Writing mermaid code is simple.
 
-But how is it turned into a diagram in a web page? To do this we need a mermaid renderer.
+But how is the code turned into a diagram in a web page? To do this we need a mermaid renderer.
 
 Thankfully the mermaid renderer is very accessible.
 
