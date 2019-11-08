@@ -6,7 +6,7 @@ But how is the code turned into a diagram in a web page? To do this we need a me
 
 Thankfully the mermaid renderer is very accessible.
 
-The requirement is on the part of the web browser. Modern web browsers work, such as Firefox, Chrome, Safari. But Internet Explorer does not. The web browser also needs to be able to access the online mermaid renderer at cdn.jsdelivr.net/npm/
+The requirement is on the part of the web browser. Modern web browsers can render mermaid, such as Firefox, Chrome, Safari. But Internet Explorer cannot. The web browser also needs to be able to access the online mermaid renderer at cdn.jsdelivr.net/npm/
 
 For an easy introduction, here follows three practical examples using:
 1. an online mermaid editor
