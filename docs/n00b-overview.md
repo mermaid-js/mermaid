@@ -2,7 +2,7 @@
 
 As a sysadmin I frequently have to document things, including drawing stuff.
 
-Using mermaid I can type this as a comment in a script:
+Using mermaid, I can type this as a comment in a script:
 
 ```
 graph TD
@@ -15,7 +15,7 @@ And end up with this in the documentation:
 
 ![Flowchart](./img/n00b-firstFlow.png)
 
-Most of the stuff I need to visualize can be scripted like this, with a varitety of different symbols and chart types. Since the diagram source is text based, it can be part of production scripts (and other pieces of code). So less time needs be spent on documenting as a separate task.
+Most of the stuff I need to visualize can be scripted in a similar way, with a varitety of different symbols and chart types available. Since the diagram source is text based, it can be part of production scripts (and other pieces of code). So less time needs be spent on documenting as a separate task.
 
 Comparing with Visio and similar applications, mermaid is a really fast and simple way to create good visualizations. This is especially apparent when a complex visualisation needs to be edited, which could take me hours in a desktop application.
 
