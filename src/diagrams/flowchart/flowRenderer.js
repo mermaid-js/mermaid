@@ -460,8 +460,8 @@ export const draw = function(text, id) {
     subG = subGraphs[i];
 
     if (subG.title !== 'undefined') {
-      const clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect');
-      const clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id);
+      const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
+      const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
 
       const xPos = clusterRects[0].x.baseVal.value;
       const yPos = clusterRects[0].y.baseVal.value;
@@ -475,7 +475,7 @@ export const draw = function(text, id) {
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label');
+    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
 
