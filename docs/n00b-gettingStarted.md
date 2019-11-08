@@ -105,7 +105,7 @@ This is what needs to go into the html file:
 </body>
 ```
 
-3. When initializing mermaid using `mermaid.initialize()`, it takes all the `<div class="mermaid">` tags it can find in the html body and starts to render them. This is done like so:
+3. When initializing mermaid using `mermaid.initialize()`, mermaid takes all the `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. This is done like so:
 
 ```
 <body>
