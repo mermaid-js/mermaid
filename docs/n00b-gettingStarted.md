@@ -151,6 +151,11 @@ stuff stuff
   </body>
 </html>
 ```
+The actual mermaid file could for example look like this:
+
+```
+mermaid content...
+```
 
 ---
 
