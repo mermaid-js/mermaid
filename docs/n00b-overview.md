@@ -11,7 +11,7 @@ B --> C[Server01]
 B --> D[Server02]
 ```
 
-And end up getting this in the documentation:
+And end up with this in the documentation:
 
 ![Flowchart](./img/n00b-firstFlow.png)
 
