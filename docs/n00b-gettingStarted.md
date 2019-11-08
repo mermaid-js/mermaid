@@ -13,7 +13,7 @@ For an easy introduction, here follows three practical examples for turning code
 2. a mermaid plugin
 3. a generic web server of your choosing
 
-Following either of these examples, you can get started converting your own mermaid code into web diagrams.
+Following either of these examples, you can get started with converting your own mermaid code into web diagrams.
 
 ## the mermaid live editor
 
