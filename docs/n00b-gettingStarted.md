@@ -8,7 +8,7 @@ Thankfully the mermaid renderer is very accessible.
 
 The requirement is on the part of the web browser. Modern web browsers can render mermaid, such as Firefox, Chrome, Safari. But Internet Explorer cannot. The web browser also needs to be able to access the online mermaid renderer at cdn.jsdelivr.net/npm/
 
-For an easy introduction, here follows three practical examples using:
+For an easy introduction, here follows three practical examples for turning code into diagram:
 1. an online mermaid editor
 2. a mermaid plugin
 3. a generic web server of your choosing
