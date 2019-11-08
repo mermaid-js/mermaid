@@ -45,8 +45,9 @@ const contentLoadedApi = function() {
     if (Array.isArray(graphObj.code)) {
       const numCodes = graphObj.code.length;
       const divs = [];
+      let div;
       for (let i = 0; i < numCodes; i++) {
-        const div = document.createElement('div');
+        div = document.createElement('div');
         div.id = 'block' + i;
         div.className = 'mermaid';
         // div.innerHTML = graphObj.code
@@ -82,10 +83,11 @@ const contentLoadedApi = function() {
         (svgCode, bindFunctions) => {
           div.innerHTML = svgCode;
 
-        if (bindFunctions) bindFunctions(div);
-      },
-      div
-    );
+          if (bindFunctions) bindFunctions(div);
+        },
+        div
+      );
+    }
   }
 };
 
