@@ -77,7 +77,9 @@ Through the html file, we give the web browser three instructions inside the htm
 2. the mermaid code we want to diagram.
 3. the `mermaid.initialize()` command to start the rendering process
 
-All this is done in the html `<body>` section of the web page. This is what needs to go into the html file:
+All this is done in the html `<body>` section of the web page.
+
+This is what needs to go into the html file:
 
 
 
