@@ -8,7 +8,7 @@ import { parser } from './parser/classDiagram';
 
 parser.yy = classDb;
 
-const idCache = {};
+let idCache = {};
 
 let classCnt = 0;
 const conf = {
@@ -136,7 +136,6 @@ const insertMarkers = function(elem) {
 };
 
 let edgeCount = 0;
-let total = 0;
 const drawEdge = function(elem, path, relation) {
   const getRelationType = function(type) {
     switch (type) {
@@ -291,7 +290,7 @@ const drawClass = function(elem, classDef) {
     }
   };
 
-  const id = 'classId' + (classCnt % total);
+  const id = 'classId' + classCnt;
   const classInfo = {
     id: id,
     label: classDef.id,
@@ -411,6 +410,7 @@ export const setConf = function(cnf) {
  * @param id
  */
 export const draw = function(text, id) {
+  idCache = {};
   parser.yy.clear();
   parser.parse(text);
 
@@ -437,7 +437,6 @@ export const draw = function(text, id) {
 
   const classes = classDb.getClasses();
   const keys = Object.keys(classes);
-  total = keys.length;
   for (let i = 0; i < keys.length; i++) {
     const classDef = classes[keys[i]];
     const node = drawClass(diagram, classDef);
