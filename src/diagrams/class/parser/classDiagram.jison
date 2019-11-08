@@ -43,8 +43,8 @@
 \%                    return 'PCT';
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
-[A-Za-z]+             return 'ALPHA';
-[!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
+\w+                   return 'ALPHA';
+[!"#$%&'*+,-.`?\\/]   return 'PUNCTUATION';
 [0-9]+                 return 'NUM';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|

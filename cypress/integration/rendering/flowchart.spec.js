@@ -356,4 +356,25 @@ describe('Flowcart', () => {
       }
     );
   });
+  it('13: should render hexagons', () => {
+    imgSnapshotTest(
+      `
+      graph TD
+        A[Christmas] -->|Get money| B(Go shopping)
+        B --> C{{Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?}}
+        C -->|One| D[Laptop]
+        C -->|Two| E[iPhone]
+        C -->|Three| F[Car]
+        click A "index.html#link-clicked" "link test"
+        click B testClick "click test"
+        classDef someclass fill:#f96;
+        class A someclass;
+      `,
+      {
+        listUrl: false,
+        listId: 'color styling',
+        logLevel: 0
+      }
+    );
+  });
 });
