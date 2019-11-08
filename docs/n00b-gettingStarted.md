@@ -141,7 +141,7 @@ Save this to a html file and fetch it with a browser from the web server (or jus
 
 ---
 
-**Three additional comments from Knut, the creator of mermaid:**
+**Three additional comments from Knut Sveidqvist, creator of mermaid:**
 - In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowdays we can place it directly in `<body>` as seen above. However, the documentation still frequently reflects the old way which still works.
   
 - We initialize the mermaid rendering with `mermaid.initialize()` directly in the html code. In principle this could be done through placing `mermaid.initialize()` inside of `mermaid.min.js`. We would then eliminate the need for this explicit line in the html. However, there are use cases where we do want to separate the two steps. Sometimes we want full control over when we start looking for `<div>`tags inside the web page with `mermaid.initialize()`, for example when we think that all `<div>` tags may not have loaded when `mermaid.min.js` runs.
