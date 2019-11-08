@@ -22,6 +22,6 @@ Comparing with Visio and similar applications, mermaid is a really fast and simp
 With mermaid I can spend a fraction of that time automating the diagram generation and end up saving even more time. I love it!
 
 
-However, a lot of the mermaid documentation is geared to professional frontend developers, and presumes a skill set which I simply do not have.
+However, a lot of the mermaid documentation is geared to professional frontend developers, presuming a skill set which I simply do not have.
 
 I needed a really basic instruction, and here it is.
