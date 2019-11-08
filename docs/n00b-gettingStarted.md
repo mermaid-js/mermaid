@@ -141,7 +141,7 @@ Save this to a html file and fetch it with a browser from the web server (or jus
 
 ---
 
-A more condensed code can be achieved by embedding the mermaid code in its own .js file, which is referenced like so:
+A more condensed html code can be achieved by embedding the mermaid code in its own .js file, which is referenced like so:
 
 ```
 stuff stuff
