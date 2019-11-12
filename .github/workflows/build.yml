@@ -9,7 +9,7 @@ jobs:
       matrix:
         node-version: [10.x, 12.x]
     env:
-      CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/node_modules/.cypress
+      CYPRESS_CACHE_FOLDER: node_modules/.cypress
     steps:
     - uses: actions/checkout@v1
     - name: Setup Node.js ${{ matrix.node-version }}
