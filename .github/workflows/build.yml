@@ -8,6 +8,8 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x, 12.x]
+    env:
+      CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/.cache/cypress
     steps:
     - uses: actions/checkout@v1
     - name: Setup Node.js ${{ matrix.node-version }}
@@ -29,10 +31,8 @@ jobs:
           ${{ runner.OS }}-
           
     - name: Install Packages
-      run: rm -rf $GITHUB_WORKSPACE/.cache && yarn install --frozen-lockfile --force
-      env:
-        CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/.cache/cypress
-          
+      run: yarn install --frozen-lockfile
+      
     - name: Run Build
       run: yarn build
 
