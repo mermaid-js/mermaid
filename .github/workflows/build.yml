@@ -29,7 +29,7 @@ jobs:
           ${{ runner.OS }}-
           
     - name: Install Packages
-      run: yarn install --frozen-lockfile
+      run: yarn install --frozen-lockfile --force
       env:
         CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/.cache/cypress
           
