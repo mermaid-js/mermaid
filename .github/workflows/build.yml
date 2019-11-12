@@ -16,9 +16,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install Yarn
       run: npm i yarn --global
-
-    - name: Install Packages
-      run: yarn install
       
     - name: Cache node modules
       uses: actions/cache@v1
@@ -26,9 +23,11 @@ jobs:
         path: node_modules
         key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
-          ${{ runner.OS }}-build-${{ env.cache-name }}-
           ${{ runner.OS }}-build-
           ${{ runner.OS }}-
+          
+    - name: Install Packages
+      run: yarn install
           
     - name: Run Build
       run: yarn build
