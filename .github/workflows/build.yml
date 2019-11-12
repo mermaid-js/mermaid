@@ -15,19 +15,23 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install Yarn
-      run: npm i yarn --global
+      run: |
+        npm i yarn --global
+        yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
       
     - name: Cache node modules
       uses: actions/cache@v1
       with:
-        path: node_modules
+        path: .cache
         key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.OS }}-build-
           ${{ runner.OS }}-
           
     - name: Install Packages
-      run: yarn install
+      run: yarn install --frozen-lockfile
+      env:
+        CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/.cache/cypress
           
     - name: Run Build
       run: yarn build
