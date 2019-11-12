@@ -20,12 +20,16 @@ jobs:
     - name: Install Packages
       run: yarn install
       
-    - name: Cache Node Modules
+    - name: Cache node modules
       uses: actions/cache@v1
       with:
         path: node_modules
-        key: $GITHUB_REF
-
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.OS }}-build-${{ env.cache-name }}-
+          ${{ runner.OS }}-build-
+          ${{ runner.OS }}-
+          
     - name: Run Build
       run: yarn build
 
