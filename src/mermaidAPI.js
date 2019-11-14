@@ -383,6 +383,16 @@ function parse(text) {
   parser.parse(text);
 }
 
+function validate(text) {
+  try {
+    parse(text);
+    return true;
+  } catch (e) {
+    // ignored
+  }
+  return false;
+}
+
 export const encodeEntities = function(text) {
   let txt = text;
 
@@ -677,6 +687,7 @@ function initialize(options) {
 const mermaidAPI = {
   render,
   parse,
+  validate,
   initialize,
   getConfig
 };

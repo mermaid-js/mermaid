@@ -114,7 +114,7 @@ $(document).ready(function() {
 
 Not doing so will most likely result in mermaid rendering graphs that have labels out of bounds. The default integration in mermaid uses the window.load event to start rendering.
 
-If your page has other fonts in its body those might be used instead of the mermaid font. Specifying the font in your styling is a workaround for this. 
+If your page has other fonts in its body those might be used instead of the mermaid font. Specifying the font in your styling is a workaround for this.
 ```
     div.mermaid {
         font-family: 'trebuchet ms', verdana, arial;
@@ -262,8 +262,14 @@ function in order to handle the error in an application-specific way.
 
 **Parsing text without rendering**
 
+Text can also be parsed without rendering it. The function
+**mermaid.validate(txt)** takes a text string as an argument and returns true if the text is syntactically correct and
+false if it is not. The parseError function will be called when the parse function returns false.
+
+**Validating text**
+
 It is also possible to validate the syntax before rendering in order to streamline the user experience. The function
-**mermaid.parse(txt)** takes a text string as an argument and returns true if the text is syntactically correct and
+**mermaid.validate(txt)** takes a text string as an argument and returns true if the text is syntactically correct and
 false if it is not. The parseError function will be called when the parse function returns false.
 
 The code-example below in meta code illustrates how this could work:

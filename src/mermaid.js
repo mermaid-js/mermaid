@@ -172,6 +172,7 @@ const mermaid = {
 
   mermaidAPI,
   parse: mermaidAPI.parse,
+  validate: mermaidAPI.validate,
   render: mermaidAPI.render,
 
   init,

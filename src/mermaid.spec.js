@@ -4,8 +4,8 @@ import flowDb from './diagrams/flowchart/flowDb';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 
-describe('when using mermaid and ', function() {
-  describe('when detecting chart type ', function() {
+describe('when using mermaid and', function() {
+  describe('when detecting chart type', function() {
     it('should not start rendering with mermaid.startOnLoad set to false', function() {
       mermaid.startOnLoad = false;
       document.body.innerHTML = '<div class="mermaid">graph TD;\na;</div>';
@@ -38,7 +38,7 @@ describe('when using mermaid and ', function() {
     });
   });
 
-  describe('when calling addEdges ', function() {
+  describe('when calling addEdges', function() {
     beforeEach(function() {
       flowParser.parser.yy = flowDb;
       flowDb.clear();
@@ -180,7 +180,7 @@ describe('when using mermaid and ', function() {
     });
   });
 
-  describe('checking validity of input ', function() {
+  describe('parsing input', function() {
     beforeEach(function() {
       flowParser.parser.yy = flowDb;
       flowDb.clear();
@@ -222,6 +222,20 @@ describe('when using mermaid and ', function() {
         'Bob-->Alice: Feel sick...\n' +
         'end';
       expect(() => mermaid.parse(text)).toThrow();
+    });
+  });
+  describe('checking validity of input', function() {
+    beforeEach(function() {
+      flowParser.parser.yy = flowDb;
+      flowDb.clear();
+    });
+    it('it should return false for an invalid definiton', function() {
+      const res = mermaid.validate('this is not a mermaid diagram definition');
+      expect(res).toBeFalsy();
+    });
+    it('it should return true for a valid definition', function() {
+      const res = mermaid.validate('graph TD;A--x|text including URL space|B;');
+      expect(res).toBeTruthy();
     });
   });
 });
