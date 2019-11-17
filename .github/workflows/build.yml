@@ -31,7 +31,7 @@ jobs:
       run: |
         yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
         yarn install --frozen-lockfile
-        ls -a $GITHUB_WORKSPACE/.cache/Cypress
+        ls -a ~/.cache/Cypress
 
     - name: Run Build
       run: yarn build
