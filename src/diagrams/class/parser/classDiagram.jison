@@ -21,6 +21,8 @@
 
 
 "class"               return 'CLASS';
+"<<"                  return 'ANNOTATION_START';
+">>"                  return 'ANNOTATION_END';
 ["]                   this.begin("string");
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
@@ -41,8 +43,8 @@
 \%                    return 'PCT';
 "="                   return 'EQUALS';
 \=                    return 'EQUALS';
-[A-Za-z]+             return 'ALPHA';
-[!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
+\w+                   return 'ALPHA';
+[!"#$%&'*+,-.`?\\/]   return 'PUNCTUATION';
 [0-9]+                 return 'NUM';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -131,7 +133,6 @@ statements
     | statement NEWLINE statements
     ;
 
-
 className
     : alphaNumToken className { $$=$1+$2; }
     | alphaNumToken { $$=$1; }
@@ -142,11 +143,16 @@ statement
     | relationStatement LABEL { $1.title =  yy.cleanupLabel($2); yy.addRelation($1);        }
     | classStatement
     | methodStatement
+    | annotationStatement
     ;
 
 classStatement
     : CLASS className         {yy.addClass($2);}
     | CLASS className STRUCT_START members STRUCT_STOP {/*console.log($2,JSON.stringify($4));*/yy.addClass($2);yy.addMembers($2,$4);}
+    ;
+
+annotationStatement
+    : ANNOTATION_START alphaNumToken ANNOTATION_END className  { yy.addAnnotation($4,$2); }
     ;
 
 members
@@ -157,7 +163,7 @@ members
 methodStatement
     : className {/*console.log('Rel found',$1);*/}
     | className LABEL {yy.addMember($1,yy.cleanupLabel($2));}
-    | MEMBER {console.warn('Member',$1);}
+    | MEMBER {/*console.warn('Member',$1);*/}
     | SEPARATOR {/*console.log('sep found',$1);*/}
     ;
 

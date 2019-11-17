@@ -4,12 +4,20 @@
 
 # mermaid
 
+## New diagrams in 8.4
+
+With version 8.4 class diagrams has got some new features, bug fixes and documentation. Another new feature in 8.4 is the new diagram
+type, state diagrams.
+
+![Image show the two new diagram types](./img/new-diagrams.png)
+
+
 ## Special note regarding version 8.2
 
 In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced wich sets the level of trust to be used on the parsed diagrams.
 
 * **true**: (default) tags in text are encoded, click functionality is disabled
-* false: tags in text are allowed, click functionality is enabledClosed issues: 
+* false: tags in text are allowed, click functionality is enabledClosed issues:
 
 ⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
@@ -190,8 +198,9 @@ Don't hesitate to contact me if you want to get involved.
 
     yarn lint
 
-We use [JavaScript Standard Style](https://github.com/feross/standard).
-We recommend you installing [editor plugins](https://github.com/feross/standard#are-there-text-editor-plugins) so you can get real time lint result.
+We use [eslint](https://eslint.org/).
+We recommend you installing [editor plugins](https://eslint.org/docs/user-guide/integrations) so you can get real time lint result.
+
 
 
 ## Test

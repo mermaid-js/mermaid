@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.3.1",
+  "version": "8.4.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -26,7 +26,7 @@
     "dev": "webpack-dev-server --config webpack.config.e2e.js",
     "test": "yarn lint && jest src",
     "test:watch": "jest --watch src",
-    "prepublishOnly": "yarn build && yarn release && yarn test",
+    "prepublishOnly": "yarn build && yarn release && yarn test && yarn e2e",
     "prepush": "yarn test"
   },
   "repository": {
@@ -47,10 +47,11 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^3.1.0",
+    "crypto-random-string": "^3.0.1",
     "d3": "^5.7.0",
-    "dagre-d3-renderer": "^0.5.8",
-    "dagre-layout": "^0.8.8",
-    "graphlibrary": "^2.2.0",
+    "dagre-d3": "dagrejs/dagre-d3",
+    "dagre": "^0.8.4",
+    "graphlib": "^2.1.7",
     "he": "^1.2.0",
     "lodash": "^4.17.11",
     "minify": "^4.1.1",
@@ -82,7 +83,7 @@
     "jest-puppeteer": "^4.2.0",
     "jison": "^0.4.18",
     "moment": "^2.23.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "puppeteer": "^1.17.0",
     "sass-loader": "^7.1.0",
     "start-server-and-test": "^1.10.0",

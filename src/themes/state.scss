@@ -1,0 +1,64 @@
+g.stateGroup text {
+  fill: $nodeBorder;
+  stroke: none;
+  font-size: 10px;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+}
+g.stateGroup text {
+  fill: $nodeBorder;
+  stroke: none;
+  font-size: 10px;
+
+}
+g.stateGroup .state-title {
+  font-weight: bolder;
+  fill: $labelColor;
+}
+
+g.stateGroup rect {
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
+}
+
+g.stateGroup line {
+  stroke: $nodeBorder;
+  stroke-width: 1;
+}
+
+.transition {
+  stroke: $nodeBorder;
+  stroke-width: 1;
+  fill: none;
+}
+
+.stateGroup .composit {
+  fill: white;
+  border-bottom: 1px
+}
+
+.state-note {
+  stroke: $noteBorderColor;
+  fill: $noteBkgColor;
+
+  text {
+    fill: black;
+    stroke: none;
+    font-size: 10px;
+  }
+}
+
+.stateLabel .box {
+  stroke: none;
+  stroke-width: 0;
+  fill: $nodeBkg;
+  opacity: 0.5;
+}
+
+.stateLabel text {
+  fill: $labelColor;
+  font-size: 10px;
+  font-weight: bold;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+}

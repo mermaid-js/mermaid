@@ -16,7 +16,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#s1Function')
+        .find('g#mermaid-dom-id-1Function')
         .click();
 
       cy.get('.created-by-click').should('have.text', 'Clicked By Flow');
@@ -38,7 +38,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#s2URL')
+        .find('g#mermaid-dom-id-2URL')
         .click();
 
       cy.location().should(location => {
@@ -108,7 +108,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#s1Function')
+        .find('g#mermaid-dom-id-1Function')
         .click();
 
       cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');
@@ -130,7 +130,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#s2URL')
+        .find('g#mermaid-dom-id-2URL')
         .click();
 
       cy.location().should(location => {
@@ -200,7 +200,7 @@ describe('Interaction', () => {
       cy.viewport(1440, 1024);
       cy.visit(url);
       cy.get('body')
-        .find('g#s1Function')
+        .find('g#mermaid-dom-id-1Function')
         .click();
 
       cy.get('.created-by-click').should('not.have.text', 'Clicked By Flow');

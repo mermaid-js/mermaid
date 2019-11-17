@@ -4,7 +4,7 @@
 
 This statement declares a new graph and the direction of the graph layout.
 
-This declares a graph oriented from top to bottom.
+This declares a graph oriented from top to bottom (`TD` or `TB`).
 
 ```
 graph TD
@@ -15,7 +15,16 @@ graph TD
     Start --> Stop
 ```
 
-This declares a graph oriented from left to right.
+This declares a graph oriented from left to right (`LR`).
+
+```
+graph LR
+    Start --> Stop
+```
+```mermaid
+graph LR
+    Start --> Stop
+```
 
 Possible directions are:
 
@@ -26,14 +35,6 @@ Possible directions are:
 
 * TD - same as TB
 
-```
-graph LR
-    Start --> Stop
-```
-```mermaid
-graph LR
-    Start --> Stop
-```
 
 ## Nodes & shapes
 
@@ -111,14 +112,33 @@ graph LR
     id1{This is the text in the box}
 ```
 
+### A hexagon node
+
+```
+graph LR
+    id1{{This is the text in the box}}
+```
+```mermaid
+graph LR
+    id1{{This is the text in the box}}
+```
+
 ### Trapezoid
 
+```
+graph TD
+    A[/Christmas\]
+```
 ```mermaid
 graph TD
     A[/Christmas\]
 ```
 ### Trapezoid alt
 
+```
+graph TD
+    B[\Go shopping/]
+```
 ```mermaid
 graph TD
     B[\Go shopping/]
@@ -238,6 +258,19 @@ graph LR
    A == text ==> B
 ```
 
+### Chaining of links
+
+It is possible declare many links in the same line as per below:
+```
+graph LR
+   A -- text --> B -- text2 --> C
+```
+```mermaid
+graph LR
+   A -- text --> B -- text2 --> C
+```
+
+
 ## Special characters that break syntax
 
 It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
@@ -349,7 +382,7 @@ Beginners tip, a full example using interactive links in a html context:
     	click A callback "Tooltip"
     	click B "http://www.github.com" "This is a link"
   </div>
-  
+
   <script>
   	var callback = function(){
         alert('A callback was triggered');
@@ -363,7 +396,7 @@ Beginners tip, a full example using interactive links in a html context:
       },
       securityLevel:'loose',
     };
-    
+
     mermaid.initialize(config);
   </script>
 </body>

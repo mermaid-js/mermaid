@@ -21,7 +21,7 @@ export const setConf = function(cnf) {
  * @param id
  */
 let w;
-export const draw = (txt, id, ver) => {
+export const draw = (txt, id) => {
   try {
     const parser = pieParser.parser;
     parser.yy = pieData;
@@ -50,6 +50,8 @@ export const draw = (txt, id, ver) => {
     var width = w; // 450
     var height = 450;
     var margin = 40;
+    var legendRectSize = 18;
+    var legendSpacing = 4;
 
     var radius = Math.min(width, height) / 2 - margin;
 
@@ -62,6 +64,10 @@ export const draw = (txt, id, ver) => {
       .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     var data = pieData.getSections();
+    var sum = 0;
+    Object.keys(data).forEach(function(key) {
+      sum += data[key];
+    });
     logger.info(data);
 
     // set the color scale
@@ -75,7 +81,6 @@ export const draw = (txt, id, ver) => {
       return d.value;
     });
     var dataReady = pie(d3.entries(data));
-    // Now I know that group A goes from 0 degrees to x degrees and so on.
 
     // shape helper to build arcs:
     var arcGenerator = d3
@@ -97,19 +102,20 @@ export const draw = (txt, id, ver) => {
       .style('stroke-width', '2px')
       .style('opacity', 0.7);
 
-    // Now add the annotation. Use the centroid method to get the best coordinates
+    // Now add the Percentage. Use the centroid method to get the best coordinates
     svg
       .selectAll('mySlices')
       .data(dataReady)
       .enter()
       .append('text')
       .text(function(d) {
-        return d.data.key;
+        return ((d.data.value / sum) * 100).toFixed(0) + '%';
       })
       .attr('transform', function(d) {
         return 'translate(' + arcGenerator.centroid(d) + ')';
       })
       .style('text-anchor', 'middle')
+      .attr('class', 'slice')
       .style('font-size', 17);
 
     svg
@@ -118,6 +124,36 @@ export const draw = (txt, id, ver) => {
       .attr('x', 0)
       .attr('y', -(h - 50) / 2)
       .attr('class', 'pieTitleText');
+
+    //Add the slegend/annotations for each section
+    var legend = svg
+      .selectAll('.legend')
+      .data(color.domain())
+      .enter()
+      .append('g')
+      .attr('class', 'legend')
+      .attr('transform', function(d, i) {
+        var height = legendRectSize + legendSpacing;
+        var offset = (height * color.domain().length) / 2;
+        var horz = 12 * legendRectSize;
+        var vert = i * height - offset;
+        return 'translate(' + horz + ',' + vert + ')';
+      });
+
+    legend
+      .append('rect')
+      .attr('width', legendRectSize)
+      .attr('height', legendRectSize)
+      .style('fill', color)
+      .style('stroke', color);
+
+    legend
+      .append('text')
+      .attr('x', legendRectSize + legendSpacing)
+      .attr('y', legendRectSize - legendSpacing)
+      .text(function(d) {
+        return d;
+      });
   } catch (e) {
     logger.error('Error while rendering info diagram');
     logger.error(e.message);

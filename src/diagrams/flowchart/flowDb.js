@@ -4,6 +4,8 @@ import { logger } from '../../logger';
 import utils from '../../utils';
 import { getConfig } from '../../config';
 
+const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
+
 const config = getConfig();
 let vertices = {};
 let edges = [];
@@ -48,7 +50,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     return;
   }
 
-  if (id[0].match(/\d/)) id = 's' + id;
+  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
   if (typeof vertices[id] === 'undefined') {
     vertices[id] = { id: id, styles: [], classes: [] };
@@ -96,8 +98,8 @@ export const addVertex = function(_id, text, type, style, classes) {
 export const addLink = function(_start, _end, type, linktext) {
   let start = _start;
   let end = _end;
-  if (start[0].match(/\d/)) start = 's' + start;
-  if (end[0].match(/\d/)) end = 's' + end;
+  if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
+  if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
   logger.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '' };
@@ -194,7 +196,7 @@ export const setDirection = function(dir) {
 export const setClass = function(ids, className) {
   ids.split(',').forEach(function(_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = 's' + id;
+    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);
     }
@@ -215,7 +217,7 @@ const setTooltip = function(ids, tooltip) {
 
 const setClickFun = function(_id, functionName) {
   let id = _id;
-  if (_id[0].match(/\d/)) id = 's' + id;
+  if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   if (config.securityLevel !== 'loose') {
     return;
   }
@@ -223,7 +225,7 @@ const setClickFun = function(_id, functionName) {
     return;
   }
   if (typeof vertices[id] !== 'undefined') {
-    funs.push(function(element) {
+    funs.push(function() {
       const elem = document.querySelector(`[id="${id}"]`);
       if (elem !== null) {
         elem.addEventListener(
@@ -247,7 +249,7 @@ const setClickFun = function(_id, functionName) {
 export const setLink = function(ids, linkStr, tooltip) {
   ids.split(',').forEach(function(_id) {
     let id = _id;
-    if (_id[0].match(/\d/)) id = 's' + id;
+    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
       if (config.securityLevel !== 'loose') {
         vertices[id].link = sanitizeUrl(linkStr); // .replace(/javascript:.*/g, '')
@@ -395,7 +397,7 @@ export const addSubGraph = function(_id, list, _title) {
         return false;
       }
       if (type in prims) {
-        return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true);
+        return prims[type].hasOwnProperty(item) ? false : (prims[type][item] = true); // eslint-disable-line
       } else {
         return objs.indexOf(item) >= 0 ? false : objs.push(item);
       }
@@ -406,11 +408,11 @@ export const addSubGraph = function(_id, list, _title) {
 
   nodeList = uniq(nodeList.concat.apply(nodeList, list));
   for (let i = 0; i < nodeList.length; i++) {
-    if (nodeList[i][0].match(/\d/)) nodeList[i] = 's' + nodeList[i];
+    if (nodeList[i][0].match(/\d/)) nodeList[i] = MERMAID_DOM_ID_PREFIX + nodeList[i];
   }
 
   id = id || 'subGraph' + subCount;
-  if (id[0].match(/\d/)) id = 's' + id;
+  if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   title = title || '';
   title = sanitize(title);
   subCount = subCount + 1;

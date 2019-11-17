@@ -1,13 +1,19 @@
-import graphlib from 'graphlibrary';
+import graphlib from 'graphlib';
 import * as d3 from 'd3';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
 import { getConfig } from '../../config';
-import dagreD3 from 'dagre-d3-renderer';
-import addHtmlLabel from 'dagre-d3-renderer/lib/label/add-html-label.js';
+
+const newDagreD3 = true;
+import dagreD3 from 'dagre-d3';
+// const newDagreD3 = false;
+// import dagreD3 from '../../../../dagre-d3-renderer/dist/dagre-d3.core.js';
+
+import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve } from '../../utils';
+import flowChartShapes from './flowChartShapes';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -35,9 +41,10 @@ export const addVertices = function(vert, g, svgId) {
         }
       }
     } else {
+      // create the style definition for the text, if property is a text-property
       for (let i = 0; i < arr.length; i++) {
         if (typeof arr[i] !== 'undefined') {
-          if (arr[i].match('^color:')) styleStr = styleStr + arr[i] + ';';
+          if (arr[i].match('^color:|^text-align:')) styleStr = styleStr + arr[i] + ';';
         }
       }
     }
@@ -120,6 +127,9 @@ export const addVertices = function(vert, g, svgId) {
         break;
       case 'diamond':
         _shape = 'question';
+        break;
+      case 'hexagon':
+        _shape = 'hexagon';
         break;
       case 'odd':
         _shape = 'rect_left_inv_arrow';
@@ -286,18 +296,35 @@ export const draw = function(text, id) {
   }
 
   // Create the input mermaid.graph
-  const g = new graphlib.Graph({
-    multigraph: true,
-    compound: true
-  })
-    .setGraph({
-      rankdir: dir,
-      marginx: 20,
-      marginy: 20
+  let g;
+  // Todo remove newDagreD3 when properly verified
+  if (newDagreD3) {
+    g = new graphlib.Graph({
+      multigraph: true,
+      compound: true
     })
-    .setDefaultEdgeLabel(function() {
-      return {};
-    });
+      .setGraph({
+        rankdir: dir,
+        marginx: 8,
+        marginy: 8
+      })
+      .setDefaultEdgeLabel(function() {
+        return {};
+      });
+  } else {
+    g = new graphlib.Graph({
+      multigraph: true,
+      compound: true
+    })
+      .setGraph({
+        rankdir: dir,
+        marginx: 20,
+        marginy: 20
+      })
+      .setDefaultEdgeLabel(function() {
+        return {};
+      });
+  }
 
   let subG;
   const subGraphs = flowDb.getSubGraphs();
@@ -328,199 +355,8 @@ export const draw = function(text, id) {
   const Render = dagreD3.render;
   const render = new Render();
 
-  // Add custom shape for rhombus type of boc (decision)
-  render.shapes().question = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const s = (w + h) * 0.9;
-    const points = [
-      { x: s / 2, y: 0 },
-      { x: s, y: -s / 2 },
-      { x: s / 2, y: -s },
-      { x: 0, y: -s / 2 }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('rx', 5)
-      .attr('ry', 5)
-      .attr('transform', 'translate(' + -s / 2 + ',' + (s * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
-
-  // Add custom shape for box with inverted arrow on left side
-  render.shapes().rect_left_inv_arrow = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const points = [
-      { x: -h / 2, y: 0 },
-      { x: w, y: 0 },
-      { x: w, y: -h },
-      { x: -h / 2, y: -h },
-      { x: 0, y: -h / 2 }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
-
-  // Add custom shape for box with inverted arrow on left side
-  render.shapes().lean_right = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const points = [
-      { x: (-2 * h) / 6, y: 0 },
-      { x: w - h / 6, y: 0 },
-      { x: w + (2 * h) / 6, y: -h },
-      { x: h / 6, y: -h }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
-
-  // Add custom shape for box with inverted arrow on left side
-  render.shapes().lean_left = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const points = [
-      { x: (2 * h) / 6, y: 0 },
-      { x: w + h / 6, y: 0 },
-      { x: w - (2 * h) / 6, y: -h },
-      { x: -h / 6, y: -h }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
-
-  // Add custom shape for box with inverted arrow on left side
-  render.shapes().trapezoid = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const points = [
-      { x: (-2 * h) / 6, y: 0 },
-      { x: w + (2 * h) / 6, y: 0 },
-      { x: w - h / 6, y: -h },
-      { x: h / 6, y: -h }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
-
-  // Add custom shape for box with inverted arrow on left side
-  render.shapes().inv_trapezoid = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const points = [
-      { x: h / 6, y: 0 },
-      { x: w - h / 6, y: 0 },
-      { x: w + (2 * h) / 6, y: -h },
-      { x: (-2 * h) / 6, y: -h }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
-
-  // Add custom shape for box with inverted arrow on right side
-  render.shapes().rect_right_inv_arrow = function(parent, bbox, node) {
-    const w = bbox.width;
-    const h = bbox.height;
-    const points = [
-      { x: 0, y: 0 },
-      { x: w + h / 2, y: 0 },
-      { x: w, y: -h / 2 },
-      { x: w + h / 2, y: -h },
-      { x: 0, y: -h }
-    ];
-    const shapeSvg = parent
-      .insert('polygon', ':first-child')
-      .attr(
-        'points',
-        points
-          .map(function(d) {
-            return d.x + ',' + d.y;
-          })
-          .join(' ')
-      )
-      .attr('transform', 'translate(' + -w / 2 + ',' + (h * 2) / 4 + ')');
-    node.intersect = function(point) {
-      return dagreD3.intersect.polygon(node, points, point);
-    };
-    return shapeSvg;
-  };
+  // Add custom shapes
+  flowChartShapes.addToRender(render);
 
   // Add our custom arrow - an empty arrowhead
   render.arrows().none = function normal(parent, id, edge, type) {
@@ -540,7 +376,7 @@ export const draw = function(text, id) {
   };
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
-  render.arrows().normal = function normal(parent, id, edge, type) {
+  render.arrows().normal = function normal(parent, id) {
     const marker = parent
       .append('marker')
       .attr('id', id)
@@ -571,14 +407,51 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
+  const conf = getConfig().flowchart;
   const padding = 8;
-  const width = g.maxX - g.minX + padding * 2;
-  const height = g.maxY - g.minY + padding * 2;
-  svg.attr('width', '100%');
-  svg.attr('style', `max-width: ${width}px;`);
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`);
+  // Todo remove newDagreD3 when properly verified
+  if (newDagreD3) {
+    const svgBounds = svg.node().getBBox();
+    const width = svgBounds.width + padding * 2;
+    const height = svgBounds.height + padding * 2;
+    logger.debug(
+      `new ViewBox 0 0 ${width} ${height}`,
+      `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
+    );
 
+    if (conf.useMaxWidth) {
+      svg.attr('width', '100%');
+      svg.attr('style', `max-width: ${width}px;`);
+    } else {
+      svg.attr('height', height);
+      svg.attr('width', width);
+    }
+
+    svg.attr('viewBox', `0 0 ${width} ${height}`);
+    svg
+      .select('g')
+      .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  } else {
+    const width = g.maxX - g.minX + padding * 2;
+    const height = g.maxY - g.minY + padding * 2;
+
+    if (conf.useMaxWidth) {
+      svg.attr('width', '100%');
+      svg.attr('style', `max-width: ${width}px;`);
+    } else {
+      svg.attr('height', height);
+      svg.attr('width', width);
+    }
+
+    logger.debug(
+      `Org ViewBox 0 0 ${width} ${height}`,
+      `translate(${padding - g.minX}, ${padding - g.minY})\n${location.href}`
+    );
+
+    svg.attr('viewBox', `0 0 ${width} ${height}`);
+    svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`);
+    // svg.select('g').attr('transform', `translate(${padding - minX}, ${padding - minY})`);
+  }
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
 
@@ -601,7 +474,7 @@ export const draw = function(text, id) {
   }
 
   // Add label rects for non html labels
-  if (!getConfig().flowchart.htmlLabels) {
+  if (!conf.htmlLabels) {
     const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];

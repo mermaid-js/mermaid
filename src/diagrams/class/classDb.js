@@ -6,18 +6,18 @@ let classes = {};
 /**
  * Function called by parser when a node definition has been found.
  * @param id
- * @param text
- * @param type
- * @param style
+ * @public
  */
 export const addClass = function(id) {
-  if (typeof classes[id] === 'undefined') {
-    classes[id] = {
-      id: id,
-      methods: [],
-      members: []
-    };
-  }
+  // Only add class if not exists
+  if (typeof classes[id] !== 'undefined') return;
+
+  classes[id] = {
+    id: id,
+    methods: [],
+    members: [],
+    annotations: []
+  };
 };
 
 export const clear = function() {
@@ -43,20 +43,47 @@ export const addRelation = function(relation) {
   relations.push(relation);
 };
 
+/**
+ * Adds an annotation to the specified class
+ * Annotations mark special properties of the given type (like 'interface' or 'service')
+ * @param className The class name
+ * @param annotation The name of the annotation without any brackets
+ * @public
+ */
+export const addAnnotation = function(className, annotation) {
+  classes[className].annotations.push(annotation);
+};
+
+/**
+ * Adds a member to the specified class
+ * @param className The class name
+ * @param member The full name of the member.
+ * If the member is enclosed in <<brackets>> it is treated as an annotation
+ * If the member is ending with a closing bracket ) it is treated as a method
+ * Otherwise the member will be treated as a normal property
+ * @public
+ */
 export const addMember = function(className, member) {
   const theClass = classes[className];
   if (typeof member === 'string') {
-    if (member.substr(-1) === ')') {
-      theClass.methods.push(member);
-    } else {
-      theClass.members.push(member);
+    // Member can contain white spaces, we trim them out
+    const memberString = member.trim();
+
+    if (memberString.startsWith('<<') && memberString.endsWith('>>')) {
+      // Remove leading and trailing brackets
+      theClass.annotations.push(memberString.substring(2, memberString.length - 2));
+    } else if (memberString.endsWith(')')) {
+      theClass.methods.push(memberString);
+    } else if (memberString) {
+      theClass.members.push(memberString);
     }
   }
 };
 
-export const addMembers = function(className, MembersArr) {
-  if (Array.isArray(MembersArr)) {
-    MembersArr.forEach(member => addMember(className, member));
+export const addMembers = function(className, members) {
+  if (Array.isArray(members)) {
+    members.reverse();
+    members.forEach(member => addMember(className, member));
   }
 };
 
@@ -85,6 +112,7 @@ export default {
   clear,
   getClass,
   getClasses,
+  addAnnotation,
   getRelations,
   addRelation,
   addMember,

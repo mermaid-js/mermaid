@@ -19,7 +19,7 @@ describe('Sequencediagram', () => {
 
       section Critical tasks
       Completed task in the critical line :crit, done, 2014-01-06,24h
-      Implement parser and jison          :crit, done, after des1, 2d
+      Implement parser and jison :crit, done, after des1, 2d
       Create tests for parser             :crit, active, 3d
       Future task in critical line        :crit, 5d
       Create tests for renderer           :2d
