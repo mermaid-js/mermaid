@@ -8,8 +8,8 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x, 12.x]
-    env:
-      CYPRESS_CACHE_FOLDER: ~/work/${{ github.repository }}/.cache/Cypress
+    #env:
+    #  CYPRESS_CACHE_FOLDER: ~/work/${{ github.repository }}/.cache/Cypress
     steps:
     - uses: actions/checkout@v1
 
@@ -31,7 +31,10 @@ jobs:
       run: |
         yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
         yarn install --frozen-lockfile
-        ls -a ~/.cache/Cypress
+        ls -a $GITHUB_WORKSPACE/.cache/Cypress
+        exit 1
+      env:
+        CYPRESS_CACHE_FOLDER: .cache/Cypress
 
     - name: Run Build
       run: yarn build
