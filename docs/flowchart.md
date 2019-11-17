@@ -123,6 +123,28 @@ graph LR
     id1{{This is the text in the box}}
 ```
 
+### Parallelogram
+
+```
+graph TD
+    id1[/This is the text in the box/]
+```
+```mermaid
+graph TD
+    id1[/This is the text in the box/]
+```
+
+### Parallelogram alt
+
+```
+graph TD
+    id1[\This is the text in the box\]
+```
+```mermaid
+graph TD
+    id1[\This is the text in the box\]
+```
+
 ### Trapezoid
 
 ```
