@@ -9,7 +9,7 @@ jobs:
       matrix:
         node-version: [10.x, 12.x]
     env:
-      CYPRESS_CACHE_FOLDER: '~/work/.cache/Cypress'
+      CYPRESS_CACHE_FOLDER: ~/work/${{ github.repository }}/.cache/Cypress
     steps:
     - uses: actions/checkout@v1
 
