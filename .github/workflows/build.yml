@@ -30,7 +30,7 @@ jobs:
     - name: Install Packages
       run: |
         yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
-        yarn install --frozen-lockfile
+        yarn install --verbose --frozen-lockfile
         ls -a $GITHUB_WORKSPACE/.cache/Cypress
         exit 1
       env:
