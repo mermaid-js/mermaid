@@ -24,7 +24,7 @@
     "e2e": "start-server-and-test dev http://localhost:9000/ cypress",
     "e2e-upd": "yarn lint && jest e2e -u --config e2e/jest.config.js",
     "dev": "webpack-dev-server --config webpack.config.e2e.js",
-    "test": "yarn lint && jest src",
+    "test": "yarn lint && jest --testPathPattern src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn release && yarn test",
     "prepush": "yarn test"
