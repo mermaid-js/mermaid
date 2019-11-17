@@ -20,19 +20,19 @@ jobs:
 
     - name: Install Yarn
       run: npm i yarn --global
-      
+
     - name: Cache Node Modules
       uses: actions/cache@v1
       with:
         path: .cache
         key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
-          
+
     - name: Install Packages
       run: |
         yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
         yarn install --frozen-lockfile
-        ls -a $GITHUB_WORKSPACE/src
-      
+        ls -a $GITHUB_WORKSPACE
+
     - name: Run Build
       run: yarn build
 
