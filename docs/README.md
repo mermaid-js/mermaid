@@ -14,10 +14,12 @@ type, state diagrams.
 
 ## Special note regarding version 8.2
 
-In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced wich sets the level of trust to be used on the parsed diagrams.
+In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced which sets the level of trust to be used on the parsed diagrams.
 
 * **true**: (default) tags in text are encoded, click functionality is disabled
-* false: tags in text are allowed, click functionality is enabledClosed issues:
+* false: tags in text are allowed, click functionality is enabled
+
+Closed issues:
 
 ⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
 
@@ -39,7 +41,7 @@ Ever wanted to simplify documentation and avoid heavy tools like Visio when expl
 
 This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
 
-**Mermaid was nomiated and won the JS Open Source Awards (2019) in the catory The most existing use of technology!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+**Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 ### Flowchart
 
@@ -168,15 +170,15 @@ https://mermaidjs.github.io
 
 # Request for assistance
 
-Things are piling up and I have hard time keeping up. To remedy this
+Things are piling up and I have a hard time keeping up. To remedy this
 it would be great if we could form a core team of developers to cooperate
-with the future development mermaid.
+with the future development of mermaid.
 
 As part of this team you would get write access to the repository and would
 represent the project when answering questions and issues.
 
 Together we could continue the work with things like:
-* adding more types of diagrams like mindmaps, ert diagrams etc
+* adding more types of diagrams like mindmaps, ert diagrams, etc.
 * improving existing diagrams
 
 Don't hesitate to contact me if you want to get involved.
