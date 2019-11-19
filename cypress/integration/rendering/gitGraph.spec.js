@@ -6,12 +6,6 @@ describe('Sequencediagram', () => {
     imgSnapshotTest(
       `
     gitGraph:
-      options
-      {
-          "nodeSpacing": 150,
-          "nodeRadius": 10
-      }
-      end
       commit
       branch newbranch
       checkout newbranch
@@ -20,9 +14,8 @@ describe('Sequencediagram', () => {
       checkout master
       commit
       commit
-      merge newbranch
-      `,
-      {}
+      merge newbranch`,
+      { logLevel: 0 }
     );
   });
 });

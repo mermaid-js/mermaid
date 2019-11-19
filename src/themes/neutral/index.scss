@@ -59,4 +59,7 @@ $critBkgColor: $critical;
 $critBorderColor: darken($critBkgColor, 10%);
 $todayLineColor: $critBkgColor;
 
+/* state colors */
+$labelColor: black;
+
 @import '../mermaid';

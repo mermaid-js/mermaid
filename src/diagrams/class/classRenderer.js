@@ -1,13 +1,14 @@
 import * as d3 from 'd3';
-import dagre from 'dagre-layout';
-import graphlib from 'graphlibrary';
+import dagre from 'dagre';
+import graphlib from 'graphlib';
 import { logger } from '../../logger';
 import classDb from './classDb';
+import utils from '../../utils';
 import { parser } from './parser/classDiagram';
 
 parser.yy = classDb;
 
-const idCache = {};
+let idCache = {};
 
 let classCnt = 0;
 const conf = {
@@ -135,7 +136,6 @@ const insertMarkers = function(elem) {
 };
 
 let edgeCount = 0;
-let total = 0;
 const drawEdge = function(elem, path, relation) {
   const getRelationType = function(type) {
     switch (type) {
@@ -198,15 +198,36 @@ const drawEdge = function(elem, path, relation) {
 
   let x, y;
   const l = path.points.length;
+  // Calculate Label position
+  let labalPosition = utils.calcLabelPosition(path.points);
+  x = labalPosition.x;
+  y = labalPosition.y;
+
+  let p1_card_x, p1_card_y;
+  // p1_card_padd_x = conf.padding * 2,
+  // p1_card_padd_y = conf.padding;
+  let p2_card_x, p2_card_y;
+  // p2_card_padd_x = conf.padding * 2,
+  // p2_card_padd_y = -conf.padding / 2;
   if (l % 2 !== 0 && l > 1) {
-    const p1 = path.points[Math.floor(l / 2)];
-    const p2 = path.points[Math.ceil(l / 2)];
-    x = (p1.x + p2.x) / 2;
-    y = (p1.y + p2.y) / 2;
-  } else {
-    const p = path.points[Math.floor(l / 2)];
-    x = p.x;
-    y = p.y;
+    let cardinality_1_point = utils.calcCardinalityPosition(
+      relation.relation.type1 !== 'none',
+      path.points,
+      path.points[0]
+    );
+    let cardinality_2_point = utils.calcCardinalityPosition(
+      relation.relation.type2 !== 'none',
+      path.points,
+      path.points[l - 1]
+    );
+
+    logger.debug('cardinality_1_point ' + JSON.stringify(cardinality_1_point));
+    logger.debug('cardinality_2_point ' + JSON.stringify(cardinality_2_point));
+
+    p1_card_x = cardinality_1_point.x;
+    p1_card_y = cardinality_1_point.y;
+    p2_card_x = cardinality_2_point.x;
+    p2_card_y = cardinality_2_point.y;
   }
 
   if (typeof relation.title !== 'undefined') {
@@ -231,6 +252,28 @@ const drawEdge = function(elem, path, relation) {
       .attr('height', bounds.height + conf.padding);
   }
 
+  logger.info('Rendering relation ' + JSON.stringify(relation));
+  if (typeof relation.relationTitle1 !== 'undefined' && relation.relationTitle1 !== 'none') {
+    const g = elem.append('g').attr('class', 'cardinality');
+    g.append('text')
+      .attr('class', 'type1')
+      .attr('x', p1_card_x)
+      .attr('y', p1_card_y)
+      .attr('fill', 'black')
+      .attr('font-size', '6')
+      .text(relation.relationTitle1);
+  }
+  if (typeof relation.relationTitle2 !== 'undefined' && relation.relationTitle2 !== 'none') {
+    const g = elem.append('g').attr('class', 'cardinality');
+    g.append('text')
+      .attr('class', 'type2')
+      .attr('x', p2_card_x)
+      .attr('y', p2_card_y)
+      .attr('fill', 'black')
+      .attr('font-size', '6')
+      .text(relation.relationTitle2);
+  }
+
   edgeCount++;
 };
 
@@ -247,7 +290,7 @@ const drawClass = function(elem, classDef) {
     }
   };
 
-  const id = 'classId' + (classCnt % total);
+  const id = 'classId' + classCnt;
   const classInfo = {
     id: id,
     label: classDef.id,
@@ -255,15 +298,34 @@ const drawClass = function(elem, classDef) {
     height: 0
   };
 
+  // add class group
   const g = elem
     .append('g')
     .attr('id', id)
     .attr('class', 'classGroup');
+
+  // add title
   const title = g
     .append('text')
-    .attr('x', conf.padding)
     .attr('y', conf.textHeight + conf.padding)
-    .text(classDef.id);
+    .attr('x', 0);
+
+  // add annotations
+  let isFirst = true;
+  classDef.annotations.forEach(function(member) {
+    const titleText2 = title.append('tspan').text('«' + member + '»');
+    if (!isFirst) titleText2.attr('dy', conf.textHeight);
+    isFirst = false;
+  });
+
+  // add class title
+  const classTitle = title
+    .append('tspan')
+    .text(classDef.id)
+    .attr('class', 'title');
+
+  // If class has annotations the title needs to have an offset of the text height
+  if (!isFirst) classTitle.attr('dy', conf.textHeight);
 
   const titleHeight = title.node().getBBox().height;
 
@@ -280,7 +342,7 @@ const drawClass = function(elem, classDef) {
     .attr('fill', 'white')
     .attr('class', 'classText');
 
-  let isFirst = true;
+  isFirst = true;
   classDef.members.forEach(function(member) {
     addTspan(members, member, isFirst);
     isFirst = false;
@@ -309,16 +371,25 @@ const drawClass = function(elem, classDef) {
   });
 
   const classBox = g.node().getBBox();
-  g.insert('rect', ':first-child')
+  const rect = g
+    .insert('rect', ':first-child')
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', classBox.width + 2 * conf.padding)
     .attr('height', classBox.height + conf.padding + 0.5 * conf.dividerMargin);
 
-  membersLine.attr('x2', classBox.width + 2 * conf.padding);
-  methodsLine.attr('x2', classBox.width + 2 * conf.padding);
+  const rectWidth = rect.node().getBBox().width;
 
-  classInfo.width = classBox.width + 2 * conf.padding;
+  // Center title
+  // We subtract the width of each text element from the class box width and divide it by 2
+  title.node().childNodes.forEach(function(x) {
+    x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
+  });
+
+  membersLine.attr('x2', rectWidth);
+  methodsLine.attr('x2', rectWidth);
+
+  classInfo.width = rectWidth;
   classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
   idCache[id] = classInfo;
@@ -339,6 +410,7 @@ export const setConf = function(cnf) {
  * @param id
  */
 export const draw = function(text, id) {
+  idCache = {};
   parser.yy.clear();
   parser.parse(text);
 
@@ -365,7 +437,6 @@ export const draw = function(text, id) {
 
   const classes = classDb.getClasses();
   const keys = Object.keys(classes);
-  total = keys.length;
   for (let i = 0; i < keys.length; i++) {
     const classDef = classes[keys[i]];
     const node = drawClass(diagram, classDef);
@@ -407,8 +478,8 @@ export const draw = function(text, id) {
   });
 
   diagram.attr('height', '100%');
-  diagram.attr('width', '100%');
-  diagram.attr('viewBox', '0 0 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+  diagram.attr('width', `${g.graph().width * 1.5 + 20}`);
+  diagram.attr('viewBox', '-10 -10 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
 };
 
 export default {

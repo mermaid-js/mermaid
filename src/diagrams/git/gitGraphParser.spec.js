@@ -1,11 +1,24 @@
 /* eslint-env jasmine */
 import gitGraphAst from './gitGraphAst';
 import { parser } from './parser/gitGraph';
+import randomString from 'crypto-random-string';
+import cryptoRandomString from 'crypto-random-string';
+
+jest.mock('crypto-random-string');
 
 describe('when parsing a gitGraph', function() {
+  let randomNumber;
   beforeEach(function() {
     parser.yy = gitGraphAst;
     parser.yy.clear();
+    randomNumber = 0;
+    cryptoRandomString.mockImplementation(() => {
+      randomNumber = randomNumber + 1;
+      return String(randomNumber);
+    });
+  });
+  afterEach(function() {
+    cryptoRandomString.mockReset();
   });
   it('should handle a gitGraph defintion', function() {
     const str = 'gitGraph:\n' + 'commit\n';
@@ -223,5 +236,52 @@ describe('when parsing a gitGraph', function() {
     expect(parser.yy.getHead().id).toEqual(parser.yy.getBranches()['master']);
 
     parser.yy.prettyPrint();
+  });
+
+  it('it should generate a secure random ID for commits', function() {
+    const str = 'gitGraph:\n' + 'commit\n' + 'commit\n';
+    const EXPECTED_LENGTH = 7;
+    const EXPECTED_CHARACTERS = '0123456789abcdef';
+
+    let idCount = 0;
+    randomString.mockImplementation(options => {
+      if (
+        options.length === EXPECTED_LENGTH &&
+        options.characters === EXPECTED_CHARACTERS &&
+        Object.keys(options).length === 2
+      ) {
+        const id = `abcdef${idCount}`;
+        idCount += 1;
+        return id;
+      }
+      return 'unexpected-ID';
+    });
+
+    parser.parse(str);
+    const commits = parser.yy.getCommits();
+
+    expect(Object.keys(commits)).toEqual(['abcdef0', 'abcdef1']);
+    Object.keys(commits).forEach(key => {
+      expect(commits[key].id).toEqual(key);
+    });
+  });
+
+  it('it should generate an array of known branches', function() {
+    const str =
+      'gitGraph:\n' +
+      'commit\n' +
+      'branch b1\n' +
+      'checkout b1\n' +
+      'commit\n' +
+      'commit\n' +
+      'branch b2\n';
+
+    parser.parse(str);
+    const branches = gitGraphAst.getBranchesAsObjArray();
+
+    expect(branches).toHaveLength(3);
+    expect(branches[0]).toHaveProperty('name', 'master');
+    expect(branches[1]).toHaveProperty('name', 'b1');
+    expect(branches[2]).toHaveProperty('name', 'b2');
   });
 });

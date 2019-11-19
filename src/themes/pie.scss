@@ -2,4 +2,10 @@
   text-anchor: middle;
   font-size: 25px;
   fill: $taskTextDarkColor;
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
+}
+.slice {
+  font-family: 'trebuchet ms', verdana, arial;
+  font-family: var(--mermaid-font-family);
 }

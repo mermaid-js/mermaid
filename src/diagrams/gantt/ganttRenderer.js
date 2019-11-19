@@ -102,7 +102,7 @@ export const draw = function(text, id) {
     drawToday(leftPadding, topPadding, pageWidth, pageHeight);
   }
 
-  function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w, h) {
+  function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg
       .append('g')
@@ -309,10 +309,18 @@ export const draw = function(text, id) {
           if (endX + textWidth + 1.5 * conf.leftPadding > w) {
             return classStr + ' taskTextOutsideLeft taskTextOutside' + secNum + ' ' + taskType;
           } else {
-            return classStr + ' taskTextOutsideRight taskTextOutside' + secNum + ' ' + taskType;
+            return (
+              classStr +
+              ' taskTextOutsideRight taskTextOutside' +
+              secNum +
+              ' ' +
+              taskType +
+              ' width-' +
+              textWidth
+            );
           }
         } else {
-          return classStr + ' taskText taskText' + secNum + ' ' + taskType;
+          return classStr + ' taskText taskText' + secNum + ' ' + taskType + ' width-' + textWidth;
         }
       });
   }
@@ -393,7 +401,7 @@ export const draw = function(text, id) {
     const hash = {};
     const result = [];
     for (let i = 0, l = arr.length; i < l; ++i) {
-      if (!hash.hasOwnProperty(arr[i])) {
+      if (!hash.hasOwnProperty(arr[i])) { // eslint-disable-line
         // it works with objects! in FF, at least
         hash[arr[i]] = true;
         result.push(arr[i]);

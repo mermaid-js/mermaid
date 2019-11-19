@@ -28,6 +28,9 @@ import ganttDb from './diagrams/gantt/ganttDb';
 import classRenderer from './diagrams/class/classRenderer';
 import classParser from './diagrams/class/parser/classDiagram';
 import classDb from './diagrams/class/classDb';
+import stateRenderer from './diagrams/state/stateRenderer';
+import stateParser from './diagrams/state/parser/stateDiagram';
+import stateDb from './diagrams/state/stateDb';
 import gitGraphRenderer from './diagrams/git/gitGraphRenderer';
 import gitGraphParser from './diagrams/git/parser/gitGraph';
 import gitGraphAst from './diagrams/git/gitGraphAst';
@@ -90,9 +93,13 @@ const config = {
    *  "themeCSS": ".node rect { fill: red; }"
    * </pre>
    */
-
   theme: 'default',
   themeCSS: undefined,
+
+  /**
+   * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
+   */
+  fontFamily: '"trebuchet ms", verdana, arial;',
 
   /**
    * This option decides the amount of logging to be used.
@@ -299,7 +306,27 @@ const config = {
     axisFormat: '%Y-%m-%d'
   },
   class: {},
-  git: {}
+  git: {},
+  state: {
+    dividerMargin: 10,
+    sizeUnit: 5,
+    padding: 8,
+    textHeight: 10,
+    titleShift: -15,
+    noteMargin: 10,
+    forkWidth: 70,
+    forkHeight: 7,
+    // Used
+    miniPadding: 2,
+    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
+    // layout. This might need updating if/when switching font
+    fontSizeFactor: 5.02,
+    fontSize: 24,
+    labelHeight: 16,
+    edgeLengthFactor: '20',
+    compositTitleSize: 35,
+    radius: 5
+  }
 };
 
 setLogLevel(config.logLevel);
@@ -332,10 +359,12 @@ function parse(text) {
       parser = classParser;
       parser.parser.yy = classDb;
       break;
+    case 'state':
+      parser = stateParser;
+      parser.parser.yy = stateDb;
+      break;
     case 'info':
       logger.debug('info info info');
-      console.warn('In API', pkg.version);
-
       parser = infoParser;
       parser.parser.yy = infoDb;
       break;
@@ -424,12 +453,17 @@ const render = function(id, txt, cb, container) {
     d3.select(container)
       .append('div')
       .attr('id', 'd' + id)
+      .attr('style', 'font-family: ' + config.fontFamily)
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
       .attr('xmlns', 'http://www.w3.org/2000/svg')
       .append('g');
   } else {
+    const existingSvg = document.getElementById(id);
+    if (existingSvg) {
+      existingSvg.remove();
+    }
     const element = document.querySelector('#' + 'd' + id);
     if (element) {
       element.innerHTML = '';
@@ -464,6 +498,14 @@ const render = function(id, txt, cb, container) {
   // user provided theme CSS
   if (config.themeCSS !== undefined) {
     style += `\n${config.themeCSS}`;
+  }
+  // user provided theme CSS
+  if (config.fontFamily !== undefined) {
+    style += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+  }
+  // user provided theme CSS
+  if (config.altFontFamily !== undefined) {
+    style += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
   }
 
   // classDef
@@ -521,6 +563,11 @@ const render = function(id, txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       classRenderer.setConf(config.class);
       classRenderer.draw(txt, id);
+      break;
+    case 'state':
+      // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+      stateRenderer.setConf(config.state);
+      stateRenderer.draw(txt, id);
       break;
     case 'info':
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

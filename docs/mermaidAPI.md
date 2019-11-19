@@ -63,6 +63,10 @@ theme , the CSS style sheet
  "themeCSS": ".node rect { fill: red; }"
 </pre>
 
+## fontFamily
+
+**fontFamily** The font to be used for the rendered diagrams. Default value is \\"trebuchet ms\\", verdana, arial;
+
 ## logLevel
 
 This option decides the amount of logging to be used.
@@ -77,7 +81,7 @@ This option decides the amount of logging to be used.
 
 Sets the level of trust to be used on the parsed diagrams.
 
--   **strict**: (**default**) tags in text are encoded, click functionality is disabled
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
 -   **loose**: tags in text are allowed, click functionality is enabled
 
 ## startOnLoad
