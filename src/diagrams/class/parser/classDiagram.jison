@@ -36,7 +36,7 @@
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
-":"[^#\n;]+        return 'LABEL';
+":"[^\n;]+        return 'LABEL';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';

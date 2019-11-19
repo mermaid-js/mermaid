@@ -19,6 +19,9 @@ describe('Class diagram', () => {
       Class01 : size()
       Class01 : int chimp
       Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
       Class08 <--> C2: Cool label
       class Class10 {
         &lt;&lt;service&gt;&gt;

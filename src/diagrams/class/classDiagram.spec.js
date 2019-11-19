@@ -40,6 +40,21 @@ describe('class diagram, ', function() {
 
       parser.parse(str);
     });
+
+    it('should handle visibility for methods and members', function() {
+      const str =
+        'classDiagram\n' +
+        'class TestClass\n' +
+        'TestClass : -int privateMember\n' +
+        'TestClass : +int publicMember\n' +
+        'TestClass : #int protectedMember\n' +
+        'TestClass : -privateMethod()\n' +
+        'TestClass : +publicMethod()\n' +
+        'TestClass : #protectedMethod()\n' +
+
+      parser.parse(str);
+    });
+
     it('should handle class definitions', function() {
       const str =
         'classDiagram\n' +
