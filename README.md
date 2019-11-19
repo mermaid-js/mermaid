@@ -7,7 +7,19 @@
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 <!-- <Main description> -->
 __Generate diagrams, charts, graphs or flows from markdown-like text via javascript.__
-See our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Play in our [live editor](https://mermaidjs.github.io/mermaid-live-editor/) or jump straight to the [installation and usage](http://mermaid-js.github.io/mermaid/#/usage).
+See our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Play in our [live editor](https://mermaidjs.github.io/mermaid-live-editor/) or jump straight to the installation:
+
+```
+yarn add mermaid
+```
+
+```
+npm install mermaid
+```
+
+For more detailed instructions visit our [installation and usage guide](http://mermaid-js.github.io/mermaid/#/usage). Mermaid officially supports the following `Node` versions:
+* Node 10
+* Node 12
 <!-- </Main description> -->
 
 :trophy: _"The most exciting use of technology"_ - [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees)
@@ -133,7 +145,7 @@ Crash --> [*]
 pie
 "Dogs" : 386
 "Cats" : 85
-"Rats" : 15 
+"Rats" : 15
 </pre></td>
     <td align="center">
         <img src="./img/gray-pie.png" />
@@ -151,7 +163,7 @@ pie
 <!-- </Git> -->
 </table>
 
-## Related projects 
+## Related projects
 
 - [Command Line Interface](https://github.com/mermaid-js/mermaid.cli)
 - [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
