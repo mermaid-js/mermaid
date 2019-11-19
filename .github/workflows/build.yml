@@ -1,0 +1,50 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x]
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Yarn
+      run: npm i yarn --global
+
+    - name: Cache Node Modules
+      uses: actions/cache@v1
+      with:
+        path: .cache
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install Packages
+      run: |
+        yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
+        yarn install --frozen-lockfile
+      env:
+        CYPRESS_CACHE_FOLDER: ../../.cache/Cypress
+
+    - name: Run Build
+      run: yarn build
+
+    - name: Run Unit Tests
+      run: |
+        yarn test --coverage
+        cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
+      env:
+        COVERALLS_SERVICE_NAME: ${{ secrets.COVERALLS_SERVICE_NAME }}
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+    - name: Run E2E Tests
+      run: yarn e2e
+      env:
+        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+        CYPRESS_CACHE_FOLDER: .cache/Cypress
