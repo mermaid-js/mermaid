@@ -50,7 +50,7 @@ describe('class diagram, ', function() {
         'TestClass : #int protectedMember\n' +
         'TestClass : -privateMethod()\n' +
         'TestClass : +publicMethod()\n' +
-        'TestClass : #protectedMethod()\n' +
+        'TestClass : #protectedMethod()\n';
 
       parser.parse(str);
     });
