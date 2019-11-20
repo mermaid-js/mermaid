@@ -168,7 +168,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['mermaid-dom-id-1'].text).toBe('1');
+    expect(vert['1'].text).toBe('1');
   });
 
   it('should handle a single node with a single digit in a subgraph', function() {
@@ -180,7 +180,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['mermaid-dom-id-1'].text).toBe('1');
+    expect(vert['1'].text).toBe('1');
   });
 
   it('should handle a single node with alphanumerics starting on a num', function() {
@@ -191,7 +191,7 @@ describe('[Singlenodes] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges.length).toBe(0);
-    expect(vert['mermaid-dom-id-1id'].styles.length).toBe(0);
+    expect(vert['1id'].styles.length).toBe(0);
   });
 
   it('should handle a single node with alphanumerics containing a minus sign', function() {
