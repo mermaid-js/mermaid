@@ -598,10 +598,11 @@ const render = function(id, txt, cb, container) {
   }
 
   // Fix for when the base tag is used
-  let svgCode = d3
-    .select('#d' + id)
-    .node()
-    .innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g');
+  let svgCode = d3.select('#d' + id).node().innerHTML;
+
+  if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
+    svgCode = svgCode.replace(/marker-end=\"url\(.*?#/g, 'marker-end="url(#', 'g');
+  }
 
   svgCode = decodeEntities(svgCode);
 
