@@ -14,6 +14,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('2: should render a simple flowchart with htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
@@ -26,6 +27,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: true } }
     );
   });
+
   it('3: should render a simple flowchart with line breaks', () => {
     imgSnapshotTest(
       `
@@ -99,6 +101,7 @@ describe('Flowcart', () => {
       {}
     );
   });
+
   it('6: should render a flowchart full of icons', () => {
     imgSnapshotTest(
       `
@@ -178,6 +181,7 @@ describe('Flowcart', () => {
       {}
     );
   });
+
   it('8: should render subgraphs', () => {
     imgSnapshotTest(
       `
@@ -356,6 +360,7 @@ describe('Flowcart', () => {
       }
     );
   });
+
   it('13: should render hexagons', () => {
     imgSnapshotTest(
       `
@@ -375,6 +380,20 @@ describe('Flowcart', () => {
         listId: 'color styling',
         logLevel: 0
       }
+    );
+  });
+
+  it('14: should render a simple flowchart with comments', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      %% this is a comment
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { htmlLabels: false } }
     );
   });
 });

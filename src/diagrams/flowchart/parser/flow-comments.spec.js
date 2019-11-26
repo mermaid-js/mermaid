@@ -12,8 +12,8 @@ describe('[Comments] when parsing', () => {
     flow.parser.yy.clear();
   });
 
-  it('should handle a comments', function() {
-    const res = flow.parser.parse('graph TD;\n%% CComment\n A-->B;');
+  it('should handle comments', function() {
+    const res = flow.parser.parse('graph TD;\n%% Comment\n A-->B;');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -43,7 +43,7 @@ describe('[Comments] when parsing', () => {
   });
 
   it('should handle comments at the end', function() {
-    const res = flow.parser.parse('graph TD;\n A-->B\n %% Comment at the find\n');
+    const res = flow.parser.parse('graph TD;\n A-->B\n %% Comment at the end\n');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
@@ -117,7 +117,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle a comments with blank rows in-between', function() {
+  it('should handle a comment with blank rows in-between', function() {
     const res = flow.parser.parse('graph TD;\n\n\n %% Comment\n A-->B;');
 
     const vert = flow.parser.yy.getVertices();
@@ -132,7 +132,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle a comments mermaid flowchart code in them', function() {
+  it('should handle a comment with mermaid flowchart code in them', function() {
     const res = flow.parser.parse(
       'graph TD;\n\n\n %% Test od>Odd shape]-->|Two line<br>edge comment|ro;\n A-->B;'
     );

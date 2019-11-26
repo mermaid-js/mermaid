@@ -9,7 +9,7 @@
 %x string
 %x dir
 %%
-\%\%[^\n]*            /* do nothing */
+\%\%[^\n]*\n*           /* do nothing */
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";

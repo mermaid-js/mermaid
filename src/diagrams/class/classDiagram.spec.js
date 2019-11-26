@@ -19,6 +19,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
+
     it('should handle relation definition of different types and directions', function () {
       const str =
         'classDiagram\n' +
@@ -76,6 +77,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
+
     it('should handle parsing of method statements  grouped by brackets', function () {
       const str =
         'classDiagram\n' +
@@ -124,9 +126,106 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
+
+    it('should handle a comment', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        '%% Comment\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle comments at the start', function () {
+      const str =
+        '%% Comment\n' +
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+      parser.parse(str);
+    });
+
+    it('should handle comments at the end', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '\n}' +
+        '%% Comment\n';
+
+      parser.parse(str);
+    });
+
+    it('should handle comments at the end no trailing newline', function () {
+      const str =
+      'classDiagram\n' +
+      'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}\n' +
+        '%% Comment';
+
+      parser.parse(str);
+    });
+
+    it('should handle a comment with multiple line feeds', function () {
+      const str =
+        'classDiagram\n\n\n' +
+        '%% Comment\n\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle a comment with mermaid class diagram code in them', function () {
+      const str =
+        'classDiagram\n' +
+        '%% Comment Class01 <|-- Class02\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle a comment inside brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        '%% Comment Class01 <|-- Class02\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
   });
 
-  describe('when fetching data from an classDiagram graph it', function () {
+  describe('when fetching data from a classDiagram graph it', function () {
     beforeEach(function () {
       parser.yy = classDb;
       parser.yy.clear();
@@ -144,6 +243,7 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
+
     it('should handle relation definitions AGGREGATION and dotted line', function () {
       const str = 'classDiagram\n' + 'Class01 o.. Class02';
 
@@ -157,6 +257,7 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
+
     it('should handle relation definitions COMPOSITION on both sides', function () {
       const str = 'classDiagram\n' + 'Class01 *--* Class02';
 
@@ -170,6 +271,7 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.type2).toBe(classDb.relationType.COMPOSITION);
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
+
     it('should handle relation definitions no types', function () {
       const str = 'classDiagram\n' + 'Class01 -- Class02';
 
@@ -183,6 +285,7 @@ describe('class diagram, ', function () {
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
+
     it('should handle relation definitions with type only on right side', function () {
       const str = 'classDiagram\n' + 'Class01 --|> Class02';
 
@@ -297,100 +400,5 @@ describe('class diagram, ', function () {
       expect(testClass.methods[0]).toBe('test()');
       expect(testClass.methods[1]).toBe('foo()');
     });
-
-    it('should handle a comment', function () {
-      const str =
-        'classDiagram\n' +
-        '%% Comment \n' +
-        'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '}';
-
-      parser.parse(str);
-    });
-
-    // it('should handle comments at the start', function () {
-    //   const str =
-    //     '%% Comment\n' +
-    //     'class Class1 {\n' +
-    //     'int : test\n' +
-    //     'string : foo\n' +
-    //     'test()\n' +
-    //     'foo()\n' +
-    //     '}';
-    //   parser.parse(str);
-    // });
-
-    // it('should handle comments at the end', function () {
-    //   const str =
-    //     'classDiagram\n' +
-    //     'class Class1 {\n' +
-    //     'int : test\n' +
-    //     'string : foo\n' +
-    //     'test()\n' +
-    //     'foo()\n' +
-    //     '\n}' +
-    //     '%% Comment\n';
-
-    //   parser.parse(str);
-    // });
-
-    // it('should handle comments at the end no trailing newline', function () {
-    //   const str =
-    //     'class Class1 {\n' +
-    //     'int : test\n' +
-    //     'string : foo\n' +
-    //     'test()\n' +
-    //     'foo()\n' +
-    //     '}\n' +
-    //     '%% Comment';
-
-    //   parser.parse(str);
-    // });
-
-    // it('should handle comments at the end many trailing newlines', function () {
-    //   const str =
-    //     'classDiagram\n' +
-    //     '%% Comment\n\n\n\n\n' +
-    //     'class Class1 {\n' +
-    //     'int : test\n' +
-    //     'string : foo\n' +
-    //     'test()\n' +
-    //     'foo()\n' +
-    //     '}';
-
-    //   parser.parse(str);
-    // });
-
-    // it('should handle a comment with blank rows in-between', function () {
-    //   const str =
-    //     'classDiagram\n\n\n' +
-    //     '%% Comment\n\n' +
-    //     'class Class1 {\n' +
-    //     'int : test\n' +
-    //     'string : foo\n' +
-    //     'test()\n' +
-    //     'foo()\n' +
-    //     '}';
-
-    //   parser.parse(str);
-    // });
-
-    // it('should handle a comment with mermaid class diagram code in them', function () {
-    //   const str =
-    //     'classDiagram\n' +
-    //     '%% Comment Class01 <|-- Class02\n' +
-    //     'class Class1 {\n' +
-    //     'int : test\n' +
-    //     'string : foo\n' +
-    //     'test()\n' +
-    //     'foo()\n' +
-    //     '}';
-
-    //   parser.parse(str);
-    //});
   });
 });
