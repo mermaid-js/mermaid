@@ -190,7 +190,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('9: should render subgraphs with a title startign with a digit', () => {
+  it('9: should render subgraphs with a title starting with a digit', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -237,7 +237,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('11: should render a flowchart with ling sames and class definitoins', () => {
+  it('11: should render a flowchart with long names and class definitions', () => {
     imgSnapshotTest(
       `graph LR
       sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["

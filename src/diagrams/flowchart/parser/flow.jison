@@ -460,13 +460,6 @@ text: textToken
 
 
 
-commentText: commentToken
-    {$$=$1;}
-    | commentText commentToken
-    {$$=$1+''+$2;}
-    ;
-
-
 keywords
     : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
 
@@ -516,8 +509,6 @@ linkStyleStatement
           {$$ = $1;yy.updateLinkInterpolate($3,$7);}
     ;
 
-commentStatement: PCT PCT commentText;
-
 numList: NUM
         {$$ = [$1]}
     | numList COMMA NUM
@@ -538,8 +529,6 @@ style: styleComponent
 styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
 
 /* Token lists */
-
-commentToken   : textToken | graphCodeTokens ;
 
 textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFAULT;
 

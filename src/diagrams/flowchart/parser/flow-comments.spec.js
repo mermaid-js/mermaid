@@ -27,7 +27,7 @@ describe('[Comments] when parsing', () => {
     expect(edges[0].text).toBe('');
   });
 
-  it('should handle comments a at the start', function() {
+  it('should handle comments at the start', function() {
     const res = flow.parser.parse('%% Comment\ngraph TD;\n A-->B;');
 
     const vert = flow.parser.yy.getVertices();
