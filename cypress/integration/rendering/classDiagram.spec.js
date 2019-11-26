@@ -19,6 +19,9 @@ describe('Class diagram', () => {
       Class01 : size()
       Class01 : int chimp
       Class01 : int gorilla
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
       Class08 <--> C2: Cool label
       class Class10 {
         &lt;&lt;service&gt;&gt;
@@ -58,6 +61,25 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('should render a simple class diagram with different visibilities', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      &lt;&lt;interface&gt;&gt; Class01
+      Class01 : -int privateMethod()
+      Class01 : +int publicMethod()
+      Class01 : #int protectedMethod()
+      Class01 : -int privateChimp
+      Class01 : +int publicGorilla
+      Class01 : #int protectedMarmoset
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
   it('should render multiple class diagrams', () => {
     imgSnapshotTest(
       [
