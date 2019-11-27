@@ -6,11 +6,10 @@ import flow from './parser/flow';
 import { getConfig } from '../../config';
 
 const newDagreD3 = true;
-import dagreD3 from 'dagre-d3';
+import dagreD3 from 'dagre-d3-unofficial';
 // const newDagreD3 = false;
-// import dagreD3 from '../../../../dagre-d3-renderer/dist/dagre-d3.core.js';
 
-import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
+import addHtmlLabel from 'dagre-d3-unofficial/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve } from '../../utils';
 import flowChartShapes from './flowChartShapes';
