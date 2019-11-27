@@ -322,7 +322,20 @@ class Color{
 }
 ```
 
+## Comments
 
+Comments can be entered within a class diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any class diagram syntax
+
+```
+classDiagram
+%% This whole line is a comment classDiagram class Shape <<interface>>
+class Shape{
+    <<interface>>
+    noOfVertices
+    draw()
+}
+
+```
 
 ## Styling
 

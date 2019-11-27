@@ -322,6 +322,21 @@ As in plantUml you can specify concurrency using the -- symbol.
         }
 ```
 
+## Comments
+
+Comments can be entered within a state diagram chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
+
+```
+stateDiagram
+    [*] --> Still
+    Still --> [*]
+%% this is a comment
+    Still --> Moving
+    Moving --> Still %% another comment
+    Moving --> Crash
+    Crash --> [*]
+```
+
 ## Styling
 
 Styling of the a state diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/state.scss
