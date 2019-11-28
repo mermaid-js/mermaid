@@ -19,7 +19,7 @@ Most of the stuff I need to visualize can be scripted in a similar way, with a v
 
 Comparing with Visio and similar applications, mermaid is a really fast way to create good visualizations. This is especially apparent when editing a complex visualisation, this could take me hours in a desktop application but takes minutes (or even less if generation has been scripted) with mermaid.
 
-With mermaid I can spend a fraction of the time I normally would spend instead automating the diagram generation and end up saving even more time. I love it!
+With mermaid I can spend a fraction of the time I normally would spend, and instead automate the diagram generation and end up saving even more time. I love it!
 
 
 However, a lot of the mermaid documentation is geared to professional frontend developers, presuming a skill set which I simply do not have.
