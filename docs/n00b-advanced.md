@@ -1,6 +1,4 @@
-# Advanced n00b mermaid
-
-(Coming soon..)
+# Advanced n00b mermaid (Coming soon..)
 
 ## splitting mermaid code from html
 A more condensed html code can be achieved by embedding the mermaid code in its own .js file, which is referenced like so:
