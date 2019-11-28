@@ -141,22 +141,6 @@ Save this to a html file and fetch it with a browser from the web server (or jus
 
 ---
 
-A more condensed html code can be achieved by embedding the mermaid code in its own .js file, which is referenced like so:
-
-```
-stuff stuff
-  </div>
-  </body>
-</html>
-```
-The actual mermaid file could for example look like this:
-
-```
-mermaid content...
-```
-
----
-
 **Three additional comments from Knut Sveidqvist, creator of mermaid:**
 - In early versions of mermaid, the `<script src>` tag was invoked in the `<head>` part of the web page. Nowdays we can place it directly in `<body>` as seen above. However, older parts of the documentation frequently reflects the previous way which still works.
   
