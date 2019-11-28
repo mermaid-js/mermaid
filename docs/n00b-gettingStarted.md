@@ -150,5 +150,5 @@ Save this to a html file and fetch it with a browser from the web server (or jus
   
   1. If you do not enter a specific version, you automatically get the latest one.
   2. If you really need a specific version, hard code it (this is rare but it happens).
-  3. If you need to know the current mermaid version, replace a mermaid code block with the word `info` and the version will be returned. Like [this](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiaW5mb1xuXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ==)
+  3. If you need to know the current mermaid version, replace a mermaid code block with the word `info` and the version will be returned like [this](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiaW5mb1xuXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ==)
    
