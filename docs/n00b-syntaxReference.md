@@ -1,6 +1,6 @@
 ## Diagram syntax reference
 
-It turned out the existing documentation was easy enough to follow, even for a n00b like me..
+Having already [gotten started](n00b-gettingStarted.md), existing syntax documentation was easy enough to follow even for a n00b like me..
 
 The syntax for different diagrams can be found here:
 
