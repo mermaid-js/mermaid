@@ -24,3 +24,4 @@
 - I'm a n00b
   - [overview](n00b-overview.md)
   - [Getting started - easier](n00b-gettingStarted.md)
+  - [Advanced usage](n00b-advanced.md)

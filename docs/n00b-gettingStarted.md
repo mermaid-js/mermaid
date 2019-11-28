@@ -27,7 +27,7 @@ It is also the easiest way to develop diagrams, the code of which can be pasted 
 
 ![Flowchart](./img/n00b-liveEditor.png)
 
-The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [n00b Advanced section]. A complete configuration reference is found [here].
+The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
 
 
 ## mermaid using plugins
