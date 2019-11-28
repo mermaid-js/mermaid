@@ -85,7 +85,7 @@ This is what needs to go into the html file:
 
 ```
 <body>
-  <script src="//cdn.jsdelivr.net/npm/mermaid@8.4.0/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@8.4.0/dist/mermaid.min.js"></script>
 </body>
 ```
 
