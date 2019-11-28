@@ -4,11 +4,11 @@ Writing mermaid code is simple.
 
 But how is the code turned into a diagram in a web page? To do this we need a mermaid renderer.
 
-Thankfully the mermaid renderer is very accessible.
+Thankfully the mermaid renderer is very accessible, in essence it is a javascript.
 
-The requirement is on the part of the web browser. Modern web browsers, such as Firefox, Chrome and Safari, can render mermaid. But Internet Explorer cannot. The web browser also needs to be able to access the online mermaid renderer at cdn.jsdelivr.net/npm/
+The requirement is on the part of the web browser. Modern web browsers, such as Firefox, Chrome and Safari, can render mermaid. But Internet Explorer cannot. The web browser also needs access to the online mermaid renderer which it downloads from https://cdn.jsdelivr.net/npm/mermaid
 
-For an easy introduction, here follows three practical examples for turning code into diagram with:
+For an easy introduction, here follows three practical examples using:
 1. an online mermaid editor
 2. a mermaid plugin
 3. a generic web server of your choosing
@@ -27,9 +27,7 @@ It is also the easiest way to develop diagrams, the code of which can be pasted 
 
 ![Flowchart](./img/n00b-liveEditor.png)
 
-The `Mermaid configuration` is for controlling mermaid behaviour.
-
-An easy introduction to mermaid configuration is found in the [n00b Advanced section]. A complete configuration reference is found [here].
+The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [n00b Advanced section]. A complete configuration reference is found [here].
 
 
 ## mermaid using plugins
@@ -66,14 +64,14 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 
 ---
 
-## mermaid using any web server
+## mermaid using any web server (or just a browser)
 
 This example can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
 We do not need to install anything on the server, apart from a normal file of html to be reached by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer). So if you want to really simplify things when testing this out, don't use a web server at all but just create the file locally and drag it into your browser window. It is the browser which does all the work of rendering mermaid!
 
 Through the html file, we give the web browser three instructions inside the html code it retrieves:
-1. a reference for fetching the online mermaid renderer, in essence a javascript.
+1. a reference for fetching the online mermaid renderer, the renderer is just a javascript.
 2. the mermaid code we want to diagram.
 3. the `mermaid.initialize()` command to start the rendering process
 
@@ -118,23 +116,23 @@ This is what needs to go into the html file:
 ```
 <html>
   <body>
-    <script src="//cdn.jsdelivr.net/npm/mermaid@8.4.0/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.4.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
 
     Here is one mermaid diagram:
     <div class="mermaid">
       graph TD
       A[Client] --> B[Load Balancer]
-      B --> C[Server01]
-      B --> D[Server02]
+      B --> C[Server1]
+      B --> D[Server2]
     </div>
 
-    And here is another diagram:
+    And here is another:
     <div class="mermaid">
       graph TD
-      A[Client] -->|tcp_1234| B(Load Balancer)
-      B -->|tcp_5678| C[Server01]
-      B -->|tcp_5678| D[Server02]
+      A[Client] -->|tcp_123| B(Load Balancer)
+      B -->|tcp_456| C[Server1]
+      B -->|tcp_456| D[Server2]
     </div>
   </body>
 </html>
