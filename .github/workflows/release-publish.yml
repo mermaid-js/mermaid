@@ -35,7 +35,7 @@ jobs:
         git commit -m "Bump version ${GITHUB_REF:10}"
         git checkout -t origin/master
         git merge -m "Release ${GITHUB_REF:10}" --no-ff release/${GITHUB_REF:10}
-        git push --delete release/${GITHUB_REF:10}
+        git push
 
     - name: Publish
       run: |
