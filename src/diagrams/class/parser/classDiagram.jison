@@ -9,7 +9,7 @@
 %x string struct
 
 %%
-\%\%[^\n]*            /* do nothing */
+\%\%[^\n]*\n*           /* do nothing */
 \n+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram"          return 'CLASS_DIAGRAM';

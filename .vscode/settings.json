@@ -1,8 +1,0 @@
-{
-  "typescript.format.enable": false,
-  "typescript.reportStyleChecksAsWarnings": false,
-  "typescript.validate.enable": false,
-  "javascript.validate.enable": false,
-  "editor.formatOnSave": false,
-  "editor.snippetSuggestions": "top"
-}
