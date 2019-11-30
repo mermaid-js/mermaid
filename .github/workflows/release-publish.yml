@@ -23,8 +23,8 @@ jobs:
     - name: Install Json
       run: npm i json --global
 
-    #- name: Install Packages
-    #  run: yarn install --frozen-lockfile
+    - name: Install Packages
+      run: yarn install --frozen-lockfile
 
     - name: Prepare release
       run: |
