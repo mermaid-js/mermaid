@@ -1,0 +1,38 @@
+name: Publish release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: Install Yarn
+      run: npm i yarn --global
+
+    - name: Install Json
+      run: npm i json --global
+
+    - name: Install Packages
+      run: yarn install --frozen-lockfile
+
+    - name: Prepare release
+      run: |
+        echo "Preparing release ${GITHUB_REF:11}"
+        git checkout master
+        git merge -m "Release ${GITHUB_REF:11}" --no-ff release/${GITHUB_REF:11}
+        git push --delete release/${GITHUB_REF:11}
+
+    - name: Publish
+      run: |
+        npm version --no-git-tag-version --allow-same-version ${GITHUB_REF:11}
+        npm set //registry.npmjs.org/:_authToken ${{ secrets.GITHUB_TOKEN }}
+        npm publish
+

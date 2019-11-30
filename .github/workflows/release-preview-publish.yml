@@ -8,15 +8,12 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [10.x]
     steps:
     - uses: actions/checkout@v1
-    - name: Setup Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 10.x
     - name: Install Yarn
       run: npm i yarn --global
 
@@ -24,7 +21,7 @@ jobs:
       run: npm i json --global
 
     - name: Install Packages
-      run: yarn install
+      run: yarn install --frozen-lockfile
 
     - name: Publish
       run: |
