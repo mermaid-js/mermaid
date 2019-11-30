@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - uses: fregante/setup-git-token@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v1
