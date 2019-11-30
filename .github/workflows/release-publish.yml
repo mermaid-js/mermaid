@@ -25,14 +25,16 @@ jobs:
 
     - name: Prepare release
       run: |
-        echo "Preparing release ${GITHUB_REF}"
+        echo "Preparing release ${GITHUB_REF:10}"
+        npm version --no-git-tag-version --allow-same-version ${GITHUB_REF:10}
+        git add package.json
+        git commit -m "Bump version ${GITHUB_REF:10}"
         git checkout master
-        git merge -m "Release ${GITHUB_REF}" --no-ff release/${GITHUB_REF}
-        git push --delete release/${GITHUB_REF}
+        git merge -m "Release ${GITHUB_REF:10}" --no-ff release/${GITHUB_REF:10}
+        git push --delete release/${GITHUB_REF:10}
 
     - name: Publish
       run: |
-        npm version --no-git-tag-version --allow-same-version ${GITHUB_REF}
         npm set //registry.npmjs.org/:_authToken ${{ secrets.GITHUB_TOKEN }}
         npm publish
 
