@@ -25,14 +25,14 @@ jobs:
 
     - name: Prepare release
       run: |
-        echo "Preparing release ${GITHUB_REF:11}"
+        echo "Preparing release ${GITHUB_REF}"
         git checkout master
-        git merge -m "Release ${GITHUB_REF:11}" --no-ff release/${GITHUB_REF:11}
-        git push --delete release/${GITHUB_REF:11}
+        git merge -m "Release ${GITHUB_REF}" --no-ff release/${GITHUB_REF}
+        git push --delete release/${GITHUB_REF}
 
     - name: Publish
       run: |
-        npm version --no-git-tag-version --allow-same-version ${GITHUB_REF:11}
+        npm version --no-git-tag-version --allow-same-version ${GITHUB_REF}
         npm set //registry.npmjs.org/:_authToken ${{ secrets.GITHUB_TOKEN }}
         npm publish
 
