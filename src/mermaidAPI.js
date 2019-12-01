@@ -686,7 +686,7 @@ export default mermaidAPI;
  * ## mermaidAPI configuration defaults
  * <pre>
  *
- * <script>
+ * &lt;script>
  *   var config = {
  *     theme:'default',
  *     logLevel:'fatal',
@@ -728,6 +728,6 @@ export default mermaidAPI;
  *     }
  *   };
  *   mermaid.initialize(config);
- * </script>
+ * &lt;/script>
  *</pre>
  */

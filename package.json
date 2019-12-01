@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.4.2",
+  "version": "8.4.3",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -49,18 +49,18 @@
     "@braintree/sanitize-url": "^3.1.0",
     "crypto-random-string": "^3.0.1",
     "d3": "^5.7.0",
-    "dagre-d3": "dagrejs/dagre-d3",
+    "dagre-d3-unofficial": "0.6.4",
     "dagre": "^0.8.4",
     "graphlib": "^2.1.7",
     "he": "^1.2.0",
     "lodash": "^4.17.11",
     "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
-    "prettier": "^1.18.2",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {
     "documentation": "^12.0.1",
+    "prettier": "^1.18.2",
     "eslint": "^6.3.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-prettier": "^3.1.0",
