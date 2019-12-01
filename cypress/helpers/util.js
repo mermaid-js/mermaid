@@ -26,3 +26,9 @@ export const imgSnapshotTest = (graphStr, options, api) => {
   cy.get('svg');
   cy.percySnapshot();
 };
+
+export const renderGraph = (graphStr, options, api) => {
+  const url = mermaidUrl(graphStr, options, api);
+
+  cy.visit(url);
+};

@@ -14,11 +14,22 @@ const contentLoaded = function() {
     const graphObj = JSON.parse(Base64.decode(graphBase64));
     // const graph = 'hello'
     console.log(graphObj);
-    const div = document.createElement('div');
-    div.id = 'block';
-    div.className = 'mermaid';
-    div.innerHTML = graphObj.code;
-    document.getElementsByTagName('body')[0].appendChild(div);
+    if (Array.isArray(graphObj.code)) {
+      const numCodes = graphObj.code.length;
+      for (let i = 0; i < numCodes; i++) {
+        const div = document.createElement('div');
+        div.id = 'block' + i;
+        div.className = 'mermaid';
+        div.innerHTML = graphObj.code[i];
+        document.getElementsByTagName('body')[0].appendChild(div);
+      }
+    } else {
+      const div = document.createElement('div');
+      div.id = 'block';
+      div.className = 'mermaid';
+      div.innerHTML = graphObj.code;
+      document.getElementsByTagName('body')[0].appendChild(div);
+    }
     global.mermaid.initialize(graphObj.mermaid);
     // console.log('graphObj.mermaid', graphObj.mermaid)
     global.mermaid.init();
@@ -31,23 +42,52 @@ const contentLoadedApi = function() {
     const graphBase64 = document.location.href.substr(pos);
     const graphObj = JSON.parse(Base64.decode(graphBase64));
     // const graph = 'hello'
-    const div = document.createElement('div');
-    div.id = 'block';
-    div.className = 'mermaid';
-    // div.innerHTML = graphObj.code
-    document.getElementsByTagName('body')[0].appendChild(div);
-    global.mermaid.initialize(graphObj.mermaid);
+    if (Array.isArray(graphObj.code)) {
+      const numCodes = graphObj.code.length;
+      const divs = [];
+      let div;
+      for (let i = 0; i < numCodes; i++) {
+        div = document.createElement('div');
+        div.id = 'block' + i;
+        div.className = 'mermaid';
+        // div.innerHTML = graphObj.code
+        document.getElementsByTagName('body')[0].appendChild(div);
+        divs[i] = div;
+      }
 
-    mermaid2.render(
-      'newid',
-      graphObj.code,
-      (svgCode, bindFunctions) => {
-        div.innerHTML = svgCode;
+      global.mermaid.initialize(graphObj.mermaid);
 
-        bindFunctions(div);
-      },
-      div
-    );
+      for (let i = 0; i < numCodes; i++) {
+        mermaid2.render(
+          'newid' + i,
+          graphObj.code[i],
+          (svgCode, bindFunctions) => {
+            div.innerHTML = svgCode;
+
+            bindFunctions(div);
+          },
+          divs[i]
+        );
+      }
+    } else {
+      const div = document.createElement('div');
+      div.id = 'block';
+      div.className = 'mermaid';
+      // div.innerHTML = graphObj.code
+      document.getElementsByTagName('body')[0].appendChild(div);
+      global.mermaid.initialize(graphObj.mermaid);
+
+      mermaid2.render(
+        'newid',
+        graphObj.code,
+        (svgCode, bindFunctions) => {
+          div.innerHTML = svgCode;
+
+          if (bindFunctions) bindFunctions(div);
+        },
+        div
+      );
+    }
   }
 };
 

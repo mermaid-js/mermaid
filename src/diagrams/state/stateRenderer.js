@@ -92,8 +92,6 @@ export const draw = function(text, id) {
   const padding = conf.padding;
   const bounds = diagram.node().getBBox();
 
-  console.warn(bounds);
-
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 
