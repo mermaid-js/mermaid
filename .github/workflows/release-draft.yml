@@ -1,0 +1,15 @@
+name: Draft Release
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  draft-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Draft Release
+        uses: toolmantim/release-drafter@v5.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
