@@ -106,6 +106,22 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a note with multiple lines in it', () => {
+    imgSnapshotTest(
+      `
+    stateDiagram
+    State1: The state with a note
+    note right of State1
+      Important information! You\ncan write
+      notes with multiple lines...
+      Here is another line...
+      And another line...
+    end note
+    `,
+      {}
+    );
+  });
+
   it('should render a states with descriptions including multi-line descriptions', () => {
     imgSnapshotTest(
       `
@@ -276,4 +292,33 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
+  it('should render a state with states in it', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+      state PilotCockpit {
+        state  Parent {
+          C
+        }
+    }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
+  it('Simplest compone state', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+        state  Parent {
+          C
+        }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
+
 });

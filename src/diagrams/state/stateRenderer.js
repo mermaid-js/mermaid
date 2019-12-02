@@ -5,7 +5,7 @@ import { logger } from '../../logger';
 import stateDb from './stateDb';
 import { parser } from './parser/stateDiagram';
 // import idCache from './id-cache';
-import { drawState, addIdAndBox, drawEdge } from './shapes';
+import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 
 parser.yy = stateDb;
@@ -100,7 +100,7 @@ export const draw = function(text, id) {
   // diagram.attr('height', height);
 
   // Zoom in a bit
-  diagram.attr('width', width * 2);
+  diagram.attr('width', width);
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
   diagram.attr(
     'viewBox',
@@ -189,7 +189,7 @@ const renderDoc = (doc, diagram, parentId) => {
 
       if (first) {
         // first = false;
-        sub = addIdAndBox(sub, stateDef);
+        sub = addTitleAndBox(sub, stateDef);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;
         node.height = boxBounds.height + 2 * conf.padding;
