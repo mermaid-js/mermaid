@@ -157,7 +157,6 @@ export const addTitleAndBox = (g, stateDef) => {
     width = width + dblPad;
   }
   let startX;
-  startX = orgBox.x - pad;
   // const lineY = 1 - getConfig().state.textHeight;
   // const descrLine = g
   //   .append('line') // text label for the x axis
@@ -168,11 +167,6 @@ export const addTitleAndBox = (g, stateDef) => {
 
   const graphBox = g.node().getBBox();
   // console.warn(width / 2, titleWidth / 2, getConfig().state.padding, orgBox);
-  if (titleWidth > orgWidth) {
-    startX = (orgWidth - width) / 2 + pad;
-  } else {
-    startX = orgX - pad;
-  }
   // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   if (stateDef.doc) {
@@ -202,9 +196,16 @@ export const addTitleAndBox = (g, stateDef) => {
     );
   }
 
+  startX = orgX - pad;
+  if (titleWidth > orgWidth) {
+    startX = (orgWidth - width) / 2 + pad;
+    // startX = orgX + (orgWidth - titleWidth) / 2;
+  }
   if (Math.abs(orgX - graphBox.x) < pad) {
     console.warn('resetting startX', startX);
-    startX = orgX - (titleWidth - orgWidth) / 2;
+    if (titleWidth > orgWidth) {
+      startX = orgX - (titleWidth - orgWidth) / 2;
+    }
   }
   console.warn('startX', startX);
   // // White color
@@ -221,109 +222,6 @@ export const addTitleAndBox = (g, stateDef) => {
 
   title.attr('x', startX + pad);
   if (titleWidth <= orgWidth) title.attr('x', startX + width / 2 - pad / 2);
-
-  // // Title background
-  g.insert('rect', ':first-child')
-    .attr('x', startX)
-    .attr(
-      'y',
-      getConfig().state.titleShift - getConfig().state.textHeight - getConfig().state.padding
-    )
-    .attr('width', width)
-    // Just needs to be higher then the descr line, will be clipped by the white color box
-    .attr('height', getConfig().state.textHeight * 3)
-    .attr('rx', getConfig().state.radius);
-
-  // Full background
-  g.insert('rect', ':first-child')
-    .attr('x', startX)
-    .attr(
-      'y',
-      getConfig().state.titleShift - getConfig().state.textHeight - getConfig().state.padding
-    )
-    .attr('width', width)
-    .attr('height', graphBox.height + 3 + 2 * getConfig().state.textHeight)
-    .attr('rx', getConfig().state.radius);
-
-  return g;
-};
-export const addTitleAndBoxOrg = (g, stateDef) => {
-  const pad = getConfig().state.padding;
-  const dblPad = 2 * getConfig().state.padding;
-  const orgBox = g.node().getBBox();
-  const orgWidth = orgBox.width + dblPad;
-  const orgX = orgBox.x;
-
-  // TODO Move hardcodings to conf
-  // const addTspan = function(textEl, txt, isFirst) {
-  //   const tSpan = textEl
-  //     .append('tspan')
-  //     .attr('x', 2 * getConfig().state.padding)
-  //     .text(txt);
-  //   if (!isFirst) {
-  //     tSpan.attr('dy', getConfig().state.textHeight);
-  //   }
-  // };
-
-  /*
-    ct = tw/2
-    cg = gw/2
-  */
-  const title = g
-    .append('text')
-    .attr('x', 0)
-    .attr('y', getConfig().state.titleShift)
-    .attr('font-size', getConfig().state.fontSize)
-    .attr('class', 'state-title')
-    .text(stateDef.id);
-
-  const titleBox = title.node().getBBox();
-  const titleWidth = titleBox.width + dblPad;
-  const width = Math.max(titleWidth, orgWidth + dblPad);
-  let startX;
-  startX = orgBox.x - pad;
-  // const lineY = 1 - getConfig().state.textHeight;
-  // const descrLine = g
-  //   .append('line') // text label for the x axis
-  //   .attr('x1', 0)
-  //   .attr('y1', lineY)
-  //   .attr('y2', lineY)
-  //   .attr('class', 'descr-divider');
-
-  const graphBox = g.node().getBBox();
-  // console.warn(width / 2, titleWidth / 2, getConfig().state.padding, orgBox);
-  if (titleWidth > orgWidth) {
-    title.attr('x', (orgWidth - width) / 2 + pad);
-    startX = (orgWidth - width) / 2;
-  }
-  if (titleWidth <= orgWidth) title.attr('x', (orgWidth - width) / 2);
-  // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
-
-  if (stateDef.doc) {
-    console.warn(
-      stateDef.id,
-      ' orgWidth: ',
-      orgWidth,
-      ' adjusted orgWidth: ',
-      orgWidth - dblPad,
-      titleWidth,
-      width,
-      stateDef.doc
-    );
-    startX = orgX - (orgWidth - width) / 2 - pad;
-    console.warn(' orgX: ', orgX);
-  }
-  // // White color
-  // g.insert('rect', ':first-child')
-  //   .attr('x', graphBox.x)
-  //   .attr('y', lineY)
-  //   .attr('class', 'composit')
-  //   .attr('width', graphBox.width + getConfig().state.padding)
-  //   .attr(
-  //     'height',
-  //     graphBox.height + getConfig().state.textHeight + getConfig().state.titleShift + 1
-  //   )
-  //   .attr('rx', '0');
 
   // // Title background
   g.insert('rect', ':first-child')
