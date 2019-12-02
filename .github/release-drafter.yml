@@ -10,7 +10,8 @@ categories:
   - title: '🧰 Maintenance'
     label: 'Type: Other'
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
-branches: 'develop'
+branches:
+  - develop
 no-changes-template: 'This release contains minor changes and bugfixes.'
 template: |
   # Release Notes
