@@ -278,8 +278,8 @@ const renderDoc = (doc, diagram, parentId) => {
             pShift = 0;
           }
         }
-        divider.setAttribute('x1', 0 - pShift);
-        divider.setAttribute('x2', pWidth - pShift);
+        divider.setAttribute('x1', 0 - pShift + 8);
+        divider.setAttribute('x2', pWidth - pShift - 8);
       });
     } else {
       logger.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
