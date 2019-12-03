@@ -275,7 +275,7 @@ mermaidAPI.initialize({
 
 <pre>
 
-<script>
+&lt;script>
   var config = {
     theme:'default',
     logLevel:'fatal',
@@ -317,8 +317,7 @@ mermaidAPI.initialize({
     }
   };
   mermaid.initialize(config);
-</script>
-
+&lt;/script>
 </pre>
 
 [1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render

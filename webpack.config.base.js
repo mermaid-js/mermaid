@@ -1,10 +1,10 @@
-import path from 'path'
+import path from 'path';
 
 const amdRule = {
   parser: {
     amd: false // https://github.com/lodash/lodash/issues/3052
   }
-}
+};
 
 const jisonRule = {
   test: /\.jison$/,
@@ -14,7 +14,7 @@ const jisonRule = {
       'token-stack': true
     }
   }
-}
+};
 const jsRule = {
   test: /\.js$/,
   include: [
@@ -24,16 +24,13 @@ const jsRule = {
   use: {
     loader: 'babel-loader'
   }
-}
+};
 
-const scssRule = { // load scss to string
+const scssRule = {
+  // load scss to string
   test: /\.scss$/,
-  use: [
-    { loader: 'css-to-string-loader' },
-    { loader: 'css-loader' },
-    { loader: 'sass-loader' }
-  ]
-}
+  use: [{ loader: 'css-to-string-loader' }, { loader: 'css-loader' }, { loader: 'sass-loader' }]
+};
 
 export const jsConfig = () => {
   return {
@@ -43,7 +40,10 @@ export const jsConfig = () => {
       mermaid: './src/mermaid.js'
     },
     resolve: {
-      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
+      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
+      alias: {
+        'dagre-d3': 'dagre-d3-unofficial'
+      }
     },
     node: {
       fs: 'empty' // jison generated code requires 'fs'
@@ -59,5 +59,5 @@ export const jsConfig = () => {
       rules: [amdRule, jsRule, scssRule, jisonRule]
     },
     devtool: 'source-map'
-  }
-}
+  };
+};

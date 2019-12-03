@@ -3,9 +3,7 @@ module.exports = {
     [
       '@babel/preset-env',
       {
-        targets: {
-          node: 'current'
-        }
+        targets: "defaults, ie >= 11, current node"
       }
     ]
   ]

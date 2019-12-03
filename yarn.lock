@@ -3641,9 +3641,10 @@ d3@^5.12, d3@^5.7.0:
     d3-voronoi "1"
     d3-zoom "1"
 
-dagre-d3@dagrejs/dagre-d3:
-  version "0.6.4-pre"
-  resolved "https://codeload.github.com/dagrejs/dagre-d3/tar.gz/e1a00e5cb518f5d2304a35647e024f31d178e55b"
+dagre-d3-unofficial@0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/dagre-d3-unofficial/-/dagre-d3-unofficial-0.6.4.tgz#c3d0c3993e53942b9ab977a98ac980b6e7c620eb"
+  integrity sha512-xihvMCALDS/X646WyqBSMN1kl7f0K1Urd42EKYgmyISwML1Bep1MCMm+2Q3TIJe6y8TwHKmW6oYXnP5I0J/LIg==
   dependencies:
     d3 "^5.12"
     dagre "^0.8.4"
