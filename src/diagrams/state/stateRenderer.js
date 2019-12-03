@@ -100,7 +100,7 @@ export const draw = function(text, id) {
   // diagram.attr('height', height);
 
   // Zoom in a bit
-  diagram.attr('width', width * );
+  diagram.attr('width', width * 2);
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
   diagram.attr(
     'viewBox',
@@ -134,6 +134,15 @@ const renderDoc = (doc, diagram, parentId) => {
     compound: true
   });
 
+  let i;
+  let edgeFreeDoc = true;
+  for (i = 0; i < doc.length; i++) {
+    if (doc[i].stmt === 'relation') {
+      edgeFreeDoc = false;
+      break;
+    }
+  }
+  console.warn('doc', doc, edgeFreeDoc);
   // Set an object for the graph label
   if (parentId)
     graph.setGraph({
@@ -142,8 +151,11 @@ const renderDoc = (doc, diagram, parentId) => {
       compound: true,
       // acyclicer: 'greedy',
       ranker: 'tight-tree',
-      ranksep: conf.edgeLengthFactor
+      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
+      nodeSep: edgeFreeDoc ? 1 : 50
       // isMultiGraph: false
+      // ranksep: 5,
+      // nodesep: 1
     });
   else {
     graph.setGraph({
@@ -152,7 +164,8 @@ const renderDoc = (doc, diagram, parentId) => {
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
-      ranksep: conf.edgeLengthFactor,
+      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
+      nodeSep: edgeFreeDoc ? 1 : 50,
       ranker: 'tight-tree'
       // ranker: 'network-simplex'
       // isMultiGraph: false
@@ -192,7 +205,7 @@ const renderDoc = (doc, diagram, parentId) => {
         sub = addTitleAndBox(sub, stateDef);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;
-        node.height = boxBounds.height + 2 * conf.padding;
+        node.height = boxBounds.height + conf.padding / 2;
         transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       } else {
         // sub = addIdAndBox(sub, stateDef);

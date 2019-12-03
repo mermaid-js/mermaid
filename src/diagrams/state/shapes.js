@@ -221,7 +221,8 @@ export const addTitleAndBox = (g, stateDef) => {
   //   .attr('rx', '0');
 
   title.attr('x', startX + pad);
-  if (titleWidth <= orgWidth) title.attr('x', startX + width / 2 - pad / 2);
+  // if (titleWidth <= orgWidth) title.attr('x', startX + width / 2 - pad / 2);
+  if (titleWidth <= orgWidth) title.attr('x', orgX + (width - dblPad) / 2 - titleWidth / 2 + pad);
 
   // // Title background
   g.insert('rect', ':first-child')
@@ -499,7 +500,7 @@ export const drawEdge = function(elem, path, relation) {
       .insert('rect', ':first-child')
       .attr('class', 'box')
       .attr('x', bounds.x - getConfig().state.padding / 2)
-      .attr('y', bounds.y - getConfig().state.padding / 2)
+      .attr('y', bounds.y + getConfig().state.padding / 2)
       .attr('width', bounds.width + getConfig().state.padding)
       .attr('height', bounds.height + getConfig().state.padding);
 
