@@ -100,7 +100,7 @@ export const draw = function(text, id) {
   // diagram.attr('height', height);
 
   // Zoom in a bit
-  diagram.attr('width', width);
+  diagram.attr('width', width * );
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
   diagram.attr(
     'viewBox',
