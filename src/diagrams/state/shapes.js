@@ -129,71 +129,120 @@ export const drawDescrState = (g, stateDef) => {
  * Adds the creates a box around the existing content and adds a
  * panel for the id on top of the content.
  */
-export const addIdAndBox = (g, stateDef) => {
-  // TODO Move hardcodings to conf
-  // const addTspan = function(textEl, txt, isFirst) {
-  //   const tSpan = textEl
-  //     .append('tspan')
-  //     .attr('x', 2 * getConfig().state.padding)
-  //     .text(txt);
-  //   if (!isFirst) {
-  //     tSpan.attr('dy', getConfig().state.textHeight);
-  //   }
-  // };
+/**
+ * Function that creates an title row and a frame around a substate for a composit state diagram.
+ * The function returns a new d3 svg object with updated width and height properties;
+ * @param {*} g The d3 svg object for the substate to framed
+ * @param {*} stateDef The info about the
+ */
+export const addTitleAndBox = (g, stateDef) => {
+  const pad = getConfig().state.padding;
+  const dblPad = 2 * getConfig().state.padding;
+  const orgBox = g.node().getBBox();
+  const orgWidth = orgBox.width;
+  const orgX = orgBox.x;
+
   const title = g
     .append('text')
-    .attr('x', 2 * getConfig().state.padding)
+    .attr('x', 0)
     .attr('y', getConfig().state.titleShift)
     .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
     .text(stateDef.id);
 
   const titleBox = title.node().getBBox();
-
-  const lineY = 1 - getConfig().state.textHeight;
-  const descrLine = g
-    .append('line') // text label for the x axis
-    .attr('x1', 0)
-    .attr('y1', lineY)
-    .attr('y2', lineY)
-    .attr('class', 'descr-divider');
+  const titleWidth = titleBox.width + dblPad;
+  let width = Math.max(titleWidth, orgWidth); // + dblPad;
+  if (width === orgWidth) {
+    width = width + dblPad;
+  }
+  let startX;
+  // const lineY = 1 - getConfig().state.textHeight;
+  // const descrLine = g
+  //   .append('line') // text label for the x axis
+  //   .attr('x1', 0)
+  //   .attr('y1', lineY)
+  //   .attr('y2', lineY)
+  //   .attr('class', 'descr-divider');
 
   const graphBox = g.node().getBBox();
-  title.attr('x', graphBox.width / 2 - titleBox.width / 2);
-  descrLine.attr('x2', graphBox.width + getConfig().state.padding);
+  // console.warn(width / 2, titleWidth / 2, getConfig().state.padding, orgBox);
+  // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
-  // White color
-  g.insert('rect', ':first-child')
-    .attr('x', graphBox.x)
-    .attr('y', lineY)
-    .attr('class', 'composit')
-    .attr('width', graphBox.width + getConfig().state.padding)
-    .attr(
-      'height',
-      graphBox.height + getConfig().state.textHeight + getConfig().state.titleShift + 1
-    )
-    .attr('rx', '0');
+  if (stateDef.doc) {
+    // console.warn(
+    //   stateDef.id,
+    //   ' orgWidth: ',
+    //   orgWidth,
+    //   ' adjusted orgWidth: ',
+    //   orgWidth - dblPad,
+    //   titleWidth,
+    //   stateDef.doc
+    // );
+    // startX = orgX - (orgWidth - width) / 2 - pad;
+    // console.warn(' orgX: ', orgX, graphBox.x);
+    console.warn(
+      stateDef.id,
+      'orgX: ',
+      orgX,
+      'width: ',
+      width,
+      'titleWidth: ',
+      titleWidth,
+      'orgWidth: ',
+      orgWidth,
+      'width',
+      width
+    );
+  }
 
-  // Title background
+  startX = orgX - pad;
+  if (titleWidth > orgWidth) {
+    startX = (orgWidth - width) / 2 + pad;
+    // startX = orgX + (orgWidth - titleWidth) / 2;
+  }
+  if (Math.abs(orgX - graphBox.x) < pad) {
+    console.warn('resetting startX', startX);
+    if (titleWidth > orgWidth) {
+      startX = orgX - (titleWidth - orgWidth) / 2;
+    }
+  }
+  console.warn('startX', startX);
+  // // White color
+  // g.insert('rect', ':first-child')
+  //   .attr('x', graphBox.x)
+  //   .attr('y', lineY)
+  //   .attr('class', 'composit')
+  //   .attr('width', graphBox.width + getConfig().state.padding)
+  //   .attr(
+  //     'height',
+  //     graphBox.height + getConfig().state.textHeight + getConfig().state.titleShift + 1
+  //   )
+  //   .attr('rx', '0');
+
+  title.attr('x', startX + pad);
+  if (titleWidth <= orgWidth) title.attr('x', startX + width / 2 - pad / 2);
+
+  // // Title background
   g.insert('rect', ':first-child')
-    .attr('x', graphBox.x)
+    .attr('x', startX)
     .attr(
       'y',
       getConfig().state.titleShift - getConfig().state.textHeight - getConfig().state.padding
     )
-    .attr('width', graphBox.width + getConfig().state.padding)
+    .attr('width', width)
     // Just needs to be higher then the descr line, will be clipped by the white color box
     .attr('height', getConfig().state.textHeight * 3)
     .attr('rx', getConfig().state.radius);
 
   // Full background
   g.insert('rect', ':first-child')
-    .attr('x', graphBox.x)
+    .attr('x', startX)
     .attr(
       'y',
       getConfig().state.titleShift - getConfig().state.textHeight - getConfig().state.padding
     )
-    .attr('width', graphBox.width + getConfig().state.padding)
+    .attr('width', width)
     .attr('height', graphBox.height + 3 + 2 * getConfig().state.textHeight)
     .attr('rx', getConfig().state.radius);
 
