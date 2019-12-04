@@ -5,40 +5,19 @@ import { logger } from '../../logger';
 import stateDb from './stateDb';
 import { parser } from './parser/stateDiagram';
 // import idCache from './id-cache';
-import { drawState, addIdAndBox, drawEdge } from './shapes';
+import { drawState, addTitleAndBox, drawEdge } from './shapes';
 import { getConfig } from '../../config';
 
 parser.yy = stateDb;
 
 // TODO Move conf object to main conf in mermaidAPI
 let conf;
-// {
-//   // Used
-//   padding: 5,
-//   // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
-//   // layout. This might need updating if/when switching font
-//   fontSizeFactor: 5.02,
-//   labelHeight: 16,
-//   edgeLengthFactor: '20',
-//   compositTitleSize: 35
-// };
 
 const transformationLog = {};
 
 export const setConf = function() {};
 
 // Todo optimize
-// const getGraphId = function(label) {
-//   const keys = idCache.keys();
-
-//   for (let i = 0; i < keys.length; i++) {
-//     if (idCache.get(keys[i]).label === label) {
-//       return keys[i];
-//     }
-//   }
-
-//   return undefined;
-// };
 
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
@@ -68,11 +47,11 @@ export const draw = function(text, id) {
   parser.parse(text);
   logger.debug('Rendering diagram ' + text);
 
-  // /// / Fetch the default direction, use TD if none was found
+  // Fetch the default direction, use TD if none was found
   const diagram = d3.select(`[id='${id}']`);
   insertMarkers(diagram);
 
-  // // Layout graph, Create a new directed graph
+  // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     multigraph: false,
     compound: true,
@@ -81,13 +60,13 @@ export const draw = function(text, id) {
     // ranksep: '20'
   });
 
-  // // Default to assigning a new object as a label for each new edge.
+  // Default to assigning a new object as a label for each new edge.
   graph.setDefaultEdgeLabel(function() {
     return {};
   });
 
   const rootDoc = stateDb.getRootDoc();
-  renderDoc(rootDoc, diagram);
+  renderDoc(rootDoc, diagram, undefined, false);
 
   const padding = conf.padding;
   const bounds = diagram.node().getBBox();
@@ -100,7 +79,7 @@ export const draw = function(text, id) {
   // diagram.attr('height', height);
 
   // Zoom in a bit
-  diagram.attr('width', width * 2);
+  diagram.attr('width', width * 1.75);
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
   diagram.attr(
     'viewBox',
@@ -128,11 +107,20 @@ const getRows = s => {
   return str.split('#br#');
 };
 
-const renderDoc = (doc, diagram, parentId) => {
+const renderDoc = (doc, diagram, parentId, altBkg) => {
   // // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
     compound: true
   });
+
+  let i;
+  let edgeFreeDoc = true;
+  for (i = 0; i < doc.length; i++) {
+    if (doc[i].stmt === 'relation') {
+      edgeFreeDoc = false;
+      break;
+    }
+  }
 
   // Set an object for the graph label
   if (parentId)
@@ -142,8 +130,11 @@ const renderDoc = (doc, diagram, parentId) => {
       compound: true,
       // acyclicer: 'greedy',
       ranker: 'tight-tree',
-      ranksep: conf.edgeLengthFactor
+      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
+      nodeSep: edgeFreeDoc ? 1 : 50
       // isMultiGraph: false
+      // ranksep: 5,
+      // nodesep: 1
     });
   else {
     graph.setGraph({
@@ -152,7 +143,8 @@ const renderDoc = (doc, diagram, parentId) => {
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
-      ranksep: conf.edgeLengthFactor,
+      ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
+      nodeSep: edgeFreeDoc ? 1 : 50,
       ranker: 'tight-tree'
       // ranker: 'network-simplex'
       // isMultiGraph: false
@@ -185,14 +177,14 @@ const renderDoc = (doc, diagram, parentId) => {
         .append('g')
         .attr('id', stateDef.id)
         .attr('class', 'stateGroup');
-      node = renderDoc(stateDef.doc, sub, stateDef.id);
+      node = renderDoc(stateDef.doc, sub, stateDef.id, !altBkg);
 
       if (first) {
         // first = false;
-        sub = addIdAndBox(sub, stateDef);
+        sub = addTitleAndBox(sub, stateDef, altBkg);
         let boxBounds = sub.node().getBBox();
         node.width = boxBounds.width;
-        node.height = boxBounds.height + 2 * conf.padding;
+        node.height = boxBounds.height + conf.padding / 2;
         transformationLog[stateDef.id] = { y: conf.compositTitleSize };
       } else {
         // sub = addIdAndBox(sub, stateDef);
@@ -278,8 +270,8 @@ const renderDoc = (doc, diagram, parentId) => {
             pShift = 0;
           }
         }
-        divider.setAttribute('x1', 0 - pShift);
-        divider.setAttribute('x2', pWidth - pShift);
+        divider.setAttribute('x1', 0 - pShift + 8);
+        divider.setAttribute('x2', pWidth - pShift - 8);
       });
     } else {
       logger.debug('No Node ' + v + ': ' + JSON.stringify(graph.node(v)));
