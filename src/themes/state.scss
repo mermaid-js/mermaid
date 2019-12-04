@@ -37,6 +37,11 @@ g.stateGroup line {
   border-bottom: 1px
 }
 
+.stateGroup .alt-composit {
+  fill: #e0e0e0;
+  border-bottom: 1px
+}
+
 .state-note {
   stroke: $noteBorderColor;
   fill: $noteBkgColor;

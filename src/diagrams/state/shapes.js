@@ -73,7 +73,7 @@ export const drawDescrState = (g, stateDef) => {
   const title = g
     .append('text')
     .attr('x', 2 * getConfig().state.padding)
-    .attr('y', getConfig().state.textHeight + 1.5 * getConfig().state.padding)
+    .attr('y', getConfig().state.textHeight + 1.3 * getConfig().state.padding)
     .attr('font-size', getConfig().state.fontSize)
     .attr('class', 'state-title')
     .text(stateDef.descriptions[0]);
@@ -87,7 +87,7 @@ export const drawDescrState = (g, stateDef) => {
     .attr(
       'y',
       titleHeight +
-        getConfig().state.padding * 0.2 +
+        getConfig().state.padding * 0.4 +
         getConfig().state.dividerMargin +
         getConfig().state.textHeight
     )
@@ -135,7 +135,7 @@ export const drawDescrState = (g, stateDef) => {
  * @param {*} g The d3 svg object for the substate to framed
  * @param {*} stateDef The info about the
  */
-export const addTitleAndBox = (g, stateDef) => {
+export const addTitleAndBox = (g, stateDef, altBkg) => {
   const pad = getConfig().state.padding;
   const dblPad = 2 * getConfig().state.padding;
   const orgBox = g.node().getBBox();
@@ -170,30 +170,19 @@ export const addTitleAndBox = (g, stateDef) => {
   // descrLine.attr('x2', graphBox.width + getConfig().state.padding);
 
   if (stateDef.doc) {
-    // console.warn(
+    // cnsole.warn(
     //   stateDef.id,
-    //   ' orgWidth: ',
-    //   orgWidth,
-    //   ' adjusted orgWidth: ',
-    //   orgWidth - dblPad,
+    //   'orgX: ',
+    //   orgX,
+    //   'width: ',
+    //   width,
+    //   'titleWidth: ',
     //   titleWidth,
-    //   stateDef.doc
+    //   'orgWidth: ',
+    //   orgWidth,
+    //   'width',
+    //   width
     // );
-    // startX = orgX - (orgWidth - width) / 2 - pad;
-    // console.warn(' orgX: ', orgX, graphBox.x);
-    console.warn(
-      stateDef.id,
-      'orgX: ',
-      orgX,
-      'width: ',
-      width,
-      'titleWidth: ',
-      titleWidth,
-      'orgWidth: ',
-      orgWidth,
-      'width',
-      width
-    );
   }
 
   startX = orgX - pad;
@@ -202,23 +191,23 @@ export const addTitleAndBox = (g, stateDef) => {
     // startX = orgX + (orgWidth - titleWidth) / 2;
   }
   if (Math.abs(orgX - graphBox.x) < pad) {
-    console.warn('resetting startX', startX);
     if (titleWidth > orgWidth) {
       startX = orgX - (titleWidth - orgWidth) / 2;
     }
   }
-  console.warn('startX', startX);
+
+  const lineY = 1 - getConfig().state.textHeight;
   // // White color
-  // g.insert('rect', ':first-child')
-  //   .attr('x', graphBox.x)
-  //   .attr('y', lineY)
-  //   .attr('class', 'composit')
-  //   .attr('width', graphBox.width + getConfig().state.padding)
-  //   .attr(
-  //     'height',
-  //     graphBox.height + getConfig().state.textHeight + getConfig().state.titleShift + 1
-  //   )
-  //   .attr('rx', '0');
+  g.insert('rect', ':first-child')
+    .attr('x', startX)
+    .attr('y', lineY)
+    .attr('class', altBkg ? 'alt-composit' : 'composit')
+    .attr('width', width)
+    .attr(
+      'height',
+      graphBox.height + getConfig().state.textHeight + getConfig().state.titleShift + 1
+    )
+    .attr('rx', '0');
 
   title.attr('x', startX + pad);
   // if (titleWidth <= orgWidth) title.attr('x', startX + width / 2 - pad / 2);
