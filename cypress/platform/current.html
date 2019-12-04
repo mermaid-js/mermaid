@@ -10,61 +10,14 @@
     <h1>info below</h1>
     <div style="display: flex;">
       <div class="mermaid">stateDiagram
-          state  P {
-            Child
-          }
+        [*] --> State1
+        State1 --> State2 : Transition 1
+        State1 --> State3 : Transition 2
+        State1 --> State4 : Transition 3
+        State1 --> State5 : Transition 4
+        State2 --> State3 : Transition 5
+        State1 --> [*]
       </div>
-
-      <div class="mermaid">stateDiagram
-        state P {
-          state  Par {
-            Child
-          }
-      }
-      </div>
-      <div class="mermaid">stateDiagram
-        state P {
-          state  GPar {
-            state Parent {
-              state "Long state description" as TheLongChild
-              TheLongChild : New line
-              TheLongChild : Another line
-              TheLongChild
-            }
-          }
-      }
-      </div>
-  </div>
-  <div style="display: flex;">
-    <div class="mermaid">stateDiagram
-        state  Parent {
-          C
-        }
-    </div>
-
-    <div class="mermaid">stateDiagram
-      state PilotCockpit {
-        state  Parent {
-          C
-        }
-    }
-    </div>
-    <div class="mermaid">stateDiagram
-      state Pilot {
-        state  GParent {
-          state Parent1 {
-            Child
-          }
-          state Parent2 {
-            Child2
-          }
-        }
-        state Parent3 {
-          Child4
-        }
-
-    }
-    </div>
 </div>
   <script src="./mermaid.js"></script>
     <script>
