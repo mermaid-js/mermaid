@@ -40,10 +40,7 @@ export const jsConfig = () => {
       mermaid: './src/mermaid.js'
     },
     resolve: {
-      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison'],
-      alias: {
-        'dagre-d3': 'dagre-d3-unofficial'
-      }
+      extensions: ['.wasm', '.mjs', '.js', '.json', '.jison']
     },
     node: {
       fs: 'empty' // jison generated code requires 'fs'
