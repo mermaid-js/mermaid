@@ -163,4 +163,45 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('5: should render a simple class diagram with Generic class', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+    class Class01~T~
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class08 <--> C2: Cool label
+      class Class10~T~ {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('6: should render a simple class diagram with Generic class and relations', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+    Class01~T~ <|-- AveryLongClass : Cool
+    Class03~T~ *-- Class04~T~
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class08 <--> C2: Cool label
+      class Class10~T~ {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });

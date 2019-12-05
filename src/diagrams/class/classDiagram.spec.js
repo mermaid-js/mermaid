@@ -56,6 +56,33 @@ describe('class diagram, ', function () {
       parser.parse(str);
     });
 
+    it('should handle generic class', function() {
+      const str =
+        'classDiagram\n' +
+        'class Car~T~\n' +
+        'Driver -- Car : drives >\n' +
+        'Car *-- Wheel : have 4 >\n' +
+        'Car -- Person : < owns';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic class with brackets', function() {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class~T~ {\n' +
+        'String data\n' +
+        '  void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Flight {\n' +
+        '   flightNumber : Integer\n' +
+        '   departureTime : Date\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
     it('should handle class definitions', function() {
       const str =
         'classDiagram\n' +
@@ -324,6 +351,21 @@ describe('class diagram, ', function () {
       expect(relations[3].relation.type1).toBe('none');
       expect(relations[3].relation.type2).toBe('none');
       expect(relations[3].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
+    });
+
+    it('should handle generic class with relation definitions', function () {
+      const str = 'classDiagram\n' + 'Class01~T~ <|-- Class02';
+
+      parser.parse(str);
+
+      const relations = parser.yy.getRelations();
+
+      expect(parser.yy.getClass('Class01').id).toBe('Class01');
+      expect(parser.yy.getClass('Class01').genericType).toBe('T');
+      expect(parser.yy.getClass('Class02').id).toBe('Class02');
+      expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
+      expect(relations[0].relation.type2).toBe('none');
+      expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
     it('should handle class annotations', function () {

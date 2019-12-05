@@ -318,10 +318,16 @@ const drawClass = function(elem, classDef) {
     isFirst = false;
   });
 
+  let classTitleString = classDef.id;
+
+  if(classDef.genericType !== undefined && classDef.genericType !== ''){
+    classTitleString += '<' + classDef.genericType + '>';
+  }
+
   // add class title
   const classTitle = title
     .append('tspan')
-    .text(classDef.id)
+    .text(classTitleString)
     .attr('class', 'title');
 
   // If class has annotations the title needs to have an offset of the text height

@@ -3,17 +3,32 @@ import { logger } from '../../logger';
 let relations = [];
 let classes = {};
 
+const splitClassNameAndType = function(id){
+  let genericType = '';
+  let className = id;
+  
+  if(id.indexOf('~') > 0){
+    let split = id.split('~');
+    className = split[0];
+    genericType = split[1];
+  }
+
+  return {className: className, type: genericType};
+}
+
 /**
  * Function called by parser when a node definition has been found.
  * @param id
  * @public
  */
 export const addClass = function(id) {
+  let classId = splitClassNameAndType(id);
   // Only add class if not exists
-  if (typeof classes[id] !== 'undefined') return;
+  if (typeof classes[classId.className] !== 'undefined') return;
 
-  classes[id] = {
-    id: id,
+  classes[classId.className] = {
+    id: classId.className,
+    type: classId.type,
     methods: [],
     members: [],
     annotations: []
@@ -40,6 +55,10 @@ export const addRelation = function(relation) {
   logger.debug('Adding relation: ' + JSON.stringify(relation));
   addClass(relation.id1);
   addClass(relation.id2);
+
+  relation.id1 = splitClassNameAndType(relation.id1).className;
+  relation.id2 = splitClassNameAndType(relation.id2).className;
+
   relations.push(relation);
 };
 
@@ -51,7 +70,8 @@ export const addRelation = function(relation) {
  * @public
  */
 export const addAnnotation = function(className, annotation) {
-  classes[className].annotations.push(annotation);
+  const validatedClassName = splitClassNameAndType(className).className;
+  classes[validatedClassName].annotations.push(annotation);
 };
 
 /**
@@ -64,7 +84,9 @@ export const addAnnotation = function(className, annotation) {
  * @public
  */
 export const addMember = function(className, member) {
-  const theClass = classes[className];
+  const validatedClassName = splitClassNameAndType(className).className;
+  const theClass = classes[validatedClassName];
+
   if (typeof member === 'string') {
     // Member can contain white spaces, we trim them out
     const memberString = member.trim();
