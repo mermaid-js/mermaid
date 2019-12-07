@@ -30,7 +30,6 @@ import { logger } from './logger';
  */
 const init = function() {
   const conf = mermaidAPI.getConfig();
-  console.warn('mermaid conf', conf);
   logger.debug('Starting rendering diagrams');
   let nodes;
   if (arguments.length >= 2) {
@@ -117,7 +116,6 @@ const init = function() {
 };
 
 const initialize = function(config) {
-  console.warn('Initializing mermaid ', config);
   logger.debug('Initializing mermaid ');
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
