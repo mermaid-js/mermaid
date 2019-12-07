@@ -3,18 +3,18 @@ import { logger } from '../../logger';
 let relations = [];
 let classes = {};
 
-const splitClassNameAndType = function(id){
+const splitClassNameAndType = function(id) {
   let genericType = '';
   let className = id;
   
-  if(id.indexOf('~') > 0){
+  if(id.indexOf('~') > 0) {
     let split = id.split('~');
     className = split[0];
     genericType = split[1];
   }
 
-  return {className: className, type: genericType};
-}
+  return { className: className, type: genericType };
+};
 
 /**
  * Function called by parser when a node definition has been found.
