@@ -22,6 +22,7 @@ describe('the flowchart renderer', function() {
       ['odd_right', 'rect_left_inv_arrow'],
       ['circle', 'circle'],
       ['ellipse', 'ellipse'],
+      ['stadium', 'stadium'],
       ['group', 'rect']
     ].forEach(function([type, expectedShape, expectedRadios = 0]) {
       it(`should add the correct shaped node to the graph for vertex type ${type}`, function() {

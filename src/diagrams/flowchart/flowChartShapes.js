@@ -135,9 +135,29 @@ function rect_right_inv_arrow(parent, bbox, node) {
   return shapeSvg;
 }
 
+function stadium(parent, bbox, node) {
+  const h = bbox.height;
+  const w = bbox.width + h / 4;
+
+  const shapeSvg = parent
+    .insert('rect', ':first-child')
+    .attr('rx', h / 2)
+    .attr('ry', h / 2)
+    .attr('x', -w / 2)
+    .attr('y', -h / 2)
+    .attr('width', w)
+    .attr('height', h);
+
+  node.intersect = function(point) {
+    return dagreD3.intersect.rect(node, point);
+  };
+  return shapeSvg;
+}
+
 export function addToRender(render) {
   render.shapes().question = question;
   render.shapes().hexagon = hexagon;
+  render.shapes().stadium = stadium;
 
   // Add custom shape for box with inverted arrow on left side
   render.shapes().rect_left_inv_arrow = rect_left_inv_arrow;

@@ -1,6 +1,29 @@
 import { addToRender } from './flowChartShapes';
 
 describe('flowchart shapes', function() {
+  // rect-based shapes
+  [
+    ['stadium', useWidth, useHeight]
+  ].forEach(function([shapeType, getW, getH]) {
+    it(`should add a ${shapeType} shape that renders a properly positioned rect element`, function() {
+      const mockRender = MockRender();
+      const mockSvg = MockSvg();
+      addToRender(mockRender);
+
+      [[100, 100], [123, 45], [71, 300]].forEach(function([width, height]) {
+        const shape = mockRender.shapes()[shapeType](mockSvg, { width, height }, {});
+        const w = width + height / 4;
+        const h = height;
+        const dx = -getW(w, h) / 2;
+        const dy = -getH(w, h) / 2;
+        expect(shape.__tag).toEqual('rect');
+        expect(shape.__attrs).toHaveProperty('x', dx);
+        expect(shape.__attrs).toHaveProperty('y', dy);
+      });
+    });
+  });
+
+  // polygon-based shapes
   [
     [
       'question',
