@@ -4,22 +4,31 @@
       href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
       rel="stylesheet"
     />
+    <style>
+      body {background: black}
+      h1 { color: white;}
+      .arrowheadPath {fill: red;}
 
+      .edgePath .path {stroke: red;}
+
+
+    </style>
   </head>
   <body>
     <h1>info below</h1>
     <div style="display: flex;">
       <div class="mermaid">graph TD
-        A["a=b &&</b>"]
-        A["a=b && a>b</b>"]
+        A ==> B
+        A --> C
+        A -.-> D
       </div>
 </div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'dark',
         // arrowMarkerAbsolute: true,
-        // themeCSS: '.node rect { fill: red; }',
+        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 3,
         flowchart: { curve: 'linear', "htmlLabels": false },
         gantt: { axisFormat: '%m/%d/%Y' },
