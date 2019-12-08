@@ -12,6 +12,8 @@ categories:
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
 branches:
   - develop
+exclude-labels:
+  - 'Skip changelog'
 no-changes-template: 'This release contains minor changes and bugfixes.'
 template: |
   # Release Notes
