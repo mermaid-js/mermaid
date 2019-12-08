@@ -28,7 +28,10 @@
         div.id = 'the-malware'
         div.className = 'malware'
         div.innerHTML = 'XSS Succeeded'
-        document.getElementsByTagName('body')[0].appendChild(div)
+        document.getElementsByTagName('body')[0].appendChild(div);
+        // const el = document.querySelector('.mermaid');
+        // el.parentNode.removeChild(el);
+        throw new Error('XSS Succeded');
       }
     </script>
   </head>

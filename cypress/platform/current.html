@@ -9,14 +9,9 @@
   <body>
     <h1>info below</h1>
     <div style="display: flex;">
-      <div class="mermaid">stateDiagram
-        [*] --> State1
-        State1 --> State2 : Transition 1
-        State1 --> State3 : Transition 2
-        State1 --> State4 : Transition 3
-        State1 --> State5 : Transition 4
-        State2 --> State3 : Transition 5
-        State1 --> [*]
+      <div class="mermaid">graph TD
+        A["a=b &&</b>"]
+        A["a=b && a>b</b>"]
       </div>
 </div>
   <script src="./mermaid.js"></script>
@@ -26,7 +21,7 @@
         // arrowMarkerAbsolute: true,
         // themeCSS: '.node rect { fill: red; }',
         logLevel: 3,
-        flowchart: { curve: 'linear' },
+        flowchart: { curve: 'linear', "htmlLabels": false },
         gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50 },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
