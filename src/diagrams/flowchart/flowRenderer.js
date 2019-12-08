@@ -213,10 +213,10 @@ export const addEdges = function(edges, g) {
           }
           break;
         case 'dotted':
-          style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
+          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
           break;
         case 'thick':
-          style = 'stroke: #333; stroke-width: 3.5px;fill:none';
+          style = ' stroke-width: 3.5px;fill:none';
           break;
       }
     }
