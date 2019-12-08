@@ -8,7 +8,6 @@ import { getConfig } from '../../config';
 const newDagreD3 = true;
 import dagreD3 from 'dagre-d3';
 // const newDagreD3 = false;
-// import dagreD3 from '../../../../dagre-d3-renderer/dist/dagre-d3.core.js';
 
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
@@ -214,10 +213,10 @@ export const addEdges = function(edges, g) {
           }
           break;
         case 'dotted':
-          style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
+          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
           break;
         case 'thick':
-          style = 'stroke: #333; stroke-width: 3.5px;fill:none';
+          style = ' stroke-width: 3.5px;fill:none';
           break;
       }
     }
@@ -460,8 +459,8 @@ export const draw = function(text, id) {
     subG = subGraphs[i];
 
     if (subG.title !== 'undefined') {
-      const clusterRects = document.querySelectorAll('#' + id + ' #' + subG.id + ' rect');
-      const clusterEl = document.querySelectorAll('#' + id + ' #' + subG.id);
+      const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
+      const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
 
       const xPos = clusterRects[0].x.baseVal.value;
       const yPos = clusterRects[0].y.baseVal.value;
@@ -475,7 +474,7 @@ export const draw = function(text, id) {
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
-    const labels = document.querySelectorAll('#' + id + ' .edgeLabel .label');
+    const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
 

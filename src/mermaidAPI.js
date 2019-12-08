@@ -585,23 +585,23 @@ const render = function(id, txt, cb, container) {
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-  let url = '';
-  if (config.arrowMarkerAbsolute) {
-    url =
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      window.location.pathname +
-      window.location.search;
-    url = url.replace(/\(/g, '\\(');
-    url = url.replace(/\)/g, '\\)');
-  }
+  // if (config.arrowMarkerAbsolute) {
+  //   url =
+  //     window.location.protocol +
+  //     '//' +
+  //     window.location.host +
+  //     window.location.pathname +
+  //     window.location.search;
+  //   url = url.replace(/\(/g, '\\(');
+  //   url = url.replace(/\)/g, '\\)');
+  // }
 
   // Fix for when the base tag is used
-  let svgCode = d3
-    .select('#d' + id)
-    .node()
-    .innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g');
+  let svgCode = d3.select('#d' + id).node().innerHTML;
+
+  if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
+    svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
+  }
 
   svgCode = decodeEntities(svgCode);
 
@@ -686,7 +686,7 @@ export default mermaidAPI;
  * ## mermaidAPI configuration defaults
  * <pre>
  *
- * <script>
+ * &lt;script>
  *   var config = {
  *     theme:'default',
  *     logLevel:'fatal',
@@ -728,6 +728,6 @@ export default mermaidAPI;
  *     }
  *   };
  *   mermaid.initialize(config);
- * </script>
+ * &lt;/script>
  *</pre>
  */

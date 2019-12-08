@@ -2,13 +2,13 @@
 import { parser } from './parser/classDiagram';
 import classDb from './classDb';
 
-describe('class diagram, ', function() {
-  describe('when parsing an info graph it', function() {
-    beforeEach(function() {
+describe('class diagram, ', function () {
+  describe('when parsing an info graph it', function () {
+    beforeEach(function () {
       parser.yy = classDb;
     });
 
-    it('should handle relation definitions', function() {
+    it('should handle relation definitions', function () {
       const str =
         'classDiagram\n' +
         'Class01 <|-- Class02\n' +
@@ -19,7 +19,8 @@ describe('class diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle relation definition of different types and directions', function() {
+
+    it('should handle relation definition of different types and directions', function () {
       const str =
         'classDiagram\n' +
         'Class11 <|.. Class12\n' +
@@ -31,7 +32,7 @@ describe('class diagram, ', function() {
       parser.parse(str);
     });
 
-    it('should handle cardinality and labels', function() {
+    it('should handle cardinality and labels', function () {
       const str =
         'classDiagram\n' +
         'Class01 "1" *-- "many" Class02 : contains\n' +
@@ -40,6 +41,21 @@ describe('class diagram, ', function() {
 
       parser.parse(str);
     });
+
+    it('should handle visibility for methods and members', function() {
+      const str =
+        'classDiagram\n' +
+        'class TestClass\n' +
+        'TestClass : -int privateMember\n' +
+        'TestClass : +int publicMember\n' +
+        'TestClass : #int protectedMember\n' +
+        'TestClass : -privateMethod()\n' +
+        'TestClass : +publicMethod()\n' +
+        'TestClass : #protectedMethod()\n';
+
+      parser.parse(str);
+    });
+
     it('should handle class definitions', function() {
       const str =
         'classDiagram\n' +
@@ -51,7 +67,7 @@ describe('class diagram, ', function() {
       parser.parse(str);
     });
 
-    it('should handle method statements', function() {
+    it('should handle method statements', function () {
       const str =
         'classDiagram\n' +
         'Object <|-- ArrayList\n' +
@@ -61,7 +77,8 @@ describe('class diagram, ', function() {
 
       parser.parse(str);
     });
-    it('should handle parsing of method statements  grouped by brackets', function() {
+
+    it('should handle parsing of method statements  grouped by brackets', function () {
       const str =
         'classDiagram\n' +
         'class Dummy_Class {\n' +
@@ -77,7 +94,7 @@ describe('class diagram, ', function() {
       parser.parse(str);
     });
 
-    it('should handle parsing of separators', function() {
+    it('should handle parsing of separators', function () {
       const str =
         'classDiagram\n' +
         'class Foo1 {\n' +
@@ -109,14 +126,111 @@ describe('class diagram, ', function() {
 
       parser.parse(str);
     });
+
+    it('should handle a comment', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        '%% Comment\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle comments at the start', function () {
+      const str =
+        '%% Comment\n' +
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+      parser.parse(str);
+    });
+
+    it('should handle comments at the end', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '\n}' +
+        '%% Comment\n';
+
+      parser.parse(str);
+    });
+
+    it('should handle comments at the end no trailing newline', function () {
+      const str =
+      'classDiagram\n' +
+      'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}\n' +
+        '%% Comment';
+
+      parser.parse(str);
+    });
+
+    it('should handle a comment with multiple line feeds', function () {
+      const str =
+        'classDiagram\n\n\n' +
+        '%% Comment\n\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle a comment with mermaid class diagram code in them', function () {
+      const str =
+        'classDiagram\n' +
+        '%% Comment Class01 <|-- Class02\n' +
+        'class Class1 {\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle a comment inside brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Class1 {\n' +
+        '%% Comment Class01 <|-- Class02\n' +
+        'int : test\n' +
+        'string : foo\n' +
+        'test()\n' +
+        'foo()\n' +
+        '}';
+
+      parser.parse(str);
+    });
   });
 
-  describe('when fetching data from an classDiagram graph it', function() {
-    beforeEach(function() {
+  describe('when fetching data from a classDiagram graph it', function () {
+    beforeEach(function () {
       parser.yy = classDb;
       parser.yy.clear();
     });
-    it('should handle relation definitions EXTENSION', function() {
+    it('should handle relation definitions EXTENSION', function () {
       const str = 'classDiagram\n' + 'Class01 <|-- Class02';
 
       parser.parse(str);
@@ -129,7 +243,8 @@ describe('class diagram, ', function() {
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
-    it('should handle relation definitions AGGREGATION and dotted line', function() {
+
+    it('should handle relation definitions AGGREGATION and dotted line', function () {
       const str = 'classDiagram\n' + 'Class01 o.. Class02';
 
       parser.parse(str);
@@ -142,7 +257,8 @@ describe('class diagram, ', function() {
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
-    it('should handle relation definitions COMPOSITION on both sides', function() {
+
+    it('should handle relation definitions COMPOSITION on both sides', function () {
       const str = 'classDiagram\n' + 'Class01 *--* Class02';
 
       parser.parse(str);
@@ -155,7 +271,8 @@ describe('class diagram, ', function() {
       expect(relations[0].relation.type2).toBe(classDb.relationType.COMPOSITION);
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
-    it('should handle relation definitions no types', function() {
+
+    it('should handle relation definitions no types', function () {
       const str = 'classDiagram\n' + 'Class01 -- Class02';
 
       parser.parse(str);
@@ -168,7 +285,8 @@ describe('class diagram, ', function() {
       expect(relations[0].relation.type2).toBe('none');
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
-    it('should handle relation definitions with type only on right side', function() {
+
+    it('should handle relation definitions with type only on right side', function () {
       const str = 'classDiagram\n' + 'Class01 --|> Class02';
 
       parser.parse(str);
@@ -182,7 +300,7 @@ describe('class diagram, ', function() {
       expect(relations[0].relation.lineType).toBe(classDb.lineType.LINE);
     });
 
-    it('should handle multiple classes and relation definitions', function() {
+    it('should handle multiple classes and relation definitions', function () {
       const str =
         'classDiagram\n' +
         'Class01 <|-- Class02\n' +
@@ -208,7 +326,7 @@ describe('class diagram, ', function() {
       expect(relations[3].relation.lineType).toBe(classDb.lineType.DOTTED_LINE);
     });
 
-    it('should handle class annotations', function() {
+    it('should handle class annotations', function () {
       const str = 'classDiagram\n' + 'class Class1\n' + '<<interface>> Class1';
       parser.parse(str);
 
@@ -219,7 +337,7 @@ describe('class diagram, ', function() {
       expect(testClass.annotations[0]).toBe('interface');
     });
 
-    it('should handle class annotations with members and methods', function() {
+    it('should handle class annotations with members and methods', function () {
       const str =
         'classDiagram\n' +
         'class Class1\n' +
@@ -235,7 +353,7 @@ describe('class diagram, ', function() {
       expect(testClass.annotations[0]).toBe('interface');
     });
 
-    it('should handle class annotations in brackets', function() {
+    it('should handle class annotations in brackets', function () {
       const str = 'classDiagram\n' + 'class Class1 {\n' + '<<interface>>\n' + '}';
       parser.parse(str);
 
@@ -246,7 +364,7 @@ describe('class diagram, ', function() {
       expect(testClass.annotations[0]).toBe('interface');
     });
 
-    it('should handle class annotations in brackets with members and methods', function() {
+    it('should handle class annotations in brackets with members and methods', function () {
       const str =
         'classDiagram\n' +
         'class Class1 {\n' +
@@ -263,7 +381,7 @@ describe('class diagram, ', function() {
       expect(testClass.annotations[0]).toBe('interface');
     });
 
-    it('should add bracket members in right order', function() {
+    it('should add bracket members in right order', function () {
       const str =
         'classDiagram\n' +
         'class Class1 {\n' +

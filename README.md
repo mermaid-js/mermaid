@@ -27,7 +27,7 @@ C -->|One| D[Result 1]
 C -->|Two| E[Result 2]
     </pre></td>
     <td align="center">
-        <img src="./img/gray-flow.png" />
+        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-flow.png" />
     </td>
 </tr>
 <!-- </Flowchart> -->
@@ -49,7 +49,7 @@ John->>Bob: How about you?
 Bob-->>John: Jolly good!
     </pre></td>
     <td align="center">
-        <img src="./img/gray-sequence.png" />
+        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-sequence.png" />
     </td>
 </tr>
 <!-- </Sequence> -->
@@ -70,7 +70,7 @@ Parallel 3   :         des5, after des3, 1d
 Parallel 4   :         des6, after des4, 1d
     </pre></td>
     <td align="center">
-        <img src="./img/gray-gantt.png" />
+        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-gantt.png" />
     </td>
 </tr>
 <!-- </Gantt> -->
@@ -99,7 +99,7 @@ class Class10 {
 }
 </pre></td>
     <td align="center">
-        <img src="./img/gray-class.png" />
+        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-class.png" />
     </td>
 </tr>
 <!-- </Class> -->
@@ -119,7 +119,7 @@ Moving --> Crash
 Crash --> [*]
 </pre></td>
     <td align="center">
-        <img src="./img/gray-state.png" />
+        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-state.png" />
     </td>
 </tr>
 <!-- </State> -->
@@ -136,7 +136,7 @@ pie
 "Rats" : 15 
 </pre></td>
     <td align="center">
-        <img src="./img/gray-pie.png" />
+        <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-pie.png" />
     </td>
 </tr>
 <!-- </Pie> -->

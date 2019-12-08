@@ -4,7 +4,8 @@ import { logger } from '../../logger';
 import utils from '../../utils';
 import { getConfig } from '../../config';
 
-const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
+// const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
+const MERMAID_DOM_ID_PREFIX = '';
 
 const config = getConfig();
 let vertices = {};
@@ -21,7 +22,13 @@ let funs = [];
 
 const sanitize = text => {
   let txt = text;
-  if (config.securityLevel !== 'loose') {
+  let htmlLabels = true;
+  if (
+    config.flowchart &&
+    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
+  )
+    htmlLabels = false;
+  if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
     txt = txt.replace(/<br>/g, '#br#');
     txt = txt.replace(/<br\S*?\/>/g, '#br#');
     txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');

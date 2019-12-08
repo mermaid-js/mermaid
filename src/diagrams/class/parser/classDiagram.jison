@@ -9,7 +9,7 @@
 %x string struct
 
 %%
-\%\%[^\n]*            /* do nothing */
+\%\%[^\n]*\n*           /* do nothing */
 \n+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram"          return 'CLASS_DIAGRAM';
@@ -36,7 +36,7 @@
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
-":"[^#\n;]+        return 'LABEL';
+":"[^\n;]+        return 'LABEL';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';

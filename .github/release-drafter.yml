@@ -1,0 +1,23 @@
+name-template: '$NEXT_PATCH_VERSION'
+tag-template: '$NEXT_PATCH_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'Type: Enhancement'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'Type: Bug / Error'
+  - title: '🧰 Maintenance'
+    label: 'Type: Other'
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+branches:
+  - develop
+exclude-labels:
+  - 'Skip changelog'
+no-changes-template: 'This release contains minor changes and bugfixes.'
+template: |
+  # Release Notes
+
+  $CHANGES
+
+  🎉 **Thanks to all contributors helping with this release!** 🎉
