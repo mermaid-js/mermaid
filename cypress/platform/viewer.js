@@ -31,7 +31,6 @@ const contentLoaded = function() {
       document.getElementsByTagName('body')[0].appendChild(div);
     }
     global.mermaid.initialize(graphObj.mermaid);
-    // console.log('graphObj.mermaid', graphObj.mermaid)
     global.mermaid.init();
   }
 };
@@ -55,7 +54,7 @@ const contentLoadedApi = function() {
         divs[i] = div;
       }
 
-      global.mermaid.initialize(graphObj.mermaid);
+      mermaid2.initialize(graphObj.mermaid);
 
       for (let i = 0; i < numCodes; i++) {
         mermaid2.render(
@@ -74,8 +73,9 @@ const contentLoadedApi = function() {
       div.id = 'block';
       div.className = 'mermaid';
       // div.innerHTML = graphObj.code
+      console.warn('graphObj.mermaid', graphObj.mermaid);
       document.getElementsByTagName('body')[0].appendChild(div);
-      global.mermaid.initialize(graphObj.mermaid);
+      mermaid2.initialize(graphObj.mermaid);
 
       mermaid2.render(
         'newid',

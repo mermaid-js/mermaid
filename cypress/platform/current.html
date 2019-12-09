@@ -4,29 +4,33 @@
       href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
       rel="stylesheet"
     />
+    <style>
+      body {background: black}
+      h1 { color: white;}
+      .arrowheadPath {fill: red;}
 
+      .edgePath .path {stroke: red;}
+
+
+    </style>
   </head>
   <body>
     <h1>info below</h1>
     <div style="display: flex;">
-      <div class="mermaid">stateDiagram
-        [*] --> State1
-        State1 --> State2 : Transition 1
-        State1 --> State3 : Transition 2
-        State1 --> State4 : Transition 3
-        State1 --> State5 : Transition 4
-        State2 --> State3 : Transition 5
-        State1 --> [*]
+      <div class="mermaid">graph TD
+        A ==> B
+        A --> C
+        A -.-> D
       </div>
 </div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.initialize({
-        theme: 'forest',
+        theme: 'dark',
         // arrowMarkerAbsolute: true,
-        // themeCSS: '.node rect { fill: red; }',
+        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 3,
-        flowchart: { curve: 'linear' },
+        flowchart: { curve: 'linear', "htmlLabels": false },
         gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50 },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
