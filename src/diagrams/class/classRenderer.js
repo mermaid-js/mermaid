@@ -320,8 +320,8 @@ const drawClass = function(elem, classDef) {
 
   let classTitleString = classDef.id;
 
-  if (classDef.genericType !== undefined && classDef.genericType !== '') {
-    classTitleString += '<' + classDef.genericType + '>';
+  if (classDef.type !== undefined && classDef.type !== '') {
+    classTitleString += '<' + classDef.type + '>';
   }
 
   // add class title

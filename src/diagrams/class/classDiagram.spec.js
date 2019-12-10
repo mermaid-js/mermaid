@@ -361,7 +361,7 @@ describe('class diagram, ', function () {
       const relations = parser.yy.getRelations();
 
       expect(parser.yy.getClass('Class01').id).toBe('Class01');
-      expect(parser.yy.getClass('Class01').genericType).toBe('T');
+      expect(parser.yy.getClass('Class01').type).toBe('T');
       expect(parser.yy.getClass('Class02').id).toBe('Class02');
       expect(relations[0].relation.type1).toBe(classDb.relationType.EXTENSION);
       expect(relations[0].relation.type2).toBe('none');
