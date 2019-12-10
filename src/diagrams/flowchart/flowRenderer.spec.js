@@ -1,4 +1,4 @@
-import { addVertices } from './flowRenderer';
+import { addVertices, addEdges } from './flowRenderer';
 import { setConfig } from '../../config';
 
 setConfig({
@@ -92,6 +92,34 @@ describe('the flowchart renderer', function() {
       expect(addedNodes[0][1]).toHaveProperty('labelType', 'svg');
       expect(addedNodes[0][1]).toHaveProperty('style', expectedStyle);
       expect(addedNodes[0][1]).toHaveProperty('labelStyle', expectedLabelStyle);
+    });
+  });
+
+  describe('when adding edges to a graph', function() {
+    it('should handle multiline texts and set centered label position', function() {
+      const addedEdges = [];
+      const mockG = {
+        setEdge: function(s, e, data, c) {
+          addedEdges.push(data);
+        }
+      };
+      addEdges(
+        [
+          { text: 'Multi<br>Line' },
+          { text: 'Multi<br/>Line' },
+          { text: 'Multi<br />Line' },
+          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br>Line' },
+          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br/>Line' },
+          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br />Line' }
+        ],
+        mockG,
+        'svg-id'
+      );
+
+      addedEdges.forEach(function(edge) {
+        expect(edge).toHaveProperty('label', 'Multi\nLine');
+        expect(edge).toHaveProperty('labelpos', 'c');
+      });
     });
   });
 });

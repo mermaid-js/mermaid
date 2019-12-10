@@ -239,18 +239,18 @@ export const addEdges = function(edges, g) {
       }
     } else {
       edgeData.arrowheadStyle = 'fill: #333';
-      if (typeof edge.style === 'undefined') {
-        edgeData.labelpos = 'c';
-        if (getConfig().flowchart.htmlLabels) {
-          edgeData.labelType = 'html';
-          edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
-        } else {
-          edgeData.labelType = 'text';
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
-          edgeData.label = edge.text.replace(/<br>/g, '\n');
-        }
+      edgeData.labelpos = 'c';
+
+      if (getConfig().flowchart.htmlLabels) {
+        edgeData.labelType = 'html';
+        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
-        edgeData.label = edge.text.replace(/<br>/g, '\n');
+        edgeData.labelType = 'text';
+        edgeData.label = edge.text.replace(/<br ?\/?>/g, '\n');
+
+        if (typeof edge.style === 'undefined') {
+          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
+        }
       }
     }
     // Add the edge to the graph
