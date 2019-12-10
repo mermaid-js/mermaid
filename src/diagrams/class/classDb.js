@@ -5,8 +5,8 @@ let classes = {};
 
 const splitClassNameAndType = function(id) {
   let genericType = '';
-  let className = id;
-  
+  let className = id;  
+
   if (id.indexOf('~') > 0) {
     let split = id.split('~');
     className = split[0];
