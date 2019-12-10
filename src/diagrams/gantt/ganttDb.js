@@ -488,6 +488,11 @@ const setClickFun = function(id, functionName, functionArgs) {
     }
   }
 
+  /* if no arguments passed into callback, default to passing in id */
+  if (argList.length === 0) {
+    argList.push(id);
+  }
+
   let rawTask = findTaskById(id);
   if (typeof rawTask !== 'undefined') {
     pushFun(id, () => {
