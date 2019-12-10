@@ -10,6 +10,8 @@ categories:
   - title: '🧰 Maintenance'
     label: 'Type: Other'
 change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+sort-by: title
+sort-direction: ascending
 branches:
   - develop
 exclude-labels:
