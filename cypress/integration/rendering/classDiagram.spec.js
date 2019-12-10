@@ -169,7 +169,7 @@ describe('Class diagram', () => {
       `
     classDiagram
       Class01 <|-- AveryLongClass : Cool
-      Class01 : |someMethod()
+      Class01 : someMethod()*
       `,
       {}
     );
@@ -181,7 +181,7 @@ describe('Class diagram', () => {
       `
     classDiagram
       Class01 <|-- AveryLongClass : Cool
-      Class01 : $someMethod()
+      Class01 : someMethod()$
       `,
       {}
     );

@@ -283,24 +283,28 @@ const drawClass = function(elem, classDef) {
   const addTspan = function(textEl, txt, isFirst) {
     let displayText = txt;
     let cssStyle = '';
-    let classifier = txt.substring(0 , 1);
-    
-    switch (classifier) {
-      case '|':
-      cssStyle = 'font-style:italic;';
-      displayText = txt.substring(1);
-      break;
-      case '$':
-      cssStyle = 'text-decoration:underline;';
-      displayText = txt.substring(1);
-      break;
+    let methodEnd = txt.indexOf(')') + 1;
+
+    if (methodEnd > 1 && methodEnd <= txt.length) {
+      let classifier = txt.substring(methodEnd);
+
+      switch (classifier) {
+        case '*':
+          cssStyle = 'font-style:italic;';
+          break;
+        case '$':
+          cssStyle = 'text-decoration:underline;';
+          break;
+      }
+
+      displayText = txt.substring(0, methodEnd);
     }
-    
+
     const tSpan = textEl
       .append('tspan')
       .attr('x', conf.padding)
       .text(displayText);
-    
+
     if (cssStyle !== '') {
       tSpan.attr('style', cssStyle);
     }

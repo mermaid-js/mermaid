@@ -155,9 +155,9 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 - `#`	Protected
 - `~`	Package
 
->_note_ you can also add additional _classifers_ to a method definition using the following notations (similar to visibliity above):
-> - `|` Abstract e.g.: `|someAbstractMethod()`
-> - `$` Static e.g.: `$someStaticMethod()`
+>_note_ you can also include additional _classifers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
+> - `*` Abstract e.g.: `someAbstractMethod()*`
+> - `$` Static e.g.: `someStaticMethod()$`
 
 
 ## Defining Relationship
