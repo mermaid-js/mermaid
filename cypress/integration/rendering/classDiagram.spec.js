@@ -164,7 +164,31 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('5: should render a simple class diagram with Generic class', () => {
+  it('5: should render a simple class diagram with abstract method', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      Class01 : someMethod()*
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('6: should render a simple class diagram with static method', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      Class01 <|-- AveryLongClass : Cool
+      Class01 : someMethod()$
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('7: should render a simple class diagram with Generic class', () => {
     imgSnapshotTest(
       `
     classDiagram
@@ -184,7 +208,7 @@ describe('Class diagram', () => {
     cy.get('svg');
   });
 
-  it('6: should render a simple class diagram with Generic class and relations', () => {
+  it('8: should render a simple class diagram with Generic class and relations', () => {
     imgSnapshotTest(
       `
     classDiagram

@@ -442,5 +442,27 @@ describe('class diagram, ', function () {
       expect(testClass.methods[0]).toBe('test()');
       expect(testClass.methods[1]).toBe('foo()');
     });
+
+    it('should handle abstract methods', function () {
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()*';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.annotations.length).toBe(0);
+      expect(testClass.members.length).toBe(0);
+      expect(testClass.methods.length).toBe(1);
+      expect(testClass.methods[0]).toBe('someMethod()*');
+    });
+
+    it('should handle static methods', function () {
+      const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()$';
+      parser.parse(str);
+
+      const testClass = parser.yy.getClass('Class1');
+      expect(testClass.annotations.length).toBe(0);
+      expect(testClass.members.length).toBe(0);
+      expect(testClass.methods.length).toBe(1);
+      expect(testClass.methods[0]).toBe('someMethod()$');
+    });
   });
 });
