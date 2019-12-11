@@ -78,6 +78,17 @@ graph LR
     id1(This is the text in the box)
 ```
 
+### A stadium-shaped node
+
+```
+graph LR
+    id1([This is the text in the box])
+```
+```mermaid
+graph LR
+    id1([This is the text in the box])
+```
+
 ### A node in the form of a circle
 
 ```

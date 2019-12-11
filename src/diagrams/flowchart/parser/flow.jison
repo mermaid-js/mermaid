@@ -82,6 +82,8 @@
 \s*\=\=\s*               return '==';
 "(-"                  return '(-';
 "-)"                  return '-)';
+"(["                  return 'STADIUMSTART';
+"])"                  return 'STADIUMEND';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 [\_]                  return 'UNDERSCORE';
@@ -96,8 +98,8 @@
 [A-Za-z]+             return 'ALPHA';
 "\\]"                 return 'TRAPEND';
 "[/"                  return 'TRAPSTART';
-"/]"                 return 'INVTRAPEND';
-"[\\"                  return 'INVTRAPSTART';
+"/]"                  return 'INVTRAPEND';
+"[\\"                 return 'INVTRAPSTART';
 [!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -305,6 +307,10 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
     | idString '(-' text '-)' spaceList
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
+    | idString STADIUMSTART text STADIUMEND
+        {$$ = $1;yy.addVertex($1,$3,'stadium');}
+    | idString STADIUMSTART text STADIUMEND spaceList
+        {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | idString PS text PE spaceList
@@ -563,5 +569,5 @@ alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS 
 
 idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION;
 
-graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
+graphCodeTokens: STADIUMSTART | STADIUMEND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%
