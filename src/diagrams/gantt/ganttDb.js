@@ -134,18 +134,32 @@ const getStartDate = function(prevTime, dateFormat, str) {
   str = str.trim();
 
   // Test for after
-  const re = /^after\s+([\d\w-]+)/;
+  const re = /^after\s+([\d\w- ]+)/;
   const afterStatement = re.exec(str.trim());
 
   if (afterStatement !== null) {
-    const task = findTaskById(afterStatement[1]);
+    // check all after ids and take the latest
+    let latestEndingTask = null;
+    afterStatement[1].split(' ').forEach(function(id) {
+      let task = findTaskById(id);
+      if (typeof task !== 'undefined') {
+        if (!latestEndingTask) {
+          latestEndingTask = task;
+        } else {
+          if (task.endTime > latestEndingTask.endTime) {
+            latestEndingTask = task;
+          }
+        }
+      }
+    });
 
-    if (typeof task === 'undefined') {
+    if (!latestEndingTask) {
       const dt = new Date();
       dt.setHours(0, 0, 0, 0);
       return dt;
+    } else {
+      return latestEndingTask.endTime;
     }
-    return task.endTime;
   }
 
   // Check for actual date set
