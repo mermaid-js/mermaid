@@ -6,7 +6,7 @@
 
 /* lexical grammar */
 %lex
-%x string struct
+%x string generic struct
 
 %%
 \%\%[^\n]*\n*           /* do nothing */
@@ -23,6 +23,9 @@
 "class"               return 'CLASS';
 "<<"                  return 'ANNOTATION_START';
 ">>"                  return 'ANNOTATION_END';
+[~]                   this.begin("generic");
+<generic>[~]          this.popState();
+<generic>[^~]*        return "GENERICTYPE";
 ["]                   this.begin("string");
 <string>["]           this.popState();
 <string>[^"]*         return "STR";
@@ -36,7 +39,7 @@
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
-":"[^\n;]+        return 'LABEL';
+":"[^\n;]+            return 'LABEL';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 \+                    return 'PLUS';
@@ -136,6 +139,8 @@ statements
 className
     : alphaNumToken className { $$=$1+$2; }
     | alphaNumToken { $$=$1; }
+    | alphaNumToken GENERICTYPE className { $$=$1+'~'+$2+$3; }
+    | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
     ;
 
 statement
