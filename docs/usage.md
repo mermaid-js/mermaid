@@ -159,14 +159,13 @@ The main idea of the API is to be able to call a render function with the graph 
 will render the graph and call a callback with the resulting svg code. With this approach it is up to the site creator to
 fetch the graph definition from the site (perhaps from a textarea), render it and place the graph somewhere in the site.
 
-To do this, include mermaidAPI on your web website instead of mermaid.js. The example below show an outline of how this
-could be used. The example just logs the resulting svg to the javascript console.
+The example below show an outline of how this could be used. The example just logs the resulting svg to the javascript console.
 
 ```html
-<script src="mermaidAPI.js"></script>
+<script src="mermaid.js"></script>
 
 <script>
-    mermaidAPI.initialize({
+    mermaid.initialize({
         startOnLoad:false
     });
     $(function(){
@@ -178,7 +177,7 @@ could be used. The example just logs the resulting svg to the javascript console
         };
 
         var graphDefinition = 'graph TB\na-->b';
-        var graph = mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
+        var graph = mermaid.render('graphDiv', graphDefinition, insertSvg);
     });
 </script>
 ```
