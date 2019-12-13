@@ -165,7 +165,7 @@ The example below show an outline of how this could be used. The example just lo
 <script src="mermaid.js"></script>
 
 <script>
-    mermaid.initialize({
+    mermaid.mermaidAPI.initialize({
         startOnLoad:false
     });
     $(function(){
@@ -177,7 +177,7 @@ The example below show an outline of how this could be used. The example just lo
         };
 
         var graphDefinition = 'graph TB\na-->b';
-        var graph = mermaid.render('graphDiv', graphDefinition, insertSvg);
+        var graph = mermaid.mermaidAPI.render('graphDiv', graphDefinition, insertSvg);
     });
 </script>
 ```
