@@ -6,10 +6,10 @@ import flow from './parser/flow';
 import { getConfig } from '../../config';
 
 const newDagreD3 = true;
-import dagreD3 from 'dagre-d3-unofficial';
+import dagreD3 from 'dagre-d3';
 // const newDagreD3 = false;
 
-import addHtmlLabel from 'dagre-d3-unofficial/lib/label/add-html-label.js';
+import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve } from '../../utils';
 import flowChartShapes from './flowChartShapes';
@@ -213,10 +213,10 @@ export const addEdges = function(edges, g) {
           }
           break;
         case 'dotted':
-          style = 'stroke: #333; fill:none;stroke-width:2px;stroke-dasharray:3;';
+          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
           break;
         case 'thick':
-          style = 'stroke: #333; stroke-width: 3.5px;fill:none';
+          style = ' stroke-width: 3.5px;fill:none';
           break;
       }
     }
