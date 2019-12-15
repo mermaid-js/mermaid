@@ -38,4 +38,20 @@ describe('Sequencediagram', () => {
       {}
     );
   });
+  it('Multiple dependencies syntax', () => {
+    imgSnapshotTest(
+      `
+      gantt
+      dateFormat  YYYY-MM-DD
+      axisFormat  %d/%m
+      title Adding GANTT diagram to mermaid
+      excludes weekdays 2014-01-10
+
+      apple :a, 2017-07-20, 1w
+      banana :crit, b, 2017-07-23, 1d
+      cherry :active, c, after b a, 1d
+      `,
+      {}
+    );
+  });
 });

@@ -313,6 +313,18 @@ class A someclass;
     classDef someclass fill:#f96;
     class A someclass;
   </div>
+  <div class="mermaid">
+    graph LR
+    A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
+    C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
+    E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
+    A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
+    C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
+    E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
+    linkStyle 0 stroke:DarkGray,stroke-width:2px
+    linkStyle 1 stroke:DarkGray,stroke-width:2px
+    linkStyle 2 stroke:DarkGray,stroke-width:2px
+  </div>
 
   <hr/>
 
@@ -431,6 +443,43 @@ class Class10 {
   size()
 }
   </div>
+
+  <div class="mermaid">
+    classDiagram
+    class Class01~T~
+    Class01 : #size()
+    Class01 : -int chimp
+    Class01 : +int gorilla
+    class Class10~T~ {
+      &lt;&lt;service&gt;&gt;
+      int id
+      size()
+    }
+      </div>
+
+      <div class="mermaid">
+        classDiagram
+        Class01~T~ <|-- AveryLongClass : Cool
+        &lt;&lt;interface&gt;&gt; Class01
+        Class03~T~ "0" *-- "0..n" Class04
+        Class05 "1" o-- "many" Class06
+        Class07~T~ .. Class08
+        Class09 "many" --> "1" C2  : Where am i?
+        Class09 "0" --* "1..n" C3
+        Class09 --|> Class07
+        Class07 : equals()
+        Class07 : Object[] elementData
+        Class01 : #size()
+        Class01 : -int chimp
+        Class01 : +int gorilla
+        Class08 <--> C2: Cool label
+        class Class10 {
+          &lt;&lt;service&gt;&gt;
+          int id
+          size()
+        }
+          </div>
+
   <div class="mermaid">
     stateDiagram
       State1

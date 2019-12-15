@@ -281,10 +281,34 @@ const drawClass = function(elem, classDef) {
   logger.info('Rendering class ' + classDef);
 
   const addTspan = function(textEl, txt, isFirst) {
+    let displayText = txt;
+    let cssStyle = '';
+    let methodEnd = txt.indexOf(')') + 1;
+
+    if (methodEnd > 1 && methodEnd <= txt.length) {
+      let classifier = txt.substring(methodEnd);
+
+      switch (classifier) {
+        case '*':
+          cssStyle = 'font-style:italic;';
+          break;
+        case '$':
+          cssStyle = 'text-decoration:underline;';
+          break;
+      }
+
+      displayText = txt.substring(0, methodEnd);
+    }
+
     const tSpan = textEl
       .append('tspan')
       .attr('x', conf.padding)
-      .text(txt);
+      .text(displayText);
+
+    if (cssStyle !== '') {
+      tSpan.attr('style', cssStyle);
+    }
+
     if (!isFirst) {
       tSpan.attr('dy', conf.textHeight);
     }
@@ -318,10 +342,16 @@ const drawClass = function(elem, classDef) {
     isFirst = false;
   });
 
+  let classTitleString = classDef.id;
+
+  if (classDef.type !== undefined && classDef.type !== '') {
+    classTitleString += '<' + classDef.type + '>';
+  }
+
   // add class title
   const classTitle = title
     .append('tspan')
-    .text(classDef.id)
+    .text(classTitleString)
     .attr('class', 'title');
 
   // If class has annotations the title needs to have an offset of the text height
