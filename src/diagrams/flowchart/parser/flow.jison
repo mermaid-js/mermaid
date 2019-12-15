@@ -8,6 +8,7 @@
 %lex
 %x string
 %x dir
+%x vertex
 %%
 \%\%[^\n]*\n*           /* do nothing */
 ["]                     this.begin("string");
@@ -19,6 +20,7 @@
 "interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
+"EPA"               return 'EPA';
 "click"               return 'CLICK';
 "graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
@@ -94,6 +96,7 @@
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
+"\|"                   return 'SEP';
 "v"                   return 'DOWN';
 [A-Za-z]+             return 'ALPHA';
 "\\]"                 return 'TRAPEND';
@@ -247,7 +250,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    { $$=$1}
+    { console.warn('finat vs', $1.nodes); $$=$1.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -285,12 +288,15 @@ separator: NEWLINE | SEMI | EOF ;
 //         {$$ = [$1];yy.setClass($1,$3)}
 //    ;
 
-verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
-    |node { $$ = $1 }
+
+verticeStatement: verticeStatement link node { console.warn('vs',$1.stmt,$3); yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+    |node {console.warn('noda', $1); $$ = {stmt: $1, nodes:$1 }}
     ;
 
 node: vertex
-        { $$ = [$1];}
+        { console.warn('nod', $1);$$ = [$1];}
+    | node PIPE vertex
+        { $$ = [$1[0], $3]; console.warn('pip', $1, $3, $$); }
     | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
@@ -348,7 +354,7 @@ vertex:  idString SQS text SQE
     | idString SQS text TAGSTART spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
     | idString
-        {$$ = $1;yy.addVertex($1);}
+        {console.warn('h: ', $1);$$ = $1;yy.addVertex($1);}
     | idString spaceList
         {$$ = $1;yy.addVertex($1);}
     ;

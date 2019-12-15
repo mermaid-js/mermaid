@@ -16,6 +16,7 @@ describe('when parsing subgraphs', function() {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
+
     expect(subgraph.nodes.length).toBe(2);
     expect(subgraph.nodes[0]).toBe('a2');
     expect(subgraph.nodes[1]).toBe('a1');
