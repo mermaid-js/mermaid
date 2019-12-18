@@ -182,7 +182,7 @@ describe('[Text] when parsing', () => {
 
       expect(edges[0].stroke).toBe('normal');
     });
-    it('it should handle dotted text on lines', function() {
+    it('it should handle dotted text on lines (TD3)', function() {
       const res = flow.parser.parse('graph TD;A-. test text with == .->B;');
 
       const vert = flow.parser.yy.getVertices();
@@ -265,7 +265,7 @@ describe('[Text] when parsing', () => {
       expect(edges[0].text).toBe('text including URL space');
     });
 
-    it('should handle space and dir (TD)', function() {
+    it('should handle space and dir (TD2)', function() {
       const res = flow.parser.parse('graph TD;A-- text including R TD space --xB;');
 
       const vert = flow.parser.yy.getVertices();
