@@ -87,7 +87,7 @@ describe('[Edges] when parsing', () => {
       expect(edges[0].text).toBe('');
     });
 
-    it('should handle double edged nodes with text on thick arrows', function() {
+    it('should handle double edged nodes with text on thick arrows XYZ1', function() {
       const res = flow.parser.parse('graph TD;\nA x== text ==x B;');
 
       const vert = flow.parser.yy.getVertices();

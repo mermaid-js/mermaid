@@ -41,46 +41,46 @@
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
-\s*\-\-[x]\s*            return 'ARROW_CROSS';
-\s*\-\-\>\s*             return 'ARROW_POINT';
-\s*\<\-\-\>\s*           return 'DOUBLE_ARROW_POINT';
-\s*[x]\-\-[x]\s*         return 'DOUBLE_ARROW_CROSS';
-\s*[o]\-\-[o]\s*         return 'DOUBLE_ARROW_CIRCLE';
-\s*[o]\.\-[o]\s*         return 'DOUBLE_DOTTED_ARROW_CIRCLE';
-\s*\<\=\=\>\s*           return 'DOUBLE_THICK_ARROW_POINT';
-\s*[o]\=\=[o]\s*         return 'DOUBLE_THICK_ARROW_CIRCLE';
-\s*[x]\=\=[x]\s*         return 'DOUBLE_THICK_ARROW_CROSS';
-\s*[x].\-[x]\s*          return 'DOUBLE_DOTTED_ARROW_CROSS';
-\s*[x]\-\.\-[x]\s*       return 'DOUBLE_DOTTED_ARROW_CROSS';
-\s*\<\.\-\>\s*           return 'DOUBLE_DOTTED_ARROW_POINT';
-\s*\<\-\.\-\>\s*         return 'DOUBLE_DOTTED_ARROW_POINT';
-\s*[o]\-\.\-[o]\s*       return 'DOUBLE_DOTTED_ARROW_CIRCLE';
-\s*\-\-[o]\s*            return 'ARROW_CIRCLE';
-\s*\-\-\-\s*             return 'ARROW_OPEN';
-\s*\-\.\-[x]\s*          return 'DOTTED_ARROW_CROSS';
-\s*\-\.\-\>\s*           return 'DOTTED_ARROW_POINT';
-\s*\-\.\-[o]\s*          return 'DOTTED_ARROW_CIRCLE';
-\s*\-\.\-\s*             return 'DOTTED_ARROW_OPEN';
-\s*.\-[x]\s*             return 'DOTTED_ARROW_CROSS';
-\s*\.\-\>\s*             return 'DOTTED_ARROW_POINT';
-\s*\.\-[o]\s*            return 'DOTTED_ARROW_CIRCLE';
-\s*\.\-\s*               return 'DOTTED_ARROW_OPEN';
-\s*\=\=[x]\s*            return 'THICK_ARROW_CROSS';
-\s*\=\=\>\s*             return 'THICK_ARROW_POINT';
-\s*\=\=[o]\s*            return 'THICK_ARROW_CIRCLE';
-\s*\=\=[\=]\s*           return 'THICK_ARROW_OPEN';
-\s*\<\-\-\s*             return 'START_DOUBLE_ARROW_POINT';
-\s*[x]\-\-\s*            return 'START_DOUBLE_ARROW_CROSS';
-\s*[o]\-\-\s*            return 'START_DOUBLE_ARROW_CIRCLE';
-\s*\<\-\.\s*             return 'START_DOUBLE_DOTTED_ARROW_POINT';
-\s*[x]\-\.\s*            return 'START_DOUBLE_DOTTED_ARROW_CROSS';
-\s*[o]\-\.\s*            return 'START_DOUBLE_DOTTED_ARROW_CIRCLE';
-\s*\<\=\=\s*             return 'START_DOUBLE_THICK_ARROW_POINT';
-\s*[x]\=\=\s*            return 'START_DOUBLE_THICK_ARROW_CROSS';
-\s*[o]\=\=\s*            return 'START_DOUBLE_THICK_ARROW_CIRCLE';
-\s*\-\-\s*               return '--';
-\s*\-\.\s*               return '-.';
-\s*\=\=\s*               return '==';
+\s*\-\-[x]\s*            return 'LINK';
+\s*\-\-\>\s*             return 'LINK';
+\s*\<\-\-\>\s*           return 'LINK';
+\s*[x]\-\-[x]\s*         return 'LINK';
+\s*[o]\-\-[o]\s*         return 'LINK';
+\s*[o]\.\-[o]\s*         return 'LINK';
+\s*\<\=\=\>\s*           return 'LINK';
+\s*[o]\=\=[o]\s*         return 'LINK';
+\s*[x]\=\=[x]\s*         return 'LINK';
+\s*[x].\-[x]\s*          return 'LINK';
+\s*[x]\-\.\-[x]\s*       return 'LINK';
+\s*\<\.\-\>\s*           return 'LINK';
+\s*\<\-\.\-\>\s*         return 'LINK';
+\s*[o]\-\.\-[o]\s*       return 'LINK';
+\s*\-\-[o]\s*            return 'LINK';
+\s*\-\-\-\s*             return 'LINK';
+\s*\-\.\-[x]\s*          return 'LINK';
+\s*\-\.\-\>\s*           return 'LINK';
+\s*\-\.\-[o]\s*          return 'LINK';
+\s*\-\.\-\s*             return 'LINK';
+\s*.\-[x]\s*             return 'LINK';
+\s*\.\-\>\s*             return 'LINK';
+\s*\.\-[o]\s*            return 'LINK';
+\s*\.\-\s*               return 'LINK';
+\s*\=\=[x]\s*            return 'LINK';
+\s*\=\=\>\s*             return 'LINK';
+\s*\=\=[o]\s*            return 'LINK';
+\s*\=\=[\=]\s*           return 'LINK';
+\s*\<\-\-\s*             return 'START_LINK';
+\s*[x]\-\-\s*            return 'START_LINK';
+\s*[o]\-\-\s*            return 'START_LINK';
+\s*\<\-\.\s*             return 'START_LINK';
+\s*[x]\-\.\s*            return 'START_LINK';
+\s*[o]\-\.\s*            return 'START_LINK';
+\s*\<\=\=\s*             return 'START_LINK';
+\s*[x]\=\=\s*            return 'START_LINK';
+\s*[o]\=\=\s*            return 'START_LINK';
+\s*\-\-\s*               return 'START_LINK';
+\s*\-\.\s*               return 'START_LINK';
+\s*\=\=\s*               return 'START_LINK';
 "(-"                  return '(-';
 "-)"                  return '-)';
 "(["                  return 'STADIUMSTART';
@@ -342,92 +342,12 @@ link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
     | linkStatement
     {$$ = $1;}
-    | '--' text ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"normal","text":$2};}
-    | 'START_DOUBLE_ARROW_POINT' text ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"normal","text":$2};}
-    | '--' text ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"normal","text":$2};}
-    | 'START_DOUBLE_ARROW_CIRCLE' text ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"normal","text":$2};}
-    | '--' text ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"normal","text":$2};}
-    | 'START_DOUBLE_ARROW_CROSS' text ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"normal","text":$2};}
-    | '--' text ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"normal","text":$2};}
-    | '-.' text DOTTED_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"dotted","text":$2};}
-    | 'START_DOUBLE_DOTTED_ARROW_POINT' text DOTTED_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"dotted","text":$2};}
-    | '-.' text DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"dotted","text":$2};}
-    | 'START_DOUBLE_DOTTED_ARROW_CIRCLE' text DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"dotted","text":$2};}
-    | '-.' text DOTTED_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"dotted","text":$2};}
-    | 'START_DOUBLE_DOTTED_ARROW_CROSS' text DOTTED_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"dotted","text":$2};}
-    | '-.' text DOTTED_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"dotted","text":$2};}
-    | '==' text THICK_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"thick","text":$2};}
-    | 'START_DOUBLE_THICK_ARROW_POINT' text THICK_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"thick","text":$2};}
-    | '==' text THICK_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"thick","text":$2};}
-    | 'START_DOUBLE_THICK_ARROW_CIRCLE' text THICK_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"thick","text":$2};}
-    | '==' text THICK_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"thick","text":$2};}
-    | 'START_DOUBLE_THICK_ARROW_CROSS' text THICK_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"thick","text":$2};}
-    | '==' text THICK_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"thick","text":$2};}
+    | START_LINK text LINK
+        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"text":$2};}
     ;
 
-linkStatement: ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"normal"};}
-    | DOUBLE_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"normal"};}
-    | ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"normal"};}
-    | DOUBLE_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"normal"};}
-    | ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"normal"};}
-    | DOUBLE_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"normal"};}
-    | ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"normal"};}
-    | DOTTED_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"dotted"};}
-    | DOUBLE_DOTTED_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"dotted"};}
-    | DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"dotted"};}
-    | DOUBLE_DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}
-    | DOTTED_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"dotted"};}
-    | DOUBLE_DOTTED_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}
-    | DOTTED_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"dotted"};}
-    | THICK_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"thick"};}
-    | DOUBLE_THICK_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"thick"};}
-    | THICK_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"thick"};}
-    | DOUBLE_THICK_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}
-    | THICK_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"thick"};}
-    | DOUBLE_THICK_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}
-    | THICK_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"thick"};}
+linkStatement: LINK
+        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke};}
         ;
 
 arrowText:
@@ -515,7 +435,7 @@ styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | 
 
 /* Token lists */
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFAULT;
+textToken      : textNoTagsToken | TAGSTART | TAGEND | START_LINK | PCT | DEFAULT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
