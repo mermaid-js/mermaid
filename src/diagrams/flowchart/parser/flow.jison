@@ -20,7 +20,6 @@
 "interpolate"         return 'INTERPOLATE';
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
-"EPA"               return 'EPA';
 "click"               return 'CLICK';
 "graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
@@ -250,7 +249,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    { console.warn('finat vs', $1.nodes); $$=$1.nodes}
+    { /* console.warn('finat vs', $1.nodes); */ $$=$1.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -289,74 +288,48 @@ separator: NEWLINE | SEMI | EOF ;
 //    ;
 
 
-verticeStatement: verticeStatement link node { console.warn('vs',$1.stmt,$3); yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
-    |node {console.warn('noda', $1); $$ = {stmt: $1, nodes:$1 }}
+verticeStatement: verticeStatement link node
+        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+    |  verticeStatement link node spaceList
+        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+    |node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
+    |node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
     ;
 
 node: vertex
-        { console.warn('nod', $1);$$ = [$1];}
-    | node PIPE vertex
-        { $$ = [$1[0], $3]; console.warn('pip', $1, $3, $$); }
+        { /* console.warn('nod', $1); */ $$ = [$1];}
+    | node spaceList vertex
+        { $$ = [$1[0], $3]; /*console.warn('pip', $1, $3, $$);*/ }
     | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
 
 vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    |  idString SQS text SQE spaceList
-        {$$ = $1;yy.addVertex($1,$3,'square');}
     | idString PS PS text PE PE
-        {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | idString PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
     | idString '(-' text '-)'
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | idString '(-' text '-)' spaceList
-        {$$ = $1;yy.addVertex($1,$3,'ellipse');}
     | idString STADIUMSTART text STADIUMEND
-        {$$ = $1;yy.addVertex($1,$3,'stadium');}
-    | idString STADIUMSTART text STADIUMEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
-    | idString PS text PE spaceList
-        {$$ = $1;yy.addVertex($1,$3,'round');}
     | idString DIAMOND_START text DIAMOND_STOP
-        {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | idString DIAMOND_START text DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$4,'hexagon');}
-    | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP spaceList
-        {$$ = $1;yy.addVertex($1,$4,'hexagon');}
     | idString TAGEND text SQE
-        {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | idString TAGEND text SQE spaceList
         {$$ = $1;yy.addVertex($1,$3,'odd');}
     | idString TRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
-    | idString TRAPSTART text TRAPEND spaceList
-        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
     | idString INVTRAPSTART text INVTRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
-    | idString INVTRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
     | idString TRAPSTART text INVTRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_right');}
-    | idString TRAPSTART text INVTRAPEND spaceList
-        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
     | idString INVTRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-    | idString INVTRAPSTART text TRAPEND spaceList
-        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-/*  | idString SQS text TAGSTART
-        {$$ = $1;yy.addVertex($1,$3,'odd_right');}
-    | idString SQS text TAGSTART spaceList
-        {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
     | idString
-        {console.warn('h: ', $1);$$ = $1;yy.addVertex($1);}
-    | idString spaceList
-        {$$ = $1;yy.addVertex($1);}
+        { /*console.warn('h: ', $1);*/$$ = $1;yy.addVertex($1);}
     ;
 
 

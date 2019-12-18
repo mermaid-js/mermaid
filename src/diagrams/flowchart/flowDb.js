@@ -498,7 +498,6 @@ export const indexNodes = function() {
 };
 
 export const getSubGraphs = function() {
-  console.warn(subGraphs);
   return subGraphs;
 };
 

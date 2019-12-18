@@ -192,6 +192,15 @@ describe('when parsing subgraphs', function() {
     expect(edges[0].type).toBe('arrow');
   });
 
+  it('should handle subgraphs3', function() {
+    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle   \n\n    c-->d \nend\n');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].type).toBe('arrow');
+  });
+
   it('should handle nested subgraphs', function() {
     const str =
       'graph TD\n' +
