@@ -144,13 +144,14 @@ class BankAccount{
 }
 ```
 ```mermaid
-    classDiagram
+  classDiagram
     class BankAccount{
         +String owner
         +BigDecimal balance
         +deposit(amount)
         +withdrawl(amount)
-}```
+    }
+```
 
 ## Defining Relationship
 A relationship is a general term covering the specific types of logical connections found on class and object diagrams. 
