@@ -126,13 +126,13 @@ There are two ways to define the members of a class, and regardless of the which
   BankAccount : +withdrawl(amount)
   ```
   ```mermaid
-    classDiagram
+  classDiagram
     class BankAccount
     BankAccount : +String owner
     BankAccount : +BigDecimal balance
     BankAccount : +deposit(amount)
     BankAccount : +withdrawl(amount)
-```
+  ```
 
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 ```
