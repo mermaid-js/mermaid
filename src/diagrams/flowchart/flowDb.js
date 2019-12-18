@@ -102,7 +102,7 @@ export const addVertex = function(_id, text, type, style, classes) {
  * @param type
  * @param linktext
  */
-export const addLink = function(_start, _end, type, linktext) {
+export const addSingleLink = function(_start, _end, type, linktext) {
   let start = _start;
   let end = _end;
   if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
@@ -126,6 +126,14 @@ export const addLink = function(_start, _end, type, linktext) {
     edge.stroke = type.stroke;
   }
   edges.push(edge);
+};
+export const addLink = function(_start, _end, type, linktext) {
+  let i, j;
+  for (i = 0; i < _start.length; i++) {
+    for (j = 0; j < _end.length; j++) {
+      addSingleLink(_start[i], _end[j], type, linktext);
+    }
+  }
 };
 
 /**

@@ -16,6 +16,7 @@ describe('when parsing subgraphs', function() {
     const subgraphs = flow.parser.yy.getSubGraphs();
     expect(subgraphs.length).toBe(1);
     const subgraph = subgraphs[0];
+
     expect(subgraph.nodes.length).toBe(2);
     expect(subgraph.nodes[0]).toBe('a2');
     expect(subgraph.nodes[1]).toBe('a1');
@@ -184,6 +185,15 @@ describe('when parsing subgraphs', function() {
 
   it('should handle subgraphs2', function() {
     const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\n\n c-->d \nend\n');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges[0].type).toBe('arrow');
+  });
+
+  it('should handle subgraphs3', function() {
+    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle   \n\n    c-->d \nend\n');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();
