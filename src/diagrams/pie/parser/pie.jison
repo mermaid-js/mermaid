@@ -49,7 +49,7 @@ line
 
 statement
 	:  STR VALUE {
-		console.log('str:'+$1+' value: '+$2)
+		/*console.log('str:'+$1+' value: '+$2)*/
 		yy.addSection($1,yy.cleanupValue($2));  }
 	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
 	;

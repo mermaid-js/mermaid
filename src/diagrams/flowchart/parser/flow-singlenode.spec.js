@@ -22,6 +22,16 @@ describe('[Singlenodes] when parsing', () => {
     expect(edges.length).toBe(0);
     expect(vert['A'].styles.length).toBe(0);
   });
+  it('should handle a single node with white space after it (SN1)', function() {
+    // Silly but syntactically correct
+    const res = flow.parser.parse('graph TD;A ;');
+
+    const vert = flow.parser.yy.getVertices();
+    const edges = flow.parser.yy.getEdges();
+
+    expect(edges.length).toBe(0);
+    expect(vert['A'].styles.length).toBe(0);
+  });
 
   it('should handle a single square node', function() {
     // Silly but syntactically correct
