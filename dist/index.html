@@ -356,6 +356,18 @@ and
 Alice -->> John: Parallel message 2
 end
   </div>
+  <div class="mermaid">
+    sequenceDiagram
+    participant 1 as multiline<br>using #lt;br#gt;
+    participant 2 as multiline<br/>using #lt;br/#gt;
+    participant 3 as multiline<br />using #lt;br /#gt;
+    1->>2: multiline<br>using #lt;br#gt;
+    note right of 2: multiline<br>using #lt;br#gt;
+    2->>3: multiline<br/>using #lt;br/#gt;
+    note right of 3: multiline<br/>using #lt;br/#gt;
+    3->>1: multiline<br />using #lt;br /#gt;
+    note right of 1: multiline<br />using #lt;br /#gt;
+  </div>
 
   <hr/>
 

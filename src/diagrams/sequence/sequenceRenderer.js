@@ -168,7 +168,7 @@ export const bounds = {
 
 const _drawLongText = (text, x, y, g, width) => {
   let textHeight = 0;
-  const lines = text.split(/<br\/?>/gi);
+  const lines = text.split(/<br ?\/?>/gi);
   for (const line of lines) {
     const textObj = svgDraw.getTextObj();
     textObj.x = x;
@@ -233,7 +233,7 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   let textElem;
   let counterBreaklines = 0;
   let breaklineOffset = 17;
-  const breaklines = msg.message.split(/<br\/?>/gi);
+  const breaklines = msg.message.split(/<br ?\/?>/gi);
   for (const breakline of breaklines) {
     textElem = g
       .append('text') // text label for the x axis
