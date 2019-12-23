@@ -333,6 +333,34 @@ describe('when parsing a sequenceDiagram', function() {
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('John');
   });
+  it('it should handle different line breaks', function() {
+    const str =
+      'sequenceDiagram\n' +
+      'participant 1 as multiline<br>text\n' +
+      'participant 2 as multiline<br/>text\n' +
+      'participant 3 as multiline<br />text\n' +
+      '1->>2: multiline<br>text\n' +
+      'note right of 2: multiline<br>text\n' +
+      '2->>3: multiline<br/>text\n' +
+      'note right of 3: multiline<br/>text\n' +
+      '3->>1: multiline<br />text\n' +
+      'note right of 1: multiline<br />text\n';
+
+    parser.parse(str);
+
+    const actors = parser.yy.getActors();
+    expect(actors['1'].description).toBe('multiline<br>text');
+    expect(actors['2'].description).toBe('multiline<br/>text');
+    expect(actors['3'].description).toBe('multiline<br />text');
+
+    const messages = parser.yy.getMessages();
+    expect(messages[0].message).toBe('multiline<br>text');
+    expect(messages[1].message).toBe('multiline<br>text');
+    expect(messages[2].message).toBe('multiline<br/>text');
+    expect(messages[3].message).toBe('multiline<br/>text');
+    expect(messages[4].message).toBe('multiline<br />text');
+    expect(messages[5].message).toBe('multiline<br />text');
+  });
   it('it should handle notes over a single actor', function() {
     const str =
       'sequenceDiagram\n' + 'Alice->Bob: Hello Bob, how are you?\n' + 'Note over Bob: Bob thinks\n';
