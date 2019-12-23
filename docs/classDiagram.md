@@ -105,17 +105,10 @@ Naming convention: a class name should be composed of alphanumeric (unicode allo
 
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
 
-#### Visibility
-To specify the visibility of a class member (i.e. any attribute or method), these notations may be placed before the member's name, but is it optional:
+Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and others as attributes.
 
-- `+`	Public
-- `-`	Private
-- `#`	Protected
-- `~`	Package
 
-Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The one with `()` are treated as functions/methods, and others as attributes.
-
-There are two ways to define the members of a class, and regardless of the whichever syntax is used to define the members, the output will still be same. The two different ways are :
+There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
 - Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example: 
 
  ```
@@ -125,7 +118,7 @@ There are two ways to define the members of a class, and regardless of the which
   BankAccount : +deposit(amount)
   BankAccount : +withdrawl(amount)
   ```
-  ```mermaid
+  ```  mermaid
     classDiagram
     class BankAccount
     BankAccount : +String owner
@@ -150,7 +143,22 @@ class BankAccount{
         +BigDecimal balance
         +deposit(amount)
         +withdrawl(amount)
-}```
+}
+```
+
+
+#### Visibility
+To specify the visibility of a class member (i.e. any attribute or method), these notations may be placed before the member's name, but it is optional:
+
+- `+`	Public
+- `-`	Private
+- `#`	Protected
+- `~`	Package
+
+>_note_ you can also include additional _classifers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
+> - `*` Abstract e.g.: `someAbstractMethod()*`
+> - `$` Static e.g.: `someStaticMethod()$`
+
 
 ## Defining Relationship
 A relationship is a general term covering the specific types of logical connections found on class and object diagrams. 

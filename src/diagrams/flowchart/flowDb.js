@@ -102,7 +102,7 @@ export const addVertex = function(_id, text, type, style, classes) {
  * @param type
  * @param linktext
  */
-export const addLink = function(_start, _end, type, linktext) {
+export const addSingleLink = function(_start, _end, type, linktext) {
   let start = _start;
   let end = _end;
   if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
@@ -126,6 +126,14 @@ export const addLink = function(_start, _end, type, linktext) {
     edge.stroke = type.stroke;
   }
   edges.push(edge);
+};
+export const addLink = function(_start, _end, type, linktext) {
+  let i, j;
+  for (i = 0; i < _start.length; i++) {
+    for (j = 0; j < _end.length; j++) {
+      addSingleLink(_start[i], _end[j], type, linktext);
+    }
+  }
 };
 
 /**
@@ -501,6 +509,130 @@ export const firstGraph = () => {
   return false;
 };
 
+const destructStartLink = _str => {
+  const str = _str.trim();
+
+  switch (str) {
+    case '<--':
+      return { type: 'arrow', stroke: 'normal' };
+    case 'x--':
+      return { type: 'arrow_cross', stroke: 'normal' };
+    case 'o--':
+      return { type: 'arrow_circle', stroke: 'normal' };
+    case '<-.':
+      return { type: 'arrow', stroke: 'dotted' };
+    case 'x-.':
+      return { type: 'arrow_cross', stroke: 'dotted' };
+    case 'o-.':
+      return { type: 'arrow_circle', stroke: 'dotted' };
+    case '<==':
+      return { type: 'arrow', stroke: 'thick' };
+    case 'x==':
+      return { type: 'arrow_cross', stroke: 'thick' };
+    case 'o==':
+      return { type: 'arrow_circle', stroke: 'thick' };
+    case '--':
+      return { type: 'arrow_open', stroke: 'normal' };
+    case '==':
+      return { type: 'arrow_open', stroke: 'thick' };
+    case '-.':
+      return { type: 'arrow_open', stroke: 'dotted' };
+  }
+};
+
+const destructEndLink = _str => {
+  const str = _str.trim();
+
+  switch (str) {
+    case '--x':
+      return { type: 'arrow_cross', stroke: 'normal' };
+    case '-->':
+      return { type: 'arrow', stroke: 'normal' };
+    case '<-->':
+      return { type: 'double_arrow_point', stroke: 'normal' };
+    case 'x--x':
+      return { type: 'double_arrow_cross', stroke: 'normal' };
+    case 'o--o':
+      return { type: 'double_arrow_circle', stroke: 'normal' };
+    case 'o.-o':
+      return { type: 'double_arrow_circle', stroke: 'dotted' };
+    case '<==>':
+      return { type: 'double_arrow_point', stroke: 'thick' };
+    case 'o==o':
+      return { type: 'double_arrow_circle', stroke: 'thick' };
+    case 'x==x':
+      return { type: 'double_arrow_cross', stroke: 'thick' };
+    case 'x.-x':
+      return { type: 'double_arrow_cross', stroke: 'dotted' };
+    case 'x-.-x':
+      return { type: 'double_arrow_cross', stroke: 'dotted' };
+    case '<.->':
+      return { type: 'double_arrow_point', stroke: 'dotted' };
+    case '<-.->':
+      return { type: 'double_arrow_point', stroke: 'dotted' };
+    case 'o-.-o':
+      return { type: 'double_arrow_circle', stroke: 'dotted' };
+    case '--o':
+      return { type: 'arrow_circle', stroke: 'normal' };
+    case '---':
+      return { type: 'arrow_open', stroke: 'normal' };
+    case '-.-x':
+      return { type: 'arrow_cross', stroke: 'dotted' };
+    case '-.->':
+      return { type: 'arrow', stroke: 'dotted' };
+    case '-.-o':
+      return { type: 'arrow_circle', stroke: 'dotted' };
+    case '-.-':
+      return { type: 'arrow_open', stroke: 'dotted' };
+    case '.-x':
+      return { type: 'arrow_cross', stroke: 'dotted' };
+    case '.->':
+      return { type: 'arrow', stroke: 'dotted' };
+    case '.-o':
+      return { type: 'arrow_circle', stroke: 'dotted' };
+    case '.-':
+      return { type: 'arrow_open', stroke: 'dotted' };
+    case '==x':
+      return { type: 'arrow_cross', stroke: 'thick' };
+    case '==>':
+      return { type: 'arrow', stroke: 'thick' };
+    case '==o':
+      return { type: 'arrow_circle', stroke: 'thick' };
+    case '===':
+      return { type: 'arrow_open', stroke: 'thick' };
+  }
+};
+
+const destructLink = (_str, _startStr) => {
+  const info = destructEndLink(_str);
+  let startInfo;
+  if (_startStr) {
+    startInfo = destructStartLink(_startStr);
+    console.log(startInfo, info);
+    if (startInfo.stroke !== info.stroke) {
+      return { type: 'INVALID', stroke: 'INVALID' };
+    }
+
+    if (startInfo.type === 'arrow_open') {
+      // -- xyz -->  - take arrow type form ending
+      startInfo.type = info.type;
+    } else {
+      // x-- xyz -->  - not supported
+      if (startInfo.type !== info.type) return { type: 'INVALID', stroke: 'INVALID' };
+
+      startInfo.type = 'double_' + startInfo.type;
+    }
+
+    if (startInfo.type === 'double_arrow') {
+      startInfo.type = 'double_arrow_point';
+    }
+
+    return startInfo;
+  }
+
+  return info;
+};
+
 export default {
   addVertex,
   addLink,
@@ -523,6 +655,7 @@ export default {
   getDepthFirstPos,
   indexNodes,
   getSubGraphs,
+  destructLink,
   lex: {
     firstGraph
   }

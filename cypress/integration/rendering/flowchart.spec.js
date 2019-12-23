@@ -396,4 +396,61 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+  it('15: Render Stadium shape', () => {
+    imgSnapshotTest(
+      ` graph TD
+      A([stadium shape test])
+      A -->|Get money| B([Go shopping])
+      B --> C([Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?])
+      C -->|One| D([Laptop])
+      C -->|Two| E([iPhone])
+      C -->|Three| F([Car<br/>wroom wroom])
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;`,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('16: Render Stadium shape', () => {
+    imgSnapshotTest(
+      `graph LR
+        A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
+        C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
+        E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
+        A2[Multi<br>Line] -->|Multi<br>Line| B2(Multi<br>Line)
+        C2[Multi<br/>Line] -->|Multi<br/>Line| D2(Multi<br/>Line)
+        E2[Multi<br />Line] -->|Multi<br />Line| F2(Multi<br />Line)
+        linkStyle 0 stroke:DarkGray,stroke-width:2px
+        linkStyle 1 stroke:DarkGray,stroke-width:2px
+        linkStyle 2 stroke:DarkGray,stroke-width:2px
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('17: Chaining of nodes', () => {
+    imgSnapshotTest(
+      `graph LR
+        a --> b --> c
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('18: Multiple nodes and chaining in one statement', () => {
+    imgSnapshotTest(
+      `graph LR
+        a --> b c--> d
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('19: Multiple nodes and chaining in one statement', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[ h ] -- hello --> B[" test "]:::exClass C --> D;
+      classDef exClass background:#bbb,border:1px solid red;
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
 });

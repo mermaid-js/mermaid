@@ -2,8 +2,8 @@
 
 import { imgSnapshotTest } from '../../helpers/util';
 
-context('Aliasing', () => {
-  it('should render a simple sequence diagrams', () => {
+context('Sequence diagram', () => {
+  it('should render a simple sequence diagram', () => {
     imgSnapshotTest(
       `
       sequenceDiagram
@@ -29,6 +29,23 @@ context('Aliasing', () => {
         Alice -->> John: Parallel message 2
         end
       `,
+      {}
+    );
+  });
+  it('should handle different line breaks', () => {
+    imgSnapshotTest(
+      `
+      sequenceDiagram
+      participant 1 as multiline<br>using #lt;br#gt;
+      participant 2 as multiline<br/>using #lt;br/#gt;
+      participant 3 as multiline<br />using #lt;br /#gt;
+      1->>2: multiline<br>using #lt;br#gt;
+      note right of 2: multiline<br>using #lt;br#gt;
+      2->>3: multiline<br/>using #lt;br/#gt;
+      note right of 3: multiline<br/>using #lt;br/#gt;
+      3->>1: multiline<br />using #lt;br /#gt;
+      note right of 1: multiline<br />using #lt;br /#gt;
+    `,
       {}
     );
   });

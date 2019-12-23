@@ -87,6 +87,20 @@ gantt
        Add another diagram to demo page    :48h
    ```
 
+It is possible to set multiple depenendenies separated by space:
+```
+    gantt
+        apple :a, 2017-07-20, 1w
+        banana :crit, b, 2017-07-23, 1d
+        cherry :active, c, after b a, 1d
+```
+```
+    gantt
+        apple :a, 2017-07-20, 1w
+        banana :crit, b, 2017-07-23, 1d
+        cherry :active, c, after b a, 1d
+```
+
 ### Title
 
 Tbd

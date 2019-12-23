@@ -8,6 +8,7 @@
 %lex
 %x string
 %x dir
+%x vertex
 %%
 \%\%[^\n]*\n*           /* do nothing */
 ["]                     this.begin("string");
@@ -40,48 +41,50 @@
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
-\s*\-\-[x]\s*            return 'ARROW_CROSS';
-\s*\-\-\>\s*             return 'ARROW_POINT';
-\s*\<\-\-\>\s*           return 'DOUBLE_ARROW_POINT';
-\s*[x]\-\-[x]\s*         return 'DOUBLE_ARROW_CROSS';
-\s*[o]\-\-[o]\s*         return 'DOUBLE_ARROW_CIRCLE';
-\s*[o]\.\-[o]\s*         return 'DOUBLE_DOTTED_ARROW_CIRCLE';
-\s*\<\=\=\>\s*           return 'DOUBLE_THICK_ARROW_POINT';
-\s*[o]\=\=[o]\s*         return 'DOUBLE_THICK_ARROW_CIRCLE';
-\s*[x]\=\=[x]\s*         return 'DOUBLE_THICK_ARROW_CROSS';
-\s*[x].\-[x]\s*          return 'DOUBLE_DOTTED_ARROW_CROSS';
-\s*[x]\-\.\-[x]\s*       return 'DOUBLE_DOTTED_ARROW_CROSS';
-\s*\<\.\-\>\s*           return 'DOUBLE_DOTTED_ARROW_POINT';
-\s*\<\-\.\-\>\s*         return 'DOUBLE_DOTTED_ARROW_POINT';
-\s*[o]\-\.\-[o]\s*       return 'DOUBLE_DOTTED_ARROW_CIRCLE';
-\s*\-\-[o]\s*            return 'ARROW_CIRCLE';
-\s*\-\-\-\s*             return 'ARROW_OPEN';
-\s*\-\.\-[x]\s*          return 'DOTTED_ARROW_CROSS';
-\s*\-\.\-\>\s*           return 'DOTTED_ARROW_POINT';
-\s*\-\.\-[o]\s*          return 'DOTTED_ARROW_CIRCLE';
-\s*\-\.\-\s*             return 'DOTTED_ARROW_OPEN';
-\s*.\-[x]\s*             return 'DOTTED_ARROW_CROSS';
-\s*\.\-\>\s*             return 'DOTTED_ARROW_POINT';
-\s*\.\-[o]\s*            return 'DOTTED_ARROW_CIRCLE';
-\s*\.\-\s*               return 'DOTTED_ARROW_OPEN';
-\s*\=\=[x]\s*            return 'THICK_ARROW_CROSS';
-\s*\=\=\>\s*             return 'THICK_ARROW_POINT';
-\s*\=\=[o]\s*            return 'THICK_ARROW_CIRCLE';
-\s*\=\=[\=]\s*           return 'THICK_ARROW_OPEN';
-\s*\<\-\-\s*             return 'START_DOUBLE_ARROW_POINT';
-\s*[x]\-\-\s*            return 'START_DOUBLE_ARROW_CROSS';
-\s*[o]\-\-\s*            return 'START_DOUBLE_ARROW_CIRCLE';
-\s*\<\-\.\s*             return 'START_DOUBLE_DOTTED_ARROW_POINT';
-\s*[x]\-\.\s*            return 'START_DOUBLE_DOTTED_ARROW_CROSS';
-\s*[o]\-\.\s*            return 'START_DOUBLE_DOTTED_ARROW_CIRCLE';
-\s*\<\=\=\s*             return 'START_DOUBLE_THICK_ARROW_POINT';
-\s*[x]\=\=\s*            return 'START_DOUBLE_THICK_ARROW_CROSS';
-\s*[o]\=\=\s*            return 'START_DOUBLE_THICK_ARROW_CIRCLE';
-\s*\-\-\s*               return '--';
-\s*\-\.\s*               return '-.';
-\s*\=\=\s*               return '==';
+\s*\-\-[x]\s*            return 'LINK';
+\s*\-\-\>\s*             return 'LINK';
+\s*\<\-\-\>\s*           return 'LINK';
+\s*[x]\-\-[x]\s*         return 'LINK';
+\s*[o]\-\-[o]\s*         return 'LINK';
+\s*[o]\.\-[o]\s*         return 'LINK';
+\s*\<\=\=\>\s*           return 'LINK';
+\s*[o]\=\=[o]\s*         return 'LINK';
+\s*[x]\=\=[x]\s*         return 'LINK';
+\s*[x].\-[x]\s*          return 'LINK';
+\s*[x]\-\.\-[x]\s*       return 'LINK';
+\s*\<\.\-\>\s*           return 'LINK';
+\s*\<\-\.\-\>\s*         return 'LINK';
+\s*[o]\-\.\-[o]\s*       return 'LINK';
+\s*\-\-[o]\s*            return 'LINK';
+\s*\-\-\-\s*             return 'LINK';
+\s*\-\.\-[x]\s*          return 'LINK';
+\s*\-\.\-\>\s*           return 'LINK';
+\s*\-\.\-[o]\s*          return 'LINK';
+\s*\-\.\-\s*             return 'LINK';
+\s*.\-[x]\s*             return 'LINK';
+\s*\.\-\>\s*             return 'LINK';
+\s*\.\-[o]\s*            return 'LINK';
+\s*\.\-\s*               return 'LINK';
+\s*\=\=[x]\s*            return 'LINK';
+\s*\=\=\>\s*             return 'LINK';
+\s*\=\=[o]\s*            return 'LINK';
+\s*\=\=[\=]\s*           return 'LINK';
+\s*\<\-\-\s*             return 'START_LINK';
+\s*[x]\-\-\s*            return 'START_LINK';
+\s*[o]\-\-\s*            return 'START_LINK';
+\s*\<\-\.\s*             return 'START_LINK';
+\s*[x]\-\.\s*            return 'START_LINK';
+\s*[o]\-\.\s*            return 'START_LINK';
+\s*\<\=\=\s*             return 'START_LINK';
+\s*[x]\=\=\s*            return 'START_LINK';
+\s*[o]\=\=\s*            return 'START_LINK';
+\s*\-\-\s*               return 'START_LINK';
+\s*\-\.\s*               return 'START_LINK';
+\s*\=\=\s*               return 'START_LINK';
 "(-"                  return '(-';
 "-)"                  return '-)';
+"(["                  return 'STADIUMSTART';
+"])"                  return 'STADIUMEND';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 [\_]                  return 'UNDERSCORE';
@@ -92,12 +95,13 @@
 "<"                   return 'TAGSTART';
 ">"                   return 'TAGEND';
 "^"                   return 'UP';
+"\|"                   return 'SEP';
 "v"                   return 'DOWN';
 [A-Za-z]+             return 'ALPHA';
 "\\]"                 return 'TRAPEND';
 "[/"                  return 'TRAPSTART';
-"/]"                 return 'INVTRAPEND';
-"[\\"                  return 'INVTRAPSTART';
+"/]"                  return 'INVTRAPEND';
+"[\\"                 return 'INVTRAPSTART';
 [!"#$%&'*+,-.`?\\_/]  return 'PUNCTUATION';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
@@ -245,7 +249,7 @@ spaceList
 
 statement
     : verticeStatement separator
-    { $$=$1}
+    { /* console.warn('finat vs', $1.nodes); */ $$=$1.nodes}
     | styleStatement separator
     {$$=[];}
     | linkStyleStatement separator
@@ -283,68 +287,49 @@ separator: NEWLINE | SEMI | EOF ;
 //         {$$ = [$1];yy.setClass($1,$3)}
 //    ;
 
-verticeStatement: verticeStatement link node { yy.addLink($1[0],$3[0],$2); $$ = $3.concat($1) }
-    |node { $$ = $1 }
+
+verticeStatement: verticeStatement link node
+        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+    |  verticeStatement link node spaceList
+        { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
+    |node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
+    |node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
     ;
 
 node: vertex
-        { $$ = [$1];}
+        { /* console.warn('nod', $1); */ $$ = [$1];}
+    | node spaceList vertex
+        { $$ = [$1[0], $3]; /*console.warn('pip', $1, $3, $$);*/ }
     | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
 
 vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'square');}
-    |  idString SQS text SQE spaceList
-        {$$ = $1;yy.addVertex($1,$3,'square');}
     | idString PS PS text PE PE
-        {$$ = $1;yy.addVertex($1,$4,'circle');}
-    | idString PS PS text PE PE spaceList
         {$$ = $1;yy.addVertex($1,$4,'circle');}
     | idString '(-' text '-)'
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
-    | idString '(-' text '-)' spaceList
-        {$$ = $1;yy.addVertex($1,$3,'ellipse');}
+    | idString STADIUMSTART text STADIUMEND
+        {$$ = $1;yy.addVertex($1,$3,'stadium');}
     | idString PS text PE
-        {$$ = $1;yy.addVertex($1,$3,'round');}
-    | idString PS text PE spaceList
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | idString DIAMOND_START text DIAMOND_STOP
         {$$ = $1;yy.addVertex($1,$3,'diamond');}
-    | idString DIAMOND_START text DIAMOND_STOP spaceList
-        {$$ = $1;yy.addVertex($1,$3,'diamond');}
     | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP
-        {$$ = $1;yy.addVertex($1,$4,'hexagon');}
-    | idString DIAMOND_START DIAMOND_START text DIAMOND_STOP DIAMOND_STOP spaceList
         {$$ = $1;yy.addVertex($1,$4,'hexagon');}
     | idString TAGEND text SQE
         {$$ = $1;yy.addVertex($1,$3,'odd');}
-    | idString TAGEND text SQE spaceList
-        {$$ = $1;yy.addVertex($1,$3,'odd');}
     | idString TRAPSTART text TRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
-    | idString TRAPSTART text TRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'trapezoid');}
     | idString INVTRAPSTART text INVTRAPEND
         {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
-    | idString INVTRAPSTART text INVTRAPEND spaceList
-        {$$ = $1;yy.addVertex($1,$3,'inv_trapezoid');}
     | idString TRAPSTART text INVTRAPEND
-        {$$ = $1;yy.addVertex($1,$3,'lean_right');}
-    | idString TRAPSTART text INVTRAPEND spaceList
         {$$ = $1;yy.addVertex($1,$3,'lean_right');}
     | idString INVTRAPSTART text TRAPEND
         {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-    | idString INVTRAPSTART text TRAPEND spaceList
-        {$$ = $1;yy.addVertex($1,$3,'lean_left');}
-/*  | idString SQS text TAGSTART
-        {$$ = $1;yy.addVertex($1,$3,'odd_right');}
-    | idString SQS text TAGSTART spaceList
-        {$$ = $1;yy.addVertex($1,$3,'odd_right');} */
     | idString
-        {$$ = $1;yy.addVertex($1);}
-    | idString spaceList
-        {$$ = $1;yy.addVertex($1);}
+        { /*console.warn('h: ', $1);*/$$ = $1;yy.addVertex($1);}
     ;
 
 
@@ -357,92 +342,12 @@ link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
     | linkStatement
     {$$ = $1;}
-    | '--' text ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"normal","text":$2};}
-    | 'START_DOUBLE_ARROW_POINT' text ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"normal","text":$2};}
-    | '--' text ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"normal","text":$2};}
-    | 'START_DOUBLE_ARROW_CIRCLE' text ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"normal","text":$2};}
-    | '--' text ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"normal","text":$2};}
-    | 'START_DOUBLE_ARROW_CROSS' text ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"normal","text":$2};}
-    | '--' text ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"normal","text":$2};}
-    | '-.' text DOTTED_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"dotted","text":$2};}
-    | 'START_DOUBLE_DOTTED_ARROW_POINT' text DOTTED_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"dotted","text":$2};}
-    | '-.' text DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"dotted","text":$2};}
-    | 'START_DOUBLE_DOTTED_ARROW_CIRCLE' text DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"dotted","text":$2};}
-    | '-.' text DOTTED_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"dotted","text":$2};}
-    | 'START_DOUBLE_DOTTED_ARROW_CROSS' text DOTTED_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"dotted","text":$2};}
-    | '-.' text DOTTED_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"dotted","text":$2};}
-    | '==' text THICK_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"thick","text":$2};}
-    | 'START_DOUBLE_THICK_ARROW_POINT' text THICK_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"thick","text":$2};}
-    | '==' text THICK_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"thick","text":$2};}
-    | 'START_DOUBLE_THICK_ARROW_CIRCLE' text THICK_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"thick","text":$2};}
-    | '==' text THICK_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"thick","text":$2};}
-    | 'START_DOUBLE_THICK_ARROW_CROSS' text THICK_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"thick","text":$2};}
-    | '==' text THICK_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"thick","text":$2};}
+    | START_LINK text LINK
+        {var inf = yy.destructLink($3, $1); $$ = {"type":inf.type,"stroke":inf.stroke,"text":$2};}
     ;
 
-linkStatement: ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"normal"};}
-    | DOUBLE_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"normal"};}
-    | ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"normal"};}
-    | DOUBLE_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"normal"};}
-    | ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"normal"};}
-    | DOUBLE_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"normal"};}
-    | ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"normal"};}
-    | DOTTED_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"dotted"};}
-    | DOUBLE_DOTTED_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"dotted"};}
-    | DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"dotted"};}
-    | DOUBLE_DOTTED_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"dotted"};}
-    | DOTTED_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"dotted"};}
-    | DOUBLE_DOTTED_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"dotted"};}
-    | DOTTED_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"dotted"};}
-    | THICK_ARROW_POINT
-        {$$ = {"type":"arrow","stroke":"thick"};}
-    | DOUBLE_THICK_ARROW_POINT
-        {$$ = {"type":"double_arrow_point","stroke":"thick"};}
-    | THICK_ARROW_CIRCLE
-        {$$ = {"type":"arrow_circle","stroke":"thick"};}
-    | DOUBLE_THICK_ARROW_CIRCLE
-        {$$ = {"type":"double_arrow_circle","stroke":"thick"};}
-    | THICK_ARROW_CROSS
-        {$$ = {"type":"arrow_cross","stroke":"thick"};}
-    | DOUBLE_THICK_ARROW_CROSS
-        {$$ = {"type":"double_arrow_cross","stroke":"thick"};}
-    | THICK_ARROW_OPEN
-        {$$ = {"type":"arrow_open","stroke":"thick"};}
+linkStatement: LINK
+        {var inf = yy.destructLink($1);$$ = {"type":inf.type,"stroke":inf.stroke};}
         ;
 
 arrowText:
@@ -530,7 +435,7 @@ styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | 
 
 /* Token lists */
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFAULT;
+textToken      : textNoTagsToken | TAGSTART | TAGEND | START_LINK | PCT | DEFAULT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
@@ -563,5 +468,5 @@ alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS 
 
 idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION;
 
-graphCodeTokens:  TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI ;
+graphCodeTokens: STADIUMSTART | STADIUMEND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%
