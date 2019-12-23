@@ -302,6 +302,7 @@ export const draw = function(txt, id, ver) {
   try {
     const parser = gitGraphParser.parser;
     parser.yy = db;
+    parser.yy.clear();
 
     logger.debug('in gitgraph renderer', txt + '\n', 'id:', id, ver);
     // Parse the graph definition
