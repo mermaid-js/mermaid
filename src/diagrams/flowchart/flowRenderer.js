@@ -246,7 +246,7 @@ export const addEdges = function(edges, g) {
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
         edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(/<br ?\/?>/g, '\n');
+        edgeData.label = edge.text.replace(/<br\s*\/?>/g, '\n');
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
