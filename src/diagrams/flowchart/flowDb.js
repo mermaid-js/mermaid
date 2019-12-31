@@ -65,7 +65,7 @@ export const addVertex = function(_id, text, type, style, classes) {
   if (typeof text !== 'undefined') {
     txt = sanitize(text.trim());
 
-    // strip quotes if string starts and exnds with a quote
+    // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
       txt = txt.substring(1, txt.length - 1);
     }
