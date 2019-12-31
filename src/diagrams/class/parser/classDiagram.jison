@@ -21,6 +21,9 @@
 
 
 "class"               return 'CLASS';
+//"click"               return 'CLICK';
+"callback"            return 'CALLBACK';
+"link"                return 'LINK';
 "<<"                  return 'ANNOTATION_START';
 ">>"                  return 'ANNOTATION_END';
 [~]                   this.begin("generic");
@@ -149,6 +152,7 @@ statement
     | classStatement
     | methodStatement
     | annotationStatement
+    | clickStatement
     ;
 
 classStatement
@@ -196,6 +200,13 @@ relationType
 lineType
     : LINE          {$$=yy.lineType.LINE;}
     | DOTTED_LINE   {$$=yy.lineType.DOTTED_LINE;}
+    ;
+
+clickStatement
+    : CALLBACK className STR                    {$$ = $1;yy.setClickEvent($2, $3, undefined);}
+    | CALLBACK className STR STR                {$$ = $1;yy.setClickEvent($2, $3, $4);}
+    | LINK className STR                        {$$ = $1;yy.setLink($2, $3, undefined);}
+    | LINK className STR STR                    {$$ = $1;yy.setLink($2, $3, $4);}
     ;
 
 commentToken   : textToken | graphCodeTokens ;

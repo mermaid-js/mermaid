@@ -1,7 +1,16 @@
+import * as d3 from 'd3';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
+import { getConfig } from '../../config';
+
+const MERMAID_DOM_ID_PREFIX = '';
+
+const config = getConfig();
 
 let relations = [];
 let classes = {};
+
+let funs = [];
 
 const splitClassNameAndType = function(id) {
   let genericType = '';
@@ -29,6 +38,7 @@ export const addClass = function(id) {
   classes[classId.className] = {
     id: classId.className,
     type: classId.type,
+    cssClasses: [],
     methods: [],
     members: [],
     annotations: []
@@ -38,6 +48,8 @@ export const addClass = function(id) {
 export const clear = function() {
   relations = [];
   classes = {};
+  funs = [];
+  funs.push(setupToolTips);
 };
 
 export const getClass = function(id) {
@@ -117,6 +129,91 @@ export const cleanupLabel = function(label) {
   }
 };
 
+/**
+ * Called by parser when a special node is found, e.g. a clickable element.
+ * @param ids Comma separated list of ids
+ * @param className Class to add
+ */
+export const setCssClass = function(ids, className) {
+  ids.split(',').forEach(function(_id) {
+    let id = _id;
+    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    if (typeof classes[id] !== 'undefined') {
+      classes[id].cssClasses.push(className);
+    }
+  });
+};
+
+/**
+ * Called by parser when a link is found. Adds the URL to the vertex data.
+ * @param ids Comma separated list of ids
+ * @param linkStr URL to create a link for
+ * @param tooltip Tooltip for the clickable element
+ */
+export const setLink = function(ids, linkStr, tooltip) {
+  ids.split(',').forEach(function(_id) {
+    let id = _id;
+    if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+    if (typeof classes[id] !== 'undefined') {
+      if (config.securityLevel !== 'loose') {
+        classes[id].link = sanitizeUrl(linkStr);
+      } else {
+        classes[id].link = linkStr;
+      }
+
+      if (tooltip) {
+        classes[id].tooltip = tooltip;
+      }
+    }
+  });
+  setCssClass(ids, 'clickable');
+};
+
+/**
+ * Called by parser when a click definition is found. Registers an event handler.
+ * @param ids Comma separated list of ids
+ * @param functionName Function to be called on click
+ * @param tooltip Tooltip for the clickable element
+ */
+export const setClickEvent = function(ids, functionName, tooltip) {
+  ids.split(',').forEach(function(id) {
+    setClickFunc(id, functionName, tooltip);
+  });
+  setCssClass(ids, 'clickable');
+};
+
+const setClickFunc = function(_id, functionName) {
+  let id = _id;
+  if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  if (config.securityLevel !== 'loose') {
+    return;
+  }
+  if (typeof functionName === 'undefined') {
+    return;
+  }
+  if (typeof classes[id] !== 'undefined') {
+    funs.push(function() {
+      const elem = document.querySelector(`[id="${id}"]`);
+      if (elem !== null) {
+        elem.setAttribute('title', classes[id].tooltip);
+        elem.addEventListener(
+          'click',
+          function() {
+            window[functionName](id);
+          },
+          false
+        );
+      }
+    });
+  }
+};
+
+export const bindFunctions = function(element) {
+  funs.forEach(function(fun) {
+    fun(element);
+  });
+};
+
 export const lineType = {
   LINE: 0,
   DOTTED_LINE: 1
@@ -129,8 +226,53 @@ export const relationType = {
   DEPENDENCY: 3
 };
 
+const setupToolTips = function(element) {
+  let tooltipElem = d3.select('.mermaidTooltip');
+  if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
+    tooltipElem = d3
+      .select('body')
+      .append('div')
+      .attr('class', 'mermaidTooltip')
+      .style('opacity', 0);
+  }
+
+  const svg = d3.select(element).select('svg');
+
+  const nodes = svg.selectAll('g.node');
+  nodes
+    .on('mouseover', function() {
+      const el = d3.select(this);
+      const title = el.attr('title');
+      // Dont try to draw a tooltip if no data is provided
+      if (title === null) {
+        return;
+      }
+      const rect = this.getBoundingClientRect();
+
+      tooltipElem
+        .transition()
+        .duration(200)
+        .style('opacity', '.9');
+      tooltipElem
+        .html(el.attr('title'))
+        .style('left', rect.left + (rect.right - rect.left) / 2 + 'px')
+        .style('top', rect.top - 14 + document.body.scrollTop + 'px');
+      el.classed('hover', true);
+    })
+    .on('mouseout', function() {
+      tooltipElem
+        .transition()
+        .duration(500)
+        .style('opacity', 0);
+      const el = d3.select(this);
+      el.classed('hover', false);
+    });
+};
+funs.push(setupToolTips);
+
 export default {
   addClass,
+  bindFunctions,
   clear,
   getClass,
   getClasses,
@@ -141,5 +283,8 @@ export default {
   addMembers,
   cleanupLabel,
   lineType,
-  relationType
+  relationType,
+  setClickEvent,
+  setCssClass,
+  setLink
 };
