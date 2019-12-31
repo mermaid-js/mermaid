@@ -174,6 +174,26 @@ describe('when using the ganttDb', function() {
     expect(tasks[6].task).toEqual('test7');
   });
 
+  it('should work when end date is the 31st', function() {
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('Task endTime is on the 31st day of the month');
+    ganttDb.addTask('test1', 'id1,2019-09-30,11d');
+    ganttDb.addTask('test2', 'id2,after id1,20d');
+    const tasks = ganttDb.getTasks();
+
+    expect(tasks[0].startTime).toEqual(moment('2019-09-30', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(moment('2019-10-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[0].id).toEqual('id1');
+    expect(tasks[0].task).toEqual('test1');
+
+    expect(tasks[1].startTime).toEqual(moment('2019-10-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].endTime).toEqual(moment('2019-10-31', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].renderEndTime).toBeNull(); // Fixed end
+    expect(tasks[1].id).toEqual('id2');
+    expect(tasks[1].task).toEqual('test2');
+  });
+
   describe('when setting inclusive end dates', function() {
     beforeEach(function() {
       ganttDb.setDateFormat('YYYY-MM-DD');

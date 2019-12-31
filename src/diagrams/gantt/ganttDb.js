@@ -117,7 +117,7 @@ const checkTaskDates = function(task, dateFormat, excludes) {
 const fixTaskDates = function(startTime, endTime, dateFormat, excludes) {
   let invalid = false;
   let renderEndTime = null;
-  while (startTime.date() <= endTime.date()) {
+  while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
     }
