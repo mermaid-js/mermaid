@@ -39,12 +39,15 @@ context('Sequence diagram', () => {
       participant 1 as multiline<br>using #lt;br#gt;
       participant 2 as multiline<br/>using #lt;br/#gt;
       participant 3 as multiline<br />using #lt;br /#gt;
+      participant 4 as multiline<br \t/>using #lt;br \t/#gt;
       1->>2: multiline<br>using #lt;br#gt;
       note right of 2: multiline<br>using #lt;br#gt;
       2->>3: multiline<br/>using #lt;br/#gt;
       note right of 3: multiline<br/>using #lt;br/#gt;
-      3->>1: multiline<br />using #lt;br /#gt;
-      note right of 1: multiline<br />using #lt;br /#gt;
+      3->>4: multiline<br />using #lt;br /#gt;
+      note right of 4: multiline<br />using #lt;br /#gt;
+      4->>1: multiline<br />using #lt;br /#gt;
+      note right of 1: multiline<br \t/>using #lt;br \t/#gt;
     `,
       {}
     );
