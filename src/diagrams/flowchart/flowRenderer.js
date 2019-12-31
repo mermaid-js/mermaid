@@ -157,6 +157,9 @@ export const addVertices = function(vert, g, svgId) {
       case 'stadium':
         _shape = 'stadium';
         break;
+      case 'cylinder':
+        _shape = 'cylinder';
+        break;
       case 'group':
         _shape = 'rect';
         break;

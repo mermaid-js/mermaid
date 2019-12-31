@@ -11,7 +11,8 @@
 .node rect,
 .node circle,
 .node ellipse,
-.node polygon {
+.node polygon,
+.node path {
   fill: $mainBkg;
   stroke: $nodeBorder;
   stroke-width: 1px;
