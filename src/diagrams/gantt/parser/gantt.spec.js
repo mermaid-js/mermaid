@@ -106,4 +106,34 @@ describe('when parsing a gantt diagram it', function() {
       }
     });
   });
+  it('should parse callback specifier with no args', function() {
+    spyOn(ganttDb, 'setClickEvent');
+    const str =
+      'gantt\n' +
+      'dateFormat  YYYY-MM-DD\n' +
+      'section Clickable\n' +
+      'Visit mermaidjs           :active, cl1, 2014-01-07, 3d\n' +
+      'Calling a callback        :cl2, after cl1, 3d\n\n' +
+      'click cl1 href "https://mermaidjs.github.io/"\n' +
+      'click cl2 call ganttTestClick()\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', null);
+  });
+  it('should parse callback specifier with arbitrary number of args', function() {
+    spyOn(ganttDb, 'setClickEvent');
+    const str =
+      'gantt\n' +
+      'dateFormat  YYYY-MM-DD\n' +
+      'section Clickable\n' +
+      'Visit mermaidjs           :active, cl1, 2014-01-07, 3d\n' +
+      'Calling a callback        :cl2, after cl1, 3d\n\n' +
+      'click cl1 href "https://mermaidjs.github.io/"\n' +
+      'click cl2 call ganttTestClick("test0", test1, test2)\n';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+    const args = '"test1", "test2", "test3"';
+    expect(ganttDb.setClickEvent).toHaveBeenCalledWith('cl2', 'ganttTestClick', '"test0", test1, test2');
+  });
+
 });
