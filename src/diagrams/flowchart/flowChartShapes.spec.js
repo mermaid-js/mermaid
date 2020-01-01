@@ -23,6 +23,23 @@ describe('flowchart shapes', function() {
     });
   });
 
+  // path-based shapes
+  [
+    ['cylinder', useWidth, useHeight]
+  ].forEach(function([shapeType, getW, getH]) {
+    it(`should add a ${shapeType} shape that renders a properly positioned path element`, function() {
+      const mockRender = MockRender();
+      const mockSvg = MockSvg();
+      addToRender(mockRender);
+
+      [[100, 100], [123, 45], [71, 300]].forEach(function([width, height]) {
+        const shape = mockRender.shapes()[shapeType](mockSvg, { width, height }, {});
+        expect(shape.__tag).toEqual('path');
+        expect(shape.__attrs).toHaveProperty('d');
+      });
+    });
+  });
+
   // polygon-based shapes
   [
     [

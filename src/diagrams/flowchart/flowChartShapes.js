@@ -154,10 +154,74 @@ function stadium(parent, bbox, node) {
   return shapeSvg;
 }
 
+function cylinder(parent, bbox, node) {
+  const w = bbox.width;
+  const rx = w / 2;
+  const ry = rx / (2.5 + w / 50);
+  const h = bbox.height + ry;
+
+  const shape =
+    'M 0,' +
+    ry +
+    ' a ' +
+    rx +
+    ',' +
+    ry +
+    ' 0,0,0 ' +
+    w +
+    ' 0 a ' +
+    rx +
+    ',' +
+    ry +
+    ' 0,0,0 ' +
+    -w +
+    ' 0 l 0,' +
+    h +
+    ' a ' +
+    rx +
+    ',' +
+    ry +
+    ' 0,0,0 ' +
+    w +
+    ' 0 l 0,' +
+    -h;
+
+  const shapeSvg = parent
+    .attr('label-offset-y', ry)
+    .insert('path', ':first-child')
+    .attr('d', shape)
+    .attr('transform', 'translate(' + -w / 2 + ',' + -(h / 2 + ry) + ')');
+
+  node.intersect = function(point) {
+    const pos = dagreD3.intersect.rect(node, point);
+    const x = pos.x - node.x;
+
+    if (
+      rx != 0 &&
+      (Math.abs(x) < node.width / 2 ||
+        (Math.abs(x) == node.width / 2 && Math.abs(pos.y - node.y) > node.height / 2 - ry))
+    ) {
+      // ellipsis equation: x*x / a*a + y*y / b*b = 1
+      // solve for y to get adjustion value for pos.y
+      let y = ry * ry * (1 - (x * x) / (rx * rx));
+      if (y != 0) y = Math.sqrt(y);
+      y = ry - y;
+      if (point.y - node.y > 0) y = -y;
+
+      pos.y += y;
+    }
+
+    return pos;
+  };
+
+  return shapeSvg;
+}
+
 export function addToRender(render) {
   render.shapes().question = question;
   render.shapes().hexagon = hexagon;
   render.shapes().stadium = stadium;
+  render.shapes().cylinder = cylinder;
 
   // Add custom shape for box with inverted arrow on left side
   render.shapes().rect_left_inv_arrow = rect_left_inv_arrow;

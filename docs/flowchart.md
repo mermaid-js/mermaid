@@ -89,6 +89,17 @@ graph LR
     id1([This is the text in the box])
 ```
 
+### A node in a cylindrical shape
+
+```
+graph LR
+    id1[(Database)]
+```
+```mermaid
+graph LR
+    id1[(Database)]
+```
+
 ### A node in the form of a circle
 
 ```
