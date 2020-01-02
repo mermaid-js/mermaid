@@ -302,3 +302,48 @@ Param | Descriotion | Default value
 --- | --- | ---
 mirrorActor|Turns on/off the rendering of actors below the diagram as well as above it|false
 bottomMarginAdj|Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists.|1
+
+## Interaction
+
+It is possible to bind a click event to a task, the click can lead to either a javascript callback or to a link which will be opened in the current browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+
+```
+click taskId call callback(arguments)
+click taskId href URL
+```
+
+* taskId is the id of the task
+* callback is the name of a javascript function defined on the page displaying the graph, the function will be called with the taskId as the parameter if no other arguments are specified..
+
+Beginners tip, a full example using interactive links in an html context:
+```
+<body>
+  <div class="mermaid">
+    gantt
+      dateFormat  YYYY-MM-DD
+
+      section Clickable
+      Visit mermaidjs           :active, cl1, 2014-01-07, 3d
+      Print arguments         :cl2, after cl1, 3d
+      Print task              :cl3, after cl2, 3d
+
+      click cl1 href "https://mermaidjs.github.io/"
+      click cl2 call printArguments("test1", "test2", test3)
+      click cl3 call printTask()
+  </div>
+
+  <script>
+    var printArguments = function(arg1, arg2, arg3) {
+      alert('printArguments called with arguments: ' + arg1 + ', ' + arg2 + ', ' + arg3);
+    }
+    var printTask = function(taskId) {
+      alert('taskId: ' + taskId);
+    }
+    var config = {
+      startOnLoad:true,
+      securityLevel:'loose',
+    };
+    mermaid.initialize(config);
+  </script>
+</body>
+```

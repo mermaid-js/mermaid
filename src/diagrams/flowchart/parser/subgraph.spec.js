@@ -231,7 +231,7 @@ describe('when parsing subgraphs', function() {
     expect(edges[0].type).toBe('arrow');
   });
   it('should handle subgraphs with multi node statements in it', function() {
-    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\na b --> c e\n end;');
+    const res = flow.parser.parse('graph TD\nA-->B\nsubgraph myTitle\na & b --> c & e\n end;');
 
     const vert = flow.parser.yy.getVertices();
     const edges = flow.parser.yy.getEdges();

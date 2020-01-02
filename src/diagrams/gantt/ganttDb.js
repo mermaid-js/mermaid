@@ -117,7 +117,7 @@ const checkTaskDates = function(task, dateFormat, excludes) {
 const fixTaskDates = function(startTime, endTime, dateFormat, excludes) {
   let invalid = false;
   let renderEndTime = null;
-  while (startTime.date() <= endTime.date()) {
+  while (startTime <= endTime) {
     if (!invalid) {
       renderEndTime = endTime.toDate();
     }
@@ -500,6 +500,11 @@ const setClickFun = function(id, functionName, functionArgs) {
       }
       argList[i] = item;
     }
+  }
+
+  /* if no arguments passed into callback, default to passing in id */
+  if (argList.length === 0) {
+    argList.push(id);
   }
 
   let rawTask = findTaskById(id);

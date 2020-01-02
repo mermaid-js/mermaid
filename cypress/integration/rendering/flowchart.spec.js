@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util';
 
-describe('Flowcart', () => {
+describe('Flowchart', () => {
   it('1: should render a simple flowchart no htmlLabels', () => {
     imgSnapshotTest(
       `graph TD
@@ -57,7 +57,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('4: should style nodes via a class.', () => {
+  it('5: should style nodes via a class.', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -73,7 +73,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('5: should render a flowchart full of circles', () => {
+  it('6: should render a flowchart full of circles', () => {
     imgSnapshotTest(
       `
     graph LR
@@ -102,7 +102,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('6: should render a flowchart full of icons', () => {
+  it('7: should render a flowchart full of icons', () => {
     imgSnapshotTest(
       `
     graph TD
@@ -173,7 +173,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('7: should render labels with numbers at the start', () => {
+  it('8: should render labels with numbers at the start', () => {
     imgSnapshotTest(
       `
     graph TB;subgraph "number as labels";1;end;
@@ -182,7 +182,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('8: should render subgraphs', () => {
+  it('9: should render subgraphs', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -194,7 +194,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('9: should render subgraphs with a title starting with a digit', () => {
+  it('10: should render subgraphs with a title starting with a digit', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -206,7 +206,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('10: should render styled subgraphs', () => {
+  it('11: should render styled subgraphs', () => {
     imgSnapshotTest(
       `
     graph TB
@@ -241,7 +241,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('11: should render a flowchart with long names and class definitions', () => {
+  it('12: should render a flowchart with long names and class definitions', () => {
     imgSnapshotTest(
       `graph LR
       sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["
@@ -343,7 +343,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('12: should render color of styled nodes', () => {
+  it('13: should render color of styled nodes', () => {
     imgSnapshotTest(
       `
       graph LR
@@ -361,7 +361,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('13: should render hexagons', () => {
+  it('14: should render hexagons', () => {
     imgSnapshotTest(
       `
       graph TD
@@ -383,7 +383,7 @@ describe('Flowcart', () => {
     );
   });
 
-  it('14: should render a simple flowchart with comments', () => {
+  it('15: should render a simple flowchart with comments', () => {
     imgSnapshotTest(
       `graph TD
       A[Christmas] -->|Get money| B(Go shopping)
@@ -396,7 +396,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-  it('15: Render Stadium shape', () => {
+  it('16: Render Stadium shape', () => {
     imgSnapshotTest(
       ` graph TD
       A([stadium shape test])
@@ -412,7 +412,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-  it('16: Render Stadium shape', () => {
+  it('17: Render multiline texts', () => {
     imgSnapshotTest(
       `graph LR
         A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
@@ -428,7 +428,7 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-  it('17: Chaining of nodes', () => {
+  it('18: Chaining of nodes', () => {
     imgSnapshotTest(
       `graph LR
         a --> b --> c
@@ -436,20 +436,41 @@ describe('Flowcart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-  it('18: Multiple nodes and chaining in one statement', () => {
+  it('19: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph LR
-        a --> b c--> d
+        a --> b & c--> d
       `,
       { flowchart: { htmlLabels: false } }
     );
   });
-  it('19: Multiple nodes and chaining in one statement', () => {
+  it('20: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph TD
-      A[ h ] -- hello --> B[" test "]:::exClass C --> D;
+      A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
       classDef exClass background:#bbb,border:1px solid red;
       `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('21: Render cylindrical shape', () => {
+    imgSnapshotTest(
+      `graph LR
+      A[(cylindrical<br />shape<br />test)]
+      A -->|Get money| B1[(Go shopping 1)]
+      A -->|Get money| B2[(Go shopping 2)]
+      A -->|Get money| B3[(Go shopping 3)]
+      C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
+      B1 --> C
+      B2 --> C
+      B3 --> C
+      C -->|One| D[(Laptop)]
+      C -->|Two| E[(iPhone)]
+      C -->|Three| F[(Car)]
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;`,
       { flowchart: { htmlLabels: false } }
     );
   });

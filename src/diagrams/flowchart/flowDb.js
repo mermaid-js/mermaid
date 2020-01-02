@@ -608,7 +608,7 @@ const destructLink = (_str, _startStr) => {
   let startInfo;
   if (_startStr) {
     startInfo = destructStartLink(_startStr);
-    console.log(startInfo, info);
+
     if (startInfo.stroke !== info.stroke) {
       return { type: 'INVALID', stroke: 'INVALID' };
     }

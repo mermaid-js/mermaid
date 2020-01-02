@@ -228,4 +228,48 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('9: should render a simple class diagram with clickable link', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+    Class01~T~ <|-- AveryLongClass : Cool
+    Class03~T~ *-- Class04~T~
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class08 <--> C2: Cool label
+      class Class10~T~ {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      link class01 "google.com" "A Tooltip"
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
+
+  it('10: should render a simple class diagram with clickable callback', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+    Class01~T~ <|-- AveryLongClass : Cool
+    Class03~T~ *-- Class04~T~
+      Class01 : size()
+      Class01 : int chimp
+      Class01 : int gorilla
+      Class08 <--> C2: Cool label
+      class Class10~T~ {
+        &lt;&lt;service&gt;&gt;
+        int id
+        test()
+      }
+      callback class01 "functionCall" "A Tooltip"
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });

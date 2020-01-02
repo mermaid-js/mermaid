@@ -315,6 +315,24 @@ class A someclass;
   </div>
   <div class="mermaid">
     graph LR
+    A[(cylindrical<br />shape<br />test)]
+    A -->|Get money| B1[(Go shopping 1)]
+    A -->|Get money| B2[(Go shopping 2)]
+    A -->|Get money| B3[(Go shopping 3)]
+    C[(Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?)]
+    B1 --> C
+    B2 --> C
+    B3 --> C
+    C -->|One| D[(Laptop)]
+    C -->|Two| E[(iPhone)]
+    C -->|Three| F[(Car)]
+    click A "index.html#link-clicked" "link test"
+    click B testClick "click test"
+    classDef someclass fill:#f96;
+    class A someclass;
+  </div>
+  <div class="mermaid">
+    graph LR
     A1[Multi<br>Line] -->|Multi<br>Line| B1(Multi<br>Line)
     C1[Multi<br/>Line] -->|Multi<br/>Line| D1(Multi<br/>Line)
     E1[Multi<br />Line] -->|Multi<br />Line| F1(Multi<br />Line)
@@ -361,12 +379,15 @@ end
     participant 1 as multiline<br>using #lt;br#gt;
     participant 2 as multiline<br/>using #lt;br/#gt;
     participant 3 as multiline<br />using #lt;br /#gt;
+    participant 4 as multiline<br 	/>using #lt;br 	/#gt;
     1->>2: multiline<br>using #lt;br#gt;
     note right of 2: multiline<br>using #lt;br#gt;
     2->>3: multiline<br/>using #lt;br/#gt;
     note right of 3: multiline<br/>using #lt;br/#gt;
-    3->>1: multiline<br />using #lt;br /#gt;
-    note right of 1: multiline<br />using #lt;br /#gt;
+    3->>4: multiline<br />using #lt;br /#gt;
+    note right of 4: multiline<br />using #lt;br /#gt;
+    4->>1: multiline<br 	/>using #lt;br 	/#gt;
+    note right of 1: multiline<br 	/>using #lt;br 	/#gt;
   </div>
 
   <hr/>

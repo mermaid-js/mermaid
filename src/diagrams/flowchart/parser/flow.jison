@@ -38,6 +38,7 @@
 \#                    return 'BRKT';
 ":::"                 return 'STYLE_SEPARATOR';
 ":"                   return 'COLON';
+"&"                   return 'AMP';
 ";"                   return 'SEMI';
 ","                   return 'COMMA';
 "*"                   return 'MULT';
@@ -85,6 +86,8 @@
 "-)"                  return '-)';
 "(["                  return 'STADIUMSTART';
 "])"                  return 'STADIUMEND';
+"[("                  return 'CYLINDERSTART';
+")]"                  return 'CYLINDEREND';
 \-                    return 'MINUS';
 "."                   return 'DOT';
 [\_]                  return 'UNDERSCORE';
@@ -298,8 +301,8 @@ verticeStatement: verticeStatement link node
 
 node: vertex
         { /* console.warn('nod', $1); */ $$ = [$1];}
-    | node spaceList vertex
-        { $$ = [$1[0], $3]; /*console.warn('pip', $1, $3, $$);*/ }
+    | node spaceList AMP spaceList vertex
+        { $$ = $1.concat($5); /* console.warn('pip', $1[0], $5, $$); */ }
     | vertex STYLE_SEPARATOR idString
         {$$ = [$1];yy.setClass($1,$3)}
     ;
@@ -312,6 +315,8 @@ vertex:  idString SQS text SQE
         {$$ = $1;yy.addVertex($1,$3,'ellipse');}
     | idString STADIUMSTART text STADIUMEND
         {$$ = $1;yy.addVertex($1,$3,'stadium');}
+    | idString CYLINDERSTART text CYLINDEREND
+        {$$ = $1;yy.addVertex($1,$3,'cylinder');}
     | idString PS text PE
         {$$ = $1;yy.addVertex($1,$3,'round');}
     | idString DIAMOND_START text DIAMOND_STOP
@@ -464,9 +469,9 @@ alphaNumStatement
         {$$='-';}
     ;
 
-alphaNumToken  : PUNCTUATION | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
+alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
 
-idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION;
+idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP;
 
-graphCodeTokens: STADIUMSTART | STADIUMEND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
+graphCodeTokens: STADIUMSTART | STADIUMEND | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
 %%

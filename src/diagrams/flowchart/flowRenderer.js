@@ -104,15 +104,6 @@ export const addVertices = function(vert, g, svgId) {
       vertexNode = svgLabel;
     }
 
-    // If the node has a link, we wrap it in a SVG link
-    if (vertex.link) {
-      const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
-      link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
-      link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-      link.appendChild(vertexNode);
-      vertexNode = link;
-    }
-
     let radious = 0;
     let _shape = '';
     // Set the shape based parameters
@@ -156,6 +147,9 @@ export const addVertices = function(vert, g, svgId) {
         break;
       case 'stadium':
         _shape = 'stadium';
+        break;
+      case 'cylinder':
+        _shape = 'cylinder';
         break;
       case 'group':
         _shape = 'rect';
@@ -246,7 +240,7 @@ export const addEdges = function(edges, g) {
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
         edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(/<br ?\/?>/g, '\n');
+        edgeData.label = edge.text.replace(/<br\s*\/?>/g, '\n');
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
@@ -494,6 +488,39 @@ export const draw = function(text, id) {
       label.insertBefore(rect, label.firstChild);
     }
   }
+
+  // If node has a link, wrap it in an anchor SVG object.
+  const keys = Object.keys(vert);
+  keys.forEach(function(key) {
+    const vertex = vert[key];
+
+    if (vertex.link) {
+      const node = d3.select('#' + id + ' [id="' + key + '"]');
+      if (node) {
+        const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
+
+        const linkNode = node.insert(function() {
+          return link;
+        }, ':first-child');
+
+        const shape = node.select('.label-container');
+        if (shape) {
+          linkNode.append(function() {
+            return shape.node();
+          });
+        }
+
+        const label = node.select('.label');
+        if (label) {
+          linkNode.append(function() {
+            return label.node();
+          });
+        }
+      }
+    }
+  });
 };
 
 export default {
