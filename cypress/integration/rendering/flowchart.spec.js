@@ -439,7 +439,7 @@ describe('Flowchart', () => {
   it('19: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph LR
-        a --> b c--> d
+        a --> b & c--> d
       `,
       { flowchart: { htmlLabels: false } }
     );
@@ -447,7 +447,7 @@ describe('Flowchart', () => {
   it('20: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph TD
-      A[ h ] -- hello --> B[" test "]:::exClass C --> D;
+      A[ h ] -- hello --> B[" test "]:::exClass & C --> D;
       classDef exClass background:#bbb,border:1px solid red;
       `,
       { flowchart: { htmlLabels: false } }
