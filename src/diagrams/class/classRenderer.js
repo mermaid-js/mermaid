@@ -280,6 +280,11 @@ const drawEdge = function(elem, path, relation) {
 const drawClass = function(elem, classDef) {
   logger.info('Rendering class ' + classDef);
 
+  let cssClassStr = 'classGroup ';
+  if (classDef.cssClasses.length > 0) {
+    cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
+  }
+
   const addTspan = function(textEl, txt, isFirst) {
     let displayText = txt;
     let cssStyle = '';
@@ -326,13 +331,25 @@ const drawClass = function(elem, classDef) {
   const g = elem
     .append('g')
     .attr('id', id)
-    .attr('class', 'classGroup');
+    .attr('class', cssClassStr);
 
   // add title
-  const title = g
-    .append('text')
-    .attr('y', conf.textHeight + conf.padding)
-    .attr('x', 0);
+  let title;
+  if (classDef.link) {
+    title = g
+      .append('svg:a')
+      .attr('xlink:href', classDef.link)
+      .attr('xlink:target', '_blank')
+      .attr('xlink:title', classDef.tooltip)
+      .append('text')
+      .attr('y', conf.textHeight + conf.padding)
+      .attr('x', 0);
+  } else {
+    title = g
+      .append('text')
+      .attr('y', conf.textHeight + conf.padding)
+      .attr('x', 0);
+  }
 
   // add annotations
   let isFirst = true;
@@ -348,7 +365,6 @@ const drawClass = function(elem, classDef) {
     classTitleString += '<' + classDef.type + '>';
   }
 
-  // add class title
   const classTitle = title
     .append('tspan')
     .text(classTitleString)
@@ -434,6 +450,7 @@ export const setConf = function(cnf) {
     conf[key] = cnf[key];
   });
 };
+
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
  * @param text
@@ -470,10 +487,12 @@ export const draw = function(text, id) {
   for (let i = 0; i < keys.length; i++) {
     const classDef = classes[keys[i]];
     const node = drawClass(diagram, classDef);
+
     // Add nodes to the graph. The first argument is the node id. The second is
     // metadata about the node. In this case we're going to add labels to each of
     // our nodes.
     g.setNode(node.id, node);
+
     logger.info('Org height: ' + node.height);
   }
 
