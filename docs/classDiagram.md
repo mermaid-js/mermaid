@@ -169,22 +169,26 @@ A relationship is a general term covering the specific types of logical connecti
 There are different types of relations defined for classes under UML which are currently supported:
 
 Type | Description
----  | ---
-<\|--| Inheritance
-*--  | Composition
-o--  | Aggregation
--->  | Association
---   | Link 
+---   | ---
+<\|-- | Inheritance
+*--   | Composition
+o--   | Aggregation
+-->   | Association
+--    | Link (Solid) 
+..>   | Dependency
+..\|> | Realization
+..    | Link (Dashed)
 
-<!--- TODO ..>  Dependency--->
 ```
 classDiagram
 classA <|-- classB
 classC *-- classD
 classE o-- classF
 classG <-- classH
-classI <.. classJ
-classK .. classL
+classI -- classJ
+classK <.. classL
+classM <|.. classN
+classO .. classP
 
 ```
 
@@ -194,30 +198,36 @@ classA <|-- classB
 classC *-- classD
 classE o-- classF
 classG <-- classH
-classI <.. classJ
-classK .. classL
+classI -- classJ
+classK <.. classL
+classM <|.. classN
+classO .. classP
 
 ```
-We can use the arrowheads in opposite directions as well :
+We can use the labels to describe nature of relation between two classes. Also, arrowheads can be used in opposite directions as well :
 ```
 classDiagram
-classA --|> classB
-classC --* classD
-classE --o classF
-classG <--> classH
-classI ..> classJ
-classK .. classL
+classA --|> classB : Inheritance
+classC --* classD : Composition
+classE --o classF : Aggregation
+classG --> classH : Association
+classI -- classJ : Link(Solid)
+classK ..> classL : Dependency
+classM ..|> classN : Realization
+classO .. classP : Link(Dashed)
 
 ```
 
 ```mermaid
 classDiagram
-classA --|> classB
-classC --* classD
-classE --o classF
-classG <--> classH
-classI ..> classJ
-classK .. classL
+classA --|> classB : Inheritance
+classC --* classD : Composition
+classE --o classF : Aggregation
+classG --> classH : Association
+classI -- classJ : Link(Solid)
+classK ..> classL : Dependency
+classM ..|> classN : Realization
+classO .. classP : Link(Dashed)
 
 
 ```
