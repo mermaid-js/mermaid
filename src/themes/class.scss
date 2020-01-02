@@ -38,6 +38,10 @@ g.classGroup line {
   fill: none;
 }
 
+.dashed-line{
+  stroke-dasharray: 3;
+}
+
 @mixin composition {
   fill: $nodeBorder;
   stroke: $nodeBorder;
