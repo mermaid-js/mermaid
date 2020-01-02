@@ -337,15 +337,14 @@ const drawClass = function(elem, classDef) {
   let title;
   if (classDef.link) {
     title = g
-      .append("svg:a")
-      .attr("xlink:href", classDef.link)
+      .append('svg:a')
+      .attr('xlink:href', classDef.link)
       .attr('xlink:target', '_blank')
       .attr('xlink:title', classDef.tooltip)
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
       .attr('x', 0);
-  }
-  else {
+  } else {
     title = g
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
@@ -370,7 +369,7 @@ const drawClass = function(elem, classDef) {
     .append('tspan')
     .text(classTitleString)
     .attr('class', 'title');
-  
+
   // If class has annotations the title needs to have an offset of the text height
   if (!isFirst) classTitle.attr('dy', conf.textHeight);
 
