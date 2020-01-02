@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { logger } from './logger';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 
 /**
  * @function detectType
@@ -72,6 +73,43 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
   const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
   return d3[curveName] || defaultCurve;
 };
+
+export const sanitize = (text, config) => {
+  let txt = text;
+  let htmlLabels = true;
+  if (
+    config.flowchart &&
+    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
+  )
+    htmlLabels = false;
+
+  if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
+    txt = txt.replace(/<br>/g, '#br#');
+    txt = txt.replace(/<br\S*?\/>/g, '#br#');
+    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    txt = txt.replace(/=/g, '&equals;');
+    txt = txt.replace(/#br#/g, '<br/>');
+  }
+
+  return txt;
+};
+
+export const formatUrl = (linkStr, config) => {
+  let url = linkStr;
+
+  if (config.securityLevel !== 'loose') {
+    return sanitizeUrl(url);
+  } else {
+    url = url.trim();
+    if (!!url) {
+      if (!/^(https?:)?\/\//i.test(url)) {
+        url = 'http://' + url;
+      }
+    }
+
+    return url;
+  }
+}
 
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
@@ -174,5 +212,7 @@ export default {
   isSubstringInArray,
   interpolateToCurve,
   calcLabelPosition,
-  calcCardinalityPosition
+  calcCardinalityPosition,
+  sanitize,
+  formatUrl
 };

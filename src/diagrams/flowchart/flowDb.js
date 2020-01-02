@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
 import utils from '../../utils';
 import { getConfig } from '../../config';
@@ -19,25 +18,6 @@ let firstGraphFlag = true;
 let direction;
 // Functions to be run after graph rendering
 let funs = [];
-
-const sanitize = text => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  )
-    htmlLabels = false;
-  if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
-    txt = txt.replace(/<br>/g, '#br#');
-    txt = txt.replace(/<br\S*?\/>/g, '#br#');
-    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    txt = txt.replace(/=/g, '&equals;');
-    txt = txt.replace(/#br#/g, '<br/>');
-  }
-
-  return txt;
-};
 
 /**
  * Function called by parser when a node definition has been found
@@ -63,7 +43,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] };
   }
   if (typeof text !== 'undefined') {
-    txt = sanitize(text.trim());
+    txt = utils.sanitize(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
@@ -113,7 +93,7 @@ export const addSingleLink = function(_start, _end, type, linktext) {
   linktext = type.text;
 
   if (typeof linktext !== 'undefined') {
-    edge.text = sanitize(linktext.trim());
+    edge.text = utils.sanitize(linktext.trim(), config);
 
     // strip quotes if string starts and exnds with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
@@ -225,7 +205,7 @@ export const setClass = function(ids, className) {
 const setTooltip = function(ids, tooltip) {
   ids.split(',').forEach(function(id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = sanitize(tooltip);
+      tooltips[id] = utils.sanitize(tooltip, config);
     }
   });
 };
@@ -266,11 +246,7 @@ export const setLink = function(ids, linkStr, tooltip) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof vertices[id] !== 'undefined') {
-      if (config.securityLevel !== 'loose') {
-        vertices[id].link = sanitizeUrl(linkStr); // .replace(/javascript:.*/g, '')
-      } else {
-        vertices[id].link = linkStr;
-      }
+      vertices[id].link = utils.formatUrl(linkStr, config);
     }
   });
   setTooltip(ids, tooltip);
@@ -429,7 +405,7 @@ export const addSubGraph = function(_id, list, _title) {
   id = id || 'subGraph' + subCount;
   if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   title = title || '';
-  title = sanitize(title);
+  title = utils.sanitize(title, config);
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
   subGraphs.push(subGraph);

@@ -8,6 +8,7 @@ import { parser } from './parser/classDiagram';
 
 parser.yy = classDb;
 
+const MERMAID_DOM_ID_PREFIX = 'classid-';
 let idCache = {};
 
 let classCnt = 0;
@@ -319,7 +320,7 @@ const drawClass = function(elem, classDef) {
     }
   };
 
-  const id = 'classId' + classCnt;
+  const id = MERMAID_DOM_ID_PREFIX + classDef.id;
   const classInfo = {
     id: id,
     label: classDef.id,
@@ -339,8 +340,7 @@ const drawClass = function(elem, classDef) {
     title = g
       .append('svg:a')
       .attr('xlink:href', classDef.link)
-      .attr('xlink:target', '_blank')
-      .attr('xlink:title', classDef.tooltip)
+      .attr('target', '_blank')
       .append('text')
       .attr('y', conf.textHeight + conf.padding)
       .attr('x', 0);
@@ -431,6 +431,12 @@ const drawClass = function(elem, classDef) {
   title.node().childNodes.forEach(function(x) {
     x.setAttribute('x', (rectWidth - x.getBBox().width) / 2);
   });
+
+  if (classDef.tooltip) {
+    const tooltip = title
+    .insert('title')
+    .text(classDef.tooltip);
+  }
 
   membersLine.attr('x2', rectWidth);
   methodsLine.attr('x2', rectWidth);

@@ -613,6 +613,9 @@ const render = function(id, txt, cb, container) {
       case 'gantt':
         cb(svgCode, ganttDb.bindFunctions);
         break;
+      case 'class':
+        cb(svgCode, classDb.bindFunctions);
+        break;
       default:
         cb(svgCode);
     }
