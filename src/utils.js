@@ -95,13 +95,12 @@ export const sanitize = (text, config) => {
 };
 
 export const formatUrl = (linkStr, config) => {
-  let url = linkStr;
+  let url = linkStr.trim();
 
-  if (config.securityLevel !== 'loose') {
-    return sanitizeUrl(url);
-  } else {
-    url = url.trim();
-    if (!!url) {
+  if (url) {
+    if (config.securityLevel !== 'loose') {
+      return sanitizeUrl(url);
+    } else {
       if (!/^(https?:)?\/\//i.test(url)) {
         url = 'http://' + url;
       }
@@ -109,7 +108,7 @@ export const formatUrl = (linkStr, config) => {
 
     return url;
   }
-}
+};
 
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;

@@ -11,7 +11,6 @@ parser.yy = classDb;
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 let idCache = {};
 
-let classCnt = 0;
 const conf = {
   dividerMargin: 10,
   padding: 5,
@@ -433,8 +432,7 @@ const drawClass = function(elem, classDef) {
   });
 
   if (classDef.tooltip) {
-    const tooltip = title
-    .insert('title')
+    title.insert('title')
     .text(classDef.tooltip);
   }
 
@@ -445,7 +443,6 @@ const drawClass = function(elem, classDef) {
   classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
   idCache[id] = classInfo;
-  classCnt++;
   return classInfo;
 };
 

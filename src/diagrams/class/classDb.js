@@ -196,7 +196,7 @@ const setClickFunc = function(_id, functionName, tooltip) {
     funs.push(function() {
       const elem = document.querySelector(`[id="${elemId}"]`);
       if (elem !== null) {
-        
+
         elem.addEventListener(
           'click',
           function() {
