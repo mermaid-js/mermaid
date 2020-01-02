@@ -183,6 +183,9 @@ const drawEdge = function(elem, path, relation) {
     url = url.replace(/\)/g, '\\)');
   }
 
+  if (relation.relation.lineType == 1) {
+    svgPath.attr('class', 'relation dashed-line');
+  }
   if (relation.relation.type1 !== 'none') {
     svgPath.attr(
       'marker-start',
