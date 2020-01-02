@@ -432,8 +432,7 @@ const drawClass = function(elem, classDef) {
   });
 
   if (classDef.tooltip) {
-    title.insert('title')
-    .text(classDef.tooltip);
+    title.insert('title').text(classDef.tooltip);
   }
 
   membersLine.attr('x2', rectWidth);
