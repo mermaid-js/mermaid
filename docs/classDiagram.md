@@ -345,6 +345,101 @@ class Shape{
 
 ```
 
+## Interaction
+
+It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
+
+You would define these actions on a separate line after all classes have been declared. 
+
+```
+action className "reference" "tooltip"
+```
+
+* _action_ is either `link` or `callback`, depending on which type of interaction you want to have called
+* _className_ is the id of the node that the action will be associated with
+* _reference_ is either the url link, or the function name for callback. (note: callback function will be called with the nodeId as parameter).
+* (_optional_) tooltip is a string to be displayed when hovering over element (note: The styles of the tooltip are set by the class .mermaidTooltip.)
+
+### Examples:
+
+*URL Link:*
+
+```
+classDiagram
+class Shape
+link Shape "http://www.github.com" "This is a tooltip for a link"
+```
+
+*Callback:*
+
+```
+classDiagram
+class Shape
+callback Shape "callbackFunction" "This is a tooltip for a callback"
+```
+
+```
+<script>
+    var callbackFunction = function(){
+        alert('A callback was triggered');
+    }
+<script>
+```
+
+```mermaid
+classDiagram
+    class Class01
+    class Class02
+    callback Class01 "callbackFunction" "Callback tooltip"
+    link Class02 "http://www.github.com" "This is a link"
+```
+
+> **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
+
+Beginners tip, a full example using interactive links in an html context:
+```
+<body>
+  <div class="mermaid">
+    classDiagram
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    Animal: +mate()
+    class Duck{
+      +String beakColor
+      +swim()
+      +quack()
+      }
+    class Fish{
+      -int sizeInFeet
+      -canEat()
+      }
+    class Zebra{
+      +bool is_wild
+      +run()
+      }
+
+    	callback Duck callback "Tooltip"
+    	click Zebra "http://www.github.com" "This is a link"
+  </div>
+
+  <script>
+  	var callback = function(){
+        alert('A callback was triggered');
+    }
+    var config = {
+      startOnLoad:true,
+      securityLevel:'loose',
+    };
+
+    mermaid.initialize(config);
+  </script>
+</body>
+```
+
 ## Styling
 
 Styling of the class diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/class.scss
