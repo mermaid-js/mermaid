@@ -27,7 +27,6 @@ mermaid.initialize({
 **Example 2:**
 
 <pre>
- <script>
   var config = {
     startOnLoad:true,
     flowchart:{
@@ -39,8 +38,6 @@ mermaid.initialize({
     securityLevel:'loose',
   };
   mermaid.initialize(config);
-</script>
-
 </pre>
 A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
 
@@ -104,6 +101,18 @@ The object containing configurations specific for flowcharts
 Flag for setting whether or not a html tag should be used for rendering labels
 on the edges.
 **Default value true**.
+
+### nodeSpacing
+
+Defines the spacing between nodes on the same level (meaning horizontal spacing for
+TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
+**Default value 50**.
+
+### rankSpacing
+
+Defines the spacing between nodes on different levels (meaning vertical spacing for
+TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
+**Default value 50**.
 
 ### curve
 
