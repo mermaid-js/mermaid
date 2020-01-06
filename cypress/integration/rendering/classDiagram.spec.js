@@ -14,6 +14,8 @@ describe('Class diagram', () => {
       Class09 --> C2 : Where am i?
       Class09 --* C3
       Class09 --|> Class07
+      Class12 <|.. Class08
+      Class11 ..>Class12
       Class07 : equals()
       Class07 : Object[] elementData
       Class01 : size()
@@ -29,7 +31,7 @@ describe('Class diagram', () => {
         test()
       }
       `,
-      {}
+      {logLevel : 1}
     );
     cy.get('svg');
   });

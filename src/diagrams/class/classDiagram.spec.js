@@ -310,6 +310,16 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
+    it('should handle dashed relation definition of different types and directions', function () {
+      const str =
+        'classDiagram\n' +
+        'Class11 <|.. Class12\n' +
+        'Class13 <.. Class14\n' +
+        'Class15 ..|> Class16\n' +
+        'Class17 ..> Class18\n' +
+        'Class19 .. Class20';
+      parser.parse(str);
+    });
   });
 
   describe('when fetching data from a classDiagram graph it', function () {

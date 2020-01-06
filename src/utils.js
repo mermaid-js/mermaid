@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { logger } from './logger';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 
 /**
  * @function detectType
@@ -71,6 +72,42 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
   }
   const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
   return d3[curveName] || defaultCurve;
+};
+
+export const sanitize = (text, config) => {
+  let txt = text;
+  let htmlLabels = true;
+  if (
+    config.flowchart &&
+    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
+  )
+    htmlLabels = false;
+
+  if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
+    txt = txt.replace(/<br>/g, '#br#');
+    txt = txt.replace(/<br\S*?\/>/g, '#br#');
+    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    txt = txt.replace(/=/g, '&equals;');
+    txt = txt.replace(/#br#/g, '<br/>');
+  }
+
+  return txt;
+};
+
+export const formatUrl = (linkStr, config) => {
+  let url = linkStr.trim();
+
+  if (url) {
+    if (config.securityLevel !== 'loose') {
+      return sanitizeUrl(url);
+    } else {
+      if (!/^(https?:)?\/\//i.test(url)) {
+        url = 'http://' + url;
+      }
+    }
+
+    return url;
+  }
 };
 
 const distance = (p1, p2) =>
@@ -174,5 +211,7 @@ export default {
   isSubstringInArray,
   interpolateToCurve,
   calcLabelPosition,
-  calcCardinalityPosition
+  calcCardinalityPosition,
+  sanitize,
+  formatUrl
 };

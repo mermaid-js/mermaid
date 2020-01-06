@@ -10,6 +10,10 @@ g.classGroup text {
   }
 }
 
+g.clickable {
+  cursor: pointer;
+}
+
 g.classGroup rect {
   fill: $nodeBkg;
   stroke: $nodeBorder;
@@ -36,6 +40,10 @@ g.classGroup line {
   stroke: $nodeBorder;
   stroke-width: 1;
   fill: none;
+}
+
+.dashed-line{
+  stroke-dasharray: 3;
 }
 
 @mixin composition {

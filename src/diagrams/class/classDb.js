@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
-import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
 import { getConfig } from '../../config';
+import utils from '../../utils';
 
-const MERMAID_DOM_ID_PREFIX = '';
+const MERMAID_DOM_ID_PREFIX = 'classid-';
 
 const config = getConfig();
 
@@ -155,14 +155,10 @@ export const setLink = function(ids, linkStr, tooltip) {
     let id = _id;
     if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
     if (typeof classes[id] !== 'undefined') {
-      if (config.securityLevel !== 'loose') {
-        classes[id].link = sanitizeUrl(linkStr);
-      } else {
-        classes[id].link = linkStr;
-      }
+      classes[id].link = utils.formatUrl(linkStr, config);
 
       if (tooltip) {
-        classes[id].tooltip = tooltip;
+        classes[id].tooltip = utils.sanitize(tooltip, config);
       }
     }
   });
@@ -182,9 +178,10 @@ export const setClickEvent = function(ids, functionName, tooltip) {
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function(_id, functionName) {
+const setClickFunc = function(_id, functionName, tooltip) {
   let id = _id;
-  if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
+  let elemId = MERMAID_DOM_ID_PREFIX + id;
+
   if (config.securityLevel !== 'loose') {
     return;
   }
@@ -192,14 +189,17 @@ const setClickFunc = function(_id, functionName) {
     return;
   }
   if (typeof classes[id] !== 'undefined') {
+    if (tooltip) {
+      classes[id].tooltip = utils.sanitize(tooltip, config);
+    }
+
     funs.push(function() {
-      const elem = document.querySelector(`[id="${id}"]`);
+      const elem = document.querySelector(`[id="${elemId}"]`);
       if (elem !== null) {
-        elem.setAttribute('title', classes[id].tooltip);
         elem.addEventListener(
           'click',
           function() {
-            window[functionName](id);
+            window[functionName](elemId);
           },
           false
         );
