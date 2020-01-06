@@ -343,9 +343,9 @@ const drawClass = function(elem, classDef) {
 
       method.displayText = methodName + ' : ' + returnType;
     }
-    
+
     return method;
-  }
+  };
 
   const classInfo = {
     id: id,
