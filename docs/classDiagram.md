@@ -105,7 +105,7 @@ Naming convention: a class name should be composed of alphanumeric (unicode allo
 
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
 
-Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and others as attributes.
+Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and others as attributes. To indicate a return type for a method, enclose the type within **square brackets** `[]`
 
 
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
@@ -115,15 +115,15 @@ There are two ways to define the members of a class, and regardless of whichever
   class BankAccount
   BankAccount : +String owner
   BankAccount : +BigDecimal balance
-  BankAccount : +deposit(amount)
-  BankAccount : +withdrawl(amount)
+  BankAccount : +deposit(amount) [bool]
+  BankAccount : +withdrawal(amount)
   ```
   ```  mermaid
     classDiagram
     class BankAccount
     BankAccount : +String owner
     BankAccount : +BigDecimal balance
-    BankAccount : +deposit(amount)
+    BankAccount : +deposit(amount) : bool
     BankAccount : +withdrawl(amount)
 ```
 
@@ -132,7 +132,7 @@ There are two ways to define the members of a class, and regardless of whichever
 class BankAccount{
     +String owner
     +BigDecimal balance
-    +deposit(amount)
+    +deposit(amount) [bool]
     +withdrawl(amount)
 }
 ```
@@ -141,7 +141,7 @@ class BankAccount{
     class BankAccount{
         +String owner
         +BigDecimal balance
-        +deposit(amount)
+        +deposit(amount) : bool
         +withdrawl(amount)
 }
 ```

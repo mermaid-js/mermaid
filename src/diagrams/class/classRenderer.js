@@ -288,23 +288,14 @@ const drawClass = function(elem, classDef) {
   }
 
   const addTspan = function(textEl, txt, isFirst) {
+    let isMethod = txt.indexOf(')') > 1;
     let displayText = txt;
     let cssStyle = '';
-    let methodEnd = txt.indexOf(')') + 1;
 
-    if (methodEnd > 1 && methodEnd <= txt.length) {
-      let classifier = txt.substring(methodEnd);
-
-      switch (classifier) {
-        case '*':
-          cssStyle = 'font-style:italic;';
-          break;
-        case '$':
-          cssStyle = 'text-decoration:underline;';
-          break;
-      }
-
-      displayText = txt.substring(0, methodEnd);
+    if (isMethod) {
+      let method = buildDisplayTextForMethod(txt);
+      displayText = method.displayText;
+      cssStyle = method.cssStyle;
     }
 
     const tSpan = textEl
@@ -322,6 +313,40 @@ const drawClass = function(elem, classDef) {
   };
 
   const id = classDef.id;
+  const buildDisplayTextForMethod = function(txt) {
+    let cssStyle = '';
+    let methodEnd = txt.indexOf(')') + 1;
+    let methodName = txt.substring(0, methodEnd);
+
+    let classifier = txt.substring(methodEnd, methodEnd + 1);
+
+    switch (classifier) {
+      case '*':
+        cssStyle = 'font-style:italic;';
+        break;
+      case '$':
+        cssStyle = 'text-decoration:underline;';
+        break;
+    }
+
+    let method = {
+      methodname: methodName,
+      displayText: methodName,
+      cssStyle: cssStyle
+    };
+
+    let returnTypeStart = txt.indexOf('[') + 1;
+    let returnTypeEnd = txt.indexOf(']');
+
+    if (returnTypeStart > 1 && returnTypeEnd > returnTypeStart) {
+      let returnType = txt.substring(returnTypeStart, returnTypeEnd);
+
+      method.displayText = methodName + ' : ' + returnType;
+    }
+    
+    return method;
+  }
+
   const classInfo = {
     id: id,
     label: classDef.id,
