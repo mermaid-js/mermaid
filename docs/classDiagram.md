@@ -115,7 +115,7 @@ There are two ways to define the members of a class, and regardless of whichever
   class BankAccount
   BankAccount : +String owner
   BankAccount : +BigDecimal balance
-  BankAccount : +deposit(amount) [bool]
+  BankAccount : +deposit(amount) bool
   BankAccount : +withdrawal(amount)
   ```
   ```  mermaid
@@ -132,7 +132,7 @@ There are two ways to define the members of a class, and regardless of whichever
 class BankAccount{
     +String owner
     +BigDecimal balance
-    +deposit(amount) [bool]
+    +deposit(amount) bool
     +withdrawl(amount)
 }
 ```
@@ -146,6 +146,9 @@ class BankAccount{
 }
 ```
 
+
+#### Return Type
+Optionally you can end the method/function definition with the data type that will be returned
 
 #### Visibility
 To specify the visibility of a class member (i.e. any attribute or method), these notations may be placed before the member's name, but it is optional:

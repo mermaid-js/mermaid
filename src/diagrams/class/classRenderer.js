@@ -314,11 +314,24 @@ const drawClass = function(elem, classDef) {
 
   const id = classDef.id;
   const buildDisplayTextForMethod = function(txt) {
+    let regEx = /(\+|-|~|#)?(\w+)\((\w+\[?\]?)?\s?(\w+)?\)([*|$])?\s?(\w+\[?\]?)?/;
     let cssStyle = '';
-    let methodEnd = txt.indexOf(')') + 1;
-    let methodName = txt.substring(0, methodEnd);
+    let displayText = txt;
+    let methodName = txt;
+    let classifier = '';
 
-    let classifier = txt.substring(methodEnd, methodEnd + 1);
+    let parsedText = txt.match(regEx);
+
+    if (parsedText) {
+      let visibility = parsedText[1] ? parsedText[1] : '';
+      methodName = parsedText[2] ? parsedText[2] : '';
+      let parameterType = parsedText[3] ? parsedText[3] : '';
+      let parameterName = parsedText[4] ? parsedText[4] : '';
+      classifier = parsedText[5] ? parsedText[5] : '';
+      let returnType = parsedText[6] ? ' : ' + parsedText[6] : '';
+      displayText =
+        visibility + methodName + '(' + parameterType + ' ' + parameterName + ')' + returnType;
+    }
 
     switch (classifier) {
       case '*':
@@ -331,18 +344,9 @@ const drawClass = function(elem, classDef) {
 
     let method = {
       methodname: methodName,
-      displayText: methodName,
+      displayText: displayText,
       cssStyle: cssStyle
     };
-
-    let returnTypeStart = txt.indexOf('[') + 1;
-    let returnTypeEnd = txt.indexOf(']');
-
-    if (returnTypeStart > 1 && returnTypeEnd > returnTypeStart) {
-      let returnType = txt.substring(returnTypeStart, returnTypeEnd);
-
-      method.displayText = methodName + ' : ' + returnType;
-    }
 
     return method;
   };
