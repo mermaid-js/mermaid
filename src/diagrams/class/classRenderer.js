@@ -331,6 +331,12 @@ const drawClass = function(elem, classDef) {
       let returnType = parsedText[6] ? ' : ' + parsedText[6] : '';
       displayText =
         visibility + methodName + '(' + parameterType + ' ' + parameterName + ')' + returnType;
+    } else {
+      let methodEnd = displayText.indexOf(')') + 1;
+      classifier = displayText.substring(methodEnd, methodEnd + 1);
+      if (classifier !== '' && classifier !== ' ') {
+        displayText = displayText.replace(classifier, '');
+      }
     }
 
     switch (classifier) {
