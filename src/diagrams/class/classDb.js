@@ -9,6 +9,7 @@ const config = getConfig();
 
 let relations = [];
 let classes = {};
+let classCounter = 0;
 
 let funs = [];
 
@@ -41,8 +42,24 @@ export const addClass = function(id) {
     cssClasses: [],
     methods: [],
     members: [],
-    annotations: []
+    annotations: [],
+    domId: MERMAID_DOM_ID_PREFIX + classId.className + '-' + classCounter
   };
+  classCounter++;
+};
+
+/**
+ * Function to lookup domId from id in the graph definition.
+ * @param id
+ * @public
+ */
+export const lookUpDomId = function(id) {
+  const classKeys = Object.keys(classes);
+  for (let i = 0; i < classKeys.length; i++) {
+    if (classes[classKeys[i]].id === id) {
+      return classes[classKeys[i]].domId;
+    }
+  }
 };
 
 export const clear = function() {
@@ -178,9 +195,9 @@ export const setClickEvent = function(ids, functionName, tooltip) {
   setCssClass(ids, 'clickable');
 };
 
-const setClickFunc = function(_id, functionName, tooltip) {
-  let id = _id;
-  let elemId = MERMAID_DOM_ID_PREFIX + id;
+const setClickFunc = function(domId, functionName, tooltip) {
+  let id = domId;
+  let elemId = lookUpDomId(id);
 
   if (config.securityLevel !== 'loose') {
     return;
@@ -286,5 +303,6 @@ export default {
   relationType,
   setClickEvent,
   setCssClass,
-  setLink
+  setLink,
+  lookUpDomId
 };

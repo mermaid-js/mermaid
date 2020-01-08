@@ -2,13 +2,12 @@ import * as d3 from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { logger } from '../../logger';
-import classDb from './classDb';
+import classDb, { lookUpDomId } from './classDb';
 import utils from '../../utils';
 import { parser } from './parser/classDiagram';
 
 parser.yy = classDb;
 
-const MERMAID_DOM_ID_PREFIX = 'classid-';
 let idCache = {};
 
 const conf = {
@@ -322,7 +321,7 @@ const drawClass = function(elem, classDef) {
     }
   };
 
-  const id = MERMAID_DOM_ID_PREFIX + classDef.id;
+  const id = classDef.id;
   const classInfo = {
     id: id,
     label: classDef.id,
@@ -333,7 +332,7 @@ const drawClass = function(elem, classDef) {
   // add class group
   const g = elem
     .append('g')
-    .attr('id', id)
+    .attr('id', lookUpDomId(id))
     .attr('class', cssClassStr);
 
   // add title
@@ -514,7 +513,7 @@ export const draw = function(text, id) {
   g.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
-      d3.select('#' + v).attr(
+      d3.select('#' + lookUpDomId(v)).attr(
         'transform',
         'translate(' +
           (g.node(v).x - g.node(v).width / 2) +
