@@ -5,10 +5,7 @@ import flowDb from './flowDb';
 import flow from './parser/flow';
 import { getConfig } from '../../config';
 
-const newDagreD3 = true;
 import dagreD3 from 'dagre-d3';
-// const newDagreD3 = false;
-
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve } from '../../utils';
@@ -296,39 +293,20 @@ export const draw = function(text, id) {
   const rankSpacing = conf.rankSpacing || 50;
 
   // Create the input mermaid.graph
-  let g;
-  // Todo remove newDagreD3 when properly verified
-  if (newDagreD3) {
-    g = new graphlib.Graph({
-      multigraph: true,
-      compound: true
+  const g = new graphlib.Graph({
+    multigraph: true,
+    compound: true
+  })
+    .setGraph({
+      rankdir: dir,
+      nodesep: nodeSpacing,
+      ranksep: rankSpacing,
+      marginx: 8,
+      marginy: 8
     })
-      .setGraph({
-        rankdir: dir,
-        nodesep: nodeSpacing,
-        ranksep: rankSpacing,
-        marginx: 8,
-        marginy: 8
-      })
-      .setDefaultEdgeLabel(function() {
-        return {};
-      });
-  } else {
-    g = new graphlib.Graph({
-      multigraph: true,
-      compound: true
-    })
-      .setGraph({
-        rankdir: dir,
-        nodesep: nodeSpacing,
-        ranksep: rankSpacing,
-        marginx: 20,
-        marginy: 20
-      })
-      .setDefaultEdgeLabel(function() {
-        return {};
-      });
-  }
+    .setDefaultEdgeLabel(function() {
+      return {};
+    });
 
   let subG;
   const subGraphs = flowDb.getSubGraphs();
@@ -412,49 +390,27 @@ export const draw = function(text, id) {
   });
 
   const padding = 8;
-  // Todo remove newDagreD3 when properly verified
-  if (newDagreD3) {
-    const svgBounds = svg.node().getBBox();
-    const width = svgBounds.width + padding * 2;
-    const height = svgBounds.height + padding * 2;
-    logger.debug(
-      `new ViewBox 0 0 ${width} ${height}`,
-      `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-    );
+  const svgBounds = svg.node().getBBox();
+  const width = svgBounds.width + padding * 2;
+  const height = svgBounds.height + padding * 2;
+  logger.debug(
+    `new ViewBox 0 0 ${width} ${height}`,
+    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
+  );
 
-    if (conf.useMaxWidth) {
-      svg.attr('width', '100%');
-      svg.attr('style', `max-width: ${width}px;`);
-    } else {
-      svg.attr('height', height);
-      svg.attr('width', width);
-    }
-
-    svg.attr('viewBox', `0 0 ${width} ${height}`);
-    svg
-      .select('g')
-      .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', `max-width: ${width}px;`);
   } else {
-    const width = g.maxX - g.minX + padding * 2;
-    const height = g.maxY - g.minY + padding * 2;
-
-    if (conf.useMaxWidth) {
-      svg.attr('width', '100%');
-      svg.attr('style', `max-width: ${width}px;`);
-    } else {
-      svg.attr('height', height);
-      svg.attr('width', width);
-    }
-
-    logger.debug(
-      `Org ViewBox 0 0 ${width} ${height}`,
-      `translate(${padding - g.minX}, ${padding - g.minY})\n${location.href}`
-    );
-
-    svg.attr('viewBox', `0 0 ${width} ${height}`);
-    svg.select('g').attr('transform', `translate(${padding - g.minX}, ${padding - g.minY})`);
-    // svg.select('g').attr('transform', `translate(${padding - minX}, ${padding - minY})`);
+    svg.attr('height', height);
+    svg.attr('width', width);
   }
+
+  svg.attr('viewBox', `0 0 ${width} ${height}`);
+  svg
+    .select('g')
+    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
 
