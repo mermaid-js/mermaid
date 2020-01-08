@@ -474,4 +474,30 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+  it('22: Render a simple flowchart with nodeSpacing set to 100', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      %% this is a comment
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { nodeSpacing: 50 } }
+    );
+  });
+  it('23: Render a simple flowchart with rankSpacing set to 100', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      %% this is a comment
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { rankSpacing: '100' } }
+    );
+  });
 });

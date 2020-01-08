@@ -291,6 +291,10 @@ export const draw = function(text, id) {
     dir = 'TD';
   }
 
+  const conf = getConfig().flowchart;
+  const nodeSpacing = conf.nodeSpacing || 50;
+  const rankSpacing = conf.rankSpacing || 50;
+
   // Create the input mermaid.graph
   let g;
   // Todo remove newDagreD3 when properly verified
@@ -301,6 +305,8 @@ export const draw = function(text, id) {
     })
       .setGraph({
         rankdir: dir,
+        nodesep: nodeSpacing,
+        ranksep: rankSpacing,
         marginx: 8,
         marginy: 8
       })
@@ -314,6 +320,8 @@ export const draw = function(text, id) {
     })
       .setGraph({
         rankdir: dir,
+        nodesep: nodeSpacing,
+        ranksep: rankSpacing,
         marginx: 20,
         marginy: 20
       })
@@ -403,7 +411,6 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
-  const conf = getConfig().flowchart;
   const padding = 8;
   // Todo remove newDagreD3 when properly verified
   if (newDagreD3) {
