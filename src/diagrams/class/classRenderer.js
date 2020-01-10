@@ -312,9 +312,9 @@ const drawClass = function(elem, classDef) {
     }
   };
 
-  const id = classDef.id;
   const buildDisplayTextForMethod = function(txt) {
-    let regEx = /(\+|-|~|#)?(\w+)\((\w+\[?\]?)?\s?(\w+)?\)([*|$])?\s?(\w+\[?\]?)?/;
+    let regEx = /(\+|-|~|#)?(\w+)\s?\((\w+(<\w+>|\[\])?\s?(\w+)?)?\)\s?([*|$])?\s?(\w+(<\w+>|\[\])?)?/;
+
     let cssStyle = '';
     let displayText = txt;
     let methodName = txt;
@@ -323,14 +323,13 @@ const drawClass = function(elem, classDef) {
     let parsedText = txt.match(regEx);
 
     if (parsedText) {
-      let visibility = parsedText[1] ? parsedText[1] : '';
-      methodName = parsedText[2] ? parsedText[2] : '';
-      let parameterType = parsedText[3] ? parsedText[3] : '';
-      let parameterName = parsedText[4] ? parsedText[4] : '';
-      classifier = parsedText[5] ? parsedText[5] : '';
-      let returnType = parsedText[6] ? ' : ' + parsedText[6] : '';
-      displayText =
-        visibility + methodName + '(' + parameterType + ' ' + parameterName + ')' + returnType;
+      let visibility = parsedText[1] ? parsedText[1].trim() : '';
+      methodName = parsedText[2] ? parsedText[2].trim() : '';
+      let parameters = parsedText[3] ? parsedText[3].trim() : '';
+      classifier = parsedText[6] ? parsedText[6].trim() : '';
+      let returnType = parsedText[7] ? ' : ' + parsedText[7].trim() : '';
+
+      displayText = visibility + methodName + '(' + parameters + ')' + returnType;
     } else {
       let methodEnd = displayText.indexOf(')') + 1;
       classifier = displayText.substring(methodEnd, methodEnd + 1);
@@ -357,6 +356,7 @@ const drawClass = function(elem, classDef) {
     return method;
   };
 
+  const id = classDef.id;
   const classInfo = {
     id: id,
     label: classDef.id,
