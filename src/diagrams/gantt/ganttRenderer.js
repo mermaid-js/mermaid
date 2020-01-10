@@ -357,9 +357,22 @@ export const draw = function(text, id) {
       .selectAll('text')
       .data(numOccurances)
       .enter()
-      .append('text')
-      .text(function(d) {
-        return d[0];
+      .append(function(d) {
+        const rows = d[0].split(/<br\s*\/?>/gi);
+        const dy = -(rows.length - 1) / 2;
+
+        const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        svgLabel.setAttribute('dy', dy + 'em');
+
+        for (let j = 0; j < rows.length; j++) {
+          const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+          tspan.setAttribute('alignment-baseline', 'central');
+          tspan.setAttribute('x', '10');
+          if (j > 0) tspan.setAttribute('dy', '1em');
+          tspan.textContent = rows[j];
+          svgLabel.appendChild(tspan);
+        }
+        return svgLabel;
       })
       .attr('x', 10)
       .attr('y', function(d, i) {

@@ -47,6 +47,16 @@ describe('when parsing a gantt diagram it', function() {
 
     expect(parserFnConstructor(str)).not.toThrow();
   });
+  it('should handle multiline section titles with different line breaks', function() {
+    const str =
+      'gantt\n' +
+      'dateFormat yyyy-mm-dd\n' +
+      'title Adding gantt diagram functionality to mermaid\n' +
+      'excludes weekdays 2019-02-01\n' +
+      'section Line1<br>Line2<br/>Line3</br />Line4<br\t/>Line5';
+
+    expect(parserFnConstructor(str)).not.toThrow();
+  });
   /**
    * Beslutsflöde inligt nedan. Obs bla bla bla
    * ```
