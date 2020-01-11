@@ -29,7 +29,7 @@ Mermaid can render class diagrams.
           +bool is_wild
           +run()
       }
-     
+
 ```
 ```mermaid
  classDiagram
@@ -52,8 +52,8 @@ Mermaid can render class diagrams.
       class Zebra{
           +bool is_wild
           +run()
-      }  
-    
+      }
+
 ```
 
 ## Syntax
@@ -109,7 +109,7 @@ Mermaid distinguishes between attributes and functions/methods based on if the *
 
 
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
-- Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example: 
+- Associate a member of a class using **:** (colon) followed by member name, useful to define one member at a time. For example:
 
  ```
   class BankAccount
@@ -118,6 +118,7 @@ There are two ways to define the members of a class, and regardless of whichever
   BankAccount : +deposit(amount)
   BankAccount : +withdrawl(amount)
   ```
+
   ```  mermaid
     classDiagram
     class BankAccount
@@ -125,7 +126,7 @@ There are two ways to define the members of a class, and regardless of whichever
     BankAccount : +BigDecimal balance
     BankAccount : +deposit(amount)
     BankAccount : +withdrawl(amount)
-```
+  ```
 
 - Associate members of a class using **{}** brackets, where members are grouped within curly brackets. Suitable for defining multiple members at once. For example:
 ```
@@ -137,7 +138,7 @@ class BankAccount{
 }
 ```
 ```mermaid
-    classDiagram
+  classDiagram
     class BankAccount{
         +String owner
         +BigDecimal balance
@@ -161,7 +162,7 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 
 
 ## Defining Relationship
-A relationship is a general term covering the specific types of logical connections found on class and object diagrams. 
+A relationship is a general term covering the specific types of logical connections found on class and object diagrams.
 ```
 [classA][Arrow][ClassB]:LabelText
 ```
@@ -174,7 +175,7 @@ Type | Description
 *--   | Composition
 o--   | Aggregation
 -->   | Association
---    | Link (Solid) 
+--    | Link (Solid)
 ..>   | Dependency
 ..\|> | Realization
 ..    | Link (Dashed)
@@ -231,7 +232,7 @@ classO .. classP : Link(Dashed)
 
 
 ```
-## Labels on Relations 
+## Labels on Relations
 
 It is possible to add a label text to a relation:
 ```
@@ -252,7 +253,7 @@ classE o-- classF : association
 ## Cardinality / Multiplicity on relations
 Multiplicity or cardinality in class diagrams indicates the number of instances of one class linked to one instance of the other class. For example, one company will have one or more employees, but each employee works for just one company.
 
-Multiplicity notations are placed near the ends of an association. 
+Multiplicity notations are placed near the ends of an association.
 
 The different cardinality options are :
 - `0..1`        Zero or one
@@ -280,7 +281,7 @@ classDiagram
     Student "1" --> "1..*" Course
     Galaxy --> "many" Star : Contains
 ```
-## Annotations on classes 
+## Annotations on classes
 
 It is possible to annotate classes with a specific marker text which is like meta-data for the class, giving a clear indication about its nature. Some common annotations examples could be:
 - `<<Interface>>`   To represent an Interface class
@@ -359,7 +360,7 @@ class Shape{
 
 It is possible to bind a click event to a node, the click can lead to either a javascript callback or to a link which will be opened in a new browser tab. **Note**: This functionality is disabled when using `securityLevel='strict'` and enabled when using `securityLevel='loose'`.
 
-You would define these actions on a separate line after all classes have been declared. 
+You would define these actions on a separate line after all classes have been declared.
 
 ```
 action className "reference" "tooltip"
@@ -460,7 +461,7 @@ Class               | Description
 ---                 | ---
 g.classGroup text   | Styles for general class text
 classGroup .title   | Styles for general class title
-g.classGroup rect   | Styles for class diagram rectangle 
+g.classGroup rect   | Styles for class diagram rectangle
 g.classGroup line   | Styles for class diagram line
 .classLabel .box    | Styles for class label box
 .classLabel .label  | Styles for class label text
