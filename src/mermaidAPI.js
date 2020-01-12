@@ -143,6 +143,20 @@ const config = {
     htmlLabels: true,
 
     /**
+     * Defines the spacing between nodes on the same level (meaning horizontal spacing for
+     * TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
+     * **Default value 50**.
+     */
+    nodeSpacing: 50,
+
+    /**
+     * Defines the spacing between nodes on different levels (meaning vertical spacing for
+     * TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
+     * **Default value 50**.
+     */
+    rankSpacing: 50,
+
+    /**
      * How mermaid renders curves for flowcharts. Possible values are
      *   * basis
      *   * linear **default**
