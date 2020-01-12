@@ -105,6 +105,18 @@ Flag for setting whether or not a html tag should be used for rendering labels
 on the edges.
 **Default value true**.
 
+### nodeSpacing
+
+Defines the spacing between nodes on the same level (meaning horizontal spacing for
+TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
+**Default value 50**.
+
+### rankSpacing
+
+Defines the spacing between nodes on different levels (meaning vertical spacing for
+TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
+**Default value 50**.
+
 ### curve
 
 How mermaid renders curves for flowcharts. Possible values are
