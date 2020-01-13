@@ -519,45 +519,46 @@ class Class10 {
       int id
       size()
     }
-      </div>
+  </div>
 
-      <div class="mermaid">
-        classDiagram
-        Class01~T~ <|-- AveryLongClass : Cool
-        &lt;&lt;interface&gt;&gt; Class01
-        Class03~T~ "0" *-- "0..n" Class04
-        Class05 "1" o-- "many" Class06
-        Class07~T~ .. Class08
-        Class09 "many" --> "1" C2  : Where am i?
-        Class09 "0" --* "1..n" C3
-        Class09 --|> Class07
-        Class07 : equals()
-        Class07 : Object[] elementData
-        Class01 : #size()
-        Class01 : -int chimp
-        Class01 : +int gorilla
-        Class08 <--> C2: Cool label
-        class Class10 {
-          &lt;&lt;service&gt;&gt;
-          int id
-          size()
-        }
-          </div>
+  <div class="mermaid">
+    classDiagram
+    Class01~T~ <|-- AveryLongClass : Cool
+    &lt;&lt;interface&gt;&gt; Class01
+    Class03~T~ "0" *-- "0..n" Class04
+    Class05 "1" o-- "many" Class06
+    Class07~T~ .. Class08
+    Class09 "many" --> "1" C2  : Where am i?
+    Class09 "0" --* "1..n" C3
+    Class09 --|> Class07
+    Class07 : equals()
+    Class07 : Object[] elementData
+    Class01 : #size()
+    Class01 : -int chimp
+    Class01 : +int gorilla
+    Class08 <--> C2: Cool label
+    class Class10 {
+      &lt;&lt;service&gt;&gt;
+      int id
+      size()
+    }
+  </div>
 
   <div class="mermaid">
     stateDiagram
       State1
-      </div>
+  </div>
 
-      <hr>
-      <div class="mermaid">
-        stateDiagram
-        [*] --> First
-        state First {
-            [*] --> second
-            second --> [*]
-        }
-          </div>
+  <hr>
+
+  <div class="mermaid">
+    stateDiagram
+    [*] --> First
+    state First {
+        [*] --> second
+        second --> [*]
+    }
+  </div>
   <div class="mermaid">
     stateDiagram
         State1: The state with a note
@@ -567,8 +568,14 @@ class Class10 {
         end note
         State1 --> State2
         note left of State2 : This is the note to the left.
-      </div>
-
+  </div>
+  <div class="mermaid">
+    stateDiagram
+    State1
+    note right of State1
+    Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
+    end note
+  </div>
 
   <script src="./mermaid.js"></script>
   <script>
