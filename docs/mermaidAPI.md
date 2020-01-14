@@ -27,6 +27,7 @@ mermaid.initialize({
 **Example 2:**
 
 <pre>
+ <script>
   var config = {
     startOnLoad:true,
     flowchart:{
@@ -38,6 +39,8 @@ mermaid.initialize({
     securityLevel:'loose',
   };
   mermaid.initialize(config);
+</script>
+
 </pre>
 A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
 

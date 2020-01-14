@@ -274,4 +274,19 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('11: should render a simple class diagram with return type on method', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10~T~ {
+        int[] id
+        test(int[] ids) bool
+        testArray() bool[]
+      }
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });

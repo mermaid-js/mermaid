@@ -105,7 +105,7 @@ describe('class diagram, ', function () {
       parser.parse(str);
     });
 
-    it('should handle parsing of method statements  grouped by brackets', function () {
+    it('should handle parsing of method statements grouped by brackets', function () {
       const str =
         'classDiagram\n' +
         'class Dummy_Class {\n' +
@@ -116,6 +116,36 @@ describe('class diagram, ', function () {
         'class Flight {\n' +
         '   flightNumber : Integer\n' +
         '   departureTime : Date\n' +
+        '}';
+
+      parser.parse(str);
+    });
+
+    it('should handle return types on methods', function () {
+      const str =
+        'classDiagram\n' +
+        'Object <|-- ArrayList\n' +
+        'Object : equals()\n' +
+        'Object : -Object[] objects\n' +
+        'Object : +getObjects() Object[]\n' +
+        'ArrayList : Dummy elementData\n' +
+        'ArrayList : getDummy() Dummy';
+
+      parser.parse(str);
+    });
+
+    it('should handle return types on methods grouped by brackets', function () {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class {\n' +
+        'string data\n' +
+        'getDummy() Dummy\n' +
+        '}\n' +
+        '\n' +
+        'class Flight {\n' +
+        '   int flightNumber\n' +
+        '   datetime departureTime\n' +
+        '   getDepartureTime() datetime\n' +
         '}';
 
       parser.parse(str);

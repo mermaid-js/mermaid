@@ -288,23 +288,14 @@ const drawClass = function(elem, classDef) {
   }
 
   const addTspan = function(textEl, txt, isFirst) {
+    let isMethod = txt.indexOf(')') > 1;
     let displayText = txt;
     let cssStyle = '';
-    let methodEnd = txt.indexOf(')') + 1;
 
-    if (methodEnd > 1 && methodEnd <= txt.length) {
-      let classifier = txt.substring(methodEnd);
-
-      switch (classifier) {
-        case '*':
-          cssStyle = 'font-style:italic;';
-          break;
-        case '$':
-          cssStyle = 'text-decoration:underline;';
-          break;
-      }
-
-      displayText = txt.substring(0, methodEnd);
+    if (isMethod) {
+      let method = buildDisplayTextForMethod(txt);
+      displayText = method.displayText;
+      cssStyle = method.cssStyle;
     }
 
     const tSpan = textEl
@@ -319,6 +310,50 @@ const drawClass = function(elem, classDef) {
     if (!isFirst) {
       tSpan.attr('dy', conf.textHeight);
     }
+  };
+
+  const buildDisplayTextForMethod = function(txt) {
+    let regEx = /(\+|-|~|#)?(\w+)\s?\((\w+(<\w+>|\[\])?\s?(\w+)?)?\)\s?([*|$])?\s?(\w+(<\w+>|\[\])?)?/;
+
+    let cssStyle = '';
+    let displayText = txt;
+    let methodName = txt;
+    let classifier = '';
+
+    let parsedText = txt.match(regEx);
+
+    if (parsedText) {
+      let visibility = parsedText[1] ? parsedText[1].trim() : '';
+      methodName = parsedText[2] ? parsedText[2].trim() : '';
+      let parameters = parsedText[3] ? parsedText[3].trim() : '';
+      classifier = parsedText[6] ? parsedText[6].trim() : '';
+      let returnType = parsedText[7] ? ' : ' + parsedText[7].trim() : '';
+
+      displayText = visibility + methodName + '(' + parameters + ')' + returnType;
+    } else {
+      let methodEnd = displayText.indexOf(')') + 1;
+      classifier = displayText.substring(methodEnd, methodEnd + 1);
+      if (classifier !== '' && classifier !== ' ') {
+        displayText = displayText.replace(classifier, '');
+      }
+    }
+
+    switch (classifier) {
+      case '*':
+        cssStyle = 'font-style:italic;';
+        break;
+      case '$':
+        cssStyle = 'text-decoration:underline;';
+        break;
+    }
+
+    let method = {
+      methodname: methodName,
+      displayText: displayText,
+      cssStyle: cssStyle
+    };
+
+    return method;
   };
 
   const id = classDef.id;
