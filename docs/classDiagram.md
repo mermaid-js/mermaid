@@ -105,7 +105,7 @@ Naming convention: a class name should be composed of alphanumeric (unicode allo
 
 UML provides mechanisms to represent class members, such as attributes and methods, and additional information about them.
 
-Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and others as attributes. To indicate a return type for a method, enclose the type within **square brackets** `[]`
+Mermaid distinguishes between attributes and functions/methods based on if the **parenthesis** `()` are present or not. The ones with `()` are treated as functions/methods, and others as attributes.
 
 
 There are two ways to define the members of a class, and regardless of whichever syntax is used to define the members, the output will still be same. The two different ways are :
@@ -115,7 +115,7 @@ There are two ways to define the members of a class, and regardless of whichever
   class BankAccount
   BankAccount : +String owner
   BankAccount : +BigDecimal balance
-  BankAccount : +deposit(amount) bool
+  BankAccount : +deposit(amount)
   BankAccount : +withdrawal(amount)
   ```
 
@@ -124,7 +124,7 @@ There are two ways to define the members of a class, and regardless of whichever
     class BankAccount
     BankAccount : +String owner
     BankAccount : +BigDecimal balance
-    BankAccount : +deposit(amount) : bool
+    BankAccount : +deposit(amount)
     BankAccount : +withdrawl(amount)
   ```
 
@@ -142,11 +142,64 @@ class BankAccount{
     class BankAccount{
         +String owner
         +BigDecimal balance
-        +deposit(amount) : bool
-        +withdrawl(amount)
+        +deposit(amount) bool
+        +withdrawl(amount) int
 }
 ```
 
+#### Return Type
+Optionally you can end the method/function definition with the data type that will be returned (note: there must be a space between the final `)` of the method definition and return type
+example:
+```
+class BankAccount{
+    +String owner
+    +BigDecimal balance
+    +deposit(amount) bool
+    +withdrawl(amount) int
+}
+```
+```mermaid
+    classDiagram
+    class BankAccount{
+        +String owner
+        +BigDecimal balance
+        +deposit(amount) bool
+        +withdrawl(amount) int
+}
+```
+
+#### Generic Types
+Members can be defined using generic types, such as `List<int>`, for fields, parameters and return types by enclosing the type within `~` (**tilde**). Note: **nested** type declarations (such as `List<List<int>>`) are not currently supported
+
+This can be done as part of either class definition method:
+
+```
+classDiagram
+class Square~Shape~{
+    int id
+    List~int~ position
+    setPoints(List~int~ points)
+    getPoints() List~int~
+}
+
+Square : -List~string~ messages
+Square : +setMessages(List~string~ messages)
+Square : +getMessages() List~string~
+```
+
+```mermaid
+classDiagram
+class Square~Shape~{
+    int id
+    List~int~ position
+    setPoints(List~int~ points)
+    getPoints() List~int~
+}
+
+Square : -List~string~ messages
+Square : +setMessages(List~string~ messages)
+Square : +getMessages() List~string~
+```
 
 #### Return Type
 Optionally you can end the method/function definition with the data type that will be returned
@@ -157,7 +210,7 @@ To specify the visibility of a class member (i.e. any attribute or method), thes
 - `+`	Public
 - `-`	Private
 - `#`	Protected
-- `~`	Package
+- `~`	Package/Internal
 
 >_note_ you can also include additional _classifers_ to a method definition by adding the following notations to the end of the method, i.e.: after the `()`:
 > - `*` Abstract e.g.: `someAbstractMethod()*`

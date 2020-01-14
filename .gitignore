@@ -12,3 +12,9 @@ yarn-error.log
 token
 
 package-lock.json
+
+dist/classTest.html
+
+dist/sequenceTest.html
+
+.vscode/
