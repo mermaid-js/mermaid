@@ -396,6 +396,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('16: Render Stadium shape', () => {
     imgSnapshotTest(
       ` graph TD
@@ -412,6 +413,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('17: Render multiline texts', () => {
     imgSnapshotTest(
       `graph LR
@@ -428,6 +430,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('18: Chaining of nodes', () => {
     imgSnapshotTest(
       `graph LR
@@ -436,6 +439,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('19: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph LR
@@ -444,6 +448,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('20: Multiple nodes and chaining in one statement', () => {
     imgSnapshotTest(
       `graph TD
@@ -453,6 +458,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('21: Render cylindrical shape', () => {
     imgSnapshotTest(
       `graph LR
@@ -474,6 +480,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
   it('22: Render a simple flowchart with nodeSpacing set to 100', () => {
     imgSnapshotTest(
       `graph TD
@@ -487,6 +494,7 @@ describe('Flowchart', () => {
       { flowchart: { nodeSpacing: 50 } }
     );
   });
+
   it('23: Render a simple flowchart with rankSpacing set to 100', () => {
     imgSnapshotTest(
       `graph TD
@@ -498,6 +506,19 @@ describe('Flowchart', () => {
       C -->|Three| F[fa:fa-car Car]
       `,
       { flowchart: { rankSpacing: '100' } }
+    );
+  });
+
+  it('24: Keep node label text (if already defined) when a style is applied', () => {
+    imgSnapshotTest(
+      `graph LR
+      A(( )) -->|step 1| B(( ))
+      B(( )) -->|step 2| C(( ))
+      C(( )) -->|step 3| D(( ))
+      linkStyle 1 stroke:greenyellow,stroke-width:2px
+      style C fill:greenyellow,stroke:green,stroke-width:4px
+      `,
+      { flowchart: { htmlLabels: false } }
     );
   });
 });
