@@ -52,7 +52,7 @@ export const addVertex = function(_id, text, type, style, classes) {
 
     vertices[id].text = txt;
   } else {
-    if (!vertices[id].text) {
+    if (typeof vertices[id].text === 'undefined') {
       vertices[id].text = _id;
     }
   }

@@ -86,6 +86,17 @@ describe('[Style] when parsing', () => {
     expect(vert['T'].styles[1]).toBe('border:1px solid red');
   });
 
+  it('should keep node label text (if already defined) when a style is applied', function() {
+    const res = flow.parser.parse('graph TD;A(( ));B((Test));C;style A background:#fff;style D border:1px solid red;');
+
+    const vert = flow.parser.yy.getVertices();
+
+    expect(vert['A'].text).toBe('');
+    expect(vert['B'].text).toBe('Test');
+    expect(vert['C'].text).toBe('C');
+    expect(vert['D'].text).toBe('D');
+  });
+
   it('should be possible to declare a class', function() {
     const res = flow.parser.parse(
       'graph TD;classDef exClass background:#bbb,border:1px solid red;'
