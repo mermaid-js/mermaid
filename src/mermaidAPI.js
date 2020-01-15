@@ -52,14 +52,14 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  * <pre>
  * mermaid.initialize({
  *   flowchart:{
- *      htmlLabels: false
+ *     htmlLabels: false
  *   }
  * });
  * </pre>
  *
  * **Example 2:**
  * <pre>
- *  <script>
+ * &lt;script>
  *   var config = {
  *     startOnLoad:true,
  *     flowchart:{
@@ -71,7 +71,7 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  *     securityLevel:'loose',
  *   };
  *   mermaid.initialize(config);
- * </script>
+ * &lt;/script>
  * </pre>
  * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
  *
