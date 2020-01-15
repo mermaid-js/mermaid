@@ -84,8 +84,7 @@ export const sanitize = (text, config) => {
     htmlLabels = false;
 
   if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
-    txt = txt.replace(/<br>/g, '#br#');
-    txt = txt.replace(/<br\S*?\/>/g, '#br#');
+    txt = txt.replace(/<br\s*\/?>/gi, '#br#');
     txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
     txt = txt.replace(/=/g, '&equals;');
     txt = txt.replace(/#br#/g, '<br/>');

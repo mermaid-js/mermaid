@@ -98,7 +98,7 @@ const init = function() {
     txt = he
       .decode(txt)
       .trim()
-      .replace(/<br>/gi, '<br/>');
+      .replace(/<br\s*\/?>/gi, '<br/>');
 
     mermaidAPI.render(
       id,
