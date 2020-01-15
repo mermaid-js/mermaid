@@ -214,6 +214,33 @@ describe('when parsing a sequenceDiagram', function() {
     expect(messages[7].type).toBe(parser.yy.LINETYPE.ACTIVE_END);
     expect(messages[7].from.actor).toBe('Carol');
   });
+  it('it should handle fail parsing when activating an inactive participant', function() {
+    const str =
+      `sequenceDiagram
+    participant user as End User
+    participant Server as Server
+    participant System as System
+    participant System2 as System2
+
+    user->>+Server: Test
+    user->>+Server: Test2
+    user->>System: Test
+    Server->>-user: Test
+    Server->>-user: Test2
+
+    %% The following deactivation of Server will fail
+    Server->>-user: Test3`;
+
+    let error = false;
+    try {
+      parser.parse(str);
+    } catch(e) {
+      console.log(e.hash);
+      error = true;
+    }
+    expect(error).toBe(true);
+  });
+
   it('it should handle comments in a sequenceDiagram', function() {
     const str =
       'sequenceDiagram\n' +
