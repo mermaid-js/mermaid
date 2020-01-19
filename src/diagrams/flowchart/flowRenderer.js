@@ -461,6 +461,7 @@ export const draw = function(text, id) {
       const node = d3.select('#' + id + ' [id="' + key + '"]');
       if (node) {
         const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
 
