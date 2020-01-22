@@ -374,6 +374,7 @@ describe('Flowchart', () => {
         click B testClick "click test"
         classDef someclass fill:#f96;
         class A someclass;
+        class C someclass;
       `,
       {
         listUrl: false,
@@ -409,7 +410,9 @@ describe('Flowchart', () => {
       click A "index.html#link-clicked" "link test"
       click B testClick "click test"
       classDef someclass fill:#f96;
-      class A someclass;`,
+      class A someclass;
+      class C someclass;
+      `,
       { flowchart: { htmlLabels: false } }
     );
   });
