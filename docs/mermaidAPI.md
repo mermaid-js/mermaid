@@ -19,7 +19,7 @@ These are the default options which can be overridden with the initialization ca
 <pre>
 mermaid.initialize({
   flowchart:{
-     htmlLabels: false
+    htmlLabels: false
   }
 });
 </pre>
@@ -27,7 +27,7 @@ mermaid.initialize({
 **Example 2:**
 
 <pre>
- <script>
+&lt;script>
   var config = {
     startOnLoad:true,
     flowchart:{
@@ -39,10 +39,10 @@ mermaid.initialize({
     securityLevel:'loose',
   };
   mermaid.initialize(config);
-</script>
-
+&lt;/script>
 </pre>
-A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
+
+A summary of all options and their defaults is found [here][2]. A description of each option follows below.
 
 ## theme
 
@@ -333,3 +333,5 @@ mermaidAPI.initialize({
 </pre>
 
 [1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render
+
+[2]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults

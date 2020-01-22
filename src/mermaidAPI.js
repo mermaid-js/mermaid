@@ -52,14 +52,14 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  * <pre>
  * mermaid.initialize({
  *   flowchart:{
- *      htmlLabels: false
+ *     htmlLabels: false
  *   }
  * });
  * </pre>
  *
  * **Example 2:**
  * <pre>
- *  <script>
+ * &lt;script>
  *   var config = {
  *     startOnLoad:true,
  *     flowchart:{
@@ -71,7 +71,7 @@ for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
  *     securityLevel:'loose',
  *   };
  *   mermaid.initialize(config);
- * </script>
+ * &lt;/script>
  * </pre>
  * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
  *
@@ -141,6 +141,20 @@ const config = {
      * **Default value true**.
      */
     htmlLabels: true,
+
+    /**
+     * Defines the spacing between nodes on the same level (meaning horizontal spacing for
+     * TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
+     * **Default value 50**.
+     */
+    nodeSpacing: 50,
+
+    /**
+     * Defines the spacing between nodes on different levels (meaning vertical spacing for
+     * TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
+     * **Default value 50**.
+     */
+    rankSpacing: 50,
 
     /**
      * How mermaid renders curves for flowcharts. Possible values are

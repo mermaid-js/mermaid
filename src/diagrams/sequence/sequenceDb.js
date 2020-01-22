@@ -16,6 +16,25 @@ export const addActor = function(id, name, description) {
   actors[id] = { name: name, description: description };
 };
 
+const activationCount = part => {
+  let i = 0;
+  let count = 0;
+  for (i = 0; i < messages.length; i++) {
+    // console.warn(i, messages[i]);
+    if (messages[i].type === LINETYPE.ACTIVE_START) {
+      if (messages[i].from.actor === part) {
+        count++;
+      }
+    }
+    if (messages[i].type === LINETYPE.ACTIVE_END) {
+      if (messages[i].from.actor === part) {
+        count--;
+      }
+    }
+  }
+  return count;
+};
+
 export const addMessage = function(idFrom, idTo, message, answer) {
   messages.push({ from: idFrom, to: idTo, message: message, answer: answer });
 };
@@ -24,7 +43,25 @@ export const addSignal = function(idFrom, idTo, message, messageType) {
   logger.debug(
     'Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType
   );
+
+  if (messageType === LINETYPE.ACTIVE_END) {
+    const cnt = activationCount(idFrom.actor);
+    logger.debug('Adding message from=', messages, cnt);
+    if (cnt < 1) {
+      // Bail out as there is an activation signal from an inactive participant
+      var error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
+      error.hash = {
+        text: '->>-',
+        token: '->>-',
+        line: '1',
+        loc: { first_line: 1, last_line: 1, first_column: 1, last_column: 1 },
+        expected: ["'ACTIVE_PARTICIPANT'"]
+      };
+      throw error;
+    }
+  }
   messages.push({ from: idFrom, to: idTo, message: message, type: messageType });
+  return true;
 };
 
 export const getMessages = function() {

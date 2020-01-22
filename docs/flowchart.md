@@ -314,6 +314,37 @@ graph LR
    A -- text --> B -- text2 --> C
 ```
 
+It is also possible to declare multiple nodes links in the same line as per below:
+```
+graph LR
+   a --> b & c--> d
+```
+```mermaid
+graph LR
+   a --> b & c--> d
+```
+
+You can then describe dependencies in a very expressive way. Like the onliner below:
+```
+graph TB
+    A & B--> C & D
+```
+```mermaid
+graph TB
+    A & B--> C & D
+```
+If you describe the same diagram using the the basic syntax, it will take four lines. A
+word of warning, one could go overboard with this making the graph harder to read in
+markdown form. The Swedish word `lagom` comes to mind. It means, not to much and not to little.
+This goes for expressive syntaxes as well.
+```
+graph TB
+    A --> C
+    A --> D
+    B --> C
+    B --> D
+```
+
 
 ## Special characters that break syntax
 
@@ -510,6 +541,19 @@ It is also possible to attach a class to a list of nodes in one statement:
 
 ```
     class nodeId1,nodeId2 className;
+```
+
+A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
+
+```
+graph LR
+    A:::someclass --> B
+    classDef someclass fill:#f96;
+```
+```mermaid
+graph LR
+    A:::someclass --> B
+    classDef someclass fill:#f96;
 ```
 
 

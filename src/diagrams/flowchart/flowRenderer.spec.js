@@ -55,6 +55,43 @@ describe('the flowchart renderer', function() {
         expect(addedNodes[0][1]).toHaveProperty('ry', expectedRadios);
       });
     });
+
+    [
+      'Multi<br>Line',
+      'Multi<br/>Line',
+      'Multi<br />Line',
+      'Multi<br\t/>Line'
+    ].forEach(function(labelText) {
+      it('should handle multiline texts with different line breaks', function() {
+        const addedNodes = [];
+        const mockG = {
+          setNode: function(id, object) {
+            addedNodes.push([id, object]);
+          }
+        };
+        addVertices(
+          {
+            v1: {
+              type: 'rect',
+              id: 'my-node-id',
+              classes: [],
+              styles: [],
+              text: 'Multi<br>Line'
+            }
+          },
+          mockG,
+          'svg-id'
+        );
+        expect(addedNodes).toHaveLength(1);
+        expect(addedNodes[0][0]).toEqual('my-node-id');
+        expect(addedNodes[0][1]).toHaveProperty('id', 'my-node-id');
+        expect(addedNodes[0][1]).toHaveProperty('labelType', 'svg');
+        expect(addedNodes[0][1].label).toBeDefined();
+        expect(addedNodes[0][1].label).toBeDefined(); // <text> node
+        expect(addedNodes[0][1].label.firstChild.innerHTML).toEqual('Multi'); // <tspan> node, line 1
+        expect(addedNodes[0][1].label.lastChild.innerHTML).toEqual('Line'); // <tspan> node, line 2
+      });
+    });
   });
 
   [
@@ -109,9 +146,11 @@ describe('the flowchart renderer', function() {
           { text: 'Multi<br>Line' },
           { text: 'Multi<br/>Line' },
           { text: 'Multi<br />Line' },
+          { text: 'Multi<br\t/>Line' },
           { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br>Line' },
           { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br/>Line' },
-          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br />Line' }
+          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br />Line' },
+          { style: ['stroke:DarkGray', 'stroke-width:2px'], text: 'Multi<br\t/>Line' }
         ],
         mockG,
         'svg-id'
