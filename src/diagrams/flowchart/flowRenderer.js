@@ -88,7 +88,7 @@ export const addVertices = function(vert, g, svgId) {
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 
-      const rows = vertexText.split(/<br[/]{0,1}>/);
+      const rows = vertexText.split(/<br\s*\/?>/gi);
 
       for (let j = 0; j < rows.length; j++) {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
@@ -237,7 +237,7 @@ export const addEdges = function(edges, g) {
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
         edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(/<br\s*\/?>/g, '\n');
+        edgeData.label = edge.text.replace(/<br\s*\/?>/gi, '\n');
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
@@ -461,6 +461,7 @@ export const draw = function(text, id) {
       const node = d3.select('#' + id + ' [id="' + key + '"]');
       if (node) {
         const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
+        link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
         link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
         link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
 

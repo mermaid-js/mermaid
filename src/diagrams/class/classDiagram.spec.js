@@ -67,6 +67,48 @@ describe('class diagram, ', function () {
       parser.parse(str);
     });
 
+    it('should break when another `{`is encountered before closing the first one while defining generic class with brackets', function() {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class~T~ {\n' +
+        'String data\n' +
+        '  void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Dummy_Class {\n' +
+        'class Flight {\n' +
+        '   flightNumber : Integer\n' +
+        '   departureTime : Date\n' +
+        '}';
+      let testPased =false;
+      try{
+        parser.parse(str);
+      }catch (error){
+        console.log(error.name);
+        testPased = true;
+      }
+      expect(testPased).toBe(true);
+    });
+
+    it('should break when EOF is encountered before closing the first `{` while defining generic class with brackets', function() {
+      const str =
+        'classDiagram\n' +
+        'class Dummy_Class~T~ {\n' +
+        'String data\n' +
+        '  void methods()\n' +
+        '}\n' +
+        '\n' +
+        'class Dummy_Class {\n';
+      let testPased =false;
+      try{
+        parser.parse(str);
+      }catch (error){
+        console.log(error.name);
+        testPased = true;
+      }
+      expect(testPased).toBe(true);
+    });
+
     it('should handle generic class with brackets', function() {
       const str =
         'classDiagram\n' +
@@ -79,8 +121,6 @@ describe('class diagram, ', function () {
         '   flightNumber : Integer\n' +
         '   departureTime : Date\n' +
         '}';
-
-      parser.parse(str);
     });
 
     it('should handle class definitions', function() {

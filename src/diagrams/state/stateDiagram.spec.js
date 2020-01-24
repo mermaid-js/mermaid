@@ -261,6 +261,16 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
+    it('should handle multiline notes with different line breaks', function() {
+      const str = `stateDiagram
+        State1
+        note right of State1
+          Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
+        end note
+      `;
+
+      parser.parse(str);
+    });
     it('should handle floating notes', function() {
       const str = `stateDiagram
         foo: bar

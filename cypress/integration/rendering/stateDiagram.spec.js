@@ -121,6 +121,18 @@ describe('State diagram', () => {
       {}
     );
   });
+  it('should handle multiline notes with different line breaks', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+      State1
+      note right of State1
+      Line1<br>Line2<br/>Line3<br />Line4<br	/>Line5
+      end note
+      `,
+      {}
+    );
+  });
 
   it('should render a states with descriptions including multi-line descriptions', () => {
     imgSnapshotTest(

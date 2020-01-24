@@ -540,9 +540,14 @@ export const draw = function(text, id) {
     logger.info(
       'tjoho' + getGraphId(relation.id1) + getGraphId(relation.id2) + JSON.stringify(relation)
     );
-    g.setEdge(getGraphId(relation.id1), getGraphId(relation.id2), {
-      relation: relation
-    });
+    g.setEdge(
+      getGraphId(relation.id1),
+      getGraphId(relation.id2),
+      {
+        relation: relation
+      },
+      relation.title || 'DEFAULT'
+    );
   });
   dagre.layout(g);
   g.nodes().forEach(function(v) {

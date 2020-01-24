@@ -102,7 +102,7 @@ const getLabelWidth = text => {
 /* TODO: REMOVE DUPLICATION, SEE SHAPES */
 const getRows = s => {
   if (!s) return 1;
-  let str = s.replace(/<br\/?>/gi, '#br#');
+  let str = s.replace(/<br\s*\/?>/gi, '#br#');
   str = str.replace(/\\n/g, '#br#');
   return str.split('#br#');
 };
