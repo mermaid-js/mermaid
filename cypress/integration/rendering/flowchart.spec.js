@@ -524,4 +524,36 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
+  it('25: Set node text color according to style when html labels are enabled', () => {
+    imgSnapshotTest(
+      `graph LR
+      A[red<br>text] --> B(blue<br>text)
+      C[/red<br/>text/] --> D{blue<br/>text}
+      style A color:red;
+      style B color:blue;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+      click B "index.html#link-clicked" "link test"
+      click D testClick "click test"
+      `,
+      { flowchart: { htmlLabels: true } }
+    );
+  });
+
+  it('26: Set node text color according to style when html labels are disabled', () => {
+    imgSnapshotTest(
+      `graph LR
+      A[red<br>text] --> B(blue<br>text)
+      C[/red<br/>text/] --> D{blue<br/>text}
+      style A color:red;
+      style B color:blue;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+      click B "index.html#link-clicked" "link test"
+      click D testClick "click test"
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
 });
