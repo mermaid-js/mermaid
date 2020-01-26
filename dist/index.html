@@ -353,6 +353,21 @@ graph TB
     linkStyle 1 stroke:greenyellow,stroke-width:2px
     style C fill:greenyellow,stroke:green,stroke-width:4px
   </div>
+  <div class="mermaid">
+    graph TB
+    TITLE["Link Click Events<br>(click the nodes below)"]
+    A[link test]
+    B[anchor test]
+    C[mailto test]
+    D[other protocol test]
+    E[script test]
+    TITLE --> A & B & C & D & E
+    click A "https://mermaid-js.github.io/mermaid/#/" "link test"
+    click B "#link-clicked" "anchor test"
+    click C "mailto:user@user.user" "mailto test"
+    click D "notes://do-your-thing/id" "other protocol test"
+    click E "javascript:alert('test')" "script test"
+  </div>
 
   <hr/>
 
@@ -587,12 +602,15 @@ class Class10 {
     end note
   </div>
 
+  <h1 id="link-clicked">Anchor for "link-clicked" test</h1>
+
   <script src="./mermaid.js"></script>
   <script>
     mermaid.initialize({
       theme: 'forest',
       // themeCSS: '.node rect { fill: red; }',
       logLevel: 3,
+      securityLevel: 'loose',
       flowchart: { curve: 'basis' },
       gantt: { axisFormat: '%m/%d/%Y' },
       sequence: { actorMargin: 50 },

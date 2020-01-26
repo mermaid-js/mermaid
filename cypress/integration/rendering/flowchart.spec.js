@@ -524,4 +524,24 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
+  it('24: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
+    imgSnapshotTest(
+      `graph TB
+      TITLE["Link Click Events<br>(click the nodes below)"]
+      A[link test]
+      B[anchor test]
+      C[mailto test]
+      D[other protocol test]
+      E[script test]
+      TITLE --> A & B & C & D & E
+      click A "https://mermaid-js.github.io/mermaid/#/" "link test"
+      click B "#link-clicked" "anchor test"
+      click C "mailto:user@user.user" "mailto test"
+      click D "notes://do-your-thing/id" "other protocol test"
+      click E "javascript:alert('test')" "script test"
+      `,
+      { securityLevel: 'loose' }
+    );
+  });
 });
