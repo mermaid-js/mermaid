@@ -95,6 +95,8 @@ const config = {
    */
   theme: 'default',
   themeCSS: undefined,
+  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
+  maxTextSize: 50000,
 
   /**
    * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
@@ -460,7 +462,13 @@ export const decodeEntities = function(text) {
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
-const render = function(id, txt, cb, container) {
+const render = function(id, _txt, cb, container) {
+  // Check the maximum allowed text size
+  let txt = _txt;
+  if (_txt.length > config.maxTextSize) {
+    txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  }
+
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
 
