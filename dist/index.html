@@ -368,6 +368,18 @@ graph TB
     click D "notes://do-your-thing/id" "other protocol test"
     click E "javascript:alert('test')" "script test"
   </div>
+  <hr/>
+  <div class="mermaid">
+    graph LR
+    A[red<br>text] --> B(blue<br>text)
+    C[/red<br/>text/] --> D{blue<br/>text}
+    style A color:red;
+    style B color:blue;
+    style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+    style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+    click B "index.html#link-clicked" "link test"
+    click D testClick "click test"
+  </div>
 
   <hr/>
 

@@ -512,7 +512,7 @@ describe('Flowchart', () => {
     );
   });
 
-  it('24: Keep node label text (if already defined) when a style is applied', () => {
+  it('24.1: Keep node label text (if already defined) when a style is applied', () => {
     imgSnapshotTest(
       `graph LR
       A(( )) -->|step 1| B(( ))
@@ -524,8 +524,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-
-  it('24: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
+it('24.2: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
     imgSnapshotTest(
       `graph TB
       TITLE["Link Click Events<br>(click the nodes below)"]
@@ -542,6 +541,38 @@ describe('Flowchart', () => {
       click E "javascript:alert('test')" "script test"
       `,
       { securityLevel: 'loose' }
+      );
+  });
+
+  it('25: Set node text color according to style when html labels are enabled', () => {
+    imgSnapshotTest(
+      `graph LR
+      A[red<br>text] --> B(blue<br>text)
+      C[/red<br/>text/] --> D{blue<br/>text}
+      style A color:red;
+      style B color:blue;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+      click B "index.html#link-clicked" "link test"
+      click D testClick "click test"
+      `,
+      { flowchart: { htmlLabels: true } }
+    );
+  });
+
+  it('26: Set node text color according to style when html labels are disabled', () => {
+    imgSnapshotTest(
+      `graph LR
+      A[red<br>text] --> B(blue<br>text)
+      C[/red<br/>text/] --> D{blue<br/>text}
+      style A color:red;
+      style B color:blue;
+      style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
+      style D stroke:#0000ff,fill:#ccccff,color:#0000ff
+      click B "index.html#link-clicked" "link test"
+      click D testClick "click test"
+      `,
+      { flowchart: { htmlLabels: false } }
     );
   });
 });
