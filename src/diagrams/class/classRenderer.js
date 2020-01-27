@@ -570,8 +570,8 @@ export const draw = function(text, id) {
     }
   });
 
-  diagram.attr('height', '100%');
-  diagram.attr('width', `${g.graph().width * 1.5 + 20}`);
+  diagram.attr('height', g.graph().height + 40);
+  diagram.attr('width', g.graph().width * 1.5 + 20);
   diagram.attr('viewBox', '-10 -10 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
 };
 
