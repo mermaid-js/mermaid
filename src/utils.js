@@ -99,10 +99,6 @@ export const formatUrl = (linkStr, config) => {
   if (url) {
     if (config.securityLevel !== 'loose') {
       return sanitizeUrl(url);
-    } else {
-      if (!/^(https?:)?\/\//i.test(url)) {
-        url = 'http://' + url;
-      }
     }
 
     return url;
