@@ -53,6 +53,39 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
+
+    it('handle "as" in state names', function() {
+      const str = `stateDiagram
+      assemble
+      state assemble
+      `;
+
+      parser.parse(str);
+    });
+    it('handle "as" in state names 1', function() {
+      const str = `stateDiagram
+      assemble
+      state assemble
+      `;
+
+      parser.parse(str);
+    });
+    it('handle "as" in state names 2', function() {
+      const str = `stateDiagram
+      assembleas
+      state assembleas
+      `;
+
+      parser.parse(str);
+    });
+    it('handle "as" in state names 3', function() {
+      const str = `stateDiagram
+      state "as" as as
+      `;
+
+      parser.parse(str);
+    });
+
     it('scale', function() {
       const str = `stateDiagram\n
         scale 350 width
