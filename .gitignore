@@ -12,3 +12,4 @@ yarn-error.log
 token
 
 package-lock.json
+cypress/platform/current.html
