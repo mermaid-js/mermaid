@@ -18,3 +18,4 @@ dist/classTest.html
 dist/sequenceTest.html
 
 .vscode/
+cypress/platform/current.html

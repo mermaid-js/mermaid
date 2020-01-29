@@ -87,6 +87,7 @@ export const addVertices = function(vert, g, svgId) {
       vertexNode.parentNode.removeChild(vertexNode);
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      svgLabel.setAttribute('style', labelStyle.replace('color:', 'fill:'));
 
       const rows = vertexText.split(/<br\s*\/?>/gi);
 
