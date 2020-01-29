@@ -336,7 +336,7 @@ describe('State diagram', () => {
     imgSnapshotTest(
       `
       stateDiagram
-        a --> b: Status
+        a --> b: Start
         a --> b: Stop
     `,
       {
