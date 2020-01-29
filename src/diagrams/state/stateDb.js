@@ -113,7 +113,6 @@ export const addRelation = function(_id1, _id2, title) {
   }
   addState(id1, type1);
   addState(id2, type2);
-  console.info('Adding relation', { id1, id2, title });
   currentDocument.relations.push({ id1, id2, title });
 };
 

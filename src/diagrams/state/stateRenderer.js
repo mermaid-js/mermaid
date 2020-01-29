@@ -228,7 +228,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
     }
   }
 
-  logger.info('Count=', graph.nodeCount(), graph);
+  logger.debug('Count=', graph.nodeCount(), graph);
   let cnt = 0;
   relations.forEach(function(relation) {
     cnt++;
@@ -292,8 +292,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
 
   graph.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
-      // logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e).points));
+      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
       drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
     }
   });
@@ -310,7 +309,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
   stateInfo.width = stateBox.width + 2 * conf.padding;
   stateInfo.height = stateBox.height + 2 * conf.padding;
 
-  logger.info('Doc rendered', stateInfo, graph);
+  logger.debug('Doc rendered', stateInfo, graph);
   return stateInfo;
 };
 
