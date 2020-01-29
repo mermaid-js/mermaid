@@ -53,7 +53,7 @@ export const draw = function(text, id) {
 
   // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
-    multigraph: false,
+    multigraph: true,
     compound: true,
     // acyclicer: 'greedy',
     rankdir: 'RL'
@@ -110,7 +110,8 @@ const getRows = s => {
 const renderDoc = (doc, diagram, parentId, altBkg) => {
   // // Layout graph, Create a new directed graph
   const graph = new graphlib.Graph({
-    compound: true
+    compound: true,
+    multigraph: true
   });
 
   let i;
@@ -126,28 +127,29 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
   if (parentId)
     graph.setGraph({
       rankdir: 'LR',
-      // multigraph: false,
+      multigraph: true,
       compound: true,
       // acyclicer: 'greedy',
       ranker: 'tight-tree',
       ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
-      nodeSep: edgeFreeDoc ? 1 : 50
-      // isMultiGraph: false
+      nodeSep: edgeFreeDoc ? 1 : 50,
+      isMultiGraph: true
       // ranksep: 5,
       // nodesep: 1
     });
   else {
     graph.setGraph({
       rankdir: 'TB',
+      multigraph: true,
       compound: true,
       // isCompound: true,
       // acyclicer: 'greedy',
       // ranker: 'longest-path'
       ranksep: edgeFreeDoc ? 1 : conf.edgeLengthFactor,
       nodeSep: edgeFreeDoc ? 1 : 50,
-      ranker: 'tight-tree'
+      ranker: 'tight-tree',
       // ranker: 'network-simplex'
-      // isMultiGraph: false
+      isMultiGraph: true
     });
   }
 
@@ -226,14 +228,22 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
     }
   }
 
-  logger.info('Count=', graph.nodeCount());
+  logger.info('Count=', graph.nodeCount(), graph);
+  let cnt = 0;
   relations.forEach(function(relation) {
-    graph.setEdge(relation.id1, relation.id2, {
-      relation: relation,
-      width: getLabelWidth(relation.title),
-      height: conf.labelHeight * getRows(relation.title).length,
-      labelpos: 'c'
-    });
+    cnt++;
+    logger.debug('Setting edge', relation);
+    graph.setEdge(
+      relation.id1,
+      relation.id2,
+      {
+        relation: relation,
+        width: getLabelWidth(relation.title),
+        height: conf.labelHeight * getRows(relation.title).length,
+        labelpos: 'c'
+      },
+      'id' + cnt
+    );
   });
 
   dagre.layout(graph);
@@ -282,7 +292,8 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
 
   graph.edges().forEach(function(e) {
     if (typeof e !== 'undefined' && typeof graph.edge(e) !== 'undefined') {
-      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+      // logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+      logger.debug('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e).points));
       drawEdge(diagram, graph.edge(e), graph.edge(e).relation);
     }
   });
