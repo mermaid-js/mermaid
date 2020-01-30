@@ -37,3 +37,61 @@ describe('when finding substring in array ', function() {
     expect(result).toEqual(-1);
   });
 });
+
+describe('when formatting urls', function() {
+  it('should handle links', function() {
+    const url = 'https://mermaid-js.github.io/mermaid/#/';
+
+    let config = { securityLevel: 'loose' };
+    let result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+
+    config.securityLevel = 'strict';
+    result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+  });
+  it('should handle anchors', function() {
+    const url = '#interaction';
+
+    let config = { securityLevel: 'loose' };
+    let result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+
+    config.securityLevel = 'strict';
+    result = utils.formatUrl(url, config);
+    expect(result).toEqual('about:blank');
+  });
+  it('should handle mailto', function() {
+    const url = 'mailto:user@user.user';
+
+    let config = { securityLevel: 'loose' };
+    let result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+
+    config.securityLevel = 'strict';
+    result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+  });
+  it('should handle other protocols', function() {
+    const url = 'notes://do-your-thing/id';
+
+    let config = { securityLevel: 'loose' };
+    let result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+
+    config.securityLevel = 'strict';
+    result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+  });
+  it('should handle scripts', function() {
+    const url = 'javascript:alert("test")';
+
+    let config = { securityLevel: 'loose' };
+    let result = utils.formatUrl(url, config);
+    expect(result).toEqual(url);
+
+    config.securityLevel = 'strict';
+    result = utils.formatUrl(url, config);
+    expect(result).toEqual('about:blank');
+  });
+});

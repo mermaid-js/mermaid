@@ -319,13 +319,25 @@ describe('State diagram', () => {
       }
     );
   });
-  it('Simplest compone state', () => {
+  it('Simplest composit state', () => {
     imgSnapshotTest(
       `
       stateDiagram
         state  Parent {
           C
         }
+    `,
+      {
+        logLevel: 0,
+      }
+    );
+  });
+  it('should handle multiple arrows from one node to another', () => {
+    imgSnapshotTest(
+      `
+      stateDiagram
+        a --> b: Start
+        a --> b: Stop
     `,
       {
         logLevel: 0,

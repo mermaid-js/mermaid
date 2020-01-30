@@ -380,6 +380,7 @@ describe('class diagram, ', function () {
 
       parser.parse(str);
     });
+
     it('should handle dashed relation definition of different types and directions', function () {
       const str =
         'classDiagram\n' +
@@ -388,6 +389,29 @@ describe('class diagram, ', function () {
         'Class15 ..|> Class16\n' +
         'Class17 ..> Class18\n' +
         'Class19 .. Class20';
+      parser.parse(str);
+    });
+
+    it('should handle generic types in members', function () {
+      const str =
+        'classDiagram\n' +
+        'class Car~T~\n' +
+        'Car : -List~Wheel~ wheels\n' +
+        'Car : +setWheels(List~Wheel~ wheels)\n' +
+        'Car : +getWheels() List~Wheel~';
+
+      parser.parse(str);
+    });
+
+    it('should handle generic types in members in class with brackets', function () {
+      const str =
+      'classDiagram\n' +
+      'class Car {\n' +
+      'List~Wheel~ wheels\n' +
+        'setWheels(List~Wheel~ wheels)\n' +
+        '+getWheels() List~Wheel~\n' +
+      '}';
+
       parser.parse(str);
     });
   });
@@ -614,6 +638,7 @@ describe('class diagram, ', function () {
       expect(testClass.cssClasses.length).toBe(1);
       expect(testClass.cssClasses[0]).toBe('clickable');
     });
+    
     it('should associate link with tooltip', function () {
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com" "A tooltip"';
       parser.parse(str);

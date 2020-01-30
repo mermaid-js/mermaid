@@ -5,6 +5,7 @@ import { logger } from '../../logger';
 import classDb, { lookUpDomId } from './classDb';
 import utils from '../../utils';
 import { parser } from './parser/classDiagram';
+import memberRenderer from './classMemberRenderer';
 
 parser.yy = classDb;
 
@@ -287,75 +288,6 @@ const drawClass = function(elem, classDef) {
     cssClassStr = cssClassStr + classDef.cssClasses.join(' ');
   }
 
-  const addTspan = function(textEl, txt, isFirst) {
-    let isMethod = txt.indexOf(')') > 1;
-    let displayText = txt;
-    let cssStyle = '';
-
-    if (isMethod) {
-      let method = buildDisplayTextForMethod(txt);
-      displayText = method.displayText;
-      cssStyle = method.cssStyle;
-    }
-
-    const tSpan = textEl
-      .append('tspan')
-      .attr('x', conf.padding)
-      .text(displayText);
-
-    if (cssStyle !== '') {
-      tSpan.attr('style', cssStyle);
-    }
-
-    if (!isFirst) {
-      tSpan.attr('dy', conf.textHeight);
-    }
-  };
-
-  const buildDisplayTextForMethod = function(txt) {
-    let regEx = /(\+|-|~|#)?(\w+)\s?\((\w+(<\w+>|\[\])?\s?(\w+)?)?\)\s?([*|$])?\s?(\w+(<\w+>|\[\])?)?/;
-
-    let cssStyle = '';
-    let displayText = txt;
-    let methodName = txt;
-    let classifier = '';
-
-    let parsedText = txt.match(regEx);
-
-    if (parsedText) {
-      let visibility = parsedText[1] ? parsedText[1].trim() : '';
-      methodName = parsedText[2] ? parsedText[2].trim() : '';
-      let parameters = parsedText[3] ? parsedText[3].trim() : '';
-      classifier = parsedText[6] ? parsedText[6].trim() : '';
-      let returnType = parsedText[7] ? ' : ' + parsedText[7].trim() : '';
-
-      displayText = visibility + methodName + '(' + parameters + ')' + returnType;
-    } else {
-      let methodEnd = displayText.indexOf(')') + 1;
-      classifier = displayText.substring(methodEnd, methodEnd + 1);
-      if (classifier !== '' && classifier !== ' ') {
-        displayText = displayText.replace(classifier, '');
-      }
-    }
-
-    switch (classifier) {
-      case '*':
-        cssStyle = 'font-style:italic;';
-        break;
-      case '$':
-        cssStyle = 'text-decoration:underline;';
-        break;
-    }
-
-    let method = {
-      methodname: methodName,
-      displayText: displayText,
-      cssStyle: cssStyle
-    };
-
-    return method;
-  };
-
   const id = classDef.id;
   const classInfo = {
     id: id,
@@ -426,7 +358,7 @@ const drawClass = function(elem, classDef) {
 
   isFirst = true;
   classDef.members.forEach(function(member) {
-    addTspan(members, member, isFirst);
+    memberRenderer.addTspan(members, member, isFirst, conf);
     isFirst = false;
   });
 
@@ -448,7 +380,7 @@ const drawClass = function(elem, classDef) {
   isFirst = true;
 
   classDef.methods.forEach(function(method) {
-    addTspan(methods, method, isFirst);
+    memberRenderer.addTspan(methods, method, isFirst, conf);
     isFirst = false;
   });
 
@@ -570,8 +502,8 @@ export const draw = function(text, id) {
     }
   });
 
-  diagram.attr('height', '100%');
-  diagram.attr('width', `${g.graph().width * 1.5 + 20}`);
+  diagram.attr('height', g.graph().height + 40);
+  diagram.attr('width', g.graph().width * 1.5 + 20);
   diagram.attr('viewBox', '-10 -10 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
 };
 

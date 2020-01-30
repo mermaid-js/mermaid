@@ -289,4 +289,20 @@ describe('Class diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('12: should render a simple class diagram with generic types', () => {
+    imgSnapshotTest(
+      `
+    classDiagram
+      class Class10~T~ {
+        int[] id
+        List~int~ ids
+        test(List~int~ ids) List~bool~
+        testArray() bool[]
+      }
+      `,
+      {}
+    );
+    cy.get('svg');
+  });
 });
