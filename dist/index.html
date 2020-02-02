@@ -371,8 +371,10 @@ graph TB
   <hr/>
   <div class="mermaid">
     graph LR
-    A[red<br>text] --> B(blue<br>text)
-    C[/red<br/>text/] --> D{blue<br/>text}
+    A[red<br>text] -->|red<br>text| B(blue<br>text)
+    C[/red<br/>text/] -->|blue<br/>text| D{blue<br/>text}
+    linkStyle 0 color:red;
+    linkStyle 1 stroke:DarkGray,stroke-width:2px,color:#0000ff
     style A color:red;
     style B color:blue;
     style C stroke:#ff0000,fill:#ffcccc,color:#ff0000

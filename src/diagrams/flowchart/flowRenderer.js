@@ -176,6 +176,25 @@ export const addVertices = function(vert, g, svgId) {
  * @param {Object} g The graph object
  */
 export const addEdges = function(edges, g) {
+  const styleFromStyleArr = function(styleStr, arr, { label }) {
+    if (!label) {
+      // Create a compound style definition from the style definitions found for the node in the graph definition
+      for (let i = 0; i < arr.length; i++) {
+        if (typeof arr[i] !== 'undefined') {
+          styleStr = styleStr + arr[i] + ';';
+        }
+      }
+    } else {
+      // create the style definition for the text, if property is a text-property
+      for (let i = 0; i < arr.length; i++) {
+        if (typeof arr[i] !== 'undefined') {
+          if (arr[i].startsWith('color:')) styleStr = styleStr + arr[i] + ';';
+        }
+      }
+    }
+    return styleStr;
+  };
+
   let cnt = 0;
 
   let defaultStyle;
@@ -195,10 +214,11 @@ export const addEdges = function(edges, g) {
     }
 
     let style = '';
+    let labelStyle = '';
+
     if (typeof edge.style !== 'undefined') {
-      edge.style.forEach(function(s) {
-        style = style + s + ';';
-      });
+      style = styleFromStyleArr(style, edge.style, { label: false });
+      labelStyle = styleFromStyleArr(labelStyle, edge.style, { label: true });
     } else {
       switch (edge.stroke) {
         case 'normal':
@@ -215,7 +235,9 @@ export const addEdges = function(edges, g) {
           break;
       }
     }
+
     edgeData.style = style;
+    edgeData.labelStyle = labelStyle;
 
     if (typeof edge.interpolate !== 'undefined') {
       edgeData.curve = interpolateToCurve(edge.interpolate, d3.curveLinear);
@@ -242,6 +264,8 @@ export const addEdges = function(edges, g) {
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
+        } else {
+          edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
         }
       }
     }
