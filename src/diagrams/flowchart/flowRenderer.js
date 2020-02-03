@@ -8,7 +8,7 @@ import { getConfig } from '../../config';
 import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
-import { interpolateToCurve } from '../../utils';
+import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import flowChartShapes from './flowChartShapes';
 
 const conf = {};
@@ -28,25 +28,6 @@ export const addVertices = function(vert, g, svgId) {
   const svg = d3.select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
-  const styleFromStyleArr = function(styleStr, arr, { label }) {
-    if (!label) {
-      // Create a compound style definition from the style definitions found for the node in the graph definition
-      for (let i = 0; i < arr.length; i++) {
-        if (typeof arr[i] !== 'undefined') {
-          styleStr = styleStr + arr[i] + ';';
-        }
-      }
-    } else {
-      // create the style definition for the text, if property is a text-property
-      for (let i = 0; i < arr.length; i++) {
-        if (typeof arr[i] !== 'undefined') {
-          if (arr[i].match('^color:|^text-align:')) styleStr = styleStr + arr[i] + ';';
-        }
-      }
-    }
-    return styleStr;
-  };
-
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function(id) {
     const vertex = vert[id];
@@ -60,15 +41,7 @@ export const addVertices = function(vert, g, svgId) {
       classStr = vertex.classes.join(' ');
     }
 
-    /**
-     * Variable for storing the extracted style for the vertex
-     * @type {string}
-     */
-    let style = '';
-    // Create a compound style definition from the style definitions found for the node in the graph definition
-    style = styleFromStyleArr(style, vertex.styles, { label: false });
-    let labelStyle = '';
-    labelStyle = styleFromStyleArr(labelStyle, vertex.styles, { label: true });
+    const styles = getStylesFromArray(vertex.styles);
 
     // Use vertex id as text in the box if no text is provided by the graph definition
     let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
@@ -87,7 +60,7 @@ export const addVertices = function(vert, g, svgId) {
       vertexNode.parentNode.removeChild(vertexNode);
     } else {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      svgLabel.setAttribute('style', labelStyle.replace('color:', 'fill:'));
+      svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
       const rows = vertexText.split(/<br\s*\/?>/gi);
 
@@ -158,13 +131,13 @@ export const addVertices = function(vert, g, svgId) {
     // Add the node
     g.setNode(vertex.id, {
       labelType: 'svg',
-      labelStyle: labelStyle,
+      labelStyle: styles.labelStyle,
       shape: _shape,
       label: vertexNode,
       rx: radious,
       ry: radious,
       class: classStr,
-      style: style,
+      style: styles.style,
       id: vertex.id
     });
   });
@@ -176,25 +149,6 @@ export const addVertices = function(vert, g, svgId) {
  * @param {Object} g The graph object
  */
 export const addEdges = function(edges, g) {
-  const styleFromStyleArr = function(styleStr, arr, { label }) {
-    if (!label) {
-      // Create a compound style definition from the style definitions found for the node in the graph definition
-      for (let i = 0; i < arr.length; i++) {
-        if (typeof arr[i] !== 'undefined') {
-          styleStr = styleStr + arr[i] + ';';
-        }
-      }
-    } else {
-      // create the style definition for the text, if property is a text-property
-      for (let i = 0; i < arr.length; i++) {
-        if (typeof arr[i] !== 'undefined') {
-          if (arr[i].startsWith('color:')) styleStr = styleStr + arr[i] + ';';
-        }
-      }
-    }
-    return styleStr;
-  };
-
   let cnt = 0;
 
   let defaultStyle;
@@ -217,8 +171,9 @@ export const addEdges = function(edges, g) {
     let labelStyle = '';
 
     if (typeof edge.style !== 'undefined') {
-      style = styleFromStyleArr(style, edge.style, { label: false });
-      labelStyle = styleFromStyleArr(labelStyle, edge.style, { label: true });
+      const styles = getStylesFromArray(edge.style);
+      style = styles.style;
+      labelStyle = styles.labelStyle;
     } else {
       switch (edge.stroke) {
         case 'normal':
