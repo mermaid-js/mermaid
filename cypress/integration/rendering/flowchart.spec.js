@@ -549,6 +549,8 @@ it('25: Handle link click events (link, anchor, mailto, other protocol, script)'
       `graph LR
       A[red<br>text] -->|red<br>text| B(blue<br>text)
       C[/red<br/>text/] -->|blue<br/>text| D{blue<br/>text}
+      E{{default<br />style}} -->|default<br />style| F([default<br />style])
+      linkStyle default color:Sienna;
       linkStyle 0 color:red;
       linkStyle 1 stroke:DarkGray,stroke-width:2px,color:#0000ff
       style A color:red;
@@ -567,6 +569,8 @@ it('25: Handle link click events (link, anchor, mailto, other protocol, script)'
       `graph LR
       A[red<br>text] -->|red<br>text| B(blue<br>text)
       C[/red<br/>text/] -->|blue<br/>text| D{blue<br/>text}
+      E{{default<br />style}} -->|default<br />style| F([default<br />style])
+      linkStyle default color:Sienna;
       linkStyle 0 color:red;
       linkStyle 1 stroke:DarkGray,stroke-width:2px,color:#0000ff
       style A color:red;

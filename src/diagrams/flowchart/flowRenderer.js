@@ -152,8 +152,12 @@ export const addEdges = function(edges, g) {
   let cnt = 0;
 
   let defaultStyle;
+  let defaultLabelStyle;
+
   if (typeof edges.defaultStyle !== 'undefined') {
-    defaultStyle = edges.defaultStyle.toString().replace(/,/g, ';');
+    const defaultStyles = getStylesFromArray(edges.defaultStyle);
+    defaultStyle = defaultStyles.style;
+    defaultLabelStyle = defaultStyles.labelStyle;
   }
 
   edges.forEach(function(edge) {
@@ -180,6 +184,9 @@ export const addEdges = function(edges, g) {
           style = 'fill:none';
           if (typeof defaultStyle !== 'undefined') {
             style = defaultStyle;
+          }
+          if (typeof defaultLabelStyle !== 'undefined') {
+            labelStyle = defaultLabelStyle;
           }
           break;
         case 'dotted':
@@ -219,9 +226,9 @@ export const addEdges = function(edges, g) {
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
-        } else {
-          edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
         }
+
+        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
     }
     // Add the edge to the graph
