@@ -121,6 +121,8 @@ describe('class diagram, ', function () {
         '   flightNumber : Integer\n' +
         '   departureTime : Date\n' +
         '}';
+
+        parser.parse(str);
     });
 
     it('should handle class definitions', function() {
