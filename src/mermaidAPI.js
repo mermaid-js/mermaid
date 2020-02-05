@@ -533,11 +533,18 @@ const render = function(id, _txt, cb, container) {
   // classDef
   if (graphType === 'flowchart') {
     const classes = flowRenderer.getClasses(txt);
+    console.log('classes in mermaidApi', classes);
     for (const className in classes) {
       style += `\n.${className} > * { ${classes[className].styles.join(
         ' !important; '
       )} !important; }`;
+      if (classes[className].textStyles) {
+        style += `\n.${className} tspan { ${classes[className].textStyles.join(
+          ' !important; '
+        )} !important; }`;
+      }
     }
+    console.log(style);
   }
 
   const style1 = document.createElement('style');

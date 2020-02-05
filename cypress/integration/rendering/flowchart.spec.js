@@ -575,4 +575,27 @@ it('24.2: Handle link click events (link, anchor, mailto, other protocol, script
       { flowchart: { htmlLabels: false } }
     );
   });
+  it('30: Possibility to style text color of nodes and subgraphs as well as apply classes to subgraphs', () => {
+    imgSnapshotTest(
+      `graph LR
+      subgraph id1 [title is set]
+        A-->B
+      end
+      subgraph id2 [title]
+        E
+      end
+
+      B-->C
+
+      subgraph id3
+      C-->D
+      end
+      class id3,id2,A redBg;
+      class id3,A whiteTxt;
+      classDef redBg fill:#622;
+      classDef whiteTxt color: white;
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
 });
