@@ -201,6 +201,24 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
   return cardinalityPosition;
 };
 
+export const getStylesFromArray = arr => {
+  let style = '';
+  let labelStyle = '';
+
+  for (let i = 0; i < arr.length; i++) {
+    if (typeof arr[i] !== 'undefined') {
+      // add text properties to label style definition
+      if (arr[i].startsWith('color:') || arr[i].startsWith('text-align:')) {
+        labelStyle = labelStyle + arr[i] + ';';
+      } else {
+        style = style + arr[i] + ';';
+      }
+    }
+  }
+
+  return { style: style, labelStyle: labelStyle };
+};
+
 export default {
   detectType,
   isSubstringInArray,
@@ -208,5 +226,6 @@ export default {
   calcLabelPosition,
   calcCardinalityPosition,
   sanitize,
-  formatUrl
+  formatUrl,
+  getStylesFromArray
 };

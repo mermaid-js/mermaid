@@ -497,7 +497,7 @@ Instead of ids, the order number of when the link was defined in the graph is us
 defined in the linkStyle statement will belong to the fourth link in the graph:
 
 ```
-linkStyle 3 stroke:#ff3,stroke-width:4px;
+linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 ```
 
 
