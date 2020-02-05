@@ -269,6 +269,9 @@ export const draw = function(text, id) {
     logger.debug('Parsing failed');
   }
 
+  console.log('Classes:', flowDb.getClasses());
+  console.log('Subgraphs:', flowDb.getSubGraphs());
+
   // Fetch the default direction, use TD if none was found
   let dir = flowDb.getDirection();
   if (typeof dir === 'undefined') {
@@ -416,6 +419,11 @@ export const draw = function(text, id) {
       const te = cluster.select('.label');
       te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
       te.attr('id', id + 'Text');
+
+      console.log('Fixing subgraph', id, subG.id, subG.classes); // eslitn-disable-line
+      for (let j = 0; j < subG.classes.length; j++) {
+        clusterEl[0].classList.add(subG.classes[j]);
+      }
     }
   }
 

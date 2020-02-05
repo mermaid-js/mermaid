@@ -151,12 +151,18 @@ export const updateLink = function(positions, style) {
 
 export const addClass = function(id, style) {
   if (typeof classes[id] === 'undefined') {
-    classes[id] = { id: id, styles: [] };
+    classes[id] = { id: id, styles: [], textStyles: [] };
   }
 
   if (typeof style !== 'undefined') {
     if (style !== null) {
       style.forEach(function(s) {
+        console.log('style', s);
+        if (s.match('color')) {
+          const newStyle1 = s.replace('fill', 'bgFill');
+          const newStyle2 = newStyle1.replace('color', 'fill');
+          classes[id].textStyles.push(newStyle2);
+        }
         classes[id].styles.push(s);
       });
     }
@@ -195,6 +201,8 @@ export const setClass = function(ids, className) {
     if (typeof vertices[id] !== 'undefined') {
       vertices[id].classes.push(className);
     }
+
+    console.log('Setting class', className, id, subGraphLookup[id]);
 
     if (typeof subGraphLookup[id] !== 'undefined') {
       subGraphLookup[id].classes.push(className);
@@ -373,7 +381,8 @@ export const defaultStyle = function() {
  * Clears the internal graph db so that a new graph can be parsed.
  */
 export const addSubGraph = function(_id, list, _title) {
-  let id = _id;
+  console.log('Adding subgraph', _id);
+  let id = _id.trim();
   let title = _title;
   if (_id === _title && _title.match(/\s/)) {
     id = undefined;
@@ -410,6 +419,7 @@ export const addSubGraph = function(_id, list, _title) {
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
   subGraphs.push(subGraph);
   subGraphLookup[id] = subGraph;
+  console.log('Adding subgraph', id, subGraphs, subGraphLookup);
   return id;
 };
 
