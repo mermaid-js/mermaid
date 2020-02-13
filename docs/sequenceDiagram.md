@@ -284,7 +284,7 @@ sequenceDiagram
 
 ## Styling
 
-Styling of the a sequence diagram is done by defining a number of css classes.  During rendering these classes are extracted from the file located at src/themes/sequence.scss
+Styling of a sequence diagram is done by defining a number of css classes. During rendering these classes are extracted from the file located at src/themes/sequence.scss
 
 ### Classes used
 
@@ -414,5 +414,5 @@ mermaid.sequenceConfig = {
 Param | Description | Default value
 --- | --- | ---
 mirrorActor | Turns on/off the rendering of actors below the diagram as well as above it | false
-bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwantewd clipping which is why this config param exists. | 1
+bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1
 
