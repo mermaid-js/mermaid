@@ -47,6 +47,7 @@
 "deactivate"      { this.begin('ID'); return 'deactivate'; }
 "title"           return 'title';
 "sequenceDiagram" return 'SD';
+"autonumber" 			return 'autonumber';
 ","               return ',';
 ";"               return 'NL';
 [^\+\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
@@ -91,6 +92,7 @@ statement
 	: 'participant' actor 'AS' restOfLine 'NL' {$2.description=$4; $$=$2;}
 	| 'participant' actor 'NL' {$$=$2;}
 	| signal 'NL'
+	| autonumber {yy.enableSequenceNumbers()}
 	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NL'
