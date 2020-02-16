@@ -29,6 +29,8 @@ jobs:
       run: |
         yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
         yarn install --frozen-lockfile
+        npx cypress cache path
+        npx cypress cache list
       env:
         CYPRESS_CACHE_FOLDER: .cache/Cypress
 
@@ -52,9 +54,13 @@ jobs:
         parallel: true
 
     - name: Run E2E Tests
-      run: yarn e2e
+      run: |
+        npx cypress cache path
+        npx cypress cache list
+        yarn e2e
       env:
         PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+        CYPRESS_CACHE_FOLDER: .cache/Cypress
 
     - name: Post Upload Test Results
       uses: coverallsapp/github-action@master
