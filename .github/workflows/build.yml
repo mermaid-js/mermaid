@@ -32,7 +32,7 @@ jobs:
         npx cypress cache path
         npx cypress cache list
       env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+        CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/.cache/Cypress
 
     - name: Run Build
       run: yarn build
@@ -60,7 +60,7 @@ jobs:
         yarn e2e
       env:
         PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+        CYPRESS_CACHE_FOLDER: $GITHUB_WORKSPACE/.cache/Cypress
 
     - name: Post Upload Test Results
       uses: coverallsapp/github-action@master
