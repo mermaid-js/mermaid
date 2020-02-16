@@ -33,6 +33,27 @@ describe('when parsing a sequenceDiagram', function() {
     expect(messages[0].from).toBe('Alice');
     expect(messages[2].from).toBe('Bob');
   });
+  it('it should not show sequence numbers per default', function() {
+    const str =
+      'sequenceDiagram\n' +
+      'Alice->Bob:Hello Bob, how are you?\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!';
+
+      parser.parse(str);
+      expect(parser.yy.showSequenceNumbers()).toBe(false);
+    });
+  it('it should show sequence numbers when autonumber is enabled', function() {
+    const str =
+      'sequenceDiagram\n' +
+      'autonumber\n' +
+      'Alice->Bob:Hello Bob, how are you?\n' +
+      'Note right of Bob: Bob thinks\n' +
+      'Bob-->Alice: I am good thanks!';
+
+    parser.parse(str);
+    expect(parser.yy.showSequenceNumbers()).toBe(true);
+  });
   it('it should handle a sequenceDiagram definition with a title', function() {
     const str =
       'sequenceDiagram\n' +

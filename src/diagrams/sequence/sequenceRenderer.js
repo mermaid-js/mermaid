@@ -342,7 +342,7 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   }
 
   // add node number
-  if (conf.showSequenceNumbers) {
+  if (sequenceDb.showSequenceNumbers() || conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
     g.append('text')
       .attr('x', startx)

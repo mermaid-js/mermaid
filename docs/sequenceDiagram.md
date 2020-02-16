@@ -282,6 +282,43 @@ sequenceDiagram
     John-->>Alice: Great!
 ```
 
+## sequenceNumbers
+
+It is possiebl to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
+```
+    <script>
+      mermaid.initialize({
+        sequence: { showSequenceNumbers: true },
+      });
+    </script>
+```
+
+It can also be be turned on via the diagram code as in the diagram:
+```
+sequenceDiagram
+    autonumber
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+```mermaid
+sequenceDiagram
+    autonumber
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+
 ## Styling
 
 Styling of a sequence diagram is done by defining a number of css classes. During rendering these classes are extracted from the file located at src/themes/sequence.scss

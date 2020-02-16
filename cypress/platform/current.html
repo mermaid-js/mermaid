@@ -16,10 +16,15 @@
     <h1>info below</h1>
     <div style="display: flex;width: 100%; height: 100%">
       <div class="mermaid" style="width: 100%; height: 100%">
-        stateDiagram
-
-        NotFound --> NotFound: Status
-              NotFound --> NotFound: Stop
+        sequenceDiagram
+        Alice->>John: Hello John, how are you?
+        loop Healthcheck
+            John->>John: Fight against hypochondria
+        end
+        Note right of John: Rational thoughts!
+        John-->>Alice: Great!
+        John->>Bob: How about you?
+        Bob-->>John: Jolly good!
 
       </div>
 </div>
@@ -32,7 +37,7 @@
         logLevel: 0,
         flowchart: { curve: 'linear', "htmlLabels": false },
         // gantt: { axisFormat: '%m/%d/%Y' },
-        sequence: { actorMargin: 50 },
+        sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
       });
     </script>

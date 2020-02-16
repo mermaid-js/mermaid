@@ -149,5 +149,38 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render autonumber when configured with such', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>John: Hello John, how are you?
+        loop Healthcheck
+            John->>John: Fight against hypochondria
+        end
+        Note right of John: Rational thoughts!
+        John-->>Alice: Great!
+        John->>Bob: How about you?
+        Bob-->>John: Jolly good!
+      `,
+      {sequence: { actorMargin: 50, showSequenceNumbers: true }}
+      );
+    });
+    it('should render autonumber when autonumber keyword is used', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        autonumber
+        Alice->>John: Hello John, how are you?
+        loop Healthcheck
+            John->>John: Fight against hypochondria
+        end
+        Note right of John: Rational thoughts!
+        John-->>Alice: Great!
+        John->>Bob: How about you?
+        Bob-->>John: Jolly good!
+      `,
+      {}
+      );
+    });
   });
 });
