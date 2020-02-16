@@ -32,6 +32,7 @@ jobs:
         yarn install --frozen-lockfile
         npx cypress cache path
         npx cypress cache list
+        npx cypress verify
 
     - name: Run Build
       run: yarn build
