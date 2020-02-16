@@ -52,10 +52,9 @@ jobs:
         parallel: true
 
     - name: Run E2E Tests
-      run: yarn e2e --group $GITHUB_RUN_ID
+      run: yarn e2e
       env:
         PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
 
     - name: Post Upload Test Results
       uses: coverallsapp/github-action@master
