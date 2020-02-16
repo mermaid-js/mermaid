@@ -22,13 +22,19 @@ jobs:
     - name: Cache Node Modules
       uses: actions/cache@v1
       with:
-        path: .cache
-        key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
+        path: ~/.cache/yarn
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
+        
+    - name: Cache Cypress
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/Cypress
+        key: ${{ runner.os }}-cypress-${{ hashFiles('**/package.json') }}
 
     - name: Install Packages
       run: |
-        yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
-        export CYPRESS_CACHE_FOLDER=$GITHUB_WORKSPACE/.cache/Cypress
+        yarn config set cache-folder ~/.cache/yarn
+        export CYPRESS_CACHE_FOLDER=~/.cache/Cypress
         yarn install --frozen-lockfile
         npx cypress cache path
         npx cypress cache list
@@ -55,7 +61,7 @@ jobs:
 
     - name: Run E2E Tests
       run: |
-        export CYPRESS_CACHE_FOLDER=$GITHUB_WORKSPACE/.cache/Cypress
+        export CYPRESS_CACHE_FOLDER=~/.cache/Cypress
         npx cypress cache path
         npx cypress cache list
         npx cypress install
@@ -68,3 +74,16 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
+        
+    - name: Upload cypress screenshots
+      uses: actions/upload-artifact@master
+      with:
+        name: screenshots
+        path: cypress/screenshots
+        if: failure()  
+
+    - name: Upload cypress videos
+      uses: actions/upload-artifact@master
+      with:
+        name: videos
+        path: cypress/videos
