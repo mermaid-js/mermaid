@@ -20,18 +20,7 @@ jobs:
     - name: Install Yarn
       run: npm i yarn --global
 
-    - name: Cache Node Modules
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/yarn
-        key: ${{ runner.OS }}-node-${{ hashFiles('**/yarn.lock') }}
-        
-    - name: Install Packages
-      run: |
-        yarn config set cache-folder ~/.cache/yarn
-        yarn install --frozen-lockfile
-
-    - name: Install Cypress
+    - name: Install Dependencies
       uses: cypress-io/github-action@v1
       with:
         runTests: false
