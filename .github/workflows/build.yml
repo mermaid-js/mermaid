@@ -57,6 +57,7 @@ jobs:
         export CYPRESS_CACHE_FOLDER=$GITHUB_WORKSPACE/.cache/Cypress
         npx cypress cache path
         npx cypress cache list
+        npx cypress install
         yarn e2e
       env:
         PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
