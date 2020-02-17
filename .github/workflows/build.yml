@@ -47,7 +47,7 @@ jobs:
     - uses: cypress-io/github-action@v1
       with:
         browser: ${{ matrix.browser }}
-        headless: true
+        headless: false
         command-prefix: 'percy exec -- npx'
         start: yarn dev
         wait-on: 'http://localhost:9000'
