@@ -8,6 +8,7 @@ jobs:
     strategy:
       matrix:
         node-version: [10.x, 12.x]
+        browser: [chrome, firefox]
     steps:
     - uses: actions/checkout@v1
 
@@ -19,18 +20,10 @@ jobs:
     - name: Install Yarn
       run: npm i yarn --global
 
-    - name: Cache Node Modules
-      uses: actions/cache@v1
+    - name: Install Dependencies
+      uses: cypress-io/github-action@v1
       with:
-        path: .cache
-        key: ${{ runner.OS }}-build-${{ hashFiles('**/yarn.lock') }}
-
-    - name: Install Packages
-      run: |
-        yarn config set cache-folder $GITHUB_WORKSPACE/.cache/yarn
-        yarn install --frozen-lockfile
-      env:
-        CYPRESS_CACHE_FOLDER: .cache/Cypress
+        runTests: false
 
     - name: Run Build
       run: yarn build
@@ -51,12 +44,35 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel: true
 
-    # - name: Run E2E Tests
-    #   run: yarn e2e
-    #   env:
-    #     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-    #     CYPRESS_CACHE_FOLDER: .cache/Cypress
+    - uses: cypress-io/github-action@v1
+      with:
+        browser: ${{ matrix.browser }}
+        group: ${{ matrix.browser }}
+        headless: true
+        command-prefix: 'percy exec -- npx'
+        start: yarn dev
+        wait-on: 'http://localhost:9000'
+        install: false
+        working-directory: cypress
+        parallel: true
+        parallelism: 4
+      env:
+        PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
 
+    - name: Upload cypress screenshots
+      uses: actions/upload-artifact@master
+      with:
+        name: cypress-screenshots
+        path: cypress/screenshots
+        if: failure()  
+
+    - name: Upload cypress videos
+      uses: actions/upload-artifact@master
+      if: always()
+      with:
+        name: cypress-videos
+        path: cypress/videos
+    
     - name: Post Upload Test Results
       uses: coverallsapp/github-action@master
       with:
