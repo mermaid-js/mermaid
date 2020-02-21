@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { logger } from '../../logger';
 import utils from '../../utils';
 import { getConfig } from '../../config';
+import common from '../common/common';
 
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = '';
@@ -43,7 +44,7 @@ export const addVertex = function(_id, text, type, style, classes) {
     vertices[id] = { id: id, styles: [], classes: [] };
   }
   if (typeof text !== 'undefined') {
-    txt = utils.sanitize(text.trim(), config);
+    txt = common.sanitizeText(text.trim(), config);
 
     // strip quotes if string starts and ends with a quote
     if (txt[0] === '"' && txt[txt.length - 1] === '"') {
@@ -93,7 +94,7 @@ export const addSingleLink = function(_start, _end, type, linktext) {
   linktext = type.text;
 
   if (typeof linktext !== 'undefined') {
-    edge.text = utils.sanitize(linktext.trim(), config);
+    edge.text = common.sanitizeText(linktext.trim(), config);
 
     // strip quotes if string starts and exnds with a quote
     if (edge.text[0] === '"' && edge.text[edge.text.length - 1] === '"') {
@@ -210,7 +211,7 @@ export const setClass = function(ids, className) {
 const setTooltip = function(ids, tooltip) {
   ids.split(',').forEach(function(id) {
     if (typeof tooltip !== 'undefined') {
-      tooltips[id] = utils.sanitize(tooltip, config);
+      tooltips[id] = common.sanitizeText(tooltip, config);
     }
   });
 };
@@ -410,7 +411,7 @@ export const addSubGraph = function(_id, list, _title) {
   id = id || 'subGraph' + subCount;
   if (id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
   title = title || '';
-  title = utils.sanitize(title, config);
+  title = common.sanitizeText(title, config);
   subCount = subCount + 1;
   const subGraph = { id: id, nodes: nodeList, title: title.trim(), classes: [] };
   subGraphs.push(subGraph);

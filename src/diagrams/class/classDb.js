@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { logger } from '../../logger';
 import { getConfig } from '../../config';
+import common from '../common/common';
 import utils from '../../utils';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
@@ -175,7 +176,7 @@ export const setLink = function(ids, linkStr, tooltip) {
       classes[id].link = utils.formatUrl(linkStr, config);
 
       if (tooltip) {
-        classes[id].tooltip = utils.sanitize(tooltip, config);
+        classes[id].tooltip = common.sanitizeText(tooltip, config);
       }
     }
   });
@@ -207,7 +208,7 @@ const setClickFunc = function(domId, functionName, tooltip) {
   }
   if (typeof classes[id] !== 'undefined') {
     if (tooltip) {
-      classes[id].tooltip = utils.sanitize(tooltip, config);
+      classes[id].tooltip = common.sanitizeText(tooltip, config);
     }
 
     funs.push(function() {
