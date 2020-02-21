@@ -96,36 +96,36 @@ describe('Sequencediagram', () => {
       gantt
       excludes weekdays 2017-01-10
       title Projects Timeline
-  
+
       section asdf
           specs :done, :ps, 2019-05-10, 50d
           Plasma      :pc, 2019-06-20, 60d
           Rollup  :or, 2019-08-20, 50d
-      
+
       section CEL
-              
+
           plasma-chamber      :done, :pc, 2019-05-20, 60d
           Plasma Implementation (Rust)      :por, 2019-06-20, 120d
           Predicates (Atomic Swap)      :pred, 2019-07-20, 60d
-      
-      section DEX 💰
-          
+
+      section DEX
+
           History zkSNARK  :hs, 2019-08-10, 40d
           Exit           :vs, after hs, 60d
           PredicateSpec          :ps, 2019-09-1, 20d
           PlasmaIntegration     :pi, after ps,40d
-      
-      
-      section Events 🏁
-      
+
+
+      section Events
+
       ETHBoston :done, :eb, 2019-09-08, 3d
       DevCon :active, :dc, 2019-10-08, 3d
-      
-      section Plasma Calls & updates ✨
+
+      section Plasma Calls & updates
           OVM      :ovm, 2019-07-12, 120d
       Plasma call 26 :pc26, 2019-08-21, 1d
       Plasma call 27 :pc27, 2019-09-03, 1d
-      Plasma call 28 :pc28, 2019-09-17, 1d 
+      Plasma call 28 :pc28, 2019-09-17, 1d
         `,
       {}
     );
