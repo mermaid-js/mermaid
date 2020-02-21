@@ -537,6 +537,11 @@ const render = function(id, _txt, cb, container) {
       style += `\n.${className} > * { ${classes[className].styles.join(
         ' !important; '
       )} !important; }`;
+      if (classes[className].textStyles) {
+        style += `\n.${className} tspan { ${classes[className].textStyles.join(
+          ' !important; '
+        )} !important; }`;
+      }
     }
   }
 

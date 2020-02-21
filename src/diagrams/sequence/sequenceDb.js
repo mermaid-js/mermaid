@@ -4,7 +4,7 @@ let actors = {};
 let messages = [];
 const notes = [];
 let title = '';
-
+let sequenceNumbersEnabled = false;
 export const addActor = function(id, name, description) {
   // Don't allow description nulling
   const old = actors[id];
@@ -80,6 +80,10 @@ export const getActorKeys = function() {
 export const getTitle = function() {
   return title;
 };
+export const enableSequenceNumbers = function() {
+  sequenceNumbersEnabled = true;
+};
+export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
 export const clear = function() {
   actors = {};
@@ -210,6 +214,8 @@ export default {
   addActor,
   addMessage,
   addSignal,
+  enableSequenceNumbers,
+  showSequenceNumbers,
   getMessages,
   getActors,
   getActor,

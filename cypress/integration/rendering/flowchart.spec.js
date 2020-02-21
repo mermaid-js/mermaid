@@ -512,7 +512,7 @@ describe('Flowchart', () => {
     );
   });
 
-  it('24.1: Keep node label text (if already defined) when a style is applied', () => {
+  it('24: Keep node label text (if already defined) when a style is applied', () => {
     imgSnapshotTest(
       `graph LR
       A(( )) -->|step 1| B(( ))
@@ -524,7 +524,7 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-it('24.2: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
+it('25: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
     imgSnapshotTest(
       `graph TB
       TITLE["Link Click Events<br>(click the nodes below)"]
@@ -544,11 +544,15 @@ it('24.2: Handle link click events (link, anchor, mailto, other protocol, script
       );
   });
 
-  it('25: Set node text color according to style when html labels are enabled', () => {
+  it('26: Set text color of nodes and links according to styles when html labels are enabled', () => {
     imgSnapshotTest(
       `graph LR
-      A[red<br>text] --> B(blue<br>text)
-      C[/red<br/>text/] --> D{blue<br/>text}
+      A[red<br>text] -->|red<br>text| B(blue<br>text)
+      C[/red<br/>text/] -->|blue<br/>text| D{blue<br/>text}
+      E{{default<br />style}} -->|default<br />style| F([default<br />style])
+      linkStyle default color:Sienna;
+      linkStyle 0 color:red;
+      linkStyle 1 stroke:DarkGray,stroke-width:2px,color:#0000ff
       style A color:red;
       style B color:blue;
       style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
@@ -560,17 +564,44 @@ it('24.2: Handle link click events (link, anchor, mailto, other protocol, script
     );
   });
 
-  it('26: Set node text color according to style when html labels are disabled', () => {
+  it('27: Set text color of nodes and links according to styles when html labels are disabled', () => {
     imgSnapshotTest(
       `graph LR
-      A[red<br>text] --> B(blue<br>text)
-      C[/red<br/>text/] --> D{blue<br/>text}
+      A[red<br>text] -->|red<br>text| B(blue<br>text)
+      C[/red<br/>text/] -->|blue<br/>text| D{blue<br/>text}
+      E{{default<br />style}} -->|default<br />style| F([default<br />style])
+      linkStyle default color:Sienna;
+      linkStyle 0 color:red;
+      linkStyle 1 stroke:DarkGray,stroke-width:2px,color:#0000ff
       style A color:red;
       style B color:blue;
       style C stroke:#ff0000,fill:#ffcccc,color:#ff0000
       style D stroke:#0000ff,fill:#ccccff,color:#0000ff
       click B "index.html#link-clicked" "link test"
       click D testClick "click test"
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+  it('30: Possibility to style text color of nodes and subgraphs as well as apply classes to subgraphs', () => {
+    imgSnapshotTest(
+      `graph LR
+      subgraph id1 [title is set]
+        A-->B
+      end
+      subgraph id2 [title]
+        E
+      end
+
+      B-->C
+
+      subgraph id3
+      C-->D
+      end
+      class id3,id2,A redBg;
+      class id3,A whiteTxt;
+      classDef redBg fill:#622;
+      classDef whiteTxt color: white;
       `,
       { flowchart: { htmlLabels: false } }
     );

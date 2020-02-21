@@ -50,7 +50,8 @@ export const jsConfig = () => {
       filename: '[name].js',
       library: 'mermaid',
       libraryTarget: 'umd',
-      libraryExport: 'default'
+      libraryExport: 'default',
+      globalObject: 'typeof self !== "undefined" ? self : this'
     },
     module: {
       rules: [amdRule, jsRule, scssRule, jisonRule]

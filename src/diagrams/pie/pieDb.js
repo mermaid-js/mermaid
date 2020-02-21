@@ -10,7 +10,6 @@ const addSection = function(id, value) {
   if (typeof sections[id] === 'undefined') {
     sections[id] = value;
     logger.debug('Added new section :', id);
-    // console.log('Added new section:', id, value)
   }
 };
 const getSections = () => sections;

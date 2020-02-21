@@ -151,12 +151,17 @@ export const updateLink = function(positions, style) {
 
 export const addClass = function(id, style) {
   if (typeof classes[id] === 'undefined') {
-    classes[id] = { id: id, styles: [] };
+    classes[id] = { id: id, styles: [], textStyles: [] };
   }
 
   if (typeof style !== 'undefined') {
     if (style !== null) {
       style.forEach(function(s) {
+        if (s.match('color')) {
+          const newStyle1 = s.replace('fill', 'bgFill');
+          const newStyle2 = newStyle1.replace('color', 'fill');
+          classes[id].textStyles.push(newStyle2);
+        }
         classes[id].styles.push(s);
       });
     }
@@ -373,7 +378,7 @@ export const defaultStyle = function() {
  * Clears the internal graph db so that a new graph can be parsed.
  */
 export const addSubGraph = function(_id, list, _title) {
-  let id = _id;
+  let id = _id.trim();
   let title = _title;
   if (_id === _title && _title.match(/\s/)) {
     id = undefined;
