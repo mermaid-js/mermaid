@@ -6,12 +6,14 @@
 
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
 <!-- <Main description> -->
-__Generate diagrams, charts, graphs or flows from markdown-like text via javascript.__
-See our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Play in our [live editor](https://mermaidjs.github.io/mermaid-live-editor/) or jump straight to the [installation and usage](http://mermaid-js.github.io/mermaid/#/usage).
+__mermaid is a Javascript based diagramming and charting tool. It generates diagrams flowcharts and more, using markdown-inspired text for ease and speed.__
+
+For more information and help in gettin started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/) or jump straight to the [installation and usage](http://mermaid-js.github.io/mermaid/#/usage).
 <!-- </Main description> -->
 
 :trophy: _"The most exciting use of technology"_ - [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees)
 
+__The following are some examples of the diagrams, charts and graphs that can be made using mermaid and the Markdown-inspired text specific to it. Click here jump into the [text syntax](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference).__
 <table>
 <!-- <Flowchart> -->
 <tr><td colspan=2 align="center">
