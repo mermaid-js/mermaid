@@ -30,8 +30,6 @@ It is also an easier way to develop diagrams. You can also click "Copy Markdown"
 
 ![Flowchart](./img/liveEditorOptions.png)
 
-<img src="https://github.com/NeilCuzon/mermaid/blob/develop/docs/img/liveEditorOptions.png">
-
 The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
 
 
