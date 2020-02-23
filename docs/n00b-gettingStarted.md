@@ -1,4 +1,4 @@
-# A basic User-Guide for Beginners
+# A basic mermaid User-Guide for Beginners
 
 Creating diagrams and charts, using mermaid code is simple.
 
@@ -11,7 +11,7 @@ Most widely used web browsers, such as Firefox, Chrome and Safari, can render me
 # For beginners, there are three relatively easy ways you can use mermaid:
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/)
 2. Using a mermaid plugin, such as that for Confluence or [Atom](https://atom.io/packages/atom-mermaid).
-3. Calling mermaid with HTML, deployed in a friendly browser. 
+3. Calling mermaid renderer with HTML, deployed in a friendly browser. 
 
 # Following either of these examples, you can get started with creating your own diagrams using mermaid code.
 
@@ -89,7 +89,6 @@ c. The `mermaid.initialize()` command to start the rendering process.
 
 
 This is what needs to go into the html file:
-
 
 
 # a. The reference to the mermaid renderer has to be contained in a `<script src>` tag like so:
