@@ -27,7 +27,7 @@ You can also copy the code from the code section and paste it into either a merm
 
 It is also an easier way to develop diagrams. You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation. 
 
-![Flowchart](./img/liveEditor-options.png.png)
+![Flowchart](./img/liveEditor-options.png)
 
 The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
 
