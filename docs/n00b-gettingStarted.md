@@ -33,7 +33,7 @@ It is also an easier way to develop diagrams. You can also click "Copy Markdown"
 The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
 
 
-## 2. Using mermaid plugins
+## 2. Using mermaid plugins:
 
 Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer.
 One example is the [Atom plugin](https://atom.io/packages/atom-mermaid) for mermaid.
@@ -69,7 +69,7 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 
 ---
 
-## 3. mermaid using any web server (or just a browser)
+## 3. mermaid using any web server (or just a browser):
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
