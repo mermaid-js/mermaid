@@ -1,42 +1,45 @@
-# A more basic getting started
+# A basic Walkthrough for beginners
 
-Writing mermaid code is simple.
+Creating diagrams and charts, using mermaid code is simple.
 
-But how is the code turned into a diagram in a web page? To do this we need a mermaid renderer.
+But how is the code turned into a diagram in a web page? This is done with the use of a mermaid renderer.
 
-Thankfully the mermaid renderer is very accessible, in essence it is a javascript.
+Thankfully the mermaid renderer is very accessible, in essence it is a piece of javascript that can be called. 
 
-The requirement is on the part of the web browser. Modern web browsers, such as Firefox, Chrome and Safari, can render mermaid. But Internet Explorer cannot. The web browser also needs access to the online mermaid renderer which it downloads from https://cdn.jsdelivr.net/npm/mermaid
+Most widely used web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot. The web browser also needs access to the online mermaid renderer which it downloads from https://cdn.jsdelivr.net/npm/mermaid
 
-For an easy introduction, here follows three practical examples using:
-1. an online mermaid editor
-2. a mermaid plugin
-3. a generic web server of your choosing
+# For beginners, there are three relatively easy ways you can use mermaid:
+1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/)
+2. Using a mermaid plugin, such as that for Confluence or [Atom](https://atom.io/packages/atom-mermaid).
+3. Calling mermaid with HTML, deployed in a friendly browser. 
 
-Following either of these examples, you can get started with converting your own mermaid code into web diagrams.
+# Following either of these examples, you can get started with creating your own diagrams using mermaid code.
 
-## the mermaid live editor
+## 1. The mermaid live editor
 
 The quickest way to get started with mermaid is to visit [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
 
-In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result.
+In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
 This is a great way to get started.
 
-It is also the easiest way to develop diagrams, the code of which can be pasted straight into documentation.
+It is also the easiest way to develop diagrams. You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation. 
+You can also copy the code from the code section and paste it into either a mermaid plugin or in inside an html file, which will be taught in numbers 2 and 3. 
 
-![Flowchart](./img/n00b-liveEditor.png)
+![Flowchart](./img/liveEditor-options.png.png)
 
 The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
 
 
-## mermaid using plugins
+## 2. Using mermaid plugins
 
 Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer.
+One example is the [Atom plugin](https://atom.io/packages/atom-mermaid) for mermaid.
 
-One example is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview)
+Another example is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview) 
 
 When the mermaid plugin is installed on a Confluence server, one can insert a mermaid object into any Confluence page.
+# Here is a step by step process for using the mermaid-Confluence plugin:
 
 ---
 
@@ -64,24 +67,30 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 
 ---
 
-## mermaid using any web server (or just a browser)
+## 3. mermaid using any web server (or just a browser)
 
-This example can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
+This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
-We do not need to install anything on the server, apart from a normal file of html to be reached by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer). So if you want to really simplify things when testing this out, don't use a web server at all but just create the file locally and drag it into your browser window. It is the browser which does all the work of rendering mermaid!
+We do not need to install anything on the server, apart from a program (like Notepad++) that can generate an html file, which is then deployed by a web browser (such as Firefox, Chrome, Safari, but not Internet Explorer). 
 
-Through the html file, we give the web browser three instructions inside the html code it retrieves:
-1. a reference for fetching the online mermaid renderer, the renderer is just a javascript.
-2. the mermaid code we want to diagram.
-3. the `mermaid.initialize()` command to start the rendering process
+So if you want to really simplify things when testing this out, don't use a web server at all but just create the file locally and drag it into your browser window. It is the browser which does all the work of rendering mermaid!
 
-All this is done in the html `<body>` section of the web page.
+# Here are instructions for creating an html file with mermaid code: 
+# Note that all this is written in the html `<body>` section of the web page.
+
+When writing the html file, we give the web browser three instructions inside the html code:
+a. A reference for fetching the online mermaid renderer, which is written in Javascript.
+b. The mermaid code for the diagram we want to create.
+c. The `mermaid.initialize()` command to start the rendering process. 
+
+
+
 
 This is what needs to go into the html file:
 
 
 
-1. The reference to the mermaid renderer is done in a `<script src>` tag like so:
+# a. The reference to the mermaid renderer has to be contained in a `<script src>` tag like so:
 
 ```
 <body>
@@ -89,7 +98,7 @@ This is what needs to go into the html file:
 </body>
 ```
 
-2. The embedded mermaid code is similarly placed in a `<div>` tag:
+# b. The embedded mermaid code is similarly placed inside a `<div>` tag:
 
 ```
 <body>
@@ -102,8 +111,9 @@ This is what needs to go into the html file:
   </div>
 </body>
 ```
+(take note that every mermaid chart/graph/diagram, has to have separate `<div>` tags.)
 
-3. When initializing mermaid using `mermaid.initialize()`, mermaid takes all the `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. This is done like so:
+# c. When initializing mermaid using `mermaid.initialize()`, mermaid takes all the `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. This is done like so:
 
 ```
 <body>
@@ -111,8 +121,8 @@ This is what needs to go into the html file:
 </body>
 ```
 
-*Finally*
-4. Putting the three steps together is as simple as:
+# *Finally*
+# If the three steps mentioned are followed you will end up with something like this:
 ```
 <html>
   <body>
@@ -137,7 +147,7 @@ This is what needs to go into the html file:
   </body>
 </html>
 ```
-Save this to a html file and fetch it with a browser from the web server (or just drag it into your web browser window) and voila!
+# Save this to a html file and fetch it with a browser from the web server (or just drag it into your web browser window) and voila!
 
 ---
 
