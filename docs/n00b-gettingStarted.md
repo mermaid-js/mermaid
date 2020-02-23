@@ -21,8 +21,9 @@ Most widely used web browsers, such as Firefox, Chrome and Safari, can render me
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
 
-![Flowchart](./img/n00b-liveEditor.png)
+![Flowchart](./img/n00b-liveEditor.png) 
 
+![Flowchart](./img/n00b-Confluence1.png)
 You can also copy the code from the code section and paste it into either a mermaid plugin or in inside an html file, which will be taught in numbers 2 and 3. 
 
 It is also an easier way to develop diagrams. You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation. 
