@@ -1,4 +1,4 @@
-# A basic Walkthrough for beginners
+# A basic User-Guide for Beginners
 
 Creating diagrams and charts, using mermaid code is simple.
 
@@ -15,16 +15,16 @@ Most widely used web browsers, such as Firefox, Chrome and Safari, can render me
 
 # Following either of these examples, you can get started with creating your own diagrams using mermaid code.
 
-## 1. The mermaid live editor
+## 1. The mermaid live editor:
 
-The quickest way to get started with mermaid is to visit [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
+ A great way to get started with mermaid is to visit [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
+![Flowchart](./img/n00b-liveEditor.png)
 
-This is a great way to get started.
-
-It is also the easiest way to develop diagrams. You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation. 
 You can also copy the code from the code section and paste it into either a mermaid plugin or in inside an html file, which will be taught in numbers 2 and 3. 
+
+It is also an easier way to develop diagrams. You can also click "Copy Markdown" to copy the markdown code for the diagram, that can then be pasted directly into your documentation. 
 
 ![Flowchart](./img/liveEditor-options.png.png)
 
