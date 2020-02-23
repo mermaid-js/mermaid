@@ -20,6 +20,7 @@ Most widely used web browsers, such as Firefox, Chrome and Safari, can render me
  A great way to get started with mermaid is to visit [The mermaid live editor](https://mermaidjs.github.io/mermaid-live-editor).
 
 In the `Code` section one can write or edit raw mermaid code, and instantly `Preview` the rendered result on the panel beside it.
+
 ![Flowchart](./img/n00b-liveEditor.png)
 
 You can also copy the code from the code section and paste it into either a mermaid plugin or in inside an html file, which will be taught in numbers 2 and 3. 
