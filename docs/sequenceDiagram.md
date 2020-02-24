@@ -326,7 +326,7 @@ sequenceDiagram
 
 ## sequenceNumbers
 
-It is possiebl to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
+It is possible to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
 ```
     <script>
       mermaid.initialize({
