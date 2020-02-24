@@ -77,7 +77,6 @@ Type | Description
 -x   | Solid line with a cross at the end (async)
 --x  | Dotted line with a cross at the end (async)
 
-
 ## Activations
 
 It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:
@@ -127,7 +126,6 @@ sequenceDiagram
     John-->>-Alice: I feel great!
 ```
 
-
 ## Notes
 
 It is possible to add notes to a sequence diagram. This is done by the notation
@@ -159,7 +157,6 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
-
 ## Loops
 
 It is possible to express loops in a sequence diagram. This is done by the notation
@@ -186,7 +183,6 @@ sequenceDiagram
         John-->Alice: Great!
     end
 ```
-
 
 ## Alt
 
@@ -280,8 +276,8 @@ sequenceDiagram
     end
 ```
 
-
 ## Background Highlighting
+
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
 The colors are defined using rgb and rgba syntax.
@@ -386,9 +382,7 @@ loopLine     | Defines styles for the lines in the loop box.
 note         | Styles for the note box.
 noteText     | Styles for the text on in the note boxes.
 
-
 ### Sample stylesheet
-
 
 ```css
 body {
@@ -471,7 +465,6 @@ text.actor {
     font-size:14px;
 }
 ```
-
 
 ## Configuration
 
