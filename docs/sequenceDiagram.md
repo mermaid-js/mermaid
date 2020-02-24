@@ -235,6 +235,52 @@ sequenceDiagram
     end
 ```
 
+## Parallel
+
+It is possible to show actions that are happening in parallel.
+
+This is done by the notation
+
+```
+par [Action 1]
+... statements ...
+and [Action 2]
+... statements ...
+and [Action N]
+... statements ...
+end
+```
+
+See the example below:
+
+```mermaid
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Hello guys!
+    and Alice to John
+        Alice->>John: Hello guys!
+    end
+    Bob-->>Alice: Hi Alice!
+    John-->>Alice: Hi Alice!
+```
+
+It is also possible to nest parallel blocks.
+
+```mermaid
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Go help John
+    and Alice to John
+        Alice->>John: I want this done today
+        par John to Charlie
+            John->>Charlie: Can we do this today?
+        and John to Diana
+            John->>Diana: Can you help us today?
+        end
+    end
+```
+
+
 ## Background Highlighting
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
@@ -452,4 +498,3 @@ Param | Description | Default value
 --- | --- | ---
 mirrorActor | Turns on/off the rendering of actors below the diagram as well as above it | false
 bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1
-
