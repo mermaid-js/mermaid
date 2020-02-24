@@ -384,6 +384,17 @@ graph TB
     click B "index.html#link-clicked" "link test"
     click D testClick "click test"
   </div>
+  <div class="mermaid">
+    graph TD
+    A[myClass1] --> B[default] & C[default]
+    B[default] & C[default] --> D[myClass2]
+    classDef default stroke-width:2px,fill:none,stroke:silver
+    classDef node color:red
+    classDef myClass1 color:#0000ff
+    classDef myClass2 stroke:#0000ff,fill:#ccccff
+    class A myClass1
+    class D myClass2
+  </div>
 
   <hr/>
 

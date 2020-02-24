@@ -127,6 +127,40 @@ describe('the flowchart renderer', function() {
         expect(addedNodes[0][1]).toHaveProperty('labelStyle', expectedLabelStyle);
       });
     });
+
+    it(`should add default class to all nodes which do not have another class assigned`, function() {
+      const addedNodes = [];
+      const mockG = {
+        setNode: function(id, object) {
+          addedNodes.push([id, object]);
+        }
+      };
+      addVertices(
+        {
+          v1: {
+            type: 'rect',
+            id: 'defaultNode',
+            classes: [],
+            styles: [],
+            text: 'my vertex text'
+          },
+          v2: {
+            type: 'rect',
+            id: 'myNode',
+            classes: ['myClass'],
+            styles: [],
+            text: 'my vertex text'
+          }
+        },
+        mockG,
+        'svg-id'
+      );
+      expect(addedNodes).toHaveLength(2);
+      expect(addedNodes[0][0]).toEqual('defaultNode');
+      expect(addedNodes[0][1]).toHaveProperty('class', 'default');
+      expect(addedNodes[1][0]).toEqual('myNode');
+      expect(addedNodes[1][1]).toHaveProperty('class', 'myClass');
+    });
   });
 
   describe('when adding edges to a graph', function() {
