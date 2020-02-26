@@ -35,7 +35,8 @@ The `Mermaid configuration` is for controlling mermaid behaviour. An easy introd
 
 ## 2. Using mermaid plugins:
 
-Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer.
+Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](integrations.md).
+
 One example is the [Atom plugin](https://atom.io/packages/atom-mermaid) for mermaid.
 
 Another example is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview) 
