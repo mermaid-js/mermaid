@@ -4,6 +4,7 @@ import stateDb from './stateDb';
 import utils from '../../utils';
 import common from '../common/common';
 import { getConfig } from '../../config';
+import { logger } from '../../logger';
 
 // let conf;
 
@@ -464,9 +465,13 @@ export const drawEdge = function(elem, path, relation) {
         .attr('x', x)
         .attr('y', y + titleHeight);
 
+      const boundstmp = label.node().getBBox();
+      logger.info(boundstmp, x, y + titleHeight);
+
       if (titleHeight === 0) {
         const titleBox = title.node().getBBox();
         titleHeight = titleBox.height;
+        logger.info('Title height', titleHeight, y);
       }
       titleRows.push(title);
     }
@@ -482,9 +487,11 @@ export const drawEdge = function(elem, path, relation) {
       .insert('rect', ':first-child')
       .attr('class', 'box')
       .attr('x', bounds.x - getConfig().state.padding / 2)
-      .attr('y', bounds.y - getConfig().state.padding / 2)
+      .attr('y', y - titleHeight)
       .attr('width', bounds.width + getConfig().state.padding)
-      .attr('height', bounds.height + getConfig().state.padding);
+      .attr('height', titleHeight + getConfig().state.padding);
+
+    logger.info(bounds);
 
     //label.attr('transform', '0 -' + (bounds.y / 2));
 
