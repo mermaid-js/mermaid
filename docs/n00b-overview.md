@@ -2,7 +2,7 @@
 
 mermaid is a tool that aims to make diagrams and flowcharts for documentation, easier. 
 
-with mermaid, diagramscan be created through comments like this in a script:
+with mermaid, diagrams can be created through comments like this in a script:
 
 ```
 graph TD
