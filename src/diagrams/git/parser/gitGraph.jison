@@ -18,6 +18,7 @@
 \s+                             /* skip all whitespace */
 \#[^\n]*                        /* skip comments */
 \%%[^\n]*                       /* skip comments */
+\%\%\*((.|\n)*)\*\%\%           /* multiline skip comments */
 "gitGraph"                      return 'GG';
 "commit"                        return 'COMMIT';
 "branch"                        return 'BRANCH';
