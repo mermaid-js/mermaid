@@ -20,7 +20,7 @@ Since the diagram source is text based, it can be part of production scripts (an
 
 Comparing with Visio and similar applications, mermaid is a really fast way to create good visualizations. This is especially apparent when editing a complex visualisations, a process that usually takes hours in a desktop application, but only takes minutes (or even less if generation has been scripted) with mermaid.
 
-mermaid can potentially cut down the amount of time and effort spent on the process of creating diagrams, to a fraction of what you sually put in.  
+mermaid can potentially cut down the amount of time and effort spent on the process of creating diagrams, to a fraction of what you usually put in.  
 
 However, a lot of the mermaid documentation is geared to professional frontend developers, presuming a skill set which I simply do not have.
 
