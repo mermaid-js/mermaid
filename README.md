@@ -9,7 +9,10 @@
 <!-- <Main description> -->
 __mermaid is a Javascript based diagramming and charting tool. It generates diagrams flowcharts and more, using markdown-inspired text for ease and speed.__
 
-Check out the list of [Integrations and Usages of Mermaid](./docs/integrations.md)
+Check out the list of [Integrations and Usages of Mermaid](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md)
+
+For more information and help in getting started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Alternatively, you can also play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/).
+<!-- </Main description> --> 
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
