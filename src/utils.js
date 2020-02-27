@@ -74,25 +74,6 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
   return d3[curveName] || defaultCurve;
 };
 
-export const sanitize = (text, config) => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  )
-    htmlLabels = false;
-
-  if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
-    txt = txt.replace(/<br\s*\/?>/gi, '#br#');
-    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    txt = txt.replace(/=/g, '&equals;');
-    txt = txt.replace(/#br#/g, '<br/>');
-  }
-
-  return txt;
-};
-
 export const formatUrl = (linkStr, config) => {
   let url = linkStr.trim();
 
@@ -225,7 +206,6 @@ export default {
   interpolateToCurve,
   calcLabelPosition,
   calcCardinalityPosition,
-  sanitize,
   formatUrl,
   getStylesFromArray
 };

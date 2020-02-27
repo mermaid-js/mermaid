@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
+import common from '../common/common';
 import { getConfig } from '../../config';
 
 // let conf;
@@ -391,12 +392,6 @@ export const drawState = function(elem, stateDef) {
   return stateInfo;
 };
 
-const getRows = s => {
-  let str = s.replace(/<br\s*\/?>/gi, '#br#');
-  str = str.replace(/\\n/g, '#br#');
-  return str.split('#br#');
-};
-
 let edgeCount = 0;
 export const drawEdge = function(elem, path, relation) {
   const getRelationType = function(type) {
@@ -455,7 +450,7 @@ export const drawEdge = function(elem, path, relation) {
 
     const { x, y } = utils.calcLabelPosition(path.points);
 
-    const rows = getRows(relation.title);
+    const rows = common.getRows(relation.title);
 
     // console.warn(rows);
 

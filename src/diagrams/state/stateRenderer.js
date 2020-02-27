@@ -3,6 +3,7 @@ import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { logger } from '../../logger';
 import stateDb from './stateDb';
+import common from '../common/common';
 import { parser } from './parser/stateDiagram';
 // import idCache from './id-cache';
 import { drawState, addTitleAndBox, drawEdge } from './shapes';
@@ -97,14 +98,6 @@ export const draw = function(text, id) {
 };
 const getLabelWidth = text => {
   return text ? text.length * conf.fontSizeFactor : 1;
-};
-
-/* TODO: REMOVE DUPLICATION, SEE SHAPES */
-const getRows = s => {
-  if (!s) return 1;
-  let str = s.replace(/<br\s*\/?>/gi, '#br#');
-  str = str.replace(/\\n/g, '#br#');
-  return str.split('#br#');
 };
 
 const renderDoc = (doc, diagram, parentId, altBkg) => {
@@ -239,7 +232,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
       {
         relation: relation,
         width: getLabelWidth(relation.title),
-        height: conf.labelHeight * getRows(relation.title).length,
+        height: conf.labelHeight * common.getRows(relation.title).length,
         labelpos: 'c'
       },
       'id' + cnt

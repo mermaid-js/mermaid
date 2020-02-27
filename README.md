@@ -5,13 +5,44 @@
 <!-- </Remove this in the future> -->
 
 # mermaid [![Build Status](https://travis-ci.org/mermaid-js/mermaid.svg?branch=master)](https://travis-ci.org/mermaid-js/mermaid) [![NPM](https://img.shields.io/npm/v/mermaid)](https://www.npmjs.com/package/mermaid) [![Coverage Status](https://coveralls.io/repos/github/mermaid-js/mermaid/badge.svg?branch=master)](https://coveralls.io/github/mermaid-js/mermaid?branch=master) [![Join our Slack!](https://img.shields.io/static/v1?message=join%20chat&color=9cf&logo=slack&label=slack)](https://join.slack.com/t/mermaid-talk/shared_invite/enQtNzc4NDIyNzk4OTAyLWVhYjQxOTI2OTg4YmE1ZmJkY2Y4MTU3ODliYmIwOTY3NDJlYjA0YjIyZTdkMDMyZTUwOGI0NjEzYmEwODcwOTE) [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Mermaid/mermaid)
+
 <!-- <Main description> -->
 __mermaid is a Javascript based diagramming and charting tool. It generates diagrams flowcharts and more, using markdown-inspired text for ease and speed.__
 
+Check out the list of [Integrations and Usages of Mermaid](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md)
+
+For more information and help in getting started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Alternatively, you can also play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/)
+<!-- </Main description> --> 
+
+:trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+
+## New diagrams in 8.4
+
+With version 8.4 class diagrams have got some new features, bug fixes and documentation. Another new feature in 8.4 is the new diagram type, state diagrams.
+
+![Image show the two new diagram types](.docs/img/new-diagrams.png)
+
+## Special note regarding version 8.2
+
+In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced which sets the level of trust to be used on the parsed diagrams.
+
+- **true**: (default) tags in text are encoded, click functionality is disabled
+- false: tags in text are allowed, click functionality is enabled
+
+Closed issues:
+
+⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
+
+If your application is taking resposibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
+
+```javascript
+mermaidAPI.initialize({
+    securityLevel: 'loose'
+});
+```
+
 For more information and help in getting started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/) or jump straight to the [installation and usage](http://mermaid-js.github.io/mermaid/#/usage).
 <!-- </Main description> -->
-
-:trophy: _"The most exciting use of technology"_ - [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees)
 
 __The following are some examples of the diagrams, charts and graphs that can be made using mermaid and the Markdown-inspired text specific to it. Click here jump into the [text syntax](https://mermaid-js.github.io/mermaid/#/n00b-syntaxReference).__
 <table>
