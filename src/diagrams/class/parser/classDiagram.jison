@@ -9,7 +9,8 @@
 %x string generic struct
 
 %%
-\%\%[^\n]*\n*           /* do nothing */
+\%\%[^\n]*\n*           /* skip comments */
+\%\%\*((.|\n)*)\*\%\%   /* multiline skip comments */
 \n+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram"          return 'CLASS_DIAGRAM';

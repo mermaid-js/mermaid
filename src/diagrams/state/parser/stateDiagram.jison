@@ -33,10 +33,11 @@
 %%
 
 [\n]+                            return 'NL';
-\s+                              /* skip all whitespace */
+\s+                                     /* skip all whitespace */
 <ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
-\%%[^\n]*                        /* skip comments */
+\%%[^\n]*                               /* skip comments */
+\%\%\*((.|\n)*)\*\%\%                   /* multiline skip comments */
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
