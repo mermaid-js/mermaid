@@ -80,6 +80,7 @@ So if you want to really simplify things when testing this out, don't use a web 
 # Note that all this is written in the html `<body>` section of the web page.
 
 When writing the html file, we give the web browser three instructions inside the html code:
+
 a. A reference for fetching the online mermaid renderer, which is written in Javascript.
 
 b. The mermaid code for the diagram we want to create.
