@@ -24,6 +24,6 @@ mermaid can potentially cut down the amount of time and effort spent on the proc
 
 However, a lot of the mermaid documentation is geared to professional frontend developers, presuming a skill set which I simply do not have.
 
-If you need some basic instructions and introductions. And here are a few good places to start:
+If you need some basic instructions and introductions, here are a few good places to start:
 
-For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted), or you can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/)
+For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted), or you can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/), alternatively, you could also view the [integrations and uses](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md) for mermaid. 
