@@ -21,6 +21,10 @@ The following is a list of different integrations and plugins where mermaid is b
   - [redmine-mermaid](https://github.com/styz/redmine_mermaid)
   - [markdown-for-mermaid-plugin](https://github.com/jamieh-mongolian/markdown-for-mermaid-plugin)
 
+## CRM/ERP/Similar
+
+  - [coreBOS](http://blog.corebos.org/blog/december2019)
+
 ## Blogs
 
 - [Wordpress](https://wordpress.org)
