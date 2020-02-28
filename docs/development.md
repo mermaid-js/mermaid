@@ -3,9 +3,31 @@
 
 ## Updating the documentation
 
-We write documention with GitBook.
+Please continue writing documentation at [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
 
-Please continue with the [mermaid-gitbook](https://github.com/mermaidjs/mermaid-gitbook) project.
+We publish documentation using GitHub Pages.
+
+
+### Questions and/or suggestions ?
+After logging in at [GitHub.com](https://www.github.com), open or append to an issue [using the GitHub issue tracker of the mermaid-js repository](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Area%3A+Documentation%22).
+
+### How to contribute a suggestion
+Markdown is used to format the text, for more information about Markdown [see the GitHub Markdown help page](https://help.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax).
+
+If you want to use an editor on your own computer, you may follow these steps:
+* Find the Markdown file (.md) to edit in the [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs) directory on the develop branch.
+* Create a fork of the develop branch.
+* Make changes or add new documentation.
+* Commit changes to your fork and push it to GitHub.
+* Create a pull request of your fork.
+
+If you don't have such editor on your computer, you may follow these steps:
+* Login at [GitHub.com](https://www.github.com).
+* Navigate to [mermaid-js/mermaid/docs](https://github.com/mermaid-js/mermaid/tree/develop/docs).
+* To edit a file, click the pencil icon at the top-right of the file contents panel.
+* Describe what you changed in the "Propose file change" section, located at the bottom of the page.
+* Submit your changes by clicking the button "Propose file change" at the bottom (by automatic creation of a fork and a new branch).
+* Create a pull request of your newly forked branch, by clicking the green "Create pull request" button.
 
 
 ## How to add a new diagram type

@@ -36,7 +36,7 @@ export const addVertices = function(vert, g, svgId) {
      * Variable for storing the classes for the vertex
      * @type {string}
      */
-    let classStr = '';
+    let classStr = 'default';
     if (vertex.classes.length > 0) {
       classStr = vertex.classes.join(' ');
     }

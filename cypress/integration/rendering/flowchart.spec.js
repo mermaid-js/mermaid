@@ -524,7 +524,8 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
-it('25: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
+
+  it('25: Handle link click events (link, anchor, mailto, other protocol, script)', () => {
     imgSnapshotTest(
       `graph TB
       TITLE["Link Click Events<br>(click the nodes below)"]
@@ -583,6 +584,39 @@ it('25: Handle link click events (link, anchor, mailto, other protocol, script)'
       { flowchart: { htmlLabels: false } }
     );
   });
+
+  it('28: Apply default class to all nodes which do not have another class assigned (htmlLabels enabled)', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[myClass1] --> B[default] & C[default]
+      B[default] & C[default] --> D[myClass2]
+      classDef default stroke-width:2px,fill:none,stroke:silver
+      classDef node color:red
+      classDef myClass1 color:#0000ff
+      classDef myClass2 stroke:#0000ff,fill:#ccccff
+      class A myClass1
+      class D myClass2
+      `,
+      { flowchart: { htmlLabels: true } }
+    );
+  });
+
+  it('29: Apply default class to all nodes which do not have another class assigned (htmlLabels disabled)', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[myClass1] --> B[default] & C[default]
+      B[default] & C[default] --> D[myClass2]
+      classDef default stroke-width:2px,fill:none,stroke:silver
+      classDef node color:red
+      classDef myClass1 color:#0000ff
+      classDef myClass2 stroke:#0000ff,fill:#ccccff
+      class A myClass1
+      class D myClass2
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+
   it('30: Possibility to style text color of nodes and subgraphs as well as apply classes to subgraphs', () => {
     imgSnapshotTest(
       `graph LR
