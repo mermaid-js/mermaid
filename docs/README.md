@@ -5,7 +5,7 @@
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![banner](./img/header.png)
-
+# What is mermaid?
 mermaid offers the capacity to generate diagrams and charts from markdown inspired text.
 
 The reasoning behind it's inception was a need for simplified documentation and frustration with heavy and time consuming tools like Visio, for explaining code?
@@ -44,7 +44,7 @@ mermaidAPI.initialize({
 
 **🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/k3nsv/mermaid/issues/866)**
 
-## The following are examples of Diagrams that mermaid can make.
+## The following are examples of Diagrams that mermaid can make:
 
 ### Flowchart
 
