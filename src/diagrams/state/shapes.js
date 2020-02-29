@@ -459,7 +459,7 @@ export const drawEdge = function(elem, path, relation) {
     const titleRows = [];
     let maxWidth = 0;
     let minX = 0;
-    let totalHeight = 0;
+
     for (let i = 0; i <= rows.length; i++) {
       const title = label
         .append('text')
