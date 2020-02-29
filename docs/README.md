@@ -6,11 +6,12 @@
 
 ![banner](./img/header.png)
 # What is mermaid?
-mermaid offers the capacity to generate diagrams and charts from markdown inspired text.
 
-The reasoning behind it's inception was a need for simplified documentation and frustration with heavy and time consuming tools like Visio, for explaining code?
+It is a simple markdown-inspired, script language for diagramming and charting that can be deployed via Javascipt.
 
-Thus a simple markdown-inspired, script language for diagramming and charting, via javascript was made.
+The reasoning behind it's inception was a need for simplified documentation and frustration with heavy and time consuming tools like Visio, for explaining code. 
+
+Thus mermaid was created to make the process of diagramming and charting, as simple and as close to markdown, as possible.
 
 Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 For the uninitiated, you can also  try out our [live editor](https://mermaid-js.github.io/mermaid-live-editor/) and look at our [documentation](https://mermaid-js.github.io/mermaid/#/n00b-overview) for a deeper understanding of the tool itself, more importantly don't forget to have fun. 
