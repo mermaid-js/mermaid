@@ -20,15 +20,10 @@
     <h1>info below</h1>
     <div style="display: flex;width: 100%; height: 100%">
       <div class="mermaid" style="width: 100%; height: 100%">
-        sequenceDiagram
-        Alice->>John: Hello John, how are you?
-        loop Healthcheck
-            John->>John: Fight against hypochondria
-        end
-        Note right of John: Rational thoughts!
-        John-->>Alice: Great!
-        John->>Bob: How about you?
-        Bob-->>John: Jolly good!
+        stateDiagram
+          O --> A : ong line using<br/>should work<br/>should work<br/>should work
+          A --> B : ong line using<br/>should work
+          B --> C : Sing line
 
       </div>
 </div>
