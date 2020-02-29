@@ -12,8 +12,7 @@
 %}
 
 %%
-\%\%[^\n]*               /* skip comments */
-\%\%\*((.|\n)*)\*\%\%    /* multiline skip comments */
+\%\%[^\n]*               /* do nothing */
 \s+                      /* skip whitespace */
 "pie"		             return 'pie'    ;
 [\s\n\r]+                 return 'NL'      ;

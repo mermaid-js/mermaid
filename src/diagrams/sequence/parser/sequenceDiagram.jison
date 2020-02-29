@@ -26,7 +26,6 @@
 <ID,ALIAS,LINE>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,ID,ALIAS,LINE>\#[^\n]*  /* skip comments */
 \%%[^\n]*                        /* skip comments */
-\%\%\*((.|\n)*)\*\%\%     		 /* multiline skip comments */
 "participant"     { this.begin('ID'); return 'participant'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)  { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"       { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
