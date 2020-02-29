@@ -6,13 +6,14 @@
 
 ![banner](./img/header.png)
 
-Generation of diagrams and flowcharts from text in a similar manner as markdown.
+mermaid offers the capacity to generate diagrams and charts from markdown inspired text.
 
-Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
+The reasoning behind it's inception was a need for simplified documentation and frustration with heavy and time consuming tools like Visio, for explaining code?
 
-This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
+Thus a simple markdown-inspired, script language for diagramming and charting, via javascript was made.
 
 Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
+For the uninitiated, you can also  try out our [live editor](https://mermaid-js.github.io/mermaid-live-editor/) and look at our [documentation](https://mermaid-js.github.io/mermaid/#/n00b-overview) for a deeper understanding of the tool itself, more importantly don't forget to have fun. 
 
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
@@ -41,9 +42,9 @@ mermaidAPI.initialize({
 });
 ```
 
-**🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
+**🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/k3nsv/mermaid/issues/866)**
 
-## Diagrams
+## The following are examples of Diagrams that mermaid can make.
 
 ### Flowchart
 
