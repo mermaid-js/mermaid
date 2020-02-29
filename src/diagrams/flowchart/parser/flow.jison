@@ -10,8 +10,7 @@
 %x dir
 %x vertex
 %%
-\%\%[^\n]*\n*           /* skip comments */
-\%\%\*((.|\n)*)\*\%\%   /* multiline skip comments */
+\%\%[^\n]*\n*           /* do nothing */
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
