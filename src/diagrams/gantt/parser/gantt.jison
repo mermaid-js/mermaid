@@ -17,7 +17,6 @@
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
 \%%[^\n]*               /* skip comments */
-\%\%\*((.|\n)*)\*\%\%   /* multiline skip comments */
 
 /*
 ---interactivity command---
