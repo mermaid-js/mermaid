@@ -8,22 +8,22 @@ let relationships = [];
 let title = '';
 
 const Cardinality = {
-  ONLY_ONE_TO_ONE_OR_MORE     : 'ONLY_ONE_TO_ONE_OR_MORE',
-  ONLY_ONE_TO_ZERO_OR_MORE    : 'ONLY_ONE_TO_ZERO_OR_MORE',    
-  ZERO_OR_ONE_TO_ZERO_OR_MORE : 'ZERO_OR_ONE_TO_ZERO_OR_MORE',
-  ZERO_OR_ONE_TO_ONE_OR_MORE  : 'ZERO_OR_ONE_TO_ONE_OR_MORE',
-  ONE_OR_MORE_TO_ONLY_ONE     : 'ONE_OR_MORE_TO_ONLY_ONE',
-  ZERO_OR_MORE_TO_ONLY_ONE    : 'ZERO_OR_MORE_TO_ONLY_ONE',
-  ZERO_OR_MORE_TO_ZERO_OR_ONE : 'ZERO_OR_MORE_TO_ZERO_OR_ONE',
-  ONE_OR_MORE_TO_ZERO_OR_ONE  : 'ONE_OR_MORE_TO_ZERO_OR_ONE',
-  ZERO_OR_ONE_TO_ONLY_ONE     : 'ZERO_OR_ONE_TO_ONLY_ONE',
-  ONLY_ONE_TO_ONLY_ONE        : 'ONLY_ONE_TO_ONLY_ONE',
-  ONLY_ONE_TO_ZERO_OR_ONE     : 'ONLY_ONE_TO_ZERO_OR_ONE',
-  ZERO_OR_ONE_TO_ZERO_OR_ONE  : 'ZERO_OR_ONE_TO_ZERO_OR_ONE',  
+  ONLY_ONE_TO_ONE_OR_MORE: 'ONLY_ONE_TO_ONE_OR_MORE',
+  ONLY_ONE_TO_ZERO_OR_MORE: 'ONLY_ONE_TO_ZERO_OR_MORE',
+  ZERO_OR_ONE_TO_ZERO_OR_MORE: 'ZERO_OR_ONE_TO_ZERO_OR_MORE',
+  ZERO_OR_ONE_TO_ONE_OR_MORE: 'ZERO_OR_ONE_TO_ONE_OR_MORE',
+  ONE_OR_MORE_TO_ONLY_ONE: 'ONE_OR_MORE_TO_ONLY_ONE',
+  ZERO_OR_MORE_TO_ONLY_ONE: 'ZERO_OR_MORE_TO_ONLY_ONE',
+  ZERO_OR_MORE_TO_ZERO_OR_ONE: 'ZERO_OR_MORE_TO_ZERO_OR_ONE',
+  ONE_OR_MORE_TO_ZERO_OR_ONE: 'ONE_OR_MORE_TO_ZERO_OR_ONE',
+  ZERO_OR_ONE_TO_ONLY_ONE: 'ZERO_OR_ONE_TO_ONLY_ONE',
+  ONLY_ONE_TO_ONLY_ONE: 'ONLY_ONE_TO_ONLY_ONE',
+  ONLY_ONE_TO_ZERO_OR_ONE: 'ONLY_ONE_TO_ZERO_OR_ONE',
+  ZERO_OR_ONE_TO_ZERO_OR_ONE: 'ZERO_OR_ONE_TO_ZERO_OR_ONE',
   ZERO_OR_MORE_TO_ZERO_OR_MORE: 'ZERO_OR_MORE_TO_ZERO_OR_MORE',
-  ZERO_OR_MORE_TO_ONE_OR_MORE : 'ZERO_OR_MORE_TO_ONE_OR_MORE',
-  ONE_OR_MORE_TO_ZERO_OR_MORE : 'ONE_OR_MORE_TO_ZERO_OR_MORE',
-  ONE_OR_MORE_TO_ONE_OR_MORE  : 'ONE_OR_MORE_TO_ONE_OR_MORE'
+  ZERO_OR_MORE_TO_ONE_OR_MORE: 'ZERO_OR_MORE_TO_ONE_OR_MORE',
+  ONE_OR_MORE_TO_ZERO_OR_MORE: 'ONE_OR_MORE_TO_ZERO_OR_MORE',
+  ONE_OR_MORE_TO_ONE_OR_MORE: 'ONE_OR_MORE_TO_ONE_OR_MORE'
 };
 
 const addEntity = function(name) {
@@ -37,16 +37,16 @@ const getEntities = () => entities;
 
 const addRelationship = function(entA, rolA, entB, rolB, card) {
   let rel = {
-    entityA     : entA,
-    roleA       : rolA,
-    entityB     : entB,
-    roleB       : rolB,
-    cardinality : card
+    entityA: entA,
+    roleA: rolA,
+    entityB: entB,
+    roleB: rolB,
+    cardinality: card
   };
 
   relationships.push(rel);
   logger.debug('Added new relationship :', rel);
-}
+};
 
 const getRelationships = () => relationships;
 
