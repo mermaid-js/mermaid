@@ -40,6 +40,9 @@ import infoDb from './diagrams/info/infoDb';
 import pieRenderer from './diagrams/pie/pieRenderer';
 import pieParser from './diagrams/pie/parser/pie';
 import pieDb from './diagrams/pie/pieDb';
+import erDb from './diagrams/er/erDb';
+import erParser from './diagrams/er/parser/erDiagram';
+import erRenderer from './diagrams/er/erRenderer';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -342,6 +345,84 @@ const config = {
     edgeLengthFactor: '20',
     compositTitleSize: 35,
     radius: 5
+  },
+
+  /**
+   * The object containing configurations specific for entity relationship diagrams
+   */
+  er: {
+    /**
+     * The mimimum width of an entity box
+     */
+    minEntityWidth: 100,
+
+    /**
+     * The minimum height of an entity box
+     */
+    minEntityHeight: 75,
+
+    /**
+     * The minimum internal padding between the text in an entity box and the enclosing box borders
+     */
+    entityPadding: 15,
+
+    /**
+     * Stroke color of box edges and lines
+     */
+    stroke: 'purple',
+
+    /**
+     * Fill color of entity boxes
+     */
+    fill: 'honeydew',
+
+    /**
+     * Distance of the 'ankle' from the intersection point
+     */
+    ankleDistance: 35,
+
+    /**
+     * Distance of the 'heel' from the intersection point
+     */
+    heelDistance: 20,
+
+    /**
+     * Distance of the side 'toes' perpendicular to the intersection point
+     */
+    toeDistance: 12,
+
+    /**
+     * The style of the toes on the crow's foot: either 'curved' or 'straight'
+     */
+    toeStyle: 'curved',
+
+    /**
+     * THE REMAINING CONFIG OPTIONS FOR 'er' DIAGRAMS ARE EXPERIMENTAL AND ARE USEFUL
+     * DURING DEVELOPMENT BUT WILL PROBABLY BE REMOVED BEFORE E-R DIAGRAMS ARE PRODUCTIONIZED.
+     * THEY ARE HELPFUL IN DIAGNOSING POSITIONAL AND LAYOUT-RELATED ISSUES; THEY WOULDN'T
+     * LOOK GOOD ON REAL DIAGRAMS
+     */
+
+    // Opacity of entity boxes - helpful when < 100% to see lines 'behind' the box
+    fillOpacity: '100%',
+
+    // Whether to show dots at important points in the diagram geometry
+    dots: false,
+
+    // Radius of dots
+    dotRadius: 1.5,
+
+    // Color of intersection point dots
+    intersectColor: 'green',
+
+    // Color of 'ankle' dots
+    ankleColor: 'red',
+
+    // Color of 'heel' dots
+    heelColor: 'blue',
+
+    // Color of 'toe' dots
+    toeColor: 'darkorchid'
   }
 };
 
@@ -388,6 +469,11 @@ function parse(text) {
       logger.debug('pie');
       parser = pieParser;
       parser.parser.yy = pieDb;
+      break;
+    case 'er':
+      logger.debug('er');
+      parser = erParser;
+      parser.parser.yy = erDb;
       break;
   }
 
@@ -605,6 +691,10 @@ const render = function(id, _txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       pieRenderer.setConf(config.class);
       pieRenderer.draw(txt, id, pkg.version);
+      break;
+    case 'er':
+      erRenderer.setConf(config.er);
+      erRenderer.draw(txt, id, pkg.version);
       break;
   }
 
