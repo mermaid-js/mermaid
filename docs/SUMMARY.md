@@ -1,6 +1,6 @@
 # Summary
 
-- [mermaid](README.md)
+- [mermaid-README](README.md)
 - [FAQ](faq.md)
 - [Breaking changes](breakingChanges.md)
 - [Usage](usage.md)
