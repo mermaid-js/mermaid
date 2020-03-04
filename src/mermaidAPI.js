@@ -17,6 +17,7 @@ import { setConfig, getConfig } from './config';
 import { logger, setLogLevel } from './logger';
 import utils from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
+import flowRendererV2 from './diagrams/flowchart-v2/flowRenderer';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowDb from './diagrams/flowchart/flowDb';
 import sequenceRenderer from './diagrams/sequence/sequenceRenderer';
@@ -363,6 +364,11 @@ function parse(text) {
       parser = flowParser;
       parser.parser.yy = flowDb;
       break;
+    case 'flowchart-v2':
+      flowDb.clear();
+      parser = flowRendererV2;
+      parser.parser.yy = flowDb;
+      break;
     case 'sequence':
       parser = sequenceParser;
       parser.parser.yy = sequenceDb;
@@ -567,6 +573,11 @@ const render = function(id, _txt, cb, container) {
       config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       flowRenderer.setConf(config.flowchart);
       flowRenderer.draw(txt, id, false);
+      break;
+    case 'flowchart-v2':
+      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+      flowRendererV2.setConf(config.flowchart);
+      flowRendererV2.draw(txt, id, false);
       break;
     case 'sequence':
       config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

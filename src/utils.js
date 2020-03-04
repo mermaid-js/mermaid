@@ -41,6 +41,9 @@ export const detectType = function(text) {
   if (text.match(/^\s*gitGraph/)) {
     return 'git';
   }
+  if (text.match(/^\s*flowchart/)) {
+    return 'flowchart-v2';
+  }
 
   if (text.match(/^\s*info/)) {
     return 'info';
