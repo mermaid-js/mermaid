@@ -2,14 +2,13 @@
 
 ## mermaidAPI
 
-This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
+This API can  be used optionally handle the integration  of mermaid to a web page, instead of using the default integration methods provided by mermaid.js.
 
-The core of this api is the [**render**][1] function which, given a graph
-definition as text, renders the graph/diagram and returns an svg element for the graph.
+The core of this api is the [**render**][1] function which, renders the given text based input to a graph/diagram, that is returned as an svg element.
 
-It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.
+After it is rendered, it is is then up to the user of the API to make use of the svg, which can be either inserted somewhere in the page or something else altogether.
 
-In addition to the render function, a number of behavioral configuration options are available.
+In addition to the render function, a number of behavioral configuration options are also available.
 
 ## Configuration
 
