@@ -21,28 +21,15 @@ export const setConf = function(cnf) {
  */
 const addEntities = function(entities, g) {
   const keys = Object.keys(entities);
-  //const fontFamily = getConfig().fontFamily;
 
   keys.forEach(function(id) {
     const entity = entities[id];
-
     const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 
-    // Add the text content (the entity id)
-    /*
-    const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-    tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-    tspan.setAttribute('dy', '1em');
-    tspan.setAttribute('x', '1');
-    tspan.textContent = id;
-    tspan.setAttribute('style', 'font-family: monospace');
-    svgLabel.appendChild(tspan);
-    */
     g.setNode(entity, {
       labelType: 'svg',
       width: 100,
       height: 75,
-      //labelStyle: labelStyle,
       shape: 'rect',
       label: svgLabel,
       id: entity
@@ -56,7 +43,7 @@ const addEntities = function(entities, g) {
  * @param entities the entities to be drawn
  * @param g the dagre graph that contains the vertex and edge definitions post-layout
  */
-const drawEntities = function(diagram, entities, g) {
+const drawEntities = function(diagram, entities, g, svgId) {
   // For each vertex in the graph:
   // - append the text label centred in the right place
   // - get it's bounding box and calculate the size of the enclosing rectangle
@@ -66,12 +53,14 @@ const drawEntities = function(diagram, entities, g) {
     console.debug('Handling node ', v);
 
     // Get the centre co-ordinate of the node so that we can centre the entity name
-    let centre = { x: g.node(v).x, y: g.node(v).y };
+    const centre = { x: g.node(v).x, y: g.node(v).y };
 
     // Label the entity - this is done first so that we can get the bounding box
     // which then determines the size of the rectangle
-    let textNode = diagram
+    const textId = 'entity-' + v + '-' + svgId;
+    const textNode = diagram
       .append('text')
+      .attr('id', textId)
       .attr('x', centre.x)
       .attr('y', centre.y)
       .attr('dominant-baseline', 'middle')
@@ -79,19 +68,19 @@ const drawEntities = function(diagram, entities, g) {
       .attr('style', 'font-family: ' + getConfig().fontFamily)
       .text(v);
 
-    let textBBox = textNode.node().getBBox();
-    let entityWidth = Math.max(conf.minEntityWidth, textBBox.width + conf.entityPadding * 2);
-    let entityHeight = Math.max(conf.minEntityHeight, textBBox.height + conf.entityPadding * 2);
+    const textBBox = textNode.node().getBBox();
+    const entityWidth = Math.max(conf.minEntityWidth, textBBox.width + conf.entityPadding * 2);
+    const entityHeight = Math.max(conf.minEntityHeight, textBBox.height + conf.entityPadding * 2);
 
     // Add info to the node so that we can retrieve it later when drawing relationships
     g.node(v).width = entityWidth;
     g.node(v).height = entityHeight;
 
-    // Draw the rectangle
-    let rectX = centre.x - entityWidth / 2;
-    let rectY = centre.y - entityHeight / 2;
+    // Draw the rectangle - insert it before the text so that the text is not obscured
+    const rectX = centre.x - entityWidth / 2;
+    const rectY = centre.y - entityHeight / 2;
     diagram
-      .insert('rect')
+      .insert('rect', '#' + textId)
       .attr('fill', conf.fill)
       .attr('fill-opacity', conf.fillOpacity)
       .attr('stroke', conf.stroke)
@@ -99,18 +88,6 @@ const drawEntities = function(diagram, entities, g) {
       .attr('y', rectY)
       .attr('width', entityWidth)
       .attr('height', entityHeight);
-
-    // TODO: Revisit
-    // Bit of a hack - we're adding the text AGAIN because
-    // the rectangle is filled to obscure the lines that go to the centre!
-    diagram
-      .append('text')
-      .attr('x', centre.x)
-      .attr('y', centre.y)
-      .attr('dominant-baseline', 'middle')
-      .attr('text-anchor', 'middle')
-      .attr('style', 'font-family: ' + getConfig().fontFamily)
-      .text(v);
   });
 }; // drawEntities
 
@@ -118,7 +95,7 @@ const addRelationships = function(relationships, g) {
   relationships.forEach(function(r) {
     g.setEdge(r.entityA, r.entityB, { relationship: r });
   });
-};
+}; // addRelationships
 
 const drawRelationships = function(diagram, relationships, g) {
   relationships.forEach(function(rel) {
@@ -231,35 +208,66 @@ const getToes = function(relationship, fromPoint, toPoint, distance) {
   const toeXDelta = toeYDelta * Math.abs(gradient);
 
   if (gradient > 0) {
-    if (fromPoint.x < toPoint.x) {
-      // Scenario A
-
+    const topToe = function(point) {
       return {
-        to: {
-          top: {
-            x: toPoint.x + toeXDelta,
-            y: toPoint.y - toeYDelta
-          },
-          bottom: {
-            x: toPoint.x - toeXDelta,
-            y: toPoint.y + toeYDelta
-          }
-        },
-        from: {
-          top: {
-            x: fromPoint.x + toeXDelta,
-            y: fromPoint.y - toeYDelta
-          },
-          bottom: {
-            x: fromPoint.x - toeXDelta,
-            y: fromPoint.y + toeYDelta
-          }
-        }
+        x: point.x + toeXDelta,
+        y: point.y - toeYDelta
       };
-    } else {
-      // Scenario E
-    }
+    };
+
+    const bottomToe = function(point) {
+      return {
+        x: point.x - toeXDelta,
+        y: point.y + toeYDelta
+      };
+    };
+
+    const lower = {
+      top: fromPoint.x < toPoint.x ? topToe(toPoint) : topToe(fromPoint),
+      bottom: fromPoint.x < toPoint.x ? bottomToe(toPoint) : bottomToe(fromPoint)
+    };
+
+    const upper = {
+      top: fromPoint.x < toPoint.x ? topToe(fromPoint) : topToe(toPoint),
+      bottom: fromPoint.x < toPoint.x ? bottomToe(fromPoint) : bottomToe(toPoint)
+    };
+
+    return {
+      to: fromPoint.x < toPoint.x ? lower : upper,
+      from: fromPoint.x < toPoint.x ? upper : lower
+    };
   }
+
+  /*
+  if (fromPoint.x < toPoint.x) {
+    // Scenario A
+
+    return {
+      to: {
+        top: {
+          x: toPoint.x + toeXDelta,
+          y: toPoint.y - toeYDelta
+        },
+        bottom: {
+          x: toPoint.x - toeXDelta,
+          y: toPoint.y + toeYDelta
+        }
+      },
+      from: {
+        top: {
+          x: fromPoint.x + toeXDelta,
+          y: fromPoint.y - toeYDelta
+        },
+        bottom: {
+          x: fromPoint.x - toeXDelta,
+          y: fromPoint.y + toeYDelta
+        }
+      }
+    };
+  } else {
+    // Scenario E
+  }
+  */
 }; // getToes
 
 const getJoints = function(relationship, fromPoint, toPoint, distance) {
@@ -445,7 +453,7 @@ export const draw = function(text, id) {
 
   drawRelationships(diagram, relationships, g);
   drawFeet(diagram, relationships, g);
-  drawEntities(diagram, entities, g);
+  drawEntities(diagram, entities, g, id);
 
   const padding = 8;
 
@@ -473,6 +481,5 @@ export const draw = function(text, id) {
 
 export default {
   setConf,
-  //addEntities,
   draw
 };
