@@ -30,6 +30,11 @@ gantt
 
 ```
 gantt
+##     excludes (excludes specified day, i.e, "weekends", saturday, sunday, monday, or specific dates, making it useful for computing the amount of time it will take before a project is finished, not the amount of time and effort spent on a project, by individual contributors. 
+important note when using exclude function, the graphic will accomodate the exclusion of certain days. however, if the date being excluded is inside the time alloted for a task, by adding an extra day to the duration of the task, rather than creating a gap within the scheduled task. 
+
+## present some screenshots to show for it and the math to back it up. 
+
        dateFormat  YYYY-MM-DD
        title Adding GANTT diagram functionality to mermaid
 
