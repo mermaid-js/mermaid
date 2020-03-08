@@ -3,7 +3,7 @@
 > A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule and the amount of time it would take for any one project to finish. Gantt charts illustrate number of days between the start and finish dates of the terminal elements and summary elements of a project.
  
  ## A note to users
- Gannt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The lower axis represents time and the right records the different tasks and their order.  
+ Gannt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.   
  
  It is important to remember that when a date, day or collection of dates are "excluded", the Gannt Chart will accomodate those changes by extending another day, towards the right, not by creating a gap inside the task.
  As shown here ![](https://github.com/NeilCuzon/mermaid/blob/develop/docs/img/Gantt-excluded-days-within.png)
