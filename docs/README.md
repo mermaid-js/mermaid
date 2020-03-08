@@ -9,7 +9,7 @@
 
 It is a simple markdown-inspired, script language for diagramming and charting that can be deployed via Javascipt.
 
-The reasoning behind it's inception was a need for simplified documentation and frustration with heavy and time consuming tools like Visio, for explaining code. 
+The reasoning behind it's inception was a need for simplified documentation and frustration with heavy and time consuming tools for explaining code, like Visio. 
 
 Thus mermaid was created to make the process of diagramming and charting, as simple and as close to markdown, as possible.
 
