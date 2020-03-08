@@ -17,7 +17,7 @@ import { setConfig, getConfig } from './config';
 import { logger, setLogLevel } from './logger';
 import utils from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
-import flowRendererV2 from './diagrams/flowchart-v2/flowRenderer';
+import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowDb from './diagrams/flowchart/flowDb';
 import sequenceRenderer from './diagrams/sequence/sequenceRenderer';
@@ -165,7 +165,10 @@ const config = {
      *   * linear **default**
      *   * cardinal
      */
-    curve: 'linear'
+    curve: 'linear',
+    // Only used in new experimental rendering
+    // repreesents the padding between the labels and the shape
+    padding: 15
   },
 
   /**

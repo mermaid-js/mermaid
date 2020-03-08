@@ -2,15 +2,15 @@ import graphlib from 'graphlib';
 import * as d3 from 'd3';
 import dagre from 'dagre';
 
-import flowDb from '../flowchart/flowDb';
-import flow from '../flowchart/parser/flow';
+import flowDb from './flowDb';
+import flow from './parser/flow';
 import { getConfig } from '../../config';
 
-import dagreD3 from 'dagre-d3';
+import { render, addShape } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import flowChartShapes from '../flowchart/flowChartShapes';
+import flowChartShapes from './flowChartShapes';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -21,7 +21,7 @@ export const setConf = function(cnf) {
 };
 
 /**
- * Function that adds the vertices found in the graph definition to the graph to be rendered.
+ * Function that adds the vertices found during parsing to the graph to be rendered.
  * @param vert Object containing the vertices.
  * @param g The graph that is to be drawn.
  */
@@ -135,11 +135,13 @@ export const addVertices = function(vert, g, svgId) {
       labelStyle: styles.labelStyle,
       shape: _shape,
       label: vertexNode,
+      labelText: vertexText,
       rx: radious,
       ry: radious,
       class: classStr,
       style: styles.style,
-      id: vertex.id
+      id: vertex.id,
+      padding: getConfig().flowchart.padding
     });
   });
 };
@@ -164,7 +166,7 @@ export const addEdges = function(edges, g) {
   edges.forEach(function(edge) {
     cnt++;
     const edgeData = {};
-
+    edgeData.id = 'id' + cnt;
     // Set link type for rendering
     if (edge.type === 'arrow_open') {
       edgeData.arrowhead = 'none';
@@ -321,50 +323,46 @@ export const draw = function(text, id) {
   addVertices(vert, g, id);
   addEdges(edges, g);
 
-  // Create the renderer
-  const Render = dagreD3.render;
-  const render = new Render();
-
   // Add custom shapes
-  flowChartShapes.addToRender(render);
+  // flowChartShapes.addToRenderV2(addShape);
 
   // Add our custom arrow - an empty arrowhead
-  render.arrows().none = function normal(parent, id, edge, type) {
-    const marker = parent
-      .append('marker')
-      .attr('id', id)
-      .attr('viewBox', '0 0 10 10')
-      .attr('refX', 9)
-      .attr('refY', 5)
-      .attr('markerUnits', 'strokeWidth')
-      .attr('markerWidth', 8)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto');
+  // render.arrows().none = function normal(parent, id, edge, type) {
+  //   const marker = parent
+  //     .append('marker')
+  //     .attr('id', id)
+  //     .attr('viewBox', '0 0 10 10')
+  //     .attr('refX', 9)
+  //     .attr('refY', 5)
+  //     .attr('markerUnits', 'strokeWidth')
+  //     .attr('markerWidth', 8)
+  //     .attr('markerHeight', 6)
+  //     .attr('orient', 'auto');
 
-    const path = marker.append('path').attr('d', 'M 0 0 L 0 0 L 0 0 z');
-    dagreD3.util.applyStyle(path, edge[type + 'Style']);
-  };
+  //   // const path = marker.append('path').attr('d', 'M 0 0 L 0 0 L 0 0 z');
+  // dagreD3.util.applyStyle(path, edge[type + 'Style']);
+  // };
 
   // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
-  render.arrows().normal = function normal(parent, id) {
-    const marker = parent
-      .append('marker')
-      .attr('id', id)
-      .attr('viewBox', '0 0 10 10')
-      .attr('refX', 9)
-      .attr('refY', 5)
-      .attr('markerUnits', 'strokeWidth')
-      .attr('markerWidth', 8)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto');
+  // render.arrows().normal = function normal(parent, id) {
+  //   const marker = parent
+  //     .append('marker')
+  //     .attr('id', id)
+  //     .attr('viewBox', '0 0 10 10')
+  //     .attr('refX', 9)
+  //     .attr('refY', 5)
+  //     .attr('markerUnits', 'strokeWidth')
+  //     .attr('markerWidth', 8)
+  //     .attr('markerHeight', 6)
+  //     .attr('orient', 'auto');
 
-    marker
-      .append('path')
-      .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-      .attr('class', 'arrowheadPath')
-      .style('stroke-width', 1)
-      .style('stroke-dasharray', '1,0');
-  };
+  //   marker
+  //     .append('path')
+  //     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+  //     .attr('class', 'arrowheadPath')
+  //     .style('stroke-width', 1)
+  //     .style('stroke-dasharray', '1,0');
+  // };
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = d3.select(`[id="${id}"]`);
@@ -372,6 +370,7 @@ export const draw = function(text, id) {
   // Run the renderer. This is what draws the final graph.
   const element = d3.select('#' + id + ' g');
   render(element, g);
+  dagre.layout(g);
 
   element.selectAll('g.node').attr('title', function() {
     return flowDb.getTooltip(this.id);
