@@ -5,6 +5,7 @@ import erParser from './parser/erDiagram';
 import dagre from 'dagre';
 import { getConfig } from '../../config';
 import { logger } from '../../logger';
+import erMarkers from './erMarkers';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -99,9 +100,118 @@ const addRelationships = function(relationships, g) {
 
 const drawRelationships = function(diagram, relationships, g) {
   relationships.forEach(function(rel) {
-    drawRelationship(diagram, rel, g);
+    //drawRelationship(diagram, rel, g);
+    drawRelationshipFromLayout(diagram, rel, g);
   });
 }; // drawRelationships
+
+const drawRelationshipFromLayout = function(diagram, rel, g) {
+  // Find the edge relating to this relationship
+  const edge = g.edge({ v: rel.entityA, w: rel.entityB });
+
+  // Using it's points, generate a line function
+  edge.points = edge.points.filter(p => !Number.isNaN(p.y));  // TODO: why is necessary?
+
+  // Get a function that will generate the line path
+  const lineFunction = d3
+    .line()
+    .x(function(d) {
+      return d.x;
+    })
+    .y(function(d) {
+      return d.y;
+    })
+    .curve(d3.curveBasis);
+
+  // Append the line to the diagram node
+  const svgPath = diagram
+    .append('path')
+    .attr('d', lineFunction(edge.points))
+    .attr('stroke', conf.stroke)
+    .attr('fill', 'none');
+
+  // TODO: Understand this
+  let url = '';
+  if (conf.arrowMarkerAbsolute) {
+    url =
+      window.location.protocol +
+      '//' +
+      window.location.host +
+      window.location.pathname +
+      window.location.search;
+    url = url.replace(/\(/g, '\\(');
+    url = url.replace(/\)/g, '\\)');
+  }
+
+  // TODO: change the way enums are imported
+  // Decide which start and end markers it needs
+  switch (rel.cardinality) {
+    case erDb.Cardinality.ONLY_ONE_TO_ONE_OR_MORE: 
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ONLY_ONE_TO_ZERO_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_ONE_TO_ONE_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ONE_OR_MORE_TO_ONLY_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_MORE_TO_ONLY_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ONE_OR_MORE_TO_ZERO_OR_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_ONE_TO_ONLY_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ONLY_ONE_TO_ONLY_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ONLY_ONE_TO_ZERO_OR_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_ONE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ZERO_OR_MORE_TO_ONE_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ONE_OR_MORE_TO_ZERO_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ONE_OR_MORE_TO_ONE_OR_MORE:
+      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      break;
+  }
+};
 
 const drawRelationship = function(diagram, relationship, g) {
   // Set the from and to co-ordinates using the graph vertices
@@ -406,7 +516,7 @@ export const draw = function(text, id) {
   const diagram = d3.select(`[id='${id}']`);
 
   // Add cardinality 'marker' definitions to the svg
-  //insertMarkers(diagram);
+  erMarkers.insertMarkers(diagram, conf);
 
   // Create the graph
   let g;
@@ -451,8 +561,8 @@ export const draw = function(text, id) {
   //const element = d3.select('#' + id + ' g');
   //render(element, g);
 
+  //drawFeet(diagram, relationships, g);
   drawRelationships(diagram, relationships, g);
-  drawFeet(diagram, relationships, g);
   drawEntities(diagram, entities, g, id);
 
   const padding = 8;
