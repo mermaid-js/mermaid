@@ -5,13 +5,13 @@
  ## A note to users
  Gannt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.   
  
- It is important to remember that when a date, day or collection of dates are "excluded", the Gannt Chart will accomodate those changes by extending another day, towards the right, not by creating a gap inside the task.
+ It is important to remember that when a date, day or collection of dates specific to a task are "excluded", the Gannt Chart will accomodate those changes by extending an equal number of day, towards the right, not by creating a gap inside the task.
  As shown here ![](https://github.com/NeilCuzon/mermaid/blob/develop/docs/img/Gantt-excluded-days-within.png)
  
  However, if the excluded date/s is between two tasks that are set to start consecutively, the excluded dates will be skipped graphically and left blank, and the following task will begin after the end of the excluded date/s.   
  As shown here ![](https://github.com/NeilCuzon/mermaid/blob/develop/docs/img/Gantt-long-weekend-look.png)
  
- Thus, it is useful for tracking the amount of time it would take before a project is finished, but it can also be used to graphically represent "non-working days.
+ A Gantt chart is useful for tracking the amount of time it would take before a project is finished, but it can also be used to graphically represent "non-working days, with a few tweaks. 
  
 Mermaid can render Gantt diagrams as SVG, PNG or a MarkDown link that can be pasted into docs. 
 
