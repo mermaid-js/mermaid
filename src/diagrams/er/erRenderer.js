@@ -110,7 +110,7 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
   const edge = g.edge({ v: rel.entityA, w: rel.entityB });
 
   // Using it's points, generate a line function
-  edge.points = edge.points.filter(p => !Number.isNaN(p.y));  // TODO: why is necessary?
+  edge.points = edge.points.filter(p => !Number.isNaN(p.y)); // TODO: why is necessary?
 
   // Get a function that will generate the line path
   const lineFunction = d3
@@ -146,7 +146,7 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
   // TODO: change the way enums are imported
   // Decide which start and end markers it needs
   switch (rel.cardinality) {
-    case erDb.Cardinality.ONLY_ONE_TO_ONE_OR_MORE: 
+    case erDb.Cardinality.ONLY_ONE_TO_ONE_OR_MORE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
@@ -155,31 +155,52 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_ONE_TO_ONE_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
     case erDb.Cardinality.ONE_OR_MORE_TO_ONLY_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_MORE_TO_ONLY_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
     case erDb.Cardinality.ONE_OR_MORE_TO_ZERO_OR_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_ONE_TO_ONLY_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
     case erDb.Cardinality.ONLY_ONE_TO_ONLY_ONE:
@@ -191,28 +212,44 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
     case erDb.Cardinality.ZERO_OR_MORE_TO_ONE_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
     case erDb.Cardinality.ONE_OR_MORE_TO_ZERO_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
     case erDb.Cardinality.ONE_OR_MORE_TO_ONE_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')');
+      svgPath.attr(
+        'marker-start',
+        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
+      );
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
   }
 };
 
+/*
 const drawRelationship = function(diagram, relationship, g) {
   // Set the from and to co-ordinates using the graph vertices
 
@@ -234,7 +271,9 @@ const drawRelationship = function(diagram, relationship, g) {
     .attr('y2', to.y)
     .attr('stroke', conf.stroke);
 }; // drawRelationship
+*/
 
+/*
 const drawFeet = function(diagram, relationships, g) {
   relationships.forEach(function(rel) {
     // Get the points of intersection with the entities
@@ -307,7 +346,8 @@ const getToePath = function(heel, toe, tip) {
     return `M ${heel.x} ${heel.y} Q ${toe.x} ${toe.y} ${tip.x} ${tip.y}`;
   }
 };
-
+*/
+/*
 const getToes = function(relationship, fromPoint, toPoint, distance) {
   if (conf.toeStyle === 'curved') {
     distance *= 2;
@@ -347,8 +387,8 @@ const getToes = function(relationship, fromPoint, toPoint, distance) {
       from: fromPoint.x < toPoint.x ? upper : lower
     };
   }
-
-  /*
+*/
+/*
   if (fromPoint.x < toPoint.x) {
     // Scenario A
 
@@ -377,9 +417,11 @@ const getToes = function(relationship, fromPoint, toPoint, distance) {
   } else {
     // Scenario E
   }
-  */
+*/
+/*
 }; // getToes
-
+*/
+/*
 const getJoints = function(relationship, fromPoint, toPoint, distance) {
   const gradient = (fromPoint.y - toPoint.y) / (fromPoint.x - toPoint.x);
   let jointXDelta = getXDelta(distance, gradient);
@@ -453,21 +495,9 @@ const getJoints = function(relationship, fromPoint, toPoint, distance) {
     to: { x: toX, y: toY }
   };
 };
+*/
 
-// Calculate point pXDelta w.r.t. an intersect point
-
-// Calcualate point pYDelta w.r.t. an intersect point
-
-// Calculate point qXDelta w.r.t. an intersect point
-
-// Calculate point qYDelta w.r.t. an intersect point
-
-// Now draw from the heel to point P then to the centre of the target entity
-
-// Now do the same again using point Q instead of P
-
-// Now draw the ankle
-
+/*
 const getXDelta = function(hypotenuse, gradient) {
   return Math.sqrt((hypotenuse * hypotenuse) / (Math.abs(gradient) + 1));
 };
@@ -493,7 +523,7 @@ const dot = function(diagram, p, color) {
       .attr('fill', color);
   }
 }; // dot
-
+*/
 /**
  * Draw en E-R diagram in the tag with id: id based on the text definition of the graph
  * @param text

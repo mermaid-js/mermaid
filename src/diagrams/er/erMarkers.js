@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+//import * as d3 from 'd3';
 
 const ERMarkers = {
   ONLY_ONE_START: 'ONLY_ONE_START',
@@ -20,7 +20,6 @@ const ERMarkers = {
 const insertMarkers = function(elem, conf) {
   let marker;
 
-  const markerWidth = 
   elem
     .append('defs')
     .append('marker')
