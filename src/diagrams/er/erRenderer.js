@@ -16,9 +16,10 @@ export const setConf = function(cnf) {
 };
 
 /**
- * Function that adds the entities as vertices
+ * Function that adds the entities as vertices in the graph prior to laying out
  * @param entities The entities to be added to the graph
  * @param g The graph that is to be drawn
+ * @returns {Object} The object containing all the entities as properties
  */
 const addEntities = function(entities, g) {
   const keys = Object.keys(entities);
@@ -36,6 +37,7 @@ const addEntities = function(entities, g) {
       id: entity
     });
   });
+  return entities;
 };
 
 /**
@@ -92,25 +94,37 @@ const drawEntities = function(diagram, entities, g, svgId) {
   });
 }; // drawEntities
 
+/**
+ * Add each relationship to the graph
+ * @param relationships the relationships to be added
+ * @param g the graph
+ * @return {Array} The array of relationships
+ */
 const addRelationships = function(relationships, g) {
   relationships.forEach(function(r) {
     g.setEdge(r.entityA, r.entityB, { relationship: r });
   });
+  return relationships;
 }; // addRelationships
 
+/**
+ *
+ */
 const drawRelationships = function(diagram, relationships, g) {
   relationships.forEach(function(rel) {
-    //drawRelationship(diagram, rel, g);
     drawRelationshipFromLayout(diagram, rel, g);
   });
 }; // drawRelationships
 
+/**
+ * Draw a relationship using edge information from the graph
+ * @param diagram the svg node
+ * @param rel the relationship to draw in the svg
+ * @param g the graph containing the edge information
+ */
 const drawRelationshipFromLayout = function(diagram, rel, g) {
   // Find the edge relating to this relationship
   const edge = g.edge({ v: rel.entityA, w: rel.entityB });
-
-  // Using it's points, generate a line function
-  edge.points = edge.points.filter(p => !Number.isNaN(p.y)); // TODO: why is necessary?
 
   // Get a function that will generate the line path
   const lineFunction = d3
@@ -130,7 +144,7 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
     .attr('stroke', conf.stroke)
     .attr('fill', 'none');
 
-  // TODO: Understand this
+  // TODO: Understand this better
   let url = '';
   if (conf.arrowMarkerAbsolute) {
     url =
@@ -143,8 +157,8 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
     url = url.replace(/\)/g, '\\)');
   }
 
-  // TODO: change the way enums are imported
-  // Decide which start and end markers it needs
+  // Decide which start and end markers it needs. It may be possible to be more concise here
+  // by reversing a start marker to make an end marker...but this will do for now
   switch (rel.cardinality) {
     case erDb.Cardinality.ONLY_ONE_TO_ONE_OR_MORE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
@@ -249,285 +263,10 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
   }
 };
 
-/*
-const drawRelationship = function(diagram, relationship, g) {
-  // Set the from and to co-ordinates using the graph vertices
-
-  let from = {
-    x: g.node(relationship.entityA).x,
-    y: g.node(relationship.entityA).y
-  };
-
-  let to = {
-    x: g.node(relationship.entityB).x,
-    y: g.node(relationship.entityB).y
-  };
-
-  diagram
-    .append('line')
-    .attr('x1', from.x)
-    .attr('y1', from.y)
-    .attr('x2', to.x)
-    .attr('y2', to.y)
-    .attr('stroke', conf.stroke);
-}; // drawRelationship
-*/
-
-/*
-const drawFeet = function(diagram, relationships, g) {
-  relationships.forEach(function(rel) {
-    // Get the points of intersection with the entities
-    const nodeA = g.node(rel.entityA);
-    const nodeB = g.node(rel.entityB);
-
-    const fromIntersect = getIntersection(
-      nodeB.x - nodeA.x,
-      nodeB.y - nodeA.y,
-      nodeA.x,
-      nodeA.y,
-      nodeA.width / 2,
-      nodeA.height / 2
-    );
-
-    dot(diagram, fromIntersect, conf.intersectColor);
-
-    const toIntersect = getIntersection(
-      nodeA.x - nodeB.x,
-      nodeA.y - nodeB.y,
-      nodeB.x,
-      nodeB.y,
-      nodeB.width / 1,
-      nodeB.height / 2
-    );
-
-    dot(diagram, toIntersect, conf.intersectColor);
-
-    // Get the ankle and heel points
-    const anklePoints = getJoints(rel, fromIntersect, toIntersect, conf.ankleDistance);
-
-    dot(diagram, { x: anklePoints.from.x, y: anklePoints.from.y }, conf.ankleColor);
-    dot(diagram, { x: anklePoints.to.x, y: anklePoints.to.y }, conf.ankleColor);
-
-    const heelPoints = getJoints(rel, fromIntersect, toIntersect, conf.heelDistance);
-
-    dot(diagram, { x: heelPoints.from.x, y: heelPoints.from.y }, conf.heelColor);
-    dot(diagram, { x: heelPoints.to.x, y: heelPoints.to.y }, conf.heelColor);
-
-    // Get the toe points
-    const toePoints = getToes(rel, fromIntersect, toIntersect, conf.toeDistance);
-
-    if (toePoints) {
-      dot(diagram, { x: toePoints.from.top.x, y: toePoints.from.top.y }, conf.toeColor);
-      dot(diagram, { x: toePoints.from.bottom.x, y: toePoints.from.bottom.y }, conf.toeColor);
-      dot(diagram, { x: toePoints.to.top.x, y: toePoints.to.top.y }, conf.toeColor);
-      dot(diagram, { x: toePoints.to.bottom.x, y: toePoints.to.bottom.y }, conf.toeColor);
-
-      let paths = [];
-      paths.push(getToePath(heelPoints.from, toePoints.from.top, nodeA));
-      paths.push(getToePath(heelPoints.from, toePoints.from.bottom, nodeA));
-      paths.push(getToePath(heelPoints.to, toePoints.to.top, nodeB));
-      paths.push(getToePath(heelPoints.to, toePoints.to.bottom, nodeB));
-
-      for (const path of paths) {
-        diagram
-          .append('path')
-          .attr('d', path)
-          .attr('stroke', conf.stroke)
-          .attr('fill', 'none');
-      }
-    }
-  });
-}; // drawFeet
-
-const getToePath = function(heel, toe, tip) {
-  if (conf.toeStyle === 'straight') {
-    return `M ${heel.x} ${heel.y} L ${toe.x} ${toe.y} L ${tip.x} ${tip.y}`;
-  } else {
-    return `M ${heel.x} ${heel.y} Q ${toe.x} ${toe.y} ${tip.x} ${tip.y}`;
-  }
-};
-*/
-/*
-const getToes = function(relationship, fromPoint, toPoint, distance) {
-  if (conf.toeStyle === 'curved') {
-    distance *= 2;
-  }
-
-  const gradient = (fromPoint.y - toPoint.y) / (fromPoint.x - toPoint.x);
-  const toeYDelta = getXDelta(distance, gradient);
-  const toeXDelta = toeYDelta * Math.abs(gradient);
-
-  if (gradient > 0) {
-    const topToe = function(point) {
-      return {
-        x: point.x + toeXDelta,
-        y: point.y - toeYDelta
-      };
-    };
-
-    const bottomToe = function(point) {
-      return {
-        x: point.x - toeXDelta,
-        y: point.y + toeYDelta
-      };
-    };
-
-    const lower = {
-      top: fromPoint.x < toPoint.x ? topToe(toPoint) : topToe(fromPoint),
-      bottom: fromPoint.x < toPoint.x ? bottomToe(toPoint) : bottomToe(fromPoint)
-    };
-
-    const upper = {
-      top: fromPoint.x < toPoint.x ? topToe(fromPoint) : topToe(toPoint),
-      bottom: fromPoint.x < toPoint.x ? bottomToe(fromPoint) : bottomToe(toPoint)
-    };
-
-    return {
-      to: fromPoint.x < toPoint.x ? lower : upper,
-      from: fromPoint.x < toPoint.x ? upper : lower
-    };
-  }
-*/
-/*
-  if (fromPoint.x < toPoint.x) {
-    // Scenario A
-
-    return {
-      to: {
-        top: {
-          x: toPoint.x + toeXDelta,
-          y: toPoint.y - toeYDelta
-        },
-        bottom: {
-          x: toPoint.x - toeXDelta,
-          y: toPoint.y + toeYDelta
-        }
-      },
-      from: {
-        top: {
-          x: fromPoint.x + toeXDelta,
-          y: fromPoint.y - toeYDelta
-        },
-        bottom: {
-          x: fromPoint.x - toeXDelta,
-          y: fromPoint.y + toeYDelta
-        }
-      }
-    };
-  } else {
-    // Scenario E
-  }
-*/
-/*
-}; // getToes
-*/
-/*
-const getJoints = function(relationship, fromPoint, toPoint, distance) {
-  const gradient = (fromPoint.y - toPoint.y) / (fromPoint.x - toPoint.x);
-  let jointXDelta = getXDelta(distance, gradient);
-  let jointYDelta = jointXDelta * Math.abs(gradient);
-
-  let toX, toY;
-  let fromX, fromY;
-
-  if (gradient > 0) {
-    if (fromPoint.x < toPoint.x) {
-      // Scenario A
-    } else {
-      // Scenario E
-      jointXDelta *= -1;
-      jointYDelta *= -1;
-    }
-
-    toX = toPoint.x - jointXDelta;
-    toY = toPoint.y - jointYDelta;
-    fromX = fromPoint.x + jointXDelta;
-    fromY = fromPoint.y + jointYDelta;
-  }
-
-  if (gradient < 0) {
-    if (fromPoint.x < toPoint.x) {
-      // Scenario C
-      jointXDelta *= -1;
-      jointYDelta *= -1;
-    } else {
-      // Scenario G
-    }
-
-    toX = toPoint.x + jointXDelta;
-    toY = toPoint.y - jointYDelta;
-    fromX = fromPoint.x - jointXDelta;
-    fromY = fromPoint.y + jointYDelta;
-  }
-
-  if (!isFinite(gradient)) {
-    if (fromPoint.y < toPoint.y) {
-      // Scenario B
-    } else {
-      // Scenario F
-      jointXDelta *= -1;
-      jointYDelta *= -1;
-    }
-
-    toX = toPoint.x;
-    toY = toPoint.y - distance;
-    fromX = fromPoint.x;
-    fromY = fromPoint.y + distance;
-  }
-
-  if (gradient === 0) {
-    if (fromPoint.x < toPoint.x) {
-      // Scenario D
-    } else {
-      // Scenario H
-      jointXDelta *= -1;
-      jointYDelta *= -1;
-    }
-
-    toX = toPoint.x - distance;
-    toY = toPoint.y;
-    fromX = fromPoint.x + distance;
-    fromY = fromPoint.y;
-  }
-
-  return {
-    from: { x: fromX, y: fromY },
-    to: { x: toX, y: toY }
-  };
-};
-*/
-
-/*
-const getXDelta = function(hypotenuse, gradient) {
-  return Math.sqrt((hypotenuse * hypotenuse) / (Math.abs(gradient) + 1));
-};
-
-const getIntersection = function(dx, dy, cx, cy, w, h) {
-  if (Math.abs(dy / dx) < h / w) {
-    // Hit vertical edge of box
-    return { x: cx + (dx > 0 ? w : -w), y: cy + (dy * w) / Math.abs(dx) };
-  } else {
-    // Hit horizontal edge of box
-    return { x: cx + (dx * h) / Math.abs(dy), y: cy + (dy > 0 ? h : -h) };
-  }
-}; // getIntersection
-
-const dot = function(diagram, p, color) {
-  // stick a small circle at point p
-  if (conf.dots) {
-    diagram
-      .append('circle')
-      .attr('cx', p.x)
-      .attr('cy', p.y)
-      .attr('r', conf.dotRadius)
-      .attr('fill', color);
-  }
-}; // dot
-*/
 /**
- * Draw en E-R diagram in the tag with id: id based on the text definition of the graph
- * @param text
- * @param id
+ * Draw en E-R diagram in the tag with id: id based on the text definition of the diagram
+ * @param text the text of the diagram
+ * @param id the unique id of the DOM node that contains the diagram
  */
 export const draw = function(text, id) {
   logger.info('Drawing ER diagram');
@@ -543,25 +282,26 @@ export const draw = function(text, id) {
   }
 
   // Get a reference to the diagram node
-  const diagram = d3.select(`[id='${id}']`);
+  const svg = d3.select(`[id='${id}']`);
 
-  // Add cardinality 'marker' definitions to the svg
-  erMarkers.insertMarkers(diagram, conf);
+  // Add cardinality marker definitions to the svg
+  erMarkers.insertMarkers(svg, conf);
 
   // Create the graph
   let g;
 
   // TODO: Explore directed vs undirected graphs, and how the layout is affected
   // An E-R diagram could be said to be undirected, but there is merit in setting
-  // the direction from parent to child (1 to many) as this influences graphlib to
-  // put the parent above the child, which is intuitive
+  // the direction from parent to child in a one-to-many as this influences graphlib to
+  // put the parent above the child (does it?), which is intuitive.  Most relationships
+  // in ER diagrams are one-to-many.
   g = new graphlib.Graph({
     multigraph: true,
     directed: true,
     compound: false
   })
     .setGraph({
-      rankdir: 'TB',
+      rankdir: 'LR',
       marginx: 20,
       marginy: 20,
       nodesep: 100,
@@ -571,31 +311,18 @@ export const draw = function(text, id) {
       return {};
     });
 
-  // Fetch the entities (which will become vertices)
-  const entities = erDb.getEntities();
-
-  // Add all the entities to the graph
-  addEntities(entities, g);
-
-  const relationships = erDb.getRelationships();
-  // Add all the relationships as edges on the graph
-  addRelationships(relationships, g);
-
-  // Set up an SVG group so that we can translate the final graph.
-  // TODO: This is redundant -just use diagram from above
-  const svg = d3.select(`[id="${id}"]`);
+  // Add the entities and relationships to the graph
+  const entities = addEntities(erDb.getEntities(), g);
+  const relationships = addRelationships(erDb.getRelationships(), g);
 
   dagre.layout(g); // Node and edge positions will be updated
 
-  // Run the renderer. This is what draws the final graph.
-  //const element = d3.select('#' + id + ' g');
-  //render(element, g);
+  // Draw the relationships first because their markers need to be
+  // clipped by the entity boxes
+  drawRelationships(svg, relationships, g);
+  drawEntities(svg, entities, g, id);
 
-  //drawFeet(diagram, relationships, g);
-  drawRelationships(diagram, relationships, g);
-  drawEntities(diagram, entities, g, id);
-
-  const padding = 8;
+  const padding = 8; // TODO: move this to config
 
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 4;

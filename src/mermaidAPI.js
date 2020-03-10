@@ -369,7 +369,7 @@ const config = {
     /**
      * Stroke color of box edges and lines
      */
-    stroke: 'purple',
+    stroke: 'gray',
 
     /**
      * Fill color of entity boxes
@@ -377,52 +377,11 @@ const config = {
     fill: 'honeydew',
 
     /**
-     * Distance of the 'ankle' from the intersection point
+     * Opacity of entity boxes - if you want to see how the crows feet
+     * retain their elegant joins to the boxes regardless of the angle of incidence
+     * then override this to something less than 100%
      */
-    ankleDistance: 35,
-
-    /**
-     * Distance of the 'heel' from the intersection point
-     */
-    heelDistance: 20,
-
-    /**
-     * Distance of the side 'toes' perpendicular to the intersection point
-     */
-    toeDistance: 12,
-
-    /**
-     * The style of the toes on the crow's foot: either 'curved' or 'straight'
-     */
-    toeStyle: 'curved',
-
-    /**
-     * THE REMAINING CONFIG OPTIONS FOR 'er' DIAGRAMS ARE EXPERIMENTAL AND ARE USEFUL
-     * DURING DEVELOPMENT BUT WILL PROBABLY BE REMOVED BEFORE E-R DIAGRAMS ARE PRODUCTIONIZED.
-     * THEY ARE HELPFUL IN DIAGNOSING POSITIONAL AND LAYOUT-RELATED ISSUES; THEY WOULDN'T
-     * LOOK GOOD ON REAL DIAGRAMS
-     */
-
-    // Opacity of entity boxes - helpful when < 100% to see lines 'behind' the box
-    fillOpacity: '100%',
-
-    // Whether to show dots at important points in the diagram geometry
-    dots: false,
-
-    // Radius of dots
-    dotRadius: 1.5,
-
-    // Color of intersection point dots
-    intersectColor: 'green',
-
-    // Color of 'ankle' dots
-    ankleColor: 'red',
-
-    // Color of 'heel' dots
-    heelColor: 'blue',
-
-    // Color of 'toe' dots
-    toeColor: 'darkorchid'
+    fillOpacity: '100%'
   }
 };
 

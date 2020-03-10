@@ -1,21 +1,16 @@
-//import * as d3 from 'd3';
-
 const ERMarkers = {
   ONLY_ONE_START: 'ONLY_ONE_START',
   ONLY_ONE_END: 'ONLY_ONE_END',
-
   ZERO_OR_ONE_START: 'ZERO_OR_ONE_START',
   ZERO_OR_ONE_END: 'ZERO_OR_ONE_END',
-
   ONE_OR_MORE_START: 'ONE_OR_MORE_START',
   ONE_OR_MORE_END: 'ONE_OR_MORE_END',
-
   ZERO_OR_MORE_START: 'ZERO_OR_MORE_START',
   ZERO_OR_MORE_END: 'ZERO_OR_MORE_END'
 };
 
 /**
- * Put the markers into the svg DOM for use in paths
+ * Put the markers into the svg DOM for later use with edge paths
  */
 const insertMarkers = function(elem, conf) {
   let marker;
@@ -96,73 +91,73 @@ const insertMarkers = function(elem, conf) {
     .append('defs')
     .append('marker')
     .attr('id', ERMarkers.ONE_OR_MORE_START)
-    .attr('refX', 0)
-    .attr('refY', 9)
-    .attr('markerWidth', 18)
-    .attr('markerHeight', 18)
+    .attr('refX', 18)
+    .attr('refY', 18)
+    .attr('markerWidth', 45)
+    .attr('markerHeight', 36)
     .attr('orient', 'auto')
     .append('path')
     .attr('stroke', conf.stroke)
     .attr('fill', 'none')
-    .attr('d', 'M0,0 L9,9 L0,18 M15,0 L15,18');
+    .attr('d', 'M0,18 Q 18,0 36,18 Q 18,36 0,18 M42,9 L42,27');
 
   elem
     .append('defs')
     .append('marker')
     .attr('id', ERMarkers.ONE_OR_MORE_END)
-    .attr('refX', 18)
-    .attr('refY', 9)
-    .attr('markerWidth', 21)
-    .attr('markerHeight', 18)
+    .attr('refX', 27)
+    .attr('refY', 18)
+    .attr('markerWidth', 45)
+    .attr('markerHeight', 36)
     .attr('orient', 'auto')
     .append('path')
     .attr('stroke', conf.stroke)
     .attr('fill', 'none')
-    .attr('d', 'M3,0 L3,18 M18,0 L9,9 L18,18');
+    .attr('d', 'M3,9 L3,27 M9,18 Q27,0 45,18 Q27,36 9,18');
 
   marker = elem
     .append('defs')
     .append('marker')
     .attr('id', ERMarkers.ZERO_OR_MORE_START)
-    .attr('refX', 0)
-    .attr('refY', 9)
-    .attr('markerWidth', 30)
-    .attr('markerHeight', 18)
+    .attr('refX', 18)
+    .attr('refY', 18)
+    .attr('markerWidth', 57)
+    .attr('markerHeight', 36)
     .attr('orient', 'auto');
   marker
     .append('circle')
     .attr('stroke', conf.stroke)
     .attr('fill', 'white')
-    .attr('cx', 21)
-    .attr('cy', 9)
+    .attr('cx', 48)
+    .attr('cy', 18)
     .attr('r', 6);
   marker
     .append('path')
     .attr('stroke', conf.stroke)
     .attr('fill', 'none')
-    .attr('d', 'M0,0 L9,9 L0,18');
+    .attr('d', 'M0,18 Q18,0 36,18 Q18,36 0,18');
 
   marker = elem
     .append('defs')
     .append('marker')
     .attr('id', ERMarkers.ZERO_OR_MORE_END)
-    .attr('refX', 30)
-    .attr('refY', 9)
-    .attr('markerWidth', 30)
-    .attr('markerHeight', 18)
+    .attr('refX', 39)
+    .attr('refY', 18)
+    .attr('markerWidth', 57)
+    .attr('markerHeight', 36)
     .attr('orient', 'auto');
   marker
     .append('circle')
     .attr('stroke', conf.stroke)
     .attr('fill', 'white')
     .attr('cx', 9)
-    .attr('cy', 9)
+    .attr('cy', 18)
     .attr('r', 6);
   marker
     .append('path')
     .attr('stroke', conf.stroke)
     .attr('fill', 'none')
-    .attr('d', 'M30,0 L21,9 L30,18');
+    .attr('d', 'M21,18 Q39,0 57,18 Q39,36 21,18');
 
   return;
 };
