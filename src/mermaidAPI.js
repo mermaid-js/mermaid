@@ -381,7 +381,12 @@ const config = {
      * retain their elegant joins to the boxes regardless of the angle of incidence
      * then override this to something less than 100%
      */
-    fillOpacity: '100%'
+    fillOpacity: '100%',
+
+    /**
+     * Font size
+     */
+    fontSize: '12px'
   }
 };
 

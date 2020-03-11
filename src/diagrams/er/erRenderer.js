@@ -21,6 +21,7 @@ export const setConf = function(cnf) {
  * @param g The graph that is to be drawn
  * @returns {Object} The object containing all the entities as properties
  */
+/*
 const addEntities = function(entities, g) {
   const keys = Object.keys(entities);
 
@@ -39,60 +40,90 @@ const addEntities = function(entities, g) {
   });
   return entities;
 };
-
+*/
 /**
  * Use D3 to construct the svg elements for the entities
- * @param diagram the svg node that contains the diagram
+ * @param svgNode the svg node that contains the diagram
  * @param entities the entities to be drawn
  * @param g the dagre graph that contains the vertex and edge definitions post-layout
  */
-const drawEntities = function(diagram, entities, g, svgId) {
-  // For each vertex in the graph:
-  // - append the text label centred in the right place
-  // - get it's bounding box and calculate the size of the enclosing rectangle
-  // - insert the enclosing rectangle
+const drawEntities = function(svgNode, entities, svgId, graph) {
+  const keys = Object.keys(entities);
+  let firstOne;
 
-  g.nodes().forEach(function(v) {
-    console.debug('Handling node ', v);
+  keys.forEach(function(id) {
+    // Create a group for each entity
+    const groupNode = svgNode.append('g').attr('id', id);
 
-    // Get the centre co-ordinate of the node so that we can centre the entity name
-    const centre = { x: g.node(v).x, y: g.node(v).y };
+    firstOne = firstOne === undefined ? id : firstOne;
 
     // Label the entity - this is done first so that we can get the bounding box
     // which then determines the size of the rectangle
-    const textId = 'entity-' + v + '-' + svgId;
-    const textNode = diagram
+    const textId = 'entity-' + id + '-' + svgId;
+    const textNode = groupNode
       .append('text')
       .attr('id', textId)
-      .attr('x', centre.x)
-      .attr('y', centre.y)
+      .attr('x', 0)
+      .attr('y', (conf.fontSize + 2 * conf.entityPadding) / 2)
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', 'middle')
-      .attr('style', 'font-family: ' + getConfig().fontFamily)
-      .text(v);
+      .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
+      .text(id);
 
+    // Calculate the width and height of the entity
     const textBBox = textNode.node().getBBox();
     const entityWidth = Math.max(conf.minEntityWidth, textBBox.width + conf.entityPadding * 2);
     const entityHeight = Math.max(conf.minEntityHeight, textBBox.height + conf.entityPadding * 2);
 
-    // Add info to the node so that we can retrieve it later when drawing relationships
-    g.node(v).width = entityWidth;
-    g.node(v).height = entityHeight;
+    // Make sure the text gets centred relative to the entity box
+    textNode.attr('transform', 'translate(' + entityWidth / 2 + ',' + entityHeight / 2 + ')');
 
     // Draw the rectangle - insert it before the text so that the text is not obscured
-    const rectX = centre.x - entityWidth / 2;
-    const rectY = centre.y - entityHeight / 2;
-    diagram
+    const rectNode = groupNode
       .insert('rect', '#' + textId)
       .attr('fill', conf.fill)
       .attr('fill-opacity', conf.fillOpacity)
       .attr('stroke', conf.stroke)
-      .attr('x', rectX)
-      .attr('y', rectY)
+      .attr('x', 0)
+      .attr('y', 0)
       .attr('width', entityWidth)
       .attr('height', entityHeight);
+
+    const rectBBox = rectNode.node().getBBox();
+
+    // Add the entity to the graph
+    // TODO: revisit this - need to understand properly
+    graph.setNode(id, {
+      labelType: 'svg',
+      width: rectBBox.width,
+      height: rectBBox.height,
+      shape: 'rect',
+      label: document.createElementNS('http://www.w3.org/2000/svg', 'text'),
+      id: id
+    });
   });
+  return firstOne;
 }; // drawEntities
+
+const adjustEntities = function(svgNode, entities, graph) {
+  graph.nodes().forEach(function(v) {
+    if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
+      d3.select('#' + v).attr(
+        'transform',
+        'translate(' +
+          (graph.node(v).x - graph.node(v).width / 2) +
+          ',' +
+          (graph.node(v).y - graph.node(v).height / 2) +
+          ' )'
+      );
+    }
+  });
+  return;
+};
+
+const getEdgeName = function(rel) {
+  return (rel.entityA + rel.roleA + rel.roleB + rel.entityB).replace(/\s/g, '');
+};
 
 /**
  * Add each relationship to the graph
@@ -102,7 +133,7 @@ const drawEntities = function(diagram, entities, g, svgId) {
  */
 const addRelationships = function(relationships, g) {
   relationships.forEach(function(r) {
-    g.setEdge(r.entityA, r.entityB, { relationship: r });
+    g.setEdge(r.entityA, r.entityB, { relationship: r }, getEdgeName(r));
   });
   return relationships;
 }; // addRelationships
@@ -110,9 +141,9 @@ const addRelationships = function(relationships, g) {
 /**
  *
  */
-const drawRelationships = function(diagram, relationships, g) {
+const drawRelationships = function(diagram, relationships, g, insertId) {
   relationships.forEach(function(rel) {
-    drawRelationshipFromLayout(diagram, rel, g);
+    drawRelationshipFromLayout(diagram, rel, g, insertId);
   });
 }; // drawRelationships
 
@@ -122,9 +153,10 @@ const drawRelationships = function(diagram, relationships, g) {
  * @param rel the relationship to draw in the svg
  * @param g the graph containing the edge information
  */
-const drawRelationshipFromLayout = function(diagram, rel, g) {
+const drawRelationshipFromLayout = function(diagram, rel, g, insert) {
   // Find the edge relating to this relationship
-  const edge = g.edge({ v: rel.entityA, w: rel.entityB });
+  //const edge = g.edge({ v: rel.entityA, w: rel.entityB });
+  const edge = g.edge(rel.entityA, rel.entityB, getEdgeName(rel));
 
   // Get a function that will generate the line path
   const lineFunction = d3
@@ -137,9 +169,9 @@ const drawRelationshipFromLayout = function(diagram, rel, g) {
     })
     .curve(d3.curveBasis);
 
-  // Append the line to the diagram node
+  // Insert the line at the right place
   const svgPath = diagram
-    .append('path')
+    .insert('path', '#' + insert)
     .attr('d', lineFunction(edge.points))
     .attr('stroke', conf.stroke)
     .attr('fill', 'none');
@@ -281,11 +313,25 @@ export const draw = function(text, id) {
     logger.debug('Parsing failed');
   }
 
-  // Get a reference to the diagram node
+  // Get a reference to the svg node that contains the text
   const svg = d3.select(`[id='${id}']`);
 
   // Add cardinality marker definitions to the svg
   erMarkers.insertMarkers(svg, conf);
+
+  // Now we have to construct the diagram in a specific way:
+  // ---
+  // 1. Create all the entities in the svg node at 0,0, but with the correct dimensions (allowing for text content)
+  // 2. Make sure they are all added to the graph
+  // 3. Add all the edges (relationships) to the graph aswell
+  // 4. Let dagre do its magic to layout the graph.  This assigns:
+  //    - the centre co-ordinates for each node, bearing in mind the dimensions and edge relationships
+  //    - the path co-ordinates for each edge
+  //    But it has no impact on the svg child nodes - the diagram remains with every entity rooted at 0,0
+  // 5. Now assign a transform to each entity in the svg node so that it gets drawn in the correct place, as determined by
+  //    its centre point, which is obtained from the graph, and it's width and height
+  // 6. And finally, create all the edges in the svg node using information from the graph
+  // ---
 
   // Create the graph
   let g;
@@ -311,16 +357,20 @@ export const draw = function(text, id) {
       return {};
     });
 
-  // Add the entities and relationships to the graph
-  const entities = addEntities(erDb.getEntities(), g);
+  const entities = erDb.getEntities();
+  const firstEntity = drawEntities(svg, entities, id, g);
+
+  //addEntities(erDb.getEntities(), g);
   const relationships = addRelationships(erDb.getRelationships(), g);
 
   dagre.layout(g); // Node and edge positions will be updated
 
+  adjustEntities(svg, entities, g);
+
   // Draw the relationships first because their markers need to be
   // clipped by the entity boxes
-  drawRelationships(svg, relationships, g);
-  drawEntities(svg, entities, g, id);
+  drawRelationships(svg, relationships, g, firstEntity);
+  //drawEntities(svg, entities, id);
 
   const padding = 8; // TODO: move this to config
 
