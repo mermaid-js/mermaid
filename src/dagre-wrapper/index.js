@@ -22,16 +22,16 @@ export const render = (elem, graph) => {
     if (node.type !== 'group') {
       insertNode(nodes, graph.node(v));
     } else {
-      const width = getClusterTitleWidth(clusters, node);
-      const children = graph.children(v);
-      nodes2expand.push({ id: children[0], width });
+      // const width = getClusterTitleWidth(clusters, node);
+      // const children = graph.children(v);
+      // nodes2expand.push({ id: children[0], width });
     }
   });
 
-  nodes2expand.forEach(item => {
-    const node = graph.node(item.id);
-    node.width = item.width;
-  });
+  // nodes2expand.forEach(item => {
+  //   const node = graph.node(item.id);
+  //   node.width = item.width;
+  // });
 
   // Inster labels, this will insert them into the dom so that the width can be calculated
   graph.edges().forEach(function(e) {

@@ -8,7 +8,7 @@ const createLabel = (vertexText, style) => {
     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
     tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
     tspan.setAttribute('dy', '1em');
-    tspan.setAttribute('x', '1');
+    tspan.setAttribute('x', '0');
     tspan.textContent = rows[j];
     svgLabel.appendChild(tspan);
   }

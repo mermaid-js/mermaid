@@ -33,10 +33,17 @@ const rect = (parent, node) => {
     .attr('height', node.height + padding);
 
   const adj = (node.width + node.padding - bbox.width) / 2;
-
+  logger.info('bbox', bbox.width, node.x, node.width);
   // Center the label
-  label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
-  // label.attr('transform', 'translate(' + 70 + ', ' + -node.height / 2 + ')');
+  // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
+  label.attr(
+    'transform',
+    'translate(' +
+      (node.x - bbox.width / 2) +
+      ', ' +
+      (node.y - node.height / 2 - node.padding / 3 + 3) +
+      ')'
+  );
 
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;
