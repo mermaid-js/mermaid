@@ -7,7 +7,7 @@ import { logger } from '../logger';
 export const render = (elem, graph) => {
   insertMarkers(elem);
 
-  const clusters = elem.insert('g').attr('class', 'clusters');
+  const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');

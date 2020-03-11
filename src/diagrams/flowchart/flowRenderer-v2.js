@@ -6,11 +6,10 @@ import flowDb from './flowDb';
 import flow from './parser/flow';
 import { getConfig } from '../../config';
 
-import { render, addShape } from '../../dagre-wrapper/index.js';
+import { render } from '../../dagre-wrapper/index.js';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import flowChartShapes from './flowChartShapes';
 
 const conf = {};
 export const setConf = function(cnf) {

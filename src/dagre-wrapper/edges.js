@@ -34,18 +34,18 @@ export const positionEdgeLabel = edge => {
   el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
 };
 
-const getRelationType = function(type) {
-  switch (type) {
-    case stateDb.relationType.AGGREGATION:
-      return 'aggregation';
-    case stateDb.relationType.EXTENSION:
-      return 'extension';
-    case stateDb.relationType.COMPOSITION:
-      return 'composition';
-    case stateDb.relationType.DEPENDENCY:
-      return 'dependency';
-  }
-};
+// const getRelationType = function(type) {
+//   switch (type) {
+//     case stateDb.relationType.AGGREGATION:
+//       return 'aggregation';
+//     case stateDb.relationType.EXTENSION:
+//       return 'extension';
+//     case stateDb.relationType.COMPOSITION:
+//       return 'composition';
+//     case stateDb.relationType.DEPENDENCY:
+//       return 'dependency';
+//   }
+// };
 
 export const insertEdge = function(elem, edge) {
   // The data for our line
