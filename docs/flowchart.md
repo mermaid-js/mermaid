@@ -409,6 +409,22 @@ graph TB
     end
  ```
 
+ You can also set an excplicit id for the subgraph.
+
+```
+graph TB
+    c1-->a2
+    subgraph ide1 [one]
+    a1-->a2
+    end
+ ```
+```mermaid
+graph TB
+    c1-->a2
+    subgraph id1 [one]
+    a1-->a2
+    end
+ ```
 
 ## Interaction
 

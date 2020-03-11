@@ -140,6 +140,8 @@ export const addVertices = function(vert, g, svgId) {
       class: classStr,
       style: styles.style,
       id: vertex.id,
+      width: vertex.type === 'group' ? 500 : undefined,
+      type: vertex.type,
       padding: getConfig().flowchart.padding
     });
   });
