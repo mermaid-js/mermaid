@@ -20,7 +20,7 @@ For more information and help in getting started, please view our [documentation
 
 With version 8.4 class diagrams have got some new features, bug fixes and documentation. Another new feature in 8.4 is the new diagram type, state diagrams.
 
-![Image show the two new diagram types](./docs/img/new-diagrams.png)
+![Image show the two new diagram types](.docs/img/new-diagrams.png)
 
 ## Special note regarding version 8.2
 
