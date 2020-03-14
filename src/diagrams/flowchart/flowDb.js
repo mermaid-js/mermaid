@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { logger } from '../../logger';
+import { logger } from '../../logger'; // eslint-disable-line
 import utils from '../../utils';
 import { getConfig } from '../../config';
 import common from '../common/common';
@@ -88,7 +88,7 @@ export const addSingleLink = function(_start, _end, type, linktext) {
   let end = _end;
   if (start[0].match(/\d/)) start = MERMAID_DOM_ID_PREFIX + start;
   if (end[0].match(/\d/)) end = MERMAID_DOM_ID_PREFIX + end;
-  logger.info('Got edge...', start, end);
+  // logger.info('Got edge...', start, end);
 
   const edge = { start: start, end: end, type: undefined, text: '' };
   linktext = type.text;

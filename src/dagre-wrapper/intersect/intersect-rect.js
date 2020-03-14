@@ -2,6 +2,7 @@ const intersectRect = (node, point) => {
   var x = node.x;
   var y = node.y;
 
+  console.log(node, point);
   // Rectangle intersection algorithm from:
   // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
   var dx = point.x - x;

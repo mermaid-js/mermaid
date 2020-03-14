@@ -1,9 +1,14 @@
 import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
 import * as d3 from 'd3';
+import inter from './intersect/index.js';
 import { getConfig } from '../config';
 
-const edgeLabels = {};
+let edgeLabels = {};
+
+export const clear = () => {
+  edgeLabels = {};
+};
 
 export const insertEdgeLabel = (elem, edge) => {
   // Create the actual text element
@@ -30,7 +35,6 @@ export const insertEdgeLabel = (elem, edge) => {
 
 export const positionEdgeLabel = edge => {
   const el = edgeLabels[edge.id];
-  logger.info(edge.id, el);
   el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
 };
 
@@ -47,9 +51,128 @@ export const positionEdgeLabel = edge => {
 //   }
 // };
 
-export const insertEdge = function(elem, edge) {
+const outsideNode = (node, point) => {
+  const x = node.x;
+  const y = node.y;
+  const dx = Math.abs(point.x - x);
+  const dy = Math.abs(point.y - y);
+  const w = node.width / 2;
+  const h = node.height / 2;
+  if (dx > w || dy > h) {
+    return true;
+  }
+  return false;
+};
+
+// const intersection = (node, outsidePoint, insidePoint) => {
+//   const x = node.x;
+//   const y = node.y;
+
+//   const dx = Math.abs(x - insidePoint.x);
+//   const w = node.width / 2;
+//   let r = w - dx;
+//   const dy = Math.abs(y - insidePoint.y);
+//   const h = node.height / 2;
+//   const q = h - dy;
+
+//   const Q = Math.abs(outsidePoint.y - insidePoint.y);
+//   const R = Math.abs(outsidePoint.x - insidePoint.x);
+//   r = (R * q) / Q;
+
+//   return { x: insidePoint.x + r, y: insidePoint.y + q };
+// };
+const intersection = (node, outsidePoint, insidePoint) => {
+  const x = node.x;
+  const y = node.y;
+
+  const dx = Math.abs(x - insidePoint.x);
+  const w = node.width / 2;
+  let r = w - dx;
+  const dy = Math.abs(y - insidePoint.y);
+  const h = node.height / 2;
+  let q = h - dy;
+
+  logger.info('q och r', q, r);
+
+  const Q = Math.abs(outsidePoint.y - insidePoint.y);
+  const R = Math.abs(outsidePoint.x - insidePoint.x);
+  // if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h || false) { // eslint-disable-line
+  //   // Intersection is top or bottom of rect.
+
+  //   r = (R * q) / Q;
+
+  //   return {
+  //     x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - r,
+  //     y: insidePoint.y + q
+  //   };
+  // } else {
+  q = (Q * r) / R;
+
+  return {
+    x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - r,
+    y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
+  };
+  // }
+};
+
+export const insertEdge = function(elem, edge, clusterDb) {
+  let points = edge.points;
+  if (edge.toCluster) {
+    logger.trace('edge', edge);
+    logger.trace('cluster', clusterDb[edge.toCluster]);
+    points = [];
+    let lastPointOutside;
+    let isInside = false;
+    edge.points.forEach(point => {
+      const node = clusterDb[edge.toCluster].node;
+
+      if (!outsideNode(node, point) && !isInside) {
+        logger.info('inside', edge.toCluster, point);
+
+        // First point inside the rect
+        const insterection = intersection(node, lastPointOutside, point);
+        logger.info('intersect', inter.rect(node, lastPointOutside));
+        points.push(insterection);
+        // points.push(insterection);
+        isInside = true;
+      } else {
+        if (!isInside) points.push(point);
+      }
+      lastPointOutside = point;
+    });
+  }
+
+  if (edge.fromCluster) {
+    logger.info('edge', edge);
+    logger.info('cluster', clusterDb[edge.toCluster]);
+    const updatedPoints = [];
+    let lastPointOutside;
+    let isInside = false;
+    for (let i = points.length - 1; i >= 0; i--) {
+      const point = points[i];
+      const node = clusterDb[edge.fromCluster].node;
+
+      if (!outsideNode(node, point) && !isInside) {
+        logger.info('inside', edge.toCluster, point);
+
+        // First point inside the rect
+        const insterection = intersection(node, lastPointOutside, point);
+        logger.info('intersect', inter.rect(node, lastPointOutside));
+        updatedPoints.unshift(insterection);
+        // points.push(insterection);
+        isInside = true;
+      } else {
+        if (!isInside) updatedPoints.unshift(point);
+      }
+      lastPointOutside = point;
+    }
+    points = updatedPoints;
+  }
+
+  logger.info('Points', points);
+
   // The data for our line
-  const lineData = edge.points.filter(p => !Number.isNaN(p.y));
+  const lineData = points.filter(p => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
   const lineFunction = d3
@@ -59,14 +182,25 @@ export const insertEdge = function(elem, edge) {
     })
     .y(function(d) {
       return d.y;
-    })
-    .curve(d3.curveBasis);
+    });
+  // .curve(d3.curveBasis);
 
   const svgPath = elem
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
     .attr('class', 'transition');
+
+  // edge.points.forEach(point => {
+  //   elem
+  //     .append('circle')
+  //     .style('stroke', 'red')
+  //     .style('fill', 'red')
+  //     .attr('r', 1)
+  //     .attr('cx', point.x)
+  //     .attr('cy', point.y);
+  // });
+
   let url = '';
   if (getConfig().state.arrowMarkerAbsolute) {
     url =
@@ -79,6 +213,6 @@ export const insertEdge = function(elem, edge) {
     url = url.replace(/\)/g, '\\)');
   }
 
-  svgPath.attr('marker-end', 'url(' + url + '#' + 'extensionEnd' + ')');
-  svgPath.attr('marker-start', 'url(' + url + '#' + 'extensionStart' + ')');
+  svgPath.attr('marker-end', 'url(' + url + '#' + 'normalEnd' + ')');
+  // svgPath.attr('marker-start', 'url(' + url + '#' + 'normalStart' + ')');
 };

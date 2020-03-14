@@ -32,7 +32,7 @@ const rect = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
 
-  logger.info('bbox', bbox.width, node.x, node.width);
+  // logger.info('bbox', bbox.width, node.x, node.width);
   // Center the label
   // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
   label.attr(
@@ -57,7 +57,7 @@ const rect = (parent, node) => {
 
 const shapes = { rect };
 
-const clusterElems = {};
+let clusterElems = {};
 
 export const insertCluster = (elem, node) => {
   clusterElems[node.id] = shapes[node.shape](elem, node);
@@ -68,6 +68,10 @@ export const getClusterTitleWidth = (elem, node) => {
   const width = label.getBBox().width;
   elem.node().removeChild(label);
   return width;
+};
+
+export const clear = () => {
+  clusterElems = {};
 };
 
 export const positionCluster = node => {

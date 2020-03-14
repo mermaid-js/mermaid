@@ -47,10 +47,13 @@ const rect = (parent, node) => {
 
 const shapes = { rect };
 
-const nodeElems = {};
+let nodeElems = {};
 
 export const insertNode = (elem, node) => {
   nodeElems[node.id] = shapes[node.shape](elem, node);
+};
+export const clear = () => {
+  nodeElems = {};
 };
 
 export const positionNode = node => {

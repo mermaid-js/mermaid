@@ -1,12 +1,23 @@
 import dagre from 'dagre';
 import insertMarkers from './markers';
-import { insertNode, positionNode } from './nodes';
-import { insertCluster } from './clusters';
-import { insertEdgeLabel, positionEdgeLabel, insertEdge } from './edges';
+import { insertNode, positionNode, clearNodes } from './nodes';
+import { insertCluster, clearClusters } from './clusters';
+import { insertEdgeLabel, positionEdgeLabel, insertEdge, clearEdges } from './edges';
 import { logger } from '../logger';
+
+let clusterDb = {};
+
+const translateClusterId = id => {
+  if (clusterDb[id]) return clusterDb[id].id;
+  return id;
+};
 
 export const render = (elem, graph) => {
   insertMarkers(elem);
+  clusterDb = {};
+  clearNodes();
+  clearEdges();
+  clearClusters();
 
   const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
@@ -17,27 +28,41 @@ export const render = (elem, graph) => {
   // to the abstract node and is later used by dagre for the layout
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    logger.trace('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node.type !== 'group') {
       insertNode(nodes, graph.node(v));
     } else {
       // const width = getClusterTitleWidth(clusters, node);
-      // const children = graph.children(v);
+      const children = graph.children(v);
+      logger.info('Cluster identified', node.id, children[0]);
       // nodes2expand.push({ id: children[0], width });
+      clusterDb[node.id] = { id: children[0] };
+      logger.info('Clusters ', clusterDb);
     }
   });
 
-  // nodes2expand.forEach(item => {
-  //   const node = graph.node(item.id);
-  //   node.width = item.width;
-  // });
-
-  // Inster labels, this will insert them into the dom so that the width can be calculated
+  // Insert labels, this will insert them into the dom so that the width can be calculated
+  // Also figure out which edges point to/from clusters and adjust them accordingly
+  // Edges from/to clusters really points to the first child in the cluster.
+  // TODO: pick optimal child in the cluster to us as link anchor
   graph.edges().forEach(function(e) {
-    logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
-    insertEdgeLabel(edgeLabels, graph.edge(e));
+    const edge = graph.edge(e);
+    // logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    // logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    const v = translateClusterId(e.v);
+    const w = translateClusterId(e.w);
+    if (v !== e.v || w !== e.w) {
+      graph.removeEdge(e.v, e.w, e.name);
+      if (v !== e.v) edge.fromCluster = e.v;
+      if (w !== e.w) edge.toCluster = e.w;
+      graph.setEdge(v, w, edge, e.name);
+    }
+    insertEdgeLabel(edgeLabels, edge);
   });
 
+  // graph.edges().forEach(function(e) {
+  //   logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+  // });
   logger.info('#############################################');
   logger.info('###                Layout                 ###');
   logger.info('#############################################');
@@ -46,11 +71,12 @@ export const render = (elem, graph) => {
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    logger.trace('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node.type !== 'group') {
       positionNode(node);
     } else {
       insertCluster(clusters, node);
+      clusterDb[node.id].node = node;
     }
   });
 
@@ -59,7 +85,7 @@ export const render = (elem, graph) => {
     const edge = graph.edge(e);
     logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge));
 
-    insertEdge(edgePaths, edge);
+    insertEdge(edgePaths, edge, clusterDb);
     positionEdgeLabel(edge);
   });
 };

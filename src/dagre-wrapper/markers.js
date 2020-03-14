@@ -101,6 +101,37 @@ const insertMarkers = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
+
+  elem
+    .append('marker')
+    .attr('id', 'normalEnd')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 9)
+    .attr('refY', 5)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('markerWidth', 8)
+    .attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+    .attr('class', 'arrowheadPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0');
+  elem
+    .append('marker')
+    .attr('id', 'normalStart')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 9)
+    .attr('refY', 5)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('markerWidth', 8)
+    .attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+    .attr('class', 'arrowheadPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0');
 };
 
 export default insertMarkers;

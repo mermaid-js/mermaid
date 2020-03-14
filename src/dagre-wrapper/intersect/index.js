@@ -8,7 +8,7 @@ import ellipse from './intersect-ellipse';
 import polygon from './intersect-polygon';
 import rect from './intersect-rect';
 
-module.exports = {
+export default {
   node,
   circle,
   ellipse,
