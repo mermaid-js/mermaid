@@ -174,6 +174,7 @@ export const addEdges = function(edges, g) {
     } else {
       edgeData.arrowhead = 'normal';
     }
+    edgeData.arrowType = edge.type;
 
     let style = '';
     let labelStyle = '';
@@ -311,6 +312,7 @@ export const draw = function(text, id) {
 
   const edges = flowDb.getEdges();
 
+  logger.info(edges);
   let i = 0;
   for (i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];

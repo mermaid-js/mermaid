@@ -36,3 +36,8 @@ This is set by the renderer of the diagram and insert the data that the wrapper 
 | id         | id of the shape                                                                                             |
 | type       | if set to group then this node indicates a cluster.                                                         |
 | padding    | Padding. Passed from the renderr as this might differ between react for different diagrams. Maybe obsolete. |
+
+
+#edge
+
+arrowType sets the type of arrows to use

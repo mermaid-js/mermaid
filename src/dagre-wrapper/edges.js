@@ -169,7 +169,7 @@ export const insertEdge = function(elem, edge, clusterDb) {
     points = updatedPoints;
   }
 
-  logger.info('Points', points);
+  logger.info('Edge', edge);
 
   // The data for our line
   const lineData = points.filter(p => !Number.isNaN(p.y));
@@ -212,7 +212,13 @@ export const insertEdge = function(elem, edge, clusterDb) {
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
-
-  svgPath.attr('marker-end', 'url(' + url + '#' + 'normalEnd' + ')');
-  // svgPath.attr('marker-start', 'url(' + url + '#' + 'normalStart' + ')');
+  switch (edge.arrowType) {
+    case 'double_arrow_circle':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'circleEnd' + ')');
+      svgPath.attr('marker-start', 'url(' + url + '#' + 'circleStart' + ')');
+      break;
+    case 'arrow_circle':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'circleEnd' + ')');
+      break;
+  }
 };

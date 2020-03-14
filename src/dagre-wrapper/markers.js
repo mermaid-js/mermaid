@@ -132,6 +132,43 @@ const insertMarkers = elem => {
     .attr('class', 'arrowheadPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
+  elem
+    .append('marker')
+    .attr('id', 'circleEnd')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 10)
+    .attr('refY', 5)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('markerWidth', 7)
+    .attr('markerHeight', 7)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('cx', '5')
+    .attr('cy', '5')
+    .attr('r', '5')
+    .attr('fill', 'red')
+    .attr('class', 'arrowheadPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0');
+
+  elem
+    .append('marker')
+    .attr('id', 'circleStart')
+    .attr('viewBox', '0 0 10 10')
+    .attr('refX', 0)
+    .attr('refY', 5)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('markerWidth', 7)
+    .attr('markerHeight', 7)
+    .attr('orient', 'auto')
+    .append('circle')
+    .attr('cx', '5')
+    .attr('cy', '5')
+    .attr('r', '5')
+    .attr('fill', 'red')
+    .attr('class', 'arrowheadPath')
+    .style('stroke-width', 1)
+    .style('stroke-dasharray', '1,0');
 };
 
 export default insertMarkers;
