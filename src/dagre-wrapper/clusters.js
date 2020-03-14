@@ -32,7 +32,6 @@ const rect = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
 
-  const adj = (node.width + node.padding - bbox.width) / 2;
   logger.info('bbox', bbox.width, node.x, node.width);
   // Center the label
   // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');

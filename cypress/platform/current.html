@@ -18,7 +18,7 @@
   </head>
   <body>
     <h1>info below</h1>
-    <div style="display: flex;width: 100%; height: 100%">
+    <div style="display: flex;flex-direction:column;width: 100%; height: 100%">
       <div class="mermaid2" style="width: 100%; height: 100%;display: none;">
         flowchart LR
           A --> B & C & D
@@ -34,24 +34,11 @@
           C --> D
       </div>
       <div class="mermaid" style="width: 100%; height: 100%">
-        graph LR
-          A[apan klättrar]-- i träd -->B
-          subgraph id1 [Test with title wider then the node in the subgraph]
-            B
-          end
-      </div>
-      <div class="mermaid" style="width: 100%; height: 100%">
         flowchart LR
-          A-- i träd -->B
-          subgraph id1 [Test]
-             B
-          end
-      </div>
-      <div class="mermaid" style="width: 100%; height: 100%">
-        flowchart TB
-          C[apan klättrar]-- i träd -->D
-          subgraph id1 [Test]
-            D
+        G-->H
+        G-->H
+        subgraph id1 [Test]
+            H
           end
       </div>
 </div>

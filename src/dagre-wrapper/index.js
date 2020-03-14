@@ -1,7 +1,7 @@
 import dagre from 'dagre';
 import insertMarkers from './markers';
 import { insertNode, positionNode } from './nodes';
-import { insertCluster, positionCluster, getClusterTitleWidth } from './clusters';
+import { insertCluster } from './clusters';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge } from './edges';
 import { logger } from '../logger';
 
@@ -15,7 +15,6 @@ export const render = (elem, graph) => {
 
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
-  const nodes2expand = [];
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
     logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
