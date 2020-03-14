@@ -1,5 +1,4 @@
 import dagre from 'dagre';
-import graphlib from 'graphlib';
 
 // Create a new directed graph
 var g = new dagre.graphlib.Graph({ compound: true });
