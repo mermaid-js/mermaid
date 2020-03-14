@@ -1,5 +1,6 @@
 import graphlib from 'graphlib';
 import * as d3 from 'd3';
+import dagre from 'dagre';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
