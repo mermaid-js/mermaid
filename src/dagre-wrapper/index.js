@@ -1,8 +1,8 @@
 import dagre from 'dagre';
 import insertMarkers from './markers';
-import { insertNode, positionNode, clearNodes } from './nodes';
-import { insertCluster, clearClusters } from './clusters';
-import { insertEdgeLabel, positionEdgeLabel, insertEdge, clearEdges } from './edges';
+import { insertNode, positionNode, clear as clearNodes } from './nodes';
+import { insertCluster, clear as clearClusters } from './clusters';
+import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
 import { logger } from '../logger';
 
 let clusterDb = {};
