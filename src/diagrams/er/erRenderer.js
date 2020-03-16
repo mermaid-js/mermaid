@@ -8,6 +8,12 @@ import { logger } from '../../logger';
 import erMarkers from './erMarkers';
 
 const conf = {};
+
+/**
+ * Allows the top-level API module to inject config specific to this renderer,
+ * storing it in the local conf object. Note that generic config still needs to be
+ * retrieved using getConfig() imported from the config module
+ */
 export const setConf = function(cnf) {
   const keys = Object.keys(cnf);
   for (let i = 0; i < keys.length; i++) {
@@ -44,10 +50,11 @@ const addEntities = function(entities, g) {
 /**
  * Use D3 to construct the svg elements for the entities
  * @param svgNode the svg node that contains the diagram
- * @param entities the entities to be drawn
- * @param g the dagre graph that contains the vertex and edge definitions post-layout
+ * @param entities The entities to be drawn
+ * @param g The graph that contains the vertex and edge definitions post-layout
+ * @return The first entity that was inserted
  */
-const drawEntities = function(svgNode, entities, svgId, graph) {
+const drawEntities = function(svgNode, entities, graph) {
   const keys = Object.keys(entities);
   let firstOne;
 
@@ -59,7 +66,7 @@ const drawEntities = function(svgNode, entities, svgId, graph) {
 
     // Label the entity - this is done first so that we can get the bounding box
     // which then determines the size of the rectangle
-    const textId = 'entity-' + id + '-' + svgId;
+    const textId = 'entity-' + id;
     const textNode = groupNode
       .append('text')
       .attr('id', textId)
@@ -92,20 +99,17 @@ const drawEntities = function(svgNode, entities, svgId, graph) {
     const rectBBox = rectNode.node().getBBox();
 
     // Add the entity to the graph
-    // TODO: revisit this - need to understand properly
     graph.setNode(id, {
-      labelType: 'svg',
       width: rectBBox.width,
       height: rectBBox.height,
       shape: 'rect',
-      label: document.createElementNS('http://www.w3.org/2000/svg', 'text'),
       id: id
     });
   });
   return firstOne;
 }; // drawEntities
 
-const adjustEntities = function(svgNode, entities, graph) {
+const adjustEntities = function(svgNode, graph) {
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       d3.select('#' + v).attr(
@@ -139,23 +143,13 @@ const addRelationships = function(relationships, g) {
 }; // addRelationships
 
 /**
- *
- */
-const drawRelationships = function(diagram, relationships, g, insertId) {
-  relationships.forEach(function(rel) {
-    drawRelationshipFromLayout(diagram, rel, g, insertId);
-  });
-}; // drawRelationships
-
-/**
  * Draw a relationship using edge information from the graph
- * @param diagram the svg node
+ * @param svg the svg node
  * @param rel the relationship to draw in the svg
  * @param g the graph containing the edge information
  */
-const drawRelationshipFromLayout = function(diagram, rel, g, insert) {
+const drawRelationshipFromLayout = function(svg, rel, g, insert) {
   // Find the edge relating to this relationship
-  //const edge = g.edge({ v: rel.entityA, w: rel.entityB });
   const edge = g.edge(rel.entityA, rel.entityB, getEdgeName(rel));
 
   // Get a function that will generate the line path
@@ -170,7 +164,7 @@ const drawRelationshipFromLayout = function(diagram, rel, g, insert) {
     .curve(d3.curveBasis);
 
   // Insert the line at the right place
-  const svgPath = diagram
+  const svgPath = svg
     .insert('path', '#' + insert)
     .attr('d', lineFunction(edge.points))
     .attr('stroke', conf.stroke)
@@ -347,7 +341,7 @@ export const draw = function(text, id) {
     compound: false
   })
     .setGraph({
-      rankdir: 'LR',
+      rankdir: 'TB',
       marginx: 20,
       marginy: 20,
       nodesep: 100,
@@ -357,20 +351,24 @@ export const draw = function(text, id) {
       return {};
     });
 
-  const entities = erDb.getEntities();
-  const firstEntity = drawEntities(svg, entities, id, g);
+  // Draw the entities (at 0,0), returning the first svg node that got
+  // inserted - this represents the insertion point for relationship paths
+  const firstEntity = drawEntities(svg, erDb.getEntities(), g);
 
-  //addEntities(erDb.getEntities(), g);
+  // TODO: externalise the addition of entities to the graph - it's a bit 'buried' in the above
+
+  // Add all the relationships to the graph
   const relationships = addRelationships(erDb.getRelationships(), g);
 
   dagre.layout(g); // Node and edge positions will be updated
 
-  adjustEntities(svg, entities, g);
+  // Adjust the positions of the entities so that they adhere to the layout
+  adjustEntities(svg, g);
 
-  // Draw the relationships first because their markers need to be
-  // clipped by the entity boxes
-  drawRelationships(svg, relationships, g, firstEntity);
-  //drawEntities(svg, entities, id);
+  // Draw the relationships
+  relationships.forEach(function(rel) {
+    drawRelationshipFromLayout(svg, rel, g, firstEntity);
+  });
 
   const padding = 8; // TODO: move this to config
 

@@ -10,7 +10,7 @@
 <string>["]               { this.popState(); }
 <string>[^"]*             { return 'STR'; }
 "erDiagram"               return 'ER_DIAGRAM';
-[A-Za-z][A-Za-z0-9]*      return 'ALPHANUM';
+[A-Za-z][A-Za-z0-9\-]*    return 'ALPHANUM';
 \>\?\-\?\<                return 'ZERO_OR_MORE_TO_ZERO_OR_MORE';
 \>\?\-\!\<                return 'ZERO_OR_MORE_TO_ONE_OR_MORE';
 \>\!\-\!\<                return 'ONE_OR_MORE_TO_ONE_OR_MORE';
