@@ -19,7 +19,7 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(edges[0].type).toBe('arrow');
+      expect(edges[0].type).toBe('arrow_point');
       expect(edges.length).toBe(47917);
       console.log(vert);
       expect(Object.keys(vert).length).toBe(2);

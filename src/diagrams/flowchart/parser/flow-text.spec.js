@@ -74,7 +74,7 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(edges[0].type).toBe('arrow');
+      expect(edges[0].type).toBe('arrow_point');
       expect(edges[0].text).toBe('text including URL space and send');
     });
     it('should handle space and send', function() {
@@ -83,7 +83,7 @@ describe('[Text] when parsing', () => {
       const vert = flow.parser.yy.getVertices();
       const edges = flow.parser.yy.getEdges();
 
-      expect(edges[0].type).toBe('arrow');
+      expect(edges[0].type).toBe('arrow_point');
       expect(edges[0].text).toBe('text including URL space and send');
     });
 
@@ -380,7 +380,7 @@ describe('[Text] when parsing', () => {
     const edges = flow.parser.yy.getEdges();
 
     expect(edges[0].type).toBe('arrow_circle');
-    expect(edges[1].type).toBe('arrow');
+    expect(edges[1].type).toBe('arrow_point');
     expect(vert['A'].id).toBe('A');
     expect(vert['B'].id).toBe('B');
     expect(vert['C'].id).toBe('C');
