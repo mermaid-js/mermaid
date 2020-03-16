@@ -496,19 +496,19 @@ const destructStartLink = _str => {
 
   switch (str) {
     case '<--':
-      return { type: 'arrow', stroke: 'normal' };
+      return { type: 'arrow_point', stroke: 'normal' };
     case 'x--':
       return { type: 'arrow_cross', stroke: 'normal' };
     case 'o--':
       return { type: 'arrow_circle', stroke: 'normal' };
     case '<-.':
-      return { type: 'arrow', stroke: 'dotted' };
+      return { type: 'arrow_point', stroke: 'dotted' };
     case 'x-.':
       return { type: 'arrow_cross', stroke: 'dotted' };
     case 'o-.':
       return { type: 'arrow_circle', stroke: 'dotted' };
     case '<==':
-      return { type: 'arrow', stroke: 'thick' };
+      return { type: 'arrow_point', stroke: 'thick' };
     case 'x==':
       return { type: 'arrow_cross', stroke: 'thick' };
     case 'o==':
@@ -529,7 +529,7 @@ const destructEndLink = _str => {
     case '--x':
       return { type: 'arrow_cross', stroke: 'normal' };
     case '-->':
-      return { type: 'arrow', stroke: 'normal' };
+      return { type: 'arrow_point', stroke: 'normal' };
     case '<-->':
       return { type: 'double_arrow_point', stroke: 'normal' };
     case 'x--x':
@@ -561,7 +561,7 @@ const destructEndLink = _str => {
     case '-.-x':
       return { type: 'arrow_cross', stroke: 'dotted' };
     case '-.->':
-      return { type: 'arrow', stroke: 'dotted' };
+      return { type: 'arrow_point', stroke: 'dotted' };
     case '-.-o':
       return { type: 'arrow_circle', stroke: 'dotted' };
     case '-.-':
@@ -569,7 +569,7 @@ const destructEndLink = _str => {
     case '.-x':
       return { type: 'arrow_cross', stroke: 'dotted' };
     case '.->':
-      return { type: 'arrow', stroke: 'dotted' };
+      return { type: 'arrow_point', stroke: 'dotted' };
     case '.-o':
       return { type: 'arrow_circle', stroke: 'dotted' };
     case '.-':
@@ -577,7 +577,7 @@ const destructEndLink = _str => {
     case '==x':
       return { type: 'arrow_cross', stroke: 'thick' };
     case '==>':
-      return { type: 'arrow', stroke: 'thick' };
+      return { type: 'arrow_point', stroke: 'thick' };
     case '==o':
       return { type: 'arrow_circle', stroke: 'thick' };
     case '===':

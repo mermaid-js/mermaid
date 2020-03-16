@@ -1,7 +1,14 @@
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
-const insertMarkers = elem => {
+// Only add the number of markers that the diagram needs
+const insertMarkers = (elem, markerArray) => {
+  markerArray.forEach(markerName => {
+    markers[markerName](elem);
+  });
+};
+
+const extension = elem => {
   elem
     .append('defs')
     .append('marker')
@@ -26,7 +33,9 @@ const insertMarkers = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
+};
 
+const composition = elem => {
   elem
     .append('defs')
     .append('marker')
@@ -51,7 +60,8 @@ const insertMarkers = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-
+};
+const aggregation = elem => {
   elem
     .append('defs')
     .append('marker')
@@ -76,7 +86,8 @@ const insertMarkers = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
-
+};
+const dependency = elem => {
   elem
     .append('defs')
     .append('marker')
@@ -101,16 +112,17 @@ const insertMarkers = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
-
+};
+const point = elem => {
   elem
     .append('marker')
-    .attr('id', 'normalEnd')
+    .attr('id', 'pointEnd')
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 9)
+    .attr('refX', 10)
     .attr('refY', 5)
     .attr('markerUnits', 'strokeWidth')
     .attr('markerWidth', 8)
-    .attr('markerHeight', 6)
+    .attr('markerHeight', 8)
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
@@ -119,24 +131,26 @@ const insertMarkers = elem => {
     .style('stroke-dasharray', '1,0');
   elem
     .append('marker')
-    .attr('id', 'normalStart')
+    .attr('id', 'pointStart')
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 9)
+    .attr('refX', 0)
     .attr('refY', 5)
     .attr('markerUnits', 'strokeWidth')
     .attr('markerWidth', 8)
-    .attr('markerHeight', 6)
+    .attr('markerHeight', 8)
     .attr('orient', 'auto')
     .append('path')
-    .attr('d', 'M 0 0 L 10 5 L 0 10 z')
+    .attr('d', 'M 0 5 L 10 10 L 10 0 z')
     .attr('class', 'arrowheadPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
+};
+const circle = elem => {
   elem
     .append('marker')
     .attr('id', 'circleEnd')
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 10)
+    .attr('refX', 11)
     .attr('refY', 5)
     .attr('markerUnits', 'strokeWidth')
     .attr('markerWidth', 7)
@@ -146,7 +160,6 @@ const insertMarkers = elem => {
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
-    .attr('fill', 'red')
     .attr('class', 'arrowheadPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
@@ -155,7 +168,7 @@ const insertMarkers = elem => {
     .append('marker')
     .attr('id', 'circleStart')
     .attr('viewBox', '0 0 10 10')
-    .attr('refX', 0)
+    .attr('refX', -1)
     .attr('refY', 5)
     .attr('markerUnits', 'strokeWidth')
     .attr('markerWidth', 7)
@@ -165,10 +178,54 @@ const insertMarkers = elem => {
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
-    .attr('fill', 'red')
     .attr('class', 'arrowheadPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
+const cross = elem => {
+  elem
+    .append('marker')
+    .attr('id', 'crossEnd')
+    .attr('viewBox', '0 0 11 11')
+    .attr('refX', 12)
+    .attr('refY', 5.2)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('markerWidth', 7)
+    .attr('markerHeight', 7)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('stroke', 'black')
+    .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
+    .attr('class', 'arrowheadPath')
+    .style('stroke-width', 2)
+    .style('stroke-dasharray', '1,0');
 
+  elem
+    .append('marker')
+    .attr('id', 'crossStart')
+    .attr('viewBox', '0 0 11 11')
+    .attr('refX', -1)
+    .attr('refY', 5.2)
+    .attr('markerUnits', 'strokeWidth')
+    .attr('markerWidth', 7)
+    .attr('markerHeight', 7)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('stroke', 'black')
+    .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
+    .attr('class', 'arrowheadPath')
+    .style('stroke-width', 2)
+    .style('stroke-dasharray', '1,0');
+};
+
+// TODO rename the class diagram markers to something shape descriptive and semanitc free
+const markers = {
+  extension,
+  composition,
+  aggregation,
+  dependency,
+  point,
+  circle,
+  cross
+};
 export default insertMarkers;

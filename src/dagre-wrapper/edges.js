@@ -191,6 +191,7 @@ export const insertEdge = function(elem, edge, clusterDb) {
     .attr('id', edge.id)
     .attr('class', 'transition');
 
+  // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {
   //   elem
   //     .append('circle')
@@ -212,13 +213,29 @@ export const insertEdge = function(elem, edge, clusterDb) {
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
+  logger.info('arrowType', edge.arrowType);
   switch (edge.arrowType) {
-    case 'double_arrow_circle':
-      svgPath.attr('marker-end', 'url(' + url + '#' + 'circleEnd' + ')');
-      svgPath.attr('marker-start', 'url(' + url + '#' + 'circleStart' + ')');
+    case 'arrow_cross':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'crossEnd' + ')');
+      break;
+    case 'double_arrow_cross':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'crossEnd' + ')');
+      svgPath.attr('marker-start', 'url(' + url + '#' + 'crossStart' + ')');
+      break;
+    case 'arrow_point':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'pointEnd' + ')');
+      break;
+    case 'double_arrow_point':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'pointEnd' + ')');
+      svgPath.attr('marker-start', 'url(' + url + '#' + 'pointStart' + ')');
       break;
     case 'arrow_circle':
       svgPath.attr('marker-end', 'url(' + url + '#' + 'circleEnd' + ')');
       break;
+    case 'double_arrow_circle':
+      svgPath.attr('marker-end', 'url(' + url + '#' + 'circleEnd' + ')');
+      svgPath.attr('marker-start', 'url(' + url + '#' + 'circleStart' + ')');
+      break;
+    default:
   }
 };

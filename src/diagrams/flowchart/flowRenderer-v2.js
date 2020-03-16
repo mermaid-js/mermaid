@@ -372,7 +372,7 @@ export const draw = function(text, id) {
 
   // Run the renderer. This is what draws the final graph.
   const element = d3.select('#' + id + ' g');
-  render(element, g);
+  render(element, g, ['point', 'circle', 'cross']);
   dagre.layout(g);
 
   element.selectAll('g.node').attr('title', function() {

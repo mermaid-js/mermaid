@@ -12,8 +12,8 @@ const translateClusterId = id => {
   return id;
 };
 
-export const render = (elem, graph) => {
-  insertMarkers(elem);
+export const render = (elem, graph, markers) => {
+  insertMarkers(elem, markers);
   clusterDb = {};
   clearNodes();
   clearEdges();

@@ -38,6 +38,30 @@ This is set by the renderer of the diagram and insert the data that the wrapper 
 | padding    | Padding. Passed from the renderr as this might differ between react for different diagrams. Maybe obsolete. |
 
 
-#edge
+# edge
 
-arrowType sets the type of arrows to use
+arrowType sets the type of arrows to use. The following arrow types are currently supported:
+
+arrow_cross
+double_arrow_cross
+arrow_point
+double_arrow_point
+arrow_circle
+double_arrow_circle
+
+Lets try to make these types semantic free so that diagram type semantics does not find its way in to this more generic layer.
+
+
+# Markers
+
+Define what markers that should be included in the diagram with the insert markers function. The function takes two arguments, first the element in which the markers should be included and a list of the markers that should be added.
+
+Ex:
+insertMarkers(el, ['point', 'circle'])
+
+The example above adds the markers point and cross. This means that edges with the arrowTypes arrow_cross, double_arrow_cross, arrow_point and double_arrow_cross will get the corresponding markers but arrowType arrow_cross will have no impact.
+
+Current markers:
+* point - the standard arrow from flowcharts
+* circle - Arrows ending with circle
+* cross - arrows starting and ending with a cross
