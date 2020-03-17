@@ -22,32 +22,6 @@ export const setConf = function(cnf) {
 };
 
 /**
- * Function that adds the entities as vertices in the graph prior to laying out
- * @param entities The entities to be added to the graph
- * @param g The graph that is to be drawn
- * @returns {Object} The object containing all the entities as properties
- */
-/*
-const addEntities = function(entities, g) {
-  const keys = Object.keys(entities);
-
-  keys.forEach(function(id) {
-    const entity = entities[id];
-    const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-
-    g.setNode(entity, {
-      labelType: 'svg',
-      width: 100,
-      height: 75,
-      shape: 'rect',
-      label: svgLabel,
-      id: entity
-    });
-  });
-  return entities;
-};
-*/
-/**
  * Use D3 to construct the svg elements for the entities
  * @param svgNode the svg node that contains the diagram
  * @param entities The entities to be drawn
@@ -142,6 +116,7 @@ const addRelationships = function(relationships, g) {
   return relationships;
 }; // addRelationships
 
+let relCnt = 0;
 /**
  * Draw a relationship using edge information from the graph
  * @param svg the svg node
@@ -149,6 +124,8 @@ const addRelationships = function(relationships, g) {
  * @param g the graph containing the edge information
  */
 const drawRelationshipFromLayout = function(svg, rel, g, insert) {
+  relCnt++;
+
   // Find the edge relating to this relationship
   const edge = g.edge(rel.entityA, rel.entityB, getEdgeName(rel));
 
@@ -287,6 +264,40 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
   }
+
+  // Now label the relationship
+
+  // Find the half-way point
+  const len = svgPath.node().getTotalLength();
+  const labelPoint = svgPath.node().getPointAtLength(len * 0.5);
+
+  // Append a text node containing the label
+  const labelId = 'rel' + relCnt;
+
+  const labelNode = svg
+    .append('text')
+    .attr('id', labelId)
+    .attr('x', labelPoint.x)
+    .attr('y', labelPoint.y)
+    .attr('text-anchor', 'middle')
+    .attr('dominant-baseline', 'middle')
+    .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
+    .text(rel.roleA);
+  
+  // Figure out how big the opaque 'container' rectangle needs to be
+  const labelBBox = labelNode.node().getBBox();
+
+  // Insert the opaque rectangle in front of the text label
+  svg
+    .insert('rect', '#' + labelId)
+    .attr('x', labelPoint.x - labelBBox.width / 2)
+    .attr('y', labelPoint.y - labelBBox.height / 2)
+    .attr('width', labelBBox.width)
+    .attr('height', labelBBox.height)
+    .attr('fill', 'white')
+    .attr('fill-opacity', '85%');
+
+  return;
 };
 
 /**
@@ -341,7 +352,7 @@ export const draw = function(text, id) {
     compound: false
   })
     .setGraph({
-      rankdir: 'TB',
+      rankdir: conf.layoutDirection,
       marginx: 20,
       marginy: 20,
       nodesep: 100,
