@@ -353,8 +353,8 @@ const config = {
    */
   er: {
     /**
-     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL', 
-     * where T = top, B = bottom, L = left, and R = right. 
+     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
+     * where T = top, B = bottom, L = left, and R = right.
      */
     layoutDirection: 'TB',
 

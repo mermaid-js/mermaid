@@ -283,7 +283,7 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
     .attr('dominant-baseline', 'middle')
     .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
     .text(rel.roleA);
-  
+
   // Figure out how big the opaque 'container' rectangle needs to be
   const labelBBox = labelNode.node().getBBox();
 
