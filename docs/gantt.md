@@ -1,8 +1,19 @@
 # Gantt diagrams
 
-> A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule. Gantt charts illustrate the start and finish dates of the terminal elements and summary elements of a project.
-
-Mermaid can render Gantt diagrams.
+> A Gantt chart is a type of bar chart, first developed by Karol Adamiecki in 1896, and independently by Henry Gantt in the 1910s, that illustrates a project schedule and the amount of time it would take for any one project to finish. Gantt charts illustrate number of days between the start and finish dates of the terminal elements and summary elements of a project.
+ 
+ ## A note to users
+ Gannt Charts will record each scheduled task as one continuous bar that extends from the left to the right. The x axis represents time and the y records the different tasks and the order in which they are to be completed.   
+ 
+ It is important to remember that when a date, day or collection of dates specific to a task are "excluded", the Gannt Chart will accomodate those changes by extending an equal number of day, towards the right, not by creating a gap inside the task.
+ As shown here ![](https://github.com/NeilCuzon/mermaid/blob/develop/docs/img/Gantt-excluded-days-within.png)
+ 
+ However, if the excluded date/s is between two tasks that are set to start consecutively, the excluded dates will be skipped graphically and left blank, and the following task will begin after the end of the excluded date/s.   
+ As shown here ![](https://github.com/NeilCuzon/mermaid/blob/develop/docs/img/Gantt-long-weekend-look.png)
+ 
+ A Gantt chart is useful for tracking the amount of time it would take before a project is finished, but it can also be used to graphically represent "non-working days, with a few tweaks. 
+ 
+Mermaid can render Gantt diagrams as SVG, PNG or a MarkDown link that can be pasted into docs. 
 
 ```
 gantt
@@ -30,9 +41,12 @@ gantt
 
 ```
 gantt
-       dateFormat  YYYY-MM-DD
-       title Adding GANTT diagram functionality to mermaid
 
+
+       dateFormat                :YYYY-MM-DD
+       title                     :Adding GANTT diagram functionality to mermaid
+       excludes                  :excludes the named dates/days from being included in a charted task.. 
+       (Accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".) 
        section A section
        Completed task            :done,    des1, 2014-01-06,2014-01-08
        Active task               :active,  des2, 2014-01-09, 3d
@@ -118,7 +132,7 @@ Tbd
 
 ### Date format
 
-The default date format is YYYY-MM-DD. You can define your ``dateFormat``. For example:
+The default date format is YYYY-MM-DD. You can define your ``dateFormat``. For example: 2020-3-7
 
 ```
 dateFormat YYYY MM DD
