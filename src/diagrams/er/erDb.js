@@ -35,12 +35,18 @@ const addEntity = function(name) {
 
 const getEntities = () => entities;
 
-const addRelationship = function(entA, rolA, entB, rolB, card) {
+/**
+ * Add a relationship
+ * @param entA The first entity in the relationship
+ * @param rolA The role played by the first entity in relation to the second
+ * @param entB The second entity in the relationship
+ * @param card The cardinality of the relationship between the two entities
+ */
+const addRelationship = function(entA, rolA, entB, card) {
   let rel = {
     entityA: entA,
     roleA: rolA,
     entityB: entB,
-    roleB: rolB,
     cardinality: card
   };
 

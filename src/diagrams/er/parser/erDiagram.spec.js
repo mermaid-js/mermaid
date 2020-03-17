@@ -15,7 +15,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should associate two entities correctly', function() {
-    erDiagram.parser.parse('erDiagram\nCAR !-?< DRIVER : "insured for", "can drive"');
+    erDiagram.parser.parse('erDiagram\nCAR !-?< DRIVER : "insured for"');
     const entities = erDb.getEntities();
     const relationships = erDb.getRelationships();
     const carEntity = entities.CAR;
@@ -28,33 +28,31 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should not create duplicate entities', function() {
-    const line1 = 'CAR !-?< DRIVER : "insured for", "can drive"';
-    const line2 = 'DRIVER !-! LICENSE : has, "belongs to"';
+    const line1 = 'CAR !-?< DRIVER : "insured for"';
+    const line2 = 'DRIVER !-! LICENSE : has';
     erDiagram.parser.parse(`erDiagram\n${line1}\n${line2}`);
     const entities = erDb.getEntities();
 
     expect(Object.keys(entities).length).toBe(3);
   });
 
-  it('should create the roles specified', function() {
+  it('should create the role specified', function() {
     const teacherRole = 'is teacher of';
-    const studentRole = 'is student of';
-    const line1 = `TEACHER >?-?< STUDENT : "${teacherRole}", "${studentRole}"`;
+    const line1 = `TEACHER >?-?< STUDENT : "${teacherRole}"`;
     erDiagram.parser.parse(`erDiagram\n${line1}`);
     const rels = erDb.getRelationships();
 
     expect(rels[0].roleA).toBe(`${teacherRole}`);
-    expect(rels[0].roleB).toBe(`${studentRole}`);
   });
 
   it('should allow recursive relationships', function() {
-    erDiagram.parser.parse('erDiagram\nNODE !-?< NODE : "leads to", "comes from"');
+    erDiagram.parser.parse('erDiagram\nNODE !-?< NODE : "leads to"');
     expect(Object.keys(erDb.getEntities()).length).toBe(1);
   });
 
   it('should allow more than one relationship between the same two entities', function() {
-    const line1 = 'CAR !-?< PERSON : "insured for", "may drive"';
-    const line2 = 'CAR >?-! PERSON : "owned by", "owns"';
+    const line1 = 'CAR !-?< PERSON : "insured for"';
+    const line2 = 'CAR >?-! PERSON : "owned by"';
     erDiagram.parser.parse(`erDiagram\n${line1}\n${line2}`);
     const entities = erDb.getEntities();
     const rels     = erDb.getRelationships();
@@ -67,12 +65,12 @@ describe('when parsing ER diagram it...', function() {
     /* TODO */
   });
 
-  it ('should not allow relationships between the same two entities unless the roles are different', function() {
+  it ('should not allow multiple relationships between the same two entities unless the roles are different', function() {
     /* TODO */
   });
 
   it('should handle only-one-to-one-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA !-!< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA !-!< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -81,7 +79,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle only-one-to-zero-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA !-?< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA !-?< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -91,7 +89,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-one-to-zero-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA ?-?< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA ?-?< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -100,7 +98,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-one-to-one-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA ?-!< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA ?-!< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -109,7 +107,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle one-or-more-to-only-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >!-! B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >!-! B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -118,7 +116,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-more-to-only-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >?-! B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >?-! B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -127,7 +125,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-more-to-zero-or-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >?-? B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >?-? B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -136,7 +134,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle one-or-more-to-zero-or-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >!-? B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >!-? B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -145,7 +143,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-one-to-only-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA ?-! B : has, has');
+    erDiagram.parser.parse('erDiagram\nA ?-! B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -154,7 +152,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle only-one-to-only-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA !-! B : has, has');
+    erDiagram.parser.parse('erDiagram\nA !-! B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -163,7 +161,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle only-one-to-zero-or-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA !-? B : has, has');
+    erDiagram.parser.parse('erDiagram\nA !-? B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -172,7 +170,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-one-to-zero-or-one relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA ?-? B : has, has');
+    erDiagram.parser.parse('erDiagram\nA ?-? B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -181,7 +179,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-more-to-zero-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >?-?< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >?-?< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -190,7 +188,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle one-or-more-to-one-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >!-!< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >!-!< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -199,7 +197,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle zero-or-more-to-one-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >?-!< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >?-!< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -208,7 +206,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should handle one-or-more-to-zero-or-more relationships', function() {
-    erDiagram.parser.parse('erDiagram\nA >!-?< B : has, has');
+    erDiagram.parser.parse('erDiagram\nA >!-?< B : has');
     const rels = erDb.getRelationships();
 
     expect(Object.keys(erDb.getEntities()).length).toBe(2);
@@ -217,7 +215,7 @@ describe('when parsing ER diagram it...', function() {
   });
 
   it('should not accept a syntax error', function() {
-    const doc = 'erDiagram\nA xxx B : has, has';
+    const doc = 'erDiagram\nA xxx B : has';
     expect(() => {
       erDiagram.parser.parse(doc);
     }).toThrowError();

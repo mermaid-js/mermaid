@@ -46,12 +46,12 @@ document
     ;
 
 statement
-    : entityName relationship entityName ':' role ',' role
+    : entityName relationship entityName ':' role 
       { 
           yy.addEntity($1); 
           yy.addEntity($3); 
-          yy.addRelationship($1, $5, $3, $7, $2);
-          /*console.log($1 + $2 + $3 + ':' + $5 + ',' + $7);*/
+          yy.addRelationship($1, $5, $3, $2);
+          /*console.log($1 + $2 + $3 + ':' + $5);*/
       };
 
 entityName

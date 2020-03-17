@@ -100,7 +100,7 @@ const adjustEntities = function(svgNode, graph) {
 };
 
 const getEdgeName = function(rel) {
-  return (rel.entityA + rel.roleA + rel.roleB + rel.entityB).replace(/\s/g, '');
+  return (rel.entityA + rel.roleA + rel.entityB).replace(/\s/g, '');
 };
 
 /**
