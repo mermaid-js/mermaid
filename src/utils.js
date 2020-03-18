@@ -52,6 +52,10 @@ export const detectType = function(text) {
     return 'pie';
   }
 
+  if (text.match(/^\s*erDiagram/)) {
+    return 'er';
+  }
+
   return 'flowchart';
 };
 
