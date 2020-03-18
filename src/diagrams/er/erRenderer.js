@@ -86,14 +86,16 @@ const drawEntities = function(svgNode, entities, graph) {
 const adjustEntities = function(svgNode, graph) {
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
-      d3.select('#' + v).attr(
-        'transform',
-        'translate(' +
-          (graph.node(v).x - graph.node(v).width / 2) +
-          ',' +
-          (graph.node(v).y - graph.node(v).height / 2) +
-          ' )'
-      );
+      svgNode
+        .select('#' + v)
+        .attr(
+          'transform',
+          'translate(' +
+            (graph.node(v).x - graph.node(v).width / 2) +
+            ',' +
+            (graph.node(v).y - graph.node(v).height / 2) +
+            ' )'
+        );
     }
   });
   return;
@@ -356,6 +358,7 @@ export const draw = function(text, id) {
       marginx: 20,
       marginy: 20,
       nodesep: 100,
+      edgesep: 100,
       ranksep: 100
     })
     .setDefaultEdgeLabel(function() {
