@@ -107,14 +107,15 @@
           a <--> b
           b o--o c
           c x--x d
-          a2 --> b2
-          b2 --o c2
-          c2 --x d2
+          a21([In the box]) --> b2
+          b2((b2)) --o c2
+          c2(c2) --x d2 --> id1{{This is the text in the box}} --> A[(cylindrical<br />shape<br />test)]
       </div>
       old:
       <div class="mermaid" style="width: 100%; height: 100%">
         graph LR
-          a --> b
+          a((a)) --> b --> id1{{This is the text in the box}}
+          A[(cylindrical<br />shape<br />test)]
       </div>
 
 </div>

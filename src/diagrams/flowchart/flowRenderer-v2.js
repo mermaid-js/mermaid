@@ -329,44 +329,6 @@ export const draw = function(text, id) {
   // Add custom shapes
   // flowChartShapes.addToRenderV2(addShape);
 
-  // Add our custom arrow - an empty arrowhead
-  // render.arrows().none = function normal(parent, id, edge, type) {
-  //   const marker = parent
-  //     .append('marker')
-  //     .attr('id', id)
-  //     .attr('viewBox', '0 0 10 10')
-  //     .attr('refX', 9)
-  //     .attr('refY', 5)
-  //     .attr('markerUnits', 'strokeWidth')
-  //     .attr('markerWidth', 8)
-  //     .attr('markerHeight', 6)
-  //     .attr('orient', 'auto');
-
-  //   // const path = marker.append('path').attr('d', 'M 0 0 L 0 0 L 0 0 z');
-  // dagreD3.util.applyStyle(path, edge[type + 'Style']);
-  // };
-
-  // Override normal arrowhead defined in d3. Remove style & add class to allow css styling.
-  // render.arrows().normal = function normal(parent, id) {
-  //   const marker = parent
-  //     .append('marker')
-  //     .attr('id', id)
-  //     .attr('viewBox', '0 0 10 10')
-  //     .attr('refX', 9)
-  //     .attr('refY', 5)
-  //     .attr('markerUnits', 'strokeWidth')
-  //     .attr('markerWidth', 8)
-  //     .attr('markerHeight', 6)
-  //     .attr('orient', 'auto');
-
-  //   marker
-  //     .append('path')
-  //     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-  //     .attr('class', 'arrowheadPath')
-  //     .style('stroke-width', 1)
-  //     .style('stroke-dasharray', '1,0');
-  // };
-
   // Set up an SVG group so that we can translate the final graph.
   const svg = d3.select(`[id="${id}"]`);
 
