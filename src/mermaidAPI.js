@@ -30,6 +30,7 @@ import classRenderer from './diagrams/class/classRenderer';
 import classParser from './diagrams/class/parser/classDiagram';
 import classDb from './diagrams/class/classDb';
 import stateRenderer from './diagrams/state/stateRenderer';
+import stateRendererV2 from './diagrams/state/stateRenderer-v2';
 import stateParser from './diagrams/state/parser/stateDiagram';
 import stateDb from './diagrams/state/stateDb';
 import gitGraphRenderer from './diagrams/git/gitGraphRenderer';
@@ -439,6 +440,10 @@ function parse(text) {
       parser = stateParser;
       parser.parser.yy = stateDb;
       break;
+    case 'stateDiagram':
+      parser = stateParser;
+      parser.parser.yy = stateDb;
+      break;
     case 'info':
       logger.debug('info info info');
       parser = infoParser;
@@ -665,6 +670,11 @@ const render = function(id, _txt, cb, container) {
       // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       stateRenderer.setConf(config.state);
       stateRenderer.draw(txt, id);
+      break;
+    case 'stateDiagram':
+      // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+      stateRendererV2.setConf(config.state);
+      stateRendererV2.draw(txt, id);
       break;
     case 'info':
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;

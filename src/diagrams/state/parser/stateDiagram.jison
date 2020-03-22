@@ -71,6 +71,7 @@
 <NOTE_TEXT>\s*[^:;]+"end note"       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
 
 "stateDiagram"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
+"stateDiagram-v2"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
 "hide empty description"    { /*console.log('HIDE_EMPTY', yytext,'#');*/return 'HIDE_EMPTY'; }
 <INITIAL,struct>"[*]"                   { /*console.log('EDGE_STATE=',yytext);*/ return 'EDGE_STATE';}
 <INITIAL,struct>[^:\n\s\-\{]+                { /*console.log('=>ID=',yytext);*/ return 'ID';}

@@ -21,23 +21,8 @@
   </head>
   <body>
     <h1>info below</h1>
-    <div style="display: flex;flex-direction:column;width: 100%; height: 100%">
-      <div class="mermaid2" style="width: 100%; height: 100%;display: none;">
+      <div class="mermaid2" style="width: 100%; height: 100%;">
         flowchart LR
-          A --> B & C & D
-          subgraph s1
-            B
-            C
-          end
-          subgraph s2
-            D
-          end
-          C --> D
-          C --> D
-          C --> D
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%; display: none">
-        graph LR
         a --> b
 
         subgraph id1 [Test]
@@ -48,6 +33,38 @@
           end
         G-->H
         G-->c
+      </div>
+      <div class="mermaid2" style="width: 100%; height: 100%;">
+        flowchart LR
+        subgraph id1 [Test]
+            b
+          end
+        a-->id1
+      </div>
+      <div class="mermaid" style="width: 100%; height: 100%;">
+        stateDiagram-v2
+        state apa {
+          Still
+        }
+        state "APAN" as apa
+          banana --> apa
+          banana --> Still
+
+      </div>
+
+    <div style="display: flex;flex-direction:column;width: 100%; height: 100%">
+      <div class="mermaid2" style="width: 100%; height: 100%;">
+        stateDiagram-v2
+          state apa {
+            [*] --> Still
+            Still --> [*]
+
+            Still --> Moving
+            Moving --> Still
+            Moving --> Crash
+            Crash --> [*]
+          }
+
       </div>
       <div class="mermaid2" style="width: 100%; height: 100%">
         flowchart TB
@@ -102,7 +119,7 @@
         id1 --> id2
       </div>
       new:
-      <div class="mermaid" style="width: 100%; height: 100%">
+      <div class="mermaid2" style="width: 100%; height: 100%">
         flowchart LR
           a <--> b
           b o--o c
@@ -112,7 +129,7 @@
           c2(c2) --x d2 --> id1{{This is the text in the box}} --> A[(cylindrical<br />shape<br />test)]
       </div>
       old:
-      <div class="mermaid" style="width: 100%; height: 100%">
+      <div class="mermaid2" style="width: 100%; height: 100%">
         graph LR
           a((a)) --> b --> id1{{This is the text in the box}}
           A[(cylindrical<br />shape<br />test)]

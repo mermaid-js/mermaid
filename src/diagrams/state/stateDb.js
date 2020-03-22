@@ -3,7 +3,7 @@ import { logger } from '../../logger';
 let rootDoc = [];
 const setRootDoc = o => {
   logger.info('Setting root doc', o);
-  rootDoc = o;
+  rootDoc = { id: 'root', doc: o };
 };
 
 const getRootDoc = () => rootDoc;
@@ -145,6 +145,12 @@ const getDividerId = () => {
   return 'divider-id-' + dividerCnt;
 };
 
+const classes = [];
+
+const getClasses = () => classes;
+
+const getDirection = () => 'TB';
+
 export const relationType = {
   AGGREGATION: 0,
   EXTENSION: 1,
@@ -158,6 +164,8 @@ export default {
   getState,
   getStates,
   getRelations,
+  getClasses,
+  getDirection,
   addRelation,
   getDividerId,
   // addDescription,

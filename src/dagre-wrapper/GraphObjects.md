@@ -34,7 +34,7 @@ This is set by the renderer of the diagram and insert the data that the wrapper 
 | class      | Class to be set for the shape                                                                               |
 | style      | Css styles for the actual shape                                                                             |
 | id         | id of the shape                                                                                             |
-| type       | if set to group then this node indicates a cluster.                                                         |
+| type       | if set to group then this node indicates *a cluster*.                                                         |
 | padding    | Padding. Passed from the renderr as this might differ between react for different diagrams. Maybe obsolete. |
 
 
@@ -65,3 +65,10 @@ Current markers:
 * point - the standard arrow from flowcharts
 * circle - Arrows ending with circle
 * cross - arrows starting and ending with a cross
+
+
+// Todo - in case of common renderer
+# Common functions used by the renderer to be implemented by the Db
+
+getDirection
+getClasses

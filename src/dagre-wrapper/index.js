@@ -24,11 +24,13 @@ export const render = (elem, graph, markers) => {
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
 
+  logger.warn('graph', graph);
+
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.trace('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node.type !== 'group') {
       insertNode(nodes, graph.node(v));
     } else {
@@ -47,7 +49,7 @@ export const render = (elem, graph, markers) => {
   // TODO: pick optimal child in the cluster to us as link anchor
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    // logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    logger.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
     // logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
     const v = translateClusterId(e.v);
     const w = translateClusterId(e.w);
@@ -60,12 +62,13 @@ export const render = (elem, graph, markers) => {
     insertEdgeLabel(edgeLabels, edge);
   });
 
-  // graph.edges().forEach(function(e) {
-  //   logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-  // });
+  graph.edges().forEach(function(e) {
+    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+  });
   logger.info('#############################################');
   logger.info('###                Layout                 ###');
   logger.info('#############################################');
+  logger.info(graph);
   dagre.layout(graph);
 
   // Move the nodes to the correct place
