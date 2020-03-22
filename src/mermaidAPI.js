@@ -41,6 +41,9 @@ import infoDb from './diagrams/info/infoDb';
 import pieRenderer from './diagrams/pie/pieRenderer';
 import pieParser from './diagrams/pie/parser/pie';
 import pieDb from './diagrams/pie/pieDb';
+import erDb from './diagrams/er/erDb';
+import erParser from './diagrams/er/parser/erDiagram';
+import erRenderer from './diagrams/er/erRenderer';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -346,6 +349,54 @@ const config = {
     edgeLengthFactor: '20',
     compositTitleSize: 35,
     radius: 5
+  },
+
+  /**
+   * The object containing configurations specific for entity relationship diagrams
+   */
+  er: {
+    /**
+     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
+     * where T = top, B = bottom, L = left, and R = right.
+     */
+    layoutDirection: 'TB',
+
+    /**
+     * The mimimum width of an entity box
+     */
+    minEntityWidth: 100,
+
+    /**
+     * The minimum height of an entity box
+     */
+    minEntityHeight: 75,
+
+    /**
+     * The minimum internal padding between the text in an entity box and the enclosing box borders
+     */
+    entityPadding: 15,
+
+    /**
+     * Stroke color of box edges and lines
+     */
+    stroke: 'gray',
+
+    /**
+     * Fill color of entity boxes
+     */
+    fill: 'honeydew',
+
+    /**
+     * Opacity of entity boxes - if you want to see how the crows feet
+     * retain their elegant joins to the boxes regardless of the angle of incidence
+     * then override this to something less than 100%
+     */
+    fillOpacity: '100%',
+
+    /**
+     * Font size
+     */
+    fontSize: '12px'
   }
 };
 
@@ -397,6 +448,11 @@ function parse(text) {
       logger.debug('pie');
       parser = pieParser;
       parser.parser.yy = pieDb;
+      break;
+    case 'er':
+      logger.debug('er');
+      parser = erParser;
+      parser.parser.yy = erDb;
       break;
   }
 
@@ -619,6 +675,10 @@ const render = function(id, _txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       pieRenderer.setConf(config.class);
       pieRenderer.draw(txt, id, pkg.version);
+      break;
+    case 'er':
+      erRenderer.setConf(config.er);
+      erRenderer.draw(txt, id, pkg.version);
       break;
   }
 
