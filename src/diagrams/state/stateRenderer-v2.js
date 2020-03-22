@@ -1,7 +1,5 @@
 import graphlib from 'graphlib';
 import * as d3 from 'd3';
-import dagre from 'dagre';
-
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
