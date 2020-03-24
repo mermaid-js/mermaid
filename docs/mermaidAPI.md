@@ -174,6 +174,14 @@ margin around notes.
 Space between messages.
 **Default value 35**.
 
+### messageAlign
+
+Multiline message alignment. Possible values are:
+
+-   left
+-   center **default**
+-   right
+
 ### mirrorActors
 
 mirror actors under diagram.
