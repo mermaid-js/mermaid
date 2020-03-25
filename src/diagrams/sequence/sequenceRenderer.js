@@ -247,6 +247,8 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   const offsetLineCounter = counterBreaklines - 1;
   const totalOffset = offsetLineCounter * breaklineOffset;
 
+  bounds.bumpVerticalPos(totalOffset);
+
   let textWidth = (textElem._groups || textElem)[0][0].getBBox().width;
 
   let line;
@@ -295,9 +297,9 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   } else {
     line = g.append('line');
     line.attr('x1', startx);
-    line.attr('y1', verticalPos);
+    line.attr('y1', verticalPos + totalOffset);
     line.attr('x2', stopx);
-    line.attr('y2', verticalPos);
+    line.attr('y2', verticalPos + totalOffset);
     bounds.insert(
       startx,
       bounds.getVerticalPos() - 10 + totalOffset,
