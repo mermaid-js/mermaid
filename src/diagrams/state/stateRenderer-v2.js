@@ -5,9 +5,7 @@ import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
 
 import { render } from '../../dagre-wrapper/index.js';
-import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
-import { interpolateToCurve, getStylesFromArray } from '../../utils';
 
 const conf = {};
 export const setConf = function(cnf) {
@@ -34,7 +32,7 @@ export const getClasses = function(text) {
   return stateDb.getClasses();
 };
 
-const setupNode = (g, parent, node, first) => {
+const setupNode = (g, parent, node) => {
   // Add the node
   if (node.id !== 'root') {
     let shape = 'rect';

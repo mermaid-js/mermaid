@@ -1,7 +1,6 @@
 import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
 import * as d3 from 'd3';
-import inter from './intersect/index.js';
 import { getConfig } from '../config';
 
 let edgeLabels = {};
