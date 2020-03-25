@@ -353,6 +353,28 @@ const circle = (parent, node) => {
 
   return shapeSvg;
 };
+const start = (parent, node) => {
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'node default')
+    .attr('id', node.id);
+  const circle = shapeSvg.insert('circle', ':first-child');
+
+  // center the circle around its coordinate
+  circle
+    .attr('class', 'state-start')
+    .attr('r', 7)
+    .attr('width', 14)
+    .attr('height', 14);
+
+  updateNodeBounds(node, circle);
+
+  node.intersect = function(point) {
+    return intersect.circle(node, point);
+  };
+
+  return shapeSvg;
+};
 
 const shapes = {
   question,
@@ -366,7 +388,9 @@ const shapes = {
   trapezoid,
   inv_trapezoid,
   rect_right_inv_arrow,
-  cylinder
+  cylinder,
+  start,
+  end: start
 };
 
 let nodeElems = {};

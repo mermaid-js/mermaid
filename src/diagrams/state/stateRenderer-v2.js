@@ -20,228 +20,6 @@ export const setConf = function(cnf) {
 const nodeDb = {};
 
 /**
- * Function that adds the vertices found during parsing to the graph to be rendered.
- * @param vert Object containing the vertices.
- * @param g The graph that is to be drawn.
- */
-export const addVertices = function(vert, g, svgId) {
-  const svg = d3.select(`[id="${svgId}"]`);
-  const keys = Object.keys(vert);
-
-  // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
-  keys.forEach(function(id) {
-    const vertex = vert[id];
-
-    /**
-     * Variable for storing the classes for the vertex
-     * @type {string}
-     */
-    let classStr = 'default';
-    if (vertex.classes.length > 0) {
-      classStr = vertex.classes.join(' ');
-    }
-
-    const styles = getStylesFromArray(vertex.styles);
-
-    // Use vertex id as text in the box if no text is provided by the graph definition
-    let vertexText = vertex.text !== undefined ? vertex.text : vertex.id;
-
-    // We create a SVG label, either by delegating to addHtmlLabel or manually
-    let vertexNode;
-    if (getConfig().flowchart.htmlLabels) {
-      // TODO: addHtmlLabel accepts a labelStyle. Do we possibly have that?
-      const node = {
-        label: vertexText.replace(
-          /fa[lrsb]?:fa-[\w-]+/g,
-          s => `<i class='${s.replace(':', ' ')}'></i>`
-        )
-      };
-      vertexNode = addHtmlLabel(svg, node).node();
-      vertexNode.parentNode.removeChild(vertexNode);
-    } else {
-      const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
-
-      const rows = vertexText.split(/<br\s*\/?>/gi);
-
-      for (let j = 0; j < rows.length; j++) {
-        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
-        tspan.setAttributeNS('http://www.w3.org/XML/1998/namespace', 'xml:space', 'preserve');
-        tspan.setAttribute('dy', '1em');
-        tspan.setAttribute('x', '1');
-        tspan.textContent = rows[j];
-        svgLabel.appendChild(tspan);
-      }
-      vertexNode = svgLabel;
-    }
-
-    let radious = 0;
-    let _shape = '';
-    // Set the shape based parameters
-    switch (vertex.type) {
-      case 'round':
-        radious = 5;
-        _shape = 'rect';
-        break;
-      case 'square':
-        _shape = 'rect';
-        break;
-      case 'diamond':
-        _shape = 'question';
-        break;
-      case 'hexagon':
-        _shape = 'hexagon';
-        break;
-      case 'odd':
-        _shape = 'rect_left_inv_arrow';
-        break;
-      case 'lean_right':
-        _shape = 'lean_right';
-        break;
-      case 'lean_left':
-        _shape = 'lean_left';
-        break;
-      case 'trapezoid':
-        _shape = 'trapezoid';
-        break;
-      case 'inv_trapezoid':
-        _shape = 'inv_trapezoid';
-        break;
-      case 'odd_right':
-        _shape = 'rect_left_inv_arrow';
-        break;
-      case 'circle':
-        _shape = 'circle';
-        break;
-      case 'ellipse':
-        _shape = 'ellipse';
-        break;
-      case 'stadium':
-        _shape = 'stadium';
-        break;
-      case 'cylinder':
-        _shape = 'cylinder';
-        break;
-      case 'group':
-        _shape = 'rect';
-        break;
-      default:
-        _shape = 'rect';
-    }
-    // Add the node
-    g.setNode(vertex.id, {
-      labelType: 'svg',
-      labelStyle: styles.labelStyle,
-      shape: _shape,
-      label: vertexNode,
-      labelText: vertexText,
-      rx: radious,
-      ry: radious,
-      class: classStr,
-      style: styles.style,
-      id: vertex.id,
-      width: vertex.type === 'group' ? 500 : undefined,
-      type: vertex.type,
-      padding: getConfig().flowchart.padding
-    });
-  });
-};
-
-/**
- * Add edges to graph based on parsed graph defninition
- * @param {Object} edges The edges to add to the graph
- * @param {Object} g The graph object
- */
-export const addEdges = function(edges, g) {
-  let cnt = 0;
-
-  let defaultStyle;
-  let defaultLabelStyle;
-
-  if (typeof edges.defaultStyle !== 'undefined') {
-    const defaultStyles = getStylesFromArray(edges.defaultStyle);
-    defaultStyle = defaultStyles.style;
-    defaultLabelStyle = defaultStyles.labelStyle;
-  }
-
-  edges.forEach(function(edge) {
-    cnt++;
-    const edgeData = {};
-    edgeData.id = 'id' + cnt;
-    // Set link type for rendering
-    if (edge.type === 'arrow_open') {
-      edgeData.arrowhead = 'none';
-    } else {
-      edgeData.arrowhead = 'normal';
-    }
-    edgeData.arrowType = edge.type;
-
-    let style = '';
-    let labelStyle = '';
-
-    if (typeof edge.style !== 'undefined') {
-      const styles = getStylesFromArray(edge.style);
-      style = styles.style;
-      labelStyle = styles.labelStyle;
-    } else {
-      switch (edge.stroke) {
-        case 'normal':
-          style = 'fill:none';
-          if (typeof defaultStyle !== 'undefined') {
-            style = defaultStyle;
-          }
-          if (typeof defaultLabelStyle !== 'undefined') {
-            labelStyle = defaultLabelStyle;
-          }
-          break;
-        case 'dotted':
-          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
-          break;
-        case 'thick':
-          style = ' stroke-width: 3.5px;fill:none';
-          break;
-      }
-    }
-
-    edgeData.style = style;
-    edgeData.labelStyle = labelStyle;
-
-    if (typeof edge.interpolate !== 'undefined') {
-      edgeData.curve = interpolateToCurve(edge.interpolate, d3.curveLinear);
-    } else if (typeof edges.defaultInterpolate !== 'undefined') {
-      edgeData.curve = interpolateToCurve(edges.defaultInterpolate, d3.curveLinear);
-    } else {
-      edgeData.curve = interpolateToCurve(conf.curve, d3.curveLinear);
-    }
-
-    if (typeof edge.text === 'undefined') {
-      if (typeof edge.style !== 'undefined') {
-        edgeData.arrowheadStyle = 'fill: #333';
-      }
-    } else {
-      edgeData.arrowheadStyle = 'fill: #333';
-      edgeData.labelpos = 'c';
-
-      if (getConfig().flowchart.htmlLabels) {
-        edgeData.labelType = 'html';
-        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
-      } else {
-        edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(/<br\s*\/?>/gi, '\n');
-
-        if (typeof edge.style === 'undefined') {
-          edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
-        }
-
-        edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
-      }
-    }
-    // Add the edge to the graph
-    g.setEdge(edge.start, edge.end, edgeData, cnt);
-  });
-};
-
-/**
  * Returns the all the styles from classDef statements in the graph definition.
  * @returns {object} classDef styles
  */
@@ -256,38 +34,32 @@ export const getClasses = function(text) {
   return stateDb.getClasses();
 };
 
-const setupNode = (g, parent, node) => {
-  // logger.trace('node', node);
-  // , {
-  //   labelType: 'svg',
-  //   labelStyle: '',
-  //   shape: 'rect',
-  //   label: node.description || node.id,
-  //   labelText: node.description || node.id,
-  //   rx: 0,
-  //   ry: 0,
-  //   class: 'default', //classStr,
-  //   style: '', //styles.style,
-  //   id: node.id,
-  //   // width: node.type === 'group' ? 500 : undefined,
-  //   // type: node.type,
-  //   padding: 15 //getConfig().flowchart.padding
-  // });
+const setupNode = (g, parent, node, first) => {
   // Add the node
   if (node.id !== 'root') {
+    let shape = 'rect';
+    if (node.start === true) {
+      shape = 'start';
+    }
+    if (node.start === false) {
+      shape = 'end';
+    }
+
     if (!nodeDb[node.id]) {
       nodeDb[node.id] = {
-        id: node.id
+        id: node.id,
+        shape,
+        description: node.id
       };
+    }
+
+    // Description
+    if (node.description) {
+      nodeDb[node.id].description = node.description;
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
     // one with description
-
-    // Description
-    if (nodeDb[node.id].description) {
-      nodeDb[node.id].description = node.description;
-    }
 
     // group
     if (!nodeDb[node.id].type && node.doc) {
@@ -298,9 +70,9 @@ const setupNode = (g, parent, node) => {
     const nodeData = {
       labelType: 'svg',
       labelStyle: '',
-      shape: 'rect',
+      shape: nodeDb[node.id].shape,
       label: node.id,
-      labelText: node.id,
+      labelText: nodeDb[node.id].description,
       // label: nodeDb[node.id].description || node.id,
       // labelText: nodeDb[node.id].description || node.id,
       rx: 0,
@@ -313,7 +85,6 @@ const setupNode = (g, parent, node) => {
     };
 
     g.setNode(node.id, nodeData);
-    logger.warn('nodeData = ', node.id, nodeData);
   }
 
   if (parent) {
@@ -332,9 +103,9 @@ const setupDoc = (g, parent, doc) => {
   logger.trace('items', doc);
   doc.forEach(item => {
     if (item.stmt === 'state' || item.stmt === 'default') {
-      setupNode(g, parent, item);
+      setupNode(g, parent, item, true);
     } else if (item.stmt === 'relation') {
-      setupNode(g, parent, item.state1);
+      setupNode(g, parent, item.state1, true);
       setupNode(g, parent, item.state2);
       const edgeData = {
         arrowhead: 'normal',
@@ -344,9 +115,23 @@ const setupDoc = (g, parent, doc) => {
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
-        label: ''
+        label: '',
+        // curve: d3.curveNatural,
+        curve: d3.curveStep
+        // curve: d3.curveMonotoneX
       };
-      g.setEdge(item.state1.id, item.state2.id, edgeData, cnt);
+      let startId = item.state1.id;
+      let endId = item.state2.id;
+
+      // if (parent && startId === '[*]') {
+      //   startId = parent.id + '_start';
+      // }
+
+      // if (parent && endId === '[*]') {
+      //   startId = parent.id + '_end';
+      // }
+
+      g.setEdge(startId, endId, edgeData, cnt);
       cnt++;
     }
   });
@@ -396,36 +181,9 @@ export const draw = function(text, id) {
       return {};
     });
 
-  setupNode(g, undefined, stateDb.getRootDoc());
-
-  // let subG;
-  // const subGraphs = stateDb.getSubGraphs();
-  // for (let i = subGraphs.length - 1; i >= 0; i--) {
-  //   subG = subGraphs[i];
-  //   stateDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
-  // }
-
-  // // Fetch the verices/nodes and edges/links from the parsed graph definition
-  // const vert = stateDb.getVertices();
-
-  // const edges = stateDb.getEdges();
-
-  // logger.trace(edges);
-  // let i = 0;
-  // for (i = subGraphs.length - 1; i >= 0; i--) {
-  //   subG = subGraphs[i];
-
-  //   d3.selectAll('cluster').append('text');
-
-  //   for (let j = 0; j < subG.nodes.length; j++) {
-  //     g.setParent(subG.nodes[j], subG.id);
-  //   }
-  // }
-  // addVertices(vert, g, id);
-  // addEdges(edges, g);
-
-  // Add custom shapes
-  // flowChartShapes.addToRenderV2(addShape);
+  // logger.info(stateDb.getRootDoc());
+  logger.info(stateDb.getRootDocV2());
+  setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
   const svg = d3.select(`[id="${id}"]`);
@@ -433,11 +191,6 @@ export const draw = function(text, id) {
   // Run the renderer. This is what draws the final graph.
   const element = d3.select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross']);
-  // // dagre.layout(g);
-
-  // element.selectAll('g.node').attr('title', function() {
-  //   return stateDb.getTooltip(this.id);
-  // });
 
   const padding = 8;
   const svgBounds = svg.node().getBBox();
@@ -461,31 +214,6 @@ export const draw = function(text, id) {
     .select('g')
     .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
 
-  // Index nodes
-  // stateDb.indexNodes('subGraph' + i);
-
-  // // reposition labels
-  // for (i = 0; i < subGraphs.length; i++) {
-  //   subG = subGraphs[i];
-
-  //   if (subG.title !== 'undefined') {
-  //     const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-  //     const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
-
-  //     const xPos = clusterRects[0].x.baseVal.value;
-  //     const yPos = clusterRects[0].y.baseVal.value;
-  //     const width = clusterRects[0].width.baseVal.value;
-  //     const cluster = d3.select(clusterEl[0]);
-  //     const te = cluster.select('.label');
-  //     te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
-  //     te.attr('id', id + 'Text');
-
-  //     for (let j = 0; j < subG.classes.length; j++) {
-  //       clusterEl[0].classList.add(subG.classes[j]);
-  //     }
-  //   }
-  // }
-
   // Add label rects for non html labels
   if (!conf.htmlLabels) {
     const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
@@ -505,46 +233,10 @@ export const draw = function(text, id) {
       label.insertBefore(rect, label.firstChild);
     }
   }
-
-  // // If node has a link, wrap it in an anchor SVG object.
-  // const keys = Object.keys(vert);
-  // keys.forEach(function(key) {
-  //   const vertex = vert[key];
-
-  //   if (vertex.link) {
-  //     const node = d3.select('#' + id + ' [id="' + key + '"]');
-  //     if (node) {
-  //       const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
-  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));
-  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'href', vertex.link);
-  //       link.setAttributeNS('http://www.w3.org/2000/svg', 'rel', 'noopener');
-
-  //       const linkNode = node.insert(function() {
-  //         return link;
-  //       }, ':first-child');
-
-  //       const shape = node.select('.label-container');
-  //       if (shape) {
-  //         linkNode.append(function() {
-  //           return shape.node();
-  //         });
-  //       }
-
-  //       const label = node.select('.label');
-  //       if (label) {
-  //         linkNode.append(function() {
-  //           return label.node();
-  //         });
-  //       }
-  //     }
-  //   }
-  // });
 };
 
 export default {
   setConf,
-  addVertices,
-  addEdges,
   getClasses,
   draw
 };

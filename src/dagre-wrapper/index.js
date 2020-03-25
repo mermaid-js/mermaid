@@ -74,7 +74,7 @@ export const render = (elem, graph, markers) => {
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.trace('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node.type !== 'group') {
       positionNode(node);
     } else {
@@ -86,7 +86,7 @@ export const render = (elem, graph, markers) => {
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge));
+    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     insertEdge(edgePaths, edge, clusterDb);
     positionEdgeLabel(edge);

@@ -67,3 +67,8 @@ g.stateGroup line {
   font-family: 'trebuchet ms', verdana, arial;
   font-family: var(--mermaid-font-family);
 }
+
+.node circle.state-start {
+  fill: black;
+  stroke: black;
+}

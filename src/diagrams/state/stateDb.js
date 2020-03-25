@@ -8,6 +8,28 @@ const setRootDoc = o => {
 
 const getRootDoc = () => rootDoc;
 
+const docTranslator = (parent, node, first) => {
+  if (node.stmt === 'relation') {
+    docTranslator(parent, node.state1, true);
+    docTranslator(parent, node.state2, false);
+  } else {
+    if (node.stmt === 'state') {
+      if (node.id === '[*]') {
+        node.id = first ? parent.id + '_start' : parent.id + '_end';
+        node.start = first;
+      }
+    }
+
+    if (node.doc) {
+      node.doc.forEach(docNode => docTranslator(node, docNode, true));
+    }
+  }
+};
+const getRootDocV2 = () => {
+  docTranslator({ id: 'root' }, rootDoc, true);
+  return rootDoc;
+};
+
 const extract = doc => {
   // const res = { states: [], relations: [] };
   clear();
@@ -175,5 +197,6 @@ export default {
   logDocuments,
   getRootDoc,
   setRootDoc,
+  getRootDocV2,
   extract
 };

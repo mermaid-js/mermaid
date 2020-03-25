@@ -82,7 +82,7 @@ const outsideNode = (node, point) => {
 //   return { x: insidePoint.x + r, y: insidePoint.y + q };
 // };
 const intersection = (node, outsidePoint, insidePoint) => {
-  logger.info('intersection', outsidePoint, insidePoint, node);
+  // logger.info('intersection', outsidePoint, insidePoint, node);
   const x = node.x;
   const y = node.y;
 
@@ -92,8 +92,6 @@ const intersection = (node, outsidePoint, insidePoint) => {
   const dy = Math.abs(y - insidePoint.y);
   const h = node.height / 2;
   let q = h - dy;
-
-  logger.info('q och r', q, r);
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
@@ -120,8 +118,8 @@ export const insertEdge = function(elem, edge, clusterDb) {
   logger.info('\n\n\n\n');
   let points = edge.points;
   if (edge.toCluster) {
-    logger.info('edge', edge);
-    logger.info('to cluster', clusterDb[edge.toCluster]);
+    // logger.info('edge', edge);
+    // logger.info('to cluster', clusterDb[edge.toCluster]);
     points = [];
     let lastPointOutside;
     let isInside = false;
@@ -129,11 +127,11 @@ export const insertEdge = function(elem, edge, clusterDb) {
       const node = clusterDb[edge.toCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.info('inside', edge.toCluster, point);
+        // logger.info('inside', edge.toCluster, point);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
-        logger.info('intersect', inter.rect(node, lastPointOutside));
+        // logger.info('intersect', inter.rect(node, lastPointOutside));
         points.push(insterection);
         // points.push(insterection);
         isInside = true;
@@ -145,8 +143,8 @@ export const insertEdge = function(elem, edge, clusterDb) {
   }
 
   if (edge.fromCluster) {
-    logger.info('edge', edge);
-    logger.info('from cluster', clusterDb[edge.toCluster]);
+    // logger.info('edge', edge);
+    // logger.info('from cluster', clusterDb[edge.toCluster]);
     const updatedPoints = [];
     let lastPointOutside;
     let isInside = false;
@@ -155,7 +153,7 @@ export const insertEdge = function(elem, edge, clusterDb) {
       const node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.info('inside', edge.toCluster, point);
+        // logger.info('inside', edge.toCluster, point);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
@@ -165,7 +163,7 @@ export const insertEdge = function(elem, edge, clusterDb) {
         isInside = true;
       } else {
         // at the outside
-        logger.info('Outside point', point);
+        // logger.info('Outside point', point);
         if (!isInside) updatedPoints.unshift(point);
       }
       lastPointOutside = point;
@@ -173,9 +171,9 @@ export const insertEdge = function(elem, edge, clusterDb) {
     points = updatedPoints;
   }
 
-  logger.info('Poibts', points);
+  // logger.info('Poibts', points);
 
-  logger.info('Edge', edge);
+  // logger.info('Edge', edge);
 
   // The data for our line
   const lineData = points.filter(p => !Number.isNaN(p.y));
@@ -188,8 +186,8 @@ export const insertEdge = function(elem, edge, clusterDb) {
     })
     .y(function(d) {
       return d.y;
-    });
-  // .curve(d3.curveBasis);
+    })
+    .curve(d3.curveBasis);
 
   const svgPath = elem
     .append('path')
@@ -219,7 +217,7 @@ export const insertEdge = function(elem, edge, clusterDb) {
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
-  logger.info('arrowType', edge.arrowType);
+  // logger.info('arrowType', edge.arrowType);
   switch (edge.arrowType) {
     case 'arrow_cross':
       svgPath.attr('marker-end', 'url(' + url + '#' + 'crossEnd' + ')');
