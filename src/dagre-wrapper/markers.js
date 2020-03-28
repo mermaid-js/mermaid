@@ -1,6 +1,9 @@
 /**
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
+
+import { logger } from '../logger';
+
 // Only add the number of markers that the diagram needs
 const insertMarkers = (elem, markerArray, type, id) => {
   markerArray.forEach(markerName => {
@@ -9,6 +12,7 @@ const insertMarkers = (elem, markerArray, type, id) => {
 };
 
 const extension = (elem, type, id) => {
+  logger.trace('Making markers for ', id);
   elem
     .append('defs')
     .append('marker')
@@ -240,42 +244,8 @@ const barb = (elem, type, id) => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
-
-  //   .append('marker')
-  //   .attr('id', 'barbEnd')
-  //   .attr('class', type)
-  //   .attr('viewBox', '0 0 11 11')
-  //   .attr('refX', 12)
-  //   .attr('refY', 5.2)
-  //   .attr('markerUnits', 'strokeWidth')
-  //   .attr('markerWidth', 7)
-  //   .attr('markerHeight', 7)
-  //   .attr('orient', 'auto')
-  //   .append('path')
-  //   .attr('stroke', 'black')
-  //   .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
-  //   .attr('class', 'arrowMarkerPath')
-  //   .style('stroke-width', 2)
-  //   .style('stroke-dasharray', '1,0');
-
-  // elem
-  //   .append('marker')
-  //   .attr('id', 'barbStart')
-  //   .attr('class', type)
-  //   .attr('viewBox', '0 0 11 11')
-  //   .attr('refX', -1)
-  //   .attr('refY', 5.2)
-  //   .attr('markerUnits', 'strokeWidth')
-  //   .attr('markerWidth', 7)
-  //   .attr('markerHeight', 7)
-  //   .attr('orient', 'auto')
-  //   .append('path')
-  //   .attr('stroke', 'black')
-  //   .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
-  //   .attr('class', 'arrowMarkerPath')
-  //   .style('stroke-width', 2)
-  //   .style('stroke-dasharray', '1,0');
 };
+
 // TODO rename the class diagram markers to something shape descriptive and semanitc free
 const markers = {
   extension,
