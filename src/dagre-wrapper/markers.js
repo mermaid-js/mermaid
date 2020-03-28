@@ -40,7 +40,7 @@ const extension = (elem, type, id) => {
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };
 
-const composition = (elem, type, id) => {
+const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
@@ -67,7 +67,7 @@ const composition = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const aggregation = (elem, type, id) => {
+const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
@@ -94,7 +94,7 @@ const aggregation = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const dependency = (elem, type, id) => {
+const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
@@ -121,7 +121,7 @@ const dependency = (elem, type, id) => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const point = (elem, type, id) => {
+const point = (elem, type) => {
   elem
     .append('marker')
     .attr('id', type + '-pointEnd')
@@ -155,7 +155,7 @@ const point = (elem, type, id) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const circle = (elem, type, id) => {
+const circle = (elem, type) => {
   elem
     .append('marker')
     .attr('id', 'circleEnd')
@@ -194,7 +194,7 @@ const circle = (elem, type, id) => {
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const cross = (elem, type, id) => {
+const cross = (elem, type) => {
   elem
     .append('marker')
     .attr('id', 'crossEnd')
@@ -231,7 +231,7 @@ const cross = (elem, type, id) => {
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
-const barb = (elem, type, id) => {
+const barb = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
