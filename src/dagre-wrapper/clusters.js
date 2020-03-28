@@ -55,7 +55,66 @@ const rect = (parent, node) => {
   return shapeSvg;
 };
 
-const shapes = { rect };
+const roundedWithTitle = (parent, node) => {
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.class)
+    .attr('id', node.id);
+
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  // Create the label and insert it after the rect
+  const label = shapeSvg.insert('g').attr('class', 'cluster-label');
+  const innerRect = shapeSvg.append('rect');
+
+  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
+
+  // Get the size of the label
+  const bbox = text.getBBox();
+
+  const padding = 0 * node.padding;
+  const halfPadding = padding / 2;
+
+  // center the rect around its coordinate
+  rect
+    .attr('class', 'outer')
+    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('y', node.y - node.height / 2 - halfPadding)
+    .attr('width', node.width + padding)
+    .attr('height', node.height + padding);
+  innerRect
+    .attr('class', 'inner')
+    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1)
+    .attr('width', node.width + padding)
+    .attr('height', node.height + padding - bbox.height - 3);
+
+  // logger.info('bbox', bbox.width, node.x, node.width);
+  // Center the label
+  // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
+  label.attr(
+    'transform',
+    'translate(' +
+      (node.x - bbox.width / 2) +
+      ', ' +
+      (node.y - node.height / 2 - node.padding / 3 + 3) +
+      ')'
+  );
+
+  const rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function(point) {
+    return intersectRect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+const shapes = { rect, roundedWithTitle };
 
 let clusterElems = {};
 

@@ -32,7 +32,7 @@ export const getClasses = function(text) {
   return stateDb.getClasses();
 };
 
-const setupNode = (g, parent, node) => {
+const setupNode = (g, parent, node, altFlag) => {
   // Add the node
   if (node.id !== 'root') {
     let shape = 'rect';
@@ -63,6 +63,7 @@ const setupNode = (g, parent, node) => {
     if (!nodeDb[node.id].type && node.doc) {
       logger.info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
+      nodeDb[node.id].shape = 'roundedWithTitle';
     }
 
     const nodeData = {
@@ -71,9 +72,7 @@ const setupNode = (g, parent, node) => {
       shape: nodeDb[node.id].shape,
       label: node.id,
       labelText: nodeDb[node.id].description,
-      rx: 5,
-      ry: 5,
-      class: 'default', //classStr,
+      class: altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster', //classStr,
       style: '', //styles.style,
       id: node.id,
       type: nodeDb[node.id].type,
@@ -91,18 +90,18 @@ const setupNode = (g, parent, node) => {
   }
   if (node.doc) {
     logger.trace('Adding nodes children ');
-    setupDoc(g, node, node.doc);
+    setupDoc(g, node, node.doc, !altFlag);
   }
 };
 let cnt = 0;
-const setupDoc = (g, parent, doc) => {
+const setupDoc = (g, parent, doc, altFlag) => {
   logger.trace('items', doc);
   doc.forEach(item => {
     if (item.stmt === 'state' || item.stmt === 'default') {
-      setupNode(g, parent, item, true);
+      setupNode(g, parent, item, altFlag);
     } else if (item.stmt === 'relation') {
-      setupNode(g, parent, item.state1, true);
-      setupNode(g, parent, item.state2);
+      setupNode(g, parent, item.state1, altFlag);
+      setupNode(g, parent, item.state2, altFlag);
       const edgeData = {
         arrowhead: 'normal',
         arrowType: 'arrow_barb',
@@ -143,7 +142,7 @@ export const draw = function(text, id) {
   // Fetch the default direction, use TD if none was found
   let dir = stateDb.getDirection();
   if (typeof dir === 'undefined') {
-    dir = 'TD';
+    dir = 'LR';
   }
 
   const conf = getConfig().state;
@@ -156,7 +155,7 @@ export const draw = function(text, id) {
     compound: true
   })
     .setGraph({
-      rankdir: dir,
+      rankdir: 'LR',
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,

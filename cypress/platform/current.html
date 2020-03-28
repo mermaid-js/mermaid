@@ -14,9 +14,6 @@
       .mermaid2 {
         display: none;
       }
-      .mermaid-apa #pointEnd {
-        fill: green !important;
-      }
     </style>
   </head>
   <body>
@@ -41,7 +38,7 @@
           end
         a-->id1
       </div>
-      <div class="mermaid mermaid-apa" style="width: 100%; height: 20%;">
+      <div class="mermaid2 mermaid-apa" style="width: 100%; height: 20%;">
         stateDiagram-v2
         [*] --> Still
         [*] --> Moving
@@ -57,6 +54,24 @@
         Moving --> Crash
         Crash --> [*]
       </div>
+      <div class="mermaid" style="width: 100%; height: 100%;">
+        stateDiagram-v2
+    [*] --> First
+
+    state First {
+        [*] --> Second
+
+        state Second {
+            [*] --> second
+            second --> Third
+
+            state Third {
+                [*] --> third
+                third --> [*]
+            }
+        }
+    }
+    </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
         stateDiagram-v2
       [*]-->TV
