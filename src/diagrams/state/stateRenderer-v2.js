@@ -71,10 +71,8 @@ const setupNode = (g, parent, node) => {
       shape: nodeDb[node.id].shape,
       label: node.id,
       labelText: nodeDb[node.id].description,
-      // label: nodeDb[node.id].description || node.id,
-      // labelText: nodeDb[node.id].description || node.id,
-      rx: 0,
-      ry: 0,
+      rx: 5,
+      ry: 5,
       class: 'default', //classStr,
       style: '', //styles.style,
       id: node.id,
@@ -107,27 +105,16 @@ const setupDoc = (g, parent, doc) => {
       setupNode(g, parent, item.state2);
       const edgeData = {
         arrowhead: 'normal',
-        arrowType: 'arrow_point',
+        arrowType: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
-        label: '',
-        // curve: d3.curveNatural,
-        curve: d3.curveStep
-        // curve: d3.curveMonotoneX
+        label: ''
       };
       let startId = item.state1.id;
       let endId = item.state2.id;
-
-      // if (parent && startId === '[*]') {
-      //   startId = parent.id + '_start';
-      // }
-
-      // if (parent && endId === '[*]') {
-      //   startId = parent.id + '_end';
-      // }
 
       g.setEdge(startId, endId, edgeData, cnt);
       cnt++;
@@ -141,7 +128,7 @@ const setupDoc = (g, parent, doc) => {
  * @param id
  */
 export const draw = function(text, id) {
-  logger.trace('Drawing state diagram (v2)');
+  logger.info('Drawing state diagram (v2)', id);
   stateDb.clear();
   const parser = state.parser;
   parser.yy = stateDb;
@@ -188,29 +175,47 @@ export const draw = function(text, id) {
 
   // Run the renderer. This is what draws the final graph.
   const element = d3.select('#' + id + ' g');
-  render(element, g, ['point', 'circle', 'cross']);
+  render(element, g, ['barb'], 'statediagram', id);
 
   const padding = 8;
-  const svgBounds = svg.node().getBBox();
-  const width = svgBounds.width + padding * 2;
-  const height = svgBounds.height + padding * 2;
-  logger.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
+  // const svgBounds = svg.node().getBBox();
+  // const width = svgBounds.width + padding * 2;
+  // const height = svgBounds.height + padding * 2;
+  // logger.debug(
+  //   `new ViewBox 0 0 ${width} ${height}`,
+  //   `translate(${padding + g._label.marginx}, ${padding + g._label.marginy})`
+  // );
+
+  // if (conf.useMaxWidth) {
+  //   svg.attr('width', '100%');
+  //   svg.attr('style', `max-width: ${width}px;`);
+  // } else {
+  //   svg.attr('height', height);
+  //   svg.attr('width', width);
+  // }
+
+  // svg.attr('viewBox', `0 0 ${width} ${height}`);
+  // svg
+  //   .select('g')
+  //   .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+
+  const bounds = svg.node().getBBox();
+
+  const width = bounds.width + padding * 2;
+  const height = bounds.height + padding * 2;
+
+  // diagram.attr('height', '100%');
+  // diagram.attr('style', `width: ${bounds.width * 3 + conf.padding * 2};`);
+  // diagram.attr('height', height);
+
+  // Zoom in a bit
+  svg.attr('width', width * 1.75);
+  svg.attr('class', 'statediagram');
+  // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
+  svg.attr(
+    'viewBox',
+    `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
-
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {

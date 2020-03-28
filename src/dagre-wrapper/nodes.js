@@ -375,6 +375,34 @@ const start = (parent, node) => {
 
   return shapeSvg;
 };
+const end = (parent, node) => {
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'node default')
+    .attr('id', node.id);
+  const innerCircle = shapeSvg.insert('circle', ':first-child');
+  const circle = shapeSvg.insert('circle', ':first-child');
+
+  circle
+    .attr('class', 'state-start')
+    .attr('r', 7)
+    .attr('width', 14)
+    .attr('height', 14);
+
+  innerCircle
+    .attr('class', 'state-end')
+    .attr('r', 5)
+    .attr('width', 10)
+    .attr('height', 10);
+
+  updateNodeBounds(node, circle);
+
+  node.intersect = function(point) {
+    return intersect.circle(node, point);
+  };
+
+  return shapeSvg;
+};
 
 const shapes = {
   question,
@@ -390,7 +418,7 @@ const shapes = {
   rect_right_inv_arrow,
   cylinder,
   start,
-  end: start
+  end
 };
 
 let nodeElems = {};

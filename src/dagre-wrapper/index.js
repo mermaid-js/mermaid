@@ -12,8 +12,8 @@ const translateClusterId = id => {
   return id;
 };
 
-export const render = (elem, graph, markers) => {
-  insertMarkers(elem, markers);
+export const render = (elem, graph, markers, diagramtype, id) => {
+  insertMarkers(elem, markers, diagramtype, id);
   clusterDb = {};
   clearNodes();
   clearEdges();
@@ -88,7 +88,7 @@ export const render = (elem, graph, markers) => {
     const edge = graph.edge(e);
     logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
-    insertEdge(edgePaths, edge, clusterDb);
+    insertEdge(edgePaths, edge, clusterDb, diagramtype);
     positionEdgeLabel(edge);
   });
 };

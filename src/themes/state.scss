@@ -72,3 +72,11 @@ g.stateGroup line {
   fill: black;
   stroke: black;
 }
+.node circle.state-end {
+  fill: black;
+  stroke: white;
+  stroke-width: 1.5
+}
+#statediagram-barbEnd {
+  fill: $nodeBorder
+}

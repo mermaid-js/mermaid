@@ -2,18 +2,18 @@
  * Setup arrow head and define the marker. The result is appended to the svg.
  */
 // Only add the number of markers that the diagram needs
-const insertMarkers = (elem, markerArray) => {
+const insertMarkers = (elem, markerArray, type, id) => {
   markerArray.forEach(markerName => {
-    markers[markerName](elem);
+    markers[markerName](elem, type, id);
   });
 };
 
-const extension = elem => {
+const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
     .attr('id', 'extensionStart')
-    .attr('class', 'extension')
+    .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
@@ -25,7 +25,8 @@ const extension = elem => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'extensionEnd')
+    .attr('id', 'extensionEnd ' + type)
+    .attr('class', 'extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -35,12 +36,12 @@ const extension = elem => {
     .attr('d', 'M 1,1 V 13 L18,7 Z'); // this is actual shape for arrowhead
 };
 
-const composition = elem => {
+const composition = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
     .attr('id', 'compositionStart')
-    .attr('class', 'extension')
+    .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
@@ -53,6 +54,7 @@ const composition = elem => {
     .append('defs')
     .append('marker')
     .attr('id', 'compositionEnd')
+    .attr('class', 'extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -61,12 +63,12 @@ const composition = elem => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const aggregation = elem => {
+const aggregation = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
     .attr('id', 'aggregationStart')
-    .attr('class', 'extension')
+    .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
@@ -79,6 +81,7 @@ const aggregation = elem => {
     .append('defs')
     .append('marker')
     .attr('id', 'aggregationEnd')
+    .attr('class', type)
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -87,12 +90,12 @@ const aggregation = elem => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L1,7 L9,1 Z');
 };
-const dependency = elem => {
+const dependency = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
     .attr('id', 'dependencyStart')
-    .attr('class', 'extension')
+    .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
     .attr('markerWidth', 190)
@@ -105,6 +108,7 @@ const dependency = elem => {
     .append('defs')
     .append('marker')
     .attr('id', 'dependencyEnd')
+    .attr('class', type)
     .attr('refX', 19)
     .attr('refY', 7)
     .attr('markerWidth', 20)
@@ -113,10 +117,11 @@ const dependency = elem => {
     .append('path')
     .attr('d', 'M 18,7 L9,13 L14,7 L9,1 Z');
 };
-const point = elem => {
+const point = (elem, type, id) => {
   elem
     .append('marker')
-    .attr('id', 'pointEnd')
+    .attr('id', type + '-pointEnd')
+    .attr('class', type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 10)
     .attr('refY', 5)
@@ -126,12 +131,13 @@ const point = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-    .attr('class', 'arrowheadPath')
+    .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
   elem
     .append('marker')
-    .attr('id', 'pointStart')
+    .attr('id', type + '-pointStart')
+    .attr('class', type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 0)
     .attr('refY', 5)
@@ -141,14 +147,15 @@ const point = elem => {
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 0 5 L 10 10 L 10 0 z')
-    .attr('class', 'arrowheadPath')
+    .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const circle = elem => {
+const circle = (elem, type, id) => {
   elem
     .append('marker')
     .attr('id', 'circleEnd')
+    .attr('class', type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 11)
     .attr('refY', 5)
@@ -160,13 +167,14 @@ const circle = elem => {
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
-    .attr('class', 'arrowheadPath')
+    .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 
   elem
     .append('marker')
     .attr('id', 'circleStart')
+    .attr('class', type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', -1)
     .attr('refY', 5)
@@ -178,14 +186,15 @@ const circle = elem => {
     .attr('cx', '5')
     .attr('cy', '5')
     .attr('r', '5')
-    .attr('class', 'arrowheadPath')
+    .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 1)
     .style('stroke-dasharray', '1,0');
 };
-const cross = elem => {
+const cross = (elem, type, id) => {
   elem
     .append('marker')
     .attr('id', 'crossEnd')
+    .attr('class', type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', 12)
     .attr('refY', 5.2)
@@ -196,13 +205,14 @@ const cross = elem => {
     .append('path')
     .attr('stroke', 'black')
     .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
-    .attr('class', 'arrowheadPath')
+    .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 
   elem
     .append('marker')
     .attr('id', 'crossStart')
+    .attr('class', type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', -1)
     .attr('refY', 5.2)
@@ -213,11 +223,59 @@ const cross = elem => {
     .append('path')
     .attr('stroke', 'black')
     .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
-    .attr('class', 'arrowheadPath')
+    .attr('class', 'arrowMarkerPath')
     .style('stroke-width', 2)
     .style('stroke-dasharray', '1,0');
 };
+const barb = (elem, type, id) => {
+  elem
+    .append('defs')
+    .append('marker')
+    .attr('id', type + '-barbEnd')
+    .attr('refX', 19)
+    .attr('refY', 7)
+    .attr('markerWidth', 20)
+    .attr('markerHeight', 14)
+    .attr('markerUnits', 0)
+    .attr('orient', 'auto')
+    .append('path')
+    .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');
 
+  //   .append('marker')
+  //   .attr('id', 'barbEnd')
+  //   .attr('class', type)
+  //   .attr('viewBox', '0 0 11 11')
+  //   .attr('refX', 12)
+  //   .attr('refY', 5.2)
+  //   .attr('markerUnits', 'strokeWidth')
+  //   .attr('markerWidth', 7)
+  //   .attr('markerHeight', 7)
+  //   .attr('orient', 'auto')
+  //   .append('path')
+  //   .attr('stroke', 'black')
+  //   .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
+  //   .attr('class', 'arrowMarkerPath')
+  //   .style('stroke-width', 2)
+  //   .style('stroke-dasharray', '1,0');
+
+  // elem
+  //   .append('marker')
+  //   .attr('id', 'barbStart')
+  //   .attr('class', type)
+  //   .attr('viewBox', '0 0 11 11')
+  //   .attr('refX', -1)
+  //   .attr('refY', 5.2)
+  //   .attr('markerUnits', 'strokeWidth')
+  //   .attr('markerWidth', 7)
+  //   .attr('markerHeight', 7)
+  //   .attr('orient', 'auto')
+  //   .append('path')
+  //   .attr('stroke', 'black')
+  //   .attr('d', 'M 1,1 l 9,9 M 10,1 l -9,9')
+  //   .attr('class', 'arrowMarkerPath')
+  //   .style('stroke-width', 2)
+  //   .style('stroke-dasharray', '1,0');
+};
 // TODO rename the class diagram markers to something shape descriptive and semanitc free
 const markers = {
   extension,
@@ -226,6 +284,7 @@ const markers = {
   dependency,
   point,
   circle,
-  cross
+  cross,
+  barb
 };
 export default insertMarkers;
