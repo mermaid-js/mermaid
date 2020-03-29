@@ -230,6 +230,14 @@ const config = {
     messageMargin: 35,
 
     /**
+     * Multiline message alignment. Possible values are:
+     *   * left
+     *   * center **default**
+     *   * right
+     */
+    messageAlign: 'center',
+
+    /**
      * mirror actors under diagram.
      * **Default value true**.
      */
@@ -807,6 +815,7 @@ export default mermaidAPI;
  *       boxTextMargin:5,
  *       noteMargin:10,
  *       messageMargin:35,
+ *       messageAlign:'center',
  *       mirrorActors:true,
  *       bottomMarginAdj:1,
  *       useMaxWidth:true,
