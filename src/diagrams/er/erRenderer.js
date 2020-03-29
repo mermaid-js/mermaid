@@ -25,7 +25,7 @@ export const setConf = function(cnf) {
  * Use D3 to construct the svg elements for the entities
  * @param svgNode the svg node that contains the diagram
  * @param entities The entities to be drawn
- * @param g The graph that contains the vertex and edge definitions post-layout
+ * @param graph The graph that contains the vertex and edge definitions post-layout
  * @return The first entity that was inserted
  */
 const drawEntities = function(svgNode, entities, graph) {
@@ -63,7 +63,7 @@ const drawEntities = function(svgNode, entities, graph) {
     const rectNode = groupNode
       .insert('rect', '#' + textId)
       .attr('fill', conf.fill)
-      .attr('fill-opacity', conf.fillOpacity)
+      .attr('fill-opacity', '100%')
       .attr('stroke', conf.stroke)
       .attr('x', 0)
       .attr('y', 0)
@@ -124,6 +124,7 @@ let relCnt = 0;
  * @param svg the svg node
  * @param rel the relationship to draw in the svg
  * @param g the graph containing the edge information
+ * @param insert the insertion point in the svg DOM (because relationships have markers that need to sit 'behind' opaque entity boxes)
  */
 const drawRelationshipFromLayout = function(svg, rel, g, insert) {
   relCnt++;
@@ -149,6 +150,11 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
     .attr('stroke', conf.stroke)
     .attr('fill', 'none');
 
+  // ...and with dashes if necessary
+  if (rel.relSpec.relType === erDb.Identification.NON_IDENTIFYING) {
+    svgPath.attr('stroke-dasharray', '8,8');
+  }
+
   // TODO: Understand this better
   let url = '';
   if (conf.arrowMarkerAbsolute) {
@@ -164,106 +170,44 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
 
   // Decide which start and end markers it needs. It may be possible to be more concise here
   // by reversing a start marker to make an end marker...but this will do for now
-  switch (rel.cardinality) {
-    case erDb.Cardinality.ONLY_ONE_TO_ONE_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+
+  // Note that the 'A' entity's marker is at the end of the relationship and the 'B' entity's marker is at the start
+  switch (rel.relSpec.cardA) {
+    case erDb.Cardinality.ZERO_OR_ONE:
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
-    case erDb.Cardinality.ONLY_ONE_TO_ZERO_OR_MORE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
+    case erDb.Cardinality.ZERO_OR_MORE:
       svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
-    case erDb.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_MORE:
+    case erDb.Cardinality.ONE_OR_MORE:
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
+      break;
+    case erDb.Cardinality.ONLY_ONE:
+      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
+      break;
+  }
+
+  switch (rel.relSpec.cardB) {
+    case erDb.Cardinality.ZERO_OR_ONE:
       svgPath.attr(
         'marker-start',
         'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
       );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
       break;
-    case erDb.Cardinality.ZERO_OR_ONE_TO_ONE_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
-      break;
-    case erDb.Cardinality.ONE_OR_MORE_TO_ONLY_ONE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
-      break;
-    case erDb.Cardinality.ZERO_OR_MORE_TO_ONLY_ONE:
+    case erDb.Cardinality.ZERO_OR_MORE:
       svgPath.attr(
         'marker-start',
         'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
       );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
       break;
-    case erDb.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_ONE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
-      break;
-    case erDb.Cardinality.ONE_OR_MORE_TO_ZERO_OR_ONE:
+    case erDb.Cardinality.ONE_OR_MORE:
       svgPath.attr(
         'marker-start',
         'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
       );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
       break;
-    case erDb.Cardinality.ZERO_OR_ONE_TO_ONLY_ONE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
-      break;
-    case erDb.Cardinality.ONLY_ONE_TO_ONLY_ONE:
+    case erDb.Cardinality.ONLY_ONE:
       svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_END + ')');
-      break;
-    case erDb.Cardinality.ONLY_ONE_TO_ZERO_OR_ONE:
-      svgPath.attr('marker-start', 'url(' + url + '#' + erMarkers.ERMarkers.ONLY_ONE_START + ')');
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
-      break;
-    case erDb.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_ONE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_ONE_END + ')');
-      break;
-    case erDb.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
-      break;
-    case erDb.Cardinality.ZERO_OR_MORE_TO_ONE_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
-      break;
-    case erDb.Cardinality.ONE_OR_MORE_TO_ZERO_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ZERO_OR_MORE_END + ')');
-      break;
-    case erDb.Cardinality.ONE_OR_MORE_TO_ONE_OR_MORE:
-      svgPath.attr(
-        'marker-start',
-        'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_START + ')'
-      );
-      svgPath.attr('marker-end', 'url(' + url + '#' + erMarkers.ERMarkers.ONE_OR_MORE_END + ')');
       break;
   }
 
@@ -289,7 +233,7 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
   // Figure out how big the opaque 'container' rectangle needs to be
   const labelBBox = labelNode.node().getBBox();
 
-  // Insert the opaque rectangle in front of the text label
+  // Insert the opaque rectangle before the text label
   svg
     .insert('rect', '#' + labelId)
     .attr('x', labelPoint.x - labelBBox.width / 2)
@@ -384,28 +328,16 @@ export const draw = function(text, id) {
     drawRelationshipFromLayout(svg, rel, g, firstEntity);
   });
 
-  const padding = 8; // TODO: move this to config
+  const padding = conf.diagramPadding;
 
   const svgBounds = svg.node().getBBox();
-  const width = svgBounds.width + padding * 4;
-  const height = svgBounds.height + padding * 4;
-  logger.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-  );
+  const width = svgBounds.width + padding * 2;
+  const height = svgBounds.height + padding * 2;
 
-  if (conf.useMaxWidth) {
-    svg.attr('width', '100%');
-    svg.attr('style', `max-width: ${width}px;`);
-  } else {
-    svg.attr('height', height);
-    svg.attr('width', width);
-  }
-
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  svg.attr('height', height);
+  svg.attr('width', '100%');
+  svg.attr('style', `max-width: ${width}px;`);
+  svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 }; // draw
 
 export default {

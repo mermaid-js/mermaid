@@ -8,22 +8,15 @@ let relationships = [];
 let title = '';
 
 const Cardinality = {
-  ONLY_ONE_TO_ONE_OR_MORE: 'ONLY_ONE_TO_ONE_OR_MORE',
-  ONLY_ONE_TO_ZERO_OR_MORE: 'ONLY_ONE_TO_ZERO_OR_MORE',
-  ZERO_OR_ONE_TO_ZERO_OR_MORE: 'ZERO_OR_ONE_TO_ZERO_OR_MORE',
-  ZERO_OR_ONE_TO_ONE_OR_MORE: 'ZERO_OR_ONE_TO_ONE_OR_MORE',
-  ONE_OR_MORE_TO_ONLY_ONE: 'ONE_OR_MORE_TO_ONLY_ONE',
-  ZERO_OR_MORE_TO_ONLY_ONE: 'ZERO_OR_MORE_TO_ONLY_ONE',
-  ZERO_OR_MORE_TO_ZERO_OR_ONE: 'ZERO_OR_MORE_TO_ZERO_OR_ONE',
-  ONE_OR_MORE_TO_ZERO_OR_ONE: 'ONE_OR_MORE_TO_ZERO_OR_ONE',
-  ZERO_OR_ONE_TO_ONLY_ONE: 'ZERO_OR_ONE_TO_ONLY_ONE',
-  ONLY_ONE_TO_ONLY_ONE: 'ONLY_ONE_TO_ONLY_ONE',
-  ONLY_ONE_TO_ZERO_OR_ONE: 'ONLY_ONE_TO_ZERO_OR_ONE',
-  ZERO_OR_ONE_TO_ZERO_OR_ONE: 'ZERO_OR_ONE_TO_ZERO_OR_ONE',
-  ZERO_OR_MORE_TO_ZERO_OR_MORE: 'ZERO_OR_MORE_TO_ZERO_OR_MORE',
-  ZERO_OR_MORE_TO_ONE_OR_MORE: 'ZERO_OR_MORE_TO_ONE_OR_MORE',
-  ONE_OR_MORE_TO_ZERO_OR_MORE: 'ONE_OR_MORE_TO_ZERO_OR_MORE',
-  ONE_OR_MORE_TO_ONE_OR_MORE: 'ONE_OR_MORE_TO_ONE_OR_MORE'
+  ZERO_OR_ONE: 'ZERO_OR_ONE',
+  ZERO_OR_MORE: 'ZERO_OR_MORE',
+  ONE_OR_MORE: 'ONE_OR_MORE',
+  ONLY_ONE: 'ONLY_ONE'
+};
+
+const Identification = {
+  NON_IDENTIFYING: 'NON_IDENTIFYING',
+  IDENTIFYING: 'IDENTIFYING'
 };
 
 const addEntity = function(name) {
@@ -40,14 +33,14 @@ const getEntities = () => entities;
  * @param entA The first entity in the relationship
  * @param rolA The role played by the first entity in relation to the second
  * @param entB The second entity in the relationship
- * @param card The cardinality of the relationship between the two entities
+ * @param rSpec The details of the relationship between the two entities
  */
-const addRelationship = function(entA, rolA, entB, card) {
+const addRelationship = function(entA, rolA, entB, rSpec) {
   let rel = {
     entityA: entA,
     roleA: rolA,
     entityB: entB,
-    cardinality: card
+    relSpec: rSpec
   };
 
   relationships.push(rel);
@@ -73,6 +66,7 @@ const clear = function() {
 
 export default {
   Cardinality,
+  Identification,
   addEntity,
   getEntities,
   addRelationship,

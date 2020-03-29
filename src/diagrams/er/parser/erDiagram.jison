@@ -10,26 +10,20 @@
 <string>["]               { this.popState(); }
 <string>[^"]*             { return 'STR'; }
 "erDiagram"               return 'ER_DIAGRAM';
+\|o                       return 'ZERO_OR_ONE';
+\}o                       return 'ZERO_OR_MORE';
+\}\|                      return 'ONE_OR_MORE';
+\|\|                      return 'ONLY_ONE';
+o\|                       return 'ZERO_OR_ONE';
+o\{                       return 'ZERO_OR_MORE';
+\|\{                      return 'ONE_OR_MORE';
+\.\.                      return 'NON_IDENTIFYING';
+\-\-                      return 'IDENTIFYING';
+\.\-                      return 'NON_IDENTIFYING';
+\-\.                      return 'NON_IDENTIFYING';
 [A-Za-z][A-Za-z0-9\-]*    return 'ALPHANUM';
-\>\?\-\?\<                return 'ZERO_OR_MORE_TO_ZERO_OR_MORE';
-\>\?\-\!\<                return 'ZERO_OR_MORE_TO_ONE_OR_MORE';
-\>\!\-\!\<                return 'ONE_OR_MORE_TO_ONE_OR_MORE';
-\>\!\-\?\<                return 'ONE_OR_MORE_TO_ZERO_OR_MORE';
-\!\-\!\<                  return 'ONLY_ONE_TO_ONE_OR_MORE';
-\!\-\?\<                  return 'ONLY_ONE_TO_ZERO_OR_MORE';
-\?\-\?\<                  return 'ZERO_OR_ONE_TO_ZERO_OR_MORE';
-\?\-\!\<                  return 'ZERO_OR_ONE_TO_ONE_OR_MORE';
-\>\!\-\!                  return 'ONE_OR_MORE_TO_ONLY_ONE';
-\>\?\-\!                  return 'ZERO_OR_MORE_TO_ONLY_ONE';
-\>\?\-\?                  return 'ZERO_OR_MORE_TO_ZERO_OR_ONE';
-\>\!\-\?                  return 'ONE_OR_MORE_TO_ZERO_OR_ONE';
-\?\-\!                    return 'ZERO_OR_ONE_TO_ONLY_ONE';
-\!\-\!                    return 'ONLY_ONE_TO_ONLY_ONE';
-\!\-\?                    return 'ONLY_ONE_TO_ZERO_OR_ONE';
-\?\-\?                    return 'ZERO_OR_ONE_TO_ZERO_OR_ONE';
 .                         return yytext[0];
 <<EOF>>                   return 'EOF';
-
 
 /lex
 
@@ -46,8 +40,8 @@ document
     ;
 
 statement
-    : entityName relationship entityName ':' role 
-      { 
+    : entityName relSpec entityName ':' role
+      {
           yy.addEntity($1); 
           yy.addEntity($3); 
           yy.addRelationship($1, $5, $3, $2);
@@ -55,26 +49,27 @@ statement
       };
 
 entityName
-    : 'ALPHANUM' { $$ = $1; }
+    : 'ALPHANUM' { $$ = $1; /*console.log('Entity: ' + $1);*/ }
     ;
 
-relationship
-    : 'ONLY_ONE_TO_ONE_OR_MORE'      { $$ = yy.Cardinality.ONLY_ONE_TO_ONE_OR_MORE; }
-    | 'ONLY_ONE_TO_ZERO_OR_MORE'     { $$ = yy.Cardinality.ONLY_ONE_TO_ZERO_OR_MORE; }
-    | 'ZERO_OR_ONE_TO_ZERO_OR_MORE'  { $$ = yy.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_MORE; }
-    | 'ZERO_OR_ONE_TO_ONE_OR_MORE'   { $$ = yy.Cardinality.ZERO_OR_ONE_TO_ONE_OR_MORE; }
-    | 'ONE_OR_MORE_TO_ONLY_ONE'      { $$ = yy.Cardinality.ONE_OR_MORE_TO_ONLY_ONE; }
-    | 'ZERO_OR_MORE_TO_ONLY_ONE'     { $$ = yy.Cardinality.ZERO_OR_MORE_TO_ONLY_ONE; }
-    | 'ZERO_OR_MORE_TO_ZERO_OR_ONE'  { $$ = yy.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_ONE; }
-    | 'ONE_OR_MORE_TO_ZERO_OR_ONE'   { $$ = yy.Cardinality.ONE_OR_MORE_TO_ZERO_OR_ONE; }
-    | 'ZERO_OR_ONE_TO_ONLY_ONE'      { $$ = yy.Cardinality.ZERO_OR_ONE_TO_ONLY_ONE; }
-    | 'ONLY_ONE_TO_ONLY_ONE'         { $$ = yy.Cardinality.ONLY_ONE_TO_ONLY_ONE; }
-    | 'ONLY_ONE_TO_ZERO_OR_ONE'      { $$ = yy.Cardinality.ONLY_ONE_TO_ZERO_OR_ONE; }
-    | 'ZERO_OR_ONE_TO_ZERO_OR_ONE'   { $$ = yy.Cardinality.ZERO_OR_ONE_TO_ZERO_OR_ONE; }
-    | 'ZERO_OR_MORE_TO_ZERO_OR_MORE' { $$ = yy.Cardinality.ZERO_OR_MORE_TO_ZERO_OR_MORE; }
-    | 'ZERO_OR_MORE_TO_ONE_OR_MORE'  { $$ = yy.Cardinality.ZERO_OR_MORE_TO_ONE_OR_MORE; }
-    | 'ONE_OR_MORE_TO_ONE_OR_MORE'   { $$ = yy.Cardinality.ONE_OR_MORE_TO_ONE_OR_MORE; }
-    | 'ONE_OR_MORE_TO_ZERO_OR_MORE'  { $$ = yy.Cardinality.ONE_OR_MORE_TO_ZERO_OR_MORE; }
+relSpec
+    : cardinality relType cardinality
+      {
+        $$ = { cardA: $3, relType: $2, cardB: $1 };
+        /*console.log('relSpec: ' + $3 + $2 + $1);*/
+      }
+    ;
+
+cardinality
+    : 'ZERO_OR_ONE'                  { $$ = yy.Cardinality.ZERO_OR_ONE; }
+    | 'ZERO_OR_MORE'                 { $$ = yy.Cardinality.ZERO_OR_MORE; }
+    | 'ONE_OR_MORE'                  { $$ = yy.Cardinality.ONE_OR_MORE; }
+    | 'ONLY_ONE'                     { $$ = yy.Cardinality.ONLY_ONE; }
+    ; 
+
+relType
+    : 'NON_IDENTIFYING'              { $$ = yy.Identification.NON_IDENTIFYING;  }
+    | 'IDENTIFYING'                  { $$ = yy.Identification.IDENTIFYING; }
     ;
 
 role

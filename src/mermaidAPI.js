@@ -353,23 +353,28 @@ const config = {
    */
   er: {
     /**
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     */
+    diagramPadding: 20,
+
+    /**
      * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
      * where T = top, B = bottom, L = left, and R = right.
      */
     layoutDirection: 'TB',
 
     /**
-     * The mimimum width of an entity box
+     * The mimimum width of an entity box, expressed in pixels
      */
     minEntityWidth: 100,
 
     /**
-     * The minimum height of an entity box
+     * The minimum height of an entity box, expressed in pixels
      */
     minEntityHeight: 75,
 
     /**
-     * The minimum internal padding between the text in an entity box and the enclosing box borders
+     * The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
      */
     entityPadding: 15,
 
@@ -382,13 +387,6 @@ const config = {
      * Fill color of entity boxes
      */
     fill: 'honeydew',
-
-    /**
-     * Opacity of entity boxes - if you want to see how the crows feet
-     * retain their elegant joins to the boxes regardless of the angle of incidence
-     * then override this to something less than 100%
-     */
-    fillOpacity: '100%',
 
     /**
      * Font size
