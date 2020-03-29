@@ -1,49 +1,8 @@
 import intersect from './intersect/index.js';
 import { logger } from '../logger'; // eslint-disable-line
-import createLabel from './createLabel';
+import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
+import note from './shapes/note';
 
-const labelHelper = (parent, node) => {
-  // Add outer g element
-  const shapeSvg = parent
-    .insert('g')
-    .attr('class', 'node default')
-    .attr('id', node.id);
-
-  // Create the label and insert it after the rect
-  const label = shapeSvg.insert('g').attr('class', 'label');
-
-  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
-
-  // Get the size of the label
-  const bbox = text.getBBox();
-
-  const halfPadding = node.padding / 2;
-
-  // Center the label
-  label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
-
-  return { shapeSvg, bbox, halfPadding, label };
-};
-
-const updateNodeBounds = (node, element) => {
-  const bbox = element.node().getBBox();
-  node.width = bbox.width;
-  node.height = bbox.height;
-};
-
-function insertPolygonShape(parent, w, h, points) {
-  return parent
-    .insert('polygon', ':first-child')
-    .attr(
-      'points',
-      points
-        .map(function(d) {
-          return d.x + ',' + d.y;
-        })
-        .join(' ')
-    )
-    .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
-}
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node);
 
@@ -287,8 +246,9 @@ const cylinder = (parent, node) => {
 };
 
 const rect = (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node);
+  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
 
+  logger.info('Classes = ', node.classes);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
@@ -418,7 +378,8 @@ const shapes = {
   rect_right_inv_arrow,
   cylinder,
   start,
-  end
+  end,
+  note
 };
 
 let nodeElems = {};

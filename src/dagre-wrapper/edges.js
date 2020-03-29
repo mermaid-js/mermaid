@@ -192,7 +192,7 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
-    .attr('class', 'transition');
+    .attr('class', 'transition' + (edge.classes ? ' ' + edge.classes : ''));
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {

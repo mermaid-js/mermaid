@@ -31,7 +31,7 @@
         G-->H
         G-->c
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
         flowchart LR
         subgraph id1 [Test]
             b
@@ -56,21 +56,13 @@
       </div>
       <div class="mermaid" style="width: 100%; height: 100%;">
         stateDiagram-v2
-    [*] --> First
-
-    state First {
-        [*] --> Second
-
-        state Second {
-            [*] --> second
-            second --> Third
-
-            state Third {
-                [*] --> third
-                third --> [*]
-            }
-        }
-    }
+        State1: The state with a note
+        note right of State1
+            Important information! You can write
+            notes.
+        end note
+        State1 --> State2
+        note left of State2 : This is the note to the left.
     </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
         stateDiagram-v2

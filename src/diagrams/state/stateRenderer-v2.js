@@ -47,7 +47,8 @@ const setupNode = (g, parent, node, altFlag) => {
       nodeDb[node.id] = {
         id: node.id,
         shape,
-        description: node.id
+        description: node.id,
+        classes: 'statediagram-state'
       };
     }
 
@@ -64,6 +65,10 @@ const setupNode = (g, parent, node, altFlag) => {
       logger.info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
       nodeDb[node.id].shape = 'roundedWithTitle';
+      nodeDb[node.id].classes =
+        nodeDb[node.id].classes +
+        ' ' +
+        (altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster');
     }
 
     const nodeData = {
@@ -72,14 +77,68 @@ const setupNode = (g, parent, node, altFlag) => {
       shape: nodeDb[node.id].shape,
       label: node.id,
       labelText: nodeDb[node.id].description,
-      class: altFlag ? 'statediagram-cluster statediagram-cluster-alt' : 'statediagram-cluster', //classStr,
+      classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
       id: node.id,
       type: nodeDb[node.id].type,
       padding: 15 //getConfig().flowchart.padding
     };
 
-    g.setNode(node.id, nodeData);
+    if (node.note) {
+      // Todo: set random id
+      const noteData = {
+        labelType: 'svg',
+        labelStyle: '',
+        shape: 'note',
+        label: node.id,
+        labelText: node.note.text,
+        classes: 'statediagram-note', //classStr,
+        style: '', //styles.style,
+        id: node.id + '----note',
+        type: nodeDb[node.id].type,
+        padding: 15 //getConfig().flowchart.padding
+      };
+      const groupData = {
+        labelType: 'svg',
+        labelStyle: '',
+        shape: 'noteGroup',
+        label: node.id + '----parent',
+        labelText: node.note.text,
+        classes: nodeDb[node.id].classes, //classStr,
+        style: '', //styles.style,
+        id: node.id + '----parent',
+        type: 'group',
+        padding: 0 //getConfig().flowchart.padding
+      };
+      g.setNode(node.id + '----parent', groupData);
+
+      g.setNode(noteData.id, noteData);
+      g.setNode(node.id, nodeData);
+
+      g.setParent(node.id, node.id + '----parent');
+      g.setParent(noteData.id, node.id + '----parent');
+
+      let from = node.id;
+      let to = noteData.id;
+
+      if (node.note.position === 'left of') {
+        from = noteData.id;
+        to = node.id;
+      }
+      g.setEdge(from, to, {
+        arrowhead: 'none',
+        arrowType: '',
+        style: 'fill:none',
+        labelStyle: '',
+        classes: 'note-edge',
+        arrowheadStyle: 'fill: #333',
+        labelpos: 'c',
+        labelType: 'text',
+        label: ''
+      });
+    } else {
+      g.setNode(node.id, nodeData);
+    }
   }
 
   if (parent) {
@@ -166,6 +225,7 @@ export const draw = function(text, id) {
     });
 
   // logger.info(stateDb.getRootDoc());
+  stateDb.extract(stateDb.getRootDocV2().doc);
   logger.info(stateDb.getRootDocV2());
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 

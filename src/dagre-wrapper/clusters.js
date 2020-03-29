@@ -55,11 +55,47 @@ const rect = (parent, node) => {
   return shapeSvg;
 };
 
+/**
+ * Non visiable cluster where the note is group with its
+ */
+const noteGroup = (parent, node) => {
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'note-cluster')
+    .attr('id', node.id);
+
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  const padding = 0 * node.padding;
+  const halfPadding = padding / 2;
+
+  // center the rect around its coordinate
+  rect
+    .attr('rx', node.rx)
+    .attr('ry', node.ry)
+    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('y', node.y - node.height / 2 - halfPadding)
+    .attr('width', node.width + padding)
+    .attr('height', node.height + padding)
+    .attr('fill', 'none');
+
+  const rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function(point) {
+    return intersectRect(node, point);
+  };
+
+  return shapeSvg;
+};
 const roundedWithTitle = (parent, node) => {
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
-    .attr('class', node.class)
+    .attr('class', node.classes)
     .attr('id', node.id);
 
   // add the rect
@@ -114,7 +150,7 @@ const roundedWithTitle = (parent, node) => {
   return shapeSvg;
 };
 
-const shapes = { rect, roundedWithTitle };
+const shapes = { rect, roundedWithTitle, noteGroup };
 
 let clusterElems = {};
 

@@ -114,7 +114,7 @@ line
 
 statement
 	: idStatement { /*console.warn('got id and descr', $1);*/$$={ stmt: 'state', id: $1, type: 'default', description: ''};}
-	| idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
+	| idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: yy.trimColon($2)};}
 	| idStatement '-->' idStatement
     {
         /*console.warn('got id', $1);yy.addRelation($1, $3);*/

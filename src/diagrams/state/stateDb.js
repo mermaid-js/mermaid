@@ -180,6 +180,8 @@ export const relationType = {
   DEPENDENCY: 3
 };
 
+const trimColon = str => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
+
 export default {
   addState,
   clear,
@@ -198,5 +200,6 @@ export default {
   getRootDoc,
   setRootDoc,
   getRootDocV2,
-  extract
+  extract,
+  trimColon
 };
