@@ -3,7 +3,8 @@ import { logger } from '../../logger';
 let rootDoc = [];
 const setRootDoc = o => {
   logger.info('Setting root doc', o);
-  rootDoc = { id: 'root', doc: o };
+  // rootDoc = { id: 'root', doc: o };
+  rootDoc = o;
 };
 
 const getRootDoc = () => rootDoc;
@@ -26,17 +27,17 @@ const docTranslator = (parent, node, first) => {
   }
 };
 const getRootDocV2 = () => {
-  docTranslator({ id: 'root' }, rootDoc, true);
-  return rootDoc;
+  docTranslator({ id: 'root' }, { id: 'root', doc: rootDoc }, true);
+  return { id: 'root', doc: rootDoc };
 };
 
-const extract = root => {
+const extract = doc => {
   // const res = { states: [], relations: [] };
-  let doc = root.doc;
-  if (!doc) {
-    doc = root;
-  }
-  logger.info(root.doc);
+  // let doc = root.doc;
+  // if (!doc) {
+  //   doc = root;
+  // }
+  logger.info(doc);
   clear();
 
   doc.forEach(item => {
