@@ -30,8 +30,13 @@ const getRootDocV2 = () => {
   return rootDoc;
 };
 
-const extract = doc => {
+const extract = root => {
   // const res = { states: [], relations: [] };
+  let doc = root.doc;
+  if (!doc) {
+    doc = root;
+  }
+  logger.info(root.doc);
   clear();
 
   doc.forEach(item => {
