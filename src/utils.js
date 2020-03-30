@@ -33,6 +33,9 @@ export const detectType = function(text) {
   if (text.match(/^\s*classDiagram/)) {
     return 'class';
   }
+  if (text.match(/^\s*stateDiagram-v2/)) {
+    return 'stateDiagram';
+  }
 
   if (text.match(/^\s*stateDiagram/)) {
     return 'state';

@@ -242,6 +242,31 @@ export function addToRender(render) {
   render.shapes().rect_right_inv_arrow = rect_right_inv_arrow;
 }
 
+export function addToRenderV2(addShape) {
+  addShape({ question });
+  addShape({ hexagon });
+  addShape({ stadium });
+  addShape({ cylinder });
+
+  // Add custom shape for box with inverted arrow on left side
+  addShape({ rect_left_inv_arrow });
+
+  // Add custom shape for box with inverted arrow on left side
+  addShape({ lean_right });
+
+  // Add custom shape for box with inverted arrow on left side
+  addShape({ lean_left });
+
+  // Add custom shape for box with inverted arrow on left side
+  addShape({ trapezoid });
+
+  // Add custom shape for box with inverted arrow on left side
+  addShape({ inv_trapezoid });
+
+  // Add custom shape for box with inverted arrow on right side
+  addShape({ rect_right_inv_arrow });
+}
+
 function insertPolygonShape(parent, w, h, points) {
   return parent
     .insert('polygon', ':first-child')
@@ -257,5 +282,6 @@ function insertPolygonShape(parent, w, h, points) {
 }
 
 export default {
-  addToRender
+  addToRender,
+  addToRenderV2
 };

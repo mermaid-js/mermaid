@@ -23,7 +23,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -41,7 +41,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -59,7 +59,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -77,7 +77,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -95,7 +95,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -110,7 +110,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -125,7 +125,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(1);
     expect(edges[0].start).toBe('A');
     expect(edges[0].end).toBe('B');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 
@@ -140,7 +140,7 @@ describe('[Arrows] when parsing', () => {
     expect(edges.length).toBe(2);
     expect(edges[1].start).toBe('B');
     expect(edges[1].end).toBe('C');
-    expect(edges[0].type).toBe('arrow');
+    expect(edges[0].type).toBe('arrow_point');
     expect(edges[0].text).toBe('');
   });
 

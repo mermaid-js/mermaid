@@ -75,10 +75,6 @@ export const draw = function(text, id) {
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 
-  // diagram.attr('height', '100%');
-  // diagram.attr('style', `width: ${bounds.width * 3 + conf.padding * 2};`);
-  // diagram.attr('height', height);
-
   // Zoom in a bit
   diagram.attr('width', width * 1.75);
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
@@ -86,15 +82,6 @@ export const draw = function(text, id) {
     'viewBox',
     `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
   );
-  // diagram.attr('transform', `translate(, 0)`);
-
-  // diagram.attr(
-  //   'viewBox',
-  //   `${conf.padding * -1} ${conf.padding * -1} ` +
-  //     (bounds.width * 1.5 + conf.padding * 2) +
-  //     ' ' +
-  //     (bounds.height + conf.padding * 5)
-  // );
 };
 const getLabelWidth = text => {
   return text ? text.length * conf.fontSizeFactor : 1;

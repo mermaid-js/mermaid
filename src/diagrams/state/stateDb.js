@@ -3,10 +3,32 @@ import { logger } from '../../logger';
 let rootDoc = [];
 const setRootDoc = o => {
   logger.info('Setting root doc', o);
-  rootDoc = o;
+  rootDoc = { id: 'root', doc: o };
 };
 
 const getRootDoc = () => rootDoc;
+
+const docTranslator = (parent, node, first) => {
+  if (node.stmt === 'relation') {
+    docTranslator(parent, node.state1, true);
+    docTranslator(parent, node.state2, false);
+  } else {
+    if (node.stmt === 'state') {
+      if (node.id === '[*]') {
+        node.id = first ? parent.id + '_start' : parent.id + '_end';
+        node.start = first;
+      }
+    }
+
+    if (node.doc) {
+      node.doc.forEach(docNode => docTranslator(node, docNode, true));
+    }
+  }
+};
+const getRootDocV2 = () => {
+  docTranslator({ id: 'root' }, rootDoc, true);
+  return rootDoc;
+};
 
 const extract = doc => {
   // const res = { states: [], relations: [] };
@@ -145,6 +167,12 @@ const getDividerId = () => {
   return 'divider-id-' + dividerCnt;
 };
 
+const classes = [];
+
+const getClasses = () => classes;
+
+const getDirection = () => 'TB';
+
 export const relationType = {
   AGGREGATION: 0,
   EXTENSION: 1,
@@ -152,12 +180,16 @@ export const relationType = {
   DEPENDENCY: 3
 };
 
+const trimColon = str => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
+
 export default {
   addState,
   clear,
   getState,
   getStates,
   getRelations,
+  getClasses,
+  getDirection,
   addRelation,
   getDividerId,
   // addDescription,
@@ -167,5 +199,7 @@ export default {
   logDocuments,
   getRootDoc,
   setRootDoc,
-  extract
+  getRootDocV2,
+  extract,
+  trimColon
 };
