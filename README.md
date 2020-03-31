@@ -189,6 +189,9 @@ pie
 - [Command Line Interface](https://github.com/mermaid-js/mermaid.cli)
 - [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 
+## Thrid-party projects
+- [Koala Diagram](https://github.com/xyeric/koala-diagram). A desktop application based on mermaid.
+
 # Contributors [![Help wanted](https://img.shields.io/github/labels/mermaid-js/mermaid/Help%20wanted!)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Help+wanted%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
 
 Mermaid is a growing community and is always accepting new contributors. There's a lot of different ways to help out and we're always looking for extra hands! Look at [this issue](https://github.com/mermaid-js/mermaid/issues/866) if you want to know where to start helping out.
