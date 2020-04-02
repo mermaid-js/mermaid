@@ -7,7 +7,7 @@ import { logger } from '../logger';
 
 let clusterDb = {};
 
-const getAnchorId = (id, graph, nodes) => {
+const getAnchorId = id => {
   // Only insert an achor once
   if (clusterDb[id]) {
     //   if (!clusterDb[id].inserted) {
