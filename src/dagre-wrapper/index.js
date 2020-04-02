@@ -32,6 +32,22 @@ const getAnchorId = (id, graph, nodes) => {
   return id;
 };
 
+const findNonClusterChild = (id, graph) => {
+  const node = graph.node(id);
+  logger.info('identified node', node);
+  if (node.type !== 'group') {
+    return node.id;
+  }
+  logger.info('identified node Not', node.id);
+  const children = graph.children(id);
+  for (let i = 0; i < children.length; i++) {
+    const _id = findNonClusterChild(children[i], graph);
+    if (_id) {
+      return _id;
+    }
+  }
+};
+
 export const render = (elem, graph, markers, diagramtype, id) => {
   insertMarkers(elem, markers, diagramtype, id);
   clusterDb = {};
@@ -55,9 +71,9 @@ export const render = (elem, graph, markers, diagramtype, id) => {
       // const width = getClusterTitleWidth(clusters, node);
       const children = graph.children(v);
 
-      logger.info('Cluster identified', node.id, children[0]);
+      logger.info('Cluster identified', node.id, children[0], findNonClusterChild(node.id, graph));
       // nodes2expand.push({ id: children[0], width });
-      clusterDb[node.id] = { id: children[0] };
+      clusterDb[node.id] = { id: findNonClusterChild(node.id, graph) };
       // clusterDb[node.id] = { id: node.id + '_anchor' };
     }
   });
