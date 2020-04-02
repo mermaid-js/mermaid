@@ -9,6 +9,7 @@ import svgDraw from './svgDraw';
 parser.yy = classDb;
 
 let idCache = {};
+const padding = 20;
 
 const conf = {
   dividerMargin: 10,
@@ -227,7 +228,13 @@ export const draw = function(text, id) {
 
   diagram.attr('height', g.graph().height + 40);
   diagram.attr('width', g.graph().width * 1.5 + 20);
-  diagram.attr('viewBox', '-10 -10 ' + (g.graph().width + 20) + ' ' + (g.graph().height + 20));
+
+  const svgBounds = diagram.node().getBBox();
+  const width = svgBounds.width + padding * 2;
+  const height = svgBounds.height + padding * 2;
+
+  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  diagram.attr('viewBox', vBox);
 };
 
 export default {
