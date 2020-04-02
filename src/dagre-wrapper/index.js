@@ -7,8 +7,28 @@ import { logger } from '../logger';
 
 let clusterDb = {};
 
-const translateClusterId = id => {
-  if (clusterDb[id]) return clusterDb[id].id;
+const getAnchorId = (id, graph, nodes) => {
+  // Only insert an achor once
+  if (clusterDb[id]) {
+    //   if (!clusterDb[id].inserted) {
+    //     // Create anchor node for cluster
+    //     const anchorData = {
+    //       shape: 'start',
+    //       labelText: '',
+    //       classes: '',
+    //       style: '',
+    //       id: id + '_anchor',
+    //       type: 'anchor',
+    //       padding: 0
+    //     };
+    //     insertNode(nodes, anchorData);
+
+    //     graph.setNode(anchorData.id, anchorData);
+    //     graph.setParent(anchorData.id, id);
+    //     clusterDb[id].inserted = true;
+    //   }
+    return clusterDb[id].id;
+  }
   return id;
 };
 
@@ -24,24 +44,24 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
 
-  logger.warn('graph', graph);
-
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node.type !== 'group') {
       insertNode(nodes, graph.node(v));
     } else {
       // const width = getClusterTitleWidth(clusters, node);
       const children = graph.children(v);
+
       logger.info('Cluster identified', node.id, children[0]);
       // nodes2expand.push({ id: children[0], width });
       clusterDb[node.id] = { id: children[0] };
-      logger.info('Clusters ', clusterDb);
+      // clusterDb[node.id] = { id: node.id + '_anchor' };
     }
   });
+  logger.info('Clusters ', clusterDb);
 
   // Insert labels, this will insert them into the dom so that the width can be calculated
   // Also figure out which edges point to/from clusters and adjust them accordingly
@@ -49,21 +69,37 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   // TODO: pick optimal child in the cluster to us as link anchor
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    logger.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    // logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
-    const v = translateClusterId(e.v);
-    const w = translateClusterId(e.w);
-    if (v !== e.v || w !== e.w) {
+    logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+
+    let v = e.v;
+    let w = e.w;
+    // Check if link is either from or to a cluster
+    logger.info(
+      'Fix',
+      clusterDb,
+      'ids:',
+      e.v,
+      e.w,
+      'Translateing: ',
+      clusterDb[e.v],
+      clusterDb[e.w]
+    );
+    if (clusterDb[e.v] || clusterDb[e.w]) {
+      logger.info('Fixing and trixing - rwemoving', e.v, e.w, e.name);
+      v = getAnchorId(e.v, graph, nodes);
+      w = getAnchorId(e.w, graph, nodes);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
+      logger.info('Fixing Replacing with', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
     insertEdgeLabel(edgeLabels, edge);
   });
 
   graph.edges().forEach(function(e) {
-    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
   logger.info('#############################################');
   logger.info('###                Layout                 ###');
@@ -74,7 +110,7 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    logger.trace('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
     if (node.type !== 'group') {
       positionNode(node);
     } else {
@@ -86,7 +122,7 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     insertEdge(edgePaths, edge, clusterDb, diagramtype);
     positionEdgeLabel(edge);

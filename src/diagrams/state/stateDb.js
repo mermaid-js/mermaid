@@ -1,4 +1,7 @@
 import { logger } from '../../logger';
+import { generateId } from '../../utils';
+
+const clone = o => JSON.parse(JSON.stringify(o));
 
 let rootDoc = [];
 const setRootDoc = o => {
@@ -22,6 +25,34 @@ const docTranslator = (parent, node, first) => {
     }
 
     if (node.doc) {
+      const doc = [];
+      // Check for concurrency
+      let i = 0;
+      let currentDoc = [];
+      for (i = 0; i < node.doc.length; i++) {
+        if (node.doc[i].type === 'divider') {
+          // debugger;
+          const newNode = clone(node.doc[i]);
+          newNode.doc = clone(currentDoc);
+          doc.push(newNode);
+          currentDoc = [];
+        } else {
+          currentDoc.push(node.doc[i]);
+        }
+      }
+
+      // If any divider was encountered
+      if (doc.length > 0 && currentDoc.length > 0) {
+        const newNode = {
+          stmt: 'state',
+          id: generateId(),
+          type: 'divider',
+          doc: clone(currentDoc)
+        };
+        doc.push(clone(newNode));
+        node.doc = doc;
+      }
+
       node.doc.forEach(docNode => docTranslator(node, docNode, true));
     }
   }
@@ -31,14 +62,22 @@ const getRootDocV2 = () => {
   return { id: 'root', doc: rootDoc };
 };
 
-const extract = doc => {
+const extract = _doc => {
   // const res = { states: [], relations: [] };
+  let doc;
+  if (_doc.doc) {
+    doc = _doc.doc;
+  } else {
+    doc = _doc;
+  }
   // let doc = root.doc;
   // if (!doc) {
   //   doc = root;
   // }
   logger.info(doc);
   clear();
+
+  logger.info('Extract', doc);
 
   doc.forEach(item => {
     if (item.stmt === 'state') {

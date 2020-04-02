@@ -130,10 +130,8 @@ export const addVertices = function(vert, g, svgId) {
     }
     // Add the node
     g.setNode(vertex.id, {
-      labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
-      label: vertexNode,
       labelText: vertexText,
       rx: radious,
       ry: radious,
@@ -146,10 +144,8 @@ export const addVertices = function(vert, g, svgId) {
     });
 
     logger.info('setNode', {
-      labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
-      label: vertexNode,
       labelText: vertexText,
       rx: radious,
       ry: radious,

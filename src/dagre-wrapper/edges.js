@@ -63,34 +63,17 @@ const outsideNode = (node, point) => {
   return false;
 };
 
-// const intersection = (node, outsidePoint, insidePoint) => {
-//   const x = node.x;
-//   const y = node.y;
-
-//   const dx = Math.abs(x - insidePoint.x);
-//   const w = node.width / 2;
-//   let r = w - dx;
-//   const dy = Math.abs(y - insidePoint.y);
-//   const h = node.height / 2;
-//   const q = h - dy;
-
-//   const Q = Math.abs(outsidePoint.y - insidePoint.y);
-//   const R = Math.abs(outsidePoint.x - insidePoint.x);
-//   r = (R * q) / Q;
-
-//   return { x: insidePoint.x + r, y: insidePoint.y + q };
-// };
 const intersection = (node, outsidePoint, insidePoint) => {
-  // logger.info('intersection', outsidePoint, insidePoint, node);
+  logger.info('intersection o:', outsidePoint, ' i:', insidePoint, node);
   const x = node.x;
   const y = node.y;
 
   const dx = Math.abs(x - insidePoint.x);
   const w = node.width / 2;
-  let r = w - dx;
+  let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
   const dy = Math.abs(y - insidePoint.y);
   const h = node.height / 2;
-  let q = h - dy;
+  let q = insidePoint.y < outsidePoint.y ? h - dy : h - dy;
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
@@ -105,9 +88,10 @@ const intersection = (node, outsidePoint, insidePoint) => {
     };
   } else {
     q = (Q * r) / R;
+    r = (R * q) / Q;
 
     return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - r,
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x + dx - w,
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
     };
   }
@@ -117,8 +101,8 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
   logger.info('\n\n\n\n');
   let points = edge.points;
   if (edge.toCluster) {
-    // logger.info('edge', edge);
-    // logger.info('to cluster', clusterDb[edge.toCluster]);
+    logger.info('edge', edge);
+    logger.info('to cluster', clusterDb[edge.toCluster]);
     points = [];
     let lastPointOutside;
     let isInside = false;
@@ -126,13 +110,12 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
       const node = clusterDb[edge.toCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        // logger.info('inside', edge.toCluster, point);
+        logger.info('inside', edge.toCluster, point, lastPointOutside);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
-        // logger.info('intersect', inter.rect(node, lastPointOutside));
+        logger.info('intersect', insterection);
         points.push(insterection);
-        // points.push(insterection);
         isInside = true;
       } else {
         if (!isInside) points.push(point);
@@ -142,8 +125,8 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
   }
 
   if (edge.fromCluster) {
-    // logger.info('edge', edge);
-    // logger.info('from cluster', clusterDb[edge.toCluster]);
+    logger.info('edge', edge);
+    logger.info('from cluster', clusterDb[edge.toCluster]);
     const updatedPoints = [];
     let lastPointOutside;
     let isInside = false;
@@ -152,7 +135,7 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
       const node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        // logger.info('inside', edge.toCluster, point);
+        logger.info('inside', edge.toCluster, point);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
@@ -162,17 +145,13 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
         isInside = true;
       } else {
         // at the outside
-        // logger.info('Outside point', point);
+        logger.info('Outside point', point);
         if (!isInside) updatedPoints.unshift(point);
       }
       lastPointOutside = point;
     }
     points = updatedPoints;
   }
-
-  // logger.info('Poibts', points);
-
-  // logger.info('Edge', edge);
 
   // The data for our line
   const lineData = points.filter(p => !Number.isNaN(p.y));

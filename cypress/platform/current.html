@@ -32,13 +32,31 @@
         G-->c
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
-        flowchart LR
-        subgraph id1 [Test]
-            b
-          end
-        a-->id1
+    stateDiagram-v2
+    [*] --> monkey
+    state monkey {
+              Sitting
+            --
+              Eating
+            }
       </div>
-      <div class="mermaid mermaid-apa" style="width: 100%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+    stateDiagram-v2
+        state Active {
+            [*] --> NumLockOff
+            NumLockOff --> NumLockOn : EvNumLockPressed
+            NumLockOn --> NumLockOff : EvNumLockPressed
+            --
+            [*] --> CapsLockOff
+            CapsLockOff --> CapsLockOn : EvCapsLockPressed
+            CapsLockOn --> CapsLockOff : EvCapsLockPressed
+            --
+            [*] --> ScrollLockOff
+            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+        }
+      </div>
+      <div class="mermaid2 mermaid-apa" style="width: 100%; height: 20%;">
         stateDiagram
         [*] --> Still
         Still --> [*]
@@ -52,15 +70,39 @@
         Moving --> Crash
         Crash --> [*]
       </div>
+      <div class="mermaid2" style="width: 100%; height: 100%;">
+stateDiagram-v2
+    [*] --> First
+    First --> Second
+%    First --> Third
+
+    state First {
+        [*] --> fir
+        fir --> [*]
+    }
+    state Second {
+        [*] --> sec
+        sec --> [*]
+    }
+    </div>
       <div class="mermaid" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-        State1: The state with a note
-        note right of State1
-            Important information! You can write
-            notes.
-        end note
-        State1 --> State2
-        note left of State2 : This is the note to the left.
+stateDiagram-v2
+    [*] --> First
+    First --> Second
+    First --> Third
+
+    state First {
+        [*] --> fir
+        fir --> [*]
+    }
+    state Second {
+        [*] --> sec
+        sec --> [*]
+    }
+    state Third {
+        [*] --> thi
+        thi --> [*]
+    }
     </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
         stateDiagram-v2

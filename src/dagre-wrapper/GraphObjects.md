@@ -7,12 +7,10 @@ Explains the representation of various objects used to render the flow charts an
 Sample object:
 ```json
 {
-  "labelType":"svg",
-  "labelStyle":"",
   "shape":"rect",
-  "label":{},
   "labelText":"Test",
-  "rx":0,"ry":0,
+  "rx":0,
+  "ry":0,
   "class":"default",
   "style":"",
   "id":"Test",
@@ -24,18 +22,16 @@ This is set by the renderer of the diagram and insert the data that the wrapper 
 
 |  property  |                                                 description                                                 |
 | ---------- | ----------------------------------------------------------------------------------------------------------- |
-| labelType  | If the label should be html label or a svg label. Should we continue to support both?                       |
-| labelStyle | Css styles for the label. Not currently used.                                                               |
-| shape      | The shape of the node. Currently on rect is suppoerted. This will change.                                   |
-| label      | ??                                                                                                          |
+| labelStyle | Css styles for the label. User for instance for stylling the labels for clusters                            |
+| shape      | The shape of the node.                                                                                      |
 | labelText  | The text on the label                                                                                       |
-| rx         | The corner radius - maybe part of the shape instead?                                                        |
-| ry         | The corner radius - maybe part of the shape instead?                                                        |
-| class      | Class to be set for the shape                                                                               |
+| rx         | The corner radius - maybe part of the shape instead? Used for rects.                                        |
+| ry         | The corner radius - maybe part of the shape instead? Used for rects.                                        |
+| classes    | Classes to be set for the shape. Not used                                                                   |
 | style      | Css styles for the actual shape                                                                             |
 | id         | id of the shape                                                                                             |
-| type       | if set to group then this node indicates *a cluster*.                                                         |
-| padding    | Padding. Passed from the renderr as this might differ between react for different diagrams. Maybe obsolete. |
+| type       | if set to group then this node indicates *a cluster*.                                                       |
+| padding    | Padding. Passed from the render as this might differ between different diagrams. Maybe obsolete.            |
 
 
 # edge
