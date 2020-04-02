@@ -33,11 +33,10 @@
 %%
 
 [\n]+                            return 'NL';
-\s+                                     /* skip all whitespace */
+\s+                              /* skip all whitespace */
 <ID,STATE,struct,LINE>((?!\n)\s)+       /* skip same-line whitespace */
 <INITIAL,ID,STATE,struct,LINE>\#[^\n]*  /* skip comments */
-\%%[^\n]*                               /* skip comments */
-\%\%\*((.|\n)*)\*\%\%                   /* multiline skip comments */
+\%%[^\n]*                        /* skip comments */
 
 "scale"\s+            { this.pushState('SCALE'); /* console.log('Got scale', yytext);*/ return 'scale'; }
 <SCALE>\d+            return 'WIDTH';
@@ -72,6 +71,7 @@
 <NOTE_TEXT>\s*[^:;]+"end note"       { this.popState();/*console.log('Got NOTE_TEXT for note',yytext);*/yytext = yytext.slice(0,-8).trim();return 'NOTE_TEXT';}
 
 "stateDiagram"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
+"stateDiagram-v2"\s+                   { /*console.log('Got state diagram', yytext,'#');*/return 'SD'; }
 "hide empty description"    { /*console.log('HIDE_EMPTY', yytext,'#');*/return 'HIDE_EMPTY'; }
 <INITIAL,struct>"[*]"                   { /*console.log('EDGE_STATE=',yytext);*/ return 'EDGE_STATE';}
 <INITIAL,struct>[^:\n\s\-\{]+                { /*console.log('=>ID=',yytext);*/ return 'ID';}
@@ -114,7 +114,7 @@ line
 
 statement
 	: idStatement { /*console.warn('got id and descr', $1);*/$$={ stmt: 'state', id: $1, type: 'default', description: ''};}
-	| idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: $2.trim()};}
+	| idStatement DESCR { /*console.warn('got id and descr', $1, $2.trim());*/$$={ stmt: 'state', id: $1, type: 'default', description: yy.trimColon($2)};}
 	| idStatement '-->' idStatement
     {
         /*console.warn('got id', $1);yy.addRelation($1, $3);*/

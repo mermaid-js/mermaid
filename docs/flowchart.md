@@ -409,6 +409,22 @@ graph TB
     end
  ```
 
+ You can also set an excplicit id for the subgraph.
+
+```
+graph TB
+    c1-->a2
+    subgraph ide1 [one]
+    a1-->a2
+    end
+ ```
+```mermaid
+graph TB
+    c1-->a2
+    subgraph id1 [one]
+    a1-->a2
+    end
+ ```
 
 ## Interaction
 
@@ -425,10 +441,10 @@ Examples of tooltip usage below:
 
 ```
 <script>
-    var callback = function(){
-        alert('A callback was triggered');
-    }
-<script>
+  var callback = function(){
+      alert('A callback was triggered');
+  }
+</script>
 ```
 
 ```
@@ -448,28 +464,30 @@ graph LR;
 ```
 > **Success** The tooltip functionality and the ability to link to urls are available from version 0.5.2.
 
+?> Due to limitations with how Docsify handles JavaScript callback functions, an alternate working demo for the above code can be viewed at [this jsfiddle](https://jsfiddle.net/s37cjoau/3/).
+
 Beginners tip, a full example using interactive links in a html context:
 ```
 <body>
   <div class="mermaid">
     graph LR;
-    	A-->B;
-    	click A callback "Tooltip"
-    	click B "http://www.github.com" "This is a link"
+        A-->B;
+        click A callback "Tooltip"
+        click B "http://www.github.com" "This is a link"
   </div>
 
   <script>
-  	var callback = function(){
+    var callback = function(){
         alert('A callback was triggered');
     }
     var config = {
-      startOnLoad:true,
-      flowchart:{
-        useMaxWidth:true,
-        htmlLabels:true,
-        curve:'cardinal',
-      },
-      securityLevel:'loose',
+        startOnLoad:true,
+        flowchart:{
+            useMaxWidth:true,
+            htmlLabels:true,
+            curve:'cardinal',
+        },
+        securityLevel:'loose',
     };
 
     mermaid.initialize(config);

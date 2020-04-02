@@ -24,6 +24,8 @@ const conf = {
   noteMargin: 10,
   // Space between messages
   messageMargin: 35,
+  // Multiline message alignment
+  messageAlign: 'center',
   // mirror actors under diagram
   mirrorActors: false,
   // Depending on css styling this might need adjustment
@@ -230,24 +232,38 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   const g = elem.append('g');
   const txtCenter = startx + (stopx - startx) / 2;
 
-  let textElem;
+  let textElems = [];
   let counterBreaklines = 0;
   let breaklineOffset = 17;
   const breaklines = msg.message.split(/<br\s*\/?>/gi);
   for (const breakline of breaklines) {
-    textElem = g
-      .append('text') // text label for the x axis
-      .attr('x', txtCenter)
-      .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
-      .style('text-anchor', 'middle')
-      .attr('class', 'messageText')
-      .text(breakline.trim());
+    textElems.push(
+      g
+        .append('text') // text label for the x axis
+        .attr('x', txtCenter)
+        .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
+        .style('text-anchor', 'middle')
+        .attr('class', 'messageText')
+        .text(breakline.trim())
+    );
     counterBreaklines++;
   }
   const offsetLineCounter = counterBreaklines - 1;
   const totalOffset = offsetLineCounter * breaklineOffset;
 
-  let textWidth = (textElem._groups || textElem)[0][0].getBBox().width;
+  let textWidths = textElems.map(function(textElem) {
+    return (textElem._groups || textElem)[0][0].getBBox().width;
+  });
+  let textWidth = Math.max(...textWidths);
+  for (const textElem of textElems) {
+    if (conf.messageAlign === 'left') {
+      textElem.attr('x', txtCenter - textWidth / 2).style('text-anchor', 'start');
+    } else if (conf.messageAlign === 'right') {
+      textElem.attr('x', txtCenter + textWidth / 2).style('text-anchor', 'end');
+    }
+  }
+
+  bounds.bumpVerticalPos(totalOffset);
 
   let line;
   if (startx === stopx) {
@@ -295,9 +311,9 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   } else {
     line = g.append('line');
     line.attr('x1', startx);
-    line.attr('y1', verticalPos);
+    line.attr('y1', verticalPos + totalOffset);
     line.attr('x2', stopx);
-    line.attr('y2', verticalPos);
+    line.attr('y2', verticalPos + totalOffset);
     bounds.insert(
       startx,
       bounds.getVerticalPos() - 10 + totalOffset,

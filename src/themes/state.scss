@@ -67,3 +67,52 @@ g.stateGroup line {
   font-family: 'trebuchet ms', verdana, arial;
   font-family: var(--mermaid-font-family);
 }
+
+.node circle.state-start {
+  fill: black;
+  stroke: black;
+}
+.node circle.state-end {
+  fill: black;
+  stroke: white;
+  stroke-width: 1.5
+}
+#statediagram-barbEnd {
+  fill: $nodeBorder
+}
+
+.statediagram-cluster rect {
+  fill: $nodeBkg;
+  stroke: $nodeBorder;
+  stroke-width: 1px;
+  rx: 5px;
+  ry: 5px;
+}
+.statediagram-cluster.statediagram-cluster .inner {
+  fill: white;
+}
+.statediagram-cluster.statediagram-cluster-alt .inner {
+  fill: #e0e0e0;
+}
+
+.statediagram-cluster .inner {
+  rx:0;
+  ry:0;
+}
+
+.statediagram-state rect {
+  rx: 5px;
+  ry: 5px;
+}
+
+.note-edge {
+  stroke-dasharray: 5;
+}
+
+.statediagram-note rect {
+  fill: $noteBkgColor;
+  stroke: $noteBorderColor;
+  stroke-width: 1px;
+  rx: 0;
+  ry: 0;
+}

@@ -17,6 +17,7 @@ import { setConfig, getConfig } from './config';
 import { logger, setLogLevel } from './logger';
 import utils from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
+import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
 import flowParser from './diagrams/flowchart/parser/flow';
 import flowDb from './diagrams/flowchart/flowDb';
 import sequenceRenderer from './diagrams/sequence/sequenceRenderer';
@@ -29,6 +30,7 @@ import classRenderer from './diagrams/class/classRenderer';
 import classParser from './diagrams/class/parser/classDiagram';
 import classDb from './diagrams/class/classDb';
 import stateRenderer from './diagrams/state/stateRenderer';
+import stateRendererV2 from './diagrams/state/stateRenderer-v2';
 import stateParser from './diagrams/state/parser/stateDiagram';
 import stateDb from './diagrams/state/stateDb';
 import gitGraphRenderer from './diagrams/git/gitGraphRenderer';
@@ -40,6 +42,9 @@ import infoDb from './diagrams/info/infoDb';
 import pieRenderer from './diagrams/pie/pieRenderer';
 import pieParser from './diagrams/pie/parser/pie';
 import pieDb from './diagrams/pie/pieDb';
+import erDb from './diagrams/er/erDb';
+import erParser from './diagrams/er/parser/erDiagram';
+import erRenderer from './diagrams/er/erRenderer';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -164,7 +169,10 @@ const config = {
      *   * linear **default**
      *   * cardinal
      */
-    curve: 'linear'
+    curve: 'linear',
+    // Only used in new experimental rendering
+    // repreesents the padding between the labels and the shape
+    padding: 15
   },
 
   /**
@@ -224,6 +232,14 @@ const config = {
      * **Default value 35**.
      */
     messageMargin: 35,
+
+    /**
+     * Multiline message alignment. Possible values are:
+     *   * left
+     *   * center **default**
+     *   * right
+     */
+    messageAlign: 'center',
 
     /**
      * mirror actors under diagram.
@@ -342,6 +358,52 @@ const config = {
     edgeLengthFactor: '20',
     compositTitleSize: 35,
     radius: 5
+  },
+
+  /**
+   * The object containing configurations specific for entity relationship diagrams
+   */
+  er: {
+    /**
+     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     */
+    diagramPadding: 20,
+
+    /**
+     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
+     * where T = top, B = bottom, L = left, and R = right.
+     */
+    layoutDirection: 'TB',
+
+    /**
+     * The mimimum width of an entity box, expressed in pixels
+     */
+    minEntityWidth: 100,
+
+    /**
+     * The minimum height of an entity box, expressed in pixels
+     */
+    minEntityHeight: 75,
+
+    /**
+     * The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
+     */
+    entityPadding: 15,
+
+    /**
+     * Stroke color of box edges and lines
+     */
+    stroke: 'gray',
+
+    /**
+     * Fill color of entity boxes
+     */
+    fill: 'honeydew',
+
+    /**
+     * Font size
+     */
+    fontSize: '12px'
   }
 };
 
@@ -363,6 +425,11 @@ function parse(text) {
       parser = flowParser;
       parser.parser.yy = flowDb;
       break;
+    case 'flowchart-v2':
+      flowDb.clear();
+      parser = flowRendererV2;
+      parser.parser.yy = flowDb;
+      break;
     case 'sequence':
       parser = sequenceParser;
       parser.parser.yy = sequenceDb;
@@ -379,6 +446,10 @@ function parse(text) {
       parser = stateParser;
       parser.parser.yy = stateDb;
       break;
+    case 'stateDiagram':
+      parser = stateParser;
+      parser.parser.yy = stateDb;
+      break;
     case 'info':
       logger.debug('info info info');
       parser = infoParser;
@@ -388,6 +459,11 @@ function parse(text) {
       logger.debug('pie');
       parser = pieParser;
       parser.parser.yy = pieDb;
+      break;
+    case 'er':
+      logger.debug('er');
+      parser = erParser;
+      parser.parser.yy = erDb;
       break;
   }
 
@@ -568,6 +644,11 @@ const render = function(id, _txt, cb, container) {
       flowRenderer.setConf(config.flowchart);
       flowRenderer.draw(txt, id, false);
       break;
+    case 'flowchart-v2':
+      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+      flowRendererV2.setConf(config.flowchart);
+      flowRendererV2.draw(txt, id, false);
+      break;
     case 'sequence':
       config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       if (config.sequenceDiagram) {
@@ -596,6 +677,11 @@ const render = function(id, _txt, cb, container) {
       stateRenderer.setConf(config.state);
       stateRenderer.draw(txt, id);
       break;
+    case 'stateDiagram':
+      // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+      stateRendererV2.setConf(config.state);
+      stateRendererV2.draw(txt, id);
+      break;
     case 'info':
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       infoRenderer.setConf(config.class);
@@ -605,6 +691,10 @@ const render = function(id, _txt, cb, container) {
       config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
       pieRenderer.setConf(config.class);
       pieRenderer.draw(txt, id, pkg.version);
+      break;
+    case 'er':
+      erRenderer.setConf(config.er);
+      erRenderer.draw(txt, id, pkg.version);
       break;
   }
 
@@ -738,6 +828,7 @@ export default mermaidAPI;
  *       boxTextMargin:5,
  *       noteMargin:10,
  *       messageMargin:35,
+ *       messageAlign:'center',
  *       mirrorActors:true,
  *       bottomMarginAdj:1,
  *       useMaxWidth:true,

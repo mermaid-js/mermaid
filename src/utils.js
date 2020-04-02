@@ -33,6 +33,9 @@ export const detectType = function(text) {
   if (text.match(/^\s*classDiagram/)) {
     return 'class';
   }
+  if (text.match(/^\s*stateDiagram-v2/)) {
+    return 'stateDiagram';
+  }
 
   if (text.match(/^\s*stateDiagram/)) {
     return 'state';
@@ -41,12 +44,19 @@ export const detectType = function(text) {
   if (text.match(/^\s*gitGraph/)) {
     return 'git';
   }
+  if (text.match(/^\s*flowchart/)) {
+    return 'flowchart-v2';
+  }
 
   if (text.match(/^\s*info/)) {
     return 'info';
   }
   if (text.match(/^\s*pie/)) {
     return 'pie';
+  }
+
+  if (text.match(/^\s*erDiagram/)) {
+    return 'er';
   }
 
   return 'flowchart';

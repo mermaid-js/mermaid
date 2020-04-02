@@ -10,8 +10,7 @@
 %x dir
 %x vertex
 %%
-\%\%[^\n]*\n*           /* skip comments */
-\%\%\*((.|\n)*)\*\%\%   /* multiline skip comments */
+\%\%[^\n]*\n*           /* do nothing */
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
@@ -22,7 +21,8 @@
 "classDef"            return 'CLASSDEF';
 "class"               return 'CLASS';
 "click"               return 'CLICK';
-"graph"      {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"graph"                {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
+"flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
 <dir>\s*"LR"             {   this.popState();  return 'DIR'; }

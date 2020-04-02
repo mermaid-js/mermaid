@@ -17,6 +17,7 @@ export const logger = {
 };
 
 export const setLogLevel = function(level) {
+  logger.trace = () => {};
   logger.debug = () => {};
   logger.info = () => {};
   logger.warn = () => {};

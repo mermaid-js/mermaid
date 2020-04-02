@@ -4,6 +4,7 @@ import stateDb from './stateDb';
 import utils from '../../utils';
 import common from '../common/common';
 import { getConfig } from '../../config';
+import { logger } from '../../logger';
 
 // let conf;
 
@@ -456,6 +457,9 @@ export const drawEdge = function(elem, path, relation) {
 
     let titleHeight = 0;
     const titleRows = [];
+    let maxWidth = 0;
+    let minX = 0;
+
     for (let i = 0; i <= rows.length; i++) {
       const title = label
         .append('text')
@@ -464,27 +468,39 @@ export const drawEdge = function(elem, path, relation) {
         .attr('x', x)
         .attr('y', y + titleHeight);
 
+      const boundstmp = title.node().getBBox();
+      maxWidth = Math.max(maxWidth, boundstmp.width);
+      minX = Math.min(minX, boundstmp.x);
+
+      logger.info(boundstmp.x, x, y + titleHeight);
+
       if (titleHeight === 0) {
         const titleBox = title.node().getBBox();
         titleHeight = titleBox.height;
+        logger.info('Title height', titleHeight, y);
       }
       titleRows.push(title);
     }
 
+    let boxHeight = titleHeight * rows.length;
     if (rows.length > 1) {
-      const heightAdj = rows.length * titleHeight * 0.25;
+      const heightAdj = (rows.length - 1) * titleHeight * 0.5;
 
       titleRows.forEach((title, i) => title.attr('y', y + i * titleHeight - heightAdj));
+      boxHeight = titleHeight * rows.length;
     }
 
     const bounds = label.node().getBBox();
+
     label
       .insert('rect', ':first-child')
       .attr('class', 'box')
-      .attr('x', bounds.x - getConfig().state.padding / 2)
-      .attr('y', bounds.y - getConfig().state.padding / 2)
-      .attr('width', bounds.width + getConfig().state.padding)
-      .attr('height', bounds.height + getConfig().state.padding);
+      .attr('x', x - maxWidth / 2 - getConfig().state.padding / 2)
+      .attr('y', y - boxHeight / 2 - getConfig().state.padding / 2 - 3.5)
+      .attr('width', maxWidth + getConfig().state.padding)
+      .attr('height', boxHeight + getConfig().state.padding);
+
+    logger.info(bounds);
 
     //label.attr('transform', '0 -' + (bounds.y / 2));
 
