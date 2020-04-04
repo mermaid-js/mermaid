@@ -640,4 +640,16 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
+  it('31: should not slice off edges that are to the left of the left-most vertex', () => {
+    imgSnapshotTest(
+      `graph TD
+      work --> sleep
+      sleep --> work
+      eat --> sleep
+      work --> eat
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
 });
