@@ -16,6 +16,10 @@ For more information and help in getting started, please view our [documentation
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
+## New diagram
+
+This version comes with a new diagram type, user journey diagrams.
+
 ## New diagrams in 8.4
 
 With version 8.4 class diagrams have got some new features, bug fixes and documentation. Another new feature in 8.4 is the new diagram type, state diagrams.
@@ -182,6 +186,25 @@ pie
     <td colspan="2" align="center"><i>Coming soon!</i></td>
 </tr>
 <!-- </Git> -->
+<!-- <Journey> -->
+<tr>
+  <td><pre>
+  journey
+    title Hello
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 3: Me
+</pre></td>
+  <td align="center">
+    <img alt="User Journey Diagram" src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-journey.png" />
+  </td>
+</tr>
+<!-- </Journey> -->
+
 </table>
 
 ## Related projects 

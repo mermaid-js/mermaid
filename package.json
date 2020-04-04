@@ -27,7 +27,8 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn release && yarn test && yarn e2e",
-    "prepush": "yarn test"
+    "prepush": "yarn test",
+    "prepare": "yarn build"
   },
   "repository": {
     "type": "git",

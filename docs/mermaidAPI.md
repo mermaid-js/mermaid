@@ -263,6 +263,119 @@ The number of alternating section styles.
 Datetime format of the axis. This might need adjustment to match your locale and preferences
 **Default value '%Y-%m-%d'**.
 
+## journey
+
+The object containing configurations specific for sequence diagrams
+
+### diagramMarginX
+
+margin to the right and left of the sequence diagram.
+**Default value 50**.
+
+### diagramMarginY
+
+margin to the over and under the sequence diagram.
+**Default value 10**.
+
+### actorMargin
+
+Margin between actors.
+**Default value 50**.
+
+### width
+
+Width of actor boxes
+**Default value 150**.
+
+### height
+
+Height of actor boxes
+**Default value 65**.
+
+### boxMargin
+
+Margin around loop boxes
+**Default value 10**.
+
+### boxTextMargin
+
+margin around the text in loop/alt/opt boxes
+**Default value 5**.
+
+### noteMargin
+
+margin around notes.
+**Default value 10**.
+
+### messageMargin
+
+Space between messages.
+**Default value 35**.
+
+### messageAlign
+
+Multiline message alignment. Possible values are:
+
+-   left
+-   center **default**
+-   right
+
+### bottomMarginAdj
+
+Depending on css styling this might need adjustment.
+Prolongs the edge of the diagram downwards.
+**Default value 1**.
+
+### useMaxWidth
+
+when this flag is set the height and width is set to 100% and is then scaling with the
+available space if not the absolute space required is used.
+**Default value true**.
+
+### rightAngles
+
+This will display arrows that start and begin at the same node as right angles, rather than a curve
+**Default value false**.
+
+## er
+
+The object containing configurations specific for entity relationship diagrams
+
+### layoutDirection
+
+Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
+where T = top, B = bottom, L = left, and R = right.
+
+### minEntityWidth
+
+The mimimum width of an entity box
+
+### minEntityHeight
+
+The minimum height of an entity box
+
+### entityPadding
+
+The minimum internal padding between the text in an entity box and the enclosing box borders
+
+### stroke
+
+Stroke color of box edges and lines
+
+### fill
+
+Fill color of entity boxes
+
+### fillOpacity
+
+Opacity of entity boxes - if you want to see how the crows feet
+retain their elegant joins to the boxes regardless of the angle of incidence
+then override this to something less than 100%
+
+### fontSize
+
+Font size
+
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
