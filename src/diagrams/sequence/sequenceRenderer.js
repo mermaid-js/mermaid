@@ -362,7 +362,7 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
     g.append('text')
       .attr('x', startx)
-      .attr('y', verticalPos + 4)
+      .attr('y', verticalPos + 4 + totalOffset)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
