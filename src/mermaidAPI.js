@@ -45,6 +45,9 @@ import pieDb from './diagrams/pie/pieDb';
 import erDb from './diagrams/er/erDb';
 import erParser from './diagrams/er/parser/erDiagram';
 import erRenderer from './diagrams/er/erRenderer';
+import journeyParser from './diagrams/user-journey/parser/journey';
+import journeyDb from './diagrams/user-journey/journeyDb';
+import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -337,6 +340,92 @@ const config = {
      */
     axisFormat: '%Y-%m-%d'
   },
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  journey: {
+    /**
+     * margin to the right and left of the sequence diagram.
+     * **Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     * margin to the over and under the sequence diagram.
+     * **Default value 10**.
+     */
+    diagramMarginY: 10,
+
+    /**
+     * Margin between actors.
+     * **Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     * Width of actor boxes
+     * **Default value 150**.
+     */
+    width: 150,
+
+    /**
+     * Height of actor boxes
+     * **Default value 65**.
+     */
+    height: 65,
+
+    /**
+     * Margin around loop boxes
+     * **Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     * margin around the text in loop/alt/opt boxes
+     * **Default value 5**.
+     */
+    boxTextMargin: 5,
+
+    /**
+     * margin around notes.
+     * **Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     * Space between messages.
+     * **Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     * Multiline message alignment. Possible values are:
+     *   * left
+     *   * center **default**
+     *   * right
+     */
+    messageAlign: 'center',
+
+    /**
+     * Depending on css styling this might need adjustment.
+     * Prolongs the edge of the diagram downwards.
+     * **Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     * when this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     * **Default value true**.
+     */
+    useMaxWidth: true,
+
+    /**
+     * This will display arrows that start and begin at the same node as right angles, rather than a curve
+     * **Default value false**.
+     */
+    rightAngles: false
+  },
   class: {},
   git: {},
   state: {
@@ -464,6 +553,11 @@ function parse(text) {
       logger.debug('er');
       parser = erParser;
       parser.parser.yy = erDb;
+      break;
+    case 'journey':
+      logger.debug('Journey');
+      parser = journeyParser;
+      parser.parser.yy = journeyDb;
       break;
   }
 
@@ -695,6 +789,10 @@ const render = function(id, _txt, cb, container) {
     case 'er':
       erRenderer.setConf(config.er);
       erRenderer.draw(txt, id, pkg.version);
+      break;
+    case 'journey':
+      journeyRenderer.setConf(config.journey);
+      journeyRenderer.draw(txt, id, pkg.version);
       break;
   }
 

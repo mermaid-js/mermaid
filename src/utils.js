@@ -59,6 +59,10 @@ export const detectType = function(text) {
     return 'er';
   }
 
+  if (text.match(/^\s*journey/)) {
+    return 'journey';
+  }
+
   return 'flowchart';
 };
 
