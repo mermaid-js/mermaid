@@ -65,7 +65,8 @@ describe('flowchart shapes', function() {
     ['lean_right', 4, useWidth, useHeight],
     ['lean_left', 4, useWidth, useHeight],
     ['trapezoid', 4, useWidth, useHeight],
-    ['inv_trapezoid', 4, useWidth, useHeight]
+    ['inv_trapezoid', 4, useWidth, useHeight],
+    ['subroutine', 10, useWidth, useHeight],
   ].forEach(function([shapeType, expectedPointCount, getW, getH]) {
     it(`should add a ${shapeType} shape that renders a properly translated polygon element`, function() {
       const mockRender = MockRender();

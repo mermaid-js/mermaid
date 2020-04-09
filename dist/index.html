@@ -317,6 +317,20 @@ graph TB
   </div>
   <div class="mermaid">
     graph LR
+    A[[subroutine shape test]]
+    A -->|Get money| B[[Go shopping]]
+    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
+    C -->|One| D[[Laptop]]
+    C -->|Two| E[[iPhone]]
+    C -->|Three| F[[Car<br/>wroom wroom]]
+    click A "index.html#link-clicked" "link test"
+    click B testClick "click test"
+    classDef someclass fill:#f96;
+    class A someclass;
+    class C someclass;
+  </div>
+  <div class="mermaid">
+    graph LR
     A[(cylindrical<br />shape<br />test)]
     A -->|Get money| B1[(Go shopping 1)]
     A -->|Get money| B2[(Go shopping 2)]
