@@ -1,11 +1,12 @@
 import dagre from 'dagre';
 import insertMarkers from './markers';
+import { clear as cleargraphlib, clusterDb, adjustClustersAndEdges } from './mermaid-graphlib';
 import { insertNode, positionNode, clear as clearNodes } from './nodes';
 import { insertCluster, clear as clearClusters } from './clusters';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
 import { logger } from '../logger';
 
-let clusterDb = {};
+// let clusterDb = {};
 
 const getAnchorId = id => {
   // Only insert an achor once
@@ -50,10 +51,11 @@ const findNonClusterChild = (id, graph) => {
 
 export const render = (elem, graph, markers, diagramtype, id) => {
   insertMarkers(elem, markers, diagramtype, id);
-  clusterDb = {};
   clearNodes();
   clearEdges();
   clearClusters();
+
+  adjustClustersAndEdges(graph);
 
   const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
@@ -68,13 +70,9 @@ export const render = (elem, graph, markers, diagramtype, id) => {
     if (node.type !== 'group') {
       insertNode(nodes, graph.node(v));
     } else {
-      // const width = getClusterTitleWidth(clusters, node);
-      const children = graph.children(v);
-
-      logger.info('Cluster identified', node.id, children[0], findNonClusterChild(node.id, graph));
-      // nodes2expand.push({ id: children[0], width });
-      clusterDb[node.id] = { id: findNonClusterChild(node.id, graph) };
-      // clusterDb[node.id] = { id: node.id + '_anchor' };
+      // const children = graph.children(v);
+      // logger.info('Cluster identified', node.id, children[0], findNonClusterChild(node.id, graph));
+      // clusterDb[node.id] = { id: findNonClusterChild(node.id, graph) };
     }
   });
   logger.info('Clusters ', clusterDb);
