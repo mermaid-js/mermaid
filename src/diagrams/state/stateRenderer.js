@@ -75,8 +75,13 @@ export const draw = function(text, id) {
   const width = bounds.width + padding * 2;
   const height = bounds.height + padding * 2;
 
-  // Zoom in a bit
-  diagram.attr('width', width * 1.75);
+  if (conf.useMaxWidth) {
+    diagram.attr('width', '100%');
+    diagram.attr('style', `max-width: ${width * 1.75}px;`);
+  } else {
+    // Zoom in a bit
+    diagram.attr('width', width * 1.75);
+  }
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
   diagram.attr(
     'viewBox',
