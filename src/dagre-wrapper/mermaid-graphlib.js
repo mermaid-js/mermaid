@@ -13,7 +13,7 @@ export const clear = () => {
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
-  logger.trace('Copying ', clusterId);
+  logger.info('Copying ', clusterId, graph.node(clusterId));
   const nodes = graph.children(clusterId);
   nodes.forEach(node => {
     if (graph.children(node).length > 0) {
@@ -21,22 +21,29 @@ const copy = (clusterId, graph, newGraph, rootId) => {
     }
 
     const data = graph.node(node);
-    logger.trace(node, data, ' parent is ', clusterId);
+    logger.info(node, data, ' parent is ', clusterId);
     newGraph.setNode(node, data);
     newGraph.setParent(node, clusterId);
     const edges = graph.edges(node);
-    graph.removeNode(node);
-    logger.trace('Edges', edges);
+    logger.info('Copying Edges', edges);
     edges.forEach(edge => {
-      const data = graph.edge(edge);
-      // Do not copy edges in and out of the root cluster, they belong to the parent graph
-      if (!(edge.v === rootId || edge.w === rootId)) {
-        logger.trace('Copying as ', rootId, edge.v, edge.w, clusterId);
-        newGraph.setEdge(edge.v, edge.w, data);
-      } else {
-        logger.trace('Skipping copy of edge as ', rootId, edge.v, edge.w, clusterId);
+      logger.info('Edge', edge);
+      const data = graph.edge(edge.v, edge.w, edge.name);
+      logger.info('Edge data', data, rootId);
+      try {
+        // Do not copy edges in and out of the root cluster, they belong to the parent graph
+        if (!(edge.v === rootId || edge.w === rootId)) {
+          logger.info('Copying as ', edge.v, edge.w, data, edge.name);
+          newGraph.setEdge(edge.v, edge.w, data, edge.name);
+          logger.info('newgrapg edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
+        } else {
+          logger.info('Skipping copy of edge as ', rootId, edge.v, edge.w, clusterId);
+        }
+      } catch (e) {
+        logger.error(e);
       }
     });
+    graph.removeNode(node);
   });
   newGraph.setNode(clusterId, graph.node(clusterId));
 };
@@ -60,14 +67,34 @@ export const extractGraphFromCluster = (clusterId, graph) => {
     .setGraph({
       rankdir: 'TB',
       // Todo: set proper spacing
-      nodesep: 10,
-      ranksep: 10,
+      nodesep: 50,
+      ranksep: 50,
       marginx: 8,
       marginy: 8
     })
     .setDefaultEdgeLabel(function() {
       return {};
     });
+
+  // const conf = getConfig().flowchart;
+  // const nodeSpacing = conf.nodeSpacing || 50;
+  // const rankSpacing = conf.rankSpacing || 50;
+
+  // // Create the input mermaid.graph
+  // const g = new graphlib.Graph({
+  //   multigraph: true,
+  //   compound: true
+  // })
+  //   .setGraph({
+  //     rankdir: 'TB',
+  //     nodesep: nodeSpacing,
+  //     ranksep: rankSpacing,
+  //     marginx: 8,
+  //     marginy: 8
+  //   })
+  //   .setDefaultEdgeLabel(function() {
+  //     return {};
+  //   });
 
   copy(clusterId, graph, clusterGraph, clusterId);
 
@@ -100,7 +127,7 @@ export const validate = graph => {
  * @param {Finds a } id
  * @param {*} graph
  */
-const findNonClusterChild = (id, graph) => {
+export const findNonClusterChild = (id, graph) => {
   // const node = graph.node(id);
   logger.trace('Searching', id);
   const children = graph.children(id);
@@ -141,7 +168,7 @@ export const adjustClustersAndEdges = graph => {
   graph.nodes().forEach(function(id) {
     const children = graph.children(id);
     if (children.length > 0) {
-      logger.trace(
+      logger.info(
         'Cluster identified',
         id,
         ' Replacement id in edges: ',
@@ -157,13 +184,13 @@ export const adjustClustersAndEdges = graph => {
     const children = graph.children(id);
     const edges = graph.edges();
     if (children.length > 0) {
-      logger.trace('Cluster identified', id);
+      logger.info('Cluster identified', id);
       edges.forEach(edge => {
-        logger.trace('Edge: ', edge, decendants[id]);
+        logger.info('Edge: ', edge, decendants[id]);
         // Check if any edge leaves the cluster (not the actual cluster, thats a link from the box)
         if (edge.v !== id && edge.w !== id) {
           if (decendants[id].indexOf(edge.v) < 0 || decendants[id].indexOf(edge.w) < 0) {
-            logger.trace('Edge: ', edge, ' leaves cluster ', id);
+            logger.info('Edge: ', edge, ' leaves cluster ', id);
             clusterDb[id].externalConnections = true;
           }
         }
@@ -189,7 +216,13 @@ export const adjustClustersAndEdges = graph => {
 
       // Create a new node in the original graph, this new node is not a cluster
       // but a regular node with the cluster dontent as a new attached graph
-      graph.setNode(clusterId, { clusterNode: true, graph: clusterGraph });
+      graph.setNode(clusterId, {
+        clusterNode: true,
+        id: clusterId,
+        clusterData: clusterDb[clusterId],
+        labelText: clusterDb[clusterId].labelText,
+        graph: clusterGraph
+      });
 
       // The original edges in and out of the cluster is applied
       edges.forEach(edge => {
@@ -205,7 +238,7 @@ export const adjustClustersAndEdges = graph => {
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
     logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    logger.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
+    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
 
     let v = e.v;
     let w = e.w;

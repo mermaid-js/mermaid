@@ -135,7 +135,7 @@ describe('Graphlib decorations', () => {
       expect(newGraph.edges('a')).toEqual([{ v: 'a', w: 'b' }]);
     });
 
-    it('It is possible to extract a clusters to a new graph 2', function () {
+    it('It is possible to extract a clusters to a new graph 2 GLB1', function () {
       /*
         subgraph C1
           a --> b
@@ -163,7 +163,7 @@ describe('Graphlib decorations', () => {
       expect(g.children('C2')).toEqual([]);
       expect(g.edges()).toEqual([{ v: 'C1', w: 'C2' }]);
 
-      logger.info(C1.nodes());
+      logger.info(g.nodes());
       expect(C1.nodes()).toEqual(['a', 'C1', 'b']);
       expect(C1.children('C1')).toEqual(['a', 'b']);
       expect(C1.edges()).toEqual([{ v: 'a', w: 'b' }]);
@@ -200,7 +200,7 @@ describe('Graphlib decorations', () => {
       expect(g.children('C1')).toEqual([]);
     });
   });
-    it('Validate should detect edges between clusters and transform clusters', function () {
+    it('Validate should detect edges between clusters and transform clusters GLB4', function () {
       /*
         a --> b
         subgraph C1
@@ -220,6 +220,31 @@ describe('Graphlib decorations', () => {
       g.setEdge('a', 'b', { name: 'C1-internal-link' });
       g.setEdge('C1', 'c', { name: 'C1-external-link' });
 
+      adjustClustersAndEdges(g);
+      logger.info(g.nodes())
+      expect(g.nodes().length).toBe(2);
+      expect(validate(g)).toBe(true);
+    });
+    it('Validate should detect edges between clusters and transform clusters GLB5', function () {
+      /*
+        a --> b
+        subgraph C1
+          a
+        end
+        subgraph C2
+          b
+        end
+        C1 -->
+      */
+      g.setNode('a', { data: 1 });
+      g.setNode('b', { data: 2 });
+      g.setParent('a', 'C1');
+      g.setParent('b', 'C2');
+      g.setParent('C1', 'C2');
+      // g.setEdge('a', 'b', { name: 'C1-internal-link' });
+      g.setEdge('C1', 'C2', { name: 'C1-external-link' });
+
+      logger.info(g.nodes())
       adjustClustersAndEdges(g);
       logger.info(g.nodes())
       expect(g.nodes().length).toBe(2);

@@ -387,6 +387,9 @@ let nodeElems = {};
 export const insertNode = (elem, node) => {
   nodeElems[node.id] = shapes[node.shape](elem, node);
 };
+export const setNodeElem = (elem, node) => {
+  nodeElems[node.id] = elem;
+};
 export const clear = () => {
   nodeElems = {};
 };

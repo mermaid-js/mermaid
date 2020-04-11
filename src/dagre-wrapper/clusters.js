@@ -1,8 +1,10 @@
 import intersectRect from './intersect/intersect-rect';
-import { logger } from '../logger'; // eslint-disable-line
+import { logger as log } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
 
 const rect = (parent, node) => {
+  log.info('Creating subgraph rect for ', node.id, node);
+
   // Add outer g element
   const shapeSvg = parent
     .insert('g')
@@ -22,7 +24,10 @@ const rect = (parent, node) => {
 
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
+  const width = node.width || 50;
+  const height = node.height || 50;
 
+  log.info('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
     .attr('rx', node.rx)
@@ -32,7 +37,7 @@ const rect = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
 
-  // logger.info('bbox', bbox.width, node.x, node.width);
+  // log.info('bbox', bbox.width, node.x, node.width);
   // Center the label
   // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
   label.attr(
@@ -127,7 +132,7 @@ const roundedWithTitle = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
-  // logger.info('bbox', bbox.width, node.x, node.width);
+  // log.info('bbox', bbox.width, node.x, node.width);
   // Center the label
   // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
   label.attr(
@@ -155,7 +160,9 @@ const shapes = { rect, roundedWithTitle, noteGroup };
 let clusterElems = {};
 
 export const insertCluster = (elem, node) => {
-  clusterElems[node.id] = shapes[node.shape](elem, node);
+  log.info('Inserting cluster');
+  const shape = node.shape || 'rect';
+  clusterElems[node.id] = shapes[shape](elem, node);
 };
 export const getClusterTitleWidth = (elem, node) => {
   const label = createLabel(node.labelText, node.labelStyle);
@@ -170,6 +177,8 @@ export const clear = () => {
 };
 
 export const positionCluster = node => {
+  log.info('Position cluster');
   const el = clusterElems[node.id];
+
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
 };
