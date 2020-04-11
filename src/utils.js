@@ -41,12 +41,19 @@ export const detectType = function(text) {
   if (text.match(/^\s*gitGraph/)) {
     return 'git';
   }
+  if (text.match(/^\s*flowchart/)) {
+    return 'flowchart-v2';
+  }
 
   if (text.match(/^\s*info/)) {
     return 'info';
   }
   if (text.match(/^\s*pie/)) {
     return 'pie';
+  }
+
+  if (text.match(/^\s*erDiagram/)) {
+    return 'er';
   }
 
   return 'flowchart';
@@ -72,25 +79,6 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
   }
   const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
   return d3[curveName] || defaultCurve;
-};
-
-export const sanitize = (text, config) => {
-  let txt = text;
-  let htmlLabels = true;
-  if (
-    config.flowchart &&
-    (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  )
-    htmlLabels = false;
-
-  if (config.securityLevel !== 'loose' && htmlLabels) { // eslint-disable-line
-    txt = txt.replace(/<br\s*\/?>/gi, '#br#');
-    txt = txt.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    txt = txt.replace(/=/g, '&equals;');
-    txt = txt.replace(/#br#/g, '<br/>');
-  }
-
-  return txt;
 };
 
 export const formatUrl = (linkStr, config) => {
@@ -225,7 +213,6 @@ export default {
   interpolateToCurve,
   calcLabelPosition,
   calcCardinalityPosition,
-  sanitize,
   formatUrl,
   getStylesFromArray
 };

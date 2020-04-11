@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.4.8",
+  "version": "8.5.0",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -13,7 +13,7 @@
     "git graph"
   ],
   "scripts": {
-    "build": "webpack --progress --colors",
+    "build": "webpack --progress --colors -p",
     "postbuild": "documentation build src/mermaidAPI.js --shallow -f md --markdown-toc false -o docs/mermaidAPI.md",
     "build:watch": "yarn build --watch",
     "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",

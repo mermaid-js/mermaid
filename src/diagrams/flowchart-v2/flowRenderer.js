@@ -1,15 +1,15 @@
 import graphlib from 'graphlib';
 import * as d3 from 'd3';
 
-import flowDb from './flowDb';
-import flow from './parser/flow';
+import flowDb from '../flowchart/flowDb';
+import flow from '../flowchart/parser/flow';
 import { getConfig } from '../../config';
 
 import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
-import flowChartShapes from './flowChartShapes';
+import flowChartShapes from '../flowchart/flowChartShapes';
 
 const conf = {};
 export const setConf = function(cnf) {

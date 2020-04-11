@@ -77,7 +77,6 @@ Type | Description
 -x   | Solid line with a cross at the end (async)
 --x  | Dotted line with a cross at the end (async)
 
-
 ## Activations
 
 It is possible to activate and deactivate an actor. (de)activation can be dedicated declarations:
@@ -127,7 +126,6 @@ sequenceDiagram
     John-->>-Alice: I feel great!
 ```
 
-
 ## Notes
 
 It is possible to add notes to a sequence diagram. This is done by the notation
@@ -159,7 +157,6 @@ sequenceDiagram
     Note over Alice,John: A typical interaction
 ```
 
-
 ## Loops
 
 It is possible to express loops in a sequence diagram. This is done by the notation
@@ -186,7 +183,6 @@ sequenceDiagram
         John-->Alice: Great!
     end
 ```
-
 
 ## Alt
 
@@ -235,7 +231,53 @@ sequenceDiagram
     end
 ```
 
+## Parallel
+
+It is possible to show actions that are happening in parallel.
+
+This is done by the notation
+
+```
+par [Action 1]
+... statements ...
+and [Action 2]
+... statements ...
+and [Action N]
+... statements ...
+end
+```
+
+See the example below:
+
+```mermaid
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Hello guys!
+    and Alice to John
+        Alice->>John: Hello guys!
+    end
+    Bob-->>Alice: Hi Alice!
+    John-->>Alice: Hi Alice!
+```
+
+It is also possible to nest parallel blocks.
+
+```mermaid
+sequenceDiagram
+    par Alice to Bob
+        Alice->>Bob: Go help John
+    and Alice to John
+        Alice->>John: I want this done today
+        par John to Charlie
+            John->>Charlie: Can we do this today?
+        and John to Diana
+            John->>Diana: Can you help us today?
+        end
+    end
+```
+
 ## Background Highlighting
+
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
 The colors are defined using rgb and rgba syntax.
@@ -340,9 +382,7 @@ loopLine     | Defines styles for the lines in the loop box.
 note         | Styles for the note box.
 noteText     | Styles for the text on in the note boxes.
 
-
 ### Sample stylesheet
-
 
 ```css
 body {
@@ -426,7 +466,6 @@ text.actor {
 }
 ```
 
-
 ## Configuration
 
 Is it possible to adjust the margins for rendering the sequence diagram.
@@ -452,4 +491,3 @@ Param | Description | Default value
 --- | --- | ---
 mirrorActor | Turns on/off the rendering of actors below the diagram as well as above it | false
 bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1
-

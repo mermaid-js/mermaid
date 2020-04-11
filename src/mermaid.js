@@ -6,7 +6,6 @@ import he from 'he';
 
 import mermaidAPI from './mermaidAPI';
 import { logger } from './logger';
-
 /**
  * ## init
  * Function that goes through the document to find the chart definitions in there and render them.
