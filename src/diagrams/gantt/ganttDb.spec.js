@@ -21,6 +21,7 @@ describe('when using the ganttDb', function() {
     beforeEach(function() {
       ganttDb.setDateFormat('YYYY-MM-DD');
       ganttDb.enableInclusiveEndDates();
+      ganttDb.setTodayMarker('off');
       ganttDb.setExcludes('weekends 2019-02-06,friday');
       ganttDb.addSection('weekends skip test');
       ganttDb.addTask('test1', 'id1,2019-02-01,1d');
@@ -34,6 +35,7 @@ describe('when using the ganttDb', function() {
       ${'getTitle'}             | ${''}
       ${'getDateFormat'}        | ${''}
       ${'getAxisFormat'}        | ${''}
+      ${'getTodayMarker'}       | ${''}
       ${'getExcludes'}          | ${[]}
       ${'getSections'}          | ${[]}
       ${'endDatesAreInclusive'} | ${false}
@@ -215,5 +217,14 @@ describe('when using the ganttDb', function() {
       expect(tasks[1].id).toEqual('id2');
       expect(tasks[1].task).toEqual('test2');
     });
+  });
+
+  it.each`
+    type       | expected
+    ${'hide'}  | ${'off'}
+    ${'style'} | ${'stoke:stroke-width:5px,stroke:#00f,opacity:0.5'}
+  `('should ${type} today marker', ({ expected }) => {
+    ganttDb.setTodayMarker(expected);
+    expect(ganttDb.getTodayMarker()).toEqual(expected);
   });
 });
