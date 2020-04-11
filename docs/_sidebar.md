@@ -12,6 +12,7 @@
   - [Sequence diagram](sequenceDiagram.md)
   - [Class Diagram](classDiagram.md)
   - [State Diagram](stateDiagram.md)
+  - [Entity Relationship Diagram](entityRelationshipDiagram.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
 
