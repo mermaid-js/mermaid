@@ -182,5 +182,18 @@ context('Sequence diagram', () => {
       {}
       );
     });
+    it('should render autonumber with different line breaks', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        autonumber
+        Alice->>John: Hello John,<br>how are you?
+        Alice->>John: John,<br/>can you hear me?
+        John-->>Alice: Hi Alice,<br />I can hear you!
+        John-->>Alice: I feel great!
+      `,
+      {}
+      );
+    });
   });
 });
