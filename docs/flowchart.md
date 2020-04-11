@@ -89,6 +89,17 @@ graph LR
     id1([This is the text in the box])
 ```
 
+### A node in a subroutine shape
+
+```
+graph LR
+    id1[[This is the text in the box]]
+```
+```mermaid
+graph LR
+    id1[[This is the text in the box]]
+```
+
 ### A node in a cylindrical shape
 
 ```

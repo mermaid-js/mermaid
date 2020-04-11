@@ -23,6 +23,7 @@ describe('the flowchart renderer', function() {
       ['circle', 'circle'],
       ['ellipse', 'ellipse'],
       ['stadium', 'stadium'],
+      ['subroutine', 'subroutine'],
       ['cylinder', 'cylinder'],
       ['group', 'rect']
     ].forEach(function([type, expectedShape, expectedRadios = 0]) {

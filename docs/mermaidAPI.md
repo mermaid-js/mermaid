@@ -263,6 +263,43 @@ The number of alternating section styles.
 Datetime format of the axis. This might need adjustment to match your locale and preferences
 **Default value '%Y-%m-%d'**.
 
+## er
+
+The object containing configurations specific for entity relationship diagrams
+
+### diagramPadding
+
+The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+
+### layoutDirection
+
+Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
+where T = top, B = bottom, L = left, and R = right.
+
+### minEntityWidth
+
+The mimimum width of an entity box, expressed in pixels
+
+### minEntityHeight
+
+The minimum height of an entity box, expressed in pixels
+
+### entityPadding
+
+The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
+
+### stroke
+
+Stroke color of box edges and lines
+
+### fill
+
+Fill color of entity boxes
+
+### fontSize
+
+Font size
+
 ## render
 
 Function that renders an svg with a graph from a chart definition. Usage example below.
@@ -318,6 +355,7 @@ mermaidAPI.initialize({
       boxTextMargin:5,
       noteMargin:10,
       messageMargin:35,
+      messageAlign:'center',
       mirrorActors:true,
       bottomMarginAdj:1,
       useMaxWidth:true,

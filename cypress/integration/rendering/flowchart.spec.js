@@ -640,4 +640,35 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
+  it('31: should not slice off edges that are to the left of the left-most vertex', () => {
+    imgSnapshotTest(
+      `graph TD
+      work --> sleep
+      sleep --> work
+      eat --> sleep
+      work --> eat
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
+
+  it('32: Render Subroutine shape', () => {
+    imgSnapshotTest(
+      `graph LR
+      A[[subroutine shape test]]
+      A -->|Get money| B[[Go shopping]]
+      B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
+      C -->|One| D[[Laptop]]
+      C -->|Two| E[[iPhone]]
+      C -->|Three| F[[Car<br/>wroom wroom]]
+      click A "index.html#link-clicked" "link test"
+      click B testClick "click test"
+      classDef someclass fill:#f96;
+      class A someclass;
+      class C someclass;
+      `,
+      { flowchart: { htmlLabels: false } }
+    );
+  });
 });

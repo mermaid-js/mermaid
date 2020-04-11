@@ -119,6 +119,9 @@ export const addVertices = function(vert, g, svgId) {
       case 'stadium':
         _shape = 'stadium';
         break;
+      case 'subroutine':
+        _shape = 'subroutine';
+        break;
       case 'cylinder':
         _shape = 'cylinder';
         break;
@@ -380,10 +383,6 @@ export const draw = function(text, id) {
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
-  logger.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-  );
 
   if (conf.useMaxWidth) {
     svg.attr('width', '100%');
@@ -393,10 +392,10 @@ export const draw = function(text, id) {
     svg.attr('width', width);
   }
 
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  logger.debug(`viewBox ${vBox}`);
+  svg.attr('viewBox', vBox);
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i);

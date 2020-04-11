@@ -154,6 +154,28 @@ function stadium(parent, bbox, node) {
   return shapeSvg;
 }
 
+function subroutine(parent, bbox, node) {
+  const w = bbox.width;
+  const h = bbox.height;
+  const points = [
+    { x: 0, y: 0 },
+    { x: w, y: 0 },
+    { x: w, y: -h },
+    { x: 0, y: -h },
+    { x: 0, y: 0 },
+    { x: -8, y: 0 },
+    { x: w + 8, y: 0 },
+    { x: w + 8, y: -h },
+    { x: -8, y: -h },
+    { x: -8, y: 0 }
+  ];
+  const shapeSvg = insertPolygonShape(parent, w, h, points);
+  node.intersect = function(point) {
+    return dagreD3.intersect.polygon(node, points, point);
+  };
+  return shapeSvg;
+}
+
 function cylinder(parent, bbox, node) {
   const w = bbox.width;
   const rx = w / 2;
@@ -221,6 +243,7 @@ export function addToRender(render) {
   render.shapes().question = question;
   render.shapes().hexagon = hexagon;
   render.shapes().stadium = stadium;
+  render.shapes().subroutine = subroutine;
   render.shapes().cylinder = cylinder;
 
   // Add custom shape for box with inverted arrow on left side
@@ -246,6 +269,7 @@ export function addToRenderV2(addShape) {
   addShape({ question });
   addShape({ hexagon });
   addShape({ stadium });
+  addShape({ subroutine });
   addShape({ cylinder });
 
   // Add custom shape for box with inverted arrow on left side
