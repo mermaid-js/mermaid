@@ -6,6 +6,7 @@ import { getConfig } from '../../config';
 const config = getConfig();
 let dateFormat = '';
 let axisFormat = '';
+let todayMarker = '';
 let excludes = [];
 let title = '';
 let sections = [];
@@ -27,6 +28,7 @@ export const clear = function() {
   rawTasks = [];
   dateFormat = '';
   axisFormat = '';
+  todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
 };
@@ -37,6 +39,14 @@ export const setAxisFormat = function(txt) {
 
 export const getAxisFormat = function() {
   return axisFormat;
+};
+
+export const setTodayMarker = function(txt) {
+  todayMarker = txt;
+};
+
+export const getTodayMarker = function() {
+  return todayMarker;
 };
 
 export const setDateFormat = function(txt) {
@@ -572,6 +582,8 @@ export default {
   endDatesAreInclusive,
   setAxisFormat,
   getAxisFormat,
+  setTodayMarker,
+  getTodayMarker,
   setTitle,
   getTitle,
   addSection,
