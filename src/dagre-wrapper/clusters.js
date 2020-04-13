@@ -24,8 +24,6 @@ const rect = (parent, node) => {
 
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
-  const width = node.width || 50;
-  const height = node.height || 50;
 
   log.info('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate

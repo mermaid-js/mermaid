@@ -9,7 +9,7 @@ import {
   findNonClusterChild
 } from './mermaid-graphlib';
 import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
-import { insertCluster, clear as clearClusters, positionCluster } from './clusters';
+import { insertCluster, clear as clearClusters } from './clusters';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
 import { logger as log } from '../logger';
 
@@ -24,11 +24,12 @@ const getAnchorId = id => {
 };
 
 const recursiveRender = (_elem, graph, diagramtype) => {
+  log.info('Graph in recursive render:', graphlib.json.write(graph));
   const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
   if (!graph.nodes()) {
     log.info('No nodes found for', graph);
   } else {
-    log.info('Recursive render', graph.edges());
+    log.info('Recursive render', graph.nodes());
   }
   if (graph.edges().length > 0) {
     log.info('Recursive edges', graph.edge(graph.edges()[0]));
@@ -50,7 +51,7 @@ const recursiveRender = (_elem, graph, diagramtype) => {
       updateNodeBounds(node, newEl);
       setNodeElem(newEl, node);
 
-      log.info('Recursice render complete', newEl, node);
+      log.warn('Recursive render complete', newEl, node);
     } else {
       if (graph.children(v).length > 0) {
         // This is a cluster but not to be rendered recusively
@@ -65,7 +66,6 @@ const recursiveRender = (_elem, graph, diagramtype) => {
       }
     }
   });
-  log.info('Clusters ', clusterDb);
 
   // Insert labels, this will insert them into the dom so that the width can be calculated
   // Also figure out which edges point to/from clusters and adjust them accordingly
@@ -74,27 +74,24 @@ const recursiveRender = (_elem, graph, diagramtype) => {
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e.v, e.w, e.name);
     log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    log.info(
-      'Edge ' + e.v + ' -> ' + e.w + ': ',
-      e,
-      ' ',
-      +JSON.stringify(graph.edge(e.v, e.w, e.name))
-    );
+    log.info('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
     let v = e.v;
     let w = e.w;
     // Check if link is either from or to a cluster
     log.info('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
-    if (clusterDb[e.v] || clusterDb[e.w]) {
-      log.info('Fixing and trixing - removing', e.v, e.w, e.name);
-      v = getAnchorId(e.v, graph, nodes);
-      w = getAnchorId(e.w, graph, nodes);
-      graph.removeEdge(e.v, e.w, e.name);
-      if (v !== e.v) edge.fromCluster = e.v;
-      if (w !== e.w) edge.toCluster = e.w;
-      log.info('Fixing Replacing with', v, w, e.name);
-      graph.setEdge(v, w, edge, e.name);
-    }
+    // Todo handle case with links
+
+    // if (clusterDb[e.v] || clusterDb[e.w]) {
+    //   log.info('Fixing and trixing - removing', e.v, e.w, e.name);
+    //   v = getAnchorId(e.v, graph, nodes);
+    //   w = getAnchorId(e.w, graph, nodes);
+    //   graph.removeEdge(e.v, e.w, e.name);
+    //   if (v !== e.v) edge.fromCluster = e.v;
+    //   if (w !== e.w) edge.toCluster = e.w;
+    //   log.info('Fixing Replacing with', v, w, e.name);
+    //   graph.setEdge(v, w, edge, e.name);
+    // }
     insertEdgeLabel(edgeLabels, edge);
   });
 
@@ -106,14 +103,22 @@ const recursiveRender = (_elem, graph, diagramtype) => {
   log.info('#############################################');
   log.info(graph);
   dagre.layout(graph);
-
+  log.warn('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    // log.info('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    log.info(
+      'Position ' + v + ': (' + node.x,
+      ',' + node.y,
+      ') width: ',
+      node.width,
+      ' height: ',
+      node.height
+    );
     if (node && node.clusterNode) {
       // clusterDb[node.id].node = node;
-      // positionNode(node);
+      positionNode(node);
     } else {
       // Non cluster node
       if (graph.children(v).length > 0) {
@@ -130,7 +135,7 @@ const recursiveRender = (_elem, graph, diagramtype) => {
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     insertEdge(edgePaths, edge, clusterDb, diagramtype);
     positionEdgeLabel(edge);

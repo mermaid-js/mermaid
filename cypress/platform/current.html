@@ -87,9 +87,19 @@ stateDiagram-v2
     </div>
       <div class="mermaid" style="width: 100%; height: 100%;">
 flowchart TD
-    subgraph Apa
-      a --> b
+    subgraph A
+      a
     end
+    subgraph B
+      b
+    end
+    subgraph C
+      subgraph D
+        d
+      end
+    end
+    A -- oAo --> B
+    A --> C
     </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
 stateDiagram-v2

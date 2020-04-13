@@ -396,5 +396,7 @@ export const clear = () => {
 
 export const positionNode = node => {
   const el = nodeElems[node.id];
+  logger.debug('Transforming node', node);
   el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+  // el.attr('transform', 'translate(' + node.x / 2 + ', ' + 0 + ')');
 };
