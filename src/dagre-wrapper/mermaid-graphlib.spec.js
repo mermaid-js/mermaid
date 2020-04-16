@@ -1,6 +1,6 @@
 import graphlib from 'graphlib';
 import dagre from 'dagre';
-import { validate, adjustClustersAndEdges, extractGraphFromCluster, extractDecendants } from './mermaid-graphlib';
+import { validate, adjustClustersAndEdges, extractDecendants } from './mermaid-graphlib';
 import { setLogLevel, logger } from '../logger';
 
 describe('Graphlib decorations', () => {
@@ -70,35 +70,6 @@ describe('Graphlib decorations', () => {
       adjustClustersAndEdges(g);
       logger.info(g.edges())
       expect(validate(g)).toBe(true);
-    });
-
-    it('It is possible to copy a cluster to a new graph 1', function () {
-      /*
-        a --> b
-        subgraph C1
-          subgraph C2
-            a
-          end
-          b
-        end
-        C1 --> c
-      */
-      g.setNode('a', { data: 1 });
-      g.setNode('b', { data: 2 });
-      g.setNode('c', { data: 3 });
-      g.setParent('a', 'C2');
-      g.setParent('b', 'C1');
-      g.setParent('C2', 'C1');
-      g.setEdge('a', 'b', { name: 'C1-internal-link' });
-      g.setEdge('C1', 'c', { name: 'C1-external-link' });
-
-      const newGraph = extractGraphFromCluster('C1', g);
-      expect(newGraph.nodes().length).toBe(4);
-      expect(newGraph.edges().length).toBe(1);
-      logger.info(newGraph.children('C1'));
-      expect(newGraph.children('C2')).toEqual(['a']);
-      expect(newGraph.children('C1')).toEqual(['b', 'C2']);
-      expect(newGraph.edges('a')).toEqual([{ v: 'a', w: 'b' }]);
     });
 
     it('Validate should detect edges between clusters and transform clusters GLB4', function () {

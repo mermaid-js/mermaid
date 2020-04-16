@@ -7,13 +7,11 @@ import graphlib from 'graphlib';
 export let clusterDb = {};
 let decendants = {};
 let parents = {};
-let graphs = {};
 
 export const clear = () => {
   decendants = {};
   parents = {};
   clusterDb = {};
-  graphs = {};
 };
 
 const isDecendant = (id, ancenstorId) => {
@@ -37,7 +35,7 @@ const edgeInCluster = (edge, clusterId) => {
   if (!(edge.v === clusterId || edge.w === clusterId)) return false;
 
   if (!decendants[clusterId]) {
-    log.debug('Tilt, ', clustedId, ',not in decendants');
+    log.debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
 

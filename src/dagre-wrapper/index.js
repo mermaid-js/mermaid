@@ -9,7 +9,7 @@ import {
   findNonClusterChild
 } from './mermaid-graphlib';
 import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
-import { insertCluster, clear as clearClusters, positionCluster } from './clusters';
+import { insertCluster, clear as clearClusters } from './clusters';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
 import { logger as log } from '../logger';
 
@@ -73,22 +73,8 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
     log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
     log.trace('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
 
-    let v = e.v;
-    let w = e.w;
     // Check if link is either from or to a cluster
     log.trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
-    // Todo handle case with links
-
-    // if (clusterDb[e.v] || clusterDb[e.w]) {
-    //   log.trace('Fixing and trixing - removing', e.v, e.w, e.name);
-    //   v = getAnchorId(e.v, graph, nodes);
-    //   w = getAnchorId(e.w, graph, nodes);
-    //   graph.removeEdge(e.v, e.w, e.name);
-    //   if (v !== e.v) edge.fromCluster = e.v;
-    //   if (w !== e.w) edge.toCluster = e.w;
-    //   log.trace('Fixing Replacing with', v, w, e.name);
-    //   graph.setEdge(v, w, edge, e.name);
-    // }
     insertEdgeLabel(edgeLabels, edge);
   });
 
