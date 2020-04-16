@@ -1,6 +1,5 @@
 import graphlib from 'graphlib';
 import * as d3 from 'd3';
-import dagre from 'dagre';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
@@ -133,10 +132,8 @@ export const addVertices = function(vert, g, svgId) {
     }
     // Add the node
     g.setNode(vertex.id, {
-      labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
-      label: vertexNode,
       labelText: vertexText,
       rx: radious,
       ry: radious,
@@ -149,10 +146,8 @@ export const addVertices = function(vert, g, svgId) {
     });
 
     logger.info('setNode', {
-      labelType: 'svg',
       labelStyle: styles.labelStyle,
       shape: _shape,
-      label: vertexNode,
       labelText: vertexText,
       rx: radious,
       ry: radious,
@@ -193,6 +188,8 @@ export const addEdges = function(edges, g) {
     } else {
       edgeData.arrowhead = 'normal';
     }
+
+    logger.info(edgeData, edge);
     edgeData.arrowType = edge.type;
 
     let style = '';
@@ -321,8 +318,10 @@ export const draw = function(text, id) {
 
   let subG;
   const subGraphs = flowDb.getSubGraphs();
+  logger.info('Subgraphs - ', subGraphs);
   for (let i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
+    logger.info('Subgraph - ', subG);
     flowDb.addVertex(subG.id, subG.title, 'group', undefined, subG.classes);
   }
 
@@ -354,7 +353,7 @@ export const draw = function(text, id) {
   // Run the renderer. This is what draws the final graph.
   const element = d3.select('#' + id + ' g');
   render(element, g, ['point', 'circle', 'cross'], 'flowchart', id);
-  dagre.layout(g);
+  // dagre.layout(g);
 
   element.selectAll('g.node').attr('title', function() {
     return flowDb.getTooltip(this.id);
@@ -385,27 +384,27 @@ export const draw = function(text, id) {
   // Index nodes
   flowDb.indexNodes('subGraph' + i);
 
-  // reposition labels
-  for (i = 0; i < subGraphs.length; i++) {
-    subG = subGraphs[i];
+  // // reposition labels
+  // for (i = 0; i < subGraphs.length; i++) {
+  //   subG = subGraphs[i];
 
-    if (subG.title !== 'undefined') {
-      const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
-      const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
+  //   if (subG.title !== 'undefined') {
+  //     const clusterRects = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"] rect');
+  //     const clusterEl = document.querySelectorAll('#' + id + ' [id="' + subG.id + '"]');
 
-      const xPos = clusterRects[0].x.baseVal.value;
-      const yPos = clusterRects[0].y.baseVal.value;
-      const width = clusterRects[0].width.baseVal.value;
-      const cluster = d3.select(clusterEl[0]);
-      const te = cluster.select('.label');
-      te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
-      te.attr('id', id + 'Text');
+  //     const xPos = clusterRects[0].x.baseVal.value;
+  //     const yPos = clusterRects[0].y.baseVal.value;
+  //     const width = clusterRects[0].width.baseVal.value;
+  //     const cluster = d3.select(clusterEl[0]);
+  //     const te = cluster.select('.label');
+  //     te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
+  //     te.attr('id', id + 'Text');
 
-      for (let j = 0; j < subG.classes.length; j++) {
-        clusterEl[0].classList.add(subG.classes[j]);
-      }
-    }
-  }
+  //     for (let j = 0; j < subG.classes.length; j++) {
+  //       clusterEl[0].classList.add(subG.classes[j]);
+  //     }
+  //   }
+  // }
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {

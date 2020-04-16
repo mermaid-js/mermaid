@@ -1,8 +1,10 @@
 const createLabel = (vertexText, style) => {
   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
-
-  const rows = vertexText.split(/\n|<br\s*\/?>/gi);
+  let rows = [];
+  if (vertexText) {
+    rows = vertexText.split(/\n|<br\s*\/?>/gi);
+  }
 
   for (let j = 0; j < rows.length; j++) {
     const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');

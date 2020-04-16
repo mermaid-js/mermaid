@@ -1,45 +1,66 @@
 import dagre from 'dagre';
+import graphlib from 'graphlib';
 import insertMarkers from './markers';
-import { insertNode, positionNode, clear as clearNodes } from './nodes';
+import { updateNodeBounds } from './shapes/util';
+import {
+  clear as clearGraphlib,
+  clusterDb,
+  adjustClustersAndEdges,
+  findNonClusterChild
+} from './mermaid-graphlib';
+import { insertNode, positionNode, clear as clearNodes, setNodeElem } from './nodes';
 import { insertCluster, clear as clearClusters } from './clusters';
 import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } from './edges';
-import { logger } from '../logger';
+import { logger as log } from '../logger';
 
-let clusterDb = {};
-
-const translateClusterId = id => {
-  if (clusterDb[id]) return clusterDb[id].id;
-  return id;
-};
-
-export const render = (elem, graph, markers, diagramtype, id) => {
-  insertMarkers(elem, markers, diagramtype, id);
-  clusterDb = {};
-  clearNodes();
-  clearEdges();
-  clearClusters();
-
+const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
+  log.trace('Graph in recursive render:', graphlib.json.write(graph), parentCluster);
+  const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
+  if (!graph.nodes()) {
+    log.trace('No nodes found for', graph);
+  } else {
+    log.trace('Recursive render', graph.nodes());
+  }
+  if (graph.edges().length > 0) {
+    log.trace('Recursive edges', graph.edge(graph.edges()[0]));
+  }
   const clusters = elem.insert('g').attr('class', 'clusters'); // eslint-disable-line
   const edgePaths = elem.insert('g').attr('class', 'edgePaths');
   const edgeLabels = elem.insert('g').attr('class', 'edgeLabels');
   const nodes = elem.insert('g').attr('class', 'nodes');
 
-  logger.warn('graph', graph);
-
   // Insert nodes, this will insert them into the dom and each node will get a size. The size is updated
   // to the abstract node and is later used by dagre for the layout
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-    if (node.type !== 'group') {
-      insertNode(nodes, graph.node(v));
+    if (typeof parentCluster !== 'undefined') {
+      const data = JSON.parse(JSON.stringify(parentCluster.clusterData));
+      // data.clusterPositioning = true;
+      log.trace('Setting data for cluster', data);
+      graph.setNode(parentCluster.id, data);
+      graph.setParent(v, parentCluster.id, data);
+    }
+    log.trace('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
+    if (node.clusterNode) {
+      // const children = graph.children(v);
+      log.trace('Cluster identified', v, node, graph.node(v));
+      const newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
+      updateNodeBounds(node, newEl);
+      setNodeElem(newEl, node);
+
+      log.warn('Recursive render complete', newEl, node);
     } else {
-      // const width = getClusterTitleWidth(clusters, node);
-      const children = graph.children(v);
-      logger.info('Cluster identified', node.id, children[0]);
-      // nodes2expand.push({ id: children[0], width });
-      clusterDb[node.id] = { id: children[0] };
-      logger.info('Clusters ', clusterDb);
+      if (graph.children(v).length > 0) {
+        // This is a cluster but not to be rendered recusively
+        // Render as before
+        log.trace('Cluster - the non recursive path', v, node.id, node, graph);
+        log.trace(findNonClusterChild(node.id, graph));
+        clusterDb[node.id] = { id: findNonClusterChild(node.id, graph), node };
+        // insertCluster(clusters, graph.node(v));
+      } else {
+        log.trace('Node - the non recursive path', v, node.id, node);
+        insertNode(nodes, graph.node(v));
+      }
     }
   });
 
@@ -48,49 +69,77 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   // Edges from/to clusters really points to the first child in the cluster.
   // TODO: pick optimal child in the cluster to us as link anchor
   graph.edges().forEach(function(e) {
-    const edge = graph.edge(e);
-    logger.warn('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
-    // logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(graph.edge(e)));
-    const v = translateClusterId(e.v);
-    const w = translateClusterId(e.w);
-    if (v !== e.v || w !== e.w) {
-      graph.removeEdge(e.v, e.w, e.name);
-      if (v !== e.v) edge.fromCluster = e.v;
-      if (w !== e.w) edge.toCluster = e.w;
-      graph.setEdge(v, w, edge, e.name);
-    }
+    const edge = graph.edge(e.v, e.w, e.name);
+    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ', e, ' ', JSON.stringify(graph.edge(e)));
+
+    // Check if link is either from or to a cluster
+    log.trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
     insertEdgeLabel(edgeLabels, edge);
   });
 
   graph.edges().forEach(function(e) {
-    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
-  logger.info('#############################################');
-  logger.info('###                Layout                 ###');
-  logger.info('#############################################');
-  logger.info(graph);
+  log.trace('#############################################');
+  log.trace('###                Layout                 ###');
+  log.trace('#############################################');
+  log.trace(graph);
   dagre.layout(graph);
-
+  log.warn('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    logger.info('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-    if (node.type !== 'group') {
+    // log.trace('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    log.trace(
+      'Position ' + v + ': (' + node.x,
+      ',' + node.y,
+      ') width: ',
+      node.width,
+      ' height: ',
+      node.height
+    );
+    if (node && node.clusterNode) {
+      // clusterDb[node.id].node = node;
+
       positionNode(node);
     } else {
-      insertCluster(clusters, node);
-      clusterDb[node.id].node = node;
+      // Non cluster node
+      if (graph.children(v).length > 0) {
+        // A cluster in the non-recurive way
+        // positionCluster(node);
+        insertCluster(clusters, node);
+        clusterDb[node.id].node = node;
+      } else {
+        positionNode(node);
+      }
     }
   });
 
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    logger.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     insertEdge(edgePaths, edge, clusterDb, diagramtype);
     positionEdgeLabel(edge);
   });
+
+  return elem;
+};
+
+export const render = (elem, graph, markers, diagramtype, id) => {
+  insertMarkers(elem, markers, diagramtype, id);
+  clearNodes();
+  clearEdges();
+  clearClusters();
+  clearGraphlib();
+
+  log.warn('Graph before:', graphlib.json.write(graph));
+  adjustClustersAndEdges(graph);
+  log.warn('Graph after:', graphlib.json.write(graph));
+
+  recursiveRender(elem, graph, diagramtype);
 };
 
 // const shapeDefinitions = {};
