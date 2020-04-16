@@ -3,7 +3,7 @@ import { logger as log } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
 
 const rect = (parent, node) => {
-  log.info('Creating subgraph rect for ', node.id, node);
+  log.trace('Creating subgraph rect for ', node.id, node);
 
   // Add outer g element
   const shapeSvg = parent
@@ -25,7 +25,7 @@ const rect = (parent, node) => {
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
-  log.info('Data ', node, JSON.stringify(node));
+  log.trace('Data ', node, JSON.stringify(node));
   // center the rect around its coordinate
   rect
     .attr('rx', node.rx)
@@ -35,9 +35,7 @@ const rect = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
 
-  // log.info('bbox', bbox.width, node.x, node.width);
   // Center the label
-  // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
   label.attr(
     'transform',
     'translate(' +
@@ -130,9 +128,7 @@ const roundedWithTitle = (parent, node) => {
     .attr('width', node.width + padding)
     .attr('height', node.height + padding - bbox.height - 3);
 
-  // log.info('bbox', bbox.width, node.x, node.width);
   // Center the label
-  // label.attr('transform', 'translate(' + adj + ', ' + (node.y - node.height / 2) + ')');
   label.attr(
     'transform',
     'translate(' +
@@ -158,7 +154,7 @@ const shapes = { rect, roundedWithTitle, noteGroup };
 let clusterElems = {};
 
 export const insertCluster = (elem, node) => {
-  log.info('Inserting cluster');
+  log.trace('Inserting cluster');
   const shape = node.shape || 'rect';
   clusterElems[node.id] = shapes[shape](elem, node);
 };

@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
-        background: white;
+        background: rgb(221, 208, 208);
         font-family: 'Arial';
         }
       h1 { color: white;}
@@ -98,9 +98,20 @@ flowchart TD
         d
       end
     end
-    A -- oAo --> B
+    A -- oAo --o B
     A --> C
     </div>
+      <div class="mermaid" style="width: 100%; height: 100%;">
+flowchart TD
+    subgraph A
+      a
+    end
+    subgraph B
+      b
+    end
+    c-->A
+    c-->B
+  </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
 stateDiagram-v2
     [*] --> First

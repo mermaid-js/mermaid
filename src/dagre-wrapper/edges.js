@@ -64,7 +64,7 @@ const outsideNode = (node, point) => {
 };
 
 const intersection = (node, outsidePoint, insidePoint) => {
-  logger.info('intersection o:', outsidePoint, ' i:', insidePoint, node);
+  logger.trace('intersection o:', outsidePoint, ' i:', insidePoint, node);
   const x = node.x;
   const y = node.y;
 
@@ -98,11 +98,10 @@ const intersection = (node, outsidePoint, insidePoint) => {
 };
 
 export const insertEdge = function(elem, edge, clusterDb, diagramType) {
-  logger.info('\n\n\n\n');
   let points = edge.points;
   if (edge.toCluster) {
-    logger.info('edge', edge);
-    logger.info('to cluster', clusterDb[edge.toCluster]);
+    logger.trace('edge', edge);
+    logger.trace('to cluster', clusterDb[edge.toCluster]);
     points = [];
     let lastPointOutside;
     let isInside = false;
@@ -110,11 +109,11 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
       const node = clusterDb[edge.toCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.info('inside', edge.toCluster, point, lastPointOutside);
+        logger.trace('inside', edge.toCluster, point, lastPointOutside);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
-        logger.info('intersect', insterection);
+        logger.trace('intersect', insterection);
         points.push(insterection);
         isInside = true;
       } else {
@@ -125,8 +124,8 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
   }
 
   if (edge.fromCluster) {
-    logger.info('edge', edge);
-    logger.info('from cluster', clusterDb[edge.toCluster]);
+    logger.trace('edge', edge);
+    logger.trace('from cluster', clusterDb[edge.toCluster]);
     const updatedPoints = [];
     let lastPointOutside;
     let isInside = false;
@@ -135,17 +134,17 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
       const node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.info('inside', edge.toCluster, point);
+        logger.trace('inside', edge.toCluster, point);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
-        // logger.info('intersect', intersection(node, lastPointOutside, point));
+        // logger.trace('intersect', intersection(node, lastPointOutside, point));
         updatedPoints.unshift(insterection);
         // points.push(insterection);
         isInside = true;
       } else {
         // at the outside
-        logger.info('Outside point', point);
+        logger.trace('Outside point', point);
         if (!isInside) updatedPoints.unshift(point);
       }
       lastPointOutside = point;
@@ -195,7 +194,7 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
     url = url.replace(/\(/g, '\\(');
     url = url.replace(/\)/g, '\\)');
   }
-  // logger.info('arrowType', edge.arrowType);
+  logger.info('arrowType', edge.arrowType);
   switch (edge.arrowType) {
     case 'arrow_cross':
       svgPath.attr('marker-end', 'url(' + url + '#' + diagramType + '-crossEnd' + ')');

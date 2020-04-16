@@ -188,6 +188,8 @@ export const addEdges = function(edges, g) {
     } else {
       edgeData.arrowhead = 'normal';
     }
+
+    logger.info(edgeData, edge);
     edgeData.arrowType = edge.type;
 
     let style = '';
