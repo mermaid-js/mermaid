@@ -9,13 +9,13 @@ Mermaid can render ER diagrams
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
-    CUSTOMER }|..|{ : DELIVERY-ADDRESS : uses 
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses 
 ```
 ```mermaid
 erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
-    CUSTOMER }|..|{ : DELIVERY-ADDRESS : uses 
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses 
 ```
 
 Entity names are often capitalised, although there is no accepted standard on this, and it is not required in Mermaid.
