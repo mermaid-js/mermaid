@@ -137,3 +137,4 @@ The following is a list of different integrations and plugins where mermaid is b
   - [bisheng-plugin-mermaid](https://github.com/yct21/bisheng-plugin-mermaid)
 - [Reveal CK](https://github.com/jedcn/reveal-ck)
   - [reveal-ck-mermaid-plugin](https://github.com/tmtm/reveal-ck-mermaid-plugin)
+- [mermaid-server: Generate diagrams using a HTTP request](https://github.com/TomWright/mermaid-server)

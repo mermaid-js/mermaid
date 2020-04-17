@@ -214,6 +214,19 @@ export const getStylesFromArray = arr => {
   return { style: style, labelStyle: labelStyle };
 };
 
+let cnt = 0;
+export const generateId = () => {
+  cnt++;
+  return (
+    'id-' +
+    Math.random()
+      .toString(36)
+      .substr(2, 12) +
+    '-' +
+    cnt
+  );
+};
+
 export default {
   detectType,
   isSubstringInArray,
@@ -221,5 +234,6 @@ export default {
   calcLabelPosition,
   calcCardinalityPosition,
   formatUrl,
-  getStylesFromArray
+  getStylesFromArray,
+  generateId
 };

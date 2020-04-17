@@ -211,6 +211,7 @@ pie
 
 - [Command Line Interface](https://github.com/mermaid-js/mermaid.cli)
 - [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
+- [HTTP Server](https://github.com/TomWright/mermaid-server)
 
 # Contributors [![Help wanted](https://img.shields.io/github/labels/mermaid-js/mermaid/Help%20wanted!)](https://github.com/mermaid-js/mermaid/issues?q=is%3Aissue+is%3Aopen+label%3A%22Help+wanted%21%22) [![Contributors](https://img.shields.io/github/contributors/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors) [![Commits](https://img.shields.io/github/commit-activity/m/mermaid-js/mermaid)](https://github.com/mermaid-js/mermaid/graphs/contributors)
 

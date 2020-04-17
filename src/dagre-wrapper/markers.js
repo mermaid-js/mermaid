@@ -16,7 +16,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'extensionStart')
+    .attr('id', type + '-extensionStart')
     .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -29,7 +29,7 @@ const extension = (elem, type, id) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'extensionEnd ' + type)
+    .attr('id', type + '-extensionEnd ' + type)
     .attr('class', 'extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -44,7 +44,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'compositionStart')
+    .attr('id', type + '-compositionStart')
     .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -57,7 +57,7 @@ const composition = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'compositionEnd')
+    .attr('id', type + '-compositionEnd')
     .attr('class', 'extension ' + type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -71,7 +71,7 @@ const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'aggregationStart')
+    .attr('id', type + '-aggregationStart')
     .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -84,7 +84,7 @@ const aggregation = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'aggregationEnd')
+    .attr('id', type + '-aggregationEnd')
     .attr('class', type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -98,7 +98,7 @@ const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'dependencyStart')
+    .attr('id', type + '-dependencyStart')
     .attr('class', 'extension ' + type)
     .attr('refX', 0)
     .attr('refY', 7)
@@ -111,7 +111,7 @@ const dependency = (elem, type) => {
   elem
     .append('defs')
     .append('marker')
-    .attr('id', 'dependencyEnd')
+    .attr('id', type + '-dependencyEnd')
     .attr('class', type)
     .attr('refX', 19)
     .attr('refY', 7)
@@ -158,7 +158,7 @@ const point = (elem, type) => {
 const circle = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', 'circleEnd')
+    .attr('id', type + '-circleEnd')
     .attr('class', type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', 11)
@@ -177,7 +177,7 @@ const circle = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', 'circleStart')
+    .attr('id', type + '-circleStart')
     .attr('class', type)
     .attr('viewBox', '0 0 10 10')
     .attr('refX', -1)
@@ -197,7 +197,7 @@ const circle = (elem, type) => {
 const cross = (elem, type) => {
   elem
     .append('marker')
-    .attr('id', 'crossEnd')
+    .attr('id', type + '-crossEnd')
     .attr('class', type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', 12)
@@ -215,7 +215,7 @@ const cross = (elem, type) => {
 
   elem
     .append('marker')
-    .attr('id', 'crossStart')
+    .attr('id', type + '-crossStart')
     .attr('class', type)
     .attr('viewBox', '0 0 11 11')
     .attr('refX', -1)
