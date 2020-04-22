@@ -161,7 +161,6 @@ const divider = (parent, node) => {
 
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
-  const innerRect = shapeSvg.append('rect');
 
   const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
 
