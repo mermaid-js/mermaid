@@ -64,7 +64,7 @@ const setupNode = (g, parent, node, altFlag) => {
     if (!nodeDb[node.id].type && node.doc) {
       logger.info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
-      nodeDb[node.id].shape = 'roundedWithTitle';
+      nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes =
         nodeDb[node.id].classes +
         ' ' +

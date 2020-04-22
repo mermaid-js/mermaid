@@ -85,6 +85,8 @@ g.stateGroup line {
   fill: $nodeBkg;
   stroke: $nodeBorder;
   stroke-width: 1px;
+}
+.statediagram-cluster rect.outer {
   rx: 5px;
   ry: 5px;
 }
@@ -100,9 +102,13 @@ g.stateGroup line {
   ry:0;
 }
 
-.statediagram-state rect {
+.statediagram-state rect.basic {
   rx: 5px;
   ry: 5px;
+}
+.statediagram-state rect.divider {
+  stroke-dasharray: 10,10;
+  fill: #efefef;
 }
 
 .note-edge {

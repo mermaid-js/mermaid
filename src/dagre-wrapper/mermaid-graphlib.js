@@ -31,13 +31,17 @@ const isDecendant = (id, ancenstorId) => {
 };
 
 const edgeInCluster = (edge, clusterId) => {
+  log.info('Decendants of ', clusterId, ' is ', decendants[clusterId]);
+  log.info('Edge is ', edge);
   // Edges to/from the cluster is not in the cluster, they are in the parent
-  if (!(edge.v === clusterId || edge.w === clusterId)) return false;
+  if (edge.v === clusterId) return false;
+  if (edge.w === clusterId) return false;
 
   if (!decendants[clusterId]) {
     log.debug('Tilt, ', clusterId, ',not in decendants');
     return false;
   }
+  log.info('Here ');
 
   if (decendants[clusterId].indexOf(edge.v) >= 0) return true;
   if (isDecendant(edge.v, clusterId)) return true;
@@ -80,17 +84,26 @@ const copy = (clusterId, graph, newGraph, rootId) => {
       const edges = graph.edges(node);
       log.debug('Copying Edges', edges);
       edges.forEach(edge => {
-        log.trace('Edge', edge);
+        log.info('Edge', edge);
         const data = graph.edge(edge.v, edge.w, edge.name);
-        log.trace('Edge data', data, rootId);
+        log.info('Edge data', data, rootId);
         try {
           // Do not copy edges in and out of the root cluster, they belong to the parent graph
           if (edgeInCluster(edge, rootId)) {
-            log.trace('Copying as ', edge.v, edge.w, data, edge.name);
+            log.info('Copying as ', edge.v, edge.w, data, edge.name);
             newGraph.setEdge(edge.v, edge.w, data, edge.name);
-            log.trace('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
+            log.info('newGraph edges ', newGraph.edges(), newGraph.edge(newGraph.edges()[0]));
           } else {
-            log.trace('Skipping copy of edge as ', rootId, edge.v, edge.w, clusterId);
+            log.info(
+              'Skipping copy of edge ',
+              edge.v,
+              '-->',
+              edge.w,
+              ' rootId: ',
+              rootId,
+              ' clusterId:',
+              clusterId
+            );
           }
         } catch (e) {
           log.error(e);

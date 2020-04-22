@@ -14,7 +14,7 @@ import { insertEdgeLabel, positionEdgeLabel, insertEdge, clear as clearEdges } f
 import { logger as log } from '../logger';
 
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
-  log.trace('Graph in recursive render:', graphlib.json.write(graph), parentCluster);
+  log.info('Graph in recursive render:', graphlib.json.write(graph), parentCluster);
   const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
   if (!graph.nodes()) {
     log.trace('No nodes found for', graph);

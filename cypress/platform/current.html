@@ -22,6 +22,14 @@
         flowchart LR
         a --> b
 
+        subgraph b [Test]
+            c --> d -->e
+          end
+      </div>
+      <div class="mermaid2" style="width: 100%; height: 20%;">
+        flowchart LR
+        a --> b
+
         subgraph id1 [Test]
             a --apa--> c
             b
@@ -40,7 +48,7 @@
               Eating
             }
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 20%;">
     stateDiagram-v2
         state Active {
             [*] --> NumLockOff
@@ -73,8 +81,8 @@
       <div class="mermaid2" style="width: 100%; height: 100%;">
 stateDiagram-v2
     [*] --> First
-    First --> Second
-%    First --> Third
+    First --> Third
+    First --> sec
 
     state First {
         [*] --> fir
@@ -83,9 +91,14 @@ stateDiagram-v2
     state Second {
         [*] --> sec
         sec --> [*]
-    }
+   }
+    state Third {
+        [*] --> thi
+        thi --> [*]
+      }
+      thi --> sec
     </div>
-      <div class="mermaid" style="width: 100%; height: 100%;">
+      <div class="mermaid2" style="width: 100%; height: 100%;">
 flowchart TD
     subgraph A
       a
@@ -101,7 +114,7 @@ flowchart TD
     A -- oAo --o B
     A --> C
     </div>
-      <div class="mermaid" style="width: 100%; height: 100%;">
+      <div class="mermaid2" style="width: 100%; height: 100%;">
 flowchart TD
     subgraph A
       a
@@ -133,28 +146,27 @@ stateDiagram-v2
     </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
         stateDiagram-v2
-      [*]-->TV
+          [*]-->TV
 
-      state TV {
-        [*] --> Off: Off to start with
-        On --> Off : Turn off
-        Off --> On : Turn on
-      }
+          state TV {
+            [*] --> Off: Off to start with
+            On --> Off : Turn off
+            Off --> On : Turn on
+          }
 
-      TV--> Console
+          TV--> Console
 
-      state Console {
-        [*] --> Off2: Off to start with
-        On2--> Off2 : Turn off
-        Off2 --> On2 : Turn on
-        On2-->Playing
+          state Console {
+            [*] --> Off2: Off to start with
+            On2--> Off2 : Turn off
+            Off2 --> On2 : Turn on
+            On2-->Playing
 
-        state Playing {
-          Alive --> Dead
-          Dead-->Alive
-        }
-      }
-
+            state Playing {
+              Alive --> Dead
+              Dead-->Alive
+            }
+          }
       </div>
 
     <div style="display: flex;flex-direction:column;width: 100%; height: 100%">

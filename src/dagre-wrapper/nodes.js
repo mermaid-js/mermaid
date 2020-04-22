@@ -253,6 +253,7 @@ const rect = (parent, node) => {
   const rect = shapeSvg.insert('rect', ':first-child');
 
   rect
+    .attr('class', 'basic')
     .attr('rx', node.rx)
     .attr('ry', node.ry)
     .attr('x', -bbox.width / 2 - halfPadding)
