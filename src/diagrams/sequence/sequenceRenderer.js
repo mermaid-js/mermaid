@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import svgDraw from './svgDraw';
 import { logger } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
+import common from '../common/common';
 import sequenceDb from './sequenceDb';
 
 parser.yy = sequenceDb;
@@ -170,7 +171,7 @@ export const bounds = {
 
 const _drawLongText = (text, x, y, g, width) => {
   let textHeight = 0;
-  const lines = text.split(/<br\s*\/?>/gi);
+  const lines = text.split(common.lineBreakRegex);
   for (const line of lines) {
     const textObj = svgDraw.getTextObj();
     textObj.x = x;
@@ -237,7 +238,7 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   let textElems = [];
   let counterBreaklines = 0;
   let breaklineOffset = 17;
-  const breaklines = msg.message.split(/<br\s*\/?>/gi);
+  const breaklines = msg.message.split(common.lineBreakRegex);
   for (const breakline of breaklines) {
     textElems.push(
       g

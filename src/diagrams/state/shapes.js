@@ -282,7 +282,7 @@ const drawForkJoinState = (g, stateDef) => {
 
 export const drawText = function(elem, textData) {
   // Remove and ignore br:s
-  const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
+  const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
   const textElem = elem.append('text');
   textElem.attr('x', textData.x);
@@ -310,7 +310,7 @@ const _drawLongText = (_text, x, y, g) => {
 
   let text = _text.replace(/\r\n/g, '<br/>');
   text = text.replace(/\n/g, '<br/>');
-  const lines = text.split(/<br\s*\/?>/gi);
+  const lines = text.split(common.lineBreakRegex);
 
   let tHeight = 1.25 * getConfig().state.noteMargin;
   for (const line of lines) {
