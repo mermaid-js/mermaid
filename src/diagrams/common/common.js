@@ -25,8 +25,10 @@ export const sanitizeText = (text, config) => {
   return txt;
 };
 
+export const lineBreakRegex = /<br\s*\/?>/gi;
+
 const breakToPlaceholder = s => {
-  return s.replace(/<br\s*\/?>/gi, '#br#');
+  return s.replace(lineBreakRegex, '#br#');
 };
 
 const placeholderToBreak = s => {
@@ -35,5 +37,6 @@ const placeholderToBreak = s => {
 
 export default {
   getRows,
-  sanitizeText
+  sanitizeText,
+  lineBreakRegex
 };

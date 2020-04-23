@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 
 import { parser } from './parser/gantt';
+import common from '../common/common';
 import ganttDb from './ganttDb';
 
 parser.yy = ganttDb;
@@ -358,7 +359,7 @@ export const draw = function(text, id) {
       .data(numOccurances)
       .enter()
       .append(function(d) {
-        const rows = d[0].split(/<br\s*\/?>/gi);
+        const rows = d[0].split(common.lineBreakRegex);
         const dy = -(rows.length - 1) / 2;
 
         const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
