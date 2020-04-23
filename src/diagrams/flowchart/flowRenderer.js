@@ -8,6 +8,7 @@ import { getConfig } from '../../config';
 import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
+import common from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import flowChartShapes from './flowChartShapes';
 
@@ -62,7 +63,7 @@ export const addVertices = function(vert, g, svgId) {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
-      const rows = vertexText.split(/<br\s*\/?>/gi);
+      const rows = vertexText.split(common.lineBreakRegex);
 
       for (let j = 0; j < rows.length; j++) {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
@@ -225,7 +226,7 @@ export const addEdges = function(edges, g) {
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
         edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(/<br\s*\/?>/gi, '\n');
+        edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
