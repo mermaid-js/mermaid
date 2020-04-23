@@ -9,6 +9,7 @@ sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
@@ -31,6 +32,7 @@ sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
 ```
+
 ```mermaid
 sequenceDiagram
     participant John
@@ -50,6 +52,7 @@ sequenceDiagram
     A->>J: Hello John, how are you?
     J->>A: Great!
 ```
+
 ```mermaid
 sequenceDiagram
     participant A as Alice
@@ -68,14 +71,14 @@ Messages can be of two displayed either solid or with a dotted line.
 
 There are six types of arrows currently supported:
 
-Type | Description
----  | ---
-->   | Solid line without arrow
--->  | Dotted line  without arrow
-->>  | Solid line with arrowhead
--->> | Dotted line  with arrowhead
--x   | Solid line with a cross at the end (async)
---x  | Dotted line with a cross at the end (async)
+| Type | Description                                 |
+| ---- | ------------------------------------------- |
+| ->   | Solid line without arrow                    |
+| -->  | Dotted line without arrow                   |
+| ->>  | Solid line with arrowhead                   |
+| -->> | Dotted line with arrowhead                  |
+| -x   | Solid line with a cross at the end (async)  |
+| --x  | Dotted line with a cross at the end (async) |
 
 ## Activations
 
@@ -88,6 +91,7 @@ sequenceDiagram
     John-->>Alice: Great!
     deactivate John
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->>John: Hello John, how are you?
@@ -103,6 +107,7 @@ sequenceDiagram
     Alice->>+John: Hello John, how are you?
     John-->>-Alice: Great!
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
@@ -118,6 +123,7 @@ sequenceDiagram
     John-->>-Alice: Hi Alice, I can hear you!
     John-->>-Alice: I feel great!
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->>+John: Hello John, how are you?
@@ -138,6 +144,7 @@ sequenceDiagram
     participant John
     Note right of John: Text in note
 ```
+
 ```mermaid
 sequenceDiagram
     participant John
@@ -151,6 +158,7 @@ sequenceDiagram
     Alice->John: Hello John, how are you?
     Note over Alice,John: A typical interaction
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
@@ -176,6 +184,7 @@ sequenceDiagram
         John-->Alice: Great!
     end
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->John: Hello John, how are you?
@@ -218,6 +227,7 @@ sequenceDiagram
         Bob->>Alice: Thanks for asking
     end
 ```
+
 ```mermaid
 sequenceDiagram
     Alice->>Bob: Hello Bob, how are you?
@@ -281,11 +291,13 @@ sequenceDiagram
 It is possible to highlight flows by providing colored background rects. This is done by the notation
 
 The colors are defined using rgb and rgba syntax.
+
 ```
 rect rgb(0, 255, 0)
 ... content ...
 end
 ```
+
 ```
 rect rgba(0, 0, 255, .1)
 ... content ...
@@ -327,6 +339,7 @@ sequenceDiagram
 ## sequenceNumbers
 
 It is possible to get a sequence number attached to each arrow in a sequence diagram. This can be configured when adding mermaid to the website as shown below:
+
 ```
     <script>
       mermaid.initialize({
@@ -336,6 +349,7 @@ It is possible to get a sequence number attached to each arrow in a sequence dia
 ```
 
 It can also be be turned on via the diagram code as in the diagram:
+
 ```
 sequenceDiagram
     autonumber
@@ -348,6 +362,7 @@ sequenceDiagram
     John->>Bob: How about you?
     Bob-->>John: Jolly good!
 ```
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -367,20 +382,20 @@ Styling of a sequence diagram is done by defining a number of css classes. Durin
 
 ### Classes used
 
-Class        | Description
----          | ---
-actor        | Style for the actor box at the top of the diagram.
-text.actor   | Styles for text in the actor box at the top of the diagram.
-actor-line   | The vertical line for an actor.
-messageLine0 | Styles for the solid message line.
-messageLine1 | Styles for the dotted message line.
-messageText  | Defines styles for the text on the message arrows.
-labelBox     | Defines styles label to left in a loop.
-labelText    | Styles for the text in label for loops.
-loopText     | Styles for the text in the loop box.
-loopLine     | Defines styles for the lines in the loop box.
-note         | Styles for the note box.
-noteText     | Styles for the text on in the note boxes.
+| Class        | Description                                                 |
+| ------------ | ----------------------------------------------------------- |
+| actor        | Style for the actor box at the top of the diagram.          |
+| text.actor   | Styles for text in the actor box at the top of the diagram. |
+| actor-line   | The vertical line for an actor.                             |
+| messageLine0 | Styles for the solid message line.                          |
+| messageLine1 | Styles for the dotted message line.                         |
+| messageText  | Defines styles for the text on the message arrows.          |
+| labelBox     | Defines styles label to left in a loop.                     |
+| labelText    | Styles for the text in label for loops.                     |
+| loopText     | Styles for the text in the loop box.                        |
+| loopLine     | Defines styles for the lines in the loop box.               |
+| note         | Styles for the note box.                                    |
+| noteText     | Styles for the text on in the note boxes.                   |
 
 ### Sample stylesheet
 
@@ -390,79 +405,78 @@ body {
 }
 
 .actor {
-    stroke: #CCCCFF;
-    fill: #ECECFF;
+    stroke: #ccccff;
+    fill: #ececff;
 }
 text.actor {
-    fill:black;
-    stroke:none;
+    fill: black;
+    stroke: none;
     font-family: Helvetica;
 }
 
 .actor-line {
-    stroke:grey;
+    stroke: grey;
 }
 
 .messageLine0 {
-    stroke-width:1.5;
-    stroke-dasharray: "2 2";
-    marker-end:"url(#arrowhead)";
-    stroke:black;
+    stroke-width: 1.5;
+    stroke-dasharray: '2 2';
+    marker-end: 'url(#arrowhead)';
+    stroke: black;
 }
 
 .messageLine1 {
-    stroke-width:1.5;
-    stroke-dasharray: "2 2";
-    stroke:black;
+    stroke-width: 1.5;
+    stroke-dasharray: '2 2';
+    stroke: black;
 }
 
 #arrowhead {
-    fill:black;
-
+    fill: black;
 }
 
 .messageText {
-    fill:black;
-    stroke:none;
+    fill: black;
+    stroke: none;
     font-family: 'trebuchet ms', verdana, arial;
-    font-size:14px;
+    font-size: 14px;
 }
 
 .labelBox {
-    stroke: #CCCCFF;
-    fill: #ECECFF;
+    stroke: #ccccff;
+    fill: #ececff;
 }
 
 .labelText {
-    fill:black;
-    stroke:none;
+    fill: black;
+    stroke: none;
     font-family: 'trebuchet ms', verdana, arial;
 }
 
 .loopText {
-    fill:black;
-    stroke:none;
+    fill: black;
+    stroke: none;
     font-family: 'trebuchet ms', verdana, arial;
 }
 
 .loopLine {
-    stroke-width:2;
-    stroke-dasharray: "2 2";
-    marker-end:"url(#arrowhead)";
-    stroke: #CCCCFF;
+    stroke-width: 2;
+    stroke-dasharray: '2 2';
+    marker-end: 'url(#arrowhead)';
+    stroke: #ccccff;
 }
 
 .note {
     stroke: #decc93;
-    stroke: #CCCCFF;
+    stroke: #ccccff;
     fill: #fff5ad;
 }
 
 .noteText {
-    fill:black;
-    stroke:none;
+    fill: black;
+    stroke: none;
     font-family: 'trebuchet ms', verdana, arial;
-    font-size:14px;
+    font-size: 14px;
 }
 ```
 
@@ -476,18 +490,25 @@ How to use the CLI is described in the [mermaidCLI](mermaidCLI.html) page.
 
 ```javascript
 mermaid.sequenceConfig = {
-    diagramMarginX:50,
-    diagramMarginY:10,
-    boxTextMargin:5,
-    noteMargin:10,
-    messageMargin:35,
-    mirrorActors:true
+    diagramMarginX: 50,
+    diagramMarginY: 10,
+    boxTextMargin: 5,
+    noteMargin: 10,
+    messageMargin: 35,
+    mirrorActors: true
 };
 ```
 
 ### Possible configuration params:
 
-Param | Description | Default value
---- | --- | ---
-mirrorActor | Turns on/off the rendering of actors below the diagram as well as above it | false
-bottomMarginAdj | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1
+| Param             | Description                                                                                                                                | Default value                  |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| mirrorActor       | Turns on/off the rendering of actors below the diagram as well as above it                                                                 | false                          |
+| bottomMarginAdj   | Adjusts how far down the graph ended. Wide borders styles with css could generate unwanted clipping which is why this config param exists. | 1                              |
+| actorFontSize     | Sets the font size for the actor's description                                                                                             | 14                             |
+| actorFontFamily   | Sets the font family for the actor's description                                                                                           | "Open-Sans", "sans-serif"      |
+| noteFontSize      | Sets the font size for actor-attached notes                                                                                                | 14                             |
+| noteFontFamily    | Sets the font family for actor-attached notes                                                                                              | "trebuchet ms", verdana, arial |
+| noteAlign         | Sets the text alignment for text in actor-attached notes                                                                                   | center                         |
+| messageFontSize   | Sets the font size for actor<->actor messages                                                                                              | 16                             |
+| messageFontFamily | Sets the font family for actor<->actor messages                                                                                            | "trebuchet ms", verdana, arial |
