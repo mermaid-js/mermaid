@@ -17,7 +17,7 @@ export const addActor = function(id, name, description) {
 
   actors[id] = { name: name, description: description, prevActor: prevActor };
   if (prevActor && actors[prevActor]) {
-    actors[prevActor].nextActor = actors[id];
+    actors[prevActor].nextActor = id;
   }
 
   prevActor = id;

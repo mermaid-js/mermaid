@@ -52,6 +52,138 @@ context('Sequence diagram', () => {
       {}
     );
   });
+  it('should render loops with a slight margin', () => {
+    imgSnapshotTest(
+      `
+        sequenceDiagram
+        Alice->>Bob: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        loop Loopy
+            Bob->>Alice: Pasten
+        end      `,
+      {}
+    );
+  });
+  context('font settings', () => {
+    it('should render different note fonts when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I should have bigger fonts
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+    it('should render different message fonts when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { messageFontSize: 18, messageFontFamily: 'Arial' } }
+      );
+    });
+    it('should render different actor fonts when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { actorFontSize: 18, actorFontFamily: 'Arial' } }
+      );
+    });
+    it('should render notes aligned to the left when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am left aligned
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'left' } }
+      );
+    });
+    it('should render notes aligned to the right when configured', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        note left of Alice: I am right aligned
+        Bob->>Alice: Short as well
+      `,
+        { sequence: { noteAlign: 'right' } }
+      );
+    });
+  });
+  context('auth width scaling', () => {
+    it('should render long actor descriptions', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+      `,
+        {}
+      );
+    });
+    it('should render long notes left of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note left of Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes right of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note right of Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes over actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note over Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long messages from an actor to the left to one to the right', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long messages from an actor to the right to one to the left', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+      `,
+        {}
+      );
+    });
+  });
   context('background rects', () => {
     it('should render a single and nested rects', () => {
       imgSnapshotTest(
@@ -162,7 +294,7 @@ context('Sequence diagram', () => {
         John->>Bob: How about you?
         Bob-->>John: Jolly good!
       `,
-      {sequence: { actorMargin: 50, showSequenceNumbers: true }}
+        { sequence: { actorMargin: 50, showSequenceNumbers: true } }
       );
     });
     it('should render autonumber when autonumber keyword is used', () => {
@@ -179,7 +311,7 @@ context('Sequence diagram', () => {
         John->>Bob: How about you?
         Bob-->>John: Jolly good!
       `,
-      {}
+        {}
       );
     });
     it('should render autonumber with different line breaks', () => {
@@ -192,7 +324,7 @@ context('Sequence diagram', () => {
         John-->>Alice: Hi Alice,<br />I can hear you!
         John-->>Alice: I feel great!
       `,
-      {}
+        {}
       );
     });
   });
