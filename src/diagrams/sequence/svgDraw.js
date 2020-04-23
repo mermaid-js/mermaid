@@ -73,9 +73,9 @@ export const drawLabel = function(elem, txtObject) {
 let actorCnt = -1;
 /**
  * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
+ * @param elem - The diagram we'll draw to.
+ * @param actor - The actor to draw.
+ * @param config - The sequence diagram config object.
  */
 export const drawActor = function(elem, left, verticalPos, description, conf) {
   const center = left + conf.width / 2;
@@ -120,10 +120,12 @@ export const anchorElement = function(elem) {
   return elem.append('g');
 };
 /**
- * Draws an actor in the diagram with the attaced line
- * @param elem - element to append activation rect
- * @param bounds - activation box bounds
- * @param verticalPos - precise y cooridnate of bottom activation box edge
+ * Draws an activation in the diagram
+ * @param elem - element to append activation rect.
+ * @param bounds - activation box bounds.
+ * @param verticalPos - precise y cooridnate of bottom activation box edge.
+ * @param conf - sequence diagram config object.
+ * @param actorActivations - number of activations on the actor.
  */
 export const drawActivation = function(elem, bounds, verticalPos, conf, actorActivations) {
   const rect = getNoteRect();
@@ -137,10 +139,11 @@ export const drawActivation = function(elem, bounds, verticalPos, conf, actorAct
 };
 
 /**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the list of actors
- * @param description The text in the box
+ * Draws a loop in the diagram
+ * @param elem - elemenet to append the loop to.
+ * @param bounds - bounds of the given loop.
+ * @param labelText - Text within the loop.
+ * @param config - sequence diagram config object.
  */
 export const drawLoop = function(elem, bounds, labelText, conf) {
   const g = elem.append('g');

@@ -186,10 +186,12 @@ const _drawLongText = (text, x, y, g, width) => {
 };
 
 /**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
+ * Draws an note in the diagram with the attaced line
+ * @param elem - The diagram to draw to.
+ * @param startx - The x axis start position.
+ * @param verticalPos - The y axis position.
+ * @param msg - The message to be drawn.
+ * @param forceWidth - Set this with a custom width to override the default configured width.
  */
 const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
   const rect = svgDraw.getNoteRect();
