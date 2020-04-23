@@ -270,7 +270,42 @@ const config = {
      * This will show the node numbers
      * **Default value false**.
      */
-    showSequenceNumbers: false
+    showSequenceNumbers: false,
+    /**
+     * This sets the font size of the actor's description
+     * **Default value 14**.
+     */
+    actorFontSize: 14,
+    /**
+     * This sets the font family of the actor's description
+     * **Default value "Open-Sans", "sans-serif"**.
+     */
+    actorFontFamily: '"Open-Sans", "sans-serif"',
+    /**
+     * This sets the font size of actor-attached notes.
+     * **Default value 14**.
+     */
+    noteFontSize: 14,
+    /**
+     * This sets the font family of actor-attached notes.
+     * **Default value "trebuchet ms", verdana, arial**.
+     */
+    noteFontFamily: '"trebuchet ms", verdana, arial',
+    /**
+     * This sets the text alignment of actor-attached notes.
+     * **Default value center**.
+     */
+    noteAlign: 'center',
+    /**
+     * This sets the font size of actor messages.
+     * **Default value 16**.
+     */
+    messageFontSize: 16,
+    /**
+     * This sets the font family of actor messages.
+     * **Default value "trebuchet ms", verdana, arial**.
+     */
+    messageFontFamily: '"trebuchet ms", verdana, arial'
   },
 
   /**

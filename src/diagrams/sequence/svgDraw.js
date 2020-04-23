@@ -79,10 +79,11 @@ let actorCnt = -1;
  * @param actor - The actor to draw.
  * @param config - The sequence diagram config object.
  */
-export const drawActor = function(elem, left, verticalPos, description, conf) {
-  const center = left + conf.width / 2;
+export const drawActor = function(elem, actor, conf) {
+  const center = actor.x + actor.width / 2;
+
   const g = elem.append('g');
-  if (verticalPos === 0) {
+  if (actor.y === 0) {
     actorCnt++;
     g.append('line')
       .attr('id', 'actor' + actorCnt)
@@ -96,18 +97,18 @@ export const drawActor = function(elem, left, verticalPos, description, conf) {
   }
 
   const rect = getNoteRect();
-  rect.x = left;
-  rect.y = verticalPos;
+  rect.x = actor.x;
+  rect.y = actor.y;
   rect.fill = '#eaeaea';
-  rect.width = conf.width;
-  rect.height = conf.height;
+  rect.width = actor.width;
+  rect.height = actor.height;
   rect.class = 'actor';
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
 
   _drawTextCandidateFunc(conf)(
-    description,
+    actor.description,
     g,
     rect.x,
     rect.y,
