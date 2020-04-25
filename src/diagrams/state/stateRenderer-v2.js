@@ -155,10 +155,12 @@ const setupDoc = (g, parent, doc, altFlag) => {
       setupNode(g, parent, item.state1, altFlag);
       setupNode(g, parent, item.state2, altFlag);
       const edgeData = {
+        id: 'edge' + cnt,
         arrowhead: 'normal',
         arrowType: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
+        label: item.description,
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text'

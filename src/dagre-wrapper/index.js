@@ -79,14 +79,14 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   });
 
   graph.edges().forEach(function(e) {
-    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
+    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(e));
   });
-  log.trace('#############################################');
-  log.trace('###                Layout                 ###');
-  log.trace('#############################################');
-  log.trace(graph);
+  log.info('#############################################');
+  log.info('###                Layout                 ###');
+  log.info('#############################################');
+  log.info(graph);
   dagre.layout(graph);
-  log.warn('Graph after layout:', graphlib.json.write(graph));
+  log.trace('Graph after layout:', graphlib.json.write(graph));
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
@@ -119,7 +119,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   // Move the edge labels to the correct place after layout
   graph.edges().forEach(function(e) {
     const edge = graph.edge(e);
-    log.trace('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
+    log.info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
 
     insertEdge(edgePaths, edge, clusterDb, diagramtype);
     positionEdgeLabel(edge);
