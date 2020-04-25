@@ -3,7 +3,7 @@ const createLabel = (vertexText, style) => {
   svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
   let rows = [];
   if (vertexText) {
-    rows = vertexText.split(/\n|<br\s*\/?>/gi);
+    rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
   }
 
   for (let j = 0; j < rows.length; j++) {
