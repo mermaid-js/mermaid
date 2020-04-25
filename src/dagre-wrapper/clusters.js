@@ -159,14 +159,6 @@ const divider = (parent, node) => {
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
-  // Create the label and insert it after the rect
-  const label = shapeSvg.insert('g').attr('class', 'cluster-label');
-
-  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
-
-  // Get the size of the label
-  const bbox = text.getBBox();
-
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
@@ -174,25 +166,9 @@ const divider = (parent, node) => {
   rect
     .attr('class', 'divider')
     .attr('x', node.x - node.width / 2 - halfPadding)
-    .attr('y', node.y - node.height / 2 - halfPadding)
+    .attr('y', node.y - node.height / 2)
     .attr('width', node.width + padding)
     .attr('height', node.height + padding);
-  // innerRect
-  //   .attr('class', 'inner')
-  //   .attr('x', node.x - node.width / 2 - halfPadding)
-  //   .attr('y', node.y - node.height / 2 - halfPadding + bbox.height - 1)
-  //   .attr('width', node.width + padding)
-  //   .attr('height', node.height + padding - bbox.height);
-
-  // Center the label
-  label.attr(
-    'transform',
-    'translate(' +
-      (node.x - bbox.width / 2) +
-      ', ' +
-      (node.y - node.height / 2 - node.padding / 3 + 3) +
-      ')'
-  );
 
   const rectBox = rect.node().getBBox();
   node.width = rectBox.width;
