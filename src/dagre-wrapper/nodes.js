@@ -1,6 +1,8 @@
 import intersect from './intersect/index.js';
+import { select } from 'd3';
 import { logger } from '../logger'; // eslint-disable-line
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
+import createLabel from './createLabel';
 import note from './shapes/note';
 
 const question = (parent, node) => {
@@ -269,6 +271,76 @@ const rect = (parent, node) => {
 
   return shapeSvg;
 };
+const rectWithTitle = (parent, node) => {
+  // const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
+
+  let classes;
+  if (!node.classes) {
+    classes = 'node default';
+  } else {
+    classes = 'node ' + node.classes;
+  }
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', classes)
+    .attr('id', node.id);
+
+  // Create the title label and insert it after the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+  // const innerRect = shapeSvg.insert('rect');
+  const innerLine = shapeSvg.insert('line');
+
+  const label = shapeSvg.insert('g').attr('class', 'label');
+
+  const text = label.node().appendChild(createLabel(node.labelText[0], node.labelStyle, true));
+  const textRows = node.labelText.slice(1, node.labelText.length);
+  let titleBox = text.getBBox();
+  const descr = label
+    .node()
+    .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true));
+
+  logger.info(descr);
+  const halfPadding = node.padding / 2;
+  select(descr).attr('transform', 'translate( 0' + ', ' + (titleBox.height + halfPadding) + ')');
+  // Get the size of the label
+
+  // Bounding box for title and text
+  const bbox = label.node().getBBox();
+
+  // Center the label
+  label.attr(
+    'transform',
+    'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
+  );
+
+  rect
+    .attr('class', 'outer title-state')
+    .attr('x', -bbox.width / 2 - halfPadding)
+    .attr('y', -bbox.height / 2 - halfPadding)
+    .attr('width', bbox.width + node.padding)
+    .attr('height', bbox.height + node.padding);
+  // innerRect
+  //   .attr('class', 'inner')
+  //   .attr('x', -bbox.width / 2 - halfPadding)
+  //   .attr('y', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
+  //   .attr('width', bbox.width + node.padding)
+  //   .attr('height', bbox.height + node.padding - titleBox.height - halfPadding);
+  innerLine
+    .attr('class', 'divider')
+    .attr('x1', -bbox.width / 2 - halfPadding)
+    .attr('x2', bbox.width / 2 + halfPadding)
+    .attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
+    .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
+
+  updateNodeBounds(node, rect);
+
+  node.intersect = function(point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
 
 const stadium = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node);
@@ -368,6 +440,7 @@ const end = (parent, node) => {
 const shapes = {
   question,
   rect,
+  rectWithTitle,
   circle,
   stadium,
   hexagon,

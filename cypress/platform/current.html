@@ -49,20 +49,10 @@
             }
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-    stateDiagram-v2
-        state Active {
-            [*] --> NumLockOff
-            NumLockOff --> NumLockOn : EvNumLockPressed
-            NumLockOn --> NumLockOff : EvNumLockPressed
-            --
-            [*] --> CapsLockOff
-            CapsLockOff --> CapsLockOn : EvCapsLockPressed
-            CapsLockOn --> CapsLockOff : EvCapsLockPressed
-            --
-            [*] --> ScrollLockOff
-            ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
-            ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
-        }
+      stateDiagram-v2
+
+      [*] --> S1
+      state "Some long name" as S1: The description<br/>continues
       </div>
       <div class="mermaid2 mermaid-apa" style="width: 100%; height: 20%;">
         stateDiagram

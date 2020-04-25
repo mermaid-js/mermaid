@@ -54,7 +54,12 @@ const setupNode = (g, parent, node, altFlag) => {
 
     // Description
     if (node.description) {
-      nodeDb[node.id].description = node.description;
+      if (Array.isArray(node.description)) {
+        nodeDb[node.id].shape = 'rectWithTitle';
+        nodeDb[node.id].description = node.description;
+      } else {
+        nodeDb[node.id].description = node.description;
+      }
     }
 
     // Save data for description and group so that for instance a statement without description overwrites

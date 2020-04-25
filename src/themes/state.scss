@@ -90,6 +90,14 @@ g.stateGroup line {
   rx: 5px;
   ry: 5px;
 }
+.statediagram-state .divider {
+  stroke: $nodeBorder;
+}
+
+.statediagram-state .title-state {
+  rx: 5px;
+  ry: 5px;
+}
 .statediagram-cluster.statediagram-cluster .inner {
   fill: white;
 }
