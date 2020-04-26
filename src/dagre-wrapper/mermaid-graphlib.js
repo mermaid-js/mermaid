@@ -329,12 +329,14 @@ export const extractor = (graph, depth) => {
         depth
       );
 
+      const graphSettings = graph.graph();
+
       const clusterGraph = new graphlib.Graph({
         multigraph: true,
         compound: true
       })
         .setGraph({
-          rankdir: 'TB',
+          rankdir: graphSettings.rankdir === 'TB' ? 'LR' : 'TB',
           // Todo: set proper spacing
           nodesep: 50,
           ranksep: 50,

@@ -404,24 +404,33 @@ const start = (parent, node) => {
   return shapeSvg;
 };
 
-const forkJoin = (parent, node) => {
+const forkJoin = (parent, node, dir) => {
   const shapeSvg = parent
     .insert('g')
     .attr('class', 'node default')
     .attr('id', node.id);
 
+  let width = 70;
+  let height = 10;
+
+  if (dir === 'LR') {
+    width = 10;
+    height = 70;
+  }
+
   const shape = shapeSvg
     .append('rect')
     .style('stroke', 'black')
     .style('fill', 'black')
-    .attr('x', -35)
-    .attr('y', -5)
-    .attr('width', 70)
-    .attr('height', 10)
+    .attr('x', (-1 * width) / 2)
+    .attr('y', (-1 * height) / 2)
+    .attr('width', width)
+    .attr('height', height)
     .attr('class', 'fork-join');
 
   updateNodeBounds(node, shape);
   node.height = node.height + node.padding / 2;
+  node.width = node.width + node.padding / 2;
   node.intersect = function(point) {
     return intersect.rect(node, point);
   };
@@ -481,8 +490,8 @@ const shapes = {
 
 let nodeElems = {};
 
-export const insertNode = (elem, node) => {
-  nodeElems[node.id] = shapes[node.shape](elem, node);
+export const insertNode = (elem, node, dir) => {
+  nodeElems[node.id] = shapes[node.shape](elem, node, dir);
 };
 export const setNodeElem = (elem, node) => {
   nodeElems[node.id] = elem;

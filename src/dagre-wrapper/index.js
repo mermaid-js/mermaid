@@ -15,6 +15,7 @@ import { logger as log } from '../logger';
 
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render:', graphlib.json.write(graph), parentCluster);
+  const dir = graph.graph().rankdir;
   const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
   if (!graph.nodes()) {
     log.trace('No nodes found for', graph);
@@ -59,7 +60,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
         // insertCluster(clusters, graph.node(v));
       } else {
         log.trace('Node - the non recursive path', v, node.id, node);
-        insertNode(nodes, graph.node(v));
+        insertNode(nodes, graph.node(v), dir);
       }
     }
   });
@@ -138,7 +139,7 @@ export const render = (elem, graph, markers, diagramtype, id) => {
   log.warn('Graph before:', graphlib.json.write(graph));
   adjustClustersAndEdges(graph);
   log.warn('Graph after:', graphlib.json.write(graph));
-
+  log.warn('Graph ever  after:', graph.graph());
   recursiveRender(elem, graph, diagramtype);
 };
 
