@@ -42,6 +42,9 @@ const setupNode = (g, parent, node, altFlag) => {
     if (node.start === false) {
       shape = 'end';
     }
+    if (node.type !== 'default') {
+      shape = node.type;
+    }
 
     if (!nodeDb[node.id]) {
       nodeDb[node.id] = {

@@ -320,12 +320,7 @@ const rectWithTitle = (parent, node) => {
     .attr('y', -bbox.height / 2 - halfPadding)
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);
-  // innerRect
-  //   .attr('class', 'inner')
-  //   .attr('x', -bbox.width / 2 - halfPadding)
-  //   .attr('y', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
-  //   .attr('width', bbox.width + node.padding)
-  //   .attr('height', bbox.height + node.padding - titleBox.height - halfPadding);
+
   innerLine
     .attr('class', 'divider')
     .attr('x1', -bbox.width / 2 - halfPadding)
@@ -408,6 +403,32 @@ const start = (parent, node) => {
 
   return shapeSvg;
 };
+
+const forkJoin = (parent, node) => {
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'node default')
+    .attr('id', node.id);
+
+  const shape = shapeSvg
+    .append('rect')
+    .style('stroke', 'black')
+    .style('fill', 'black')
+    .attr('x', -35)
+    .attr('y', -5)
+    .attr('width', 70)
+    .attr('height', 10)
+    .attr('class', 'fork-join');
+
+  updateNodeBounds(node, shape);
+  node.height = node.height + node.padding / 2;
+  node.intersect = function(point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
 const end = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
@@ -453,7 +474,9 @@ const shapes = {
   cylinder,
   start,
   end,
-  note
+  note,
+  fork: forkJoin,
+  join: forkJoin
 };
 
 let nodeElems = {};

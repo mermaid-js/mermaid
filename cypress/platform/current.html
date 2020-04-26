@@ -49,14 +49,21 @@
             }
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-    stateDiagram-v2
-    State1: This a a single line description
-    State2: This a a multi line description
-    State2: here comes the multi part
-    a
-    [*] --> State1
-    State1 --> State2
-    State2 --> [*]
+     stateDiagram-v2
+      [*]-->TV
+
+      state TV {
+        state fork_state &lt;&lt;fork&gt;&gt;
+        [*] --> fork_state
+        fork_state --> State2
+        fork_state --> State3
+
+        state join_state &lt;&lt;join&gt;&gt;
+        State2 --> join_state
+        State3 --> join_state
+        join_state --> State4
+        State4 --> [*]
+      }
       </div>
       <div class="mermaid2 mermaid-apa" style="width: 100%; height: 20%;">
         stateDiagram
