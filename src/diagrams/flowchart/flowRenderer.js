@@ -8,6 +8,7 @@ import { getConfig } from '../../config';
 import dagreD3 from 'dagre-d3';
 import addHtmlLabel from 'dagre-d3/lib/label/add-html-label.js';
 import { logger } from '../../logger';
+import common from '../common/common';
 import { interpolateToCurve, getStylesFromArray } from '../../utils';
 import flowChartShapes from './flowChartShapes';
 
@@ -62,7 +63,7 @@ export const addVertices = function(vert, g, svgId) {
       const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       svgLabel.setAttribute('style', styles.labelStyle.replace('color:', 'fill:'));
 
-      const rows = vertexText.split(/<br\s*\/?>/gi);
+      const rows = vertexText.split(common.lineBreakRegex);
 
       for (let j = 0; j < rows.length; j++) {
         const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
@@ -118,6 +119,9 @@ export const addVertices = function(vert, g, svgId) {
         break;
       case 'stadium':
         _shape = 'stadium';
+        break;
+      case 'subroutine':
+        _shape = 'subroutine';
         break;
       case 'cylinder':
         _shape = 'cylinder';
@@ -222,7 +226,7 @@ export const addEdges = function(edges, g) {
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {
         edgeData.labelType = 'text';
-        edgeData.label = edge.text.replace(/<br\s*\/?>/gi, '\n');
+        edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
 
         if (typeof edge.style === 'undefined') {
           edgeData.style = edgeData.style || 'stroke: #333; stroke-width: 1.5px;fill:none';
@@ -380,10 +384,6 @@ export const draw = function(text, id) {
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
-  logger.debug(
-    `new ViewBox 0 0 ${width} ${height}`,
-    `translate(${padding - g._label.marginx}, ${padding - g._label.marginy})`
-  );
 
   if (conf.useMaxWidth) {
     svg.attr('width', '100%');
@@ -393,10 +393,10 @@ export const draw = function(text, id) {
     svg.attr('width', width);
   }
 
-  svg.attr('viewBox', `0 0 ${width} ${height}`);
-  svg
-    .select('g')
-    .attr('transform', `translate(${padding - g._label.marginx}, ${padding - svgBounds.y})`);
+  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  logger.debug(`viewBox ${vBox}`);
+  svg.attr('viewBox', vBox);
 
   // Index nodes
   flowDb.indexNodes('subGraph' + i);

@@ -16,6 +16,9 @@
   <div class="mermaid">
     info
   </div>
+
+  <hr/>
+
   <div class="mermaid">
     gantt
       title Exclusive end dates (Manual date should end on 3d)
@@ -25,7 +28,6 @@
        2 Days: 1, 2019-01-01,2d
        Manual Date: 2, 2019-01-01,2019-01-03
   </div>
-
   <div class="mermaid">
     gantt
       title Inclusive end dates (Manual date should end on 4th)
@@ -36,6 +38,27 @@
        2 Days: 1, 2019-01-01,2d
        Manual Date: 2, 2019-01-01,2019-01-03
   </div>
+  <div class="mermaid">
+    gantt
+      title Hide today marker (vertical line should not be visible)
+      dateFormat YYYY-MM-DD
+      axisFormat %d
+      todayMarker off
+      section Section1
+       Today: 1, -1h
+  </div>
+  <div class="mermaid">
+    gantt
+      title Style today marker (vertical line should be 5px wide and half-transparent blue)
+      dateFormat YYYY-MM-DD
+      axisFormat %d
+      todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
+      section Section1
+       Today: 1, -1h
+  </div>
+
+  <hr/>
+
   <div class="mermaid">
       graph LR
       sid-B3655226-6C29-4D00-B685-3D5C734DC7E1["
@@ -317,6 +340,20 @@ graph TB
   </div>
   <div class="mermaid">
     graph LR
+    A[[subroutine shape test]]
+    A -->|Get money| B[[Go shopping]]
+    B --> C[[Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?]]
+    C -->|One| D[[Laptop]]
+    C -->|Two| E[[iPhone]]
+    C -->|Three| F[[Car<br/>wroom wroom]]
+    click A "index.html#link-clicked" "link test"
+    click B testClick "click test"
+    classDef someclass fill:#f96;
+    class A someclass;
+    class C someclass;
+  </div>
+  <div class="mermaid">
+    graph LR
     A[(cylindrical<br />shape<br />test)]
     A -->|Get money| B1[(Go shopping 1)]
     A -->|Get money| B2[(Go shopping 2)]
@@ -440,6 +477,14 @@ end
     note right of 4: multiline<br />using #lt;br /#gt;
     4->>1: multiline<br 	/>using #lt;br 	/#gt;
     note right of 1: multiline<br 	/>using #lt;br 	/#gt;
+  </div>
+  <div class="mermaid">
+    sequenceDiagram
+    autonumber
+    Alice->>John: Hello John,<br>how are you?
+    Alice->>John: John,<br/>can you hear me?
+    John-->>Alice: Hi Alice,<br />I can hear you!
+    John-->>Alice: I feel great!
   </div>
 
   <hr/>

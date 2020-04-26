@@ -248,7 +248,7 @@ const cylinder = (parent, node) => {
 const rect = (parent, node) => {
   const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
 
-  logger.info('Classes = ', node.classes);
+  logger.trace('Classes = ', node.classes);
   // add the rect
   const rect = shapeSvg.insert('rect', ':first-child');
 
@@ -387,11 +387,31 @@ let nodeElems = {};
 export const insertNode = (elem, node) => {
   nodeElems[node.id] = shapes[node.shape](elem, node);
 };
+export const setNodeElem = (elem, node) => {
+  nodeElems[node.id] = elem;
+};
 export const clear = () => {
   nodeElems = {};
 };
 
 export const positionNode = node => {
   const el = nodeElems[node.id];
-  el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+  logger.trace(
+    'Transforming node',
+    node,
+    'translate(' + (node.x - node.width / 2 - 5) + ', ' + (node.y - node.height / 2 - 5) + ')'
+  );
+  const padding = 8;
+  if (node.clusterNode) {
+    el.attr(
+      'transform',
+      'translate(' +
+        (node.x - node.width / 2 - padding) +
+        ', ' +
+        (node.y - node.height / 2 - padding) +
+        ')'
+    );
+  } else {
+    el.attr('transform', 'translate(' + node.x + ', ' + node.y + ')');
+  }
 };

@@ -55,13 +55,14 @@ that id.
 
 "gantt"                 return 'gantt';
 "dateFormat"\s[^#\n;]+  return 'dateFormat';
-"inclusiveEndDates"			return 'inclusiveEndDates';
+"inclusiveEndDates"     return 'inclusiveEndDates';
 "axisFormat"\s[^#\n;]+  return 'axisFormat';
 "excludes"\s[^#\n;]+    return 'excludes';
+"todayMarker"\s[^\n;]+  return 'todayMarker';
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
 "title"\s[^#\n;]+       return 'title';
 "section"\s[^#:\n;]+    return 'section';
-[^#:\n;]+             return 'taskTxt';
+[^#:\n;]+               return 'taskTxt';
 ":"[^#\n;]+             return 'taskData';
 ":"                     return ':';
 <<EOF>>                 return 'EOF';
@@ -93,9 +94,10 @@ line
 
 statement
   : dateFormat {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
-	| inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
+  | inclusiveEndDates {yy.enableInclusiveEndDates();$$=$1.substr(18);}
   | axisFormat {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
   | excludes {yy.setExcludes($1.substr(9));$$=$1.substr(9);}
+  | todayMarker {yy.setTodayMarker($1.substr(12));$$=$1.substr(12);}
   | title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
   | section {yy.addSection($1.substr(8));$$=$1.substr(8);}
   | clickStatement

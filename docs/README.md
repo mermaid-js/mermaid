@@ -16,11 +16,11 @@ Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
-## New diagrams in 8.4
+## New diagrams in 8.5
 
-With version 8.4 class diagrams have got some new features, bug fixes and documentation. Another new feature in 8.4 is the new diagram type, state diagrams.
+With version 8.5 there are some bug fixes and enhancements, plus a new diagram type,  entity relationship diagrams.
 
-![Image show the two new diagram types](./img/new-diagrams.png)
+![Image showing the new ER diagram type](./img/er.png)
 
 ## Special note regarding version 8.2
 
@@ -136,6 +136,18 @@ merge newbranch
 ```
 
 ![Git graph](./img/git.png)
+
+### Entity Relationship Diagram - :exclamation: experimental
+
+```
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+
+```
+
+![ER diagram](./img/simple-er.png)
 
 ## Installation
 

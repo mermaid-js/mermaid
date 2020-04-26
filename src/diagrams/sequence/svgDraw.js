@@ -1,3 +1,5 @@
+import common from '../common/common';
+
 export const drawRect = function(elem, rectData) {
   const rectElem = elem.append('rect');
   rectElem.attr('x', rectData.x);
@@ -18,7 +20,7 @@ export const drawRect = function(elem, rectData) {
 
 export const drawText = function(elem, textData) {
   // Remove and ignore br:s
-  const nText = textData.text.replace(/<br\s*\/?>/gi, ' ');
+  const nText = textData.text.replace(common.lineBreakRegex, ' ');
 
   const textElem = elem.append('text');
   textElem.attr('x', textData.x);
@@ -321,7 +323,7 @@ const _drawTextCandidateFunc = (function() {
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     const { actorFontSize, actorFontFamily } = conf;
 
-    const lines = content.split(/<br\s*\/?>/gi);
+    const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
       const dy = i * actorFontSize - (actorFontSize * (lines.length - 1)) / 2;
       const text = g

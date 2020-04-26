@@ -1,7 +1,7 @@
 /* eslint-env jest */
 import { imgSnapshotTest } from '../../helpers/util.js';
 
-describe('Sequencediagram', () => {
+describe('Gantt diagram', () => {
   it('should render a gantt chart', () => {
     imgSnapshotTest(
       `
@@ -127,6 +127,36 @@ describe('Sequencediagram', () => {
       Plasma call 27 :pc27, 2019-09-03, 1d
       Plasma call 28 :pc28, 2019-09-17, 1d
         `,
+      {}
+    );
+  });
+
+  it('should hide today marker', () => {
+    imgSnapshotTest(
+      `
+      gantt
+        title Hide today marker (vertical line should not be visible)
+        dateFormat YYYY-MM-DD
+        axisFormat %d
+        todayMarker off
+        section Section1
+         Today: 1, -1h
+      `,
+      {}
+    );
+  });
+
+  it('should style today marker', () => {
+    imgSnapshotTest(
+      `
+    gantt
+      title Style today marker (vertical line should be 5px wide and half-transparent blue)
+      dateFormat YYYY-MM-DD
+      axisFormat %d
+      todayMarker stroke-width:5px,stroke:#00f,opacity:0.5
+      section Section1
+       Today: 1, -1h
+      `,
       {}
     );
   });

@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 
 import { parser } from './parser/gantt';
+import common from '../common/common';
 import ganttDb from './ganttDb';
 
 parser.yy = ganttDb;
@@ -358,7 +359,7 @@ export const draw = function(text, id) {
       .data(numOccurances)
       .enter()
       .append(function(d) {
-        const rows = d[0].split(/<br\s*\/?>/gi);
+        const rows = d[0].split(common.lineBreakRegex);
         const dy = -(rows.length - 1) / 2;
 
         const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -396,17 +397,25 @@ export const draw = function(text, id) {
   }
 
   function drawToday(theSidePad, theTopPad, w, h) {
+    const todayMarker = ganttDb.getTodayMarker();
+    if (todayMarker === 'off') {
+      return;
+    }
+
     const todayG = svg.append('g').attr('class', 'today');
-
     const today = new Date();
+    const todayLine = todayG.append('line');
 
-    todayG
-      .append('line')
+    todayLine
       .attr('x1', timeScale(today) + theSidePad)
       .attr('x2', timeScale(today) + theSidePad)
       .attr('y1', conf.titleTopMargin)
       .attr('y2', h - conf.titleTopMargin)
       .attr('class', 'today');
+
+    if (todayMarker !== '') {
+      todayLine.attr('style', todayMarker.replace(/,/g, ';'));
+    }
   }
 
   // from this stackexchange question: http://stackoverflow.com/questions/1890203/unique-for-arrays-in-javascript

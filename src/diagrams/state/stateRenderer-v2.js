@@ -72,10 +72,8 @@ const setupNode = (g, parent, node, altFlag) => {
     }
 
     const nodeData = {
-      labelType: 'svg',
       labelStyle: '',
       shape: nodeDb[node.id].shape,
-      label: node.id,
       labelText: nodeDb[node.id].description,
       classes: nodeDb[node.id].classes, //classStr,
       style: '', //styles.style,
@@ -87,10 +85,8 @@ const setupNode = (g, parent, node, altFlag) => {
     if (node.note) {
       // Todo: set random id
       const noteData = {
-        labelType: 'svg',
         labelStyle: '',
         shape: 'note',
-        label: node.id,
         labelText: node.note.text,
         classes: 'statediagram-note', //classStr,
         style: '', //styles.style,
@@ -99,10 +95,8 @@ const setupNode = (g, parent, node, altFlag) => {
         padding: 15 //getConfig().flowchart.padding
       };
       const groupData = {
-        labelType: 'svg',
         labelStyle: '',
         shape: 'noteGroup',
-        label: node.id + '----parent',
         labelText: node.note.text,
         classes: nodeDb[node.id].classes, //classStr,
         style: '', //styles.style,
@@ -133,8 +127,7 @@ const setupNode = (g, parent, node, altFlag) => {
         classes: 'note-edge',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text',
-        label: ''
+        labelType: 'text'
       });
     } else {
       g.setNode(node.id, nodeData);
@@ -143,12 +136,12 @@ const setupNode = (g, parent, node, altFlag) => {
 
   if (parent) {
     if (parent.id !== 'root') {
-      logger.trace('Setting node ', node.id, ' to be child of its parent ', parent.id);
+      logger.info('Setting node ', node.id, ' to be child of its parent ', parent.id);
       g.setParent(node.id, parent.id);
     }
   }
   if (node.doc) {
-    logger.trace('Adding nodes children ');
+    logger.info('Adding nodes children ');
     setupDoc(g, node, node.doc, !altFlag);
   }
 };
@@ -168,8 +161,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
         labelStyle: '',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text',
-        label: ''
+        labelType: 'text'
       };
       let startId = item.state1.id;
       let endId = item.state2.id;
@@ -214,7 +206,7 @@ export const draw = function(text, id) {
     compound: true
   })
     .setGraph({
-      rankdir: 'LR',
+      rankdir: 'TB',
       nodesep: nodeSpacing,
       ranksep: rankSpacing,
       marginx: 8,
@@ -224,8 +216,8 @@ export const draw = function(text, id) {
       return {};
     });
 
-  // logger.info(stateDb.getRootDoc());
-  stateDb.extract(stateDb.getRootDocV2().doc);
+  logger.info(stateDb.getRootDocV2());
+  stateDb.extract(stateDb.getRootDocV2());
   logger.info(stateDb.getRootDocV2());
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
