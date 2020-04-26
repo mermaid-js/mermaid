@@ -149,7 +149,39 @@ const roundedWithTitle = (parent, node) => {
   return shapeSvg;
 };
 
-const shapes = { rect, roundedWithTitle, noteGroup };
+const divider = (parent, node) => {
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.classes)
+    .attr('id', node.id);
+
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  const padding = 0 * node.padding;
+  const halfPadding = padding / 2;
+
+  // center the rect around its coordinate
+  rect
+    .attr('class', 'divider')
+    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('y', node.y - node.height / 2)
+    .attr('width', node.width + padding)
+    .attr('height', node.height + padding);
+
+  const rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function(point) {
+    return intersectRect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+const shapes = { rect, roundedWithTitle, noteGroup, divider };
 
 let clusterElems = {};
 

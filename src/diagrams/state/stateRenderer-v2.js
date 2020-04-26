@@ -42,6 +42,9 @@ const setupNode = (g, parent, node, altFlag) => {
     if (node.start === false) {
       shape = 'end';
     }
+    if (node.type !== 'default') {
+      shape = node.type;
+    }
 
     if (!nodeDb[node.id]) {
       nodeDb[node.id] = {
@@ -52,9 +55,27 @@ const setupNode = (g, parent, node, altFlag) => {
       };
     }
 
-    // Description
+    // Build of the array of description strings accordinging
     if (node.description) {
-      nodeDb[node.id].description = node.description;
+      if (Array.isArray(nodeDb[node.id].description)) {
+        // There already is an array of strings,add to it
+        nodeDb[node.id].shape = 'rectWithTitle';
+        nodeDb[node.id].description.push(node.description);
+      } else {
+        if (nodeDb[node.id].description.length > 0) {
+          // if there is a description already transformit to an array
+          nodeDb[node.id].shape = 'rectWithTitle';
+          if (nodeDb[node.id].description === node.id) {
+            // If the previous description was the is, remove it
+            nodeDb[node.id].description = [node.description];
+          } else {
+            nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
+          }
+        } else {
+          nodeDb[node.id].shape = 'rect';
+          nodeDb[node.id].description = node.description;
+        }
+      }
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -64,7 +85,7 @@ const setupNode = (g, parent, node, altFlag) => {
     if (!nodeDb[node.id].type && node.doc) {
       logger.info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
-      nodeDb[node.id].shape = 'roundedWithTitle';
+      nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes =
         nodeDb[node.id].classes +
         ' ' +
@@ -155,10 +176,12 @@ const setupDoc = (g, parent, doc, altFlag) => {
       setupNode(g, parent, item.state1, altFlag);
       setupNode(g, parent, item.state2, altFlag);
       const edgeData = {
+        id: 'edge' + cnt,
         arrowhead: 'normal',
         arrowType: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
+        label: item.description,
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text'

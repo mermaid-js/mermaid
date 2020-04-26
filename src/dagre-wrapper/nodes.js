@@ -1,6 +1,8 @@
 import intersect from './intersect/index.js';
+import { select } from 'd3';
 import { logger } from '../logger'; // eslint-disable-line
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
+import createLabel from './createLabel';
 import note from './shapes/note';
 
 const question = (parent, node) => {
@@ -253,12 +255,81 @@ const rect = (parent, node) => {
   const rect = shapeSvg.insert('rect', ':first-child');
 
   rect
+    .attr('class', 'basic')
     .attr('rx', node.rx)
     .attr('ry', node.ry)
     .attr('x', -bbox.width / 2 - halfPadding)
     .attr('y', -bbox.height / 2 - halfPadding)
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);
+
+  updateNodeBounds(node, rect);
+
+  node.intersect = function(point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+const rectWithTitle = (parent, node) => {
+  // const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
+
+  let classes;
+  if (!node.classes) {
+    classes = 'node default';
+  } else {
+    classes = 'node ' + node.classes;
+  }
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', classes)
+    .attr('id', node.id);
+
+  // Create the title label and insert it after the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+  // const innerRect = shapeSvg.insert('rect');
+  const innerLine = shapeSvg.insert('line');
+
+  const label = shapeSvg.insert('g').attr('class', 'label');
+
+  const text2 = node.labelText.flat();
+  logger.info('Label text', text2[0]);
+
+  const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true));
+  const textRows = text2.slice(1, text2.length);
+  let titleBox = text.getBBox();
+  const descr = label
+    .node()
+    .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true));
+
+  logger.info(descr);
+  const halfPadding = node.padding / 2;
+  select(descr).attr('transform', 'translate( 0' + ', ' + (titleBox.height + halfPadding) + ')');
+  // Get the size of the label
+
+  // Bounding box for title and text
+  const bbox = label.node().getBBox();
+
+  // Center the label
+  label.attr(
+    'transform',
+    'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
+  );
+
+  rect
+    .attr('class', 'outer title-state')
+    .attr('x', -bbox.width / 2 - halfPadding)
+    .attr('y', -bbox.height / 2 - halfPadding)
+    .attr('width', bbox.width + node.padding)
+    .attr('height', bbox.height + node.padding);
+
+  innerLine
+    .attr('class', 'divider')
+    .attr('x1', -bbox.width / 2 - halfPadding)
+    .attr('x2', bbox.width / 2 + halfPadding)
+    .attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
+    .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
 
   updateNodeBounds(node, rect);
 
@@ -335,6 +406,41 @@ const start = (parent, node) => {
 
   return shapeSvg;
 };
+
+const forkJoin = (parent, node, dir) => {
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', 'node default')
+    .attr('id', node.id);
+
+  let width = 70;
+  let height = 10;
+
+  if (dir === 'LR') {
+    width = 10;
+    height = 70;
+  }
+
+  const shape = shapeSvg
+    .append('rect')
+    .style('stroke', 'black')
+    .style('fill', 'black')
+    .attr('x', (-1 * width) / 2)
+    .attr('y', (-1 * height) / 2)
+    .attr('width', width)
+    .attr('height', height)
+    .attr('class', 'fork-join');
+
+  updateNodeBounds(node, shape);
+  node.height = node.height + node.padding / 2;
+  node.width = node.width + node.padding / 2;
+  node.intersect = function(point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
 const end = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
@@ -367,6 +473,7 @@ const end = (parent, node) => {
 const shapes = {
   question,
   rect,
+  rectWithTitle,
   circle,
   stadium,
   hexagon,
@@ -379,13 +486,15 @@ const shapes = {
   cylinder,
   start,
   end,
-  note
+  note,
+  fork: forkJoin,
+  join: forkJoin
 };
 
 let nodeElems = {};
 
-export const insertNode = (elem, node) => {
-  nodeElems[node.id] = shapes[node.shape](elem, node);
+export const insertNode = (elem, node, dir) => {
+  nodeElems[node.id] = shapes[node.shape](elem, node, dir);
 };
 export const setNodeElem = (elem, node) => {
   nodeElems[node.id] = elem;
