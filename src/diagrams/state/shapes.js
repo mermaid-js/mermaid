@@ -333,10 +333,9 @@ const _drawLongText = (_text, x, y, g) => {
 };
 
 /**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
+ * Draws a note to the diagram
+ * @param text - The text of the given note.
+ * @param g - The element the note is attached to.
  */
 
 export const drawNote = (text, g) => {

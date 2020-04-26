@@ -19,6 +19,13 @@ const conf = {
   height: 65,
   actorFontSize: 14,
   actorFontFamily: '"Open-Sans", "sans-serif"',
+  // Note font settings
+  noteFontSize: 14,
+  noteFontFamily: '"trebuchet ms", verdana, arial',
+  noteAlign: 'center',
+  // Message font settings
+  messageFontSize: 16,
+  messageFontFamily: '"trebuchet ms", verdana, arial',
   // Margin around loop boxes
   boxMargin: 10,
   boxTextMargin: 5,
@@ -171,26 +178,62 @@ export const bounds = {
 
 const _drawLongText = (text, x, y, g, width) => {
   let textHeight = 0;
+  let prevTextHeight = 0;
+
+  const alignmentToAnchor = {
+    left: 'start',
+    start: 'start',
+    center: 'middle',
+    middle: 'middle',
+    right: 'end',
+    end: 'end'
+  };
+
   const lines = text.split(common.lineBreakRegex);
   for (const line of lines) {
     const textObj = svgDraw.getTextObj();
-    textObj.x = x;
+    const alignment = alignmentToAnchor[conf.noteAlign] || 'middle';
+
+    switch (alignment) {
+      case 'start':
+        textObj.x = x + conf.noteMargin;
+        break;
+      case 'middle':
+        textObj.x = x + width / 2;
+        break;
+      case 'end':
+        textObj.x = x + width - conf.noteMargin;
+        break;
+    }
+
     textObj.y = y + textHeight;
-    textObj.textMargin = conf.noteMargin;
     textObj.dy = '1em';
     textObj.text = line;
     textObj.class = 'noteText';
-    const textElem = svgDraw.drawText(g, textObj, width);
+
+    const textElem = svgDraw
+      .drawText(g, textObj)
+      .style('text-anchor', alignment)
+      .style('font-size', conf.noteFontSize)
+      .style('font-family', conf.noteFontFamily)
+      .attr('dominant-baseline', 'central')
+      .attr('alignment-baseline', 'central');
+
     textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+    textElem.attr('y', y + (prevTextHeight + textHeight + 2 * conf.noteMargin) / 2);
+    prevTextHeight = textHeight;
   }
+
   return textHeight;
 };
 
 /**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
+ * Draws an note in the diagram with the attaced line
+ * @param elem - The diagram to draw to.
+ * @param startx - The x axis start position.
+ * @param verticalPos - The y axis position.
+ * @param msg - The message to be drawn.
+ * @param forceWidth - Set this with a custom width to override the default configured width.
  */
 const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
   const rect = svgDraw.getNoteRect();
@@ -202,13 +245,7 @@ const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
   let g = elem.append('g');
   const rectElem = svgDraw.drawRect(g, rect);
 
-  const textHeight = _drawLongText(
-    msg.message,
-    startx - 4,
-    verticalPos + 24,
-    g,
-    rect.width - conf.noteMargin
-  );
+  const textHeight = _drawLongText(msg.message, startx, verticalPos, g, rect.width);
 
   bounds.insert(
     startx,
@@ -216,6 +253,7 @@ const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
     startx + rect.width,
     verticalPos + 2 * conf.noteMargin + textHeight
   );
+
   rectElem.attr('height', textHeight + 2 * conf.noteMargin);
   bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin);
 };
@@ -243,6 +281,8 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
         .append('text') // text label for the x axis
         .attr('x', txtCenter)
         .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
+        .style('font-size', conf.messageFontSize)
+        .style('font-family', conf.messageFontFamily)
         .style('text-anchor', 'middle')
         .attr('class', 'messageText')
         .text(breakline.trim())
@@ -250,7 +290,7 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
     counterBreaklines++;
   }
   const offsetLineCounter = counterBreaklines - 1;
-  const totalOffset = offsetLineCounter * breaklineOffset;
+  let totalOffset = offsetLineCounter * breaklineOffset;
 
   let textWidths = textElems.map(function(textElem) {
     return (textElem._groups || textElem)[0][0].getBBox().width;
@@ -278,6 +318,8 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
             totalOffset} H ${startx}`
         );
     } else {
+      totalOffset += 5;
+
       line = g
         .append('path')
         .attr(
@@ -375,18 +417,26 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
 
 export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
   // Draw the actors
+  let prevWidth = 0;
+  let prevMargin = 0;
+
   for (let i = 0; i < actorKeys.length; i++) {
-    const key = actorKeys[i];
+    const actor = actors[actorKeys[i]];
 
     // Add some rendering data to the object
-    actors[key].x = i * conf.actorMargin + i * conf.width;
-    actors[key].y = verticalPos;
-    actors[key].width = conf.diagramMarginX;
-    actors[key].height = conf.diagramMarginY;
+    actor.width = actor.width || calculateActorWidth(actor);
+    actor.height = conf.height;
+    actor.margin = actor.margin || conf.actorMargin;
+
+    actor.x = prevWidth + prevMargin;
+    actor.y = verticalPos;
 
     // Draw the box with the attached line
-    svgDraw.drawActor(diagram, actors[key].x, verticalPos, actors[key].description, conf);
-    bounds.insert(actors[key].x, verticalPos, actors[key].x + conf.width, conf.height);
+    svgDraw.drawActor(diagram, actor, conf);
+    bounds.insert(actor.x, verticalPos, actor.x + actor.width, conf.height);
+
+    prevWidth += actor.width;
+    prevMargin += actor.margin;
   }
 
   // Add a margin between the actor boxes and the first arrow
@@ -399,7 +449,10 @@ export const setConf = function(cnf) {
   keys.forEach(function(key) {
     conf[key] = cnf[key];
   });
-  conf.actorFontFamily = cnf.fontFamily;
+
+  if (cnf.fontFamily) {
+    conf.actorFontFamily = conf.noteFontFamily = cnf.fontFamily;
+  }
 };
 
 const actorActivations = function(actor) {
@@ -410,16 +463,87 @@ const actorActivations = function(actor) {
 
 const actorFlowVerticaBounds = function(actor) {
   // handle multiple stacked activations for same actor
-  const actors = parser.yy.getActors();
+  const actorObj = parser.yy.getActors()[actor];
   const activations = actorActivations(actor);
 
   const left = activations.reduce(function(acc, activation) {
     return Math.min(acc, activation.startx);
-  }, actors[actor].x + conf.width / 2);
+  }, actorObj.x + actorObj.width / 2);
   const right = activations.reduce(function(acc, activation) {
     return Math.max(acc, activation.stopx);
-  }, actors[actor].x + conf.width / 2);
+  }, actorObj.x + actorObj.width / 2);
   return [left, right];
+};
+
+/**
+ * This calculates the actor's width, taking into account both the statically configured width,
+ * and the actor's description.
+ *
+ * If the description text has greater length, we extend the width of the actor, so it's description
+ * won't overflow.
+ *
+ * @param actor - An actor object
+ * @return - The width for the given actor
+ */
+const calculateActorWidth = function(actor) {
+  if (!actor.description) {
+    return conf.width;
+  }
+
+  return Math.max(
+    conf.width,
+    calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily)
+  );
+};
+
+/**
+ * This calculates the width of the given text, font size and family.
+ *
+ * @param text - The text to calculate the width of
+ * @param fontSize - The font size of the given text
+ * @param fontFamily - The font family (one, or more fonts) to render
+ */
+export const calculateTextWidth = function(text, fontSize, fontFamily) {
+  if (!text) {
+    return 0;
+  }
+
+  fontSize = fontSize ? fontSize : conf.actorFontSize;
+  fontFamily = fontFamily ? fontFamily : conf.actorFontFamily;
+
+  // We can't really know if the user supplied font family will render on the user agent;
+  // thus, we'll take the max width between the user supplied font family, and a default
+  // of sans-serif.
+  const fontFamilies = ['sans-serif', fontFamily];
+  const lines = text.split(common.lineBreakRegex);
+  let maxWidth = 0;
+
+  const body = d3.select('body');
+  // We don'y want to leak DOM elements - if a removal operation isn't available
+  // for any reason, do not continue.
+  if (!body.remove) {
+    return 0;
+  }
+
+  const g = body.append('svg');
+
+  for (let line of lines) {
+    for (let fontFamily of fontFamilies) {
+      const textObj = svgDraw.getTextObj();
+      textObj.text = line;
+      const textElem = svgDraw
+        .drawText(g, textObj)
+        .style('font-size', fontSize)
+        .style('font-family', fontFamily);
+
+      maxWidth = Math.max(maxWidth, (textElem._groups || textElem)[0][0].getBBox().width);
+    }
+  }
+
+  g.remove();
+
+  // Adds some padding, so the text won't sit exactly within the actor's borders
+  return maxWidth + 35;
 };
 
 /**
@@ -443,6 +567,10 @@ export const draw = function(text, id) {
   const actorKeys = parser.yy.getActorKeys();
   const messages = parser.yy.getMessages();
   const title = parser.yy.getTitle();
+
+  const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
+  calculateActorMargins(actors, maxMessageWidthPerActor);
+
   drawActors(diagram, actors, actorKeys, 0);
 
   // The arrow head definition is attached to the svg once
@@ -467,12 +595,15 @@ export const draw = function(text, id) {
     bounds.insert(activationData.startx, verticalPos - 10, activationData.stopx, verticalPos);
   }
 
-  // const lastMsg
-
   // Draw the messages/signals
   let sequenceIndex = 1;
   messages.forEach(function(msg) {
     let loopData;
+    const noteWidth = Math.max(
+      conf.width,
+      calculateTextWidth(msg.message, conf.noteFontSize, conf.noteFontFamily)
+    );
+
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
         bounds.bumpVerticalPos(conf.boxMargin);
@@ -483,26 +614,35 @@ export const draw = function(text, id) {
         if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
           drawNote(
             diagram,
-            startx + (conf.width + conf.actorMargin) / 2,
+            startx + (actors[msg.from].width + conf.actorMargin) / 2,
             bounds.getVerticalPos(),
-            msg
+            msg,
+            noteWidth
           );
         } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
           drawNote(
             diagram,
-            startx - (conf.width + conf.actorMargin) / 2,
+            startx - noteWidth + (actors[msg.from].width - conf.actorMargin) / 2,
             bounds.getVerticalPos(),
-            msg
+            msg,
+            noteWidth
           );
         } else if (msg.to === msg.from) {
           // Single-actor over
-          drawNote(diagram, startx, bounds.getVerticalPos(), msg);
+          drawNote(
+            diagram,
+            startx + (actors[msg.to].width - noteWidth) / 2,
+            bounds.getVerticalPos(),
+            msg,
+            noteWidth
+          );
         } else {
           // Multi-actor over
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
+
           drawNote(
             diagram,
-            (startx + stopx + conf.width - forceWidth) / 2,
+            (startx + stopx + noteWidth - forceWidth) / 2,
             bounds.getVerticalPos(),
             msg,
             forceWidth
@@ -666,6 +806,137 @@ export const draw = function(text, id) {
       ' ' +
       (height + extraVertForTitle)
   );
+};
+
+/**
+ * Retrieves the max message width of each actor, supports signals (messages, loops)
+ * and notes.
+ *
+ * It will enumerate each given message, and will determine its text width, in relation
+ * to the actor it originates from, and destined to.
+ *
+ * @param actors - The actors map
+ * @param messages - A list of message objects to iterate
+ */
+const getMaxMessageWidthPerActor = function(actors, messages) {
+  const maxMessageWidthPerActor = {};
+
+  messages.forEach(function(msg) {
+    if (actors[msg.to] && actors[msg.from]) {
+      const actor = actors[msg.to];
+
+      // If this is the first actor, and the message is left of it, no need to calculate the margin
+      if (msg.placement == parser.yy.PLACEMENT.LEFTOF && !actor.prevActor) {
+        return;
+      }
+
+      // If this is the last actor, and the message is right of it, no need to calculate the margin
+      if (msg.placement == parser.yy.PLACEMENT.RIGHTOF && !actor.nextActor) {
+        return;
+      }
+
+      const isNote = msg.placement !== undefined;
+      const isMessage = !isNote;
+
+      const fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
+      const fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
+      const messageWidth = calculateTextWidth(msg.message, fontSize, fontFamily);
+
+      /*
+       * The following scenarios should be supported:
+       *
+       * - There's a message (non-note) between fromActor and toActor
+       *   - If fromActor is on the right and toActor is on the left, we should
+       *     define the toActor's margin
+       *   - If fromActor is on the left and toActor is on the right, we should
+       *     define the fromActor's margin
+       * - There's a note, in which case fromActor == toActor
+       *   - If the note is to the left of the actor, we should define the previous actor
+       *     margin
+       *   - If the note is on the actor, we should define both the previous and next actor
+       *     margins, each being the half of the note size
+       *   - If the note is on the right of the actor, we should define the current actor
+       *     margin
+       */
+      if (isMessage && msg.from == actor.nextActor) {
+        maxMessageWidthPerActor[msg.to] = Math.max(
+          maxMessageWidthPerActor[msg.to] || 0,
+          messageWidth
+        );
+      } else if (
+        (isMessage && msg.from == actor.prevActor) ||
+        msg.placement == parser.yy.PLACEMENT.RIGHTOF
+      ) {
+        maxMessageWidthPerActor[msg.from] = Math.max(
+          maxMessageWidthPerActor[msg.from] || 0,
+          messageWidth
+        );
+      } else if (msg.placement == parser.yy.PLACEMENT.LEFTOF) {
+        maxMessageWidthPerActor[actor.prevActor] = Math.max(
+          maxMessageWidthPerActor[actor.prevActor] || 0,
+          messageWidth
+        );
+      } else if (msg.placement == parser.yy.PLACEMENT.OVER) {
+        if (actor.prevActor) {
+          maxMessageWidthPerActor[actor.prevActor] = Math.max(
+            maxMessageWidthPerActor[actor.prevActor] || 0,
+            messageWidth / 2
+          );
+        }
+
+        if (actor.nextActor) {
+          maxMessageWidthPerActor[msg.from] = Math.max(
+            maxMessageWidthPerActor[msg.from] || 0,
+            messageWidth / 2
+          );
+        }
+      }
+    }
+  });
+
+  return maxMessageWidthPerActor;
+};
+
+/**
+ * This will calculate the optimal margin for each given actor, for a given
+ * actor->messageWidth map.
+ *
+ * An actor's margin is determined by the width of the actor, the width of the
+ * largest message that originates from it, and the configured conf.actorMargin.
+ *
+ * @param actors - The actors map to calculate margins for
+ * @param actorToMessageWidth - A map of actor key -> max message width it holds
+ */
+const calculateActorMargins = function(actors, actorToMessageWidth) {
+  for (let actorKey in actorToMessageWidth) {
+    const actor = actors[actorKey];
+
+    if (!actor) {
+      continue;
+    }
+
+    const nextActor = actors[actor.nextActor];
+
+    // No need to space out an actor that doesn't have a next link
+    if (!nextActor) {
+      continue;
+    }
+
+    actor.width = Math.max(
+      conf.width,
+      calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily)
+    );
+
+    nextActor.width = Math.max(
+      conf.width,
+      calculateTextWidth(nextActor.description, conf.actorFontSize, conf.actorFontFamily)
+    );
+
+    const messageWidth = actorToMessageWidth[actorKey];
+    const actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
+
+    actor.margin = Math.max(actorWidth, conf.actorMargin);
+  }
 };
 
 export default {
