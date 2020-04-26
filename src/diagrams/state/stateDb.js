@@ -132,6 +132,7 @@ export const addState = function(id, type, doc, descr, note) {
     }
   }
   if (descr) {
+    logger.info('Adding state ', id, descr);
     if (typeof descr === 'string') addDescription(id, descr.trim());
 
     if (typeof descr === 'object') {
