@@ -226,14 +226,21 @@ export const draw = function(text, id) {
     }
   });
 
-  diagram.attr('height', g.graph().height + 40);
-  diagram.attr('width', g.graph().width * 1.5 + 20);
-
   const svgBounds = diagram.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
+  if (conf.useMaxWidth) {
+    diagram.attr('width', '100%');
+    diagram.attr('style', `max-width: ${width}px;`);
+  } else {
+    diagram.attr('height', height);
+    diagram.attr('width', width);
+  }
+
+  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
   const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  logger.debug(`viewBox ${vBox}`);
   diagram.attr('viewBox', vBox);
 };
 
