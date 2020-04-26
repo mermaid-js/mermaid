@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+  <body>
+    <h1>User Journey</h1>
+    <div class="mermaid">
+      journey
+        title Go shopping
+
+        section Get to the shops
+          Get car keys:5: Dad
+          Get into car:5: Dad, Mum, Child 1, Child 2
+          Really drive to supermarket:3: Dad
+
+        section Do shopping
+          Do actual shop:3: Mum
+          Get in the way:2: Dad, Child 1, Child 2
+          Pay: 2: Dad
+
+        section Go home
+          Lose keys:3: Dad
+          Get cross:1: Dad, Child 1
+          Find keys:4: Mum
+          Get into car:4: Dad, Mum, Child 1, Child 2
+          Drive home:3: Dad
+    </div>
+    <script src="./mermaid.js"></script>
+    <script>
+      mermaid.initialize({
+        theme: 'forest',
+        logLevel: 3,
+        journey: { taskMargin: 30 },
+      });
+    </script>
+  </body>
+</html>
