@@ -39,16 +39,25 @@
         G-->H
         G-->c
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-    stateDiagram-v2
-    [*] --> monkey
-    state monkey {
-              Sitting
-            --
-              Eating
-            }
-      </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
+stateDiagram-v2
+    [*] --> Active
+
+    state Active {
+      [*] --> NumLockOff
+      NumLockOff --> NumLockOn : EvNumLockPressed
+      NumLockOn --> NumLockOff : EvNumLockPressed
+      --
+      [*] --> CapsLockOff
+      CapsLockOff --> CapsLockOn : EvCapsLockPressed
+      CapsLockOn --> CapsLockOff : EvCapsLockPressed
+      --
+      [*] --> ScrollLockOff
+      ScrollLockOff --> ScrollLockOn : EvCapsLockPressed
+      ScrollLockOn --> ScrollLockOff : EvCapsLockPressed
+    }
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
      stateDiagram-v2
       [*]-->TV
 

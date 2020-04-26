@@ -16,6 +16,8 @@ import { logger as log } from '../logger';
 const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   log.info('Graph in recursive render:', graphlib.json.write(graph), parentCluster);
   const dir = graph.graph().rankdir;
+  log.warn('Dir in recursive render - dir:', dir);
+
   const elem = _elem.insert('g').attr('class', 'root'); // eslint-disable-line
   if (!graph.nodes()) {
     log.trace('No nodes found for', graph);

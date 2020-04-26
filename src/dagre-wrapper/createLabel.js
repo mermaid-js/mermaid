@@ -2,8 +2,12 @@ const createLabel = (vertexText, style, isTitle) => {
   const svgLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   svgLabel.setAttribute('style', style.replace('color:', 'fill:'));
   let rows = [];
-  if (vertexText) {
+  if (typeof vertexText === 'string') {
     rows = vertexText.split(/\\n|\n|<br\s*\/?>/gi);
+  } else if (Array.isArray(vertexText)) {
+    rows = vertexText;
+  } else {
+    rows = [];
   }
 
   for (let j = 0; j < rows.length; j++) {

@@ -290,7 +290,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render conurrency states', () => {
+  it('should render concurrency states', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2

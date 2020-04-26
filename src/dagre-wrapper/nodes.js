@@ -293,8 +293,11 @@ const rectWithTitle = (parent, node) => {
 
   const label = shapeSvg.insert('g').attr('class', 'label');
 
-  const text = label.node().appendChild(createLabel(node.labelText[0], node.labelStyle, true));
-  const textRows = node.labelText.slice(1, node.labelText.length);
+  const text2 = node.labelText.flat();
+  logger.info('Label text', text2[0]);
+
+  const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true));
+  const textRows = text2.slice(1, text2.length);
   let titleBox = text.getBBox();
   const descr = label
     .node()
