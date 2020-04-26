@@ -2,7 +2,7 @@
 import { imgSnapshotTest } from '../../helpers/util';
 
 describe('State diagram', () => {
-  it('should render a simple info', () => {
+  it('v2 should render a simple info', () => {
     imgSnapshotTest(
       `
     info
@@ -11,7 +11,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a simple state diagrams', () => {
+  it('v2 should render a simple state diagrams', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -23,7 +23,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a long descriptions instead of id when available', () => {
+  it('v2 should render a long descriptions instead of id when available', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -35,7 +35,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a long descriptions with additional descriptions', () => {
+  it('v2 should render a long descriptions with additional descriptions', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -47,7 +47,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a single state with short descr', () => {
+  it('v2 should render a single state with short descr', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -58,7 +58,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a transition descrions with new lines', () => {
+  it('v2 should render a transition descrions with new lines', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -72,7 +72,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a state with a note', () => {
+  it('v2 should render a state with a note', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -86,7 +86,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a state with on the left side when so specified', () => {
+  it('v2 should render a state with on the left side when so specified', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -100,7 +100,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a state with a note together with another state', () => {
+  it('v2 should render a state with a note together with another state', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -116,7 +116,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a note with multiple lines in it', () => {
+  it('v2 should render a note with multiple lines in it', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -131,7 +131,7 @@ describe('State diagram', () => {
       {}
     );
   });
-  it('should handle multiline notes with different line breaks', () => {
+  it('v2 should handle multiline notes with different line breaks', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -144,7 +144,7 @@ describe('State diagram', () => {
     );
   });
 
-  it('should render a states with descriptions including multi-line descriptions', () => {
+  it('v2 should render a states with descriptions including multi-line descriptions', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -159,7 +159,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a simple state diagrams', () => {
+  it('v2 should render a simple state diagrams', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -172,7 +172,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a simple state diagrams with labels', () => {
+  it('v2 should render a simple state diagrams with labels', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -188,7 +188,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render state descriptions', () => {
+  it('v2 should render state descriptions', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -201,7 +201,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render composit states', () => {
+  it('v2 should render composit states', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -220,7 +220,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render multiple composit states', () => {
+  it('v2 should render multiple composit states', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -249,7 +249,7 @@ describe('State diagram', () => {
       { logLevel: 0 }
     );
   });
-  it('should render forks in composit states', () => {
+  it('v2 should render forks in composit states', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -271,7 +271,7 @@ describe('State diagram', () => {
       { logLevel: 0 }
     );
   });
-  it('should render forks and joins', () => {
+  it('v2 should render forks and joins', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -290,7 +290,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render concurrency states', () => {
+  it('v2 should render concurrency states', () => {
     imgSnapshotTest(
       `
     stateDiagram-v2
@@ -314,7 +314,7 @@ describe('State diagram', () => {
     );
     cy.get('svg');
   });
-  it('should render a state with states in it', () => {
+  it('v2 should render a state with states in it', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -329,7 +329,7 @@ describe('State diagram', () => {
       }
     );
   });
-  it('Simplest composit state', () => {
+  it('v2 Simplest composit state', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
@@ -342,7 +342,7 @@ describe('State diagram', () => {
       }
     );
   });
-  it('should handle multiple arrows from one node to another', () => {
+  it('v2 should handle multiple arrows from one node to another', () => {
     imgSnapshotTest(
       `
       stateDiagram-v2
