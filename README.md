@@ -195,7 +195,7 @@ pie
   <td>
   <pre>
   journey
-    title Hello
+    title My working day
     section Go to work
       Make tea: 5: Me
       Go upstairs: 3: Me
