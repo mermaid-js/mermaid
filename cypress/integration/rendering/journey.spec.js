@@ -16,16 +16,14 @@ section Order from website
     imgSnapshotTest(
       `
     journey
-      title Go shopping
-
-      section Get to the shops
-      Get car keys: Dad
-      Get into car: Dad, Mum, Child#1, Child#2
-      Drive to supermarket: Dad
-
-      section Do shopping
-      Do actual shop: Mum
-      Get in the way: Dad, Child#1, Child#2
+    title My working day
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 3: Me
       `,
       {}
     );

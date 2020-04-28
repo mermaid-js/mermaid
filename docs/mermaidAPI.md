@@ -209,6 +209,41 @@ This will display arrows that start and begin at the same node as right angles, 
 This will show the node numbers
 **Default value false**.
 
+### actorFontSize
+
+This sets the font size of the actor's description
+**Default value 14**.
+
+### actorFontFamily
+
+This sets the font family of the actor's description
+**Default value "Open-Sans", "sans-serif"**.
+
+### noteFontSize
+
+This sets the font size of actor-attached notes.
+**Default value 14**.
+
+### noteFontFamily
+
+This sets the font family of actor-attached notes.
+**Default value "trebuchet ms", verdana, arial**.
+
+### noteAlign
+
+This sets the text alignment of actor-attached notes.
+**Default value center**.
+
+### messageFontSize
+
+This sets the font size of actor messages.
+**Default value 16**.
+
+### messageFontFamily
+
+This sets the font family of actor messages.
+**Default value "trebuchet ms", verdana, arial**.
+
 ## gantt
 
 The object containing configurations specific for gantt diagrams\*
@@ -262,6 +297,80 @@ The number of alternating section styles.
 
 Datetime format of the axis. This might need adjustment to match your locale and preferences
 **Default value '%Y-%m-%d'**.
+
+## journey
+
+The object containing configurations specific for sequence diagrams
+
+### diagramMarginX
+
+margin to the right and left of the sequence diagram.
+**Default value 50**.
+
+### diagramMarginY
+
+margin to the over and under the sequence diagram.
+**Default value 10**.
+
+### actorMargin
+
+Margin between actors.
+**Default value 50**.
+
+### width
+
+Width of actor boxes
+**Default value 150**.
+
+### height
+
+Height of actor boxes
+**Default value 65**.
+
+### boxMargin
+
+Margin around loop boxes
+**Default value 10**.
+
+### boxTextMargin
+
+margin around the text in loop/alt/opt boxes
+**Default value 5**.
+
+### noteMargin
+
+margin around notes.
+**Default value 10**.
+
+### messageMargin
+
+Space between messages.
+**Default value 35**.
+
+### messageAlign
+
+Multiline message alignment. Possible values are:
+
+-   left
+-   center **default**
+-   right
+
+### bottomMarginAdj
+
+Depending on css styling this might need adjustment.
+Prolongs the edge of the diagram downwards.
+**Default value 1**.
+
+### useMaxWidth
+
+when this flag is set the height and width is set to 100% and is then scaling with the
+available space if not the absolute space required is used.
+**Default value true**.
+
+### rightAngles
+
+This will display arrows that start and begin at the same node as right angles, rather than a curve
+**Default value false**.
 
 ## er
 
