@@ -205,7 +205,7 @@ pie
       Sit down: 3: Me
 </pre></td>
   <td align="center">
-    <img alt="User Journey Diagram" src="img/user-journey.png" />
+    <img alt="User Journey Diagram" src="img/gray-user-journey.png" />
   </td>
 </tr>
 <!-- </Journey> -->
