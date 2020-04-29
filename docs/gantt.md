@@ -127,21 +127,23 @@ Tbd
 
 ## Setting dates
 
-`dateFormat` defines the format of the date **input** of your gantt elements. How these dates are represented in the rendered chart **output** are defined by `axisFormat`.
+Tbd
 
 
-### Input date format 
+### Date format
 
-The default input date format is `YYYY-MM-DD`. You can define your custom ``dateFormat``.
-
-```
-dateFormat YYYY-MM-DD
-```
-
-The following formating options are supported:
+The default date format is YYYY-MM-DD. You can define your ``dateFormat``. For example: 2020-3-7
 
 ```
+dateFormat YYYY MM DD
+```
+
+
+### Diagram definition
+
 Input	Example	Description:
+
+```
 YYYY	2014	4 digit year
 YY	14	2 digit year
 Q	1..4	Quarter of year. Sets month to first month in quarter.
@@ -152,6 +154,8 @@ Do	1st..31st	Day of month with ordinal
 DDD DDDD	1..365	Day of year
 X	1410715640.579	Unix timestamp
 x	1410715640579	Unix ms timestamp
+
+Input	Example	Description
 H HH	0..23	24 hour time
 h hh	1..12	12 hour time used with a A.
 a A	am pm	Post or ante meridiem
@@ -165,15 +169,8 @@ Z ZZ	+12:00	Offset from UTC as +-HH:mm, +-HHmm, or Z
 
 More info in: http://momentjs.com/docs/#/parsing/string-format/
 
-### Output date format on the axis
 
-The default output date format is YYYY-MM-DD. You can define your custom ``axisFormat``, like `2020-Q1` for the first quarter of the year 2020.
-
-```
-axisFormat  %Y-%m-%d 
-```
-
-The following formating strings are supported:
+### Scale
 
 ```
 %a - abbreviated weekday name.
