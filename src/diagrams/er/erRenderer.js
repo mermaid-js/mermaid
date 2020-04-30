@@ -45,10 +45,13 @@ const drawEntities = function(svgNode, entities, graph) {
       .append('text')
       .attr('id', textId)
       .attr('x', 0)
-      .attr('y', (conf.fontSize + 2 * conf.entityPadding) / 2)
+      .attr('y', 0)
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', 'middle')
-      .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
+      .attr(
+        'style',
+        'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+      )
       .text(id);
 
     // Calculate the width and height of the entity
@@ -227,7 +230,10 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
     .attr('y', labelPoint.y)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
+    .attr(
+      'style',
+      'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+    )
     .text(rel.roleA);
 
   // Figure out how big the opaque 'container' rectangle needs to be
