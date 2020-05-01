@@ -13,6 +13,7 @@
   - [Class Diagram](classDiagram.md)
   - [State Diagram](stateDiagram.md)
   - [Entity Relationship Diagram](entityRelationshipDiagram.md)
+  - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
 
