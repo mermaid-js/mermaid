@@ -52,12 +52,12 @@ const edgeInCluster = (edge, clusterId) => {
 };
 
 const copy = (clusterId, graph, newGraph, rootId) => {
-  log.trace(
+  log.info(
     'Copying children of ',
     clusterId,
+    'root',
     rootId,
-    ' from ',
-    clusterId,
+    'data',
     graph.node(clusterId),
     rootId
   );
@@ -68,18 +68,33 @@ const copy = (clusterId, graph, newGraph, rootId) => {
     nodes.push(clusterId);
   }
 
-  log.debug('Copying (nodes)', nodes);
+  log.debug('Copying (nodes) clusterId', clusterId, 'nodes', nodes);
 
   nodes.forEach(node => {
     if (graph.children(node).length > 0) {
       copy(node, graph, newGraph, rootId);
     } else {
       const data = graph.node(node);
-      log.trace('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
+      log.info('cp ', node, ' to ', rootId, ' with parent ', clusterId); //,node, data, ' parent is ', clusterId);
       newGraph.setNode(node, data);
+      log.debug('Setting parent', node, graph.parent(node));
+      if (rootId !== graph.parent(node)) {
+        newGraph.setParent(node, graph.parent(node));
+      }
+
       if (clusterId !== rootId && node !== clusterId) {
         log.debug('Setting parent', node, clusterId);
         newGraph.setParent(node, clusterId);
+      } else {
+        log.info('In copy ', clusterId, 'root', rootId, 'data', graph.node(clusterId), rootId);
+        log.debug(
+          'Not Setting parent for node=',
+          node,
+          'cluster!==rootId',
+          clusterId !== rootId,
+          'node!==clusterId',
+          node !== clusterId
+        );
       }
       const edges = graph.edges(node);
       log.debug('Copying Edges', edges);
@@ -347,6 +362,7 @@ export const extractor = (graph, depth) => {
           return {};
         });
 
+      log.debug('Old graph before copy', graphlib.json.write(graph));
       copy(node, graph, clusterGraph, node);
       graph.setNode(node, {
         clusterNode: true,

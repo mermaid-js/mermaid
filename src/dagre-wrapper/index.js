@@ -44,7 +44,7 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
       graph.setParent(v, parentCluster.id, data);
     }
     log.trace('(Insert) Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-    if (node.clusterNode) {
+    if (node && node.clusterNode) {
       // const children = graph.children(v);
       log.trace('Cluster identified', v, node, graph.node(v));
       const newEl = recursiveRender(nodes, node.graph, diagramtype, graph.node(v));
