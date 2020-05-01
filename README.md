@@ -12,7 +12,7 @@ __mermaid is a Javascript based diagramming and charting tool. It generates diag
 Check out the list of [Integrations and Usages of Mermaid](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md)
 
 For more information and help in getting started, please view our [documentation](http://mermaid-js.github.io/mermaid/) and start simplifying yours. Alternatively, you can also play with our [live editor](https://mermaidjs.github.io/mermaid-live-editor/).
-<!-- </Main description> --> 
+<!-- </Main description> -->
 
 :trophy: **Mermaid was nominated and won the [JS Open Source Awards (2019)](https://osawards.com/javascript/#nominees) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
@@ -170,7 +170,7 @@ Crash --> [*]
 pie
 "Dogs" : 386
 "Cats" : 85
-"Rats" : 15 
+"Rats" : 15
 </pre></td>
     <td align="center">
         <img src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-pie.png" />
@@ -187,10 +187,15 @@ pie
 </tr>
 <!-- </Git> -->
 <!-- <Journey> -->
+<tr><td colspan=2 align="center">
+    <b>User Journey</b><br />
+    [<a href="http://mermaid-js.github.io/mermaid/#/user-journey">docs</a> - <a href="https://mermaidjs.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic3RhdGVEaWFncmFtXG4gICAgWypdIC0tPiBTdGlsbFxuICAgIFN0aWxsIC0tPiBbKl1cbiAgICBTdGlsbCAtLT4gTW92aW5nXG4gICAgTW92aW5nIC0tPiBTdGlsbFxuICAgIE1vdmluZyAtLT4gQ3Jhc2hcbiAgICBDcmFzaCAtLT4gWypdIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifX0">live editor</a>]
+</td></tr>
 <tr>
-  <td><pre>
+  <td>
+  <pre>
   journey
-    title Hello
+    title My working day
     section Go to work
       Make tea: 5: Me
       Go upstairs: 3: Me
@@ -200,14 +205,14 @@ pie
       Sit down: 3: Me
 </pre></td>
   <td align="center">
-    <img alt="User Journey Diagram" src="https://raw.githubusercontent.com/mermaid-js/mermaid/master/img/gray-journey.png" />
+    <img alt="User Journey Diagram" src="img/gray-user-journey.png" />
   </td>
 </tr>
 <!-- </Journey> -->
 
 </table>
 
-## Related projects 
+## Related projects
 
 - [Command Line Interface](https://github.com/mermaid-js/mermaid.cli)
 - [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
