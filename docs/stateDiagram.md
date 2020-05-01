@@ -157,14 +157,14 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     [*] --> First
 
     state First {
         [*] --> Second
         state Second {
-            [*] --> second
-            second --> Third
+            [*] --> second2
+            second2 --> Third
 
             state Third {
                 [*] --> third
