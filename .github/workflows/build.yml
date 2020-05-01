@@ -57,8 +57,8 @@ jobs:
     #     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
     #     CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Post Upload Test Results
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
+    #- name: Post Upload Test Results
+    #  uses: coverallsapp/github-action@master
+    #  with:
+    #    github-token: ${{ secrets.GITHUB_TOKEN }}
+    #    parallel-finished: true
