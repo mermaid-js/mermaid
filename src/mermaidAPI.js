@@ -525,9 +525,9 @@ const config = {
     fill: 'honeydew',
 
     /**
-     * Font size
+     * Font size (expressed as an integer representing a number of  pixels)
      */
-    fontSize: '12px'
+    fontSize: 12
   }
 };
 
