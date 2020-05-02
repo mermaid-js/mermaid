@@ -112,7 +112,7 @@ The following is a list of different integrations and plugins where mermaid is b
 - [jSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
 - [MkDocs](https://mkdocs.org)
-  - [MarkdownMermaid](https://github.com/pugong/mkdocs-mermaid-plugin)
+  - [MarkdownMermaid](https://github.com/sebastienwarin/mkdocs-mermaid-plugin)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
 
