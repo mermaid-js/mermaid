@@ -359,6 +359,40 @@ graph TB
     B --> D
 ```
 
+## Beta: New arrow types
+
+When using flowchart instead of graph there is the are new types of arrows supported as per below:
+
+```
+flowchart LR
+    A --o B
+    B --x C
+```
+
+```mermaid
+flowchart LR
+    A --o B
+    B --x C
+```
+
+
+## Beta: multi directional arrows
+
+When using flowchart instead of graph there is the possibility to use multidirectional arrows.
+
+```
+flowchart LR
+    A o--o B
+    B <--> C
+    C x--x D
+```
+
+```mermaid
+flowchart LR
+    A o--o B
+    B <--> C
+    C x--x D
+```
 
 ## Special characters that break syntax
 

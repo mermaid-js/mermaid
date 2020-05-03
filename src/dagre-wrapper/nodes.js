@@ -384,6 +384,34 @@ const circle = (parent, node) => {
 
   return shapeSvg;
 };
+
+const subroutine = (parent, node) => {
+  const { shapeSvg, bbox } = labelHelper(parent, node);
+
+  const w = bbox.width + node.padding;
+  const h = bbox.height + node.padding;
+  const points = [
+    { x: 0, y: 0 },
+    { x: w, y: 0 },
+    { x: w, y: -h },
+    { x: 0, y: -h },
+    { x: 0, y: 0 },
+    { x: -8, y: 0 },
+    { x: w + 8, y: 0 },
+    { x: w + 8, y: -h },
+    { x: -8, y: -h },
+    { x: -8, y: 0 }
+  ];
+  const el = insertPolygonShape(shapeSvg, w, h, points);
+  updateNodeBounds(node, el);
+
+  node.intersect = function(point) {
+    return intersect.polygon(node, point);
+  };
+
+  return shapeSvg;
+};
+
 const start = (parent, node) => {
   const shapeSvg = parent
     .insert('g')
@@ -487,6 +515,7 @@ const shapes = {
   start,
   end,
   note,
+  subroutine,
   fork: forkJoin,
   join: forkJoin
 };
