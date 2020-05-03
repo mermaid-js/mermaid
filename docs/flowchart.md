@@ -35,6 +35,9 @@ Possible directions are:
 
 * TD - same as TB
 
+## flowchart
+
+This renders a flowchart in the same way as graph but with a new rendering method opening up for long requested features as more arrow types, multi directional arrows and link to and from  subgraphs. Apart from the graph type flowchart/graph the syntax is the same. This is currently experimental but when the beta persioid is over both the graph and flowchart keyswords will render in the new way. This means it is ok to start betat testing flowcharts.
 
 ## Nodes & shapes
 
@@ -74,7 +77,7 @@ graph LR
     id1(This is the text in the box)
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1(This is the text in the box)
 ```
 
@@ -85,7 +88,7 @@ graph LR
     id1([This is the text in the box])
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1([This is the text in the box])
 ```
 
@@ -435,6 +438,44 @@ graph TB
     subgraph id1 [one]
     a1-->a2
     end
+ ```
+
+## Beta: flowcharts
+
+With the graphtype flowcharts it is also possible to set edges to and from subgraphs as in the graph below.
+
+```
+flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    one --> two
+    three --> two
+    two --> c2
+ ```
+
+```mermaid
+flowchart TB
+    c1-->a2
+    subgraph one
+    a1-->a2
+    end
+    subgraph two
+    b1-->b2
+    end
+    subgraph three
+    c1-->c2
+    end
+    one --> two
+    three --> two
+    two --> c2
  ```
 
 ## Interaction

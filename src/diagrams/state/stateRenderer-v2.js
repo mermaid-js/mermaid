@@ -286,10 +286,25 @@ export const draw = function(text, id) {
   svg.attr('width', width * 1.75);
   svg.attr('class', 'statediagram');
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
-  svg.attr(
-    'viewBox',
-    `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
-  );
+  // svg.attr(
+  //   'viewBox',
+  //   `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
+  // );
+
+  const svgBounds = svg.node().getBBox();
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', `max-width: ${width}px;`);
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
+  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  logger.debug(`viewBox ${vBox}`);
+  svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {

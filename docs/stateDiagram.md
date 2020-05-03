@@ -5,7 +5,7 @@
 Mermaid can render state diagrams. The syntax tries to be compliant with the syntax used in plantUml as this will make it easier for users to share diagrams between mermaid and plantUml.
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     [*] --> Still
     Still --> [*]
 
@@ -15,6 +15,16 @@ stateDiagram
     Crash --> [*]
 ```
 
+```mermaid
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+```
 ```mermaid
 stateDiagram
     [*] --> Still
@@ -33,36 +43,36 @@ In state diagrams systems are described in terms of its states and how the syste
 A state can be declares in multiple ways. The simplest way is to define a state id as a description.
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     s1
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     s1
 ```
 
 Another way is by using the state keyword with a description as per below:
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     state "This is a state description" as s2
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     state "This is a state description" as s2
 ```
 
 Another way to define a state with a description is to define the state id followed by a colon and the description:
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     s2 : This is a state description
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     s2 : This is a state description
 ```
 
@@ -73,24 +83,24 @@ Transitions are path/edges when one state passes into another. This is represent
 When you define a transition between two states and the states are not already defined the undefined states are defined with the id from the transition. You can later add descriptions to states defined this way.
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     s1 --> s2
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     s1 --> s2
 ```
 
 It is possible to add text to a transition. To describe what it represents.
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     s1 --> s2: A transition
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     s1 --> s2: A transition
 ```
 
@@ -99,13 +109,13 @@ stateDiagram
 There are two special states indicating the start and stop of the diagram. These are written with the [\*] syntax and the direction of the transition to it defines it either as a start or a stop state.
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     [*] --> s1
     s1 --> [*]
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     [*] --> s1
     s1 --> [*]
 ```
@@ -118,7 +128,7 @@ have several internal states. These are called composite states in this terminol
 In order to define a composite state you need to use the state keyword followed by and id and the body of the composite state between \{\}. See the example below:
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     [*] --> First
     state First {
         [*] --> second
@@ -127,7 +137,7 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     [*] --> First
     state First {
         [*] --> second
@@ -138,7 +148,7 @@ stateDiagram
 You can do this in several layers:
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     [*] --> First
 
     state First {
@@ -157,7 +167,7 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram-v2
+stateDiagram-v2-v2
     [*] --> First
 
     state First {
@@ -177,7 +187,7 @@ stateDiagram-v2
 You can also define transitions also between composite states:
 
 ```markdown
-stateDiagram
+stateDiagram-v2
     [*] --> First
     First --> Second
     First --> Third
@@ -197,7 +207,7 @@ stateDiagram
 ```
 
 ```mermaid
-stateDiagram
+stateDiagram-v2
     [*] --> First
     First --> Second
     First --> Third
@@ -223,7 +233,7 @@ stateDiagram
 It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&lt;join&gt;&gt;.
 
 ```markdown
-   stateDiagram
+   stateDiagram-v2
     state fork_state <<fork>>
       [*] --> fork_state
       fork_state --> State2
@@ -237,7 +247,7 @@ It is possible to specify a fork in the diagram using &lt;&lt;fork&gt;&gt; &lt;&
 ```
 
 ```mermaid
-   stateDiagram
+   stateDiagram-v2
     state fork_state <<fork>>
       [*] --> fork_state
       fork_state --> State2
@@ -258,7 +268,7 @@ Sometimes nothing says it better then a Post-it note. That is also the case in s
 Here you can choose to put the note to the *right of* or to the *left of* a node.
 
 ```markdown
-    stateDiagram
+    stateDiagram-v2
         State1: The state with a note
         note right of State1
             Important information! You can write
@@ -269,7 +279,7 @@ Here you can choose to put the note to the *right of* or to the *left of* a node
 ```
 
 ```mermaid
-    stateDiagram
+    stateDiagram-v2
     State1: The state with a note
     note right of State1
       Important information! You can write
@@ -285,7 +295,7 @@ Here you can choose to put the note to the *right of* or to the *left of* a node
 As in plantUml you can specify concurrency using the -- symbol.
 
 ```markdown
-    stateDiagram
+    stateDiagram-v2
         [*] --> Active
 
         state Active {
@@ -304,7 +314,7 @@ As in plantUml you can specify concurrency using the -- symbol.
 ```
 
 ```mermaid
-    stateDiagram
+    stateDiagram-v2
         [*] --> Active
 
         state Active {
@@ -327,7 +337,7 @@ As in plantUml you can specify concurrency using the -- symbol.
 Comments can be entered within a state diagram chart, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any diagram syntax
 
 ```
-stateDiagram
+stateDiagram-v2
     [*] --> Still
     Still --> [*]
 %% this is a comment
