@@ -18,11 +18,11 @@ graph TD
 This declares a graph oriented from left to right (`LR`).
 
 ```
-graph LR
+flowchart LR
     Start --> Stop
 ```
 ```mermaid
-graph LR
+flowchart LR
     Start --> Stop
 ```
 
@@ -44,12 +44,12 @@ This renders a flowchart in the same way as graph but with a new rendering metho
 ### A node (default)
 
 ```
-graph LR
+flowchart LR
     id
 ```
 
 ```mermaid
-graph LR
+flowchart LR
     id
 ```
 Note that the id is what is displayed in the box.
@@ -61,11 +61,11 @@ found for the node that will be used. Also if you define edges for the node late
 one previously defined will be used when rendering the box.
 
 ```
-graph LR
+flowchart LR
     id1[This is the text in the box]
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1[This is the text in the box]
 ```
 
@@ -73,7 +73,7 @@ graph LR
 ### A node with round edges
 
 ```
-graph LR
+flowchart LR
     id1(This is the text in the box)
 ```
 ```mermaid
@@ -84,7 +84,7 @@ flowchart LR
 ### A stadium-shaped node
 
 ```
-graph LR
+flowchart LR
     id1([This is the text in the box])
 ```
 ```mermaid
@@ -95,44 +95,44 @@ flowchart LR
 ### A node in a subroutine shape
 
 ```
-graph LR
+flowchart LR
     id1[[This is the text in the box]]
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1[[This is the text in the box]]
 ```
 
 ### A node in a cylindrical shape
 
 ```
-graph LR
+flowchart LR
     id1[(Database)]
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1[(Database)]
 ```
 
 ### A node in the form of a circle
 
 ```
-graph LR
+flowchart LR
     id1((This is the text in the circle))
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1((This is the text in the circle))
 ```
 
 ### A node in an asymetric shape
 
 ```
-graph LR
+flowchart LR
     id1>This is the text in the box]
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1>This is the text in the box]
 ```
 Currently only the shape above is possible and not its mirror. *This might change with future releases.*
@@ -140,22 +140,22 @@ Currently only the shape above is possible and not its mirror. *This might chang
 ### A node (rhombus)
 
 ```
-graph LR
+flowchart LR
     id1{This is the text in the box}
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1{This is the text in the box}
 ```
 
 ### A hexagon node
 
 ```
-graph LR
+flowchart LR
     id1{{This is the text in the box}}
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1{{This is the text in the box}}
 ```
 
@@ -209,110 +209,110 @@ Nodes can be connected with links/edges. It is possible to have different types 
 ### A link with arrow head
 
 ```
-graph LR
+flowchart LR
     A-->B
 ```
 ```mermaid
-graph LR
+flowchart LR
     A-->B
 ```
 
 ### An open link
 
 ```
-graph LR
+flowchart LR
     A --- B
 ```
 ```mermaid
-graph LR
+flowchart LR
     A --- B
 ```
 
 ### Text on links
 
 ```
-graph LR
-    A-- This is the text ---B
+flowchart LR
+    A-- This is the text! ---B
 ```
 ```mermaid
-graph LR
+flowchart LR
     A-- This is the text ---B
 ```
 
 or
 
 ```
-graph LR
+flowchart LR
     A---|This is the text|B
 ```
 ```mermaid
-graph LR
+flowchart LR
     A---|This is the text|B
 ```
 
 ### A link with arrow head and text
 
 ```
-graph LR
+flowchart LR
     A-->|text|B
 ```
 ```mermaid
-graph LR
+flowchart LR
     A-->|text|B
 ```
 
 or
 
 ```
-graph LR
+flowchart LR
     A-- text -->B
 ```
 ```mermaid
-graph LR
+flowchart LR
     A-- text -->B
 ```
 
 ### Dotted link
 
 ```
-graph LR;
+flowchart LR;
    A-.->B;
 ```
 ```mermaid
-graph LR;
+flowchart LR;
    A-.->B;
 ```
 
 ### Dotted link with text
 
 ```
-graph LR
+flowchart LR
    A-. text .-> B
 ```
 ```mermaid
-graph LR
+flowchart LR
    A-. text .-> B
 ```
 
 ### Thick link
 
 ```
-graph LR
+flowchart LR
    A ==> B
 ```
 ```mermaid
-graph LR
+flowchart LR
    A ==> B
 ```
 
 ### Thick link with text
 
 ```
-graph LR
+flowchart LR
    A == text ==> B
 ```
 ```mermaid
-graph LR
+flowchart LR
    A == text ==> B
 ```
 
@@ -320,31 +320,31 @@ graph LR
 
 It is possible declare many links in the same line as per below:
 ```
-graph LR
+flowchart LR
    A -- text --> B -- text2 --> C
 ```
 ```mermaid
-graph LR
+flowchart LR
    A -- text --> B -- text2 --> C
 ```
 
 It is also possible to declare multiple nodes links in the same line as per below:
 ```
-graph LR
+flowchart LR
    a --> b & c--> d
 ```
 ```mermaid
-graph LR
+flowchart LR
    a --> b & c--> d
 ```
 
 You can then describe dependencies in a very expressive way. Like the onliner below:
 ```
-graph TB
+flowchart TB
     A & B--> C & D
 ```
 ```mermaid
-graph TB
+flowchart TB
     A & B--> C & D
 ```
 If you describe the same diagram using the the basic syntax, it will take four lines. A
@@ -352,7 +352,7 @@ word of warning, one could go overboard with this making the graph harder to rea
 markdown form. The Swedish word `lagom` comes to mind. It means, not to much and not to little.
 This goes for expressive syntaxes as well.
 ```
-graph TB
+flowchart TB
     A --> C
     A --> D
     B --> C
@@ -399,11 +399,11 @@ flowchart LR
 It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
 
 ```
-graph LR
+flowchart LR
     id1["This is the (text) in the box"]
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1["This is the (text) in the box"]
 ```
 
@@ -412,11 +412,11 @@ graph LR
 It is possible to escape characters using the syntax examplified here.
 
 ```
-    graph LR
+    flowchart LR
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
 ```mermaid
-    graph LR
+    flowchart LR
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
 
@@ -431,7 +431,7 @@ end
 An example below:
 
 ```
-graph TB
+flowchart TB
     c1-->a2
     subgraph one
     a1-->a2
@@ -444,7 +444,7 @@ graph TB
     end
  ```
 ```mermaid
-graph TB
+flowchart TB
     c1-->a2
     subgraph one
     a1-->a2
@@ -460,14 +460,14 @@ graph TB
  You can also set an excplicit id for the subgraph.
 
 ```
-graph TB
+flowchart TB
     c1-->a2
     subgraph ide1 [one]
     a1-->a2
     end
  ```
 ```mermaid
-graph TB
+flowchart TB
     c1-->a2
     subgraph id1 [one]
     a1-->a2
@@ -534,7 +534,7 @@ Examples of tooltip usage below:
 ```
 
 ```
-graph LR;
+flowchart LR;
     A-->B;
     click A callback "Tooltip for a callback"
     click B "http://www.github.com" "This is a tooltip for a link"
@@ -543,7 +543,7 @@ graph LR;
 The tooltip text is surrounded in double quotes. The styles of the tooltip are set by the class .mermaidTooltip.
 
 ```mermaid
-graph LR;
+flowchart LR
     A-->B;
     click A callback "Tooltip"
     click B "http://www.github.com" "This is a link"
@@ -556,7 +556,7 @@ Beginners tip, a full example using interactive links in a html context:
 ```
 <body>
   <div class="mermaid">
-    graph LR;
+    flowchart LR;
         A-->B;
         click A callback "Tooltip"
         click B "http://www.github.com" "This is a link"
@@ -586,7 +586,7 @@ Beginners tip, a full example using interactive links in a html context:
 Comments can be entered within a flow diagram, which will be ignored by the parser.  Comments need to be on their own line, and must be prefaced with `%%` (double percent signs). Any text after the start of the comment to the next newline will be treated as a comment, including any flow syntax
 
 ```
-graph LR
+flowchart LR
 %% this is a comment A -- text --> B{node}
    A -- text --> B -- text2 --> C
 ```
@@ -610,13 +610,13 @@ linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
 It is possible to apply specific styles such as a thicker border or a different background color to a node.
 
 ```
-graph LR
+flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5, 5
 ```
 ```mermaid
-graph LR
+flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5, 5
@@ -650,12 +650,12 @@ It is also possible to attach a class to a list of nodes in one statement:
 A shorter form of adding a class is to attach the classname to the node using the `:::`operator as per below:
 
 ```
-graph LR
+flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96;
 ```
 ```mermaid
-graph LR
+flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96;
 ```
@@ -681,13 +681,13 @@ below:
 **Example definition**
 
 ```
-graph LR;
+flowchart LR;
     A-->B[AAA<span>BBB</span>];
     B-->D;
     class A cssClass;
 ```
 ```mermaid
-graph LR;
+flowchart LR;
     A-->B[AAA<span>BBB</span>];
     B-->D;
     class A cssClass;
@@ -734,7 +734,7 @@ graph TD
 Below is the new declaration of the graph edges which is also valid along with the old declaration of the graph edges.
 
 ```
-graph LR
+flowchart LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}
     C -->|One| D[Result one]
@@ -742,7 +742,7 @@ graph LR
 ```
 
 ```mermaid
-graph LR
+flowchart LR
     A[Hard edge] -->|Link text| B(Round edge)
     B --> C{Decision}
     C -->|One| D[Result one]

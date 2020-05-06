@@ -736,7 +736,7 @@ const render = function(id, _txt, cb, container) {
   }
 
   // classDef
-  if (graphType === 'flowchart') {
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2') {
     const classes = flowRenderer.getClasses(txt);
     for (const className in classes) {
       style += `\n.${className} > * { ${classes[className].styles.join(
@@ -858,6 +858,7 @@ const render = function(id, _txt, cb, container) {
   if (typeof cb !== 'undefined') {
     switch (graphType) {
       case 'flowchart':
+      case 'flowchart-v2':
         cb(svgCode, flowDb.bindFunctions);
         break;
       case 'gantt':

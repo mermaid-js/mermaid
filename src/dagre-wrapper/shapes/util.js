@@ -46,5 +46,6 @@ export function insertPolygonShape(parent, w, h, points) {
         })
         .join(' ')
     )
+    .attr('class', 'label-container')
     .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
 }
