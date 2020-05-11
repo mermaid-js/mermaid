@@ -30,7 +30,7 @@ In state diagrams systems are described in terms of its states and how the syste
 
 ## States
 
-A state can be declares in multiple ways. The simplest way is to define a state id as a description.
+A state can be declared in multiple ways. The simplest way is to define a state id as a description.
 
 ```markdown
 stateDiagram
