@@ -1,5 +1,5 @@
-import * as d3 from 'd3';
-import classDb, { lookUpDomId } from './classDb';
+import { line, curveBasis } from 'd3';
+import { lookUpDomId, relationType } from './classDb';
 import utils from '../../utils';
 import { logger } from '../../logger';
 
@@ -7,13 +7,13 @@ let edgeCount = 0;
 export const drawEdge = function(elem, path, relation, conf) {
   const getRelationType = function(type) {
     switch (type) {
-      case classDb.relationType.AGGREGATION:
+      case relationType.AGGREGATION:
         return 'aggregation';
-      case classDb.relationType.EXTENSION:
+      case relationType.EXTENSION:
         return 'extension';
-      case classDb.relationType.COMPOSITION:
+      case relationType.COMPOSITION:
         return 'composition';
-      case classDb.relationType.DEPENDENCY:
+      case relationType.DEPENDENCY:
         return 'dependency';
     }
   };
@@ -24,15 +24,14 @@ export const drawEdge = function(elem, path, relation, conf) {
   const lineData = path.points;
 
   // This is the accessor function we talked about above
-  const lineFunction = d3
-    .line()
+  const lineFunction = line()
     .x(function(d) {
       return d.x;
     })
     .y(function(d) {
       return d.y;
     })
-    .curve(d3.curveBasis);
+    .curve(curveBasis);
 
   const svgPath = elem
     .append('path')

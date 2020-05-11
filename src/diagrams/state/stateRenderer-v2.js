@@ -1,5 +1,5 @@
 import graphlib from 'graphlib';
-import * as d3 from 'd3';
+import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
@@ -245,10 +245,10 @@ export const draw = function(text, id) {
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = d3.select(`[id="${id}"]`);
+  const svg = select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.
-  const element = d3.select('#' + id + ' g');
+  const element = select('#' + id + ' g');
   render(element, g, ['barb'], 'statediagram', id);
 
   const padding = 8;

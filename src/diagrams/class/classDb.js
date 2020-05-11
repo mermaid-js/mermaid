@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { select } from 'd3';
 import { logger } from '../../logger';
 import { getConfig } from '../../config';
 import common from '../common/common';
@@ -245,21 +245,20 @@ export const relationType = {
 };
 
 const setupToolTips = function(element) {
-  let tooltipElem = d3.select('.mermaidTooltip');
+  let tooltipElem = select('.mermaidTooltip');
   if ((tooltipElem._groups || tooltipElem)[0][0] === null) {
-    tooltipElem = d3
-      .select('body')
+    tooltipElem = select('body')
       .append('div')
       .attr('class', 'mermaidTooltip')
       .style('opacity', 0);
   }
 
-  const svg = d3.select(element).select('svg');
+  const svg = select(element).select('svg');
 
   const nodes = svg.selectAll('g.node');
   nodes
     .on('mouseover', function() {
-      const el = d3.select(this);
+      const el = select(this);
       const title = el.attr('title');
       // Dont try to draw a tooltip if no data is provided
       if (title === null) {
@@ -282,7 +281,7 @@ const setupToolTips = function(element) {
         .transition()
         .duration(500)
         .style('opacity', 0);
-      const el = d3.select(this);
+      const el = select(this);
       el.classed('hover', false);
     });
 };

@@ -1,5 +1,4 @@
-import * as d3 from 'd3';
-
+import { select, selectAll } from 'd3';
 import svgDraw from './svgDraw';
 import { logger } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
@@ -518,7 +517,7 @@ export const calculateTextWidth = function(text, fontSize, fontFamily) {
   const lines = text.split(common.lineBreakRegex);
   let maxWidth = 0;
 
-  const body = d3.select('body');
+  const body = select('body');
   // We don'y want to leak DOM elements - if a removal operation isn't available
   // for any reason, do not continue.
   if (!body.remove) {
@@ -556,7 +555,7 @@ export const draw = function(text, id) {
   parser.parse(text + '\n');
 
   bounds.init();
-  const diagram = d3.select(`[id="${id}"]`);
+  const diagram = select(`[id="${id}"]`);
 
   let startx;
   let stopx;
@@ -768,7 +767,7 @@ export const draw = function(text, id) {
 
   // Adjust line height of actor lines now that the height of the diagram is known
   logger.debug('For line height fix Querying: #' + id + ' .actor-line');
-  const actorLines = d3.selectAll('#' + id + ' .actor-line');
+  const actorLines = selectAll('#' + id + ' .actor-line');
   actorLines.attr('y2', box.stopy);
 
   let height = box.stopy - box.starty + 2 * conf.diagramMarginY;
