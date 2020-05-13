@@ -1,4 +1,5 @@
 import path from 'path';
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const amdRule = {
   parser: {
@@ -56,6 +57,7 @@ export const jsConfig = () => {
     module: {
       rules: [amdRule, jsRule, scssRule, jisonRule]
     },
+    // plugins: [new BundleAnalyzerPlugin()],
     devtool: 'source-map'
   };
 };
