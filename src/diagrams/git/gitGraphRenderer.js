@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { curveBasis, line, select } from 'd3';
 import _ from 'lodash';
 
 import db from './gitGraphAst';
@@ -54,10 +54,9 @@ function svgCreateDefs(svg) {
 }
 
 function svgDrawLine(svg, points, colorIdx, interpolate) {
-  const curve = interpolateToCurve(interpolate, d3.curveBasis);
+  const curve = interpolateToCurve(interpolate, curveBasis);
   const color = config.branchColors[colorIdx % config.branchColors.length];
-  const lineGen = d3
-    .line()
+  const lineGen = line()
     .x(function(d) {
       return Math.round(d.x);
     })
@@ -318,7 +317,7 @@ export const draw = function(txt, id, ver) {
       config.nodeLabel.width = '100%';
       config.nodeLabel.y = -1 * 2 * config.nodeRadius;
     }
-    const svg = d3.select(`[id="${id}"]`);
+    const svg = select(`[id="${id}"]`);
     svgCreateDefs(svg);
     branchNum = 1;
     for (let branch in branches) {

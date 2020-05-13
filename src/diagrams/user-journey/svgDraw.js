@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { arc as d3arc } from 'd3';
 
 export const drawRect = function(elem, rectData) {
   const rectElem = elem.append('rect');
@@ -53,8 +53,7 @@ export const drawFace = function(element, faceData) {
     .attr('stroke', '#666');
 
   function smile(face) {
-    const arc = d3
-      .arc()
+    const arc = d3arc()
       .startAngle(Math.PI / 2)
       .endAngle(3 * (Math.PI / 2))
       .innerRadius(radius / 2)
@@ -67,8 +66,7 @@ export const drawFace = function(element, faceData) {
   }
 
   function sad(face) {
-    const arc = d3
-      .arc()
+    const arc = d3arc()
       .startAngle((3 * Math.PI) / 2)
       .endAngle(5 * (Math.PI / 2))
       .innerRadius(radius / 2)

@@ -10,7 +10,7 @@
  *
  * @name mermaidAPI
  */
-import * as d3 from 'd3';
+import { select } from 'd3';
 import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig } from './config';
@@ -677,7 +677,7 @@ const render = function(id, _txt, cb, container) {
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
 
-    d3.select(container)
+    select(container)
       .append('div')
       .attr('id', 'd' + id)
       .attr('style', 'font-family: ' + config.fontFamily)
@@ -696,7 +696,7 @@ const render = function(id, _txt, cb, container) {
       element.innerHTML = '';
     }
 
-    d3.select('body')
+    select('body')
       .append('div')
       .attr('id', 'd' + id)
       .append('svg')
@@ -709,7 +709,7 @@ const render = function(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
 
-  const element = d3.select('#d' + id).node();
+  const element = select('#d' + id).node();
   const graphType = utils.detectType(txt);
 
   // insert inline style into svg
@@ -831,7 +831,7 @@ const render = function(id, _txt, cb, container) {
       break;
   }
 
-  d3.select(`[id="${id}"]`)
+  select(`[id="${id}"]`)
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
@@ -847,7 +847,7 @@ const render = function(id, _txt, cb, container) {
   // }
 
   // Fix for when the base tag is used
-  let svgCode = d3.select('#d' + id).node().innerHTML;
+  let svgCode = select('#d' + id).node().innerHTML;
 
   if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -873,9 +873,9 @@ const render = function(id, _txt, cb, container) {
     logger.debug('CB = undefined!');
   }
 
-  const node = d3.select('#d' + id).node();
+  const node = select('#d' + id).node();
   if (node !== null && typeof node.remove === 'function') {
-    d3.select('#d' + id)
+    select('#d' + id)
       .node()
       .remove();
   }

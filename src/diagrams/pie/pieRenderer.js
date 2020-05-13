@@ -1,7 +1,7 @@
 /**
  * Created by AshishJ on 11-09-2019.
  */
-import * as d3 from 'd3';
+import { select, scaleOrdinal, schemeSet2, pie as d3pie, entries, arc } from 'd3';
 import pieData from './pieDb';
 import pieParser from './parser/pie';
 import { logger } from '../../logger';
@@ -55,8 +55,7 @@ export const draw = (txt, id) => {
 
     var radius = Math.min(width, height) / 2 - margin;
 
-    var svg = d3
-      .select('#' + id)
+    var svg = select('#' + id)
       .append('svg')
       .attr('width', width)
       .attr('height', height)
@@ -71,20 +70,18 @@ export const draw = (txt, id) => {
     logger.info(data);
 
     // set the color scale
-    var color = d3
-      .scaleOrdinal()
+    var color = scaleOrdinal()
       .domain(data)
-      .range(d3.schemeSet2);
+      .range(schemeSet2);
 
     // Compute the position of each group on the pie:
-    var pie = d3.pie().value(function(d) {
+    var pie = d3pie().value(function(d) {
       return d.value;
     });
-    var dataReady = pie(d3.entries(data));
+    var dataReady = pie(entries(data));
 
     // shape helper to build arcs:
-    var arcGenerator = d3
-      .arc()
+    var arcGenerator = arc()
       .innerRadius(0)
       .outerRadius(radius);
 

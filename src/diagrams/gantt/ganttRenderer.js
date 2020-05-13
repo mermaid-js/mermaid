@@ -1,5 +1,13 @@
-import * as d3 from 'd3';
-
+import {
+  select,
+  scaleTime,
+  min,
+  max,
+  scaleLinear,
+  interpolateHcl,
+  axisBottom,
+  timeFormat
+} from 'd3';
 import { parser } from './parser/gantt';
 import common from '../common/common';
 import ganttDb from './ganttDb';
@@ -48,16 +56,15 @@ export const draw = function(text, id) {
   elem.setAttribute('height', '100%');
   // Set viewBox
   elem.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-  const svg = d3.select(`[id="${id}"]`);
+  const svg = select(`[id="${id}"]`);
 
   // Set timescale
-  const timeScale = d3
-    .scaleTime()
+  const timeScale = scaleTime()
     .domain([
-      d3.min(taskArray, function(d) {
+      min(taskArray, function(d) {
         return d.startTime;
       }),
-      d3.max(taskArray, function(d) {
+      max(taskArray, function(d) {
         return d.endTime;
       })
     ])
@@ -91,11 +98,10 @@ export const draw = function(text, id) {
     const topPadding = conf.topPadding;
     const leftPadding = conf.leftPadding;
 
-    const colorScale = d3
-      .scaleLinear()
+    const colorScale = scaleLinear()
       .domain([0, categories.length])
       .range(['#00B9FA', '#F95002'])
-      .interpolate(d3.interpolateHcl);
+      .interpolate(interpolateHcl);
 
     makeGrid(leftPadding, topPadding, pageWidth, pageHeight);
     drawRects(tasks, gap, topPadding, leftPadding, barHeight, colorScale, pageWidth, pageHeight);
@@ -327,10 +333,9 @@ export const draw = function(text, id) {
   }
 
   function makeGrid(theSidePad, theTopPad, w, h) {
-    let xAxis = d3
-      .axisBottom(timeScale)
+    let xAxis = axisBottom(timeScale)
       .tickSize(-h + theTopPad + conf.gridLineStartPadding)
-      .tickFormat(d3.timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
+      .tickFormat(timeFormat(parser.yy.getAxisFormat() || conf.axisFormat || '%Y-%m-%d'));
 
     svg
       .append('g')
