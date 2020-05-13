@@ -2,8 +2,8 @@
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
-import he from 'he';
-
+// import { decode } from 'he';
+import decode from 'entity-decode/browser';
 import mermaidAPI from './mermaidAPI';
 import { logger } from './logger';
 /**
@@ -94,8 +94,7 @@ const init = function() {
     txt = element.innerHTML;
 
     // transforms the html to pure text
-    txt = he
-      .decode(txt)
+    txt = decode(txt)
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 

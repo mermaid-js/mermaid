@@ -407,7 +407,7 @@ Fill color of entity boxes
 
 ### fontSize
 
-Font size
+Font size (expressed as an integer representing a number of  pixels)
 
 ## render
 

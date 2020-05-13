@@ -1,5 +1,3 @@
-import randomString from 'crypto-random-string';
-
 import { logger } from '../../logger';
 
 let commits = {};
@@ -9,11 +7,18 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
+function makeid(length) {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 function getId() {
-  return randomString({
-    length: 7,
-    characters: '0123456789abcdef'
-  });
+  return makeid(7);
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
