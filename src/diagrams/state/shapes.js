@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { line, curveBasis } from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
@@ -413,15 +413,14 @@ export const drawEdge = function(elem, path, relation) {
   const lineData = path.points;
 
   // This is the accessor function we talked about above
-  const lineFunction = d3
-    .line()
+  const lineFunction = line()
     .x(function(d) {
       return d.x;
     })
     .y(function(d) {
       return d.y;
     })
-    .curve(d3.curveBasis);
+    .curve(curveBasis);
 
   const svgPath = elem
     .append('path')

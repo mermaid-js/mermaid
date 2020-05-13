@@ -1,5 +1,4 @@
-import * as d3 from 'd3';
-
+import { select } from 'd3';
 import { parser } from './parser/journey';
 import journeyDb from './journeyDb';
 import svgDraw from './svgDraw';
@@ -85,7 +84,7 @@ export const draw = function(text, id) {
   parser.parse(text + '\n');
 
   bounds.init();
-  const diagram = d3.select('#' + id);
+  const diagram = select('#' + id);
   diagram.attr('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
   svgDraw.initGraphics(diagram);

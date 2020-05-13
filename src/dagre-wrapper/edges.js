@@ -1,6 +1,6 @@
 import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
-import * as d3 from 'd3';
+import { line, curveBasis } from 'd3';
 import { getConfig } from '../config';
 
 let edgeLabels = {};
@@ -157,15 +157,14 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
   const lineData = points.filter(p => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
-  const lineFunction = d3
-    .line()
+  const lineFunction = line()
     .x(function(d) {
       return d.x;
     })
     .y(function(d) {
       return d.y;
     })
-    .curve(d3.curveBasis);
+    .curve(curveBasis);
 
   const svgPath = elem
     .append('path')

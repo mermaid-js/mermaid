@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { logger } from '../../logger';
@@ -49,7 +49,7 @@ export const draw = function(text, id) {
   logger.debug('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
-  const diagram = d3.select(`[id='${id}']`);
+  const diagram = select(`[id='${id}']`);
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph
@@ -239,7 +239,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
   graph.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof graph.node(v) !== 'undefined') {
       logger.warn('Node ' + v + ': ' + JSON.stringify(graph.node(v)));
-      d3.select('#' + svgElem.id + ' #' + v).attr(
+      select('#' + svgElem.id + ' #' + v).attr(
         'transform',
         'translate(' +
           (graph.node(v).x - graph.node(v).width / 2) +
@@ -249,7 +249,7 @@ const renderDoc = (doc, diagram, parentId, altBkg) => {
             graph.node(v).height / 2) +
           ' )'
       );
-      d3.select('#' + svgElem.id + ' #' + v).attr(
+      select('#' + svgElem.id + ' #' + v).attr(
         'data-x-shift',
         graph.node(v).x - graph.node(v).width / 2
       );

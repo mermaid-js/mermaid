@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { select } from 'd3';
 import dagre from 'dagre';
 import graphlib from 'graphlib';
 import { logger } from '../../logger';
@@ -156,7 +156,7 @@ export const draw = function(text, id) {
   logger.info('Rendering diagram ' + text);
 
   // Fetch the default direction, use TD if none was found
-  const diagram = d3.select(`[id='${id}']`);
+  const diagram = select(`[id='${id}']`);
   insertMarkers(diagram);
 
   // Layout graph, Create a new directed graph
@@ -208,7 +208,7 @@ export const draw = function(text, id) {
   g.nodes().forEach(function(v) {
     if (typeof v !== 'undefined' && typeof g.node(v) !== 'undefined') {
       logger.debug('Node ' + v + ': ' + JSON.stringify(g.node(v)));
-      d3.select('#' + lookUpDomId(v)).attr(
+      select('#' + lookUpDomId(v)).attr(
         'transform',
         'translate(' +
           (g.node(v).x - g.node(v).width / 2) +
