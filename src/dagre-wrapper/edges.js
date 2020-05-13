@@ -34,8 +34,10 @@ export const insertEdgeLabel = (elem, edge) => {
 
 export const positionEdgeLabel = edge => {
   logger.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
-  const el = edgeLabels[edge.id];
-  el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+  if (edge.label) {
+    const el = edgeLabels[edge.id];
+    el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+  }
 };
 
 // const getRelationType = function(type) {

@@ -239,7 +239,7 @@ export const addEdges = function(edges, g) {
       edgeData.arrowheadStyle = 'fill: #333';
       edgeData.labelpos = 'c';
 
-      if (getConfig().flowchart.htmlLabels) {
+      if (getConfig().flowchart.htmlLabels && false) { // eslint-disable-line
         edgeData.labelType = 'html';
         edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
       } else {

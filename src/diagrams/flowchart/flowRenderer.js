@@ -424,7 +424,7 @@ export const draw = function(text, id) {
   }
 
   // Add label rects for non html labels
-  if (!conf.htmlLabels) {
+  if (!conf.htmlLabels || true) { // eslint-disable-line
     const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];

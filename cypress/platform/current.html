@@ -40,22 +40,15 @@
         G-->c
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-stateDiagram-v2
-   [*] --> First
+flowchart LR
+    A{{A}}-->B{{B}};
+    click A callback "Tooltip"
+    click B "http://www.github.com" "This is a link"
 
-    state First {
-        [*] --> Second
-
-        state Second {
-            [*] --> second
-            second --> Third
-
-            state Third {
-                [*] --> third
-                third --> [*]
-            }
-        }
-    }
+      </div>
+      <div class="mermaid" style="width: 50%; height: 20%;">
+flowchart LR
+    A{{A}}-->B{{B}};
 
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
@@ -277,8 +270,9 @@ stateDiagram-v2
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
         curve: 'linear',
+        securityLevel: 'loose'
       });
-    </script>
+      function callback(){alert('It worked');}
     </script>
   </body>
 </html>
