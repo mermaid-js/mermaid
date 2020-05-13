@@ -318,7 +318,7 @@ The different cardinality options are :
 - `1..*`        One or more
 - `*`           Many
 - `n`           n {where n>1}
-- `0..n`        zeor to n {where n>1}
+- `0..n`        zero to n {where n>1}
 - `1..n`        one to n {where n>1}
 
 Cardinality can be easily defined by placing cardinality text within qoutes `"` before(optional) and after(optional) a given arrow.
