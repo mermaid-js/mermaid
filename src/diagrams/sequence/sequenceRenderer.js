@@ -639,14 +639,12 @@ export const draw = function(text, id) {
         } else {
           // Multi-actor over
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
+          let x =
+            startx < stopx
+              ? startx + (actors[msg.from].width - conf.actorMargin) / 2
+              : stopx + (actors[msg.to].width - conf.actorMargin) / 2;
 
-          drawNote(
-            diagram,
-            (startx + stopx + noteWidth - forceWidth) / 2,
-            bounds.getVerticalPos(),
-            msg,
-            forceWidth
-          );
+          drawNote(diagram, x, bounds.getVerticalPos(), msg, forceWidth);
         }
         break;
       case parser.yy.LINETYPE.ACTIVE_START:
