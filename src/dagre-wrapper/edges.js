@@ -1,6 +1,6 @@
 import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
-import { line, svg, curveBasis } from 'd3';
+import { line, curveBasis } from 'd3';
 import { getConfig } from '../config';
 
 let edgeLabels = {};
