@@ -10,7 +10,7 @@ const question = (parent, node) => {
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
-  const s = (w + h) * 0.9;
+  const s = w + h;
   const points = [
     { x: s / 2, y: 0 },
     { x: s, y: -s / 2 },
@@ -21,7 +21,8 @@ const question = (parent, node) => {
   const questionElem = insertPolygonShape(shapeSvg, s, s, points);
   updateNodeBounds(node, questionElem);
   node.intersect = function(point) {
-    return intersect.polugon(node, points, point);
+    logger.warn('Intersect called');
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
