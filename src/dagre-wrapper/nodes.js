@@ -380,7 +380,7 @@ const circle = (parent, node) => {
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, point);
+    return intersect.circle(node, node.rx, point);
   };
 
   return shapeSvg;
@@ -430,7 +430,7 @@ const start = (parent, node) => {
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, point);
+    return intersect.circle(node, 7, point);
   };
 
   return shapeSvg;
@@ -493,7 +493,7 @@ const end = (parent, node) => {
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, point);
+    return intersect.circle(node, 7, point);
   };
 
   return shapeSvg;
