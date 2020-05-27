@@ -1,6 +1,33 @@
-import * as d3 from 'd3';
+import {
+  curveBasis,
+  curveBasisClosed,
+  curveBasisOpen,
+  curveLinear,
+  curveLinearClosed,
+  curveMonotoneX,
+  curveMonotoneY,
+  curveNatural,
+  curveStep,
+  curveStepAfter,
+  curveStepBefore
+} from 'd3';
 import { logger } from './logger';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+
+// Effectively an enum of the supported curve types, accessible by name
+const d3CurveTypes = {
+  curveBasis: curveBasis,
+  curveBasisClosed: curveBasisClosed,
+  curveBasisOpen: curveBasisOpen,
+  curveLinear: curveLinear,
+  curveLinearClosed: curveLinearClosed,
+  curveMonotoneX: curveMonotoneX,
+  curveMonotoneY: curveMonotoneY,
+  curveNatural: curveNatural,
+  curveStep: curveStep,
+  curveStepAfter: curveStepAfter,
+  curveStepBefore: curveStepBefore
+};
 
 /**
  * @function detectType
@@ -59,6 +86,10 @@ export const detectType = function(text) {
     return 'er';
   }
 
+  if (text.match(/^\s*journey/)) {
+    return 'journey';
+  }
+
   return 'flowchart';
 };
 
@@ -81,7 +112,7 @@ export const interpolateToCurve = (interpolate, defaultCurve) => {
     return defaultCurve;
   }
   const curveName = `curve${interpolate.charAt(0).toUpperCase() + interpolate.slice(1)}`;
-  return d3[curveName] || defaultCurve;
+  return d3CurveTypes[curveName] || defaultCurve;
 };
 
 export const formatUrl = (linkStr, config) => {

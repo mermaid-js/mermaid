@@ -1,10 +1,12 @@
 import { logger } from '../../logger';
 
+let prevActor = undefined;
 let actors = {};
 let messages = [];
 const notes = [];
 let title = '';
 let sequenceNumbersEnabled = false;
+
 export const addActor = function(id, name, description) {
   // Don't allow description nulling
   const old = actors[id];
@@ -13,7 +15,12 @@ export const addActor = function(id, name, description) {
   // Don't allow null descriptions, either
   if (description == null) description = name;
 
-  actors[id] = { name: name, description: description };
+  actors[id] = { name: name, description: description, prevActor: prevActor };
+  if (prevActor && actors[prevActor]) {
+    actors[prevActor].nextActor = id;
+  }
+
+  prevActor = id;
 };
 
 const activationCount = part => {

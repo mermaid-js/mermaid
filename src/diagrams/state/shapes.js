@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { line, curveBasis } from 'd3';
 import idCache from './id-cache.js';
 import stateDb from './stateDb';
 import utils from '../../utils';
@@ -333,10 +333,9 @@ const _drawLongText = (_text, x, y, g) => {
 };
 
 /**
- * Draws an actor in the diagram with the attaced line
- * @param center - The center of the the actor
- * @param pos The position if the actor in the liost of actors
- * @param description The text in the box
+ * Draws a note to the diagram
+ * @param text - The text of the given note.
+ * @param g - The element the note is attached to.
  */
 
 export const drawNote = (text, g) => {
@@ -414,15 +413,14 @@ export const drawEdge = function(elem, path, relation) {
   const lineData = path.points;
 
   // This is the accessor function we talked about above
-  const lineFunction = d3
-    .line()
+  const lineFunction = line()
     .x(function(d) {
       return d.x;
     })
     .y(function(d) {
       return d.y;
     })
-    .curve(d3.curveBasis);
+    .curve(curveBasis);
 
   const svgPath = elem
     .append('path')

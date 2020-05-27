@@ -314,6 +314,64 @@ describe('Graphlib decorations', () => {
     // expect(edgeData.data).toBe('link2');
     // expect(validate(g)).toBe(true);
   });
+  it('adjustClustersAndEdges the extracted graphs shall contain the correct links  GLB20', function () {
+    /*
+      a --> b
+      subgraph b [Test]
+        c --> d -->e
+      end
+    */
+    g.setNode('a', { data: 1 });
+    g.setNode('b', { data: 2 });
+    g.setNode('c', { data: 3 });
+    g.setNode('d', { data: 3 });
+    g.setNode('e', { data: 3 });
+    g.setParent('c', 'b');
+    g.setParent('d', 'b');
+    g.setParent('e', 'b');
+    g.setEdge('a', 'b', { data: 'link1' }, '1');
+    g.setEdge('c', 'd', { data: 'link2' }, '2');
+    g.setEdge('d', 'e', { data: 'link2' }, '2');
+
+    logger.info('Graph before', graphlib.json.write(g))
+    adjustClustersAndEdges(g);
+    const bGraph = g.node('b').graph;
+    // logger.trace('Graph after', graphlib.json.write(g))
+    logger.info('Graph after', graphlib.json.write(bGraph));
+    expect(bGraph.nodes().length).toBe(3);
+    expect(bGraph.edges().length).toBe(2);
+  });
+  it('adjustClustersAndEdges the extracted graphs shall contain the correct links  GLB21', function () {
+    /*
+    state a {
+        state b {
+            state c {
+                e
+            }
+        }
+    }
+    */
+    g.setNode('a', { data: 1 });
+    g.setNode('b', { data: 2 });
+    g.setNode('c', { data: 3 });
+    g.setNode('e', { data: 3 });
+    g.setParent('b', 'a');
+    g.setParent('c', 'b');
+    g.setParent('e', 'c');
+
+    logger.info('Graph before', graphlib.json.write(g))
+    adjustClustersAndEdges(g);
+    const aGraph = g.node('a').graph;
+    const bGraph = aGraph.node('b').graph;
+    logger.info('Graph after', graphlib.json.write(aGraph));
+    const cGraph = bGraph.node('c').graph;
+    // logger.trace('Graph after', graphlib.json.write(g))
+    expect(aGraph.nodes().length).toBe(1);
+    expect(bGraph.nodes().length).toBe(1);
+    expect(cGraph.nodes().length).toBe(1);
+    expect(bGraph.edges().length).toBe(0);
+  });
+
 });
 });
 describe('extractDecendants', function () {

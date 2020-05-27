@@ -10,7 +10,7 @@
  *
  * @name mermaidAPI
  */
-import * as d3 from 'd3';
+import { select } from 'd3';
 import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig } from './config';
@@ -45,6 +45,9 @@ import pieDb from './diagrams/pie/pieDb';
 import erDb from './diagrams/er/erDb';
 import erParser from './diagrams/er/parser/erDiagram';
 import erRenderer from './diagrams/er/erRenderer';
+import journeyParser from './diagrams/user-journey/parser/journey';
+import journeyDb from './diagrams/user-journey/journeyDb';
+import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -270,7 +273,42 @@ const config = {
      * This will show the node numbers
      * **Default value false**.
      */
-    showSequenceNumbers: false
+    showSequenceNumbers: false,
+    /**
+     * This sets the font size of the actor's description
+     * **Default value 14**.
+     */
+    actorFontSize: 14,
+    /**
+     * This sets the font family of the actor's description
+     * **Default value "Open-Sans", "sans-serif"**.
+     */
+    actorFontFamily: '"Open-Sans", "sans-serif"',
+    /**
+     * This sets the font size of actor-attached notes.
+     * **Default value 14**.
+     */
+    noteFontSize: 14,
+    /**
+     * This sets the font family of actor-attached notes.
+     * **Default value "trebuchet ms", verdana, arial**.
+     */
+    noteFontFamily: '"trebuchet ms", verdana, arial',
+    /**
+     * This sets the text alignment of actor-attached notes.
+     * **Default value center**.
+     */
+    noteAlign: 'center',
+    /**
+     * This sets the font size of actor messages.
+     * **Default value 16**.
+     */
+    messageFontSize: 16,
+    /**
+     * This sets the font family of actor messages.
+     * **Default value "trebuchet ms", verdana, arial**.
+     */
+    messageFontFamily: '"trebuchet ms", verdana, arial'
   },
 
   /**
@@ -337,6 +375,92 @@ const config = {
      */
     axisFormat: '%Y-%m-%d'
   },
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  journey: {
+    /**
+     * margin to the right and left of the sequence diagram.
+     * **Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     * margin to the over and under the sequence diagram.
+     * **Default value 10**.
+     */
+    diagramMarginY: 10,
+
+    /**
+     * Margin between actors.
+     * **Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     * Width of actor boxes
+     * **Default value 150**.
+     */
+    width: 150,
+
+    /**
+     * Height of actor boxes
+     * **Default value 65**.
+     */
+    height: 65,
+
+    /**
+     * Margin around loop boxes
+     * **Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     * margin around the text in loop/alt/opt boxes
+     * **Default value 5**.
+     */
+    boxTextMargin: 5,
+
+    /**
+     * margin around notes.
+     * **Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     * Space between messages.
+     * **Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     * Multiline message alignment. Possible values are:
+     *   * left
+     *   * center **default**
+     *   * right
+     */
+    messageAlign: 'center',
+
+    /**
+     * Depending on css styling this might need adjustment.
+     * Prolongs the edge of the diagram downwards.
+     * **Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     * when this flag is set the height and width is set to 100% and is then scaling with the
+     * available space if not the absolute space required is used.
+     * **Default value true**.
+     */
+    useMaxWidth: true,
+
+    /**
+     * This will display arrows that start and begin at the same node as right angles, rather than a curve
+     * **Default value false**.
+     */
+    rightAngles: false
+  },
   class: {},
   git: {},
   state: {
@@ -401,9 +525,9 @@ const config = {
     fill: 'honeydew',
 
     /**
-     * Font size
+     * Font size (expressed as an integer representing a number of  pixels)
      */
-    fontSize: '12px'
+    fontSize: 12
   }
 };
 
@@ -464,6 +588,11 @@ function parse(text) {
       logger.debug('er');
       parser = erParser;
       parser.parser.yy = erDb;
+      break;
+    case 'journey':
+      logger.debug('Journey');
+      parser = journeyParser;
+      parser.parser.yy = journeyDb;
       break;
   }
 
@@ -548,7 +677,7 @@ const render = function(id, _txt, cb, container) {
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
 
-    d3.select(container)
+    select(container)
       .append('div')
       .attr('id', 'd' + id)
       .attr('style', 'font-family: ' + config.fontFamily)
@@ -567,7 +696,7 @@ const render = function(id, _txt, cb, container) {
       element.innerHTML = '';
     }
 
-    d3.select('body')
+    select('body')
       .append('div')
       .attr('id', 'd' + id)
       .append('svg')
@@ -580,7 +709,7 @@ const render = function(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
 
-  const element = d3.select('#d' + id).node();
+  const element = select('#d' + id).node();
   const graphType = utils.detectType(txt);
 
   // insert inline style into svg
@@ -607,7 +736,7 @@ const render = function(id, _txt, cb, container) {
   }
 
   // classDef
-  if (graphType === 'flowchart') {
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2') {
     const classes = flowRenderer.getClasses(txt);
     for (const className in classes) {
       style += `\n.${className} > * { ${classes[className].styles.join(
@@ -696,9 +825,13 @@ const render = function(id, _txt, cb, container) {
       erRenderer.setConf(config.er);
       erRenderer.draw(txt, id, pkg.version);
       break;
+    case 'journey':
+      journeyRenderer.setConf(config.journey);
+      journeyRenderer.draw(txt, id, pkg.version);
+      break;
   }
 
-  d3.select(`[id="${id}"]`)
+  select(`[id="${id}"]`)
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
@@ -714,7 +847,7 @@ const render = function(id, _txt, cb, container) {
   // }
 
   // Fix for when the base tag is used
-  let svgCode = d3.select('#d' + id).node().innerHTML;
+  let svgCode = select('#d' + id).node().innerHTML;
 
   if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -725,6 +858,7 @@ const render = function(id, _txt, cb, container) {
   if (typeof cb !== 'undefined') {
     switch (graphType) {
       case 'flowchart':
+      case 'flowchart-v2':
         cb(svgCode, flowDb.bindFunctions);
         break;
       case 'gantt':
@@ -740,9 +874,9 @@ const render = function(id, _txt, cb, container) {
     logger.debug('CB = undefined!');
   }
 
-  const node = d3.select('#d' + id).node();
+  const node = select('#d' + id).node();
   if (node !== null && typeof node.remove === 'function') {
-    d3.select('#d' + id)
+    select('#d' + id)
       .node()
       .remove();
   }

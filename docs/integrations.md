@@ -5,6 +5,7 @@ The following is a list of different integrations and plugins where mermaid is b
 ## Productivity
 
 - [GitLab](https://docs.gitlab.com/ee/user/markdown.html#diagrams-and-flowcharts) (**Native support**)
+- [Azure Devops](https://docs.microsoft.com/en-us/azure/devops/project/wiki/wiki-markdown-guidance?view=azure-devops#add-mermaid-diagrams-to-a-wiki-page) (**Native support**)
 - [GitHub](https://github.com)
   - [Github action: Compile mermaid to image](https://github.com/neenjaw/compile-mermaid-markdown-action)
   - [svg-generator](https://github.com/SimonKenyonShepard/mermaidjs-github-svg-generator)
@@ -112,7 +113,7 @@ The following is a list of different integrations and plugins where mermaid is b
 - [jSDoc](https://jsdoc.app/)
   - [jsdoc-mermaid](https://github.com/Jellyvision/jsdoc-mermaid)
 - [MkDocs](https://mkdocs.org)
-  - [MarkdownMermaid](https://github.com/pugong/mkdocs-mermaid-plugin)
+  - [MarkdownMermaid](https://github.com/sebastienwarin/mkdocs-mermaid-plugin)
 - [Type Doc](https://typedoc.org/)
   - [typedoc-plugin-mermaid](https://www.npmjs.com/package/typedoc-plugin-mermaid)
 

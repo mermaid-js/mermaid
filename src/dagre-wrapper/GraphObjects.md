@@ -100,6 +100,20 @@ double_arrow_circle
 Lets try to make these types semantic free so that diagram type semantics does not find its way in to this more generic layer.
 
 
+Required edgeData for proper rendering:
+
+|  property  |               description                |
+| ---------- | ---------------------------------------- |
+| id         | Id of the edge                           |
+| arrowHead  | overlap between arrowHead and arrowType? |
+| arrowType  | overlap between arrowHead and arrowType? |
+| style      |                                          |
+| labelStyle |                                          |
+| label      | overlap between label and labelText?     |
+| labelPos   |                                          |
+| labelType  | overlap between label and labelText?     |
+
+
 # Markers
 
 Define what markers that should be included in the diagram with the insert markers function. The function takes two arguments, first the element in which the markers should be included and a list of the markers that should be added.

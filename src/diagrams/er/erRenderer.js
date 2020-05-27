@@ -1,5 +1,5 @@
 import graphlib from 'graphlib';
-import * as d3 from 'd3';
+import { line, curveBasis, select } from 'd3';
 import erDb from './erDb';
 import erParser from './parser/erDiagram';
 import dagre from 'dagre';
@@ -45,10 +45,13 @@ const drawEntities = function(svgNode, entities, graph) {
       .append('text')
       .attr('id', textId)
       .attr('x', 0)
-      .attr('y', (conf.fontSize + 2 * conf.entityPadding) / 2)
+      .attr('y', 0)
       .attr('dominant-baseline', 'middle')
       .attr('text-anchor', 'middle')
-      .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
+      .attr(
+        'style',
+        'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+      )
       .text(id);
 
     // Calculate the width and height of the entity
@@ -133,15 +136,14 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
   const edge = g.edge(rel.entityA, rel.entityB, getEdgeName(rel));
 
   // Get a function that will generate the line path
-  const lineFunction = d3
-    .line()
+  const lineFunction = line()
     .x(function(d) {
       return d.x;
     })
     .y(function(d) {
       return d.y;
     })
-    .curve(d3.curveBasis);
+    .curve(curveBasis);
 
   // Insert the line at the right place
   const svgPath = svg
@@ -227,7 +229,10 @@ const drawRelationshipFromLayout = function(svg, rel, g, insert) {
     .attr('y', labelPoint.y)
     .attr('text-anchor', 'middle')
     .attr('dominant-baseline', 'middle')
-    .attr('style', 'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize)
+    .attr(
+      'style',
+      'font-family: ' + getConfig().fontFamily + '; font-size: ' + conf.fontSize + 'px'
+    )
     .text(rel.roleA);
 
   // Figure out how big the opaque 'container' rectangle needs to be
@@ -265,7 +270,7 @@ export const draw = function(text, id) {
   }
 
   // Get a reference to the svg node that contains the text
-  const svg = d3.select(`[id='${id}']`);
+  const svg = select(`[id='${id}']`);
 
   // Add cardinality marker definitions to the svg
   erMarkers.insertMarkers(svg, conf);

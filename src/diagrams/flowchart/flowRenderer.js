@@ -1,5 +1,5 @@
 import graphlib from 'graphlib';
-import * as d3 from 'd3';
+import { select, curveLinear, selectAll } from 'd3';
 
 import flowDb from './flowDb';
 import flow from './parser/flow';
@@ -26,7 +26,7 @@ export const setConf = function(cnf) {
  * @param g The graph that is to be drawn.
  */
 export const addVertices = function(vert, g, svgId) {
-  const svg = d3.select(`[id="${svgId}"]`);
+  const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(vert);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
@@ -206,11 +206,11 @@ export const addEdges = function(edges, g) {
     edgeData.labelStyle = labelStyle;
 
     if (typeof edge.interpolate !== 'undefined') {
-      edgeData.curve = interpolateToCurve(edge.interpolate, d3.curveLinear);
+      edgeData.curve = interpolateToCurve(edge.interpolate, curveLinear);
     } else if (typeof edges.defaultInterpolate !== 'undefined') {
-      edgeData.curve = interpolateToCurve(edges.defaultInterpolate, d3.curveLinear);
+      edgeData.curve = interpolateToCurve(edges.defaultInterpolate, curveLinear);
     } else {
-      edgeData.curve = interpolateToCurve(conf.curve, d3.curveLinear);
+      edgeData.curve = interpolateToCurve(conf.curve, curveLinear);
     }
 
     if (typeof edge.text === 'undefined') {
@@ -315,7 +315,7 @@ export const draw = function(text, id) {
   for (i = subGraphs.length - 1; i >= 0; i--) {
     subG = subGraphs[i];
 
-    d3.selectAll('cluster').append('text');
+    selectAll('cluster').append('text');
 
     for (let j = 0; j < subG.nodes.length; j++) {
       g.setParent(subG.nodes[j], subG.id);
@@ -370,10 +370,10 @@ export const draw = function(text, id) {
   };
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = d3.select(`[id="${id}"]`);
+  const svg = select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.
-  const element = d3.select('#' + id + ' g');
+  const element = select('#' + id + ' g');
   render(element, g);
 
   element.selectAll('g.node').attr('title', function() {
@@ -412,7 +412,7 @@ export const draw = function(text, id) {
       const xPos = clusterRects[0].x.baseVal.value;
       const yPos = clusterRects[0].y.baseVal.value;
       const width = clusterRects[0].width.baseVal.value;
-      const cluster = d3.select(clusterEl[0]);
+      const cluster = select(clusterEl[0]);
       const te = cluster.select('.label');
       te.attr('transform', `translate(${xPos + width / 2}, ${yPos + 14})`);
       te.attr('id', id + 'Text');
@@ -424,7 +424,7 @@ export const draw = function(text, id) {
   }
 
   // Add label rects for non html labels
-  if (!conf.htmlLabels) {
+  if (!conf.htmlLabels || true) { // eslint-disable-line
     const labels = document.querySelectorAll('[id="' + id + '"] .edgeLabel .label');
     for (let k = 0; k < labels.length; k++) {
       const label = labels[k];
@@ -449,7 +449,7 @@ export const draw = function(text, id) {
     const vertex = vert[key];
 
     if (vertex.link) {
-      const node = d3.select('#' + id + ' [id="' + key + '"]');
+      const node = select('#' + id + ' [id="' + key + '"]');
       if (node) {
         const link = document.createElementNS('http://www.w3.org/2000/svg', 'a');
         link.setAttributeNS('http://www.w3.org/2000/svg', 'class', vertex.classes.join(' '));

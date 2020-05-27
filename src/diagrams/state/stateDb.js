@@ -132,6 +132,7 @@ export const addState = function(id, type, doc, descr, note) {
     }
   }
   if (descr) {
+    logger.info('Adding state ', id, descr);
     if (typeof descr === 'string') addDescription(id, descr.trim());
 
     if (typeof descr === 'object') {
@@ -147,6 +148,12 @@ export const clear = function() {
     root: newDoc()
   };
   currentDocument = documents.root;
+
+  currentDocument = documents.root;
+
+  startCnt = 0;
+  endCnt = 0; // eslint-disable-line
+  classes = [];
 };
 
 export const getState = function(id) {
@@ -212,7 +219,7 @@ const getDividerId = () => {
   return 'divider-id-' + dividerCnt;
 };
 
-const classes = [];
+let classes = [];
 
 const getClasses = () => classes;
 

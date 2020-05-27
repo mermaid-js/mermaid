@@ -1,6 +1,7 @@
 import createLabel from '../createLabel';
-
-export const labelHelper = (parent, node, _classes) => {
+import { getConfig } from '../../config';
+import { select } from 'd3';
+export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
   if (!_classes) {
     classes = 'node default';
@@ -16,10 +17,20 @@ export const labelHelper = (parent, node, _classes) => {
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'label');
 
-  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
+  const text = label
+    .node()
+    .appendChild(createLabel(node.labelText, node.labelStyle, false, isNode));
 
   // Get the size of the label
-  const bbox = text.getBBox();
+  let bbox = text.getBBox();
+
+  if (getConfig().flowchart.htmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
 
   const halfPadding = node.padding / 2;
 
@@ -46,5 +57,6 @@ export function insertPolygonShape(parent, w, h, points) {
         })
         .join(' ')
     )
+    .attr('class', 'label-container')
     .attr('transform', 'translate(' + -w / 2 + ',' + h / 2 + ')');
 }

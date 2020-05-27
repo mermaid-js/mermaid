@@ -27,7 +27,8 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn release && yarn test && yarn e2e",
-    "prepush": "yarn test"
+    "prepush": "yarn test",
+    "prepare": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -51,9 +52,9 @@
     "d3": "^5.7.0",
     "dagre": "^0.8.4",
     "dagre-d3": "^0.6.4",
+    "entity-decode": "^2.0.2",
     "graphlib": "^2.1.7",
     "he": "^1.2.0",
-    "lodash": "^4.17.11",
     "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
     "scope-css": "^1.2.1"
@@ -86,6 +87,7 @@
     "start-server-and-test": "^1.10.6",
     "terser-webpack-plugin": "^2.2.2",
     "webpack": "^4.41.2",
+    "webpack-bundle-analyzer": "^3.7.0",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.4.1",
     "webpack-node-externals": "^1.7.2",
@@ -98,5 +100,9 @@
     "ignore": [
       "babel-core"
     ]
-  }
+  },
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ]
 }

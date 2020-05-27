@@ -1,7 +1,7 @@
 /**
  * Created by knut on 14-12-11.
  */
-import * as d3 from 'd3';
+import { select } from 'd3';
 import db from './infoDb';
 import infoParser from './parser/info';
 import { logger } from '../../logger';
@@ -29,7 +29,7 @@ export const draw = (txt, id, ver) => {
     parser.parse(txt);
     logger.debug('Parsed info diagram');
     // Fetch the default direction, use TD if none was found
-    const svg = d3.select('#' + id);
+    const svg = select('#' + id);
 
     const g = svg.append('g');
 

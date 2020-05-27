@@ -45,11 +45,11 @@ jobs:
       run: |
         yarn test --coverage
 
-    - name: Upload Test Results
-      uses: coverallsapp/github-action@v1.0.1
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel: true
+    #- name: Upload Test Results
+    #  uses: coverallsapp/github-action@v1.0.1
+    #  with:
+    #    github-token: ${{ secrets.GITHUB_TOKEN }}
+    #    parallel: true
 
     # - name: Run E2E Tests
     #   run: yarn e2e
@@ -57,8 +57,8 @@ jobs:
     #     PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
     #     CYPRESS_CACHE_FOLDER: .cache/Cypress
 
-    - name: Post Upload Test Results
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
+    #- name: Post Upload Test Results
+    #  uses: coverallsapp/github-action@master
+    #  with:
+    #    github-token: ${{ secrets.GITHUB_TOKEN }}
+    #    parallel-finished: true

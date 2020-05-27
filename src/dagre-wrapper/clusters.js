@@ -1,6 +1,8 @@
 import intersectRect from './intersect/intersect-rect';
 import { logger as log } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
+import { select } from 'd3';
+import { getConfig } from '../config';
 
 const rect = (parent, node) => {
   log.trace('Creating subgraph rect for ', node.id, node);
@@ -17,10 +19,20 @@ const rect = (parent, node) => {
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
 
-  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
+  const text = label
+    .node()
+    .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
 
   // Get the size of the label
-  const bbox = text.getBBox();
+  let bbox = text.getBBox();
+
+  if (getConfig().flowchart.htmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
 
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
@@ -106,11 +118,20 @@ const roundedWithTitle = (parent, node) => {
   const label = shapeSvg.insert('g').attr('class', 'cluster-label');
   const innerRect = shapeSvg.append('rect');
 
-  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
+  const text = label
+    .node()
+    .appendChild(createLabel(node.labelText, node.labelStyle, undefined, true));
 
   // Get the size of the label
-  const bbox = text.getBBox();
-
+  let bbox = text.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+  bbox = text.getBBox();
   const padding = 0 * node.padding;
   const halfPadding = padding / 2;
 
@@ -134,7 +155,7 @@ const roundedWithTitle = (parent, node) => {
     'translate(' +
       (node.x - bbox.width / 2) +
       ', ' +
-      (node.y - node.height / 2 - node.padding / 3 + 3) +
+      (node.y - node.height / 2 - node.padding / 3 + (getConfig().flowchart.htmlLabels ? 5 : 3)) +
       ')'
   );
 
@@ -149,7 +170,39 @@ const roundedWithTitle = (parent, node) => {
   return shapeSvg;
 };
 
-const shapes = { rect, roundedWithTitle, noteGroup };
+const divider = (parent, node) => {
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', node.classes)
+    .attr('id', node.id);
+
+  // add the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+
+  const padding = 0 * node.padding;
+  const halfPadding = padding / 2;
+
+  // center the rect around its coordinate
+  rect
+    .attr('class', 'divider')
+    .attr('x', node.x - node.width / 2 - halfPadding)
+    .attr('y', node.y - node.height / 2)
+    .attr('width', node.width + padding)
+    .attr('height', node.height + padding);
+
+  const rectBox = rect.node().getBBox();
+  node.width = rectBox.width;
+  node.height = rectBox.height;
+
+  node.intersect = function(point) {
+    return intersectRect(node, point);
+  };
+
+  return shapeSvg;
+};
+
+const shapes = { rect, roundedWithTitle, noteGroup, divider };
 
 let clusterElems = {};
 
@@ -159,7 +212,7 @@ export const insertCluster = (elem, node) => {
   clusterElems[node.id] = shapes[shape](elem, node);
 };
 export const getClusterTitleWidth = (elem, node) => {
-  const label = createLabel(node.labelText, node.labelStyle);
+  const label = createLabel(node.labelText, node.labelStyle, undefined, true);
   elem.node().appendChild(label);
   const width = label.getBBox().width;
   elem.node().removeChild(label);

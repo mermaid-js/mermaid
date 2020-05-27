@@ -1,6 +1,6 @@
 import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
-import * as d3 from 'd3';
+import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 
 let edgeLabels = {};
@@ -21,7 +21,14 @@ export const insertEdgeLabel = (elem, edge) => {
   label.node().appendChild(labelElement);
 
   // Center the label
-  const bbox = labelElement.getBBox();
+  let bbox = labelElement.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = labelElement.children[0];
+    const dv = select(labelElement);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
   label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
 
   // Make element accessible by id for positioning
@@ -33,8 +40,11 @@ export const insertEdgeLabel = (elem, edge) => {
 };
 
 export const positionEdgeLabel = edge => {
-  const el = edgeLabels[edge.id];
-  el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+  logger.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
+  if (edge.label) {
+    const el = edgeLabels[edge.id];
+    el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+  }
 };
 
 // const getRelationType = function(type) {
@@ -156,15 +166,14 @@ export const insertEdge = function(elem, edge, clusterDb, diagramType) {
   const lineData = points.filter(p => !Number.isNaN(p.y));
 
   // This is the accessor function we talked about above
-  const lineFunction = d3
-    .line()
+  const lineFunction = line()
     .x(function(d) {
       return d.x;
     })
     .y(function(d) {
       return d.y;
     })
-    .curve(d3.curveBasis);
+    .curve(curveBasis);
 
   const svgPath = elem
     .append('path')

@@ -1,5 +1,5 @@
 import graphlib from 'graphlib';
-import * as d3 from 'd3';
+import { select } from 'd3';
 import stateDb from './stateDb';
 import state from './parser/stateDiagram';
 import { getConfig } from '../../config';
@@ -15,7 +15,7 @@ export const setConf = function(cnf) {
   }
 };
 
-const nodeDb = {};
+let nodeDb = {};
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
@@ -42,6 +42,9 @@ const setupNode = (g, parent, node, altFlag) => {
     if (node.start === false) {
       shape = 'end';
     }
+    if (node.type !== 'default') {
+      shape = node.type;
+    }
 
     if (!nodeDb[node.id]) {
       nodeDb[node.id] = {
@@ -52,9 +55,27 @@ const setupNode = (g, parent, node, altFlag) => {
       };
     }
 
-    // Description
+    // Build of the array of description strings accordinging
     if (node.description) {
-      nodeDb[node.id].description = node.description;
+      if (Array.isArray(nodeDb[node.id].description)) {
+        // There already is an array of strings,add to it
+        nodeDb[node.id].shape = 'rectWithTitle';
+        nodeDb[node.id].description.push(node.description);
+      } else {
+        if (nodeDb[node.id].description.length > 0) {
+          // if there is a description already transformit to an array
+          nodeDb[node.id].shape = 'rectWithTitle';
+          if (nodeDb[node.id].description === node.id) {
+            // If the previous description was the is, remove it
+            nodeDb[node.id].description = [node.description];
+          } else {
+            nodeDb[node.id].description = [nodeDb[node.id].description, node.description];
+          }
+        } else {
+          nodeDb[node.id].shape = 'rect';
+          nodeDb[node.id].description = node.description;
+        }
+      }
     }
 
     // Save data for description and group so that for instance a statement without description overwrites
@@ -64,7 +85,7 @@ const setupNode = (g, parent, node, altFlag) => {
     if (!nodeDb[node.id].type && node.doc) {
       logger.info('Setting cluser for ', node.id);
       nodeDb[node.id].type = 'group';
-      nodeDb[node.id].shape = 'roundedWithTitle';
+      nodeDb[node.id].shape = node.type === 'divider' ? 'divider' : 'roundedWithTitle';
       nodeDb[node.id].classes =
         nodeDb[node.id].classes +
         ' ' +
@@ -155,10 +176,12 @@ const setupDoc = (g, parent, doc, altFlag) => {
       setupNode(g, parent, item.state1, altFlag);
       setupNode(g, parent, item.state2, altFlag);
       const edgeData = {
+        id: 'edge' + cnt,
         arrowhead: 'normal',
         arrowType: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
+        label: item.description,
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text'
@@ -180,6 +203,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
 export const draw = function(text, id) {
   logger.info('Drawing state diagram (v2)', id);
   stateDb.clear();
+  nodeDb = {};
   const parser = state.parser;
   parser.yy = stateDb;
 
@@ -222,10 +246,10 @@ export const draw = function(text, id) {
   setupNode(g, undefined, stateDb.getRootDocV2(), true);
 
   // Set up an SVG group so that we can translate the final graph.
-  const svg = d3.select(`[id="${id}"]`);
+  const svg = select(`[id="${id}"]`);
 
   // Run the renderer. This is what draws the final graph.
-  const element = d3.select('#' + id + ' g');
+  const element = select('#' + id + ' g');
   render(element, g, ['barb'], 'statediagram', id);
 
   const padding = 8;
@@ -263,10 +287,25 @@ export const draw = function(text, id) {
   svg.attr('width', width * 1.75);
   svg.attr('class', 'statediagram');
   // diagram.attr('height', bounds.height * 3 + conf.padding * 2);
-  svg.attr(
-    'viewBox',
-    `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
-  );
+  // svg.attr(
+  //   'viewBox',
+  //   `${bounds.x - conf.padding}  ${bounds.y - conf.padding} ` + width + ' ' + height
+  // );
+
+  const svgBounds = svg.node().getBBox();
+
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', `max-width: ${width}px;`);
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
+  // Ensure the viewBox includes the whole svgBounds area with extra space for padding
+  const vBox = `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`;
+  logger.debug(`viewBox ${vBox}`);
+  svg.attr('viewBox', vBox);
 
   // Add label rects for non html labels
   if (!conf.htmlLabels) {

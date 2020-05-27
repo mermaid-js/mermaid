@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import randomString from 'crypto-random-string';
-
 import { logger } from '../../logger';
 
 let commits = {};
@@ -10,11 +7,18 @@ let curBranch = 'master';
 let direction = 'LR';
 let seq = 0;
 
+function makeid(length) {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 function getId() {
-  return randomString({
-    length: 7,
-    characters: '0123456789abcdef'
-  });
+  return makeid(7);
 }
 
 function isfastforwardable(currentCommit, otherCommit) {
@@ -41,6 +45,18 @@ function isReachableFrom(currentCommit, otherCommit) {
   const otherSeq = otherCommit.seq;
   if (currentSeq > otherSeq) return isfastforwardable(otherCommit, currentCommit);
   return false;
+}
+
+function uniqBy(list, fn) {
+  const recordMap = Object.create(null);
+  return list.reduce((out, item) => {
+    const key = fn(item);
+    if (!recordMap[key]) {
+      recordMap[key] = true;
+      out.push(item);
+    }
+    return out;
+  }, []);
 }
 
 export const setDirection = function(dir) {
@@ -142,7 +158,10 @@ function upsert(arr, key, newval) {
 }
 
 function prettyPrintCommitHistory(commitArr) {
-  const commit = _.maxBy(commitArr, 'seq');
+  const commit = commitArr.reduce((out, commit) => {
+    if (out.seq > commit.seq) return out;
+    return commit;
+  }, commitArr[0]);
   let line = '';
   commitArr.forEach(function(c) {
     if (c === commit) {
@@ -166,7 +185,7 @@ function prettyPrintCommitHistory(commitArr) {
     const nextCommit = commits[commit.parent];
     upsert(commitArr, commit, nextCommit);
   }
-  commitArr = _.uniqBy(commitArr, 'id');
+  commitArr = uniqBy(commitArr, c => c.id);
   prettyPrintCommitHistory(commitArr);
 }
 
@@ -205,7 +224,8 @@ export const getCommitsArray = function() {
   commitArr.forEach(function(o) {
     logger.debug(o.id);
   });
-  return _.orderBy(commitArr, ['seq'], ['desc']);
+  commitArr.sort((a, b) => b.seq - a.seq);
+  return commitArr;
 };
 export const getCurrentBranch = function() {
   return curBranch;

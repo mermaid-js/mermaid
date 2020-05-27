@@ -36,6 +36,9 @@
 
 .edgeLabel {
   background-color: $edgeLabelBackground;
+  rect {
+    opacity: 0.5;
+  }
   text-align: center;
 }
 
