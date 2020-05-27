@@ -19,14 +19,16 @@
   <body>
     <h1>info below</h1>
       <div class="mermaid" style="width: 100%; height: 20%;">
-   stateDiagram-v2
+      stateDiagram-v2
 
       [*] --> S1
-      state "Some long name\nwith an even longer next row" as S1
+      state "Some long name" as S1: The
       </div>
       <div class="mermaid" style="width: 100%; height: 20%;">
-flowchart TD
-    cr((Create Request)) --label this is--> server[REST Server]
+      stateDiagram-v2
+
+      [*] --> S1
+      state "Some long name" as S1: The description\nwith multiple lines
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
 flowchart LR

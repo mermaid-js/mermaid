@@ -306,15 +306,41 @@ const rectWithTitle = (parent, node) => {
     dv.attr('width', bbox.width);
     dv.attr('height', bbox.height);
   }
+  logger.info('Text 2', text2);
   const textRows = text2.slice(1, text2.length);
   let titleBox = text.getBBox();
   const descr = label
     .node()
     .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
 
-  logger.info(descr);
+  if (getConfig().flowchart.htmlLabels) {
+    const div = descr.children[0];
+    const dv = select(descr);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+  // bbox = label.getBBox();
+  // logger.info(descr);
   const halfPadding = node.padding / 2;
-  select(descr).attr('transform', 'translate( 0' + ', ' + (titleBox.height + halfPadding) + ')');
+  select(descr).attr(
+    'transform',
+    'translate( ' +
+      // (titleBox.width - bbox.width) / 2 +
+      (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
+      ', ' +
+      (titleBox.height + halfPadding + 5) +
+      ')'
+  );
+  select(text).attr(
+    'transform',
+    'translate( ' +
+      // (titleBox.width - bbox.width) / 2 +
+      (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
+      ', ' +
+      0 +
+      ')'
+  );
   // Get the size of the label
 
   // Bounding box for title and text
