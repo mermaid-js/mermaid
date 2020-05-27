@@ -148,6 +148,12 @@ export const clear = function() {
     root: newDoc()
   };
   currentDocument = documents.root;
+
+  currentDocument = documents.root;
+
+  startCnt = 0;
+  endCnt = 0; // eslint-disable-line
+  classes = [];
 };
 
 export const getState = function(id) {
@@ -213,7 +219,7 @@ const getDividerId = () => {
   return 'divider-id-' + dividerCnt;
 };
 
-const classes = [];
+let classes = [];
 
 const getClasses = () => classes;
 
