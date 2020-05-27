@@ -88,4 +88,17 @@ describe('Entity Relationship Diagram', () => {
     );
     cy.get('svg');
   });
+
+  it('should render an ER diagram with blank or empty labels', () => {
+    imgSnapshotTest(
+      `
+    erDiagram
+        BOOK }|..|{ AUTHOR : ""
+        BOOK }|..|{ GENRE : " "
+        AUTHOR }|..|{ GENRE : "  "
+      `,
+      {logLevel : 1}
+    );
+    cy.get('svg');
+  });
 });
