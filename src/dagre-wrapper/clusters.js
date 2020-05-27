@@ -124,7 +124,6 @@ const roundedWithTitle = (parent, node) => {
 
   // Get the size of the label
   let bbox = text.getBBox();
-  let labelHeight = bbox.height;
   if (getConfig().flowchart.htmlLabels) {
     const div = text.children[0];
     const dv = select(text);
