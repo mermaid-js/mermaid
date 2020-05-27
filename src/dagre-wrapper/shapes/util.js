@@ -1,5 +1,6 @@
 import createLabel from '../createLabel';
-
+import { getConfig } from '../../config';
+import { select } from 'd3';
 export const labelHelper = (parent, node, _classes) => {
   let classes;
   if (!_classes) {
@@ -19,7 +20,15 @@ export const labelHelper = (parent, node, _classes) => {
   const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
 
   // Get the size of the label
-  const bbox = text.getBBox();
+  let bbox = text.getBBox();
+
+  if (getConfig().flowchart.htmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
 
   const halfPadding = node.padding / 2;
 

@@ -41,14 +41,14 @@
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
 flowchart LR
-    A{{A}}-->B{{B}};
+    A{{A}}-- apa -->B{{B}};
     click A callback "Tooltip"
     click B "http://www.github.com" "This is a link"
 
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-flowchart LR
-    A{{A}}-->B{{B}};
+graph LR
+    A{{A}}--apa-->B{{B}};
 
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
@@ -264,7 +264,7 @@ stateDiagram-v2
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'linear', "htmlLabels": false },
+        flowchart: { curve: 'linear', "htmlLabels": true },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
