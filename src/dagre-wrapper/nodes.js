@@ -2,11 +2,12 @@ import intersect from './intersect/index.js';
 import { select } from 'd3';
 import { logger } from '../logger'; // eslint-disable-line
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
+import { getConfig } from '../config';
 import createLabel from './createLabel';
 import note from './shapes/note';
 
 const question = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -28,7 +29,7 @@ const question = (parent, node) => {
 };
 
 const hexagon = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const f = 4;
   const h = bbox.height + node.padding;
@@ -53,7 +54,7 @@ const hexagon = (parent, node) => {
 };
 
 const rect_left_inv_arrow = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -75,7 +76,7 @@ const rect_left_inv_arrow = (parent, node) => {
   return shapeSvg;
 };
 const lean_right = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -97,7 +98,7 @@ const lean_right = (parent, node) => {
 };
 
 const lean_left = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -119,7 +120,7 @@ const lean_left = (parent, node) => {
 };
 
 const trapezoid = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -140,7 +141,7 @@ const trapezoid = (parent, node) => {
 };
 
 const inv_trapezoid = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -160,7 +161,7 @@ const inv_trapezoid = (parent, node) => {
   return shapeSvg;
 };
 const rect_right_inv_arrow = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
@@ -181,7 +182,7 @@ const rect_right_inv_arrow = (parent, node) => {
   return shapeSvg;
 };
 const cylinder = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const rx = w / 2;
@@ -248,7 +249,7 @@ const cylinder = (parent, node) => {
 };
 
 const rect = (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
+  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
 
   logger.trace('Classes = ', node.classes);
   // add the rect
@@ -296,12 +297,20 @@ const rectWithTitle = (parent, node) => {
   const text2 = node.labelText.flat();
   logger.info('Label text', text2[0]);
 
-  const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true));
+  const text = label.node().appendChild(createLabel(text2[0], node.labelStyle, true, true));
+  let bbox;
+  if (getConfig().flowchart.htmlLabels) {
+    const div = text.children[0];
+    const dv = select(text);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
   const textRows = text2.slice(1, text2.length);
   let titleBox = text.getBBox();
   const descr = label
     .node()
-    .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true));
+    .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
 
   logger.info(descr);
   const halfPadding = node.padding / 2;
@@ -309,7 +318,7 @@ const rectWithTitle = (parent, node) => {
   // Get the size of the label
 
   // Bounding box for title and text
-  const bbox = label.node().getBBox();
+  bbox = label.node().getBBox();
 
   // Center the label
   label.attr(
@@ -341,7 +350,7 @@ const rectWithTitle = (parent, node) => {
 };
 
 const stadium = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const h = bbox.height + node.padding;
   const w = bbox.width + h / 4 + node.padding;
@@ -365,7 +374,7 @@ const stadium = (parent, node) => {
   return shapeSvg;
 };
 const circle = (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node);
+  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, undefined, true);
   const circle = shapeSvg.insert('circle', ':first-child');
 
   // center the circle around its coordinate
@@ -386,7 +395,7 @@ const circle = (parent, node) => {
 };
 
 const subroutine = (parent, node) => {
-  const { shapeSvg, bbox } = labelHelper(parent, node);
+  const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;

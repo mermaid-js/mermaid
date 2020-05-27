@@ -18,35 +18,24 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
-        flowchart LR
-        a --> b
+      <div class="mermaid" style="width: 100%; height: 20%;">
+   stateDiagram-v2
 
-        subgraph b [Test]
-            c --> d -->e
-          end
+      [*] --> S1
+      state "Some long name\nwith an even longer next row" as S1
       </div>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
-        flowchart LR
-        a --> b
-
-        subgraph id1 [Test]
-            a --apa--> c
-            b
-            c-->b
-            b-->H
-          end
-        G-->H
-        G-->c
+      <div class="mermaid" style="width: 100%; height: 20%;">
+flowchart TD
+    cr((Create Request)) --label this is--> server[REST Server]
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 flowchart LR
     A{{A}}-- apa -->B{{B}};
     click A callback "Tooltip"
     click B "http://www.github.com" "This is a link"
 
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 graph LR
     A{{A}}--apa-->B{{B}};
 

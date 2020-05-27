@@ -1,7 +1,7 @@
 import createLabel from '../createLabel';
 import { getConfig } from '../../config';
 import { select } from 'd3';
-export const labelHelper = (parent, node, _classes) => {
+export const labelHelper = (parent, node, _classes, isNode) => {
   let classes;
   if (!_classes) {
     classes = 'node default';
@@ -17,7 +17,9 @@ export const labelHelper = (parent, node, _classes) => {
   // Create the label and insert it after the rect
   const label = shapeSvg.insert('g').attr('class', 'label');
 
-  const text = label.node().appendChild(createLabel(node.labelText, node.labelStyle));
+  const text = label
+    .node()
+    .appendChild(createLabel(node.labelText, node.labelStyle, false, isNode));
 
   // Get the size of the label
   let bbox = text.getBBox();
