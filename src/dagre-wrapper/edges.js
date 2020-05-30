@@ -116,8 +116,13 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
-
     points.unshift(tail.intersect(points[0]));
+    logger.info(
+      'Last point',
+      points[points.length - 1],
+      head,
+      head.intersect(points[points.length - 1])
+    );
     points.push(head.intersect(points[points.length - 1]));
   }
   if (edge.toCluster) {

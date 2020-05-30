@@ -93,8 +93,8 @@ const recursiveRender = (_elem, graph, diagramtype, parentCluster) => {
   // Move the nodes to the correct place
   graph.nodes().forEach(function(v) {
     const node = graph.node(v);
-    // log.trace('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
-    log.trace(
+    log.trace('Position ' + v + ': ' + JSON.stringify(graph.node(v)));
+    log.info(
       'Position ' + v + ': (' + node.x,
       ',' + node.y,
       ') width: ',

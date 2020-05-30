@@ -19,6 +19,8 @@ const question = (parent, node) => {
     { x: 0, y: -s / 2 }
   ];
 
+  logger.info('Question main (Circle)');
+
   const questionElem = insertPolygonShape(shapeSvg, s, s, points);
   updateNodeBounds(node, questionElem);
   node.intersect = function(point) {
@@ -412,10 +414,13 @@ const circle = (parent, node) => {
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);
 
+  logger.info('Circle main');
+
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, node.rx, point);
+    logger.info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
+    return intersect.circle(node, bbox.width / 2 + halfPadding, point);
   };
 
   return shapeSvg;
