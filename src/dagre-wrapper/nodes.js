@@ -11,7 +11,7 @@ const question = (parent, node) => {
 
   const w = bbox.width + node.padding;
   const h = bbox.height + node.padding;
-  const s = (w + h) * 0.9;
+  const s = w + h;
   const points = [
     { x: s / 2, y: 0 },
     { x: s, y: -s / 2 },
@@ -19,10 +19,13 @@ const question = (parent, node) => {
     { x: 0, y: -s / 2 }
   ];
 
+  logger.info('Question main (Circle)');
+
   const questionElem = insertPolygonShape(shapeSvg, s, s, points);
   updateNodeBounds(node, questionElem);
   node.intersect = function(point) {
-    return intersect.polugon(node, points, point);
+    logger.warn('Intersect called');
+    return intersect.polygon(node, points, point);
   };
 
   return shapeSvg;
@@ -411,10 +414,13 @@ const circle = (parent, node) => {
     .attr('width', bbox.width + node.padding)
     .attr('height', bbox.height + node.padding);
 
+  logger.info('Circle main');
+
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, point);
+    logger.info('Circle intersect', node, bbox.width / 2 + halfPadding, point);
+    return intersect.circle(node, bbox.width / 2 + halfPadding, point);
   };
 
   return shapeSvg;
@@ -464,7 +470,7 @@ const start = (parent, node) => {
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, point);
+    return intersect.circle(node, 7, point);
   };
 
   return shapeSvg;
@@ -527,7 +533,7 @@ const end = (parent, node) => {
   updateNodeBounds(node, circle);
 
   node.intersect = function(point) {
-    return intersect.circle(node, point);
+    return intersect.circle(node, 7, point);
   };
 
   return shapeSvg;

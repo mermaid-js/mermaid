@@ -65,7 +65,7 @@ graph LR
     id1[This is the text in the box]
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1[This is the text in the box]
 ```
 
@@ -73,66 +73,66 @@ flowchart LR
 ### A node with round edges
 
 ```
-flowchart LR
+graph LR
     id1(This is the text in the box)
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1(This is the text in the box)
 ```
 
 ### A stadium-shaped node
 
 ```
-flowchart LR
+graph LR
     id1([This is the text in the box])
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1([This is the text in the box])
 ```
 
 ### A node in a subroutine shape
 
 ```
-flowchart LR
+graph LR
     id1[[This is the text in the box]]
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1[[This is the text in the box]]
 ```
 
 ### A node in a cylindrical shape
 
 ```
-flowchart LR
+graph LR
     id1[(Database)]
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1[(Database)]
 ```
 
 ### A node in the form of a circle
 
 ```
-flowchart LR
+graph LR
     id1((This is the text in the circle))
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1((This is the text in the circle))
 ```
 
 ### A node in an asymetric shape
 
 ```
-flowchart LR
+graph LR
     id1>This is the text in the box]
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1>This is the text in the box]
 ```
 Currently only the shape above is possible and not its mirror. *This might change with future releases.*
@@ -140,22 +140,22 @@ Currently only the shape above is possible and not its mirror. *This might chang
 ### A node (rhombus)
 
 ```
-flowchart LR
+graph LR
     id1{This is the text in the box}
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1{This is the text in the box}
 ```
 
 ### A hexagon node
 
 ```
-flowchart LR
+graph LR
     id1{{This is the text in the box}}
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1{{This is the text in the box}}
 ```
 
@@ -209,22 +209,22 @@ Nodes can be connected with links/edges. It is possible to have different types 
 ### A link with arrow head
 
 ```
-flowchart LR
+graph LR
     A-->B
 ```
 ```mermaid
-flowchart LR
+graph LR
     A-->B
 ```
 
 ### An open link
 
 ```
-flowchart LR
+graph LR
     A --- B
 ```
 ```mermaid
-flowchart LR
+graph LR
     A --- B
 ```
 
@@ -235,84 +235,84 @@ graph LR
     A-- This is the text! ---B
 ```
 ```mermaid
-flowchart LR
+graph LR
     A-- This is the text ---B
 ```
 
 or
 
 ```
-flowchart LR
+graph LR
     A---|This is the text|B
 ```
 ```mermaid
-flowchart LR
+graph LR
     A---|This is the text|B
 ```
 
 ### A link with arrow head and text
 
 ```
-flowchart LR
+graph LR
     A-->|text|B
 ```
 ```mermaid
-flowchart LR
+graph LR
     A-->|text|B
 ```
 
 or
 
 ```
-flowchart LR
+graph LR
     A-- text -->B
 ```
 ```mermaid
-flowchart LR
+graph LR
     A-- text -->B
 ```
 
 ### Dotted link
 
 ```
-flowchart LR;
+graph LR;
    A-.->B;
 ```
 ```mermaid
-flowchart LR;
+graph LR;
    A-.->B;
 ```
 
 ### Dotted link with text
 
 ```
-flowchart LR
+graph LR
    A-. text .-> B
 ```
 ```mermaid
-flowchart LR
+graph LR
    A-. text .-> B
 ```
 
 ### Thick link
 
 ```
-flowchart LR
+graph LR
    A ==> B
 ```
 ```mermaid
-flowchart LR
+graph LR
    A ==> B
 ```
 
 ### Thick link with text
 
 ```
-flowchart LR
+graph LR
    A == text ==> B
 ```
 ```mermaid
-flowchart LR
+graph LR
    A == text ==> B
 ```
 
@@ -320,21 +320,21 @@ flowchart LR
 
 It is possible declare many links in the same line as per below:
 ```
-flowchart LR
+graph LR
    A -- text --> B -- text2 --> C
 ```
 ```mermaid
-flowchart LR
+graph LR
    A -- text --> B -- text2 --> C
 ```
 
 It is also possible to declare multiple nodes links in the same line as per below:
 ```
-flowchart LR
+graph LR
    a --> b & c--> d
 ```
 ```mermaid
-flowchart LR
+graph LR
    a --> b & c--> d
 ```
 
@@ -399,11 +399,11 @@ flowchart LR
 It is possible to put text within quotes in order to render more troublesome characters. As in the example below:
 
 ```
-flowchart LR
+graph LR
     id1["This is the (text) in the box"]
 ```
 ```mermaid
-flowchart LR
+graph LR
     id1["This is the (text) in the box"]
 ```
 
@@ -412,11 +412,11 @@ flowchart LR
 It is possible to escape characters using the syntax examplified here.
 
 ```
-    flowchart LR
+    graph LR
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
 ```mermaid
-    flowchart LR
+    graph LR
         A["A double quote:#quot;"] -->B["A dec char:#9829;"]
 ```
 
@@ -534,7 +534,7 @@ Examples of tooltip usage below:
 ```
 
 ```
-flowchart LR;
+graph LR;
     A-->B;
     click A callback "Tooltip for a callback"
     click B "http://www.github.com" "This is a tooltip for a link"

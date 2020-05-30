@@ -107,8 +107,24 @@ const intersection = (node, outsidePoint, insidePoint) => {
   }
 };
 
-export const insertEdge = function(elem, edge, clusterDb, diagramType) {
+//(edgePaths, e, edge, clusterDb, diagramtype, graph)
+export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph) {
   let points = edge.points;
+
+  const tail = graph.node(e.v);
+  var head = graph.node(e.w);
+
+  if (head.intersect && tail.intersect) {
+    points = points.slice(1, edge.points.length - 1);
+    points.unshift(tail.intersect(points[0]));
+    logger.info(
+      'Last point',
+      points[points.length - 1],
+      head,
+      head.intersect(points[points.length - 1])
+    );
+    points.push(head.intersect(points[points.length - 1]));
+  }
   if (edge.toCluster) {
     logger.trace('edge', edge);
     logger.trace('to cluster', clusterDb[edge.toCluster]);
