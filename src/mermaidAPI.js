@@ -551,7 +551,7 @@ function parse(text) {
       break;
     case 'flowchart-v2':
       flowDb.clear();
-      parser = flowRendererV2;
+      parser = flowParser;
       parser.parser.yy = flowDb;
       break;
     case 'sequence':
