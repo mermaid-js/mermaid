@@ -668,7 +668,7 @@ export const decodeEntities = function(text) {
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
-const render = function (id, _txt, cb, container) {
+const render = function(id, _txt, cb, container) {
   // Check the maximum allowed text size
   let txt = _txt;
   if (_txt.length > config.maxTextSize) {
@@ -835,7 +835,7 @@ const render = function (id, _txt, cb, container) {
   } catch (e) {
     errorRenderer.setConf(config.class);
     errorRenderer.draw(id, pkg.version);
-    throw (e)
+    throw e;
   }
 
   select(`[id="${id}"]`)
