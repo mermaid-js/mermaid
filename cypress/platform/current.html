@@ -4,10 +4,12 @@
       href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
-        background: rgb(221, 208, 208);
+        /* background: rgb(221, 208, 208); */
+        background:#333;
         font-family: 'Arial';
         }
       h1 { color: white;}
@@ -19,17 +21,9 @@
   <body>
     <h1>info below</h1>
       <div class="mermaid" style="width: 100%; height: 20%;">
-    flowchart TD
-        db[(PostgreSQL<br/>database)]
-        broker{RabbitMQ<br/>broker}
-        db --> broker
-        box --> broker
+        flowchart LR
+          user1[fa:fa-user User 1] -- edit -> folder
       </div>
-        broker --> db
-        broker --> box
-        db --> broker
-        box --> broker
-
       <div class="mermaid2" style="width: 50%; height: 20%;">
 flowchart LR
     A{{A}}-- apa -->B{{B}};
@@ -245,12 +239,15 @@ stateDiagram-v2
 </div>
   <script src="./mermaid.js"></script>
     <script>
+      mermaid.parseError = function (err, hash) {
+          // console.error('Mermaid error: ', err);
+        };
       mermaid.initialize({
-        // theme: 'dark',
+        theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'linear', "htmlLabels": true },
+        flowchart: { curve: 'linear', "htmlLabels": false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
