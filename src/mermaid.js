@@ -98,6 +98,7 @@ const init = function() {
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
+    try {
     mermaidAPI.render(
       id,
       txt,
@@ -110,6 +111,13 @@ const init = function() {
       },
       element
     );
+    } catch (e) {
+      logger.warn('Syntax Error rendering');
+      logger.warn(e);
+      if (this.parseError) {
+        this.parseError(e);
+      }
+    }
   }
 };
 

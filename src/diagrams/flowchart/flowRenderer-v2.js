@@ -285,11 +285,11 @@ export const draw = function(text, id) {
   parser.yy = flowDb;
 
   // Parse the graph definition
-  try {
+  // try {
     parser.parse(text);
-  } catch (err) {
-    logger.debug('Parsing failed');
-  }
+  // } catch (err) {
+    // logger.debug('Parsing failed');
+  // }
 
   // Fetch the default direction, use TD if none was found
   let dir = flowDb.getDirection();
