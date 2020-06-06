@@ -59,6 +59,7 @@
     "he": "^1.2.0",
     "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
+    "node": "^14.3.0",
     "scope-css": "^1.2.1"
   },
   "devDependencies": {
