@@ -3,7 +3,7 @@ import { logger } from '../../logger'; // eslint-disable-line
 import intersect from '../intersect/index.js';
 
 const note = (parent, node) => {
-  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes);
+  const { shapeSvg, bbox, halfPadding } = labelHelper(parent, node, 'node ' + node.classes, true);
 
   logger.info('Classes = ', node.classes);
   // add the rect

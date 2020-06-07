@@ -1,14 +1,11 @@
 %lex
 
-%x string
 %options case-insensitive
 
 %%
 \s+                       /* skip whitespace */
 [\s]+                     return 'SPACE';
-["]                       { this.begin("string");}
-<string>["]               { this.popState(); }
-<string>[^"]*             { return 'STR'; }
+\"[^"]*\"                 return 'WORD';
 "erDiagram"               return 'ER_DIAGRAM';
 \|o                       return 'ZERO_OR_ONE';
 \}o                       return 'ZERO_OR_MORE';
@@ -73,7 +70,7 @@ relType
     ;
 
 role
-    : 'STR'       { $$ = $1; }
+    : 'WORD'      { $$ = $1.replace(/"/g, ''); }
     | 'ALPHANUM'  { $$ = $1; }
     ;
 %%

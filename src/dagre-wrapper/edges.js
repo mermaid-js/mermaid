@@ -1,6 +1,6 @@
 import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
-import { line, curveBasis } from 'd3';
+import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
 
 let edgeLabels = {};
@@ -21,7 +21,14 @@ export const insertEdgeLabel = (elem, edge) => {
   label.node().appendChild(labelElement);
 
   // Center the label
-  const bbox = labelElement.getBBox();
+  let bbox = labelElement.getBBox();
+  if (getConfig().flowchart.htmlLabels) {
+    const div = labelElement.children[0];
+    const dv = select(labelElement);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
   label.attr('transform', 'translate(' + -bbox.width / 2 + ', ' + -bbox.height / 2 + ')');
 
   // Make element accessible by id for positioning
@@ -109,8 +116,13 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
 
   if (head.intersect && tail.intersect) {
     points = points.slice(1, edge.points.length - 1);
-
     points.unshift(tail.intersect(points[0]));
+    logger.info(
+      'Last point',
+      points[points.length - 1],
+      head,
+      head.intersect(points[points.length - 1])
+    );
     points.push(head.intersect(points[points.length - 1]));
   }
   if (edge.toCluster) {

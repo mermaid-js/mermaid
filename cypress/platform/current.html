@@ -18,41 +18,28 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
-        flowchart LR
-        a --> b
-
-        subgraph b [Test]
-            c --> d -->e
-          end
+      <div class="mermaid" style="width: 100%; height: 20%;">
+    flowchart TD
+        db[(PostgreSQL<br/>database)]
+        broker{RabbitMQ<br/>broker}
+        db --> broker
+        box --> broker
       </div>
-      <div class="mermaid2" style="width: 100%; height: 20%;">
-        flowchart LR
-        a --> b
+        broker --> db
+        broker --> box
+        db --> broker
+        box --> broker
 
-        subgraph id1 [Test]
-            a --apa--> c
-            b
-            c-->b
-            b-->H
-          end
-        G-->H
-        G-->c
-      </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
 flowchart LR
-    A{{A}}-->B{{B}};
+    A{{A}}-- apa -->B{{B}};
     click A callback "Tooltip"
     click B "http://www.github.com" "This is a link"
 
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart TD
-	A[Christmas] -->|Get money| B(Go shopping)
-	B --> C{Let me think}
-	C -->|One| D[Laptop]
-	C -->|Two| E[iPhone]
-	C -->|Three| F[fa:fa-car Car]
+graph LR
+    A{{A}}--apa-->B{{B}};
 
       </div>
       <div class="mermaid2" style="width: 50%; height: 20%;">
@@ -71,11 +58,6 @@ flowchart TD
         join_state --> State4
         State4 --> [*]
       }
-      </div>
-      <div class="mermaid mermaid-apa" style="width: 100%; height: 20%;">
-        stateDiagram-v2
-        [*] --> Still
-        Still --> [*]
       </div>
       <div class="mermaid2" style="width: 100%; height: 100%;">
         stateDiagram-v2
@@ -268,7 +250,7 @@ stateDiagram-v2
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'linear', "htmlLabels": false },
+        flowchart: { curve: 'linear', "htmlLabels": true },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated

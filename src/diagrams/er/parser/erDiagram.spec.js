@@ -252,4 +252,21 @@ describe('when parsing ER diagram it...', function() {
     }).toThrowError();
   });
 
+  it('should allow an empty quoted label', function() {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : ""');
+    const rels = erDb.getRelationships();
+    expect(rels[0].roleA).toBe('');
+  });
+
+  it('should allow an non-empty quoted label', function() {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : "places"');
+    const rels = erDb.getRelationships();
+    expect(rels[0].roleA).toBe('places');
+  });
+
+  it('should allow an non-empty unquoted label', function() {
+    erDiagram.parser.parse('erDiagram\nCUSTOMER ||--|{ ORDER : places');
+    const rels = erDb.getRelationships();
+    expect(rels[0].roleA).toBe('places');
+  });
 });

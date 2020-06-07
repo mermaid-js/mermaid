@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "8.5.1",
+  "version": "8.5.2",
   "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.",
   "main": "dist/mermaid.core.js",
   "keywords": [
@@ -13,11 +13,13 @@
     "git graph"
   ],
   "scripts": {
-    "build": "webpack --progress --colors -p",
+    "build:development": "webpack --progress --colors",
+    "build:production": "yarn build:development -p --config webpack.config.prod.babel.js",
+    "build": "yarn build:development && yarn build:production",
     "postbuild": "documentation build src/mermaidAPI.js --shallow -f md --markdown-toc false -o docs/mermaidAPI.md",
     "build:watch": "yarn build --watch",
     "minify": "minify ./dist/mermaid.js > ./dist/mermaid.min.js",
-    "release": "yarn build -p --config webpack.config.prod.babel.js",
+    "release": "yarn build",
     "lint": "eslint src",
     "e2e:depr": "yarn lint && jest e2e --config e2e/jest.config.js",
     "cypress": "percy exec -- cypress run",
@@ -26,7 +28,7 @@
     "dev": "webpack-dev-server --config webpack.config.e2e.js",
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
-    "prepublishOnly": "yarn build && yarn release && yarn test && yarn e2e",
+    "prepublishOnly": "yarn build && yarn test && yarn e2e",
     "prepush": "yarn test",
     "prepare": "yarn build"
   },

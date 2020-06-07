@@ -37,7 +37,7 @@ Possible directions are:
 
 ## flowchart
 
-This renders a flowchart in the same way as graph but with a new rendering method opening up for long requested features as more arrow types, multi directional arrows and link to and from  subgraphs. Apart from the graph type flowchart/graph the syntax is the same. This is currently experimental but when the beta persioid is over both the graph and flowchart keyswords will render in the new way. This means it is ok to start betat testing flowcharts.
+This renders a flowchart in the same way as a graph but with a new rendering method opening up for long requested features such as: more arrow types, multi directional arrows, and linking to and from subgraphs. Apart from the graph type, flowchart/graph, the syntax is the same. This is currently experimental but when the beta period is over both the graph and flowchart keywords will render in the new way. This means it is ok to start beta testing flowcharts.
 
 ## Nodes & shapes
 

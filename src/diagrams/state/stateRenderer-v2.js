@@ -15,7 +15,7 @@ export const setConf = function(cnf) {
   }
 };
 
-const nodeDb = {};
+let nodeDb = {};
 
 /**
  * Returns the all the styles from classDef statements in the graph definition.
@@ -203,6 +203,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
 export const draw = function(text, id) {
   logger.info('Drawing state diagram (v2)', id);
   stateDb.clear();
+  nodeDb = {};
   const parser = state.parser;
   parser.yy = stateDb;
 
