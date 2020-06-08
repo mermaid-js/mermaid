@@ -98,18 +98,26 @@ const init = function() {
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
-    mermaidAPI.render(
-      id,
-      txt,
-      (svgCode, bindFunctions) => {
-        element.innerHTML = svgCode;
-        if (typeof callback !== 'undefined') {
-          callback(id);
-        }
-        if (bindFunctions) bindFunctions(element);
-      },
-      element
-    );
+    try {
+      mermaidAPI.render(
+        id,
+        txt,
+        (svgCode, bindFunctions) => {
+          element.innerHTML = svgCode;
+          if (typeof callback !== 'undefined') {
+            callback(id);
+          }
+          if (bindFunctions) bindFunctions(element);
+        },
+        element
+      );
+    } catch (e) {
+      logger.warn('Syntax Error rendering');
+      logger.warn(e);
+      if (this.parseError) {
+        this.parseError(e);
+      }
+    }
   }
 };
 

@@ -37,6 +37,7 @@ import gitGraphRenderer from './diagrams/git/gitGraphRenderer';
 import gitGraphParser from './diagrams/git/parser/gitGraph';
 import gitGraphAst from './diagrams/git/gitGraphAst';
 import infoRenderer from './diagrams/info/infoRenderer';
+import errorRenderer from './errorRenderer';
 import infoParser from './diagrams/info/parser/info';
 import infoDb from './diagrams/info/infoDb';
 import pieRenderer from './diagrams/pie/pieRenderer';
@@ -791,73 +792,79 @@ const render = function(id, _txt, cb, container) {
   }`;
   svg.insertBefore(style2, firstChild);
 
-  switch (graphType) {
-    case 'git':
-      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      gitGraphRenderer.setConf(config.git);
-      gitGraphRenderer.draw(txt, id, false);
-      break;
-    case 'flowchart':
-      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      flowRenderer.setConf(config.flowchart);
-      flowRenderer.draw(txt, id, false);
-      break;
-    case 'flowchart-v2':
-      config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      flowRendererV2.setConf(config.flowchart);
-      flowRendererV2.draw(txt, id, false);
-      break;
-    case 'sequence':
-      config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      if (config.sequenceDiagram) {
-        // backwards compatibility
-        sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram));
-        console.error(
-          '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
-        );
-      } else {
-        sequenceRenderer.setConf(config.sequence);
-      }
-      sequenceRenderer.draw(txt, id);
-      break;
-    case 'gantt':
-      config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      ganttRenderer.setConf(config.gantt);
-      ganttRenderer.draw(txt, id);
-      break;
-    case 'class':
-      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      classRenderer.setConf(config.class);
-      classRenderer.draw(txt, id);
-      break;
-    case 'state':
-      // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      stateRenderer.setConf(config.state);
-      stateRenderer.draw(txt, id);
-      break;
-    case 'stateDiagram':
-      // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      stateRendererV2.setConf(config.state);
-      stateRendererV2.draw(txt, id);
-      break;
-    case 'info':
-      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      infoRenderer.setConf(config.class);
-      infoRenderer.draw(txt, id, pkg.version);
-      break;
-    case 'pie':
-      config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-      pieRenderer.setConf(config.class);
-      pieRenderer.draw(txt, id, pkg.version);
-      break;
-    case 'er':
-      erRenderer.setConf(config.er);
-      erRenderer.draw(txt, id, pkg.version);
-      break;
-    case 'journey':
-      journeyRenderer.setConf(config.journey);
-      journeyRenderer.draw(txt, id, pkg.version);
-      break;
+  try {
+    switch (graphType) {
+      case 'git':
+        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        gitGraphRenderer.setConf(config.git);
+        gitGraphRenderer.draw(txt, id, false);
+        break;
+      case 'flowchart':
+        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        flowRenderer.setConf(config.flowchart);
+        flowRenderer.draw(txt, id, false);
+        break;
+      case 'flowchart-v2':
+        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        flowRendererV2.setConf(config.flowchart);
+        flowRendererV2.draw(txt, id, false);
+        break;
+      case 'sequence':
+        config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        if (config.sequenceDiagram) {
+          // backwards compatibility
+          sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram));
+          console.error(
+            '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
+          );
+        } else {
+          sequenceRenderer.setConf(config.sequence);
+        }
+        sequenceRenderer.draw(txt, id);
+        break;
+      case 'gantt':
+        config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        ganttRenderer.setConf(config.gantt);
+        ganttRenderer.draw(txt, id);
+        break;
+      case 'class':
+        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        classRenderer.setConf(config.class);
+        classRenderer.draw(txt, id);
+        break;
+      case 'state':
+        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        stateRenderer.setConf(config.state);
+        stateRenderer.draw(txt, id);
+        break;
+      case 'stateDiagram':
+        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        stateRendererV2.setConf(config.state);
+        stateRendererV2.draw(txt, id);
+        break;
+      case 'info':
+        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        infoRenderer.setConf(config.class);
+        infoRenderer.draw(txt, id, pkg.version);
+        break;
+      case 'pie':
+        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        pieRenderer.setConf(config.class);
+        pieRenderer.draw(txt, id, pkg.version);
+        break;
+      case 'er':
+        erRenderer.setConf(config.er);
+        erRenderer.draw(txt, id, pkg.version);
+        break;
+      case 'journey':
+        journeyRenderer.setConf(config.journey);
+        journeyRenderer.draw(txt, id, pkg.version);
+        break;
+    }
+  } catch (e) {
+    errorRenderer.setConf(config.class);
+    errorRenderer.draw(id, pkg.version);
+    throw e;
   }
 
   select(`[id="${id}"]`)

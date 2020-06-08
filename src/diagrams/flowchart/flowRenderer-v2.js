@@ -268,8 +268,13 @@ export const getClasses = function(text) {
   const parser = flow.parser;
   parser.yy = flowDb;
 
-  // Parse the graph definition
-  parser.parse(text);
+  try {
+    // Parse the graph definition
+    parser.parse(text);
+  } catch (e) {
+    return;
+  }
+
   return flowDb.getClasses();
 };
 
@@ -278,6 +283,7 @@ export const getClasses = function(text) {
  * @param text
  * @param id
  */
+
 export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
@@ -285,11 +291,11 @@ export const draw = function(text, id) {
   parser.yy = flowDb;
 
   // Parse the graph definition
-  try {
-    parser.parse(text);
-  } catch (err) {
-    logger.debug('Parsing failed');
-  }
+  // try {
+  parser.parse(text);
+  // } catch (err) {
+  // logger.debug('Parsing failed');
+  // }
 
   // Fetch the default direction, use TD if none was found
   let dir = flowDb.getDirection();
