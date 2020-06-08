@@ -1,4 +1,5 @@
 import { logger } from '../../logger';
+import { getConfig, setConfig } from '../../config';
 
 let prevActor = undefined;
 let actors = {};
@@ -6,6 +7,7 @@ let messages = [];
 const notes = [];
 let title = '';
 let sequenceNumbersEnabled = false;
+let wrapEnabled = false;
 
 export const addActor = function(id, name, description) {
   // Don't allow description nulling
@@ -91,6 +93,16 @@ export const enableSequenceNumbers = function() {
   sequenceNumbersEnabled = true;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
+
+export const enableWrap = function() {
+  wrapEnabled = true;
+};
+
+export const disableWrap = function() {
+  wrapEnabled = false;
+};
+
+export const autoWrap = () => wrapEnabled;
 
 export const clear = function() {
   actors = {};
@@ -213,6 +225,16 @@ export const apply = function(param) {
       case 'parEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
+      case 'config':
+        try {
+          let cfg = param.config;
+          let _config = getConfig();
+          let config = Object.assign(_config, cfg);
+          setConfig(config);
+        } catch (error) {
+          logger.error('Error: unable to parse config');
+        }
+        break;
     }
   }
 };
@@ -221,8 +243,11 @@ export default {
   addActor,
   addMessage,
   addSignal,
+  enableWrap,
+  disableWrap,
   enableSequenceNumbers,
   showSequenceNumbers,
+  autoWrap,
   getMessages,
   getActors,
   getActor,

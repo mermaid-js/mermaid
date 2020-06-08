@@ -29,6 +29,52 @@ const d3CurveTypes = {
   curveStepBefore: curveStepBefore
 };
 
+const initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
+
+/**
+ * @function detectInit
+ * Detects the init config object from the text
+ * ```mermaid
+ * init: {"startOnLoad": true, "logLevel": 1 }
+ * graph LR
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ * or
+ * ```mermaid
+ * initialize: {"startOnLoad": true, logLevel: "fatal" }
+ * graph LR
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ *
+ * @param {string} text The text defining the graph
+ * @returns {object} An object representing the initialization to pass to mermaidAPI.initialize()
+ */
+export const detectInit = function(text) {
+  text = text.replace(/^\s*%%.*\n/g, '\n');
+  logger.debug('Detecting diagram init based on the text ' + text);
+  if (text.match(initPart)) {
+    return JSON.parse(
+      text
+        .match(initPart)[1]
+        .trim()
+        .replace(/\\n/g, '\n')
+        .replace(/'/g, '"')
+    );
+  }
+};
+
 /**
  * @function detectType
  * Detects the type of the graph text.
@@ -47,7 +93,7 @@ const d3CurveTypes = {
  * @returns {string} A graph definition key
  */
 export const detectType = function(text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n');
+  text = text.replace(/^\s*%%.*\n/g, '\n').replace(initPart, '');
   logger.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
@@ -255,6 +301,7 @@ export const generateId = () => {
 };
 
 export default {
+  detectInit,
   detectType,
   isSubstringInArray,
   interpolateToCurve,

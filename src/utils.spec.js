@@ -7,6 +7,16 @@ describe('when detecting chart type ', function() {
     const type = utils.detectType(str);
     expect(type).toBe('flowchart');
   });
+  it('should handle an initialize defintion', function() {
+    const str = 'initialize: { "logLevel": 0, "theme": "dark" }\ngraph TB\nbfs1:queue';
+    const init = JSON.stringify(utils.detectInit(str));
+    expect(init).toBe('{"logLevel":0,"theme":"dark"}');
+  });
+  it('should handle an init defintion', function() {
+    const str = 'init: { "logLevel": 0, "theme": "dark" }\ngraph TB\nbfs1:queue';
+    const init = JSON.stringify(utils.detectInit(str));
+    expect(init).toBe('{"logLevel":0,"theme":"dark"}');
+  });
   it('should handle a graph defintion with leading spaces', function() {
     const str = '    graph TB\nbfs1:queue';
     const type = utils.detectType(str);

@@ -48,6 +48,14 @@
 "title"           return 'title';
 "sequenceDiagram" return 'SD';
 "autonumber" 			return 'autonumber';
+"init"      			return 'INIT';
+"initialize"      return 'INIT';
+"conf"      			return 'conf';
+"config"     			return 'conf';
+"configure"     	return 'conf';
+"configuration"   return 'conf';
+"wrap"      			return 'wrap';
+"nowrap"     			return 'nowrap';
 ","               return ',';
 ";"               return 'NL';
 [^\+\->:\n,;]+      { yytext = yytext.trim(); return 'ACTOR'; }
@@ -74,6 +82,7 @@
 start
 	: SPACE start
 	| NL start
+	| INIT text3 start
 	| SD document { yy.apply($2);return $2; }
 	;
 
@@ -85,7 +94,7 @@ document
 line
 	: SPACE statement { $$ = $2 }
 	| statement { $$ = $1 }
-	| NL { $$=[];}
+	| NL { $$=[]; }
 	;
 
 statement
@@ -93,9 +102,12 @@ statement
 	| 'participant' actor 'NL' {$$=$2;}
 	| signal 'NL'
 	| autonumber {yy.enableSequenceNumbers()}
+	| wrap {yy.enableWrap()}
+	| nowrap {yy.disableWrap()}
 	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NL'
+	| conf text3 'NL' {$$=[{type:'config', config:$2}]}
 	| title text2 'NL' {$$=[{type:'setTitle', text:$2}]}
 	| 'loop' restOfLine document end
 	{
@@ -196,5 +208,7 @@ signaltype
 	;
 
 text2: TXT {$$ = $1.substring(1).trim().replace(/\\n/gm, "\n");} ;
+
+text3: TXT {$$ = JSON.parse($1.substring(1).trim().replace(/\\n/gm, "\n").replace(/'/gm, "\""));} ;
 
 %%

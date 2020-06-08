@@ -4,6 +4,7 @@ import { logger } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
+import { getConfig } from '../../config';
 
 parser.yy = sequenceDb;
 
@@ -18,13 +19,17 @@ const conf = {
   height: 65,
   actorFontSize: 14,
   actorFontFamily: '"Open-Sans", "sans-serif"',
+  // 400 = normal
+  actorFontWeight: 400,
   // Note font settings
   noteFontSize: 14,
   noteFontFamily: '"trebuchet ms", verdana, arial',
+  noteFontWeight: 400,
   noteAlign: 'center',
   // Message font settings
   messageFontSize: 16,
   messageFontFamily: '"trebuchet ms", verdana, arial',
+  messageFontWeight: 400,
   // Margin around loop boxes
   boxMargin: 10,
   boxTextMargin: 5,
@@ -45,7 +50,12 @@ const conf = {
   // text placement as: tspan | fo | old only text as before
   textPlacement: 'tspan',
 
-  showSequenceNumbers: false
+  showSequenceNumbers: false,
+
+  // wrap text
+  wrapEnabled: false,
+  // padding for wrapped text
+  wrapPadding: 15
 };
 
 export const bounds = {
@@ -138,8 +148,7 @@ export const bounds = {
         return activation.actor;
       })
       .lastIndexOf(message.from.actor);
-    const activation = this.activations.splice(lastActorActivationIdx, 1)[0];
-    return activation;
+    return this.activations.splice(lastActorActivationIdx, 1)[0];
   },
   newLoop: function(title, fill) {
     this.sequenceItems.push({
@@ -152,8 +161,7 @@ export const bounds = {
     });
   },
   endLoop: function() {
-    const loop = this.sequenceItems.pop();
-    return loop;
+    return this.sequenceItems.pop();
   },
   addSectionToLoop: function(message) {
     const loop = this.sequenceItems.pop();
@@ -174,6 +182,50 @@ export const bounds = {
     return this.data;
   }
 };
+const wrapLabel = (label, maxWidth, joinWith = '<br/>') => {
+  const words = label.split(' ');
+  const completedLines = [];
+  let nextLine = '';
+  words.forEach((word, index) => {
+    const wordLength = calculateTextWidth(`${word} `);
+    const nextLineLength = calculateTextWidth(nextLine);
+    if (wordLength > maxWidth) {
+      const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth);
+      completedLines.push(nextLine, ...hyphenatedStrings);
+      nextLine = remainingWord;
+    } else if (nextLineLength + wordLength >= maxWidth) {
+      completedLines.push(nextLine);
+      nextLine = word;
+    } else {
+      nextLine = [nextLine, word].filter(Boolean).join(' ');
+    }
+    const currentWord = index + 1;
+    const isLastWord = currentWord === words.length;
+    if (isLastWord) {
+      completedLines.push(nextLine);
+    }
+  });
+  return completedLines.filter(line => line !== '').join(joinWith);
+};
+const breakString = (word, maxWidth, hyphenCharacter = '-') => {
+  const characters = word.split('');
+  const lines = [];
+  let currentLine = '';
+  characters.forEach((character, index) => {
+    const nextLine = `${currentLine}${character}`;
+    const lineWidth = calculateTextWidth(nextLine);
+    if (lineWidth >= maxWidth) {
+      const currentCharacter = index + 1;
+      const isLastLine = characters.length === currentCharacter;
+      const hyphenatedNextLine = `${nextLine}${hyphenCharacter}`;
+      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
+      currentLine = '';
+    } else {
+      currentLine = nextLine;
+    }
+  });
+  return { hyphenatedStrings: lines, remainingWord: currentLine };
+};
 
 const _drawLongText = (text, x, y, g, width) => {
   let textHeight = 0;
@@ -187,7 +239,6 @@ const _drawLongText = (text, x, y, g, width) => {
     right: 'end',
     end: 'end'
   };
-
   const lines = text.split(common.lineBreakRegex);
   for (const line of lines) {
     const textObj = svgDraw.getTextObj();
@@ -263,8 +314,8 @@ const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
  * @param startx
  * @param stopx
  * @param verticalPos
- * @param txtCenter
  * @param msg
+ * @param sequenceIndex
  */
 const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceIndex) {
   const g = elem.append('g');
@@ -450,7 +501,13 @@ export const setConf = function(cnf) {
   });
 
   if (cnf.fontFamily) {
-    conf.actorFontFamily = conf.noteFontFamily = cnf.fontFamily;
+    conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
+  }
+  if (cnf.fontSize) {
+    conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize;
+  }
+  if (cnf.fontWeight) {
+    conf.actorFontWeight = conf.noteFontWeight = conf.messageFontWeight = cnf.fontWeight;
   }
 };
 
@@ -491,7 +548,12 @@ const calculateActorWidth = function(actor) {
 
   return Math.max(
     conf.width,
-    calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily)
+    calculateTextWidth(
+      actor.description,
+      conf.actorFontSize,
+      conf.actorFontFamily,
+      conf.actorFontWeight
+    )
   );
 };
 
@@ -501,14 +563,16 @@ const calculateActorWidth = function(actor) {
  * @param text - The text to calculate the width of
  * @param fontSize - The font size of the given text
  * @param fontFamily - The font family (one, or more fonts) to render
+ * @param fontWeight - The font weight (normal, bold, italics)
  */
-export const calculateTextWidth = function(text, fontSize, fontFamily) {
+export const calculateTextWidth = function(text, fontSize, fontFamily, fontWeight) {
   if (!text) {
     return 0;
   }
 
   fontSize = fontSize ? fontSize : conf.actorFontSize;
   fontFamily = fontFamily ? fontFamily : conf.actorFontFamily;
+  fontWeight = fontWeight ? fontWeight : conf.actorFontWeight;
 
   // We can't really know if the user supplied font family will render on the user agent;
   // thus, we'll take the max width between the user supplied font family, and a default
@@ -518,7 +582,7 @@ export const calculateTextWidth = function(text, fontSize, fontFamily) {
   let maxWidth = 0;
 
   const body = select('body');
-  // We don'y want to leak DOM elements - if a removal operation isn't available
+  // We don't want to leak DOM elements - if a removal operation isn't available
   // for any reason, do not continue.
   if (!body.remove) {
     return 0;
@@ -533,6 +597,7 @@ export const calculateTextWidth = function(text, fontSize, fontFamily) {
       const textElem = svgDraw
         .drawText(g, textObj)
         .style('font-size', fontSize)
+        .style('font-weight', fontWeight)
         .style('font-family', fontFamily);
 
       maxWidth = Math.max(maxWidth, (textElem._groups || textElem)[0][0].getBBox().width);
@@ -542,7 +607,7 @@ export const calculateTextWidth = function(text, fontSize, fontFamily) {
   g.remove();
 
   // Adds some padding, so the text won't sit exactly within the actor's borders
-  return maxWidth + 35;
+  return maxWidth + conf.wrapPadding * 2;
 };
 
 /**
@@ -551,8 +616,11 @@ export const calculateTextWidth = function(text, fontSize, fontFamily) {
  * @param id
  */
 export const draw = function(text, id) {
+  logger.debug(`Config (preclear): ${JSON.stringify(conf)}`, conf);
   parser.yy.clear();
   parser.parse(text + '\n');
+  logger.debug(`Config (postclear): ${JSON.stringify(conf)}`, conf);
+  setConf(getConfig());
 
   bounds.init();
   const diagram = select(`[id="${id}"]`);
@@ -597,11 +665,18 @@ export const draw = function(text, id) {
   // Draw the messages/signals
   let sequenceIndex = 1;
   messages.forEach(function(msg) {
-    let loopData;
-    const noteWidth = Math.max(
-      conf.width,
-      calculateTextWidth(msg.message, conf.noteFontSize, conf.noteFontFamily)
-    );
+    let loopData,
+      noteWidth,
+      textWidth = calculateTextWidth(
+        msg.message,
+        conf.noteFontSize,
+        conf.noteFontFamily,
+        conf.noteFontWeight
+      ),
+      shouldWrap =
+        (sequenceDb.autoWrap() || conf.wrapEnabled) &&
+        msg.message &&
+        !common.lineBreakRegex.test(msg.message);
 
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
@@ -609,8 +684,12 @@ export const draw = function(text, id) {
 
         startx = actors[msg.from].x;
         stopx = actors[msg.to].x;
+        noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth);
 
         if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
+          if (shouldWrap) {
+            msg.message = wrapLabel(msg.message, noteWidth - conf.noteMargin * 2);
+          }
           drawNote(
             diagram,
             startx + (actors[msg.from].width + conf.actorMargin) / 2,
@@ -619,6 +698,9 @@ export const draw = function(text, id) {
             noteWidth
           );
         } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
+          if (shouldWrap) {
+            msg.message = wrapLabel(msg.message, noteWidth - conf.noteMargin * 2);
+          }
           drawNote(
             diagram,
             startx - noteWidth + (actors[msg.from].width - conf.actorMargin) / 2,
@@ -628,6 +710,9 @@ export const draw = function(text, id) {
           );
         } else if (msg.to === msg.from) {
           // Single-actor over
+          if (shouldWrap) {
+            msg.message = wrapLabel(msg.message, noteWidth - conf.noteMargin * 2);
+          }
           drawNote(
             diagram,
             startx + (actors[msg.to].width - noteWidth) / 2,
@@ -638,6 +723,11 @@ export const draw = function(text, id) {
         } else {
           // Multi-actor over
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
+          noteWidth =
+            (shouldWrap ? forceWidth : Math.max(forceWidth, textWidth)) - conf.noteMargin * 2;
+          if (shouldWrap) {
+            msg.message = wrapLabel(msg.message, noteWidth);
+          }
           let x =
             startx < stopx
               ? startx + (actors[msg.from].width - conf.actorMargin) / 2
@@ -726,6 +816,9 @@ export const draw = function(text, id) {
           const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
           startx = fromBounds[fromIdx];
           stopx = toBounds[toIdx];
+          if (shouldWrap) {
+            msg.message = wrapLabel(msg.message, Math.abs(stopx - startx - conf.messageMargin));
+          }
 
           const verticalPos = bounds.getVerticalPos();
           drawMessage(diagram, startx, stopx, verticalPos, msg, sequenceIndex);
@@ -823,21 +916,34 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
       const actor = actors[msg.to];
 
       // If this is the first actor, and the message is left of it, no need to calculate the margin
-      if (msg.placement == parser.yy.PLACEMENT.LEFTOF && !actor.prevActor) {
+      if (msg.placement === parser.yy.PLACEMENT.LEFTOF && !actor.prevActor) {
         return;
       }
 
       // If this is the last actor, and the message is right of it, no need to calculate the margin
-      if (msg.placement == parser.yy.PLACEMENT.RIGHTOF && !actor.nextActor) {
+      if (msg.placement === parser.yy.PLACEMENT.RIGHTOF && !actor.nextActor) {
         return;
       }
 
       const isNote = msg.placement !== undefined;
       const isMessage = !isNote;
+      const wrapped = sequenceDb.autoWrap() || conf.wrapEnabled;
 
       const fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
       const fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
-      const messageWidth = calculateTextWidth(msg.message, fontSize, fontFamily);
+      const fontWeight = isNote ? conf.noteFontWeight : conf.messageFontWeight;
+      const messageWidth = calculateTextWidth(
+        wrapped
+          ? wrapLabel(
+              msg.message,
+              conf.width -
+                (isNote ? conf.noteMargin * 2 + conf.messageMargin * 2 : conf.messageMargin * 2)
+            )
+          : msg.message,
+        fontSize,
+        fontFamily,
+        fontWeight
+      );
 
       /*
        * The following scenarios should be supported:
@@ -855,25 +961,25 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
        *   - If the note is on the right of the actor, we should define the current actor
        *     margin
        */
-      if (isMessage && msg.from == actor.nextActor) {
+      if (isMessage && msg.from === actor.nextActor) {
         maxMessageWidthPerActor[msg.to] = Math.max(
           maxMessageWidthPerActor[msg.to] || 0,
           messageWidth
         );
       } else if (
-        (isMessage && msg.from == actor.prevActor) ||
-        msg.placement == parser.yy.PLACEMENT.RIGHTOF
+        (isMessage && msg.from === actor.prevActor) ||
+        msg.placement === parser.yy.PLACEMENT.RIGHTOF
       ) {
         maxMessageWidthPerActor[msg.from] = Math.max(
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
         );
-      } else if (msg.placement == parser.yy.PLACEMENT.LEFTOF) {
+      } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
         maxMessageWidthPerActor[actor.prevActor] = Math.max(
           maxMessageWidthPerActor[actor.prevActor] || 0,
           messageWidth
         );
-      } else if (msg.placement == parser.yy.PLACEMENT.OVER) {
+      } else if (msg.placement === parser.yy.PLACEMENT.OVER) {
         if (actor.prevActor) {
           maxMessageWidthPerActor[actor.prevActor] = Math.max(
             maxMessageWidthPerActor[actor.prevActor] || 0,
@@ -891,6 +997,7 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
     }
   });
 
+  logger.debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
 
@@ -919,15 +1026,31 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
       continue;
     }
 
-    actor.width = Math.max(
-      conf.width,
-      calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily)
-    );
+    const wrapped = sequenceDb.autoWrap() || conf.wrapEnabled;
 
-    nextActor.width = Math.max(
-      conf.width,
-      calculateTextWidth(nextActor.description, conf.actorFontSize, conf.actorFontFamily)
-    );
+    actor.width = wrapped
+      ? conf.width
+      : Math.max(
+          conf.width,
+          calculateTextWidth(
+            actor.description,
+            conf.actorFontSize,
+            conf.actorFontFamily,
+            conf.actorFontWeight
+          )
+        );
+
+    nextActor.width = wrapped
+      ? conf.width
+      : Math.max(
+          conf.width,
+          calculateTextWidth(
+            nextActor.description,
+            conf.actorFontSize,
+            conf.actorFontFamily,
+            conf.actorFontWeight
+          )
+        );
 
     const messageWidth = actorToMessageWidth[actorKey];
     const actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
