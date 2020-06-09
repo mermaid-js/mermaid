@@ -17,3 +17,10 @@
   // --mermaid-alt-font-family: '"Lucida Console", Monaco, monospace';
 }
 
+.error-icon {
+  fill: $errorBkgColor;
+}
+.error-text {
+  fill: $errorTextColor;
+  stroke: $errorTextColor;
+}
