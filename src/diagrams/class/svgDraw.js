@@ -279,8 +279,7 @@ export const drawClass = function(elem, classDef, conf) {
 
 export const parseMember = function(text) {
   const fieldRegEx = /(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
-  const methodRegEx = /(\+|-|~|#)?(\w+)\((.*)\)(\*|\$)? *(.*)?/;
-  ///^(\+|-|~|#)?(\w+)\((.*)\)(\*|\$)?[ ]*(.*)?$/;
+  const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
 
   let fieldMatch = text.match(fieldRegEx);
   let methodMatch = text.match(methodRegEx);
@@ -299,10 +298,11 @@ const buildFieldDisplay = function(parsedText) {
 
   try {
     let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let fieldType = parsedText[2] ? parseGenericTypes(parsedText[2]) : '';
+    let fieldType = parsedText[2] ? parsedText[2].trim() : '';
+    let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
     let fieldName = parsedText[4] ? parsedText[4].trim() : '';
 
-    displayText = visibility + fieldType + ' ' + fieldName;
+    displayText = visibility + fieldType + genericType + ' ' + fieldName;
   } catch (err) {
     displayText = parsedText;
   }
@@ -320,7 +320,7 @@ const buildMethodDisplay = function(parsedText) {
   try {
     let visibility = parsedText[1] ? parsedText[1].trim() : '';
     let methodName = parsedText[2] ? parsedText[2].trim() : '';
-    let parameters = parsedText[3] ? parseGenericTypes(parsedText[3]) : '';
+    let parameters = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
     let classifier = parsedText[4] ? parsedText[4].trim() : '';
     let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
 
@@ -347,11 +347,22 @@ const buildLegacyDisplay = function(text) {
   let methodEnd = text.indexOf(')');
 
   if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    let parsedText = text.match(/(\+|-|~|#)?(\w+)/);
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let methodName = text.substring(0, methodStart);
+    let visibility = '';
+    let methodName = '';
+
+    let firstChar = text.substring(0, 1);
+    if (firstChar.match(/\w/)) {
+      methodName = text.substring(0, methodStart).trim();
+    } else {
+      if (firstChar.match(/\+|-|~|#/)) {
+        visibility = firstChar;
+      }
+
+      methodName = text.substring(1, methodStart).trim();
+    }
+
     let parameters = text.substring(methodStart + 1, methodEnd);
-    let classifier = text.substring(methodEnd, methodEnd + 1);
+    let classifier = text.substring(methodEnd + 1, 1);
     cssStyle = parseClassifier(classifier);
 
     displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
