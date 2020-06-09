@@ -278,13 +278,14 @@ export const drawClass = function(elem, classDef, conf) {
 };
 
 export const parseMember = function(text) {
-  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
-  const methodRegEx = /^(\+|-|~|#)?(\w+)\((.*)\)(\*|\$)?\s?(.*)?/;
+  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)$/;
+  const methodRegEx = /(\+|-|~|#)?(\w+)\((.*)\)(\*|\$)? *(.*)?/;
+  ///^(\+|-|~|#)?(\w+)\((.*)\)(\*|\$)?[ ]*(.*)?$/;
 
   let fieldMatch = text.match(fieldRegEx);
   let methodMatch = text.match(methodRegEx);
 
-  if (fieldMatch) {
+  if (fieldMatch && !methodMatch) {
     return buildFieldDisplay(fieldMatch);
   } else if (methodMatch) {
     return buildMethodDisplay(methodMatch);
@@ -299,7 +300,7 @@ const buildFieldDisplay = function(parsedText) {
   try {
     let visibility = parsedText[1] ? parsedText[1].trim() : '';
     let fieldType = parsedText[2] ? parseGenericTypes(parsedText[2]) : '';
-    let fieldName = parsedText[3] ? parsedText[3].trim() : '';
+    let fieldName = parsedText[4] ? parsedText[4].trim() : '';
 
     displayText = visibility + fieldType + ' ' + fieldName;
   } catch (err) {
