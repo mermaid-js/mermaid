@@ -71,9 +71,9 @@ describe('Class diagram', () => {
     classDiagram
       Class01 <|-- AveryLongClass : Cool
       &lt;&lt;interface&gt;&gt; Class01
-      Class01 : -int privateMethod()
-      Class01 : +int publicMethod()
-      Class01 : #int protectedMethod()
+      Class01 : -privateMethod()
+      Class01 : +publicMethod()
+      Class01 : #protectedMethod()
       Class01 : -int privateChimp
       Class01 : +int publicGorilla
       Class01 : #int protectedMarmoset
