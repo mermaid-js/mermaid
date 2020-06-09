@@ -7651,13 +7651,6 @@ node-sass@^4.12.0:
     stdout-stream "^1.4.0"
     "true-case-path" "^1.0.2"
 
-node@^14.3.0:
-  version "14.3.0"
-  resolved "https://registry.yarnpkg.com/node/-/node-14.3.0.tgz#a0aa79f74add23cf84a2d3ac9d631bbed3ca496a"
-  integrity sha512-wYdyAhpzQ+iaXnDby6JUok/efke+TW2VJk8lOFc4B6F1omIiBG6gt/xVG074btcliY9Sw49D2veah8bZ20lGEA==
-  dependencies:
-    node-bin-setup "^1.0.0"
-
 nomnom@1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/nomnom/-/nomnom-1.5.2.tgz#f4345448a853cfbd5c0d26320f2477ab0526fe2f"
