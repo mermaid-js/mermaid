@@ -158,7 +158,7 @@ module.exports = {
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: white;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: white;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText {\n  fill: #1f2020;\n  stroke: none;\n  font-family: \"trebuchet ms\", verdana, arial, var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #1f2020;\n  fill: #1f2020;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: purple;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: purple; }\n\ng.classGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: purple;\n  font-size: 10px; }\n\n.relation {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: purple; }\n\ng.stateGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.transition {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: purple; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: purple; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n", ""]);
+exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #474949;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #474949;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\ng > rect[class=\"note\"] {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #1f2020;\n  fill: #1f2020;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: purple;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: purple; }\n\ng.classGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: purple;\n  font-size: 10px; }\n\n.relation {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: purple; }\n\ng.stateGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.transition {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: purple; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: purple; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial, \"Comic Sans MS\", \"Comic Sans\", cursive'; }\n\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n", ""]);
 
 
 
@@ -173,7 +173,7 @@ exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variable
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #333333;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #ffffde;\n  stroke: #aaaa33;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #ffffde;\n  border: 1px solid #aaaa33;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #CCCCFF;\n  fill: #CCCCFF; }\n\n.note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\n.noteText {\n  fill: #ECECFF;\n  stroke: none;\n  font-family: \"trebuchet ms\", verdana, arial, var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #ECECFF;\n  fill: #ECECFF;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(102, 102, 255, 0.49); }\n\n.section2 {\n  fill: #fff400; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #8a90dd;\n  stroke: #534fbc; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #bfc7ff;\n  stroke: #534fbc; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #bfc7ff;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.classGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #9370DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.stateGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #9370DB; }\n\n.statediagram-cluster rect {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #9370DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #aaaa33;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
+exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #333333;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #ffffde;\n  stroke: #aaaa33;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #ffffde;\n  border: 1px solid #aaaa33;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #CCCCFF;\n  fill: #CCCCFF; }\n\n.note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\n.noteText {\n  fill: #ECECFF;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #ECECFF;\n  fill: #ECECFF;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(102, 102, 255, 0.49); }\n\n.section2 {\n  fill: #fff400; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #8a90dd;\n  stroke: #534fbc; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #bfc7ff;\n  stroke: #534fbc; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #bfc7ff;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.classGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #9370DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.stateGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #9370DB; }\n\n.statediagram-cluster rect {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #9370DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #aaaa33;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial, \"Comic Sans MS\", \"Comic Sans\", cursive'; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
 
 
 
@@ -188,7 +188,7 @@ exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variable
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: green; }\n\n.edgePath .path {\n  stroke: green;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #cdffb2;\n  stroke: #6eaa49;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #cdffb2;\n  border: 1px solid #6eaa49;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #13540c;\n  fill: #cde498; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #326932;\n  fill: #cde498; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #326932;\n  fill: #326932; }\n\n.note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\n.noteText {\n  fill: #cde498;\n  stroke: none;\n  font-family: \"trebuchet ms\", verdana, arial, var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #cde498;\n  fill: #cde498;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #6eaa49; }\n\n.section2 {\n  fill: #6eaa49; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #487e3a;\n  stroke: #13540c; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #cde498;\n  stroke: #13540c; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #cde498;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.classGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #13540c;\n  font-size: 10px; }\n\n.relation {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.stateGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #13540c; }\n\n.statediagram-cluster rect {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #13540c; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #6eaa49;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
+exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: green; }\n\n.edgePath .path {\n  stroke: green;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #cdffb2;\n  stroke: #6eaa49;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #cdffb2;\n  border: 1px solid #6eaa49;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #13540c;\n  fill: #cde498; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #326932;\n  fill: #cde498; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #326932;\n  fill: #326932; }\n\n.note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\n.noteText {\n  fill: #cde498;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #cde498;\n  fill: #cde498;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #6eaa49; }\n\n.section2 {\n  fill: #6eaa49; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #487e3a;\n  stroke: #13540c; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #cde498;\n  stroke: #13540c; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #cde498;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.classGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #13540c;\n  font-size: 10px; }\n\n.relation {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.stateGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #13540c; }\n\n.statediagram-cluster rect {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #13540c; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #6eaa49;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial, \"Comic Sans MS\", \"Comic Sans\", cursive'; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
 
 
 
@@ -203,7 +203,7 @@ exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variable
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #666;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: white;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #eaf2fb;\n  stroke: #26a;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #eaf2fb;\n  border: 1px solid #26a;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #999;\n  fill: #eee; }\n\ntext.actor > tspan {\n  fill: #333;\n  stroke: none; }\n\n.actor-line {\n  stroke: #666; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #999;\n  fill: #eee; }\n\n.labelText, .labelText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #999;\n  fill: #999; }\n\n.note {\n  stroke: #777700;\n  fill: #ffa; }\n\n.noteText {\n  fill: #eee;\n  stroke: none;\n  font-family: \"trebuchet ms\", verdana, arial, var(--mermaid-font-family);\n  font-size: 14px; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: #777700;\n  fill: #ffa; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #eee;\n  fill: #eee;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #80b3e6; }\n\n.section2 {\n  fill: #80b3e6; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: #e6e6e6;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #d42;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #333;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #333;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #26a;\n  stroke: #1a4d80; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: #333; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: #333; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #eee;\n  stroke: #1a4d80; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #333 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: #666;\n  fill: #bbb;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #333 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #b1361b;\n  fill: #d42;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #b1361b;\n  fill: #eee;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #b1361b;\n  fill: #bbb;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #333 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #333 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #999;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.classGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #999;\n  font-size: 10px; }\n\n.relation {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.stateGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #777700;\n  fill: #ffa; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #999; }\n\n.statediagram-cluster rect {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #999; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #ffa;\n  stroke: #777700;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
+exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: #333333; }\n\n.edgePath .path {\n  stroke: #666;\n  stroke-width: 1.5px; }\n\n.edgeLabel {\n  background-color: white;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #eaf2fb;\n  stroke: #26a;\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #333; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #eaf2fb;\n  border: 1px solid #26a;\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #999;\n  fill: #eee; }\n\ntext.actor > tspan {\n  fill: #333;\n  stroke: none; }\n\n.actor-line {\n  stroke: #666; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #999;\n  fill: #eee; }\n\n.labelText, .labelText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #999;\n  fill: #999; }\n\n.note {\n  stroke: #777700;\n  fill: #ffa; }\n\n.noteText {\n  fill: #eee;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\ng > rect[class=\"note\"] {\n  stroke: #777700;\n  fill: #ffa; }\n\ng > text[class=\"noteText\"] > tspan {\n  stroke: #eee;\n  fill: #eee;\n  stroke-width: 1px; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #80b3e6; }\n\n.section2 {\n  fill: #80b3e6; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: #e6e6e6;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #d42;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #333;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #333;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #26a;\n  stroke: #1a4d80; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: #333; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: #333; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #eee;\n  stroke: #1a4d80; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #333 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: #666;\n  fill: #bbb;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #333 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #b1361b;\n  fill: #d42;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #b1361b;\n  fill: #eee;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #b1361b;\n  fill: #bbb;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #333 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #333 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #999;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.classGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #999;\n  font-size: 10px; }\n\n.relation {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.stateGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #777700;\n  fill: #ffa; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #999; }\n\n.statediagram-cluster rect {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #999; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #ffa;\n  stroke: #777700;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial, \"Comic Sans MS\", \"Comic Sans\", cursive'; }\n\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n", ""]);
 
 
 
@@ -59637,12 +59637,12 @@ var draw = function draw(txt, id) {
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,4],$V3=[1,5],$V4=[1,9],$V5=[2,5],$V6=[1,13],$V7=[1,15],$V8=[1,16],$V9=[1,18],$Va=[1,19],$Vb=[1,20],$Vc=[1,21],$Vd=[1,22],$Ve=[1,24],$Vf=[1,25],$Vg=[1,26],$Vh=[1,27],$Vi=[1,28],$Vj=[1,29],$Vk=[1,30],$Vl=[1,32],$Vm=[1,33],$Vn=[1,4,5,12,17,18,19,20,21,23,24,26,27,28,29,30,32,34,35,36,47],$Vo=[1,42],$Vp=[4,5,12,17,18,19,20,21,23,24,26,27,28,29,30,32,36,47],$Vq=[4,5,12,17,18,19,20,21,23,24,26,27,28,29,30,32,35,36,47],$Vr=[4,5,12,17,18,19,20,21,23,24,26,27,28,29,30,32,34,36,47],$Vs=[45,46,47];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,2],$V1=[1,3],$V2=[1,5],$V3=[1,6],$V4=[2,5],$V5=[1,14],$V6=[1,16],$V7=[1,17],$V8=[1,19],$V9=[1,21],$Va=[1,22],$Vb=[1,24],$Vc=[1,25],$Vd=[1,26],$Ve=[1,27],$Vf=[1,28],$Vg=[1,29],$Vh=[1,31],$Vi=[1,32],$Vj=[1,4,5,11,14,19,20,21,23,25,26,27,28,29,31,33,34,35,46],$Vk=[1,42],$Vl=[4,5,11,14,19,20,21,23,25,26,27,28,29,31,35,46],$Vm=[4,5,11,14,19,20,21,23,25,26,27,28,29,31,34,35,46],$Vn=[4,5,11,14,19,20,21,23,25,26,27,28,29,31,33,35,46],$Vo=[44,45,46];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"INIT":6,"text3":7,"SD":8,"document":9,"line":10,"statement":11,"participant":12,"actor":13,"AS":14,"restOfLine":15,"signal":16,"autonumber":17,"wrap":18,"nowrap":19,"activate":20,"deactivate":21,"note_statement":22,"conf":23,"title":24,"text2":25,"loop":26,"end":27,"rect":28,"opt":29,"alt":30,"else_sections":31,"par":32,"par_sections":33,"and":34,"else":35,"note":36,"placement":37,"over":38,"actor_pair":39,"spaceList":40,",":41,"left_of":42,"right_of":43,"signaltype":44,"+":45,"-":46,"ACTOR":47,"SOLID_OPEN_ARROW":48,"DOTTED_OPEN_ARROW":49,"SOLID_ARROW":50,"DOTTED_ARROW":51,"SOLID_CROSS":52,"DOTTED_CROSS":53,"TXT":54,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"SPACE",5:"NL",6:"INIT",8:"SD",12:"participant",14:"AS",15:"restOfLine",17:"autonumber",18:"wrap",19:"nowrap",20:"activate",21:"deactivate",23:"conf",24:"title",26:"loop",27:"end",28:"rect",29:"opt",30:"alt",32:"par",34:"and",35:"else",36:"note",38:"over",41:",",42:"left_of",43:"right_of",45:"+",46:"-",47:"ACTOR",48:"SOLID_OPEN_ARROW",49:"DOTTED_OPEN_ARROW",50:"SOLID_ARROW",51:"DOTTED_ARROW",52:"SOLID_CROSS",53:"DOTTED_CROSS",54:"TXT"},
-productions_: [0,[3,2],[3,2],[3,3],[3,2],[9,0],[9,2],[10,2],[10,1],[10,1],[11,5],[11,3],[11,2],[11,1],[11,1],[11,1],[11,3],[11,3],[11,2],[11,3],[11,3],[11,4],[11,4],[11,4],[11,4],[11,4],[33,1],[33,4],[31,1],[31,4],[22,4],[22,4],[40,2],[40,1],[39,3],[39,1],[37,1],[37,1],[16,5],[16,5],[16,4],[13,1],[44,1],[44,1],[44,1],[44,1],[44,1],[44,1],[25,1],[7,1]],
+symbols_: {"error":2,"start":3,"SPACE":4,"NL":5,"directive":6,"SD":7,"document":8,"line":9,"statement":10,"open_directive":11,"textDirective":12,"close_directive":13,"participant":14,"actor":15,"AS":16,"restOfLine":17,"signal":18,"autonumber":19,"activate":20,"deactivate":21,"note_statement":22,"title":23,"text2":24,"loop":25,"end":26,"rect":27,"opt":28,"alt":29,"else_sections":30,"par":31,"par_sections":32,"and":33,"else":34,"note":35,"placement":36,"over":37,"actor_pair":38,"spaceList":39,",":40,"left_of":41,"right_of":42,"signaltype":43,"+":44,"-":45,"ACTOR":46,"SOLID_OPEN_ARROW":47,"DOTTED_OPEN_ARROW":48,"SOLID_ARROW":49,"DOTTED_ARROW":50,"SOLID_CROSS":51,"DOTTED_CROSS":52,"TXT":53,"text3":54,"IN_DIRECTIVE":55,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"SPACE",5:"NL",7:"SD",11:"open_directive",13:"close_directive",14:"participant",16:"AS",17:"restOfLine",19:"autonumber",20:"activate",21:"deactivate",23:"title",25:"loop",26:"end",27:"rect",28:"opt",29:"alt",31:"par",33:"and",34:"else",35:"note",37:"over",40:",",41:"left_of",42:"right_of",44:"+",45:"-",46:"ACTOR",47:"SOLID_OPEN_ARROW",48:"DOTTED_OPEN_ARROW",49:"SOLID_ARROW",50:"DOTTED_ARROW",51:"SOLID_CROSS",52:"DOTTED_CROSS",53:"TXT",55:"IN_DIRECTIVE"},
+productions_: [0,[3,2],[3,2],[3,2],[3,2],[8,0],[8,2],[9,2],[9,1],[9,1],[6,3],[10,5],[10,3],[10,2],[10,1],[10,2],[10,3],[10,3],[10,2],[10,3],[10,4],[10,4],[10,4],[10,4],[10,4],[32,1],[32,4],[30,1],[30,4],[22,4],[22,4],[39,2],[39,1],[38,3],[38,1],[36,1],[36,1],[18,5],[18,5],[18,4],[15,1],[43,1],[43,1],[43,1],[43,1],[43,1],[43,1],[24,1],[54,1],[12,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -59664,19 +59664,16 @@ case 9:
  this.$=[]; 
 break;
 case 10:
-$$[$0-3].description=$$[$0-1]; this.$=$$[$0-3];
+ yy.handleDirective($$[$0-1]); 
 break;
 case 11:
+$$[$0-3].description=yy.parseMessage($$[$0-1]); this.$=$$[$0-3];
+break;
+case 12:
 this.$=$$[$0-1];
 break;
-case 13:
-yy.enableSequenceNumbers()
-break;
 case 14:
-yy.enableWrap()
-break;
-case 15:
-yy.disableWrap()
+yy.enableSequenceNumbers()
 break;
 case 16:
 this.$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]};
@@ -59685,58 +59682,55 @@ case 17:
 this.$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-1]};
 break;
 case 19:
-this.$=[{type:'config', config:$$[$0-1]}]
+this.$=[{type:'setTitle', text:$$[$0-1]}]
 break;
 case 20:
-this.$=[{type:'setTitle', text:$$[$0-1]}]
+
+		$$[$0-1].unshift({type: 'loopStart', loopText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.LOOP_START});
+		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
+		this.$=$$[$0-1];
 break;
 case 21:
 
-		$$[$0-1].unshift({type: 'loopStart', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_START});
-		$$[$0-1].push({type: 'loopEnd', loopText:$$[$0-2], signalType: yy.LINETYPE.LOOP_END});
+		$$[$0-1].unshift({type: 'rectStart', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_START });
+		$$[$0-1].push({type: 'rectEnd', color:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.RECT_END });
 		this.$=$$[$0-1];
 break;
 case 22:
 
-		$$[$0-1].unshift({type: 'rectStart', color:$$[$0-2], signalType: yy.LINETYPE.RECT_START });
-		$$[$0-1].push({type: 'rectEnd', color:$$[$0-2], signalType: yy.LINETYPE.RECT_END });
+		$$[$0-1].unshift({type: 'optStart', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_START});
+		$$[$0-1].push({type: 'optEnd', optText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.OPT_END});
 		this.$=$$[$0-1];
 break;
 case 23:
 
-		$$[$0-1].unshift({type: 'optStart', optText:$$[$0-2], signalType: yy.LINETYPE.OPT_START});
-		$$[$0-1].push({type: 'optEnd', optText:$$[$0-2], signalType: yy.LINETYPE.OPT_END});
-		this.$=$$[$0-1];
-break;
-case 24:
-
 		// Alt start
-		$$[$0-1].unshift({type: 'altStart', altText:$$[$0-2], signalType: yy.LINETYPE.ALT_START});
+		$$[$0-1].unshift({type: 'altStart', altText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.ALT_START});
 		// Content in alt is already in $$[$0-1]
 		// End
 		$$[$0-1].push({type: 'altEnd', signalType: yy.LINETYPE.ALT_END});
 		this.$=$$[$0-1];
 break;
-case 25:
+case 24:
 
 		// Parallel start
-		$$[$0-1].unshift({type: 'parStart', parText:$$[$0-2], signalType: yy.LINETYPE.PAR_START});
+		$$[$0-1].unshift({type: 'parStart', parText:yy.parseMessage($$[$0-2]), signalType: yy.LINETYPE.PAR_START});
 		// Content in par is already in $$[$0-1]
 		// End
 		$$[$0-1].push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		this.$=$$[$0-1];
 break;
-case 27:
- this.$ = $$[$0-3].concat([{type: 'and', parText:$$[$0-1], signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
+case 26:
+ this.$ = $$[$0-3].concat([{type: 'and', parText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.PAR_AND}, $$[$0]]); 
+break;
+case 28:
+ this.$ = $$[$0-3].concat([{type: 'else', altText:yy.parseMessage($$[$0-1]), signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
 break;
 case 29:
- this.$ = $$[$0-3].concat([{type: 'else', altText:$$[$0-1], signalType: yy.LINETYPE.ALT_ELSE}, $$[$0]]); 
-break;
-case 30:
 
 		this.$ = [$$[$0-1], {type:'addNote', placement:$$[$0-2], actor:$$[$0-1].actor, text:$$[$0]}];
 break;
-case 31:
+case 30:
 
 		// Coerce actor_pair into a [to, from, ...] array
 		$$[$0-2] = [].concat($$[$0-1], $$[$0-1]).slice(0, 2);
@@ -59744,62 +59738,73 @@ case 31:
 		$$[$0-2][1] = $$[$0-2][1].actor;
 		this.$ = [$$[$0-1], {type:'addNote', placement:yy.PLACEMENT.OVER, actor:$$[$0-2].slice(0, 2), text:$$[$0]}];
 break;
-case 34:
+case 33:
  this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 35:
+case 34:
  this.$ = $$[$0]; 
 break;
-case 36:
+case 35:
  this.$ = yy.PLACEMENT.LEFTOF; 
 break;
-case 37:
+case 36:
  this.$ = yy.PLACEMENT.RIGHTOF; 
 break;
-case 38:
+case 37:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	              {type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $$[$0-1]}
 	             ]
 break;
-case 39:
+case 38:
  this.$ = [$$[$0-4],$$[$0-1],{type: 'addMessage', from:$$[$0-4].actor, to:$$[$0-1].actor, signalType:$$[$0-3], msg:$$[$0]},
 	             {type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $$[$0-4]}
 	             ]
 break;
-case 40:
+case 39:
  this.$ = [$$[$0-3],$$[$0-1],{type: 'addMessage', from:$$[$0-3].actor, to:$$[$0-1].actor, signalType:$$[$0-2], msg:$$[$0]}]
 break;
-case 41:
+case 40:
 this.$={type: 'addActor', actor:$$[$0]}
 break;
-case 42:
+case 41:
  this.$ = yy.LINETYPE.SOLID_OPEN; 
 break;
-case 43:
+case 42:
  this.$ = yy.LINETYPE.DOTTED_OPEN; 
 break;
-case 44:
+case 43:
  this.$ = yy.LINETYPE.SOLID; 
 break;
-case 45:
+case 44:
  this.$ = yy.LINETYPE.DOTTED; 
 break;
-case 46:
+case 45:
  this.$ = yy.LINETYPE.SOLID_CROSS; 
 break;
-case 47:
+case 46:
  this.$ = yy.LINETYPE.DOTTED_CROSS; 
 break;
+case 47:
+this.$ = yy.parseMessage($$[$0].trim().substring(1)) 
+break;
 case 48:
-this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
+this.$ = JSON.parse($$[$0].substring(1).trim().replace(/\\n/gm, "\n").replace(/'/gm, "\""));
 break;
 case 49:
-this.$ = JSON.parse($$[$0].substring(1).trim().replace(/\\n/gm, "\n").replace(/'/gm, "\""));
+
+    $$[$0] = $$[$0].trim().replace(/'/gm, '"');
+    if (/(\w+)[:]?\s*(\{.*}(?!%%))?/.test($$[$0])) {
+      $$[$0] = $$[$0].match(/(\w+)[:]?\s*(\{.*}(?!%%))?/);
+      this.$ = { type: $$[$0][1], args: $$[$0][2] !== undefined ? JSON.parse($$[$0][2]) : null };
+    } else {
+      this.$ = { type: $$[$0], args: null };
+    }
+  
 break;
 }
 },
-table: [{3:1,4:$V0,5:$V1,6:$V2,8:$V3},{1:[3]},{3:6,4:$V0,5:$V1,6:$V2,8:$V3},{3:7,4:$V0,5:$V1,6:$V2,8:$V3},{7:8,54:$V4},o([1,4,5,12,17,18,19,20,21,23,24,26,28,29,30,32,36,47],$V5,{9:10}),{1:[2,1]},{1:[2,2]},{3:11,4:$V0,5:$V1,6:$V2,8:$V3},o([4,5,6,8],[2,49]),{1:[2,4],4:$V6,5:$V7,10:12,11:14,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,28:$Vh,29:$Vi,30:$Vj,32:$Vk,36:$Vl,47:$Vm},{1:[2,3]},o($Vn,[2,6]),{11:34,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,28:$Vh,29:$Vi,30:$Vj,32:$Vk,36:$Vl,47:$Vm},o($Vn,[2,8]),o($Vn,[2,9]),{13:35,47:$Vm},{5:[1,36]},o($Vn,[2,13]),o($Vn,[2,14]),o($Vn,[2,15]),{13:37,47:$Vm},{13:38,47:$Vm},{5:[1,39]},{7:40,54:$V4},{25:41,54:$Vo},{15:[1,43]},{15:[1,44]},{15:[1,45]},{15:[1,46]},{15:[1,47]},{44:48,48:[1,49],49:[1,50],50:[1,51],51:[1,52],52:[1,53],53:[1,54]},{37:55,38:[1,56],42:[1,57],43:[1,58]},o([5,14,41,48,49,50,51,52,53,54],[2,41]),o($Vn,[2,7]),{5:[1,60],14:[1,59]},o($Vn,[2,12]),{5:[1,61]},{5:[1,62]},o($Vn,[2,18]),{5:[1,63]},{5:[1,64]},{5:[2,48]},o($Vp,$V5,{9:65}),o($Vp,$V5,{9:66}),o($Vp,$V5,{9:67}),o($Vq,$V5,{31:68,9:69}),o($Vr,$V5,{33:70,9:71}),{13:74,45:[1,72],46:[1,73],47:$Vm},o($Vs,[2,42]),o($Vs,[2,43]),o($Vs,[2,44]),o($Vs,[2,45]),o($Vs,[2,46]),o($Vs,[2,47]),{13:75,47:$Vm},{13:77,39:76,47:$Vm},{47:[2,36]},{47:[2,37]},{15:[1,78]},o($Vn,[2,11]),o($Vn,[2,16]),o($Vn,[2,17]),o($Vn,[2,19]),o($Vn,[2,20]),{4:$V6,5:$V7,10:12,11:14,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,27:[1,79],28:$Vh,29:$Vi,30:$Vj,32:$Vk,36:$Vl,47:$Vm},{4:$V6,5:$V7,10:12,11:14,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,27:[1,80],28:$Vh,29:$Vi,30:$Vj,32:$Vk,36:$Vl,47:$Vm},{4:$V6,5:$V7,10:12,11:14,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,27:[1,81],28:$Vh,29:$Vi,30:$Vj,32:$Vk,36:$Vl,47:$Vm},{27:[1,82]},{4:$V6,5:$V7,10:12,11:14,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,27:[2,28],28:$Vh,29:$Vi,30:$Vj,32:$Vk,35:[1,83],36:$Vl,47:$Vm},{27:[1,84]},{4:$V6,5:$V7,10:12,11:14,12:$V8,13:31,16:17,17:$V9,18:$Va,19:$Vb,20:$Vc,21:$Vd,22:23,23:$Ve,24:$Vf,26:$Vg,27:[2,26],28:$Vh,29:$Vi,30:$Vj,32:$Vk,34:[1,85],36:$Vl,47:$Vm},{13:86,47:$Vm},{13:87,47:$Vm},{25:88,54:$Vo},{25:89,54:$Vo},{25:90,54:$Vo},{41:[1,91],54:[2,35]},{5:[1,92]},o($Vn,[2,21]),o($Vn,[2,22]),o($Vn,[2,23]),o($Vn,[2,24]),{15:[1,93]},o($Vn,[2,25]),{15:[1,94]},{25:95,54:$Vo},{25:96,54:$Vo},{5:[2,40]},{5:[2,30]},{5:[2,31]},{13:97,47:$Vm},o($Vn,[2,10]),o($Vq,$V5,{9:69,31:98}),o($Vr,$V5,{9:71,33:99}),{5:[2,38]},{5:[2,39]},{54:[2,34]},{27:[2,29]},{27:[2,27]}],
-defaultActions: {6:[2,1],7:[2,2],11:[2,3],42:[2,48],57:[2,36],58:[2,37],88:[2,40],89:[2,30],90:[2,31],95:[2,38],96:[2,39],97:[2,34],98:[2,29],99:[2,27]},
+table: [{3:1,4:$V0,5:$V1,6:4,7:$V2,11:$V3},{1:[3]},{3:7,4:$V0,5:$V1,6:4,7:$V2,11:$V3},{3:8,4:$V0,5:$V1,6:4,7:$V2,11:$V3},{3:9,4:$V0,5:$V1,6:4,7:$V2,11:$V3},o([1,4,5,11,14,19,20,21,23,25,27,28,29,31,35,46],$V4,{8:10}),{12:11,55:[1,12]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4],4:$V5,5:$V6,6:20,9:13,10:15,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,27:$Vd,28:$Ve,29:$Vf,31:$Vg,35:$Vh,46:$Vi},{13:[1,33]},{13:[2,49]},o($Vj,[2,6]),{6:20,10:34,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,27:$Vd,28:$Ve,29:$Vf,31:$Vg,35:$Vh,46:$Vi},o($Vj,[2,8]),o($Vj,[2,9]),{15:35,46:$Vi},{5:[1,36]},o($Vj,[2,14]),{5:[1,37]},{15:38,46:$Vi},{15:39,46:$Vi},{5:[1,40]},{24:41,53:$Vk},{17:[1,43]},{17:[1,44]},{17:[1,45]},{17:[1,46]},{17:[1,47]},{43:48,47:[1,49],48:[1,50],49:[1,51],50:[1,52],51:[1,53],52:[1,54]},{36:55,37:[1,56],41:[1,57],42:[1,58]},o([5,16,40,47,48,49,50,51,52,53],[2,40]),o([4,5,7,11],[2,10]),o($Vj,[2,7]),{5:[1,60],16:[1,59]},o($Vj,[2,13]),o($Vj,[2,15]),{5:[1,61]},{5:[1,62]},o($Vj,[2,18]),{5:[1,63]},{5:[2,47]},o($Vl,$V4,{8:64}),o($Vl,$V4,{8:65}),o($Vl,$V4,{8:66}),o($Vm,$V4,{30:67,8:68}),o($Vn,$V4,{32:69,8:70}),{15:73,44:[1,71],45:[1,72],46:$Vi},o($Vo,[2,41]),o($Vo,[2,42]),o($Vo,[2,43]),o($Vo,[2,44]),o($Vo,[2,45]),o($Vo,[2,46]),{15:74,46:$Vi},{15:76,38:75,46:$Vi},{46:[2,35]},{46:[2,36]},{17:[1,77]},o($Vj,[2,12]),o($Vj,[2,16]),o($Vj,[2,17]),o($Vj,[2,19]),{4:$V5,5:$V6,6:20,9:13,10:15,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,26:[1,78],27:$Vd,28:$Ve,29:$Vf,31:$Vg,35:$Vh,46:$Vi},{4:$V5,5:$V6,6:20,9:13,10:15,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,26:[1,79],27:$Vd,28:$Ve,29:$Vf,31:$Vg,35:$Vh,46:$Vi},{4:$V5,5:$V6,6:20,9:13,10:15,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,26:[1,80],27:$Vd,28:$Ve,29:$Vf,31:$Vg,35:$Vh,46:$Vi},{26:[1,81]},{4:$V5,5:$V6,6:20,9:13,10:15,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,26:[2,27],27:$Vd,28:$Ve,29:$Vf,31:$Vg,34:[1,82],35:$Vh,46:$Vi},{26:[1,83]},{4:$V5,5:$V6,6:20,9:13,10:15,11:$V3,14:$V7,15:30,18:18,19:$V8,20:$V9,21:$Va,22:23,23:$Vb,25:$Vc,26:[2,25],27:$Vd,28:$Ve,29:$Vf,31:$Vg,33:[1,84],35:$Vh,46:$Vi},{15:85,46:$Vi},{15:86,46:$Vi},{24:87,53:$Vk},{24:88,53:$Vk},{24:89,53:$Vk},{40:[1,90],53:[2,34]},{5:[1,91]},o($Vj,[2,20]),o($Vj,[2,21]),o($Vj,[2,22]),o($Vj,[2,23]),{17:[1,92]},o($Vj,[2,24]),{17:[1,93]},{24:94,53:$Vk},{24:95,53:$Vk},{5:[2,39]},{5:[2,29]},{5:[2,30]},{15:96,46:$Vi},o($Vj,[2,11]),o($Vm,$V4,{8:68,30:97}),o($Vn,$V4,{8:70,32:98}),{5:[2,37]},{5:[2,38]},{53:[2,33]},{26:[2,28]},{26:[2,26]}],
+defaultActions: {7:[2,1],8:[2,2],9:[2,3],12:[2,49],42:[2,47],57:[2,35],58:[2,36],87:[2,39],88:[2,29],89:[2,30],94:[2,37],95:[2,38],96:[2,33],97:[2,28],98:[2,26]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -60278,108 +60283,104 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 5;
+case 0: this.begin('OPEN_DIRECTIVE'); return 11; 
 break;
-case 1:/* skip all whitespace */
+case 1: this.popState(); return 55; 
 break;
-case 2:/* skip same-line whitespace */
+case 2: this.popState(); return 13; 
 break;
-case 3:/* skip comments */
+case 3:return 5;
 break;
-case 4:/* skip comments */
+case 4:return 5;
 break;
-case 5: this.begin('ID'); return 12; 
+case 5:return 5;
 break;
-case 6: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 47; 
+case 6:/* skip all whitespace */
 break;
-case 7: this.popState(); this.popState(); this.begin('LINE'); return 14; 
+case 7:/* skip same-line whitespace */
 break;
-case 8: this.popState(); this.popState(); return 5; 
+case 8:/* skip comments */
 break;
-case 9: this.begin('LINE'); return 26; 
+case 9:/* skip comments */
 break;
-case 10: this.begin('LINE'); return 28; 
+case 10:/* skip comments */
 break;
-case 11: this.begin('LINE'); return 29; 
+case 11: this.begin('ID'); return 14; 
 break;
-case 12: this.begin('LINE'); return 30; 
+case 12: yy_.yytext = yy_.yytext.trim(); this.begin('ALIAS'); return 46; 
 break;
-case 13: this.begin('LINE'); return 35; 
+case 13: this.popState(); this.popState(); this.begin('LINE'); return 16; 
 break;
-case 14: this.begin('LINE'); return 32; 
+case 14: this.popState(); this.popState(); return 5; 
 break;
-case 15: this.begin('LINE'); return 34; 
+case 15: this.begin('LINE'); return 25; 
 break;
-case 16: this.popState(); return 15; 
+case 16: this.begin('LINE'); return 27; 
 break;
-case 17:return 27;
+case 17: this.begin('LINE'); return 28; 
 break;
-case 18:return 42;
+case 18: this.begin('LINE'); return 29; 
 break;
-case 19:return 43;
+case 19: this.begin('LINE'); return 34; 
 break;
-case 20:return 38;
+case 20: this.begin('LINE'); return 31; 
 break;
-case 21:return 36;
+case 21: this.begin('LINE'); return 33; 
 break;
-case 22: this.begin('ID'); return 20; 
+case 22: this.popState(); return 17; 
 break;
-case 23: this.begin('ID'); return 21; 
+case 23:return 26;
 break;
-case 24:return 24;
+case 24:return 41;
 break;
-case 25:return 8;
+case 25:return 42;
 break;
-case 26:return 17;
+case 26:return 37;
 break;
-case 27:return 6;
+case 27:return 35;
 break;
-case 28:return 6;
+case 28: this.begin('ID'); return 20; 
 break;
-case 29:return 23;
+case 29: this.begin('ID'); return 21; 
 break;
 case 30:return 23;
 break;
-case 31:return 23;
+case 31:return 7;
 break;
-case 32:return 23;
+case 32:return 19;
 break;
-case 33:return 18;
+case 33:return 40;
 break;
-case 34:return 19;
+case 34:return 5;
 break;
-case 35:return 41;
+case 35: yy_.yytext = yy_.yytext.trim(); return 46; 
 break;
-case 36:return 5;
+case 36:return 49;
 break;
-case 37: yy_.yytext = yy_.yytext.trim(); return 47; 
+case 37:return 50;
 break;
-case 38:return 50;
+case 38:return 47;
 break;
-case 39:return 51;
+case 39:return 48;
 break;
-case 40:return 48;
+case 40:return 51;
 break;
-case 41:return 49;
+case 41:return 52;
 break;
-case 42:return 52;
+case 42:return 53;
 break;
-case 43:return 53;
+case 43:return 44;
 break;
-case 44:return 54;
+case 44:return 45;
 break;
-case 45:return 45;
+case 45:return 5;
 break;
-case 46:return 46;
-break;
-case 47:return 5;
-break;
-case 48:return 'INVALID';
+case 46:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:init\b)/i,/^(?:initialize\b)/i,/^(?:conf\b)/i,/^(?:config\b)/i,/^(?:configure\b)/i,/^(?:configuration\b)/i,/^(?:wrap\b)/i,/^(?:nowrap\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"LINE":{"rules":[2,3,16],"inclusive":false},"ALIAS":{"rules":[2,3,7,8],"inclusive":false},"ID":{"rules":[2,3,6],"inclusive":false},"INITIAL":{"rules":[0,1,3,4,5,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"inclusive":true}}
+rules: [/^(?:%%\{)/i,/^(?:(?!\}%%)(?:\w+)\s*[:]?\s*(?:.*?)?(?=\}%%))/i,/^(?:\}%%)/i,/^(?:close_directive\b)/i,/^(?:open_directive\b)/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"LINE":{"rules":[7,8,22],"inclusive":false},"IN_DIRECTIVE":{"rules":[8],"inclusive":false},"OPEN_DIRECTIVE":{"rules":[1,8],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"INITIAL":{"rules":[0,2,3,4,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
 });
 return lexer;
 })();
@@ -60416,11 +60417,12 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 /*!*********************************************!*\
   !*** ./src/diagrams/sequence/sequenceDb.js ***!
   \*********************************************/
-/*! exports provided: addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, enableSequenceNumbers, showSequenceNumbers, enableWrap, disableWrap, autoWrap, clear, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
+/*! exports provided: handleDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, enableWrap, disableWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, updateConfig, hasConfigChange, apply, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleDirective", function() { return handleDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addActor", function() { return addActor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addMessage", function() { return addMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addSignal", function() { return addSignal; });
@@ -60429,20 +60431,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getActor", function() { return getActor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getActorKeys", function() { return getActorKeys; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitle", function() { return getTitle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitleWrapped", function() { return getTitleWrapped; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableSequenceNumbers", function() { return enableSequenceNumbers; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showSequenceNumbers", function() { return showSequenceNumbers; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableWrap", function() { return enableWrap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "disableWrap", function() { return disableWrap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "autoWrap", function() { return autoWrap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseMessage", function() { return parseMessage; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LINETYPE", function() { return LINETYPE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ARROWTYPE", function() { return ARROWTYPE; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PLACEMENT", function() { return PLACEMENT; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNote", function() { return addNote; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTitle", function() { return setTitle; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateConfig", function() { return updateConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasConfigChange", function() { return hasConfigChange; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return apply; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+
 
 
 var prevActor = undefined;
@@ -60450,17 +60458,42 @@ var actors = {};
 var messages = [];
 var notes = [];
 var title = '';
+var titleWrapped = false;
 var sequenceNumbersEnabled = false;
 var wrapEnabled = false;
+var configUpdated = false;
+var handleDirective = function handleDirective(directive) {
+  switch (directive.type) {
+    case 'init':
+    case 'initialize':
+      _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].reinitialize(directive.args);
+      break;
+
+    case 'config':
+      updateConfig(directive.args);
+      break;
+
+    case 'wrap':
+      wrapEnabled = true;
+      break;
+  }
+};
 var addActor = function addActor(id, name, description) {
   // Don't allow description nulling
   var old = actors[id];
   if (old && name === old.name && description == null) return; // Don't allow null descriptions, either
 
-  if (description == null) description = name;
+  if (description == null || description.text == null) {
+    description = {
+      text: name,
+      wrap: null
+    };
+  }
+
   actors[id] = {
     name: name,
-    description: description,
+    description: description.text,
+    wrap: description.wrap === null && autoWrap() || !!description.wrap,
     prevActor: prevActor
   };
 
@@ -60472,7 +60505,7 @@ var addActor = function addActor(id, name, description) {
 };
 
 var activationCount = function activationCount(part) {
-  var i = 0;
+  var i;
   var count = 0;
 
   for (i = 0; i < messages.length; i++) {
@@ -60497,12 +60530,18 @@ var addMessage = function addMessage(idFrom, idTo, message, answer) {
   messages.push({
     from: idFrom,
     to: idTo,
-    message: message,
+    message: message.text,
+    wrap: message.wrap === null && autoWrap() || !!message.wrap,
     answer: answer
   });
 };
-var addSignal = function addSignal(idFrom, idTo, message, messageType) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType);
+var addSignal = function addSignal(idFrom, idTo) {
+  var message = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
+    text: null,
+    wrap: null
+  };
+  var messageType = arguments.length > 3 ? arguments[3] : undefined;
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message.text + ' wrap=' + message.wrap + ' type=' + messageType);
 
   if (messageType === LINETYPE.ACTIVE_END) {
     var cnt = activationCount(idFrom.actor);
@@ -60530,7 +60569,8 @@ var addSignal = function addSignal(idFrom, idTo, message, messageType) {
   messages.push({
     from: idFrom,
     to: idTo,
-    message: message,
+    message: message.text,
+    wrap: message.wrap === null && autoWrap() || !!message.wrap,
     type: messageType
   });
   return true;
@@ -60550,6 +60590,9 @@ var getActorKeys = function getActorKeys() {
 var getTitle = function getTitle() {
   return title;
 };
+var getTitleWrapped = function getTitleWrapped() {
+  return titleWrapped;
+};
 var enableSequenceNumbers = function enableSequenceNumbers() {
   sequenceNumbersEnabled = true;
 };
@@ -60568,6 +60611,15 @@ var autoWrap = function autoWrap() {
 var clear = function clear() {
   actors = {};
   messages = [];
+  configUpdated = false;
+};
+var parseMessage = function parseMessage(str) {
+  var _str = str.trim();
+
+  return {
+    text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
+    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
+  };
 };
 var LINETYPE = {
   SOLID: 0,
@@ -60605,7 +60657,8 @@ var addNote = function addNote(actor, placement, message) {
   var note = {
     actor: actor,
     placement: placement,
-    message: message
+    message: message.text,
+    wrap: message.wrap === null && autoWrap() || !!message.wrap
   }; // Coerce actor into a [to, from, ...] array
 
   var actors = [].concat(actor, actor);
@@ -60613,13 +60666,28 @@ var addNote = function addNote(actor, placement, message) {
   messages.push({
     from: actors[0],
     to: actors[1],
-    message: message,
+    message: message.text,
+    wrap: message.wrap === null && autoWrap() || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
 };
-var setTitle = function setTitle(titleText) {
-  title = titleText;
+var setTitle = function setTitle(titleWrap) {
+  title = titleWrap.text;
+  titleWrapped = titleWrap.wrap === null && autoWrap() || !!titleWrap.wrap;
+};
+var updateConfig = function updateConfig() {
+  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Object(_config__WEBPACK_IMPORTED_MODULE_1__["getConfig"])();
+
+  try {
+    Object(_config__WEBPACK_IMPORTED_MODULE_1__["setConfig"])(config);
+    configUpdated = true;
+  } catch (error) {
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Error: unable to parse config');
+  }
+};
+var hasConfigChange = function hasConfigChange() {
+  return configUpdated;
 };
 var apply = function apply(param) {
   if (param instanceof Array) {
@@ -60699,20 +60767,6 @@ var apply = function apply(param) {
       case 'parEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
-
-      case 'config':
-        try {
-          var cfg = param.config;
-
-          var _config = Object(_config__WEBPACK_IMPORTED_MODULE_1__["getConfig"])();
-
-          var config = Object.assign(_config, cfg);
-          Object(_config__WEBPACK_IMPORTED_MODULE_1__["setConfig"])(config);
-        } catch (error) {
-          _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Error: unable to parse config');
-        }
-
-        break;
     }
   }
 };
@@ -60730,7 +60784,13 @@ var apply = function apply(param) {
   getActor: getActor,
   getActorKeys: getActorKeys,
   getTitle: getTitle,
+  handleDirective: handleDirective,
+  hasConfigChange: hasConfigChange,
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_1__["getConfig"],
+  updateConfig: updateConfig,
+  getTitleWrapped: getTitleWrapped,
   clear: clear,
+  parseMessage: parseMessage,
   LINETYPE: LINETYPE,
   ARROWTYPE: ARROWTYPE,
   PLACEMENT: PLACEMENT,
@@ -60745,7 +60805,7 @@ var apply = function apply(param) {
 /*!***************************************************!*\
   !*** ./src/diagrams/sequence/sequenceRenderer.js ***!
   \***************************************************/
-/*! exports provided: bounds, drawActors, setConf, calculateTextWidth, draw, default */
+/*! exports provided: bounds, drawActors, setConf, calculateTextHeight, calculateTextWidth, draw, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -60753,6 +60813,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bounds", function() { return bounds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActors", function() { return drawActors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextHeight", function() { return calculateTextHeight; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextWidth", function() { return calculateTextWidth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
@@ -60844,6 +60905,10 @@ var bounds = {
       stopy: undefined
     };
     this.verticalPos = 0;
+
+    if (_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.hasConfigChange()) {
+      setConf(Object(_config__WEBPACK_IMPORTED_MODULE_6__["getConfig"])());
+    }
   },
   updateVal: function updateVal(obj, key, val, fun) {
     if (typeof obj[key] === 'undefined') {
@@ -60956,6 +61021,11 @@ var bounds = {
 
 var wrapLabel = function wrapLabel(label, maxWidth) {
   var joinWith = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '<br/>';
+
+  if (_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(label)) {
+    return label;
+  }
+
   var words = label.split(' ');
   var completedLines = [];
   var nextLine = '';
@@ -61054,7 +61124,7 @@ var _drawLongText = function _drawLongText(text, x, y, g, width) {
       textObj.dy = '1em';
       textObj.text = line;
       textObj.class = 'noteText';
-      var textElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawText(g, textObj).style('text-anchor', alignment).style('font-size', conf.noteFontSize).style('font-family', conf.noteFontFamily).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
+      var textElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawText(g, textObj).style('text-anchor', alignment).style('font-size', conf.noteFontSize).style('font-family', conf.noteFontFamily).style('font-weight', conf.noteFontWeight).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
       textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       textElem.attr('y', y + (prevTextHeight + textHeight + 2 * conf.noteMargin) / 2);
       prevTextHeight = textHeight;
@@ -61116,8 +61186,28 @@ var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg, se
   var g = elem.append('g');
   var txtCenter = startx + (stopx - startx) / 2;
   var textElems = [];
+  /*
+  let textHeight = 0;
+  const breaklines = msg.message.split(common.lineBreakRegex);
+  for (const breakline of breaklines) {
+    let textElem = g
+      .append('text') // text label for the x axis
+      .attr('x', txtCenter)
+      .attr('y', verticalPos + textHeight)
+      .style('font-size', conf.messageFontSize)
+      .style('font-family', conf.messageFontFamily)
+      .style('font-weight', conf.messageFontWeight)
+      .style('text-anchor', 'middle')
+      .attr('class', 'messageText')
+      .text(breakline.trim());
+    textElems.push(textElem);
+    textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+  }
+   let totalOffset = textHeight;
+  */
+
   var counterBreaklines = 0;
-  var breaklineOffset = 17;
+  var breaklineOffset = conf.messageFontSize + 4;
   var breaklines = msg.message.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
   var _iteratorNormalCompletion2 = true;
   var _didIteratorError2 = false;
@@ -61127,7 +61217,8 @@ var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg, se
     for (var _iterator2 = breaklines[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
       var breakline = _step2.value;
       textElems.push(g.append('text') // text label for the x axis
-      .attr('x', txtCenter).attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset).style('font-size', conf.messageFontSize).style('font-family', conf.messageFontFamily).style('text-anchor', 'middle').attr('class', 'messageText').text(breakline.trim()));
+      .attr('x', txtCenter) // .attr('y', verticalPos - breaklineVerticalOffset + counterBreaklines * breaklineOffset)
+      .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset).style('font-size', conf.messageFontSize).style('font-family', conf.messageFontFamily).style('font-weight', conf.messageFontWeight).style('text-anchor', 'middle').attr('class', 'messageText').text(breakline.trim()));
       counterBreaklines++;
     }
   } catch (err) {
@@ -61225,24 +61316,31 @@ var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   // Draw the actors
   var prevWidth = 0;
   var prevMargin = 0;
+  var maxActorHeight = conf.height;
 
   for (var i = 0; i < actorKeys.length; i++) {
     var actor = actors[actorKeys[i]]; // Add some rendering data to the object
 
     actor.width = actor.width || calculateActorWidth(actor);
-    actor.height = conf.height;
+    actor.height = actor.wrap ? calculateTextHeight(actor.message, conf.height, actor.width, conf.wrapPadding, actor.wrap, conf.actorFontSize) : conf.height;
+    maxActorHeight = Math.max(maxActorHeight, actor.height);
     actor.margin = actor.margin || conf.actorMargin;
     actor.x = prevWidth + prevMargin;
-    actor.y = verticalPos; // Draw the box with the attached line
+    actor.y = verticalPos;
+
+    if (actor.wrap) {
+      actor.description = wrapLabel(actor.description, actor.width);
+    } // Draw the box with the attached line
+
 
     _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawActor(diagram, actor, conf);
-    bounds.insert(actor.x, verticalPos, actor.x + actor.width, conf.height);
+    bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
     prevWidth += actor.width;
     prevMargin += actor.margin;
   } // Add a margin between the actor boxes and the first arrow
 
 
-  bounds.bumpVerticalPos(conf.height);
+  bounds.bumpVerticalPos(maxActorHeight);
 };
 var setConf = function setConf(cnf) {
   var keys = Object.keys(cnf);
@@ -61255,7 +61353,7 @@ var setConf = function setConf(cnf) {
   }
 
   if (cnf.fontSize) {
-    conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize;
+    conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize; // conf.height = cnf.fontSize * (65 / 14);
   }
 
   if (cnf.fontWeight) {
@@ -61298,7 +61396,32 @@ var calculateActorWidth = function calculateActorWidth(actor) {
     return conf.width;
   }
 
-  return Math.max(conf.width, calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
+  return actor.wrap ? conf.width : Math.max(conf.width, calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
+};
+/**
+ * This calculates the text's height, taking into account the wrap value and
+ * both the statically configured height, width, and the length of the text (in pixels).
+ *
+ * If the wrapped text text has greater height, we extend the height, so it's
+ * value won't overflow.
+ *
+ * @return - The height for the given actor
+ * @param message the text to measure
+ * @param elementHeight the height of the default bounding box containing the text
+ * @param elementWidth the width of the default bounding box containing the text
+ * @param margin space above and below
+ * @param wrap wrap the text based on: elementWidth - 2 * margin
+ * @param fontSize
+ */
+
+
+var calculateTextHeight = function calculateTextHeight(message, elementHeight, elementWidth, margin, wrap, fontSize) {
+  if (!message) {
+    return elementHeight;
+  }
+
+  var lineHeightFactor = wrap ? wrapLabel(message, elementWidth - 2 * margin).split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex).length : 1;
+  return wrap ? Math.max(elementHeight, lineHeightFactor * fontSize) : elementHeight;
 };
 /**
  * This calculates the width of the given text, font size and family.
@@ -61308,7 +61431,6 @@ var calculateActorWidth = function calculateActorWidth(actor) {
  * @param fontFamily - The font family (one, or more fonts) to render
  * @param fontWeight - The font weight (normal, bold, italics)
  */
-
 
 var calculateTextWidth = function calculateTextWidth(text, fontSize, fontFamily, fontWeight) {
   if (!text) {
@@ -61396,7 +61518,6 @@ var draw = function draw(text, id) {
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.clear();
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
   _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("Config (postclear): ".concat(JSON.stringify(conf)), conf);
-  setConf(Object(_config__WEBPACK_IMPORTED_MODULE_6__["getConfig"])());
   bounds.init();
   var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]"));
   var startx;
@@ -61408,8 +61529,9 @@ var draw = function draw(text, id) {
   var messages = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getMessages();
   var title = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getTitle();
   var maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
-  calculateActorMargins(actors, maxMessageWidthPerActor);
-  drawActors(diagram, actors, actorKeys, 0); // The arrow head definition is attached to the svg once
+  var maxActorHeight = calculateActorMargins(actors, maxMessageWidthPerActor);
+  drawActors(diagram, actors, actorKeys, 0);
+  bounds.bumpVerticalPos(maxActorHeight > conf.height ? Math.min(conf.boxMargin, Math.abs(maxActorHeight - conf.height)) : 0); // The arrow head definition is attached to the svg once
 
   _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertArrowHead(diagram);
   _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertArrowCrossHead(diagram);
@@ -61432,45 +61554,48 @@ var draw = function draw(text, id) {
   messages.forEach(function (msg) {
     var loopData,
         noteWidth,
-        textWidth = calculateTextWidth(msg.message, conf.noteFontSize, conf.noteFontFamily, conf.noteFontWeight),
-        shouldWrap = (_sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"].autoWrap() || conf.wrapEnabled) && msg.message && !_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(msg.message);
+        textWidth,
+        shouldWrap = msg.wrap && msg.message && !_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(msg.message);
 
     switch (msg.type) {
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.NOTE:
         bounds.bumpVerticalPos(conf.boxMargin);
         startx = actors[msg.from].x;
         stopx = actors[msg.to].x;
+        textWidth = calculateTextWidth(msg.message, conf.noteFontSize, conf.noteFontFamily, conf.noteFontWeight);
         noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth);
 
         if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
           if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, noteWidth - conf.noteMargin * 2);
+            msg.message = wrapLabel(msg.message, noteWidth);
           }
 
           drawNote(diagram, startx + (actors[msg.from].width + conf.actorMargin) / 2, bounds.getVerticalPos(), msg, noteWidth);
         } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
           if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, noteWidth - conf.noteMargin * 2);
+            msg.message = wrapLabel(msg.message, noteWidth);
           }
 
           drawNote(diagram, startx - noteWidth + (actors[msg.from].width - conf.actorMargin) / 2, bounds.getVerticalPos(), msg, noteWidth);
         } else if (msg.to === msg.from) {
           // Single-actor over
           if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, noteWidth - conf.noteMargin * 2);
+            msg.message = wrapLabel(msg.message, noteWidth);
           }
 
           drawNote(diagram, startx + (actors[msg.to].width - noteWidth) / 2, bounds.getVerticalPos(), msg, noteWidth);
         } else {
           // Multi-actor over
-          forceWidth = Math.abs(startx - stopx) + conf.actorMargin;
-          noteWidth = (shouldWrap ? forceWidth : Math.max(forceWidth, textWidth)) - conf.noteMargin * 2;
+          forceWidth = Math.abs(startx - stopx) + conf.actorMargin / 2;
 
           if (shouldWrap) {
+            noteWidth = forceWidth;
             msg.message = wrapLabel(msg.message, noteWidth);
+          } else {
+            noteWidth = Math.max(forceWidth, textWidth - 2 * conf.noteMargin);
           }
 
-          var x = startx < stopx ? startx + (actors[msg.from].width - conf.actorMargin) / 2 : stopx + (actors[msg.to].width - conf.actorMargin) / 2;
+          var x = startx < stopx ? startx + (actors[msg.from].width - conf.actorMargin / 2) / 2 : stopx + (actors[msg.to].width - conf.actorMargin / 2) / 2;
           drawNote(diagram, x, bounds.getVerticalPos(), msg, forceWidth);
         }
 
@@ -61542,6 +61667,11 @@ var draw = function draw(text, id) {
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_START:
         bounds.bumpVerticalPos(conf.boxMargin);
+
+        if (shouldWrap) {
+          msg.message = wrapLabel(msg.message, conf.boxMargin);
+        }
+
         bounds.newLoop(msg.message);
         bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
         break;
@@ -61570,7 +61700,7 @@ var draw = function draw(text, id) {
           stopx = toBounds[toIdx];
 
           if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, Math.abs(stopx - startx - conf.messageMargin));
+            msg.message = wrapLabel(msg.message, Math.max(Math.abs(stopx - startx) + conf.messageMargin * 2, conf.width + conf.messageMargin * 2));
           }
 
           var verticalPos = bounds.getVerticalPos();
@@ -61652,11 +61782,10 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
       var isNote = msg.placement !== undefined;
       var isMessage = !isNote;
-      var wrapped = _sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"].autoWrap() || conf.wrapEnabled;
       var fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
       var fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
       var fontWeight = isNote ? conf.noteFontWeight : conf.messageFontWeight;
-      var messageWidth = calculateTextWidth(wrapped ? wrapLabel(msg.message, conf.width - (isNote ? conf.noteMargin * 2 + conf.messageMargin * 2 : conf.messageMargin * 2)) : msg.message, fontSize, fontFamily, fontWeight);
+      var messageWidth = calculateTextWidth(msg.wrap ? wrapLabel(msg.message, conf.width - conf.noteMargin) : msg.message, fontSize, fontFamily, fontWeight);
       /*
        * The following scenarios should be supported:
        *
@@ -61707,26 +61836,41 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
 
 var calculateActorMargins = function calculateActorMargins(actors, actorToMessageWidth) {
-  for (var actorKey in actorToMessageWidth) {
+  var maxHeight = 0;
+
+  var _loop = function _loop(actorKey) {
     var actor = actors[actorKey];
 
     if (!actor) {
-      continue;
+      return "continue";
     }
 
     var nextActor = actors[actor.nextActor]; // No need to space out an actor that doesn't have a next link
 
     if (!nextActor) {
-      continue;
+      return "continue";
     }
 
-    var wrapped = _sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"].autoWrap() || conf.wrapEnabled;
-    actor.width = wrapped ? conf.width : Math.max(conf.width, calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
-    nextActor.width = wrapped ? conf.width : Math.max(conf.width, calculateTextWidth(nextActor.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
+    [actor, nextActor].forEach(function (act) {
+      act.width = act.wrap ? conf.width : Math.max(conf.width, calculateTextWidth(act.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
+      act.height = act.wrap ? calculateTextHeight(act.description, conf.height, actor.width, conf.actorMargin, act.wrap, conf.actorFontSize) : conf.height;
+      maxHeight = Math.max(maxHeight, act.height);
+    });
     var messageWidth = actorToMessageWidth[actorKey];
     var actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
     actor.margin = Math.max(actorWidth, conf.actorMargin);
+  };
+
+  for (var actorKey in actorToMessageWidth) {
+    var _ret = _loop(actorKey);
+
+    if (_ret === "continue") continue;
   }
+
+  Object.keys(actors).forEach(function (key) {
+    actors[key].height = maxHeight;
+  });
+  return maxHeight;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -61786,6 +61930,9 @@ var drawText = function drawText(elem, textData) {
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
   textElem.style('text-anchor', textData.anchor);
+  textElem.style('font-family', textData.fontFamily);
+  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
 
   if (typeof textData.class !== 'undefined') {
@@ -61815,7 +61962,7 @@ var actorCnt = -1;
  * Draws an actor in the diagram with the attaced line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param config - The sequence diagram config object.
+ * @param conf - drawText implementation discriminator object
  */
 
 var drawActor = function drawActor(elem, actor, conf) {
@@ -61870,7 +62017,7 @@ var drawActivation = function drawActivation(elem, bounds, verticalPos, conf, ac
  * @param elem - elemenet to append the loop to.
  * @param bounds - bounds of the given loop.
  * @param labelText - Text within the loop.
- * @param config - sequence diagram config object.
+ * @param conf
  */
 
 var drawLoop = function drawLoop(elem, bounds, labelText, conf) {
@@ -61891,12 +62038,16 @@ var drawLoop = function drawLoop(elem, bounds, labelText, conf) {
     });
   }
 
+  var minSize = Math.round(3 * conf.fontSize / 4) < 10 ? conf.fontSize : Math.round(3 * conf.fontSize / 4);
   var txt = getTextObj();
   txt.text = labelText;
   txt.x = bounds.startx;
   txt.y = bounds.starty;
   txt.labelMargin = 1.5 * 10; // This is the small box that says "loop"
 
+  txt.fontFamily = conf.fontFamily;
+  txt.fontSize = minSize;
+  txt.fontWeight = conf.fontWeight;
   txt.class = 'labelText'; // Its size & position are fixed.
 
   drawLabel(g, txt);
@@ -61906,21 +62057,29 @@ var drawLoop = function drawLoop(elem, bounds, labelText, conf) {
   txt.y = bounds.starty + 1.5 * conf.boxMargin;
   txt.anchor = 'middle';
   txt.class = 'loopText';
-  drawText(g, txt);
+  txt.fontFamily = conf.fontFamily;
+  txt.fontSize = minSize;
+  txt.fontWeight = conf.fontWeight;
+  var textElem = drawText(g, txt);
+  var textHeight = (textElem._groups || textElem)[0][0].getBBox().height;
 
   if (typeof bounds.sectionTitles !== 'undefined') {
     bounds.sectionTitles.forEach(function (item, idx) {
       if (item !== '') {
         txt.text = '[ ' + item + ' ]';
         txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
-        drawText(g, txt);
+        textElem = drawText(g, txt);
+        textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       }
     });
   }
+
+  return textHeight + 4;
 };
 /**
  * Draws a background rectangle
- * @param color - The fill color for the background
+ * @param elem diagram (reference for bounds)
+ * @param bounds shape of the rectangle
  */
 
 var drawBackgroundRect = function drawBackgroundRect(elem, bounds) {
@@ -61999,12 +62158,13 @@ var _drawTextCandidateFunc = function () {
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
     var actorFontSize = conf.actorFontSize,
-        actorFontFamily = conf.actorFontFamily;
+        actorFontFamily = conf.actorFontFamily,
+        actorFontWeight = conf.actorFontWeight;
     var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
       var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
-      var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle').style('font-size', actorFontSize).style('font-family', actorFontFamily);
+      var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle').style('font-size', actorFontSize).style('font-weight', actorFontWeight).style('font-family', actorFontFamily);
       text.append('tspan').attr('x', x + width / 2).attr('dy', dy).text(lines[i]);
       text.attr('y', y + height / 2.0).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
 
@@ -66591,6 +66751,13 @@ Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
 Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(config);
 
 function parse(text) {
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(text);
+
+  if (graphInit) {
+    reinitialize(graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Init ', graphInit);
+  }
+
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(text);
   var parser;
   _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Type ' + graphType);
@@ -66977,19 +67144,16 @@ var setConf = function setConf(cnf) {
 };
 
 function reinitialize(options) {
-  var _config = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])();
-
   if (_typeof(options) === 'object') {
-    _config = Object.assign(_config, options);
-    setConf(_config);
+    setConf(options);
   }
 
-  Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(_config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(_config.logLevel);
+  Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
   _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('RE-Initializing mermaidAPI ', {
     version: _package_json__WEBPACK_IMPORTED_MODULE_2__.version,
     options: options,
-    _config: _config
+    config: config
   });
 }
 
@@ -67018,6 +67182,7 @@ var mermaidAPI = {
   render: render,
   parse: parse,
   initialize: initialize,
+  reinitialize: reinitialize,
   getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]
 };
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
@@ -67235,12 +67400,15 @@ var d3CurveTypes = {
   curveStepAfter: d3__WEBPACK_IMPORTED_MODULE_0__["curveStepAfter"],
   curveStepBefore: d3__WEBPACK_IMPORTED_MODULE_0__["curveStepBefore"]
 };
-var initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
+var fullDirective = /%%\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
+var directiveWithoutOpen = /\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
+var commentWithoutDirectives = new RegExp("\\s*%%(?!".concat(directiveWithoutOpen.source, ")(?=}%%).*\n"), 'gm');
+var anyComment = new RegExp("\\s*%%.*\n", 'gm');
 /**
  * @function detectInit
  * Detects the init config object from the text
  * ```mermaid
- * init: {"startOnLoad": true, "logLevel": 1 }
+ * %%{init: {"startOnLoad": true, "logLevel": 1 }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -67252,7 +67420,7 @@ var initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
  * ```
  * or
  * ```mermaid
- * initialize: {"startOnLoad": true, logLevel: "fatal" }
+ * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -67268,17 +67436,20 @@ var initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
  */
 
 var detectInit = function detectInit(text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n');
+  text = text.replace(commentWithoutDirectives, '\n');
   _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Detecting diagram init based on the text ' + text);
+  var matches = text.match(fullDirective);
 
-  if (text.match(initPart)) {
-    return JSON.parse(text.match(initPart)[1].trim().replace(/\\n/g, '\n').replace(/'/g, '"'));
+  if (matches && /init(?:ialize)?/.test(matches[1])) {
+    return JSON.parse(matches[2].trim().replace(/\\n/g, '\n').replace(/'/g, '"'));
   }
 };
 /**
  * @function detectType
- * Detects the type of the graph text.
+ * Detects the type of the graph text. Takes into consideration the possible existence of an %%init
+ * directive
  * ```mermaid
+ * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -67294,7 +67465,7 @@ var detectInit = function detectInit(text) {
  */
 
 var detectType = function detectType(text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n').replace(initPart, '');
+  text = text.replace(anyComment, '\n');
   _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Detecting diagram type based on the text ' + text);
 
   if (text.match(/^\s*sequenceDiagram/)) {

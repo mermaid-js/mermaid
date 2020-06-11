@@ -1,13 +1,31 @@
 import { logger } from '../../logger';
 import { getConfig, setConfig } from '../../config';
+import mermaidAPI from '../../mermaidAPI';
 
 let prevActor = undefined;
 let actors = {};
 let messages = [];
 const notes = [];
 let title = '';
+let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
+let configUpdated = false;
+
+export const handleDirective = function(directive) {
+  switch (directive.type) {
+    case 'init':
+    case 'initialize':
+      mermaidAPI.reinitialize(directive.args);
+      break;
+    case 'config':
+      updateConfig(directive.args);
+      break;
+    case 'wrap':
+      wrapEnabled = true;
+      break;
+  }
+};
 
 export const addActor = function(id, name, description) {
   // Don't allow description nulling
@@ -15,9 +33,16 @@ export const addActor = function(id, name, description) {
   if (old && name === old.name && description == null) return;
 
   // Don't allow null descriptions, either
-  if (description == null) description = name;
+  if (description == null || description.text == null) {
+    description = { text: name, wrap: null };
+  }
 
-  actors[id] = { name: name, description: description, prevActor: prevActor };
+  actors[id] = {
+    name: name,
+    description: description.text,
+    wrap: (description.wrap === null && autoWrap()) || !!description.wrap,
+    prevActor: prevActor
+  };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;
   }
@@ -26,7 +51,7 @@ export const addActor = function(id, name, description) {
 };
 
 const activationCount = part => {
-  let i = 0;
+  let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
     // console.warn(i, messages[i]);
@@ -45,12 +70,27 @@ const activationCount = part => {
 };
 
 export const addMessage = function(idFrom, idTo, message, answer) {
-  messages.push({ from: idFrom, to: idTo, message: message, answer: answer });
+  messages.push({
+    from: idFrom,
+    to: idTo,
+    message: message.text,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
+    answer: answer
+  });
 };
 
-export const addSignal = function(idFrom, idTo, message, messageType) {
+export const addSignal = function(idFrom, idTo, message = { text: null, wrap: null }, messageType) {
   logger.debug(
-    'Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType
+    'Adding message from=' +
+      idFrom +
+      ' to=' +
+      idTo +
+      ' message=' +
+      message.text +
+      ' wrap=' +
+      message.wrap +
+      ' type=' +
+      messageType
   );
 
   if (messageType === LINETYPE.ACTIVE_END) {
@@ -58,7 +98,7 @@ export const addSignal = function(idFrom, idTo, message, messageType) {
     logger.debug('Adding message from=', messages, cnt);
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      var error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
+      let error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
       error.hash = {
         text: '->>-',
         token: '->>-',
@@ -69,7 +109,13 @@ export const addSignal = function(idFrom, idTo, message, messageType) {
       throw error;
     }
   }
-  messages.push({ from: idFrom, to: idTo, message: message, type: messageType });
+  messages.push({
+    from: idFrom,
+    to: idTo,
+    message: message.text,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
+    type: messageType
+  });
   return true;
 };
 
@@ -89,6 +135,9 @@ export const getActorKeys = function() {
 export const getTitle = function() {
   return title;
 };
+export const getTitleWrapped = function() {
+  return titleWrapped;
+};
 export const enableSequenceNumbers = function() {
   sequenceNumbersEnabled = true;
 };
@@ -107,6 +156,22 @@ export const autoWrap = () => wrapEnabled;
 export const clear = function() {
   actors = {};
   messages = [];
+  configUpdated = false;
+};
+
+export const parseMessage = function(str) {
+  const _str = str.trim();
+  return {
+    text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
+    wrap:
+      _str.match(/^[:]?(?:no)?wrap:/) === null
+        ? autoWrap()
+        : _str.match(/^[:]?wrap:/) !== null
+        ? true
+        : _str.match(/^[:]?nowrap:/) !== null
+        ? false
+        : autoWrap()
+  };
 };
 
 export const LINETYPE = {
@@ -145,7 +210,12 @@ export const PLACEMENT = {
 };
 
 export const addNote = function(actor, placement, message) {
-  const note = { actor: actor, placement: placement, message: message };
+  const note = {
+    actor: actor,
+    placement: placement,
+    message: message.text,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap
+  };
 
   // Coerce actor into a [to, from, ...] array
   const actors = [].concat(actor, actor);
@@ -154,14 +224,29 @@ export const addNote = function(actor, placement, message) {
   messages.push({
     from: actors[0],
     to: actors[1],
-    message: message,
+    message: message.text,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
 };
 
-export const setTitle = function(titleText) {
-  title = titleText;
+export const setTitle = function(titleWrap) {
+  title = titleWrap.text;
+  titleWrapped = (titleWrap.wrap === null && autoWrap()) || !!titleWrap.wrap;
+};
+
+export const updateConfig = function(config = getConfig()) {
+  try {
+    setConfig(config);
+    configUpdated = true;
+  } catch (error) {
+    logger.error('Error: unable to parse config');
+  }
+};
+
+export const hasConfigChange = function() {
+  return configUpdated;
 };
 
 export const apply = function(param) {
@@ -225,16 +310,6 @@ export const apply = function(param) {
       case 'parEnd':
         addSignal(undefined, undefined, undefined, param.signalType);
         break;
-      case 'config':
-        try {
-          let cfg = param.config;
-          let _config = getConfig();
-          let config = Object.assign(_config, cfg);
-          setConfig(config);
-        } catch (error) {
-          logger.error('Error: unable to parse config');
-        }
-        break;
     }
   }
 };
@@ -253,7 +328,13 @@ export default {
   getActor,
   getActorKeys,
   getTitle,
+  handleDirective,
+  hasConfigChange,
+  getConfig,
+  updateConfig,
+  getTitleWrapped,
   clear,
+  parseMessage,
   LINETYPE,
   ARROWTYPE,
   PLACEMENT,

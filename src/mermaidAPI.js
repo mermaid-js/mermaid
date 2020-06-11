@@ -561,6 +561,11 @@ setLogLevel(config.logLevel);
 setConfig(config);
 
 function parse(text) {
+  const graphInit = utils.detectInit(text);
+  if (graphInit) {
+    reinitialize(graphInit);
+    logger.debug('Init ', graphInit);
+  }
   const graphType = utils.detectType(text);
   let parser;
 
@@ -949,14 +954,12 @@ const setConf = function(cnf) {
 };
 
 function reinitialize(options) {
-  let _config = getConfig();
   if (typeof options === 'object') {
-    _config = Object.assign(_config, options);
-    setConf(_config);
+    setConf(options);
   }
-  setConfig(_config);
-  setLogLevel(_config.logLevel);
-  logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, _config });
+  setConfig(config);
+  setLogLevel(config.logLevel);
+  logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, config });
 }
 
 function initialize(options) {
@@ -980,6 +983,7 @@ const mermaidAPI = {
   render,
   parse,
   initialize,
+  reinitialize,
   getConfig
 };
 

@@ -28,14 +28,19 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore
 };
-
-const initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
+const fullDirective = /%%\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
+const directiveWithoutOpen = /\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
+const commentWithoutDirectives = new RegExp(
+  `\\s*%%(?!${directiveWithoutOpen.source})(?=}%%).*\n`,
+  'gm'
+);
+const anyComment = new RegExp(`\\s*%%.*\n`, 'gm');
 
 /**
  * @function detectInit
  * Detects the init config object from the text
  * ```mermaid
- * init: {"startOnLoad": true, "logLevel": 1 }
+ * %%{init: {"startOnLoad": true, "logLevel": 1 }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -47,7 +52,7 @@ const initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
  * ```
  * or
  * ```mermaid
- * initialize: {"startOnLoad": true, logLevel: "fatal" }
+ * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -62,12 +67,12 @@ const initPart = /^\s*init(?:ialize)?:\s*(\{.*})$/m;
  * @returns {object} An object representing the initialization to pass to mermaidAPI.initialize()
  */
 export const detectInit = function(text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n');
+  text = text.replace(commentWithoutDirectives, '\n');
   logger.debug('Detecting diagram init based on the text ' + text);
-  if (text.match(initPart)) {
+  const matches = text.match(fullDirective);
+  if (matches && /init(?:ialize)?/.test(matches[1])) {
     return JSON.parse(
-      text
-        .match(initPart)[1]
+      matches[2]
         .trim()
         .replace(/\\n/g, '\n')
         .replace(/'/g, '"')
@@ -77,8 +82,10 @@ export const detectInit = function(text) {
 
 /**
  * @function detectType
- * Detects the type of the graph text.
+ * Detects the type of the graph text. Takes into consideration the possible existence of an %%init
+ * directive
  * ```mermaid
+ * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -93,7 +100,7 @@ export const detectInit = function(text) {
  * @returns {string} A graph definition key
  */
 export const detectType = function(text) {
-  text = text.replace(/^\s*%%.*\n/g, '\n').replace(initPart, '');
+  text = text.replace(anyComment, '\n');
   logger.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';

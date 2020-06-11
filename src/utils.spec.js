@@ -8,12 +8,19 @@ describe('when detecting chart type ', function() {
     expect(type).toBe('flowchart');
   });
   it('should handle an initialize defintion', function() {
-    const str = 'initialize: { "logLevel": 0, "theme": "dark" }\ngraph TB\nbfs1:queue';
+    const str = `
+%%{initialize: { 'logLevel': 0, 'theme': 'dark' }}%%
+graph TB
+bfs1:queue
+`;
     const init = JSON.stringify(utils.detectInit(str));
     expect(init).toBe('{"logLevel":0,"theme":"dark"}');
   });
   it('should handle an init defintion', function() {
-    const str = 'init: { "logLevel": 0, "theme": "dark" }\ngraph TB\nbfs1:queue';
+    const str = `
+%%{init: { 'logLevel': 0, 'theme': 'dark' }}%%
+graph TB
+bfs1:queue`;
     const init = JSON.stringify(utils.detectInit(str));
     expect(init).toBe('{"logLevel":0,"theme":"dark"}');
   });

@@ -1,5 +1,5 @@
 $mainBkg: #1f2020;
-$secondBkg: lighten(#1f2020, 100);
+$secondBkg: lighten(#1f2020, 16);
 $mainContrastColor: lightgrey;
 $darkTextColor: #323D47;
 $lineColor: $mainContrastColor;
@@ -31,8 +31,8 @@ $labelTextColor: $mainContrastColor;
 $loopTextColor: $mainContrastColor;
 $noteBorderColor: $border2;
 $noteBkgColor: #fff5ad;
-$activationBorderColor: #666;
-$activationBkgColor: #f4f4f4;
+$activationBorderColor: $border1;
+$activationBkgColor: $secondBkg;
 $sequenceNumberColor: white;
 
 /* Gantt chart variables */
