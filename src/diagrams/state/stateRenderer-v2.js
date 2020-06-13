@@ -145,7 +145,7 @@ const setupNode = (g, parent, node, altFlag) => {
         arrowType: '',
         style: 'fill:none',
         labelStyle: '',
-        classes: 'note-edge',
+        classes: 'transition note-edge',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
         labelType: 'text',
