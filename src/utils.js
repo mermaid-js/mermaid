@@ -127,6 +127,21 @@ export const formatUrl = (linkStr, config) => {
   }
 };
 
+export const runFunc = (functionName, ...params) => {
+  var arrPaths = functionName.split('.');
+
+  var len = arrPaths.length - 1;
+  var fnName = arrPaths[len];
+
+  var obj = window;
+  for (var i = 0; i < len; i++) {
+    obj = obj[arrPaths[i]];
+    if (!obj) return;
+  }
+
+  obj[fnName](...params);
+};
+
 const distance = (p1, p2) =>
   p1 && p2 ? Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)) : 0;
 
@@ -262,5 +277,6 @@ export default {
   calcCardinalityPosition,
   formatUrl,
   getStylesFromArray,
-  generateId
+  generateId,
+  runFunc
 };
