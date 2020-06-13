@@ -191,11 +191,35 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     })
     .curve(curveBasis);
 
+  // Contruct stroke classes based on properties
+  let strokeClasses;
+  switch (edge.thickness) {
+    case 'normal':
+      strokeClasses = 'edge-thickness-normal';
+      break;
+    case 'thick':
+      strokeClasses = 'edge-thickness-thick';
+      break;
+    default:
+      strokeClasses = '';
+  }
+  switch (edge.pattern) {
+    case 'solid':
+      strokeClasses += ' edge-pattern-solid';
+      break;
+    case 'dotted':
+      strokeClasses += ' edge-pattern-dotted';
+      break;
+    case 'dashed':
+      strokeClasses += ' edge-pattern-dashed';
+      break;
+  }
+
   const svgPath = elem
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
-    .attr('class', 'transition' + (edge.classes ? ' ' + edge.classes : ''));
+    .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''));
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {

@@ -148,7 +148,8 @@ const setupNode = (g, parent, node, altFlag) => {
         classes: 'note-edge',
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text'
+        labelType: 'text',
+        thickness: 'normal'
       });
     } else {
       g.setNode(node.id, nodeData);
@@ -184,7 +185,9 @@ const setupDoc = (g, parent, doc, altFlag) => {
         label: item.description,
         arrowheadStyle: 'fill: #333',
         labelpos: 'c',
-        labelType: 'text'
+        labelType: 'text',
+        thickness: 'normal',
+        classes: 'transition'
       };
       let startId = item.state1.id;
       let endId = item.state2.id;

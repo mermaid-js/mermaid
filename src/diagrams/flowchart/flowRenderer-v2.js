@@ -217,12 +217,16 @@ export const addEdges = function(edges, g) {
           if (typeof defaultLabelStyle !== 'undefined') {
             labelStyle = defaultLabelStyle;
           }
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'solid';
           break;
         case 'dotted':
-          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'dotted';
           break;
         case 'thick':
-          style = ' stroke-width: 3.5px;fill:none';
+          edgeData.thickness = 'thick';
+          edgeData.pattern = 'solid';
           break;
       }
     }
@@ -262,7 +266,7 @@ export const addEdges = function(edges, g) {
     }
 
     edgeData.id = linkId;
-    edgeData.class = linkNameStart + ' ' + linkNameEnd;
+    edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
 
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
