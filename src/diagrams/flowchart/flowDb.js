@@ -232,7 +232,7 @@ const setClickFun = function(_id, functionName) {
         elem.addEventListener(
           'click',
           function() {
-            window[functionName](id);
+            utils.runFunc(functionName, id);
           },
           false
         );
