@@ -217,7 +217,7 @@ const setClickFunc = function(domId, functionName, tooltip) {
         elem.addEventListener(
           'click',
           function() {
-            window[functionName](elemId);
+            utils.runFunc(functionName, elemId);
           },
           false
         );

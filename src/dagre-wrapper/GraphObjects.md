@@ -112,6 +112,8 @@ Required edgeData for proper rendering:
 | label      | overlap between label and labelText?     |
 | labelPos   |                                          |
 | labelType  | overlap between label and labelText?     |
+| thickness  | Sets the thinkess of the edge. Can be ['normal', 'thick'] |
+| pattern    | Sets the pattern of the edge. Can be ['solid', 'dotted', 'dashed']    |
 
 
 # Markers

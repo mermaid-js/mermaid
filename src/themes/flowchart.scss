@@ -34,6 +34,11 @@
   stroke-width: 1.5px;
 }
 
+.flowchart-link {
+  stroke: $lineColor;
+  fill: none;
+}
+
 .edgeLabel {
   background-color: $edgeLabelBackground;
   rect {

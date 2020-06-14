@@ -219,6 +219,11 @@ This sets the font size of the actor's description
 This sets the font family of the actor's description
 **Default value "Open-Sans", "sans-serif"**.
 
+### actorFontWeight
+
+This sets the font weight of the actor's description
+\*\*Default value 400.
+
 ### noteFontSize
 
 This sets the font size of actor-attached notes.
@@ -228,6 +233,11 @@ This sets the font size of actor-attached notes.
 
 This sets the font family of actor-attached notes.
 **Default value "trebuchet ms", verdana, arial**.
+
+### noteFontWeight
+
+This sets the font weight of the note's description
+\*\*Default value 400.
 
 ### noteAlign
 
@@ -243,6 +253,21 @@ This sets the font size of actor messages.
 
 This sets the font family of actor messages.
 **Default value "trebuchet ms", verdana, arial**.
+
+### messageFontWeight
+
+This sets the font weight of the message's description
+\*\*Default value 400.
+
+### wrapEnabled
+
+This sets the auto-wrap state for the diagram
+\*\*Default value false.
+
+### wrapPadding
+
+This sets the auto-wrap padding for the diagram (sides only)
+\*\*Default value 15.
 
 ## gantt
 
