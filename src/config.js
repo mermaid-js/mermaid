@@ -1,4 +1,3 @@
-import { logger } from './logger';
 let config = {};
 
 const setConf = function(cnf) {
