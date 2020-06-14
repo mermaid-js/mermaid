@@ -14,7 +14,6 @@ let configUpdated = false;
 let currentDirective = {};
 
 export const parseDirective = function(statement, context) {
-  logger.info(`statement: ${statement} ctx: ${context}`);
   try {
     if (statement !== undefined) {
       statement = statement.trim();

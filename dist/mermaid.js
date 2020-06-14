@@ -60374,7 +60374,7 @@ case 46:return 'INVALID';
 break;
 }
 },
-rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
+rules: [/^(?:%%\{)/i,/^(?:((?:(?!\}%%)[^:.])*))/i,/^(?::)/i,/^(?:\}%%)/i,/^(?:((?:(?!\}%%).|\n)*))/i,/^(?:[\n]+)/i,/^(?:\s+)/i,/^(?:((?!\n)\s)+)/i,/^(?:#[^\n]*)/i,/^(?:%(?!\{)[^\n]*)/i,/^(?:[^\}]%%[^\n]*)/i,/^(?:participant\b)/i,/^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i,/^(?:as\b)/i,/^(?:(?:))/i,/^(?:loop\b)/i,/^(?:rect\b)/i,/^(?:opt\b)/i,/^(?:alt\b)/i,/^(?:else\b)/i,/^(?:par\b)/i,/^(?:and\b)/i,/^(?:(?:[:]?(?:no)?wrap)?[^#\n;]*)/i,/^(?:end\b)/i,/^(?:left of\b)/i,/^(?:right of\b)/i,/^(?:over\b)/i,/^(?:note\b)/i,/^(?:activate\b)/i,/^(?:deactivate\b)/i,/^(?:title\b)/i,/^(?:sequenceDiagram\b)/i,/^(?:autonumber\b)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[^\+\->:\n,;]+)/i,/^(?:->>)/i,/^(?:-->>)/i,/^(?:->)/i,/^(?:-->)/i,/^(?:-[x])/i,/^(?:--[x])/i,/^(?::(?:(?:no)?wrap)?[^#\n;]+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:$)/i,/^(?:.)/i],
 conditions: {"LINE":{"rules":[7,8,22],"inclusive":false},"ARG_DIRECTIVE":{"rules":[3,4,8],"inclusive":false},"TYPE_DIRECTIVE":{"rules":[2,3,8],"inclusive":false},"OPEN_DIRECTIVE":{"rules":[1,8],"inclusive":false},"ALIAS":{"rules":[7,8,13,14],"inclusive":false},"ID":{"rules":[7,8,12],"inclusive":false},"INITIAL":{"rules":[0,5,6,8,9,10,11,15,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"inclusive":true}}
 });
 return lexer;
@@ -60459,8 +60459,6 @@ var wrapEnabled = false;
 var configUpdated = false;
 var currentDirective = {};
 var parseDirective = function parseDirective(statement, context) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info("statement: ".concat(statement, " ctx: ").concat(context));
-
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -65894,7 +65892,17 @@ var logger = {
   error: function error() {},
   fatal: function fatal() {}
 };
-var setLogLevel = function setLogLevel(level) {
+var setLogLevel = function setLogLevel() {
+  var level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'fatal';
+
+  if (isNaN(level)) {
+    level = level.toLowerCase();
+
+    if (LEVELS[level] !== undefined) {
+      level = LEVELS[level];
+    }
+  }
+
   logger.trace = function () {};
 
   logger.debug = function () {};
@@ -66313,7 +66321,6 @@ var config = {
    */
   theme: 'default',
   themeCSS: undefined,
-  multilineDirectives: false,
 
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
@@ -67401,12 +67408,13 @@ if (typeof styles === 'string') {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: detectInit, detectType, isSubstringInArray, interpolateToCurve, formatUrl, getStylesFromArray, generateId, default */
+/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, getStylesFromArray, generateId, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detectInit", function() { return detectInit; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detectDirective", function() { return detectDirective; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "detectType", function() { return detectType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isSubstringInArray", function() { return isSubstringInArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "interpolateToCurve", function() { return interpolateToCurve; });
@@ -67417,6 +67425,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @braintree/sanitize-url */ "./node_modules/@braintree/sanitize-url/index.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 
 
  // Effectively an enum of the supported curve types, accessible by name
@@ -67434,15 +67450,14 @@ var d3CurveTypes = {
   curveStepAfter: d3__WEBPACK_IMPORTED_MODULE_0__["curveStepAfter"],
   curveStepBefore: d3__WEBPACK_IMPORTED_MODULE_0__["curveStepBefore"]
 };
-var fullDirective = /%%\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
-var directiveWithoutOpen = /\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
-var commentWithoutDirectives = new RegExp("\\s*%%(?!".concat(directiveWithoutOpen.source, ")(?=}%%).*\n"), 'gm');
-var anyComment = new RegExp("\\s*%%.*\n", 'gm');
+var directive = /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+var directiveWithoutOpen = /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+var anyComment = /\s*%%.*\n/gm;
 /**
  * @function detectInit
  * Detects the init config object from the text
  * ```mermaid
- * %%{init: {"startOnLoad": true, "logLevel": 1 }}%%
+ * %%{init: {"theme": "debug", "logLevel": 1 }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -67454,7 +67469,7 @@ var anyComment = new RegExp("\\s*%%.*\n", 'gm');
  * ```
  * or
  * ```mermaid
- * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
+ * %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -67466,16 +67481,87 @@ var anyComment = new RegExp("\\s*%%.*\n", 'gm');
  * ```
  *
  * @param {string} text The text defining the graph
- * @returns {object} An object representing the initialization to pass to mermaidAPI.initialize()
+ * @returns {object} the json object representing the init to pass to mermaid.initialize()
  */
 
 var detectInit = function detectInit(text) {
-  text = text.replace(commentWithoutDirectives, '\n');
-  _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Detecting diagram init based on the text ' + text);
-  var matches = text.match(fullDirective);
+  var inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
+  var results = {};
 
-  if (matches && /init(?:ialize)?/.test(matches[1])) {
-    return JSON.parse(matches[2].trim().replace(/\\n/g, '\n').replace(/'/g, '"'));
+  if (Array.isArray(inits)) {
+    var args = inits.map(function (init) {
+      return init.args;
+    });
+    results = Object.assign.apply(Object, [results].concat(_toConsumableArray(args)));
+  } else {
+    results = inits.args;
+  }
+
+  return results;
+};
+/**
+ * @function detectDirective
+ * Detects the directive from the text. Text can be single line or multiline. If type is null or omitted
+ * the first directive encountered in text will be returned
+ * ```mermaid
+ * graph LR
+ *  %%{somedirective}%%
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ *
+ * @param {string} text The text defining the graph
+ * @param {string|RegExp} type The directive to return (default: null
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matchd by the input type
+ *          if a single directive was found, that directive object will be returned.
+ */
+
+var detectDirective = function detectDirective(text) {
+  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+  try {
+    var commentWithoutDirectives = new RegExp("[%]{2}(?![{]".concat(directiveWithoutOpen.source, ")(?=[}][%]{2}).*\n"), 'ig');
+    text = text.trim().replace(commentWithoutDirectives, '').replace(/'/gm, '"');
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug("Detecting diagram directive".concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    var match,
+        result = [];
+
+    while ((match = directive.exec(text)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (match.index === directive.lastIndex) {
+        directive.lastIndex++;
+      }
+
+      if (match && !type || type && match[1] && match[1].match(type) || type && match[2] && match[2].match(type)) {
+        var _type = match[1] ? match[1] : match[2];
+
+        var args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
+        result.push({
+          type: _type,
+          args: args
+        });
+      }
+    }
+
+    if (result.length === 0) {
+      result.push({
+        type: text,
+        args: null
+      });
+    }
+
+    return result.length === 1 ? result[0] : result;
+  } catch (error) {
+    _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].error("ERROR: ".concat(error.message, " - Unable to parse directive").concat(type !== null ? ' type:' + type : '', " based on the text:").concat(text));
+    return {
+      type: null,
+      args: null
+    };
   }
 };
 /**
@@ -67499,7 +67585,7 @@ var detectInit = function detectInit(text) {
  */
 
 var detectType = function detectType(text) {
-  text = text.replace(anyComment, '\n');
+  text = text.replace(directive, '').replace(anyComment, '\n');
   _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].debug('Detecting diagram type based on the text ' + text);
 
   if (text.match(/^\s*sequenceDiagram/)) {
@@ -67719,6 +67805,7 @@ var generateId = function generateId() {
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
   detectInit: detectInit,
+  detectDirective: detectDirective,
   detectType: detectType,
   isSubstringInArray: isSubstringInArray,
   interpolateToCurve: interpolateToCurve,

@@ -28,19 +28,15 @@ const d3CurveTypes = {
   curveStepAfter: curveStepAfter,
   curveStepBefore: curveStepBefore
 };
-const fullDirective = /%%\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
-const directiveWithoutOpen = /\{(\w+)[:]?\s*(\{.*}(?!%%))?\s*}%%/;
-const commentWithoutDirectives = new RegExp(
-  `\\s*%%(?!${directiveWithoutOpen.source})(?=}%%).*\n`,
-  'gm'
-);
-const anyComment = new RegExp(`\\s*%%.*\n`, 'gm');
+const directive = /[%]{2}[{]\s*(?:(?:(\w+)\s*:|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const directiveWithoutOpen = /\s*(?:(?:(\w+)(?=:):|(\w+))\s*(?:(?:(\w+))|((?:(?![}][%]{2}).|\r?\n)*))?\s*)(?:[}][%]{2})?/gi;
+const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit
  * Detects the init config object from the text
  * ```mermaid
- * %%{init: {"startOnLoad": true, "logLevel": 1 }}%%
+ * %%{init: {"theme": "debug", "logLevel": 1 }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -52,7 +48,7 @@ const anyComment = new RegExp(`\\s*%%.*\n`, 'gm');
  * ```
  * or
  * ```mermaid
- * %%{initialize: {"startOnLoad": true, logLevel: "fatal" }}%%
+ * %%{initialize: {"theme": "dark", logLevel: "debug" }}%%
  * graph LR
  *  a-->b
  *  b-->c
@@ -64,19 +60,83 @@ const anyComment = new RegExp(`\\s*%%.*\n`, 'gm');
  * ```
  *
  * @param {string} text The text defining the graph
- * @returns {object} An object representing the initialization to pass to mermaidAPI.initialize()
+ * @returns {object} the json object representing the init to pass to mermaid.initialize()
  */
 export const detectInit = function(text) {
-  text = text.replace(commentWithoutDirectives, '\n');
-  logger.debug('Detecting diagram init based on the text ' + text);
-  const matches = text.match(fullDirective);
-  if (matches && /init(?:ialize)?/.test(matches[1])) {
-    return JSON.parse(
-      matches[2]
-        .trim()
-        .replace(/\\n/g, '\n')
-        .replace(/'/g, '"')
+  let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
+  let results = {};
+  if (Array.isArray(inits)) {
+    let args = inits.map(init => init.args);
+    results = Object.assign(results, ...args);
+  } else {
+    results = inits.args;
+  }
+  return results;
+};
+
+/**
+ * @function detectDirective
+ * Detects the directive from the text. Text can be single line or multiline. If type is null or omitted
+ * the first directive encountered in text will be returned
+ * ```mermaid
+ * graph LR
+ *  %%{somedirective}%%
+ *  a-->b
+ *  b-->c
+ *  c-->d
+ *  d-->e
+ *  e-->f
+ *  f-->g
+ *  g-->h
+ * ```
+ *
+ * @param {string} text The text defining the graph
+ * @param {string|RegExp} type The directive to return (default: null
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matchd by the input type
+ *          if a single directive was found, that directive object will be returned.
+ */
+export const detectDirective = function(text, type = null) {
+  try {
+    const commentWithoutDirectives = new RegExp(
+      `[%]{2}(?![{]${directiveWithoutOpen.source})(?=[}][%]{2}).*\n`,
+      'ig'
     );
+    text = text
+      .trim()
+      .replace(commentWithoutDirectives, '')
+      .replace(/'/gm, '"');
+    logger.debug(
+      `Detecting diagram directive${type !== null ? ' type:' + type : ''} based on the text:${text}`
+    );
+    let match,
+      result = [];
+    while ((match = directive.exec(text)) !== null) {
+      // This is necessary to avoid infinite loops with zero-width matches
+      if (match.index === directive.lastIndex) {
+        directive.lastIndex++;
+      }
+      if (
+        (match && !type) ||
+        (type && match[1] && match[1].match(type)) ||
+        (type && match[2] && match[2].match(type))
+      ) {
+        let type = match[1] ? match[1] : match[2];
+        let args = match[3] ? match[3].trim() : match[4] ? JSON.parse(match[4].trim()) : null;
+        result.push({ type, args });
+      }
+    }
+    if (result.length === 0) {
+      result.push({ type: text, args: null });
+    }
+
+    return result.length === 1 ? result[0] : result;
+  } catch (error) {
+    logger.error(
+      `ERROR: ${error.message} - Unable to parse directive${
+        type !== null ? ' type:' + type : ''
+      } based on the text:${text}`
+    );
+    return { type: null, args: null };
   }
 };
 
@@ -100,7 +160,7 @@ export const detectInit = function(text) {
  * @returns {string} A graph definition key
  */
 export const detectType = function(text) {
-  text = text.replace(anyComment, '\n');
+  text = text.replace(directive, '').replace(anyComment, '\n');
   logger.debug('Detecting diagram type based on the text ' + text);
   if (text.match(/^\s*sequenceDiagram/)) {
     return 'sequence';
@@ -309,6 +369,7 @@ export const generateId = () => {
 
 export default {
   detectInit,
+  detectDirective,
   detectType,
   isSubstringInArray,
   interpolateToCurve,

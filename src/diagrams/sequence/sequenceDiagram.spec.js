@@ -1016,6 +1016,21 @@ Note right of Alice: Alice thinks`;
   it('it should handle two actors', function() {
     renderer.bounds.init();
     const str = `
+sequenceDiagram
+Alice->Bob: Hello Bob, how are you?`;
+
+    parser.parse(str);
+    renderer.draw(str, 'tst');
+
+    const bounds = renderer.bounds.getBounds();
+    expect(bounds.startx).toBe(0);
+    expect(bounds.starty).toBe(0);
+    expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
+    expect(bounds.stopy).toBe(0 + conf.messageMargin + conf.height);
+  });
+  it('it should handle two actors with init directive', function() {
+    renderer.bounds.init();
+    const str = `
 %%{init: {'logLevel': 0}}%%
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
@@ -1024,6 +1039,29 @@ Alice->Bob: Hello Bob, how are you?`;
     renderer.draw(str, 'tst');
 
     const bounds = renderer.bounds.getBounds();
+    const mermaid = mermaidAPI.getConfig();
+    expect(mermaid.logLevel).toBe(0);
+    expect(bounds.startx).toBe(0);
+    expect(bounds.starty).toBe(0);
+    expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
+    expect(bounds.stopy).toBe(0 + conf.messageMargin + conf.height);
+  });
+  it('it should handle two actors with init directive with multiline directive', function() {
+    renderer.bounds.init();
+    const str = `
+%%{init: { 'logLevel': 0}}%%
+sequenceDiagram
+%%{
+wrap
+}%%
+Alice->Bob: Hello Bob, how are you?`;
+
+    parser.parse(str);
+    renderer.draw(str, 'tst');
+
+    const bounds = renderer.bounds.getBounds();
+    const mermaid = mermaidAPI.getConfig();
+    expect(mermaid.logLevel).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);

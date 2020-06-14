@@ -104,7 +104,6 @@ const config = {
    */
   theme: 'default',
   themeCSS: undefined,
-  multilineDirectives: false,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
 

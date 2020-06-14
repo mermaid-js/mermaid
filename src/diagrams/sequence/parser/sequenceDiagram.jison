@@ -30,7 +30,7 @@
 <OPEN_DIRECTIVE>((?:(?!\}\%\%)[^:.])*)                          { this.begin('TYPE_DIRECTIVE'); return 'type_directive'; }
 <TYPE_DIRECTIVE>":"                                             { this.popState(); this.begin('ARG_DIRECTIVE'); return ':'; }
 <TYPE_DIRECTIVE,ARG_DIRECTIVE>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<ARG_DIRECTIVE>((?:(?!\}\%\%).)*)                               return 'arg_directive';
+<ARG_DIRECTIVE>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 [\n]+                                                           return 'NL';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
