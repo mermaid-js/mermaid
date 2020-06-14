@@ -11,18 +11,56 @@ let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
 let configUpdated = false;
+let currentDirective = {};
 
-export const handleDirective = function(directive) {
+export const parseDirective = function(statement, context) {
+  logger.info(`statement: ${statement} ctx: ${context}`);
+  try {
+    if (statement !== undefined) {
+      statement = statement.trim();
+      switch (context) {
+        case 'open_directive':
+          currentDirective = {};
+          break;
+        case 'type_directive':
+          currentDirective.type = statement.toLowerCase();
+          break;
+        case 'arg_directive':
+          currentDirective.args = JSON.parse(statement);
+          break;
+        case 'close_directive':
+          handleDirective(currentDirective);
+          currentDirective = null;
+          break;
+      }
+    }
+  } catch (error) {
+    logger.error(
+      `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
+    );
+    logger.error(error.message);
+  }
+};
+
+const handleDirective = function(directive) {
+  logger.debug(`Directive type=${directive.type} with args:`, directive.args);
   switch (directive.type) {
     case 'init':
     case 'initialize':
-      mermaidAPI.reinitialize(directive.args);
+      mermaidAPI.initialize(directive.args);
       break;
     case 'config':
       updateConfig(directive.args);
       break;
     case 'wrap':
-      wrapEnabled = true;
+    case 'nowrap':
+      wrapEnabled = directive.type === 'wrap';
+      break;
+    default:
+      logger.warn(
+        `Unrecognized directive: source: '%%{${directive.type}: ${directive.args}}%%`,
+        directive
+      );
       break;
   }
 };
@@ -328,7 +366,7 @@ export default {
   getActor,
   getActorKeys,
   getTitle,
-  handleDirective,
+  parseDirective,
   hasConfigChange,
   getConfig,
   updateConfig,

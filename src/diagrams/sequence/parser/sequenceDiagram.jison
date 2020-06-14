@@ -18,7 +18,8 @@
 
 // Directive states
 %x OPEN_DIRECTIVE
-%x IN_DIRECTIVE
+%x TYPE_DIRECTIVE
+%x ARG_DIRECTIVE
 
 // A special state for grabbing text up to the first comment/newline
 %x LINE
@@ -26,14 +27,14 @@
 %%
 
 \%\%\{                                                          { this.begin('OPEN_DIRECTIVE'); return 'open_directive'; }
-<OPEN_DIRECTIVE>(?!\}\%\%)(?:\w+)\s*[:]?\s*(?:.*?)?(?=\}\%\%)   { this.popState(); return 'IN_DIRECTIVE'; }
-\}\%\%                                                          { this.popState(); return 'close_directive'; }
-"close_directive"                                               return 'NL';
-"open_directive"                                                return 'NL';
+<OPEN_DIRECTIVE>((?:(?!\}\%\%)[^:.])*)                          { this.begin('TYPE_DIRECTIVE'); return 'type_directive'; }
+<TYPE_DIRECTIVE>":"                                             { this.popState(); this.begin('ARG_DIRECTIVE'); return ':'; }
+<TYPE_DIRECTIVE,ARG_DIRECTIVE>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<ARG_DIRECTIVE>((?:(?!\}\%\%).)*)                               return 'arg_directive';
 [\n]+                                                           return 'NL';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
-<INITIAL,ID,ALIAS,LINE,IN_DIRECTIVE,OPEN_DIRECTIVE>\#[^\n]*     /* skip comments */
+<INITIAL,ID,ALIAS,LINE,ARG_DIRECTIVE,TYPE_DIRECTIVE,OPEN_DIRECTIVE>\#[^\n]*   /* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 "participant"                                                   { this.begin('ID'); return 'participant'; }
@@ -100,7 +101,8 @@ line
 	;
 
 directive
-  : open_directive textDirective close_directive { yy.handleDirective($2); }
+  : openDirective typeDirective closeDirective 'NL'
+  | openDirective typeDirective ':' argDirective closeDirective 'NL'
   ;
 
 statement
@@ -108,7 +110,6 @@ statement
 	| 'participant' actor 'NL' {$$=$2;}
 	| signal 'NL'
 	| autonumber {yy.enableSequenceNumbers()}
-	| directive 'NL'
 	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
 	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
 	| note_statement 'NL'
@@ -144,6 +145,7 @@ statement
 		// End
 		$3.push({type: 'parEnd', signalType: yy.LINETYPE.PAR_END});
 		$$=$3;}
+  | directive
 	;
 
 par_sections
@@ -212,22 +214,23 @@ signaltype
 	;
 
 text2
-  : TXT {$$ = yy.parseMessage($1.trim().substring(1)) } ;
+  : TXT {$$ = yy.parseMessage($1.trim().substring(1)) }
+  ;
 
-text3
-  : TXT {$$ = JSON.parse($1.substring(1).trim().replace(/\\n/gm, "\n").replace(/'/gm, "\""));} ;
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
 
-textDirective
-  : IN_DIRECTIVE
-  {
-    $1 = $1.trim().replace(/'/gm, '"');
-    if (/(\w+)[:]?\s*(\{.*}(?!%%))?/.test($1)) {
-      $1 = $1.match(/(\w+)[:]?\s*(\{.*}(?!%%))?/);
-      $$ = { type: $1[1], args: $1[2] !== undefined ? JSON.parse($1[2]) : null };
-    } else {
-      $$ = { type: $1, args: null };
-    }
-  }
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive'); }
   ;
 
 %%
