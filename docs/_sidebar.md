@@ -16,6 +16,7 @@
   - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
+  - [Directives](directives.md)
 
 - Guide
 
