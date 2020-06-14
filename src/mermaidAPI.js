@@ -964,6 +964,10 @@ function reinitialize(options) {
 
 function initialize(options) {
   let _config = config;
+  // Set default options
+  if (typeof options === 'object') {
+    setConf(_config);
+  }
   logger.debug('Initializing mermaidAPI ', { version: pkg.version, options, _config });
   // Update default config with options supplied at initialization
   if (typeof options === 'object') {

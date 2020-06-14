@@ -20400,6 +20400,8 @@ var init = function init() {
 };
 
 var initialize = function initialize(config) {
+  console.log('Ininitializeze ', config);
+
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -21516,7 +21518,12 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  var _config = config;
+  var _config = config; // Set default options
+
+  if (_typeof(options) === 'object') {
+    setConf(_config);
+  }
+
   _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Initializing mermaidAPI ', {
     version: _package_json__WEBPACK_IMPORTED_MODULE_2__.version,
     options: options,
