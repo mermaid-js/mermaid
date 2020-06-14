@@ -699,6 +699,7 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
+  const config = getConfig();
   // Check the maximum allowed text size
   let txt = _txt;
   if (_txt.length > config.maxTextSize) {
@@ -925,61 +926,35 @@ const render = function(id, _txt, cb, container) {
   return svgCode;
 };
 
-const setConf = function(cnf) {
-  // console.log('set conf ', cnf);
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  const lvl1Keys = Object.keys(cnf);
-  for (let i = 0; i < lvl1Keys.length; i++) {
-    if (typeof cnf[lvl1Keys[i]] === 'object' && cnf[lvl1Keys[i]] != null) {
-      const lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
-
-      for (let j = 0; j < lvl2Keys.length; j++) {
-        logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j]);
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        }
-        logger.debug(
-          'Setting config: ' +
-            lvl1Keys[i] +
-            ' ' +
-            lvl2Keys[j] +
-            ' to ' +
-            cnf[lvl1Keys[i]][lvl2Keys[j]]
-        );
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
-      }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
-    }
-  }
-  // console.log('set conf done', config);
-};
-
 function reinitialize(options) {
+  // console.log('re-initialize ', options.logLevel, config.logLevel, getConfig().logLevel);
   if (typeof options === 'object') {
-    setConf(options);
+    // setConf(options);
+    setConfig(options);
   }
-  setConfig(config);
-  setLogLevel(config.logLevel);
+  // setConfig(config);
+  setLogLevel(getConfig().logLevel);
   logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, config });
 }
 
+let firstInit = true;
 function initialize(options) {
-  // console.log('initialize ', options, config, getConfig());
-  let _config = getConfig();
   // Set default options
   if (typeof options === 'object') {
-    setConf(_config);
-    setConfig(_config);
+    if (firstInit) {
+      firstInit = false;
+      setConfig(config);
+    }
+    setConfig(options);
   }
-  logger.debug('Initializing mermaidAPI ', { version: pkg.version, options, _config });
-  // Update default config with options supplied at initialization
-  if (typeof options === 'object') {
-    _config = Object.assign(_config, options);
-    setConf(_config);
-  }
-  setConfig(_config);
-  setLogLevel(_config.logLevel);
+  logger.warn('Initializing mermaidAPI theme', {
+    version: pkg.version,
+    options,
+    config,
+    current: getConfig().theme
+  });
+
+  setLogLevel(getConfig().logLevel);
 }
 
 // function getConfig () {
@@ -992,7 +967,10 @@ const mermaidAPI = {
   parse,
   initialize,
   reinitialize,
-  getConfig
+  getConfig,
+  reset: () => {
+    firstInit = true;
+  }
 };
 
 export default mermaidAPI;

@@ -26,8 +26,13 @@ describe('when using mermaidAPI and ', function() {
       };
 
       mermaidAPI.initialize({ testObject: object });
+      let config = mermaidAPI.getConfig();
+
+      console.log('1:', config);
+      expect(config.testObject.test1).toBe(1);
       mermaidAPI.initialize({ testObject: { test3: true } });
-      const config = mermaidAPI.getConfig();
+      config = mermaidAPI.getConfig();
+      console.log(config);
 
       expect(config.testObject.test1).toBe(1);
       expect(config.testObject.test2).toBe(false);

@@ -1,3 +1,4 @@
+import { logger } from './logger';
 let config = {};
 
 const setConf = function(cnf) {
@@ -13,10 +14,18 @@ const setConf = function(cnf) {
         if (typeof config[lvl1Keys[i]] === 'undefined') {
           config[lvl1Keys[i]] = {};
         }
-        // logger.debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]])
+        // logger.debug(
+        //   'Setting config: ' +
+        //     lvl1Keys[i] +
+        //     ' ' +
+        //     lvl2Keys[j] +
+        //     ' to ' +
+        //     cnf[lvl1Keys[i]][lvl2Keys[j]]
+        // );
         config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
       }
     } else {
+      // logger.debug('Setting config: ' + lvl1Keys[i] + ' to ' + cnf[lvl1Keys[i]]);
       config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
   }

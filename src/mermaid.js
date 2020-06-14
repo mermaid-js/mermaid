@@ -122,6 +122,9 @@ const init = function() {
 };
 
 const initialize = function(config) {
+  mermaidAPI.reset();
+
+  // logger.debug('Initializing mermaid 1', config);
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -131,7 +134,7 @@ const initialize = function(config) {
     }
   }
   mermaidAPI.initialize(config);
-  logger.debug('Initializing mermaid ');
+  logger.debug('Initializing mermaid ', config);
 };
 
 /**
