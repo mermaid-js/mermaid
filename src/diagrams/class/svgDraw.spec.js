@@ -83,6 +83,14 @@ describe('class member Renderer, ', function () {
       expect(actual.cssStyle).toBe('');
     });
 
+    it('should handle simple method declaration with multiple parameters', function () {
+      const str = 'foo(int id, object thing)';
+      let actual = svgDraw.parseMember(str);
+      
+      expect(actual.displayText).toBe('foo(int id, object thing)');
+      expect(actual.cssStyle).toBe('');
+    });
+
     it('should handle simple method declaration with single item in parameters', function () {
       const str = 'foo(id)';
       let actual = svgDraw.parseMember(str);

@@ -2,6 +2,7 @@ import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
 import { getConfig } from '../../config';
+import utils from '../../utils';
 
 const config = getConfig();
 let dateFormat = '';
@@ -520,7 +521,7 @@ const setClickFun = function(id, functionName, functionArgs) {
   let rawTask = findTaskById(id);
   if (typeof rawTask !== 'undefined') {
     pushFun(id, () => {
-      window[functionName](...argList);
+      utils.runFunc(functionName, ...argList);
     });
   }
 };
