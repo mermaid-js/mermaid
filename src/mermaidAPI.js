@@ -926,6 +926,7 @@ const render = function(id, _txt, cb, container) {
 };
 
 const setConf = function(cnf) {
+  // console.log('set conf ', cnf);
   // Top level initially mermaid, gflow, sequenceDiagram and gantt
   const lvl1Keys = Object.keys(cnf);
   for (let i = 0; i < lvl1Keys.length; i++) {
@@ -951,6 +952,7 @@ const setConf = function(cnf) {
       config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
   }
+  // console.log('set conf done', config);
 };
 
 function reinitialize(options) {
@@ -963,10 +965,12 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  let _config = config;
+  // console.log('initialize ', options, config, getConfig());
+  let _config = getConfig();
   // Set default options
   if (typeof options === 'object') {
     setConf(_config);
+    setConfig(_config);
   }
   logger.debug('Initializing mermaidAPI ', { version: pkg.version, options, _config });
   // Update default config with options supplied at initialization

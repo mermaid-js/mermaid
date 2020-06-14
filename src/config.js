@@ -1,6 +1,7 @@
 let config = {};
 
 const setConf = function(cnf) {
+  // console.log('config::setConf', cnf);
   // Top level initially mermaid, gflow, sequenceDiagram and gantt
   const lvl1Keys = Object.keys(cnf);
   for (let i = 0; i < lvl1Keys.length; i++) {
@@ -19,6 +20,7 @@ const setConf = function(cnf) {
       config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
   }
+  // console.log('config::setConf done', config);
 };
 
 export const setConfig = conf => {
