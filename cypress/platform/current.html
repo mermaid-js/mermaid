@@ -20,223 +20,40 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid" style="width: 100%; height: 20%;">
-        flowchart LR
-          user1[fa:fa-user User 1] -- edit -> folder
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart LR
-    A{{A}}-- apa -->B{{B}};
-    click A callback "Tooltip"
-    click B "http://www.github.com" "This is a link"
-
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-graph LR
-    A{{A}}--apa-->B{{B}};
-
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-     stateDiagram-v2
-      [*]-->TV
-
-      state TV {
-        state fork_state &lt;&lt;fork&gt;&gt;
-        [*] --> fork_state
-        fork_state --> State2
-        fork_state --> State3
-
-        state join_state &lt;&lt;join&gt;&gt;
-        State2 --> join_state
-        State3 --> join_state
-        join_state --> State4
-        State4 --> [*]
-      }
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-        [*] --> Still
-        Still --> [*]
-        Still --> Moving
-        Moving --> Still
-        Moving --> Crash
-        Crash --> [*]
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-stateDiagram-v2
-    [*] --> First
-    First --> Third
-    First --> sec
-
-    state First {
-        [*] --> fir
-        fir --> [*]
-    }
-    state Second {
-        [*] --> sec
-        sec --> [*]
-   }
-    state Third {
-        [*] --> thi
-        thi --> [*]
-      }
-      thi --> sec
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-flowchart TD
-    subgraph A
-      a
-    end
-    subgraph B
-      b
-    end
-    subgraph C
-      subgraph D
-        d
-      end
-    end
-    A -- oAo --o B
-    A --> C
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-flowchart TD
-    subgraph A
-      a
-    end
-    subgraph B
-      b
-    end
-    c-->A
-    c-->B
-  </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-stateDiagram-v2
-    [*] --> First
-    First --> Second
-    First --> Third
-
-    state First {
-        [*] --> fir
-        fir --> [*]
-    }
-    state Second {
-        [*] --> sec
-        sec --> [*]
-    }
-    state Third {
-        [*] --> thi
-        thi --> [*]
-    }
-    </div>
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-          [*]-->TV
-
-          state TV {
-            [*] --> Off: Off to start with
-            On --> Off : Turn off
-            Off --> On : Turn on
-          }
-
-          TV--> Console
-
-          state Console {
-            [*] --> Off2: Off to start with
-            On2--> Off2 : Turn off
-            Off2 --> On2 : Turn on
-            On2-->Playing
-
-            state Playing {
-              Alive --> Dead
-              Dead-->Alive
-            }
-          }
+      <div class="mermaid" style="width: 50%; height: 20%;">
+flowchart TB
+  subgraph 1
+    A --> B;
+    A -.-> C;
+    A ==> D;
+    A ==> E;
+    B <--> F
+    C <--> F
+    D <--> F
+    E <--> F
+  end
+  subgraph 2
+    A2 --x B2;
+    A2 -.-x C2;
+    A2 ==x D2;
+    A2 ==x E2;
+    B2 x--x F2
+    C2 x--x F2
+    D2 x--x F2
+    E2 x--x F2
+  end
+  subgraph 3
+    A3 --o B3;
+    A3 -.-o C3;
+    A3 ==o D3;
+    A3 ==o E3;
+    B3 o--o F3
+    C3 o--o F3
+    D3 o--o F3
+    E3 o--o F3
+  end
       </div>
 
-    <div style="display: flex;flex-direction:column;width: 100%; height: 100%">
-      <div class="mermaid2" style="width: 100%; height: 100%;">
-        stateDiagram-v2
-          state apa {
-            [*] --> Still
-            Still --> [*]
-
-            Still --> Moving
-            Moving --> Still
-            Moving --> Crash
-            Crash --> [*]
-          }
-
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart TB
-        a --> b
-
-        subgraph id1 [Test]
-            a --apa--> c
-            b
-            c-->b
-            b-->H
-          end
-        G-->H
-        G-->id1
-        id1 --> I
-        I --> G
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart RL
-        a --> b
-
-        subgraph id1 [Test]
-            a --apa--> c
-            b
-            c-->b
-            b-->H
-          end
-        G-->H
-        G-->id1
-        id1 --> I
-        I --> G
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart RL
-
-        subgraph id1 [Test]
-          a
-        end
-        b-->id1
-      </div>
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart RL
-
-        subgraph id1 [Test1]
-          a
-        end
-        subgraph id2 [Test2]
-          b
-        end
-        a --> id2
-        a --> b
-        b-->id1
-        id1 --> id2
-      </div>
-      new:
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        flowchart LR
-          a <--> b
-          b o--o c
-          c x--x d
-          a21([In the box]) --> b2
-          b2((b2)) --o c2
-          c2(c2) --x d2 --> id1{{This is the text in the box}} --> A[(cylindrical<br />shape<br />test)]
-      </div>
-      old:
-      <div class="mermaid2" style="width: 100%; height: 100%">
-        graph LR
-          a((a)) --> b --> id1{{This is the text in the box}}
-          A[(cylindrical<br />shape<br />test)]
-      </div>
-
-</div>
   <script src="./mermaid.js"></script>
     <script>
       mermaid.parseError = function (err, hash) {
