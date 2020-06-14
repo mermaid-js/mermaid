@@ -75,8 +75,8 @@ text.actor > tspan {
   fill: $noteBkgColor;
 }
 
-.noteText {
-  fill: $actorBkg;
+.noteText, .noteText > tspan {
+  fill: $noteTextColor;
   stroke: none;
 }
 
@@ -93,15 +93,4 @@ text.actor > tspan {
 .activation2 {
   fill: $activationBkgColor;
   stroke: $activationBorderColor;
-}
-
-g > rect[class="note"] {
-  stroke: $noteBorderColor;
-  fill: $noteBkgColor;
-}
-
-g > text[class="noteText"] > tspan {
-  stroke: $actorBkg;
-  fill: $actorBkg;
-  stroke-width: 1px;
 }
