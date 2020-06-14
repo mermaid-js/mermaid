@@ -286,6 +286,11 @@ const config = {
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
     /**
+     * This sets the font weight of the actor's description
+     * **Default value 400.
+     */
+    actorFontWeight: 400,
+    /**
      * This sets the font size of actor-attached notes.
      * **Default value 14**.
      */
@@ -295,6 +300,11 @@ const config = {
      * **Default value "trebuchet ms", verdana, arial**.
      */
     noteFontFamily: '"trebuchet ms", verdana, arial',
+    /**
+     * This sets the font weight of the note's description
+     * **Default value 400.
+     */
+    noteFontWeight: 400,
     /**
      * This sets the text alignment of actor-attached notes.
      * **Default value center**.
@@ -309,7 +319,22 @@ const config = {
      * This sets the font family of actor messages.
      * **Default value "trebuchet ms", verdana, arial**.
      */
-    messageFontFamily: '"trebuchet ms", verdana, arial'
+    messageFontFamily: '"trebuchet ms", verdana, arial',
+    /**
+     * This sets the font weight of the message's description
+     * **Default value 400.
+     */
+    messageFontWeight: 400,
+    /**
+     * This sets the auto-wrap state for the diagram
+     * **Default value false.
+     */
+    wrapEnabled: false,
+    /**
+     * This sets the auto-wrap padding for the diagram (sides only)
+     * **Default value 15.
+     */
+    wrapPadding: 15
   },
 
   /**
@@ -536,6 +561,11 @@ setLogLevel(config.logLevel);
 setConfig(config);
 
 function parse(text) {
+  const graphInit = utils.detectInit(text);
+  if (graphInit) {
+    reinitialize(graphInit);
+    logger.debug('Init ', graphInit);
+  }
   const graphType = utils.detectType(text);
   let parser;
 
@@ -711,6 +741,10 @@ const render = function(id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   const element = select('#d' + id).node();
+  const graphInit = utils.detectInit(txt);
+  if (graphInit) {
+    reinitialize(graphInit);
+  }
   const graphType = utils.detectType(txt);
 
   // insert inline style into svg
@@ -919,15 +953,25 @@ const setConf = function(cnf) {
   }
 };
 
-function initialize(options) {
-  logger.debug('Initializing mermaidAPI ', pkg.version);
-
-  // Update default config with options supplied at initialization
+function reinitialize(options) {
   if (typeof options === 'object') {
     setConf(options);
   }
   setConfig(config);
   setLogLevel(config.logLevel);
+  logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, config });
+}
+
+function initialize(options) {
+  let _config = config;
+  logger.debug('Initializing mermaidAPI ', { version: pkg.version, options, _config });
+  // Update default config with options supplied at initialization
+  if (typeof options === 'object') {
+    _config = Object.assign(_config, options);
+    setConf(_config);
+  }
+  setConfig(_config);
+  setLogLevel(_config.logLevel);
 }
 
 // function getConfig () {
@@ -939,6 +983,7 @@ const mermaidAPI = {
   render,
   parse,
   initialize,
+  reinitialize,
   getConfig
 };
 

@@ -2,23 +2,73 @@
 import utils from './utils';
 
 describe('when detecting chart type ', function() {
-  it('should handle a graph defintion', function() {
+  it('should handle a graph definition', function() {
     const str = 'graph TB\nbfs1:queue';
     const type = utils.detectType(str);
     expect(type).toBe('flowchart');
   });
-  it('should handle a graph defintion with leading spaces', function() {
+  it('should handle an initialize definition', function() {
+    const str = `
+%%{initialize: { 'logLevel': 0, 'theme': 'dark' }}%%
+sequenceDiagram
+Alice->Bob: hi`;
+    const type = utils.detectType(str);
+    const init = utils.detectInit(str);
+    expect(type).toBe('sequence');
+    expect(init).toEqual({logLevel:0,theme:"dark"});
+  });
+  it('should handle an init definition', function() {
+    const str = `
+%%{init: { 'logLevel': 0, 'theme': 'dark' }}%%
+sequenceDiagram
+Alice->Bob: hi`;
+    const type = utils.detectType(str);
+    const init = utils.detectInit(str);
+    expect(type).toBe('sequence');
+    expect(init).toEqual({logLevel:0,theme:"dark"});
+  });
+  it('should handle a multiline init definition', function() {
+    const str = `
+%%{
+  init: {
+    'logLevel': 0,
+    'theme': 'dark'
+  }
+}%%
+sequenceDiagram
+Alice->Bob: hi`;
+    const type = utils.detectType(str);
+    const init = utils.detectInit(str);
+    expect(type).toBe('sequence');
+    expect(init).toEqual({logLevel:0,theme:"dark"});
+  });
+  it('should handle multiple init directives', function() {
+    const str = `
+%%{ init: { 'logLevel': 0, 'theme': 'forest' } }%%
+%%{
+  init: {
+    'theme': 'dark'
+  }
+}%%
+sequenceDiagram
+Alice->Bob: hi`;
+    const type = utils.detectType(str);
+    const init = utils.detectInit(str);
+    expect(type).toBe('sequence');
+    expect(init).toEqual({logLevel:0,theme:"dark"});
+  });
+  it('should handle a graph definition with leading spaces', function() {
     const str = '    graph TB\nbfs1:queue';
     const type = utils.detectType(str);
     expect(type).toBe('flowchart');
   });
 
-  it('should handle a graph defintion with leading spaces and newline', function() {
+  it('should handle a graph definition with leading spaces and newline', function() {
     const str = '  \n  graph TB\nbfs1:queue';
     const type = utils.detectType(str);
     expect(type).toBe('flowchart');
   });
-  it('should handle a graph defintion for gitGraph', function() {
+  it('should handle a graph definition for gitGraph', function() {
     const str = '  \n  gitGraph TB:\nbfs1:queue';
     const type = utils.detectType(str);
     expect(type).toBe('git');

@@ -26,6 +26,9 @@ export const drawText = function(elem, textData) {
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
   textElem.style('text-anchor', textData.anchor);
+  textElem.style('font-family', textData.fontFamily);
+  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-weight', textData.fontWeight);
   textElem.attr('fill', textData.fill);
   if (typeof textData.class !== 'undefined') {
     textElem.attr('class', textData.class);
@@ -77,7 +80,7 @@ let actorCnt = -1;
  * Draws an actor in the diagram with the attaced line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param config - The sequence diagram config object.
+ * @param conf - drawText implementation discriminator object
  */
 export const drawActor = function(elem, actor, conf) {
   const center = actor.x + actor.width / 2;
@@ -146,7 +149,7 @@ export const drawActivation = function(elem, bounds, verticalPos, conf, actorAct
  * @param elem - elemenet to append the loop to.
  * @param bounds - bounds of the given loop.
  * @param labelText - Text within the loop.
- * @param config - sequence diagram config object.
+ * @param conf
  */
 export const drawLoop = function(elem, bounds, labelText, conf) {
   const g = elem.append('g');
@@ -169,11 +172,17 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
     });
   }
 
+  let minSize =
+    Math.round((3 * conf.fontSize) / 4) < 10 ? conf.fontSize : Math.round((3 * conf.fontSize) / 4);
+
   let txt = getTextObj();
   txt.text = labelText;
   txt.x = bounds.startx;
   txt.y = bounds.starty;
   txt.labelMargin = 1.5 * 10; // This is the small box that says "loop"
+  txt.fontFamily = conf.fontFamily;
+  txt.fontSize = minSize;
+  txt.fontWeight = conf.fontWeight;
   txt.class = 'labelText'; // Its size & position are fixed.
 
   drawLabel(g, txt);
@@ -184,23 +193,31 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
   txt.y = bounds.starty + 1.5 * conf.boxMargin;
   txt.anchor = 'middle';
   txt.class = 'loopText';
+  txt.fontFamily = conf.fontFamily;
+  txt.fontSize = minSize;
+  txt.fontWeight = conf.fontWeight;
 
-  drawText(g, txt);
+  let textElem = drawText(g, txt);
+  let textHeight = (textElem._groups || textElem)[0][0].getBBox().height;
 
   if (typeof bounds.sectionTitles !== 'undefined') {
     bounds.sectionTitles.forEach(function(item, idx) {
       if (item !== '') {
         txt.text = '[ ' + item + ' ]';
         txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
-        drawText(g, txt);
+        textElem = drawText(g, txt);
+        textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
       }
     });
   }
+
+  return textHeight + 4;
 };
 
 /**
  * Draws a background rectangle
- * @param color - The fill color for the background
+ * @param elem diagram (reference for bounds)
+ * @param bounds shape of the rectangle
  */
 export const drawBackgroundRect = function(elem, bounds) {
   const rectElem = drawRect(elem, {
@@ -325,7 +342,7 @@ const _drawTextCandidateFunc = (function() {
   }
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
-    const { actorFontSize, actorFontFamily } = conf;
+    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -336,6 +353,7 @@ const _drawTextCandidateFunc = (function() {
         .attr('y', y)
         .style('text-anchor', 'middle')
         .style('font-size', actorFontSize)
+        .style('font-weight', actorFontWeight)
         .style('font-family', actorFontFamily);
       text
         .append('tspan')

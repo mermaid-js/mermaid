@@ -16,7 +16,13 @@ export const logger = {
   fatal: () => {}
 };
 
-export const setLogLevel = function(level) {
+export const setLogLevel = function(level = 'fatal') {
+  if (isNaN(level)) {
+    level = level.toLowerCase();
+    if (LEVELS[level] !== undefined) {
+      level = LEVELS[level];
+    }
+  }
   logger.trace = () => {};
   logger.debug = () => {};
   logger.info = () => {};
