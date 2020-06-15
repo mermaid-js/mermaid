@@ -803,75 +803,74 @@ const render = function(id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        cnf.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        gitGraphRenderer.setConf(config.git);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
         break;
       case 'flowchart':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        flowRenderer.setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        flowRenderer.setConf(cnf.flowchart);
         flowRenderer.draw(txt, id, false);
         break;
       case 'flowchart-v2':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        flowRendererV2.setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        flowRendererV2.setConf(cnf.flowchart);
         flowRendererV2.draw(txt, id, false);
         break;
       case 'sequence':
-        config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        if (config.sequenceDiagram) {
+        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        if (cnf.sequenceDiagram) {
           // backwards compatibility
-          sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram));
+          sequenceRenderer.setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error(
             '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
           );
         } else {
-          sequenceRenderer.setConf(config.sequence);
+          sequenceRenderer.setConf(cnf.sequence);
         }
         sequenceRenderer.draw(txt, id);
         break;
       case 'gantt':
-        config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        ganttRenderer.setConf(config.gantt);
+        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        ganttRenderer.setConf(cnf.gantt);
         ganttRenderer.draw(txt, id);
         break;
       case 'class':
-        console.log(cnf, config);
-        cnf.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         classRenderer.setConf(cnf.class);
         classRenderer.draw(txt, id);
         break;
       case 'state':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        stateRenderer.setConf(config.state);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        stateRenderer.setConf(cnf.state);
         stateRenderer.draw(txt, id);
         break;
       case 'stateDiagram':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        stateRendererV2.setConf(config.state);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        stateRendererV2.setConf(cnf.state);
         stateRendererV2.draw(txt, id);
         break;
       case 'info':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        infoRenderer.setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        infoRenderer.setConf(cnf.class);
         infoRenderer.draw(txt, id, pkg.version);
         break;
       case 'pie':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        pieRenderer.setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        pieRenderer.setConf(cnf.class);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
-        erRenderer.setConf(config.er);
+        erRenderer.setConf(cnf.er);
         erRenderer.draw(txt, id, pkg.version);
         break;
       case 'journey':
-        journeyRenderer.setConf(config.journey);
+        journeyRenderer.setConf(cnf.journey);
         journeyRenderer.draw(txt, id, pkg.version);
         break;
     }
   } catch (e) {
-    // errorRenderer.setConf(config.class);
+    // errorRenderer.setConf(cnf.class);
     errorRenderer.draw(id, pkg.version);
     throw e;
   }
@@ -880,7 +879,7 @@ const render = function(id, _txt, cb, container) {
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-  // if (config.arrowMarkerAbsolute) {
+  // if (cnf.arrowMarkerAbsolute) {
   //   url =
   //     window.location.protocol +
   //     '//' +
@@ -893,8 +892,8 @@ const render = function(id, _txt, cb, container) {
 
   // Fix for when the base tag is used
   let svgCode = select('#d' + id).node().innerHTML;
-
-  if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
+  logger.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -930,7 +929,7 @@ const render = function(id, _txt, cb, container) {
 };
 
 function reinitialize(options) {
-  // console.log('re-initialize ', options.logLevel, config.logLevel, getConfig().logLevel);
+  // console.log('re-initialize ', options.logLevel, cnf.logLevel, getConfig().logLevel);
   if (typeof options === 'object') {
     // setConf(options);
     setConfig(options);
@@ -942,6 +941,7 @@ function reinitialize(options) {
 
 let firstInit = true;
 function initialize(options) {
+  // console.log('mermaidAPI.initialize');
   // Set default options
   if (typeof options === 'object') {
     if (firstInit) {
@@ -971,7 +971,9 @@ const mermaidAPI = {
   initialize,
   reinitialize,
   getConfig,
+  setConfig,
   reset: () => {
+    // console.warn('reset');
     firstInit = true;
   }
 };

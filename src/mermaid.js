@@ -29,7 +29,7 @@ import { logger } from './logger';
  */
 const init = function() {
   const conf = mermaidAPI.getConfig();
-  logger.debug('Starting rendering diagrams');
+  // console.log('Starting rendering diagrams (init) - mermaid.init');
   let nodes;
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
@@ -69,11 +69,11 @@ const init = function() {
   logger.debug('Start On Load before: ' + mermaid.startOnLoad);
   if (typeof mermaid.startOnLoad !== 'undefined') {
     logger.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    mermaidAPI.initialize({ startOnLoad: mermaid.startOnLoad });
+    mermaidAPI.setConfig({ startOnLoad: mermaid.startOnLoad });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.initialize({ gantt: mermaid.ganttConfig });
+    mermaidAPI.setConfig({ gantt: mermaid.ganttConfig });
   }
 
   let txt;
@@ -124,7 +124,7 @@ const init = function() {
 const initialize = function(config) {
   mermaidAPI.reset();
 
-  // logger.debug('Initializing mermaid 1', config);
+  // console.log('Initializing mermaid 1', config);
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -133,8 +133,9 @@ const initialize = function(config) {
       mermaid.htmlLabels = config.mermaid.htmlLabels;
     }
   }
+  // console.log('Initializing mermaid 2', config);
   mermaidAPI.initialize(config);
-  logger.debug('Initializing mermaid ', config);
+  // logger.debug('Initializing mermaid 3', config);
 };
 
 /**
