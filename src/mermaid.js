@@ -124,7 +124,7 @@ const init = function() {
 const initialize = function(config) {
   mermaidAPI.reset();
 
-  // console.log('Initializing mermaid 1', config);
+  // console.log('mermaid.initialize1', config);
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
