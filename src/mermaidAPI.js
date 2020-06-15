@@ -702,6 +702,7 @@ export const decodeEntities = function(text) {
  */
 const render = function(id, _txt, cb, container) {
   const cnf = getConfig();
+  console.warn(cnf);
   // Check the maximum allowed text size
   let txt = _txt;
   if (_txt.length > cnf.maxTextSize) {
@@ -941,7 +942,7 @@ function reinitialize(options) {
 
 let firstInit = true;
 function initialize(options) {
-  // console.log('mermaidAPI.initialize');
+  console.log('mermaidAPI.initialize');
   // Set default options
   if (typeof options === 'object') {
     if (firstInit) {
@@ -950,7 +951,7 @@ function initialize(options) {
     }
     setConfig(options);
   }
-  logger.warn('Initializing mermaidAPI theme', {
+  console.warn('Initializing mermaidAPI theme', {
     version: pkg.version,
     options,
     config,
