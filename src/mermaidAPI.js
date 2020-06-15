@@ -556,6 +556,8 @@ const config = {
     fontSize: 12
   }
 };
+config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 setLogLevel(config.logLevel);
 setConfig(config);
@@ -699,10 +701,10 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
-  const config = getConfig();
+  const cnf = getConfig();
   // Check the maximum allowed text size
   let txt = _txt;
-  if (_txt.length > config.maxTextSize) {
+  if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
@@ -712,7 +714,7 @@ const render = function(id, _txt, cb, container) {
     select(container)
       .append('div')
       .attr('id', 'd' + id)
-      .attr('style', 'font-family: ' + config.fontFamily)
+      .attr('style', 'font-family: ' + cnf.fontFamily)
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
@@ -753,22 +755,22 @@ const render = function(id, _txt, cb, container) {
   const firstChild = svg.firstChild;
 
   // pre-defined theme
-  let style = themes[config.theme];
+  let style = themes[cnf.theme];
   if (style === undefined) {
     style = '';
   }
 
   // user provided theme CSS
-  if (config.themeCSS !== undefined) {
-    style += `\n${config.themeCSS}`;
+  if (cnf.themeCSS !== undefined) {
+    style += `\n${cnf.themeCSS}`;
   }
   // user provided theme CSS
-  if (config.fontFamily !== undefined) {
-    style += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+  if (cnf.fontFamily !== undefined) {
+    style += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
   }
   // user provided theme CSS
-  if (config.altFontFamily !== undefined) {
-    style += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+  if (cnf.altFontFamily !== undefined) {
+    style += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
   }
 
   // classDef
@@ -801,7 +803,7 @@ const render = function(id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        cnf.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
         gitGraphRenderer.setConf(config.git);
         gitGraphRenderer.draw(txt, id, false);
         break;
@@ -834,8 +836,9 @@ const render = function(id, _txt, cb, container) {
         ganttRenderer.draw(txt, id);
         break;
       case 'class':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        classRenderer.setConf(config.class);
+        console.log(cnf, config);
+        cnf.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        classRenderer.setConf(cnf.class);
         classRenderer.draw(txt, id);
         break;
       case 'state':
@@ -868,7 +871,7 @@ const render = function(id, _txt, cb, container) {
         break;
     }
   } catch (e) {
-    errorRenderer.setConf(config.class);
+    // errorRenderer.setConf(config.class);
     errorRenderer.draw(id, pkg.version);
     throw e;
   }
