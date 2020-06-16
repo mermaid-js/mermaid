@@ -1351,7 +1351,7 @@ describe('when rendering a sequenceDiagram with directives', function() {
     renderer.setConf(conf);
   });
 
-  it('it should handle one actor, when theme is dark and logLevel is 1', function() {
+  it('it should handle one actor, when theme is dark and logLevel is 1 DX1', function() {
     renderer.bounds.init();
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
