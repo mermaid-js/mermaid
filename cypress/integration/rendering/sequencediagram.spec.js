@@ -422,4 +422,30 @@ context('Sequence diagram', () => {
       );
     });
   });
+  context('directives', () => {
+      it('should overide config with directive settings', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        %%{config: { "mirrorActors": true} }%%
+        Alice->>Bob: I'm short
+        note left of Alice: config set to mirrorActors: false<br/>directive set to mirrorActors: true
+        Bob->>Alice: Short as well
+      `,
+        { logLevel:0,  sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+      it('should overide config with directive settings', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        %%{config: { "mirrorActors": false} }%%
+        Alice->>Bob: I'm short
+        note left of Alice: config set to mirrorActors: true<br/>directive set to mirrorActors: false
+        Bob->>Alice: Short as well
+      `,
+        { logLevel:0,  sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
+      );
+    });
+  });
 });
