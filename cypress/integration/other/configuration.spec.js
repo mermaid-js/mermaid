@@ -88,7 +88,7 @@ describe('Configuration', () => {
         C -->|Three| F[fa:fa-car Car]
         `,
         {
-          arrowMarkerAbsolute: true
+          logLevel:0, arrowMarkerAbsolute: true,fontFamily: '"Noto Sans SC", sans-serif'
         }
       );
 

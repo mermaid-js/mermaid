@@ -6,12 +6,12 @@
     <style>
       body {
         /* font-family: 'Mansalva', cursive;*/
-        font-family: 'Mansalva', cursive;
+        font-family: '"Noto Sans SC", sans-serif';
       }
-      /* .mermaid-main-font {
-        font-family: "trebuchet ms", verdana, arial;
-        font-family: var(--mermaid-font-family);
-      } */
+      .mermaid-main-font {
+        font-family: '"Noto Sans SC", sans-serif';
+        /* font-family: var(--mermaid-font-family); */
+      }
       /* :root {
         --mermaid-font-family: '"trebuchet ms", verdana, arial';
         --mermaid-font-family: "Comic Sans MS", "Comic Sans", cursive;
@@ -27,7 +27,7 @@
     <script>
       // Notice startOnLoad=false
       // This prevents default handling in mermaid from render before the e2e logic is applied
-      mermaid.initialize({
+      window.mermaidDefault = {
         startOnLoad: false,
         useMaxWidth: true,
         // "themeCSS": ":root { --mermaid-font-family: \"trebuchet ms\", verdana, arial;}",
@@ -35,7 +35,8 @@
         // fontFamily: '"Comic Sans MS", "Comic Sans", cursive'
         // fontFamily: '"Mansalva", cursive',
         fontFamily: '"Noto Sans SC", sans-serif'
-      });
+      };
+      mermaid.initialize(window.mermaidDefault);
     </script>
   </body>
 </html>
