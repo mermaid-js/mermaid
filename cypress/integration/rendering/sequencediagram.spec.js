@@ -122,7 +122,20 @@ context('Sequence diagram', () => {
     it('should render long actor descriptions', () => {
       imgSnapshotTest(
         `
+        %%{init: {'theme': 'dark'}}%%
         sequenceDiagram
+        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+      `,
+        {logLevel: 0}
+      );
+    });
+    it('should render long actor descriptions', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        %%{wrap}%%
         participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
@@ -141,12 +154,34 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render long notes wrapped (inline) left of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note left of Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
     it('should render long notes right of actor', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
         Alice->>Bob: Hola
         Note right of Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long notes wrapped (inline) right of actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note right of Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -163,11 +198,32 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render long notes wrapped (inline) over actor', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: Hola
+        Note over Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
     it('should render long messages from an actor to the left to one to the right', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
         Alice->>Bob: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob->>Alice: I'm short though
+      `,
+        {}
+      );
+    });
+    it('should render long messages wrapped (inline) from an actor to the left to one to the right', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -179,6 +235,16 @@ context('Sequence diagram', () => {
         sequenceDiagram
         Alice->>Bob: I'm short
         Bob->>Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+      `,
+        {}
+      );
+    });
+    it('should render long messages wrapped (inline) from an actor to the right to one to the left', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        Alice->>Bob: I'm short
+        Bob->>Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
       `,
         {}
       );
@@ -323,6 +389,34 @@ context('Sequence diagram', () => {
         Alice->>John: John,<br/>can you hear me?
         John-->>Alice: Hi Alice,<br />I can hear you!
         John-->>Alice: I feel great!
+      `,
+        {}
+      );
+    });
+    it('should render dark theme from init directive and size 24 font set from config directive', () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'theme': 'dark'}}%%
+        sequenceDiagram
+        %%{config: {'fontSize': 24}}%%
+        Alice->>John: Hello John, how are you?
+        Alice->>John: John, can you hear me?
+        John-->>Alice: Hi Alice, I can hear you!
+        John-->>Alice: I feel great!
+      `,
+        {}
+      );
+    });
+    it('should render with wrapping enabled', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+        %%{wrap}%%
+        participant A as Alice, the talkative one
+        A->>John: Hello John, how are you today? I'm feeling quite verbose today.
+        A->>John: John, can you hear me? If you are not available, we can talk later.
+        John-->>A: Hi Alice, I can hear you! I was finishing up an important meeting.
+        John-->>A: I feel great! I was not ignoring you. I am sorry you had to wait for a response.
       `,
         {}
       );

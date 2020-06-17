@@ -561,11 +561,6 @@ setLogLevel(config.logLevel);
 setConfig(config);
 
 function parse(text) {
-  const graphInit = utils.detectInit(text);
-  if (graphInit) {
-    reinitialize(graphInit);
-    logger.debug('Init ', graphInit);
-  }
   const graphType = utils.detectType(text);
   let parser;
 
@@ -692,7 +687,7 @@ export const decodeEntities = function(text) {
  *  });
  *```
  * @param id the id of the element to be rendered
- * @param txt the graph definition
+ * @param _txt the graph definition
  * @param cb callback which is called after rendering is finished with the svg code as inparam.
  * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
@@ -741,10 +736,6 @@ const render = function(id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   const element = select('#d' + id).node();
-  const graphInit = utils.detectInit(txt);
-  if (graphInit) {
-    reinitialize(graphInit);
-  }
   const graphType = utils.detectType(txt);
 
   // insert inline style into svg
@@ -927,51 +918,18 @@ const render = function(id, _txt, cb, container) {
 
 const setConf = function(cnf) {
   // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  const lvl1Keys = Object.keys(cnf);
-  for (let i = 0; i < lvl1Keys.length; i++) {
-    if (typeof cnf[lvl1Keys[i]] === 'object' && cnf[lvl1Keys[i]] != null) {
-      const lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
-
-      for (let j = 0; j < lvl2Keys.length; j++) {
-        logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j]);
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        }
-        logger.debug(
-          'Setting config: ' +
-            lvl1Keys[i] +
-            ' ' +
-            lvl2Keys[j] +
-            ' to ' +
-            cnf[lvl1Keys[i]][lvl2Keys[j]]
-        );
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
-      }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
-    }
-  }
+  utils.assignWithDepth(config, cnf);
 };
 
-function reinitialize(options) {
+function initialize(options) {
+  logger.debug('Initializing mermaidAPI ', pkg.version);
+  // Update default config with options supplied at initialization
   if (typeof options === 'object') {
     setConf(options);
   }
   setConfig(config);
   setLogLevel(config.logLevel);
-  logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, config });
-}
-
-function initialize(options) {
-  let _config = config;
-  logger.debug('Initializing mermaidAPI ', { version: pkg.version, options, _config });
-  // Update default config with options supplied at initialization
-  if (typeof options === 'object') {
-    _config = Object.assign(_config, options);
-    setConf(_config);
-  }
-  setConfig(_config);
-  setLogLevel(_config.logLevel);
+  logger.debug(`Initialized mermaidAPI ${JSON.stringify(config, null, 2)}`);
 }
 
 // function getConfig () {
@@ -983,7 +941,6 @@ const mermaidAPI = {
   render,
   parse,
   initialize,
-  reinitialize,
   getConfig
 };
 

@@ -13,6 +13,7 @@ import {
 } from 'd3';
 import { logger } from './logger';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import mermaidAPI from './mermaidAPI';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -34,7 +35,7 @@ const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit
- * Detects the init config object from the text
+ * Detects the init config object from the text and (re)initializes mermaid
  * ```mermaid
  * %%{init: {"theme": "debug", "logLevel": 1 }}%%
  * graph LR
@@ -60,16 +61,19 @@ const anyComment = /\s*%%.*\n/gm;
  * ```
  *
  * @param {string} text The text defining the graph
- * @returns {object} the json object representing the init to pass to mermaid.initialize()
+ * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function(text) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
   if (Array.isArray(inits)) {
     let args = inits.map(init => init.args);
-    results = Object.assign(results, ...args);
+    results = assignWithDepth(results, ...args);
   } else {
     results = inits.args;
+  }
+  if (results) {
+    mermaidAPI.initialize(results);
   }
   return results;
 };
@@ -382,6 +386,34 @@ export const generateId = () => {
   );
 };
 
+export const assignWithDepth = function(dst, src, depth = 2) {
+  if (depth <= 0) {
+    if (dst !== undefined && dst !== null && typeof dst === 'object' && typeof src === 'object') {
+      return Object.assign(dst, src);
+    } else {
+      return src;
+    }
+  }
+  if (src !== undefined && src !== null && typeof dst === 'object' && typeof src === 'object') {
+    let optionsKeys = Object.keys(src);
+    for (let i = 0; i < optionsKeys.length; i++) {
+      let key = optionsKeys[i];
+      if (
+        typeof src[key] === 'object' &&
+        (dst[key] === undefined || typeof dst[key] === 'object')
+      ) {
+        if (dst[key] === undefined) {
+          dst[key] = {};
+        }
+        dst[key] = assignWithDepth(dst[key], src[key], depth - 1);
+      } else {
+        dst[key] = src[key];
+      }
+    }
+  }
+  return dst;
+};
+
 export default {
   detectInit,
   detectDirective,
@@ -393,5 +425,6 @@ export default {
   formatUrl,
   getStylesFromArray,
   generateId,
-  runFunc
+  runFunc,
+  assignWithDepth
 };

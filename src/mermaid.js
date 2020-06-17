@@ -6,6 +6,8 @@
 import decode from 'entity-decode/browser';
 import mermaidAPI from './mermaidAPI';
 import { logger } from './logger';
+import utils from './utils';
+
 /**
  * ## init
  * Function that goes through the document to find the chart definitions in there and render them.
@@ -97,6 +99,11 @@ const init = function() {
     txt = decode(txt)
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
+
+    const init = utils.detectInit(txt);
+    if (init) {
+      logger.debug('Detected early reinit: ', init);
+    }
 
     try {
       mermaidAPI.render(
