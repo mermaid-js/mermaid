@@ -493,6 +493,16 @@ context('Sequence diagram', () => {
         {}
       );
     });
+    it('should render with an init directive', () => {
+      imgSnapshotTest(
+`%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrapEnabled": true }}}%%
+          sequenceDiagram
+          Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
+          Note left of Alice: Bob thinks
+          Bob->>Alice: Fine!`,
+        {}
+      )
+    });
   });
   context('directives', () => {
       it('should overide config with directive settings', () => {

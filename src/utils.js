@@ -613,7 +613,7 @@ export const calculateTextDimensions = function(text, config) {
   // We don't want to leak DOM elements - if a removal operation isn't available
   // for any reason, do not continue.
   if (!body.remove) {
-    return 0;
+    return { width: 0, height: 0 };
   }
 
   const g = body.append('svg');

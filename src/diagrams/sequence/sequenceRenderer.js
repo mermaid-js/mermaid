@@ -4,7 +4,7 @@ import { logger } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
-import utils from '../../utils';
+import utils, { assignWithDepth } from '../../utils';
 
 parser.yy = sequenceDb;
 
@@ -436,7 +436,7 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
     const actor = actors[actorKeys[i]];
 
     // Add some rendering data to the object
-    actor.width = actor.width || calculateActorWidth(actor);
+    actor.width = typeof actor.width === 'undefined' ? calculateActorWidth(actor) : actor.width;
     actor.height = conf.height;
     actor.margin = conf.actorMargin;
 
@@ -456,26 +456,16 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
 };
 
 export const setConf = function(cnf) {
-  const keys = Object.keys(cnf);
-
-  keys.forEach(function(key) {
-    conf[key] = cnf[key];
-  });
+  assignWithDepth(conf, cnf);
 
   if (cnf.fontFamily) {
     conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
-  } else {
-    conf.fontFamily = conf.messageFontFamily;
   }
   if (cnf.fontSize) {
     conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize;
-  } else {
-    conf.fontSize = conf.messageFontSize;
   }
   if (cnf.fontWeight) {
     conf.actorFontWeight = conf.noteFontWeight = conf.messageFontWeight = cnf.fontWeight;
-  } else {
-    conf.fontWeight = conf.messageFontWeight;
   }
 };
 
@@ -536,23 +526,18 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
       Math.round((3 * conf.fontSize) / 4) < 10
         ? conf.fontSize
         : Math.round((3 * conf.fontSize) / 4);
+    let textConf = {
+      fontSize: minSize,
+      fontFamily: conf.messageFontFamily,
+      fontWeight: conf.messageFontWeight,
+      margin: conf.wrapPadding
+    };
     msg.message = msg.message
-      ? utils.wrapLabel(`[${msg.message}]`, loopWidth, {
-          fontSize: minSize,
-          fontFamily: conf.fontFamily,
-          fontWeight: conf.fontWeight,
-          margin: conf.wrapPadding
-        })
+      ? utils.wrapLabel(`[${msg.message}]`, loopWidth, textConf)
       : msg.message;
     heightAdjust = Math.max(
       0,
-      utils.calculateTextHeight(msg.message, {
-        fontSize: minSize,
-        fontFamily: conf.fontFamily,
-        fontWeight: conf.fontWeight,
-        margin: conf.wrapPadding
-      }) -
-        (preMargin + postMargin)
+      utils.calculateTextHeight(msg.message, textConf) - (preMargin + postMargin)
     );
   }
   addLoopFn(msg);
@@ -616,6 +601,7 @@ export const draw = function(text, id) {
     let loopData,
       noteWidth,
       textWidth,
+      textConf,
       shouldWrap = msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message);
 
     switch (msg.type) {
@@ -624,12 +610,18 @@ export const draw = function(text, id) {
 
         startx = actors[msg.from].x;
         stopx = actors[msg.to].x;
-        textWidth = utils.calculateTextWidth(msg.message, conf);
+        textConf = {
+          fontSize: conf.noteFontSize,
+          fontFamily: conf.noteFontFamily,
+          fontWeight: conf.noteFontWeight,
+          margin: conf.wrapPadding
+        };
+        textWidth = utils.calculateTextWidth(msg.message, textConf);
         noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth);
 
         if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, conf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
           }
           drawNote(
             diagram,
@@ -640,7 +632,7 @@ export const draw = function(text, id) {
           );
         } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, conf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
           }
           drawNote(
             diagram,
@@ -652,7 +644,7 @@ export const draw = function(text, id) {
         } else if (msg.to === msg.from) {
           // Single-actor over
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, conf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
           }
           drawNote(
             diagram,
@@ -666,7 +658,7 @@ export const draw = function(text, id) {
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin / 2;
           if (shouldWrap) {
             noteWidth = forceWidth;
-            msg.message = utils.wrapLabel(msg.message, noteWidth, conf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
           } else {
             noteWidth = Math.max(forceWidth, textWidth - 2 * conf.noteMargin);
           }
@@ -769,6 +761,12 @@ export const draw = function(text, id) {
           const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
           startx = fromBounds[fromIdx];
           stopx = toBounds[toIdx];
+          textConf = {
+            fontSize: conf.messageFontSize,
+            fontFamily: conf.messageFontFamily,
+            fontWeight: conf.messageFontWeight,
+            margin: conf.wrapPadding
+          };
           if (shouldWrap) {
             msg.message = utils.wrapLabel(
               msg.message,
@@ -776,7 +774,7 @@ export const draw = function(text, id) {
                 Math.abs(stopx - startx) + conf.messageMargin * 2,
                 conf.width + conf.messageMargin * 2
               ),
-              conf
+              textConf
             );
           }
 

@@ -1,6 +1,5 @@
 import { logger } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
-import { detectType } from '../../utils';
 
 let prevActor = undefined;
 let actors = {};
@@ -45,7 +44,6 @@ const handleDirective = function(directive) {
   switch (directive.type) {
     case 'init':
     case 'initialize':
-      logger.debug('init/initialize is handled in mermaid/mermaidAPI');
       ['config'].forEach(prop => {
         if (typeof directive.args[prop] !== 'undefined') {
           directive.args.sequence = directive.args[prop];

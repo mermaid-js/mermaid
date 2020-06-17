@@ -49,6 +49,7 @@ import erRenderer from './diagrams/er/erRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
+import configApi from './config';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -556,11 +557,12 @@ const config = {
     fontSize: 12
   }
 };
+export const defaultConfig = Object.freeze(assignWithDepth({}, config));
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 setLogLevel(config.logLevel);
-setConfig(config);
+configApi.reset(config);
 
 function parse(text) {
   const graphInit = utils.detectInit(text);
@@ -635,6 +637,7 @@ function parse(text) {
   };
 
   parser.parse(text);
+  return parser;
 }
 
 export const encodeEntities = function(text) {
@@ -702,7 +705,6 @@ export const decodeEntities = function(text) {
  */
 const render = function(id, _txt, cb, container) {
   const cnf = getConfig();
-  console.warn(cnf);
   // Check the maximum allowed text size
   let txt = _txt;
   if (_txt.length > cnf.maxTextSize) {
@@ -930,21 +932,36 @@ const render = function(id, _txt, cb, container) {
   return svgCode;
 };
 
-let firstInit = true;
+function updateRendererConfigs(conf) {
+  gitGraphRenderer.setConf(conf.git);
+  flowRenderer.setConf(conf.flowchart);
+  flowRendererV2.setConf(conf.flowchart);
+  if (typeof conf['sequenceDiagram'] !== 'undefined') {
+    sequenceRenderer.setConf(assignWithDepth(conf.sequence, conf['sequenceDiagram']));
+  }
+  sequenceRenderer.setConf(conf.sequence);
+  ganttRenderer.setConf(conf.gantt);
+  classRenderer.setConf(conf.class);
+  stateRenderer.setConf(conf.state);
+  stateRendererV2.setConf(conf.state);
+  infoRenderer.setConf(conf.class);
+  pieRenderer.setConf(conf.class);
+  erRenderer.setConf(conf.er);
+  journeyRenderer.setConf(conf.journey);
+  errorRenderer.setConf(conf.class);
+}
+
 function initialize(options) {
-  console.log('mermaidAPI.initialize');
+  console.log(`mermaidAPI.initialize: v${pkg.version}`);
   // Set default options
   if (typeof options === 'object') {
-    if (firstInit) {
-      firstInit = false;
-      setConfig(config);
-    }
-    setConfig(options);
+    assignWithDepth(config, options);
+    updateRendererConfigs(config);
   }
-  assignWithDepth(config, getConfig());
-  console.warn(`Initializing mermaidAPI: v${pkg.version} theme: ${config.theme}`);
+  setConfig(config);
 
-  setLogLevel(getConfig().logLevel);
+  setLogLevel(config.logLevel);
+  logger.debug('mermaidAPI.initialize: ', config);
 }
 
 // function getConfig () {
@@ -952,7 +969,7 @@ function initialize(options) {
 //   return config
 // }
 
-const mermaidAPI = {
+const mermaidAPI = Object.freeze({
   render,
   parse,
   initialize,
@@ -960,9 +977,12 @@ const mermaidAPI = {
   setConfig,
   reset: () => {
     // console.warn('reset');
-    firstInit = true;
-  }
-};
+    configApi.reset(defaultConfig);
+    assignWithDepth(config, defaultConfig, { clobber: true });
+    updateRendererConfigs(config);
+  },
+  defaultConfig
+});
 
 export default mermaidAPI;
 /**

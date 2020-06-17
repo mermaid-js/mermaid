@@ -6,11 +6,14 @@ export const setConfig = conf => {
 };
 export const getConfig = () => config;
 
+export const reset = conf => {
+  Object.keys(config).forEach(key => delete config[key]);
+  assignWithDepth(config, conf, { clobber: true });
+};
+
 const configApi = {
   setConfig,
-  getConfig
-  // get conf() {
-  //   return config;
-  // }
+  getConfig,
+  reset
 };
 export default configApi;
