@@ -120,15 +120,13 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
-    logger.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
-      y: outsidePoint.y + q
-    });
-
-    return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+    const res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
       y: outsidePoint.y + q
     };
+    logger.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+
+    return res;
   } else {
     // Intersection onn sides of rect
     // q = (Q * r) / R;

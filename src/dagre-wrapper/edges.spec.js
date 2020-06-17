@@ -55,7 +55,7 @@ describe('Graphlib decorations', () => {
             height: 176.5
           }
           const int = intersection(node2, o, i);
-                expect(int.x).toBeCloseTo(127.39979619565217)
+                expect(int.x).toBeCloseTo(167.9232336956522)
           expect(int.y).toBeCloseTo(76)
 
         });
