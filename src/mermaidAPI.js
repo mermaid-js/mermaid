@@ -728,7 +728,7 @@ const render = function(id, _txt, cb, container) {
     }
     const element = document.querySelector('#' + 'd' + id);
     if (element) {
-      element.innerHTML = '';
+      element.remove();
     }
 
     select('body')
