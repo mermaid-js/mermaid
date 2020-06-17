@@ -46615,7 +46615,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 var config = {};
 
 var setConf = function setConf(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
+  console.log('config::setConf', cnf); // Top level initially mermaid, gflow, sequenceDiagram and gantt
+
   var lvl1Keys = Object.keys(cnf);
 
   for (var i = 0; i < lvl1Keys.length; i++) {
@@ -46635,6 +46636,8 @@ var setConf = function setConf(cnf) {
       config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
   }
+
+  console.log('config::setConf done', config);
 };
 
 var setConfig = function setConfig(conf) {
@@ -67236,7 +67239,8 @@ var render = function render(id, _txt, cb, container) {
 };
 
 var setConf = function setConf(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
+  console.log('set conf ', cnf); // Top level initially mermaid, gflow, sequenceDiagram and gantt
+
   var lvl1Keys = Object.keys(cnf);
 
   for (var i = 0; i < lvl1Keys.length; i++) {
@@ -67257,6 +67261,8 @@ var setConf = function setConf(cnf) {
       config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
   }
+
+  console.log('set conf done', config);
 };
 
 function reinitialize(options) {
@@ -67274,7 +67280,16 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  var _config = config;
+  console.log('initialize ', options, config, Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+
+  var _config = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])(); // Set default options
+
+
+  if (_typeof(options) === 'object') {
+    setConf(_config);
+    Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(_config);
+  }
+
   _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Initializing mermaidAPI ', {
     version: _package_json__WEBPACK_IMPORTED_MODULE_2__.version,
     options: options,
