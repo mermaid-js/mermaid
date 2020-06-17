@@ -4,15 +4,16 @@
       href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
       rel="stylesheet"
     />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
       body {
         /* background: rgb(221, 208, 208); */
-        background:#333;
+        /* background:#333; */
         font-family: 'Arial';
         }
-      h1 { color: white;}
+      h1 { color: grey;}
       .mermaid2 {
         display: none;
       }
@@ -20,38 +21,53 @@
   </head>
   <body>
     <h1>info below</h1>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+    <div class="flex">
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+flowchart BT
+    subgraph two
+    b1
+    end
+    subgraph three
+    c1-->c2
+    end
+    c1 --apa apa apa--> b1
+    two --> c2
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 flowchart TB
-  subgraph 1
-    A --> B;
-    A -.-> C;
-    A ==> D;
-    A ==> E;
-    B <--> F
-    C <--> F
-    D <--> F
-    E <--> F
-  end
-  subgraph 2
-    A2 --x B2;
-    A2 -.-x C2;
-    A2 ==x D2;
-    A2 ==x E2;
-    B2 x--x F2
-    C2 x--x F2
-    D2 x--x F2
-    E2 x--x F2
-  end
-  subgraph 3
-    A3 --o B3;
-    A3 -.-o C3;
-    A3 ==o D3;
-    A3 ==o E3;
-    B3 o--o F3
-    C3 o--o F3
-    D3 o--o F3
-    E3 o--o F3
-  end
+    subgraph two
+    b1
+    end
+    subgraph three
+    c1-->c2
+    end
+    c1 --apa apa apa--> b1
+    b1 --> c2
+      </div>
+      <div class="mermaid" style="width: 50%; height: 20%;">
+
+      flowchart RL
+      subgraph a
+        b1 -- ok --> b2
+      end
+      a -- sert --> c
+      c --> d
+      b1 --> d
+      a --asd123 --> d
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+stateDiagram-v2
+  state A {
+    B1 --> B2: ok
+  }
+  A --> C: sert
+  C --> D
+  B1 --> D
+  A --> D: asd123
+      </div>
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
+
       </div>
 
   <script src="./mermaid.js"></script>
@@ -60,7 +76,7 @@ flowchart TB
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'dark',
+        // theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
