@@ -92,7 +92,6 @@ export const intersection = (node, outsidePoint, insidePoint) => {
   const dx = Math.abs(x - insidePoint.x);
   const w = node.width / 2;
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  const dy = Math.abs(y - insidePoint.y);
   const h = node.height / 2;
 
   const edges = {
@@ -234,8 +233,8 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     })
     .y(function(d) {
       return d.y;
-    });
-  // .curve(curveBasis);
+    })
+    .curve(curveBasis);
 
   // Contruct stroke classes based on properties
   let strokeClasses;

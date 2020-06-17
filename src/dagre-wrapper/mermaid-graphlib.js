@@ -171,8 +171,8 @@ export const validate = graph => {
 export const findNonClusterChild = (id, graph) => {
   // const node = graph.node(id);
   log.trace('Searching', id);
-  const children = graph.children(id).reverse();
-  // const children = graph.children(id); //.reverse();
+  // const children = graph.children(id).reverse();
+  const children = graph.children(id); //.reverse();
   log.trace('Searching children of id ', id, children);
   if (children.length < 1) {
     log.trace('This is a valid node', id);
