@@ -1,14 +1,8 @@
-import utils from './utils';
-
+import { assignWithDepth } from './utils';
 const config = {};
 
-const setConf = function(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  utils.assignWithDepth(config, cnf);
-};
-
 export const setConfig = conf => {
-  setConf(conf);
+  assignWithDepth(config, conf);
 };
 export const getConfig = () => config;
 

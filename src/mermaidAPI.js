@@ -15,7 +15,7 @@ import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig } from './config';
 import { logger, setLogLevel } from './logger';
-import utils from './utils';
+import utils, { assignWithDepth } from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
 import flowParser from './diagrams/flowchart/parser/flow';
@@ -565,7 +565,7 @@ setConfig(config);
 function parse(text) {
   const graphInit = utils.detectInit(text);
   if (graphInit) {
-    reinitialize(graphInit);
+    initialize(graphInit);
     logger.debug('Init ', graphInit);
   }
   const graphType = utils.detectType(text);
@@ -694,7 +694,7 @@ export const decodeEntities = function(text) {
  *  });
  *```
  * @param id the id of the element to be rendered
- * @param txt the graph definition
+ * @param _txt the graph definition
  * @param cb callback which is called after rendering is finished with the svg code as inparam.
  * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
@@ -707,6 +707,11 @@ const render = function(id, _txt, cb, container) {
   let txt = _txt;
   if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  }
+  const graphInit = utils.detectInit(txt);
+  if (graphInit) {
+    initialize(graphInit);
+    assignWithDepth(cnf, getConfig());
   }
 
   if (typeof container !== 'undefined') {
@@ -745,10 +750,6 @@ const render = function(id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   const element = select('#d' + id).node();
-  const graphInit = utils.detectInit(txt);
-  if (graphInit) {
-    reinitialize(graphInit);
-  }
   const graphType = utils.detectType(txt);
 
   // insert inline style into svg
@@ -929,17 +930,6 @@ const render = function(id, _txt, cb, container) {
   return svgCode;
 };
 
-function reinitialize(options) {
-  // console.log('re-initialize ', options.logLevel, cnf.logLevel, getConfig().logLevel);
-  if (typeof options === 'object') {
-    // setConf(options);
-    setConfig(options);
-  }
-  // setConfig(config);
-  setLogLevel(getConfig().logLevel);
-  logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, config });
-}
-
 let firstInit = true;
 function initialize(options) {
   console.log('mermaidAPI.initialize');
@@ -951,12 +941,8 @@ function initialize(options) {
     }
     setConfig(options);
   }
-  console.warn('Initializing mermaidAPI theme', {
-    version: pkg.version,
-    options,
-    config,
-    current: getConfig().theme
-  });
+  assignWithDepth(config, getConfig());
+  console.warn(`Initializing mermaidAPI: v${pkg.version} theme: ${config.theme}`);
 
   setLogLevel(getConfig().logLevel);
 }
@@ -970,7 +956,6 @@ const mermaidAPI = {
   render,
   parse,
   initialize,
-  reinitialize,
   getConfig,
   setConfig,
   reset: () => {

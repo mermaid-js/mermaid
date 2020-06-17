@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 import { parser } from './parser/sequenceDiagram';
 import sequenceDb from './sequenceDb';
-import renderer, { calculateTextHeight, calculateTextWidth } from './sequenceRenderer';
+import renderer from './sequenceRenderer';
 import mermaidAPI from '../../mermaidAPI';
 
 function addConf(conf, key, value) {
@@ -10,7 +10,26 @@ function addConf(conf, key, value) {
   }
   return conf;
 }
-
+describe('when processing', function() {
+  beforeEach(function() {
+    parser.yy = sequenceDb;
+    parser.yy.clear();
+  });
+  it('should handle long opts', function() {
+    const str = `
+      %%{init: {'config': { 'fontFamily': 'Menlo'}}}%%
+        sequenceDiagram
+        participant A as wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+        `;
+    mermaidAPI.parse(str);
+    renderer.setConf(mermaidAPI.getConfig().sequence);
+    renderer.draw(str, 'tst');
+    const messages = parser.yy.getMessages();
+    expect(messages).toBeTruthy();
+  });
+});
 describe('when parsing a sequenceDiagram', function() {
   beforeEach(function() {
     parser.yy = sequenceDb;
@@ -923,9 +942,12 @@ describe('when rendering a sequenceDiagram', function() {
       boxMargin: 10,
       messageMargin: 40,
       boxTextMargin: 15,
-      noteMargin: 25
+      noteMargin: 25,
+      wrapEnabled: false,
+      mirrorActors: false
     };
     renderer.setConf(conf);
+    renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
     it(`
@@ -1035,7 +1057,7 @@ Alice->Bob: Hello Bob, how are you?`;
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
     const bounds = renderer.bounds.getBounds();
@@ -1044,7 +1066,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(0 + conf.messageMargin + conf.height);
+    expect(bounds.stopy).toBe(conf.messageMargin + conf.height);
   });
   it('it should handle two actors with init directive with multiline directive', function() {
     renderer.bounds.init();
@@ -1221,13 +1243,14 @@ Bob->>Alice: Fine!`;
   it('it should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
     renderer.bounds.init();
     const str = `
-%%{init: { "theme": "dark" }}%%
+%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrapEnabled": true }}}%%
 sequenceDiagram
-%%{config: { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400 } }%%
-%%{wrap}%%
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
+    mermaidAPI.parse(str);
+    renderer.setConf(mermaidAPI.getConfig().sequence);
+    parser.yy.clear();
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1237,9 +1260,9 @@ Bob->>Alice: Fine!`;
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(mermaid.theme).toBe('dark');
-    expect(mermaid.fontFamily).toBe('Menlo');
-    expect(mermaid.fontSize).toBe(18);
-    expect(mermaid.fontWeight).toBe(400);
+    expect(mermaid.sequence.fontFamily).toBe('Menlo');
+    expect(mermaid.sequence.fontSize).toBe(18);
+    expect(mermaid.sequence.fontWeight).toBe(400);
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);

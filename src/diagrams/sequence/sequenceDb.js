@@ -1,4 +1,6 @@
 import { logger } from '../../logger';
+import mermaidAPI from '../../mermaidAPI';
+import { detectType } from '../../utils';
 
 let prevActor = undefined;
 let actors = {};
@@ -44,6 +46,14 @@ const handleDirective = function(directive) {
     case 'init':
     case 'initialize':
       logger.debug('init/initialize is handled in mermaid/mermaidAPI');
+      ['config'].forEach(prop => {
+        if (typeof directive.args[prop] !== 'undefined') {
+          directive.args.sequence = directive.args[prop];
+          delete directive.args[prop];
+        }
+      });
+
+      mermaidAPI.initialize(directive.args);
       break;
     case 'wrap':
     case 'nowrap':
@@ -194,7 +204,7 @@ export const clear = function() {
 
 export const parseMessage = function(str) {
   const _str = str.trim();
-  return {
+  const retVal = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
@@ -205,6 +215,8 @@ export const parseMessage = function(str) {
         ? false
         : autoWrap()
   };
+  logger.debug(`ParseMessage[${str}] [${JSON.stringify(retVal, null, 2)}`);
+  return retVal;
 };
 
 export const LINETYPE = {

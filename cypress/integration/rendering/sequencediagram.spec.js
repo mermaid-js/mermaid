@@ -122,7 +122,6 @@ context('Sequence diagram', () => {
     it('should render long actor descriptions', () => {
       imgSnapshotTest(
         `
-        %%{init: {'theme': 'dark'}}%%
         sequenceDiagram
         participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
@@ -131,11 +130,22 @@ context('Sequence diagram', () => {
         {logLevel: 0}
       );
     });
-    it('should render long actor descriptions', () => {
+    it('should wrap (inline) long actor descriptions', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
-        %%{wrap}%%
+        participant A as wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        A->>Bob: Hola
+        Bob-->A: Pasten !
+      `,
+        {logLevel: 0}
+      );
+    });
+    it('should wrap (directive) long actor descriptions', () => {
+      imgSnapshotTest(
+        `
+        %%{init: {'config': {'wrapEnabled': true }}}%%
+        sequenceDiagram
         participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
         Bob-->A: Pasten !
@@ -223,7 +233,7 @@ context('Sequence diagram', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
-        Alice->>Bob:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Alice->>Bob:wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -272,6 +282,69 @@ context('Sequence diagram', () => {
           rect rgb(0, 128, 255)
             D ->>+ E: Task 4
             rect rgb(0, 204, 0)
+            E ->>+ G: Task 5
+            G -->>- E: Return
+            end
+            E ->> E: Task 6
+          end
+          D -->> A: Complete
+      `,
+        {}
+      );
+    });
+    it('should render a single and nested opt with long test overflowing', () => {
+      imgSnapshotTest(
+        `
+        sequenceDiagram
+          participant A
+          participant B
+          participant C
+          participant D
+          participant E
+          participant G
+
+          A ->>+ B: Task 1
+          opt this is an opt with a long title that will overflow
+            B ->>+ C: Task 2
+            C -->>- B: Return
+          end
+
+          A ->> D: Task 3
+          opt this is another opt with a long title that will overflow
+            D ->>+ E: Task 4
+            opt this is a nested opt with a long title that will overflow
+            E ->>+ G: Task 5
+            G -->>- E: Return
+            end
+            E ->> E: Task 6
+          end
+          D -->> A: Complete
+      `,
+        {}
+      );
+    });
+    it('should render a single and nested opt with long test wrapping', () => {
+      imgSnapshotTest(
+        `
+        %%{init: { 'config': { 'wrapEnabled': true } } }%%
+        sequenceDiagram
+          participant A
+          participant B
+          participant C
+          participant D
+          participant E
+          participant G
+
+          A ->>+ B: Task 1
+          opt this is an opt with a long title that will overflow
+            B ->>+ C: Task 2
+            C -->>- B: Return
+          end
+
+          A ->> D: Task 3
+          opt this is another opt with a long title that will overflow
+            D ->>+ E: Task 4
+            opt this is a nested opt with a long title that will overflow
             E ->>+ G: Task 5
             G -->>- E: Return
             end
@@ -393,12 +466,11 @@ context('Sequence diagram', () => {
         {}
       );
     });
-    it('should render dark theme from init directive and size 24 font set from config directive', () => {
+    it('should render dark theme from init directive and configure font size 24 font', () => {
       imgSnapshotTest(
         `
-        %%{init: {'theme': 'dark'}}%%
+        %%{init: {'theme': 'dark', 'config': {'fontSize': 24}}}%%
         sequenceDiagram
-        %%{config: {'fontSize': 24}}%%
         Alice->>John: Hello John, how are you?
         Alice->>John: John, can you hear me?
         John-->>Alice: Hi Alice, I can hear you!
@@ -410,8 +482,8 @@ context('Sequence diagram', () => {
     it('should render with wrapping enabled', () => {
       imgSnapshotTest(
         `
+        %%{init: { 'config': { 'wrapEnabled': true }}}%%
         sequenceDiagram
-        %%{wrap}%%
         participant A as Alice, the talkative one
         A->>John: Hello John, how are you today? I'm feeling quite verbose today.
         A->>John: John, can you hear me? If you are not available, we can talk later.
@@ -426,8 +498,8 @@ context('Sequence diagram', () => {
       it('should overide config with directive settings', () => {
       imgSnapshotTest(
         `
+        %%{init: { "sequence": { "mirrorActors": true }}}%%
         sequenceDiagram
-        %%{config: { "mirrorActors": true} }%%
         Alice->>Bob: I'm short
         note left of Alice: config set to mirrorActors: false<br/>directive set to mirrorActors: true
         Bob->>Alice: Short as well
@@ -438,6 +510,7 @@ context('Sequence diagram', () => {
       it('should overide config with directive settings', () => {
       imgSnapshotTest(
         `
+        %%{init: { "sequence": { "mirrorActors": false }}}%%
         sequenceDiagram
         %%{config: { "mirrorActors": false} }%%
         Alice->>Bob: I'm short

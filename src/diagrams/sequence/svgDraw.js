@@ -18,30 +18,6 @@ export const drawRect = function(elem, rectData) {
   return rectElem;
 };
 
-export const drawSimpleText = function(elem, textData) {
-  // Remove and ignore br:s
-  const nText = textData.text.replace(common.lineBreakRegex, ' ');
-
-  const textElem = elem.append('text');
-  textElem.attr('x', textData.x);
-  textElem.attr('y', textData.y);
-  textElem.style('text-anchor', textData.anchor);
-  textElem.style('font-family', textData.fontFamily);
-  textElem.style('font-size', textData.fontSize);
-  textElem.style('font-weight', textData.fontWeight);
-  textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
-    textElem.attr('class', textData.class);
-  }
-
-  const span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.attr('fill', textData.fill);
-  span.text(nText);
-
-  return textElem;
-};
-
 export const drawText = function(elem, textData) {
   let prevTextHeight = 0,
     textHeight = 0;
@@ -509,7 +485,6 @@ const _drawTextCandidateFunc = (function() {
 export default {
   drawRect,
   drawText,
-  drawSimpleText,
   drawLabel,
   drawActor,
   anchorElement,
