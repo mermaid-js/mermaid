@@ -991,7 +991,7 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
 
     [actor, nextActor].forEach(function(act) {
       if (act.wrap) {
-        actor.description = utils.wrapLabel(actor.description, conf.width, textConf);
+        act.description = utils.wrapLabel(act.description, conf.width, textConf);
       }
       const actDims = utils.calculateTextDimensions(act.description, textConf);
       act.width = act.wrap ? conf.width : Math.max(conf.width, actDims.width);
