@@ -827,7 +827,8 @@ export const draw = function(text, id) {
   if (conf.useMaxWidth) {
     diagram.attr('height', '100%');
     diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:100%;');
+    diagram.attr('style', 'max-width:' + width + 'px;');
+    // diagram.attr('style', 'max-width:100%;');
   } else {
     diagram.attr('height', height);
     diagram.attr('width', width);
