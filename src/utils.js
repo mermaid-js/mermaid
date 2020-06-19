@@ -36,7 +36,7 @@ const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit
- * Detects the init config object from the text and (re)initializes mermaid
+ * Detects the init config object from the text
  * ```mermaid
  * %%{init: {"theme": "debug", "logLevel": 1 }}%%
  * graph LR

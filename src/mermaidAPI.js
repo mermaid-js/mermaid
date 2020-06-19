@@ -735,7 +735,7 @@ const render = function(id, _txt, cb, container) {
     }
     const element = document.querySelector('#' + 'd' + id);
     if (element) {
-      element.innerHTML = '';
+      element.remove();
     }
 
     select('body')
@@ -959,7 +959,6 @@ function initialize(options) {
     updateRendererConfigs(config);
   }
   setConfig(config);
-
   setLogLevel(config.logLevel);
   logger.debug('mermaidAPI.initialize: ', config);
 }

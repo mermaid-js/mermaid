@@ -130,8 +130,6 @@ const init = function() {
 
 const initialize = function(config) {
   mermaidAPI.reset();
-
-  // console.log('mermaid.initialize1', config);
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -140,9 +138,7 @@ const initialize = function(config) {
       mermaid.htmlLabels = config.mermaid.htmlLabels;
     }
   }
-  // console.log('Initializing mermaid 2', config);
   mermaidAPI.initialize(config);
-  // logger.debug('Initializing mermaid 3', config);
 };
 
 /**

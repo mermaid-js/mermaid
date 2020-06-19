@@ -10,6 +10,7 @@ function addConf(conf, key, value) {
   }
   return conf;
 }
+
 describe('when parsing a sequenceDiagram', function() {
   beforeEach(function() {
     parser.yy = sequenceDb;
@@ -1190,7 +1191,6 @@ sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1214,7 +1214,6 @@ sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-
     parser.parse(str);
     // renderer.setConf(mermaidAPI.getConfig().sequence);
     renderer.draw(str, 'tst');
@@ -1242,7 +1241,6 @@ Alice->Bob: Hello Bob, how are you?
 loop Cheers
 Bob->Alice: Fine!
 end`;
-
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1274,38 +1272,6 @@ end`;
   });
 });
 
-describe('issue fixes', function() {
-  beforeEach(() => {
-    parser.yy = sequenceDb;
-    parser.yy.clear();
-    mermaidAPI.reset();
-    mermaidAPI.initialize({ logLevel: 0, theme: 'dark' });
-    renderer.bounds.init();
-  });
-  it('should fix issue 1480', function() {
-    const str = `
-    sequenceDiagram
-participant Event as Very long name goes here
-participant API as Some API
-participant API2 as A different API
-participant Client as Another very long name goes here
-
-activate Event
-Event ->> Event: Something important happens
-Note over Event,Client: Some explanation goes here
-activate Client
-Event --x Client: Publish event
-deactivate Event
-
-deactivate Client`;
-    parser.parse(str);
-    renderer.draw(str, 'tst');
-    const bounds = renderer.bounds.getBounds();
-    const actors = parser.yy.getActors();
-    const messages = parser.yy.getMessages();
-    expect(bounds).toBeTruthy();
-  })
-});
 
 describe('when rendering a sequenceDiagram with actor mirror activated', function() {
   let conf;

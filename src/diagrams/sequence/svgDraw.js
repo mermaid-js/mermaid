@@ -148,7 +148,7 @@ let actorCnt = -1;
  * Draws an actor in the diagram with the attaced line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param conf - utils.drawText implementation discriminator object
+ * @param conf - drawText implementation discriminator object
  */
 export const drawActor = function(elem, actor, conf) {
   const center = actor.x + actor.width / 2;

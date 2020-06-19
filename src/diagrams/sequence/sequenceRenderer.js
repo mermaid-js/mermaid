@@ -460,7 +460,7 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
     // Add some rendering data to the object
     actor.width = actor.width ? actor.width : conf.width;
     actor.height = conf.height;
-    actor.margin = conf.actorMargin;
+    actor.margin = actor.margin || conf.actorMargin;
 
     actor.x = prevWidth + prevMargin;
     actor.y = verticalPos;
@@ -565,7 +565,6 @@ export const draw = function(text, id) {
   drawActors(diagram, actors, actorKeys, 0);
   const loopWidths = calculateLoopMargins(messages, actors);
 
-  logger.debug('actors:', actors);
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
   svgDraw.insertArrowCrossHead(diagram);
@@ -966,6 +965,7 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
     }
   });
 
+  logger.debug('MaxMessages:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
 
@@ -1077,7 +1077,6 @@ const calculateLoopMargins = function(messages, actors) {
       });
     }
   });
-  logger.debug('LoopWidths:', { loops, actors });
   return loops;
 };
 

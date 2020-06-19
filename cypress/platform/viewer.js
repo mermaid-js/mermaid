@@ -30,11 +30,6 @@ const contentLoaded = function() {
       div.innerHTML = graphObj.code;
       document.getElementsByTagName('body')[0].appendChild(div);
     }
-
-    if (window.mermaidDefault.fontFamily) {
-      graphObj.mermaid.fontFamily = window.mermaidDefault.fontFamily;
-    }
-
     global.mermaid.initialize(graphObj.mermaid);
     global.mermaid.init();
   }
