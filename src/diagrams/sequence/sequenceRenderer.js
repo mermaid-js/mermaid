@@ -615,7 +615,7 @@ export const draw = function(text, id) {
           noteWidth = shouldWrap
             ? conf.width
             : Math.max(
-                actors[msg.from].width / 2 + actors[msg.to].width / 2 - conf.actorMargin,
+                actors[msg.from].width / 2 + actors[msg.to].width / 2,
                 textWidth + 2 * conf.noteMargin
               );
           if (shouldWrap) {
@@ -636,7 +636,7 @@ export const draw = function(text, id) {
           noteWidth = shouldWrap
             ? conf.width
             : Math.max(
-                actors[msg.from].width / 2 + actors[msg.to].width / 2 - conf.actorMargin,
+                actors[msg.from].width / 2 + actors[msg.to].width / 2,
                 textWidth + 2 * conf.noteMargin
               );
           if (shouldWrap) {
