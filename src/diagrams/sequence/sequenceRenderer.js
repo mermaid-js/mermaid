@@ -55,7 +55,29 @@ const conf = {
   // wrap text
   wrapEnabled: false,
   // padding for wrapped text
-  wrapPadding: 15
+  wrapPadding: 15,
+
+  messageFont: () => {
+    return {
+      fontFamily: conf.messageFontFamily,
+      fontSize: conf.messageFontSize,
+      fontWeight: conf.messageFontWeight
+    };
+  },
+  noteFont: () => {
+    return {
+      fontFamily: conf.noteFontFamily,
+      fontSize: conf.noteFontSize,
+      fontWeight: conf.noteFontWeight
+    };
+  },
+  actorFont: () => {
+    return {
+      fontFamily: conf.actorFontFamily,
+      fontSize: conf.actorFontSize,
+      fontWeight: conf.actorFontWeight
+    };
+  }
 };
 
 export const bounds = {
@@ -495,18 +517,16 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
   if (msg.message && loopWidths[msg.message]) {
     let loopWidth = loopWidths[msg.message].width;
     let minSize =
-      Math.round((3 * conf.fontSize) / 4) < 10
-        ? conf.fontSize
-        : Math.round((3 * conf.fontSize) / 4);
-    let textConf = {
-      fontSize: minSize,
-      fontFamily: conf.messageFontFamily,
-      fontWeight: conf.messageFontWeight,
-      margin: conf.wrapPadding
-    };
-    msg.message = msg.wrap
-      ? utils.wrapLabel(`[${msg.message}]`, loopWidth, textConf)
-      : `[${msg.message}]`;
+      Math.round((3 * conf.messageFontSize) / 4) < 10
+        ? conf.messageFontSize
+        : Math.round((3 * conf.messageFontSize) / 4);
+    let textConf = conf.messageFont();
+    textConf.fontSize = minSize;
+    msg.message = utils.wrapLabel(
+      `[${msg.message}]`,
+      loopWidth - 20 - 2 * conf.wrapPadding,
+      textConf
+    );
 
     heightAdjust = Math.max(
       0,
@@ -573,8 +593,9 @@ export const draw = function(text, id) {
   messages.forEach(function(msg) {
     let loopData,
       noteWidth,
+      noteStart,
+      noteEnd,
       textWidth,
-      textConf,
       shouldWrap = msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message);
 
     switch (msg.type) {
@@ -583,24 +604,27 @@ export const draw = function(text, id) {
 
         startx = actors[msg.from].x;
         stopx = actors[msg.to].x;
-        textConf = {
-          fontSize: conf.noteFontSize,
-          fontFamily: conf.noteFontFamily,
-          fontWeight: conf.noteFontWeight,
-          margin: conf.wrapPadding
-        };
+        noteStart = startx + actors[msg.from].width / 2;
+        noteEnd = stopx + actors[msg.to].width / 2;
         textWidth = utils.calculateTextWidth(
-          shouldWrap ? utils.wrapLabel(msg.message, conf.width, textConf) : msg.message,
-          textConf
+          shouldWrap ? utils.wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message,
+          conf.noteFont()
         );
         noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth + 2 * conf.noteMargin);
-        logger.debug(
-          `msg:${msg.message} start:${startx} stop:${stopx} tw:${textWidth} nw:${noteWidth}`
-        );
 
         if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
+          noteWidth = shouldWrap
+            ? conf.width
+            : Math.max(
+                actors[msg.from].width / 2 + actors[msg.to].width / 2 - conf.actorMargin,
+                textWidth + 2 * conf.noteMargin
+              );
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth - 2 * conf.wrapPadding, textConf);
+            msg.message = utils.wrapLabel(
+              msg.message,
+              noteWidth - 2 * conf.wrapPadding,
+              conf.noteFont()
+            );
           }
           drawNote(
             diagram,
@@ -610,8 +634,18 @@ export const draw = function(text, id) {
             noteWidth
           );
         } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
+          noteWidth = shouldWrap
+            ? conf.width
+            : Math.max(
+                actors[msg.from].width / 2 + actors[msg.to].width / 2 - conf.actorMargin,
+                textWidth + 2 * conf.noteMargin
+              );
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth - 2 * conf.wrapPadding, textConf);
+            msg.message = utils.wrapLabel(
+              msg.message,
+              noteWidth - 2 * conf.wrapPadding,
+              conf.noteFont()
+            );
           }
           drawNote(
             diagram,
@@ -624,15 +658,23 @@ export const draw = function(text, id) {
           // Single-actor over
           textWidth = utils.calculateTextWidth(
             shouldWrap
-              ? utils.wrapLabel(msg.message, Math.max(conf.width, actors[msg.to].width), textConf)
+              ? utils.wrapLabel(
+                  msg.message,
+                  Math.max(conf.width, actors[msg.to].width),
+                  conf.noteFont()
+                )
               : msg.message,
-            textConf
+            conf.noteFont()
           );
           noteWidth = shouldWrap
             ? Math.max(conf.width, actors[msg.to].width)
             : Math.max(actors[msg.to].width, conf.width, textWidth + 2 * conf.noteMargin);
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth - 2 * conf.wrapPadding, textConf);
+            msg.message = utils.wrapLabel(
+              msg.message,
+              noteWidth - 2 * conf.wrapPadding,
+              conf.noteFont()
+            );
           }
           drawNote(
             diagram,
@@ -643,20 +685,14 @@ export const draw = function(text, id) {
           );
         } else {
           // Multi-actor over
-          let noteStart = startx + actors[msg.from].width / 2;
-          let noteEnd = stopx + actors[msg.to].width / 2;
           noteWidth = Math.abs(noteStart - noteEnd) + conf.actorMargin;
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth, conf.noteFont());
           }
           let x =
             startx < stopx
               ? startx + actors[msg.from].width / 2 - conf.actorMargin / 2
               : stopx + actors[msg.to].width / 2 - conf.actorMargin / 2;
-
-          logger.debug(
-            `msg:${msg.message} start:${startx} stop:${stopx} tw:${textWidth} nw:${noteWidth}`
-          );
           drawNote(diagram, x, bounds.getVerticalPos(), msg, noteWidth);
         }
         break;
@@ -751,12 +787,6 @@ export const draw = function(text, id) {
           const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
           startx = fromBounds[fromIdx];
           stopx = toBounds[toIdx];
-          textConf = {
-            fontSize: conf.messageFontSize,
-            fontFamily: conf.messageFontFamily,
-            fontWeight: conf.messageFontWeight,
-            margin: conf.wrapPadding
-          };
           if (shouldWrap) {
             msg.message = utils.wrapLabel(
               msg.message,
@@ -764,7 +794,7 @@ export const draw = function(text, id) {
                 Math.abs(stopx - startx) + conf.messageMargin * 2,
                 conf.width + conf.messageMargin * 2
               ),
-              textConf
+              conf.messageFont()
             );
           }
 
@@ -877,19 +907,11 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
       const isNote = msg.placement !== undefined;
       const isMessage = !isNote;
 
-      const fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
-      const fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
-      const fontWeight = isNote ? conf.noteFontWeight : conf.messageFontWeight;
-      const textConf = { fontFamily, fontSize, fontWeight, margin: conf.wrapPadding };
+      const textFont = isNote ? conf.noteFont() : conf.messageFont();
       let wrappedMessage = msg.wrap
-        ? utils.wrapLabel(msg.message, conf.width - conf.noteMargin, textConf)
+        ? utils.wrapLabel(msg.message, conf.width - conf.noteMargin, textFont)
         : msg.message;
-      const messageDimensions = utils.calculateTextDimensions(wrappedMessage, {
-        fontSize,
-        fontFamily,
-        fontWeight,
-        margin: conf.wrapPadding
-      });
+      const messageDimensions = utils.calculateTextDimensions(wrappedMessage, textFont);
       const messageWidth = messageDimensions.width;
 
       /*
@@ -958,12 +980,6 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
  * @param actorToMessageWidth - A map of actor key -> max message width it holds
  */
 const calculateActorMargins = function(actors, actorToMessageWidth) {
-  const textConf = {
-    fontSize: conf.actorFontSize,
-    fontFamily: conf.actorFontFamily,
-    fontWeight: conf.actorFontWeight,
-    margin: conf.wrapPadding
-  };
   let maxHeight = 0;
   Object.keys(actors).forEach(prop => {
     const actor = actors[prop];
@@ -971,10 +987,10 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
       actor.description = utils.wrapLabel(
         actor.description,
         conf.width - 2 * conf.wrapPadding,
-        textConf
+        conf.actorFont()
       );
     }
-    const actDims = utils.calculateTextDimensions(actor.description, textConf);
+    const actDims = utils.calculateTextDimensions(actor.description, conf.actorFont());
     actor.width = actor.wrap
       ? conf.width
       : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
@@ -1045,14 +1061,19 @@ const calculateLoopMargins = function(messages, actors) {
         current = stk;
         let from = actors[msg.from];
         let to = actors[msg.to];
-        if (from.x < to.x) {
-          current.from = Math.min(current.from, from.x);
-          current.to = Math.max(current.to, to.x);
+        if (from.x === to.x) {
+          current.from = current.to = from.x;
+          current.width = from.width;
         } else {
-          current.from = Math.min(current.from, to.x);
-          current.to = Math.max(current.to, from.x);
+          if (from.x < to.x) {
+            current.from = Math.min(current.from, from.x);
+            current.to = Math.max(current.to, to.x);
+          } else {
+            current.from = Math.min(current.from, to.x);
+            current.to = Math.max(current.to, from.x);
+          }
+          current.width = Math.abs(current.from - current.to) - 20 + 2 * conf.wrapPadding;
         }
-        current.width = Math.abs(current.from - current.to) - 20 + 2 * conf.wrapPadding;
       });
     }
   });

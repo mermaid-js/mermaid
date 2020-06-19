@@ -498,7 +498,7 @@ export const wrapLabel = (label, maxWidth, config) => {
     return label;
   }
   config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15, joinWith: '<br/>' },
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0, joinWith: '<br/>' },
     config
   );
   if (common.lineBreakRegex.test(label)) {
@@ -530,10 +530,7 @@ export const wrapLabel = (label, maxWidth, config) => {
 };
 
 const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
-  config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
-    config
-  );
+  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 }, config);
   const characters = word.split('');
   const lines = [];
   let currentLine = '';
