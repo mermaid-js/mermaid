@@ -36,7 +36,7 @@ const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit
- * Detects the init config object from the text and (re)initializes mermaid
+ * Detects the init config object from the text
  * ```mermaid
  * %%{init: {"theme": "debug", "logLevel": 1 }}%%
  * graph LR
@@ -494,8 +494,11 @@ export const drawSimpleText = function(elem, textData) {
 };
 
 export const wrapLabel = (label, maxWidth, config) => {
+  if (!label) {
+    return label;
+  }
   config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15, joinWith: '<br/>' },
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0, joinWith: '<br/>' },
     config
   );
   if (common.lineBreakRegex.test(label)) {
@@ -527,10 +530,7 @@ export const wrapLabel = (label, maxWidth, config) => {
 };
 
 const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
-  config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
-    config
-  );
+  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 }, config);
   const characters = word.split('');
   const lines = [];
   let currentLine = '';
@@ -596,7 +596,7 @@ export const calculateTextDimensions = function(text, config) {
     { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
     config
   );
-  const { fontSize, fontFamily, fontWeight, margin } = config;
+  const { fontSize, fontFamily, fontWeight } = config;
   if (!text) {
     return 0;
   }
@@ -638,7 +638,7 @@ export const calculateTextDimensions = function(text, config) {
   g.remove();
 
   // Adds some padding, so the text won't sit exactly within the actor's borders
-  return { width: maxWidth + 2 * margin, height: height + 2 * margin };
+  return { width: Math.round(maxWidth), height: Math.round(height) };
 };
 
 export default {

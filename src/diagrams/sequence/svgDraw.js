@@ -148,7 +148,7 @@ let actorCnt = -1;
  * Draws an actor in the diagram with the attaced line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param conf - utils.drawText implementation discriminator object
+ * @param conf - drawText implementation discriminator object
  */
 export const drawActor = function(elem, actor, conf) {
   const center = actor.x + actor.width / 2;
@@ -241,16 +241,18 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
   }
 
   let minSize =
-    Math.round((3 * conf.fontSize) / 4) < 10 ? conf.fontSize : Math.round((3 * conf.fontSize) / 4);
+    Math.round((3 * conf.messageFontSize) / 4) < 10
+      ? conf.messageFontSize
+      : Math.round((3 * conf.messageFontSize) / 4);
 
   let txt = getTextObj();
   txt.text = labelText;
   txt.x = bounds.startx;
   txt.y = bounds.starty;
   txt.labelMargin = 1.5 * 10; // This is the small box that says "loop"
-  txt.fontFamily = conf.fontFamily;
+  txt.fontFamily = conf.messageFontFamily;
   txt.fontSize = minSize;
-  txt.fontWeight = conf.fontWeight;
+  txt.fontWeight = conf.messageFontWeight;
   txt.class = 'labelText'; // Its size & position are fixed.
 
   let labelElem = drawLabel(g, txt);
@@ -261,10 +263,10 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
   txt.y = bounds.starty + conf.boxMargin + conf.boxTextMargin;
   txt.anchor = 'middle';
   txt.class = 'loopText';
-  txt.fontFamily = conf.fontFamily;
+  txt.fontFamily = conf.messageFontFamily;
   txt.fontSize = minSize;
-  txt.fontWeight = conf.fontWeight;
-  txt.wrap = bounds.wrap;
+  txt.fontWeight = conf.messageFontWeight;
+  txt.wrap = true;
 
   drawText(g, txt);
 
@@ -273,12 +275,12 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
       if (item.message) {
         txt.text = item.message;
         txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
-        txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
+        txt.y = bounds.sections[idx] + conf.boxMargin + conf.boxTextMargin;
         txt.class = 'loopText';
         txt.anchor = 'middle';
-        txt.fontFamily = conf.fontFamily;
+        txt.fontFamily = conf.messageFontFamily;
         txt.fontSize = minSize;
-        txt.fontWeight = conf.fontWeight;
+        txt.fontWeight = conf.messageFontWeight;
         txt.wrap = bounds.wrap;
         drawText(g, txt);
       }

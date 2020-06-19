@@ -10,6 +10,7 @@ function addConf(conf, key, value) {
   }
   return conf;
 }
+
 describe('when parsing a sequenceDiagram', function() {
   beforeEach(function() {
     parser.yy = sequenceDb;
@@ -1190,7 +1191,6 @@ sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1214,7 +1214,6 @@ sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-
     parser.parse(str);
     // renderer.setConf(mermaidAPI.getConfig().sequence);
     renderer.draw(str, 'tst');
@@ -1242,7 +1241,6 @@ Alice->Bob: Hello Bob, how are you?
 loop Cheers
 Bob->Alice: Fine!
 end`;
-
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1273,6 +1271,7 @@ end`;
     expect(bounds.stopy).toBe(0 + 2 * conf.messageMargin + conf.height + 3 * conf.boxMargin);
   });
 });
+
 
 describe('when rendering a sequenceDiagram with actor mirror activated', function() {
   let conf;

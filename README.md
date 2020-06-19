@@ -214,7 +214,7 @@ pie
 
 ## Related projects
 
-- [Command Line Interface](https://github.com/mermaid-js/mermaid-cli)
+- [Command Line Interface](https://github.com/mermaid-js/mermaid.cli)
 - [Live Editor](https://github.com/mermaid-js/mermaid-live-editor)
 - [HTTP Server](https://github.com/TomWright/mermaid-server)
 
