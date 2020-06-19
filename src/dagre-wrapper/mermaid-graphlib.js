@@ -171,7 +171,9 @@ export const validate = graph => {
 export const findNonClusterChild = (id, graph) => {
   // const node = graph.node(id);
   log.trace('Searching', id);
-  const children = graph.children(id);
+  // const children = graph.children(id).reverse();
+  const children = graph.children(id); //.reverse();
+  log.trace('Searching children of id ', id, children);
   if (children.length < 1) {
     log.trace('This is a valid node', id);
     return id;
@@ -213,7 +215,7 @@ export const adjustClustersAndEdges = (graph, depth) => {
   graph.nodes().forEach(function(id) {
     const children = graph.children(id);
     if (children.length > 0) {
-      log.trace(
+      log.warn(
         'Cluster identified',
         id,
         ' Replacement id in edges: ',
@@ -266,17 +268,17 @@ export const adjustClustersAndEdges = (graph, depth) => {
     // Check if link is either from or to a cluster
     log.trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
     if (clusterDb[e.v] || clusterDb[e.w]) {
-      log.trace('Fixing and trixing - removing', e.v, e.w, e.name);
+      log.warn('Fixing and trixing - removing', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
-      log.trace('Replacing with', v, w, e.name);
+      log.warn('Replacing with', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
-  log.debug('Adjusted Graph', graphlib.json.write(graph));
+  log.warn('Adjusted Graph', graphlib.json.write(graph));
 
   log.trace(clusterDb);
 
