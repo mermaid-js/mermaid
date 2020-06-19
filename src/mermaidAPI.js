@@ -15,7 +15,7 @@ import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig } from './config';
 import { logger, setLogLevel } from './logger';
-import utils from './utils';
+import utils, { assignWithDepth } from './utils';
 import flowRenderer from './diagrams/flowchart/flowRenderer';
 import flowRendererV2 from './diagrams/flowchart/flowRenderer-v2';
 import flowParser from './diagrams/flowchart/parser/flow';
@@ -49,6 +49,7 @@ import erRenderer from './diagrams/er/erRenderer';
 import journeyParser from './diagrams/user-journey/parser/journey';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
+import configApi from './config';
 
 const themes = {};
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
@@ -556,14 +557,17 @@ const config = {
     fontSize: 12
   }
 };
+export const defaultConfig = Object.freeze(assignWithDepth({}, config));
+config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 
 setLogLevel(config.logLevel);
-setConfig(config);
+configApi.reset(config);
 
 function parse(text) {
   const graphInit = utils.detectInit(text);
   if (graphInit) {
-    reinitialize(graphInit);
+    initialize(graphInit);
     logger.debug('Init ', graphInit);
   }
   const graphType = utils.detectType(text);
@@ -633,6 +637,7 @@ function parse(text) {
   };
 
   parser.parse(text);
+  return parser;
 }
 
 export const encodeEntities = function(text) {
@@ -692,17 +697,23 @@ export const decodeEntities = function(text) {
  *  });
  *```
  * @param id the id of the element to be rendered
- * @param txt the graph definition
+ * @param _txt the graph definition
  * @param cb callback which is called after rendering is finished with the svg code as inparam.
  * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
  * completed.
  */
 const render = function(id, _txt, cb, container) {
+  const cnf = getConfig();
   // Check the maximum allowed text size
   let txt = _txt;
-  if (_txt.length > config.maxTextSize) {
+  if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  }
+  const graphInit = utils.detectInit(txt);
+  if (graphInit) {
+    initialize(graphInit);
+    assignWithDepth(cnf, getConfig());
   }
 
   if (typeof container !== 'undefined') {
@@ -711,7 +722,7 @@ const render = function(id, _txt, cb, container) {
     select(container)
       .append('div')
       .attr('id', 'd' + id)
-      .attr('style', 'font-family: ' + config.fontFamily)
+      .attr('style', 'font-family: ' + cnf.fontFamily)
       .append('svg')
       .attr('id', id)
       .attr('width', '100%')
@@ -741,10 +752,6 @@ const render = function(id, _txt, cb, container) {
   txt = encodeEntities(txt);
 
   const element = select('#d' + id).node();
-  const graphInit = utils.detectInit(txt);
-  if (graphInit) {
-    reinitialize(graphInit);
-  }
   const graphType = utils.detectType(txt);
 
   // insert inline style into svg
@@ -752,22 +759,22 @@ const render = function(id, _txt, cb, container) {
   const firstChild = svg.firstChild;
 
   // pre-defined theme
-  let style = themes[config.theme];
+  let style = themes[cnf.theme];
   if (style === undefined) {
     style = '';
   }
 
   // user provided theme CSS
-  if (config.themeCSS !== undefined) {
-    style += `\n${config.themeCSS}`;
+  if (cnf.themeCSS !== undefined) {
+    style += `\n${cnf.themeCSS}`;
   }
   // user provided theme CSS
-  if (config.fontFamily !== undefined) {
-    style += `\n:root { --mermaid-font-family: ${config.fontFamily}}`;
+  if (cnf.fontFamily !== undefined) {
+    style += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
   }
   // user provided theme CSS
-  if (config.altFontFamily !== undefined) {
-    style += `\n:root { --mermaid-alt-font-family: ${config.altFontFamily}}`;
+  if (cnf.altFontFamily !== undefined) {
+    style += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
   }
 
   // classDef
@@ -800,74 +807,74 @@ const render = function(id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        gitGraphRenderer.setConf(config.git);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        gitGraphRenderer.setConf(cnf.git);
         gitGraphRenderer.draw(txt, id, false);
         break;
       case 'flowchart':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        flowRenderer.setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        flowRenderer.setConf(cnf.flowchart);
         flowRenderer.draw(txt, id, false);
         break;
       case 'flowchart-v2':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        flowRendererV2.setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        flowRendererV2.setConf(cnf.flowchart);
         flowRendererV2.draw(txt, id, false);
         break;
       case 'sequence':
-        config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        if (config.sequenceDiagram) {
+        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        if (cnf.sequenceDiagram) {
           // backwards compatibility
-          sequenceRenderer.setConf(Object.assign(config.sequence, config.sequenceDiagram));
+          sequenceRenderer.setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error(
             '`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.'
           );
         } else {
-          sequenceRenderer.setConf(config.sequence);
+          sequenceRenderer.setConf(cnf.sequence);
         }
         sequenceRenderer.draw(txt, id);
         break;
       case 'gantt':
-        config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        ganttRenderer.setConf(config.gantt);
+        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        ganttRenderer.setConf(cnf.gantt);
         ganttRenderer.draw(txt, id);
         break;
       case 'class':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        classRenderer.setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        classRenderer.setConf(cnf.class);
         classRenderer.draw(txt, id);
         break;
       case 'state':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        stateRenderer.setConf(config.state);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        stateRenderer.setConf(cnf.state);
         stateRenderer.draw(txt, id);
         break;
       case 'stateDiagram':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        stateRendererV2.setConf(config.state);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        stateRendererV2.setConf(cnf.state);
         stateRendererV2.draw(txt, id);
         break;
       case 'info':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        infoRenderer.setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        infoRenderer.setConf(cnf.class);
         infoRenderer.draw(txt, id, pkg.version);
         break;
       case 'pie':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        pieRenderer.setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        pieRenderer.setConf(cnf.class);
         pieRenderer.draw(txt, id, pkg.version);
         break;
       case 'er':
-        erRenderer.setConf(config.er);
+        erRenderer.setConf(cnf.er);
         erRenderer.draw(txt, id, pkg.version);
         break;
       case 'journey':
-        journeyRenderer.setConf(config.journey);
+        journeyRenderer.setConf(cnf.journey);
         journeyRenderer.draw(txt, id, pkg.version);
         break;
     }
   } catch (e) {
-    errorRenderer.setConf(config.class);
+    // errorRenderer.setConf(cnf.class);
     errorRenderer.draw(id, pkg.version);
     throw e;
   }
@@ -876,7 +883,7 @@ const render = function(id, _txt, cb, container) {
     .selectAll('foreignobject > *')
     .attr('xmlns', 'http://www.w3.org/1999/xhtml');
 
-  // if (config.arrowMarkerAbsolute) {
+  // if (cnf.arrowMarkerAbsolute) {
   //   url =
   //     window.location.protocol +
   //     '//' +
@@ -889,8 +896,8 @@ const render = function(id, _txt, cb, container) {
 
   // Fix for when the base tag is used
   let svgCode = select('#d' + id).node().innerHTML;
-
-  if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
+  logger.debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -925,53 +932,36 @@ const render = function(id, _txt, cb, container) {
   return svgCode;
 };
 
-const setConf = function(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  const lvl1Keys = Object.keys(cnf);
-  for (let i = 0; i < lvl1Keys.length; i++) {
-    if (typeof cnf[lvl1Keys[i]] === 'object' && cnf[lvl1Keys[i]] != null) {
-      const lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
-
-      for (let j = 0; j < lvl2Keys.length; j++) {
-        logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j]);
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        }
-        logger.debug(
-          'Setting config: ' +
-            lvl1Keys[i] +
-            ' ' +
-            lvl2Keys[j] +
-            ' to ' +
-            cnf[lvl1Keys[i]][lvl2Keys[j]]
-        );
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
-      }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
-    }
+function updateRendererConfigs(conf) {
+  gitGraphRenderer.setConf(conf.git);
+  flowRenderer.setConf(conf.flowchart);
+  flowRendererV2.setConf(conf.flowchart);
+  if (typeof conf['sequenceDiagram'] !== 'undefined') {
+    sequenceRenderer.setConf(assignWithDepth(conf.sequence, conf['sequenceDiagram']));
   }
-};
-
-function reinitialize(options) {
-  if (typeof options === 'object') {
-    setConf(options);
-  }
-  setConfig(config);
-  setLogLevel(config.logLevel);
-  logger.debug('RE-Initializing mermaidAPI ', { version: pkg.version, options, config });
+  sequenceRenderer.setConf(conf.sequence);
+  ganttRenderer.setConf(conf.gantt);
+  classRenderer.setConf(conf.class);
+  stateRenderer.setConf(conf.state);
+  stateRendererV2.setConf(conf.state);
+  infoRenderer.setConf(conf.class);
+  pieRenderer.setConf(conf.class);
+  erRenderer.setConf(conf.er);
+  journeyRenderer.setConf(conf.journey);
+  errorRenderer.setConf(conf.class);
 }
 
 function initialize(options) {
-  let _config = config;
-  logger.debug('Initializing mermaidAPI ', { version: pkg.version, options, _config });
-  // Update default config with options supplied at initialization
+  console.log(`mermaidAPI.initialize: v${pkg.version}`);
+  // Set default options
   if (typeof options === 'object') {
-    _config = Object.assign(_config, options);
-    setConf(_config);
+    assignWithDepth(config, options);
+    updateRendererConfigs(config);
   }
-  setConfig(_config);
-  setLogLevel(_config.logLevel);
+  setConfig(config);
+
+  setLogLevel(config.logLevel);
+  logger.debug('mermaidAPI.initialize: ', config);
 }
 
 // function getConfig () {
@@ -979,13 +969,20 @@ function initialize(options) {
 //   return config
 // }
 
-const mermaidAPI = {
+const mermaidAPI = Object.freeze({
   render,
   parse,
   initialize,
-  reinitialize,
-  getConfig
-};
+  getConfig,
+  setConfig,
+  reset: () => {
+    // console.warn('reset');
+    configApi.reset(defaultConfig);
+    assignWithDepth(config, defaultConfig, { clobber: true });
+    updateRendererConfigs(config);
+  },
+  defaultConfig
+});
 
 export default mermaidAPI;
 /**

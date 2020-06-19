@@ -9,10 +9,12 @@ import {
   curveNatural,
   curveStep,
   curveStepAfter,
-  curveStepBefore
+  curveStepBefore,
+  select
 } from 'd3';
 import { logger } from './logger';
 import { sanitizeUrl } from '@braintree/sanitize-url';
+import common from './diagrams/common/common';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -34,7 +36,7 @@ const anyComment = /\s*%%.*\n/gm;
 
 /**
  * @function detectInit
- * Detects the init config object from the text
+ * Detects the init config object from the text and (re)initializes mermaid
  * ```mermaid
  * %%{init: {"theme": "debug", "logLevel": 1 }}%%
  * graph LR
@@ -60,16 +62,28 @@ const anyComment = /\s*%%.*\n/gm;
  * ```
  *
  * @param {string} text The text defining the graph
- * @returns {object} the json object representing the init to pass to mermaid.initialize()
+ * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
 export const detectInit = function(text) {
   let inits = detectDirective(text, /(?:init\b)|(?:initialize\b)/);
   let results = {};
   if (Array.isArray(inits)) {
     let args = inits.map(init => init.args);
-    results = Object.assign(results, ...args);
+    results = assignWithDepth(results, [...args]);
   } else {
     results = inits.args;
+  }
+  if (results) {
+    let type = detectType(text);
+    ['config'].forEach(prop => {
+      if (typeof results[prop] !== 'undefined') {
+        if (type === 'flowchart-v2') {
+          type = 'flowchart';
+        }
+        results[type] = results[prop];
+        delete results[prop];
+      }
+    });
   }
   return results;
 };
@@ -382,7 +396,257 @@ export const generateId = () => {
   );
 };
 
+/**
+ * @function assignWithDepth
+ * Extends the functionality of {@link ObjectConstructor.assign} with the ability to merge arbitrary-depth objects
+ * For each key in src with path `k` (recursively) performs an Object.assign(dst[`k`], src[`k`]) with
+ * a slight change from the typical handling of undefined for dst[`k`]: instead of raising an error,
+ * dst[`k`] is auto-initialized to {} and effectively merged with src[`k`]
+ * <p>
+ * Additionally, dissimilar types will not clobber unless the config.clobber parameter === true. Example:
+ * ```
+ * let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
+ * let config_1 = { foo: 'foo', bar: 'bar' };
+ * let result = assignWithDepth(config_0, config_1);
+ * console.log(result);
+ * //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
+ * ```
+ * <p>
+ * Traditional Object.assign would have clobbered foo in config_0 with foo in config_1.
+ * <p>
+ * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
+ * in order.
+ * @param dst:any - the destination of the merge
+ * @param src:any - the source object(s) to merge into destination
+ * @param config:{ depth: number, clobber: boolean } - depth: depth to traverse within src and dst for merging -
+ * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
+ * @returns {*}
+ */
+export const assignWithDepth = function(dst, src, config) {
+  const { depth, clobber } = Object.assign({ depth: 2, clobber: false }, config);
+  if (Array.isArray(src) && !Array.isArray(dst)) {
+    src.forEach(s => assignWithDepth(dst, s, config));
+    return dst;
+  }
+  if (typeof dst === 'undefined' || depth <= 0) {
+    if (dst !== undefined && dst !== null && typeof dst === 'object' && typeof src === 'object') {
+      return Object.assign(dst, src);
+    } else {
+      return src;
+    }
+  }
+  if (typeof src !== 'undefined' && typeof dst === 'object' && typeof src === 'object') {
+    Object.keys(src).forEach(key => {
+      if (
+        typeof src[key] === 'object' &&
+        (dst[key] === undefined || typeof dst[key] === 'object')
+      ) {
+        if (dst[key] === undefined) {
+          dst[key] = {};
+        }
+        dst[key] = assignWithDepth(dst[key], src[key], { depth: depth - 1, clobber });
+      } else if (clobber || (typeof dst[key] !== 'object' && typeof src[key] !== 'object')) {
+        dst[key] = src[key];
+      }
+    });
+  }
+  return dst;
+};
+
+export const getTextObj = function() {
+  return {
+    x: 0,
+    y: 0,
+    fill: undefined,
+    anchor: 'start',
+    style: '#666',
+    width: 100,
+    height: 100,
+    textMargin: 0,
+    rx: 0,
+    ry: 0,
+    valign: undefined
+  };
+};
+
+export const drawSimpleText = function(elem, textData) {
+  // Remove and ignore br:s
+  const nText = textData.text.replace(common.lineBreakRegex, ' ');
+
+  const textElem = elem.append('text');
+  textElem.attr('x', textData.x);
+  textElem.attr('y', textData.y);
+  textElem.style('text-anchor', textData.anchor);
+  textElem.style('font-family', textData.fontFamily);
+  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-weight', textData.fontWeight);
+  textElem.attr('fill', textData.fill);
+  if (typeof textData.class !== 'undefined') {
+    textElem.attr('class', textData.class);
+  }
+
+  const span = textElem.append('tspan');
+  span.attr('x', textData.x + textData.textMargin * 2);
+  span.attr('fill', textData.fill);
+  span.text(nText);
+
+  return textElem;
+};
+
+export const wrapLabel = (label, maxWidth, config) => {
+  config = Object.assign(
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15, joinWith: '<br/>' },
+    config
+  );
+  if (common.lineBreakRegex.test(label)) {
+    return label;
+  }
+  const words = label.split(' ');
+  const completedLines = [];
+  let nextLine = '';
+  words.forEach((word, index) => {
+    const wordLength = calculateTextWidth(`${word} `, config);
+    const nextLineLength = calculateTextWidth(nextLine, config);
+    if (wordLength > maxWidth) {
+      const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
+      completedLines.push(nextLine, ...hyphenatedStrings);
+      nextLine = remainingWord;
+    } else if (nextLineLength + wordLength >= maxWidth) {
+      completedLines.push(nextLine);
+      nextLine = word;
+    } else {
+      nextLine = [nextLine, word].filter(Boolean).join(' ');
+    }
+    const currentWord = index + 1;
+    const isLastWord = currentWord === words.length;
+    if (isLastWord) {
+      completedLines.push(nextLine);
+    }
+  });
+  return completedLines.filter(line => line !== '').join(config.joinWith);
+};
+
+const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
+  config = Object.assign(
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
+    config
+  );
+  const characters = word.split('');
+  const lines = [];
+  let currentLine = '';
+  characters.forEach((character, index) => {
+    const nextLine = `${currentLine}${character}`;
+    const lineWidth = calculateTextWidth(nextLine, config);
+    if (lineWidth >= maxWidth) {
+      const currentCharacter = index + 1;
+      const isLastLine = characters.length === currentCharacter;
+      const hyphenatedNextLine = `${nextLine}${hyphenCharacter}`;
+      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
+      currentLine = '';
+    } else {
+      currentLine = nextLine;
+    }
+  });
+  return { hyphenatedStrings: lines, remainingWord: currentLine };
+};
+
+/**
+ * This calculates the text's height, taking into account the wrap breaks and
+ * both the statically configured height, width, and the length of the text (in pixels).
+ *
+ * If the wrapped text text has greater height, we extend the height, so it's
+ * value won't overflow.
+ *
+ * @return - The height for the given text
+ * @param text the text to measure
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+export const calculateTextHeight = function(text, config) {
+  config = Object.assign(
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
+    config
+  );
+  return calculateTextDimensions(text, config).height;
+};
+
+/**
+ * This calculates the width of the given text, font size and family.
+ *
+ * @return - The width for the given text
+ * @param text - The text to calculate the width of
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+export const calculateTextWidth = function(text, config) {
+  config = Object.assign(
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
+    config
+  );
+  return calculateTextDimensions(text, config).width;
+};
+
+/**
+ * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
+ *
+ * @return - The width for the given text
+ * @param text - The text to calculate the width of
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+export const calculateTextDimensions = function(text, config) {
+  config = Object.assign(
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
+    config
+  );
+  const { fontSize, fontFamily, fontWeight, margin } = config;
+  if (!text) {
+    return 0;
+  }
+
+  // We can't really know if the user supplied font family will render on the user agent;
+  // thus, we'll take the max width between the user supplied font family, and a default
+  // of sans-serif.
+  const fontFamilies = ['sans-serif', fontFamily];
+  const lines = text.split(common.lineBreakRegex);
+  let maxWidth = 0,
+    height = 0;
+
+  const body = select('body');
+  // We don't want to leak DOM elements - if a removal operation isn't available
+  // for any reason, do not continue.
+  if (!body.remove) {
+    return { width: 0, height: 0 };
+  }
+
+  const g = body.append('svg');
+
+  for (let line of lines) {
+    let cheight = 0;
+    for (let fontFamily of fontFamilies) {
+      const textObj = getTextObj();
+      textObj.text = line;
+      const textElem = drawSimpleText(g, textObj)
+        .style('font-size', fontSize)
+        .style('font-weight', fontWeight)
+        .style('font-family', fontFamily);
+
+      let bBox = (textElem._groups || textElem)[0][0].getBBox();
+      maxWidth = Math.max(maxWidth, bBox.width);
+      cheight = Math.max(bBox.height, cheight);
+    }
+    height += cheight;
+  }
+
+  g.remove();
+
+  // Adds some padding, so the text won't sit exactly within the actor's borders
+  return { width: maxWidth + 2 * margin, height: height + 2 * margin };
+};
+
 export default {
+  assignWithDepth,
+  wrapLabel,
+  calculateTextHeight,
+  calculateTextWidth,
+  calculateTextDimensions,
   detectInit,
   detectDirective,
   detectType,

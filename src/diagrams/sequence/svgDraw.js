@@ -19,27 +19,95 @@ export const drawRect = function(elem, rectData) {
 };
 
 export const drawText = function(elem, textData) {
-  // Remove and ignore br:s
-  const nText = textData.text.replace(common.lineBreakRegex, ' ');
+  let prevTextHeight = 0,
+    textHeight = 0;
+  const lines = textData.wrap
+    ? textData.text.split(common.lineBreakRegex)
+    : [textData.text.replace(common.lineBreakRegex, ' ')];
 
-  const textElem = elem.append('text');
-  textElem.attr('x', textData.x);
-  textElem.attr('y', textData.y);
-  textElem.style('text-anchor', textData.anchor);
-  textElem.style('font-family', textData.fontFamily);
-  textElem.style('font-size', textData.fontSize);
-  textElem.style('font-weight', textData.fontWeight);
-  textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
-    textElem.attr('class', textData.class);
+  let textElems = [];
+  let dy = 0;
+  let yfunc = () => textData.y;
+  if (
+    typeof textData.valign !== 'undefined' &&
+    typeof textData.textMargin !== 'undefined' &&
+    textData.textMargin > 0
+  ) {
+    switch (textData.valign) {
+      case 'top':
+      case 'start':
+        yfunc = () => textData.y + textData.textMargin;
+        break;
+      case 'middle':
+      case 'center':
+        yfunc = () => textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2;
+        break;
+      case 'bottom':
+      case 'end':
+        yfunc = () =>
+          textData.y +
+          (prevTextHeight + textHeight + 2 * textData.textMargin) -
+          textData.textMargin;
+        break;
+    }
+  }
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    if (
+      typeof textData.textMargin !== 'undefined' &&
+      textData.textMargin === 0 &&
+      typeof textData.fontSize !== 'undefined'
+    ) {
+      dy = i * textData.fontSize;
+    }
+
+    const textElem = elem.append('text');
+    textElem.attr('x', textData.x);
+    textElem.attr('y', yfunc());
+    if (typeof textData.anchor !== 'undefined') {
+      textElem.style('text-anchor', textData.anchor);
+    }
+    if (typeof textData.fontFamily !== 'undefined') {
+      textElem.style('font-family', textData.fontFamily);
+    }
+    if (typeof textData.fontSize !== 'undefined') {
+      textElem.style('font-size', textData.fontSize);
+    }
+    if (typeof textData.fontWeight !== 'undefined') {
+      textElem.style('font-weight', textData.fontWeight);
+    }
+    if (typeof textData.fill !== 'undefined') {
+      textElem.attr('fill', textData.fill);
+    }
+    if (typeof textData.class !== 'undefined') {
+      textElem.attr('class', textData.class);
+    }
+    if (typeof textData.dy !== 'undefined') {
+      textElem.attr('dy', textData.dy);
+    } else if (dy !== 0) {
+      textElem.attr('dy', dy);
+    }
+
+    const span = textElem.append('tspan');
+    span.attr('x', textData.x);
+    if (typeof textData.fill !== 'undefined') {
+      span.attr('fill', textData.fill);
+    }
+    span.text(line);
+
+    if (
+      typeof textData.valign !== 'undefined' &&
+      typeof textData.textMargin !== 'undefined' &&
+      textData.textMargin > 0
+    ) {
+      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      prevTextHeight = textHeight;
+    }
+
+    textElems.push(textElem);
   }
 
-  const span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.attr('fill', textData.fill);
-  span.text(nText);
-
-  return textElem;
+  return textElems.length === 1 ? textElems[0] : textElems;
 };
 
 export const drawLabel = function(elem, txtObject) {
@@ -72,7 +140,7 @@ export const drawLabel = function(elem, txtObject) {
 
   txtObject.y = txtObject.y + txtObject.labelMargin;
   txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
-  drawText(elem, txtObject);
+  return drawText(elem, txtObject);
 };
 
 let actorCnt = -1;
@@ -80,7 +148,7 @@ let actorCnt = -1;
  * Draws an actor in the diagram with the attaced line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param conf - drawText implementation discriminator object
+ * @param conf - utils.drawText implementation discriminator object
  */
 export const drawActor = function(elem, actor, conf) {
   const center = actor.x + actor.width / 2;
@@ -185,33 +253,39 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
   txt.fontWeight = conf.fontWeight;
   txt.class = 'labelText'; // Its size & position are fixed.
 
-  drawLabel(g, txt);
-
+  let labelElem = drawLabel(g, txt);
+  let labelBoxWidth = (labelElem._groups || labelElem)[0][0].getBBox().width;
   txt = getTextObj();
-  txt.text = '[ ' + bounds.title + ' ]';
-  txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
-  txt.y = bounds.starty + 1.5 * conf.boxMargin;
+  txt.text = bounds.title;
+  txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2 + labelBoxWidth;
+  txt.y = bounds.starty + conf.boxMargin + conf.boxTextMargin;
   txt.anchor = 'middle';
   txt.class = 'loopText';
   txt.fontFamily = conf.fontFamily;
   txt.fontSize = minSize;
   txt.fontWeight = conf.fontWeight;
+  txt.wrap = bounds.wrap;
 
-  let textElem = drawText(g, txt);
-  let textHeight = (textElem._groups || textElem)[0][0].getBBox().height;
+  drawText(g, txt);
 
   if (typeof bounds.sectionTitles !== 'undefined') {
     bounds.sectionTitles.forEach(function(item, idx) {
-      if (item !== '') {
-        txt.text = '[ ' + item + ' ]';
+      if (item.message) {
+        txt.text = item.message;
+        txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
         txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
-        textElem = drawText(g, txt);
-        textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+        txt.class = 'loopText';
+        txt.anchor = 'middle';
+        txt.fontFamily = conf.fontFamily;
+        txt.fontSize = minSize;
+        txt.fontWeight = conf.fontWeight;
+        txt.wrap = bounds.wrap;
+        drawText(g, txt);
       }
     });
   }
 
-  return textHeight + 4;
+  return g;
 };
 
 /**
@@ -300,23 +374,23 @@ export const insertArrowCrossHead = function(elem) {
 };
 
 export const getTextObj = function() {
-  const txt = {
+  return {
     x: 0,
     y: 0,
     fill: undefined,
-    'text-anchor': 'start',
+    anchor: 'start',
     style: '#666',
     width: 100,
     height: 100,
     textMargin: 0,
     rx: 0,
-    ry: 0
+    ry: 0,
+    valign: undefined
   };
-  return txt;
 };
 
 export const getNoteRect = function() {
-  const rect = {
+  return {
     x: 0,
     y: 0,
     fill: '#EDF2AE',
@@ -327,7 +401,6 @@ export const getNoteRect = function() {
     rx: 0,
     ry: 0
   };
-  return rect;
 };
 
 const _drawTextCandidateFunc = (function() {

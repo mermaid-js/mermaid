@@ -21,6 +21,14 @@
   <body>
     <h1>info below</h1>
       <div class="mermaid" style="width: 50%; height: 20%;">
+      graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      </div>
+      <div class="mermaid2" style="width: 50%; height: 20%;">
 flowchart TB
   subgraph 1
     A --> B;
@@ -64,13 +72,14 @@ flowchart TB
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'linear', "htmlLabels": false },
+        flowchart: { curve: 'linear',htmlLabels: false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
         curve: 'linear',
-        securityLevel: 'loose'
+        securityLevel: 'loose',
+        htmlLabels: false
       });
       function callback(){alert('It worked');}
     </script>
