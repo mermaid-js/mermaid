@@ -1274,6 +1274,39 @@ end`;
   });
 });
 
+describe('issue fixes', function() {
+  beforeEach(() => {
+    parser.yy = sequenceDb;
+    parser.yy.clear();
+    mermaidAPI.reset();
+    mermaidAPI.initialize({ logLevel: 0, theme: 'dark' });
+    renderer.bounds.init();
+  });
+  it('should fix issue 1480', function() {
+    const str = `
+    sequenceDiagram
+participant Event as Very long name goes here
+participant API as Some API
+participant API2 as A different API
+participant Client as Another very long name goes here
+
+activate Event
+Event ->> Event: Something important happens
+Note over Event,Client: Some explanation goes here
+activate Client
+Event --x Client: Publish event
+deactivate Event
+
+deactivate Client`;
+    parser.parse(str);
+    renderer.draw(str, 'tst');
+    const bounds = renderer.bounds.getBounds();
+    const actors = parser.yy.getActors();
+    const messages = parser.yy.getMessages();
+    expect(bounds).toBeTruthy();
+  })
+});
+
 describe('when rendering a sequenceDiagram with actor mirror activated', function() {
   let conf;
   beforeEach(function() {

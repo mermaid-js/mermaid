@@ -128,10 +128,10 @@ export const bounds = {
 
     this.updateBounds(_startx, _starty, _stopx, _stopy);
   },
-  newActivation: function(message, diagram) {
-    const actorRect = parser.yy.getActors()[message.from.actor];
+  newActivation: function(message, diagram, actors) {
+    const actorRect = actors[message.from.actor];
     const stackedSize = actorActivations(message.from.actor).length;
-    const x = actorRect.x + conf.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
+    const x = actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
     this.activations.push({
       startx: x,
       starty: this.verticalPos + 2,
@@ -436,7 +436,7 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
     const actor = actors[actorKeys[i]];
 
     // Add some rendering data to the object
-    actor.width = typeof actor.width === 'undefined' ? calculateActorWidth(actor) : actor.width;
+    actor.width = actor.width ? actor.width : conf.width;
     actor.height = conf.height;
     actor.margin = conf.actorMargin;
 
@@ -489,38 +489,10 @@ const actorFlowVerticaBounds = function(actor) {
   return [left, right];
 };
 
-/**
- * This calculates the actor's width, taking into account both the statically configured width,
- * and the actor's description.
- *
- * If the description text has greater length, we extend the width of the actor, so it's description
- * won't overflow.
- *
- * @param actor - An actor object
- * @return - The width for the given actor
- */
-const calculateActorWidth = function(actor) {
-  if (!actor.description) {
-    return conf.width;
-  }
-
-  return actor.wrap
-    ? conf.width
-    : Math.max(
-        conf.width,
-        utils.calculateTextWidth(actor.description, {
-          fontSize: conf.actorFontSize,
-          fontFamily: conf.actorFontFamily,
-          fontWeight: conf.actorFontWeight,
-          margin: conf.wrapPadding
-        })
-      );
-};
-
 function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
   let heightAdjust = 0;
   bounds.bumpVerticalPos(preMargin);
-  if (msg.message && msg.wrap && loopWidths[msg.message]) {
+  if (msg.message && loopWidths[msg.message]) {
     let loopWidth = loopWidths[msg.message].width;
     let minSize =
       Math.round((3 * conf.fontSize) / 4) < 10
@@ -532,9 +504,10 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
       fontWeight: conf.messageFontWeight,
       margin: conf.wrapPadding
     };
-    msg.message = msg.message
+    msg.message = msg.wrap
       ? utils.wrapLabel(`[${msg.message}]`, loopWidth, textConf)
-      : msg.message;
+      : `[${msg.message}]`;
+
     heightAdjust = Math.max(
       0,
       utils.calculateTextHeight(msg.message, textConf) - (preMargin + postMargin)
@@ -559,7 +532,6 @@ export const draw = function(text, id) {
 
   let startx;
   let stopx;
-  let forceWidth;
 
   // Fetch data from the parsing
   const actors = parser.yy.getActors();
@@ -573,6 +545,7 @@ export const draw = function(text, id) {
   drawActors(diagram, actors, actorKeys, 0);
   const loopWidths = calculateLoopMargins(messages, actors);
 
+  logger.debug('actors:', actors);
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
   svgDraw.insertArrowCrossHead(diagram);
@@ -616,12 +589,18 @@ export const draw = function(text, id) {
           fontWeight: conf.noteFontWeight,
           margin: conf.wrapPadding
         };
-        textWidth = utils.calculateTextWidth(msg.message, textConf);
-        noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth);
+        textWidth = utils.calculateTextWidth(
+          shouldWrap ? utils.wrapLabel(msg.message, conf.width, textConf) : msg.message,
+          textConf
+        );
+        noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth + 2 * conf.noteMargin);
+        logger.debug(
+          `msg:${msg.message} start:${startx} stop:${stopx} tw:${textWidth} nw:${noteWidth}`
+        );
 
         if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth - 2 * conf.wrapPadding, textConf);
           }
           drawNote(
             diagram,
@@ -632,7 +611,7 @@ export const draw = function(text, id) {
           );
         } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth - 2 * conf.wrapPadding, textConf);
           }
           drawNote(
             diagram,
@@ -643,8 +622,17 @@ export const draw = function(text, id) {
           );
         } else if (msg.to === msg.from) {
           // Single-actor over
+          textWidth = utils.calculateTextWidth(
+            shouldWrap
+              ? utils.wrapLabel(msg.message, Math.max(conf.width, actors[msg.to].width), textConf)
+              : msg.message,
+            textConf
+          );
+          noteWidth = shouldWrap
+            ? Math.max(conf.width, actors[msg.to].width)
+            : Math.max(actors[msg.to].width, conf.width, textWidth + 2 * conf.noteMargin);
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = utils.wrapLabel(msg.message, noteWidth - 2 * conf.wrapPadding, textConf);
           }
           drawNote(
             diagram,
@@ -655,23 +643,25 @@ export const draw = function(text, id) {
           );
         } else {
           // Multi-actor over
-          forceWidth = Math.abs(startx - stopx) + conf.actorMargin / 2;
+          let noteStart = startx + actors[msg.from].width / 2;
+          let noteEnd = stopx + actors[msg.to].width / 2;
+          noteWidth = Math.abs(noteStart - noteEnd) + conf.actorMargin;
           if (shouldWrap) {
-            noteWidth = forceWidth;
             msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
-          } else {
-            noteWidth = Math.max(forceWidth, textWidth - 2 * conf.noteMargin);
           }
           let x =
             startx < stopx
-              ? startx + (actors[msg.from].width - conf.actorMargin / 2) / 2
-              : stopx + (actors[msg.to].width - conf.actorMargin / 2) / 2;
+              ? startx + actors[msg.from].width / 2 - conf.actorMargin / 2
+              : stopx + actors[msg.to].width / 2 - conf.actorMargin / 2;
 
-          drawNote(diagram, x, bounds.getVerticalPos(), msg, forceWidth);
+          logger.debug(
+            `msg:${msg.message} start:${startx} stop:${stopx} tw:${textWidth} nw:${noteWidth}`
+          );
+          drawNote(diagram, x, bounds.getVerticalPos(), msg, noteWidth);
         }
         break;
       case parser.yy.LINETYPE.ACTIVE_START:
-        bounds.newActivation(msg, diagram);
+        bounds.newActivation(msg, diagram, actors);
         break;
       case parser.yy.LINETYPE.ACTIVE_END:
         activeEnd(msg, bounds.getVerticalPos());
@@ -967,7 +957,31 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
  * @param actorToMessageWidth - A map of actor key -> max message width it holds
  */
 const calculateActorMargins = function(actors, actorToMessageWidth) {
+  const textConf = {
+    fontSize: conf.actorFontSize,
+    fontFamily: conf.actorFontFamily,
+    fontWeight: conf.actorFontWeight,
+    margin: conf.wrapPadding
+  };
   let maxHeight = 0;
+  Object.keys(actors).forEach(prop => {
+    const actor = actors[prop];
+    if (actor.wrap) {
+      actor.description = utils.wrapLabel(
+        actor.description,
+        conf.width - 2 * conf.wrapPadding,
+        textConf
+      );
+    }
+    const actDims = utils.calculateTextDimensions(actor.description, textConf);
+    actor.width = actor.wrap
+      ? conf.width
+      : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
+
+    actor.height = actor.wrap ? Math.max(actDims.height, conf.height) : conf.height;
+    maxHeight = Math.max(maxHeight, actor.height);
+  });
+
   for (let actorKey in actorToMessageWidth) {
     const actor = actors[actorKey];
 
@@ -975,31 +989,12 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
       continue;
     }
 
-    const textConf = {
-      fontSize: conf.actorFontSize,
-      fontFamily: conf.actorFontFamily,
-      fontWeight: conf.actorFontWeight,
-      margin: conf.wrapPadding
-    };
-
     const nextActor = actors[actor.nextActor];
 
     // No need to space out an actor that doesn't have a next link
     if (!nextActor) {
       continue;
     }
-
-    [actor, nextActor].forEach(function(act) {
-      if (act.wrap) {
-        act.description = utils.wrapLabel(act.description, conf.width, textConf);
-      }
-      const actDims = utils.calculateTextDimensions(act.description, textConf);
-      act.width = act.wrap ? conf.width : Math.max(conf.width, actDims.width);
-
-      act.height = act.wrap ? Math.max(actDims.height, conf.height) : conf.height;
-      logger.debug(`Actor h:${act.height} ${actDims.height} d:${act.description}`);
-      maxHeight = Math.max(maxHeight, act.height);
-    });
 
     const messageWidth = actorToMessageWidth[actorKey];
     const actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
