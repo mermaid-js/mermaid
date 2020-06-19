@@ -1,10 +1,10 @@
 $mainBkg: #1f2020;
-$secondBkg: lighten(#1f2020, 24);
-$mainContrastColor: rgba(226, 226, 226, .75);
+$secondBkg: lighten(#1f2020, 16);
+$mainContrastColor: lightgrey;
 $darkTextColor: #323D47;
-$lineColor: lighten($mainContrastColor, 24);
-$border1: #81b1db;
-$border2: darken(#81b1db, 32);
+$lineColor: $mainContrastColor;
+$border1: #81B1DB;
+$border2: rgba(255, 255, 255, 0.25);
 $arrowheadColor: $mainContrastColor;
 
 /* Flowchart variables */
@@ -31,10 +31,10 @@ $labelTextColor: $mainContrastColor;
 $loopTextColor: $mainContrastColor;
 $noteBorderColor: $border2;
 $noteBkgColor: #fff5ad;
-$noteTextColor: #1f2020;
+$noteTextColor: $mainBkg;
 $activationBorderColor: $border1;
 $activationBkgColor: $secondBkg;
-$sequenceNumberColor: $mainContrastColor;
+$sequenceNumberColor: white;
 
 /* Gantt chart variables */
 

@@ -127,29 +127,6 @@ context('Sequence diagram', () => {
         A->>Bob: Hola
         Bob-->A: Pasten !
       `,
-        {logLevel: 0}
-      );
-    });
-    it('should wrap (inline) long actor descriptions', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-        participant A as wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        A->>Bob: Hola
-        Bob-->A: Pasten !
-      `,
-        {logLevel: 0}
-      );
-    });
-    it('should wrap (directive) long actor descriptions', () => {
-      imgSnapshotTest(
-        `
-        %%{init: {'config': {'wrapEnabled': true }}}%%
-        sequenceDiagram
-        participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        A->>Bob: Hola
-        Bob-->A: Pasten !
-      `,
         {}
       );
     });
@@ -159,17 +136,6 @@ context('Sequence diagram', () => {
         sequenceDiagram
         Alice->>Bob: Hola
         Note left of Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        Bob->>Alice: I'm short though
-      `,
-        {}
-      );
-    });
-    it('should render long notes wrapped (inline) left of actor', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-        Alice->>Bob: Hola
-        Note left of Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -186,34 +152,12 @@ context('Sequence diagram', () => {
         {}
       );
     });
-    it('should render long notes wrapped (inline) right of actor', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-        Alice->>Bob: Hola
-        Note right of Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        Bob->>Alice: I'm short though
-      `,
-        {}
-      );
-    });
     it('should render long notes over actor', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
         Alice->>Bob: Hola
         Note over Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        Bob->>Alice: I'm short though
-      `,
-        {}
-      );
-    });
-    it('should render long notes wrapped (inline) over actor', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-        Alice->>Bob: Hola
-        Note over Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         Bob->>Alice: I'm short though
       `,
         {}
@@ -229,32 +173,12 @@ context('Sequence diagram', () => {
         {}
       );
     });
-    it('should render long messages wrapped (inline) from an actor to the left to one to the right', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-        Alice->>Bob:wrap:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-        Bob->>Alice: I'm short though
-      `,
-        {}
-      );
-    });
     it('should render long messages from an actor to the right to one to the left', () => {
       imgSnapshotTest(
         `
         sequenceDiagram
         Alice->>Bob: I'm short
         Bob->>Alice: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-      `,
-        {}
-      );
-    });
-    it('should render long messages wrapped (inline) from an actor to the right to one to the left', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-        Alice->>Bob: I'm short
-        Bob->>Alice:wrap: Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
       `,
         {}
       );
@@ -282,69 +206,6 @@ context('Sequence diagram', () => {
           rect rgb(0, 128, 255)
             D ->>+ E: Task 4
             rect rgb(0, 204, 0)
-            E ->>+ G: Task 5
-            G -->>- E: Return
-            end
-            E ->> E: Task 6
-          end
-          D -->> A: Complete
-      `,
-        {}
-      );
-    });
-    it('should render a single and nested opt with long test overflowing', () => {
-      imgSnapshotTest(
-        `
-        sequenceDiagram
-          participant A
-          participant B
-          participant C
-          participant D
-          participant E
-          participant G
-
-          A ->>+ B: Task 1
-          opt this is an opt with a long title that will overflow
-            B ->>+ C: Task 2
-            C -->>- B: Return
-          end
-
-          A ->> D: Task 3
-          opt this is another opt with a long title that will overflow
-            D ->>+ E: Task 4
-            opt this is a nested opt with a long title that will overflow
-            E ->>+ G: Task 5
-            G -->>- E: Return
-            end
-            E ->> E: Task 6
-          end
-          D -->> A: Complete
-      `,
-        {}
-      );
-    });
-    it('should render a single and nested opt with long test wrapping', () => {
-      imgSnapshotTest(
-        `
-        %%{init: { 'config': { 'wrapEnabled': true } } }%%
-        sequenceDiagram
-          participant A
-          participant B
-          participant C
-          participant D
-          participant E
-          participant G
-
-          A ->>+ B: Task 1
-          opt this is an opt with a long title that will overflow
-            B ->>+ C: Task 2
-            C -->>- B: Return
-          end
-
-          A ->> D: Task 3
-          opt this is another opt with a long title that will overflow
-            D ->>+ E: Task 4
-            opt this is a nested opt with a long title that will overflow
             E ->>+ G: Task 5
             G -->>- E: Return
             end
@@ -464,70 +325,6 @@ context('Sequence diagram', () => {
         John-->>Alice: I feel great!
       `,
         {}
-      );
-    });
-    it('should render dark theme from init directive and configure font size 24 font', () => {
-      imgSnapshotTest(
-        `
-        %%{init: {'theme': 'dark', 'config': {'fontSize': 24}}}%%
-        sequenceDiagram
-        Alice->>John: Hello John, how are you?
-        Alice->>John: John, can you hear me?
-        John-->>Alice: Hi Alice, I can hear you!
-        John-->>Alice: I feel great!
-      `,
-        {}
-      );
-    });
-    it('should render with wrapping enabled', () => {
-      imgSnapshotTest(
-        `
-        %%{init: { 'config': { 'wrapEnabled': true }}}%%
-        sequenceDiagram
-        participant A as Alice, the talkative one
-        A->>John: Hello John, how are you today? I'm feeling quite verbose today.
-        A->>John: John, can you hear me? If you are not available, we can talk later.
-        John-->>A: Hi Alice, I can hear you! I was finishing up an important meeting.
-        John-->>A: I feel great! I was not ignoring you. I am sorry you had to wait for a response.
-      `,
-        {}
-      );
-    });
-    it('should render with an init directive', () => {
-      imgSnapshotTest(
-`%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrapEnabled": true }}}%%
-          sequenceDiagram
-          Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
-          Note left of Alice: Bob thinks
-          Bob->>Alice: Fine!`,
-        {}
-      )
-    });
-  });
-  context('directives', () => {
-      it('should overide config with directive settings', () => {
-      imgSnapshotTest(
-        `
-        %%{init: { "sequence": { "mirrorActors": true }}}%%
-        sequenceDiagram
-        Alice->>Bob: I'm short
-        note left of Alice: config set to mirrorActors: false<br/>directive set to mirrorActors: true
-        Bob->>Alice: Short as well
-      `,
-        { logLevel:0,  sequence: { mirrorActors: false, noteFontSize: 18, noteFontFamily: 'Arial' } }
-      );
-    });
-      it('should overide config with directive settings', () => {
-      imgSnapshotTest(
-        `
-        %%{init: { "sequence": { "mirrorActors": false }}}%%
-        sequenceDiagram
-        %%{config: { "mirrorActors": false} }%%
-        Alice->>Bob: I'm short
-        note left of Alice: config set to mirrorActors: true<br/>directive set to mirrorActors: false
-        Bob->>Alice: Short as well
-      `,
-        { logLevel:0,  sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }
       );
     });
   });

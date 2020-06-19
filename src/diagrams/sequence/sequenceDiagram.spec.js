@@ -1,7 +1,7 @@
 /* eslint-env jasmine */
 import { parser } from './parser/sequenceDiagram';
 import sequenceDb from './sequenceDb';
-import renderer from './sequenceRenderer';
+import renderer, { calculateTextHeight, calculateTextWidth } from './sequenceRenderer';
 import mermaidAPI from '../../mermaidAPI';
 
 function addConf(conf, key, value) {
@@ -10,6 +10,7 @@ function addConf(conf, key, value) {
   }
   return conf;
 }
+
 describe('when parsing a sequenceDiagram', function() {
   beforeEach(function() {
     parser.yy = sequenceDb;
@@ -773,7 +774,6 @@ end`;
 describe('when checking the bounds in a sequenceDiagram', function() {
   let conf;
   beforeEach(function() {
-    mermaidAPI.reset();
     parser.yy = sequenceDb;
     parser.yy.clear();
     conf = {
@@ -788,11 +788,10 @@ describe('when checking the bounds in a sequenceDiagram', function() {
       boxTextMargin: 15,
       noteMargin: 25
     };
-
-    mermaidAPI.initialize({ sequence: conf });
-    renderer.bounds.init();
+    renderer.setConf(conf);
   });
   it('it should handle a simple bound call', function() {
+    renderer.bounds.init();
 
     renderer.bounds.insert(100, 100, 200, 200);
 
@@ -803,6 +802,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(200);
   });
   it('it should handle an expanding bound', function() {
+    renderer.bounds.init();
 
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.insert(25, 50, 300, 400);
@@ -814,6 +814,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(400);
   });
   it('it should handle inserts within the bound without changing the outer bounds', function() {
+    renderer.bounds.init();
 
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.insert(25, 50, 300, 400);
@@ -826,6 +827,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(400);
   });
   it('it should handle a loop without expanding the area', function() {
+    renderer.bounds.init();
 
     renderer.bounds.insert(25, 50, 300, 400);
     renderer.bounds.verticalPos = 150;
@@ -848,6 +850,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(400);
   });
   it('it should handle multiple loops withtout expanding the bounds', function() {
+    renderer.bounds.init();
 
     renderer.bounds.insert(100, 100, 1000, 1000);
     renderer.bounds.verticalPos = 200;
@@ -880,6 +883,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(bounds.stopy).toBe(1000);
   });
   it('it should handle a loop that expands the area', function() {
+    renderer.bounds.init();
 
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.verticalPos = 200;
@@ -906,7 +910,6 @@ describe('when checking the bounds in a sequenceDiagram', function() {
 describe('when rendering a sequenceDiagram', function() {
   let conf;
   beforeEach(function() {
-    mermaidAPI.reset();
     parser.yy = sequenceDb;
     parser.yy.clear();
 
@@ -920,22 +923,19 @@ describe('when rendering a sequenceDiagram', function() {
       boxMargin: 10,
       messageMargin: 40,
       boxTextMargin: 15,
-      noteMargin: 25,
-      wrapEnabled: false,
-      mirrorActors: false
+      noteMargin: 25
     };
-    mermaidAPI.initialize({ sequence: conf });
-    renderer.bounds.init();
+    renderer.setConf(conf);
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
     it(`
 it should handle one actor, when textPlacement is ${textPlacement}`, function() {
+      renderer.setConf(addConf(conf, 'textPlacement', textPlacement));
+      renderer.bounds.init();
       const str = `
 sequenceDiagram
 participant Alice`;
 
-      mermaidAPI.initialize(addConf(conf, 'textPlacement', textPlacement));
-      renderer.bounds.init();
       parser.parse(str);
       renderer.draw(str, 'tst');
 
@@ -947,6 +947,8 @@ participant Alice`;
     });
   });
   it('it should handle same actor with different whitespace properly', function() {
+    renderer.bounds.init();
+
     const str = `
 sequenceDiagram
 participant Alice
@@ -960,6 +962,7 @@ participant Alice
     expect(Object.keys(actors)).toEqual(['Alice']);
   });
   it('it should handle one actor and a centered note', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 participant Alice
@@ -977,6 +980,7 @@ Note over Alice: Alice thinks
     expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10);
   });
   it('it should handle one actor and a note to the left', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 participant Alice
@@ -993,6 +997,7 @@ Note left of Alice: Alice thinks`;
     expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10);
   });
   it('it should handle one actor and a note to the right', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 participant Alice
@@ -1009,6 +1014,7 @@ Note right of Alice: Alice thinks`;
     expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10);
   });
   it('it should handle two actors', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
@@ -1020,9 +1026,10 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(conf.messageMargin + conf.height);
+    expect(bounds.stopy).toBe(0 + conf.messageMargin + conf.height);
   });
   it('it should handle two actors with init directive', function() {
+    renderer.bounds.init();
     const str = `
 %%{init: {'logLevel': 0}}%%
 sequenceDiagram
@@ -1037,9 +1044,10 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(conf.height + conf.messageMargin + (conf.mirrorActors ?  2 * conf.boxMargin + conf.height : 0));
+    expect(bounds.stopy).toBe(0 + conf.messageMargin + conf.height);
   });
   it('it should handle two actors with init directive with multiline directive', function() {
+    renderer.bounds.init();
     const str = `
 %%{init: { 'logLevel': 0}}%%
 sequenceDiagram
@@ -1051,18 +1059,16 @@ Alice->Bob: Hello Bob, how are you?`;
     parser.parse(str);
     renderer.draw(str, 'tst');
 
-    const msgs = parser.yy.getMessages();
     const bounds = renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.logLevel).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(conf.messageMargin + conf.height);
-    expect(msgs.every(v => v.wrap)).toBe(true);
-
+    expect(bounds.stopy).toBe(0 + conf.messageMargin + conf.height);
   });
   it('it should handle two actors and two centered shared notes', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1082,6 +1088,7 @@ Note over Bob,Alice: Looks back
     );
   });
   it('it should draw two actors and two messages', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1097,6 +1104,7 @@ Bob->Alice: Fine!`;
     expect(bounds.stopy).toBe(0 + 2 * conf.messageMargin + conf.height);
   });
   it('it should draw two actors notes to the right', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1118,6 +1126,7 @@ Bob->Alice: Fine!`;
     );
   });
   it('it should draw two actors notes to the left', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
@@ -1137,6 +1146,7 @@ Bob->Alice: Fine!`;
     );
   });
   it('it should draw two actors notes to the left with text wrapped (inline)', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->>Bob:wrap: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
@@ -1158,6 +1168,7 @@ Bob->>Alice: Fine!`;
     );
   });
   it('it should draw two actors notes to the left with text wrapped (directive)', function() {
+    renderer.bounds.init();
     const str = `
 %%{init: { 'theme': 'dark' } }%%
 sequenceDiagram
@@ -1183,6 +1194,7 @@ Bob->>Alice: Fine!`;
     );
   });
   it('it should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark', function() {
+    renderer.bounds.init();
     const str = `
 %%{init:{'theme':'dark'}}%%
 sequenceDiagram
@@ -1190,7 +1202,6 @@ sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1207,16 +1218,17 @@ Bob->>Alice: Fine!`;
       2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
     );
   });
-  it('it should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
+  it('it should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
+    renderer.bounds.init();
     const str = `
-%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrapEnabled": true }}}%%
+%%{init: { "theme": "dark" }}%%
 sequenceDiagram
+%%{config: { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400 } }%%
+%%{wrap}%%
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-
     parser.parse(str);
-    // renderer.setConf(mermaidAPI.getConfig().sequence);
     renderer.draw(str, 'tst');
 
     const bounds = renderer.bounds.getBounds();
@@ -1225,9 +1237,9 @@ Bob->>Alice: Fine!`;
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(mermaid.theme).toBe('dark');
-    expect(mermaid.sequence.fontFamily).toBe('Menlo');
-    expect(mermaid.sequence.fontSize).toBe(18);
-    expect(mermaid.sequence.fontWeight).toBe(400);
+    expect(mermaid.fontFamily).toBe('Menlo');
+    expect(mermaid.fontSize).toBe(18);
+    expect(mermaid.fontWeight).toBe(400);
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
@@ -1236,13 +1248,13 @@ Bob->>Alice: Fine!`;
     );
   });
   it('it should draw two loops', function() {
+    renderer.bounds.init();
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 loop Cheers
 Bob->Alice: Fine!
 end`;
-
     parser.parse(str);
     renderer.draw(str, 'tst');
 
@@ -1256,6 +1268,7 @@ end`;
     );
   });
   it('it should draw background rect', function() {
+    renderer.bounds.init();
     const str = `
       sequenceDiagram
         Alice->Bob: Hello Bob, are you alright?
@@ -1277,7 +1290,6 @@ end`;
 describe('when rendering a sequenceDiagram with actor mirror activated', function() {
   let conf;
   beforeEach(function() {
-    mermaidAPI.reset();
     parser.yy = sequenceDb;
     parser.yy.clear();
 
@@ -1297,12 +1309,11 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
       // Prolongs the edge of the diagram downwards
       bottomMarginAdj: 1
     };
-    mermaidAPI.initialize({ sequence: conf });
-    renderer.bounds.init();
+    renderer.setConf(conf);
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
     it('it should handle one actor, when textPlacement is' + textPlacement, function() {
-      mermaidAPI.initialize(addConf(conf, 'textPlacement', textPlacement));
+      renderer.setConf(addConf(conf, 'textPlacement', textPlacement));
       renderer.bounds.init();
       const str = `
 sequenceDiagram
@@ -1323,7 +1334,6 @@ participant Alice`;
 describe('when rendering a sequenceDiagram with directives', function() {
   let conf;
   beforeEach(function() {
-    mermaidAPI.reset();
     parser.yy = sequenceDb;
     parser.yy.clear();
     conf = {
@@ -1338,11 +1348,11 @@ describe('when rendering a sequenceDiagram with directives', function() {
       boxTextMargin: 15,
       noteMargin: 25
     };
-    mermaidAPI.initialize({ sequence: conf });
-    renderer.bounds.init();
+    renderer.setConf(conf);
   });
 
-  it('it should handle one actor, when theme is dark and logLevel is 1 DX1', function() {
+  it('it should handle one actor, when theme is dark and logLevel is 1', function() {
+    renderer.bounds.init();
     const str = `
 %%{init: { "theme": "dark", "logLevel": 1 } }%%
 sequenceDiagram
@@ -1363,6 +1373,7 @@ participant Alice
     expect(bounds.stopy).toBe(2 * conf.height + 2 * conf.boxMargin);
   });
   it('it should handle one actor, when logLevel is 3', function() {
+    renderer.bounds.init();
     const str = `
 %%{initialize: { "logLevel": 3 }}%%
 sequenceDiagram

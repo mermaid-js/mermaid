@@ -1,4 +1,5 @@
 import { logger } from '../../logger';
+import { getConfig, setConfig } from '../../config';
 import mermaidAPI from '../../mermaidAPI';
 
 let prevActor = undefined;
@@ -9,6 +10,7 @@ let title = '';
 let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
+let configUpdated = false;
 let currentDirective = {};
 
 export const parseDirective = function(statement, context) {
@@ -44,14 +46,10 @@ const handleDirective = function(directive) {
   switch (directive.type) {
     case 'init':
     case 'initialize':
-      ['config'].forEach(prop => {
-        if (typeof directive.args[prop] !== 'undefined') {
-          directive.args.sequence = directive.args[prop];
-          delete directive.args[prop];
-        }
-      });
-
       mermaidAPI.initialize(directive.args);
+      break;
+    case 'config':
+      updateConfig(directive.args);
       break;
     case 'wrap':
     case 'nowrap':
@@ -59,9 +57,7 @@ const handleDirective = function(directive) {
       break;
     default:
       logger.warn(
-        `Unhandled directive: source: '%%{${directive.type}: ${JSON.stringify(
-          directive.args ? directive.args : {}
-        )}}%%`,
+        `Unrecognized directive: source: '%%{${directive.type}: ${directive.args}}%%`,
         directive
       );
       break;
@@ -81,7 +77,7 @@ export const addActor = function(id, name, description) {
   actors[id] = {
     name: name,
     description: description.text,
-    wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
+    wrap: (description.wrap === null && autoWrap()) || !!description.wrap,
     prevActor: prevActor
   };
   if (prevActor && actors[prevActor]) {
@@ -115,17 +111,12 @@ export const addMessage = function(idFrom, idTo, message, answer) {
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
     answer: answer
   });
 };
 
-export const addSignal = function(
-  idFrom,
-  idTo,
-  message = { text: undefined, wrap: undefined },
-  messageType
-) {
+export const addSignal = function(idFrom, idTo, message = { text: null, wrap: null }, messageType) {
   logger.debug(
     'Adding message from=' +
       idFrom +
@@ -159,7 +150,7 @@ export const addSignal = function(
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
     type: messageType
   });
   return true;
@@ -189,8 +180,12 @@ export const enableSequenceNumbers = function() {
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
-export const setWrap = function(wrapSetting) {
-  wrapEnabled = wrapSetting;
+export const enableWrap = function() {
+  wrapEnabled = true;
+};
+
+export const disableWrap = function() {
+  wrapEnabled = false;
 };
 
 export const autoWrap = () => wrapEnabled;
@@ -198,11 +193,12 @@ export const autoWrap = () => wrapEnabled;
 export const clear = function() {
   actors = {};
   messages = [];
+  configUpdated = false;
 };
 
 export const parseMessage = function(str) {
   const _str = str.trim();
-  const retVal = {
+  return {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
@@ -213,8 +209,6 @@ export const parseMessage = function(str) {
         ? false
         : autoWrap()
   };
-  logger.debug(`ParseMessage[${str}] [${JSON.stringify(retVal, null, 2)}`);
-  return retVal;
 };
 
 export const LINETYPE = {
@@ -257,7 +251,7 @@ export const addNote = function(actor, placement, message) {
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap
   };
 
   // Coerce actor into a [to, from, ...] array
@@ -268,7 +262,7 @@ export const addNote = function(actor, placement, message) {
     from: actors[0],
     to: actors[1],
     message: message.text,
-    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
@@ -276,7 +270,20 @@ export const addNote = function(actor, placement, message) {
 
 export const setTitle = function(titleWrap) {
   title = titleWrap.text;
-  titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
+  titleWrapped = (titleWrap.wrap === null && autoWrap()) || !!titleWrap.wrap;
+};
+
+export const updateConfig = function(config = getConfig()) {
+  try {
+    setConfig(config);
+    configUpdated = true;
+  } catch (error) {
+    logger.error('Error: unable to parse config');
+  }
+};
+
+export const hasConfigChange = function() {
+  return configUpdated;
 };
 
 export const apply = function(param) {
@@ -348,16 +355,20 @@ export default {
   addActor,
   addMessage,
   addSignal,
-  autoWrap,
-  setWrap,
+  enableWrap,
+  disableWrap,
   enableSequenceNumbers,
   showSequenceNumbers,
+  autoWrap,
   getMessages,
   getActors,
   getActor,
   getActorKeys,
   getTitle,
   parseDirective,
+  hasConfigChange,
+  getConfig,
+  updateConfig,
   getTitleWrapped,
   clear,
   parseMessage,

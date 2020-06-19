@@ -1,10 +1,10 @@
 import { select, selectAll } from 'd3';
-import svgDraw, { drawText } from './svgDraw';
+import svgDraw from './svgDraw';
 import { logger } from '../../logger';
 import { parser } from './parser/sequenceDiagram';
 import common from '../common/common';
 import sequenceDb from './sequenceDb';
-import utils, { assignWithDepth } from '../../utils';
+import { getConfig } from '../../config';
 
 parser.yy = sequenceDb;
 
@@ -79,6 +79,9 @@ export const bounds = {
       stopy: undefined
     };
     this.verticalPos = 0;
+    if (parser.yy.hasConfigChange()) {
+      setConf(getConfig());
+    }
   },
   updateVal: function(obj, key, val, fun) {
     if (typeof obj[key] === 'undefined') {
@@ -150,20 +153,15 @@ export const bounds = {
       .lastIndexOf(message.from.actor);
     return this.activations.splice(lastActorActivationIdx, 1)[0];
   },
-  createLoop: function(title = { message: undefined, wrap: false, width: undefined }, fill) {
-    return {
+  newLoop: function(title, fill) {
+    this.sequenceItems.push({
       startx: undefined,
       starty: this.verticalPos,
       stopx: undefined,
       stopy: undefined,
-      title: title.message,
-      wrap: title.wrap,
-      width: title.width,
+      title: title,
       fill: fill
-    };
-  },
-  newLoop: function(title = { message: undefined, wrap: false, width: undefined }, fill) {
-    this.sequenceItems.push(this.createLoop(title, fill));
+    });
   },
   endLoop: function() {
     return this.sequenceItems.pop();
@@ -188,7 +186,59 @@ export const bounds = {
   }
 };
 
-const drawLongText = (text, x, y, g, width) => {
+const wrapLabel = (label, maxWidth, joinWith = '<br/>') => {
+  if (common.lineBreakRegex.test(label)) {
+    return label;
+  }
+  const words = label.split(' ');
+  const completedLines = [];
+  let nextLine = '';
+  words.forEach((word, index) => {
+    const wordLength = calculateTextWidth(`${word} `);
+    const nextLineLength = calculateTextWidth(nextLine);
+    if (wordLength > maxWidth) {
+      const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth);
+      completedLines.push(nextLine, ...hyphenatedStrings);
+      nextLine = remainingWord;
+    } else if (nextLineLength + wordLength >= maxWidth) {
+      completedLines.push(nextLine);
+      nextLine = word;
+    } else {
+      nextLine = [nextLine, word].filter(Boolean).join(' ');
+    }
+    const currentWord = index + 1;
+    const isLastWord = currentWord === words.length;
+    if (isLastWord) {
+      completedLines.push(nextLine);
+    }
+  });
+  return completedLines.filter(line => line !== '').join(joinWith);
+};
+
+const breakString = (word, maxWidth, hyphenCharacter = '-') => {
+  const characters = word.split('');
+  const lines = [];
+  let currentLine = '';
+  characters.forEach((character, index) => {
+    const nextLine = `${currentLine}${character}`;
+    const lineWidth = calculateTextWidth(nextLine);
+    if (lineWidth >= maxWidth) {
+      const currentCharacter = index + 1;
+      const isLastLine = characters.length === currentCharacter;
+      const hyphenatedNextLine = `${nextLine}${hyphenCharacter}`;
+      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
+      currentLine = '';
+    } else {
+      currentLine = nextLine;
+    }
+  });
+  return { hyphenatedStrings: lines, remainingWord: currentLine };
+};
+
+const _drawLongText = (text, x, y, g, width) => {
+  let textHeight = 0;
+  let prevTextHeight = 0;
+
   const alignmentToAnchor = {
     left: 'start',
     start: 'start',
@@ -197,45 +247,43 @@ const drawLongText = (text, x, y, g, width) => {
     right: 'end',
     end: 'end'
   };
-  const alignment = alignmentToAnchor[conf.noteAlign] || 'middle';
-  const textObj = svgDraw.getTextObj();
-  switch (alignment) {
-    case 'start':
-      textObj.x = x + conf.noteMargin;
-      break;
-    case 'middle':
-      textObj.x = x + width / 2;
-      break;
-    case 'end':
-      textObj.x = x + width - conf.noteMargin;
-      break;
+  const lines = text.split(common.lineBreakRegex);
+  for (const line of lines) {
+    const textObj = svgDraw.getTextObj();
+    const alignment = alignmentToAnchor[conf.noteAlign] || 'middle';
+
+    switch (alignment) {
+      case 'start':
+        textObj.x = x + conf.noteMargin;
+        break;
+      case 'middle':
+        textObj.x = x + width / 2;
+        break;
+      case 'end':
+        textObj.x = x + width - conf.noteMargin;
+        break;
+    }
+
+    textObj.y = y + textHeight;
+    textObj.dy = '1em';
+    textObj.text = line;
+    textObj.class = 'noteText';
+
+    const textElem = svgDraw
+      .drawText(g, textObj)
+      .style('text-anchor', alignment)
+      .style('font-size', conf.noteFontSize)
+      .style('font-family', conf.noteFontFamily)
+      .style('font-weight', conf.noteFontWeight)
+      .attr('dominant-baseline', 'central')
+      .attr('alignment-baseline', 'central');
+
+    textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+    textElem.attr('y', y + (prevTextHeight + textHeight + 2 * conf.noteMargin) / 2);
+    prevTextHeight = textHeight;
   }
 
-  textObj.y = y;
-  textObj.dy = '1em';
-  textObj.text = text;
-  textObj.class = 'noteText';
-  textObj.fontFamily = conf.noteFontFamily;
-  textObj.fontSize = conf.noteFontSize;
-  textObj.fontWeight = conf.noteFontWeight;
-  textObj.anchor = alignment;
-  textObj.textMargin = conf.noteMargin;
-  textObj.valign = alignment;
-  textObj.wrap = true;
-
-  let textElem = drawText(g, textObj);
-
-  if (!Array.isArray(textElem)) {
-    textElem = [textElem];
-  }
-
-  textElem.forEach(te => {
-    te.attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
-  });
-
-  return textElem
-    .map(te => (te._groups || te)[0][0].getBBox().height)
-    .reduce((acc, curr) => acc + curr);
+  return textHeight;
 };
 
 /**
@@ -256,7 +304,7 @@ const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
   let g = elem.append('g');
   const rectElem = svgDraw.drawRect(g, rect);
 
-  const textHeight = drawLongText(msg.message, startx, verticalPos, g, rect.width);
+  const textHeight = _drawLongText(msg.message, startx, verticalPos, g, rect.width);
 
   bounds.insert(
     startx,
@@ -283,15 +331,36 @@ const drawMessage = function(elem, startx, stopx, verticalPos, msg, sequenceInde
   const txtCenter = startx + (stopx - startx) / 2;
 
   let textElems = [];
+  /*
+  let textHeight = 0;
+  const breaklines = msg.message.split(common.lineBreakRegex);
+  for (const breakline of breaklines) {
+    let textElem = g
+      .append('text') // text label for the x axis
+      .attr('x', txtCenter)
+      .attr('y', verticalPos + textHeight)
+      .style('font-size', conf.messageFontSize)
+      .style('font-family', conf.messageFontFamily)
+      .style('font-weight', conf.messageFontWeight)
+      .style('text-anchor', 'middle')
+      .attr('class', 'messageText')
+      .text(breakline.trim());
+    textElems.push(textElem);
+    textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+  }
+
+  let totalOffset = textHeight;
+*/
 
   let counterBreaklines = 0;
-  let breaklineOffset = conf.messageFontSize;
+  let breaklineOffset = conf.messageFontSize + 4;
   const breaklines = msg.message.split(common.lineBreakRegex);
   for (const breakline of breaklines) {
     textElems.push(
       g
         .append('text') // text label for the x axis
         .attr('x', txtCenter)
+        // .attr('y', verticalPos - breaklineVerticalOffset + counterBreaklines * breaklineOffset)
         .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset)
         .style('font-size', conf.messageFontSize)
         .style('font-family', conf.messageFontFamily)
@@ -431,18 +500,32 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
   // Draw the actors
   let prevWidth = 0;
   let prevMargin = 0;
+  let maxActorHeight = conf.height;
 
   for (let i = 0; i < actorKeys.length; i++) {
     const actor = actors[actorKeys[i]];
 
     // Add some rendering data to the object
-    actor.width = typeof actor.width === 'undefined' ? calculateActorWidth(actor) : actor.width;
-    actor.height = conf.height;
-    actor.margin = conf.actorMargin;
+    actor.width = actor.width || calculateActorWidth(actor);
+    actor.height = actor.wrap
+      ? calculateTextHeight(
+          actor.message,
+          conf.height,
+          actor.width,
+          conf.wrapPadding,
+          actor.wrap,
+          conf.actorFontSize
+        )
+      : conf.height;
+    maxActorHeight = Math.max(maxActorHeight, actor.height);
+    actor.margin = actor.margin || conf.actorMargin;
 
     actor.x = prevWidth + prevMargin;
     actor.y = verticalPos;
 
+    if (actor.wrap) {
+      actor.description = wrapLabel(actor.description, actor.width);
+    }
     // Draw the box with the attached line
     svgDraw.drawActor(diagram, actor, conf);
     bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
@@ -452,17 +535,22 @@ export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
   }
 
   // Add a margin between the actor boxes and the first arrow
-  bounds.bumpVerticalPos(conf.height);
+  bounds.bumpVerticalPos(maxActorHeight);
 };
 
 export const setConf = function(cnf) {
-  assignWithDepth(conf, cnf);
+  const keys = Object.keys(cnf);
+
+  keys.forEach(function(key) {
+    conf[key] = cnf[key];
+  });
 
   if (cnf.fontFamily) {
     conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
   }
   if (cnf.fontSize) {
     conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize;
+    // conf.height = cnf.fontSize * (65 / 14);
   }
   if (cnf.fontWeight) {
     conf.actorFontWeight = conf.noteFontWeight = conf.messageFontWeight = cnf.fontWeight;
@@ -508,41 +596,100 @@ const calculateActorWidth = function(actor) {
     ? conf.width
     : Math.max(
         conf.width,
-        utils.calculateTextWidth(actor.description, {
-          fontSize: conf.actorFontSize,
-          fontFamily: conf.actorFontFamily,
-          fontWeight: conf.actorFontWeight,
-          margin: conf.wrapPadding
-        })
+        calculateTextWidth(
+          actor.description,
+          conf.actorFontSize,
+          conf.actorFontFamily,
+          conf.actorFontWeight
+        )
       );
 };
 
-function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
-  let heightAdjust = 0;
-  bounds.bumpVerticalPos(preMargin);
-  if (msg.message && msg.wrap && loopWidths[msg.message]) {
-    let loopWidth = loopWidths[msg.message].width;
-    let minSize =
-      Math.round((3 * conf.fontSize) / 4) < 10
-        ? conf.fontSize
-        : Math.round((3 * conf.fontSize) / 4);
-    let textConf = {
-      fontSize: minSize,
-      fontFamily: conf.messageFontFamily,
-      fontWeight: conf.messageFontWeight,
-      margin: conf.wrapPadding
-    };
-    msg.message = msg.message
-      ? utils.wrapLabel(`[${msg.message}]`, loopWidth, textConf)
-      : msg.message;
-    heightAdjust = Math.max(
-      0,
-      utils.calculateTextHeight(msg.message, textConf) - (preMargin + postMargin)
-    );
+/**
+ * This calculates the text's height, taking into account the wrap value and
+ * both the statically configured height, width, and the length of the text (in pixels).
+ *
+ * If the wrapped text text has greater height, we extend the height, so it's
+ * value won't overflow.
+ *
+ * @return - The height for the given actor
+ * @param message the text to measure
+ * @param elementHeight the height of the default bounding box containing the text
+ * @param elementWidth the width of the default bounding box containing the text
+ * @param margin space above and below
+ * @param wrap wrap the text based on: elementWidth - 2 * margin
+ * @param fontSize
+ */
+export const calculateTextHeight = function(
+  message,
+  elementHeight,
+  elementWidth,
+  margin,
+  wrap,
+  fontSize
+) {
+  if (!message) {
+    return elementHeight;
   }
-  addLoopFn(msg);
-  bounds.bumpVerticalPos(heightAdjust + postMargin);
-}
+  let lineHeightFactor = wrap
+    ? wrapLabel(message, elementWidth - 2 * margin).split(common.lineBreakRegex).length
+    : 1;
+
+  return wrap ? Math.max(elementHeight, lineHeightFactor * fontSize) : elementHeight;
+};
+
+/**
+ * This calculates the width of the given text, font size and family.
+ *
+ * @param text - The text to calculate the width of
+ * @param fontSize - The font size of the given text
+ * @param fontFamily - The font family (one, or more fonts) to render
+ * @param fontWeight - The font weight (normal, bold, italics)
+ */
+export const calculateTextWidth = function(text, fontSize, fontFamily, fontWeight) {
+  if (!text) {
+    return 0;
+  }
+
+  fontSize = fontSize ? fontSize : conf.actorFontSize;
+  fontFamily = fontFamily ? fontFamily : conf.actorFontFamily;
+  fontWeight = fontWeight ? fontWeight : conf.actorFontWeight;
+
+  // We can't really know if the user supplied font family will render on the user agent;
+  // thus, we'll take the max width between the user supplied font family, and a default
+  // of sans-serif.
+  const fontFamilies = ['sans-serif', fontFamily];
+  const lines = text.split(common.lineBreakRegex);
+  let maxWidth = 0;
+
+  const body = select('body');
+  // We don't want to leak DOM elements - if a removal operation isn't available
+  // for any reason, do not continue.
+  if (!body.remove) {
+    return 0;
+  }
+
+  const g = body.append('svg');
+
+  for (let line of lines) {
+    for (let fontFamily of fontFamilies) {
+      const textObj = svgDraw.getTextObj();
+      textObj.text = line;
+      const textElem = svgDraw
+        .drawText(g, textObj)
+        .style('font-size', fontSize)
+        .style('font-weight', fontWeight)
+        .style('font-family', fontFamily);
+
+      maxWidth = Math.max(maxWidth, (textElem._groups || textElem)[0][0].getBBox().width);
+    }
+  }
+
+  g.remove();
+
+  // Adds some padding, so the text won't sit exactly within the actor's borders
+  return maxWidth + conf.wrapPadding * 2;
+};
 
 /**
  * Draws a flowchart in the tag with id: id based on the graph definition in text.
@@ -551,7 +698,6 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
  */
 export const draw = function(text, id) {
   parser.yy.clear();
-  parser.yy.setWrap(conf.wrapEnabled);
   parser.parse(text + '\n');
 
   bounds.init();
@@ -568,10 +714,15 @@ export const draw = function(text, id) {
   const title = parser.yy.getTitle();
 
   const maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
-  conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
+  const maxActorHeight = calculateActorMargins(actors, maxMessageWidthPerActor);
 
   drawActors(diagram, actors, actorKeys, 0);
-  const loopWidths = calculateLoopMargins(messages, actors);
+
+  bounds.bumpVerticalPos(
+    maxActorHeight > conf.height
+      ? Math.min(conf.boxMargin, Math.abs(maxActorHeight - conf.height))
+      : 0
+  );
 
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
@@ -601,7 +752,6 @@ export const draw = function(text, id) {
     let loopData,
       noteWidth,
       textWidth,
-      textConf,
       shouldWrap = msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message);
 
     switch (msg.type) {
@@ -610,18 +760,17 @@ export const draw = function(text, id) {
 
         startx = actors[msg.from].x;
         stopx = actors[msg.to].x;
-        textConf = {
-          fontSize: conf.noteFontSize,
-          fontFamily: conf.noteFontFamily,
-          fontWeight: conf.noteFontWeight,
-          margin: conf.wrapPadding
-        };
-        textWidth = utils.calculateTextWidth(msg.message, textConf);
+        textWidth = calculateTextWidth(
+          msg.message,
+          conf.noteFontSize,
+          conf.noteFontFamily,
+          conf.noteFontWeight
+        );
         noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth);
 
         if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = wrapLabel(msg.message, noteWidth);
           }
           drawNote(
             diagram,
@@ -632,7 +781,7 @@ export const draw = function(text, id) {
           );
         } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = wrapLabel(msg.message, noteWidth);
           }
           drawNote(
             diagram,
@@ -644,7 +793,7 @@ export const draw = function(text, id) {
         } else if (msg.to === msg.from) {
           // Single-actor over
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = wrapLabel(msg.message, noteWidth);
           }
           drawNote(
             diagram,
@@ -658,7 +807,7 @@ export const draw = function(text, id) {
           forceWidth = Math.abs(startx - stopx) + conf.actorMargin / 2;
           if (shouldWrap) {
             noteWidth = forceWidth;
-            msg.message = utils.wrapLabel(msg.message, noteWidth, textConf);
+            msg.message = wrapLabel(msg.message, noteWidth);
           } else {
             noteWidth = Math.max(forceWidth, textWidth - 2 * conf.noteMargin);
           }
@@ -677,16 +826,13 @@ export const draw = function(text, id) {
         activeEnd(msg, bounds.getVerticalPos());
         break;
       case parser.yy.LINETYPE.LOOP_START:
-        adjustLoopHeightForWrap(
-          loopWidths,
-          msg,
-          conf.boxMargin,
-          conf.boxMargin + conf.boxTextMargin,
-          message => bounds.newLoop(message)
-        );
+        bounds.bumpVerticalPos(conf.boxMargin);
+        bounds.newLoop(msg.message);
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
         break;
       case parser.yy.LINETYPE.LOOP_END:
         loopData = bounds.endLoop();
+
         svgDraw.drawLoop(diagram, loopData, 'loop', conf);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
@@ -695,56 +841,51 @@ export const draw = function(text, id) {
         bounds.newLoop(undefined, msg.message);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
-      case parser.yy.LINETYPE.RECT_END:
-        svgDraw.drawBackgroundRect(diagram, bounds.endLoop());
+      case parser.yy.LINETYPE.RECT_END: {
+        const rectData = bounds.endLoop();
+        svgDraw.drawBackgroundRect(diagram, rectData);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
+      }
       case parser.yy.LINETYPE.OPT_START:
-        adjustLoopHeightForWrap(
-          loopWidths,
-          msg,
-          conf.boxMargin,
-          conf.boxMargin + conf.boxTextMargin,
-          message => bounds.newLoop(message)
-        );
+        bounds.bumpVerticalPos(conf.boxMargin);
+        bounds.newLoop(msg.message);
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
         break;
       case parser.yy.LINETYPE.OPT_END:
         loopData = bounds.endLoop();
+
         svgDraw.drawLoop(diagram, loopData, 'opt', conf);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
       case parser.yy.LINETYPE.ALT_START:
-        adjustLoopHeightForWrap(
-          loopWidths,
-          msg,
-          conf.boxMargin,
-          conf.boxMargin + conf.boxTextMargin,
-          message => bounds.newLoop(message)
-        );
+        bounds.bumpVerticalPos(conf.boxMargin);
+        bounds.newLoop(msg.message);
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
         break;
       case parser.yy.LINETYPE.ALT_ELSE:
-        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, message =>
-          bounds.addSectionToLoop(message)
-        );
+        bounds.bumpVerticalPos(conf.boxMargin);
+        loopData = bounds.addSectionToLoop(msg.message);
+        bounds.bumpVerticalPos(conf.boxMargin);
         break;
       case parser.yy.LINETYPE.ALT_END:
         loopData = bounds.endLoop();
+
         svgDraw.drawLoop(diagram, loopData, 'alt', conf);
         bounds.bumpVerticalPos(conf.boxMargin);
         break;
       case parser.yy.LINETYPE.PAR_START:
-        adjustLoopHeightForWrap(
-          loopWidths,
-          msg,
-          conf.boxMargin,
-          conf.boxMargin + conf.boxTextMargin,
-          message => bounds.newLoop(message)
-        );
+        bounds.bumpVerticalPos(conf.boxMargin);
+        if (shouldWrap) {
+          msg.message = wrapLabel(msg.message, conf.boxMargin);
+        }
+        bounds.newLoop(msg.message);
+        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
         break;
       case parser.yy.LINETYPE.PAR_AND:
-        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, message =>
-          bounds.addSectionToLoop(message)
-        );
+        bounds.bumpVerticalPos(conf.boxMargin);
+        loopData = bounds.addSectionToLoop(msg.message);
+        bounds.bumpVerticalPos(conf.boxMargin);
         break;
       case parser.yy.LINETYPE.PAR_END:
         loopData = bounds.endLoop();
@@ -761,20 +902,13 @@ export const draw = function(text, id) {
           const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
           startx = fromBounds[fromIdx];
           stopx = toBounds[toIdx];
-          textConf = {
-            fontSize: conf.messageFontSize,
-            fontFamily: conf.messageFontFamily,
-            fontWeight: conf.messageFontWeight,
-            margin: conf.wrapPadding
-          };
           if (shouldWrap) {
-            msg.message = utils.wrapLabel(
+            msg.message = wrapLabel(
               msg.message,
               Math.max(
                 Math.abs(stopx - startx) + conf.messageMargin * 2,
                 conf.width + conf.messageMargin * 2
-              ),
-              textConf
+              )
             );
           }
 
@@ -838,7 +972,6 @@ export const draw = function(text, id) {
     diagram.attr('height', '100%');
     diagram.attr('width', '100%');
     diagram.attr('style', 'max-width:' + width + 'px;');
-    // diagram.attr('style', 'max-width:100%;');
   } else {
     diagram.attr('height', height);
     diagram.attr('width', width);
@@ -890,17 +1023,12 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
       const fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
       const fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
       const fontWeight = isNote ? conf.noteFontWeight : conf.messageFontWeight;
-      const textConf = { fontFamily, fontSize, fontWeight, margin: conf.wrapPadding };
-      let wrappedMessage = msg.wrap
-        ? utils.wrapLabel(msg.message, conf.width - conf.noteMargin, textConf)
-        : msg.message;
-      const messageDimensions = utils.calculateTextDimensions(wrappedMessage, {
+      const messageWidth = calculateTextWidth(
+        msg.wrap ? wrapLabel(msg.message, conf.width - conf.noteMargin) : msg.message,
         fontSize,
         fontFamily,
-        fontWeight,
-        margin: conf.wrapPadding
-      });
-      const messageWidth = messageDimensions.width;
+        fontWeight
+      );
 
       /*
        * The following scenarios should be supported:
@@ -976,13 +1104,6 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
       continue;
     }
 
-    const textConf = {
-      fontSize: conf.actorFontSize,
-      fontFamily: conf.actorFontFamily,
-      fontWeight: conf.actorFontWeight,
-      margin: conf.wrapPadding
-    };
-
     const nextActor = actors[actor.nextActor];
 
     // No need to space out an actor that doesn't have a next link
@@ -991,14 +1112,28 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
     }
 
     [actor, nextActor].forEach(function(act) {
-      if (act.wrap) {
-        act.description = utils.wrapLabel(act.description, conf.width, textConf);
-      }
-      const actDims = utils.calculateTextDimensions(act.description, textConf);
-      act.width = act.wrap ? conf.width : Math.max(conf.width, actDims.width);
+      act.width = act.wrap
+        ? conf.width
+        : Math.max(
+            conf.width,
+            calculateTextWidth(
+              act.description,
+              conf.actorFontSize,
+              conf.actorFontFamily,
+              conf.actorFontWeight
+            )
+          );
 
-      act.height = act.wrap ? Math.max(actDims.height, conf.height) : conf.height;
-      logger.debug(`Actor h:${act.height} ${actDims.height} d:${act.description}`);
+      act.height = act.wrap
+        ? calculateTextHeight(
+            act.description,
+            conf.height,
+            actor.width,
+            conf.actorMargin,
+            act.wrap,
+            conf.actorFontSize
+          )
+        : conf.height;
       maxHeight = Math.max(maxHeight, act.height);
     });
 
@@ -1007,62 +1142,11 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
 
     actor.margin = Math.max(actorWidth, conf.actorMargin);
   }
-
-  return Math.max(maxHeight, conf.height);
-};
-
-const calculateLoopMargins = function(messages, actors) {
-  const loops = {};
-  const stack = [];
-  let current;
-
-  messages.forEach(function(msg) {
-    switch (msg.type) {
-      case parser.yy.LINETYPE.LOOP_START:
-      case parser.yy.LINETYPE.ALT_START:
-      case parser.yy.LINETYPE.OPT_START:
-      case parser.yy.LINETYPE.PAR_START:
-        stack.push({
-          msg: msg.message,
-          from: Number.MAX_SAFE_INTEGER,
-          to: Number.MIN_SAFE_INTEGER,
-          width: 0
-        });
-        break;
-      case parser.yy.LINETYPE.ALT_ELSE:
-      case parser.yy.LINETYPE.PAR_AND:
-        if (msg.message) {
-          current = stack.pop();
-          loops[msg.message] = current;
-          stack.push(current);
-        }
-        break;
-      case parser.yy.LINETYPE.LOOP_END:
-      case parser.yy.LINETYPE.ALT_END:
-      case parser.yy.LINETYPE.OPT_END:
-      case parser.yy.LINETYPE.PAR_END:
-        current = stack.pop();
-        loops[current.msg] = current;
-        break;
-    }
-    if (msg.from && msg.to && stack.length > 0) {
-      stack.forEach(stk => {
-        current = stk;
-        let from = actors[msg.from];
-        let to = actors[msg.to];
-        if (from.x < to.x) {
-          current.from = Math.min(current.from, from.x);
-          current.to = Math.max(current.to, to.x);
-        } else {
-          current.from = Math.min(current.from, to.x);
-          current.to = Math.max(current.to, from.x);
-        }
-        current.width = Math.abs(current.from - current.to) - 20 + 2 * conf.wrapPadding;
-      });
-    }
+  Object.keys(actors).forEach(function(key) {
+    actors[key].height = maxHeight;
   });
-  logger.debug('LoopWidths:', { loops, actors });
-  return loops;
+
+  return maxHeight;
 };
 
 export default {
