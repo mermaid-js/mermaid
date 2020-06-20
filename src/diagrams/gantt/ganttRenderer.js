@@ -83,7 +83,6 @@ export const draw = function(text, id) {
   function taskCompare(a, b) {
     const taskA = a.startTime;
     const taskB = b.startTime;
-  
     let result = 0;
     if (taskA > taskB) {
       result = 1;
@@ -136,7 +135,9 @@ export const draw = function(text, id) {
       .append('rect')
       .attr('x', 0)
       .attr('y', function(d, i) {
-        return d.order * theGap + theTopPad - 2;
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
+        return i * theGap + theTopPad - 2;
       })
       .attr('width', function() {
         return w - conf.rightPadding / 2;
@@ -177,7 +178,9 @@ export const draw = function(text, id) {
         return timeScale(d.startTime) + theSidePad;
       })
       .attr('y', function(d, i) {
-        return  d.order * theGap + theTopPad;
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
+        return i * theGap + theTopPad;
       })
       .attr('width', function(d) {
         if (d.milestone) {
@@ -280,7 +283,9 @@ export const draw = function(text, id) {
         }
       })
       .attr('y', function(d, i) {
-        return d.order * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
+        // Ignore the incoming i value and use our order instead
+        i = d.order;
+        return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
       })
       .attr('text-height', theBarHeight)
       .attr('class', function(d) {
