@@ -263,32 +263,26 @@ const drawLongText = (text, x, y, g, width) => {
 /**
  * Draws an note in the diagram with the attaced line
  * @param elem - The diagram to draw to.
- * @param startx - The x axis start position.
- * @param verticalPos - The y axis position.
- * @param msg - The message to be drawn.
- * @param forceWidth - Set this with a custom width to override the default configured width.
+ * @param noteModel:{x: number, y: number, message: string, width: number} - startx: x axis start position, verticalPos: y axis position, messsage: the message to be shown, width: Set this with a custom width to override the default configured width.
  */
-const drawNote = function(elem, startx, verticalPos, msg, forceWidth) {
+const drawNote = function(elem, noteModel) {
   const rect = svgDraw.getNoteRect();
-  rect.x = startx;
-  rect.y = verticalPos;
-  rect.width = forceWidth || conf.width;
+  rect.x = noteModel.x;
+  rect.y = noteModel.y;
+  rect.width = noteModel.width || conf.width;
   rect.class = 'note';
 
   let g = elem.append('g');
   const rectElem = svgDraw.drawRect(g, rect);
 
-  const textHeight = drawLongText(msg.message, startx, verticalPos, g, rect.width);
+  const textHeight = drawLongText(noteModel.message, noteModel.x, noteModel.y, g, rect.width);
 
-  bounds.insert(
-    startx,
-    verticalPos,
-    startx + rect.width,
-    verticalPos + 2 * conf.noteMargin + textHeight
-  );
+  noteModel.height = textHeight + 2 * conf.noteMargin;
 
-  rectElem.attr('height', textHeight + 2 * conf.noteMargin);
-  bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin);
+  bounds.insert(noteModel.x, noteModel.y, noteModel.x + rect.width, noteModel.y + noteModel.height);
+
+  rectElem.attr('height', noteModel.height);
+  bounds.bumpVerticalPos(noteModel.height);
 };
 
 /**
@@ -516,12 +510,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
   bounds.bumpVerticalPos(preMargin);
   if (msg.message && loopWidths[msg.message]) {
     let loopWidth = loopWidths[msg.message].width;
-    let minSize =
-      Math.round((3 * conf.messageFontSize) / 4) < 10
-        ? conf.messageFontSize
-        : Math.round((3 * conf.messageFontSize) / 4);
     let textConf = conf.messageFont();
-    textConf.fontSize = minSize;
     msg.message = utils.wrapLabel(
       `[${msg.message}]`,
       loopWidth - 20 - 2 * conf.wrapPadding,
@@ -550,9 +539,6 @@ export const draw = function(text, id) {
   bounds.init();
   const diagram = select(`[id="${id}"]`);
 
-  let startx;
-  let stopx;
-
   // Fetch data from the parsing
   const actors = parser.yy.getActors();
   const actorKeys = parser.yy.getActorKeys();
@@ -563,7 +549,7 @@ export const draw = function(text, id) {
   conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
 
   drawActors(diagram, actors, actorKeys, 0);
-  const loopWidths = calculateLoopMargins(messages, actors);
+  const loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor);
 
   // The arrow head definition is attached to the svg once
   svgDraw.insertArrowHead(diagram);
@@ -590,110 +576,15 @@ export const draw = function(text, id) {
   // Draw the messages/signals
   let sequenceIndex = 1;
   messages.forEach(function(msg) {
-    let loopData,
-      noteWidth,
-      noteStart,
-      noteEnd,
-      textWidth,
-      shouldWrap = msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message);
+    let loopData, noteModel, msgModel;
 
     switch (msg.type) {
       case parser.yy.LINETYPE.NOTE:
         bounds.bumpVerticalPos(conf.boxMargin);
-
-        startx = actors[msg.from].x;
-        stopx = actors[msg.to].x;
-        noteStart = startx + actors[msg.from].width / 2;
-        noteEnd = stopx + actors[msg.to].width / 2;
-        textWidth = utils.calculateTextWidth(
-          shouldWrap ? utils.wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message,
-          conf.noteFont()
-        );
-        noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth + 2 * conf.noteMargin);
-
-        if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
-          noteWidth = shouldWrap
-            ? conf.width
-            : Math.max(
-                actors[msg.from].width / 2 + actors[msg.to].width / 2,
-                textWidth + 2 * conf.noteMargin
-              );
-          if (shouldWrap) {
-            msg.message = utils.wrapLabel(
-              msg.message,
-              noteWidth - 2 * conf.wrapPadding,
-              conf.noteFont()
-            );
-          }
-          drawNote(
-            diagram,
-            startx + (actors[msg.from].width + conf.actorMargin) / 2,
-            bounds.getVerticalPos(),
-            msg,
-            noteWidth
-          );
-        } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
-          noteWidth = shouldWrap
-            ? conf.width
-            : Math.max(
-                actors[msg.from].width / 2 + actors[msg.to].width / 2,
-                textWidth + 2 * conf.noteMargin
-              );
-          if (shouldWrap) {
-            msg.message = utils.wrapLabel(
-              msg.message,
-              noteWidth - 2 * conf.wrapPadding,
-              conf.noteFont()
-            );
-          }
-          drawNote(
-            diagram,
-            startx - noteWidth + (actors[msg.from].width - conf.actorMargin) / 2,
-            bounds.getVerticalPos(),
-            msg,
-            noteWidth
-          );
-        } else if (msg.to === msg.from) {
-          // Single-actor over
-          textWidth = utils.calculateTextWidth(
-            shouldWrap
-              ? utils.wrapLabel(
-                  msg.message,
-                  Math.max(conf.width, actors[msg.to].width),
-                  conf.noteFont()
-                )
-              : msg.message,
-            conf.noteFont()
-          );
-          noteWidth = shouldWrap
-            ? Math.max(conf.width, actors[msg.to].width)
-            : Math.max(actors[msg.to].width, conf.width, textWidth + 2 * conf.noteMargin);
-          if (shouldWrap) {
-            msg.message = utils.wrapLabel(
-              msg.message,
-              noteWidth - 2 * conf.wrapPadding,
-              conf.noteFont()
-            );
-          }
-          drawNote(
-            diagram,
-            startx + (actors[msg.to].width - noteWidth) / 2,
-            bounds.getVerticalPos(),
-            msg,
-            noteWidth
-          );
-        } else {
-          // Multi-actor over
-          noteWidth = Math.abs(noteStart - noteEnd) + conf.actorMargin;
-          if (shouldWrap) {
-            msg.message = utils.wrapLabel(msg.message, noteWidth, conf.noteFont());
-          }
-          let x =
-            startx < stopx
-              ? startx + actors[msg.from].width / 2 - conf.actorMargin / 2
-              : stopx + actors[msg.to].width / 2 - conf.actorMargin / 2;
-          drawNote(diagram, x, bounds.getVerticalPos(), msg, noteWidth);
-        }
+        noteModel = msg.noteModel;
+        noteModel.y = bounds.getVerticalPos();
+        logger.debug('noteModel', noteModel);
+        drawNote(diagram, noteModel);
         break;
       case parser.yy.LINETYPE.ACTIVE_START:
         bounds.newActivation(msg, diagram, actors);
@@ -780,32 +671,17 @@ export const draw = function(text, id) {
         try {
           // lastMsg = msg
           bounds.bumpVerticalPos(conf.messageMargin);
-          const fromBounds = actorFlowVerticaBounds(msg.from);
-          const toBounds = actorFlowVerticaBounds(msg.to);
-          const fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
-          const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
-          startx = fromBounds[fromIdx];
-          stopx = toBounds[toIdx];
-          if (shouldWrap) {
-            msg.message = utils.wrapLabel(
-              msg.message,
-              Math.max(
-                Math.abs(stopx - startx) + conf.messageMargin * 2,
-                conf.width + conf.messageMargin * 2
-              ),
-              conf.messageFont()
-            );
-          }
-
-          const verticalPos = bounds.getVerticalPos();
-          drawMessage(diagram, startx, stopx, verticalPos, msg, sequenceIndex);
-          const allBounds = fromBounds.concat(toBounds);
-          bounds.insert(
-            Math.min.apply(null, allBounds),
-            verticalPos,
-            Math.max.apply(null, allBounds),
-            verticalPos
+          msgModel = msg.msgModel;
+          msgModel.starty = bounds.getVerticalPos();
+          drawMessage(
+            diagram,
+            msgModel.startx,
+            msgModel.stopx,
+            msgModel.starty,
+            msgModel,
+            sequenceIndex
           );
+          bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.starty);
         } catch (e) {
           logger.error('error while drawing message', e);
         }
@@ -934,10 +810,7 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
           maxMessageWidthPerActor[msg.to] || 0,
           messageWidth
         );
-      } else if (
-        (isMessage && msg.from === actor.prevActor) ||
-        msg.placement === parser.yy.PLACEMENT.RIGHTOF
-      ) {
+      } else if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
         maxMessageWidthPerActor[msg.from] = Math.max(
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
@@ -1022,10 +895,118 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
   return Math.max(maxHeight, conf.height);
 };
 
-const calculateLoopMargins = function(messages, actors) {
+const buildNoteModel = function(msg, actors) {
+  let startx = actors[msg.from].x;
+  let stopx = actors[msg.to].x;
+  let shouldWrap = msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message);
+
+  let textDimensions = utils.calculateTextDimensions(
+    shouldWrap ? utils.wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message,
+    conf.noteFont()
+  );
+  let noteModel = {
+    width: shouldWrap
+      ? conf.width
+      : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
+    height: 0,
+    x: actors[msg.from].x,
+    y: 0,
+    message: msg.message
+  };
+  if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
+    noteModel.width = shouldWrap
+      ? conf.width
+      : Math.max(
+          actors[msg.from].width / 2 + actors[msg.to].width / 2,
+          textDimensions.width + 2 * conf.noteMargin
+        );
+    noteModel.x = startx + (actors[msg.from].width + conf.actorMargin) / 2;
+  } else if (msg.placement === parser.yy.PLACEMENT.LEFTOF) {
+    noteModel.width = shouldWrap
+      ? conf.width
+      : Math.max(
+          actors[msg.from].width / 2 + actors[msg.to].width / 2,
+          textDimensions.width + 2 * conf.noteMargin
+        );
+    noteModel.x = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
+  } else if (msg.to === msg.from) {
+    textDimensions = utils.calculateTextDimensions(
+      shouldWrap
+        ? utils.wrapLabel(msg.message, Math.max(conf.width, actors[msg.to].width), conf.noteFont())
+        : msg.message,
+      conf.noteFont()
+    );
+    noteModel.width = shouldWrap
+      ? Math.max(conf.width, actors[msg.to].width)
+      : Math.max(actors[msg.to].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.x = startx + (actors[msg.to].width - noteModel.width) / 2;
+  } else {
+    noteModel.width =
+      Math.abs(startx + actors[msg.from].width / 2 - (stopx + actors[msg.to].width / 2)) +
+      conf.actorMargin;
+    noteModel.x =
+      startx < stopx
+        ? startx + actors[msg.from].width / 2 - conf.actorMargin / 2
+        : stopx + actors[msg.to].width / 2 - conf.actorMargin / 2;
+  }
+  if (shouldWrap) {
+    noteModel.message = utils.wrapLabel(
+      msg.message,
+      noteModel.width - 2 * conf.wrapPadding,
+      conf.noteFont()
+    );
+  }
+  return noteModel;
+};
+
+const buildMessageModel = function(msg) {
+  let process = false;
+  if (
+    [
+      parser.yy.LINETYPE.SOLID_OPEN,
+      parser.yy.LINETYPE.DOTTED_OPEN,
+      parser.yy.LINETYPE.SOLID,
+      parser.yy.LINETYPE.DOTTED,
+      parser.yy.LINETYPE.SOLID_CROSS,
+      parser.yy.LINETYPE.DOTTED_CROSS
+    ].includes(msg.type)
+  ) {
+    process = true;
+  }
+  if (!process) {
+    return {};
+  }
+  const fromBounds = actorFlowVerticaBounds(msg.from);
+  const toBounds = actorFlowVerticaBounds(msg.to);
+  const fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
+  const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
+  const allBounds = fromBounds.concat(toBounds);
+  const msgModel = {
+    width: Math.abs(toBounds[toIdx] - fromBounds[fromIdx]) + conf.messageMargin * 2,
+    height: 0,
+    startx: fromBounds[fromIdx],
+    stopx: toBounds[toIdx],
+    starty: 0,
+    stopy: 0,
+    message: msg.message,
+    type: msg.type,
+    fromBounds: Math.min.apply(null, allBounds),
+    toBounds: Math.max.apply(null, allBounds)
+  };
+  if (msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message)) {
+    msgModel.message = utils.wrapLabel(
+      msg.message,
+      Math.max(msgModel.width, conf.width + conf.messageMargin * 2),
+      conf.messageFont()
+    );
+  }
+  return msgModel;
+};
+
+const calculateLoopBounds = function(messages, actors) {
   const loops = {};
   const stack = [];
-  let current;
+  let current, noteModel, msgModel;
 
   messages.forEach(function(msg) {
     switch (msg.type) {
@@ -1056,27 +1037,46 @@ const calculateLoopMargins = function(messages, actors) {
         loops[current.msg] = current;
         break;
     }
-    if (msg.from && msg.to && stack.length > 0) {
+    const isNote = msg.placement !== undefined;
+    if (isNote) {
+      noteModel = buildNoteModel(msg, actors);
+      msg.noteModel = noteModel;
       stack.forEach(stk => {
         current = stk;
-        let from = actors[msg.from];
-        let to = actors[msg.to];
-        if (from.x === to.x) {
-          current.from = current.to = from.x;
-          current.width = from.width;
-        } else {
-          if (from.x < to.x) {
+        current.from = Math.min(current.from, noteModel.x);
+        current.to = Math.max(current.to, noteModel.x + noteModel.width);
+        current.width = Math.max(current.width, Math.abs(current.from - current.to));
+      });
+    } else {
+      msgModel = buildMessageModel(msg);
+      msg.msgModel = msgModel;
+      if (msg.from && msg.to && stack.length > 0) {
+        stack.forEach(stk => {
+          current = stk;
+          let from = actors[msg.from];
+          let to = actors[msg.to];
+          if (from.x === to.x) {
             current.from = Math.min(current.from, from.x);
             current.to = Math.max(current.to, to.x);
+            current.width = Math.max(current.width, from.width);
           } else {
-            current.from = Math.min(current.from, to.x);
-            current.to = Math.max(current.to, from.x);
+            if (from.x < to.x) {
+              current.from = Math.min(current.from, from.x);
+              current.to = Math.max(current.to, to.x);
+            } else {
+              current.from = Math.min(current.from, to.x);
+              current.to = Math.max(current.to, from.x);
+            }
+            current.width = Math.max(
+              current.width,
+              Math.abs(current.from - current.to) - 20 + 2 * conf.wrapPadding
+            );
           }
-          current.width = Math.abs(current.from - current.to) - 20 + 2 * conf.wrapPadding;
-        }
-      });
+        });
+      }
     }
   });
+  logger.debug('Loop type widths:', loops);
   return loops;
 };
 
