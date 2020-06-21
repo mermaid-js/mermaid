@@ -6,4 +6,4 @@
 1. [How to add newline in the text?](https://github.com/knsv/mermaid/issues/384#issuecomment-281339381)
 1. [How to have special characters in link text?](https://github.com/knsv/mermaid/issues/407#issuecomment-329944735)
 1. [How to change Flowchart curve style?](https://github.com/knsv/mermaid/issues/580#issuecomment-373929046)
-1. [How to create a Flowchart end-Node that says "End"](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897 
+1. [How to create a Flowchart end-Node that says "End"](https://github.com/mermaid-js/mermaid/issues/1444#issuecomment-639528897)
