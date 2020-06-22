@@ -335,7 +335,17 @@ const config = {
      * This sets the auto-wrap padding for the diagram (sides only)
      * **Default value 15.
      */
-    wrapPadding: 15
+    wrapPadding: 15,
+    /**
+     * This sets the width of the loop-box (loop, alt, opt, par)
+     * **Default value 50.
+     */
+    labelBoxWidth: 50,
+    /**
+     * This sets the height of the loop-box (loop, alt, opt, par)
+     * **Default value 20.
+     */
+    labelBoxHeight: 20
   },
 
   /**

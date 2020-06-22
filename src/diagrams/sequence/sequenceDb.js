@@ -202,7 +202,7 @@ export const clear = function() {
 
 export const parseMessage = function(str) {
   const _str = str.trim();
-  const retVal = {
+  return {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
@@ -213,8 +213,6 @@ export const parseMessage = function(str) {
         ? false
         : autoWrap()
   };
-  logger.debug(`ParseMessage[${str}] [${JSON.stringify(retVal, null, 2)}`);
-  return retVal;
 };
 
 export const LINETYPE = {

@@ -508,7 +508,7 @@ context('Sequence diagram', () => {
       it('should overide config with directive settings', () => {
       imgSnapshotTest(
         `
-        %%{init: { "sequence": { "mirrorActors": true }}}%%
+        %%{init: { "config": { "mirrorActors": true }}}%%
         sequenceDiagram
         Alice->>Bob: I'm short
         note left of Alice: config set to mirrorActors: false<br/>directive set to mirrorActors: true
@@ -520,7 +520,7 @@ context('Sequence diagram', () => {
       it('should overide config with directive settings', () => {
       imgSnapshotTest(
         `
-        %%{init: { "sequence": { "mirrorActors": false }}}%%
+        %%{init: { "config": { "mirrorActors": false }}}%%
         sequenceDiagram
         %%{config: { "mirrorActors": false} }%%
         Alice->>Bob: I'm short
