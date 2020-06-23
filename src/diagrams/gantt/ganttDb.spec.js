@@ -176,6 +176,137 @@ describe('when using the ganttDb', function() {
     expect(tasks[6].task).toEqual('test7');
   });
 
+  it('should create tasks in the order days - top to bottom and letft to right', function() {
+    ganttDb.setTitle('Project Execution');
+    ganttDb.setDateFormat('YYYY-MM-DD');
+    ganttDb.addSection('section A section');
+    ganttDb.addTask('Completed task', 'done,    des1, 2014-01-06,2014-01-08');
+    ganttDb.addTask('Active task', 'active,  des2, 2014-01-09, 3d');
+    ganttDb.addTask('Future task', 'des3, after des2, 5d');
+    ganttDb.addTask('Future task2', 'des4, after des3, 5d');
+
+    ganttDb.addSection('section Critical tasks');
+    ganttDb.addTask('Completed task in the critical line', 'crit, done, 2014-01-06,24h');
+    ganttDb.addTask('Implement parser and jison', 'crit, done, after des1, 2d');
+    ganttDb.addTask('Create tests for parser', 'crit, active, 3d');
+    ganttDb.addTask('Future task in critical line', 'crit, 5d');
+    ganttDb.addTask('Create tests for renderer', '2d');
+    ganttDb.addTask('Add to mermaid', '1d');
+
+    ganttDb.addSection('section Documentation');
+    ganttDb.addTask('Describe gantt syntax', 'active, a1, after des1, 3d');
+    ganttDb.addTask('Add gantt diagram to demo page', 'after a1  , 20h');
+    ganttDb.addTask('Add another diagram to demo page', 'doc1, after a1  , 48h');
+
+    ganttDb.addSection('section Last section');
+    ganttDb.addTask('Describe gantt syntax', 'after doc1, 3d');
+    ganttDb.addTask('Add gantt diagram to demo page', '20h');
+    ganttDb.addTask('Add another diagram to demo page', '48h');
+
+    const tasks = ganttDb.getTasks();
+
+    // Section - A section
+    expect(tasks[0].startTime).toEqual(moment('2014-01-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].endTime).toEqual(moment('2014-01-08', 'YYYY-MM-DD').toDate());
+    expect(tasks[0].order).toEqual(0);
+    expect(tasks[0].id).toEqual('des1');
+    expect(tasks[0].task).toEqual('Completed task');
+
+    expect(tasks[1].startTime).toEqual(moment('2014-01-09', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].endTime).toEqual(moment('2014-01-12', 'YYYY-MM-DD').toDate());
+    expect(tasks[1].order).toEqual(1);
+    expect(tasks[1].id).toEqual('des2');
+    expect(tasks[1].task).toEqual('Active task');
+
+    expect(tasks[2].startTime).toEqual(moment('2014-01-12', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].endTime).toEqual(moment('2014-01-17', 'YYYY-MM-DD').toDate());
+    expect(tasks[2].order).toEqual(2);
+    expect(tasks[2].id).toEqual('des3');
+    expect(tasks[2].task).toEqual('Future task');
+
+    expect(tasks[3].startTime).toEqual(moment('2014-01-17', 'YYYY-MM-DD').toDate());
+    expect(tasks[3].endTime).toEqual(moment('2014-01-22', 'YYYY-MM-DD').toDate());
+    expect(tasks[3].order).toEqual(3);
+    expect(tasks[3].id).toEqual('des4');
+    expect(tasks[3].task).toEqual('Future task2');
+
+    // Section - Critical tasks
+    expect(tasks[4].startTime).toEqual(moment('2014-01-06', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].endTime).toEqual(moment('2014-01-07', 'YYYY-MM-DD').toDate());
+    expect(tasks[4].order).toEqual(4);
+    expect(tasks[4].id).toEqual('task1');
+    expect(tasks[4].task).toEqual('Completed task in the critical line');
+
+    expect(tasks[5].startTime).toEqual(moment('2014-01-08', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].endTime).toEqual(moment('2014-01-10', 'YYYY-MM-DD').toDate());
+    expect(tasks[5].order).toEqual(5);
+    expect(tasks[5].id).toEqual('task2');
+    expect(tasks[5].task).toEqual('Implement parser and jison');
+    
+    expect(tasks[6].startTime).toEqual(moment('2014-01-10', 'YYYY-MM-DD').toDate());
+    expect(tasks[6].endTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[6].order).toEqual(6);
+    expect(tasks[6].id).toEqual('task3');
+    expect(tasks[6].task).toEqual('Create tests for parser');
+
+    expect(tasks[7].startTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[7].endTime).toEqual(moment('2014-01-18', 'YYYY-MM-DD').toDate());
+    expect(tasks[7].order).toEqual(7);
+    expect(tasks[7].id).toEqual('task4');
+    expect(tasks[7].task).toEqual('Future task in critical line');
+
+    expect(tasks[8].startTime).toEqual(moment('2014-01-18', 'YYYY-MM-DD').toDate());
+    expect(tasks[8].endTime).toEqual(moment('2014-01-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[8].order).toEqual(8);
+    expect(tasks[8].id).toEqual('task5');
+    expect(tasks[8].task).toEqual('Create tests for renderer');
+
+    expect(tasks[9].startTime).toEqual(moment('2014-01-20', 'YYYY-MM-DD').toDate());
+    expect(tasks[9].endTime).toEqual(moment('2014-01-21', 'YYYY-MM-DD').toDate());
+    expect(tasks[9].order).toEqual(9);
+    expect(tasks[9].id).toEqual('task6');
+    expect(tasks[9].task).toEqual('Add to mermaid');
+
+    // Section - Documentation
+    expect(tasks[10].startTime).toEqual(moment('2014-01-08', 'YYYY-MM-DD').toDate());
+    expect(tasks[10].endTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[10].order).toEqual(10);
+    expect(tasks[10].id).toEqual('a1');
+    expect(tasks[10].task).toEqual('Describe gantt syntax');
+
+    expect(tasks[11].startTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[11].endTime).toEqual(moment('2014-01-11 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[11].order).toEqual(11);
+    expect(tasks[11].id).toEqual('task7');
+    expect(tasks[11].task).toEqual('Add gantt diagram to demo page');
+
+    expect(tasks[12].startTime).toEqual(moment('2014-01-11', 'YYYY-MM-DD').toDate());
+    expect(tasks[12].endTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[12].order).toEqual(12);
+    expect(tasks[12].id).toEqual('doc1');
+    expect(tasks[12].task).toEqual('Add another diagram to demo page');
+
+    // Section - Last section
+    expect(tasks[13].startTime).toEqual(moment('2014-01-13', 'YYYY-MM-DD').toDate());
+    expect(tasks[13].endTime).toEqual(moment('2014-01-16', 'YYYY-MM-DD').toDate());
+    expect(tasks[13].order).toEqual(13);
+    expect(tasks[13].id).toEqual('task8');
+    expect(tasks[13].task).toEqual('Describe gantt syntax');
+
+    expect(tasks[14].startTime).toEqual(moment('2014-01-16', 'YYYY-MM-DD').toDate());
+    expect(tasks[14].endTime).toEqual(moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[14].order).toEqual(14);
+    expect(tasks[14].id).toEqual('task9');
+    expect(tasks[14].task).toEqual('Add gantt diagram to demo page');
+
+    expect(tasks[15].startTime).toEqual(moment('2014-01-16 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[15].endTime).toEqual(moment('2014-01-18 20:00:00', 'YYYY-MM-DD HH:mm:ss').toDate());
+    expect(tasks[15].order).toEqual(15);
+    expect(tasks[15].id).toEqual('task10');
+    expect(tasks[15].task).toEqual('Add another diagram to demo page');
+  });
+
+
   it('should work when end date is the 31st', function() {
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('Task endTime is on the 31st day of the month');
