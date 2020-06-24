@@ -74,6 +74,8 @@ const init = function() {
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
     mermaidAPI.initialize({ gantt: mermaid.ganttConfig });
+  } else {
+    mermaidAPI.initialize({ gantt: conf.gantt });
   }
 
   let txt;
