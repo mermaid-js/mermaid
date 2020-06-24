@@ -32,6 +32,7 @@ export const addClasses = function(classes, g) {
   // const svg = select(`[id="${svgId}"]`);
   const keys = Object.keys(classes);
   logger.info('keys:', keys);
+  logger.info(classes);
 
   // Iterate through each item in the vertex object (containing all the vertices found) in the graph definition
   keys.forEach(function(id) {
@@ -154,8 +155,8 @@ export const addRelations = function(relations, g) {
 
     logger.info(edgeData, edge);
     //Set relation arrow types
-    edgeData.arrowStartType = getArrowMarker(edge.relation.type1);
-    edgeData.arrowEndType = getArrowMarker(edge.relation.type2);
+    edgeData.arrowTypeStart = getArrowMarker(edge.relation.type1);
+    edgeData.arrowTypeEnd = getArrowMarker(edge.relation.type2);
     let style = '';
     let labelStyle = '';
 
@@ -409,7 +410,7 @@ export const draw = function(text, id) {
 
   // Run the renderer. This is what draws the final graph.
   const element = select('#' + id + ' g');
-  render(element, g, ['point', 'circle', 'cross'], 'classDiagram', id);
+  render(element, g, ['aggregation', 'extension', 'composition', 'dependency'], 'classDiagram', id);
 
   // element.selectAll('g.node').attr('title', function() {
   //   return flowDb.getTooltip(this.id);
