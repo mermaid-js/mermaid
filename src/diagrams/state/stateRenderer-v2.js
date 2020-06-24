@@ -179,7 +179,7 @@ const setupDoc = (g, parent, doc, altFlag) => {
       const edgeData = {
         id: 'edge' + cnt,
         arrowhead: 'normal',
-        arrowType: 'arrow_barb',
+        arrowTypeEnd: 'arrow_barb',
         style: 'fill:none',
         labelStyle: '',
         label: item.description,
