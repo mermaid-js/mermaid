@@ -12,6 +12,7 @@
 \%\%[^\n]*\n*           /* do nothing */
 \n+                     return 'NEWLINE';
 \s+                     /* skip whitespace */
+"classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
 [\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
 <struct><<EOF>>         return "EOF_IN_STRUCT";

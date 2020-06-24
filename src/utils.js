@@ -169,10 +169,13 @@ export const detectType = function(text) {
   if (text.match(/^\s*gantt/)) {
     return 'gantt';
   }
-
+  if (text.match(/^\s*classDiagram-v2/)) {
+    return 'classDiagram';
+  }
   if (text.match(/^\s*classDiagram/)) {
     return 'class';
   }
+
   if (text.match(/^\s*stateDiagram-v2/)) {
     return 'stateDiagram';
   }
