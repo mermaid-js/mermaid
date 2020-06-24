@@ -176,7 +176,7 @@ describe('when using the ganttDb', function() {
     expect(tasks[6].task).toEqual('test7');
   });
 
-  it('should create tasks in the order days - top to bottom and letft to right', function() {
+  it('should maintain the order in which tasks are created', function() {
     ganttDb.setTitle('Project Execution');
     ganttDb.setDateFormat('YYYY-MM-DD');
     ganttDb.addSection('section A section');
