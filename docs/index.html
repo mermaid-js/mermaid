@@ -57,7 +57,7 @@
     var num = 0;
     const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
 
-    const conf = { logLevel:0, startOnLoad: false, themeCSS:'.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }' };
+    const conf = { logLevel:4, startOnLoad: false, themeCSS:'.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }' };
     if(isDarkMode) conf.theme = 'dark';
     mermaid.initialize(conf);
 
