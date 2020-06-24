@@ -6,7 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <!-- <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css"> -->
+  <link rel="stylesheet" href="theme.css">
   <script src="//cdn.jsdelivr.net/npm/mermaid@8.5.2/dist/mermaid.min.js"></script>
   <!-- <script src="http://localhost:9000/mermaid.js"></script> -->
   <script>
@@ -54,7 +55,11 @@
     }
 
     var num = 0;
-    mermaid.initialize({ logLevel:0, startOnLoad: false, themeCSS:'.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }' });
+    const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
+
+    const conf = { logLevel:0, startOnLoad: false, themeCSS:'.label { font-family: Source Sans Pro,Helvetica Neue,Arial,sans-serif; }' };
+    if(isDarkMode) conf.theme = 'dark';
+    mermaid.initialize(conf);
 
   </script>
   <script>
