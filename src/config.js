@@ -138,6 +138,12 @@ const config = {
    */
   sequence: {
     /**
+     * widt of the activation rect
+     * **Default value 10**.
+     */
+    activationWidth: 10,
+
+    /**
      * margin to the right and left of the sequence diagram.
      * **Default value 50**.
      */
