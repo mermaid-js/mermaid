@@ -144,7 +144,7 @@ context('Sequence diagram', () => {
     it('should wrap (directive) long actor descriptions', () => {
       imgSnapshotTest(
         `
-        %%{init: {'config': {'wrapEnabled': true }}}%%
+        %%{init: {'config': {'wrap': true }}}%%
         sequenceDiagram
         participant A as Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
         A->>Bob: Hola
@@ -326,7 +326,7 @@ context('Sequence diagram', () => {
     it('should render a single and nested opt with long test wrapping', () => {
       imgSnapshotTest(
         `
-        %%{init: { 'config': { 'wrapEnabled': true } } }%%
+        %%{init: { 'config': { 'wrap': true } } }%%
         sequenceDiagram
           participant A
           participant B
@@ -482,7 +482,7 @@ context('Sequence diagram', () => {
     it('should render with wrapping enabled', () => {
       imgSnapshotTest(
         `
-        %%{init: { 'config': { 'wrapEnabled': true }}}%%
+        %%{init: { 'config': { 'wrap': true }}}%%
         sequenceDiagram
         participant A as Alice, the talkative one
         A->>John: Hello John, how are you today? I'm feeling quite verbose today.
@@ -495,7 +495,7 @@ context('Sequence diagram', () => {
     });
     it('should render with an init directive', () => {
       imgSnapshotTest(
-`%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrapEnabled": true }}}%%
+`%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
           sequenceDiagram
           Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
           Note left of Alice: Bob thinks
@@ -520,11 +520,10 @@ context('Sequence diagram', () => {
       it('should overide config with directive settings', () => {
       imgSnapshotTest(
         `
-        %%{init: { "config": { "mirrorActors": false }}}%%
+        %%{init: { "config": { "mirrorActors": false, "wrap": true }}}%%
         sequenceDiagram
-        %%{config: { "mirrorActors": false} }%%
         Alice->>Bob: I'm short
-        note left of Alice: config set to mirrorActors: true<br/>directive set to mirrorActors: false
+        note left of Alice: config: mirrorActors=true<br/>directive: mirrorActors=false
         Bob->>Alice: Short as well
       `,
         { logLevel:0,  sequence: { mirrorActors: true, noteFontSize: 18, noteFontFamily: 'Arial' } }

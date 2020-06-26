@@ -251,11 +251,11 @@ export const drawActivation = function(elem, bounds, verticalPos, conf, actorAct
 /**
  * Draws a loop in the diagram
  * @param elem - elemenet to append the loop to.
- * @param bounds - bounds of the given loop.
+ * @param loopModel - loopModel of the given loop.
  * @param labelText - Text within the loop.
- * @param conf
+ * @param conf - diagrom configuration
  */
-export const drawLoop = function(elem, bounds, labelText, conf) {
+export const drawLoop = function(elem, loopModel, labelText, conf) {
   const g = elem.append('g');
   const drawLoopLine = function(startx, starty, stopx, stopy) {
     return g
@@ -266,20 +266,23 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
       .attr('y2', stopy)
       .attr('class', 'loopLine');
   };
-  drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty);
-  drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.stopy, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy);
-  if (typeof bounds.sections !== 'undefined') {
-    bounds.sections.forEach(function(item) {
-      drawLoopLine(bounds.startx, item.y, bounds.stopx, item.y).style('stroke-dasharray', '3, 3');
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.stopx, loopModel.starty);
+  drawLoopLine(loopModel.stopx, loopModel.starty, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
+  if (typeof loopModel.sections !== 'undefined') {
+    loopModel.sections.forEach(function(item) {
+      drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style(
+        'stroke-dasharray',
+        '3, 3'
+      );
     });
   }
 
   let txt = getTextObj();
   txt.text = labelText;
-  txt.x = bounds.startx;
-  txt.y = bounds.starty;
+  txt.x = loopModel.startx;
+  txt.y = loopModel.starty;
   const msgFont = conf.messageFont();
   txt.fontFamily = msgFont.fontFamily;
   txt.fontSize = msgFont.fontSize;
@@ -294,9 +297,9 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
 
   drawLabel(g, txt);
   txt = getTextObj();
-  txt.text = bounds.title;
-  txt.x = bounds.startx + conf.labelBoxWidth / 2 + (bounds.stopx - bounds.startx) / 2;
-  txt.y = bounds.starty + conf.boxMargin + conf.boxTextMargin;
+  txt.text = loopModel.title;
+  txt.x = loopModel.startx + conf.labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + conf.boxMargin + conf.boxTextMargin;
   txt.anchor = 'middle';
   txt.class = 'loopText';
   txt.fontFamily = msgFont.fontFamily;
@@ -306,12 +309,12 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
 
   let textElem = drawText(g, txt);
 
-  if (typeof bounds.sectionTitles !== 'undefined') {
-    bounds.sectionTitles.forEach(function(item, idx) {
+  if (typeof loopModel.sectionTitles !== 'undefined') {
+    loopModel.sectionTitles.forEach(function(item, idx) {
       if (item.message) {
         txt.text = item.message;
-        txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
-        txt.y = bounds.sections[idx].y + conf.boxMargin + conf.boxTextMargin;
+        txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
+        txt.y = loopModel.sections[idx].y + conf.boxMargin + conf.boxTextMargin;
         txt.class = 'loopText';
         txt.anchor = 'middle';
         txt.valign = 'middle';
@@ -319,20 +322,19 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
         txt.fontFamily = msgFont.fontFamily;
         txt.fontSize = msgFont.fontSize;
         txt.fontWeight = msgFont.fontWeight;
-        txt.wrap = bounds.wrap;
+        txt.wrap = loopModel.wrap;
         textElem = drawText(g, txt);
         let sectionHeight = Math.round(
           textElem
             .map(te => (te._groups || te)[0][0].getBBox().height)
             .reduce((acc, curr) => acc + curr)
         );
-        bounds.sections[idx].height += sectionHeight - (conf.boxMargin + conf.boxTextMargin);
+        loopModel.sections[idx].height += sectionHeight - (conf.boxMargin + conf.boxTextMargin);
       }
     });
   }
 
-  bounds.height = Math.round(bounds.stopy - bounds.starty);
-
+  loopModel.height = Math.round(loopModel.stopy - loopModel.starty);
   return g;
 };
 

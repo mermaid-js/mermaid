@@ -6,7 +6,7 @@ describe('when using mermaidAPI and ', function() {
   describe('doing initialize ', function() {
     beforeEach(function() {
       document.body.innerHTML = '';
-      mermaidAPI.reset();
+      mermaidAPI.globalReset();
     });
 
     it('should copy a literal into the configuration', function() {
@@ -30,11 +30,9 @@ describe('when using mermaidAPI and ', function() {
       mermaidAPI.initialize({ testObject: object });
       let config = mermaidAPI.getConfig();
 
-      console.log('1:', config);
       expect(config.testObject.test1).toBe(1);
       mermaidAPI.initialize({ testObject: { test3: true } });
       config = mermaidAPI.getConfig();
-      console.log(config);
 
       expect(config.testObject.test1).toBe(1);
       expect(config.testObject.test2).toBe(false);
@@ -42,12 +40,49 @@ describe('when using mermaidAPI and ', function() {
     });
     it('should reset mermaid config to global defaults', function() {
       let config = {
-        logLevel: 0
+        logLevel: 0,
+        securityLevel: 'loose'
       };
       mermaidAPI.initialize(config);
       expect(mermaidAPI.getConfig().logLevel).toBe(0);
-      mermaidAPI.reset();
+      expect(mermaidAPI.getConfig().securityLevel).toBe('loose');
+      mermaidAPI.globalReset();
       expect(mermaidAPI.getConfig()).toEqual(mermaidAPI.defaultConfig);
+    });
+    it('should reset mermaid config to site defaults', function() {
+      let config = {
+        logLevel: 0
+      };
+      mermaidAPI.initialize(config);
+      const siteConfig = mermaidAPI.getSiteConfig();
+      expect(mermaidAPI.getConfig().logLevel).toBe(0);
+      config.logLevel = 3;
+      config.securityLevel = 'loose';
+      mermaidAPI.reinitialize(config);
+      expect(mermaidAPI.getConfig().logLevel).toBe(3);
+      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      mermaidAPI.reset();
+      expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig)
+      expect(mermaidAPI.getConfig()).toEqual(siteConfig);
+    });
+    it('should prevent changes to site defaults (sneaky)', function() {
+      let config = {
+        logLevel: 0
+      };
+      mermaidAPI.initialize(config);
+      const siteConfig = mermaidAPI.getSiteConfig();
+      expect(mermaidAPI.getConfig().logLevel).toBe(0);
+      config.secure = {
+        toString: function() {
+          mermaidAPI.initialize({ securityLevel: 'loose' });
+        }
+      };
+      mermaidAPI.reinitialize(config);
+      expect(mermaidAPI.getConfig().secure).toEqual(mermaidAPI.getSiteConfig().secure);
+      expect(mermaidAPI.getConfig().securityLevel).toBe('strict');
+      mermaidAPI.reset();
+      expect(mermaidAPI.getSiteConfig()).toEqual(siteConfig)
+      expect(mermaidAPI.getConfig()).toEqual(siteConfig);
     });
     it('should prevent clobbering global defaults (direct)', function() {
       let config = assignWithDepth({}, mermaidAPI.defaultConfig);
@@ -65,7 +100,7 @@ describe('when using mermaidAPI and ', function() {
     it('should prevent changes to global defaults (direct)', function() {
       let error = { message: '' };
       try {
-        mermaidAPI.defaultConfig.logLevel = 0;
+        mermaidAPI.defaultConfig['logLevel'] = 0;
       } catch(e) {
         error = e;
       }

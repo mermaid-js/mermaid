@@ -71,11 +71,11 @@ const init = function() {
   logger.debug('Start On Load before: ' + mermaid.startOnLoad);
   if (typeof mermaid.startOnLoad !== 'undefined') {
     logger.debug('Start On Load inner: ' + mermaid.startOnLoad);
-    mermaidAPI.setConfig({ startOnLoad: mermaid.startOnLoad });
+    mermaidAPI.initialize({ startOnLoad: mermaid.startOnLoad });
   }
 
   if (typeof mermaid.ganttConfig !== 'undefined') {
-    mermaidAPI.setConfig({ gantt: mermaid.ganttConfig });
+    mermaidAPI.initialize({ gantt: mermaid.ganttConfig });
   }
 
   let txt;

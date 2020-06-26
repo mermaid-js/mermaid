@@ -23,7 +23,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -41,7 +41,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     expect(parser.yy.showSequenceNumbers()).toBe(false);
   });
   it('it should show sequence numbers when autonumber is enabled', function() {
@@ -52,7 +52,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     expect(parser.yy.showSequenceNumbers()).toBe(true);
   });
   it('it should handle a sequenceDiagram definition with a title', function() {
@@ -63,7 +63,7 @@ Alice->Bob:Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -82,7 +82,7 @@ sequenceDiagram
 Alice->Bob:Hello Bob, how are - you?
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -101,7 +101,7 @@ participant B as Bob
 A->B:Hello Bob, how are you?
 B-->A: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const actors = parser.yy.getActors();
     expect(Object.keys(actors)).toEqual(['A', 'B']);
@@ -118,7 +118,7 @@ B-->A: I am good thanks!`;
 sequenceDiagram
 Alice-xBob:Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -133,7 +133,7 @@ Alice-xBob:Hello Bob, how are you?`;
 sequenceDiagram
 Alice--xBob:Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -148,7 +148,7 @@ Alice--xBob:Hello Bob, how are you?`;
 sequenceDiagram
 Alice->>Bob:Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -161,7 +161,7 @@ Alice->>Bob:Hello Bob, how are you?`;
   it('it should handle in arrow messages', function() {
     const str = 'sequenceDiagram\n' + 'Alice-->>Bob:Hello Bob, how are you?';
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -179,7 +179,7 @@ activate Bob
 Bob-->>Alice:Hello Alice, I'm fine and  you?
 deactivate Bob`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -200,7 +200,7 @@ deactivate Bob`;
       Alice-->>+Bob:Hello Bob, how are you?
       Bob-->>- Alice:Hello Alice, I'm fine and  you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -223,7 +223,7 @@ deactivate Bob`;
       Bob-->>- Alice:Hello Alice, please meet Carol?
       Carol->>- Bob:Oh Bob, I'm so happy to be here!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     expect(actors.Bob.description).toBe('Bob');
@@ -261,7 +261,7 @@ deactivate Bob`;
 
     let error = false;
     try {
-      parser.parse(str);
+      mermaidAPI.parse(str);
     } catch (e) {
       console.log(e.hash);
       error = true;
@@ -277,7 +277,7 @@ deactivate Bob`;
       Note right of Bob: Bob thinks
       Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -298,7 +298,7 @@ deactivate Bob`;
       Bob-->Alice: I am good thanks!
       `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -313,7 +313,7 @@ deactivate Bob`;
     const str = `
 sequenceDiagram;Alice->Bob: Hello Bob, how are you?;Note right of Bob: Bob thinks;Bob-->Alice: I am good thanks!;`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -333,7 +333,7 @@ sequenceDiagram
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -353,7 +353,7 @@ sequenceDiagram
 Note right of Bob: Bob thinks
 Bob-->Alice: I am good thanks!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -378,7 +378,7 @@ Note right of John: Rational thoughts<br/>prevail...
     John->Bob: How about you?
 Bob-->John: Jolly good!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -406,7 +406,7 @@ note right of 4: multiline<br />text
 note right of 1: multiline<br \t/>text
 `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const actors = parser.yy.getActors();
     expect(actors['1'].description).toBe('multiline<br>text');
@@ -431,7 +431,7 @@ Alice->Bob: Hello Bob, how are you?
 Note over Bob: Bob thinks
 `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].from).toBe('Bob');
@@ -445,7 +445,7 @@ Note over Alice,Bob: confusion
 Note over Bob,Alice: resolution
 `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].from).toBe('Alice');
@@ -465,7 +465,7 @@ loop Multiple happy responses
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -487,7 +487,7 @@ end`;
         end
     `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -512,7 +512,7 @@ end`;
         Bob-->Alice: I am good thanks
         end
     `;
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -539,7 +539,7 @@ opt Perhaps a happy response
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
     expect(actors.Alice.description).toBe('Alice');
     actors.Bob.description = 'Bob';
@@ -564,7 +564,7 @@ else isSick
 Bob-->Alice: Feel sick...
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
 
     expect(actors.Alice.description).toBe('Alice');
@@ -591,7 +591,7 @@ Bob-->Alice: Feel sick...
 else default
 Bob-->Alice: :-)
 end`;
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const messages = parser.yy.getMessages();
     expect(messages.length).toBe(9);
     expect(messages[1].from).toBe('Bob');
@@ -617,7 +617,7 @@ Alice->>Bob: What do you think about it?
 Bob-->>Alice: It's good!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     const actors = parser.yy.getActors();
 
     expect(actors.Alice.description).toBe('Alice');
@@ -633,7 +633,7 @@ end`;
   it('it should handle special characters in signals', function() {
     const str = 'sequenceDiagram\n' + 'Alice->Bob: -:<>,;# comment';
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[0].message).toBe('-:<>,');
@@ -644,7 +644,7 @@ sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Note right of Bob: -:<>,;# comment`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('-:<>,');
@@ -657,7 +657,7 @@ loop -:<>,;# comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('-:<>,');
@@ -670,7 +670,7 @@ opt -:<>,;# comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('-:<>,');
@@ -685,7 +685,7 @@ else ,<>:-#; comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('-:<>,');
@@ -701,7 +701,7 @@ and ,<>:-#; comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('-:<>,');
@@ -715,7 +715,7 @@ loop
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('');
@@ -729,7 +729,7 @@ opt # comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('');
@@ -744,7 +744,7 @@ else # comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('');
@@ -761,7 +761,7 @@ and # comment
 Bob-->Alice: I am good thanks!
 end`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const messages = parser.yy.getMessages();
     expect(messages[1].message).toBe('');
@@ -772,12 +772,8 @@ end`;
 });
 
 describe('when checking the bounds in a sequenceDiagram', function() {
-  let conf;
-  beforeEach(function() {
-    mermaidAPI.reset();
-    parser.yy = sequenceDb;
-    parser.yy.clear();
-    conf = {
+  beforeAll(() => {
+    let conf = {
       diagramMarginX: 50,
       diagramMarginY: 10,
       actorMargin: 50,
@@ -791,13 +787,21 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     };
 
     mermaidAPI.initialize({ sequence: conf });
+  });
+
+  let conf;
+  beforeEach(function() {
+    mermaidAPI.reset();
+    parser.yy = sequenceDb;
+    parser.yy.clear();
     renderer.bounds.init();
+    conf = parser.yy.getConfig();
   });
   it('it should handle a simple bound call', function() {
 
     renderer.bounds.insert(100, 100, 200, 200);
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(100);
     expect(bounds.starty).toBe(100);
     expect(bounds.stopx).toBe(200);
@@ -808,7 +812,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     renderer.bounds.insert(100, 100, 200, 200);
     renderer.bounds.insert(25, 50, 300, 400);
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(25);
     expect(bounds.starty).toBe(50);
     expect(bounds.stopx).toBe(300);
@@ -820,7 +824,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     renderer.bounds.insert(25, 50, 300, 400);
     renderer.bounds.insert(125, 150, 150, 200);
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(25);
     expect(bounds.starty).toBe(50);
     expect(bounds.stopx).toBe(300);
@@ -841,7 +845,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(loop.stopy).toBe(200 + conf.boxMargin);
 
     // Check bounds of first loop
-    const bounds = renderer.bounds.getBounds();
+    const { bounds } = renderer.bounds.getBounds();
 
     expect(bounds.startx).toBe(25);
     expect(bounds.starty).toBe(50);
@@ -873,7 +877,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(loop.stopy).toBe(300 + 2 * conf.boxMargin);
 
     // Check bounds of first loop
-    const bounds = renderer.bounds.getBounds();
+    const { bounds } = renderer.bounds.getBounds();
 
     expect(bounds.startx).toBe(100);
     expect(bounds.starty).toBe(100);
@@ -895,7 +899,7 @@ describe('when checking the bounds in a sequenceDiagram', function() {
     expect(loop.stopy).toBe(300 + conf.boxMargin);
 
     // Check bounds after the loop
-    const bounds = renderer.bounds.getBounds();
+    const { bounds } = renderer.bounds.getBounds();
 
     expect(bounds.startx).toBe(loop.startx);
     expect(bounds.starty).toBe(loop.starty);
@@ -905,13 +909,8 @@ describe('when checking the bounds in a sequenceDiagram', function() {
 });
 
 describe('when rendering a sequenceDiagram', function() {
-  let conf;
-  beforeEach(function() {
-    mermaidAPI.reset();
-    parser.yy = sequenceDb;
-    parser.yy.clear();
-
-    conf = {
+  beforeAll(() => {
+    let conf = {
       diagramMarginX: 50,
       diagramMarginY: 10,
       actorMargin: 50,
@@ -922,10 +921,17 @@ describe('when rendering a sequenceDiagram', function() {
       messageMargin: 40,
       boxTextMargin: 15,
       noteMargin: 25,
-      wrapEnabled: false,
+      wrap: false,
       mirrorActors: false
     };
     mermaidAPI.initialize({ sequence: conf });
+  });
+  let conf;
+  beforeEach(function() {
+    mermaidAPI.reset();
+    parser.yy = sequenceDb;
+    parser.yy.clear();
+    conf = parser.yy.getConfig();
     renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
@@ -935,12 +941,12 @@ it should handle one actor, when textPlacement is ${textPlacement}`, function() 
 sequenceDiagram
 participant Alice`;
 
-      mermaidAPI.initialize(addConf(conf, 'textPlacement', textPlacement));
-      renderer.bounds.init();
-      parser.parse(str);
+      mermaidAPI.reinitialize({sequence: { textPlacement: textPlacement}});
+      mermaidAPI.parse(str);
+      // renderer.setConf(mermaidAPI.getConfig().sequence);
       renderer.draw(str, 'tst');
 
-      const bounds = renderer.bounds.getBounds();
+      const { bounds } = renderer.bounds.getBounds();
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
@@ -955,7 +961,7 @@ participant Alice
 participant Alice
 `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
 
     const actors = parser.yy.getActors();
     expect(Object.keys(actors)).toEqual(['Alice']);
@@ -967,15 +973,16 @@ participant Alice
 Note over Alice: Alice thinks
 `;
 
-    parser.parse(str);
+    expect(mermaidAPI.getConfig().sequence.mirrorActors).toBeFalsy();
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width);
     // 10 comes from mock of text height
-    expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10);
+    expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
   it('it should handle one actor and a note to the left', function() {
     const str = `
@@ -983,15 +990,15 @@ sequenceDiagram
 participant Alice
 Note left of Alice: Alice thinks`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width);
     // 10 comes from mock of text height
-    expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10);
+    expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
   it('it should handle one actor and a note to the right', function() {
     const str = `
@@ -999,29 +1006,29 @@ sequenceDiagram
 participant Alice
 Note right of Alice: Alice thinks`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width / 2 + conf.actorMargin / 2 + conf.width);
     // 10 comes from mock of text height
-    expect(bounds.stopy).toBe(conf.height + conf.boxMargin + 2 * conf.noteMargin + 10);
+    expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
   it('it should handle two actors', function() {
     const str = `
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(conf.messageMargin + conf.height);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should handle two actors with init directive', function() {
     const str = `
@@ -1029,16 +1036,16 @@ Alice->Bob: Hello Bob, how are you?`;
 sequenceDiagram
 Alice->Bob: Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.logLevel).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(conf.height + conf.messageMargin + (conf.mirrorActors ?  2 * conf.boxMargin + conf.height : 0));
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should handle two actors with init directive with multiline directive', function() {
     const str = `
@@ -1049,17 +1056,17 @@ wrap
 }%%
 Alice->Bob: Hello Bob, how are you?`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
     const msgs = parser.yy.getMessages();
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.logLevel).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(conf.messageMargin + conf.height);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
     expect(msgs.every(v => v.wrap)).toBe(true);
 
   });
@@ -1070,17 +1077,15 @@ Alice->Bob: Hello Bob, how are you?
 Note over Alice,Bob: Looks
 Note over Bob,Alice: Looks back
 `;
-
-    parser.parse(str);
+    mermaidAPI.initialize({logLevel:0})
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      conf.height + conf.messageMargin + 2 * (conf.boxMargin + 2 * conf.noteMargin + 10)
-    );
+    expect(bounds.stopy).toBe(models.lastNote().stopy);
   });
   it('it should draw two actors and two messages', function() {
     const str = `
@@ -1088,14 +1093,14 @@ sequenceDiagram
 Alice->Bob: Hello Bob, how are you?
 Bob->Alice: Fine!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopx).toBe(0 + conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(0 + 2 * conf.messageMargin + conf.height);
+    expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two actors notes to the right', function() {
     const str = `
@@ -1104,19 +1109,17 @@ Alice->Bob: Hello Bob, how are you?
 Note right of Bob: Bob thinks
 Bob->Alice: Fine!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
 
     const expStopX = conf.actorMargin + conf.width + conf.width / 2 + conf.noteMargin + conf.width;
 
     expect(bounds.stopx).toBe(expStopX);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
-    );
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two actors notes to the left', function() {
     const str = `
@@ -1125,17 +1128,15 @@ Alice->Bob: Hello Bob, how are you?
 Note left of Alice: Bob thinks
 Bob->Alice: Fine!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
-    );
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two actors notes to the left with text wrapped (inline)', function() {
     const str = `
@@ -1144,19 +1145,17 @@ Alice->>Bob:wrap: Hello Bob, how are you? If you are not available right now, I 
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const msgs = parser.yy.getMessages();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
     expect(bounds.starty).toBe(0);
     expect(msgs[0].wrap).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
-    );
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two actors notes to the left with text wrapped (directive)', function() {
     const str = `
@@ -1167,10 +1166,10 @@ Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can l
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const msgs = parser.yy.getMessages();
     const mermaid = mermaidAPI.getConfig();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
@@ -1179,9 +1178,7 @@ Bob->>Alice: Fine!`;
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
-    );
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark', function() {
     const str = `
@@ -1191,10 +1188,11 @@ sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-    parser.parse(str);
+
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const msgs = parser.yy.getMessages();
     const mermaid = mermaidAPI.getConfig();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
@@ -1203,22 +1201,19 @@ Bob->>Alice: Fine!`;
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
-    );
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
     const str = `
-%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrapEnabled": true }}}%%
+%%{init: { "theme": "dark", 'config': { "fontFamily": "Menlo", "fontSize": 18, "fontWeight": 400, "wrap": true }}}%%
 sequenceDiagram
 Alice->>Bob: Hello Bob, how are you? If you are not available right now, I can leave you a message. Please get back to me as soon as you can!
 Note left of Alice: Bob thinks
 Bob->>Alice: Fine!`;
-    parser.parse(str);
-    // renderer.setConf(mermaidAPI.getConfig().sequence);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const msgs = parser.yy.getMessages();
     const mermaid = mermaidAPI.getConfig();
     expect(bounds.startx).toBe(-(conf.width / 2) - conf.actorMargin / 2);
@@ -1230,9 +1225,7 @@ Bob->>Alice: Fine!`;
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + conf.boxMargin + 10 + 2 * conf.noteMargin
-    );
+    expect(bounds.stopy).toBe(models.lastMessage().stopy);
   });
   it('it should draw two loops', function() {
     const str = `
@@ -1241,17 +1234,15 @@ Alice->Bob: Hello Bob, how are you?
 loop Cheers
 Bob->Alice: Fine!
 end`;
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(
-      2 * conf.messageMargin + conf.height + 3 * conf.boxMargin + conf.boxTextMargin
-    );
+    expect(bounds.stopy).toBe(models.lastLoop().stopy);
   });
   it('it should draw background rect', function() {
     const str = `
@@ -1261,26 +1252,21 @@ end`;
           Bob->Alice: I feel surrounded by darkness
         end
     `;
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
 
-    expect(bounds.stopx).toBe(0 + conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(0 + 2 * conf.messageMargin + conf.height + 3 * conf.boxMargin);
+    expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
+    expect(bounds.stopy).toBe(models.lastLoop().stopy);
   });
 });
 
 
 describe('when rendering a sequenceDiagram with actor mirror activated', function() {
-  let conf;
-  beforeEach(function() {
-    mermaidAPI.reset();
-    parser.yy = sequenceDb;
-    parser.yy.clear();
-
-    conf = {
+  beforeAll(() => {
+    let conf = {
       diagramMarginX: 50,
       diagramMarginY: 10,
       actorMargin: 50,
@@ -1296,7 +1282,16 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
       // Prolongs the edge of the diagram downwards
       bottomMarginAdj: 1
     };
+
     mermaidAPI.initialize({ sequence: conf });
+  });
+
+  let conf;
+  beforeEach(function() {
+    mermaidAPI.reset();
+    parser.yy = sequenceDb;
+    parser.yy.clear();
+    conf = parser.yy.getConfig();
     renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
@@ -1306,31 +1301,26 @@ describe('when rendering a sequenceDiagram with actor mirror activated', functio
       const str = `
 sequenceDiagram
 participant Alice`;
-
-      parser.parse(str);
+      renderer.bounds.init();
+      mermaidAPI.parse(str);
       renderer.draw(str, 'tst');
 
-      const bounds = renderer.bounds.getBounds();
+      const { bounds, models } = renderer.bounds.getBounds();
       expect(bounds.startx).toBe(0);
       expect(bounds.starty).toBe(0);
       expect(bounds.stopx).toBe(conf.width);
-      expect(bounds.stopy).toBe(2 * conf.height + 2 * conf.boxMargin);
+      expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
     });
   });
 });
 
 describe('when rendering a sequenceDiagram with directives', function() {
-  let conf;
-  beforeEach(function() {
-    mermaidAPI.reset();
-    parser.yy = sequenceDb;
-    parser.yy.clear();
-    conf = {
+  beforeAll(function() {
+    let conf = {
       diagramMarginX: 50,
       diagramMarginY: 10,
       actorMargin: 50,
       width: 150,
-      // Height of actor boxes
       height: 65,
       boxMargin: 10,
       messageMargin: 40,
@@ -1338,6 +1328,14 @@ describe('when rendering a sequenceDiagram with directives', function() {
       noteMargin: 25
     };
     mermaidAPI.initialize({ sequence: conf });
+  });
+
+  let conf;
+  beforeEach(function() {
+    mermaidAPI.reset();
+    parser.yy = sequenceDb;
+    parser.yy.clear();
+    conf = parser.yy.getConfig();
     renderer.bounds.init();
   });
 
@@ -1349,17 +1347,18 @@ sequenceDiagram
 participant Alice
 `;
 
-    parser.parse(str);
+    renderer.bounds.init();
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.theme).toBe('dark');
     expect(mermaid.logLevel).toBe(1);
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(2 * conf.height + 2 * conf.boxMargin);
+    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
   });
   it('it should handle one actor, when logLevel is 3', function() {
     const str = `
@@ -1368,15 +1367,15 @@ sequenceDiagram
 participant Alice
 `;
 
-    parser.parse(str);
+    mermaidAPI.parse(str);
     renderer.draw(str, 'tst');
 
-    const bounds = renderer.bounds.getBounds();
+    const { bounds, models } = renderer.bounds.getBounds();
     const mermaid = mermaidAPI.getConfig();
     expect(mermaid.logLevel).toBe(3);
     expect(bounds.startx).toBe(0);
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
-    expect(bounds.stopy).toBe(2 * conf.height + 2 * conf.boxMargin);
+    expect(bounds.stopy).toBe(models.lastActor().y + models.lastActor().height);
   });
 });

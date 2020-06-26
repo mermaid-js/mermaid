@@ -15,6 +15,7 @@ import {
 import { logger } from './logger';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import common from './diagrams/common/common';
+import cryptoRandomString from 'crypto-random-string';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -396,6 +397,10 @@ export const generateId = () => {
   );
 };
 
+export const random = options => {
+  return cryptoRandomString(options);
+};
+
 /**
  * @function assignWithDepth
  * Extends the functionality of {@link ObjectConstructor.assign} with the ability to merge arbitrary-depth objects
@@ -442,7 +447,7 @@ export const assignWithDepth = function(dst, src, config) {
         (dst[key] === undefined || typeof dst[key] === 'object')
       ) {
         if (dst[key] === undefined) {
-          dst[key] = {};
+          dst[key] = Array.isArray(src[key]) ? [] : {};
         }
         dst[key] = assignWithDepth(dst[key], src[key], { depth: depth - 1, clobber });
       } else if (clobber || (typeof dst[key] !== 'object' && typeof src[key] !== 'object')) {
@@ -501,6 +506,10 @@ export const wrapLabel = (label, maxWidth, config) => {
     { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0, joinWith: '<br/>' },
     config
   );
+  const cacheKey = `${label}-${maxWidth}-${JSON.stringify(config)}`;
+  if (wrapLabel[cacheKey]) {
+    return wrapLabel[cacheKey];
+  }
   if (common.lineBreakRegex.test(label)) {
     return label;
   }
@@ -526,11 +535,17 @@ export const wrapLabel = (label, maxWidth, config) => {
       completedLines.push(nextLine);
     }
   });
-  return completedLines.filter(line => line !== '').join(config.joinWith);
+  const result = completedLines.filter(line => line !== '').join(config.joinWith);
+  wrapLabel[cacheKey] = result;
+  return result;
 };
 
 const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
   config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 }, config);
+  const cacheKey = `${word}-${maxWidth}-${hyphenCharacter}-${JSON.stringify(config)}`;
+  if (breakString[cacheKey]) {
+    return breakString[cacheKey];
+  }
   const characters = word.split('');
   const lines = [];
   let currentLine = '';
@@ -547,7 +562,9 @@ const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
       currentLine = nextLine;
     }
   });
-  return { hyphenatedStrings: lines, remainingWord: currentLine };
+  const result = { hyphenatedStrings: lines, remainingWord: currentLine };
+  breakString[cacheKey] = result;
+  return result;
 };
 
 /**
@@ -598,7 +615,11 @@ export const calculateTextDimensions = function(text, config) {
   );
   const { fontSize, fontFamily, fontWeight } = config;
   if (!text) {
-    return 0;
+    return { width: 0, height: 0 };
+  }
+  const cacheKey = `${text}-${JSON.stringify(config)}`;
+  if (calculateTextDimensions[cacheKey]) {
+    return calculateTextDimensions[cacheKey];
   }
 
   // We can't really know if the user supplied font family will render on the user agent;
@@ -638,7 +659,9 @@ export const calculateTextDimensions = function(text, config) {
   g.remove();
 
   // Adds some padding, so the text won't sit exactly within the actor's borders
-  return { width: Math.round(maxWidth), height: Math.round(height) };
+  const result = { width: Math.round(maxWidth), height: Math.round(height) };
+  calculateTextDimensions[cacheKey] = result;
+  return result;
 };
 
 export default {
@@ -657,5 +680,6 @@ export default {
   formatUrl,
   getStylesFromArray,
   generateId,
+  random,
   runFunc
 };
