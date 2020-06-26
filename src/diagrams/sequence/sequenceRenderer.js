@@ -1002,8 +1002,8 @@ const calculateLoopBounds = function(messages, actors) {
         break;
       case parser.yy.LINETYPE.ACTIVE_START:
         {
-          const actorRect = actors[msg.from.actor];
-          const stackedSize = actorActivations(msg.from.actor).length;
+          const actorRect = actors[msg.from ? msg.from.actor : msg.to.actor];
+          const stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
           const x =
             actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
           const toAdd = {
