@@ -1,5 +1,5 @@
-import { logger } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
+import configApi from '../../config';
 
 let prevActor = undefined;
 let actors = {};
@@ -9,63 +9,9 @@ let title = '';
 let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
-let currentDirective = {};
 
-export const parseDirective = function(statement, context) {
-  try {
-    if (statement !== undefined) {
-      statement = statement.trim();
-      switch (context) {
-        case 'open_directive':
-          currentDirective = {};
-          break;
-        case 'type_directive':
-          currentDirective.type = statement.toLowerCase();
-          break;
-        case 'arg_directive':
-          currentDirective.args = JSON.parse(statement);
-          break;
-        case 'close_directive':
-          handleDirective(currentDirective);
-          currentDirective = null;
-          break;
-      }
-    }
-  } catch (error) {
-    logger.error(
-      `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
-    );
-    logger.error(error.message);
-  }
-};
-
-const handleDirective = function(directive) {
-  logger.debug(`Directive type=${directive.type} with args:`, directive.args);
-  switch (directive.type) {
-    case 'init':
-    case 'initialize':
-      ['config'].forEach(prop => {
-        if (typeof directive.args[prop] !== 'undefined') {
-          directive.args.sequence = directive.args[prop];
-          delete directive.args[prop];
-        }
-      });
-
-      mermaidAPI.initialize(directive.args);
-      break;
-    case 'wrap':
-    case 'nowrap':
-      wrapEnabled = directive.type === 'wrap';
-      break;
-    default:
-      logger.warn(
-        `Unhandled directive: source: '%%{${directive.type}: ${JSON.stringify(
-          directive.args ? directive.args : {}
-        )}}%%`,
-        directive
-      );
-      break;
-  }
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(statement, context, type);
 };
 
 export const addActor = function(id, name, description) {
@@ -126,22 +72,8 @@ export const addSignal = function(
   message = { text: undefined, wrap: undefined },
   messageType
 ) {
-  logger.debug(
-    'Adding message from=' +
-      idFrom +
-      ' to=' +
-      idTo +
-      ' message=' +
-      message.text +
-      ' wrap=' +
-      message.wrap +
-      ' type=' +
-      messageType
-  );
-
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
-    logger.debug('Adding message from=', messages, cnt);
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
       let error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
@@ -202,7 +134,7 @@ export const clear = function() {
 
 export const parseMessage = function(str) {
   const _str = str.trim();
-  const retVal = {
+  return {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
@@ -213,8 +145,6 @@ export const parseMessage = function(str) {
         ? false
         : autoWrap()
   };
-  logger.debug(`ParseMessage[${str}] [${JSON.stringify(retVal, null, 2)}`);
-  return retVal;
 };
 
 export const LINETYPE = {
@@ -358,6 +288,7 @@ export default {
   getActorKeys,
   getTitle,
   parseDirective,
+  getConfig: () => configApi.getConfig().sequence,
   getTitleWrapped,
   clear,
   parseMessage,
