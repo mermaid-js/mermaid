@@ -1,4 +1,6 @@
 import common from '../common/common';
+import utils from '../../utils';
+import { logger } from '../../logger';
 
 export const drawRect = function(elem, rectData) {
   const rectElem = elem.append('rect');
@@ -36,18 +38,21 @@ export const drawText = function(elem, textData) {
     switch (textData.valign) {
       case 'top':
       case 'start':
-        yfunc = () => textData.y + textData.textMargin;
+        yfunc = () => Math.round(textData.y + textData.textMargin);
         break;
       case 'middle':
       case 'center':
-        yfunc = () => textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2;
+        yfunc = () =>
+          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
         break;
       case 'bottom':
       case 'end':
         yfunc = () =>
-          textData.y +
-          (prevTextHeight + textHeight + 2 * textData.textMargin) -
-          textData.textMargin;
+          Math.round(
+            textData.y +
+              (prevTextHeight + textHeight + 2 * textData.textMargin) -
+              textData.textMargin
+          );
         break;
     }
   }
@@ -59,21 +64,21 @@ export const drawText = function(elem, textData) {
     switch (textData.anchor) {
       case 'left':
       case 'start':
-        textData.x = textData.x + textData.textMargin;
+        textData.x = Math.round(textData.x + textData.textMargin);
         textData.anchor = 'start';
         textData.dominantBaseline = 'text-after-edge';
         textData.alignmentBaseline = 'middle';
         break;
       case 'middle':
       case 'center':
-        textData.x = textData.x + textData.width / 2;
+        textData.x = Math.round(textData.x + textData.width / 2);
         textData.anchor = 'middle';
         textData.dominantBaseline = 'middle';
         textData.alignmentBaseline = 'middle';
         break;
       case 'right':
       case 'end':
-        textData.x = textData.x + textData.width - textData.textMargin;
+        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
         textData.anchor = 'end';
         textData.dominantBaseline = 'text-before-edge';
         textData.alignmentBaseline = 'middle';
@@ -256,6 +261,15 @@ export const drawActivation = function(elem, bounds, verticalPos, conf, actorAct
  * @param conf - diagrom configuration
  */
 export const drawLoop = function(elem, loopModel, labelText, conf) {
+  const {
+    boxMargin,
+    boxTextMargin,
+    labelBoxHeight,
+    labelBoxWidth,
+    messageFontFamily: fontFamily,
+    messageFontSize: fontSize,
+    messageFontWeight: fontWeight
+  } = conf;
   const g = elem.append('g');
   const drawLoopLine = function(startx, starty, stopx, stopy) {
     return g
@@ -283,45 +297,51 @@ export const drawLoop = function(elem, loopModel, labelText, conf) {
   txt.text = labelText;
   txt.x = loopModel.startx;
   txt.y = loopModel.starty;
-  const msgFont = conf.messageFont();
-  txt.fontFamily = msgFont.fontFamily;
-  txt.fontSize = msgFont.fontSize;
-  txt.fontWeight = msgFont.fontWeight;
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
   txt.anchor = 'middle';
   txt.valign = 'middle';
   txt.tspan = false;
-  txt.width = conf.labelBoxWidth || 50;
-  txt.height = conf.labelBoxHeight || 20;
-  txt.textMargin = conf.boxTextMargin;
+  txt.width = labelBoxWidth || 50;
+  txt.height = labelBoxHeight || 20;
+  txt.textMargin = boxTextMargin;
   txt.class = 'labelText';
 
   drawLabel(g, txt);
   txt = getTextObj();
   txt.text = loopModel.title;
-  txt.x = loopModel.startx + conf.labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
-  txt.y = loopModel.starty + conf.boxMargin + conf.boxTextMargin;
+  txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + boxMargin + boxTextMargin;
   txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.textMargin = boxTextMargin;
   txt.class = 'loopText';
-  txt.fontFamily = msgFont.fontFamily;
-  txt.fontSize = msgFont.fontSize;
-  txt.fontWeight = msgFont.fontWeight;
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
   txt.wrap = true;
 
   let textElem = drawText(g, txt);
+  let textHeight = Math.round(
+    textElem.map(te => (te._groups || te)[0][0].getBBox().height).reduce((acc, curr) => acc + curr)
+  );
+  const textDims = utils.calculateTextDimensions(txt.text, txt);
+  logger.debug(`loop: ${textHeight} vs ${textDims.height} ${txt.text}`, textDims);
 
   if (typeof loopModel.sectionTitles !== 'undefined') {
     loopModel.sectionTitles.forEach(function(item, idx) {
       if (item.message) {
         txt.text = item.message;
         txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
-        txt.y = loopModel.sections[idx].y + conf.boxMargin + conf.boxTextMargin;
+        txt.y = loopModel.sections[idx].y + boxMargin + boxTextMargin;
         txt.class = 'loopText';
         txt.anchor = 'middle';
         txt.valign = 'middle';
         txt.tspan = false;
-        txt.fontFamily = msgFont.fontFamily;
-        txt.fontSize = msgFont.fontSize;
-        txt.fontWeight = msgFont.fontWeight;
+        txt.fontFamily = fontFamily;
+        txt.fontSize = fontSize;
+        txt.fontWeight = fontWeight;
         txt.wrap = loopModel.wrap;
         textElem = drawText(g, txt);
         let sectionHeight = Math.round(
@@ -329,7 +349,7 @@ export const drawLoop = function(elem, loopModel, labelText, conf) {
             .map(te => (te._groups || te)[0][0].getBBox().height)
             .reduce((acc, curr) => acc + curr)
         );
-        loopModel.sections[idx].height += sectionHeight - (conf.boxMargin + conf.boxTextMargin);
+        loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
       }
     });
   }

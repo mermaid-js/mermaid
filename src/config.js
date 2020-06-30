@@ -292,9 +292,9 @@ const config = {
     wrap: false,
     /**
      * This sets the auto-wrap padding for the diagram (sides only)
-     * **Default value 15.
+     * **Default value 10.
      */
-    wrapPadding: 15,
+    wrapPadding: 10,
     /**
      * This sets the width of the loop-box (loop, alt, opt, par)
      * **Default value 50.
@@ -306,24 +306,27 @@ const config = {
      */
     labelBoxHeight: 20,
     messageFont: () => {
+      const c = getConfig();
       return {
-        fontFamily: config.messageFontFamily,
-        fontSize: config.messageFontSize,
-        fontWeight: config.messageFontWeight
+        fontFamily: c.messageFontFamily,
+        fontSize: c.messageFontSize,
+        fontWeight: c.messageFontWeight
       };
     },
     noteFont: () => {
+      const c = getConfig();
       return {
-        fontFamily: config.noteFontFamily,
-        fontSize: config.noteFontSize,
-        fontWeight: config.noteFontWeight
+        fontFamily: c.noteFontFamily,
+        fontSize: c.noteFontSize,
+        fontWeight: c.noteFontWeight
       };
     },
     actorFont: () => {
+      const c = getConfig();
       return {
-        fontFamily: config.actorFontFamily,
-        fontSize: config.actorFontSize,
-        fontWeight: config.actorFontWeight
+        fontFamily: c.actorFontFamily,
+        fontSize: c.actorFontSize,
+        fontWeight: c.actorFontWeight
       };
     }
   },
