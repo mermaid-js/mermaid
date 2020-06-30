@@ -970,7 +970,7 @@ const buildMessageModel = function(msg, actors) {
       msg.message,
       Math.max(
         msgDims.width + 2 * conf.wrapPadding,
-        boundedWidth - 2 * conf.wrapPadding,
+        boundedWidth + 2 * conf.wrapPadding,
         conf.width
       ),
       conf.messageFont()
@@ -979,7 +979,7 @@ const buildMessageModel = function(msg, actors) {
   return {
     width: Math.max(
       msgDims.width + 2 * conf.wrapPadding,
-      boundedWidth - 2 * conf.wrapPadding,
+      boundedWidth + 2 * conf.wrapPadding,
       conf.width
     ),
     height: 0,
