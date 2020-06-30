@@ -136,7 +136,7 @@ export const bounds = {
   },
   newActivation: function(message, diagram, actors) {
     const actorRect = actors[message.from.actor];
-    const stackedSize = actorActivations(message.from.actor).length;
+    const stackedSize = actorActivations(message.from.actor).length || 0;
     const x = actorRect.x + actorRect.width / 2 + ((stackedSize - 1) * conf.activationWidth) / 2;
     this.activations.push({
       startx: x,
@@ -248,13 +248,16 @@ const drawNote = function(elem, noteModel) {
  * @param msgModel - the model containing fields describing a message
  */
 const drawMessage = function(g, msgModel) {
-  bounds.bumpVerticalPos(conf.messageMargin);
-  msgModel.height += conf.messageMargin;
-  msgModel.starty = bounds.getVerticalPos();
-  const { startx, stopx, starty: verticalPos, message, type, sequenceIndex, wrap } = msgModel;
+  const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
+  const lines = message.split(common.lineBreakRegex).length;
+  let textDims = utils.calculateTextDimensions(message, conf);
+  const lineHeight = textDims.height / lines;
+  msgModel.height += lineHeight;
+
+  bounds.bumpVerticalPos(lineHeight);
   const textObj = svgDraw.getTextObj();
   textObj.x = startx;
-  textObj.y = verticalPos;
+  textObj.y = starty;
   textObj.width = stopx - startx;
   textObj.class = 'messageText';
   textObj.dy = '1em';
@@ -268,18 +271,11 @@ const drawMessage = function(g, msgModel) {
   textObj.tspan = false;
   textObj.wrap = wrap;
 
-  let textElem = drawText(g, textObj);
-  const lineHeight = (textElem[0]._groups || textElem[0])[0][0].getBBox().height;
-  textElem.forEach(te => te.attr('y', verticalPos - 7 - lineHeight / 2));
+  drawText(g, textObj);
 
-  const lines = message.split(common.lineBreakRegex).length - 1;
+  let totalOffset = textDims.height;
 
-  let totalOffset = Math.round(lineHeight + lines * lineHeight);
-
-  let textWidth = Math.max.apply(
-    null,
-    textElem.map(te => (te._groups || te)[0][0].getBBox().width)
-  );
+  let textWidth = textDims.width;
 
   let line;
   if (startx === stopx) {
@@ -288,7 +284,8 @@ const drawMessage = function(g, msgModel) {
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${verticalPos + totalOffset} H ${startx + conf.width / 2} V ${verticalPos +
+          `M  ${startx},${bounds.getVerticalPos() + totalOffset} H ${startx +
+            Math.max(conf.width / 2, textWidth / 2)} V ${bounds.getVerticalPos() +
             25 +
             totalOffset} H ${startx}`
         );
@@ -302,49 +299,43 @@ const drawMessage = function(g, msgModel) {
           'M ' +
             startx +
             ',' +
-            (verticalPos + totalOffset) +
+            (bounds.getVerticalPos() + totalOffset) +
             ' C ' +
             (startx + 60) +
             ',' +
-            (verticalPos - 10 + totalOffset) +
+            (bounds.getVerticalPos() - 10 + totalOffset) +
             ' ' +
             (startx + 60) +
             ',' +
-            (verticalPos + 30 + totalOffset) +
+            (bounds.getVerticalPos() + 30 + totalOffset) +
             ' ' +
             startx +
             ',' +
-            (verticalPos + 20 + totalOffset)
+            (bounds.getVerticalPos() + 20 + totalOffset)
         );
     }
 
-    bounds.bumpVerticalPos(30);
-    msgModel.height += 30;
-    const dx = Math.max(textWidth / 2, 100);
+    totalOffset += 30;
+    const dx = Math.max(textWidth / 2, conf.width / 2);
     bounds.insert(
       startx - dx,
       bounds.getVerticalPos() - 10 + totalOffset,
       stopx + dx,
       bounds.getVerticalPos() + 30 + totalOffset
     );
-    bounds.bumpVerticalPos(10);
-    msgModel.height += 10;
   } else {
+    totalOffset += conf.boxMargin;
     line = g.append('line');
     line.attr('x1', startx);
-    line.attr('y1', verticalPos + totalOffset);
+    line.attr('y1', bounds.getVerticalPos() + totalOffset);
     line.attr('x2', stopx);
-    line.attr('y2', verticalPos + totalOffset);
-    bounds.bumpVerticalPos(10);
-    msgModel.height += 10;
+    line.attr('y2', bounds.getVerticalPos() + totalOffset);
     bounds.insert(
       startx,
       bounds.getVerticalPos() - 10 + totalOffset,
       stopx,
       bounds.getVerticalPos() + totalOffset
     );
-    msgModel.height += 10;
-    bounds.bumpVerticalPos(10);
   }
   // Make an SVG Container
   // Draw the line
@@ -387,7 +378,7 @@ const drawMessage = function(g, msgModel) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
     g.append('text')
       .attr('x', startx)
-      .attr('y', verticalPos + 4 + totalOffset)
+      .attr('y', bounds.getVerticalPos() + 4 + totalOffset)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')
@@ -395,9 +386,10 @@ const drawMessage = function(g, msgModel) {
       .attr('class', 'sequenceNumber')
       .text(sequenceIndex);
   }
+  bounds.bumpVerticalPos(totalOffset);
+  msgModel.height += totalOffset;
   msgModel.stopy = msgModel.starty + msgModel.height;
   bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
-  logger.debug(`mm.h:${msgModel.height} vs c.h:${msgModel.stopy - msgModel.starty}`);
 };
 
 export const drawActors = function(diagram, actors, actorKeys, verticalPos) {
@@ -472,8 +464,11 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
     msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
 
-    const textHeight = utils.calculateTextHeight(msg.message, textConf);
-    heightAdjust += textHeight;
+    // const lines = msg.message.split(common.lineBreakRegex).length;
+    const textDims = utils.calculateTextDimensions(msg.message, textConf);
+    const totalOffset = textDims.height - conf.labelBoxHeight;
+    heightAdjust = postMargin + totalOffset;
+    logger.debug(`${totalOffset} - ${msg.message}`);
   }
   addLoopFn(msg);
   bounds.bumpVerticalPos(heightAdjust);
@@ -488,8 +483,9 @@ export const draw = function(text, id) {
   parser.yy.clear();
   parser.yy.setWrap(conf.wrap);
   parser.parse(text + '\n');
-
   bounds.init();
+  logger.debug(`C:${JSON.stringify(conf, null, 2)}`);
+
   const diagram = select(`[id="${id}"]`);
 
   // Fetch data from the parsing
@@ -553,7 +549,7 @@ export const draw = function(text, id) {
         break;
       case parser.yy.LINETYPE.LOOP_END:
         loopModel = bounds.endLoop();
-        svgDraw.drawLoop(diagram, loopModel, 'loop', conf, bounds);
+        svgDraw.drawLoop(diagram, loopModel, 'loop', conf);
         bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
         bounds.models.addLoop(loopModel);
         break;
@@ -635,6 +631,7 @@ export const draw = function(text, id) {
         try {
           // lastMsg = msg
           msgModel = msg.msgModel;
+          msgModel.starty = bounds.getVerticalPos();
           msgModel.sequenceIndex = sequenceIndex;
           drawMessage(diagram, msgModel);
           bounds.models.addMessage(msgModel);
@@ -706,7 +703,7 @@ export const draw = function(text, id) {
       ' ' +
       (height + extraVertForTitle)
   );
-  logger.debug(`models: ${JSON.stringify(bounds.models, null, 2)}`);
+  logger.debug(`models:`, bounds.models);
 };
 
 /**
@@ -765,6 +762,11 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
       if (isMessage && msg.from === actor.nextActor) {
         maxMessageWidthPerActor[msg.to] = Math.max(
           maxMessageWidthPerActor[msg.to] || 0,
+          messageWidth
+        );
+      } else if (isMessage && msg.from === actor.prevActor) {
+        maxMessageWidthPerActor[msg.from] = Math.max(
+          maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
         );
       } else if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
@@ -861,7 +863,6 @@ const buildNoteModel = function(msg, actors) {
     shouldWrap ? utils.wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message,
     conf.noteFont()
   );
-  logger.debug(`TD:[${textDimensions.width},${textDimensions.height}]`);
   let noteModel = {
     width: shouldWrap
       ? conf.width
@@ -892,14 +893,18 @@ const buildNoteModel = function(msg, actors) {
   } else if (msg.to === msg.from) {
     textDimensions = utils.calculateTextDimensions(
       shouldWrap
-        ? utils.wrapLabel(msg.message, Math.max(conf.width, actors[msg.to].width), conf.noteFont())
+        ? utils.wrapLabel(
+            msg.message,
+            Math.max(conf.width, actors[msg.from].width),
+            conf.noteFont()
+          )
         : msg.message,
       conf.noteFont()
     );
     noteModel.width = shouldWrap
-      ? Math.max(conf.width, actors[msg.to].width)
-      : Math.max(actors[msg.to].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
-    noteModel.startx = startx + (actors[msg.to].width - noteModel.width) / 2;
+      ? Math.max(conf.width, actors[msg.from].width)
+      : Math.max(actors[msg.from].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx + (actors[msg.from].width - noteModel.width) / 2;
   } else {
     noteModel.width =
       Math.abs(startx + actors[msg.from].width / 2 - (stopx + actors[msg.to].width / 2)) +
@@ -916,6 +921,9 @@ const buildNoteModel = function(msg, actors) {
       conf.noteFont()
     );
   }
+  logger.debug(
+    `NM:[${noteModel.startx},${noteModel.stopx},${noteModel.starty},${noteModel.stopy}:${noteModel.width},${noteModel.height}=${msg.message}]`
+  );
   return noteModel;
 };
 
@@ -957,7 +965,7 @@ const buildMessageModel = function(msg, actors) {
   if (msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message)) {
     msgModel.message = utils.wrapLabel(
       msg.message,
-      Math.max(msgModel.width, conf.width),
+      Math.max(msgModel.width - 2 * conf.wrapPadding, conf.width),
       conf.messageFont()
     );
   }
@@ -1028,44 +1036,31 @@ const calculateLoopBounds = function(messages, actors) {
     if (isNote) {
       noteModel = buildNoteModel(msg, actors);
       msg.noteModel = noteModel;
-      let depth = 0;
       stack.forEach(stk => {
         current = stk;
         current.from = Math.min(current.from, noteModel.startx);
         current.to = Math.max(current.to, noteModel.startx + noteModel.width);
         current.width =
-          Math.max(current.width, Math.abs(current.from - current.to)) -
-          50 -
-          conf.boxMargin * depth;
-        depth++;
+          Math.max(current.width, Math.abs(current.from - current.to)) - conf.labelBoxWidth;
       });
     } else {
       msgModel = buildMessageModel(msg, actors);
       msg.msgModel = msgModel;
-      if (msg.from && msg.to && stack.length > 0) {
-        let depth = 0;
+      if (msgModel.startx && msgModel.stopx && stack.length > 0) {
         stack.forEach(stk => {
           current = stk;
-          let from = actors[msg.from];
-          let to = actors[msg.to];
-          if (from.x === to.x) {
-            current.from = Math.min(current.from, from.x);
-            current.to = Math.max(current.to, to.x);
-            current.width = Math.max(current.width, from.width) - 50 - conf.boxMargin * depth;
-          } else {
-            if (from.x < to.x) {
-              current.from = Math.min(current.from, from.x);
-              current.to = Math.max(current.to, to.x);
-            } else {
-              current.from = Math.min(current.from, to.x);
-              current.to = Math.max(current.to, from.x);
-            }
+          if (msgModel.startx === msgModel.stopx) {
+            let from = actors[msg.from];
+            let to = actors[msg.to];
+            current.from = Math.min(from.x - from.width / 2, current.from);
+            current.to = Math.max(to.x + from.width / 2, current.to);
             current.width =
-              Math.max(current.width, Math.abs(current.from - current.to)) -
-              50 -
-              conf.boxMargin * depth;
+              Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
+          } else {
+            current.from = Math.min(msgModel.startx, current.from);
+            current.to = Math.max(msgModel.stopx, current.to);
+            current.width = Math.max(current.width, msgModel.width) - conf.labelBoxWidth;
           }
-          depth++;
         });
       }
     }

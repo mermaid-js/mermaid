@@ -17,6 +17,9 @@ const tags = ['active', 'done', 'crit', 'milestone'];
 let funs = [];
 let inclusiveEndDates = false;
 
+// The serial order of the task in the script
+let lastOrder = 0;
+
 export const clear = function() {
   sections = [];
   tasks = [];
@@ -32,6 +35,7 @@ export const clear = function() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  lastOrder = 0;
 };
 
 export const setAxisFormat = function(txt) {
@@ -374,6 +378,9 @@ export const addTask = function(descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
+  rawTask.order = lastOrder;
+
+  lastOrder++;
 
   const pos = rawTasks.push(rawTask);
 

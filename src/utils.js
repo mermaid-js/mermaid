@@ -627,21 +627,21 @@ export const calculateTextDimensions = function(text, config) {
   // of sans-serif.
   const fontFamilies = ['sans-serif', fontFamily];
   const lines = text.split(common.lineBreakRegex);
-  let maxWidth = 0,
-    height = 0;
+  let dims = [];
 
   const body = select('body');
   // We don't want to leak DOM elements - if a removal operation isn't available
   // for any reason, do not continue.
   if (!body.remove) {
-    return { width: 0, height: 0 };
+    return { width: 0, height: 0, lineHeight: 0 };
   }
 
   const g = body.append('svg');
 
-  for (let line of lines) {
+  for (let fontFamily of fontFamilies) {
     let cheight = 0;
-    for (let fontFamily of fontFamilies) {
+    let dim = { width: 0, height: 0, lineHeight: 0 };
+    for (let line of lines) {
       const textObj = getTextObj();
       textObj.text = line;
       const textElem = drawSimpleText(g, textObj)
@@ -650,16 +650,26 @@ export const calculateTextDimensions = function(text, config) {
         .style('font-family', fontFamily);
 
       let bBox = (textElem._groups || textElem)[0][0].getBBox();
-      maxWidth = Math.max(maxWidth, bBox.width);
-      cheight = Math.max(bBox.height, cheight);
+      dim.width = Math.round(Math.max(dim.width, bBox.width));
+      cheight = Math.round(bBox.height);
+      dim.height += cheight;
+      dim.lineHeight = Math.round(Math.max(dim.lineHeight, cheight));
     }
-    height += cheight;
+    dims.push(dim);
   }
 
   g.remove();
 
-  // Adds some padding, so the text won't sit exactly within the actor's borders
-  const result = { width: Math.round(maxWidth), height: Math.round(height) };
+  let index =
+    isNaN(dims[1].height) ||
+    isNaN(dims[1].width) ||
+    isNaN(dims[1].lineHeight) ||
+    (dims[0].height > dims[1].height &&
+      dims[0].width > dims[1].width &&
+      dims[0].lineHeight > dims[1].lineHeight)
+      ? 0
+      : 1;
+  const result = dims[index];
   calculateTextDimensions[cacheKey] = result;
   return result;
 };
