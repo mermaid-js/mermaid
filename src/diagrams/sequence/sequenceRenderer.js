@@ -250,7 +250,7 @@ const drawNote = function(elem, noteModel) {
 const drawMessage = function(g, msgModel) {
   const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
   const lines = message.split(common.lineBreakRegex).length;
-  let textDims = utils.calculateTextDimensions(message, conf);
+  let textDims = utils.calculateTextDimensions(message, conf.messageFont());
   const lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
 
@@ -968,17 +968,13 @@ const buildMessageModel = function(msg, actors) {
   if (msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message)) {
     msg.message = utils.wrapLabel(
       msg.message,
-      Math.max(
-        msgDims.width + 2 * conf.wrapPadding,
-        boundedWidth + 2 * conf.wrapPadding,
-        conf.width
-      ),
+      Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width),
       conf.messageFont()
     );
   }
   return {
     width: Math.max(
-      msgDims.width + 2 * conf.wrapPadding,
+      msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding,
       boundedWidth + 2 * conf.wrapPadding,
       conf.width
     ),
