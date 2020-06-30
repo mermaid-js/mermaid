@@ -459,20 +459,17 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
   bounds.bumpVerticalPos(preMargin);
   let heightAdjust = postMargin;
   if (msg.id && msg.message && loopWidths[msg.id]) {
-    if (msg.wrap) {
-      let loopWidth = loopWidths[msg.id].width;
-      let textConf = conf.messageFont();
-      msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
-      msg.width = loopWidth;
+    let loopWidth = loopWidths[msg.id].width;
+    let textConf = conf.messageFont();
+    msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
+    msg.width = loopWidth;
+    msg.wrap = true;
 
-      // const lines = msg.message.split(common.lineBreakRegex).length;
-      const textDims = utils.calculateTextDimensions(msg.message, textConf);
-      const totalOffset = textDims.height - conf.labelBoxHeight;
-      heightAdjust = postMargin + totalOffset;
-      logger.debug(`${totalOffset} - ${msg.message}`);
-    } else {
-      msg.message = `[${msg.message}]`;
-    }
+    // const lines = msg.message.split(common.lineBreakRegex).length;
+    const textDims = utils.calculateTextDimensions(msg.message, textConf);
+    const totalOffset = textDims.height - conf.labelBoxHeight;
+    heightAdjust = postMargin + totalOffset;
+    logger.debug(`${totalOffset} - ${msg.message}`);
   }
   addLoopFn(msg);
   bounds.bumpVerticalPos(heightAdjust);
