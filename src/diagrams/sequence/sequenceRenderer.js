@@ -290,7 +290,7 @@ const drawMessage = function(g, msgModel) {
             totalOffset} H ${startx}`
         );
     } else {
-      totalOffset += 5;
+      totalOffset += conf.boxMargin;
 
       line = g
         .append('path')
@@ -459,16 +459,20 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
   bounds.bumpVerticalPos(preMargin);
   let heightAdjust = postMargin;
   if (msg.id && msg.message && loopWidths[msg.id]) {
-    let loopWidth = loopWidths[msg.id].width;
-    let textConf = conf.messageFont();
-    msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
-    msg.width = loopWidth;
+    if (msg.wrap) {
+      let loopWidth = loopWidths[msg.id].width;
+      let textConf = conf.messageFont();
+      msg.message = utils.wrapLabel(`[${msg.message}]`, loopWidth - 2 * conf.wrapPadding, textConf);
+      msg.width = loopWidth;
 
-    // const lines = msg.message.split(common.lineBreakRegex).length;
-    const textDims = utils.calculateTextDimensions(msg.message, textConf);
-    const totalOffset = textDims.height - conf.labelBoxHeight;
-    heightAdjust = postMargin + totalOffset;
-    logger.debug(`${totalOffset} - ${msg.message}`);
+      // const lines = msg.message.split(common.lineBreakRegex).length;
+      const textDims = utils.calculateTextDimensions(msg.message, textConf);
+      const totalOffset = textDims.height - conf.labelBoxHeight;
+      heightAdjust = postMargin + totalOffset;
+      logger.debug(`${totalOffset} - ${msg.message}`);
+    } else {
+      msg.message = `[${msg.message}]`;
+    }
   }
   addLoopFn(msg);
   bounds.bumpVerticalPos(heightAdjust);
@@ -769,6 +773,16 @@ const getMaxMessageWidthPerActor = function(actors, messages) {
           maxMessageWidthPerActor[msg.from] || 0,
           messageWidth
         );
+      } else if (isMessage && msg.from === msg.to) {
+        maxMessageWidthPerActor[msg.from] = Math.max(
+          maxMessageWidthPerActor[msg.from] || 0,
+          messageWidth / 2
+        );
+
+        maxMessageWidthPerActor[msg.to] = Math.max(
+          maxMessageWidthPerActor[msg.to] || 0,
+          messageWidth / 2
+        );
       } else if (msg.placement === parser.yy.PLACEMENT.RIGHTOF) {
         maxMessageWidthPerActor[msg.from] = Math.max(
           maxMessageWidthPerActor[msg.from] || 0,
@@ -949,8 +963,25 @@ const buildMessageModel = function(msg, actors) {
   const fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
   const toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
   const allBounds = fromBounds.concat(toBounds);
-  const msgModel = {
-    width: Math.abs(toBounds[toIdx] - fromBounds[fromIdx]),
+  const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
+  const msgDims = utils.calculateTextDimensions(msg.message, conf.messageFont());
+  if (msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message)) {
+    msg.message = utils.wrapLabel(
+      msg.message,
+      Math.max(
+        msgDims.width + 2 * conf.wrapPadding,
+        boundedWidth - 2 * conf.wrapPadding,
+        conf.width
+      ),
+      conf.messageFont()
+    );
+  }
+  return {
+    width: Math.max(
+      msgDims.width + 2 * conf.wrapPadding,
+      boundedWidth - 2 * conf.wrapPadding,
+      conf.width
+    ),
     height: 0,
     startx: fromBounds[fromIdx],
     stopx: toBounds[toIdx],
@@ -962,14 +993,6 @@ const buildMessageModel = function(msg, actors) {
     fromBounds: Math.min.apply(null, allBounds),
     toBounds: Math.max.apply(null, allBounds)
   };
-  if (msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message)) {
-    msgModel.message = utils.wrapLabel(
-      msg.message,
-      Math.max(msgModel.width - 2 * conf.wrapPadding, conf.width),
-      conf.messageFont()
-    );
-  }
-  return msgModel;
 };
 
 const calculateLoopBounds = function(messages, actors) {
@@ -1052,10 +1075,13 @@ const calculateLoopBounds = function(messages, actors) {
           if (msgModel.startx === msgModel.stopx) {
             let from = actors[msg.from];
             let to = actors[msg.to];
-            current.from = Math.min(from.x - from.width / 2, current.from);
-            current.to = Math.max(to.x + from.width / 2, current.to);
-            current.width =
-              Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
+            current.from = Math.min(
+              from.x - msgModel.width / 2,
+              from.x - from.width / 2,
+              current.from
+            );
+            current.to = Math.max(to.x + msgModel.width / 2, to.x + from.width / 2, current.to);
+            current.width = Math.max(current.width, Math.abs(current.to - current.from));
           } else {
             current.from = Math.min(msgModel.startx, current.from);
             current.to = Math.max(msgModel.stopx, current.to);

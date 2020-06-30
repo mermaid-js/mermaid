@@ -306,7 +306,7 @@ const config = {
      */
     labelBoxHeight: 20,
     messageFont: () => {
-      const c = getConfig();
+      const c = getConfig().sequence;
       return {
         fontFamily: c.messageFontFamily,
         fontSize: c.messageFontSize,
@@ -314,7 +314,7 @@ const config = {
       };
     },
     noteFont: () => {
-      const c = getConfig();
+      const c = getConfig().sequence;
       return {
         fontFamily: c.noteFontFamily,
         fontSize: c.noteFontSize,
@@ -322,7 +322,7 @@ const config = {
       };
     },
     actorFont: () => {
-      const c = getConfig();
+      const c = getConfig().sequence;
       return {
         fontFamily: c.actorFontFamily,
         fontSize: c.actorFontSize,
