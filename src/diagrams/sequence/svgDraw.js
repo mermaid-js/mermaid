@@ -1,6 +1,4 @@
 import common from '../common/common';
-import utils from '../../utils';
-import { logger } from '../../logger';
 
 export const drawRect = function(elem, rectData) {
   const rectElem = elem.append('rect');
@@ -323,11 +321,6 @@ export const drawLoop = function(elem, loopModel, labelText, conf) {
   txt.wrap = true;
 
   let textElem = drawText(g, txt);
-  let textHeight = Math.round(
-    textElem.map(te => (te._groups || te)[0][0].getBBox().height).reduce((acc, curr) => acc + curr)
-  );
-  const textDims = utils.calculateTextDimensions(txt.text, txt);
-  logger.debug(`loop: ${textHeight} vs ${textDims.height} ${txt.text}`, textDims);
 
   if (typeof loopModel.sectionTitles !== 'undefined') {
     loopModel.sectionTitles.forEach(function(item, idx) {
