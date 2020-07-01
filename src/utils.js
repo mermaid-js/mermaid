@@ -627,7 +627,7 @@ export const calculateTextDimensions = function(text, config) {
   // thus, we'll take the max width between the user supplied font family, and a default
   // of sans-serif.
   const fontFamilies = ['sans-serif', fontFamily];
-  const lines = text.split(common.lineBreakRegex);
+  const lines = common.splitBreaks(text);
   let dims = [];
 
   const body = select('body');

@@ -1,5 +1,7 @@
 import mermaidAPI from '../../mermaidAPI';
 import configApi from '../../config';
+import common from '../common/common';
+import { logger } from '../../logger';
 
 let prevActor = undefined;
 let actors = {};
@@ -134,17 +136,19 @@ export const clear = function() {
 
 export const parseMessage = function(str) {
   const _str = str.trim();
-  return {
+  const message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
-        ? autoWrap()
+        ? common.hasBreaks(_str) || autoWrap()
         : _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
         ? false
         : autoWrap()
   };
+  logger.debug('parseMessage:', message);
+  return message;
 };
 
 export const LINETYPE = {
