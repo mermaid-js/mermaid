@@ -277,8 +277,9 @@ const drawMessage = function(g, msgModel) {
 
   let textWidth = textDims.width;
 
-  let line;
+  let line, lineStarty;
   if (startx === stopx) {
+    lineStarty = bounds.getVerticalPos() + totalOffset;
     if (conf.rightAngles) {
       line = g
         .append('path')
@@ -292,6 +293,7 @@ const drawMessage = function(g, msgModel) {
     } else {
       totalOffset += conf.boxMargin;
 
+      lineStarty = bounds.getVerticalPos() + totalOffset;
       line = g
         .append('path')
         .attr(
@@ -299,19 +301,19 @@ const drawMessage = function(g, msgModel) {
           'M ' +
             startx +
             ',' +
-            (bounds.getVerticalPos() + totalOffset) +
+            lineStarty +
             ' C ' +
             (startx + 60) +
             ',' +
-            (bounds.getVerticalPos() - 10 + totalOffset) +
+            (lineStarty - 10) +
             ' ' +
             (startx + 60) +
             ',' +
-            (bounds.getVerticalPos() + 30 + totalOffset) +
+            (lineStarty + 30) +
             ' ' +
             startx +
             ',' +
-            (bounds.getVerticalPos() + 20 + totalOffset)
+            (lineStarty + 20)
         );
     }
 
@@ -324,18 +326,14 @@ const drawMessage = function(g, msgModel) {
       bounds.getVerticalPos() + 30 + totalOffset
     );
   } else {
+    lineStarty = bounds.getVerticalPos() + totalOffset;
     totalOffset += conf.boxMargin;
     line = g.append('line');
     line.attr('x1', startx);
-    line.attr('y1', bounds.getVerticalPos() + totalOffset);
+    line.attr('y1', lineStarty);
     line.attr('x2', stopx);
-    line.attr('y2', bounds.getVerticalPos() + totalOffset);
-    bounds.insert(
-      startx,
-      bounds.getVerticalPos() - 10 + totalOffset,
-      stopx,
-      bounds.getVerticalPos() + totalOffset
-    );
+    line.attr('y2', lineStarty);
+    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
   }
   // Make an SVG Container
   // Draw the line
@@ -363,7 +361,7 @@ const drawMessage = function(g, msgModel) {
   }
 
   line.attr('stroke-width', 2);
-  line.attr('stroke', 'black');
+  line.attr('stroke', 'none'); // handled by theme/css anyway
   line.style('fill', 'none'); // remove any fill colour
   if (type === parser.yy.LINETYPE.SOLID || type === parser.yy.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
@@ -378,7 +376,7 @@ const drawMessage = function(g, msgModel) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
     g.append('text')
       .attr('x', startx)
-      .attr('y', bounds.getVerticalPos() + 4 + totalOffset)
+      .attr('y', lineStarty + 4)
       .attr('font-family', 'sans-serif')
       .attr('font-size', '12px')
       .attr('text-anchor', 'middle')

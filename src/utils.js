@@ -499,16 +499,20 @@ export const drawSimpleText = function(elem, textData) {
 };
 
 export const wrapLabel = (label, maxWidth, config) => {
+  if (!wrapLabel.cache) {
+    // until memoize PR
+    wrapLabel.cache = {};
+  }
   if (!label) {
     return label;
   }
   config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0, joinWith: '<br/>' },
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
     config
   );
   const cacheKey = `${label}-${maxWidth}-${JSON.stringify(config)}`;
-  if (wrapLabel[cacheKey]) {
-    return wrapLabel[cacheKey];
+  if (wrapLabel.cache[cacheKey]) {
+    return wrapLabel.cache[cacheKey];
   }
   if (common.lineBreakRegex.test(label)) {
     return label;
@@ -536,15 +540,18 @@ export const wrapLabel = (label, maxWidth, config) => {
     }
   });
   const result = completedLines.filter(line => line !== '').join(config.joinWith);
-  wrapLabel[cacheKey] = result;
+  wrapLabel.cache[cacheKey] = result;
   return result;
 };
 
 const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
-  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 }, config);
+  if (!breakString.cache) {
+    breakString.cache = {};
+  }
+  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
   const cacheKey = `${word}-${maxWidth}-${hyphenCharacter}-${JSON.stringify(config)}`;
-  if (breakString[cacheKey]) {
-    return breakString[cacheKey];
+  if (breakString.cache[cacheKey]) {
+    return breakString.cache[cacheKey];
   }
   const characters = word.split('');
   const lines = [];
@@ -563,7 +570,7 @@ const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
     }
   });
   const result = { hyphenatedStrings: lines, remainingWord: currentLine };
-  breakString[cacheKey] = result;
+  breakString.cache[cacheKey] = result;
   return result;
 };
 
@@ -579,10 +586,7 @@ const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
  * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
  */
 export const calculateTextHeight = function(text, config) {
-  config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
-    config
-  );
+  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
   return calculateTextDimensions(text, config).height;
 };
 
@@ -594,10 +598,7 @@ export const calculateTextHeight = function(text, config) {
  * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
  */
 export const calculateTextWidth = function(text, config) {
-  config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
-    config
-  );
+  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
   return calculateTextDimensions(text, config).width;
 };
 
@@ -609,17 +610,17 @@ export const calculateTextWidth = function(text, config) {
  * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
  */
 export const calculateTextDimensions = function(text, config) {
-  config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
-    config
-  );
+  if (!calculateTextDimensions.cache) {
+    calculateTextDimensions.cache = {};
+  }
+  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
   const { fontSize, fontFamily, fontWeight } = config;
   if (!text) {
     return { width: 0, height: 0 };
   }
   const cacheKey = `${text}-${JSON.stringify(config)}`;
-  if (calculateTextDimensions[cacheKey]) {
-    return calculateTextDimensions[cacheKey];
+  if (calculateTextDimensions.cache[cacheKey]) {
+    return calculateTextDimensions.cache[cacheKey];
   }
 
   // We can't really know if the user supplied font family will render on the user agent;
@@ -670,7 +671,7 @@ export const calculateTextDimensions = function(text, config) {
       ? 0
       : 1;
   const result = dims[index];
-  calculateTextDimensions[cacheKey] = result;
+  calculateTextDimensions.cache[cacheKey] = result;
   return result;
 };
 
