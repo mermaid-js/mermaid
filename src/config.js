@@ -305,28 +305,25 @@ const config = {
      * **Default value 20.
      */
     labelBoxHeight: 20,
-    messageFont: () => {
-      const c = getConfig().sequence;
+    messageFont: function() {
       return {
-        fontFamily: c.messageFontFamily,
-        fontSize: c.messageFontSize,
-        fontWeight: c.messageFontWeight
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight
       };
     },
-    noteFont: () => {
-      const c = getConfig().sequence;
+    noteFont: function() {
       return {
-        fontFamily: c.noteFontFamily,
-        fontSize: c.noteFontSize,
-        fontWeight: c.noteFontWeight
+        fontFamily: this.noteFontFamily,
+        fontSize: this.noteFontSize,
+        fontWeight: this.noteFontWeight
       };
     },
-    actorFont: () => {
-      const c = getConfig().sequence;
+    actorFont: function() {
       return {
-        fontFamily: c.actorFontFamily,
-        fontSize: c.actorFontSize,
-        fontWeight: c.actorFontWeight
+        fontFamily: this.actorFontFamily,
+        fontSize: this.actorFontSize,
+        fontWeight: this.actorFontWeight
       };
     }
   },
