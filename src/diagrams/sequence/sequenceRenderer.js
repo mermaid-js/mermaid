@@ -285,10 +285,8 @@ const drawMessage = function(g, msgModel) {
         .append('path')
         .attr(
           'd',
-          `M  ${startx},${bounds.getVerticalPos() + totalOffset} H ${startx +
-            Math.max(conf.width / 2, textWidth / 2)} V ${bounds.getVerticalPos() +
-            25 +
-            totalOffset} H ${startx}`
+          `M  ${startx},${lineStarty} H ${startx +
+            Math.max(conf.width / 2, textWidth / 2)} V ${lineStarty + 25} H ${startx}`
         );
     } else {
       totalOffset += conf.boxMargin;
@@ -326,8 +324,8 @@ const drawMessage = function(g, msgModel) {
       bounds.getVerticalPos() + 30 + totalOffset
     );
   } else {
-    lineStarty = bounds.getVerticalPos() + totalOffset;
     totalOffset += conf.boxMargin;
+    lineStarty = bounds.getVerticalPos() + totalOffset;
     line = g.append('line');
     line.attr('x1', startx);
     line.attr('y1', lineStarty);
@@ -465,7 +463,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
 
     // const lines = msg.message.split(common.lineBreakRegex).length;
     const textDims = utils.calculateTextDimensions(msg.message, textConf);
-    const totalOffset = textDims.height - conf.labelBoxHeight;
+    const totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
     logger.debug(`${totalOffset} - ${msg.message}`);
   }
@@ -1072,7 +1070,8 @@ const calculateLoopBounds = function(messages, actors) {
               current.from
             );
             current.to = Math.max(to.x + msgModel.width / 2, to.x + from.width / 2, current.to);
-            current.width = Math.max(current.width, Math.abs(current.to - current.from));
+            current.width =
+              Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
           } else {
             current.from = Math.min(msgModel.startx, current.from);
             current.to = Math.max(msgModel.stopx, current.to);
