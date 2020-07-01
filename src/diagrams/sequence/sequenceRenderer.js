@@ -249,7 +249,7 @@ const drawNote = function(elem, noteModel) {
  */
 const drawMessage = function(g, msgModel) {
   const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
-  const lines = message.split(common.lineBreakRegex).length;
+  const lines = common.splitBreaks(message).length;
   let textDims = utils.calculateTextDimensions(message, conf.messageFont());
   const lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
@@ -461,7 +461,7 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
     msg.width = loopWidth;
     msg.wrap = true;
 
-    // const lines = msg.message.split(common.lineBreakRegex).length;
+    // const lines = common.splitBreaks(msg.message).length;
     const textDims = utils.calculateTextDimensions(msg.message, textConf);
     const totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
@@ -864,7 +864,7 @@ const calculateActorMargins = function(actors, actorToMessageWidth) {
 const buildNoteModel = function(msg, actors) {
   let startx = actors[msg.from].x;
   let stopx = actors[msg.to].x;
-  let shouldWrap = msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message);
+  let shouldWrap = msg.wrap && msg.message;
 
   let textDimensions = utils.calculateTextDimensions(
     shouldWrap ? utils.wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message,
@@ -958,7 +958,7 @@ const buildMessageModel = function(msg, actors) {
   const allBounds = fromBounds.concat(toBounds);
   const boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
   const msgDims = utils.calculateTextDimensions(msg.message, conf.messageFont());
-  if (msg.wrap && msg.message && !common.lineBreakRegex.test(msg.message)) {
+  if (msg.wrap && msg.message) {
     msg.message = utils.wrapLabel(
       msg.message,
       Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width),
