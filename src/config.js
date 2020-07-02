@@ -15,7 +15,7 @@ import { logger } from './logger';
  * **Example 2:**
  * <pre>
  * &lt;script>
- *   var currentConfig = {
+ *   var config = {
  *     startOnLoad:true,
  *     flowchart:{
  *       useMaxWidth:true,
@@ -25,7 +25,7 @@ import { logger } from './logger';
  *
  *     securityLevel:'loose',
  *   };
- *   mermaid.initialize(currentConfig);
+ *   mermaid.initialize(config);
  * &lt;/script>
  * </pre>
  * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
@@ -35,14 +35,11 @@ import { logger } from './logger';
 const config = {
   /** theme , the CSS style sheet
    *
-   * **theme** - Choose one of the built-in themes:
-   *    * default
-   *    * forest
-   *    * dark
-   *    * neutral.
-   * To disable any pre-defined mermaid theme, use "null".
-   *
-   * **themeCSS** - Use your own CSS. This overrides **theme**.
+   * theme , the CSS style sheet
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   ***Notes:**To disable any pre-defined mermaid theme, use "null".
    * <pre>
    *  "theme": "forest",
    *  "themeCSS": ".node rect { fill: red; }"
@@ -54,37 +51,58 @@ const config = {
   maxTextSize: 50000,
 
   /**
-   * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
    */
   fontFamily: '"trebuchet ms", verdana, arial;',
 
   /**
-   * This option decides the amount of logging to be used.
-   *    * debug: 1
-   *    * info: 2
-   *    * warn: 3
-   *    * error: 4
-   *    * fatal: (**default**) 5
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
    */
   logLevel: 5,
 
   /**
-   * Sets the level of trust to be used on the parsed diagrams.
-   *  * **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *  * **loose**: tags in text are allowed, click functionality is enabled
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *
+   ***Notes:
+   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   *-   **loose**: tags in text are allowed, click functionality is enabled
    */
   securityLevel: 'strict',
 
   /**
-   * This options controls whether or mermaid starts when the page loads
-   * **Default value true**.
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   *
+   ***Notes:**
+   ***Default value: true**
    */
   startOnLoad: true,
 
   /**
-   * This options controls whether or arrow markers in html code will be absolute paths or
-   * an anchor, #. This matters if you are using base tag settings.
-   * **Default value false**.
+   *| Parameter | Description |Type | Required |Values|
+   *| --- | --- | --- | --- | --- |
+   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   *
+   *
+   *## Notes**: This matters if you are using base tag settings.
+   ***Default value: false**.
    */
   arrowMarkerAbsolute: false,
 
@@ -101,31 +119,42 @@ const config = {
    */
   flowchart: {
     /**
-     * Flag for setting whether or not a html tag should be used for rendering labels
-     * on the edges.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     *
+     ***Notes: Default value: true**.
      */
     htmlLabels: true,
 
     /**
-     * Defines the spacing between nodes on the same level (meaning horizontal spacing for
-     * TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     *
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     ***Default value 50**.
      */
     nodeSpacing: 50,
 
     /**
-     * Defines the spacing between nodes on different levels (meaning vertical spacing for
-     * TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     *
+     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     ***Default value 50**.
      */
     rankSpacing: 50,
 
     /**
-     * How mermaid renders curves for flowcharts. Possible values are
-     *   * basis
-     *   * linear **default**
-     *   * cardinal
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     *
+     ***Notes:
+     *Default Vaue: Linear**
      */
     curve: 'linear',
     // Only used in new experimental rendering
@@ -144,105 +173,178 @@ const config = {
     activationWidth: 10,
 
     /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     diagramMarginY: 10,
 
     /**
-     * Margin between actors.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * Width of actor boxes
-     * **Default value 150**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
      */
     width: 150,
 
     /**
-     * Height of actor boxes
-     * **Default value 65**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 65**..
      */
     height: 65,
 
     /**
-     * Margin around loop boxes
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     *
+     ***Notes:**
+     *
+     ***Default value 5**.
      */
     boxTextMargin: 5,
 
     /**
-     * margin around notes.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * Space between messages.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     *
+     ***Notes:**center **default**
      */
     messageAlign: 'center',
 
     /**
-     * mirror actors under diagram.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     *
+     ***Notes:**
+     *
+     ***Default value true**.
      */
     mirrorActors: true,
 
     /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
+     *available space. If set to false, the absolute space required is used.
+     ***Default value: True**.
      */
     useMaxWidth: true,
 
     /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *
+     *This will display arrows that start and begin at the same node as right angles, rather than a curve
+     ***Default value false**.
      */
     rightAngles: false,
     /**
-     * This will show the node numbers
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     ***Default value false**.
      */
     showSequenceNumbers: false,
     /**
-     * This sets the font size of the actor's description
-     * **Default value 14**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
      */
     actorFontSize: 14,
     /**
-     * This sets the font family of the actor's description
-     * **Default value "Open-Sans", "sans-serif"**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     *
+     ***Notes:**
+     ***Default value "Open-Sans", "sans-serif"**.
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
     /**
@@ -251,13 +353,21 @@ const config = {
      */
     actorFontWeight: 400,
     /**
-     * This sets the font size of actor-attached notes.
-     * **Default value 14**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
      */
     noteFontSize: 14,
     /**
-     * This sets the font family of actor-attached notes.
-     * **Default value "trebuchet ms", verdana, arial**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *
+     ***Notes:**
+     ***Default value: trebuchet ms **.
      */
     noteFontFamily: '"trebuchet ms", verdana, arial',
     /**
@@ -266,18 +376,30 @@ const config = {
      */
     noteFontWeight: 400,
     /**
-     * This sets the text alignment of actor-attached notes.
-     * **Default value center**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     *
+     ***Notes:**
+     ***Default value center**.
      */
     noteAlign: 'center',
     /**
-     * This sets the font size of actor messages.
-     * **Default value 16**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     *
+     ***Notes:**
+     ***Default value 16**.
      */
     messageFontSize: 16,
     /**
-     * This sets the font family of actor messages.
-     * **Default value "trebuchet ms", verdana, arial**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *
+     ***Notes:**
+     ***Default value:"trebuchet ms**.
      */
     messageFontFamily: '"trebuchet ms", verdana, arial',
     /**
@@ -333,62 +455,107 @@ const config = {
    */
   gantt: {
     /**
-     * Margin top for the text over the gantt diagram
-     * **Default value 25**.
+     *### titleTopMargin
+     *
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 25**.
      */
     titleTopMargin: 25,
 
     /**
-     * The height of the bars in the graph
-     * **Default value 20**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 20**.
      */
     barHeight: 20,
 
     /**
-     * The margin between the different activities in the gantt diagram.
-     * **Default value 4**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
      */
     barGap: 4,
 
     /**
-     *  Margin between title and gantt diagram and between axis and gantt diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     topPadding: 50,
 
     /**
-     *  The space allocated for the section name to the left of the activities.
-     * **Default value 75**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 75**.
      */
     leftPadding: 75,
 
     /**
-     *  Vertical starting position of the grid lines.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 35**.
      */
     gridLineStartPadding: 35,
 
     /**
-     *  Font size ...
-     * **Default value 11**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
      */
     fontSize: 11,
 
     /**
-     * font family ...
-     * **Default value '"Open-Sans", "sans-serif"'**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *
+     ***Notes:**
+     *
+     ***Default value '"Open-Sans", "sans-serif"'**.
      */
     fontFamily: '"Open-Sans", "sans-serif"',
 
     /**
-     * The number of alternating section styles.
-     * **Default value 4**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
      */
     numberSectionStyles: 4,
 
     /**
-     * Datetime format of the axis. This might need adjustment to match your locale and preferences
-     * **Default value '%Y-%m-%d'**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     *
+     ***Notes:**
+     *
+     * This might need adjustment to match your locale and preferences
+     ***Default value '%Y-%m-%d'**.
      */
     axisFormat: '%Y-%m-%d'
   },
@@ -397,84 +564,134 @@ const config = {
    */
   journey: {
     /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 10**..
      */
     diagramMarginY: 10,
 
     /**
-     * Margin between actors.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * Width of actor boxes
-     * **Default value 150**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
      */
     width: 150,
 
     /**
-     * Height of actor boxes
-     * **Default value 65**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 65**.
      */
     height: 65,
 
     /**
-     * Margin around loop boxes
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
      */
     boxTextMargin: 5,
 
     /**
-     * margin around notes.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * Space between messages.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     *
+     ***Notes:**default:center**
      */
     messageAlign: 'center',
 
     /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
      */
     useMaxWidth: true,
 
     /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     *
+     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+     ***Default value false**.
      */
     rightAngles: false
   },
@@ -510,43 +727,82 @@ const config = {
    */
   er: {
     /**
-     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 20**.
      */
     diagramPadding: 20,
 
     /**
-     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
-     * where T = top, B = bottom, L = left, and R = right.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     *
+     ***Notes:**
+     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * T = top, B = bottom, L = left, and R = right.
+     ***Default value: TB **.
      */
     layoutDirection: 'TB',
 
     /**
-     * The mimimum width of an entity box, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 100**.
      */
     minEntityWidth: 100,
 
     /**
-     * The minimum height of an entity box, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 75 **
      */
     minEntityHeight: 75,
 
     /**
-     * The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     ***Default value: 15 **
      */
     entityPadding: 15,
 
     /**
-     * Stroke color of box edges and lines
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
+     ***Default value: gray **
      */
     stroke: 'gray',
 
     /**
-     * Fill color of entity boxes
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     *
+     ***Notes:**
+     ***Default value:'honeydew'**
      */
     fill: 'honeydew',
 
     /**
-     * Font size (expressed as an integer representing a number of  pixels)
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     *
+     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Default value: 12 **
      */
     fontSize: 12
   }

@@ -10002,7 +10002,7 @@ module.exports = ({length, type, characters}) => {
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: lightgrey;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #474949;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #474949;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.classGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #81B1DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.stateGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #81B1DB; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #81B1DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: lightgrey; }\n\n.marker.cross {\n  stroke: lightgrey; }\n", ""]);
+exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: lightgrey;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #474949;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #474949;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: black; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.classGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #81B1DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.stateGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #81B1DB; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #81B1DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: lightgrey; }\n\n.marker.cross {\n  stroke: lightgrey; }\n", ""]);
 
 
 
@@ -70031,7 +70031,7 @@ __webpack_require__.r(__webpack_exports__);
  * **Example 2:**
  * <pre>
  * &lt;script>
- *   var currentConfig = {
+ *   var config = {
  *     startOnLoad:true,
  *     flowchart:{
  *       useMaxWidth:true,
@@ -70041,7 +70041,7 @@ __webpack_require__.r(__webpack_exports__);
  *
  *     securityLevel:'loose',
  *   };
- *   mermaid.initialize(currentConfig);
+ *   mermaid.initialize(config);
  * &lt;/script>
  * </pre>
  * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
@@ -70052,14 +70052,11 @@ __webpack_require__.r(__webpack_exports__);
 var config = {
   /** theme , the CSS style sheet
    *
-   * **theme** - Choose one of the built-in themes:
-   *    * default
-   *    * forest
-   *    * dark
-   *    * neutral.
-   * To disable any pre-defined mermaid theme, use "null".
-   *
-   * **themeCSS** - Use your own CSS. This overrides **theme**.
+   * theme , the CSS style sheet
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   ***Notes:**To disable any pre-defined mermaid theme, use "null".
    * <pre>
    *  "theme": "forest",
    *  "themeCSS": ".node rect { fill: red; }"
@@ -70072,37 +70069,58 @@ var config = {
   maxTextSize: 50000,
 
   /**
-   * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
    */
   fontFamily: '"trebuchet ms", verdana, arial;',
 
   /**
-   * This option decides the amount of logging to be used.
-   *    * debug: 1
-   *    * info: 2
-   *    * warn: 3
-   *    * error: 4
-   *    * fatal: (**default**) 5
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
    */
   logLevel: 5,
 
   /**
-   * Sets the level of trust to be used on the parsed diagrams.
-   *  * **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *  * **loose**: tags in text are allowed, click functionality is enabled
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *
+   ***Notes:
+   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   *-   **loose**: tags in text are allowed, click functionality is enabled
    */
   securityLevel: 'strict',
 
   /**
-   * This options controls whether or mermaid starts when the page loads
-   * **Default value true**.
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   *
+   ***Notes:**
+   ***Default value: true**
    */
   startOnLoad: true,
 
   /**
-   * This options controls whether or arrow markers in html code will be absolute paths or
-   * an anchor, #. This matters if you are using base tag settings.
-   * **Default value false**.
+   *| Parameter | Description |Type | Required |Values|
+   *| --- | --- | --- | --- | --- |
+   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   *
+   *
+   *## Notes**: This matters if you are using base tag settings.
+   ***Default value: false**.
    */
   arrowMarkerAbsolute: false,
 
@@ -70119,31 +70137,42 @@ var config = {
    */
   flowchart: {
     /**
-     * Flag for setting whether or not a html tag should be used for rendering labels
-     * on the edges.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     *
+     ***Notes: Default value: true**.
      */
     htmlLabels: true,
 
     /**
-     * Defines the spacing between nodes on the same level (meaning horizontal spacing for
-     * TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     *
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     ***Default value 50**.
      */
     nodeSpacing: 50,
 
     /**
-     * Defines the spacing between nodes on different levels (meaning vertical spacing for
-     * TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     *
+     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     ***Default value 50**.
      */
     rankSpacing: 50,
 
     /**
-     * How mermaid renders curves for flowcharts. Possible values are
-     *   * basis
-     *   * linear **default**
-     *   * cardinal
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     *
+     ***Notes:
+     *Default Vaue: Linear**
      */
     curve: 'linear',
     // Only used in new experimental rendering
@@ -70162,108 +70191,181 @@ var config = {
     activationWidth: 10,
 
     /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     diagramMarginY: 10,
 
     /**
-     * Margin between actors.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * Width of actor boxes
-     * **Default value 150**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
      */
     width: 150,
 
     /**
-     * Height of actor boxes
-     * **Default value 65**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 65**..
      */
     height: 65,
 
     /**
-     * Margin around loop boxes
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     *
+     ***Notes:**
+     *
+     ***Default value 5**.
      */
     boxTextMargin: 5,
 
     /**
-     * margin around notes.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * Space between messages.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     *
+     ***Notes:**center **default**
      */
     messageAlign: 'center',
 
     /**
-     * mirror actors under diagram.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     *
+     ***Notes:**
+     *
+     ***Default value true**.
      */
     mirrorActors: true,
 
     /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
+     *available space. If set to false, the absolute space required is used.
+     ***Default value: True**.
      */
     useMaxWidth: true,
 
     /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *
+     *This will display arrows that start and begin at the same node as right angles, rather than a curve
+     ***Default value false**.
      */
     rightAngles: false,
 
     /**
-     * This will show the node numbers
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     ***Default value false**.
      */
     showSequenceNumbers: false,
 
     /**
-     * This sets the font size of the actor's description
-     * **Default value 14**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
      */
     actorFontSize: 14,
 
     /**
-     * This sets the font family of the actor's description
-     * **Default value "Open-Sans", "sans-serif"**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     *
+     ***Notes:**
+     ***Default value "Open-Sans", "sans-serif"**.
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
 
@@ -70274,14 +70376,22 @@ var config = {
     actorFontWeight: 400,
 
     /**
-     * This sets the font size of actor-attached notes.
-     * **Default value 14**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
      */
     noteFontSize: 14,
 
     /**
-     * This sets the font family of actor-attached notes.
-     * **Default value "trebuchet ms", verdana, arial**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *
+     ***Notes:**
+     ***Default value: trebuchet ms **.
      */
     noteFontFamily: '"trebuchet ms", verdana, arial',
 
@@ -70292,20 +70402,32 @@ var config = {
     noteFontWeight: 400,
 
     /**
-     * This sets the text alignment of actor-attached notes.
-     * **Default value center**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     *
+     ***Notes:**
+     ***Default value center**.
      */
     noteAlign: 'center',
 
     /**
-     * This sets the font size of actor messages.
-     * **Default value 16**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     *
+     ***Notes:**
+     ***Default value 16**.
      */
     messageFontSize: 16,
 
     /**
-     * This sets the font family of actor messages.
-     * **Default value "trebuchet ms", verdana, arial**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *
+     ***Notes:**
+     ***Default value:"trebuchet ms**.
      */
     messageFontFamily: '"trebuchet ms", verdana, arial',
 
@@ -70339,27 +70461,24 @@ var config = {
      */
     labelBoxHeight: 20,
     messageFont: function messageFont() {
-      var c = getConfig().sequence;
       return {
-        fontFamily: c.messageFontFamily,
-        fontSize: c.messageFontSize,
-        fontWeight: c.messageFontWeight
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight
       };
     },
     noteFont: function noteFont() {
-      var c = getConfig().sequence;
       return {
-        fontFamily: c.noteFontFamily,
-        fontSize: c.noteFontSize,
-        fontWeight: c.noteFontWeight
+        fontFamily: this.noteFontFamily,
+        fontSize: this.noteFontSize,
+        fontWeight: this.noteFontWeight
       };
     },
     actorFont: function actorFont() {
-      var c = getConfig().sequence;
       return {
-        fontFamily: c.actorFontFamily,
-        fontSize: c.actorFontSize,
-        fontWeight: c.actorFontWeight
+        fontFamily: this.actorFontFamily,
+        fontSize: this.actorFontSize,
+        fontWeight: this.actorFontWeight
       };
     }
   },
@@ -70369,62 +70488,107 @@ var config = {
    */
   gantt: {
     /**
-     * Margin top for the text over the gantt diagram
-     * **Default value 25**.
+     *### titleTopMargin
+     *
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 25**.
      */
     titleTopMargin: 25,
 
     /**
-     * The height of the bars in the graph
-     * **Default value 20**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 20**.
      */
     barHeight: 20,
 
     /**
-     * The margin between the different activities in the gantt diagram.
-     * **Default value 4**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
      */
     barGap: 4,
 
     /**
-     *  Margin between title and gantt diagram and between axis and gantt diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     topPadding: 50,
 
     /**
-     *  The space allocated for the section name to the left of the activities.
-     * **Default value 75**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 75**.
      */
     leftPadding: 75,
 
     /**
-     *  Vertical starting position of the grid lines.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 35**.
      */
     gridLineStartPadding: 35,
 
     /**
-     *  Font size ...
-     * **Default value 11**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
      */
     fontSize: 11,
 
     /**
-     * font family ...
-     * **Default value '"Open-Sans", "sans-serif"'**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *
+     ***Notes:**
+     *
+     ***Default value '"Open-Sans", "sans-serif"'**.
      */
     fontFamily: '"Open-Sans", "sans-serif"',
 
     /**
-     * The number of alternating section styles.
-     * **Default value 4**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
      */
     numberSectionStyles: 4,
 
     /**
-     * Datetime format of the axis. This might need adjustment to match your locale and preferences
-     * **Default value '%Y-%m-%d'**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     *
+     ***Notes:**
+     *
+     * This might need adjustment to match your locale and preferences
+     ***Default value '%Y-%m-%d'**.
      */
     axisFormat: '%Y-%m-%d'
   },
@@ -70434,84 +70598,134 @@ var config = {
    */
   journey: {
     /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 10**..
      */
     diagramMarginY: 10,
 
     /**
-     * Margin between actors.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * Width of actor boxes
-     * **Default value 150**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
      */
     width: 150,
 
     /**
-     * Height of actor boxes
-     * **Default value 65**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 65**.
      */
     height: 65,
 
     /**
-     * Margin around loop boxes
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
      */
     boxTextMargin: 5,
 
     /**
-     * margin around notes.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * Space between messages.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     *
+     ***Notes:**default:center**
      */
     messageAlign: 'center',
 
     /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
      */
     useMaxWidth: true,
 
     /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     *
+     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+     ***Default value false**.
      */
     rightAngles: false
   },
@@ -70547,43 +70761,82 @@ var config = {
    */
   er: {
     /**
-     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 20**.
      */
     diagramPadding: 20,
 
     /**
-     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
-     * where T = top, B = bottom, L = left, and R = right.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     *
+     ***Notes:**
+     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * T = top, B = bottom, L = left, and R = right.
+     ***Default value: TB **.
      */
     layoutDirection: 'TB',
 
     /**
-     * The mimimum width of an entity box, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 100**.
      */
     minEntityWidth: 100,
 
     /**
-     * The minimum height of an entity box, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 75 **
      */
     minEntityHeight: 75,
 
     /**
-     * The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     ***Default value: 15 **
      */
     entityPadding: 15,
 
     /**
-     * Stroke color of box edges and lines
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
+     ***Default value: gray **
      */
     stroke: 'gray',
 
     /**
-     * Fill color of entity boxes
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     *
+     ***Notes:**
+     ***Default value:'honeydew'**
      */
     fill: 'honeydew',
 
     /**
-     * Font size (expressed as an integer representing a number of  pixels)
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     *
+     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Default value: 12 **
      */
     fontSize: 12
   }
@@ -74564,7 +74817,7 @@ var parseClassifier = function parseClassifier(classifier) {
 /*!***************************************!*\
   !*** ./src/diagrams/common/common.js ***!
   \***************************************/
-/*! exports provided: getRows, sanitizeText, lineBreakRegex, default */
+/*! exports provided: getRows, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -74572,6 +74825,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRows", function() { return getRows; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitizeText", function() { return sanitizeText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineBreakRegex", function() { return lineBreakRegex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasBreaks", function() { return hasBreaks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splitBreaks", function() { return splitBreaks; });
 var getRows = function getRows(s) {
   if (!s) return 1;
   var str = breakToPlaceholder(s);
@@ -74594,6 +74849,12 @@ var sanitizeText = function sanitizeText(text, config) {
   return txt;
 };
 var lineBreakRegex = /<br\s*\/?>/gi;
+var hasBreaks = function hasBreaks(text) {
+  return /<br\s*[/]?>/gi.test(text);
+};
+var splitBreaks = function splitBreaks(text) {
+  return text.split(/<br\s*[/]?>/gi);
+};
 
 var breakToPlaceholder = function breakToPlaceholder(s) {
   return s.replace(lineBreakRegex, '#br#');
@@ -74606,6 +74867,8 @@ var placeholderToBreak = function placeholderToBreak(s) {
 /* harmony default export */ __webpack_exports__["default"] = ({
   getRows: getRows,
   sanitizeText: sanitizeText,
+  hasBreaks: hasBreaks,
+  splitBreaks: splitBreaks,
   lineBreakRegex: lineBreakRegex
 });
 
@@ -84629,6 +84892,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return apply; });
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+
+
 
 
 var prevActor = undefined;
@@ -84774,10 +85041,12 @@ var clear = function clear() {
 var parseMessage = function parseMessage(str) {
   var _str = str.trim();
 
-  return {
+  var message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
-    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
+    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
   };
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('parseMessage:', message);
+  return message;
 };
 var LINETYPE = {
   SOLID: 0,
@@ -85243,7 +85512,7 @@ var drawMessage = function drawMessage(g, msgModel) {
       type = msgModel.type,
       sequenceIndex = msgModel.sequenceIndex,
       wrap = msgModel.wrap;
-  var lines = message.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex).length;
+  var lines = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].splitBreaks(message).length;
   var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(message, conf.messageFont());
   var lineHeight = textDims.height / lines;
   msgModel.height += lineHeight;
@@ -85272,7 +85541,7 @@ var drawMessage = function drawMessage(g, msgModel) {
     lineStarty = bounds.getVerticalPos() + totalOffset;
 
     if (conf.rightAngles) {
-      line = g.append('path').attr('d', "M  ".concat(startx, ",").concat(bounds.getVerticalPos() + totalOffset, " H ").concat(startx + Math.max(conf.width / 2, textWidth / 2), " V ").concat(bounds.getVerticalPos() + 25 + totalOffset, " H ").concat(startx));
+      line = g.append('path').attr('d', "M  ".concat(startx, ",").concat(lineStarty, " H ").concat(startx + Math.max(conf.width / 2, textWidth / 2), " V ").concat(lineStarty + 25, " H ").concat(startx));
     } else {
       totalOffset += conf.boxMargin;
       lineStarty = bounds.getVerticalPos() + totalOffset;
@@ -85283,8 +85552,8 @@ var drawMessage = function drawMessage(g, msgModel) {
     var dx = Math.max(textWidth / 2, conf.width / 2);
     bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + 30 + totalOffset);
   } else {
-    lineStarty = bounds.getVerticalPos() + totalOffset;
     totalOffset += conf.boxMargin;
+    lineStarty = bounds.getVerticalPos() + totalOffset;
     line = g.append('line');
     line.attr('x1', startx);
     line.attr('y1', lineStarty);
@@ -85311,7 +85580,8 @@ var drawMessage = function drawMessage(g, msgModel) {
   }
 
   line.attr('stroke-width', 2);
-  line.attr('stroke', 'none');
+  line.attr('stroke', 'none'); // handled by theme/css anyway
+
   line.style('fill', 'none'); // remove any fill colour
 
   if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED) {
@@ -85402,10 +85672,10 @@ function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoop
     var textConf = conf.messageFont();
     msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
     msg.width = loopWidth;
-    msg.wrap = true; // const lines = msg.message.split(common.lineBreakRegex).length;
+    msg.wrap = true; // const lines = common.splitBreaks(msg.message).length;
 
     var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, textConf);
-    var totalOffset = textDims.height - conf.labelBoxHeight;
+    var totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
     heightAdjust = postMargin + totalOffset;
     _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("".concat(totalOffset, " - ").concat(msg.message));
   }
@@ -85732,7 +86002,7 @@ var calculateActorMargins = function calculateActorMargins(actors, actorToMessag
 var buildNoteModel = function buildNoteModel(msg, actors) {
   var startx = actors[msg.from].x;
   var stopx = actors[msg.to].x;
-  var shouldWrap = msg.wrap && msg.message && !_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(msg.message);
+  var shouldWrap = msg.wrap && msg.message;
   var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message, conf.noteFont());
   var noteModel = {
     width: shouldWrap ? conf.width : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
@@ -85786,7 +86056,7 @@ var buildMessageModel = function buildMessageModel(msg, actors) {
   var boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
   var msgDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, conf.messageFont());
 
-  if (msg.wrap && msg.message && !_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(msg.message)) {
+  if (msg.wrap && msg.message) {
     msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), conf.messageFont());
   }
 
@@ -85896,7 +86166,7 @@ var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
             var to = actors[msg.to];
             current.from = Math.min(from.x - msgModel.width / 2, from.x - from.width / 2, current.from);
             current.to = Math.max(to.x + msgModel.width / 2, to.x + from.width / 2, current.to);
-            current.width = Math.max(current.width, Math.abs(current.to - current.from));
+            current.width = Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
           } else {
             current.from = Math.min(msgModel.startx, current.from);
             current.to = Math.max(msgModel.stopx, current.to);
@@ -85943,8 +86213,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTextObj", function() { return getTextObj; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getNoteRect", function() { return getNoteRect; });
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-
 
 var drawRect = function drawRect(elem, rectData) {
   var rectElem = elem.append('rect');
@@ -86133,45 +86401,10 @@ var drawActor = function drawActor(elem, actor, conf) {
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
-  var txt = getTextObj();
 
-  var _conf$actorFont = conf.actorFont(),
-      fontSize = _conf$actorFont.fontSize,
-      fontFamily = _conf$actorFont.fontFamily,
-      fontWeight = _conf$actorFont.fontWeight;
-
-  var textDims = _utils__WEBPACK_IMPORTED_MODULE_1__["default"].calculateTextDimensions(actor.description, {
-    fontSize: fontSize,
-    fontFamily: fontFamily,
-    fontWeight: fontWeight
-  });
-  txt.text = actor.description;
-  txt.x = actor.x;
-  txt.y = actor.y + actor.height / 2 - textDims.height / 2;
-  txt.width = actor.width;
-  txt.height = actor.height;
-  txt.anchor = 'middle';
-  txt.valign = 'middle';
-  txt.textMargin = 10;
-  txt.class = 'actor';
-  txt.fontFamily = fontFamily;
-  txt.fontSize = fontSize;
-  txt.fontWeight = fontWeight;
-  txt.tspan = true;
-  txt.wrap = true;
-  drawText(g, txt);
-  /*
-  _drawTextCandidateFunc(conf)(
-    actor.description,
-    g,
-    rect.x - (conf.wrapPadding || 10),
-    rect.y,
-    rect.width + 2 * (conf.wrapPadding || 10),
-    rect.height,
-    { class: 'actor' },
-    conf
-  );
-  */
+  _drawTextCandidateFunc(conf)(actor.description, g, rect.x, rect.y, rect.width, rect.height, {
+    class: 'actor'
+  }, conf);
 };
 var anchorElement = function anchorElement(elem) {
   return elem.append('g');
@@ -86367,14 +86600,14 @@ var _drawTextCandidateFunc = function () {
   }
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
-    var fontSize = conf.fontSize,
-        fontFamily = conf.fontFamily,
-        fontWeight = conf.fontWeight;
+    var actorFontSize = conf.actorFontSize,
+        actorFontFamily = conf.actorFontFamily,
+        actorFontWeight = conf.actorFontWeight;
     var lines = content.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex);
 
     for (var i = 0; i < lines.length; i++) {
-      var dy = i * fontSize - fontSize * (lines.length - 1) / 2;
-      var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle').style('font-size', fontSize).style('font-weight', fontWeight).style('font-family', fontFamily);
+      var dy = i * actorFontSize - actorFontSize * (lines.length - 1) / 2;
+      var text = g.append('text').attr('x', x + width / 2).attr('y', y).style('text-anchor', 'middle').style('font-size', actorFontSize).style('font-weight', actorFontWeight).style('font-family', actorFontFamily);
       text.append('tspan').attr('x', x + width / 2).attr('dy', dy).text(lines[i]);
       text.attr('y', y + height / 2.0).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
 
@@ -91717,6 +91950,11 @@ var drawSimpleText = function drawSimpleText(elem, textData) {
   return textElem;
 };
 var wrapLabel = function wrapLabel(label, maxWidth, config) {
+  if (!wrapLabel.cache) {
+    // until memoize PR
+    wrapLabel.cache = {};
+  }
+
   if (!label) {
     return label;
   }
@@ -91729,8 +91967,8 @@ var wrapLabel = function wrapLabel(label, maxWidth, config) {
   }, config);
   var cacheKey = "".concat(label, "-").concat(maxWidth, "-").concat(JSON.stringify(config));
 
-  if (wrapLabel[cacheKey]) {
-    return wrapLabel[cacheKey];
+  if (wrapLabel.cache[cacheKey]) {
+    return wrapLabel.cache[cacheKey];
   }
 
   if (_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex.test(label)) {
@@ -91768,13 +92006,18 @@ var wrapLabel = function wrapLabel(label, maxWidth, config) {
   var result = completedLines.filter(function (line) {
     return line !== '';
   }).join(config.joinWith);
-  wrapLabel[cacheKey] = result;
+  wrapLabel.cache[cacheKey] = result;
   return result;
 };
 
 var breakString = function breakString(word, maxWidth) {
   var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
   var config = arguments.length > 3 ? arguments[3] : undefined;
+
+  if (!breakString.cache) {
+    breakString.cache = {};
+  }
+
   config = Object.assign({
     fontSize: 12,
     fontWeight: 400,
@@ -91782,8 +92025,8 @@ var breakString = function breakString(word, maxWidth) {
   }, config);
   var cacheKey = "".concat(word, "-").concat(maxWidth, "-").concat(hyphenCharacter, "-").concat(JSON.stringify(config));
 
-  if (breakString[cacheKey]) {
-    return breakString[cacheKey];
+  if (breakString.cache[cacheKey]) {
+    return breakString.cache[cacheKey];
   }
 
   var characters = word.split('');
@@ -91807,7 +92050,7 @@ var breakString = function breakString(word, maxWidth) {
     hyphenatedStrings: lines,
     remainingWord: currentLine
   };
-  breakString[cacheKey] = result;
+  breakString.cache[cacheKey] = result;
   return result;
 };
 /**
@@ -91856,6 +92099,10 @@ var calculateTextWidth = function calculateTextWidth(text, config) {
  */
 
 var calculateTextDimensions = function calculateTextDimensions(text, config) {
+  if (!calculateTextDimensions.cache) {
+    calculateTextDimensions.cache = {};
+  }
+
   config = Object.assign({
     fontSize: 12,
     fontWeight: 400,
@@ -91875,15 +92122,15 @@ var calculateTextDimensions = function calculateTextDimensions(text, config) {
 
   var cacheKey = "".concat(text, "-").concat(JSON.stringify(config));
 
-  if (calculateTextDimensions[cacheKey]) {
-    return calculateTextDimensions[cacheKey];
+  if (calculateTextDimensions.cache[cacheKey]) {
+    return calculateTextDimensions.cache[cacheKey];
   } // We can't really know if the user supplied font family will render on the user agent;
   // thus, we'll take the max width between the user supplied font family, and a default
   // of sans-serif.
 
 
   var fontFamilies = ['sans-serif', fontFamily];
-  var lines = text.split(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex);
+  var lines = _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].splitBreaks(text);
   var dims = [];
   var body = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body'); // We don't want to leak DOM elements - if a removal operation isn't available
   // for any reason, do not continue.
@@ -91943,7 +92190,7 @@ var calculateTextDimensions = function calculateTextDimensions(text, config) {
   g.remove();
   var index = isNaN(dims[1].height) || isNaN(dims[1].width) || isNaN(dims[1].lineHeight) || dims[0].height > dims[1].height && dims[0].width > dims[1].width && dims[0].lineHeight > dims[1].lineHeight ? 0 : 1;
   var result = dims[index];
-  calculateTextDimensions[cacheKey] = result;
+  calculateTextDimensions.cache[cacheKey] = result;
   return result;
 };
 /* harmony default export */ __webpack_exports__["default"] = ({

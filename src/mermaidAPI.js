@@ -52,6 +52,7 @@ import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import configApi from './config';
 
 const themes = {};
+
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
   themes[themeName] = require(`./themes/${themeName}/index.scss`);
 }
