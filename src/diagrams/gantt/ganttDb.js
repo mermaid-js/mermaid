@@ -4,7 +4,6 @@ import { logger } from '../../logger';
 import { getConfig } from '../../config';
 import utils from '../../utils';
 
-const config = getConfig();
 let dateFormat = '';
 let axisFormat = '';
 let todayMarker = '';
