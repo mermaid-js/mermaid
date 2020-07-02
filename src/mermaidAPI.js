@@ -51,6 +51,7 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 
 const themes = {};
+
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
   themes[themeName] = require(`./themes/${themeName}/index.scss`);
 }
@@ -105,27 +106,27 @@ const config = {
   maxTextSize: 50000,
 
   /**
-  *| Parameter | Description |Type | Required | Values|
-  *| --- | --- | --- | --- | --- |
-  *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
-  *
-  ***notes: Default value is \\"trebuchet ms\\".
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
    */
   fontFamily: '"trebuchet ms", verdana, arial;',
 
   /**
-  *| Parameter | Description |Type | Required | Values|
-  *| --- | --- | --- | --- | --- |
-  *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
-  *
-  *
-  ***Notes:** 
-  *-   debug: 1.
-  *-   info: 2.
-  *-   warn: 3.
-  *-   error: 4.
-  *-   fatal: 5(default).
-  */
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
+   */
   logLevel: 5,
 
   /**
@@ -144,7 +145,7 @@ const config = {
    *| --- | --- | --- | --- | --- |
    *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
    *
-   ***Notes:** 
+   ***Notes:**
    ***Default value: true**
    */
   startOnLoad: true,
@@ -156,7 +157,7 @@ const config = {
    *
    *
    *## Notes**: This matters if you are using base tag settings.
-     ***Default value: false**.
+   ***Default value: false**.
    */
   arrowMarkerAbsolute: false,
 
@@ -178,8 +179,8 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
      *
-     ***Notes: 
-     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.** 
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
      ***Default value 50**.
      */
     nodeSpacing: 50,
@@ -217,7 +218,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 50**.
      */
     diagramMarginX: 50,
@@ -227,7 +228,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 10**.
      */
     diagramMarginY: 10,
@@ -237,7 +238,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 50**.
      */
     actorMargin: 50,
@@ -247,7 +248,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| width | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 150**.
      */
     width: 150,
@@ -257,7 +258,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| height | Height of actor boxes | Integer | Required | Any Positive Value|
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 65**..
      */
     height: 65,
@@ -267,7 +268,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      ***Default value 10**.
      */
@@ -278,7 +279,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
      *
-     ***Notes:** 
+     ***Notes:**
      *
      ***Default value 5**.
      */
@@ -289,7 +290,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      ***Default value 10**.
      */
@@ -300,7 +301,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      *Space between messages.
      ***Default value 35**.
@@ -321,7 +322,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      ***Default value true**.
      */
@@ -342,7 +343,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| useMaxWidth | See Notes | Boolean | Required | True, False |
      *
-     ***Notes:** 
+     ***Notes:**
      *when this flag is set to true, the height and width is set to 100% and is then scaling with the
      *available space. If set to false, the absolute space required is used.
      ***Default value: True**.
@@ -354,7 +355,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      *This will display arrows that start and begin at the same node as right angles, rather than a curve
      ***Default value false**.
@@ -365,7 +366,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value false**.
      */
     showSequenceNumbers: false,
@@ -374,7 +375,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 14**..
      */
     actorFontSize: 14,
@@ -383,7 +384,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value "Open-Sans", "sans-serif"**.
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
@@ -397,7 +398,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 14**..
      */
     noteFontSize: 14,
@@ -406,7 +407,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value: trebuchet ms **.
      */
     noteFontFamily: '"trebuchet ms", verdana, arial',
@@ -420,7 +421,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value center**.
      */
     noteAlign: 'center',
@@ -429,7 +430,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 16**.
      */
     messageFontSize: 16,
@@ -438,7 +439,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value:"trebuchet ms**.
      */
     messageFontFamily: '"trebuchet ms", verdana, arial',
@@ -470,7 +471,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 25**.
      */
     titleTopMargin: 25,
@@ -480,7 +481,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 20**.
      */
     barHeight: 20,
@@ -490,7 +491,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 4**.
      */
     barGap: 4,
@@ -500,7 +501,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 50**.
      */
     topPadding: 50,
@@ -510,7 +511,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 75**.
      */
     leftPadding: 75,
@@ -520,7 +521,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 35**.
      */
     gridLineStartPadding: 35,
@@ -530,7 +531,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| fontSize | Font size| Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 11**.
      */
     fontSize: 11,
@@ -540,7 +541,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      ***Default value '"Open-Sans", "sans-serif"'**.
      */
@@ -551,7 +552,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 4**.
      */
     numberSectionStyles: 4,
@@ -561,7 +562,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      * This might need adjustment to match your locale and preferences
      ***Default value '%Y-%m-%d'**.
@@ -577,7 +578,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 50**.
      */
     diagramMarginX: 50,
@@ -587,7 +588,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 10**..
      */
     diagramMarginY: 10,
@@ -597,7 +598,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 50**.
      */
     actorMargin: 50,
@@ -607,7 +608,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| width | Width of actor boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 150**.
      */
     width: 150,
@@ -627,7 +628,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 10**.
      */
     boxMargin: 10,
@@ -637,7 +638,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      */
     boxTextMargin: 5,
 
@@ -646,7 +647,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value 10**.
      */
     noteMargin: 10,
@@ -656,7 +657,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
      *
-     ***Notes:** 
+     ***Notes:**
      *
      *Space between messages.
      ***Default value 35**.
@@ -796,7 +797,7 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
      *
-     ***Notes:** 
+     ***Notes:**
      ***Default value:'honeydew'**
      */
     fill: 'honeydew',
@@ -807,7 +808,7 @@ const config = {
      *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
      *
      ***Notes:**Font size (expressed as an integer representing a number of  pixels)
-     ***Default value: 12 **     
+     ***Default value: 12 **
      */
     fontSize: 12
   }
