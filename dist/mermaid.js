@@ -76666,7 +76666,7 @@ var setClickFun = function setClickFun(_id, functionName) {
   var id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
 
-  if (config.securityLevel !== 'loose') {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
     return;
   }
 
@@ -79808,7 +79808,7 @@ var compileTasks = function compileTasks() {
 var setLink = function setLink(ids, _linkStr) {
   var linkStr = _linkStr;
 
-  if (config.securityLevel !== 'loose') {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
     linkStr = Object(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_1__["sanitizeUrl"])(_linkStr);
   }
 
@@ -79840,7 +79840,7 @@ var setClass = function setClass(ids, className) {
 };
 
 var setClickFun = function setClickFun(id, functionName, functionArgs) {
-  if (config.securityLevel !== 'loose') {
+  if (Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().securityLevel !== 'loose') {
     return;
   }
 
@@ -91425,6 +91425,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./diagrams/common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var crypto_random_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! crypto-random-string */ "./node_modules/crypto-random-string/index.js");
 /* harmony import */ var crypto_random_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(crypto_random_string__WEBPACK_IMPORTED_MODULE_4__);
+var _this = undefined;
+
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
@@ -91534,8 +91536,8 @@ var detectInit = function detectInit(text) {
  * ```
  *
  * @param {string} text The text defining the graph
- * @param {string|RegExp} type The directive to return (default: null
- * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matchd by the input type
+ * @param {string|RegExp} type The directive to return (default: null)
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
  *          if a single directive was found, that directive object will be returned.
  */
 
@@ -91652,6 +91654,25 @@ var detectType = function detectType(text) {
 
   return 'flowchart';
 };
+
+var memoize = function memoize(fn, resolver) {
+  var cache = {};
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var n = resolver ? resolver.apply(_this, args) : args[0];
+
+    if (n in cache) {
+      return cache[n];
+    } else {
+      var result = fn.apply(void 0, args);
+      cache[n] = result;
+      return result;
+    }
+  };
+};
 /**
  * @function isSubstringInArray
  * Detects whether a substring in present in a given array
@@ -91659,6 +91680,7 @@ var detectType = function detectType(text) {
  * @param {array} arr The array to search
  * @returns {number} the array index containing the substring or -1 if not present
  **/
+
 
 var isSubstringInArray = function isSubstringInArray(str, arr) {
   for (var i = 0; i < arr.length; i++) {
@@ -91699,8 +91721,8 @@ var runFunc = function runFunc(functionName) {
     if (!obj) return;
   }
 
-  for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    params[_key - 1] = arguments[_key];
+  for (var _len2 = arguments.length, params = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    params[_key2 - 1] = arguments[_key2];
   }
 
   (_obj = obj)[fnName].apply(_obj, params);
@@ -91718,9 +91740,8 @@ var traverseEdge = function traverseEdge(points) {
     prevPoint = point;
   }); // Traverse half of total distance along points
 
-  var distanceToLabel = totalDistance / 2;
-  var remainingDistance = distanceToLabel;
-  var center;
+  var remainingDistance = totalDistance / 2;
+  var center = undefined;
   prevPoint = undefined;
   points.forEach(function (point) {
     if (prevPoint && !center) {
@@ -91753,8 +91774,7 @@ var traverseEdge = function traverseEdge(points) {
 };
 
 var calcLabelPosition = function calcLabelPosition(points) {
-  var p = traverseEdge(points);
-  return p;
+  return traverseEdge(points);
 };
 
 var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePresent, points, initialPosition) {
@@ -91772,7 +91792,10 @@ var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePre
 
   var distanceToCardinalityPoint = 25;
   var remainingDistance = distanceToCardinalityPoint;
-  var center;
+  var center = {
+    x: 0,
+    y: 0
+  };
   prevPoint = undefined;
   points.forEach(function (point) {
     if (prevPoint && !center) {
@@ -91949,12 +91972,7 @@ var drawSimpleText = function drawSimpleText(elem, textData) {
   span.text(nText);
   return textElem;
 };
-var wrapLabel = function wrapLabel(label, maxWidth, config) {
-  if (!wrapLabel.cache) {
-    // until memoize PR
-    wrapLabel.cache = {};
-  }
-
+var wrapLabel = memoize(function (label, maxWidth, config) {
   if (!label) {
     return label;
   }
@@ -91965,11 +91983,6 @@ var wrapLabel = function wrapLabel(label, maxWidth, config) {
     fontFamily: 'Arial',
     joinWith: '<br/>'
   }, config);
-  var cacheKey = "".concat(label, "-").concat(maxWidth, "-").concat(JSON.stringify(config));
-
-  if (wrapLabel.cache[cacheKey]) {
-    return wrapLabel.cache[cacheKey];
-  }
 
   if (_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex.test(label)) {
     return label;
@@ -92003,32 +92016,21 @@ var wrapLabel = function wrapLabel(label, maxWidth, config) {
       completedLines.push(nextLine);
     }
   });
-  var result = completedLines.filter(function (line) {
+  return completedLines.filter(function (line) {
     return line !== '';
   }).join(config.joinWith);
-  wrapLabel.cache[cacheKey] = result;
-  return result;
-};
-
-var breakString = function breakString(word, maxWidth) {
+}, function (label, maxWidth, config) {
+  return "".concat(label, "-").concat(maxWidth, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily, "-").concat(config.joinWith);
+});
+var breakString = memoize(function (word, maxWidth) {
   var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
   var config = arguments.length > 3 ? arguments[3] : undefined;
-
-  if (!breakString.cache) {
-    breakString.cache = {};
-  }
-
   config = Object.assign({
     fontSize: 12,
     fontWeight: 400,
-    fontFamily: 'Arial'
+    fontFamily: 'Arial',
+    margin: 0
   }, config);
-  var cacheKey = "".concat(word, "-").concat(maxWidth, "-").concat(hyphenCharacter, "-").concat(JSON.stringify(config));
-
-  if (breakString.cache[cacheKey]) {
-    return breakString.cache[cacheKey];
-  }
-
   var characters = word.split('');
   var lines = [];
   var currentLine = '';
@@ -92046,13 +92048,15 @@ var breakString = function breakString(word, maxWidth) {
       currentLine = nextLine;
     }
   });
-  var result = {
+  return {
     hyphenatedStrings: lines,
     remainingWord: currentLine
   };
-  breakString.cache[cacheKey] = result;
-  return result;
-};
+}, function (word, maxWidth) {
+  var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
+  var config = arguments.length > 3 ? arguments[3] : undefined;
+  return "".concat(word, "-").concat(maxWidth, "-").concat(hyphenCharacter, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
+});
 /**
  * This calculates the text's height, taking into account the wrap breaks and
  * both the statically configured height, width, and the length of the text (in pixels).
@@ -92062,15 +92066,15 @@ var breakString = function breakString(word, maxWidth) {
  *
  * @return - The height for the given text
  * @param text the text to measure
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
  */
-
 
 var calculateTextHeight = function calculateTextHeight(text, config) {
   config = Object.assign({
     fontSize: 12,
     fontWeight: 400,
-    fontFamily: 'Arial'
+    fontFamily: 'Arial',
+    margin: 15
   }, config);
   return calculateTextDimensions(text, config).height;
 };
@@ -92079,7 +92083,7 @@ var calculateTextHeight = function calculateTextHeight(text, config) {
  *
  * @return - The width for the given text
  * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
  */
 
 var calculateTextWidth = function calculateTextWidth(text, config) {
@@ -92098,11 +92102,7 @@ var calculateTextWidth = function calculateTextWidth(text, config) {
  * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
  */
 
-var calculateTextDimensions = function calculateTextDimensions(text, config) {
-  if (!calculateTextDimensions.cache) {
-    calculateTextDimensions.cache = {};
-  }
-
+var calculateTextDimensions = memoize(function (text, config) {
   config = Object.assign({
     fontSize: 12,
     fontWeight: 400,
@@ -92118,19 +92118,13 @@ var calculateTextDimensions = function calculateTextDimensions(text, config) {
       width: 0,
       height: 0
     };
-  }
-
-  var cacheKey = "".concat(text, "-").concat(JSON.stringify(config));
-
-  if (calculateTextDimensions.cache[cacheKey]) {
-    return calculateTextDimensions.cache[cacheKey];
   } // We can't really know if the user supplied font family will render on the user agent;
   // thus, we'll take the max width between the user supplied font family, and a default
   // of sans-serif.
 
 
   var fontFamilies = ['sans-serif', fontFamily];
-  var lines = _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].splitBreaks(text);
+  var lines = text.split(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex);
   var dims = [];
   var body = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body'); // We don't want to leak DOM elements - if a removal operation isn't available
   // for any reason, do not continue.
@@ -92189,10 +92183,10 @@ var calculateTextDimensions = function calculateTextDimensions(text, config) {
 
   g.remove();
   var index = isNaN(dims[1].height) || isNaN(dims[1].width) || isNaN(dims[1].lineHeight) || dims[0].height > dims[1].height && dims[0].width > dims[1].width && dims[0].lineHeight > dims[1].lineHeight ? 0 : 1;
-  var result = dims[index];
-  calculateTextDimensions.cache[cacheKey] = result;
-  return result;
-};
+  return dims[index];
+}, function (text, config) {
+  return "".concat(text, "-").concat(config.fontSize, "-").concat(config.fontWeight, "-").concat(config.fontFamily);
+});
 /* harmony default export */ __webpack_exports__["default"] = ({
   assignWithDepth: assignWithDepth,
   wrapLabel: wrapLabel,
@@ -92210,6 +92204,7 @@ var calculateTextDimensions = function calculateTextDimensions(text, config) {
   getStylesFromArray: getStylesFromArray,
   generateId: generateId,
   random: random,
+  memoize: memoize,
   runFunc: runFunc
 });
 
