@@ -69,6 +69,25 @@ describe('when assignWithDepth: should merge objects within objects', function()
     expect(result).toEqual({ foo: "foo", bar: { foo: 'foo', bar: { foo: { message: 'this', willbe: 'present' } } }, foobar: "foobar", boofar: 1 });
   });
 });
+describe('when memoizing', function() {
+  it('should return the same value', function() {
+    const fib = utils.memoize(function(n, canary) {
+      canary.flag = true;
+      if (n < 2){
+        return 1;
+      }else{
+        //We'll console.log a loader every time we have to recurse
+        return fib(n-2, canary) + fib(n-1, canary);
+      }
+    });
+    let canary = {flag: false};
+    fib(10, canary);
+    expect(canary.flag).toBe(true);
+    canary = {flag: false};
+    fib(10, canary);
+    expect(canary.flag).toBe(false);
+  });
+})
 describe('when detecting chart type ', function() {
   it('should handle a graph definition', function() {
     const str = 'graph TB\nbfs1:queue';
@@ -103,7 +122,7 @@ Alice->Bob: hi`;
     const type = utils.detectType(str);
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
-    expect(init).toEqual({logLevel:0,theme:"dark", sequence: { wrapEnabled: true }});
+    expect(init).toEqual({logLevel:0, theme:"dark", sequence: { wrapEnabled: true }});
   });
   it('should handle a multiline init definition', function() {
     const str = `

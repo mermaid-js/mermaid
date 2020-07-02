@@ -106,8 +106,8 @@ export const detectInit = function(text) {
  * ```
  *
  * @param {string} text The text defining the graph
- * @param {string|RegExp} type The directive to return (default: null
- * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matchd by the input type
+ * @param {string|RegExp} type The directive to return (default: null)
+ * @returns {object | Array} An object or Array representing the directive(s): { type: string, args: object|null } matched by the input type
  *          if a single directive was found, that directive object will be returned.
  */
 export const detectDirective = function(text, type = null) {
@@ -221,6 +221,20 @@ export const detectType = function(text) {
   return 'flowchart';
 };
 
+const memoize = (fn, resolver) => {
+  let cache = {};
+  return (...args) => {
+    let n = resolver ? resolver.apply(this, args) : args[0];
+    if (n in cache) {
+      return cache[n];
+    } else {
+      let result = fn(...args);
+      cache[n] = result;
+      return result;
+    }
+  };
+};
+
 /**
  * @function isSubstringInArray
  * Detects whether a substring in present in a given array
@@ -256,13 +270,13 @@ export const formatUrl = (linkStr, config) => {
 };
 
 export const runFunc = (functionName, ...params) => {
-  var arrPaths = functionName.split('.');
+  const arrPaths = functionName.split('.');
 
-  var len = arrPaths.length - 1;
-  var fnName = arrPaths[len];
+  const len = arrPaths.length - 1;
+  const fnName = arrPaths[len];
 
-  var obj = window;
-  for (var i = 0; i < len; i++) {
+  let obj = window;
+  for (let i = 0; i < len; i++) {
     obj = obj[arrPaths[i]];
     if (!obj) return;
   }
@@ -283,10 +297,8 @@ const traverseEdge = points => {
   });
 
   // Traverse half of total distance along points
-  const distanceToLabel = totalDistance / 2;
-
-  let remainingDistance = distanceToLabel;
-  let center;
+  let remainingDistance = totalDistance / 2;
+  let center = undefined;
   prevPoint = undefined;
   points.forEach(point => {
     if (prevPoint && !center) {
@@ -313,8 +325,7 @@ const traverseEdge = points => {
 };
 
 const calcLabelPosition = points => {
-  const p = traverseEdge(points);
-  return p;
+  return traverseEdge(points);
 };
 
 const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition) => {
@@ -332,7 +343,7 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
   const distanceToCardinalityPoint = 25;
 
   let remainingDistance = distanceToCardinalityPoint;
-  let center;
+  let center = { x: 0, y: 0 };
   prevPoint = undefined;
   points.forEach(point => {
     if (prevPoint && !center) {
@@ -498,81 +509,73 @@ export const drawSimpleText = function(elem, textData) {
   return textElem;
 };
 
-export const wrapLabel = (label, maxWidth, config) => {
-  if (!wrapLabel.cache) {
-    // until memoize PR
-    wrapLabel.cache = {};
-  }
-  if (!label) {
-    return label;
-  }
-  config = Object.assign(
-    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
-    config
-  );
-  const cacheKey = `${label}-${maxWidth}-${JSON.stringify(config)}`;
-  if (wrapLabel.cache[cacheKey]) {
-    return wrapLabel.cache[cacheKey];
-  }
-  if (common.lineBreakRegex.test(label)) {
-    return label;
-  }
-  const words = label.split(' ');
-  const completedLines = [];
-  let nextLine = '';
-  words.forEach((word, index) => {
-    const wordLength = calculateTextWidth(`${word} `, config);
-    const nextLineLength = calculateTextWidth(nextLine, config);
-    if (wordLength > maxWidth) {
-      const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
-      completedLines.push(nextLine, ...hyphenatedStrings);
-      nextLine = remainingWord;
-    } else if (nextLineLength + wordLength >= maxWidth) {
-      completedLines.push(nextLine);
-      nextLine = word;
-    } else {
-      nextLine = [nextLine, word].filter(Boolean).join(' ');
+export const wrapLabel = memoize(
+  (label, maxWidth, config) => {
+    if (!label) {
+      return label;
     }
-    const currentWord = index + 1;
-    const isLastWord = currentWord === words.length;
-    if (isLastWord) {
-      completedLines.push(nextLine);
+    config = Object.assign(
+      { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', joinWith: '<br/>' },
+      config
+    );
+    if (common.lineBreakRegex.test(label)) {
+      return label;
     }
-  });
-  const result = completedLines.filter(line => line !== '').join(config.joinWith);
-  wrapLabel.cache[cacheKey] = result;
-  return result;
-};
+    const words = label.split(' ');
+    const completedLines = [];
+    let nextLine = '';
+    words.forEach((word, index) => {
+      const wordLength = calculateTextWidth(`${word} `, config);
+      const nextLineLength = calculateTextWidth(nextLine, config);
+      if (wordLength > maxWidth) {
+        const { hyphenatedStrings, remainingWord } = breakString(word, maxWidth, '-', config);
+        completedLines.push(nextLine, ...hyphenatedStrings);
+        nextLine = remainingWord;
+      } else if (nextLineLength + wordLength >= maxWidth) {
+        completedLines.push(nextLine);
+        nextLine = word;
+      } else {
+        nextLine = [nextLine, word].filter(Boolean).join(' ');
+      }
+      const currentWord = index + 1;
+      const isLastWord = currentWord === words.length;
+      if (isLastWord) {
+        completedLines.push(nextLine);
+      }
+    });
+    return completedLines.filter(line => line !== '').join(config.joinWith);
+  },
+  (label, maxWidth, config) =>
+    `${label}-${maxWidth}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}-${config.joinWith}`
+);
 
-const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
-  if (!breakString.cache) {
-    breakString.cache = {};
-  }
-  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
-  const cacheKey = `${word}-${maxWidth}-${hyphenCharacter}-${JSON.stringify(config)}`;
-  if (breakString.cache[cacheKey]) {
-    return breakString.cache[cacheKey];
-  }
-  const characters = word.split('');
-  const lines = [];
-  let currentLine = '';
-  characters.forEach((character, index) => {
-    const nextLine = `${currentLine}${character}`;
-    const lineWidth = calculateTextWidth(nextLine, config);
-    if (lineWidth >= maxWidth) {
-      const currentCharacter = index + 1;
-      const isLastLine = characters.length === currentCharacter;
-      const hyphenatedNextLine = `${nextLine}${hyphenCharacter}`;
-      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
-      currentLine = '';
-    } else {
-      currentLine = nextLine;
-    }
-  });
-  const result = { hyphenatedStrings: lines, remainingWord: currentLine };
-  breakString.cache[cacheKey] = result;
-  return result;
-};
+const breakString = memoize(
+  (word, maxWidth, hyphenCharacter = '-', config) => {
+    config = Object.assign(
+      { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 0 },
+      config
+    );
+    const characters = word.split('');
+    const lines = [];
+    let currentLine = '';
+    characters.forEach((character, index) => {
+      const nextLine = `${currentLine}${character}`;
+      const lineWidth = calculateTextWidth(nextLine, config);
+      if (lineWidth >= maxWidth) {
+        const currentCharacter = index + 1;
+        const isLastLine = characters.length === currentCharacter;
+        const hyphenatedNextLine = `${nextLine}${hyphenCharacter}`;
+        lines.push(isLastLine ? nextLine : hyphenatedNextLine);
+        currentLine = '';
+      } else {
+        currentLine = nextLine;
+      }
+    });
+    return { hyphenatedStrings: lines, remainingWord: currentLine };
+  },
+  (word, maxWidth, hyphenCharacter = '-', config) =>
+    `${word}-${maxWidth}-${hyphenCharacter}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+);
 
 /**
  * This calculates the text's height, taking into account the wrap breaks and
@@ -583,10 +586,13 @@ const breakString = (word, maxWidth, hyphenCharacter = '-', config) => {
  *
  * @return - The height for the given text
  * @param text the text to measure
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
  */
 export const calculateTextHeight = function(text, config) {
-  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
+  config = Object.assign(
+    { fontSize: 12, fontWeight: 400, fontFamily: 'Arial', margin: 15 },
+    config
+  );
   return calculateTextDimensions(text, config).height;
 };
 
@@ -595,7 +601,7 @@ export const calculateTextHeight = function(text, config) {
  *
  * @return - The width for the given text
  * @param text - The text to calculate the width of
- * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ * @param config - the config for fontSize, fontFamily, and fontWeight all impacting the resulting size
  */
 export const calculateTextWidth = function(text, config) {
   config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
@@ -609,71 +615,65 @@ export const calculateTextWidth = function(text, config) {
  * @param text - The text to calculate the width of
  * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
  */
-export const calculateTextDimensions = function(text, config) {
-  if (!calculateTextDimensions.cache) {
-    calculateTextDimensions.cache = {};
-  }
-  config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
-  const { fontSize, fontFamily, fontWeight } = config;
-  if (!text) {
-    return { width: 0, height: 0 };
-  }
-  const cacheKey = `${text}-${JSON.stringify(config)}`;
-  if (calculateTextDimensions.cache[cacheKey]) {
-    return calculateTextDimensions.cache[cacheKey];
-  }
-
-  // We can't really know if the user supplied font family will render on the user agent;
-  // thus, we'll take the max width between the user supplied font family, and a default
-  // of sans-serif.
-  const fontFamilies = ['sans-serif', fontFamily];
-  const lines = common.splitBreaks(text);
-  let dims = [];
-
-  const body = select('body');
-  // We don't want to leak DOM elements - if a removal operation isn't available
-  // for any reason, do not continue.
-  if (!body.remove) {
-    return { width: 0, height: 0, lineHeight: 0 };
-  }
-
-  const g = body.append('svg');
-
-  for (let fontFamily of fontFamilies) {
-    let cheight = 0;
-    let dim = { width: 0, height: 0, lineHeight: 0 };
-    for (let line of lines) {
-      const textObj = getTextObj();
-      textObj.text = line;
-      const textElem = drawSimpleText(g, textObj)
-        .style('font-size', fontSize)
-        .style('font-weight', fontWeight)
-        .style('font-family', fontFamily);
-
-      let bBox = (textElem._groups || textElem)[0][0].getBBox();
-      dim.width = Math.round(Math.max(dim.width, bBox.width));
-      cheight = Math.round(bBox.height);
-      dim.height += cheight;
-      dim.lineHeight = Math.round(Math.max(dim.lineHeight, cheight));
+export const calculateTextDimensions = memoize(
+  function(text, config) {
+    config = Object.assign({ fontSize: 12, fontWeight: 400, fontFamily: 'Arial' }, config);
+    const { fontSize, fontFamily, fontWeight } = config;
+    if (!text) {
+      return { width: 0, height: 0 };
     }
-    dims.push(dim);
-  }
 
-  g.remove();
+    // We can't really know if the user supplied font family will render on the user agent;
+    // thus, we'll take the max width between the user supplied font family, and a default
+    // of sans-serif.
+    const fontFamilies = ['sans-serif', fontFamily];
+    const lines = text.split(common.lineBreakRegex);
+    let dims = [];
 
-  let index =
-    isNaN(dims[1].height) ||
-    isNaN(dims[1].width) ||
-    isNaN(dims[1].lineHeight) ||
-    (dims[0].height > dims[1].height &&
-      dims[0].width > dims[1].width &&
-      dims[0].lineHeight > dims[1].lineHeight)
-      ? 0
-      : 1;
-  const result = dims[index];
-  calculateTextDimensions.cache[cacheKey] = result;
-  return result;
-};
+    const body = select('body');
+    // We don't want to leak DOM elements - if a removal operation isn't available
+    // for any reason, do not continue.
+    if (!body.remove) {
+      return { width: 0, height: 0, lineHeight: 0 };
+    }
+
+    const g = body.append('svg');
+
+    for (let fontFamily of fontFamilies) {
+      let cheight = 0;
+      let dim = { width: 0, height: 0, lineHeight: 0 };
+      for (let line of lines) {
+        const textObj = getTextObj();
+        textObj.text = line;
+        const textElem = drawSimpleText(g, textObj)
+          .style('font-size', fontSize)
+          .style('font-weight', fontWeight)
+          .style('font-family', fontFamily);
+
+        let bBox = (textElem._groups || textElem)[0][0].getBBox();
+        dim.width = Math.round(Math.max(dim.width, bBox.width));
+        cheight = Math.round(bBox.height);
+        dim.height += cheight;
+        dim.lineHeight = Math.round(Math.max(dim.lineHeight, cheight));
+      }
+      dims.push(dim);
+    }
+
+    g.remove();
+
+    let index =
+      isNaN(dims[1].height) ||
+      isNaN(dims[1].width) ||
+      isNaN(dims[1].lineHeight) ||
+      (dims[0].height > dims[1].height &&
+        dims[0].width > dims[1].width &&
+        dims[0].lineHeight > dims[1].lineHeight)
+        ? 0
+        : 1;
+    return dims[index];
+  },
+  (text, config) => `${text}-${config.fontSize}-${config.fontWeight}-${config.fontFamily}`
+);
 
 export default {
   assignWithDepth,
@@ -692,5 +692,6 @@ export default {
   getStylesFromArray,
   generateId,
   random,
+  memoize,
   runFunc
 };
