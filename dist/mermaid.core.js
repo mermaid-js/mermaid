@@ -1188,7 +1188,7 @@ var createLabel = function createLabel(_vertexText, style, isTitle, isNode) {
 /*!************************************!*\
   !*** ./src/dagre-wrapper/edges.js ***!
   \************************************/
-/*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, insertEdge */
+/*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, intersection, insertEdge */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1196,16 +1196,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdgeLabel", function() { return insertEdgeLabel; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "positionEdgeLabel", function() { return positionEdgeLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "intersection", function() { return intersection; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertEdge", function() { return insertEdge; });
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../logger */ "./src/logger.js");
 /* harmony import */ var _createLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./createLabel */ "./src/dagre-wrapper/createLabel.js");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config */ "./src/config.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils */ "./src/utils.js");
  // eslint-disable-line
 
 
 
+
+ // import { calcLabelPosition } from '../utils';
 
 var edgeLabels = {};
 var clear = function clear() {
@@ -1237,12 +1241,22 @@ var insertEdgeLabel = function insertEdgeLabel(elem, edge) {
   edge.width = bbox.width;
   edge.height = bbox.height;
 };
-var positionEdgeLabel = function positionEdgeLabel(edge) {
+var positionEdgeLabel = function positionEdgeLabel(edge, points) {
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
 
   if (edge.label) {
     var el = edgeLabels[edge.id];
-    el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+    var x = edge.x;
+    var y = edge.y;
+
+    if (points) {
+      // debugger;
+      var pos = _utils__WEBPACK_IMPORTED_MODULE_4__["default"].calcLabelPosition(points);
+      x = pos.x;
+      y = pos.y;
+    }
+
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
 }; // const getRelationType = function(type) {
 //   switch (type) {
@@ -1258,6 +1272,7 @@ var positionEdgeLabel = function positionEdgeLabel(edge) {
 // };
 
 var outsideNode = function outsideNode(node, point) {
+  // logger.warn('Checking bounds ', node, point);
   var x = node.x;
   var y = node.y;
   var dx = Math.abs(point.x - x);
@@ -1265,7 +1280,7 @@ var outsideNode = function outsideNode(node, point) {
   var w = node.width / 2;
   var h = node.height / 2;
 
-  if (dx > w || dy > h) {
+  if (dx >= w || dy >= h) {
     return true;
   }
 
@@ -1273,39 +1288,68 @@ var outsideNode = function outsideNode(node, point) {
 };
 
 var intersection = function intersection(node, outsidePoint, insidePoint) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('intersection o:', outsidePoint, ' i:', insidePoint, node);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
   var x = node.x;
   var y = node.y;
   var dx = Math.abs(x - insidePoint.x);
   var w = node.width / 2;
   var r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  var dy = Math.abs(y - insidePoint.y);
   var h = node.height / 2;
-  var q = insidePoint.y < outsidePoint.y ? h - dy : h - dy;
-  var Q = Math.abs(outsidePoint.y - insidePoint.y);
-  var R = Math.abs(outsidePoint.x - insidePoint.x);
+  var edges = {
+    x1: x - w,
+    x2: x + w,
+    y1: y - h,
+    y2: y + h
+  };
 
-  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h || false) {
+  if (outsidePoint.x === edges.x1 || outsidePoint.x === edges.x2 || outsidePoint.y === edges.y1 || outsidePoint.y === edges.y2) {
+    // logger.warn('calc equals on edge');
+    return outsidePoint;
+  }
+
+  var Q = Math.abs(outsidePoint.y - insidePoint.y);
+  var R = Math.abs(outsidePoint.x - insidePoint.x); // log.warn();
+
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) {
     // eslint-disable-line
     // Intersection is top or bottom of rect.
+    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    var q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = R * q / Q;
-    return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - r,
-      y: insidePoint.y + q
+    var res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
+      y: outsidePoint.y + q
     };
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("topp/bott calc, Q ".concat(Q, ", q ").concat(q, ", R ").concat(R, ", r ").concat(r), res);
+    return res;
   } else {
-    q = Q * r / R;
-    r = R * q / Q;
+    // Intersection onn sides of rect
+    // q = (Q * r) / R;
+    // q = 2;
+    // r = (R * q) / Q;
+    if (insidePoint.x < outsidePoint.x) {
+      r = outsidePoint.x - w - x;
+    } else {
+      // r = outsidePoint.x - w - x;
+      r = x - w - outsidePoint.x;
+    }
+
+    var _q = _q = Q * r / R;
+
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("sides calc, Q ".concat(Q, ", q ").concat(_q, ", R ").concat(R, ", r ").concat(r), {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
+    });
     return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x + dx - w,
-      y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + _q : insidePoint.y - _q
     };
   }
 }; //(edgePaths, e, edge, clusterDb, diagramtype, graph)
 
-
 var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, graph) {
   var points = edge.points;
+  var pointsHasChanged = false;
   var tail = graph.node(e.v);
   var head = graph.node(e.w);
 
@@ -1338,11 +1382,12 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
 
       lastPointOutside = point;
     });
+    pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('edge', edge);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('from cluster', clusterDb[edge.toCluster]);
+    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('from cluster', clusterDb[edge.fromCluster]);
     var updatedPoints = [];
 
     var _lastPointOutside;
@@ -1354,7 +1399,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       var node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !_isInside) {
-        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('inside', edge.toCluster, point); // First point inside the rect
+        _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('inside', edge.fromCluster, point, node); // First point inside the rect
 
         var insterection = intersection(node, _lastPointOutside, point); // logger.trace('intersect', intersection(node, lastPointOutside, point));
 
@@ -1371,6 +1416,7 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
     }
 
     points = updatedPoints;
+    pointsHasChanged = true;
   } // The data for our line
 
 
@@ -1472,6 +1518,10 @@ var insertEdge = function insertEdge(elem, e, edge, clusterDb, diagramType, grap
       break;
 
     default:
+  }
+
+  if (pointsHasChanged) {
+    return points;
   }
 };
 
@@ -1615,8 +1665,8 @@ var recursiveRender = function recursiveRender(_elem, graph, diagramtype, parent
   graph.edges().forEach(function (e) {
     var edge = graph.edge(e);
     _logger__WEBPACK_IMPORTED_MODULE_8__["logger"].info('Edge ' + e.v + ' -> ' + e.w + ': ' + JSON.stringify(edge), edge);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
-    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge);
+    var updatedPath = Object(_edges__WEBPACK_IMPORTED_MODULE_7__["insertEdge"])(edgePaths, e, edge, _mermaid_graphlib__WEBPACK_IMPORTED_MODULE_4__["clusterDb"], diagramtype, graph);
+    Object(_edges__WEBPACK_IMPORTED_MODULE_7__["positionEdgeLabel"])(edge, updatedPath);
   });
   return elem;
 };
@@ -2185,8 +2235,11 @@ var validate = function validate(graph) {
 
 var findNonClusterChild = function findNonClusterChild(id, graph) {
   // const node = graph.node(id);
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id);
-  var children = graph.children(id);
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching', id); // const children = graph.children(id).reverse();
+
+  var children = graph.children(id); //.reverse();
+
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Searching children of id ', id, children);
 
   if (children.length < 1) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('This is a valid node', id);
@@ -2235,7 +2288,7 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
     var children = graph.children(id);
 
     if (children.length > 0) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Cluster identified', id, ' Replacement id in edges: ', findNonClusterChild(id, graph));
       decendants[id] = extractDecendants(id, graph);
       clusterDb[id] = {
         id: findNonClusterChild(id, graph),
@@ -2281,17 +2334,17 @@ var adjustClustersAndEdges = function adjustClustersAndEdges(graph, depth) {
     _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fix', clusterDb, 'ids:', e.v, e.w, 'Translateing: ', clusterDb[e.v], clusterDb[e.w]);
 
     if (clusterDb[e.v] || clusterDb[e.w]) {
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Fixing and trixing - removing', e.v, e.w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Fixing and trixing - removing', e.v, e.w, e.name);
       v = getAnchorId(e.v);
       w = getAnchorId(e.w);
       graph.removeEdge(e.v, e.w, e.name);
       if (v !== e.v) edge.fromCluster = e.v;
       if (w !== e.w) edge.toCluster = e.w;
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace('Replacing with', v, w, e.name);
+      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Replacing with', v, w, e.name);
       graph.setEdge(v, w, edge, e.name);
     }
   });
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
+  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn('Adjusted Graph', graphlib__WEBPACK_IMPORTED_MODULE_1___default.a.json.write(graph));
   _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].trace(clusterDb); // Remove references to extracted cluster
   // graph.edges().forEach(edge => {
   //   if (isDecendant(edge.v, clusterId) || isDecendant(edge.w, clusterId)) {
@@ -9234,7 +9287,9 @@ var tasks = [];
 var currentSection = '';
 var tags = ['active', 'done', 'crit', 'milestone'];
 var funs = [];
-var inclusiveEndDates = false;
+var inclusiveEndDates = false; // The serial order of the task in the script
+
+var lastOrder = 0;
 var clear = function clear() {
   sections = [];
   tasks = [];
@@ -9250,6 +9305,7 @@ var clear = function clear() {
   todayMarker = '';
   excludes = [];
   inclusiveEndDates = false;
+  lastOrder = 0;
 };
 var setAxisFormat = function setAxisFormat(txt) {
   axisFormat = txt;
@@ -9599,6 +9655,8 @@ var addTask = function addTask(descr, data) {
   rawTask.done = taskInfo.done;
   rawTask.crit = taskInfo.crit;
   rawTask.milestone = taskInfo.milestone;
+  rawTask.order = lastOrder;
+  lastOrder++;
   var pos = rawTasks.push(rawTask);
   lastTaskID = rawTask.id; // Store cross ref
 
@@ -9932,6 +9990,24 @@ var draw = function draw(text, id) {
   var catsUnfiltered = categories; // for vert labels
 
   categories = checkUnique(categories);
+
+  function taskCompare(a, b) {
+    var taskA = a.startTime;
+    var taskB = b.startTime;
+    var result = 0;
+
+    if (taskA > taskB) {
+      result = 1;
+    } else if (taskA < taskB) {
+      result = -1;
+    }
+
+    return result;
+  } // Sort the task array using the above taskCompare() so that
+  // tasks are created based on their order of startTime
+
+
+  taskArray.sort(taskCompare);
   makeGant(taskArray, w, h);
 
   if (typeof conf.useWidth !== 'undefined') {
@@ -9955,6 +10031,8 @@ var draw = function draw(text, id) {
   function drawRects(theArray, theGap, theTopPad, theSidePad, theBarHeight, theColorScale, w) {
     // Draw background rects covering the entire width of the graph, these form the section rows.
     svg.append('g').selectAll('rect').data(theArray).enter().append('rect').attr('x', 0).attr('y', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return i * theGap + theTopPad - 2;
     }).attr('width', function () {
       return w - conf.rightPadding / 2;
@@ -9978,6 +10056,8 @@ var draw = function draw(text, id) {
 
       return timeScale(d.startTime) + theSidePad;
     }).attr('y', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return i * theGap + theTopPad;
     }).attr('width', function (d) {
       if (d.milestone) {
@@ -10064,6 +10144,8 @@ var draw = function draw(text, id) {
         return (endX - startX) / 2 + startX + theSidePad;
       }
     }).attr('y', function (d, i) {
+      // Ignore the incoming i value and use our order instead
+      i = d.order;
       return i * theGap + conf.barHeight / 2 + (conf.fontSize / 2 - 2) + theTopPad;
     }).attr('text-height', theBarHeight).attr('class', function (d) {
       var startX = timeScale(d.startTime);
@@ -10081,6 +10163,7 @@ var draw = function draw(text, id) {
       }
 
       var secNum = 0;
+      console.log(conf);
 
       for (var _i3 = 0; _i3 < categories.length; _i3++) {
         if (d.type === categories[_i3]) {
@@ -12253,7 +12336,7 @@ case 21:return 7;
 break;
 }
 },
-rules: [/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][a-zA-Z0-9_]+)/i,/^(?:$)/i],
+rules: [/^(?:(\r?\n)+)/i,/^(?:\s+)/i,/^(?:#[^\n]*)/i,/^(?:%[^\n]*)/i,/^(?:gitGraph\b)/i,/^(?:commit\b)/i,/^(?:branch\b)/i,/^(?:merge\b)/i,/^(?:reset\b)/i,/^(?:checkout\b)/i,/^(?:LR\b)/i,/^(?:BT\b)/i,/^(?::)/i,/^(?:\^)/i,/^(?:options\r?\n)/i,/^(?:end\r?\n)/i,/^(?:[^\n]+\r?\n)/i,/^(?:["])/i,/^(?:["])/i,/^(?:[^"]*)/i,/^(?:[a-zA-Z][-_\.a-zA-Z0-9]*[-_a-zA-Z0-9])/i,/^(?:$)/i],
 conditions: {"options":{"rules":[15,16],"inclusive":false},"string":{"rules":[18,19],"inclusive":false},"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,17,20,21],"inclusive":true}}
 });
 return lexer;
@@ -20623,14 +20706,11 @@ for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.leng
 var config = {
   /** theme , the CSS style sheet
    *
-   * **theme** - Choose one of the built-in themes:
-   *    * default
-   *    * forest
-   *    * dark
-   *    * neutral.
-   * To disable any pre-defined mermaid theme, use "null".
-   *
-   * **themeCSS** - Use your own CSS. This overrides **theme**.
+   * theme , the CSS style sheet
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   ***Notes:**To disable any pre-defined mermaid theme, use "null".
    * <pre>
    *  "theme": "forest",
    *  "themeCSS": ".node rect { fill: red; }"
@@ -20643,37 +20723,58 @@ var config = {
   maxTextSize: 50000,
 
   /**
-   * **fontFamily** The font to be used for the rendered diagrams. Default value is \"trebuchet ms\", verdana, arial;
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
    */
   fontFamily: '"trebuchet ms", verdana, arial;',
 
   /**
-   * This option decides the amount of logging to be used.
-   *    * debug: 1
-   *    * info: 2
-   *    * warn: 3
-   *    * error: 4
-   *    * fatal: (**default**) 5
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
    */
   logLevel: 5,
 
   /**
-   * Sets the level of trust to be used on the parsed diagrams.
-   *  * **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *  * **loose**: tags in text are allowed, click functionality is enabled
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *
+   ***Notes:
+   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   *-   **loose**: tags in text are allowed, click functionality is enabled
    */
   securityLevel: 'strict',
 
   /**
-   * This options controls whether or mermaid starts when the page loads
-   * **Default value true**.
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   *
+   ***Notes:**
+   ***Default value: true**
    */
   startOnLoad: true,
 
   /**
-   * This options controls whether or arrow markers in html code will be absolute paths or
-   * an anchor, #. This matters if you are using base tag settings.
-   * **Default value false**.
+   *| Parameter | Description |Type | Required |Values|
+   *| --- | --- | --- | --- | --- |
+   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   *
+   *
+   *## Notes**: This matters if you are using base tag settings.
+   ***Default value: false**.
    */
   arrowMarkerAbsolute: false,
 
@@ -20682,31 +20783,42 @@ var config = {
    */
   flowchart: {
     /**
-     * Flag for setting whether or not a html tag should be used for rendering labels
-     * on the edges.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     *
+     ***Notes: Default value: true**.
      */
     htmlLabels: true,
 
     /**
-     * Defines the spacing between nodes on the same level (meaning horizontal spacing for
-     * TB or BT graphs, and the vertical spacing for LR as well as RL graphs).
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     *
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     ***Default value 50**.
      */
     nodeSpacing: 50,
 
     /**
-     * Defines the spacing between nodes on different levels (meaning vertical spacing for
-     * TB or BT graphs, and the horizontal spacing for LR as well as RL graphs).
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     *
+     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     ***Default value 50**.
      */
     rankSpacing: 50,
 
     /**
-     * How mermaid renders curves for flowcharts. Possible values are
-     *   * basis
-     *   * linear **default**
-     *   * cardinal
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     *
+     ***Notes:
+     *Default Vaue: Linear**
      */
     curve: 'linear',
     // Only used in new experimental rendering
@@ -20719,108 +20831,181 @@ var config = {
    */
   sequence: {
     /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     diagramMarginY: 10,
 
     /**
-     * Margin between actors.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * Width of actor boxes
-     * **Default value 150**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
      */
     width: 150,
 
     /**
-     * Height of actor boxes
-     * **Default value 65**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 65**..
      */
     height: 65,
 
     /**
-     * Margin around loop boxes
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     *
+     ***Notes:**
+     *
+     ***Default value 5**.
      */
     boxTextMargin: 5,
 
     /**
-     * margin around notes.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * Space between messages.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     *
+     ***Notes:**center **default**
      */
     messageAlign: 'center',
 
     /**
-     * mirror actors under diagram.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     *
+     ***Notes:**
+     *
+     ***Default value true**.
      */
     mirrorActors: true,
 
     /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
+     *available space. If set to false, the absolute space required is used.
+     ***Default value: True**.
      */
     useMaxWidth: true,
 
     /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *
+     *This will display arrows that start and begin at the same node as right angles, rather than a curve
+     ***Default value false**.
      */
     rightAngles: false,
 
     /**
-     * This will show the node numbers
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     ***Default value false**.
      */
     showSequenceNumbers: false,
 
     /**
-     * This sets the font size of the actor's description
-     * **Default value 14**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
      */
     actorFontSize: 14,
 
     /**
-     * This sets the font family of the actor's description
-     * **Default value "Open-Sans", "sans-serif"**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     *
+     ***Notes:**
+     ***Default value "Open-Sans", "sans-serif"**.
      */
     actorFontFamily: '"Open-Sans", "sans-serif"',
 
@@ -20831,14 +21016,22 @@ var config = {
     actorFontWeight: 400,
 
     /**
-     * This sets the font size of actor-attached notes.
-     * **Default value 14**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
      */
     noteFontSize: 14,
 
     /**
-     * This sets the font family of actor-attached notes.
-     * **Default value "trebuchet ms", verdana, arial**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *
+     ***Notes:**
+     ***Default value: trebuchet ms **.
      */
     noteFontFamily: '"trebuchet ms", verdana, arial',
 
@@ -20849,20 +21042,32 @@ var config = {
     noteFontWeight: 400,
 
     /**
-     * This sets the text alignment of actor-attached notes.
-     * **Default value center**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     *
+     ***Notes:**
+     ***Default value center**.
      */
     noteAlign: 'center',
 
     /**
-     * This sets the font size of actor messages.
-     * **Default value 16**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     *
+     ***Notes:**
+     ***Default value 16**.
      */
     messageFontSize: 16,
 
     /**
-     * This sets the font family of actor messages.
-     * **Default value "trebuchet ms", verdana, arial**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *
+     ***Notes:**
+     ***Default value:"trebuchet ms**.
      */
     messageFontFamily: '"trebuchet ms", verdana, arial',
 
@@ -20890,62 +21095,107 @@ var config = {
    */
   gantt: {
     /**
-     * Margin top for the text over the gantt diagram
-     * **Default value 25**.
+     *### titleTopMargin
+     *
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 25**.
      */
     titleTopMargin: 25,
 
     /**
-     * The height of the bars in the graph
-     * **Default value 20**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 20**.
      */
     barHeight: 20,
 
     /**
-     * The margin between the different activities in the gantt diagram.
-     * **Default value 4**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
      */
     barGap: 4,
 
     /**
-     *  Margin between title and gantt diagram and between axis and gantt diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     topPadding: 50,
 
     /**
-     *  The space allocated for the section name to the left of the activities.
-     * **Default value 75**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 75**.
      */
     leftPadding: 75,
 
     /**
-     *  Vertical starting position of the grid lines.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 35**.
      */
     gridLineStartPadding: 35,
 
     /**
-     *  Font size ...
-     * **Default value 11**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
      */
     fontSize: 11,
 
     /**
-     * font family ...
-     * **Default value '"Open-Sans", "sans-serif"'**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *
+     ***Notes:**
+     *
+     ***Default value '"Open-Sans", "sans-serif"'**.
      */
     fontFamily: '"Open-Sans", "sans-serif"',
 
     /**
-     * The number of alternating section styles.
-     * **Default value 4**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
      */
     numberSectionStyles: 4,
 
     /**
-     * Datetime format of the axis. This might need adjustment to match your locale and preferences
-     * **Default value '%Y-%m-%d'**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     *
+     ***Notes:**
+     *
+     * This might need adjustment to match your locale and preferences
+     ***Default value '%Y-%m-%d'**.
      */
     axisFormat: '%Y-%m-%d'
   },
@@ -20955,84 +21205,134 @@ var config = {
    */
   journey: {
     /**
-     * margin to the right and left of the sequence diagram.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     diagramMarginX: 50,
 
     /**
-     * margin to the over and under the sequence diagram.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 10**..
      */
     diagramMarginY: 10,
 
     /**
-     * Margin between actors.
-     * **Default value 50**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 50**.
      */
     actorMargin: 50,
 
     /**
-     * Width of actor boxes
-     * **Default value 150**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
      */
     width: 150,
 
     /**
-     * Height of actor boxes
-     * **Default value 65**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 65**.
      */
     height: 65,
 
     /**
-     * Margin around loop boxes
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     boxMargin: 10,
 
     /**
-     * margin around the text in loop/alt/opt boxes
-     * **Default value 5**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
      */
     boxTextMargin: 5,
 
     /**
-     * margin around notes.
-     * **Default value 10**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
      */
     noteMargin: 10,
 
     /**
-     * Space between messages.
-     * **Default value 35**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
      */
     messageMargin: 35,
 
     /**
-     * Multiline message alignment. Possible values are:
-     *   * left
-     *   * center **default**
-     *   * right
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     *
+     ***Notes:**default:center**
      */
     messageAlign: 'center',
 
     /**
-     * Depending on css styling this might need adjustment.
-     * Prolongs the edge of the diagram downwards.
-     * **Default value 1**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
      */
     bottomMarginAdj: 1,
 
     /**
-     * when this flag is set the height and width is set to 100% and is then scaling with the
-     * available space if not the absolute space required is used.
-     * **Default value true**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
      */
     useMaxWidth: true,
 
     /**
-     * This will display arrows that start and begin at the same node as right angles, rather than a curve
-     * **Default value false**.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     *
+     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+     ***Default value false**.
      */
     rightAngles: false
   },
@@ -21064,43 +21364,82 @@ var config = {
    */
   er: {
     /**
-     * The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 20**.
      */
     diagramPadding: 20,
 
     /**
-     * Directional bias for layout of entities. Can be either 'TB', 'BT', 'LR', or 'RL',
-     * where T = top, B = bottom, L = left, and R = right.
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     *
+     ***Notes:**
+     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * T = top, B = bottom, L = left, and R = right.
+     ***Default value: TB **.
      */
     layoutDirection: 'TB',
 
     /**
-     * The mimimum width of an entity box, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 100**.
      */
     minEntityWidth: 100,
 
     /**
-     * The minimum height of an entity box, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 75 **
      */
     minEntityHeight: 75,
 
     /**
-     * The minimum internal padding between the text in an entity box and the enclosing box borders, expressed in pixels
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     ***Default value: 15 **
      */
     entityPadding: 15,
 
     /**
-     * Stroke color of box edges and lines
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
+     ***Default value: gray **
      */
     stroke: 'gray',
 
     /**
-     * Fill color of entity boxes
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     *
+     ***Notes:**
+     ***Default value:'honeydew'**
      */
     fill: 'honeydew',
 
     /**
-     * Font size (expressed as an integer representing a number of  pixels)
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     *
+     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Default value: 12 **
      */
     fontSize: 12
   }
@@ -21278,7 +21617,7 @@ var render = function render(id, _txt, cb, container) {
     var _element = document.querySelector('#' + 'd' + id);
 
     if (_element) {
-      _element.innerHTML = '';
+      _element.remove();
     }
 
     Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body').append('div').attr('id', 'd' + id).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
