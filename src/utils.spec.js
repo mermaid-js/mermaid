@@ -1,6 +1,93 @@
 /* eslint-env jasmine */
 import utils from './utils';
 
+describe('when assignWithDepth: should merge objects within objects', function() {
+  it('should handle simple, depth:1 types (identity)', function() {
+    let config_0 = { foo: 'bar', bar: 0 };
+    let config_1 = { foo: 'bar', bar: 0 };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual(config_1);
+  });
+  it('should handle simple, depth:1 types (dst: undefined)', function() {
+    let config_0 = undefined;
+    let config_1 = { foo: 'bar', bar: 0 };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual(config_1);
+  });
+  it('should handle simple, depth:1 types (src: undefined)', function() {
+    let config_0 = { foo: 'bar', bar: 0 };
+    let config_1 = undefined;
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual(config_0);
+  });
+  it('should handle simple, depth:1 types (merge)', function() {
+    let config_0 = { foo: 'bar', bar: 0 };
+    let config_1 = { foo: 'foo' };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual({ foo: 'foo', bar: 0});
+  });
+  it('should handle depth:2 types (dst: orphan)', function() {
+    let config_0 = { foo: 'bar', bar: { foo: 'bar' } };
+    let config_1 = { foo: 'bar' };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual(config_0);
+  });
+  it('should handle depth:2 types (dst: object, src: simple type)', function() {
+    let config_0 = { foo: 'bar', bar: { foo: 'bar' } };
+    let config_1 = { foo: 'foo', bar: 'should NOT clobber'};
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual({ foo: 'foo', bar: { foo: 'bar' } } );
+  });
+  it('should handle depth:2 types (src: orphan)', function() {
+    let config_0 = { foo: 'bar' };
+    let config_1 = { foo: 'bar', bar: { foo: 'bar' } };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual(config_1);
+  });
+  it('should handle depth:2 types (merge)', function() {
+    let config_0 = { foo: 'bar', bar: { foo: 'bar' }, boofar: 1 };
+    let config_1 = { foo: 'foo', bar: { bar: 0 }, foobar: 'foobar' };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual({ foo: "foo", bar: { foo: "bar", bar: 0 }, foobar: "foobar", boofar: 1 });
+  });
+  it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 2)', function() {
+    let config_0 = { foo: 'bar', bar: { foo: 'bar', bar: { foo: { message: 'this', willbe: 'clobbered' } } }, boofar: 1 };
+    let config_1 = { foo: 'foo', bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } }, foobar: 'foobar' };
+    let result = utils.assignWithDepth(config_0, config_1);
+    expect(result).toEqual({ foo: "foo", bar: { foo: 'foo', bar: { foo: { message: 'clobbered other foo' } } }, foobar: "foobar", boofar: 1 });
+  });
+  it('should handle depth:3 types (merge with clobber because assignWithDepth::depth == 1)', function() {
+    let config_0 = { foo: 'bar', bar: { foo: 'bar', bar: { foo: { message: '', willNotbe: 'present' }, bar: 'shouldNotBePresent' } }, boofar: 1 };
+    let config_1 = { foo: 'foo', bar: { foo: 'foo', bar: { foo: { message: 'this' } } }, foobar: 'foobar' };
+    let result = utils.assignWithDepth(config_0, config_1, { depth: 1 });
+    expect(result).toEqual({ foo: "foo", bar: { foo: 'foo', bar: { foo: { message: 'this' } } }, foobar: "foobar", boofar: 1 });
+  });
+  it('should handle depth:3 types (merge with no clobber because assignWithDepth::depth == 3)', function() {
+    let config_0 = { foo: 'bar', bar: { foo: 'bar', bar: { foo: { message: '', willbe: 'present' } } }, boofar: 1 };
+    let config_1 = { foo: 'foo', bar: { foo: 'foo', bar: { foo: { message: 'this' } } }, foobar: 'foobar' };
+    let result = utils.assignWithDepth(config_0, config_1, { depth: 3 });
+    expect(result).toEqual({ foo: "foo", bar: { foo: 'foo', bar: { foo: { message: 'this', willbe: 'present' } } }, foobar: "foobar", boofar: 1 });
+  });
+});
+describe('when memoizing', function() {
+  it('should return the same value', function() {
+    const fib = utils.memoize(function(n, canary) {
+      canary.flag = true;
+      if (n < 2){
+        return 1;
+      }else{
+        //We'll console.log a loader every time we have to recurse
+        return fib(n-2, canary) + fib(n-1, canary);
+      }
+    });
+    let canary = {flag: false};
+    fib(10, canary);
+    expect(canary.flag).toBe(true);
+    canary = {flag: false};
+    fib(10, canary);
+    expect(canary.flag).toBe(false);
+  });
+})
 describe('when detecting chart type ', function() {
   it('should handle a graph definition', function() {
     const str = 'graph TB\nbfs1:queue';
@@ -26,6 +113,16 @@ Alice->Bob: hi`;
     const init = utils.detectInit(str);
     expect(type).toBe('sequence');
     expect(init).toEqual({logLevel:0,theme:"dark"});
+  });
+  it('should handle an init definition with config converted to the proper diagram configuration', function() {
+    const str = `
+%%{init: { 'logLevel': 0, 'theme': 'dark', 'config': {'wrapEnabled': true} } }%%
+sequenceDiagram
+Alice->Bob: hi`;
+    const type = utils.detectType(str);
+    const init = utils.detectInit(str);
+    expect(type).toBe('sequence');
+    expect(init).toEqual({logLevel:0, theme:"dark", sequence: { wrapEnabled: true }});
   });
   it('should handle a multiline init definition', function() {
     const str = `
