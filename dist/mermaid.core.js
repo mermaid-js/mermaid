@@ -105,7 +105,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: lightgrey;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #474949;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #474949;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: purple;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: purple; }\n\ng.classGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: purple;\n  font-size: 10px; }\n\n.relation {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: purple;\n  stroke: purple;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: purple;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: purple; }\n\ng.stateGroup line {\n  stroke: purple;\n  stroke-width: 1; }\n\n.transition {\n  stroke: purple;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: purple; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: purple;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: purple; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: lightgrey; }\n\n.marker.cross {\n  stroke: lightgrey; }\n", ""]);
+exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.label {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  color: #333; }\n\n.label text {\n  fill: #333; }\n\n.node rect,\n.node circle,\n.node ellipse,\n.node polygon,\n.node path {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.node .label {\n  text-align: center; }\n\n.node.clickable {\n  cursor: pointer; }\n\n.arrowheadPath {\n  fill: lightgrey; }\n\n.edgePath .path {\n  stroke: lightgrey;\n  stroke-width: 1.5px; }\n\n.flowchart-link {\n  stroke: lightgrey;\n  fill: none; }\n\n.edgeLabel {\n  background-color: #e8e8e8;\n  text-align: center; }\n  .edgeLabel rect {\n    opacity: 0.5; }\n\n.cluster rect {\n  fill: #474949;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px; }\n\n.cluster text {\n  fill: #F9FFFE; }\n\ndiv.mermaidTooltip {\n  position: absolute;\n  text-align: center;\n  max-width: 200px;\n  padding: 2px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 12px;\n  background: #474949;\n  border: 1px solid rgba(255, 255, 255, 0.25);\n  border-radius: 2px;\n  pointer-events: none;\n  z-index: 100; }\n\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: black; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.classGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #81B1DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.stateGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #81B1DB; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #81B1DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  --mermaid-font-family: \"Comic Sans MS\", \"Comic Sans\", cursive; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: lightgrey; }\n\n.marker.cross {\n  stroke: lightgrey; }\n", ""]);
 
 
 
@@ -820,53 +820,941 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.5.2\",\"descr
 /*!***********************!*\
   !*** ./src/config.js ***!
   \***********************/
-/*! exports provided: setConfig, getConfig, default */
+/*! exports provided: defaultConfig, setSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, reset, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultConfig", function() { return defaultConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setSiteConfig", function() { return setSiteConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getSiteConfig", function() { return getSiteConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConfig", function() { return setConfig; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getConfig", function() { return getConfig; });
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-var config = {};
-
-var setConf = function setConf(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  var lvl1Keys = Object.keys(cnf);
-
-  for (var i = 0; i < lvl1Keys.length; i++) {
-    if (_typeof(cnf[lvl1Keys[i]]) === 'object' && cnf[lvl1Keys[i]] != null) {
-      var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
-
-      for (var j = 0; j < lvl2Keys.length; j++) {
-        // logger.debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j])
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        } // logger.debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]])
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitize", function() { return sanitize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "reset", function() { return reset; });
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 
 
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
-      }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
+/**
+ * These are the default options which can be overridden with the initialization call like so:
+ * **Example 1:**
+ * <pre>
+ * mermaid.initialize({
+ *   flowchart:{
+ *     htmlLabels: false
+ *   }
+ * });
+ * </pre>
+ *
+ * **Example 2:**
+ * <pre>
+ * &lt;script>
+ *   var config = {
+ *     startOnLoad:true,
+ *     flowchart:{
+ *       useMaxWidth:true,
+ *       htmlLabels:true,
+ *       curve:'cardinal',
+ *     },
+ *
+ *     securityLevel:'loose',
+ *   };
+ *   mermaid.initialize(config);
+ * &lt;/script>
+ * </pre>
+ * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
+ *
+ * @name Configuration
+ */
+
+var config = {
+  /** theme , the CSS style sheet
+   *
+   * theme , the CSS style sheet
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   ***Notes:**To disable any pre-defined mermaid theme, use "null".
+   * <pre>
+   *  "theme": "forest",
+   *  "themeCSS": ".node rect { fill: red; }"
+   * </pre>
+   */
+  theme: 'default',
+  themeCSS: undefined,
+
+  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
+  maxTextSize: 50000,
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
+   *
+   ***notes: Default value is \\"trebuchet ms\\".
+   */
+  fontFamily: '"trebuchet ms", verdana, arial;',
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
+   *
+   *
+   ***Notes:**
+   *-   debug: 1.
+   *-   info: 2.
+   *-   warn: 3.
+   *-   error: 4.
+   *-   fatal: 5(default).
+   */
+  logLevel: 5,
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *
+   ***Notes:
+   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+   *-   **loose**: tags in text are allowed, click functionality is enabled
+   */
+  securityLevel: 'strict',
+
+  /**
+   *| Parameter | Description |Type | Required | Values|
+   *| --- | --- | --- | --- | --- |
+   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
+   *
+   ***Notes:**
+   ***Default value: true**
+   */
+  startOnLoad: true,
+
+  /**
+   *| Parameter | Description |Type | Required |Values|
+   *| --- | --- | --- | --- | --- |
+   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
+   *
+   *
+   *## Notes**: This matters if you are using base tag settings.
+   ***Default value: false**.
+   */
+  arrowMarkerAbsolute: false,
+
+  /**
+   * This option controls which currentConfig keys are considered _secure_ and can only be changed via
+   * call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
+   * the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+   * overriding a site's default security.
+   */
+  secure: ['secure', 'securityLevel', 'startOnLoad', 'maxTextSize'],
+
+  /**
+   * The object containing configurations specific for flowcharts
+   */
+  flowchart: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
+     *
+     ***Notes: Default value: true**.
+     */
+    htmlLabels: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
+     *
+     ***Notes:
+     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
+     ***Default value 50**.
+     */
+    nodeSpacing: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
+     *
+     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
+     ***Default value 50**.
+     */
+    rankSpacing: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
+     *
+     ***Notes:
+     *Default Vaue: Linear**
+     */
+    curve: 'linear',
+    // Only used in new experimental rendering
+    // repreesents the padding between the labels and the shape
+    padding: 15
+  },
+
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  sequence: {
+    /**
+     * widt of the activation rect
+     * **Default value 10**.
+     */
+    activationWidth: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    diagramMarginY: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
+     */
+    width: 150,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 65**..
+     */
+    height: 65,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
+     *
+     ***Notes:**
+     *
+     ***Default value 5**.
+     */
+    boxTextMargin: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     ***Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
+     *
+     ***Notes:**center **default**
+     */
+    messageAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
+     *
+     ***Notes:**
+     *
+     ***Default value true**.
+     */
+    mirrorActors: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
+     *available space. If set to false, the absolute space required is used.
+     ***Default value: True**.
+     */
+    useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
+     *
+     ***Notes:**
+     *
+     *This will display arrows that start and begin at the same node as right angles, rather than a curve
+     ***Default value false**.
+     */
+    rightAngles: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
+     *
+     ***Notes:**
+     ***Default value false**.
+     */
+    showSequenceNumbers: false,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
+     */
+    actorFontSize: 14,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
+     *
+     ***Notes:**
+     ***Default value "Open-Sans", "sans-serif"**.
+     */
+    actorFontFamily: '"Open-Sans", "sans-serif"',
+
+    /**
+     * This sets the font weight of the actor's description
+     * **Default value 400.
+     */
+    actorFontWeight: 400,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 14**..
+     */
+    noteFontSize: 14,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
+     *
+     ***Notes:**
+     ***Default value: trebuchet ms **.
+     */
+    noteFontFamily: '"trebuchet ms", verdana, arial',
+
+    /**
+     * This sets the font weight of the note's description
+     * **Default value 400.
+     */
+    noteFontWeight: 400,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
+     *
+     ***Notes:**
+     ***Default value center**.
+     */
+    noteAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
+     *
+     ***Notes:**
+     ***Default value 16**.
+     */
+    messageFontSize: 16,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
+     *
+     ***Notes:**
+     ***Default value:"trebuchet ms**.
+     */
+    messageFontFamily: '"trebuchet ms", verdana, arial',
+
+    /**
+     * This sets the font weight of the message's description
+     * **Default value 400.
+     */
+    messageFontWeight: 400,
+
+    /**
+     * This sets the auto-wrap state for the diagram
+     * **Default value false.
+     */
+    wrap: false,
+
+    /**
+     * This sets the auto-wrap padding for the diagram (sides only)
+     * **Default value 10.
+     */
+    wrapPadding: 10,
+
+    /**
+     * This sets the width of the loop-box (loop, alt, opt, par)
+     * **Default value 50.
+     */
+    labelBoxWidth: 50,
+
+    /**
+     * This sets the height of the loop-box (loop, alt, opt, par)
+     * **Default value 20.
+     */
+    labelBoxHeight: 20,
+    messageFont: function messageFont() {
+      return {
+        fontFamily: this.messageFontFamily,
+        fontSize: this.messageFontSize,
+        fontWeight: this.messageFontWeight
+      };
+    },
+    noteFont: function noteFont() {
+      return {
+        fontFamily: this.noteFontFamily,
+        fontSize: this.noteFontSize,
+        fontWeight: this.noteFontWeight
+      };
+    },
+    actorFont: function actorFont() {
+      return {
+        fontFamily: this.actorFontFamily,
+        fontSize: this.actorFontSize,
+        fontWeight: this.actorFontWeight
+      };
     }
+  },
+
+  /**
+   * The object containing configurations specific for gantt diagrams*
+   */
+  gantt: {
+    /**
+     *### titleTopMargin
+     *
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 25**.
+     */
+    titleTopMargin: 25,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 20**.
+     */
+    barHeight: 20,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
+     */
+    barGap: 4,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    topPadding: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 75**.
+     */
+    leftPadding: 75,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 35**.
+     */
+    gridLineStartPadding: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize | Font size| Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 11**.
+     */
+    fontSize: 11,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
+     *
+     ***Notes:**
+     *
+     ***Default value '"Open-Sans", "sans-serif"'**.
+     */
+    fontFamily: '"Open-Sans", "sans-serif"',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 4**.
+     */
+    numberSectionStyles: 4,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
+     *
+     ***Notes:**
+     *
+     * This might need adjustment to match your locale and preferences
+     ***Default value '%Y-%m-%d'**.
+     */
+    axisFormat: '%Y-%m-%d'
+  },
+
+  /**
+   * The object containing configurations specific for sequence diagrams
+   */
+  journey: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    diagramMarginX: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 10**..
+     */
+    diagramMarginY: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
+     *
+     ***Notes:**
+     ***Default value 50**.
+     */
+    actorMargin: 50,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 150**.
+     */
+    width: 150,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 65**.
+     */
+    height: 65,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    boxMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     */
+    boxTextMargin: 5,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     ***Default value 10**.
+     */
+    noteMargin: 10,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**
+     *
+     *Space between messages.
+     ***Default value 35**.
+     */
+    messageMargin: 35,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
+     *
+     ***Notes:**default:center**
+     */
+    messageAlign: 'center',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**Depending on css styling this might need adjustment.
+     ***Default value 1**.
+     */
+    bottomMarginAdj: 1,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See notes | Boolean | 4 | True, False |
+     *
+     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
+     *available space if not the absolute space required is used.
+     *
+     ***Default value true**.
+     */
+    useMaxWidth: true,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
+     *
+     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
+     ***Default value false**.
+     */
+    rightAngles: false
+  },
+  class: {
+    arrowMarkerAbsolute: false
+  },
+  git: {
+    arrowMarkerAbsolute: false
+  },
+  state: {
+    dividerMargin: 10,
+    sizeUnit: 5,
+    padding: 8,
+    textHeight: 10,
+    titleShift: -15,
+    noteMargin: 10,
+    forkWidth: 70,
+    forkHeight: 7,
+    // Used
+    miniPadding: 2,
+    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
+    // layout. This might need updating if/when switching font
+    fontSizeFactor: 5.02,
+    fontSize: 24,
+    labelHeight: 16,
+    edgeLengthFactor: '20',
+    compositTitleSize: 35,
+    radius: 5
+  },
+
+  /**
+   * The object containing configurations specific for entity relationship diagrams
+   */
+  er: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 20**.
+     */
+    diagramPadding: 20,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
+     *
+     ***Notes:**
+     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
+     * T = top, B = bottom, L = left, and R = right.
+     ***Default value: TB **.
+     */
+    layoutDirection: 'TB',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 100**.
+     */
+    minEntityWidth: 100,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**expressed in pixels
+     ***Default value: 75 **
+     */
+    minEntityHeight: 75,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
+     *
+     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
+     ***Default value: 15 **
+     */
+    entityPadding: 15,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
+     ***Default value: gray **
+     */
+    stroke: 'gray',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
+     *
+     ***Notes:**
+     ***Default value:'honeydew'**
+     */
+    fill: 'honeydew',
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
+     *
+     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Default value: 12 **
+     */
+    fontSize: 12
   }
 };
+config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+var defaultConfig = Object.freeze(config);
+var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
+/**
+ * Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+ * the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+ * to the defaultConfig
+ * Note: currentConfig is set in this function
+ * @param conf - the base currentConfig to use as siteConfig
+ * @returns {*} - the siteConfig
+ */
+
+var setSiteConfig = function setSiteConfig(conf) {
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
+    clobber: true
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
+  return getSiteConfig();
+};
+/**
+ * Obtains the current siteConfig base configuration
+ * @returns {*}
+ */
+
+var getSiteConfig = function getSiteConfig() {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig);
+};
+/**
+ * Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
+ * values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+ * siteConfig value.
+ * @param conf - the potential currentConfig
+ * @returns {*} - the currentConfig merged with the sanitized conf
+ */
 
 var setConfig = function setConfig(conf) {
-  setConf(conf);
+  sanitize(conf);
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf);
+  return getConfig();
 };
-var getConfig = function getConfig() {
-  return config;
-};
-var configApi = {
-  setConfig: setConfig,
-  getConfig: getConfig // get conf() {
-  //   return config;
-  // }
+/**
+ * Obtains the currentConfig
+ * @returns {*} - the currentConfig
+ */
 
+var getConfig = function getConfig() {
+  return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, currentConfig);
 };
+/**
+ * Ensures options parameter does not attempt to override siteConfig secure keys
+ * Note: modifies options in-place
+ * @param options - the potential setConfig parameter
+ */
+
+var sanitize = function sanitize(options) {
+  Object.keys(siteConfig.secure).forEach(function (key) {
+    if (typeof options[siteConfig.secure[key]] !== 'undefined') {
+      // DO NOT attempt to print options[siteConfig.secure[key]] within `${}` as a malicious script
+      // can exploit the logger's attempt to stringify the value and execute arbitrary code
+      _logger__WEBPACK_IMPORTED_MODULE_1__["logger"].warn("Denied attempt to modify a secure key ".concat(siteConfig.secure[key]), options[siteConfig.secure[key]]);
+      delete options[siteConfig.secure[key]];
+    }
+  });
+};
+/**
+ * Resets this currentConfig to conf
+ * @param conf - the base currentConfig to reset to (default: current siteConfig )
+ */
+
+var reset = function reset() {
+  var conf = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getSiteConfig();
+  Object.keys(siteConfig).forEach(function (key) {
+    return delete siteConfig[key];
+  });
+  Object.keys(currentConfig).forEach(function (key) {
+    return delete currentConfig[key];
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf, {
+    clobber: true
+  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
+    clobber: true
+  });
+};
+var configApi = Object.freeze({
+  sanitize: sanitize,
+  setSiteConfig: setSiteConfig,
+  getSiteConfig: getSiteConfig,
+  setConfig: setConfig,
+  getConfig: getConfig,
+  reset: reset,
+  defaultConfig: defaultConfig
+});
 /* harmony default export */ __webpack_exports__["default"] = (configApi);
 
 /***/ }),
@@ -4756,7 +5644,7 @@ var parseClassifier = function parseClassifier(classifier) {
 /*!***************************************!*\
   !*** ./src/diagrams/common/common.js ***!
   \***************************************/
-/*! exports provided: getRows, sanitizeText, lineBreakRegex, default */
+/*! exports provided: getRows, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -4764,6 +5652,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getRows", function() { return getRows; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sanitizeText", function() { return sanitizeText; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineBreakRegex", function() { return lineBreakRegex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasBreaks", function() { return hasBreaks; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "splitBreaks", function() { return splitBreaks; });
 var getRows = function getRows(s) {
   if (!s) return 1;
   var str = breakToPlaceholder(s);
@@ -4786,6 +5676,12 @@ var sanitizeText = function sanitizeText(text, config) {
   return txt;
 };
 var lineBreakRegex = /<br\s*\/?>/gi;
+var hasBreaks = function hasBreaks(text) {
+  return /<br\s*[/]?>/gi.test(text);
+};
+var splitBreaks = function splitBreaks(text) {
+  return text.split(/<br\s*[/]?>/gi);
+};
 
 var breakToPlaceholder = function breakToPlaceholder(s) {
   return s.replace(lineBreakRegex, '#br#');
@@ -4798,6 +5694,8 @@ var placeholderToBreak = function placeholderToBreak(s) {
 /* harmony default export */ __webpack_exports__["default"] = ({
   getRows: getRows,
   sanitizeText: sanitizeText,
+  hasBreaks: hasBreaks,
+  splitBreaks: splitBreaks,
   lineBreakRegex: lineBreakRegex
 });
 
@@ -14182,7 +15080,7 @@ case 51:
  $$[$0] = $$[$0].trim().replace(/'/g, '"'); yy.parseDirective($$[$0], 'arg_directive'); 
 break;
 case 52:
- yy.parseDirective('}%%', 'close_directive'); 
+ yy.parseDirective('}%%', 'close_directive', 'sequence'); 
 break;
 }
 },
@@ -14800,7 +15698,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 /*!*********************************************!*\
   !*** ./src/diagrams/sequence/sequenceDb.js ***!
   \*********************************************/
-/*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, enableWrap, disableWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, updateConfig, hasConfigChange, apply, default */
+/*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, setWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14817,8 +15715,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTitleWrapped", function() { return getTitleWrapped; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableSequenceNumbers", function() { return enableSequenceNumbers; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "showSequenceNumbers", function() { return showSequenceNumbers; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "enableWrap", function() { return enableWrap; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "disableWrap", function() { return disableWrap; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setWrap", function() { return setWrap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "autoWrap", function() { return autoWrap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clear", function() { return clear; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseMessage", function() { return parseMessage; });
@@ -14827,12 +15724,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PLACEMENT", function() { return PLACEMENT; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addNote", function() { return addNote; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setTitle", function() { return setTitle; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "updateConfig", function() { return updateConfig; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "hasConfigChange", function() { return hasConfigChange; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "apply", function() { return apply; });
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-/* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../mermaidAPI */ "./src/mermaidAPI.js");
+/* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../logger */ "./src/logger.js");
+
 
 
 
@@ -14844,62 +15741,9 @@ var title = '';
 var titleWrapped = false;
 var sequenceNumbersEnabled = false;
 var wrapEnabled = false;
-var configUpdated = false;
-var currentDirective = {};
-var parseDirective = function parseDirective(statement, context) {
-  try {
-    if (statement !== undefined) {
-      statement = statement.trim();
-
-      switch (context) {
-        case 'open_directive':
-          currentDirective = {};
-          break;
-
-        case 'type_directive':
-          currentDirective.type = statement.toLowerCase();
-          break;
-
-        case 'arg_directive':
-          currentDirective.args = JSON.parse(statement);
-          break;
-
-        case 'close_directive':
-          handleDirective(currentDirective);
-          currentDirective = null;
-          break;
-      }
-    }
-  } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error(error.message);
-  }
+var parseDirective = function parseDirective(statement, context, type) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_0__["default"].parseDirective(statement, context, type);
 };
-
-var handleDirective = function handleDirective(directive) {
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
-
-  switch (directive.type) {
-    case 'init':
-    case 'initialize':
-      _mermaidAPI__WEBPACK_IMPORTED_MODULE_2__["default"].initialize(directive.args);
-      break;
-
-    case 'config':
-      updateConfig(directive.args);
-      break;
-
-    case 'wrap':
-    case 'nowrap':
-      wrapEnabled = directive.type === 'wrap';
-      break;
-
-    default:
-      _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].warn("Unrecognized directive: source: '%%{".concat(directive.type, ": ").concat(directive.args, "}%%"), directive);
-      break;
-  }
-};
-
 var addActor = function addActor(id, name, description) {
   // Don't allow description nulling
   var old = actors[id];
@@ -14915,7 +15759,7 @@ var addActor = function addActor(id, name, description) {
   actors[id] = {
     name: name,
     description: description.text,
-    wrap: description.wrap === null && autoWrap() || !!description.wrap,
+    wrap: description.wrap === undefined && autoWrap() || !!description.wrap,
     prevActor: prevActor
   };
 
@@ -14953,21 +15797,19 @@ var addMessage = function addMessage(idFrom, idTo, message, answer) {
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: message.wrap === null && autoWrap() || !!message.wrap,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap,
     answer: answer
   });
 };
 var addSignal = function addSignal(idFrom, idTo) {
   var message = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {
-    text: null,
-    wrap: null
+    text: undefined,
+    wrap: undefined
   };
   var messageType = arguments.length > 3 ? arguments[3] : undefined;
-  _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message.text + ' wrap=' + message.wrap + ' type=' + messageType);
 
   if (messageType === LINETYPE.ACTIVE_END) {
     var cnt = activationCount(idFrom.actor);
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].debug('Adding message from=', messages, cnt);
 
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
@@ -14992,7 +15834,7 @@ var addSignal = function addSignal(idFrom, idTo) {
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: message.wrap === null && autoWrap() || !!message.wrap,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap,
     type: messageType
   });
   return true;
@@ -15021,11 +15863,8 @@ var enableSequenceNumbers = function enableSequenceNumbers() {
 var showSequenceNumbers = function showSequenceNumbers() {
   return sequenceNumbersEnabled;
 };
-var enableWrap = function enableWrap() {
-  wrapEnabled = true;
-};
-var disableWrap = function disableWrap() {
-  wrapEnabled = false;
+var setWrap = function setWrap(wrapSetting) {
+  wrapEnabled = wrapSetting;
 };
 var autoWrap = function autoWrap() {
   return wrapEnabled;
@@ -15033,15 +15872,16 @@ var autoWrap = function autoWrap() {
 var clear = function clear() {
   actors = {};
   messages = [];
-  configUpdated = false;
 };
 var parseMessage = function parseMessage(str) {
   var _str = str.trim();
 
-  return {
+  var message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
-    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
+    wrap: _str.match(/^[:]?(?:no)?wrap:/) === null ? _common_common__WEBPACK_IMPORTED_MODULE_2__["default"].hasBreaks(_str) || autoWrap() : _str.match(/^[:]?wrap:/) !== null ? true : _str.match(/^[:]?nowrap:/) !== null ? false : autoWrap()
   };
+  _logger__WEBPACK_IMPORTED_MODULE_3__["logger"].debug('parseMessage:', message);
+  return message;
 };
 var LINETYPE = {
   SOLID: 0,
@@ -15080,7 +15920,7 @@ var addNote = function addNote(actor, placement, message) {
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: message.wrap === null && autoWrap() || !!message.wrap
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap
   }; // Coerce actor into a [to, from, ...] array
 
   var actors = [].concat(actor, actor);
@@ -15089,27 +15929,14 @@ var addNote = function addNote(actor, placement, message) {
     from: actors[0],
     to: actors[1],
     message: message.text,
-    wrap: message.wrap === null && autoWrap() || !!message.wrap,
+    wrap: message.wrap === undefined && autoWrap() || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
 };
 var setTitle = function setTitle(titleWrap) {
   title = titleWrap.text;
-  titleWrapped = titleWrap.wrap === null && autoWrap() || !!titleWrap.wrap;
-};
-var updateConfig = function updateConfig() {
-  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Object(_config__WEBPACK_IMPORTED_MODULE_1__["getConfig"])();
-
-  try {
-    Object(_config__WEBPACK_IMPORTED_MODULE_1__["setConfig"])(config);
-    configUpdated = true;
-  } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_0__["logger"].error('Error: unable to parse config');
-  }
-};
-var hasConfigChange = function hasConfigChange() {
-  return configUpdated;
+  titleWrapped = titleWrap.wrap === undefined && autoWrap() || !!titleWrap.wrap;
 };
 var apply = function apply(param) {
   if (param instanceof Array) {
@@ -15196,20 +16023,19 @@ var apply = function apply(param) {
   addActor: addActor,
   addMessage: addMessage,
   addSignal: addSignal,
-  enableWrap: enableWrap,
-  disableWrap: disableWrap,
+  autoWrap: autoWrap,
+  setWrap: setWrap,
   enableSequenceNumbers: enableSequenceNumbers,
   showSequenceNumbers: showSequenceNumbers,
-  autoWrap: autoWrap,
   getMessages: getMessages,
   getActors: getActors,
   getActor: getActor,
   getActorKeys: getActorKeys,
   getTitle: getTitle,
   parseDirective: parseDirective,
-  hasConfigChange: hasConfigChange,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_1__["getConfig"],
-  updateConfig: updateConfig,
+  getConfig: function getConfig() {
+    return _config__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig().sequence;
+  },
   getTitleWrapped: getTitleWrapped,
   clear: clear,
   parseMessage: parseMessage,
@@ -15227,7 +16053,7 @@ var apply = function apply(param) {
 /*!***************************************************!*\
   !*** ./src/diagrams/sequence/sequenceRenderer.js ***!
   \***************************************************/
-/*! exports provided: bounds, drawActors, setConf, calculateTextHeight, calculateTextWidth, draw, default */
+/*! exports provided: bounds, drawActors, setConf, draw, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15235,8 +16061,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bounds", function() { return bounds; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawActors", function() { return drawActors; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setConf", function() { return setConf; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextHeight", function() { return calculateTextHeight; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextWidth", function() { return calculateTextWidth; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "draw", function() { return draw; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
@@ -15246,15 +16070,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _common_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../common/common */ "./src/diagrams/common/common.js");
 /* harmony import */ var _sequenceDb__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../config */ "./src/config.js");
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 
 
 
@@ -15263,51 +16079,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
 _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy = _sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"];
-var conf = {
-  diagramMarginX: 50,
-  diagramMarginY: 30,
-  // Margin between actors
-  actorMargin: 50,
-  // Width of actor boxes
-  width: 150,
-  // Height of actor boxes
-  height: 65,
-  actorFontSize: 14,
-  actorFontFamily: '"Open-Sans", "sans-serif"',
-  // 400 = normal
-  actorFontWeight: 400,
-  // Note font settings
-  noteFontSize: 14,
-  noteFontFamily: '"trebuchet ms", verdana, arial',
-  noteFontWeight: 400,
-  noteAlign: 'center',
-  // Message font settings
-  messageFontSize: 16,
-  messageFontFamily: '"trebuchet ms", verdana, arial',
-  messageFontWeight: 400,
-  // Margin around loop boxes
-  boxMargin: 10,
-  boxTextMargin: 5,
-  noteMargin: 10,
-  // Space between messages
-  messageMargin: 35,
-  // Multiline message alignment
-  messageAlign: 'center',
-  // mirror actors under diagram
-  mirrorActors: false,
-  // Depending on css styling this might need adjustment
-  // Prolongs the edge of the diagram downwards
-  bottomMarginAdj: 1,
-  // width of activation box
-  activationWidth: 10,
-  // text placement as: tspan | fo | old only text as before
-  textPlacement: 'tspan',
-  showSequenceNumbers: false,
-  // wrap text
-  wrapEnabled: false,
-  // padding for wrapped text
-  wrapPadding: 15
-};
+var conf = {};
 var bounds = {
   data: {
     startx: undefined,
@@ -15318,9 +16090,63 @@ var bounds = {
   verticalPos: 0,
   sequenceItems: [],
   activations: [],
+  models: {
+    getHeight: function getHeight() {
+      return Math.max.apply(null, this.actors.length === 0 ? [0] : this.actors.map(function (actor) {
+        return actor.height || 0;
+      })) + (this.loops.length === 0 ? 0 : this.loops.map(function (it) {
+        return it.height || 0;
+      }).reduce(function (acc, h) {
+        return acc + h;
+      })) + (this.messages.length === 0 ? 0 : this.messages.map(function (it) {
+        return it.height || 0;
+      }).reduce(function (acc, h) {
+        return acc + h;
+      })) + (this.notes.length === 0 ? 0 : this.notes.map(function (it) {
+        return it.height || 0;
+      }).reduce(function (acc, h) {
+        return acc + h;
+      }));
+    },
+    clear: function clear() {
+      this.actors = [];
+      this.loops = [];
+      this.messages = [];
+      this.notes = [];
+    },
+    addActor: function addActor(actorModel) {
+      this.actors.push(actorModel);
+    },
+    addLoop: function addLoop(loopModel) {
+      this.loops.push(loopModel);
+    },
+    addMessage: function addMessage(msgModel) {
+      this.messages.push(msgModel);
+    },
+    addNote: function addNote(noteModel) {
+      this.notes.push(noteModel);
+    },
+    lastActor: function lastActor() {
+      return this.actors[this.actors.length - 1];
+    },
+    lastLoop: function lastLoop() {
+      return this.loops[this.loops.length - 1];
+    },
+    lastMessage: function lastMessage() {
+      return this.messages[this.messages.length - 1];
+    },
+    lastNote: function lastNote() {
+      return this.notes[this.notes.length - 1];
+    },
+    actors: [],
+    loops: [],
+    messages: [],
+    notes: []
+  },
   init: function init() {
     this.sequenceItems = [];
     this.activations = [];
+    this.models.clear();
     this.data = {
       startx: undefined,
       stopx: undefined,
@@ -15328,10 +16154,7 @@ var bounds = {
       stopy: undefined
     };
     this.verticalPos = 0;
-
-    if (_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.hasConfigChange()) {
-      setConf(Object(_config__WEBPACK_IMPORTED_MODULE_6__["getConfig"])());
-    }
+    setConf(_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getConfig());
   },
   updateVal: function updateVal(obj, key, val, fun) {
     if (typeof obj[key] === 'undefined') {
@@ -15389,10 +16212,10 @@ var bounds = {
     this.updateVal(bounds.data, 'stopy', _stopy, Math.max);
     this.updateBounds(_startx, _starty, _stopx, _stopy);
   },
-  newActivation: function newActivation(message, diagram) {
-    var actorRect = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors()[message.from.actor];
-    var stackedSize = actorActivations(message.from.actor).length;
-    var x = actorRect.x + conf.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
+  newActivation: function newActivation(message, diagram, actors) {
+    var actorRect = actors[message.from.actor];
+    var stackedSize = actorActivations(message.from.actor).length || 0;
+    var x = actorRect.x + actorRect.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
     this.activations.push({
       startx: x,
       starty: this.verticalPos + 2,
@@ -15409,15 +16232,33 @@ var bounds = {
     }).lastIndexOf(message.from.actor);
     return this.activations.splice(lastActorActivationIdx, 1)[0];
   },
-  newLoop: function newLoop(title, fill) {
-    this.sequenceItems.push({
+  createLoop: function createLoop() {
+    var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      message: undefined,
+      wrap: false,
+      width: undefined
+    };
+    var fill = arguments.length > 1 ? arguments[1] : undefined;
+    return {
       startx: undefined,
       starty: this.verticalPos,
       stopx: undefined,
       stopy: undefined,
-      title: title,
+      title: title.message,
+      wrap: title.wrap,
+      width: title.width,
+      height: 0,
       fill: fill
-    });
+    };
+  },
+  newLoop: function newLoop() {
+    var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+      message: undefined,
+      wrap: false,
+      width: undefined
+    };
+    var fill = arguments.length > 1 ? arguments[1] : undefined;
+    this.sequenceItems.push(this.createLoop(title, fill));
   },
   endLoop: function endLoop() {
     return this.sequenceItems.pop();
@@ -15426,7 +16267,10 @@ var bounds = {
     var loop = this.sequenceItems.pop();
     loop.sections = loop.sections || [];
     loop.sectionTitles = loop.sectionTitles || [];
-    loop.sections.push(bounds.getVerticalPos());
+    loop.sections.push({
+      y: bounds.getVerticalPos(),
+      height: 0
+    });
     loop.sectionTitles.push(message);
     this.sequenceItems.push(loop);
   },
@@ -15438,270 +16282,125 @@ var bounds = {
     return this.verticalPos;
   },
   getBounds: function getBounds() {
-    return this.data;
+    return {
+      bounds: this.data,
+      models: this.models
+    };
   }
-};
-
-var wrapLabel = function wrapLabel(label, maxWidth) {
-  var joinWith = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '<br/>';
-
-  if (_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(label)) {
-    return label;
-  }
-
-  var words = label.split(' ');
-  var completedLines = [];
-  var nextLine = '';
-  words.forEach(function (word, index) {
-    var wordLength = calculateTextWidth("".concat(word, " "));
-    var nextLineLength = calculateTextWidth(nextLine);
-
-    if (wordLength > maxWidth) {
-      var _breakString = breakString(word, maxWidth),
-          hyphenatedStrings = _breakString.hyphenatedStrings,
-          remainingWord = _breakString.remainingWord;
-
-      completedLines.push.apply(completedLines, [nextLine].concat(_toConsumableArray(hyphenatedStrings)));
-      nextLine = remainingWord;
-    } else if (nextLineLength + wordLength >= maxWidth) {
-      completedLines.push(nextLine);
-      nextLine = word;
-    } else {
-      nextLine = [nextLine, word].filter(Boolean).join(' ');
-    }
-
-    var currentWord = index + 1;
-    var isLastWord = currentWord === words.length;
-
-    if (isLastWord) {
-      completedLines.push(nextLine);
-    }
-  });
-  return completedLines.filter(function (line) {
-    return line !== '';
-  }).join(joinWith);
-};
-
-var breakString = function breakString(word, maxWidth) {
-  var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
-  var characters = word.split('');
-  var lines = [];
-  var currentLine = '';
-  characters.forEach(function (character, index) {
-    var nextLine = "".concat(currentLine).concat(character);
-    var lineWidth = calculateTextWidth(nextLine);
-
-    if (lineWidth >= maxWidth) {
-      var currentCharacter = index + 1;
-      var isLastLine = characters.length === currentCharacter;
-      var hyphenatedNextLine = "".concat(nextLine).concat(hyphenCharacter);
-      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
-      currentLine = '';
-    } else {
-      currentLine = nextLine;
-    }
-  });
-  return {
-    hyphenatedStrings: lines,
-    remainingWord: currentLine
-  };
-};
-
-var _drawLongText = function _drawLongText(text, x, y, g, width) {
-  var textHeight = 0;
-  var prevTextHeight = 0;
-  var alignmentToAnchor = {
-    left: 'start',
-    start: 'start',
-    center: 'middle',
-    middle: 'middle',
-    right: 'end',
-    end: 'end'
-  };
-  var lines = text.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
-
-  try {
-    for (var _iterator = lines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var line = _step.value;
-      var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
-      var alignment = alignmentToAnchor[conf.noteAlign] || 'middle';
-
-      switch (alignment) {
-        case 'start':
-          textObj.x = x + conf.noteMargin;
-          break;
-
-        case 'middle':
-          textObj.x = x + width / 2;
-          break;
-
-        case 'end':
-          textObj.x = x + width - conf.noteMargin;
-          break;
-      }
-
-      textObj.y = y + textHeight;
-      textObj.dy = '1em';
-      textObj.text = line;
-      textObj.class = 'noteText';
-      var textElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawText(g, textObj).style('text-anchor', alignment).style('font-size', conf.noteFontSize).style('font-family', conf.noteFontFamily).style('font-weight', conf.noteFontWeight).attr('dominant-baseline', 'central').attr('alignment-baseline', 'central');
-      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
-      textElem.attr('y', y + (prevTextHeight + textHeight + 2 * conf.noteMargin) / 2);
-      prevTextHeight = textHeight;
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return != null) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
-    }
-  }
-
-  return textHeight;
 };
 /**
- * Draws an note in the diagram with the attaced line
+ * Draws an note in the diagram with the attached line
  * @param elem - The diagram to draw to.
- * @param startx - The x axis start position.
- * @param verticalPos - The y axis position.
- * @param msg - The message to be drawn.
- * @param forceWidth - Set this with a custom width to override the default configured width.
+ * @param noteModel:{x: number, y: number, message: string, width: number} - startx: x axis start position, verticalPos: y axis position, messsage: the message to be shown, width: Set this with a custom width to override the default configured width.
  */
 
-
-var drawNote = function drawNote(elem, startx, verticalPos, msg, forceWidth) {
+var drawNote = function drawNote(elem, noteModel) {
+  bounds.bumpVerticalPos(conf.boxMargin);
+  noteModel.height = conf.boxMargin;
+  noteModel.starty = bounds.getVerticalPos();
   var rect = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getNoteRect();
-  rect.x = startx;
-  rect.y = verticalPos;
-  rect.width = forceWidth || conf.width;
+  rect.x = noteModel.startx;
+  rect.y = noteModel.starty;
+  rect.width = noteModel.width || conf.width;
   rect.class = 'note';
   var g = elem.append('g');
   var rectElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawRect(g, rect);
-
-  var textHeight = _drawLongText(msg.message, startx, verticalPos, g, rect.width);
-
-  bounds.insert(startx, verticalPos, startx + rect.width, verticalPos + 2 * conf.noteMargin + textHeight);
+  var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
+  textObj.x = noteModel.startx;
+  textObj.y = noteModel.starty;
+  textObj.width = rect.width;
+  textObj.dy = '1em';
+  textObj.text = noteModel.message;
+  textObj.class = 'noteText';
+  textObj.fontFamily = conf.noteFontFamily;
+  textObj.fontSize = conf.noteFontSize;
+  textObj.fontWeight = conf.noteFontWeight;
+  textObj.anchor = conf.noteAlign;
+  textObj.textMargin = conf.noteMargin;
+  textObj.valign = conf.noteAlign;
+  textObj.wrap = true;
+  var textElem = Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["drawText"])(g, textObj);
+  var textHeight = Math.round(textElem.map(function (te) {
+    return (te._groups || te)[0][0].getBBox().height;
+  }).reduce(function (acc, curr) {
+    return acc + curr;
+  }));
   rectElem.attr('height', textHeight + 2 * conf.noteMargin);
+  noteModel.height += textHeight + 2 * conf.noteMargin;
   bounds.bumpVerticalPos(textHeight + 2 * conf.noteMargin);
+  noteModel.stopy = noteModel.starty + textHeight + 2 * conf.noteMargin;
+  noteModel.stopx = noteModel.startx + rect.width;
+  bounds.insert(noteModel.startx, noteModel.starty, noteModel.stopx, noteModel.stopy);
+  bounds.models.addNote(noteModel);
 };
 /**
  * Draws a message
- * @param elem
- * @param startx
- * @param stopx
- * @param verticalPos
- * @param msg
- * @param sequenceIndex
+ * @param g - the parent of the message element
+ * @param msgModel - the model containing fields describing a message
  */
 
 
-var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg, sequenceIndex) {
-  var g = elem.append('g');
-  var txtCenter = startx + (stopx - startx) / 2;
-  var textElems = [];
-  /*
-  let textHeight = 0;
-  const breaklines = msg.message.split(common.lineBreakRegex);
-  for (const breakline of breaklines) {
-    let textElem = g
-      .append('text') // text label for the x axis
-      .attr('x', txtCenter)
-      .attr('y', verticalPos + textHeight)
-      .style('font-size', conf.messageFontSize)
-      .style('font-family', conf.messageFontFamily)
-      .style('font-weight', conf.messageFontWeight)
-      .style('text-anchor', 'middle')
-      .attr('class', 'messageText')
-      .text(breakline.trim());
-    textElems.push(textElem);
-    textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
-  }
-   let totalOffset = textHeight;
-  */
-
-  var counterBreaklines = 0;
-  var breaklineOffset = conf.messageFontSize + 4;
-  var breaklines = msg.message.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
-  var _iteratorNormalCompletion2 = true;
-  var _didIteratorError2 = false;
-  var _iteratorError2 = undefined;
-
-  try {
-    for (var _iterator2 = breaklines[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-      var breakline = _step2.value;
-      textElems.push(g.append('text') // text label for the x axis
-      .attr('x', txtCenter) // .attr('y', verticalPos - breaklineVerticalOffset + counterBreaklines * breaklineOffset)
-      .attr('y', verticalPos - 7 + counterBreaklines * breaklineOffset).style('font-size', conf.messageFontSize).style('font-family', conf.messageFontFamily).style('font-weight', conf.messageFontWeight).style('text-anchor', 'middle').attr('class', 'messageText').text(breakline.trim()));
-      counterBreaklines++;
-    }
-  } catch (err) {
-    _didIteratorError2 = true;
-    _iteratorError2 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-        _iterator2.return();
-      }
-    } finally {
-      if (_didIteratorError2) {
-        throw _iteratorError2;
-      }
-    }
-  }
-
-  var offsetLineCounter = counterBreaklines - 1;
-  var totalOffset = offsetLineCounter * breaklineOffset;
-  var textWidths = textElems.map(function (textElem) {
-    return (textElem._groups || textElem)[0][0].getBBox().width;
-  });
-  var textWidth = Math.max.apply(Math, _toConsumableArray(textWidths));
-
-  for (var _i = 0, _textElems = textElems; _i < _textElems.length; _i++) {
-    var textElem = _textElems[_i];
-
-    if (conf.messageAlign === 'left') {
-      textElem.attr('x', txtCenter - textWidth / 2).style('text-anchor', 'start');
-    } else if (conf.messageAlign === 'right') {
-      textElem.attr('x', txtCenter + textWidth / 2).style('text-anchor', 'end');
-    }
-  }
-
-  bounds.bumpVerticalPos(totalOffset);
-  var line;
+var drawMessage = function drawMessage(g, msgModel) {
+  var startx = msgModel.startx,
+      stopx = msgModel.stopx,
+      starty = msgModel.starty,
+      message = msgModel.message,
+      type = msgModel.type,
+      sequenceIndex = msgModel.sequenceIndex,
+      wrap = msgModel.wrap;
+  var lines = _common_common__WEBPACK_IMPORTED_MODULE_4__["default"].splitBreaks(message).length;
+  var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(message, conf.messageFont());
+  var lineHeight = textDims.height / lines;
+  msgModel.height += lineHeight;
+  bounds.bumpVerticalPos(lineHeight);
+  var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
+  textObj.x = startx;
+  textObj.y = starty;
+  textObj.width = stopx - startx;
+  textObj.class = 'messageText';
+  textObj.dy = '1em';
+  textObj.text = message;
+  textObj.fontFamily = conf.messageFontFamily;
+  textObj.fontSize = conf.messageFontSize;
+  textObj.fontWeight = conf.messageFontWeight;
+  textObj.anchor = conf.messageAlign;
+  textObj.valign = conf.messageAlign;
+  textObj.textMargin = conf.wrapPadding;
+  textObj.tspan = false;
+  textObj.wrap = wrap;
+  Object(_svgDraw__WEBPACK_IMPORTED_MODULE_1__["drawText"])(g, textObj);
+  var totalOffset = textDims.height;
+  var textWidth = textDims.width;
+  var line, lineStarty;
 
   if (startx === stopx) {
+    lineStarty = bounds.getVerticalPos() + totalOffset;
+
     if (conf.rightAngles) {
-      line = g.append('path').attr('d', "M  ".concat(startx, ",").concat(verticalPos + totalOffset, " H ").concat(startx + conf.width / 2, " V ").concat(verticalPos + 25 + totalOffset, " H ").concat(startx));
+      line = g.append('path').attr('d', "M  ".concat(startx, ",").concat(lineStarty, " H ").concat(startx + Math.max(conf.width / 2, textWidth / 2), " V ").concat(lineStarty + 25, " H ").concat(startx));
     } else {
-      totalOffset += 5;
-      line = g.append('path').attr('d', 'M ' + startx + ',' + (verticalPos + totalOffset) + ' C ' + (startx + 60) + ',' + (verticalPos - 10 + totalOffset) + ' ' + (startx + 60) + ',' + (verticalPos + 30 + totalOffset) + ' ' + startx + ',' + (verticalPos + 20 + totalOffset));
+      totalOffset += conf.boxMargin;
+      lineStarty = bounds.getVerticalPos() + totalOffset;
+      line = g.append('path').attr('d', 'M ' + startx + ',' + lineStarty + ' C ' + (startx + 60) + ',' + (lineStarty - 10) + ' ' + (startx + 60) + ',' + (lineStarty + 30) + ' ' + startx + ',' + (lineStarty + 20));
     }
 
-    bounds.bumpVerticalPos(30 + totalOffset);
-    var dx = Math.max(textWidth / 2, 100);
-    bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + totalOffset);
+    totalOffset += 30;
+    var dx = Math.max(textWidth / 2, conf.width / 2);
+    bounds.insert(startx - dx, bounds.getVerticalPos() - 10 + totalOffset, stopx + dx, bounds.getVerticalPos() + 30 + totalOffset);
   } else {
+    totalOffset += conf.boxMargin;
+    lineStarty = bounds.getVerticalPos() + totalOffset;
     line = g.append('line');
     line.attr('x1', startx);
-    line.attr('y1', verticalPos + totalOffset);
+    line.attr('y1', lineStarty);
     line.attr('x2', stopx);
-    line.attr('y2', verticalPos + totalOffset);
-    bounds.insert(startx, bounds.getVerticalPos() - 10 + totalOffset, stopx, bounds.getVerticalPos() + totalOffset);
+    line.attr('y2', lineStarty);
+    bounds.insert(startx, lineStarty - 10, stopx, lineStarty);
   } // Make an SVG Container
   // Draw the line
 
 
-  if (msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_OPEN) {
+  if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_OPEN) {
     line.style('stroke-dasharray', '3, 3');
     line.attr('class', 'messageLine1');
   } else {
@@ -15717,66 +16416,63 @@ var drawMessage = function drawMessage(elem, startx, stopx, verticalPos, msg, se
   }
 
   line.attr('stroke-width', 2);
-  line.attr('stroke', 'black');
+  line.attr('stroke', 'none'); // handled by theme/css anyway
+
   line.style('fill', 'none'); // remove any fill colour
 
-  if (msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED) {
+  if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED) {
     line.attr('marker-end', 'url(' + url + '#arrowhead)');
   }
 
-  if (msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_CROSS || msg.type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS) {
+  if (type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_CROSS || type === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS) {
     line.attr('marker-end', 'url(' + url + '#crosshead)');
   } // add node number
 
 
   if (_sequenceDb__WEBPACK_IMPORTED_MODULE_5__["default"].showSequenceNumbers() || conf.showSequenceNumbers) {
     line.attr('marker-start', 'url(' + url + '#sequencenumber)');
-    g.append('text').attr('x', startx).attr('y', verticalPos + 4 + totalOffset).attr('font-family', 'sans-serif').attr('font-size', '12px').attr('text-anchor', 'middle').attr('textLength', '16px').attr('class', 'sequenceNumber').text(sequenceIndex);
+    g.append('text').attr('x', startx).attr('y', lineStarty + 4).attr('font-family', 'sans-serif').attr('font-size', '12px').attr('text-anchor', 'middle').attr('textLength', '16px').attr('class', 'sequenceNumber').text(sequenceIndex);
   }
+
+  bounds.bumpVerticalPos(totalOffset);
+  msgModel.height += totalOffset;
+  msgModel.stopy = msgModel.starty + msgModel.height;
+  bounds.insert(msgModel.fromBounds, msgModel.starty, msgModel.toBounds, msgModel.stopy);
 };
 
 var drawActors = function drawActors(diagram, actors, actorKeys, verticalPos) {
   // Draw the actors
   var prevWidth = 0;
   var prevMargin = 0;
-  var maxActorHeight = conf.height;
 
   for (var i = 0; i < actorKeys.length; i++) {
     var actor = actors[actorKeys[i]]; // Add some rendering data to the object
 
-    actor.width = actor.width || calculateActorWidth(actor);
-    actor.height = actor.wrap ? calculateTextHeight(actor.message, conf.height, actor.width, conf.wrapPadding, actor.wrap, conf.actorFontSize) : conf.height;
-    maxActorHeight = Math.max(maxActorHeight, actor.height);
+    actor.width = actor.width || conf.width;
+    actor.height = Math.max(actor.height || conf.height, conf.height);
     actor.margin = actor.margin || conf.actorMargin;
     actor.x = prevWidth + prevMargin;
-    actor.y = verticalPos;
-
-    if (actor.wrap) {
-      actor.description = wrapLabel(actor.description, actor.width);
-    } // Draw the box with the attached line
-
+    actor.y = verticalPos; // Draw the box with the attached line
 
     _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawActor(diagram, actor, conf);
     bounds.insert(actor.x, verticalPos, actor.x + actor.width, actor.height);
     prevWidth += actor.width;
     prevMargin += actor.margin;
+    bounds.models.addActor(actor);
   } // Add a margin between the actor boxes and the first arrow
 
 
-  bounds.bumpVerticalPos(maxActorHeight);
+  bounds.bumpVerticalPos(conf.height);
 };
 var setConf = function setConf(cnf) {
-  var keys = Object.keys(cnf);
-  keys.forEach(function (key) {
-    conf[key] = cnf[key];
-  });
+  Object(_utils__WEBPACK_IMPORTED_MODULE_6__["assignWithDepth"])(conf, cnf);
 
   if (cnf.fontFamily) {
     conf.actorFontFamily = conf.noteFontFamily = conf.messageFontFamily = cnf.fontFamily;
   }
 
   if (cnf.fontSize) {
-    conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize; // conf.height = cnf.fontSize * (65 / 14);
+    conf.actorFontSize = conf.noteFontSize = conf.messageFontSize = cnf.fontSize;
   }
 
   if (cnf.fontWeight) {
@@ -15790,9 +16486,9 @@ var actorActivations = function actorActivations(actor) {
   });
 };
 
-var actorFlowVerticaBounds = function actorFlowVerticaBounds(actor) {
+var activationBounds = function activationBounds(actor, actors) {
   // handle multiple stacked activations for same actor
-  var actorObj = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors()[actor];
+  var actorObj = actors[actor];
   var activations = actorActivations(actor);
   var left = activations.reduce(function (acc, activation) {
     return Math.min(acc, activation.startx);
@@ -15802,157 +16498,50 @@ var actorFlowVerticaBounds = function actorFlowVerticaBounds(actor) {
   }, actorObj.x + actorObj.width / 2);
   return [left, right];
 };
+
+function adjustLoopHeightForWrap(loopWidths, msg, preMargin, postMargin, addLoopFn) {
+  bounds.bumpVerticalPos(preMargin);
+  var heightAdjust = postMargin;
+
+  if (msg.id && msg.message && loopWidths[msg.id]) {
+    var loopWidth = loopWidths[msg.id].width;
+    var textConf = conf.messageFont();
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel("[".concat(msg.message, "]"), loopWidth - 2 * conf.wrapPadding, textConf);
+    msg.width = loopWidth;
+    msg.wrap = true; // const lines = common.splitBreaks(msg.message).length;
+
+    var textDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, textConf);
+    var totalOffset = Math.max(textDims.height, conf.labelBoxHeight);
+    heightAdjust = postMargin + totalOffset;
+    _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("".concat(totalOffset, " - ").concat(msg.message));
+  }
+
+  addLoopFn(msg);
+  bounds.bumpVerticalPos(heightAdjust);
+}
 /**
- * This calculates the actor's width, taking into account both the statically configured width,
- * and the actor's description.
- *
- * If the description text has greater length, we extend the width of the actor, so it's description
- * won't overflow.
- *
- * @param actor - An actor object
- * @return - The width for the given actor
- */
-
-
-var calculateActorWidth = function calculateActorWidth(actor) {
-  if (!actor.description) {
-    return conf.width;
-  }
-
-  return actor.wrap ? conf.width : Math.max(conf.width, calculateTextWidth(actor.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
-};
-/**
- * This calculates the text's height, taking into account the wrap value and
- * both the statically configured height, width, and the length of the text (in pixels).
- *
- * If the wrapped text text has greater height, we extend the height, so it's
- * value won't overflow.
- *
- * @return - The height for the given actor
- * @param message the text to measure
- * @param elementHeight the height of the default bounding box containing the text
- * @param elementWidth the width of the default bounding box containing the text
- * @param margin space above and below
- * @param wrap wrap the text based on: elementWidth - 2 * margin
- * @param fontSize
- */
-
-
-var calculateTextHeight = function calculateTextHeight(message, elementHeight, elementWidth, margin, wrap, fontSize) {
-  if (!message) {
-    return elementHeight;
-  }
-
-  var lineHeightFactor = wrap ? wrapLabel(message, elementWidth - 2 * margin).split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex).length : 1;
-  return wrap ? Math.max(elementHeight, lineHeightFactor * fontSize) : elementHeight;
-};
-/**
- * This calculates the width of the given text, font size and family.
- *
- * @param text - The text to calculate the width of
- * @param fontSize - The font size of the given text
- * @param fontFamily - The font family (one, or more fonts) to render
- * @param fontWeight - The font weight (normal, bold, italics)
- */
-
-var calculateTextWidth = function calculateTextWidth(text, fontSize, fontFamily, fontWeight) {
-  if (!text) {
-    return 0;
-  }
-
-  fontSize = fontSize ? fontSize : conf.actorFontSize;
-  fontFamily = fontFamily ? fontFamily : conf.actorFontFamily;
-  fontWeight = fontWeight ? fontWeight : conf.actorFontWeight; // We can't really know if the user supplied font family will render on the user agent;
-  // thus, we'll take the max width between the user supplied font family, and a default
-  // of sans-serif.
-
-  var fontFamilies = ['sans-serif', fontFamily];
-  var lines = text.split(_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex);
-  var maxWidth = 0;
-  var body = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body'); // We don't want to leak DOM elements - if a removal operation isn't available
-  // for any reason, do not continue.
-
-  if (!body.remove) {
-    return 0;
-  }
-
-  var g = body.append('svg');
-  var _iteratorNormalCompletion3 = true;
-  var _didIteratorError3 = false;
-  var _iteratorError3 = undefined;
-
-  try {
-    for (var _iterator3 = lines[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-      var line = _step3.value;
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
-
-      try {
-        for (var _iterator4 = fontFamilies[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var _fontFamily = _step4.value;
-          var textObj = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].getTextObj();
-          textObj.text = line;
-          var textElem = _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawText(g, textObj).style('font-size', fontSize).style('font-weight', fontWeight).style('font-family', _fontFamily);
-          maxWidth = Math.max(maxWidth, (textElem._groups || textElem)[0][0].getBBox().width);
-        }
-      } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return != null) {
-            _iterator4.return();
-          }
-        } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
-          }
-        }
-      }
-    }
-  } catch (err) {
-    _didIteratorError3 = true;
-    _iteratorError3 = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
-        _iterator3.return();
-      }
-    } finally {
-      if (_didIteratorError3) {
-        throw _iteratorError3;
-      }
-    }
-  }
-
-  g.remove(); // Adds some padding, so the text won't sit exactly within the actor's borders
-
-  return maxWidth + conf.wrapPadding * 2;
-};
-/**
- * Draws a flowchart in the tag with id: id based on the graph definition in text.
+ * Draws a sequenceDiagram in the tag with id: id based on the graph definition in text.
  * @param text
  * @param id
  */
 
+
 var draw = function draw(text, id) {
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.clear();
+  _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.setWrap(conf.wrap);
   _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].parse(text + '\n');
   bounds.init();
-  var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]"));
-  var startx;
-  var stopx;
-  var forceWidth; // Fetch data from the parsing
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("C:".concat(JSON.stringify(conf, null, 2)));
+  var diagram = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")); // Fetch data from the parsing
 
   var actors = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActors();
   var actorKeys = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getActorKeys();
   var messages = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getMessages();
   var title = _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.getTitle();
   var maxMessageWidthPerActor = getMaxMessageWidthPerActor(actors, messages);
-  var maxActorHeight = calculateActorMargins(actors, maxMessageWidthPerActor);
+  conf.height = calculateActorMargins(actors, maxMessageWidthPerActor);
   drawActors(diagram, actors, actorKeys, 0);
-  bounds.bumpVerticalPos(maxActorHeight > conf.height ? Math.min(conf.boxMargin, Math.abs(maxActorHeight - conf.height)) : 0); // The arrow head definition is attached to the svg once
+  var loopWidths = calculateLoopBounds(messages, actors, maxMessageWidthPerActor); // The arrow head definition is attached to the svg once
 
   _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertArrowHead(diagram);
   _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].insertArrowCrossHead(diagram);
@@ -15973,57 +16562,16 @@ var draw = function draw(text, id) {
 
   var sequenceIndex = 1;
   messages.forEach(function (msg) {
-    var loopData,
-        noteWidth,
-        textWidth,
-        shouldWrap = msg.wrap && msg.message && !_common_common__WEBPACK_IMPORTED_MODULE_4__["default"].lineBreakRegex.test(msg.message);
+    var loopModel, noteModel, msgModel;
 
     switch (msg.type) {
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.NOTE:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        startx = actors[msg.from].x;
-        stopx = actors[msg.to].x;
-        textWidth = calculateTextWidth(msg.message, conf.noteFontSize, conf.noteFontFamily, conf.noteFontWeight);
-        noteWidth = shouldWrap ? conf.width : Math.max(conf.width, textWidth);
-
-        if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
-          if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, noteWidth);
-          }
-
-          drawNote(diagram, startx + (actors[msg.from].width + conf.actorMargin) / 2, bounds.getVerticalPos(), msg, noteWidth);
-        } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
-          if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, noteWidth);
-          }
-
-          drawNote(diagram, startx - noteWidth + (actors[msg.from].width - conf.actorMargin) / 2, bounds.getVerticalPos(), msg, noteWidth);
-        } else if (msg.to === msg.from) {
-          // Single-actor over
-          if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, noteWidth);
-          }
-
-          drawNote(diagram, startx + (actors[msg.to].width - noteWidth) / 2, bounds.getVerticalPos(), msg, noteWidth);
-        } else {
-          // Multi-actor over
-          forceWidth = Math.abs(startx - stopx) + conf.actorMargin / 2;
-
-          if (shouldWrap) {
-            noteWidth = forceWidth;
-            msg.message = wrapLabel(msg.message, noteWidth);
-          } else {
-            noteWidth = Math.max(forceWidth, textWidth - 2 * conf.noteMargin);
-          }
-
-          var x = startx < stopx ? startx + (actors[msg.from].width - conf.actorMargin / 2) / 2 : stopx + (actors[msg.to].width - conf.actorMargin / 2) / 2;
-          drawNote(diagram, x, bounds.getVerticalPos(), msg, forceWidth);
-        }
-
+        noteModel = msg.noteModel;
+        drawNote(diagram, noteModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_START:
-        bounds.newActivation(msg, diagram);
+        bounds.newActivation(msg, diagram, actors);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_END:
@@ -16031,103 +16579,90 @@ var draw = function draw(text, id) {
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'loop', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'loop', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.RECT_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(undefined, msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin, function (message) {
+          return bounds.newLoop(undefined, message.message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.RECT_END:
-        {
-          var rectData = bounds.endLoop();
-          _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawBackgroundRect(diagram, rectData);
-          bounds.bumpVerticalPos(conf.boxMargin);
-          break;
-        }
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawBackgroundRect(diagram, loopModel);
+        bounds.models.addLoop(loopModel);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'opt', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'opt', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_ELSE:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        loopData = bounds.addSectionToLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin + conf.boxTextMargin, conf.boxMargin, function (message) {
+          return bounds.addSectionToLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'alt', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'alt', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_START:
-        bounds.bumpVerticalPos(conf.boxMargin);
-
-        if (shouldWrap) {
-          msg.message = wrapLabel(msg.message, conf.boxMargin);
-        }
-
-        bounds.newLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin + conf.boxTextMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin, conf.boxMargin + conf.boxTextMargin, function (message) {
+          return bounds.newLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_AND:
-        bounds.bumpVerticalPos(conf.boxMargin);
-        loopData = bounds.addSectionToLoop(msg.message);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        adjustLoopHeightForWrap(loopWidths, msg, conf.boxMargin + conf.boxTextMargin, conf.boxMargin, function (message) {
+          return bounds.addSectionToLoop(message);
+        });
         break;
 
       case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_END:
-        loopData = bounds.endLoop();
-        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopData, 'par', conf);
-        bounds.bumpVerticalPos(conf.boxMargin);
+        loopModel = bounds.endLoop();
+        _svgDraw__WEBPACK_IMPORTED_MODULE_1__["default"].drawLoop(diagram, loopModel, 'par', conf);
+        bounds.bumpVerticalPos(loopModel.stopy - bounds.getVerticalPos());
+        bounds.models.addLoop(loopModel);
         break;
 
       default:
         try {
           // lastMsg = msg
-          bounds.bumpVerticalPos(conf.messageMargin);
-          var fromBounds = actorFlowVerticaBounds(msg.from);
-          var toBounds = actorFlowVerticaBounds(msg.to);
-          var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
-          var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
-          startx = fromBounds[fromIdx];
-          stopx = toBounds[toIdx];
-
-          if (shouldWrap) {
-            msg.message = wrapLabel(msg.message, Math.max(Math.abs(stopx - startx) + conf.messageMargin * 2, conf.width + conf.messageMargin * 2));
-          }
-
-          var verticalPos = bounds.getVerticalPos();
-          drawMessage(diagram, startx, stopx, verticalPos, msg, sequenceIndex);
-          var allBounds = fromBounds.concat(toBounds);
-          bounds.insert(Math.min.apply(null, allBounds), verticalPos, Math.max.apply(null, allBounds), verticalPos);
+          msgModel = msg.msgModel;
+          msgModel.starty = bounds.getVerticalPos();
+          msgModel.sequenceIndex = sequenceIndex;
+          drawMessage(diagram, msgModel);
+          bounds.models.addMessage(msgModel);
         } catch (e) {
           _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].error('error while drawing message', e);
         }
@@ -16146,7 +16681,9 @@ var draw = function draw(text, id) {
     drawActors(diagram, actors, actorKeys, bounds.getVerticalPos());
   }
 
-  var box = bounds.getBounds(); // Adjust line height of actor lines now that the height of the diagram is known
+  var _bounds$getBounds = bounds.getBounds(),
+      box = _bounds$getBounds.bounds; // Adjust line height of actor lines now that the height of the diagram is known
+
 
   _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('For line height fix Querying: #' + id + ' .actor-line');
   var actorLines = Object(d3__WEBPACK_IMPORTED_MODULE_0__["selectAll"])('#' + id + ' .actor-line');
@@ -16166,7 +16703,7 @@ var draw = function draw(text, id) {
   if (conf.useMaxWidth) {
     diagram.attr('height', '100%');
     diagram.attr('width', '100%');
-    diagram.attr('style', 'max-width:' + width + 'px;');
+    diagram.attr('style', 'max-width:' + width + 'px;'); // diagram.attr('style', 'max-width:100%;');
   } else {
     diagram.attr('height', height);
     diagram.attr('width', width);
@@ -16174,6 +16711,7 @@ var draw = function draw(text, id) {
 
   var extraVertForTitle = title ? 40 : 0;
   diagram.attr('viewBox', box.startx - conf.diagramMarginX + ' -' + (conf.diagramMarginY + extraVertForTitle) + ' ' + width + ' ' + (height + extraVertForTitle));
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("models:", bounds.models);
 };
 /**
  * Retrieves the max message width of each actor, supports signals (messages, loops)
@@ -16203,10 +16741,10 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
       var isNote = msg.placement !== undefined;
       var isMessage = !isNote;
-      var fontSize = isNote ? conf.noteFontSize : conf.messageFontSize;
-      var fontFamily = isNote ? conf.noteFontFamily : conf.messageFontFamily;
-      var fontWeight = isNote ? conf.noteFontWeight : conf.messageFontWeight;
-      var messageWidth = calculateTextWidth(msg.wrap ? wrapLabel(msg.message, conf.width - conf.noteMargin) : msg.message, fontSize, fontFamily, fontWeight);
+      var textFont = isNote ? conf.noteFont() : conf.messageFont();
+      var wrappedMessage = msg.wrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width - 2 * conf.wrapPadding, textFont) : msg.message;
+      var messageDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(wrappedMessage, textFont);
+      var messageWidth = messageDimensions.width + 2 * conf.wrapPadding;
       /*
        * The following scenarios should be supported:
        *
@@ -16226,7 +16764,12 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
       if (isMessage && msg.from === actor.nextActor) {
         maxMessageWidthPerActor[msg.to] = Math.max(maxMessageWidthPerActor[msg.to] || 0, messageWidth);
-      } else if (isMessage && msg.from === actor.prevActor || msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
+      } else if (isMessage && msg.from === actor.prevActor) {
+        maxMessageWidthPerActor[msg.from] = Math.max(maxMessageWidthPerActor[msg.from] || 0, messageWidth);
+      } else if (isMessage && msg.from === msg.to) {
+        maxMessageWidthPerActor[msg.from] = Math.max(maxMessageWidthPerActor[msg.from] || 0, messageWidth / 2);
+        maxMessageWidthPerActor[msg.to] = Math.max(maxMessageWidthPerActor[msg.to] || 0, messageWidth / 2);
+      } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
         maxMessageWidthPerActor[msg.from] = Math.max(maxMessageWidthPerActor[msg.from] || 0, messageWidth);
       } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
         maxMessageWidthPerActor[actor.prevActor] = Math.max(maxMessageWidthPerActor[actor.prevActor] || 0, messageWidth);
@@ -16241,6 +16784,7 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
       }
     }
   });
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('maxMessageWidthPerActor:', maxMessageWidthPerActor);
   return maxMessageWidthPerActor;
 };
 /**
@@ -16257,40 +16801,220 @@ var getMaxMessageWidthPerActor = function getMaxMessageWidthPerActor(actors, mes
 
 var calculateActorMargins = function calculateActorMargins(actors, actorToMessageWidth) {
   var maxHeight = 0;
+  Object.keys(actors).forEach(function (prop) {
+    var actor = actors[prop];
 
-  var _loop = function _loop(actorKey) {
+    if (actor.wrap) {
+      actor.description = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(actor.description, conf.width - 2 * conf.wrapPadding, conf.actorFont());
+    }
+
+    var actDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(actor.description, conf.actorFont());
+    actor.width = actor.wrap ? conf.width : Math.max(conf.width, actDims.width + 2 * conf.wrapPadding);
+    actor.height = actor.wrap ? Math.max(actDims.height, conf.height) : conf.height;
+    maxHeight = Math.max(maxHeight, actor.height);
+  });
+
+  for (var actorKey in actorToMessageWidth) {
     var actor = actors[actorKey];
 
     if (!actor) {
-      return "continue";
+      continue;
     }
 
     var nextActor = actors[actor.nextActor]; // No need to space out an actor that doesn't have a next link
 
     if (!nextActor) {
-      return "continue";
+      continue;
     }
 
-    [actor, nextActor].forEach(function (act) {
-      act.width = act.wrap ? conf.width : Math.max(conf.width, calculateTextWidth(act.description, conf.actorFontSize, conf.actorFontFamily, conf.actorFontWeight));
-      act.height = act.wrap ? calculateTextHeight(act.description, conf.height, actor.width, conf.actorMargin, act.wrap, conf.actorFontSize) : conf.height;
-      maxHeight = Math.max(maxHeight, act.height);
-    });
     var messageWidth = actorToMessageWidth[actorKey];
     var actorWidth = messageWidth + conf.actorMargin - actor.width / 2 - nextActor.width / 2;
     actor.margin = Math.max(actorWidth, conf.actorMargin);
-  };
-
-  for (var actorKey in actorToMessageWidth) {
-    var _ret = _loop(actorKey);
-
-    if (_ret === "continue") continue;
   }
 
-  Object.keys(actors).forEach(function (key) {
-    actors[key].height = maxHeight;
+  return Math.max(maxHeight, conf.height);
+};
+
+var buildNoteModel = function buildNoteModel(msg, actors) {
+  var startx = actors[msg.from].x;
+  var stopx = actors[msg.to].x;
+  var shouldWrap = msg.wrap && msg.message;
+  var textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, conf.width, conf.noteFont()) : msg.message, conf.noteFont());
+  var noteModel = {
+    width: shouldWrap ? conf.width : Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin),
+    height: 0,
+    startx: actors[msg.from].x,
+    stopx: 0,
+    starty: 0,
+    stopy: 0,
+    message: msg.message
+  };
+
+  if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.RIGHTOF) {
+    noteModel.width = shouldWrap ? Math.max(conf.width, textDimensions.width) : Math.max(actors[msg.from].width / 2 + actors[msg.to].width / 2, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx + (actors[msg.from].width + conf.actorMargin) / 2;
+  } else if (msg.placement === _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.PLACEMENT.LEFTOF) {
+    noteModel.width = shouldWrap ? Math.max(conf.width, textDimensions.width + 2 * conf.noteMargin) : Math.max(actors[msg.from].width / 2 + actors[msg.to].width / 2, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx - noteModel.width + (actors[msg.from].width - conf.actorMargin) / 2;
+  } else if (msg.to === msg.from) {
+    textDimensions = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(shouldWrap ? _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(conf.width, actors[msg.from].width), conf.noteFont()) : msg.message, conf.noteFont());
+    noteModel.width = shouldWrap ? Math.max(conf.width, actors[msg.from].width) : Math.max(actors[msg.from].width, conf.width, textDimensions.width + 2 * conf.noteMargin);
+    noteModel.startx = startx + (actors[msg.from].width - noteModel.width) / 2;
+  } else {
+    noteModel.width = Math.abs(startx + actors[msg.from].width / 2 - (stopx + actors[msg.to].width / 2)) + conf.actorMargin;
+    noteModel.startx = startx < stopx ? startx + actors[msg.from].width / 2 - conf.actorMargin / 2 : stopx + actors[msg.to].width / 2 - conf.actorMargin / 2;
+  }
+
+  if (shouldWrap) {
+    noteModel.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, noteModel.width - 2 * conf.wrapPadding, conf.noteFont());
+  }
+
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug("NM:[".concat(noteModel.startx, ",").concat(noteModel.stopx, ",").concat(noteModel.starty, ",").concat(noteModel.stopy, ":").concat(noteModel.width, ",").concat(noteModel.height, "=").concat(msg.message, "]"));
+  return noteModel;
+};
+
+var buildMessageModel = function buildMessageModel(msg, actors) {
+  var process = false;
+
+  if ([_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_OPEN, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_OPEN, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.SOLID_CROSS, _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.DOTTED_CROSS].includes(msg.type)) {
+    process = true;
+  }
+
+  if (!process) {
+    return {};
+  }
+
+  var fromBounds = activationBounds(msg.from, actors);
+  var toBounds = activationBounds(msg.to, actors);
+  var fromIdx = fromBounds[0] <= toBounds[0] ? 1 : 0;
+  var toIdx = fromBounds[0] < toBounds[0] ? 0 : 1;
+  var allBounds = fromBounds.concat(toBounds);
+  var boundedWidth = Math.abs(toBounds[toIdx] - fromBounds[fromIdx]);
+  var msgDims = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].calculateTextDimensions(msg.message, conf.messageFont());
+
+  if (msg.wrap && msg.message) {
+    msg.message = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].wrapLabel(msg.message, Math.max(boundedWidth + 2 * conf.wrapPadding, conf.width), conf.messageFont());
+  }
+
+  return {
+    width: Math.max(msg.wrap ? 0 : msgDims.width + 2 * conf.wrapPadding, boundedWidth + 2 * conf.wrapPadding, conf.width),
+    height: 0,
+    startx: fromBounds[fromIdx],
+    stopx: toBounds[toIdx],
+    starty: 0,
+    stopy: 0,
+    message: msg.message,
+    type: msg.type,
+    wrap: msg.wrap,
+    fromBounds: Math.min.apply(null, allBounds),
+    toBounds: Math.max.apply(null, allBounds)
+  };
+};
+
+var calculateLoopBounds = function calculateLoopBounds(messages, actors) {
+  var loops = {};
+  var stack = [];
+  var current, noteModel, msgModel;
+  messages.forEach(function (msg) {
+    msg.id = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].random({
+      length: 10
+    });
+
+    switch (msg.type) {
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_START:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_START:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_START:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_START:
+        stack.push({
+          id: msg.id,
+          msg: msg.message,
+          from: Number.MAX_SAFE_INTEGER,
+          to: Number.MIN_SAFE_INTEGER,
+          width: 0
+        });
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_ELSE:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_AND:
+        if (msg.message) {
+          current = stack.pop();
+          loops[current.id] = current;
+          loops[msg.id] = current;
+          stack.push(current);
+        }
+
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.LOOP_END:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ALT_END:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.OPT_END:
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.PAR_END:
+        current = stack.pop();
+        loops[current.id] = current;
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_START:
+        {
+          var actorRect = actors[msg.from ? msg.from.actor : msg.to.actor];
+          var stackedSize = actorActivations(msg.from ? msg.from.actor : msg.to.actor).length;
+          var x = actorRect.x + actorRect.width / 2 + (stackedSize - 1) * conf.activationWidth / 2;
+          var toAdd = {
+            startx: x,
+            stopx: x + conf.activationWidth,
+            actor: msg.from.actor,
+            enabled: true
+          };
+          bounds.activations.push(toAdd);
+        }
+        break;
+
+      case _parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_3__["parser"].yy.LINETYPE.ACTIVE_END:
+        {
+          var lastActorActivationIdx = bounds.activations.map(function (a) {
+            return a.actor;
+          }).lastIndexOf(msg.from.actor);
+          delete bounds.activations.splice(lastActorActivationIdx, 1)[0];
+        }
+        break;
+    }
+
+    var isNote = msg.placement !== undefined;
+
+    if (isNote) {
+      noteModel = buildNoteModel(msg, actors);
+      msg.noteModel = noteModel;
+      stack.forEach(function (stk) {
+        current = stk;
+        current.from = Math.min(current.from, noteModel.startx);
+        current.to = Math.max(current.to, noteModel.startx + noteModel.width);
+        current.width = Math.max(current.width, Math.abs(current.from - current.to)) - conf.labelBoxWidth;
+      });
+    } else {
+      msgModel = buildMessageModel(msg, actors);
+      msg.msgModel = msgModel;
+
+      if (msgModel.startx && msgModel.stopx && stack.length > 0) {
+        stack.forEach(function (stk) {
+          current = stk;
+
+          if (msgModel.startx === msgModel.stopx) {
+            var from = actors[msg.from];
+            var to = actors[msg.to];
+            current.from = Math.min(from.x - msgModel.width / 2, from.x - from.width / 2, current.from);
+            current.to = Math.max(to.x + msgModel.width / 2, to.x + from.width / 2, current.to);
+            current.width = Math.max(current.width, Math.abs(current.to - current.from)) - conf.labelBoxWidth;
+          } else {
+            current.from = Math.min(msgModel.startx, current.from);
+            current.to = Math.max(msgModel.stopx, current.to);
+            current.width = Math.max(current.width, msgModel.width) - conf.labelBoxWidth;
+          }
+        });
+      }
+    }
   });
-  return maxHeight;
+  bounds.activations = [];
+  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Loop type widths:', loops);
+  return loops;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -16344,26 +17068,135 @@ var drawRect = function drawRect(elem, rectData) {
   return rectElem;
 };
 var drawText = function drawText(elem, textData) {
-  // Remove and ignore br:s
-  var nText = textData.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex, ' ');
-  var textElem = elem.append('text');
-  textElem.attr('x', textData.x);
-  textElem.attr('y', textData.y);
-  textElem.style('text-anchor', textData.anchor);
-  textElem.style('font-family', textData.fontFamily);
-  textElem.style('font-size', textData.fontSize);
-  textElem.style('font-weight', textData.fontWeight);
-  textElem.attr('fill', textData.fill);
+  var prevTextHeight = 0,
+      textHeight = 0;
+  var lines = textData.wrap ? textData.text.split(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex) : [textData.text.replace(_common_common__WEBPACK_IMPORTED_MODULE_0__["default"].lineBreakRegex, ' ')];
+  var textElems = [];
+  var dy = 0;
 
-  if (typeof textData.class !== 'undefined') {
-    textElem.attr('class', textData.class);
+  var yfunc = function yfunc() {
+    return textData.y;
+  };
+
+  if (typeof textData.valign !== 'undefined' && typeof textData.textMargin !== 'undefined' && textData.textMargin > 0) {
+    switch (textData.valign) {
+      case 'top':
+      case 'start':
+        yfunc = function yfunc() {
+          return Math.round(textData.y + textData.textMargin);
+        };
+
+        break;
+
+      case 'middle':
+      case 'center':
+        yfunc = function yfunc() {
+          return Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+        };
+
+        break;
+
+      case 'bottom':
+      case 'end':
+        yfunc = function yfunc() {
+          return Math.round(textData.y + (prevTextHeight + textHeight + 2 * textData.textMargin) - textData.textMargin);
+        };
+
+        break;
+    }
   }
 
-  var span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.attr('fill', textData.fill);
-  span.text(nText);
-  return textElem;
+  if (typeof textData.anchor !== 'undefined' && typeof textData.textMargin !== 'undefined' && typeof textData.width !== 'undefined') {
+    switch (textData.anchor) {
+      case 'left':
+      case 'start':
+        textData.x = Math.round(textData.x + textData.textMargin);
+        textData.anchor = 'start';
+        textData.dominantBaseline = 'text-after-edge';
+        textData.alignmentBaseline = 'middle';
+        break;
+
+      case 'middle':
+      case 'center':
+        textData.x = Math.round(textData.x + textData.width / 2);
+        textData.anchor = 'middle';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+
+      case 'right':
+      case 'end':
+        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
+        textData.anchor = 'end';
+        textData.dominantBaseline = 'text-before-edge';
+        textData.alignmentBaseline = 'middle';
+        break;
+    }
+  }
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+
+    if (typeof textData.textMargin !== 'undefined' && textData.textMargin === 0 && typeof textData.fontSize !== 'undefined') {
+      dy = i * textData.fontSize;
+    }
+
+    var textElem = elem.append('text');
+    textElem.attr('x', textData.x);
+    textElem.attr('y', yfunc());
+
+    if (typeof textData.anchor !== 'undefined') {
+      textElem.attr('text-anchor', textData.anchor).attr('dominant-baseline', textData.dominantBaseline).attr('alignment-baseline', textData.alignmentBaseline);
+    }
+
+    if (typeof textData.fontFamily !== 'undefined') {
+      textElem.style('font-family', textData.fontFamily);
+    }
+
+    if (typeof textData.fontSize !== 'undefined') {
+      textElem.style('font-size', textData.fontSize);
+    }
+
+    if (typeof textData.fontWeight !== 'undefined') {
+      textElem.style('font-weight', textData.fontWeight);
+    }
+
+    if (typeof textData.fill !== 'undefined') {
+      textElem.attr('fill', textData.fill);
+    }
+
+    if (typeof textData.class !== 'undefined') {
+      textElem.attr('class', textData.class);
+    }
+
+    if (typeof textData.dy !== 'undefined') {
+      textElem.attr('dy', textData.dy);
+    } else if (dy !== 0) {
+      textElem.attr('dy', dy);
+    }
+
+    if (textData.tspan) {
+      var span = textElem.append('tspan');
+      span.attr('x', textData.x);
+
+      if (typeof textData.fill !== 'undefined') {
+        span.attr('fill', textData.fill);
+      }
+
+      span.text(line);
+    } else {
+      textElem.text(line);
+    }
+
+    if (typeof textData.valign !== 'undefined' && typeof textData.textMargin !== 'undefined' && textData.textMargin > 0) {
+      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      prevTextHeight = textHeight;
+    }
+
+    textElems.push(textElem);
+  }
+
+  return textElems;
 };
 var drawLabel = function drawLabel(elem, txtObject) {
   function genPoints(x, y, width, height, cut) {
@@ -16371,15 +17204,15 @@ var drawLabel = function drawLabel(elem, txtObject) {
   }
 
   var polygon = elem.append('polygon');
-  polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7));
+  polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
   polygon.attr('class', 'labelBox');
-  txtObject.y = txtObject.y + txtObject.labelMargin;
-  txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
+  txtObject.y = txtObject.y + txtObject.height / 2;
   drawText(elem, txtObject);
+  return polygon;
 };
 var actorCnt = -1;
 /**
- * Draws an actor in the diagram with the attaced line
+ * Draws an actor in the diagram with the attached line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
  * @param conf - drawText implementation discriminator object
@@ -16435,66 +17268,92 @@ var drawActivation = function drawActivation(elem, bounds, verticalPos, conf, ac
 /**
  * Draws a loop in the diagram
  * @param elem - elemenet to append the loop to.
- * @param bounds - bounds of the given loop.
+ * @param loopModel - loopModel of the given loop.
  * @param labelText - Text within the loop.
- * @param conf
+ * @param conf - diagrom configuration
  */
 
-var drawLoop = function drawLoop(elem, bounds, labelText, conf) {
+var drawLoop = function drawLoop(elem, loopModel, labelText, conf) {
+  var boxMargin = conf.boxMargin,
+      boxTextMargin = conf.boxTextMargin,
+      labelBoxHeight = conf.labelBoxHeight,
+      labelBoxWidth = conf.labelBoxWidth,
+      fontFamily = conf.messageFontFamily,
+      fontSize = conf.messageFontSize,
+      fontWeight = conf.messageFontWeight;
   var g = elem.append('g');
 
   var drawLoopLine = function drawLoopLine(startx, starty, stopx, stopy) {
     return g.append('line').attr('x1', startx).attr('y1', starty).attr('x2', stopx).attr('y2', stopy).attr('class', 'loopLine');
   };
 
-  drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty);
-  drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.stopy, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy);
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.stopx, loopModel.starty);
+  drawLoopLine(loopModel.stopx, loopModel.starty, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
 
-  if (typeof bounds.sections !== 'undefined') {
-    bounds.sections.forEach(function (item) {
-      drawLoopLine(bounds.startx, item, bounds.stopx, item).style('stroke-dasharray', '3, 3');
+  if (typeof loopModel.sections !== 'undefined') {
+    loopModel.sections.forEach(function (item) {
+      drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style('stroke-dasharray', '3, 3');
     });
   }
 
-  var minSize = Math.round(3 * conf.fontSize / 4) < 10 ? conf.fontSize : Math.round(3 * conf.fontSize / 4);
   var txt = getTextObj();
   txt.text = labelText;
-  txt.x = bounds.startx;
-  txt.y = bounds.starty;
-  txt.labelMargin = 1.5 * 10; // This is the small box that says "loop"
-
-  txt.fontFamily = conf.fontFamily;
-  txt.fontSize = minSize;
-  txt.fontWeight = conf.fontWeight;
-  txt.class = 'labelText'; // Its size & position are fixed.
-
+  txt.x = loopModel.startx;
+  txt.y = loopModel.starty;
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
+  txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.tspan = false;
+  txt.width = labelBoxWidth || 50;
+  txt.height = labelBoxHeight || 20;
+  txt.textMargin = boxTextMargin;
+  txt.class = 'labelText';
   drawLabel(g, txt);
   txt = getTextObj();
-  txt.text = '[ ' + bounds.title + ' ]';
-  txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
-  txt.y = bounds.starty + 1.5 * conf.boxMargin;
+  txt.text = loopModel.title;
+  txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + boxMargin + boxTextMargin;
   txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.textMargin = boxTextMargin;
   txt.class = 'loopText';
-  txt.fontFamily = conf.fontFamily;
-  txt.fontSize = minSize;
-  txt.fontWeight = conf.fontWeight;
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
+  txt.wrap = true;
   var textElem = drawText(g, txt);
-  var textHeight = (textElem._groups || textElem)[0][0].getBBox().height;
 
-  if (typeof bounds.sectionTitles !== 'undefined') {
-    bounds.sectionTitles.forEach(function (item, idx) {
-      if (item !== '') {
-        txt.text = '[ ' + item + ' ]';
-        txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
+  if (typeof loopModel.sectionTitles !== 'undefined') {
+    loopModel.sectionTitles.forEach(function (item, idx) {
+      if (item.message) {
+        txt.text = item.message;
+        txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
+        txt.y = loopModel.sections[idx].y + boxMargin + boxTextMargin;
+        txt.class = 'loopText';
+        txt.anchor = 'middle';
+        txt.valign = 'middle';
+        txt.tspan = false;
+        txt.fontFamily = fontFamily;
+        txt.fontSize = fontSize;
+        txt.fontWeight = fontWeight;
+        txt.wrap = loopModel.wrap;
         textElem = drawText(g, txt);
-        textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+        var sectionHeight = Math.round(textElem.map(function (te) {
+          return (te._groups || te)[0][0].getBBox().height;
+        }).reduce(function (acc, curr) {
+          return acc + curr;
+        }));
+        loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
       }
     });
   }
 
-  return textHeight + 4;
+  loopModel.height = Math.round(loopModel.stopy - loopModel.starty);
+  return g;
 };
 /**
  * Draws a background rectangle
@@ -16540,22 +17399,23 @@ var insertArrowCrossHead = function insertArrowCrossHead(elem) {
   marker.append('path').attr('fill', 'none').attr('stroke', '#000000').style('stroke-dasharray', '0, 0').attr('stroke-width', '1px').attr('d', 'M 0,1 L 6,7 M 6,1 L 0,7'); // this is actual shape for arrowhead
 };
 var getTextObj = function getTextObj() {
-  var txt = {
+  return {
     x: 0,
     y: 0,
     fill: undefined,
-    'text-anchor': 'start',
+    anchor: undefined,
     style: '#666',
-    width: 100,
-    height: 100,
+    width: undefined,
+    height: undefined,
     textMargin: 0,
     rx: 0,
-    ry: 0
+    ry: 0,
+    tspan: true,
+    valign: undefined
   };
-  return txt;
 };
 var getNoteRect = function getNoteRect() {
-  var rect = {
+  return {
     x: 0,
     y: 0,
     fill: '#EDF2AE',
@@ -16566,7 +17426,6 @@ var getNoteRect = function getNoteRect() {
     rx: 0,
     ry: 0
   };
-  return rect;
 };
 
 var _drawTextCandidateFunc = function () {
@@ -20355,11 +21214,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var entity_decode_browser__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(entity_decode_browser__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mermaidAPI */ "./src/mermaidAPI.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
  */
 // import { decode } from 'he';
+
 
 
 
@@ -20388,8 +21249,8 @@ __webpack_require__.r(__webpack_exports__);
 var init = function init() {
   var _this = this;
 
-  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig();
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Starting rendering diagrams');
+  var conf = _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].getConfig(); // console.log('Starting rendering diagrams (init) - mermaid.init');
+
   var nodes;
 
   if (arguments.length >= 2) {
@@ -20454,6 +21315,11 @@ var init = function init() {
     txt = element.innerHTML; // transforms the html to pure text
 
     txt = entity_decode_browser__WEBPACK_IMPORTED_MODULE_0___default()(txt).trim().replace(/<br\s*\/?>/gi, '<br/>');
+    var init = _utils__WEBPACK_IMPORTED_MODULE_3__["default"].detectInit(txt);
+
+    if (init) {
+      _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Detected early reinit: ', init);
+    }
 
     try {
       _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].render(id, txt, function (svgCode, bindFunctions) {
@@ -20483,6 +21349,8 @@ var init = function init() {
 };
 
 var initialize = function initialize(config) {
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].reset();
+
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -20494,7 +21362,6 @@ var initialize = function initialize(config) {
   }
 
   _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config);
-  _logger__WEBPACK_IMPORTED_MODULE_2__["logger"].debug('Initializing mermaid ');
 };
 /**
  * ##contentLoaded
@@ -20664,795 +21531,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
 
+
 var themes = {};
 
 for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
   var themeName = _arr[_i];
   themes[themeName] = __webpack_require__("./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$")("./".concat(themeName, "/index.scss"));
 }
-/**
- * These are the default options which can be overridden with the initialization call like so:
- * **Example 1:**
- * <pre>
- * mermaid.initialize({
- *   flowchart:{
- *     htmlLabels: false
- *   }
- * });
- * </pre>
- *
- * **Example 2:**
- * <pre>
- * &lt;script>
- *   var config = {
- *     startOnLoad:true,
- *     flowchart:{
- *       useMaxWidth:true,
- *       htmlLabels:true,
- *       curve:'cardinal',
- *     },
- *
- *     securityLevel:'loose',
- *   };
- *   mermaid.initialize(config);
- * &lt;/script>
- * </pre>
- * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
- *
- * @name Configuration
- */
-
-
-var config = {
-  /** theme , the CSS style sheet
-   *
-   * theme , the CSS style sheet
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
-   ***Notes:**To disable any pre-defined mermaid theme, use "null".
-   * <pre>
-   *  "theme": "forest",
-   *  "themeCSS": ".node rect { fill: red; }"
-   * </pre>
-   */
-  theme: 'default',
-  themeCSS: undefined,
-
-  /* **maxTextSize** - The maximum allowed size of the users text diamgram */
-  maxTextSize: 50000,
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *|fontFamily | specifies the font to be used in the rendered diagrams| String | Required | Verdana, Arial, Trebuchet MS,|
-   *
-   ***notes: Default value is \\"trebuchet ms\\".
-   */
-  fontFamily: '"trebuchet ms", verdana, arial;',
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| logLevel |This option decides the amount of logging to be used.| String | Required | 1, 2, 3, 4, 5 |
-   *
-   *
-   ***Notes:**
-   *-   debug: 1.
-   *-   info: 2.
-   *-   warn: 3.
-   *-   error: 4.
-   *-   fatal: 5(default).
-   */
-  logLevel: 5,
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
-   *
-   ***Notes:
-   *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
-   *-   **loose**: tags in text are allowed, click functionality is enabled
-   */
-  securityLevel: 'strict',
-
-  /**
-   *| Parameter | Description |Type | Required | Values|
-   *| --- | --- | --- | --- | --- |
-   *| startOnLoad| Dictates whether mermaind starts on Page load | Boolean | Required | True, False |
-   *
-   ***Notes:**
-   ***Default value: true**
-   */
-  startOnLoad: true,
-
-  /**
-   *| Parameter | Description |Type | Required |Values|
-   *| --- | --- | --- | --- | --- |
-   *| arrowMarkerAbsolute | Controls whether or arrow markers in html code are absolute paths or anchors | Boolean | Required |  True, False |
-   *
-   *
-   *## Notes**: This matters if you are using base tag settings.
-   ***Default value: false**.
-   */
-  arrowMarkerAbsolute: false,
-
-  /**
-   * The object containing configurations specific for flowcharts
-   */
-  flowchart: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
-     *
-     ***Notes: Default value: true**.
-     */
-    htmlLabels: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| nodeSpacing | Defines the spacing between nodes on the same level | Integer| Required | Any positive Numbers |
-     *
-     ***Notes:
-     *Pertains to horizontal spacing for TB (top to bottom) or BT (bottom to top) graphs, and the vertical spacing for LR as well as RL graphs.**
-     ***Default value 50**.
-     */
-    nodeSpacing: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rankSpacing | Defines the spacing between nodes on different levels | Integer | Required| Any Positive Numbers |
-     *
-     ***Notes: pertains to vertical spacing for TB (top to bottom) or BT (bottom to top), and the horizontal spacing for LR as well as RL graphs.
-     ***Default value 50**.
-     */
-    rankSpacing: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| curve | Defines how mermaid renders curves for flowcharts. | String | Required | Basis, Linear, Cardinal|
-     *
-     ***Notes:
-     *Default Vaue: Linear**
-     */
-    curve: 'linear',
-    // Only used in new experimental rendering
-    // repreesents the padding between the labels and the shape
-    padding: 15
-  },
-
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
-  sequence: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Values |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    diagramMarginX: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | Margin to the over and under the sequence diagram | Integer | Required | Any Positive Values|
-     *
-     ***Notes:**
-     ***Default value 10**.
-     */
-    diagramMarginY: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    actorMargin: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 150**.
-     */
-    width: 150,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value|
-     *
-     ***Notes:**
-     ***Default value 65**..
-     */
-    height: 65,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     ***Default value 10**.
-     */
-    boxMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin| margin around the text in loop/alt/opt boxes | Integer | Required| Any Positive Value|
-     *
-     ***Notes:**
-     *
-     ***Default value 5**.
-     */
-    boxTextMargin: 5,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     ***Default value 10**.
-     */
-    noteMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin | Space between messages. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     *Space between messages.
-     ***Default value 35**.
-     */
-    messageMargin: 35,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign | Multiline message alignment | Integer | Required | left, center, right |
-     *
-     ***Notes:**center **default**
-     */
-    messageAlign: 'center',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| mirrorActors | mirror actors under diagram. | Boolean| Required | True, False |
-     *
-     ***Notes:**
-     *
-     ***Default value true**.
-     */
-    mirrorActors: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
-     */
-    bottomMarginAdj: 1,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See Notes | Boolean | Required | True, False |
-     *
-     ***Notes:**
-     *when this flag is set to true, the height and width is set to 100% and is then scaling with the
-     *available space. If set to false, the absolute space required is used.
-     ***Default value: True**.
-     */
-    useMaxWidth: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | display curve arrows as right angles| Boolean | Required | True, False |
-     *
-     ***Notes:**
-     *
-     *This will display arrows that start and begin at the same node as right angles, rather than a curve
-     ***Default value false**.
-     */
-    rightAngles: false,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| showSequenceNumbers | This will show the node numbers | Boolean | Required | True, False |
-     *
-     ***Notes:**
-     ***Default value false**.
-     */
-    showSequenceNumbers: false,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontSize| This sets the font size of the actor's description | Integer | Require | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 14**..
-     */
-    actorFontSize: 14,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorFontFamily |This sets the font family of the actor's description | 3 | 4 | Open-Sans, Sans-Serif |
-     *
-     ***Notes:**
-     ***Default value "Open-Sans", "sans-serif"**.
-     */
-    actorFontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     * This sets the font weight of the actor's description
-     * **Default value 400.
-     */
-    actorFontWeight: 400,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontSize |This sets the font size of actor-attached notes. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 14**..
-     */
-    noteFontSize: 14,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteFontFamily| This sets the font family of actor-attached notes. | String | Required |  trebuchet ms, verdana, arial |
-     *
-     ***Notes:**
-     ***Default value: trebuchet ms **.
-     */
-    noteFontFamily: '"trebuchet ms", verdana, arial',
-
-    /**
-     * This sets the font weight of the note's description
-     * **Default value 400.
-     */
-    noteFontWeight: 400,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteAlign | This sets the text alignment of actor-attached notes. | string | required | left, center, right|
-     *
-     ***Notes:**
-     ***Default value center**.
-     */
-    noteAlign: 'center',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontSize | This sets the font size of actor messages. | Integer | Required | Any Positive Number |
-     *
-     ***Notes:**
-     ***Default value 16**.
-     */
-    messageFontSize: 16,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageFontFamily | This sets the font family of actor messages. | String| Required | trebuchet ms", verdana, aria |
-     *
-     ***Notes:**
-     ***Default value:"trebuchet ms**.
-     */
-    messageFontFamily: '"trebuchet ms", verdana, arial',
-
-    /**
-     * This sets the font weight of the message's description
-     * **Default value 400.
-     */
-    messageFontWeight: 400,
-
-    /**
-     * This sets the auto-wrap state for the diagram
-     * **Default value false.
-     */
-    wrapEnabled: false,
-
-    /**
-     * This sets the auto-wrap padding for the diagram (sides only)
-     * **Default value 15.
-     */
-    wrapPadding: 15
-  },
-
-  /**
-   * The object containing configurations specific for gantt diagrams*
-   */
-  gantt: {
-    /**
-     *### titleTopMargin
-     *
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| titleTopMargin | Margin top for the text over the gantt diagram | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 25**.
-     */
-    titleTopMargin: 25,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barHeight | The height of the bars in the graph | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 20**.
-     */
-    barHeight: 20,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| barGap | The margin between the different activities in the gantt diagram. | Integer | Optional |Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 4**.
-     */
-    barGap: 4,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| topPadding | Margin between title and gantt diagram and between axis and gantt diagram. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    topPadding: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| leftPadding | The space allocated for the section name to the left of the activities. | Integer| Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 75**.
-     */
-    leftPadding: 75,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| gridLineStartPadding | Vertical starting position of the grid lines. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 35**.
-     */
-    gridLineStartPadding: 35,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize | Font size| Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 11**.
-     */
-    fontSize: 11,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontFamily | font Family | string | required |"Open-Sans", "sans-serif" |
-     *
-     ***Notes:**
-     *
-     ***Default value '"Open-Sans", "sans-serif"'**.
-     */
-    fontFamily: '"Open-Sans", "sans-serif"',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| numberSectionStyles | The number of alternating section styles | Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 4**.
-     */
-    numberSectionStyles: 4,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| axisFormat | Datetime format of the axis. | 3 | Required | Date in yy-mm-dd |
-     *
-     ***Notes:**
-     *
-     * This might need adjustment to match your locale and preferences
-     ***Default value '%Y-%m-%d'**.
-     */
-    axisFormat: '%Y-%m-%d'
-  },
-
-  /**
-   * The object containing configurations specific for sequence diagrams
-   */
-  journey: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginX | margin to the right and left of the sequence diagram | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    diagramMarginX: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramMarginY | margin to the over and under the sequence diagram. | Integer | Required | Any Positive Value|
-     *
-     ***Notes:**
-     ***Default value 10**..
-     */
-    diagramMarginY: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| actorMargin | Margin between actors. | Integer | Required | Any Positive Value|
-     *
-     ***Notes:**
-     ***Default value 50**.
-     */
-    actorMargin: 50,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| width | Width of actor boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 150**.
-     */
-    width: 150,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| height | Height of actor boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 65**.
-     */
-    height: 65,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxMargin | Margin around loop boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 10**.
-     */
-    boxMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| boxTextMargin | margin around the text in loop/alt/opt boxes | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     */
-    boxTextMargin: 5,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| noteMargin | margin around notes. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     ***Default value 10**.
-     */
-    noteMargin: 10,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageMargin |Space between messages. | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**
-     *
-     *Space between messages.
-     ***Default value 35**.
-     */
-    messageMargin: 35,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| messageAlign |Multiline message alignment | 3 | 4 | left, center, right |
-     *
-     ***Notes:**default:center**
-     */
-    messageAlign: 'center',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| bottomMarginAdj | Prolongs the edge of the diagram downwards. | Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**Depending on css styling this might need adjustment.
-     ***Default value 1**.
-     */
-    bottomMarginAdj: 1,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| useMaxWidth | See notes | Boolean | 4 | True, False |
-     *
-     ***Notes:**when this flag is set the height and width is set to 100% and is then scaling with the
-     *available space if not the absolute space required is used.
-     *
-     ***Default value true**.
-     */
-    useMaxWidth: true,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| rightAngles | Curved Arrows become Right Angles,  | 3 | 4 | True, False |
-     *
-     ***Notes:**This will display arrows that start and begin at the same node as right angles, rather than a curves
-     ***Default value false**.
-     */
-    rightAngles: false
-  },
-  class: {},
-  git: {},
-  state: {
-    dividerMargin: 10,
-    sizeUnit: 5,
-    padding: 8,
-    textHeight: 10,
-    titleShift: -15,
-    noteMargin: 10,
-    forkWidth: 70,
-    forkHeight: 7,
-    // Used
-    miniPadding: 2,
-    // Font size factor, this is used to guess the width of the edges labels before rendering by dagre
-    // layout. This might need updating if/when switching font
-    fontSizeFactor: 5.02,
-    fontSize: 24,
-    labelHeight: 16,
-    edgeLengthFactor: '20',
-    compositTitleSize: 35,
-    radius: 5
-  },
-
-  /**
-   * The object containing configurations specific for entity relationship diagrams
-   */
-  er: {
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
-     *
-     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
-     ***Default value: 20**.
-     */
-    diagramPadding: 20,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| layoutDirection | Directional bias for layout of entities. | String | Required | "TB", "BT","LR","RL" |
-     *
-     ***Notes:**
-     *'TB' for Top-Bottom, 'BT'for Bottom-Top, 'LR' for Left-Right, or 'RL' for Right to Left.
-     * T = top, B = bottom, L = left, and R = right.
-     ***Default value: TB **.
-     */
-    layoutDirection: 'TB',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityWidth | The mimimum width of an entity box, | Integer | Required| Any Positive Value  |
-     *
-     ***Notes:**expressed in pixels
-     ***Default value: 100**.
-     */
-    minEntityWidth: 100,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| minEntityHeight| The minimum height of an entity box, | Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**expressed in pixels
-     ***Default value: 75 **
-     */
-    minEntityHeight: 75,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| entityPadding|minimum internal padding betweentext in box and  box borders| Integer | 4 | Any Positive Value |
-     *
-     ***Notes:**The minimum internal padding betweentext in an entity box and the enclosing box borders, expressed in pixels.
-     ***Default value: 15 **
-     */
-    entityPadding: 15,
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| stroke | Stroke color of box edges and lines | String | 4 | Any recognized color |
-     ***Default value: gray **
-     */
-    stroke: 'gray',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fill | Fill color of entity boxes | String | 4 | Any recognized color |
-     *
-     ***Notes:**
-     ***Default value:'honeydew'**
-     */
-    fill: 'honeydew',
-
-    /**
-     *| Parameter | Description |Type | Required | Values|
-     *| --- | --- | --- | --- | --- |
-     *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
-     *
-     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
-     ***Default value: 12 **
-     */
-    fontSize: 12
-  }
-};
-Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(config);
 
 function parse(text) {
   var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(text);
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Init ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('reinit ', graphInit);
   }
 
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(text);
@@ -21527,6 +21619,8 @@ function parse(text) {
       break;
   }
 
+  parser.parser.yy.graphType = graphType;
+
   parser.parser.yy.parseError = function (str, hash) {
     var error = {
       str: str,
@@ -21536,6 +21630,7 @@ function parse(text) {
   };
 
   parser.parse(text);
+  return parser;
 }
 
 var encodeEntities = function encodeEntities(text) {
@@ -21589,7 +21684,7 @@ var decodeEntities = function decodeEntities(text) {
  *  });
  *```
  * @param id the id of the element to be rendered
- * @param txt the graph definition
+ * @param _txt the graph definition
  * @param cb callback which is called after rendering is finished with the svg code as inparam.
  * @param container selector to element in which a div with the graph temporarily will be inserted. In one is
  * provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
@@ -21597,16 +21692,24 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
-  // Check the maximum allowed text size
+  var cnf = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])(); // Check the maximum allowed text size
+
   var txt = _txt;
 
-  if (_txt.length > config.maxTextSize) {
+  if (_txt.length > cnf.maxTextSize) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
+  }
+
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(txt);
+
+  if (graphInit) {
+    reinitialize(graphInit);
+    Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(cnf, Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
   }
 
   if (typeof container !== 'undefined') {
     container.innerHTML = '';
-    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + config.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
+    Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])(container).append('div').attr('id', 'd' + id).attr('style', 'font-family: ' + cnf.fontFamily).append('svg').attr('id', id).attr('width', '100%').attr('xmlns', 'http://www.w3.org/2000/svg').append('g');
   } else {
     var existingSvg = document.getElementById(id);
 
@@ -21626,36 +21729,30 @@ var render = function render(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node();
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(txt);
-
-  if (graphInit) {
-    reinitialize(graphInit);
-  }
-
   var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(txt); // insert inline style into svg
 
   var svg = element.firstChild;
   var firstChild = svg.firstChild; // pre-defined theme
 
-  var style = themes[config.theme];
+  var style = themes[cnf.theme];
 
   if (style === undefined) {
     style = '';
   } // user provided theme CSS
 
 
-  if (config.themeCSS !== undefined) {
-    style += "\n".concat(config.themeCSS);
+  if (cnf.themeCSS !== undefined) {
+    style += "\n".concat(cnf.themeCSS);
   } // user provided theme CSS
 
 
-  if (config.fontFamily !== undefined) {
-    style += "\n:root { --mermaid-font-family: ".concat(config.fontFamily, "}");
+  if (cnf.fontFamily !== undefined) {
+    style += "\n:root { --mermaid-font-family: ".concat(cnf.fontFamily, "}");
   } // user provided theme CSS
 
 
-  if (config.altFontFamily !== undefined) {
-    style += "\n:root { --mermaid-alt-font-family: ".concat(config.altFontFamily, "}");
+  if (cnf.altFontFamily !== undefined) {
+    style += "\n:root { --mermaid-alt-font-family: ".concat(cnf.altFontFamily, "}");
   } // classDef
 
 
@@ -21682,90 +21779,90 @@ var render = function render(id, _txt, cb, container) {
   try {
     switch (graphType) {
       case 'git':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(config.git);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(cnf.git);
         _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
         _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
-        config.flowchart.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(config.flowchart);
+        cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(cnf.flowchart);
         _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
-        config.sequence.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
+        cnf.sequence.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
 
-        if (config.sequenceDiagram) {
+        if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(config.sequence, config.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(config.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(cnf.sequence);
         }
 
         _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].draw(txt, id);
         break;
 
       case 'gantt':
-        config.gantt.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(config.gantt);
+        cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(cnf.gantt);
         _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].draw(txt, id);
         break;
 
       case 'class':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
         _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
         break;
 
       case 'state':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(config.state);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(cnf.state);
         _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].draw(txt, id);
         break;
 
       case 'stateDiagram':
-        // config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(config.state);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
         _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
         break;
 
       case 'info':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.class);
         _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'pie':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.class);
         _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'er':
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(config.er);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.er);
         _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'journey':
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(config.journey);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(cnf.journey);
         _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
     }
   } catch (e) {
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(config.class);
+    // errorRenderer.setConf(cnf.class);
     _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
     throw e;
   }
 
-  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (config.arrowMarkerAbsolute) {
+  Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])("[id=\"".concat(id, "\"]")).selectAll('foreignobject > *').attr('xmlns', 'http://www.w3.org/1999/xhtml'); // if (cnf.arrowMarkerAbsolute) {
   //   url =
   //     window.location.protocol +
   //     '//' +
@@ -21778,8 +21875,9 @@ var render = function render(id, _txt, cb, container) {
   // Fix for when the base tag is used
 
   var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('#d' + id).node().innerHTML;
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
-  if (!config.arrowMarkerAbsolute || config.arrowMarkerAbsolute === 'false') {
+  if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
   }
 
@@ -21816,72 +21914,150 @@ var render = function render(id, _txt, cb, container) {
   return svgCode;
 };
 
-var setConf = function setConf(cnf) {
-  // Top level initially mermaid, gflow, sequenceDiagram and gantt
-  var lvl1Keys = Object.keys(cnf);
+var currentDirective = {};
 
-  for (var i = 0; i < lvl1Keys.length; i++) {
-    if (_typeof(cnf[lvl1Keys[i]]) === 'object' && cnf[lvl1Keys[i]] != null) {
-      var lvl2Keys = Object.keys(cnf[lvl1Keys[i]]);
+var parseDirective = function parseDirective(statement, context, type) {
+  try {
+    if (statement !== undefined) {
+      statement = statement.trim();
 
-      for (var j = 0; j < lvl2Keys.length; j++) {
-        _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Setting conf ', lvl1Keys[i], '-', lvl2Keys[j]);
+      switch (context) {
+        case 'open_directive':
+          currentDirective = {};
+          break;
 
-        if (typeof config[lvl1Keys[i]] === 'undefined') {
-          config[lvl1Keys[i]] = {};
-        }
+        case 'type_directive':
+          currentDirective.type = statement.toLowerCase();
+          break;
 
-        _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Setting config: ' + lvl1Keys[i] + ' ' + lvl2Keys[j] + ' to ' + cnf[lvl1Keys[i]][lvl2Keys[j]]);
-        config[lvl1Keys[i]][lvl2Keys[j]] = cnf[lvl1Keys[i]][lvl2Keys[j]];
+        case 'arg_directive':
+          currentDirective.args = JSON.parse(statement);
+          break;
+
+        case 'close_directive':
+          handleDirective(currentDirective, type);
+          currentDirective = null;
+          break;
       }
-    } else {
-      config[lvl1Keys[i]] = cnf[lvl1Keys[i]];
     }
+  } catch (error) {
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error(error.message);
   }
 };
 
-function reinitialize(options) {
-  if (_typeof(options) === 'object') {
-    setConf(options);
+var handleDirective = function handleDirective(directive, type) {
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+
+  switch (directive.type) {
+    case 'init':
+    case 'initialize':
+      {
+        ['config'].forEach(function (prop) {
+          if (typeof directive.args[prop] !== 'undefined') {
+            if (type === 'flowchart-v2') {
+              type = 'flowchart';
+            }
+
+            directive.args[type] = directive.args[prop];
+            delete directive.args[prop];
+          }
+        });
+        reinitialize(directive.args);
+        break;
+      }
+
+    case 'wrap':
+    case 'nowrap':
+      directive.args = {
+        config: {
+          wrap: directive.type === 'wrap'
+        }
+      };
+      ['config'].forEach(function (prop) {
+        if (typeof directive.args[prop] !== 'undefined') {
+          if (type === 'flowchart-v2') {
+            type = 'flowchart';
+          }
+
+          directive.args[type] = directive.args[prop];
+          delete directive.args[prop];
+        }
+      });
+      reinitialize(directive.args);
+      break;
+
+    default:
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      break;
+  }
+};
+
+function updateRendererConfigs(conf) {
+  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(conf.git);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(conf.flowchart);
+
+  if (typeof conf['sequenceDiagram'] !== 'undefined') {
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
   }
 
-  Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(config);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(conf.class);
+  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.state);
+  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
+  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(conf.class);
+  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.er);
+  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.journey);
+  _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
+}
+
+function reinitialize(options) {
+  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options); // Set default options
+
+  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+  updateRendererConfigs(config);
   Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('RE-Initializing mermaidAPI ', {
-    version: _package_json__WEBPACK_IMPORTED_MODULE_2__.version,
-    options: options,
-    config: config
-  });
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
-  var _config = config;
-  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Initializing mermaidAPI ', {
-    version: _package_json__WEBPACK_IMPORTED_MODULE_2__.version,
-    options: options,
-    _config: _config
-  }); // Update default config with options supplied at initialization
-
-  if (_typeof(options) === 'object') {
-    _config = Object.assign(_config, options);
-    setConf(_config);
-  }
-
-  Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(_config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(_config.logLevel);
+  // console.log(`mermaidAPI.initialize: v${pkg.version}`);
+  // Set default options
+  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+  updateRendererConfigs(config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.initialize: ', config);
 } // function getConfig () {
 //   console.warn('get config')
 //   return config
 // }
 
 
-var mermaidAPI = {
+var mermaidAPI = Object.freeze({
   render: render,
   parse: parse,
+  parseDirective: parseDirective,
   initialize: initialize,
   reinitialize: reinitialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"]
-};
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"],
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"],
+  reset: function reset() {
+    // console.warn('reset');
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
+    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
+    updateRendererConfigs(siteConfig);
+  },
+  globalReset: function globalReset() {
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(_config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig);
+    updateRendererConfigs(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
+  },
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig
+});
+Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -22064,7 +22240,7 @@ if (typeof styles === 'string') {
 /*!**********************!*\
   !*** ./src/utils.js ***!
   \**********************/
-/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, default */
+/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -22078,11 +22254,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "runFunc", function() { return runFunc; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStylesFromArray", function() { return getStylesFromArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateId", function() { return generateId; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "random", function() { return random; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "assignWithDepth", function() { return assignWithDepth; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getTextObj", function() { return getTextObj; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "drawSimpleText", function() { return drawSimpleText; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "wrapLabel", function() { return wrapLabel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextHeight", function() { return calculateTextHeight; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextWidth", function() { return calculateTextWidth; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calculateTextDimensions", function() { return calculateTextDimensions; });
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @braintree/sanitize-url */ "@braintree/sanitize-url");
 /* harmony import */ var _braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_braintree_sanitize_url__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./diagrams/common/common */ "./src/diagrams/common/common.js");
+/* harmony import */ var crypto_random_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! crypto-random-string */ "crypto-random-string");
+/* harmony import */ var crypto_random_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(crypto_random_string__WEBPACK_IMPORTED_MODULE_4__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -22090,6 +22279,8 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+
 
 
 
@@ -22139,7 +22330,7 @@ var anyComment = /\s*%%.*\n/gm;
  * ```
  *
  * @param {string} text The text defining the graph
- * @returns {object} the json object representing the init to pass to mermaid.initialize()
+ * @returns {object} the json object representing the init passed to mermaid.initialize()
  */
 
 var detectInit = function detectInit(text) {
@@ -22150,9 +22341,23 @@ var detectInit = function detectInit(text) {
     var args = inits.map(function (init) {
       return init.args;
     });
-    results = Object.assign.apply(Object, [results].concat(_toConsumableArray(args)));
+    results = assignWithDepth(results, _toConsumableArray(args));
   } else {
     results = inits.args;
+  }
+
+  if (results) {
+    var type = detectType(text);
+    ['config'].forEach(function (prop) {
+      if (typeof results[prop] !== 'undefined') {
+        if (type === 'flowchart-v2') {
+          type = 'flowchart';
+        }
+
+        results[type] = results[prop];
+        delete results[prop];
+      }
+    });
   }
 
   return results;
@@ -22480,7 +22685,365 @@ var generateId = function generateId() {
   cnt++;
   return 'id-' + Math.random().toString(36).substr(2, 12) + '-' + cnt;
 };
+var random = function random(options) {
+  return crypto_random_string__WEBPACK_IMPORTED_MODULE_4___default()(options);
+};
+/**
+ * @function assignWithDepth
+ * Extends the functionality of {@link ObjectConstructor.assign} with the ability to merge arbitrary-depth objects
+ * For each key in src with path `k` (recursively) performs an Object.assign(dst[`k`], src[`k`]) with
+ * a slight change from the typical handling of undefined for dst[`k`]: instead of raising an error,
+ * dst[`k`] is auto-initialized to {} and effectively merged with src[`k`]
+ * <p>
+ * Additionally, dissimilar types will not clobber unless the config.clobber parameter === true. Example:
+ * ```
+ * let config_0 = { foo: { bar: 'bar' }, bar: 'foo' };
+ * let config_1 = { foo: 'foo', bar: 'bar' };
+ * let result = assignWithDepth(config_0, config_1);
+ * console.log(result);
+ * //-> result: { foo: { bar: 'bar' }, bar: 'bar' }
+ * ```
+ * <p>
+ * Traditional Object.assign would have clobbered foo in config_0 with foo in config_1.
+ * <p>
+ * If src is a destructured array of objects and dst is not an array, assignWithDepth will apply each element of src to dst
+ * in order.
+ * @param dst:any - the destination of the merge
+ * @param src:any - the source object(s) to merge into destination
+ * @param config:{ depth: number, clobber: boolean } - depth: depth to traverse within src and dst for merging -
+ * clobber: should dissimilar types clobber (default: { depth: 2, clobber: false })
+ * @returns {*}
+ */
+
+var assignWithDepth = function assignWithDepth(dst, src, config) {
+  var _Object$assign = Object.assign({
+    depth: 2,
+    clobber: false
+  }, config),
+      depth = _Object$assign.depth,
+      clobber = _Object$assign.clobber;
+
+  if (Array.isArray(src) && !Array.isArray(dst)) {
+    src.forEach(function (s) {
+      return assignWithDepth(dst, s, config);
+    });
+    return dst;
+  }
+
+  if (typeof dst === 'undefined' || depth <= 0) {
+    if (dst !== undefined && dst !== null && _typeof(dst) === 'object' && _typeof(src) === 'object') {
+      return Object.assign(dst, src);
+    } else {
+      return src;
+    }
+  }
+
+  if (typeof src !== 'undefined' && _typeof(dst) === 'object' && _typeof(src) === 'object') {
+    Object.keys(src).forEach(function (key) {
+      if (_typeof(src[key]) === 'object' && (dst[key] === undefined || _typeof(dst[key]) === 'object')) {
+        if (dst[key] === undefined) {
+          dst[key] = Array.isArray(src[key]) ? [] : {};
+        }
+
+        dst[key] = assignWithDepth(dst[key], src[key], {
+          depth: depth - 1,
+          clobber: clobber
+        });
+      } else if (clobber || _typeof(dst[key]) !== 'object' && _typeof(src[key]) !== 'object') {
+        dst[key] = src[key];
+      }
+    });
+  }
+
+  return dst;
+};
+var getTextObj = function getTextObj() {
+  return {
+    x: 0,
+    y: 0,
+    fill: undefined,
+    anchor: 'start',
+    style: '#666',
+    width: 100,
+    height: 100,
+    textMargin: 0,
+    rx: 0,
+    ry: 0,
+    valign: undefined
+  };
+};
+var drawSimpleText = function drawSimpleText(elem, textData) {
+  // Remove and ignore br:s
+  var nText = textData.text.replace(_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex, ' ');
+  var textElem = elem.append('text');
+  textElem.attr('x', textData.x);
+  textElem.attr('y', textData.y);
+  textElem.style('text-anchor', textData.anchor);
+  textElem.style('font-family', textData.fontFamily);
+  textElem.style('font-size', textData.fontSize);
+  textElem.style('font-weight', textData.fontWeight);
+  textElem.attr('fill', textData.fill);
+
+  if (typeof textData.class !== 'undefined') {
+    textElem.attr('class', textData.class);
+  }
+
+  var span = textElem.append('tspan');
+  span.attr('x', textData.x + textData.textMargin * 2);
+  span.attr('fill', textData.fill);
+  span.text(nText);
+  return textElem;
+};
+var wrapLabel = function wrapLabel(label, maxWidth, config) {
+  if (!wrapLabel.cache) {
+    // until memoize PR
+    wrapLabel.cache = {};
+  }
+
+  if (!label) {
+    return label;
+  }
+
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial',
+    joinWith: '<br/>'
+  }, config);
+  var cacheKey = "".concat(label, "-").concat(maxWidth, "-").concat(JSON.stringify(config));
+
+  if (wrapLabel.cache[cacheKey]) {
+    return wrapLabel.cache[cacheKey];
+  }
+
+  if (_diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].lineBreakRegex.test(label)) {
+    return label;
+  }
+
+  var words = label.split(' ');
+  var completedLines = [];
+  var nextLine = '';
+  words.forEach(function (word, index) {
+    var wordLength = calculateTextWidth("".concat(word, " "), config);
+    var nextLineLength = calculateTextWidth(nextLine, config);
+
+    if (wordLength > maxWidth) {
+      var _breakString = breakString(word, maxWidth, '-', config),
+          hyphenatedStrings = _breakString.hyphenatedStrings,
+          remainingWord = _breakString.remainingWord;
+
+      completedLines.push.apply(completedLines, [nextLine].concat(_toConsumableArray(hyphenatedStrings)));
+      nextLine = remainingWord;
+    } else if (nextLineLength + wordLength >= maxWidth) {
+      completedLines.push(nextLine);
+      nextLine = word;
+    } else {
+      nextLine = [nextLine, word].filter(Boolean).join(' ');
+    }
+
+    var currentWord = index + 1;
+    var isLastWord = currentWord === words.length;
+
+    if (isLastWord) {
+      completedLines.push(nextLine);
+    }
+  });
+  var result = completedLines.filter(function (line) {
+    return line !== '';
+  }).join(config.joinWith);
+  wrapLabel.cache[cacheKey] = result;
+  return result;
+};
+
+var breakString = function breakString(word, maxWidth) {
+  var hyphenCharacter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '-';
+  var config = arguments.length > 3 ? arguments[3] : undefined;
+
+  if (!breakString.cache) {
+    breakString.cache = {};
+  }
+
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial'
+  }, config);
+  var cacheKey = "".concat(word, "-").concat(maxWidth, "-").concat(hyphenCharacter, "-").concat(JSON.stringify(config));
+
+  if (breakString.cache[cacheKey]) {
+    return breakString.cache[cacheKey];
+  }
+
+  var characters = word.split('');
+  var lines = [];
+  var currentLine = '';
+  characters.forEach(function (character, index) {
+    var nextLine = "".concat(currentLine).concat(character);
+    var lineWidth = calculateTextWidth(nextLine, config);
+
+    if (lineWidth >= maxWidth) {
+      var currentCharacter = index + 1;
+      var isLastLine = characters.length === currentCharacter;
+      var hyphenatedNextLine = "".concat(nextLine).concat(hyphenCharacter);
+      lines.push(isLastLine ? nextLine : hyphenatedNextLine);
+      currentLine = '';
+    } else {
+      currentLine = nextLine;
+    }
+  });
+  var result = {
+    hyphenatedStrings: lines,
+    remainingWord: currentLine
+  };
+  breakString.cache[cacheKey] = result;
+  return result;
+};
+/**
+ * This calculates the text's height, taking into account the wrap breaks and
+ * both the statically configured height, width, and the length of the text (in pixels).
+ *
+ * If the wrapped text text has greater height, we extend the height, so it's
+ * value won't overflow.
+ *
+ * @return - The height for the given text
+ * @param text the text to measure
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+
+
+var calculateTextHeight = function calculateTextHeight(text, config) {
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial'
+  }, config);
+  return calculateTextDimensions(text, config).height;
+};
+/**
+ * This calculates the width of the given text, font size and family.
+ *
+ * @return - The width for the given text
+ * @param text - The text to calculate the width of
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+
+var calculateTextWidth = function calculateTextWidth(text, config) {
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial'
+  }, config);
+  return calculateTextDimensions(text, config).width;
+};
+/**
+ * This calculates the dimensions of the given text, font size, font family, font weight, and margins.
+ *
+ * @return - The width for the given text
+ * @param text - The text to calculate the width of
+ * @param config - the config for fontSize, fontFamily, fontWeight, and margin all impacting the resulting size
+ */
+
+var calculateTextDimensions = function calculateTextDimensions(text, config) {
+  if (!calculateTextDimensions.cache) {
+    calculateTextDimensions.cache = {};
+  }
+
+  config = Object.assign({
+    fontSize: 12,
+    fontWeight: 400,
+    fontFamily: 'Arial'
+  }, config);
+  var _config = config,
+      fontSize = _config.fontSize,
+      fontFamily = _config.fontFamily,
+      fontWeight = _config.fontWeight;
+
+  if (!text) {
+    return {
+      width: 0,
+      height: 0
+    };
+  }
+
+  var cacheKey = "".concat(text, "-").concat(JSON.stringify(config));
+
+  if (calculateTextDimensions.cache[cacheKey]) {
+    return calculateTextDimensions.cache[cacheKey];
+  } // We can't really know if the user supplied font family will render on the user agent;
+  // thus, we'll take the max width between the user supplied font family, and a default
+  // of sans-serif.
+
+
+  var fontFamilies = ['sans-serif', fontFamily];
+  var lines = _diagrams_common_common__WEBPACK_IMPORTED_MODULE_3__["default"].splitBreaks(text);
+  var dims = [];
+  var body = Object(d3__WEBPACK_IMPORTED_MODULE_0__["select"])('body'); // We don't want to leak DOM elements - if a removal operation isn't available
+  // for any reason, do not continue.
+
+  if (!body.remove) {
+    return {
+      width: 0,
+      height: 0,
+      lineHeight: 0
+    };
+  }
+
+  var g = body.append('svg');
+
+  for (var _i = 0, _fontFamilies = fontFamilies; _i < _fontFamilies.length; _i++) {
+    var _fontFamily = _fontFamilies[_i];
+    var cheight = 0;
+    var dim = {
+      width: 0,
+      height: 0,
+      lineHeight: 0
+    };
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = lines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var line = _step.value;
+        var textObj = getTextObj();
+        textObj.text = line;
+        var textElem = drawSimpleText(g, textObj).style('font-size', fontSize).style('font-weight', fontWeight).style('font-family', _fontFamily);
+        var bBox = (textElem._groups || textElem)[0][0].getBBox();
+        dim.width = Math.round(Math.max(dim.width, bBox.width));
+        cheight = Math.round(bBox.height);
+        dim.height += cheight;
+        dim.lineHeight = Math.round(Math.max(dim.lineHeight, cheight));
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    dims.push(dim);
+  }
+
+  g.remove();
+  var index = isNaN(dims[1].height) || isNaN(dims[1].width) || isNaN(dims[1].lineHeight) || dims[0].height > dims[1].height && dims[0].width > dims[1].width && dims[0].lineHeight > dims[1].lineHeight ? 0 : 1;
+  var result = dims[index];
+  calculateTextDimensions.cache[cacheKey] = result;
+  return result;
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  assignWithDepth: assignWithDepth,
+  wrapLabel: wrapLabel,
+  calculateTextHeight: calculateTextHeight,
+  calculateTextWidth: calculateTextWidth,
+  calculateTextDimensions: calculateTextDimensions,
   detectInit: detectInit,
   detectDirective: detectDirective,
   detectType: detectType,
@@ -22491,6 +23054,7 @@ var generateId = function generateId() {
   formatUrl: formatUrl,
   getStylesFromArray: getStylesFromArray,
   generateId: generateId,
+  random: random,
   runFunc: runFunc
 });
 
@@ -22504,6 +23068,17 @@ var generateId = function generateId() {
 /***/ (function(module, exports) {
 
 module.exports = require("@braintree/sanitize-url");
+
+/***/ }),
+
+/***/ "crypto-random-string":
+/*!***************************************!*\
+  !*** external "crypto-random-string" ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("crypto-random-string");
 
 /***/ }),
 

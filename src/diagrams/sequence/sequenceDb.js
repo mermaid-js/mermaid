@@ -1,6 +1,7 @@
-import { logger } from '../../logger';
-import { getConfig, setConfig } from '../../config';
 import mermaidAPI from '../../mermaidAPI';
+import configApi from '../../config';
+import common from '../common/common';
+import { logger } from '../../logger';
 
 let prevActor = undefined;
 let actors = {};
@@ -10,58 +11,9 @@ let title = '';
 let titleWrapped = false;
 let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
-let configUpdated = false;
-let currentDirective = {};
 
-export const parseDirective = function(statement, context) {
-  try {
-    if (statement !== undefined) {
-      statement = statement.trim();
-      switch (context) {
-        case 'open_directive':
-          currentDirective = {};
-          break;
-        case 'type_directive':
-          currentDirective.type = statement.toLowerCase();
-          break;
-        case 'arg_directive':
-          currentDirective.args = JSON.parse(statement);
-          break;
-        case 'close_directive':
-          handleDirective(currentDirective);
-          currentDirective = null;
-          break;
-      }
-    }
-  } catch (error) {
-    logger.error(
-      `Error while rendering sequenceDiagram directive: ${statement} jison context: ${context}`
-    );
-    logger.error(error.message);
-  }
-};
-
-const handleDirective = function(directive) {
-  logger.debug(`Directive type=${directive.type} with args:`, directive.args);
-  switch (directive.type) {
-    case 'init':
-    case 'initialize':
-      mermaidAPI.initialize(directive.args);
-      break;
-    case 'config':
-      updateConfig(directive.args);
-      break;
-    case 'wrap':
-    case 'nowrap':
-      wrapEnabled = directive.type === 'wrap';
-      break;
-    default:
-      logger.warn(
-        `Unrecognized directive: source: '%%{${directive.type}: ${directive.args}}%%`,
-        directive
-      );
-      break;
-  }
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(statement, context, type);
 };
 
 export const addActor = function(id, name, description) {
@@ -77,7 +29,7 @@ export const addActor = function(id, name, description) {
   actors[id] = {
     name: name,
     description: description.text,
-    wrap: (description.wrap === null && autoWrap()) || !!description.wrap,
+    wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
     prevActor: prevActor
   };
   if (prevActor && actors[prevActor]) {
@@ -111,28 +63,19 @@ export const addMessage = function(idFrom, idTo, message, answer) {
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     answer: answer
   });
 };
 
-export const addSignal = function(idFrom, idTo, message = { text: null, wrap: null }, messageType) {
-  logger.debug(
-    'Adding message from=' +
-      idFrom +
-      ' to=' +
-      idTo +
-      ' message=' +
-      message.text +
-      ' wrap=' +
-      message.wrap +
-      ' type=' +
-      messageType
-  );
-
+export const addSignal = function(
+  idFrom,
+  idTo,
+  message = { text: undefined, wrap: undefined },
+  messageType
+) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
-    logger.debug('Adding message from=', messages, cnt);
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
       let error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
@@ -150,7 +93,7 @@ export const addSignal = function(idFrom, idTo, message = { text: null, wrap: nu
     from: idFrom,
     to: idTo,
     message: message.text,
-    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: messageType
   });
   return true;
@@ -180,12 +123,8 @@ export const enableSequenceNumbers = function() {
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
-export const enableWrap = function() {
-  wrapEnabled = true;
-};
-
-export const disableWrap = function() {
-  wrapEnabled = false;
+export const setWrap = function(wrapSetting) {
+  wrapEnabled = wrapSetting;
 };
 
 export const autoWrap = () => wrapEnabled;
@@ -193,22 +132,23 @@ export const autoWrap = () => wrapEnabled;
 export const clear = function() {
   actors = {};
   messages = [];
-  configUpdated = false;
 };
 
 export const parseMessage = function(str) {
   const _str = str.trim();
-  return {
+  const message = {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
-        ? autoWrap()
+        ? common.hasBreaks(_str) || autoWrap()
         : _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
         ? false
         : autoWrap()
   };
+  logger.debug('parseMessage:', message);
+  return message;
 };
 
 export const LINETYPE = {
@@ -251,7 +191,7 @@ export const addNote = function(actor, placement, message) {
     actor: actor,
     placement: placement,
     message: message.text,
-    wrap: (message.wrap === null && autoWrap()) || !!message.wrap
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap
   };
 
   // Coerce actor into a [to, from, ...] array
@@ -262,7 +202,7 @@ export const addNote = function(actor, placement, message) {
     from: actors[0],
     to: actors[1],
     message: message.text,
-    wrap: (message.wrap === null && autoWrap()) || !!message.wrap,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
@@ -270,20 +210,7 @@ export const addNote = function(actor, placement, message) {
 
 export const setTitle = function(titleWrap) {
   title = titleWrap.text;
-  titleWrapped = (titleWrap.wrap === null && autoWrap()) || !!titleWrap.wrap;
-};
-
-export const updateConfig = function(config = getConfig()) {
-  try {
-    setConfig(config);
-    configUpdated = true;
-  } catch (error) {
-    logger.error('Error: unable to parse config');
-  }
-};
-
-export const hasConfigChange = function() {
-  return configUpdated;
+  titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
 };
 
 export const apply = function(param) {
@@ -355,20 +282,17 @@ export default {
   addActor,
   addMessage,
   addSignal,
-  enableWrap,
-  disableWrap,
+  autoWrap,
+  setWrap,
   enableSequenceNumbers,
   showSequenceNumbers,
-  autoWrap,
   getMessages,
   getActors,
   getActor,
   getActorKeys,
   getTitle,
   parseDirective,
-  hasConfigChange,
-  getConfig,
-  updateConfig,
+  getConfig: () => configApi.getConfig().sequence,
   getTitleWrapped,
   clear,
   parseMessage,
