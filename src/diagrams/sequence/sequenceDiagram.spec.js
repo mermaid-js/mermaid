@@ -1028,7 +1028,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should handle two actors with init directive', function() {
     const str = `
@@ -1045,7 +1045,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should handle two actors with init directive with multiline directive', function() {
     const str = `
@@ -1066,7 +1066,7 @@ Alice->Bob: Hello Bob, how are you?`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
     expect(msgs.every(v => v.wrap)).toBe(true);
 
   });
@@ -1100,7 +1100,7 @@ Bob->Alice: Fine!`;
     expect(bounds.startx).toBe(0);
     expect(bounds.starty).toBe(0);
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two actors notes to the right', function() {
     const str = `
@@ -1119,7 +1119,7 @@ Bob->Alice: Fine!`;
     const expStopX = conf.actorMargin + conf.width + conf.width / 2 + conf.noteMargin + conf.width;
 
     expect(bounds.stopx).toBe(expStopX);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two actors notes to the left', function() {
     const str = `
@@ -1136,7 +1136,7 @@ Bob->Alice: Fine!`;
     expect(bounds.starty).toBe(0);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two actors notes to the left with text wrapped (inline)', function() {
     const str = `
@@ -1155,7 +1155,7 @@ Bob->>Alice: Fine!`;
     expect(msgs[0].wrap).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two actors notes to the left with text wrapped (directive)', function() {
     const str = `
@@ -1178,7 +1178,7 @@ Bob->>Alice: Fine!`;
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two actors notes to the left with text wrapped and the init directive sets the theme to dark', function() {
     const str = `
@@ -1201,7 +1201,7 @@ Bob->>Alice: Fine!`;
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two actors, notes to the left with text wrapped and the init directive sets the theme to dark and fontFamily to Menlo, fontSize to 18, and fontWeight to 800', function() {
     const str = `
@@ -1225,7 +1225,7 @@ Bob->>Alice: Fine!`;
     expect(msgs.every(v => v.wrap)).toBe(true);
 
     expect(bounds.stopx).toBe(conf.width * 2 + conf.actorMargin);
-    expect(bounds.stopy).toBe(models.lastMessage().stopy);
+    expect(bounds.stopy).toBe(models.lastMessage().stopy + 10);
   });
   it('it should draw two loops', function() {
     const str = `

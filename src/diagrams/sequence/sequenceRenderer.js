@@ -248,6 +248,7 @@ const drawNote = function(elem, noteModel) {
  * @param msgModel - the model containing fields describing a message
  */
 const drawMessage = function(g, msgModel) {
+  bounds.bumpVerticalPos(10);
   const { startx, stopx, starty, message, type, sequenceIndex, wrap } = msgModel;
   const lines = common.splitBreaks(message).length;
   let textDims = utils.calculateTextDimensions(message, conf.messageFont());
@@ -257,7 +258,7 @@ const drawMessage = function(g, msgModel) {
   bounds.bumpVerticalPos(lineHeight);
   const textObj = svgDraw.getTextObj();
   textObj.x = startx;
-  textObj.y = starty;
+  textObj.y = starty + 10;
   textObj.width = stopx - startx;
   textObj.class = 'messageText';
   textObj.dy = '1em';
@@ -273,7 +274,7 @@ const drawMessage = function(g, msgModel) {
 
   drawText(g, textObj);
 
-  let totalOffset = textDims.height;
+  let totalOffset = textDims.height - 10;
 
   let textWidth = textDims.width;
 
