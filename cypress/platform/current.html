@@ -33,23 +33,18 @@ flowchart BT
     c1 --apa apa apa--> b1
     two --> c2
       </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 200px;">
 sequenceDiagram
    Alice->>Bob:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
    Bob->>Alice: I'm short though
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart TB
-    subgraph two
-    b1
-    end
-    subgraph three
-    c1-->c2
-    end
-    c1 --apa apa apa--> b1
-    b1 --> c2
-      </div>
-      <div class="mermaid" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 200px;">
+        %%{init: {'config': {'wrap': true }}}%%
+        sequenceDiagram
+        participant A as Extremely utterly
+        A->>Bob:  long line of longness which had preivously overflown the actor box as it is much longer than what it should be
+        Bob-->A: Pasten !      </div>
+      <div class="mermaid2" style="width: 50%; height: 200px;">
 
       flowchart BT
       subgraph a
