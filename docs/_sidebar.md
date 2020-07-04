@@ -21,7 +21,7 @@
 - Guide
 
   - [Development](development.md)
-  - [mermaidAPI](mermaidAPI.md)
+  - [Setup](Setup.md)
   - [Changelog](CHANGELOG.md)
 
 - I'm a n00b

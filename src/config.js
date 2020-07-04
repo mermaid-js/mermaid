@@ -28,7 +28,7 @@ import { logger } from './logger';
  *   mermaid.initialize(config);
  * &lt;/script>
  * </pre>
- * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#mermaidapi-configuration-defaults). A description of each option follows below.
+ * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults). A description of each option follows below.
  *
  * @name Configuration
  */

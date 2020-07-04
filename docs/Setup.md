@@ -111,6 +111,13 @@ theme , the CSS style sheet
 
 **Default value: false**.
 
+## secure
+
+This option controls which currentConfig keys are considered _secure_ and can only be changed via
+call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
+the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+overriding a site's default security.
+
 ## flowchart
 
 The object containing configurations specific for flowcharts
@@ -154,6 +161,11 @@ Default Vaue: Linear**
 ## sequence
 
 The object containing configurations specific for sequence diagrams
+
+### activationWidth
+
+widt of the activation rect
+**Default value 10**.
 
 ### diagramMarginX
 
@@ -377,7 +389,7 @@ This sets the font weight of the note's description
 This sets the font weight of the message's description
 \*\*Default value 400.
 
-### wrapEnabled
+### wrap
 
 This sets the auto-wrap state for the diagram
 \*\*Default value false.
@@ -385,7 +397,17 @@ This sets the auto-wrap state for the diagram
 ### wrapPadding
 
 This sets the auto-wrap padding for the diagram (sides only)
-\*\*Default value 15.
+\*\*Default value 10.
+
+### labelBoxWidth
+
+This sets the width of the loop-box (loop, alt, opt, par)
+\*\*Default value 50.
+
+### labelBoxHeight
+
+This sets the height of the loop-box (loop, alt, opt, par)
+\*\*Default value 20.
 
 ## gantt
 
@@ -712,7 +734,7 @@ mermaidAPI.initialize({
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
 
-##
+## 
 
 ## mermaidAPI configuration defaults
 
@@ -764,4 +786,60 @@ mermaidAPI.initialize({
 &lt;/script>
 </pre>
 
+## setSiteConfig
+
+Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+to the defaultConfig
+Note: currentConfig is set in this function
+
+### Parameters
+
+-   `conf`  the base currentConfig to use as siteConfig
+
+Returns **any** the siteConfig
+
+## getSiteConfig
+
+Obtains the current siteConfig base configuration
+
+Returns **any** 
+
+## setConfig
+
+Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
+values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+siteConfig value.
+
+### Parameters
+
+-   `conf`  the potential currentConfig
+
+Returns **any** the currentConfig merged with the sanitized conf
+
+## getConfig
+
+Obtains the currentConfig
+
+Returns **any** the currentConfig
+
+## sanitize
+
+Ensures options parameter does not attempt to override siteConfig secure keys
+Note: modifies options in-place
+
+### Parameters
+
+-   `options`  the potential setConfig parameter
+
+## reset
+
+Resets this currentConfig to conf
+
+### Parameters
+
+-   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
+
 [1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render
+
+[2]: https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults
