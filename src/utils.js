@@ -443,6 +443,13 @@ export const assignWithDepth = function(dst, src, config) {
   if (Array.isArray(src) && !Array.isArray(dst)) {
     src.forEach(s => assignWithDepth(dst, s, config));
     return dst;
+  } else if (Array.isArray(src) && Array.isArray(dst)) {
+    src.forEach(s => {
+      if (dst.indexOf(s) === -1) {
+        dst.push(s);
+      }
+    });
+    return dst;
   }
   if (typeof dst === 'undefined' || depth <= 0) {
     if (dst !== undefined && dst !== null && typeof dst === 'object' && typeof src === 'object') {
