@@ -99,8 +99,8 @@ For simple color customization:
 
 The following CSS class selectors are available for richer styling:
 
-| Selector                     | Description                                           |
-| :--------------------------- | :---------------------------------------------------- |
+| Selector                   | Description                                           |
+| :------------------------- | :---------------------------------------------------- |
 | `.er.entityBox`            | The box representing an entity                        |
 | `.er.entityLabel`          | The label for an entity                               |
 | `.er.relationshipLabel`    | The label for a relationship                          |
