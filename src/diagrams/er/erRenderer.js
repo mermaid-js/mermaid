@@ -339,9 +339,14 @@ export const draw = function(text, id) {
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;
 
-  svg.attr('height', height);
-  svg.attr('width', '100%');
-  svg.attr('style', `max-width: ${width}px;`);
+  if (conf.useMaxWidth) {
+    svg.attr('width', '100%');
+    svg.attr('style', `max-width: ${width}px;`);
+  } else {
+    svg.attr('height', height);
+    svg.attr('width', width);
+  }
+
   svg.attr('viewBox', `${svgBounds.x - padding} ${svgBounds.y - padding} ${width} ${height}`);
 }; // draw
 

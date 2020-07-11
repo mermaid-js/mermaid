@@ -705,8 +705,20 @@ T = top, B = bottom, L = left, and R = right.
 | --------- | ------------------- | ------- | -------- | ------------------ |
 | fontSize  | Font Size in pixels | Integer |          | Any Positive Value |
 
-**Notes:**Font size (expressed as an integer representing a number of  pixels)
+**Notes:**Font size (expressed as an integer representing a number of pixels)
 **Default value: 12 **
+
+### useMaxWidth
+
+| Parameter   | Description | Type    | Required | Values      |
+| ----------- | ----------- | ------- | -------- | ----------- |
+| useMaxWidth | See Notes   | Boolean | Required | true, false |
+
+**Notes:**
+When this flag is set to true, the diagram width is locked to 100% and
+scaled based on available space. If set to false, the diagram reserves its
+absolute width.
+**Default value: true**.
 
 ## render
 
