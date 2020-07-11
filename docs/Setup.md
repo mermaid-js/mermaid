@@ -122,6 +122,15 @@ overriding a site's default security.
 
 The object containing configurations specific for flowcharts
 
+### diagramPadding
+
+| Parameter      | Description                                     | Type    | Required | Values             |
+| -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
+| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+
+**Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+**Default value: 8**.
+
 ### htmlLabels
 
 | Parameter  | Description                                                                                  | Type    | Required | Values      |
@@ -734,7 +743,7 @@ mermaidAPI.initialize({
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
 
-##
+## 
 
 ## mermaidAPI configuration defaults
 
@@ -804,7 +813,7 @@ Returns **any** the siteConfig
 
 Obtains the current siteConfig base configuration
 
-Returns **any**
+Returns **any** 
 
 ## setConfig
 
