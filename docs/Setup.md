@@ -734,7 +734,7 @@ mermaidAPI.initialize({
     provided a hidden div will be inserted in the body of the page instead. The element will be removed when rendering is
     completed.
 
-## 
+##
 
 ## mermaidAPI configuration defaults
 
@@ -749,6 +749,7 @@ mermaidAPI.initialize({
     arrowMarkerAbsolute:false,
 
     flowchart:{
+      diagramPadding:8,
       htmlLabels:true,
       curve:'linear',
     },
@@ -803,7 +804,7 @@ Returns **any** the siteConfig
 
 Obtains the current siteConfig base configuration
 
-Returns **any** 
+Returns **any**
 
 ## setConfig
 
