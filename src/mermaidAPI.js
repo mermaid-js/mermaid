@@ -576,6 +576,17 @@ export default mermaidAPI;
  *     startOnLoad:true,
  *     arrowMarkerAbsolute:false,
  *
+ *     er:{
+ *       diagramPadding:20,
+ *       layoutDirection:'TB',
+ *       minEntityWidth:100,
+ *       minEntityHeight:75,
+ *       entityPadding:15,
+ *       stroke:'gray',
+ *       fill:'honeydew',
+ *       fontSize:12,
+ *       useMaxWidth:true,
+ *     },
  *     flowchart:{
  *       diagramPadding:8,
  *       htmlLabels:true,
