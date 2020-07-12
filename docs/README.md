@@ -16,6 +16,9 @@ Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
+# New [Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+
+
 ## New diagrams in 8.5
 
 With version 8.5 there are some bug fixes and enhancements, plus a new diagram type,  entity relationship diagrams.
@@ -161,15 +164,30 @@ Replace `<version>` with expected version number.
 
 Example: https://unpkg.com/mermaid@7.1.0/dist/
 
-### Node.js
+##Incorporating mermaid to a website
+to support mermaid on your website, all you have to do is add Mermaid’s JavaScript package 
 
 ```
-yarn add mermaid
+1.You will need to isntall node v10 or 12, which would have npm
+
+2. download yarn using npm
+
+2. yarn add mermaid
+
+3. yarn add --dev mermaid
 ```
 
-## Documentation
+## To install mermaid without a bundler, one can use the script tag like so:
+
+<script src="https://unpkg.com/mermaid/"></script>
+<script>mermaid.initialize({startOnLoad:true});</script>
+
+## it can then be followed by the diagram definitions as could be found in the examples in the documentation.
+
+# Documentation
 
 https://mermaidjs.github.io
+
 
 ## Sibling projects
 
