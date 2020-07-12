@@ -121,6 +121,16 @@ const config = {
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 8**.
+     */
+    diagramPadding: 8,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
      *| htmlLabels | Flag for setting whether or not a html tag should be used for rendering labels on the edges. | Boolean| Required | True, False|
      *
      ***Notes: Default value: true**.

@@ -671,4 +671,18 @@ describe('Flowchart', () => {
       { flowchart: { htmlLabels: false } }
     );
   });
+
+  it('33: should render a simple flowchart with diagramPadding set to 0', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[Christmas] -->|Get money| B(Go shopping)
+      B --> C{Let me think}
+      %% this is a comment
+      C -->|One| D[Laptop]
+      C -->|Two| E[iPhone]
+      C -->|Three| F[fa:fa-car Car]
+      `,
+      { flowchart: { diagramPadding: 0 } }
+    );
+  });
 });

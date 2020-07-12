@@ -577,6 +577,7 @@ export default mermaidAPI;
  *     arrowMarkerAbsolute:false,
  *
  *     flowchart:{
+ *       diagramPadding:8,
  *       htmlLabels:true,
  *       curve:'linear',
  *     },

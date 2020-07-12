@@ -122,6 +122,15 @@ overriding a site's default security.
 
 The object containing configurations specific for flowcharts
 
+### diagramPadding
+
+| Parameter      | Description                                     | Type    | Required | Values             |
+| -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
+| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+
+**Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+**Default value: 8**.
+
 ### htmlLabels
 
 | Parameter  | Description                                                                                  | Type    | Required | Values      |
@@ -749,6 +758,7 @@ mermaidAPI.initialize({
     arrowMarkerAbsolute:false,
 
     flowchart:{
+      diagramPadding:8,
       htmlLabels:true,
       curve:'linear',
     },
