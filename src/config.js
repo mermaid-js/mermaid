@@ -77,11 +77,12 @@ const config = {
   /**
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
    *
    ***Notes:
    *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
    *-   **loose**: tags in text are allowed, click functionality is enabled
+   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
   securityLevel: 'strict',
 
