@@ -182,10 +182,9 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 <script src="https://unpkg.com/mermaid/"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 
-## it can then be followed by the 
+## it can then be followed by the diagram definitions as could be found in the examples in the documentation.
 
-
-## Documentation
+# Documentation
 
 https://mermaidjs.github.io
 
