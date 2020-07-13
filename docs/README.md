@@ -16,7 +16,7 @@ Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
-# New [Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+# New [Configuration Protocols in version 8.6.0](https://mermaid-js.github.io/mermaid/#/8.6.0_docs)
 
 
 ## New diagrams in 8.5
