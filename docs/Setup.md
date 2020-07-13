@@ -11,13 +11,9 @@ It is is then up to the user of the API to make use of the svg, either insert it
 
 In addition to the render function, a number of behavioral configuration options are available.
 
-# Configuration 
+## Configuration
 
-
-
-# **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](https://github.com/NeilCuzon/mermaid/blob/develop/docs/8.6.0_docs.md)].**
-
-
+**Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click here][2]].**
 
 ## **What follows are config instructions for older versions**
 
@@ -50,7 +46,7 @@ mermaid.initialize({
 &lt;/script>
 </pre>
 
-A summary of all options and their defaults is found [here][2]. A description of each option follows below.
+A summary of all options and their defaults is found [here][3]. A description of each option follows below.
 
 ## theme
 
@@ -58,9 +54,9 @@ theme , the CSS style sheet
 
 theme , the CSS style sheet
 
-| Parameter | Description |Type | Required | Values|
-| --- | --- | --- | --- | --- |
-| Theme |Built in Themes| String | Optional |  default, forest, dark, neutral, null|
+| Parameter | Description     | Type   | Required | Values                                               |
+| --------- | --------------- | ------ | -------- | ---------------------------------------------------- |
+| Theme     | Built in Themes | String | Optional | Values include, default, forest, dark, neutral, null |
 
 **Notes:**To disable any pre-defined mermaid theme, use "null".
 
@@ -850,6 +846,8 @@ Resets this currentConfig to conf
 
 -   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-[1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render
+[1]: Setup.md?id=render
 
-[2]: https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults
+[2]: 8.6.0_docs.md
+
+[3]: #mermaidapi-configuration-defaults

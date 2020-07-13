@@ -2,6 +2,9 @@ import { assignWithDepth } from './utils';
 import { logger } from './logger';
 
 /**
+ * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
+ *
+ * ## **What follows are config instructions for older versions**
  * These are the default options which can be overridden with the initialization call like so:
  * **Example 1:**
  * <pre>
@@ -28,7 +31,7 @@ import { logger } from './logger';
  *   mermaid.initialize(config);
  * &lt;/script>
  * </pre>
- * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults). A description of each option follows below.
+ * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
  *
  * @name Configuration
  */
@@ -36,9 +39,11 @@ const config = {
   /** theme , the CSS style sheet
    *
    * theme , the CSS style sheet
+   *
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
    *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   *
    ***Notes:**To disable any pre-defined mermaid theme, use "null".
    * <pre>
    *  "theme": "forest",
