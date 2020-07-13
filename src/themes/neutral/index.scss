@@ -34,6 +34,7 @@ $labelTextColor: $text;
 $loopTextColor: $text;
 $noteBorderColor: darken($note, 60%);
 $noteBkgColor: $note;
+$noteTextColor: $actorTextColor;
 $activationBorderColor: #666;
 $activationBkgColor: #f4f4f4;
 $sequenceNumberColor: white;
@@ -61,5 +62,8 @@ $todayLineColor: $critBkgColor;
 
 /* state colors */
 $labelColor: black;
+
+$errorBkgColor: #552222;
+$errorTextColor: #552222;
 
 @import '../mermaid';

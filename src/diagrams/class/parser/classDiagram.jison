@@ -10,15 +10,15 @@
 
 %%
 \%\%[^\n]*\n*           /* do nothing */
-\n+                   return 'NEWLINE';
+\n+                     return 'NEWLINE';
 \s+                     /* skip whitespace */
 "classDiagram"          return 'CLASS_DIAGRAM';
 [\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
 <struct><<EOF>>         return "EOF_IN_STRUCT";
 <struct>[\{]            return "OPEN_IN_STRUCT";
-<struct>\}           { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
+<struct>\}              { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
 <struct>[\n]              /* nothing */
-<struct>[^\{\}\n]*     { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+<struct>[^\{\}\n]*      { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
 
 
@@ -40,7 +40,7 @@
 \s*\|\>               return 'EXTENSION';
 \s*\>                 return 'DEPENDENCY';
 \s*\<                 return 'DEPENDENCY';
-\s*\*                  return 'COMPOSITION';
+\s*\*                 return 'COMPOSITION';
 \s*o                  return 'AGGREGATION';
 \-\-                  return 'LINE';
 \.\.                  return 'DOTTED_LINE';
@@ -53,7 +53,7 @@
 \=                    return 'EQUALS';
 \w+                   return 'ALPHA';
 [!"#$%&'*+,-.`?\\/]   return 'PUNCTUATION';
-[0-9]+                 return 'NUM';
+[0-9]+                return 'NUM';
 [\u00AA\u00B5\u00BA\u00C0-\u00D6\u00D8-\u00F6]|
 [\u00F8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377]|
 [\u037A-\u037D\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5]|

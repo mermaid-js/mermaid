@@ -278,13 +278,13 @@ export const drawClass = function(elem, classDef, conf) {
 };
 
 export const parseMember = function(text) {
-  const fieldRegEx = /^(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)$/;
-  const methodRegEx = /^(\+|-|~|#)?(\w+)\s?\(\s*(\w+(~\w+~|\[\])?\s*(\w+)?)?\s*\)\s?([*|$])?\s?(\w+(~\w+~|\[\])?)?\s*$/;
+  const fieldRegEx = /(\+|-|~|#)?(\w+)(~\w+~|\[\])?\s+(\w+)/;
+  const methodRegEx = /^([+|\-|~|#])?(\w+) *\( *(.*)\) *(\*|\$)? *(\w*[~|[\]]*\s*\w*~?)$/;
 
   let fieldMatch = text.match(fieldRegEx);
   let methodMatch = text.match(methodRegEx);
 
-  if (fieldMatch) {
+  if (fieldMatch && !methodMatch) {
     return buildFieldDisplay(fieldMatch);
   } else if (methodMatch) {
     return buildMethodDisplay(methodMatch);
@@ -294,56 +294,78 @@ export const parseMember = function(text) {
 };
 
 const buildFieldDisplay = function(parsedText) {
-  let visibility = parsedText[1] ? parsedText[1].trim() : '';
-  let fieldType = parsedText[2] ? parsedText[2].trim() : '';
-  let genericType = parsedText[3] ? parseGenericTypes(parsedText[3]) : '';
-  let fieldName = parsedText[4] ? parsedText[4].trim() : '';
+  let displayText = '';
+
+  try {
+    let visibility = parsedText[1] ? parsedText[1].trim() : '';
+    let fieldType = parsedText[2] ? parsedText[2].trim() : '';
+    let genericType = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
+    let fieldName = parsedText[4] ? parsedText[4].trim() : '';
+
+    displayText = visibility + fieldType + genericType + ' ' + fieldName;
+  } catch (err) {
+    displayText = parsedText;
+  }
 
   return {
-    displayText: visibility + fieldType + genericType + ' ' + fieldName,
+    displayText: displayText,
     cssStyle: ''
   };
 };
 
 const buildMethodDisplay = function(parsedText) {
   let cssStyle = '';
-  let displayText = parsedText;
+  let displayText = '';
 
-  let visibility = parsedText[1] ? parsedText[1].trim() : '';
-  let methodName = parsedText[2] ? parsedText[2].trim() : '';
-  let parameters = parsedText[3] ? parseGenericTypes(parsedText[3]) : '';
-  let classifier = parsedText[6] ? parsedText[6].trim() : '';
-  let returnType = parsedText[7] ? ' : ' + parseGenericTypes(parsedText[7]).trim() : '';
+  try {
+    let visibility = parsedText[1] ? parsedText[1].trim() : '';
+    let methodName = parsedText[2] ? parsedText[2].trim() : '';
+    let parameters = parsedText[3] ? parseGenericTypes(parsedText[3].trim()) : '';
+    let classifier = parsedText[4] ? parsedText[4].trim() : '';
+    let returnType = parsedText[5] ? ' : ' + parseGenericTypes(parsedText[5]).trim() : '';
 
-  displayText = visibility + methodName + '(' + parameters + ')' + returnType;
+    displayText = visibility + methodName + '(' + parameters + ')' + returnType;
 
-  cssStyle = parseClassifier(classifier);
+    cssStyle = parseClassifier(classifier);
+  } catch (err) {
+    displayText = parsedText;
+  }
 
-  let member = {
+  return {
     displayText: displayText,
     cssStyle: cssStyle
   };
-
-  return member;
 };
 
 const buildLegacyDisplay = function(text) {
   // if for some reason we dont have any match, use old format to parse text
-  let memberText = '';
+  let displayText = '';
   let cssStyle = '';
+  let memberText = '';
   let returnType = '';
   let methodStart = text.indexOf('(');
   let methodEnd = text.indexOf(')');
 
   if (methodStart > 1 && methodEnd > methodStart && methodEnd <= text.length) {
-    let parsedText = text.match(/(\+|-|~|#)?(\w+)/);
-    let visibility = parsedText[1] ? parsedText[1].trim() : '';
-    let methodName = parsedText[2];
+    let visibility = '';
+    let methodName = '';
+
+    let firstChar = text.substring(0, 1);
+    if (firstChar.match(/\w/)) {
+      methodName = text.substring(0, methodStart).trim();
+    } else {
+      if (firstChar.match(/\+|-|~|#/)) {
+        visibility = firstChar;
+      }
+
+      methodName = text.substring(1, methodStart).trim();
+    }
+
     let parameters = text.substring(methodStart + 1, methodEnd);
-    let classifier = text.substring(methodEnd, methodEnd + 1);
+    let classifier = text.substring(methodEnd + 1, 1);
     cssStyle = parseClassifier(classifier);
 
-    memberText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
+    displayText = visibility + methodName + '(' + parseGenericTypes(parameters.trim()) + ')';
 
     if (methodEnd < memberText.length) {
       returnType = text.substring(methodEnd + 2).trim();
@@ -353,15 +375,13 @@ const buildLegacyDisplay = function(text) {
     }
   } else {
     // finally - if all else fails, just send the text back as written (other than parsing for generic types)
-    memberText = parseGenericTypes(text);
+    displayText = parseGenericTypes(text);
   }
 
-  let member = {
-    displayText: memberText + returnType,
+  return {
+    displayText: displayText,
     cssStyle: cssStyle
   };
-
-  return member;
 };
 
 const addTspan = function(textEl, txt, isFirst, conf) {

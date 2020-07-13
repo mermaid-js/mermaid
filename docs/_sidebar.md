@@ -16,11 +16,12 @@
   - [User Journey](user-journey.md)
   - [Gantt](gantt.md)
   - [Pie Chart](pie.md)
+  - [Directives](directives.md)
 
 - Guide
 
   - [Development](development.md)
-  - [mermaidAPI](mermaidAPI.md)
+  - [Setup](Setup.md)
   - [Changelog](CHANGELOG.md)
 
 - I'm a n00b

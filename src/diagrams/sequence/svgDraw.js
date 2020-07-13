@@ -19,24 +19,133 @@ export const drawRect = function(elem, rectData) {
 };
 
 export const drawText = function(elem, textData) {
-  // Remove and ignore br:s
-  const nText = textData.text.replace(common.lineBreakRegex, ' ');
+  let prevTextHeight = 0,
+    textHeight = 0;
+  const lines = textData.wrap
+    ? textData.text.split(common.lineBreakRegex)
+    : [textData.text.replace(common.lineBreakRegex, ' ')];
 
-  const textElem = elem.append('text');
-  textElem.attr('x', textData.x);
-  textElem.attr('y', textData.y);
-  textElem.style('text-anchor', textData.anchor);
-  textElem.attr('fill', textData.fill);
-  if (typeof textData.class !== 'undefined') {
-    textElem.attr('class', textData.class);
+  let textElems = [];
+  let dy = 0;
+  let yfunc = () => textData.y;
+  if (
+    typeof textData.valign !== 'undefined' &&
+    typeof textData.textMargin !== 'undefined' &&
+    textData.textMargin > 0
+  ) {
+    switch (textData.valign) {
+      case 'top':
+      case 'start':
+        yfunc = () => Math.round(textData.y + textData.textMargin);
+        break;
+      case 'middle':
+      case 'center':
+        yfunc = () =>
+          Math.round(textData.y + (prevTextHeight + textHeight + textData.textMargin) / 2);
+        break;
+      case 'bottom':
+      case 'end':
+        yfunc = () =>
+          Math.round(
+            textData.y +
+              (prevTextHeight + textHeight + 2 * textData.textMargin) -
+              textData.textMargin
+          );
+        break;
+    }
+  }
+  if (
+    typeof textData.anchor !== 'undefined' &&
+    typeof textData.textMargin !== 'undefined' &&
+    typeof textData.width !== 'undefined'
+  ) {
+    switch (textData.anchor) {
+      case 'left':
+      case 'start':
+        textData.x = Math.round(textData.x + textData.textMargin);
+        textData.anchor = 'start';
+        textData.dominantBaseline = 'text-after-edge';
+        textData.alignmentBaseline = 'middle';
+        break;
+      case 'middle':
+      case 'center':
+        textData.x = Math.round(textData.x + textData.width / 2);
+        textData.anchor = 'middle';
+        textData.dominantBaseline = 'middle';
+        textData.alignmentBaseline = 'middle';
+        break;
+      case 'right':
+      case 'end':
+        textData.x = Math.round(textData.x + textData.width - textData.textMargin);
+        textData.anchor = 'end';
+        textData.dominantBaseline = 'text-before-edge';
+        textData.alignmentBaseline = 'middle';
+        break;
+    }
+  }
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    if (
+      typeof textData.textMargin !== 'undefined' &&
+      textData.textMargin === 0 &&
+      typeof textData.fontSize !== 'undefined'
+    ) {
+      dy = i * textData.fontSize;
+    }
+
+    const textElem = elem.append('text');
+    textElem.attr('x', textData.x);
+    textElem.attr('y', yfunc());
+    if (typeof textData.anchor !== 'undefined') {
+      textElem
+        .attr('text-anchor', textData.anchor)
+        .attr('dominant-baseline', textData.dominantBaseline)
+        .attr('alignment-baseline', textData.alignmentBaseline);
+    }
+    if (typeof textData.fontFamily !== 'undefined') {
+      textElem.style('font-family', textData.fontFamily);
+    }
+    if (typeof textData.fontSize !== 'undefined') {
+      textElem.style('font-size', textData.fontSize);
+    }
+    if (typeof textData.fontWeight !== 'undefined') {
+      textElem.style('font-weight', textData.fontWeight);
+    }
+    if (typeof textData.fill !== 'undefined') {
+      textElem.attr('fill', textData.fill);
+    }
+    if (typeof textData.class !== 'undefined') {
+      textElem.attr('class', textData.class);
+    }
+    if (typeof textData.dy !== 'undefined') {
+      textElem.attr('dy', textData.dy);
+    } else if (dy !== 0) {
+      textElem.attr('dy', dy);
+    }
+
+    if (textData.tspan) {
+      const span = textElem.append('tspan');
+      span.attr('x', textData.x);
+      if (typeof textData.fill !== 'undefined') {
+        span.attr('fill', textData.fill);
+      }
+      span.text(line);
+    } else {
+      textElem.text(line);
+    }
+    if (
+      typeof textData.valign !== 'undefined' &&
+      typeof textData.textMargin !== 'undefined' &&
+      textData.textMargin > 0
+    ) {
+      textHeight += (textElem._groups || textElem)[0][0].getBBox().height;
+      prevTextHeight = textHeight;
+    }
+
+    textElems.push(textElem);
   }
 
-  const span = textElem.append('tspan');
-  span.attr('x', textData.x + textData.textMargin * 2);
-  span.attr('fill', textData.fill);
-  span.text(nText);
-
-  return textElem;
+  return textElems;
 };
 
 export const drawLabel = function(elem, txtObject) {
@@ -64,20 +173,21 @@ export const drawLabel = function(elem, txtObject) {
     );
   }
   const polygon = elem.append('polygon');
-  polygon.attr('points', genPoints(txtObject.x, txtObject.y, 50, 20, 7));
+  polygon.attr('points', genPoints(txtObject.x, txtObject.y, txtObject.width, txtObject.height, 7));
   polygon.attr('class', 'labelBox');
 
-  txtObject.y = txtObject.y + txtObject.labelMargin;
-  txtObject.x = txtObject.x + 0.5 * txtObject.labelMargin;
+  txtObject.y = txtObject.y + txtObject.height / 2;
+
   drawText(elem, txtObject);
+  return polygon;
 };
 
 let actorCnt = -1;
 /**
- * Draws an actor in the diagram with the attaced line
+ * Draws an actor in the diagram with the attached line
  * @param elem - The diagram we'll draw to.
  * @param actor - The actor to draw.
- * @param config - The sequence diagram config object.
+ * @param conf - drawText implementation discriminator object
  */
 export const drawActor = function(elem, actor, conf) {
   const center = actor.x + actor.width / 2;
@@ -144,11 +254,20 @@ export const drawActivation = function(elem, bounds, verticalPos, conf, actorAct
 /**
  * Draws a loop in the diagram
  * @param elem - elemenet to append the loop to.
- * @param bounds - bounds of the given loop.
+ * @param loopModel - loopModel of the given loop.
  * @param labelText - Text within the loop.
- * @param config - sequence diagram config object.
+ * @param conf - diagrom configuration
  */
-export const drawLoop = function(elem, bounds, labelText, conf) {
+export const drawLoop = function(elem, loopModel, labelText, conf) {
+  const {
+    boxMargin,
+    boxTextMargin,
+    labelBoxHeight,
+    labelBoxWidth,
+    messageFontFamily: fontFamily,
+    messageFontSize: fontSize,
+    messageFontWeight: fontWeight
+  } = conf;
   const g = elem.append('g');
   const drawLoopLine = function(startx, starty, stopx, stopy) {
     return g
@@ -159,48 +278,83 @@ export const drawLoop = function(elem, bounds, labelText, conf) {
       .attr('y2', stopy)
       .attr('class', 'loopLine');
   };
-  drawLoopLine(bounds.startx, bounds.starty, bounds.stopx, bounds.starty);
-  drawLoopLine(bounds.stopx, bounds.starty, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.stopy, bounds.stopx, bounds.stopy);
-  drawLoopLine(bounds.startx, bounds.starty, bounds.startx, bounds.stopy);
-  if (typeof bounds.sections !== 'undefined') {
-    bounds.sections.forEach(function(item) {
-      drawLoopLine(bounds.startx, item, bounds.stopx, item).style('stroke-dasharray', '3, 3');
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.stopx, loopModel.starty);
+  drawLoopLine(loopModel.stopx, loopModel.starty, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.stopy, loopModel.stopx, loopModel.stopy);
+  drawLoopLine(loopModel.startx, loopModel.starty, loopModel.startx, loopModel.stopy);
+  if (typeof loopModel.sections !== 'undefined') {
+    loopModel.sections.forEach(function(item) {
+      drawLoopLine(loopModel.startx, item.y, loopModel.stopx, item.y).style(
+        'stroke-dasharray',
+        '3, 3'
+      );
     });
   }
 
   let txt = getTextObj();
   txt.text = labelText;
-  txt.x = bounds.startx;
-  txt.y = bounds.starty;
-  txt.labelMargin = 1.5 * 10; // This is the small box that says "loop"
-  txt.class = 'labelText'; // Its size & position are fixed.
+  txt.x = loopModel.startx;
+  txt.y = loopModel.starty;
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
+  txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.tspan = false;
+  txt.width = labelBoxWidth || 50;
+  txt.height = labelBoxHeight || 20;
+  txt.textMargin = boxTextMargin;
+  txt.class = 'labelText';
 
   drawLabel(g, txt);
-
   txt = getTextObj();
-  txt.text = '[ ' + bounds.title + ' ]';
-  txt.x = bounds.startx + (bounds.stopx - bounds.startx) / 2;
-  txt.y = bounds.starty + 1.5 * conf.boxMargin;
+  txt.text = loopModel.title;
+  txt.x = loopModel.startx + labelBoxWidth / 2 + (loopModel.stopx - loopModel.startx) / 2;
+  txt.y = loopModel.starty + boxMargin + boxTextMargin;
   txt.anchor = 'middle';
+  txt.valign = 'middle';
+  txt.textMargin = boxTextMargin;
   txt.class = 'loopText';
+  txt.fontFamily = fontFamily;
+  txt.fontSize = fontSize;
+  txt.fontWeight = fontWeight;
+  txt.wrap = true;
 
-  drawText(g, txt);
+  let textElem = drawText(g, txt);
 
-  if (typeof bounds.sectionTitles !== 'undefined') {
-    bounds.sectionTitles.forEach(function(item, idx) {
-      if (item !== '') {
-        txt.text = '[ ' + item + ' ]';
-        txt.y = bounds.sections[idx] + 1.5 * conf.boxMargin;
-        drawText(g, txt);
+  if (typeof loopModel.sectionTitles !== 'undefined') {
+    loopModel.sectionTitles.forEach(function(item, idx) {
+      if (item.message) {
+        txt.text = item.message;
+        txt.x = loopModel.startx + (loopModel.stopx - loopModel.startx) / 2;
+        txt.y = loopModel.sections[idx].y + boxMargin + boxTextMargin;
+        txt.class = 'loopText';
+        txt.anchor = 'middle';
+        txt.valign = 'middle';
+        txt.tspan = false;
+        txt.fontFamily = fontFamily;
+        txt.fontSize = fontSize;
+        txt.fontWeight = fontWeight;
+        txt.wrap = loopModel.wrap;
+        textElem = drawText(g, txt);
+        let sectionHeight = Math.round(
+          textElem
+            .map(te => (te._groups || te)[0][0].getBBox().height)
+            .reduce((acc, curr) => acc + curr)
+        );
+        loopModel.sections[idx].height += sectionHeight - (boxMargin + boxTextMargin);
       }
     });
   }
+
+  loopModel.height = Math.round(loopModel.stopy - loopModel.starty);
+  return g;
 };
 
 /**
  * Draws a background rectangle
- * @param color - The fill color for the background
+ * @param elem diagram (reference for bounds)
+ * @param bounds shape of the rectangle
  */
 export const drawBackgroundRect = function(elem, bounds) {
   const rectElem = drawRect(elem, {
@@ -283,23 +437,24 @@ export const insertArrowCrossHead = function(elem) {
 };
 
 export const getTextObj = function() {
-  const txt = {
+  return {
     x: 0,
     y: 0,
     fill: undefined,
-    'text-anchor': 'start',
+    anchor: undefined,
     style: '#666',
-    width: 100,
-    height: 100,
+    width: undefined,
+    height: undefined,
     textMargin: 0,
     rx: 0,
-    ry: 0
+    ry: 0,
+    tspan: true,
+    valign: undefined
   };
-  return txt;
 };
 
 export const getNoteRect = function() {
-  const rect = {
+  return {
     x: 0,
     y: 0,
     fill: '#EDF2AE',
@@ -310,7 +465,6 @@ export const getNoteRect = function() {
     rx: 0,
     ry: 0
   };
-  return rect;
 };
 
 const _drawTextCandidateFunc = (function() {
@@ -325,7 +479,7 @@ const _drawTextCandidateFunc = (function() {
   }
 
   function byTspan(content, g, x, y, width, height, textAttrs, conf) {
-    const { actorFontSize, actorFontFamily } = conf;
+    const { actorFontSize, actorFontFamily, actorFontWeight } = conf;
 
     const lines = content.split(common.lineBreakRegex);
     for (let i = 0; i < lines.length; i++) {
@@ -336,6 +490,7 @@ const _drawTextCandidateFunc = (function() {
         .attr('y', y)
         .style('text-anchor', 'middle')
         .style('font-size', actorFontSize)
+        .style('font-weight', actorFontWeight)
         .style('font-family', actorFontFamily);
       text
         .append('tspan')

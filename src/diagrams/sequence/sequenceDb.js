@@ -1,3 +1,6 @@
+import mermaidAPI from '../../mermaidAPI';
+import configApi from '../../config';
+import common from '../common/common';
 import { logger } from '../../logger';
 
 let prevActor = undefined;
@@ -5,7 +8,13 @@ let actors = {};
 let messages = [];
 const notes = [];
 let title = '';
+let titleWrapped = false;
 let sequenceNumbersEnabled = false;
+let wrapEnabled = false;
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(statement, context, type);
+};
 
 export const addActor = function(id, name, description) {
   // Don't allow description nulling
@@ -13,9 +22,16 @@ export const addActor = function(id, name, description) {
   if (old && name === old.name && description == null) return;
 
   // Don't allow null descriptions, either
-  if (description == null) description = name;
+  if (description == null || description.text == null) {
+    description = { text: name, wrap: null };
+  }
 
-  actors[id] = { name: name, description: description, prevActor: prevActor };
+  actors[id] = {
+    name: name,
+    description: description.text,
+    wrap: (description.wrap === undefined && autoWrap()) || !!description.wrap,
+    prevActor: prevActor
+  };
   if (prevActor && actors[prevActor]) {
     actors[prevActor].nextActor = id;
   }
@@ -24,7 +40,7 @@ export const addActor = function(id, name, description) {
 };
 
 const activationCount = part => {
-  let i = 0;
+  let i;
   let count = 0;
   for (i = 0; i < messages.length; i++) {
     // console.warn(i, messages[i]);
@@ -43,20 +59,26 @@ const activationCount = part => {
 };
 
 export const addMessage = function(idFrom, idTo, message, answer) {
-  messages.push({ from: idFrom, to: idTo, message: message, answer: answer });
+  messages.push({
+    from: idFrom,
+    to: idTo,
+    message: message.text,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    answer: answer
+  });
 };
 
-export const addSignal = function(idFrom, idTo, message, messageType) {
-  logger.debug(
-    'Adding message from=' + idFrom + ' to=' + idTo + ' message=' + message + ' type=' + messageType
-  );
-
+export const addSignal = function(
+  idFrom,
+  idTo,
+  message = { text: undefined, wrap: undefined },
+  messageType
+) {
   if (messageType === LINETYPE.ACTIVE_END) {
     const cnt = activationCount(idFrom.actor);
-    logger.debug('Adding message from=', messages, cnt);
     if (cnt < 1) {
       // Bail out as there is an activation signal from an inactive participant
-      var error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
+      let error = new Error('Trying to inactivate an inactive participant (' + idFrom.actor + ')');
       error.hash = {
         text: '->>-',
         token: '->>-',
@@ -67,7 +89,13 @@ export const addSignal = function(idFrom, idTo, message, messageType) {
       throw error;
     }
   }
-  messages.push({ from: idFrom, to: idTo, message: message, type: messageType });
+  messages.push({
+    from: idFrom,
+    to: idTo,
+    message: message.text,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
+    type: messageType
+  });
   return true;
 };
 
@@ -87,14 +115,40 @@ export const getActorKeys = function() {
 export const getTitle = function() {
   return title;
 };
+export const getTitleWrapped = function() {
+  return titleWrapped;
+};
 export const enableSequenceNumbers = function() {
   sequenceNumbersEnabled = true;
 };
 export const showSequenceNumbers = () => sequenceNumbersEnabled;
 
+export const setWrap = function(wrapSetting) {
+  wrapEnabled = wrapSetting;
+};
+
+export const autoWrap = () => wrapEnabled;
+
 export const clear = function() {
   actors = {};
   messages = [];
+};
+
+export const parseMessage = function(str) {
+  const _str = str.trim();
+  const message = {
+    text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
+    wrap:
+      _str.match(/^[:]?(?:no)?wrap:/) === null
+        ? common.hasBreaks(_str) || autoWrap()
+        : _str.match(/^[:]?wrap:/) !== null
+        ? true
+        : _str.match(/^[:]?nowrap:/) !== null
+        ? false
+        : autoWrap()
+  };
+  logger.debug('parseMessage:', message);
+  return message;
 };
 
 export const LINETYPE = {
@@ -133,7 +187,12 @@ export const PLACEMENT = {
 };
 
 export const addNote = function(actor, placement, message) {
-  const note = { actor: actor, placement: placement, message: message };
+  const note = {
+    actor: actor,
+    placement: placement,
+    message: message.text,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap
+  };
 
   // Coerce actor into a [to, from, ...] array
   const actors = [].concat(actor, actor);
@@ -142,14 +201,16 @@ export const addNote = function(actor, placement, message) {
   messages.push({
     from: actors[0],
     to: actors[1],
-    message: message,
+    message: message.text,
+    wrap: (message.wrap === undefined && autoWrap()) || !!message.wrap,
     type: LINETYPE.NOTE,
     placement: placement
   });
 };
 
-export const setTitle = function(titleText) {
-  title = titleText;
+export const setTitle = function(titleWrap) {
+  title = titleWrap.text;
+  titleWrapped = (titleWrap.wrap === undefined && autoWrap()) || !!titleWrap.wrap;
 };
 
 export const apply = function(param) {
@@ -221,6 +282,8 @@ export default {
   addActor,
   addMessage,
   addSignal,
+  autoWrap,
+  setWrap,
   enableSequenceNumbers,
   showSequenceNumbers,
   getMessages,
@@ -228,7 +291,11 @@ export default {
   getActor,
   getActorKeys,
   getTitle,
+  parseDirective,
+  getConfig: () => configApi.getConfig().sequence,
+  getTitleWrapped,
   clear,
+  parseMessage,
   LINETYPE,
   ARROWTYPE,
   PLACEMENT,

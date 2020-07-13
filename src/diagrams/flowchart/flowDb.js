@@ -219,7 +219,7 @@ const setTooltip = function(ids, tooltip) {
 const setClickFun = function(_id, functionName) {
   let id = _id;
   if (_id[0].match(/\d/)) id = MERMAID_DOM_ID_PREFIX + id;
-  if (config.securityLevel !== 'loose') {
+  if (getConfig().securityLevel !== 'loose') {
     return;
   }
   if (typeof functionName === 'undefined') {
@@ -232,7 +232,7 @@ const setClickFun = function(_id, functionName) {
         elem.addEventListener(
           'click',
           function() {
-            window[functionName](id);
+            utils.runFunc(functionName, id);
           },
           false
         );
@@ -324,6 +324,7 @@ const setupToolTips = function(element) {
     .on('mouseover', function() {
       const el = select(this);
       const title = el.attr('title');
+
       // Dont try to draw a tooltip if no data is provided
       if (title === null) {
         return;
@@ -336,8 +337,8 @@ const setupToolTips = function(element) {
         .style('opacity', '.9');
       tooltipElem
         .html(el.attr('title'))
-        .style('left', rect.left + (rect.right - rect.left) / 2 + 'px')
-        .style('top', rect.top - 14 + document.body.scrollTop + 'px');
+        .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
+        .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
     })
     .on('mouseout', function() {

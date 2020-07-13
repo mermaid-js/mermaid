@@ -2,6 +2,8 @@ import { logger } from '../logger'; // eslint-disable-line
 import createLabel from './createLabel';
 import { line, curveBasis, select } from 'd3';
 import { getConfig } from '../config';
+import utils from '../utils';
+// import { calcLabelPosition } from '../utils';
 
 let edgeLabels = {};
 
@@ -39,11 +41,19 @@ export const insertEdgeLabel = (elem, edge) => {
   edge.height = bbox.height;
 };
 
-export const positionEdgeLabel = edge => {
+export const positionEdgeLabel = (edge, points) => {
   logger.info('Moving label', edge.id, edge.label, edgeLabels[edge.id]);
   if (edge.label) {
     const el = edgeLabels[edge.id];
-    el.attr('transform', 'translate(' + edge.x + ', ' + edge.y + ')');
+    let x = edge.x;
+    let y = edge.y;
+    if (points) {
+      // debugger;
+      const pos = utils.calcLabelPosition(points);
+      x = pos.x;
+      y = pos.y;
+    }
+    el.attr('transform', 'translate(' + x + ', ' + y + ')');
   }
 };
 
@@ -61,47 +71,80 @@ export const positionEdgeLabel = edge => {
 // };
 
 const outsideNode = (node, point) => {
+  // logger.warn('Checking bounds ', node, point);
   const x = node.x;
   const y = node.y;
   const dx = Math.abs(point.x - x);
   const dy = Math.abs(point.y - y);
   const w = node.width / 2;
   const h = node.height / 2;
-  if (dx > w || dy > h) {
+  if (dx >= w || dy >= h) {
     return true;
   }
   return false;
 };
 
-const intersection = (node, outsidePoint, insidePoint) => {
-  logger.trace('intersection o:', outsidePoint, ' i:', insidePoint, node);
+export const intersection = (node, outsidePoint, insidePoint) => {
+  logger.warn('intersection calc o:', outsidePoint, ' i:', insidePoint, node);
   const x = node.x;
   const y = node.y;
 
   const dx = Math.abs(x - insidePoint.x);
   const w = node.width / 2;
   let r = insidePoint.x < outsidePoint.x ? w - dx : w + dx;
-  const dy = Math.abs(y - insidePoint.y);
   const h = node.height / 2;
-  let q = insidePoint.y < outsidePoint.y ? h - dy : h - dy;
+
+  const edges = {
+    x1: x - w,
+    x2: x + w,
+    y1: y - h,
+    y2: y + h
+  };
+
+  if (
+    outsidePoint.x === edges.x1 ||
+    outsidePoint.x === edges.x2 ||
+    outsidePoint.y === edges.y1 ||
+    outsidePoint.y === edges.y2
+  ) {
+    // logger.warn('calc equals on edge');
+    return outsidePoint;
+  }
 
   const Q = Math.abs(outsidePoint.y - insidePoint.y);
   const R = Math.abs(outsidePoint.x - insidePoint.x);
-  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h || false) { // eslint-disable-line
+  // log.warn();
+  if (Math.abs(y - outsidePoint.y) * w > Math.abs(x - outsidePoint.x) * h) { // eslint-disable-line
     // Intersection is top or bottom of rect.
-
+    // let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
+    let q = insidePoint.y < outsidePoint.y ? outsidePoint.y - h - y : y - h - outsidePoint.y;
     r = (R * q) / Q;
-
-    return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x - r,
-      y: insidePoint.y + q
+    const res = {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x - r,
+      y: outsidePoint.y + q
     };
+    logger.warn(`topp/bott calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, res);
+
+    return res;
   } else {
-    q = (Q * r) / R;
-    r = (R * q) / Q;
+    // Intersection onn sides of rect
+    // q = (Q * r) / R;
+    // q = 2;
+    // r = (R * q) / Q;
+    if (insidePoint.x < outsidePoint.x) {
+      r = outsidePoint.x - w - x;
+    } else {
+      // r = outsidePoint.x - w - x;
+      r = x - w - outsidePoint.x;
+    }
+    let q = (q = (Q * r) / R);
+    logger.warn(`sides calc, Q ${Q}, q ${q}, R ${R}, r ${r}`, {
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
+      y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
+    });
 
     return {
-      x: insidePoint.x < outsidePoint.x ? insidePoint.x + r : insidePoint.x + dx - w,
+      x: insidePoint.x < outsidePoint.x ? insidePoint.x + R - r : insidePoint.x + dx - w,
       y: insidePoint.y < outsidePoint.y ? insidePoint.y + q : insidePoint.y - q
     };
   }
@@ -110,7 +153,7 @@ const intersection = (node, outsidePoint, insidePoint) => {
 //(edgePaths, e, edge, clusterDb, diagramtype, graph)
 export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph) {
   let points = edge.points;
-
+  let pointsHasChanged = false;
   const tail = graph.node(e.v);
   var head = graph.node(e.w);
 
@@ -147,11 +190,12 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       }
       lastPointOutside = point;
     });
+    pointsHasChanged = true;
   }
 
   if (edge.fromCluster) {
     logger.trace('edge', edge);
-    logger.trace('from cluster', clusterDb[edge.toCluster]);
+    logger.warn('from cluster', clusterDb[edge.fromCluster]);
     const updatedPoints = [];
     let lastPointOutside;
     let isInside = false;
@@ -160,7 +204,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       const node = clusterDb[edge.fromCluster].node;
 
       if (!outsideNode(node, point) && !isInside) {
-        logger.trace('inside', edge.toCluster, point);
+        logger.warn('inside', edge.fromCluster, point, node);
 
         // First point inside the rect
         const insterection = intersection(node, lastPointOutside, point);
@@ -176,6 +220,7 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       lastPointOutside = point;
     }
     points = updatedPoints;
+    pointsHasChanged = true;
   }
 
   // The data for our line
@@ -191,11 +236,35 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
     })
     .curve(curveBasis);
 
+  // Contruct stroke classes based on properties
+  let strokeClasses;
+  switch (edge.thickness) {
+    case 'normal':
+      strokeClasses = 'edge-thickness-normal';
+      break;
+    case 'thick':
+      strokeClasses = 'edge-thickness-thick';
+      break;
+    default:
+      strokeClasses = '';
+  }
+  switch (edge.pattern) {
+    case 'solid':
+      strokeClasses += ' edge-pattern-solid';
+      break;
+    case 'dotted':
+      strokeClasses += ' edge-pattern-dotted';
+      break;
+    case 'dashed':
+      strokeClasses += ' edge-pattern-dashed';
+      break;
+  }
+
   const svgPath = elem
     .append('path')
     .attr('d', lineFunction(lineData))
     .attr('id', edge.id)
-    .attr('class', 'transition' + (edge.classes ? ' ' + edge.classes : ''));
+    .attr('class', ' ' + strokeClasses + (edge.classes ? ' ' + edge.classes : ''));
 
   // DEBUG code, adds a red circle at each edge coordinate
   // edge.points.forEach(point => {
@@ -250,5 +319,9 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
       svgPath.attr('marker-start', 'url(' + url + '#' + diagramType + '-circleStart' + ')');
       break;
     default:
+  }
+
+  if (pointsHasChanged) {
+    return points;
   }
 };

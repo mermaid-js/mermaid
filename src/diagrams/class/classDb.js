@@ -217,7 +217,7 @@ const setClickFunc = function(domId, functionName, tooltip) {
         elem.addEventListener(
           'click',
           function() {
-            window[functionName](elemId);
+            utils.runFunc(functionName, elemId);
           },
           false
         );
@@ -272,8 +272,8 @@ const setupToolTips = function(element) {
         .style('opacity', '.9');
       tooltipElem
         .html(el.attr('title'))
-        .style('left', rect.left + (rect.right - rect.left) / 2 + 'px')
-        .style('top', rect.top - 14 + document.body.scrollTop + 'px');
+        .style('left', window.scrollX + rect.left + (rect.right - rect.left) / 2 + 'px')
+        .style('top', window.scrollY + rect.top - 14 + document.body.scrollTop + 'px');
       el.classed('hover', true);
     })
     .on('mouseout', function() {

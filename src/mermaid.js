@@ -6,6 +6,8 @@
 import decode from 'entity-decode/browser';
 import mermaidAPI from './mermaidAPI';
 import { logger } from './logger';
+import utils from './utils';
+
 /**
  * ## init
  * Function that goes through the document to find the chart definitions in there and render them.
@@ -29,7 +31,7 @@ import { logger } from './logger';
  */
 const init = function() {
   const conf = mermaidAPI.getConfig();
-  logger.debug('Starting rendering diagrams');
+  // console.log('Starting rendering diagrams (init) - mermaid.init');
   let nodes;
   if (arguments.length >= 2) {
     /*! sequence config was passed as #1 */
@@ -98,22 +100,36 @@ const init = function() {
       .trim()
       .replace(/<br\s*\/?>/gi, '<br/>');
 
-    mermaidAPI.render(
-      id,
-      txt,
-      (svgCode, bindFunctions) => {
-        element.innerHTML = svgCode;
-        if (typeof callback !== 'undefined') {
-          callback(id);
-        }
-        if (bindFunctions) bindFunctions(element);
-      },
-      element
-    );
+    const init = utils.detectInit(txt);
+    if (init) {
+      logger.debug('Detected early reinit: ', init);
+    }
+
+    try {
+      mermaidAPI.render(
+        id,
+        txt,
+        (svgCode, bindFunctions) => {
+          element.innerHTML = svgCode;
+          if (typeof callback !== 'undefined') {
+            callback(id);
+          }
+          if (bindFunctions) bindFunctions(element);
+        },
+        element
+      );
+    } catch (e) {
+      logger.warn('Syntax Error rendering');
+      logger.warn(e);
+      if (this.parseError) {
+        this.parseError(e);
+      }
+    }
   }
 };
 
 const initialize = function(config) {
+  mermaidAPI.reset();
   if (typeof config.mermaid !== 'undefined') {
     if (typeof config.mermaid.startOnLoad !== 'undefined') {
       mermaid.startOnLoad = config.mermaid.startOnLoad;
@@ -123,7 +139,6 @@ const initialize = function(config) {
     }
   }
   mermaidAPI.initialize(config);
-  logger.debug('Initializing mermaid ');
 };
 
 /**

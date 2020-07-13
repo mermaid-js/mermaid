@@ -181,8 +181,15 @@ export const addEdges = function(edges, g) {
 
   edges.forEach(function(edge) {
     cnt++;
+
+    // Identify Link
+    var linkId = 'L-' + edge.start + '-' + edge.end;
+    var linkNameStart = 'LS-' + edge.start;
+    var linkNameEnd = 'LE-' + edge.end;
+
     const edgeData = {};
-    edgeData.id = 'id' + cnt;
+    //edgeData.id = 'id' + cnt;
+
     // Set link type for rendering
     if (edge.type === 'arrow_open') {
       edgeData.arrowhead = 'none';
@@ -210,12 +217,16 @@ export const addEdges = function(edges, g) {
           if (typeof defaultLabelStyle !== 'undefined') {
             labelStyle = defaultLabelStyle;
           }
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'solid';
           break;
         case 'dotted':
-          style = 'fill:none;stroke-width:2px;stroke-dasharray:3;';
+          edgeData.thickness = 'normal';
+          edgeData.pattern = 'dotted';
           break;
         case 'thick':
-          style = ' stroke-width: 3.5px;fill:none';
+          edgeData.thickness = 'thick';
+          edgeData.pattern = 'solid';
           break;
       }
     }
@@ -241,7 +252,7 @@ export const addEdges = function(edges, g) {
 
       if (getConfig().flowchart.htmlLabels && false) { // eslint-disable-line
         edgeData.labelType = 'html';
-        edgeData.label = '<span class="edgeLabel">' + edge.text + '</span>';
+        edgeData.label = `<span id="L-${linkId}" class="edgeLabel L-${linkNameStart}' L-${linkNameEnd}">${edge.text}</span>`;
       } else {
         edgeData.labelType = 'text';
         edgeData.label = edge.text.replace(common.lineBreakRegex, '\n');
@@ -253,6 +264,10 @@ export const addEdges = function(edges, g) {
         edgeData.labelStyle = edgeData.labelStyle.replace('color:', 'fill:');
       }
     }
+
+    edgeData.id = linkId;
+    edgeData.classes = 'flowchart-link ' + linkNameStart + ' ' + linkNameEnd;
+
     // Add the edge to the graph
     g.setEdge(edge.start, edge.end, edgeData, cnt);
   });
@@ -268,8 +283,13 @@ export const getClasses = function(text) {
   const parser = flow.parser;
   parser.yy = flowDb;
 
-  // Parse the graph definition
-  parser.parse(text);
+  try {
+    // Parse the graph definition
+    parser.parse(text);
+  } catch (e) {
+    return;
+  }
+
   return flowDb.getClasses();
 };
 
@@ -278,6 +298,7 @@ export const getClasses = function(text) {
  * @param text
  * @param id
  */
+
 export const draw = function(text, id) {
   logger.info('Drawing flowchart');
   flowDb.clear();
@@ -285,11 +306,11 @@ export const draw = function(text, id) {
   parser.yy = flowDb;
 
   // Parse the graph definition
-  try {
-    parser.parse(text);
-  } catch (err) {
-    logger.debug('Parsing failed');
-  }
+  // try {
+  parser.parse(text);
+  // } catch (err) {
+  // logger.debug('Parsing failed');
+  // }
 
   // Fetch the default direction, use TD if none was found
   let dir = flowDb.getDirection();

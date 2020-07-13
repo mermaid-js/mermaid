@@ -1,5 +1,5 @@
-$mainBkg: #BDD5EA;
-$secondBkg: #6D6D65;
+$mainBkg: #1f2020;
+$secondBkg: lighten(#1f2020, 16);
 $mainContrastColor: lightgrey;
 $darkTextColor: #323D47;
 $lineColor: $mainContrastColor;
@@ -10,7 +10,7 @@ $arrowheadColor: $mainContrastColor;
 /* Flowchart variables */
 
 $nodeBkg: $mainBkg;
-$nodeBorder: purple;
+$nodeBorder: $border1;
 $clusterBkg: $secondBkg;
 $clusterBorder: $border2;
 $defaultLinkColor: $lineColor;
@@ -21,19 +21,20 @@ $edgeLabelBackground: #e8e8e8;
 
 $actorBorder: $border1;
 $actorBkg: $mainBkg;
-$actorTextColor: black;
+$actorTextColor: $mainContrastColor;
 $actorLineColor: $mainContrastColor;
 $signalColor: $mainContrastColor;
 $signalTextColor: $mainContrastColor;
 $labelBoxBkgColor: $actorBkg;
 $labelBoxBorderColor: $actorBorder;
-$labelTextColor: $darkTextColor;
+$labelTextColor: $mainContrastColor;
 $loopTextColor: $mainContrastColor;
 $noteBorderColor: $border2;
 $noteBkgColor: #fff5ad;
-$activationBorderColor: #666;
-$activationBkgColor: #f4f4f4;
-$sequenceNumberColor: white;
+$noteTextColor: $mainBkg;
+$activationBorderColor: $border1;
+$activationBkgColor: $secondBkg;
+$sequenceNumberColor: black;
 
 /* Gantt chart variables */
 
@@ -58,5 +59,8 @@ $todayLineColor: #DB5757;
 
 /* state colors */
 $labelColor: black;
+
+$errorBkgColor: #a44141;
+$errorTextColor: #ddd;
 
 @import '../mermaid';
