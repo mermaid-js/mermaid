@@ -163,7 +163,6 @@ commit
 merge newbranch
 
 ```
-
 ![Git graph](./img/git.png)
 
 ### [Entity Relationship Diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
