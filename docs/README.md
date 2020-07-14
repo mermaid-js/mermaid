@@ -8,15 +8,25 @@
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./README.md)
 
 
+**Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+
+
 Mermaid is a tool that generates diagrams and charts, from markdown-inspired text definitions
 
-Have you ever wanted to simplify the generation and updating of your diagrams and charts, while avoiding time-intensive and heavy tools like visio? 
+This allows user to simplify the generation and updating of even the most complex diagrams and charts, while avoiding time-damanding and heavy tools like visio? 
 
-This is why mermaid was born, a simple markdown-inspired script language for generating charts from text-definitions, via javascript.
+mermaid, as a simple markdown-inspired script language for generating charts from text-definitions, via javascript and online. This cuts the times it takes to create, modify and render diagrams. 
+
+Even non-programmers can use mermaid through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
+
+For a more detailed introduction to mermaid, look [Getting Started]
 
 Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
+
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+
+## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
 
 ## [CDN](https://unpkg.com/mermaid/)
 
@@ -24,7 +34,7 @@ Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 ## [Documentation](https://mermaidjs.github.io)
 
 
-## New [Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
 
 
 ## New diagrams in 8.5
@@ -194,9 +204,8 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 
 
 ## Sibling projects
-
-- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
+- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
 - [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [mermaid Parcel demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 
