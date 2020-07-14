@@ -26,16 +26,15 @@ Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
+# Version 8.6.0 comes with 
+
 ## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
-
-## [CDN](https://unpkg.com/mermaid/)
-
-
-## [Documentation](https://mermaidjs.github.io)
-
 
 ## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
 
+## [CDN](https://unpkg.com/mermaid/)
+
+## [Documentation](https://mermaidjs.github.io)
 
 ## New diagrams in 8.5
 
@@ -45,10 +44,19 @@ With version 8.5 there are some bug fixes and enhancements, plus a new diagram t
 
 ## Special note regarding version 8.2
 
-In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced which sets the level of trust to be used on the parsed diagrams.
+In version 8.2 a security improvement was introduced. A **securityLevel** configuration was introduced which sets the level of trust to be used on the parsed diagrams.
 
-- **true**: (default) tags in text are encoded, click functionality is disabled
-- false: tags in text are allowed, click functionality is enabled
+## securityLevel
+
+| Parameter     | Description                       | Type   | Required | Values        |
+| ------------- | --------------------------------- | ------ | -------- | ------------- |
+| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose |
+
+\*\*Notes:
+
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+-   **loose**: tags in text are allowed, click functionality is enabled
+
 
 Closed issues:
 
@@ -64,9 +72,9 @@ mermaidAPI.initialize({
 
 **🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
 
-## Diagrams
+# Diagrams that mermaid can render:
 
-### Flowchart
+### [Flowchart](https://mermaid-js.github.io/mermaid/#/flowchart)
 
 ```
 graph TD;
@@ -78,7 +86,7 @@ graph TD;
 
 ![Flowchart](./img/flow.png)
 
-### Sequence diagram
+### [Sequence diagram](https://mermaid-js.github.io/mermaid/#/sequenceDiagram)
 
 ```
 sequenceDiagram
@@ -96,7 +104,7 @@ sequenceDiagram
 
 ![Sequence diagram](./img/sequence.png)
 
-### Gantt diagram
+### [Gantt diagram](https://mermaid-js.github.io/mermaid/#/gantt)
 
 ```
 gantt
@@ -113,7 +121,7 @@ Future task2               :         des4, after des3, 5d
 
 ![Gantt diagram](./img/gantt.png)
 
-### Class diagram - :exclamation: experimental
+### [Class diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/classDiagram)
 
 ```
 classDiagram
@@ -158,7 +166,7 @@ merge newbranch
 
 ![Git graph](./img/git.png)
 
-### Entity Relationship Diagram - :exclamation: experimental
+### [Entity Relationship Diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
 
 ```
 erDiagram
@@ -169,6 +177,22 @@ erDiagram
 ```
 
 ![ER diagram](./img/simple-er.png)
+
+[User Journey Diagram](https://mermaid-js.github.io/mermaid/#/user-journey)
+
+```markdown
+journey
+    title My working day
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 5: Me
+```
+
+![Journey diagram](./img/user-journey.pn)
 
 ## Installation
 
