@@ -192,7 +192,7 @@ journey
       Sit down: 5: Me
 ```
 
-![Journey diagram](./img/user-journey.pn)
+###![Journey diagram](./img/user-journey.png)
 
 ## Installation
 
