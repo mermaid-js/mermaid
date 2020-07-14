@@ -11,20 +11,20 @@
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 
+
 Mermaid is a tool that generates diagrams and charts, from markdown-inspired text definitions
 
-This allows user to simplify the generation and updating of even the most complex diagrams and charts, while avoiding time-damanding and heavy tools like visio? 
+This allows for simplified generation and updating of even the most complex diagrams and charts, while avoiding time-damanding and heavy tools like visio. 
 
-mermaid, as a simple markdown-inspired script language for generating charts from text-definitions, via javascript and online. This cuts the times it takes to create, modify and render diagrams. 
+mermaid, is a simple markdown-inspired script language for generating charts from text-definitions, via javascript. As such, using it cuts the times it takes to create, modify and render diagrams. 
 
-Even non-programmers can use mermaid through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
+Even non-programmers can create diagrams through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
 
-For a more detailed introduction to mermaid, look [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-overview)
+For a more detailed introduction to mermaid, look to the [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-overview) section.
 
-Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
+You should also Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
-
-**Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+You can also watch some popular mermaid tutorials.
 
 # Version 8.6.0 comes with 
 
