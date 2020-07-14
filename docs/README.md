@@ -178,7 +178,7 @@ erDiagram
 
 ![ER diagram](./img/simple-er.png)
 
-[User Journey Diagram](https://mermaid-js.github.io/mermaid/#/user-journey)
+### [User Journey Diagram](https://mermaid-js.github.io/mermaid/#/user-journey)
 
 ```markdown
 journey
@@ -191,8 +191,7 @@ journey
       Go downstairs: 5: Me
       Sit down: 5: Me
 ```
-
-###![Journey diagram](./img/user-journey.png)
+![Journey diagram](./img/user-journey.png)
 
 ## Installation
 
