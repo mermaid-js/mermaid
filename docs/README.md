@@ -19,7 +19,7 @@ mermaid, as a simple markdown-inspired script language for generating charts fro
 
 Even non-programmers can use mermaid through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
 
-For a more detailed introduction to mermaid, look [Getting Started]
+For a more detailed introduction to mermaid, look [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-overview)
 
 Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
