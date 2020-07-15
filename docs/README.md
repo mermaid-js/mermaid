@@ -20,13 +20,13 @@ mermaid, is a simple markdown-inspired script language for generating charts fro
 
 Even non-programmers can create diagrams through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
 
-For a more detailed introduction to mermaid, look to the [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-overview) section.
+For a more detailed introduction to mermaid, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) section.
 
 You should also Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
 You can also watch some popular mermaid tutorials.
 
-# Version 8.6.0 comes with 
+# New in Version 8.6.0
 
 ## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
 
