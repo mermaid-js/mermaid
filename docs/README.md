@@ -202,11 +202,15 @@ journey
 https://unpkg.com/mermaid@<version>/dist/
 ```
 
-Replace `<version>` with expected version number.
+To select a version:
 
-Example: https://unpkg.com/mermaid@7.1.0/dist/
+Replace `<version>` with the desired version number.
 
-##Incorporating mermaid to a website
+Alternatively, you can also adjust the version number in the page itself. 
+
+Latest Version: https://unpkg.com/browse/mermaid@8.6.0/
+
+## Incorporating mermaid to a website
 to support mermaid on your website, all you have to do is add Mermaid’s JavaScript package 
 
 ```
