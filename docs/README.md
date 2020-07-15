@@ -233,8 +233,10 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 <script src="https://unpkg.com/mermaid/"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
 
-## it can then be followed by the diagram definitions as could be found in the examples in the documentation.
-## Further down on your page mermaid will look for tags with class="mermaid". From these tags mermaid will try to read the chart definiton and replace it with an svg chart.
+## it can then be followed by the diagram definitions as could be found in the [examples in the documentation](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
+
+
+## On your page mermaid will look for tags with class="mermaid". From these tags mermaid will try to read the chart definiton and replace it with an svg chart.
 
 ## Sibling projects
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
