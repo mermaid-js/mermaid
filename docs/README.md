@@ -26,15 +26,17 @@ You should also Check out the list of [Integrations and Usages of Mermaid](./int
 
 You can also watch some popular mermaid tutorials.
 
+## [CDN](https://unpkg.com/mermaid/)
+
+## [Documentation](https://mermaidjs.github.io)
+
+
 # New in Version 8.6.0
 
 ## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
 
 ## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
 
-## [CDN](https://unpkg.com/mermaid/)
-
-## [Documentation](https://mermaidjs.github.io)
 
 ## New diagrams in 8.5
 
@@ -215,6 +217,7 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 2. yarn add mermaid
 
 3. yarn add --dev mermaid
+    this will add mermaid as a dev dependency
 ```
 
 ## To install mermaid without a bundler, one can use the script tag like so:
@@ -224,6 +227,8 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 
 ## it can then be followed by the diagram definitions as could be found in the examples in the documentation.
 
+
+## the renderer will then scour the document for all the objects defined as mermaid. which will then be rendered as an SVG file. 
 
 ## Sibling projects
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
