@@ -910,7 +910,7 @@ export const sanitize = options => {
   });
 };
 /**
- * ## reset
+ *## reset
   
  *| Function | Description         | Type    | Required | Values             |
  *| --------- | ------------------- | ------- | -------- | ------------------ |
