@@ -30,6 +30,8 @@ You can also watch some popular mermaid tutorials.
 
 ## [Documentation](https://mermaidjs.github.io)
 
+## [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
+
 
 # New in Version 8.6.0
 
@@ -216,12 +218,14 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 ```
 1.You will need to isntall node v10 or 12, which would have npm
 
-2. download yarn using npm
+2. download yarn using npm.
 
-2. yarn add mermaid
+2. enter the following command:
+    yarn add mermaid
 
-3. yarn add --dev mermaid
-    this will add mermaid as a dev dependency
+3. You can then add mermaid as a dev dependency using this command: 
+    yarn add --dev mermaid
+   
 ```
 
 ## To install mermaid without a bundler, one can use the script tag like so:
@@ -230,9 +234,7 @@ to support mermaid on your website, all you have to do is add Mermaid’s JavaSc
 <script>mermaid.initialize({startOnLoad:true});</script>
 
 ## it can then be followed by the diagram definitions as could be found in the examples in the documentation.
-
-
-## the renderer will then scour the document for all the objects defined as mermaid. which will then be rendered as an SVG file. 
+## Further down on your page mermaid will look for tags with class="mermaid". From these tags mermaid will try to read the chart definiton and replace it with an svg chart.
 
 ## Sibling projects
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
