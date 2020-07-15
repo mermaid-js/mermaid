@@ -271,7 +271,7 @@ const render = function(id, _txt, cb, container) {
   }
 
   // classDef
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2') {
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
     for (const className in classes) {
       style += `\n.${className} > * { ${classes[className].styles.join(
@@ -289,13 +289,17 @@ const render = function(id, _txt, cb, container) {
   style1.innerHTML = scope(style, `#${id}`);
   svg.insertBefore(style1, firstChild);
 
-  const style2 = document.createElement('style');
-  const cs = window.getComputedStyle(svg);
-  style2.innerHTML = `#${id} {
-    color: ${cs.color};
-    font: ${cs.font};
-  }`;
-  svg.insertBefore(style2, firstChild);
+  // Verify that the generated svgs are ok before removing this
+
+  // const style2 = document.createElement('style');
+  // const cs = window.getComputedStyle(svg);
+  // style2.innerHTML = `#d${id} * {
+  //   color: ${cs.color};
+  //   // font: ${cs.font};
+  //   // font-family: Arial;
+  //   // font-size: 24px;
+  // }`;
+  // svg.insertBefore(style2, firstChild);
 
   try {
     switch (graphType) {
