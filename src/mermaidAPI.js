@@ -10,8 +10,9 @@
  *
  * @name mermaidAPI
  */
+import Stylis from 'stylis';
 import { select } from 'd3';
-import scope from 'scope-css';
+// import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig, setSiteConfig, getSiteConfig } from './config';
 import { logger, setLogLevel } from './logger';
@@ -50,6 +51,7 @@ import journeyParser from './diagrams/user-journey/parser/journey';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import configApi from './config';
+import getStyles from './theme';
 
 const themes = {};
 
@@ -251,43 +253,45 @@ const render = function(id, _txt, cb, container) {
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
 
-  // pre-defined theme
-  let style = themes[cnf.theme];
-  if (style === undefined) {
-    style = '';
-  }
-
+  let userStyles = '';
   // user provided theme CSS
   if (cnf.themeCSS !== undefined) {
-    style += `\n${cnf.themeCSS}`;
+    userStyles += `\n${cnf.themeCSS}`;
   }
   // user provided theme CSS
   if (cnf.fontFamily !== undefined) {
-    style += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
+    userStyles += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
   }
   // user provided theme CSS
   if (cnf.altFontFamily !== undefined) {
-    style += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
+    userStyles += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
   }
 
   // classDef
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
     for (const className in classes) {
-      style += `\n.${className} > * { ${classes[className].styles.join(
+      userStyles += `\n.${className} > * { ${classes[className].styles.join(
         ' !important; '
       )} !important; }`;
       if (classes[className].textStyles) {
-        style += `\n.${className} tspan { ${classes[className].textStyles.join(
+        userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
           ' !important; '
         )} !important; }`;
       }
     }
   }
+  const stylis = new Stylis();
+  // stylis.use(extraScopePlugin(`#${id}`));
+  console.warn('graphType', graphType);
+  const rules = stylis(`#${id}`, getStyles(graphType, userStyles, {}));
 
   const style1 = document.createElement('style');
-  style1.innerHTML = scope(style, `#${id}`);
+  // style1.innerHTML = scope(style, `#${id}`);
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
+
+  // console.warn(rules);
 
   // Verify that the generated svgs are ok before removing this
 

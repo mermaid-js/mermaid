@@ -17,6 +17,9 @@
       .mermaid2 {
         display: none;
       }
+      .someClass > *   {
+        /* fill: red !important; */
+      }
     </style>
   </head>
   <body>
@@ -33,7 +36,7 @@ flowchart BT
     c1 --apa apa apa--> b1
     two --> c2
       </div>
-      <div class="mermaid" style="width: 50%; height: 200px;">
+      <div class="mermaid2" style="width: 50%; height: 200px;">
 sequenceDiagram
    Alice->>Bob:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
    Bob->>Alice: I'm short though

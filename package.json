@@ -50,7 +50,6 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "^3.1.0",
-    "crypto-random-string": "^3.0.1",
     "d3": "^5.7.0",
     "dagre": "^0.8.4",
     "dagre-d3": "^0.6.4",
@@ -59,7 +58,7 @@
     "he": "^1.2.0",
     "minify": "^4.1.1",
     "moment-mini": "^2.22.1",
-    "scope-css": "^1.2.1"
+    "stylis": "^3.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.2.2",
