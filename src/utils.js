@@ -15,7 +15,7 @@ import {
 import { logger } from './logger';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import common from './diagrams/common/common';
-import cryptoRandomString from 'crypto-random-string';
+// import cryptoRandomString from 'crypto-random-string';
 
 // Effectively an enum of the supported curve types, accessible by name
 const d3CurveTypes = {
@@ -408,8 +408,18 @@ export const generateId = () => {
   );
 };
 
+function makeid(length) {
+  var result = '';
+  var characters = '0123456789abcdef';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 export const random = options => {
-  return cryptoRandomString(options);
+  return makeid(options.length);
 };
 
 /**
