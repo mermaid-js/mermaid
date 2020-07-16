@@ -10,7 +10,7 @@ Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Inter
 
 # For beginners, there are three relatively easy ways you can use mermaid:
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/)
-2. Using one of the many mermaid plugins
+2. Using one of the [many mermaid plugins](https://mermaid-js.github.io/mermaid/#/./integrations)
 3. Calling mermaid renderer with HTML, deployed in a friendly browser. 
 
 # Following either of these examples, you can get started with creating your own diagrams using mermaid code.
