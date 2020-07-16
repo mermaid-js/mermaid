@@ -13,6 +13,10 @@ In addition to the render function, a number of behavioral configuration options
 
 ## Configuration
 
+**Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click here][2]].**
+
+## **What follows are config instructions for older versions**
+
 These are the default options which can be overridden with the initialization call like so:
 **Example 1:**
 
@@ -42,16 +46,18 @@ mermaid.initialize({
 &lt;/script>
 </pre>
 
-A summary of all options and their defaults is found [here][2]. A description of each option follows below.
+A summary of all options and their defaults is found [here][3]. A description of each option follows below.
 
 ## theme
 
 theme , the CSS style sheet
 
 theme , the CSS style sheet
-| Parameter | Description |Type | Required | Values|
-\| --- \| --- \| --- \| --- \| --- \|
-| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+
+| Parameter | Description     | Type   | Required | Values                                               |
+| --------- | --------------- | ------ | -------- | ---------------------------------------------------- |
+| Theme     | Built in Themes | String | Optional | Values include, default, forest, dark, neutral, null |
+
 **Notes:**To disable any pre-defined mermaid theme, use "null".
 
 <pre>
@@ -822,10 +828,19 @@ mermaidAPI.initialize({
 
 ## setSiteConfig
 
+## setSiteConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes:**
 Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
 the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
 to the defaultConfig
 Note: currentConfig is set in this function
+
+\*Default value: At default, will mirror Global Config\*\*
 
 ### Parameters
 
@@ -835,13 +850,27 @@ Returns **any** the siteConfig
 
 ## getSiteConfig
 
-Obtains the current siteConfig base configuration
+## getSiteConfig
+
+| Function      | Description                                       | Type        | Values                            |
+| ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
+| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig |
+
+**Notes**:
+Returns **any** values in siteConfig.
 
 Returns **any** 
 
 ## setConfig
 
-Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
+## setConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes**:
+Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
 values found in conf with key found in siteConfig.secure will be replaced with the corresponding
 siteConfig value.
 
@@ -853,11 +882,24 @@ Returns **any** the currentConfig merged with the sanitized conf
 
 ## getConfig
 
-Obtains the currentConfig
+## getConfig
+
+| Function  | Description               | Type        | Return Values                 |
+| --------- | ------------------------- | ----------- | ----------------------------- |
+| getConfig | Obtains the currentConfig | Get Request | Any Values from currentConfig |
+
+**Notes**:
+Returns **any** the currentConfig
 
 Returns **any** the currentConfig
 
 ## sanitize
+
+## sanitize
+
+| Function | Description                            | Type        | Values |
+| -------- | -------------------------------------- | ----------- | ------ |
+| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
 
 Ensures options parameter does not attempt to override siteConfig secure keys
 Note: modifies options in-place
@@ -868,12 +910,25 @@ Note: modifies options in-place
 
 ## reset
 
-Resets this currentConfig to conf
+## reset
+
+| Function | Description                  | Type        | Required | Values |
+| -------- | ---------------------------- | ----------- | -------- | ------ |
+| reset    | Resets currentConfig to conf | Put Request | Required | None   |
+
+| Parameter | Description                                                   | Type       | Required | Values                                       |
+| --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+| conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+
+\*Notes :
+(default: current siteConfig ) (optional, default `getSiteConfig()`)
 
 ### Parameters
 
 -   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-[1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render
+[1]: Setup.md?id=render
 
-[2]: https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults
+[2]: 8.6.0_docs.md
+
+[3]: #mermaidapi-configuration-defaults

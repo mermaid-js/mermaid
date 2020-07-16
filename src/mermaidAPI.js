@@ -1,7 +1,7 @@
 /**
  * This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
  *
- * The core of this api is the [**render**](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render) function which, given a graph
+ * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
  * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.

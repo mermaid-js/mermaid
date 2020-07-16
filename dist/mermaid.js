@@ -46620,6 +46620,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /**
+ * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
+ *
+ * ## **What follows are config instructions for older versions**
  * These are the default options which can be overridden with the initialization call like so:
  * **Example 1:**
  * <pre>
@@ -46646,7 +46649,7 @@ __webpack_require__.r(__webpack_exports__);
  *   mermaid.initialize(config);
  * &lt;/script>
  * </pre>
- * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults). A description of each option follows below.
+ * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
  *
  * @name Configuration
  */
@@ -46655,9 +46658,11 @@ var config = {
   /** theme , the CSS style sheet
    *
    * theme , the CSS style sheet
+   *
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
    *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   *
    ***Notes:**To disable any pre-defined mermaid theme, use "null".
    * <pre>
    *  "theme": "forest",
@@ -67296,7 +67301,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 /**
  * This is the api to be used when optionally handling the integration with the web page, instead of using the default integration provided by mermaid.js.
  *
- * The core of this api is the [**render**](https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render) function which, given a graph
+ * The core of this api is the [**render**](Setup.md?id=render) function which, given a graph
  * definition as text, renders the graph/diagram and returns an svg element for the graph.
  *
  * It is is then up to the user of the API to make use of the svg, either insert it somewhere in the page or do something completely different.

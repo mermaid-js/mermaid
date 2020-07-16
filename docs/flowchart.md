@@ -1,5 +1,6 @@
 # Flowcharts - Basic Syntax
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./flowchart.md)
 ## Graph
 
 This statement declares the direction of the Flowchart.
