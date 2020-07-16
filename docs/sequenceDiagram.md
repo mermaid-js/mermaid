@@ -1,5 +1,7 @@
 # Sequence diagrams
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./sequenceDiagram.md)
+
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
 Mermaid can render sequence diagrams.
