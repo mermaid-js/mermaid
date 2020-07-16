@@ -51,12 +51,11 @@ import journeyParser from './diagrams/user-journey/parser/journey';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import configApi from './config';
-import getStyles from './theme';
-
+import getStyles from './styles';
 const themes = {};
 
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
-  themes[themeName] = require(`./themes/${themeName}/index.scss`);
+  themes[themeName] = require(`./theme-${themeName}.js`).default;
 }
 
 function parse(text) {
@@ -199,6 +198,8 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
+  // debugger;
+
   const cnf = getConfig();
   // Check the maximum allowed text size
   let txt = _txt;
@@ -284,7 +285,7 @@ const render = function(id, _txt, cb, container) {
   const stylis = new Stylis();
   // stylis.use(extraScopePlugin(`#${id}`));
   console.warn('graphType', graphType);
-  const rules = stylis(`#${id}`, getStyles(graphType, userStyles, {}));
+  const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');
   // style1.innerHTML = scope(style, `#${id}`);
@@ -537,7 +538,13 @@ function reinitialize(options) {
 function initialize(options) {
   // console.log(`mermaidAPI.initialize: v${pkg.version}`);
   // Set default options
+
+  if (options.theme && themes[options.theme]) {
+    options.themeVariables = themes[options.theme];
+  }
+
   const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();
+
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
   logger.debug('mermaidAPI.initialize: ', config);

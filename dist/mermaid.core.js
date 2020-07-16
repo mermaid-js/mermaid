@@ -812,7 +812,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"crypto-random-string\":\"^3.0.1\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"emotion\":\"^10.0.27\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"remove\":\"^0.1.5\",\"scope-css\":\"^1.2.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
 
 /***/ }),
 
@@ -21569,57 +21569,55 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var stylis__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(stylis__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! d3 */ "d3");
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(d3__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var scope_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! scope-css */ "scope-css");
-/* harmony import */ var scope_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(scope_css__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../package.json */ "./package.json");
-var _package_json__WEBPACK_IMPORTED_MODULE_3___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../package.json */ "./package.json", 1);
-/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./config */ "./src/config.js");
-/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
-/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
-/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
-/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
-/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
-/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
-/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
-/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
-/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
-/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
-/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
-/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22__);
-/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
-/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
-/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25__);
-/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
-/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
-/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
-/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29__);
-/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
-/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
-/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32__);
-/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
-/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
-/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35__);
-/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
-/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37__);
-/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
-/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
-/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./theme */ "./src/theme.js");
+/* harmony import */ var _package_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../package.json */ "./package.json");
+var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpack_require__.t(/*! ../package.json */ "./package.json", 1);
+/* harmony import */ var _config__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./config */ "./src/config.js");
+/* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer */ "./src/diagrams/flowchart/flowRenderer.js");
+/* harmony import */ var _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./diagrams/flowchart/flowRenderer-v2 */ "./src/diagrams/flowchart/flowRenderer-v2.js");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./diagrams/flowchart/parser/flow */ "./src/diagrams/flowchart/parser/flow.jison");
+/* harmony import */ var _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./diagrams/flowchart/flowDb */ "./src/diagrams/flowchart/flowDb.js");
+/* harmony import */ var _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./diagrams/sequence/sequenceRenderer */ "./src/diagrams/sequence/sequenceRenderer.js");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./diagrams/sequence/parser/sequenceDiagram */ "./src/diagrams/sequence/parser/sequenceDiagram.jison");
+/* harmony import */ var _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./diagrams/sequence/sequenceDb */ "./src/diagrams/sequence/sequenceDb.js");
+/* harmony import */ var _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./diagrams/gantt/ganttRenderer */ "./src/diagrams/gantt/ganttRenderer.js");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./diagrams/gantt/parser/gantt */ "./src/diagrams/gantt/parser/gantt.jison");
+/* harmony import */ var _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(_diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./diagrams/gantt/ganttDb */ "./src/diagrams/gantt/ganttDb.js");
+/* harmony import */ var _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./diagrams/class/classRenderer */ "./src/diagrams/class/classRenderer.js");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./diagrams/class/parser/classDiagram */ "./src/diagrams/class/parser/classDiagram.jison");
+/* harmony import */ var _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(_diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./diagrams/class/classDb */ "./src/diagrams/class/classDb.js");
+/* harmony import */ var _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./diagrams/state/stateRenderer */ "./src/diagrams/state/stateRenderer.js");
+/* harmony import */ var _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./diagrams/state/stateRenderer-v2 */ "./src/diagrams/state/stateRenderer-v2.js");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./diagrams/state/parser/stateDiagram */ "./src/diagrams/state/parser/stateDiagram.jison");
+/* harmony import */ var _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(_diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./diagrams/state/stateDb */ "./src/diagrams/state/stateDb.js");
+/* harmony import */ var _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./diagrams/git/gitGraphRenderer */ "./src/diagrams/git/gitGraphRenderer.js");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./diagrams/git/parser/gitGraph */ "./src/diagrams/git/parser/gitGraph.jison");
+/* harmony import */ var _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./diagrams/git/gitGraphAst */ "./src/diagrams/git/gitGraphAst.js");
+/* harmony import */ var _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./diagrams/info/infoRenderer */ "./src/diagrams/info/infoRenderer.js");
+/* harmony import */ var _errorRenderer__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./errorRenderer */ "./src/errorRenderer.js");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./diagrams/info/parser/info */ "./src/diagrams/info/parser/info.jison");
+/* harmony import */ var _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28__);
+/* harmony import */ var _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./diagrams/info/infoDb */ "./src/diagrams/info/infoDb.js");
+/* harmony import */ var _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./diagrams/pie/pieRenderer */ "./src/diagrams/pie/pieRenderer.js");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./diagrams/pie/parser/pie */ "./src/diagrams/pie/parser/pie.jison");
+/* harmony import */ var _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default = /*#__PURE__*/__webpack_require__.n(_diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31__);
+/* harmony import */ var _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./diagrams/pie/pieDb */ "./src/diagrams/pie/pieDb.js");
+/* harmony import */ var _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./diagrams/er/erDb */ "./src/diagrams/er/erDb.js");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./diagrams/er/parser/erDiagram */ "./src/diagrams/er/parser/erDiagram.jison");
+/* harmony import */ var _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(_diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34__);
+/* harmony import */ var _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./diagrams/er/erRenderer */ "./src/diagrams/er/erRenderer.js");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./diagrams/user-journey/parser/journey */ "./src/diagrams/user-journey/parser/journey.jison");
+/* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__);
+/* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
+/* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
+/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./theme */ "./src/theme.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -21635,7 +21633,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  * @name mermaidAPI
  */
 
-
+ // import scope from 'scope-css';
 
 
 
@@ -21684,82 +21682,82 @@ for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.leng
 }
 
 function parse(text) {
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].detectInit(text);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(text);
 
   if (graphInit) {
     reinitialize(graphInit);
-    _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('reinit ', graphInit);
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('reinit ', graphInit);
   }
 
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].detectType(text);
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(text);
   var parser;
-  _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('Type ' + graphType);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Type ' + graphType);
 
   switch (graphType) {
     case 'git':
-      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_25___default.a;
-      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_26__["default"];
+      parser = _diagrams_git_parser_gitGraph__WEBPACK_IMPORTED_MODULE_24___default.a;
+      parser.parser.yy = _diagrams_git_gitGraphAst__WEBPACK_IMPORTED_MODULE_25__["default"];
       break;
 
     case 'flowchart':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_10__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_10__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"];
       break;
 
     case 'flowchart-v2':
-      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_10__["default"].clear();
-      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_9___default.a;
-      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_10__["default"];
+      _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].clear();
+      parser = _diagrams_flowchart_parser_flow__WEBPACK_IMPORTED_MODULE_8___default.a;
+      parser.parser.yy = _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"];
       break;
 
     case 'sequence':
-      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_12___default.a;
-      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_13__["default"];
+      parser = _diagrams_sequence_parser_sequenceDiagram__WEBPACK_IMPORTED_MODULE_11___default.a;
+      parser.parser.yy = _diagrams_sequence_sequenceDb__WEBPACK_IMPORTED_MODULE_12__["default"];
       break;
 
     case 'gantt':
-      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_15___default.a;
-      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_16__["default"];
+      parser = _diagrams_gantt_parser_gantt__WEBPACK_IMPORTED_MODULE_14___default.a;
+      parser.parser.yy = _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"];
       break;
 
     case 'class':
-      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_18___default.a;
-      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"];
+      parser = _diagrams_class_parser_classDiagram__WEBPACK_IMPORTED_MODULE_17___default.a;
+      parser.parser.yy = _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"];
       break;
 
     case 'state':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
       break;
 
     case 'stateDiagram':
-      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_22___default.a;
-      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_23__["default"];
+      parser = _diagrams_state_parser_stateDiagram__WEBPACK_IMPORTED_MODULE_21___default.a;
+      parser.parser.yy = _diagrams_state_stateDb__WEBPACK_IMPORTED_MODULE_22__["default"];
       break;
 
     case 'info':
-      _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('info info info');
-      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_29___default.a;
-      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_30__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('info info info');
+      parser = _diagrams_info_parser_info__WEBPACK_IMPORTED_MODULE_28___default.a;
+      parser.parser.yy = _diagrams_info_infoDb__WEBPACK_IMPORTED_MODULE_29__["default"];
       break;
 
     case 'pie':
-      _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('pie');
-      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_32___default.a;
-      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_33__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('pie');
+      parser = _diagrams_pie_parser_pie__WEBPACK_IMPORTED_MODULE_31___default.a;
+      parser.parser.yy = _diagrams_pie_pieDb__WEBPACK_IMPORTED_MODULE_32__["default"];
       break;
 
     case 'er':
-      _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('er');
-      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_35___default.a;
-      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_34__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('er');
+      parser = _diagrams_er_parser_erDiagram__WEBPACK_IMPORTED_MODULE_34___default.a;
+      parser.parser.yy = _diagrams_er_erDb__WEBPACK_IMPORTED_MODULE_33__["default"];
       break;
 
     case 'journey':
-      _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('Journey');
-      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_37___default.a;
-      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_38__["default"];
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('Journey');
+      parser = _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default.a;
+      parser.parser.yy = _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__["default"];
       break;
   }
 
@@ -21836,7 +21834,7 @@ var decodeEntities = function decodeEntities(text) {
  */
 
 var render = function render(id, _txt, cb, container) {
-  var cnf = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])(); // Check the maximum allowed text size
+  var cnf = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])(); // Check the maximum allowed text size
 
   var txt = _txt;
 
@@ -21844,11 +21842,11 @@ var render = function render(id, _txt, cb, container) {
     txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
-  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].detectInit(txt);
+  var graphInit = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectInit(txt);
 
   if (graphInit) {
     reinitialize(graphInit);
-    Object(_utils__WEBPACK_IMPORTED_MODULE_6__["assignWithDepth"])(cnf, Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])());
+    Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(cnf, Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
   }
 
   if (typeof container !== 'undefined') {
@@ -21873,49 +21871,43 @@ var render = function render(id, _txt, cb, container) {
   window.txt = txt;
   txt = encodeEntities(txt);
   var element = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
-  var graphType = _utils__WEBPACK_IMPORTED_MODULE_6__["default"].detectType(txt); // insert inline style into svg
+  var graphType = _utils__WEBPACK_IMPORTED_MODULE_5__["default"].detectType(txt); // insert inline style into svg
 
   var svg = element.firstChild;
-  var firstChild = svg.firstChild; // pre-defined theme
-
-  var style = themes[cnf.theme];
-
-  if (style === undefined) {
-    style = '';
-  } // user provided theme CSS
-
+  var firstChild = svg.firstChild;
+  var userStyles = ''; // user provided theme CSS
 
   if (cnf.themeCSS !== undefined) {
-    style += "\n".concat(cnf.themeCSS);
+    userStyles += "\n".concat(cnf.themeCSS);
   } // user provided theme CSS
 
 
   if (cnf.fontFamily !== undefined) {
-    style += "\n:root { --mermaid-font-family: ".concat(cnf.fontFamily, "}");
+    userStyles += "\n:root { --mermaid-font-family: ".concat(cnf.fontFamily, "}");
   } // user provided theme CSS
 
 
   if (cnf.altFontFamily !== undefined) {
-    style += "\n:root { --mermaid-alt-font-family: ".concat(cnf.altFontFamily, "}");
+    userStyles += "\n:root { --mermaid-alt-font-family: ".concat(cnf.altFontFamily, "}");
   } // classDef
 
 
   if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
-    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_7__["default"].getClasses(txt);
+    var classes = _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].getClasses(txt);
 
     for (var className in classes) {
-      style += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
+      userStyles += "\n.".concat(className, " > * { ").concat(classes[className].styles.join(' !important; '), " !important; }");
 
       if (classes[className].textStyles) {
-        style += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
+        userStyles += "\n.".concat(className, " tspan { ").concat(classes[className].textStyles.join(' !important; '), " !important; }");
       }
     }
   }
 
   var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a(); // stylis.use(extraScopePlugin(`#${id}`));
-  // console.warn(getStyles());
 
-  var rules = stylis("#".concat(id), Object(_theme__WEBPACK_IMPORTED_MODULE_40__["default"])());
+  console.warn('graphType', graphType);
+  var rules = stylis("#".concat(id), Object(_theme__WEBPACK_IMPORTED_MODULE_39__["default"])(graphType, userStyles, {}));
   var style1 = document.createElement('style'); // style1.innerHTML = scope(style, `#${id}`);
 
   style1.innerHTML = rules;
@@ -21935,20 +21927,20 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'git':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].setConf(cnf.git);
-        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].draw(txt, id, false);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(cnf.git);
+        _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_7__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].draw(txt, id, false);
         break;
 
       case 'flowchart-v2':
         cnf.flowchart.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_8__["default"].setConf(cnf.flowchart);
-        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_8__["default"].draw(txt, id, false);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(cnf.flowchart);
+        _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].draw(txt, id, false);
         break;
 
       case 'sequence':
@@ -21956,64 +21948,64 @@ var render = function render(id, _txt, cb, container) {
 
         if (cnf.sequenceDiagram) {
           // backwards compatibility
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_11__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object.assign(cnf.sequence, cnf.sequenceDiagram));
           console.error('`mermaid config.sequenceDiagram` has been renamed to `config.sequence`. Please update your mermaid config.');
         } else {
-          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_11__["default"].setConf(cnf.sequence);
+          _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(cnf.sequence);
         }
 
-        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_11__["default"].draw(txt, id);
+        _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].draw(txt, id);
         break;
 
       case 'gantt':
         cnf.gantt.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_14__["default"].setConf(cnf.gantt);
-        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_14__["default"].draw(txt, id);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(cnf.gantt);
+        _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].draw(txt, id);
         break;
 
       case 'class':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_17__["default"].setConf(cnf.class);
-        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_17__["default"].draw(txt, id);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(cnf.class);
+        _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].draw(txt, id);
         break;
 
       case 'state':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].draw(txt, id);
         break;
 
       case 'stateDiagram':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].setConf(cnf.state);
-        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].draw(txt, id);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(cnf.state);
+        _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].draw(txt, id);
         break;
 
       case 'info':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(cnf.class);
-        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_3__.version);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(cnf.class);
+        _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'pie':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(cnf.class);
-        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_3__.version);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(cnf.class);
+        _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'er':
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(cnf.er);
-        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_3__.version);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(cnf.er);
+        _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
 
       case 'journey':
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].setConf(cnf.journey);
-        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_3__.version);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(cnf.journey);
+        _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].draw(txt, id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
         break;
     }
   } catch (e) {
     // errorRenderer.setConf(cnf.class);
-    _errorRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_3__.version);
+    _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].draw(id, _package_json__WEBPACK_IMPORTED_MODULE_2__.version);
     throw e;
   }
 
@@ -22030,7 +22022,7 @@ var render = function render(id, _txt, cb, container) {
   // Fix for when the base tag is used
 
   var svgCode = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node().innerHTML;
-  _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('cnf.arrowMarkerAbsolute', cnf.arrowMarkerAbsolute);
 
   if (!cnf.arrowMarkerAbsolute || cnf.arrowMarkerAbsolute === 'false') {
     svgCode = svgCode.replace(/marker-end="url\(.*?#/g, 'marker-end="url(#', 'g');
@@ -22042,22 +22034,22 @@ var render = function render(id, _txt, cb, container) {
     switch (graphType) {
       case 'flowchart':
       case 'flowchart-v2':
-        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_10__["default"].bindFunctions);
+        cb(svgCode, _diagrams_flowchart_flowDb__WEBPACK_IMPORTED_MODULE_9__["default"].bindFunctions);
         break;
 
       case 'gantt':
-        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_16__["default"].bindFunctions);
+        cb(svgCode, _diagrams_gantt_ganttDb__WEBPACK_IMPORTED_MODULE_15__["default"].bindFunctions);
         break;
 
       case 'class':
-        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_19__["default"].bindFunctions);
+        cb(svgCode, _diagrams_class_classDb__WEBPACK_IMPORTED_MODULE_18__["default"].bindFunctions);
         break;
 
       default:
         cb(svgCode);
     }
   } else {
-    _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('CB = undefined!');
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('CB = undefined!');
   }
 
   var node = Object(d3__WEBPACK_IMPORTED_MODULE_1__["select"])('#d' + id).node();
@@ -22096,13 +22088,13 @@ var parseDirective = function parseDirective(statement, context, type) {
       }
     }
   } catch (error) {
-    _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
-    _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].error(error.message);
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error("Error while rendering sequenceDiagram directive: ".concat(statement, " jison context: ").concat(context));
+    _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].error(error.message);
   }
 };
 
 var handleDirective = function handleDirective(directive, type) {
-  _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug("Directive type=".concat(directive.type, " with args:"), directive.args);
 
   switch (directive.type) {
     case 'init':
@@ -22143,48 +22135,48 @@ var handleDirective = function handleDirective(directive, type) {
       break;
 
     default:
-      _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
+      _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].warn("Unhandled directive: source: '%%{".concat(directive.type, ": ").concat(JSON.stringify(directive.args ? directive.args : {}), "}%%"), directive);
       break;
   }
 };
 
 function updateRendererConfigs(conf) {
-  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_24__["default"].setConf(conf.git);
-  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(conf.flowchart);
-  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_8__["default"].setConf(conf.flowchart);
+  _diagrams_git_gitGraphRenderer__WEBPACK_IMPORTED_MODULE_23__["default"].setConf(conf.git);
+  _diagrams_flowchart_flowRenderer__WEBPACK_IMPORTED_MODULE_6__["default"].setConf(conf.flowchart);
+  _diagrams_flowchart_flowRenderer_v2__WEBPACK_IMPORTED_MODULE_7__["default"].setConf(conf.flowchart);
 
   if (typeof conf['sequenceDiagram'] !== 'undefined') {
-    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_11__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_6__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
+    _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(Object(_utils__WEBPACK_IMPORTED_MODULE_5__["assignWithDepth"])(conf.sequence, conf['sequenceDiagram']));
   }
 
-  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_11__["default"].setConf(conf.sequence);
-  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_14__["default"].setConf(conf.gantt);
-  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_17__["default"].setConf(conf.class);
-  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
-  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_21__["default"].setConf(conf.state);
-  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
-  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_31__["default"].setConf(conf.class);
-  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_36__["default"].setConf(conf.er);
-  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_39__["default"].setConf(conf.journey);
-  _errorRenderer__WEBPACK_IMPORTED_MODULE_28__["default"].setConf(conf.class);
+  _diagrams_sequence_sequenceRenderer__WEBPACK_IMPORTED_MODULE_10__["default"].setConf(conf.sequence);
+  _diagrams_gantt_ganttRenderer__WEBPACK_IMPORTED_MODULE_13__["default"].setConf(conf.gantt);
+  _diagrams_class_classRenderer__WEBPACK_IMPORTED_MODULE_16__["default"].setConf(conf.class);
+  _diagrams_state_stateRenderer__WEBPACK_IMPORTED_MODULE_19__["default"].setConf(conf.state);
+  _diagrams_state_stateRenderer_v2__WEBPACK_IMPORTED_MODULE_20__["default"].setConf(conf.state);
+  _diagrams_info_infoRenderer__WEBPACK_IMPORTED_MODULE_26__["default"].setConf(conf.class);
+  _diagrams_pie_pieRenderer__WEBPACK_IMPORTED_MODULE_30__["default"].setConf(conf.class);
+  _diagrams_er_erRenderer__WEBPACK_IMPORTED_MODULE_35__["default"].setConf(conf.er);
+  _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__["default"].setConf(conf.journey);
+  _errorRenderer__WEBPACK_IMPORTED_MODULE_27__["default"].setConf(conf.class);
 }
 
 function reinitialize(options) {
-  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_3__.version), options); // Set default options
+  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options); // Set default options
 
-  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_4__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_4__["getSiteConfig"])();
+  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
   updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_5__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('mermaidAPI.reinitialize: ', config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.reinitialize: ', config);
 }
 
 function initialize(options) {
   // console.log(`mermaidAPI.initialize: v${pkg.version}`);
   // Set default options
-  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_4__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_4__["getSiteConfig"])();
+  var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
   updateRendererConfigs(config);
-  Object(_logger__WEBPACK_IMPORTED_MODULE_5__["setLogLevel"])(config.logLevel);
-  _logger__WEBPACK_IMPORTED_MODULE_5__["logger"].debug('mermaidAPI.initialize: ', config);
+  Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
+  _logger__WEBPACK_IMPORTED_MODULE_4__["logger"].debug('mermaidAPI.initialize: ', config);
 } // function getConfig () {
 //   console.warn('get config')
 //   return config
@@ -22197,22 +22189,22 @@ var mermaidAPI = Object.freeze({
   parseDirective: parseDirective,
   initialize: initialize,
   reinitialize: reinitialize,
-  getConfig: _config__WEBPACK_IMPORTED_MODULE_4__["getConfig"],
-  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_4__["getSiteConfig"],
+  getConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getConfig"],
+  getSiteConfig: _config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"],
   reset: function reset() {
     // console.warn('reset');
-    _config__WEBPACK_IMPORTED_MODULE_4__["default"].reset();
-    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_4__["getSiteConfig"])();
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset();
+    var siteConfig = Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
     updateRendererConfigs(siteConfig);
   },
   globalReset: function globalReset() {
-    _config__WEBPACK_IMPORTED_MODULE_4__["default"].reset(_config__WEBPACK_IMPORTED_MODULE_4__["default"].defaultConfig);
-    updateRendererConfigs(Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])());
+    _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(_config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig);
+    updateRendererConfigs(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
   },
-  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_4__["default"].defaultConfig
+  defaultConfig: _config__WEBPACK_IMPORTED_MODULE_3__["default"].defaultConfig
 });
-Object(_logger__WEBPACK_IMPORTED_MODULE_5__["setLogLevel"])(Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])().logLevel);
-_config__WEBPACK_IMPORTED_MODULE_4__["default"].reset(Object(_config__WEBPACK_IMPORTED_MODULE_4__["getConfig"])());
+Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])().logLevel);
+_config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IMPORTED_MODULE_3__["getConfig"])());
 /* harmony default export */ __webpack_exports__["default"] = (mermaidAPI);
 /**
  * ## mermaidAPI configuration defaults
@@ -22305,8 +22297,8 @@ var options = {
   errorTextColor: '#552222'
 };
 
-var getStyles = function getStyles(options2, type) {
-  return ":root {\n    --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: var(--mermaid-font-family);\n    font-size: 16px;\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ".concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: var(--mermaid-font-family);\n  }\n\n  ").concat(themes[type](), "\n");
+var getStyles = function getStyles(type, userStyles, options2) {
+  return ":root {\n    --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: var(--mermaid-font-family);\n    font-size: 16px;\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ".concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: var(--mermaid-font-family);\n  }\n\n  ").concat(themes[type](), "\n\n  ").concat(userStyles, "\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -23359,17 +23351,6 @@ module.exports = require("graphlib");
 /***/ (function(module, exports) {
 
 module.exports = require("moment-mini");
-
-/***/ }),
-
-/***/ "scope-css":
-/*!****************************!*\
-  !*** external "scope-css" ***!
-  \****************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = require("scope-css");
 
 /***/ }),
 

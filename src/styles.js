@@ -1,22 +1,10 @@
-import getFlowchartStyles from './diagrams/flowchart/theme';
+import getFlowchartStyles from './diagrams/flowchart/styles';
 
 const themes = {
   flowchart: getFlowchartStyles
 };
 
-const options = {
-  mainBkg: '#ECECFF',
-  secondBkg: '#ffffde',
-  lineColor: '#333333',
-  border1: '#CCCCFF',
-  border2: '#aaaa33',
-  arrowheadColor: '#333333',
-  labelColor: 'black',
-  errorBkgColor: '#552222',
-  errorTextColor: '#552222'
-};
-
-const getStyles = (type, userStyles, options2) =>
+const getStyles = (type, userStyles, options) =>
   `:root {
     --mermaid-font-family: '"trebuchet ms", verdana, arial';
     font-family: '"trebuchet ms", verdana, arial';
@@ -64,7 +52,7 @@ const getStyles = (type, userStyles, options2) =>
     font-family: var(--mermaid-font-family);
   }
 
-  ${themes[type]()}
+  ${themes[type](options)}
 
   ${userStyles}
 `;

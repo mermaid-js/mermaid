@@ -1,23 +1,4 @@
-const options = {
-  mainBkg: '#ECECFF',
-  secondBkg: '#ffffde',
-  lineColor: '#333333',
-  border1: '#CCCCFF',
-  border2: '#aaaa33',
-  arrowheadColor: '#333333',
-
-  /* Flowchart variables */
-
-  nodeBkg: 'mainBkg',
-  nodeBorder: '#9370DB',
-  clusterBkg: 'secondBkg',
-  clusterBorder: 'border2',
-  defaultLinkColor: 'lineColor',
-  titleColor: '#333',
-  edgeLabelBackground: '#e8e8e8'
-};
-
-const getStyles = () =>
+const getStyles = options =>
   `.label {
     font-family: 'trebuchet ms', verdana, arial;
     font-family: var(--mermaid-font-family);
