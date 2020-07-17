@@ -26,8 +26,7 @@
     <h1>info below</h1>
     <div class="flex flex-wrap">
       <div class="mermaid" style="width: 50%; height: 20%;">
-              %%{init: {"theme": forest, "logLevel": 1 }}%%
-
+%%{init: { 'logLevel': 0, 'theme': 'default'} }%%
 graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -44,7 +43,7 @@ graph TD
           end
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-      %%{init: {"theme": forest, "logLevel": 1 }}%%
+%%{init: { 'logLevel': 1, 'theme': 'forest'} }%%
       graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -61,7 +60,8 @@ graph TD
           end
       </div>
       <div class="mermaid" style="width: 50%; height: 20%;">
-      %%{init: {"theme": neutral, "logLevel": 1 }}%%
+      %%{init: { 'logLevel': 1, 'theme': 'neutral'} }%%
+
       graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -78,7 +78,8 @@ graph TD
           end
       </div>
       <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
-      %%{init: {"theme": dark, "logLevel": 1 }}%%
+      %%{init: { 'logLevel': 1, 'theme': 'dark'} }%%
+
       graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
