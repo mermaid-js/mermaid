@@ -55,7 +55,8 @@ import getStyles from './styles';
 const themes = {};
 
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
-  themes[themeName] = require(`./theme-${themeName}.js`).default;
+  themes[themeName] = require(`./theme-${themeName}.js`);
+  console.warn(themeName, themes[themeName]);
 }
 
 function parse(text) {
@@ -540,6 +541,7 @@ function initialize(options) {
   // Set default options
 
   if (options.theme && themes[options.theme]) {
+    // Todo merge with user options
     options.themeVariables = themes[options.theme];
   }
 

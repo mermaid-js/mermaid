@@ -24,62 +24,77 @@
   </head>
   <body>
     <h1>info below</h1>
-    <div class="flex">
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-flowchart BT
-    subgraph two
-    b1
-    end
-    subgraph three
-    c1-->c2
-    end
-    c1 --apa apa apa--> b1
-    two --> c2
+    <div class="flex flex-wrap">
+      <div class="mermaid" style="width: 50%; height: 20%;">
+              %%{init: {"theme": forest, "logLevel": 1 }}%%
+
+graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
       </div>
-      <div class="mermaid2" style="width: 50%; height: 200px;">
-sequenceDiagram
-   Alice->>Bob:Extremely utterly long line of longness which had preivously overflown the actor box as it is much longer than what it should be
-   Bob->>Alice: I'm short though
-      </div>
-      <div class="mermaid" style="width: 50%; height: 200px;">
-        %%{init: {'securityLevel': 'loose'}}%%
+      <div class="mermaid" style="width: 50%; height: 20%;">
+      %%{init: {"theme": forest, "logLevel": 1 }}%%
       graph TD
-        A[Christmas] -->|Get money| B(Go shopping)
-        B --> C{{Let me think...<br />Do I want something for work,<br />something to spend every free second with,<br />or something to get around?}}
-        C -->|One| D[Laptop]
-        C -->|Two| E[iPhone]
-        C -->|Three| F[Car]
-        click A "index.html#link-clicked" "link test"
-        click B callback "click test"
-        classDef someclass fill:#f96;
-        class A someclass;
-        class C someclass;
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
       </div>
-      <div class="mermaid2" style="width: 50%; height: 200px;">
-
-      flowchart BT
-      subgraph a
-        b1 -- ok --> b2
-      end
-      a -- sert --> c
-      c --> d
-      b1 --> d
-      a --asd123 --> d
+      <div class="mermaid" style="width: 50%; height: 20%;">
+      %%{init: {"theme": neutral, "logLevel": 1 }}%%
+      graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-stateDiagram-v2
-  state A {
-    B1 --> B2: ok
-  }
-  A --> C: sert
-  C --> D
-  B1 --> D
-  A --> D: asd123
+      <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
+      %%{init: {"theme": dark, "logLevel": 1 }}%%
+      graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
       </div>
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-
-      </div>
+    </div>
 
   <script src="./mermaid.js"></script>
     <script>
@@ -88,17 +103,18 @@ stateDiagram-v2
         };
       mermaid.initialize({
         // theme: 'dark',
-        theme: 'forest',
+        theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,
-        flowchart: { curve: 'cardinal', "htmlLabels": false },
+        flowchart: { useMaxWidth: true },
+        graph: { curve: 'cardinal', "htmlLabels": false },
         // gantt: { axisFormat: '%m/%d/%Y' },
         sequence: { actorMargin: 50, showSequenceNumbers: true },
         // sequenceDiagram: { actorMargin: 300 } // deprecated
         fontFamily: '"arial", sans-serif',
         curve: 'cardinal',
-        securityLevel: 'strict'
+        securityLevel: 'strict',
       });
       function callback(){alert('It worked');}
     </script>

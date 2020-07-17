@@ -874,10 +874,6 @@ const currentConfig = assignWithDepth({}, defaultConfig);
 export const setSiteConfig = conf => {
   assignWithDepth(currentConfig, conf, { clobber: true });
   // Set theme variables if user has set the theme option
-  // if (conf.theme && themes[conf.theme]) {
-  //   conf.themeVariables = themes[conf.theme];
-  // }
-  // debugger;
   assignWithDepth(siteConfig, conf);
 
   return getSiteConfig();
@@ -912,9 +908,6 @@ export const getSiteConfig = () => {
 export const setConfig = conf => {
   sanitize(conf);
 
-  // if (conf.theme && themes[conf.theme]) {
-  //   conf.themeVariables = themes[conf.theme];
-  // }
   assignWithDepth(currentConfig, conf);
   return getConfig();
 };
@@ -972,12 +965,6 @@ export const sanitize = options => {
 export const reset = (conf = getSiteConfig()) => {
   Object.keys(siteConfig).forEach(key => delete siteConfig[key]);
   Object.keys(currentConfig).forEach(key => delete currentConfig[key]);
-  // Set theme variables if user has set the theme option
-  // if (conf.theme && themes[conf.theme]) {
-  //   conf.themeVariables = themes[conf.theme];
-  // }
-  // debugger;
-
   assignWithDepth(siteConfig, conf, { clobber: true });
   assignWithDepth(currentConfig, conf, { clobber: true });
 };
