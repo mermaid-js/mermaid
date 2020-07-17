@@ -1,6 +1,11 @@
-# Overview for n00bs
+# Overview for Beginners
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./n00b-overview.md)
 
-mermaid is a tool that aims to make diagrams and flowcharts for documentation, easier. 
+## Nothing explains a concept like a Good Diagram
+
+mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams, Knowledge Transfer and Documentation
+
+# The primary objective of mermaid is to help in addressing the problem of Documentation Rot. 
 
 with mermaid, diagrams can be created through comments like this in a script:
 
@@ -15,15 +20,41 @@ And they are rendered into this and made part of the documentation:
 
 ![Flowchart](./img/n00b-firstFlow.png)
 
-Most of the similar visuals that you might need to create can be scripted in a similar way, with a varitety of different symbols and chart types available. 
-Since the diagram source is text based, it can be part of production scripts (and other pieces of code). So less time needs be spent on documenting as a separate task.
+## Advantages of Using Mermaid
 
-Comparing with Visio and similar applications, mermaid is a really fast way to create good visualizations. This is especially apparent when editing a complex visualisations, a process that usually takes hours in a desktop application, but only takes minutes (or even less if generation has been scripted) with mermaid.
+- The Advantages of mermaid include its ease of generation, modification and rendering.
+- The number of integrations that it has. 
+- It is a package that can be deployed to create 
 
-mermaid can potentially cut down the amount of time and effort spent on the process of creating diagrams, to a fraction of what you usually put in.  
+## Creating and Maintaining Diagrams is an expensive and frustrating process.  
 
-However, a lot of the mermaid documentation is geared to professional frontend developers, presuming a skill set which I simply do not have.
+Anyone who has used Visio, or (God Forbid) Excel to make a Gantt Chart, knows how hard it is to make, edit and maintain good visualizations. 
 
-If you need some basic instructions and introductions, here are a few good places to start:
+In an environment of constantly changing information , diagrams/charts become obsolete/inaccurate very fast. This hobbles the information transfer and productivity in teams.
 
-For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted), or you can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/), alternatively, you could also view the [integrations and uses](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md) for mermaid. 
+The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates  and changes in the app you are documenting. Yet that is often the reality for diagrams and charts.
+
+## This is a source of frustration for developers, engineers or any subject matter experts, not to mention it costing companies in missed productivity.
+
+mermaid can potentially cut down the amount of time, effort and the learning curve that is associated with creating diagrams and charts. Because, the text base for  diagrams can be edited easily, to modify the product, it can also be part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate task. 
+
+
+## The mobility that mermaid provides can help Documentation catch up with Development in quickly changing projects. 
+
+Being based on markdown, mermaid can be used, not only by accomplished front-end developers, but by most computer savvy people to render simple diagrams, at much faster speeds.
+In fact one can pick up the syntax for it quite easily from the examples given.
+
+## mermaid is a useful charting tool 
+
+For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
+You can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
+Alternatively, you could also view the [integrations and uses](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md). 
+
+# For anyone who may need video tutorials, here is a list of beginner friendly introductions: 
+
+https://www.youtube.com/watch?v=SQ9QmuTHuSI&t=438s
+https://www.youtube.com/watch?v=5RQqht3NNSE
+https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
+https://www.youtube.com/watch?v=9HZzKkAqrX8
+https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
+https://www.youtube.com/watch?v=9HZzKkAqrX8
