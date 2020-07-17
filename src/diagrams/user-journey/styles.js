@@ -1,6 +1,7 @@
 const getStyles = options =>
   `.label {
-    font-family: ${options.fontFamily};
+    font-family: 'trebuchet ms', verdana, arial;
+    font-family: var(--mermaid-font-family);
     color: #333;
   }
 
@@ -62,7 +63,8 @@ const getStyles = options =>
     text-align: center;
     max-width: 200px;
     padding: 2px;
-    font-family: ${options.fontFamily};
+    font-family: 'trebuchet ms', verdana, arial;
+    font-family: var(--mermaid-font-family);
     font-size: 12px;
     background: ${options.secondBkg};
     border: 1px solid ${options.border2};

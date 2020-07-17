@@ -9,6 +9,8 @@ export const text = '#333';
 export const critical = '#d42';
 export const done = '#bbb';
 export const arrowheadColor = '#333333';
+export const fontFamily = '"trebuchet ms", verdana, arial';
+export const fontSize = '16px';
 
 /* Flowchart variables */
 

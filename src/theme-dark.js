@@ -6,7 +6,8 @@ export const lineColor = mainContrastColor;
 export const border1 = '#81B1DB';
 export const border2 = 'rgba(255; 255; 255; 0.25)';
 export const arrowheadColor = mainContrastColor;
-
+export const fontFamily = '"trebuchet ms", verdana, arial';
+export const fontSize = '16px';
 /* Flowchart variables */
 
 export const nodeBkg = mainBkg;

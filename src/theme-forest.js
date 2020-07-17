@@ -4,6 +4,8 @@ export const lineColor = 'green';
 export const border1 = '#13540c';
 export const border2 = '#6eaa49';
 export const arrowheadColor = 'green';
+export const fontFamily = '"trebuchet ms", verdana, arial';
+export const fontSize = '16px';
 
 /* Flowchart variables */
 

@@ -1,15 +1,33 @@
-import getFlowchartStyles from './diagrams/flowchart/styles';
+import classDiagram from './diagrams/class/styles';
+import er from './diagrams/flowchart/styles';
+import flowchart from './diagrams/flowchart/styles';
+import gantt from './diagrams/gantt/styles';
+import git from './diagrams/git/styles';
+import info from './diagrams/info/styles';
+import pie from './diagrams/pie/styles';
+import sequence from './diagrams/sequence/styles';
+import stateDiagram from './diagrams/state/styles';
+import journey from './diagrams/user-journey/styles';
 
 const themes = {
-  flowchart: getFlowchartStyles
+  flowchart,
+  'flowchart-v2': flowchart,
+  sequence,
+  gantt,
+  class: classDiagram,
+  stateDiagram,
+  state: stateDiagram,
+  git,
+  info,
+  pie,
+  er,
+  journey
 };
 
 const getStyles = (type, userStyles, options) =>
-  `:root {
-    --mermaid-font-family: '"trebuchet ms", verdana, arial';
-    font-family: '"trebuchet ms", verdana, arial';
-    font-family: var(--mermaid-font-family);
-    font-size: 16px;
+  ` {
+    font-family: ${options.fontFamily};
+    font-size: ${options.fontSize};
   }
 
   /* Classes common for multiple diagrams */
@@ -23,11 +41,9 @@ const getStyles = (type, userStyles, options) =>
   }
 
   .edge-thickness-normal {
-    // stroke: ${options.lineColor};
     stroke-width: 2px;
   }
   .edge-thickness-thick {
-    // stroke: ${options.lineColor};
     stroke-width: 3.5px
   }
   .edge-pattern-solid {
@@ -49,7 +65,8 @@ const getStyles = (type, userStyles, options) =>
   }
 
   svg {
-    font-family: var(--mermaid-font-family);
+    font-family: ${options.fontFamily};
+    font-size: ${options.fontSize};
   }
 
   ${themes[type](options)}
