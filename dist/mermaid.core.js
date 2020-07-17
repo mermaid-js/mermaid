@@ -1695,10 +1695,19 @@ var defaultConfig = Object.freeze(config);
 var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 /**
- * Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
- * the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
- * to the defaultConfig
- * Note: currentConfig is set in this function
+ *## setSiteConfig
+  
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
+ 
+ ***Notes:**
+ *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+ *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+ *to the defaultConfig
+ *Note: currentConfig is set in this function
+  
+ **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
@@ -1711,7 +1720,13 @@ var setSiteConfig = function setSiteConfig(conf) {
   return getSiteConfig();
 };
 /**
- * Obtains the current siteConfig base configuration
+ *## getSiteConfig
+ *| Function | Description         | Type    |  Values             |
+ *| --------- | ------------------- | ------- |  ------------------ |
+ *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
+  
+ ***Notes**:
+ *Returns **any** values in siteConfig.
  * @returns {*}
  */
 
@@ -1719,9 +1734,16 @@ var getSiteConfig = function getSiteConfig() {
   return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig);
 };
 /**
- * Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
- * values found in conf with key found in siteConfig.secure will be replaced with the corresponding
- * siteConfig value.
+ *## setConfig
+ *| Function  | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
+  
+  
+ ***Notes**:
+ *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
+ *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+ *siteConfig value.
  * @param conf - the potential currentConfig
  * @returns {*} - the currentConfig merged with the sanitized conf
  */
@@ -1732,7 +1754,13 @@ var setConfig = function setConfig(conf) {
   return getConfig();
 };
 /**
- * Obtains the currentConfig
+ *   ## getConfig
+ *| Function  | Description         | Type    | Return Values            |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
+  
+ ***Notes**:
+ *Returns **any** the currentConfig
  * @returns {*} - the currentConfig
  */
 
@@ -1740,8 +1768,13 @@ var getConfig = function getConfig() {
   return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, currentConfig);
 };
 /**
- * Ensures options parameter does not attempt to override siteConfig secure keys
- * Note: modifies options in-place
+ *## sanitize
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
+  
+ *Ensures options parameter does not attempt to override siteConfig secure keys
+ *Note: modifies options in-place
  * @param options - the potential setConfig parameter
  */
 
@@ -1756,7 +1789,18 @@ var sanitize = function sanitize(options) {
   });
 };
 /**
- * Resets this currentConfig to conf
+ *## reset
+  
+ *| Function | Description         | Type    | Required | Values             |
+ *| --------- | ------------------- | ------- | -------- | ------------------ |
+ *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ *
+ *| Parameter | Description |Type | Required | Values|
+ *| --- | --- | --- | --- | --- |
+ *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ *
+ **Notes :
+ (default: current siteConfig ) (optional, default `getSiteConfig()`)
  * @param conf - the base currentConfig to reset to (default: current siteConfig )
  */
 
