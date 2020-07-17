@@ -53,8 +53,13 @@ Alternatively, you could also view the [integrations and uses](https://github.co
 # For anyone who may need video tutorials, here is a list of beginner friendly introductions: 
 
 https://www.youtube.com/watch?v=SQ9QmuTHuSI&t=438s
+
 https://www.youtube.com/watch?v=5RQqht3NNSE
+
 https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
+
 https://www.youtube.com/watch?v=9HZzKkAqrX8
+
 https://www.youtube.com/watch?v=7_2IroEs6Is&t=207s
+
 https://www.youtube.com/watch?v=9HZzKkAqrX8
