@@ -95,6 +95,24 @@ graph TD
             G
           end
       </div>
+      <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
+      %%{init: { 'logLevel': 1} }%%
+
+      graph TD
+          A[Christmas] -->|Get money| B(Go shopping)
+          B --> C{Let me think}
+          B --> G[/Another/]
+          C ==>|One| D[Laptop]
+          C -->|Two| E[iPhone]
+          C -->|Three| F[fa:fa-car Car]
+          subgraph section
+            C
+            D
+            E
+            F
+            G
+          end
+      </div>
     </div>
 
   <script src="./mermaid.js"></script>
@@ -104,7 +122,7 @@ graph TD
         };
       mermaid.initialize({
         // theme: 'dark',
-        theme: 'dark',
+        // theme: 'dark',
         // arrowMarkerAbsolute: true,
         // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
         logLevel: 0,

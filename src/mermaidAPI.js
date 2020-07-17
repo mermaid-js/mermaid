@@ -12,7 +12,6 @@
  */
 import Stylis from 'stylis';
 import { select } from 'd3';
-// import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig, setSiteConfig, getSiteConfig } from './config';
 import { logger, setLogLevel } from './logger';
@@ -56,7 +55,6 @@ const themes = {};
 
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
   themes[themeName] = require(`./theme-${themeName}.js`);
-  console.warn(themeName, themes[themeName]);
 }
 
 function parse(text) {
@@ -199,8 +197,6 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
-  // debugger;
-
   const cnf = getConfig();
   // Check the maximum allowed text size
   let txt = _txt;
@@ -284,16 +280,11 @@ const render = function(id, _txt, cb, container) {
     }
   }
   const stylis = new Stylis();
-  // stylis.use(extraScopePlugin(`#${id}`));
-  console.warn('graphType', graphType);
   const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');
-  // style1.innerHTML = scope(style, `#${id}`);
   style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
-
-  // console.warn(rules);
 
   // Verify that the generated svgs are ok before removing this
 
@@ -529,6 +520,11 @@ function updateRendererConfigs(conf) {
 
 function reinitialize(options) {
   console.log(`mermaidAPI.reinitialize: v${pkg.version}`, options);
+  if (options.theme && themes[options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = themes[options.theme];
+  }
+
   // Set default options
   const config = typeof options === 'object' ? setConfig(options) : getSiteConfig();
   updateRendererConfigs(config);

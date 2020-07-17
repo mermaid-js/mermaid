@@ -149,162 +149,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss":
-/*!*****************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss ***!
-  \*****************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.actor {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\ntext.actor > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.actor-line {\n  stroke: lightgrey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: lightgrey; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: lightgrey; }\n\n#arrowhead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.sequenceNumber {\n  fill: black; }\n\n#sequencenumber {\n  fill: lightgrey; }\n\n#crosshead path {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.messageText {\n  fill: lightgrey;\n  stroke: lightgrey; }\n\n.labelBox {\n  stroke: #81B1DB;\n  fill: #1f2020; }\n\n.labelText, .labelText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: lightgrey;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #81B1DB;\n  fill: #81B1DB; }\n\n.note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: #1f2020;\n  stroke: none; }\n\n.activation0 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation1 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n.activation2 {\n  fill: #474949;\n  stroke: #81B1DB; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(255, 255, 255, 0.3); }\n\n.section2 {\n  fill: #EAE8B9; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #F9FFFE; }\n\n.sectionTitle1 {\n  fill: #F9FFFE; }\n\n.sectionTitle2 {\n  fill: #F9FFFE; }\n\n.sectionTitle3 {\n  fill: #F9FFFE; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #DB5757;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #323D47;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #323D47;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: #323D47; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #1f2020;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: lightgrey; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: lightgrey; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #81B1DB;\n  stroke: rgba(255, 255, 255, 0.5); }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #323D47 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #323D47 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #E83737;\n  fill: #E83737;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #E83737;\n  fill: #81B1DB;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #E83737;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #323D47 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #323D47 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.classGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #81B1DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #81B1DB;\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #323D47;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.legend text {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 17px; }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #81B1DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #1f2020;\n  stroke: #81B1DB; }\n\ng.stateGroup line {\n  stroke: #81B1DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #81B1DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: rgba(255, 255, 255, 0.25);\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #1f2020;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #81B1DB; }\n\n.statediagram-cluster rect {\n  fill: #1f2020;\n  stroke: #81B1DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #81B1DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: rgba(255, 255, 255, 0.25);\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: var(--mermaid-font-family);\n  font-size: 16px; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #a44141; }\n\n.error-text {\n  fill: #ddd;\n  stroke: #ddd; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: lightgrey; }\n\n.marker.cross {\n  stroke: lightgrey; }\n\nsvg {\n  font-family: var(--mermaid-font-family);\n  font-size: 24px; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss":
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss ***!
-  \********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.actor {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #CCCCFF;\n  fill: #ECECFF; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #CCCCFF;\n  fill: #CCCCFF; }\n\n.note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: black;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: rgba(102, 102, 255, 0.49); }\n\n.section2 {\n  fill: #fff400; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #8a90dd;\n  stroke: #534fbc; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #bfc7ff;\n  stroke: #534fbc; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #bfc7ff;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.classGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #9370DB;\n  font-size: 10px; }\n\n.relation {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #9370DB;\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.legend text {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 17px; }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #9370DB;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #ECECFF;\n  stroke: #9370DB; }\n\ng.stateGroup line {\n  stroke: #9370DB;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #9370DB;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #aaaa33;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #ECECFF;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #9370DB; }\n\n.statediagram-cluster rect {\n  fill: #ECECFF;\n  stroke: #9370DB;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #9370DB; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #aaaa33;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: var(--mermaid-font-family);\n  font-size: 16px; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: #333333; }\n\n.marker.cross {\n  stroke: #333333; }\n\nsvg {\n  font-family: var(--mermaid-font-family);\n  font-size: 24px; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss":
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss ***!
-  \*******************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.actor {\n  stroke: #13540c;\n  fill: #cde498; }\n\ntext.actor > tspan {\n  fill: black;\n  stroke: none; }\n\n.actor-line {\n  stroke: grey; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #326932;\n  fill: #cde498; }\n\n.labelText, .labelText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: black;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #326932;\n  fill: #326932; }\n\n.note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n\n.noteText, .noteText > tspan {\n  fill: black;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #6eaa49; }\n\n.section2 {\n  fill: #6eaa49; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: lightgrey;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: red;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: black;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: black;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #487e3a;\n  stroke: #13540c; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: black; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: black; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #cde498;\n  stroke: #13540c; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: black !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: grey;\n  fill: lightgrey;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: black !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #ff8888;\n  fill: red;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #ff8888;\n  fill: #cde498;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #ff8888;\n  fill: lightgrey;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: black !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: black !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.classGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #13540c;\n  font-size: 10px; }\n\n.relation {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #13540c;\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: black;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.legend text {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 17px; }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #13540c;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #cde498;\n  stroke: #13540c; }\n\ng.stateGroup line {\n  stroke: #13540c;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #13540c;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #6eaa49;\n  fill: #fff5ad; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #cde498;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #13540c; }\n\n.statediagram-cluster rect {\n  fill: #cde498;\n  stroke: #13540c;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #13540c; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #fff5ad;\n  stroke: #6eaa49;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: var(--mermaid-font-family);\n  font-size: 16px; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: green; }\n\n.marker.cross {\n  stroke: green; }\n\nsvg {\n  font-family: var(--mermaid-font-family);\n  font-size: 24px; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss":
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss ***!
-  \********************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
-// Module
-exports.push([module.i, "/* Flowchart variables */\n/* Sequence Diagram variables */\n/* Gantt chart variables */\n/* state colors */\n.actor {\n  stroke: #999;\n  fill: #eee; }\n\ntext.actor > tspan {\n  fill: #333;\n  stroke: none; }\n\n.actor-line {\n  stroke: #666; }\n\n.messageLine0 {\n  stroke-width: 1.5;\n  stroke-dasharray: none;\n  stroke: #333; }\n\n.messageLine1 {\n  stroke-width: 1.5;\n  stroke-dasharray: 2, 2;\n  stroke: #333; }\n\n#arrowhead path {\n  fill: #333;\n  stroke: #333; }\n\n.sequenceNumber {\n  fill: white; }\n\n#sequencenumber {\n  fill: #333; }\n\n#crosshead path {\n  fill: #333;\n  stroke: #333; }\n\n.messageText {\n  fill: #333;\n  stroke: #333; }\n\n.labelBox {\n  stroke: #999;\n  fill: #eee; }\n\n.labelText, .labelText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopText, .loopText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.loopLine {\n  stroke-width: 2px;\n  stroke-dasharray: 2, 2;\n  stroke: #999;\n  fill: #999; }\n\n.note {\n  stroke: #777700;\n  fill: #ffa; }\n\n.noteText, .noteText > tspan {\n  fill: #333;\n  stroke: none; }\n\n.activation0 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation1 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n.activation2 {\n  fill: #f4f4f4;\n  stroke: #666; }\n\n/** Section styling */\n.mermaid-main-font {\n  font-family: \"trebuchet ms\", verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.section {\n  stroke: none;\n  opacity: 0.2; }\n\n.section0 {\n  fill: #80b3e6; }\n\n.section2 {\n  fill: #80b3e6; }\n\n.section1,\n.section3 {\n  fill: white;\n  opacity: 0.2; }\n\n.sectionTitle0 {\n  fill: #333; }\n\n.sectionTitle1 {\n  fill: #333; }\n\n.sectionTitle2 {\n  fill: #333; }\n\n.sectionTitle3 {\n  fill: #333; }\n\n.sectionTitle {\n  text-anchor: start;\n  font-size: 11px;\n  text-height: 14px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n/* Grid and axis */\n.grid .tick {\n  stroke: #e6e6e6;\n  opacity: 0.8;\n  shape-rendering: crispEdges; }\n  .grid .tick text {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family); }\n\n.grid path {\n  stroke-width: 0; }\n\n/* Today line */\n.today {\n  fill: none;\n  stroke: #d42;\n  stroke-width: 2px; }\n\n/* Task styling */\n/* Default task */\n.task {\n  stroke-width: 2; }\n\n.taskText {\n  text-anchor: middle;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskText:not([font-size]) {\n  font-size: 11px; }\n\n.taskTextOutsideRight {\n  fill: #333;\n  text-anchor: start;\n  font-size: 11px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.taskTextOutsideLeft {\n  fill: #333;\n  text-anchor: end;\n  font-size: 11px; }\n\n/* Special case clickable */\n.task.clickable {\n  cursor: pointer; }\n\n.taskText.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideLeft.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n.taskTextOutsideRight.clickable {\n  cursor: pointer;\n  fill: #003163 !important;\n  font-weight: bold; }\n\n/* Specific task settings for the sections*/\n.taskText0,\n.taskText1,\n.taskText2,\n.taskText3 {\n  fill: white; }\n\n.task0,\n.task1,\n.task2,\n.task3 {\n  fill: #26a;\n  stroke: #1a4d80; }\n\n.taskTextOutside0,\n.taskTextOutside2 {\n  fill: #333; }\n\n.taskTextOutside1,\n.taskTextOutside3 {\n  fill: #333; }\n\n/* Active task */\n.active0,\n.active1,\n.active2,\n.active3 {\n  fill: #eee;\n  stroke: #1a4d80; }\n\n.activeText0,\n.activeText1,\n.activeText2,\n.activeText3 {\n  fill: #333 !important; }\n\n/* Completed task */\n.done0,\n.done1,\n.done2,\n.done3 {\n  stroke: #666;\n  fill: #bbb;\n  stroke-width: 2; }\n\n.doneText0,\n.doneText1,\n.doneText2,\n.doneText3 {\n  fill: #333 !important; }\n\n/* Tasks on the critical line */\n.crit0,\n.crit1,\n.crit2,\n.crit3 {\n  stroke: #b1361b;\n  fill: #d42;\n  stroke-width: 2; }\n\n.activeCrit0,\n.activeCrit1,\n.activeCrit2,\n.activeCrit3 {\n  stroke: #b1361b;\n  fill: #eee;\n  stroke-width: 2; }\n\n.doneCrit0,\n.doneCrit1,\n.doneCrit2,\n.doneCrit3 {\n  stroke: #b1361b;\n  fill: #bbb;\n  stroke-width: 2;\n  cursor: pointer;\n  shape-rendering: crispEdges; }\n\n.milestone {\n  transform: rotate(45deg) scale(0.8, 0.8); }\n\n.milestoneText {\n  font-style: italic; }\n\n.doneCritText0,\n.doneCritText1,\n.doneCritText2,\n.doneCritText3 {\n  fill: #333 !important; }\n\n.activeCritText0,\n.activeCritText1,\n.activeCritText2,\n.activeCritText3 {\n  fill: #333 !important; }\n\n.titleText {\n  text-anchor: middle;\n  font-size: 18px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.classGroup text {\n  fill: #999;\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px; }\n  g.classGroup text .title {\n    font-weight: bolder; }\n\ng.clickable {\n  cursor: pointer; }\n\ng.classGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.classGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.classLabel .label {\n  fill: #999;\n  font-size: 10px; }\n\n.relation {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.dashed-line {\n  stroke-dasharray: 3; }\n\n#compositionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#compositionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationStart {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#aggregationEnd {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#dependencyEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionStart {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n#extensionEnd {\n  fill: #999;\n  stroke: #999;\n  stroke-width: 1; }\n\n.commit-id,\n.commit-msg,\n.branch-label {\n  fill: lightgrey;\n  color: lightgrey;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.pieTitleText {\n  text-anchor: middle;\n  font-size: 25px;\n  fill: #333;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.slice {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.legend text {\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 17px; }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\ng.stateGroup text {\n  fill: #999;\n  stroke: none;\n  font-size: 10px; }\n\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: black; }\n\ng.stateGroup rect {\n  fill: #eee;\n  stroke: #999; }\n\ng.stateGroup line {\n  stroke: #999;\n  stroke-width: 1; }\n\n.transition {\n  stroke: #999;\n  stroke-width: 1;\n  fill: none; }\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px; }\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px; }\n\n.state-note {\n  stroke: #777700;\n  fill: #ffa; }\n  .state-note text {\n    fill: black;\n    stroke: none;\n    font-size: 10px; }\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: #eee;\n  opacity: 0.5; }\n\n.stateLabel text {\n  fill: black;\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family); }\n\n.node circle.state-start {\n  fill: black;\n  stroke: black; }\n\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5; }\n\n#statediagram-barbEnd {\n  fill: #999; }\n\n.statediagram-cluster rect {\n  fill: #eee;\n  stroke: #999;\n  stroke-width: 1px; }\n\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state .divider {\n  stroke: #999; }\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white; }\n\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0; }\n\n.statediagram-cluster .inner {\n  rx: 0;\n  ry: 0; }\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px; }\n\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef; }\n\n.note-edge {\n  stroke-dasharray: 5; }\n\n.statediagram-note rect {\n  fill: #ffa;\n  stroke: #777700;\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0; }\n\n:root {\n  --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: '\"trebuchet ms\", verdana, arial';\n  font-family: var(--mermaid-font-family);\n  font-size: 16px; }\n\n/* Classes common for multiple diagrams */\n.error-icon {\n  fill: #552222; }\n\n.error-text {\n  fill: #552222;\n  stroke: #552222; }\n\n.edge-thickness-normal {\n  stroke-width: 2px; }\n\n.edge-thickness-thick {\n  stroke-width: 3.5px; }\n\n.edge-pattern-solid {\n  stroke-dasharray: 0; }\n\n.edge-pattern-dashed {\n  stroke-dasharray: 3; }\n\n.edge-pattern-dotted {\n  stroke-dasharray: 2; }\n\n.marker {\n  fill: #666; }\n\n.marker.cross {\n  stroke: #666; }\n\nsvg {\n  font-family: var(--mermaid-font-family);\n  font-size: 24px; }\n", ""]);
-
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/dist/runtime/api.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
-  \*****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/*
-  MIT License http://www.opensource.org/licenses/mit-license.php
-  Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function (useSourceMap) {
-  var list = []; // return the list of modules as css string
-
-  list.toString = function toString() {
-    return this.map(function (item) {
-      var content = cssWithMappingToString(item, useSourceMap);
-
-      if (item[2]) {
-        return '@media ' + item[2] + '{' + content + '}';
-      } else {
-        return content;
-      }
-    }).join('');
-  }; // import a list of modules into the list
-
-
-  list.i = function (modules, mediaQuery) {
-    if (typeof modules === 'string') {
-      modules = [[null, modules, '']];
-    }
-
-    var alreadyImportedModules = {};
-
-    for (var i = 0; i < this.length; i++) {
-      var id = this[i][0];
-
-      if (id != null) {
-        alreadyImportedModules[id] = true;
-      }
-    }
-
-    for (i = 0; i < modules.length; i++) {
-      var item = modules[i]; // skip already imported module
-      // this implementation is not 100% perfect for weird media query combinations
-      // when a module is imported multiple times with different media queries.
-      // I hope this will never occur (Hey this way we have smaller bundles)
-
-      if (item[0] == null || !alreadyImportedModules[item[0]]) {
-        if (mediaQuery && !item[2]) {
-          item[2] = mediaQuery;
-        } else if (mediaQuery) {
-          item[2] = '(' + item[2] + ') and (' + mediaQuery + ')';
-        }
-
-        list.push(item);
-      }
-    }
-  };
-
-  return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-  var content = item[1] || '';
-  var cssMapping = item[3];
-
-  if (!cssMapping) {
-    return content;
-  }
-
-  if (useSourceMap && typeof btoa === 'function') {
-    var sourceMapping = toComment(cssMapping);
-    var sourceURLs = cssMapping.sources.map(function (source) {
-      return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */';
-    });
-    return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-  }
-
-  return [content].join('\n');
-} // Adapted from convert-source-map (MIT)
-
-
-function toComment(sourceMap) {
-  // eslint-disable-next-line no-undef
-  var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-  var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-  return '/*# ' + data + ' */';
-}
-
-/***/ }),
-
 /***/ "./node_modules/d3-array/src/array.js":
 /*!********************************************!*\
   !*** ./node_modules/d3-array/src/array.js ***!
@@ -47577,6 +47421,42 @@ module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"descr
 
 /***/ }),
 
+/***/ "./src sync recursive ^\\.\\/theme\\-.*\\.js$":
+/*!**************************************!*\
+  !*** ./src sync ^\.\/theme\-.*\.js$ ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./theme-dark.js": "./src/theme-dark.js",
+	"./theme-default.js": "./src/theme-default.js",
+	"./theme-forest.js": "./src/theme-forest.js",
+	"./theme-neutral.js": "./src/theme-neutral.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	if(!__webpack_require__.o(map, req)) {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return map[req];
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./src sync recursive ^\\.\\/theme\\-.*\\.js$";
+
+/***/ }),
+
 /***/ "./src/config.js":
 /*!***********************!*\
   !*** ./src/config.js ***!
@@ -47596,7 +47476,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils */ "./src/utils.js");
 /* harmony import */ var _logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./logger */ "./src/logger.js");
 
+ // import themeVariables from './theme-default';
+// import themeForestVariables from './theme-forest';
+// import themeNeutralVariables from './theme-neutral';
 
+var themes = {};
+
+for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
+  var themeName = _arr[_i];
+  themes[themeName] = __webpack_require__("./src sync recursive ^\\.\\/theme\\-.*\\.js$")("./theme-".concat(themeName, ".js")).default;
+}
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
  *
@@ -47632,6 +47521,7 @@ __webpack_require__.r(__webpack_exports__);
  * @name Configuration
  */
 
+
 var config = {
   /** theme , the CSS style sheet
    *
@@ -47648,6 +47538,7 @@ var config = {
    * </pre>
    */
   theme: 'default',
+  themeVariables: themes.default,
   themeCSS: undefined,
 
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
@@ -48449,7 +48340,8 @@ var config = {
      */
     useMaxWidth: true
   }
-};
+}; // debugger;
+
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 var defaultConfig = Object.freeze(config);
@@ -48457,17 +48349,17 @@ var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(
 var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 /**
  *## setSiteConfig
-  
+
  *| Function | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
- 
+
  ***Notes:**
  *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
  *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
  *to the defaultConfig
  *Note: currentConfig is set in this function
-  
+
  **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
@@ -48476,7 +48368,8 @@ var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"
 var setSiteConfig = function setSiteConfig(conf) {
   Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(currentConfig, conf, {
     clobber: true
-  });
+  }); // Set theme variables if user has set the theme option
+
   Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])(siteConfig, conf);
   return getSiteConfig();
 };
@@ -48485,7 +48378,7 @@ var setSiteConfig = function setSiteConfig(conf) {
  *| Function | Description         | Type    |  Values             |
  *| --------- | ------------------- | ------- |  ------------------ |
  *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
-  
+
  ***Notes**:
  *Returns **any** values in siteConfig.
  * @returns {*}
@@ -48499,8 +48392,8 @@ var getSiteConfig = function getSiteConfig() {
  *| Function  | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
-  
-  
+
+
  ***Notes**:
  *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
  *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
@@ -48519,7 +48412,7 @@ var setConfig = function setConfig(conf) {
  *| Function  | Description         | Type    | Return Values            |
  *| --------- | ------------------- | ------- | ------------------ |
  *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
-  
+
  ***Notes**:
  *Returns **any** the currentConfig
  * @returns {*} - the currentConfig
@@ -48533,7 +48426,7 @@ var getConfig = function getConfig() {
  *| Function | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
-  
+
  *Ensures options parameter does not attempt to override siteConfig secure keys
  *Note: modifies options in-place
  * @param options - the potential setConfig parameter
@@ -48551,7 +48444,7 @@ var sanitize = function sanitize(options) {
 };
 /**
  *## reset
-  
+
  *| Function | Description         | Type    | Required | Values             |
  *| --------- | ------------------- | ------- | -------- | ------------------ |
  *| reset|Resets currentConfig to conf| Put Request | Required | None|
@@ -56983,34 +56876,16 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 
 /***/ }),
 
-/***/ "./src/diagrams/flowchart/theme.js":
-/*!*****************************************!*\
-  !*** ./src/diagrams/flowchart/theme.js ***!
-  \*****************************************/
+/***/ "./src/diagrams/flowchart/styles.js":
+/*!******************************************!*\
+  !*** ./src/diagrams/flowchart/styles.js ***!
+  \******************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var options = {
-  mainBkg: '#ECECFF',
-  secondBkg: '#ffffde',
-  lineColor: '#333333',
-  border1: '#CCCCFF',
-  border2: '#aaaa33',
-  arrowheadColor: '#333333',
-
-  /* Flowchart variables */
-  nodeBkg: 'mainBkg',
-  nodeBorder: '#9370DB',
-  clusterBkg: 'secondBkg',
-  clusterBorder: 'border2',
-  defaultLinkColor: 'lineColor',
-  titleColor: '#333',
-  edgeLabelBackground: '#e8e8e8'
-};
-
-var getStyles = function getStyles() {
+var getStyles = function getStyles(options) {
   return ".label {\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    color: #333;\n  }\n\n  .label text {\n    fill: #333;\n  }\n\n  .node rect,\n  .node circle,\n  .node ellipse,\n  .node polygon,\n  .node path {\n    fill: ".concat(options.mainBkg, ";\n    stroke: ").concat(options.nodeBorder, ";\n    stroke-width: 1px;\n  }\n\n  .node .label {\n    text-align: center;\n  }\n  .node.clickable {\n    cursor: pointer;\n  }\n\n  .arrowheadPath {\n    fill: ").concat(options.arrowheadColor, ";\n  }\n\n  .edgePath .path {\n    stroke: ").concat(options.lineColor, ";\n    stroke-width: 1.5px;\n  }\n\n  .flowchart-link {\n    stroke: ").concat(options.lineColor, ";\n    fill: none;\n  }\n\n  .edgeLabel {\n    background-color: ").concat(options.edgeLabelBackground, ";\n    rect {\n      opacity: 0.5;\n    }\n    text-align: center;\n  }\n\n  .cluster rect {\n    fill: ").concat(options.secondBkg, ";\n    stroke: ").concat(options.clusterBorder, ";\n    stroke-width: 1px;\n  }\n\n  .cluster text {\n    fill: ").concat(options.titleColor, ";\n  }\n\n  div.mermaidTooltip {\n    position: absolute;\n    text-align: center;\n    max-width: 200px;\n    padding: 2px;\n    font-family: 'trebuchet ms', verdana, arial;\n    font-family: var(--mermaid-font-family);\n    font-size: 12px;\n    background: ").concat(options.secondBkg, ";\n    border: 1px solid ").concat(options.border2, ";\n    border-radius: 2px;\n    pointer-events: none;\n    z-index: 100;\n  }\n");
 };
 
@@ -68237,7 +68112,7 @@ var initialize = function initialize(config) {
     }
   }
 
-  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config);
+  _mermaidAPI__WEBPACK_IMPORTED_MODULE_1__["default"].initialize(config); // mermaidAPI.reset();
 };
 /**
  * ##contentLoaded
@@ -68353,7 +68228,7 @@ var _package_json__WEBPACK_IMPORTED_MODULE_2___namespace = /*#__PURE__*/__webpac
 /* harmony import */ var _diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(_diagrams_user_journey_parser_journey__WEBPACK_IMPORTED_MODULE_36__);
 /* harmony import */ var _diagrams_user_journey_journeyDb__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./diagrams/user-journey/journeyDb */ "./src/diagrams/user-journey/journeyDb.js");
 /* harmony import */ var _diagrams_user_journey_journeyRenderer__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./diagrams/user-journey/journeyRenderer */ "./src/diagrams/user-journey/journeyRenderer.js");
-/* harmony import */ var _theme__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./theme */ "./src/theme.js");
+/* harmony import */ var _styles__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./styles */ "./src/styles.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /**
@@ -68369,7 +68244,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  * @name mermaidAPI
  */
 
- // import scope from 'scope-css';
 
 
 
@@ -68414,7 +68288,7 @@ var themes = {};
 
 for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
   var themeName = _arr[_i];
-  themes[themeName] = __webpack_require__("./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$")("./".concat(themeName, "/index.scss"));
+  themes[themeName] = __webpack_require__("./src sync recursive ^\\.\\/theme\\-.*\\.js$")("./theme-".concat(themeName, ".js"));
 }
 
 function parse(text) {
@@ -68640,15 +68514,11 @@ var render = function render(id, _txt, cb, container) {
     }
   }
 
-  var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a(); // stylis.use(extraScopePlugin(`#${id}`));
-
-  console.warn('graphType', graphType);
-  var rules = stylis("#".concat(id), Object(_theme__WEBPACK_IMPORTED_MODULE_39__["default"])(graphType, userStyles, {}));
-  var style1 = document.createElement('style'); // style1.innerHTML = scope(style, `#${id}`);
-
+  var stylis = new stylis__WEBPACK_IMPORTED_MODULE_0___default.a();
+  var rules = stylis("#".concat(id), Object(_styles__WEBPACK_IMPORTED_MODULE_39__["default"])(graphType, userStyles, cnf.themeVariables));
+  var style1 = document.createElement('style');
   style1.innerHTML = rules;
-  svg.insertBefore(style1, firstChild); // console.warn(rules);
-  // Verify that the generated svgs are ok before removing this
+  svg.insertBefore(style1, firstChild); // Verify that the generated svgs are ok before removing this
   // const style2 = document.createElement('style');
   // const cs = window.getComputedStyle(svg);
   // style2.innerHTML = `#d${id} * {
@@ -68898,7 +68768,13 @@ function updateRendererConfigs(conf) {
 }
 
 function reinitialize(options) {
-  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options); // Set default options
+  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options);
+
+  if (options.theme && themes[options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = themes[options.theme];
+  } // Set default options
+
 
   var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
   updateRendererConfigs(config);
@@ -68909,6 +68785,11 @@ function reinitialize(options) {
 function initialize(options) {
   // console.log(`mermaidAPI.initialize: v${pkg.version}`);
   // Set default options
+  if (options.theme && themes[options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = themes[options.theme];
+  }
+
   var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
   updateRendererConfigs(config);
   Object(_logger__WEBPACK_IMPORTED_MODULE_4__["setLogLevel"])(config.logLevel);
@@ -69007,161 +68888,520 @@ _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IM
 
 /***/ }),
 
-/***/ "./src/theme.js":
-/*!**********************!*\
-  !*** ./src/theme.js ***!
-  \**********************/
+/***/ "./src/styles.js":
+/*!***********************!*\
+  !*** ./src/styles.js ***!
+  \***********************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _diagrams_flowchart_theme__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diagrams/flowchart/theme */ "./src/diagrams/flowchart/theme.js");
+/* harmony import */ var _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diagrams/flowchart/styles */ "./src/diagrams/flowchart/styles.js");
 
 var themes = {
-  flowchart: _diagrams_flowchart_theme__WEBPACK_IMPORTED_MODULE_0__["default"]
-};
-var options = {
-  mainBkg: '#ECECFF',
-  secondBkg: '#ffffde',
-  lineColor: '#333333',
-  border1: '#CCCCFF',
-  border2: '#aaaa33',
-  arrowheadColor: '#333333',
-  labelColor: 'black',
-  errorBkgColor: '#552222',
-  errorTextColor: '#552222'
+  flowchart: _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_0__["default"]
 };
 
-var getStyles = function getStyles(type, userStyles, options2) {
-  return ":root {\n    --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: var(--mermaid-font-family);\n    font-size: 16px;\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ".concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: var(--mermaid-font-family);\n  }\n\n  ").concat(themes[type](), "\n\n  ").concat(userStyles, "\n");
+var getStyles = function getStyles(type, userStyles, options) {
+  return ":root {\n    --mermaid-font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: '\"trebuchet ms\", verdana, arial';\n    font-family: var(--mermaid-font-family);\n    font-size: 16px;\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ".concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    // stroke: ").concat(options.lineColor, ";\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: var(--mermaid-font-family);\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
 
 /***/ }),
 
-/***/ "./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$":
-/*!***********************************************!*\
-  !*** ./src/themes sync ^\.\/.*\/index\.scss$ ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/theme-dark.js":
+/*!***************************!*\
+  !*** ./src/theme-dark.js ***!
+  \***************************/
+/*! exports provided: mainBkg, secondBkg, mainContrastColor, darkTextColor, lineColor, border1, border2, arrowheadColor, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextColor, taskTextLightColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBorderColor, critBkgColor, taskTextDarkColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var map = {
-	"./dark/index.scss": "./src/themes/dark/index.scss",
-	"./default/index.scss": "./src/themes/default/index.scss",
-	"./forest/index.scss": "./src/themes/forest/index.scss",
-	"./neutral/index.scss": "./src/themes/neutral/index.scss"
-};
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainContrastColor", function() { return mainContrastColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "darkTextColor", function() { return darkTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+var mainBkg = '#1f2020';
+var secondBkg = 'lighten(#1f2020; 16)';
+var mainContrastColor = 'lightgrey';
+var darkTextColor = '#323D47';
+var lineColor = mainContrastColor;
+var border1 = '#81B1DB';
+var border2 = 'rgba(255; 255; 255; 0.25)';
+var arrowheadColor = mainContrastColor;
+/* Flowchart variables */
 
+var nodeBkg = mainBkg;
+var nodeBorder = border1;
+var clusterBkg = secondBkg;
+var clusterBorder = border2;
+var defaultLinkColor = lineColor;
+var titleColor = '#F9FFFE';
+var edgeLabelBackground = '#e8e8e8';
+/* Sequence Diagram variables */
 
-function webpackContext(req) {
-	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
-}
-function webpackContextResolve(req) {
-	if(!__webpack_require__.o(map, req)) {
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	}
-	return map[req];
-}
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
-};
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = "./src/themes sync recursive ^\\.\\/.*\\/index\\.scss$";
+var actorBorder = border1;
+var actorBkg = mainBkg;
+var actorTextColor = mainContrastColor;
+var actorLineColor = mainContrastColor;
+var signalColor = mainContrastColor;
+var signalTextColor = mainContrastColor;
+var labelBoxBkgColor = actorBkg;
+var labelBoxBorderColor = actorBorder;
+var labelTextColor = mainContrastColor;
+var loopTextColor = mainContrastColor;
+var noteBorderColor = border2;
+var noteBkgColor = '#fff5ad';
+var noteTextColor = mainBkg;
+var activationBorderColor = border1;
+var activationBkgColor = secondBkg;
+var sequenceNumberColor = 'black';
+/* Gantt chart variables */
+
+var sectionBkgColor = 'rgba(255; 255; 255; 0.3)';
+var altSectionBkgColor = 'white';
+var sectionBkgColor2 = '#EAE8B9';
+var taskBorderColor = 'rgba(255; 255; 255; 0.5)';
+var taskBkgColor = mainBkg;
+var taskTextColor = darkTextColor;
+var taskTextLightColor = mainContrastColor;
+var taskTextOutsideColor = taskTextLightColor;
+var taskTextClickableColor = '#003163';
+var activeTaskBorderColor = 'rgba(255; 255; 255; 0.5)';
+var activeTaskBkgColor = '#81B1DB';
+var gridColor = mainContrastColor;
+var doneTaskBkgColor = mainContrastColor;
+var doneTaskBorderColor = 'grey';
+var critBorderColor = '#E83737';
+var critBkgColor = '#E83737';
+var taskTextDarkColor = darkTextColor;
+var todayLineColor = '#DB5757';
+/* state colors */
+
+var labelColor = 'black';
+var errorBkgColor = '#a44141';
+var errorTextColor = '#ddd';
 
 /***/ }),
 
-/***/ "./src/themes/dark/index.scss":
-/*!************************************!*\
-  !*** ./src/themes/dark/index.scss ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/theme-default.js":
+/*!******************************!*\
+  !*** ./src/theme-default.js ***!
+  \******************************/
+/*! exports provided: mainBkg, secondBkg, lineColor, border1, border2, arrowheadColor, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBorderColor, critBkgColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+var mainBkg = '#ECECFF';
+var secondBkg = '#ffffde';
+var lineColor = '#333333';
+var border1 = '#CCCCFF';
+var border2 = '#aaaa33';
+var arrowheadColor = '#333333';
+/* Flowchart variables */
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss");
+var nodeBkg = mainBkg;
+var nodeBorder = '#9370DB';
+var clusterBkg = secondBkg;
+var clusterBorder = border2;
+var defaultLinkColor = lineColor;
+var titleColor = '#333';
+var edgeLabelBackground = '#e8e8e8';
+/* Sequence Diagram variables */
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+var actorBorder = border1;
+var actorBkg = mainBkg;
+var actorTextColor = 'black';
+var actorLineColor = 'grey';
+var signalColor = '#333';
+var signalTextColor = '#333';
+var labelBoxBkgColor = actorBkg;
+var labelBoxBorderColor = actorBorder;
+var labelTextColor = actorTextColor;
+var loopTextColor = actorTextColor;
+var noteBorderColor = border2;
+var noteBkgColor = '#fff5ad';
+var noteTextColor = actorTextColor;
+var activationBorderColor = '#666';
+var activationBkgColor = '#f4f4f4';
+var sequenceNumberColor = 'white';
+/* Gantt chart variables */
+
+var sectionBkgColor = 'rgba(102; 102; 255; 0.49)';
+var altSectionBkgColor = 'white';
+var sectionBkgColor2 = '#fff400';
+var taskBorderColor = '#534fbc';
+var taskBkgColor = '#8a90dd';
+var taskTextLightColor = 'white';
+var taskTextColor = taskTextLightColor;
+var taskTextDarkColor = 'black';
+var taskTextOutsideColor = taskTextDarkColor;
+var taskTextClickableColor = '#003163';
+var activeTaskBorderColor = '#534fbc';
+var activeTaskBkgColor = '#bfc7ff';
+var gridColor = 'lightgrey';
+var doneTaskBkgColor = 'lightgrey';
+var doneTaskBorderColor = 'grey';
+var critBorderColor = '#ff8888';
+var critBkgColor = 'red';
+var todayLineColor = 'red';
+/* state colors */
+
+var labelColor = 'black';
+var errorBkgColor = '#552222';
+var errorTextColor = '#552222';
 
 /***/ }),
 
-/***/ "./src/themes/default/index.scss":
-/*!***************************************!*\
-  !*** ./src/themes/default/index.scss ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/theme-forest.js":
+/*!*****************************!*\
+  !*** ./src/theme-forest.js ***!
+  \*****************************/
+/*! exports provided: mainBkg, secondBkg, lineColor, border1, border2, arrowheadColor, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBorderColor, critBkgColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+var mainBkg = '#cde498';
+var secondBkg = '#cdffb2';
+var lineColor = 'green';
+var border1 = '#13540c';
+var border2 = '#6eaa49';
+var arrowheadColor = 'green';
+/* Flowchart variables */
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss");
+var nodeBkg = mainBkg;
+var nodeBorder = border1;
+var clusterBkg = secondBkg;
+var clusterBorder = border2;
+var defaultLinkColor = lineColor;
+var titleColor = '#333';
+var edgeLabelBackground = '#e8e8e8';
+/* Sequence Diagram variables */
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+var actorBorder = border1;
+var actorBkg = mainBkg;
+var actorTextColor = 'black';
+var actorLineColor = 'grey';
+var signalColor = '#333';
+var signalTextColor = '#333';
+var labelBoxBkgColor = actorBkg;
+var labelBoxBorderColor = '#326932';
+var labelTextColor = actorTextColor;
+var loopTextColor = actorTextColor;
+var noteBorderColor = border2;
+var noteBkgColor = '#fff5ad';
+var noteTextColor = actorTextColor;
+var activationBorderColor = '#666';
+var activationBkgColor = '#f4f4f4';
+var sequenceNumberColor = 'white';
+/* Gantt chart variables */
+
+var sectionBkgColor = '#6eaa49';
+var altSectionBkgColor = 'white';
+var sectionBkgColor2 = '#6eaa49';
+var taskBorderColor = border1;
+var taskBkgColor = '#487e3a';
+var taskTextLightColor = 'white';
+var taskTextColor = taskTextLightColor;
+var taskTextDarkColor = 'black';
+var taskTextOutsideColor = taskTextDarkColor;
+var taskTextClickableColor = '#003163';
+var activeTaskBorderColor = taskBorderColor;
+var activeTaskBkgColor = mainBkg;
+var gridColor = 'lightgrey';
+var doneTaskBkgColor = 'lightgrey';
+var doneTaskBorderColor = 'grey';
+var critBorderColor = '#ff8888';
+var critBkgColor = 'red';
+var todayLineColor = 'red';
+/* state colors */
+
+var labelColor = 'black';
+var errorBkgColor = '#552222';
+var errorTextColor = '#552222';
 
 /***/ }),
 
-/***/ "./src/themes/forest/index.scss":
-/*!**************************************!*\
-  !*** ./src/themes/forest/index.scss ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/theme-neutral.js":
+/*!******************************!*\
+  !*** ./src/theme-neutral.js ***!
+  \******************************/
+/*! exports provided: mainBkg, contrast, secondBkg, lineColor, border1, border2, note, text, critical, done, arrowheadColor, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBkgColor, critBorderColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-// css-to-string-loader: transforms styles from css-loader to a string output
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contrast", function() { return contrast; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "note", function() { return note; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "text", function() { return text; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critical", function() { return critical; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "done", function() { return done; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+var mainBkg = '#eee';
+var contrast = '#26a';
+var secondBkg = 'lighten(contrast; 55%)';
+var lineColor = '#666';
+var border1 = '#999';
+var border2 = contrast;
+var note = '#ffa';
+var text = '#333';
+var critical = '#d42';
+var done = '#bbb';
+var arrowheadColor = '#333333';
+/* Flowchart variables */
 
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss");
+var nodeBkg = mainBkg;
+var nodeBorder = border1;
+var clusterBkg = secondBkg;
+var clusterBorder = border2;
+var defaultLinkColor = lineColor;
+var titleColor = text;
+var edgeLabelBackground = 'white';
+/* Sequence Diagram variables */
 
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+var actorBorder = border1;
+var actorBkg = mainBkg;
+var actorTextColor = text;
+var actorLineColor = lineColor;
+var signalColor = text;
+var signalTextColor = text;
+var labelBoxBkgColor = actorBkg;
+var labelBoxBorderColor = actorBorder;
+var labelTextColor = text;
+var loopTextColor = text;
+var noteBorderColor = 'darken(note; 60%)';
+var noteBkgColor = note;
+var noteTextColor = actorTextColor;
+var activationBorderColor = '#666';
+var activationBkgColor = '#f4f4f4';
+var sequenceNumberColor = 'white';
+/* Gantt chart variables */
 
-/***/ }),
+var sectionBkgColor = 'lighten(contrast; 30%)';
+var altSectionBkgColor = 'white';
+var sectionBkgColor2 = 'lighten(contrast; 30%)';
+var taskBorderColor = 'darken(contrast; 10%)';
+var taskBkgColor = contrast;
+var taskTextLightColor = 'white';
+var taskTextColor = taskTextLightColor;
+var taskTextDarkColor = text;
+var taskTextOutsideColor = taskTextDarkColor;
+var taskTextClickableColor = '#003163';
+var activeTaskBorderColor = taskBorderColor;
+var activeTaskBkgColor = mainBkg;
+var gridColor = 'lighten(border1; 30%)';
+var doneTaskBkgColor = done;
+var doneTaskBorderColor = lineColor;
+var critBkgColor = critical;
+var critBorderColor = 'darken(critBkgColor; 10%)';
+var todayLineColor = critBkgColor;
+/* state colors */
 
-/***/ "./src/themes/neutral/index.scss":
-/*!***************************************!*\
-  !*** ./src/themes/neutral/index.scss ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// css-to-string-loader: transforms styles from css-loader to a string output
-
-// Get the styles
-var styles = __webpack_require__(/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */ "./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss");
-
-if (typeof styles === 'string') {
-  // Return an existing string
-  module.exports = styles;
-} else {
-  // Call the custom toString method from css-loader module
-  module.exports = styles.toString();
-}
+var labelColor = 'black';
+var errorBkgColor = '#552222';
+var errorTextColor = '#552222';
 
 /***/ }),
 
