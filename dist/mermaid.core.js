@@ -656,7 +656,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
 
 /***/ }),
 
@@ -5271,7 +5271,7 @@ if ( true && __webpack_require__.c[__webpack_require__.s] === module) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart. #extensionEnd {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n#aggregationStart, #aggregationEnd  {\n    fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n");
+  return "g.classGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n  font-size: 10px;\n\n  .title {\n    font-weight: bolder;\n  }\n}\n\ng.clickable {\n  cursor: pointer;\n}\n\ng.classGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.classGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.classLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.classLabel .label {\n  fill: ").concat(options.nodeBorder, ";\n  font-size: 10px;\n}\n\n.relation {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.dashed-line{\n  stroke-dasharray: 3;\n}\n\n#compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart, #extensionEnd {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n#aggregationStart, #aggregationEnd  {\n    fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -19809,7 +19809,7 @@ var renderDoc = function renderDoc(doc, diagram, parentId, altBkg) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getStyles = function getStyles(options) {
-  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: black;\n  stroke: black;\n}\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white;\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef;\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n");
+  return "g.stateGroup text {\n  fill: ".concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\ng.stateGroup text {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: none;\n  font-size: 10px;\n\n}\ng.stateGroup .state-title {\n  font-weight: bolder;\n  fill: ").concat(options.labelColor, ";\n}\n\ng.stateGroup rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n}\n\ng.stateGroup line {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n\n.transition {\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n  fill: none;\n}\n\n.stateGroup .composit {\n  fill: white;\n  border-bottom: 1px\n}\n\n.stateGroup .alt-composit {\n  fill: #e0e0e0;\n  border-bottom: 1px\n}\n\n.state-note {\n  stroke: ").concat(options.noteBorderColor, ";\n  fill: ").concat(options.noteBkgColor, ";\n\n  text {\n    fill: black;\n    stroke: none;\n    font-size: 10px;\n  }\n}\n\n.stateLabel .box {\n  stroke: none;\n  stroke-width: 0;\n  fill: ").concat(options.nodeBkg, ";\n  opacity: 0.5;\n}\n\n.stateLabel text {\n  fill: ").concat(options.labelColor, ";\n  font-size: 10px;\n  font-weight: bold;\n  font-family: 'trebuchet ms', verdana, arial;\n  font-family: var(--mermaid-font-family);\n}\n\n.node circle.state-start {\n  fill: black;\n  stroke: black;\n}\n.node circle.state-end {\n  fill: black;\n  stroke: white;\n  stroke-width: 1.5\n}\n\n.node rect {\n  fill: ").concat(options.mainBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n#statediagram-barbEnd {\n  fill: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-cluster rect {\n  fill: ").concat(options.nodeBkg, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1px;\n}\n.statediagram-cluster rect.outer {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state .divider {\n  stroke: ").concat(options.nodeBorder, ";\n}\n\n.statediagram-state .title-state {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-cluster.statediagram-cluster .inner {\n  fill: white;\n}\n.statediagram-cluster.statediagram-cluster-alt .inner {\n  fill: #e0e0e0;\n}\n\n.statediagram-cluster .inner {\n  rx:0;\n  ry:0;\n}\n\n.statediagram-state rect.basic {\n  rx: 5px;\n  ry: 5px;\n}\n.statediagram-state rect.divider {\n  stroke-dasharray: 10,10;\n  fill: #efefef;\n}\n\n.note-edge {\n  stroke-dasharray: 5;\n}\n\n.statediagram-note rect {\n  fill: ").concat(options.noteBkgColor, ";\n  stroke: ").concat(options.noteBorderColor, ";\n  stroke-width: 1px;\n  rx: 0;\n  ry: 0;\n}\n\n#dependencyStart, #dependencyEnd {\n  fill: ").concat(options.nodeBorder, ";\n  stroke: ").concat(options.nodeBorder, ";\n  stroke-width: 1;\n}\n");
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (getStyles);
@@ -22168,7 +22168,7 @@ function updateRendererConfigs(conf) {
 }
 
 function reinitialize(options) {
-  console.log("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options);
+  console.warn("mermaidAPI.reinitialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version), options);
 
   if (options.theme && themes[options.theme]) {
     // Todo merge with user options
@@ -22183,11 +22183,13 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  // console.log(`mermaidAPI.initialize: v${pkg.version}`);
-  // Set default options
-  if (options.theme && themes[options.theme]) {
+  console.log("mermaidAPI.initialize: v".concat(_package_json__WEBPACK_IMPORTED_MODULE_2__.version, " ").concat(options)); // Set default options
+
+  if (options && options.theme && themes[options.theme]) {
     // Todo merge with user options
     options.themeVariables = themes[options.theme];
+  } else {
+    if (options) options.themeVariables = themes.default;
   }
 
   var config = _typeof(options) === 'object' ? Object(_config__WEBPACK_IMPORTED_MODULE_3__["setSiteConfig"])(options) : Object(_config__WEBPACK_IMPORTED_MODULE_3__["getSiteConfig"])();
@@ -22719,133 +22721,10 @@ var errorTextColor = '#552222';
 /*!******************************!*\
   !*** ./src/theme-neutral.js ***!
   \******************************/
-/*! exports provided: mainBkg, contrast, secondBkg, lineColor, border1, border2, note, text, critical, done, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBkgColor, critBorderColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contrast", function() { return contrast; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "note", function() { return note; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "text", function() { return text; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critical", function() { return critical; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "done", function() { return done; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
-var mainBkg = '#eee';
-var contrast = '#26a';
-var secondBkg = 'lighten(contrast; 55%)';
-var lineColor = '#666';
-var border1 = '#999';
-var border2 = contrast;
-var note = '#ffa';
-var text = '#333';
-var critical = '#d42';
-var done = '#bbb';
-var arrowheadColor = '#333333';
-var fontFamily = '"trebuchet ms", verdana, arial';
-var fontSize = '16px';
-/* Flowchart variables */
-
-var nodeBkg = mainBkg;
-var nodeBorder = border1;
-var clusterBkg = secondBkg;
-var clusterBorder = border2;
-var defaultLinkColor = lineColor;
-var titleColor = text;
-var edgeLabelBackground = 'white';
-/* Sequence Diagram variables */
-
-var actorBorder = border1;
-var actorBkg = mainBkg;
-var actorTextColor = text;
-var actorLineColor = lineColor;
-var signalColor = text;
-var signalTextColor = text;
-var labelBoxBkgColor = actorBkg;
-var labelBoxBorderColor = actorBorder;
-var labelTextColor = text;
-var loopTextColor = text;
-var noteBorderColor = 'darken(note; 60%)';
-var noteBkgColor = note;
-var noteTextColor = actorTextColor;
-var activationBorderColor = '#666';
-var activationBkgColor = '#f4f4f4';
-var sequenceNumberColor = 'white';
-/* Gantt chart variables */
-
-var sectionBkgColor = 'lighten(contrast; 30%)';
-var altSectionBkgColor = 'white';
-var sectionBkgColor2 = 'lighten(contrast; 30%)';
-var taskBorderColor = 'darken(contrast; 10%)';
-var taskBkgColor = contrast;
-var taskTextLightColor = 'white';
-var taskTextColor = taskTextLightColor;
-var taskTextDarkColor = text;
-var taskTextOutsideColor = taskTextDarkColor;
-var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = taskBorderColor;
-var activeTaskBkgColor = mainBkg;
-var gridColor = 'lighten(border1; 30%)';
-var doneTaskBkgColor = done;
-var doneTaskBorderColor = lineColor;
-var critBkgColor = critical;
-var critBorderColor = 'darken(critBkgColor; 10%)';
-var todayLineColor = critBkgColor;
-/* state colors */
-
-var labelColor = 'black';
-var errorBkgColor = '#552222';
-var errorTextColor = '#552222';
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/knuts/source/priv/atlantica/mermaid/src/theme-neutral.js: Unexpected token (1:9)\n\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1 | \u001b[39m\u001b[36mimport\u001b[39m { \u001b[33m,\u001b[39m darken\u001b[33m,\u001b[39m lighten\u001b[33m,\u001b[39m hsla } from \u001b[32m'khroma'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m   | \u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 2 | \u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 3 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mconst\u001b[39m mainBkg \u001b[33m=\u001b[39m \u001b[32m'#eee'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 4 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mconst\u001b[39m contrast \u001b[33m=\u001b[39m \u001b[32m'#26a'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n    at Parser.raise (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/location.js:41:63)\n    at Parser.unexpected (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/util.js:150:16)\n    at Parser.parseIdentifierName (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/expression.js:2114:18)\n    at Parser.parseIdentifier (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/expression.js:2081:23)\n    at Parser.parseImportSpecifier (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2128:31)\n    at Parser.parseNamedImportSpecifiers (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2122:12)\n    at Parser.parseImport (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2037:39)\n    at Parser.parseStatementContent (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:248:25)\n    at Parser.parseStatement (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:147:17)\n    at Parser.parseBlockOrModuleBlockBody (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:866:25)\n    at Parser.parseBlockBody (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:842:10)\n    at Parser.parseTopLevel (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:53:10)\n    at Parser.parse (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/index.js:49:10)\n    at parse (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/index.js:58:38)\n    at parser (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/parser/index.js:54:34)\n    at parser.next (<anonymous>)\n    at normalizeFile (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transformation/normalize-file.js:93:38)\n    at normalizeFile.next (<anonymous>)\n    at run (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transformation/index.js:31:50)\n    at run.next (<anonymous>)\n    at Function.transform (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transform.js:27:41)\n    at transform.next (<anonymous>)\n    at step (/Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:254:32)\n    at /Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:266:13\n    at async.call.result.err.err (/Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:216:11)");
 
 /***/ }),
 

@@ -11,7 +11,6 @@ describe('Pie Chart', () => {
       it('should render a pie diagram', () => {
         imgSnapshotTest(
           `
-        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         pie title Sports in Sweden
           "Bandy" : 40
           "Ice-Hockey" : 80

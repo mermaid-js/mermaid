@@ -1,6 +1,8 @@
+import { darken, lighten } from 'khroma';
+
 export const mainBkg = '#eee';
 export const contrast = '#26a';
-export const secondBkg = 'lighten(contrast; 55%)';
+export const secondBkg = lighten(contrast, 55);
 export const lineColor = '#666';
 export const border1 = '#999';
 export const border2 = contrast;
@@ -34,7 +36,7 @@ export const labelBoxBkgColor = actorBkg;
 export const labelBoxBorderColor = actorBorder;
 export const labelTextColor = text;
 export const loopTextColor = text;
-export const noteBorderColor = 'darken(note; 60%)';
+export const noteBorderColor = darken(note, 60);
 export const noteBkgColor = note;
 export const noteTextColor = actorTextColor;
 export const activationBorderColor = '#666';
@@ -43,10 +45,10 @@ export const sequenceNumberColor = 'white';
 
 /* Gantt chart variables */
 
-export const sectionBkgColor = 'lighten(contrast; 30%)';
+export const sectionBkgColor = lighten(contrast, 30);
 export const altSectionBkgColor = 'white';
-export const sectionBkgColor2 = 'lighten(contrast; 30%)';
-export const taskBorderColor = 'darken(contrast; 10%)';
+export const sectionBkgColor2 = lighten(contrast, 30);
+export const taskBorderColor = darken(contrast, 10);
 export const taskBkgColor = contrast;
 export const taskTextLightColor = 'white';
 export const taskTextColor = taskTextLightColor;
@@ -55,11 +57,11 @@ export const taskTextOutsideColor = taskTextDarkColor;
 export const taskTextClickableColor = '#003163';
 export const activeTaskBorderColor = taskBorderColor;
 export const activeTaskBkgColor = mainBkg;
-export const gridColor = 'lighten(border1; 30%)';
+export const gridColor = lighten(border1, 30);
 export const doneTaskBkgColor = done;
 export const doneTaskBorderColor = lineColor;
 export const critBkgColor = critical;
-export const critBorderColor = 'darken(critBkgColor; 10%)';
+export const critBorderColor = darken(critBkgColor, 10);
 export const todayLineColor = critBkgColor;
 
 /* state colors */
