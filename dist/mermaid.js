@@ -35625,6 +35625,1624 @@ module.exports = '2.1.8';
 
 /***/ }),
 
+/***/ "./node_modules/khroma/dist/channels/index.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/channels/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var types_1 = __webpack_require__(/*! ../types */ "./node_modules/khroma/dist/types.js");
+var type_1 = __webpack_require__(/*! ./type */ "./node_modules/khroma/dist/channels/type.js");
+/* CHANNELS */
+var Channels = /** @class */ (function () {
+    /* CONSTRUCTOR */
+    function Channels(data, color) {
+        this.color = color;
+        this.changed = false;
+        this.data = data; //TSC
+        this.type = new type_1.default();
+    }
+    /* API */
+    Channels.prototype.set = function (data, color) {
+        this.color = color;
+        this.changed = false;
+        this.data = data; //TSC
+        this.type.type = types_1.TYPE.ALL;
+        return this;
+    };
+    /* HELPERS */
+    Channels.prototype._ensureHSL = function () {
+        if (this.data.h === undefined)
+            this.data.h = utils_1.default.channel.rgb2hsl(this.data, 'h');
+        if (this.data.s === undefined)
+            this.data.s = utils_1.default.channel.rgb2hsl(this.data, 's');
+        if (this.data.l === undefined)
+            this.data.l = utils_1.default.channel.rgb2hsl(this.data, 'l');
+    };
+    Channels.prototype._ensureRGB = function () {
+        if (this.data.r === undefined)
+            this.data.r = utils_1.default.channel.hsl2rgb(this.data, 'r');
+        if (this.data.g === undefined)
+            this.data.g = utils_1.default.channel.hsl2rgb(this.data, 'g');
+        if (this.data.b === undefined)
+            this.data.b = utils_1.default.channel.hsl2rgb(this.data, 'b');
+    };
+    Object.defineProperty(Channels.prototype, "r", {
+        /* GETTERS */
+        get: function () {
+            if (!this.type.is(types_1.TYPE.HSL) && this.data.r !== undefined)
+                return this.data.r;
+            this._ensureHSL();
+            return utils_1.default.channel.hsl2rgb(this.data, 'r');
+        },
+        /* SETTERS */
+        set: function (r) {
+            this.type.set(types_1.TYPE.RGB);
+            this.changed = true;
+            this.data.r = r;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "g", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.HSL) && this.data.g !== undefined)
+                return this.data.g;
+            this._ensureHSL();
+            return utils_1.default.channel.hsl2rgb(this.data, 'g');
+        },
+        set: function (g) {
+            this.type.set(types_1.TYPE.RGB);
+            this.changed = true;
+            this.data.g = g;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "b", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.HSL) && this.data.b !== undefined)
+                return this.data.b;
+            this._ensureHSL();
+            return utils_1.default.channel.hsl2rgb(this.data, 'b');
+        },
+        set: function (b) {
+            this.type.set(types_1.TYPE.RGB);
+            this.changed = true;
+            this.data.b = b;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "h", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.RGB) && this.data.h !== undefined)
+                return this.data.h;
+            this._ensureRGB();
+            return utils_1.default.channel.rgb2hsl(this.data, 'h');
+        },
+        set: function (h) {
+            this.type.set(types_1.TYPE.HSL);
+            this.changed = true;
+            this.data.h = h;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "s", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.RGB) && this.data.s !== undefined)
+                return this.data.s;
+            this._ensureRGB();
+            return utils_1.default.channel.rgb2hsl(this.data, 's');
+        },
+        set: function (s) {
+            this.type.set(types_1.TYPE.HSL);
+            this.changed = true;
+            this.data.s = s;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "l", {
+        get: function () {
+            if (!this.type.is(types_1.TYPE.RGB) && this.data.l !== undefined)
+                return this.data.l;
+            this._ensureRGB();
+            return utils_1.default.channel.rgb2hsl(this.data, 'l');
+        },
+        set: function (l) {
+            this.type.set(types_1.TYPE.HSL);
+            this.changed = true;
+            this.data.l = l;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Channels.prototype, "a", {
+        get: function () {
+            return this.data.a;
+        },
+        set: function (a) {
+            this.changed = true;
+            this.data.a = a;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Channels;
+}());
+/* EXPORT */
+exports.default = Channels;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/channels/reusable.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/channels/reusable.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var _1 = __webpack_require__(/*! . */ "./node_modules/khroma/dist/channels/index.js");
+/* REUSABLE */
+var channels = new _1.default({ r: 0, g: 0, b: 0, a: 0 }, 'transparent');
+/* EXPORT */
+exports.default = channels;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/channels/type.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/channels/type.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = __webpack_require__(/*! ../types */ "./node_modules/khroma/dist/types.js");
+/* TYPE */
+var Type = /** @class */ (function () {
+    function Type() {
+        this.type = types_1.TYPE.ALL;
+    }
+    Type.prototype.get = function () {
+        return this.type;
+    };
+    Type.prototype.set = function (type) {
+        if (this.type && this.type !== type)
+            throw new Error('Cannot change both RGB and HSL channels at the same time');
+        this.type = type;
+    };
+    Type.prototype.reset = function () {
+        this.type = types_1.TYPE.ALL;
+    };
+    Type.prototype.is = function (type) {
+        return this.type === type;
+    };
+    return Type;
+}());
+/* EXPORT */
+exports.default = Type;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/hex.js":
+/*!***********************************************!*\
+  !*** ./node_modules/khroma/dist/color/hex.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+var consts_1 = __webpack_require__(/*! ../consts */ "./node_modules/khroma/dist/consts.js");
+/* HEX */
+var Hex = {
+    /* VARIABLES */
+    re: /^#((?:[a-f0-9]{2}){2,4}|[a-f0-9]{3})$/i,
+    /* API */
+    parse: function (color) {
+        if (color.charCodeAt(0) !== 35)
+            return; // '#'
+        var match = color.match(Hex.re);
+        if (!match)
+            return;
+        var hex = match[1], dec = parseInt(hex, 16), length = hex.length, hasAlpha = length % 4 === 0, isFullLength = length > 4, multiplier = isFullLength ? 1 : 17, bits = isFullLength ? 8 : 4, bitsOffset = hasAlpha ? 0 : -1, mask = isFullLength ? 255 : 15;
+        return reusable_1.default.set({
+            r: ((dec >> (bits * (bitsOffset + 3))) & mask) * multiplier,
+            g: ((dec >> (bits * (bitsOffset + 2))) & mask) * multiplier,
+            b: ((dec >> (bits * (bitsOffset + 1))) & mask) * multiplier,
+            a: hasAlpha ? (dec & mask) * multiplier / 255 : 1
+        }, color);
+    },
+    stringify: function (channels) {
+        if (channels.a < 1) { // #RRGGBBAA
+            return "#" + consts_1.DEC2HEX[Math.round(channels.r)] + consts_1.DEC2HEX[Math.round(channels.g)] + consts_1.DEC2HEX[Math.round(channels.b)] + utils_1.default.unit.frac2hex(channels.a);
+        }
+        else { // #RRGGBB
+            return "#" + consts_1.DEC2HEX[Math.round(channels.r)] + consts_1.DEC2HEX[Math.round(channels.g)] + consts_1.DEC2HEX[Math.round(channels.b)];
+        }
+    }
+};
+/* EXPORT */
+exports.default = Hex;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/hsl.js":
+/*!***********************************************!*\
+  !*** ./node_modules/khroma/dist/color/hsl.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+/* HSL */
+var HSL = {
+    /* VARIABLES */
+    re: /^hsla?\(\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?(?:deg|grad|rad|turn)?)\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?%)\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?%)(?:\s*?(?:,|\/)\s*?\+?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e-?\d+)?(%)?))?\s*?\)$/i,
+    hueRe: /^(.+?)(deg|grad|rad|turn)$/i,
+    /* HELPERS */
+    _hue2deg: function (hue) {
+        var match = hue.match(HSL.hueRe);
+        if (match) {
+            var number = match[1], unit = match[2];
+            switch (unit) {
+                case 'grad': return utils_1.default.channel.clamp.h(parseFloat(number) * .9);
+                case 'rad': return utils_1.default.channel.clamp.h(parseFloat(number) * 180 / Math.PI);
+                case 'turn': return utils_1.default.channel.clamp.h(parseFloat(number) * 360);
+            }
+        }
+        return utils_1.default.channel.clamp.h(parseFloat(hue));
+    },
+    /* API */
+    parse: function (color) {
+        var charCode = color.charCodeAt(0);
+        if (charCode !== 104 && charCode !== 72)
+            return; // 'h'/'H'
+        var match = color.match(HSL.re);
+        if (!match)
+            return;
+        var h = match[1], s = match[2], l = match[3], a = match[4], isAlphaPercentage = match[5];
+        return reusable_1.default.set({
+            h: HSL._hue2deg(h),
+            s: utils_1.default.channel.clamp.s(parseFloat(s)),
+            l: utils_1.default.channel.clamp.l(parseFloat(l)),
+            a: a ? utils_1.default.channel.clamp.a(isAlphaPercentage ? parseFloat(a) / 100 : parseFloat(a)) : 1
+        }, color);
+    },
+    stringify: function (channels) {
+        if (channels.a < 1) { // HSLA
+            return "hsla(" + utils_1.default.lang.round(channels.h) + ", " + utils_1.default.lang.round(channels.s) + "%, " + utils_1.default.lang.round(channels.l) + "%, " + channels.a + ")";
+        }
+        else { // HSL
+            return "hsl(" + utils_1.default.lang.round(channels.h) + ", " + utils_1.default.lang.round(channels.s) + "%, " + utils_1.default.lang.round(channels.l) + "%)";
+        }
+    }
+};
+/* EXPORT */
+exports.default = HSL;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/color/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var types_1 = __webpack_require__(/*! ../types */ "./node_modules/khroma/dist/types.js");
+var hex_1 = __webpack_require__(/*! ./hex */ "./node_modules/khroma/dist/color/hex.js");
+var keyword_1 = __webpack_require__(/*! ./keyword */ "./node_modules/khroma/dist/color/keyword.js");
+var rgb_1 = __webpack_require__(/*! ./rgb */ "./node_modules/khroma/dist/color/rgb.js");
+var hsl_1 = __webpack_require__(/*! ./hsl */ "./node_modules/khroma/dist/color/hsl.js");
+/* COLOR */
+var Color = {
+    /* VARIABLES */
+    format: {
+        keyword: keyword_1.default,
+        hex: hex_1.default,
+        rgb: rgb_1.default,
+        rgba: rgb_1.default,
+        hsl: hsl_1.default,
+        hsla: hsl_1.default
+    },
+    /* API */
+    parse: function (color) {
+        if (typeof color !== 'string')
+            return color;
+        var channels = hex_1.default.parse(color) || rgb_1.default.parse(color) || hsl_1.default.parse(color) || keyword_1.default.parse(color); // Color providers ordered with performance in mind
+        if (channels)
+            return channels;
+        throw new Error("Unsupported color format: \"" + color + "\"");
+    },
+    stringify: function (channels) {
+        // SASS returns a keyword if possible, but we avoid doing that as it's slower and doesn't really add any value
+        if (!channels.changed && channels.color)
+            return channels.color;
+        if (channels.type.is(types_1.TYPE.HSL) || channels.data.r === undefined) {
+            return hsl_1.default.stringify(channels);
+        }
+        else if (channels.a < 1 || !Number.isInteger(channels.r) || !Number.isInteger(channels.g) || !Number.isInteger(channels.b)) {
+            return rgb_1.default.stringify(channels);
+        }
+        else {
+            return hex_1.default.stringify(channels);
+        }
+    }
+};
+/* EXPORT */
+exports.default = Color;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/keyword.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/color/keyword.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var hex_1 = __webpack_require__(/*! ./hex */ "./node_modules/khroma/dist/color/hex.js");
+/* KEYWORD */
+var Keyword = {
+    /* VARIABLES */
+    colors: {
+        aliceblue: '#f0f8ff',
+        antiquewhite: '#faebd7',
+        aqua: '#00ffff',
+        aquamarine: '#7fffd4',
+        azure: '#f0ffff',
+        beige: '#f5f5dc',
+        bisque: '#ffe4c4',
+        black: '#000000',
+        blanchedalmond: '#ffebcd',
+        blue: '#0000ff',
+        blueviolet: '#8a2be2',
+        brown: '#a52a2a',
+        burlywood: '#deb887',
+        cadetblue: '#5f9ea0',
+        chartreuse: '#7fff00',
+        chocolate: '#d2691e',
+        coral: '#ff7f50',
+        cornflowerblue: '#6495ed',
+        cornsilk: '#fff8dc',
+        crimson: '#dc143c',
+        cyanaqua: '#00ffff',
+        darkblue: '#00008b',
+        darkcyan: '#008b8b',
+        darkgoldenrod: '#b8860b',
+        darkgray: '#a9a9a9',
+        darkgreen: '#006400',
+        darkgrey: '#a9a9a9',
+        darkkhaki: '#bdb76b',
+        darkmagenta: '#8b008b',
+        darkolivegreen: '#556b2f',
+        darkorange: '#ff8c00',
+        darkorchid: '#9932cc',
+        darkred: '#8b0000',
+        darksalmon: '#e9967a',
+        darkseagreen: '#8fbc8f',
+        darkslateblue: '#483d8b',
+        darkslategray: '#2f4f4f',
+        darkslategrey: '#2f4f4f',
+        darkturquoise: '#00ced1',
+        darkviolet: '#9400d3',
+        deeppink: '#ff1493',
+        deepskyblue: '#00bfff',
+        dimgray: '#696969',
+        dimgrey: '#696969',
+        dodgerblue: '#1e90ff',
+        firebrick: '#b22222',
+        floralwhite: '#fffaf0',
+        forestgreen: '#228b22',
+        fuchsia: '#ff00ff',
+        gainsboro: '#dcdcdc',
+        ghostwhite: '#f8f8ff',
+        gold: '#ffd700',
+        goldenrod: '#daa520',
+        gray: '#808080',
+        green: '#008000',
+        greenyellow: '#adff2f',
+        grey: '#808080',
+        honeydew: '#f0fff0',
+        hotpink: '#ff69b4',
+        indianred: '#cd5c5c',
+        indigo: '#4b0082',
+        ivory: '#fffff0',
+        khaki: '#f0e68c',
+        lavender: '#e6e6fa',
+        lavenderblush: '#fff0f5',
+        lawngreen: '#7cfc00',
+        lemonchiffon: '#fffacd',
+        lightblue: '#add8e6',
+        lightcoral: '#f08080',
+        lightcyan: '#e0ffff',
+        lightgoldenrodyellow: '#fafad2',
+        lightgray: '#d3d3d3',
+        lightgreen: '#90ee90',
+        lightgrey: '#d3d3d3',
+        lightpink: '#ffb6c1',
+        lightsalmon: '#ffa07a',
+        lightseagreen: '#20b2aa',
+        lightskyblue: '#87cefa',
+        lightslategray: '#778899',
+        lightslategrey: '#778899',
+        lightsteelblue: '#b0c4de',
+        lightyellow: '#ffffe0',
+        lime: '#00ff00',
+        limegreen: '#32cd32',
+        linen: '#faf0e6',
+        magenta: '#ff00ff',
+        maroon: '#800000',
+        mediumaquamarine: '#66cdaa',
+        mediumblue: '#0000cd',
+        mediumorchid: '#ba55d3',
+        mediumpurple: '#9370db',
+        mediumseagreen: '#3cb371',
+        mediumslateblue: '#7b68ee',
+        mediumspringgreen: '#00fa9a',
+        mediumturquoise: '#48d1cc',
+        mediumvioletred: '#c71585',
+        midnightblue: '#191970',
+        mintcream: '#f5fffa',
+        mistyrose: '#ffe4e1',
+        moccasin: '#ffe4b5',
+        navajowhite: '#ffdead',
+        navy: '#000080',
+        oldlace: '#fdf5e6',
+        olive: '#808000',
+        olivedrab: '#6b8e23',
+        orange: '#ffa500',
+        orangered: '#ff4500',
+        orchid: '#da70d6',
+        palegoldenrod: '#eee8aa',
+        palegreen: '#98fb98',
+        paleturquoise: '#afeeee',
+        palevioletred: '#db7093',
+        papayawhip: '#ffefd5',
+        peachpuff: '#ffdab9',
+        peru: '#cd853f',
+        pink: '#ffc0cb',
+        plum: '#dda0dd',
+        powderblue: '#b0e0e6',
+        purple: '#800080',
+        rebeccapurple: '#663399',
+        red: '#ff0000',
+        rosybrown: '#bc8f8f',
+        royalblue: '#4169e1',
+        saddlebrown: '#8b4513',
+        salmon: '#fa8072',
+        sandybrown: '#f4a460',
+        seagreen: '#2e8b57',
+        seashell: '#fff5ee',
+        sienna: '#a0522d',
+        silver: '#c0c0c0',
+        skyblue: '#87ceeb',
+        slateblue: '#6a5acd',
+        slategray: '#708090',
+        slategrey: '#708090',
+        snow: '#fffafa',
+        springgreen: '#00ff7f',
+        tan: '#d2b48c',
+        teal: '#008080',
+        thistle: '#d8bfd8',
+        transparent: '#00000000',
+        turquoise: '#40e0d0',
+        violet: '#ee82ee',
+        wheat: '#f5deb3',
+        white: '#ffffff',
+        whitesmoke: '#f5f5f5',
+        yellow: '#ffff00',
+        yellowgreen: '#9acd32'
+    },
+    /* API */
+    parse: function (color) {
+        color = color.toLowerCase();
+        var hex = Keyword.colors[color];
+        if (!hex)
+            return;
+        return hex_1.default.parse(hex);
+    },
+    stringify: function (channels) {
+        var hex = hex_1.default.stringify(channels);
+        for (var name_1 in Keyword.colors) {
+            if (Keyword.colors[name_1] === hex)
+                return name_1;
+        }
+    }
+};
+/* EXPORT */
+exports.default = Keyword;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/color/rgb.js":
+/*!***********************************************!*\
+  !*** ./node_modules/khroma/dist/color/rgb.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+/* RGB */
+var RGB = {
+    /* VARIABLES */
+    re: /^rgba?\(\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?))\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?))\s*?(?:,|\s)\s*?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?))(?:\s*?(?:,|\/)\s*?\+?(-?(?:\d+(?:\.\d+)?|(?:\.\d+))(?:e\d+)?(%?)))?\s*?\)$/i,
+    /* API */
+    parse: function (color) {
+        var charCode = color.charCodeAt(0);
+        if (charCode !== 114 && charCode !== 82)
+            return; // 'r'/'R'
+        var match = color.match(RGB.re);
+        if (!match)
+            return;
+        var r = match[1], isRedPercentage = match[2], g = match[3], isGreenPercentage = match[4], b = match[5], isBluePercentage = match[6], a = match[7], isAlphaPercentage = match[8];
+        return reusable_1.default.set({
+            r: utils_1.default.channel.clamp.r(isRedPercentage ? parseFloat(r) * 2.55 : parseFloat(r)),
+            g: utils_1.default.channel.clamp.g(isGreenPercentage ? parseFloat(g) * 2.55 : parseFloat(g)),
+            b: utils_1.default.channel.clamp.b(isBluePercentage ? parseFloat(b) * 2.55 : parseFloat(b)),
+            a: a ? utils_1.default.channel.clamp.a(isAlphaPercentage ? parseFloat(a) / 100 : parseFloat(a)) : 1
+        }, color);
+    },
+    stringify: function (channels) {
+        if (channels.a < 1) { // RGBA
+            return "rgba(" + utils_1.default.lang.round(channels.r) + ", " + utils_1.default.lang.round(channels.g) + ", " + utils_1.default.lang.round(channels.b) + ", " + utils_1.default.lang.round(channels.a) + ")";
+        }
+        else { // RGB
+            return "rgb(" + utils_1.default.lang.round(channels.r) + ", " + utils_1.default.lang.round(channels.g) + ", " + utils_1.default.lang.round(channels.b) + ")";
+        }
+    }
+};
+/* EXPORT */
+exports.default = RGB;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/consts.js":
+/*!********************************************!*\
+  !*** ./node_modules/khroma/dist/consts.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ./utils */ "./node_modules/khroma/dist/utils/index.js");
+/* CONSTS */
+var DEC2HEX = {};
+exports.DEC2HEX = DEC2HEX;
+for (var i = 0; i <= 255; i++)
+    DEC2HEX[i] = utils_1.default.unit.dec2hex(i); // Populating dynamically, striking a balance between code size and performance
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/index.js":
+/*!*******************************************!*\
+  !*** ./node_modules/khroma/dist/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* EXPORT */
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(/*! ./methods */ "./node_modules/khroma/dist/methods/index.js"));
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/adjust.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/adjust.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+/* ADJUST */
+function adjust(color, channels) {
+    var ch = color_1.default.parse(color), changes = {};
+    for (var c in channels) {
+        if (!channels[c])
+            continue;
+        changes[c] = ch[c] + channels[c];
+    }
+    return change_1.default(color, changes);
+}
+/* EXPORT */
+exports.default = adjust;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/adjust_channel.js":
+/*!************************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/adjust_channel.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* ADJUST CHANNEL */
+function adjustChannel(color, channel, amount) {
+    var channels = color_1.default.parse(color), amountCurrent = channels[channel], amountNext = utils_1.default.channel.clamp[channel](amountCurrent + amount);
+    if (amountCurrent !== amountNext)
+        channels[channel] = amountNext;
+    return color_1.default.stringify(channels);
+}
+/* EXPORT */
+exports.default = adjustChannel;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/alpha.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/alpha.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* ALPHA */
+function alpha(color) {
+    return channel_1.default(color, 'a');
+}
+/* EXPORT */
+exports.default = alpha;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/blue.js":
+/*!**************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/blue.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* BLUE */
+function blue(color) {
+    return channel_1.default(color, 'b');
+}
+/* EXPORT */
+exports.default = blue;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/change.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/change.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* CHANGE */
+function change(color, channels) {
+    var ch = color_1.default.parse(color);
+    for (var c in channels) {
+        ch[c] = utils_1.default.channel.clamp[c](channels[c]);
+    }
+    return color_1.default.stringify(ch);
+}
+/* EXPORT */
+exports.default = change;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/channel.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/channel.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* CHANNEL */
+function channel(color, channel) {
+    return utils_1.default.lang.round(color_1.default.parse(color)[channel]);
+}
+/* EXPORT */
+exports.default = channel;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/complement.js":
+/*!********************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/complement.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* COMPLEMENT */
+function complement(color) {
+    return adjust_channel_1.default(color, 'h', 180);
+}
+/* EXPORT */
+exports.default = complement;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/darken.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/darken.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* DARKEN */
+function darken(color, amount) {
+    return adjust_channel_1.default(color, 'l', -amount);
+}
+/* EXPORT */
+exports.default = darken;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/desaturate.js":
+/*!********************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/desaturate.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* DESATURATE */
+function desaturate(color, amount) {
+    return adjust_channel_1.default(color, 's', -amount);
+}
+/* EXPORT */
+exports.default = desaturate;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/grayscale.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/grayscale.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+/* GRAYSCALE */
+function grayscale(color) {
+    return change_1.default(color, { s: 0 });
+}
+/* EXPORT */
+exports.default = grayscale;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/green.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/green.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* GREEN */
+function green(color) {
+    return channel_1.default(color, 'g');
+}
+/* EXPORT */
+exports.default = green;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/hsla.js":
+/*!**************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/hsla.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* HSLA */
+function hsla(h, s, l, a) {
+    if (a === void 0) { a = 1; }
+    var channels = reusable_1.default.set({
+        h: utils_1.default.channel.clamp.h(h),
+        s: utils_1.default.channel.clamp.s(s),
+        l: utils_1.default.channel.clamp.l(l),
+        a: utils_1.default.channel.clamp.a(a)
+    });
+    return color_1.default.stringify(channels);
+}
+/* EXPORT */
+exports.default = hsla;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/hue.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/hue.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* HUE */
+function hue(color) {
+    return channel_1.default(color, 'h');
+}
+/* EXPORT */
+exports.default = hue;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var rgba_1 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js"); // Alias
+exports.hex = rgba_1.default;
+var rgba_2 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js"); // Alias
+exports.rgb = rgba_2.default;
+var rgba_3 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js");
+exports.rgba = rgba_3.default;
+var hsla_1 = __webpack_require__(/*! ./hsla */ "./node_modules/khroma/dist/methods/hsla.js"); // Alias
+exports.hsl = hsla_1.default;
+var hsla_2 = __webpack_require__(/*! ./hsla */ "./node_modules/khroma/dist/methods/hsla.js");
+exports.hsla = hsla_2.default;
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+exports.channel = channel_1.default;
+var red_1 = __webpack_require__(/*! ./red */ "./node_modules/khroma/dist/methods/red.js");
+exports.red = red_1.default;
+var green_1 = __webpack_require__(/*! ./green */ "./node_modules/khroma/dist/methods/green.js");
+exports.green = green_1.default;
+var blue_1 = __webpack_require__(/*! ./blue */ "./node_modules/khroma/dist/methods/blue.js");
+exports.blue = blue_1.default;
+var hue_1 = __webpack_require__(/*! ./hue */ "./node_modules/khroma/dist/methods/hue.js");
+exports.hue = hue_1.default;
+var saturation_1 = __webpack_require__(/*! ./saturation */ "./node_modules/khroma/dist/methods/saturation.js");
+exports.saturation = saturation_1.default;
+var lightness_1 = __webpack_require__(/*! ./lightness */ "./node_modules/khroma/dist/methods/lightness.js");
+exports.lightness = lightness_1.default;
+var alpha_1 = __webpack_require__(/*! ./alpha */ "./node_modules/khroma/dist/methods/alpha.js");
+exports.alpha = alpha_1.default;
+var alpha_2 = __webpack_require__(/*! ./alpha */ "./node_modules/khroma/dist/methods/alpha.js"); // Alias
+exports.opacity = alpha_2.default;
+var luminance_1 = __webpack_require__(/*! ./luminance */ "./node_modules/khroma/dist/methods/luminance.js");
+exports.luminance = luminance_1.default;
+var is_dark_1 = __webpack_require__(/*! ./is_dark */ "./node_modules/khroma/dist/methods/is_dark.js");
+exports.isDark = is_dark_1.default;
+var is_light_1 = __webpack_require__(/*! ./is_light */ "./node_modules/khroma/dist/methods/is_light.js");
+exports.isLight = is_light_1.default;
+var is_valid_1 = __webpack_require__(/*! ./is_valid */ "./node_modules/khroma/dist/methods/is_valid.js");
+exports.isValid = is_valid_1.default;
+var saturate_1 = __webpack_require__(/*! ./saturate */ "./node_modules/khroma/dist/methods/saturate.js");
+exports.saturate = saturate_1.default;
+var desaturate_1 = __webpack_require__(/*! ./desaturate */ "./node_modules/khroma/dist/methods/desaturate.js");
+exports.desaturate = desaturate_1.default;
+var lighten_1 = __webpack_require__(/*! ./lighten */ "./node_modules/khroma/dist/methods/lighten.js");
+exports.lighten = lighten_1.default;
+var darken_1 = __webpack_require__(/*! ./darken */ "./node_modules/khroma/dist/methods/darken.js");
+exports.darken = darken_1.default;
+var opacify_1 = __webpack_require__(/*! ./opacify */ "./node_modules/khroma/dist/methods/opacify.js");
+exports.opacify = opacify_1.default;
+var opacify_2 = __webpack_require__(/*! ./opacify */ "./node_modules/khroma/dist/methods/opacify.js"); // Alias
+exports.fadeIn = opacify_2.default;
+var transparentize_1 = __webpack_require__(/*! ./transparentize */ "./node_modules/khroma/dist/methods/transparentize.js");
+exports.transparentize = transparentize_1.default;
+var transparentize_2 = __webpack_require__(/*! ./transparentize */ "./node_modules/khroma/dist/methods/transparentize.js"); // Alias
+exports.fadeOut = transparentize_2.default;
+var complement_1 = __webpack_require__(/*! ./complement */ "./node_modules/khroma/dist/methods/complement.js");
+exports.complement = complement_1.default;
+var grayscale_1 = __webpack_require__(/*! ./grayscale */ "./node_modules/khroma/dist/methods/grayscale.js");
+exports.grayscale = grayscale_1.default;
+var adjust_1 = __webpack_require__(/*! ./adjust */ "./node_modules/khroma/dist/methods/adjust.js");
+exports.adjust = adjust_1.default;
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+exports.change = change_1.default;
+var invert_1 = __webpack_require__(/*! ./invert */ "./node_modules/khroma/dist/methods/invert.js");
+exports.invert = invert_1.default;
+var mix_1 = __webpack_require__(/*! ./mix */ "./node_modules/khroma/dist/methods/mix.js");
+exports.mix = mix_1.default;
+var scale_1 = __webpack_require__(/*! ./scale */ "./node_modules/khroma/dist/methods/scale.js");
+exports.scale = scale_1.default;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/invert.js":
+/*!****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/invert.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var mix_1 = __webpack_require__(/*! ./mix */ "./node_modules/khroma/dist/methods/mix.js");
+/* INVERT */
+function invert(color, weight) {
+    if (weight === void 0) { weight = 100; }
+    var inverse = color_1.default.parse(color);
+    inverse.r = 255 - inverse.r;
+    inverse.g = 255 - inverse.g;
+    inverse.b = 255 - inverse.b;
+    return mix_1.default(inverse, color, weight);
+}
+/* EXPORT */
+exports.default = invert;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/is_dark.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/is_dark.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var is_light_1 = __webpack_require__(/*! ./is_light */ "./node_modules/khroma/dist/methods/is_light.js");
+/* IS DARK */
+function isDark(color) {
+    return !is_light_1.default(color);
+}
+/* EXPORT */
+exports.default = isDark;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/is_light.js":
+/*!******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/is_light.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var luminance_1 = __webpack_require__(/*! ./luminance */ "./node_modules/khroma/dist/methods/luminance.js");
+/* IS LIGHT */
+function isLight(color) {
+    return luminance_1.default(color) >= .5;
+}
+/* EXPORT */
+exports.default = isLight;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/is_valid.js":
+/*!******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/is_valid.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* IS VALID */
+function isValid(color) {
+    try {
+        color_1.default.parse(color);
+        return true;
+    }
+    catch (_a) {
+        return false;
+    }
+}
+/* EXPORT */
+exports.default = isValid;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/lighten.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/lighten.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* LIGHTEN */
+function lighten(color, amount) {
+    return adjust_channel_1.default(color, 'l', amount);
+}
+/* EXPORT */
+exports.default = lighten;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/lightness.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/lightness.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* LIGHTNESS */
+function lightness(color) {
+    return channel_1.default(color, 'l');
+}
+/* EXPORT */
+exports.default = lightness;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/luminance.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/luminance.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+/* LUMINANCE */
+//SOURCE: https://planetcalc.com/7779
+function luminance(color) {
+    var _a = color_1.default.parse(color), r = _a.r, g = _a.g, b = _a.b, luminance = .2126 * utils_1.default.channel.toLinear(r) + .7152 * utils_1.default.channel.toLinear(g) + .0722 * utils_1.default.channel.toLinear(b);
+    return utils_1.default.lang.round(luminance);
+}
+/* EXPORT */
+exports.default = luminance;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/mix.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/mix.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var rgba_1 = __webpack_require__(/*! ./rgba */ "./node_modules/khroma/dist/methods/rgba.js");
+/* MIX */
+//SOURCE: https://github.com/sass/dart-sass/blob/7457d2e9e7e623d9844ffd037a070cf32d39c348/lib/src/functions/color.dart#L718-L756
+function mix(color1, color2, weight) {
+    if (weight === void 0) { weight = 50; }
+    var _a = color_1.default.parse(color1), r1 = _a.r, g1 = _a.g, b1 = _a.b, a1 = _a.a, _b = color_1.default.parse(color2), r2 = _b.r, g2 = _b.g, b2 = _b.b, a2 = _b.a, weightScale = weight / 100, weightNormalized = (weightScale * 2) - 1, alphaDelta = a1 - a2, weight1combined = ((weightNormalized * alphaDelta) === -1) ? weightNormalized : (weightNormalized + alphaDelta) / (1 + weightNormalized * alphaDelta), weight1 = (weight1combined + 1) / 2, weight2 = 1 - weight1, r = (r1 * weight1) + (r2 * weight2), g = (g1 * weight1) + (g2 * weight2), b = (b1 * weight1) + (b2 * weight2), a = (a1 * weightScale) + (a2 * (1 - weightScale));
+    return rgba_1.default(r, g, b, a);
+}
+/* EXPORT */
+exports.default = mix;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/opacify.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/opacify.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* OPACIFY */
+function opacify(color, amount) {
+    return adjust_channel_1.default(color, 'a', amount);
+}
+/* EXPORT */
+exports.default = opacify;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/red.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/red.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* RED */
+function red(color) {
+    return channel_1.default(color, 'r');
+}
+/* EXPORT */
+exports.default = red;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/rgba.js":
+/*!**************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/rgba.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var reusable_1 = __webpack_require__(/*! ../channels/reusable */ "./node_modules/khroma/dist/channels/reusable.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var change_1 = __webpack_require__(/*! ./change */ "./node_modules/khroma/dist/methods/change.js");
+function rgba(r, g, b, a) {
+    if (b === void 0) { b = 0; }
+    if (a === void 0) { a = 1; }
+    if (typeof r !== 'number')
+        return change_1.default(r, { a: g });
+    var channels = reusable_1.default.set({
+        r: utils_1.default.channel.clamp.r(r),
+        g: utils_1.default.channel.clamp.g(g),
+        b: utils_1.default.channel.clamp.b(b),
+        a: utils_1.default.channel.clamp.a(a)
+    });
+    return color_1.default.stringify(channels);
+}
+/* EXPORT */
+exports.default = rgba;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/saturate.js":
+/*!******************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/saturate.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* SATURATE */
+function saturate(color, amount) {
+    return adjust_channel_1.default(color, 's', amount);
+}
+/* EXPORT */
+exports.default = saturate;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/saturation.js":
+/*!********************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/saturation.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/methods/channel.js");
+/* SATURATION */
+function saturation(color) {
+    return channel_1.default(color, 's');
+}
+/* EXPORT */
+exports.default = saturation;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/scale.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/scale.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(/*! ../utils */ "./node_modules/khroma/dist/utils/index.js");
+var color_1 = __webpack_require__(/*! ../color */ "./node_modules/khroma/dist/color/index.js");
+var adjust_1 = __webpack_require__(/*! ./adjust */ "./node_modules/khroma/dist/methods/adjust.js");
+/* SCALE */
+function scale(color, channels) {
+    var ch = color_1.default.parse(color), adjustments = {}, delta = function (amount, weight, max) { return weight > 0 ? (max - amount) * weight / 100 : amount * weight / 100; };
+    for (var c in channels) {
+        adjustments[c] = delta(ch[c], channels[c], utils_1.default.channel.max[c]);
+    }
+    return adjust_1.default(color, adjustments);
+}
+/* EXPORT */
+exports.default = scale;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/methods/transparentize.js":
+/*!************************************************************!*\
+  !*** ./node_modules/khroma/dist/methods/transparentize.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var adjust_channel_1 = __webpack_require__(/*! ./adjust_channel */ "./node_modules/khroma/dist/methods/adjust_channel.js");
+/* TRANSPARENTIZE */
+function transparentize(color, amount) {
+    return adjust_channel_1.default(color, 'a', -amount);
+}
+/* EXPORT */
+exports.default = transparentize;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/types.js":
+/*!*******************************************!*\
+  !*** ./node_modules/khroma/dist/types.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* ENUMS */
+Object.defineProperty(exports, "__esModule", { value: true });
+var TYPE;
+(function (TYPE) {
+    TYPE[TYPE["ALL"] = 0] = "ALL";
+    TYPE[TYPE["RGB"] = 1] = "RGB";
+    TYPE[TYPE["HSL"] = 2] = "HSL";
+})(TYPE || (TYPE = {}));
+exports.TYPE = TYPE;
+;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/channel.js":
+/*!***************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/channel.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+/* CHANNEL */
+var Channel = {
+    /* CLAMP */
+    min: {
+        r: 0,
+        g: 0,
+        b: 0,
+        s: 0,
+        l: 0,
+        a: 0
+    },
+    max: {
+        r: 255,
+        g: 255,
+        b: 255,
+        h: 360,
+        s: 100,
+        l: 100,
+        a: 1
+    },
+    clamp: {
+        r: function (r) { return r >= 255 ? 255 : (r < 0 ? 0 : r); },
+        g: function (g) { return g >= 255 ? 255 : (g < 0 ? 0 : g); },
+        b: function (b) { return b >= 255 ? 255 : (b < 0 ? 0 : b); },
+        h: function (h) { return h % 360; },
+        s: function (s) { return s >= 100 ? 100 : (s < 0 ? 0 : s); },
+        l: function (l) { return l >= 100 ? 100 : (l < 0 ? 0 : l); },
+        a: function (a) { return a >= 1 ? 1 : (a < 0 ? 0 : a); }
+    },
+    /* CONVERSION */
+    //SOURCE: https://planetcalc.com/7779
+    toLinear: function (c) {
+        var n = c / 255;
+        return c > .03928 ? Math.pow(((n + .055) / 1.055), 2.4) : n / 12.92;
+    },
+    //SOURCE: https://gist.github.com/mjackson/5311256
+    hue2rgb: function (p, q, t) {
+        if (t < 0)
+            t += 1;
+        if (t > 1)
+            t -= 1;
+        if (t < 1 / 6)
+            return p + (q - p) * 6 * t;
+        if (t < 1 / 2)
+            return q;
+        if (t < 2 / 3)
+            return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    },
+    hsl2rgb: function (_a, channel) {
+        var h = _a.h, s = _a.s, l = _a.l;
+        if (s === 100)
+            return l * 2.55; // Achromatic
+        h /= 360;
+        s /= 100;
+        l /= 100;
+        var q = (l < .5) ? l * (1 + s) : (l + s) - (l * s), p = 2 * l - q;
+        switch (channel) {
+            case 'r': return Channel.hue2rgb(p, q, h + 1 / 3) * 255;
+            case 'g': return Channel.hue2rgb(p, q, h) * 255;
+            case 'b': return Channel.hue2rgb(p, q, h - 1 / 3) * 255;
+        }
+    },
+    rgb2hsl: function (_a, channel) {
+        var r = _a.r, g = _a.g, b = _a.b;
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2;
+        if (channel === 'l')
+            return l * 100;
+        if (max === min)
+            return 0; // Achromatic
+        var d = max - min, s = (l > .5) ? d / (2 - max - min) : d / (max + min);
+        if (channel === 's')
+            return s * 100;
+        switch (max) {
+            case r: return ((g - b) / d + (g < b ? 6 : 0)) * 60;
+            case g: return ((b - r) / d + 2) * 60;
+            case b: return ((r - g) / d + 4) * 60;
+            default: return -1; //TSC: TypeScript is stupid and complains if there isn't this useless default statement
+        }
+    }
+};
+/* EXPORT */
+exports.default = Channel;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/index.js":
+/*!*************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* IMPORT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var channel_1 = __webpack_require__(/*! ./channel */ "./node_modules/khroma/dist/utils/channel.js");
+var lang_1 = __webpack_require__(/*! ./lang */ "./node_modules/khroma/dist/utils/lang.js");
+var unit_1 = __webpack_require__(/*! ./unit */ "./node_modules/khroma/dist/utils/unit.js");
+/* UTILS */
+var Utils = {
+    channel: channel_1.default,
+    lang: lang_1.default,
+    unit: unit_1.default
+};
+/* EXPORT */
+exports.default = Utils;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/lang.js":
+/*!************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/lang.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* LANG */
+Object.defineProperty(exports, "__esModule", { value: true });
+var Lang = {
+    round: function (number) {
+        return Math.round(number * 10000000000) / 10000000000;
+    }
+};
+/* EXPORT */
+exports.default = Lang;
+
+
+/***/ }),
+
+/***/ "./node_modules/khroma/dist/utils/unit.js":
+/*!************************************************!*\
+  !*** ./node_modules/khroma/dist/utils/unit.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/* UNIT */
+Object.defineProperty(exports, "__esModule", { value: true });
+var Unit = {
+    frac2hex: function (frac) {
+        var hex = Math.round(frac * 255).toString(16);
+        return hex.length > 1 ? hex : "0" + hex;
+    },
+    dec2hex: function (dec) {
+        var hex = Math.round(dec).toString(16);
+        return hex.length > 1 ? hex : "0" + hex;
+    }
+};
+/* EXPORT */
+exports.default = Unit;
+
+
+/***/ }),
+
 /***/ "./node_modules/lodash/_DataView.js":
 /*!******************************************!*\
   !*** ./node_modules/lodash/_DataView.js ***!
@@ -69140,13 +70758,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+
 var mainBkg = '#1f2020';
-var secondBkg = 'lighten(#1f2020; 16)';
+var secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])('#1f2020', 16);
 var mainContrastColor = 'lightgrey';
 var darkTextColor = '#323D47';
 var lineColor = mainContrastColor;
 var border1 = '#81B1DB';
-var border2 = 'rgba(255; 255; 255; 0.25)';
+var border2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.25);
 var arrowheadColor = mainContrastColor;
 var fontFamily = '"trebuchet ms", verdana, arial';
 var fontSize = '16px';
@@ -69179,16 +70800,16 @@ var activationBkgColor = secondBkg;
 var sequenceNumberColor = 'black';
 /* Gantt chart variables */
 
-var sectionBkgColor = 'rgba(255; 255; 255; 0.3)';
+var sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.3);
 var altSectionBkgColor = 'white';
 var sectionBkgColor2 = '#EAE8B9';
-var taskBorderColor = 'rgba(255; 255; 255; 0.5)';
+var taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
 var taskBkgColor = mainBkg;
 var taskTextColor = darkTextColor;
 var taskTextLightColor = mainContrastColor;
 var taskTextOutsideColor = taskTextLightColor;
 var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = 'rgba(255; 255; 255; 0.5)';
+var activeTaskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
 var activeTaskBkgColor = '#81B1DB';
 var gridColor = mainContrastColor;
 var doneTaskBkgColor = mainContrastColor;
@@ -69457,10 +71078,136 @@ var errorTextColor = '#552222';
 /*!******************************!*\
   !*** ./src/theme-neutral.js ***!
   \******************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: mainBkg, contrast, secondBkg, lineColor, border1, border2, note, text, critical, done, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBkgColor, critBorderColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/knuts/source/priv/atlantica/mermaid/src/theme-neutral.js: Unexpected token (1:9)\n\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1 | \u001b[39m\u001b[36mimport\u001b[39m { \u001b[33m,\u001b[39m darken\u001b[33m,\u001b[39m lighten\u001b[33m,\u001b[39m hsla } from \u001b[32m'khroma'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m   | \u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 2 | \u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 3 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mconst\u001b[39m mainBkg \u001b[33m=\u001b[39m \u001b[32m'#eee'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 4 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mconst\u001b[39m contrast \u001b[33m=\u001b[39m \u001b[32m'#26a'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n    at Parser.raise (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/location.js:41:63)\n    at Parser.unexpected (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/util.js:150:16)\n    at Parser.parseIdentifierName (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/expression.js:2114:18)\n    at Parser.parseIdentifier (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/expression.js:2081:23)\n    at Parser.parseImportSpecifier (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2128:31)\n    at Parser.parseNamedImportSpecifiers (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2122:12)\n    at Parser.parseImport (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2037:39)\n    at Parser.parseStatementContent (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:248:25)\n    at Parser.parseStatement (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:147:17)\n    at Parser.parseBlockOrModuleBlockBody (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:866:25)\n    at Parser.parseBlockBody (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:842:10)\n    at Parser.parseTopLevel (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:53:10)\n    at Parser.parse (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/index.js:49:10)\n    at parse (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/index.js:58:38)\n    at parser (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/parser/index.js:54:34)\n    at parser.next (<anonymous>)\n    at normalizeFile (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transformation/normalize-file.js:93:38)\n    at normalizeFile.next (<anonymous>)\n    at run (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transformation/index.js:31:50)\n    at run.next (<anonymous>)\n    at Function.transform (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transform.js:27:41)\n    at transform.next (<anonymous>)\n    at step (/Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:254:32)\n    at /Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:266:13\n    at async.call.result.err.err (/Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:216:11)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contrast", function() { return contrast; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "note", function() { return note; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "text", function() { return text; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critical", function() { return critical; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "done", function() { return done; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+
+var mainBkg = '#eee';
+var contrast = '#26a';
+var secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 55);
+var lineColor = '#666';
+var border1 = '#999';
+var border2 = contrast;
+var note = '#ffa';
+var text = '#333';
+var critical = '#d42';
+var done = '#bbb';
+var arrowheadColor = '#333333';
+var fontFamily = '"trebuchet ms", verdana, arial';
+var fontSize = '16px';
+/* Flowchart variables */
+
+var nodeBkg = mainBkg;
+var nodeBorder = border1;
+var clusterBkg = secondBkg;
+var clusterBorder = border2;
+var defaultLinkColor = lineColor;
+var titleColor = text;
+var edgeLabelBackground = 'white';
+/* Sequence Diagram variables */
+
+var actorBorder = border1;
+var actorBkg = mainBkg;
+var actorTextColor = text;
+var actorLineColor = lineColor;
+var signalColor = text;
+var signalTextColor = text;
+var labelBoxBkgColor = actorBkg;
+var labelBoxBorderColor = actorBorder;
+var labelTextColor = text;
+var loopTextColor = text;
+var noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(note, 60);
+var noteBkgColor = note;
+var noteTextColor = actorTextColor;
+var activationBorderColor = '#666';
+var activationBkgColor = '#f4f4f4';
+var sequenceNumberColor = 'white';
+/* Gantt chart variables */
+
+var sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 30);
+var altSectionBkgColor = 'white';
+var sectionBkgColor2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 30);
+var taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(contrast, 10);
+var taskBkgColor = contrast;
+var taskTextLightColor = 'white';
+var taskTextColor = taskTextLightColor;
+var taskTextDarkColor = text;
+var taskTextOutsideColor = taskTextDarkColor;
+var taskTextClickableColor = '#003163';
+var activeTaskBorderColor = taskBorderColor;
+var activeTaskBkgColor = mainBkg;
+var gridColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(border1, 30);
+var doneTaskBkgColor = done;
+var doneTaskBorderColor = lineColor;
+var critBkgColor = critical;
+var critBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(critBkgColor, 10);
+var todayLineColor = critBkgColor;
+/* state colors */
+
+var labelColor = 'black';
+var errorBkgColor = '#552222';
+var errorTextColor = '#552222';
 
 /***/ }),
 

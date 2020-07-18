@@ -25,17 +25,10 @@
   <body>
     <h1>info below</h1>
     <div class="flex flex-wrap">
-      <div class="mermaid2" style="width: 50%; height: 20%;">
-        %%{init: { 'logLevel': 0, 'theme': 'forest'} }%%
-        pie title Sports in Sweden
-          "Bandy" : 40
-          "Ice-Hockey" : 80
-          "Football" : 90
-      </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 20%;">
 %%{init: { 'logLevel': 0, 'theme': 'default'} }%%
 graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
+          A[Default] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[/Another/]
           C ==>|One| D[Laptop]
@@ -49,10 +42,10 @@ graph TD
             G
           end
       </div>
-      <div class="mermaid2" style="width: 50%; height: 20%;">
+      <div class="mermaid" style="width: 50%; height: 20%;">
 %%{init: { 'logLevel': 1, 'theme': 'forest'} }%%
       graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
+          A[Forest] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[/Another/]
           C ==>|One| D[Laptop]
@@ -70,7 +63,7 @@ graph TD
       %%{init: { 'logLevel': 1, 'theme': 'neutral'} }%%
 
       graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
+          A[Neutral] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[/Another/]
           C ==>|One| D[Laptop]
@@ -84,11 +77,11 @@ graph TD
             G
           end
       </div>
-      <div class="mermaid2" style="background: #3f3f3f; width: 50%; height: 20%;">
+      <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
       %%{init: { 'logLevel': 1, 'theme': 'dark'} }%%
 
       graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
+          A[Dark] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[/Another/]
           C ==>|One| D[Laptop]
@@ -102,11 +95,11 @@ graph TD
             G
           end
       </div>
-      <div class="mermaid2" style="background: #3f3f3f; width: 50%; height: 20%;">
+      <div class="mermaid" style="background: #3f3f3f; width: 50%; height: 20%;">
       %%{init: { 'logLevel': 1} }%%
 
       graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
+          A[None set] -->|Get money| B(Go shopping)
           B --> C{Let me think}
           B --> G[/Another/]
           C ==>|One| D[Laptop]
@@ -128,7 +121,6 @@ graph TD
           // console.error('Mermaid error: ', err);
         };
       mermaid.initialize({
-        theme: 'forest',
         // theme: 'dark',
         // theme: 'dark',
         // arrowMarkerAbsolute: true,

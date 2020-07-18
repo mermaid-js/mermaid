@@ -22404,13 +22404,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+
 var mainBkg = '#1f2020';
-var secondBkg = 'lighten(#1f2020; 16)';
+var secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])('#1f2020', 16);
 var mainContrastColor = 'lightgrey';
 var darkTextColor = '#323D47';
 var lineColor = mainContrastColor;
 var border1 = '#81B1DB';
-var border2 = 'rgba(255; 255; 255; 0.25)';
+var border2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.25);
 var arrowheadColor = mainContrastColor;
 var fontFamily = '"trebuchet ms", verdana, arial';
 var fontSize = '16px';
@@ -22443,16 +22446,16 @@ var activationBkgColor = secondBkg;
 var sequenceNumberColor = 'black';
 /* Gantt chart variables */
 
-var sectionBkgColor = 'rgba(255; 255; 255; 0.3)';
+var sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.3);
 var altSectionBkgColor = 'white';
 var sectionBkgColor2 = '#EAE8B9';
-var taskBorderColor = 'rgba(255; 255; 255; 0.5)';
+var taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
 var taskBkgColor = mainBkg;
 var taskTextColor = darkTextColor;
 var taskTextLightColor = mainContrastColor;
 var taskTextOutsideColor = taskTextLightColor;
 var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = 'rgba(255; 255; 255; 0.5)';
+var activeTaskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
 var activeTaskBkgColor = '#81B1DB';
 var gridColor = mainContrastColor;
 var doneTaskBkgColor = mainContrastColor;
@@ -22721,10 +22724,136 @@ var errorTextColor = '#552222';
 /*!******************************!*\
   !*** ./src/theme-neutral.js ***!
   \******************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: mainBkg, contrast, secondBkg, lineColor, border1, border2, note, text, critical, done, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBkgColor, critBorderColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/knuts/source/priv/atlantica/mermaid/src/theme-neutral.js: Unexpected token (1:9)\n\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 1 | \u001b[39m\u001b[36mimport\u001b[39m { \u001b[33m,\u001b[39m darken\u001b[33m,\u001b[39m lighten\u001b[33m,\u001b[39m hsla } from \u001b[32m'khroma'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m   | \u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 2 | \u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 3 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mconst\u001b[39m mainBkg \u001b[33m=\u001b[39m \u001b[32m'#eee'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 4 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mconst\u001b[39m contrast \u001b[33m=\u001b[39m \u001b[32m'#26a'\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n    at Parser.raise (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/location.js:41:63)\n    at Parser.unexpected (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/util.js:150:16)\n    at Parser.parseIdentifierName (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/expression.js:2114:18)\n    at Parser.parseIdentifier (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/expression.js:2081:23)\n    at Parser.parseImportSpecifier (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2128:31)\n    at Parser.parseNamedImportSpecifiers (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2122:12)\n    at Parser.parseImport (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:2037:39)\n    at Parser.parseStatementContent (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:248:25)\n    at Parser.parseStatement (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:147:17)\n    at Parser.parseBlockOrModuleBlockBody (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:866:25)\n    at Parser.parseBlockBody (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:842:10)\n    at Parser.parseTopLevel (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/statement.js:53:10)\n    at Parser.parse (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/parser/index.js:49:10)\n    at parse (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/parser/src/index.js:58:38)\n    at parser (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/parser/index.js:54:34)\n    at parser.next (<anonymous>)\n    at normalizeFile (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transformation/normalize-file.js:93:38)\n    at normalizeFile.next (<anonymous>)\n    at run (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transformation/index.js:31:50)\n    at run.next (<anonymous>)\n    at Function.transform (/Users/knuts/source/priv/atlantica/mermaid/node_modules/@babel/core/lib/transform.js:27:41)\n    at transform.next (<anonymous>)\n    at step (/Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:254:32)\n    at /Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:266:13\n    at async.call.result.err.err (/Users/knuts/source/priv/atlantica/mermaid/node_modules/gensync/index.js:216:11)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contrast", function() { return contrast; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "note", function() { return note; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "text", function() { return text; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critical", function() { return critical; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "done", function() { return done; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "khroma");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+
+var mainBkg = '#eee';
+var contrast = '#26a';
+var secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 55);
+var lineColor = '#666';
+var border1 = '#999';
+var border2 = contrast;
+var note = '#ffa';
+var text = '#333';
+var critical = '#d42';
+var done = '#bbb';
+var arrowheadColor = '#333333';
+var fontFamily = '"trebuchet ms", verdana, arial';
+var fontSize = '16px';
+/* Flowchart variables */
+
+var nodeBkg = mainBkg;
+var nodeBorder = border1;
+var clusterBkg = secondBkg;
+var clusterBorder = border2;
+var defaultLinkColor = lineColor;
+var titleColor = text;
+var edgeLabelBackground = 'white';
+/* Sequence Diagram variables */
+
+var actorBorder = border1;
+var actorBkg = mainBkg;
+var actorTextColor = text;
+var actorLineColor = lineColor;
+var signalColor = text;
+var signalTextColor = text;
+var labelBoxBkgColor = actorBkg;
+var labelBoxBorderColor = actorBorder;
+var labelTextColor = text;
+var loopTextColor = text;
+var noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(note, 60);
+var noteBkgColor = note;
+var noteTextColor = actorTextColor;
+var activationBorderColor = '#666';
+var activationBkgColor = '#f4f4f4';
+var sequenceNumberColor = 'white';
+/* Gantt chart variables */
+
+var sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 30);
+var altSectionBkgColor = 'white';
+var sectionBkgColor2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 30);
+var taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(contrast, 10);
+var taskBkgColor = contrast;
+var taskTextLightColor = 'white';
+var taskTextColor = taskTextLightColor;
+var taskTextDarkColor = text;
+var taskTextOutsideColor = taskTextDarkColor;
+var taskTextClickableColor = '#003163';
+var activeTaskBorderColor = taskBorderColor;
+var activeTaskBkgColor = mainBkg;
+var gridColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(border1, 30);
+var doneTaskBkgColor = done;
+var doneTaskBorderColor = lineColor;
+var critBkgColor = critical;
+var critBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(critBkgColor, 10);
+var todayLineColor = critBkgColor;
+/* state colors */
+
+var labelColor = 'black';
+var errorBkgColor = '#552222';
+var errorTextColor = '#552222';
 
 /***/ }),
 
@@ -23639,6 +23768,17 @@ module.exports = require("entity-decode/browser");
 /***/ (function(module, exports) {
 
 module.exports = require("graphlib");
+
+/***/ }),
+
+/***/ "khroma":
+/*!*************************!*\
+  !*** external "khroma" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("khroma");
 
 /***/ }),
 
