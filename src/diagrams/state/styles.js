@@ -138,6 +138,11 @@ g.stateGroup line {
   ry: 0;
 }
 
+#dependencyStart, #dependencyEnd {
+  fill: ${options.nodeBorder};
+  stroke: ${options.nodeBorder};
+  stroke-width: 1;
+}
 `;
 
 export default getStyles;

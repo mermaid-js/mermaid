@@ -519,7 +519,7 @@ function updateRendererConfigs(conf) {
 }
 
 function reinitialize(options) {
-  console.log(`mermaidAPI.reinitialize: v${pkg.version}`, options);
+  console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
   if (options.theme && themes[options.theme]) {
     // Todo merge with user options
     options.themeVariables = themes[options.theme];
@@ -533,15 +533,16 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  // console.log(`mermaidAPI.initialize: v${pkg.version}`);
+  console.log(`mermaidAPI.initialize: v${pkg.version} ${options}`);
   // Set default options
 
   if (options && options.theme && themes[options.theme]) {
     // Todo merge with user options
     options.themeVariables = themes[options.theme];
-  } else {
-    if (options) options.themeVariables = themes.default;
   }
+  // else {
+  //   if (options) options.themeVariables = themes.default;
+  // }
 
   const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();
 

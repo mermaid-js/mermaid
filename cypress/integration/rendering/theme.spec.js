@@ -11,6 +11,7 @@ describe('Pie Chart', () => {
       it('should render a pie diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         pie title Sports in Sweden
           "Bandy" : 40
           "Ice-Hockey" : 80
@@ -23,6 +24,7 @@ describe('Pie Chart', () => {
       it('should render a flowchart diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -45,6 +47,7 @@ describe('Pie Chart', () => {
       it('should render a new flowchart diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
           B --> C{Let me think}
@@ -67,6 +70,7 @@ describe('Pie Chart', () => {
       it('should render a sequence diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         sequenceDiagram
           autonumber
           par Action 1
@@ -93,6 +97,7 @@ describe('Pie Chart', () => {
       it('should render a class diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         classDiagram
           Animal "*" <|-- "1" Duck
           Animal "1" <|-- "10" Fish
@@ -138,6 +143,7 @@ describe('Pie Chart', () => {
       it('should render a state diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
 stateDiagram
         [*] --> Active
 
@@ -169,6 +175,7 @@ stateDiagram
       it('should render a state diagram (v2)', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
 stateDiagram-v2
         [*] --> Active
 
@@ -200,7 +207,7 @@ stateDiagram-v2
       it('should render a er diagram', () => {
         imgSnapshotTest(
           `
-      erDiagram
+erDiagram
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
         CUSTOMER ||--o{ INVOICE : "liable for"
