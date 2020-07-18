@@ -1,10 +1,12 @@
+import { lighten, rgba } from 'khroma';
+
 export const mainBkg = '#1f2020';
-export const secondBkg = 'lighten(#1f2020; 16)';
+export const secondBkg = lighten('#1f2020', 16);
 export const mainContrastColor = 'lightgrey';
 export const darkTextColor = '#323D47';
 export const lineColor = mainContrastColor;
 export const border1 = '#81B1DB';
-export const border2 = 'rgba(255; 255; 255; 0.25)';
+export const border2 = rgba(255, 255, 255, 0.25);
 export const arrowheadColor = mainContrastColor;
 export const fontFamily = '"trebuchet ms", verdana, arial';
 export const fontSize = '16px';
@@ -39,16 +41,16 @@ export const sequenceNumberColor = 'black';
 
 /* Gantt chart variables */
 
-export const sectionBkgColor = 'rgba(255; 255; 255; 0.3)';
+export const sectionBkgColor = rgba(255, 255, 255, 0.3);
 export const altSectionBkgColor = 'white';
 export const sectionBkgColor2 = '#EAE8B9';
-export const taskBorderColor = 'rgba(255; 255; 255; 0.5)';
+export const taskBorderColor = rgba(255, 255, 255, 0.5);
 export const taskBkgColor = mainBkg;
 export const taskTextColor = darkTextColor;
 export const taskTextLightColor = mainContrastColor;
 export const taskTextOutsideColor = taskTextLightColor;
 export const taskTextClickableColor = '#003163';
-export const activeTaskBorderColor = 'rgba(255; 255; 255; 0.5)';
+export const activeTaskBorderColor = rgba(255, 255, 255, 0.5);
 export const activeTaskBkgColor = '#81B1DB';
 export const gridColor = mainContrastColor;
 export const doneTaskBkgColor = mainContrastColor;
