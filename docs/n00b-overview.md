@@ -50,7 +50,7 @@ In fact one can pick up the syntax for it quite easily from the examples given a
 
 For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
 You can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
-Alternatively, you could also view the [integrations and uses](https://github.com/mermaid-js/mermaid/blob/develop/docs/integrations.md). 
+Alternatively, you could also view the [integrations and uses](https://mermaid-js.github.io/mermaid/#/./integrations). 
 
 # For anyone who may need video tutorials, here is a list of beginner friendly introductions: 
 
