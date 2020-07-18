@@ -536,11 +536,11 @@ function initialize(options) {
   // console.log(`mermaidAPI.initialize: v${pkg.version}`);
   // Set default options
 
-  if (options.theme && themes[options.theme]) {
+  if (options && options.theme && themes[options.theme]) {
     // Todo merge with user options
     options.themeVariables = themes[options.theme];
   } else {
-    options.themeVariables = themes.default;
+    if (options) options.themeVariables = themes.default;
   }
 
   const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();

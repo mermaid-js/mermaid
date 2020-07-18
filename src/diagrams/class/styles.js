@@ -47,7 +47,7 @@ g.classGroup line {
   stroke-dasharray: 3;
 }
 
-#compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart. #extensionEnd {
+#compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart, #extensionEnd {
   fill: ${options.nodeBorder};
   stroke: ${options.nodeBorder};
   stroke-width: 1;
