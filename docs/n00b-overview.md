@@ -34,17 +34,19 @@ In an environment of constantly changing information , diagrams/charts become ob
 
 The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates  and changes in the app you are documenting. Yet that is often the reality for diagrams and charts.
 
-## This is a source of frustration for developers, engineers or any subject matter experts, not to mention it costing companies in missed productivity.
+## Diagramming and charting is a gigantic waste of developer time, but not having diagrams ruins productivity. 
 
-mermaid can potentially cut down the amount of time, effort and the learning curve that is associated with creating diagrams and charts. Because, the text base for  diagrams can be edited easily, to modify the product, it can also be part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate task. 
+mermaid can cut down the amount of time, effort and the learning curve that is associated with creating diagrams and charts, by a wide margin. 
+
+Because, the text base for  diagrams allows for it to be updated easily, it can also be made part of production scripts (and other pieces of code). So less time needs be spent on documenting, as a separate task. 
 
 
-## The mobility that mermaid provides can help Documentation catch up with Development in quickly changing projects. 
+## mermaid helps Documentation catch up with Development, in quickly changing projects. 
 
 Being based on markdown, mermaid can be used, not only by accomplished front-end developers, but by most computer savvy people to render simple diagrams, at much faster speeds.
-In fact one can pick up the syntax for it quite easily from the examples given.
+In fact one can pick up the syntax for it quite easily from the examples given and there are many tutorials in the internet. 
 
-## mermaid is a useful charting tool 
+## mermaid is for everyone.
 
 For information on how to use mermaid, click [here](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
 You can try out the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/).
