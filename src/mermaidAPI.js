@@ -539,6 +539,8 @@ function initialize(options) {
   if (options.theme && themes[options.theme]) {
     // Todo merge with user options
     options.themeVariables = themes[options.theme];
+  } else {
+    options.themeVariables = themes.default;
   }
 
   const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();
