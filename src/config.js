@@ -820,8 +820,6 @@ const siteConfig = assignWithDepth({}, defaultConfig);
 const currentConfig = assignWithDepth({}, defaultConfig);
 
 /**
- *## setSiteConfig
-  
  *| Function | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
@@ -842,7 +840,6 @@ export const setSiteConfig = conf => {
   return getSiteConfig();
 };
 /**
- *## getSiteConfig
  *| Function | Description         | Type    |  Values             |
  *| --------- | ------------------- | ------- |  ------------------ |
  *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
@@ -855,7 +852,6 @@ export const getSiteConfig = () => {
   return assignWithDepth({}, siteConfig);
 };
 /**
- *## setConfig
  *| Function  | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
@@ -874,7 +870,6 @@ export const setConfig = conf => {
   return getConfig();
 };
 /**
- *   ## getConfig
  *| Function  | Description         | Type    | Return Values            |
  *| --------- | ------------------- | ------- | ------------------ |
  *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
@@ -887,7 +882,6 @@ export const getConfig = () => {
   return assignWithDepth({}, currentConfig);
 };
 /**
- *## sanitize
  *| Function | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
@@ -910,8 +904,6 @@ export const sanitize = options => {
   });
 };
 /**
- *## reset
-  
  *| Function | Description         | Type    | Required | Values             |
  *| --------- | ------------------- | ------- | -------- | ------------------ |
  *| reset|Resets currentConfig to conf| Put Request | Required | None|
