@@ -139,6 +139,7 @@ const initialize = function(config) {
     }
   }
   mermaidAPI.initialize(config);
+  // mermaidAPI.reset();
 };
 
 /**
