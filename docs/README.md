@@ -24,7 +24,7 @@ For a more detailed introduction to mermaid, look to the [Beginner's Guide](http
 
 You should also Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
-You can also watch some popular mermaid tutorials.
+You can also watch some popular mermaid tutorials on the [mermaid Overview](./n00b-overview.md)
 
 ## [CDN](https://unpkg.com/mermaid/)
 
