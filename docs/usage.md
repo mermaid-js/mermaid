@@ -5,7 +5,15 @@
 ### npm package
 
 ```
-yarn add mermaid
+1.You will need to isntall node v10 or 12, which would have npm.
+
+2. download yarn using npm.
+
+2. enter the following command:
+    yarn add mermaid
+
+3. You can then add mermaid as a dev dependency using this command: 
+    yarn add --dev mermaid
 ```
 
 ### CDN
@@ -35,7 +43,7 @@ Further down on your page mermaid will look for tags with `class="mermaid"`. Fro
 read the chart definiton and replace it with the svg chart.
 
 
-### Define a chart like this:
+### Define a chart like thi:
 
 ```html
 <div class="mermaid">
@@ -53,26 +61,7 @@ Would end up like this:
 </div>
 ```
 
-An id attribute is also added to mermaid tags without one.
-
-### To enable click event and tags in nodes
-
-In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.
-
-* **true**: (default) tags in text are encoded, click functionality is disabled
-* false: tags in text are allowed, click functionality is enabled
-
-⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
-
-If your application is taking resposibility for the diagram source security you can set the `securityLevel` accordingly. By doing this clicks and tags are again allowed.
-
-```javascript
-    mermaidAPI.initialize({
-        securityLevel: 'loose'
-    });
-```
-
-### Simple full example:
+## Simple full example:
 
 ```html
 <!DOCTYPE html>
@@ -92,6 +81,29 @@ If your application is taking resposibility for the diagram source security you 
 </body>
 </html>
 ```
+
+## Notes: 
+An id attribute is also added to mermaid tags without one.
+
+Mermaid can load multiple diagrams, in the same page.
+
+## To enable click event and tags in nodes:
+
+In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.
+
+* **true**: (default) tags in text are encoded, click functionality is disabled
+* false: tags in text are allowed, click functionality is enabled
+
+⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
+
+If your application is taking resposibility for the diagram source security you can set the `securityLevel` accordingly. By doing this clicks and tags are again allowed.
+
+```javascript
+    mermaidAPI.initialize({
+        securityLevel: 'loose'
+    });
+```
+
 
 ### Labels out of bounds
 
