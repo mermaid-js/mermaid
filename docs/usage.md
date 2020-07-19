@@ -35,8 +35,8 @@ locate the graphs on the page and transform them to svg files.
 ### Include mermaid on your web page:
 
 ```html
-<script src="mermaid.min.js"></script>
-<script>mermaid.initialize({startOnLoad:true});</script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
 ```
 
 Further down on your page mermaid will look for tags with `class="mermaid"`. From these tags mermaid will try to
@@ -47,7 +47,10 @@ read the chart definiton and replace it with the svg chart.
 
 ```html
 <div class="mermaid">
-    CHART DEFINITION GOES HERE
+     graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
 </div>
 ```
 
@@ -76,12 +79,12 @@ Would end up like this:
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
   </div>
-  <script src="mermaid.min.js"></script>
-  <script>mermaid.initialize({startOnLoad:true});</script>
+ <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+ <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 </html>
 ```
-An id attribute is also added to mermaid tags without one.	## Simple full example:
+## Try it out, save this code as HTML and load it. 
 
 ### To enable click event and tags in nodes	
 
