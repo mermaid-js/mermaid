@@ -1,5 +1,3 @@
-import { rgba } from 'khroma';
-
 class Theme {
   constructor() {
     /* Base vales */
