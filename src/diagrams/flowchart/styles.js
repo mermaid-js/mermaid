@@ -1,11 +1,11 @@
 const getStyles = options =>
   `.label {
     font-family: ${options.fontFamily};
-    color: #333;
+    color: ${options.textColor};
   }
 
   .label text {
-    fill: #333;
+    fill: ${options.textColor};
   }
 
   .node rect,

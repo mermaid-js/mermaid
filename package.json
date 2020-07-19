@@ -69,6 +69,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.4",
+    "color": "^3.1.2",
     "coveralls": "^3.0.2",
     "css-loader": "^2.0.1",
     "css-to-string-loader": "^0.1.3",

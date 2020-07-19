@@ -2,6 +2,7 @@ import { lighten, rgba } from 'khroma';
 
 class Theme {
   constructor() {
+    this.background = '#333';
     this.mainBkg = '#1f2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
@@ -12,6 +13,8 @@ class Theme {
     this.arrowheadColor = 'calculated';
     this.fontFamily = '"trebuchet ms", verdana, arial';
     this.fontSize = '16px';
+    this.labelBackground = '#181818';
+    this.textColor = '#ccc';
     /* Flowchart variables */
 
     this.nodeBkg = 'calculated';
@@ -20,7 +23,7 @@ class Theme {
     this.clusterBorder = 'calculated';
     this.defaultLinkColor = 'calculated';
     this.titleColor = '#F9FFFE';
-    this.edgeLabelBackground = '#e8e8e8';
+    this.edgeLabelBackground = 'calculated';
 
     /* Sequence Diagram variables */
 
@@ -43,16 +46,16 @@ class Theme {
 
     /* Gantt chart variables */
 
-    this.sectionBkgColor = rgba(255, 255, 255, 0.3);
+    this.sectionBkgColor = rgba(255, 255, 255, 30);
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = '#EAE8B9';
-    this.taskBorderColor = rgba(255, 255, 255, 0.5);
+    this.taskBorderColor = rgba(255, 255, 255, 50);
     this.taskBkgColor = 'calculated';
     this.taskTextColor = 'calculated';
     this.taskTextLightColor = 'calculated';
     this.taskTextOutsideColor = 'calculated';
     this.taskTextClickableColor = '#003163';
-    this.activeTaskBorderColor = rgba(255, 255, 255, 0.5);
+    this.activeTaskBorderColor = rgba(255, 255, 255, 50);
     this.activeTaskBkgColor = '#81B1DB';
     this.gridColor = 'calculated';
     this.doneTaskBkgColor = 'calculated';
@@ -63,7 +66,7 @@ class Theme {
     this.todayLineColor = '#DB5757';
 
     /* state colors */
-    this.labelColor = 'black';
+    this.labelColor = 'calculated';
 
     this.errorBkgColor = '#a44141';
     this.errorTextColor = '#ddd';
@@ -79,6 +82,7 @@ class Theme {
     this.clusterBkg = this.secondBkg;
     this.clusterBorder = this.border2;
     this.defaultLinkColor = this.lineColor;
+    this.edgeLabelBackground = lighten(this.labelBackground, 25);
 
     /* Sequence Diagram variables */
 
@@ -108,9 +112,14 @@ class Theme {
     this.taskTextDarkColor = this.darkTextColor;
 
     /* state colors */
+    this.labelColor = this.textColor;
   }
   calculate(overrides) {
-    if (typeof overrides !== 'object') return;
+    if (typeof overrides !== 'object') {
+      // Calculate colors form base colors
+      this.updateColors();
+      return;
+    }
 
     const keys = Object.keys(overrides);
 

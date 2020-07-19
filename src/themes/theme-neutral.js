@@ -1,7 +1,13 @@
-import { darken, lighten } from 'khroma';
+import Color from 'color';
+import { lighten } from 'khroma';
+window.lighten = lighten;
+
+// const Color = require ( 'khroma/dist/color' ).default
+// Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
 
 class Theme {
   constructor() {
+    this.background = 'white';
     this.mainBkg = '#eee';
     this.contrast = '#26a';
     this.secondBkg = 'calculated';
@@ -97,32 +103,59 @@ class Theme {
     this.labelBoxBorderColor = this.actorBorder;
     this.labelTextColor = this.text;
     this.loopTextColor = this.text;
-    this.noteBorderColor = darken(this.note, 60);
+    this.noteBorderColor = Color(this.note)
+      .darken(0.6)
+      .hsl()
+      .string();
     this.noteBkgColor = this.note;
     this.noteTextColor = this.actorTextColor;
 
     /* Gantt chart variables */
 
-    this.sectionBkgColor = lighten(this.contrast, 30);
-    this.sectionBkgColor2 = lighten(this.contrast, 30);
-    this.taskBorderColor = darken(this.contrast, 10);
+    this.sectionBkgColor = Color(this.contrast)
+      .lighten(0.3)
+      .hsl()
+      .string();
+
+    this.sectionBkgColor2 = Color(this.contrast)
+      .lighten(0.3)
+      .hsl()
+      .string();
+
+    this.taskBorderColor = Color(this.contrast)
+      .darken(0.1)
+      .hsl()
+      .string();
+
     this.taskBkgColor = this.contrast;
     this.taskTextColor = this.taskTextLightColor;
     this.taskTextDarkColor = this.text;
     this.taskTextOutsideColor = this.taskTextDarkColor;
     this.activeTaskBorderColor = this.taskBorderColor;
     this.activeTaskBkgColor = this.mainBkg;
-    this.gridColor = lighten(this.border1, 30);
+    this.gridColor = Color(this.border1)
+      .lighten(0.3)
+      .hsl()
+      .string();
+
     this.doneTaskBkgColor = this.done;
     this.doneTaskBorderColor = this.lineColor;
     this.critBkgColor = this.critical;
-    this.critBorderColor = darken(this.critBkgColor, 10);
+    this.critBorderColor = Color(this.critBkgColor)
+      .darken(0.1)
+      .hsl()
+      .string();
+
     this.todayLineColor = this.critBkgColor;
 
     /* state colors */
   }
   calculate(overrides) {
-    if (typeof overrides !== 'object') return;
+    if (typeof overrides !== 'object') {
+      // Calculate colors form base colors
+      this.updateColors();
+      return;
+    }
 
     const keys = Object.keys(overrides);
 
@@ -143,5 +176,6 @@ class Theme {
 export const getThemeVariables = userOverrides => {
   const theme = new Theme();
   theme.calculate(userOverrides);
+  console.info('Theme', userOverrides, theme);
   return theme;
 };

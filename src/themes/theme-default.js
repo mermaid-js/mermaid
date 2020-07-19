@@ -3,6 +3,7 @@ import { rgba } from 'khroma';
 class Theme {
   constructor() {
     /* Base variables */
+    this.background = 'white';
     this.mainBkg = '#ECECFF';
     this.secondBkg = '#ffffde';
     this.lineColor = '#333333';
@@ -121,7 +122,11 @@ class Theme {
     /* state colors */
   }
   calculate(overrides) {
-    if (typeof overrides !== 'object') return;
+    if (typeof overrides !== 'object') {
+      // Calculate colors form base colors
+      this.updateColors();
+      return;
+    }
 
     const keys = Object.keys(overrides);
 
