@@ -1,7 +1,18 @@
 import { assignWithDepth } from './utils';
 import { logger } from './logger';
+// import themeVariables from './theme-default';
+// import themeForestVariables from './theme-forest';
+// import themeNeutralVariables from './theme-neutral';
 
+const themes = {};
+
+for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
+  themes[themeName] = require(`./theme-${themeName}.js`).default;
+}
 /**
+ * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
+ *
+ * ## **What follows are config instructions for older versions**
  * These are the default options which can be overridden with the initialization call like so:
  * **Example 1:**
  * <pre>
@@ -28,7 +39,7 @@ import { logger } from './logger';
  *   mermaid.initialize(config);
  * &lt;/script>
  * </pre>
- * A summary of all options and their defaults is found [here](https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults). A description of each option follows below.
+ * A summary of all options and their defaults is found [here](#mermaidapi-configuration-defaults). A description of each option follows below.
  *
  * @name Configuration
  */
@@ -36,9 +47,11 @@ const config = {
   /** theme , the CSS style sheet
    *
    * theme , the CSS style sheet
+   *
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
    *| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+   *
    ***Notes:**To disable any pre-defined mermaid theme, use "null".
    * <pre>
    *  "theme": "forest",
@@ -46,6 +59,7 @@ const config = {
    * </pre>
    */
   theme: 'default',
+  themeVariables: themes.default,
   themeCSS: undefined,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
@@ -77,11 +91,12 @@ const config = {
   /**
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
    *
    ***Notes:
    *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
    *-   **loose**: tags in text are allowed, click functionality is enabled
+   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
   securityLevel: 'strict',
 
@@ -118,6 +133,16 @@ const config = {
    * The object containing configurations specific for flowcharts
    */
   flowchart: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 8**.
+     */
+    diagramPadding: 8,
+
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
@@ -801,12 +826,27 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
      *
-     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Notes:**Font size (expressed as an integer representing a number of pixels)
      ***Default value: 12 **
      */
-    fontSize: 12
+    fontSize: 12,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true
   }
 };
+
+// debugger;
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 export const defaultConfig = Object.freeze(config);
@@ -815,47 +855,83 @@ const siteConfig = assignWithDepth({}, defaultConfig);
 const currentConfig = assignWithDepth({}, defaultConfig);
 
 /**
- * Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
- * the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
- * to the defaultConfig
- * Note: currentConfig is set in this function
+ *## setSiteConfig
+
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
+
+ ***Notes:**
+ *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+ *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+ *to the defaultConfig
+ *Note: currentConfig is set in this function
+
+ **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = conf => {
   assignWithDepth(currentConfig, conf, { clobber: true });
+  // Set theme variables if user has set the theme option
   assignWithDepth(siteConfig, conf);
+
   return getSiteConfig();
 };
 /**
- * Obtains the current siteConfig base configuration
+ *## getSiteConfig
+ *| Function | Description         | Type    |  Values             |
+ *| --------- | ------------------- | ------- |  ------------------ |
+ *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
+
+ ***Notes**:
+ *Returns **any** values in siteConfig.
  * @returns {*}
  */
 export const getSiteConfig = () => {
   return assignWithDepth({}, siteConfig);
 };
 /**
- * Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
- * values found in conf with key found in siteConfig.secure will be replaced with the corresponding
- * siteConfig value.
+ *## setConfig
+ *| Function  | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
+
+
+ ***Notes**:
+ *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
+ *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+ *siteConfig value.
  * @param conf - the potential currentConfig
  * @returns {*} - the currentConfig merged with the sanitized conf
  */
 export const setConfig = conf => {
   sanitize(conf);
+
   assignWithDepth(currentConfig, conf);
   return getConfig();
 };
 /**
- * Obtains the currentConfig
+ *   ## getConfig
+ *| Function  | Description         | Type    | Return Values            |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
+
+ ***Notes**:
+ *Returns **any** the currentConfig
  * @returns {*} - the currentConfig
  */
 export const getConfig = () => {
   return assignWithDepth({}, currentConfig);
 };
 /**
- * Ensures options parameter does not attempt to override siteConfig secure keys
- * Note: modifies options in-place
+ *## sanitize
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
+
+ *Ensures options parameter does not attempt to override siteConfig secure keys
+ *Note: modifies options in-place
  * @param options - the potential setConfig parameter
  */
 export const sanitize = options => {
@@ -872,7 +948,18 @@ export const sanitize = options => {
   });
 };
 /**
- * Resets this currentConfig to conf
+ *## reset
+
+ *| Function | Description         | Type    | Required | Values             |
+ *| --------- | ------------------- | ------- | -------- | ------------------ |
+ *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ *
+ *| Parameter | Description |Type | Required | Values|
+ *| --- | --- | --- | --- | --- |
+ *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ *
+ **Notes :
+ (default: current siteConfig ) (optional, default `getSiteConfig()`)
  * @param conf - the base currentConfig to reset to (default: current siteConfig )
  */
 export const reset = (conf = getSiteConfig()) => {

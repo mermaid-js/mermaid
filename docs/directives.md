@@ -1,4 +1,6 @@
-### Directives
+## Directives
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./directives.md)
+### Directives were added in [Version 8.6.0](/8.6.0_docs.md)
 
 #### Init directives
 

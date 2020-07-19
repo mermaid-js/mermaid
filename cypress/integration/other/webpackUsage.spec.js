@@ -6,6 +6,6 @@ describe('Sequencediagram', () => {
     cy.visit(url);
     cy.get('body')
       .find('svg')
-      .should('have.length', 2);
+      .should('have.length', 1);
   });
 });

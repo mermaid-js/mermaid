@@ -2,6 +2,9 @@
 import { imgSnapshotTest } from '../../helpers/util.js';
 
 describe('Gantt diagram', () => {
+  beforeEach(()=>{
+    cy.clock((new Date('1010-10-10')).getTime())
+  })
   it('should render a gantt chart', () => {
     imgSnapshotTest(
       `

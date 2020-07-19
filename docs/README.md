@@ -5,16 +5,40 @@
 [![Join the chat at https://gitter.im/knsv/mermaid](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/knsv/mermaid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![banner](./img/header.png)
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./README.md)
 
-Generation of diagrams and flowcharts from text in a similar manner as markdown.
-
-Ever wanted to simplify documentation and avoid heavy tools like Visio when explaining your code?
-
-This is why mermaid was born, a simple markdown-like script language for generating charts from text via javascript.
-
-Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
 
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
+
+
+
+Mermaid is a tool that generates diagrams and charts, from markdown-inspired text definitions
+
+This allows for simplified generation and updating of even the most complex diagrams and charts, while avoiding time-damanding and heavy tools like visio. 
+
+mermaid, is a simple markdown-inspired script language for generating charts from text-definitions, via javascript. As such, using it cuts the times it takes to create, modify and render diagrams. 
+
+Even non-programmers can create diagrams through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
+
+For a more detailed introduction to mermaid, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) section.
+
+You should also Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
+
+You can also watch some popular mermaid tutorials.
+
+## [CDN](https://unpkg.com/mermaid/)
+
+## [Documentation](https://mermaidjs.github.io)
+
+## [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
+
+
+# New in Version 8.6.0
+
+## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
+
+## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+
 
 ## New diagrams in 8.5
 
@@ -24,10 +48,19 @@ With version 8.5 there are some bug fixes and enhancements, plus a new diagram t
 
 ## Special note regarding version 8.2
 
-In version 8.2 a security improvement was introduced. A securityLevel configuration was introduced which sets the level of trust to be used on the parsed diagrams.
+In version 8.2 a security improvement was introduced. A **securityLevel** configuration was introduced which sets the level of trust to be used on the parsed diagrams.
 
-- **true**: (default) tags in text are encoded, click functionality is disabled
-- false: tags in text are allowed, click functionality is enabled
+## securityLevel
+
+| Parameter     | Description                       | Type   | Required | Values        |
+| ------------- | --------------------------------- | ------ | -------- | ------------- |
+| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose |
+
+\*\*Notes:
+
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+-   **loose**: tags in text are allowed, click functionality is enabled
+
 
 Closed issues:
 
@@ -43,9 +76,9 @@ mermaidAPI.initialize({
 
 **🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
 
-## Diagrams
+# Diagrams that mermaid can render:
 
-### Flowchart
+### [Flowchart](https://mermaid-js.github.io/mermaid/#/flowchart)
 
 ```
 graph TD;
@@ -57,7 +90,7 @@ graph TD;
 
 ![Flowchart](./img/flow.png)
 
-### Sequence diagram
+### [Sequence diagram](https://mermaid-js.github.io/mermaid/#/sequenceDiagram)
 
 ```
 sequenceDiagram
@@ -75,7 +108,7 @@ sequenceDiagram
 
 ![Sequence diagram](./img/sequence.png)
 
-### Gantt diagram
+### [Gantt diagram](https://mermaid-js.github.io/mermaid/#/gantt)
 
 ```
 gantt
@@ -92,7 +125,7 @@ Future task2               :         des4, after des3, 5d
 
 ![Gantt diagram](./img/gantt.png)
 
-### Class diagram - :exclamation: experimental
+### [Class diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/classDiagram)
 
 ```
 classDiagram
@@ -134,10 +167,9 @@ commit
 merge newbranch
 
 ```
-
 ![Git graph](./img/git.png)
 
-### Entity Relationship Diagram - :exclamation: experimental
+### [Entity Relationship Diagram - :exclamation: experimental](https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram)
 
 ```
 erDiagram
@@ -149,6 +181,21 @@ erDiagram
 
 ![ER diagram](./img/simple-er.png)
 
+### [User Journey Diagram](https://mermaid-js.github.io/mermaid/#/user-journey)
+
+```markdown
+journey
+    title My working day
+    section Go to work
+      Make tea: 5: Me
+      Go upstairs: 3: Me
+      Do work: 1: Me, Cat
+    section Go home
+      Go downstairs: 5: Me
+      Sit down: 5: Me
+```
+![Journey diagram](./img/user-journey.png)
+
 ## Installation
 
 ### CDN
@@ -157,24 +204,43 @@ erDiagram
 https://unpkg.com/mermaid@<version>/dist/
 ```
 
-Replace `<version>` with expected version number.
+To select a version:
 
-Example: https://unpkg.com/mermaid@7.1.0/dist/
+Replace `<version>` with the desired version number.
 
-### Node.js
+Alternatively, you can also adjust the version number in the page itself. 
+
+Latest Version: https://unpkg.com/browse/mermaid@8.6.0/
+
+## Incorporating mermaid to a website
+to support mermaid on your website, all you have to do is add Mermaid’s JavaScript package 
 
 ```
-yarn add mermaid
+1.You will need to isntall node v10 or 12, which would have npm
+
+2. download yarn using npm.
+
+2. enter the following command:
+    yarn add mermaid
+
+3. You can then add mermaid as a dev dependency using this command: 
+    yarn add --dev mermaid
+   
 ```
 
-## Documentation
+## To install mermaid without a bundler, one can use the script tag like so:
 
-https://mermaidjs.github.io
+<script src="https://unpkg.com/mermaid/"></script>
+<script>mermaid.initialize({startOnLoad:true});</script>
+
+## it can then be followed by the diagram definitions as could be found in the [examples in the documentation](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
+
+
+## On your page mermaid will look for tags with class="mermaid". From these tags mermaid will try to read the chart definiton and replace it with an svg chart.
 
 ## Sibling projects
-
-- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
+- [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
 - [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
 - [mermaid Parcel demo](https://github.com/mermaidjs/mermaid-parcel-demo)
 

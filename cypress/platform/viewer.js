@@ -12,7 +12,9 @@ const contentLoaded = function() {
     pos = pos + 7;
     const graphBase64 = document.location.href.substr(pos);
     const graphObj = JSON.parse(Base64.decode(graphBase64));
-    // const graph = 'hello'
+    if (graphObj.mermaid && graphObj.mermaid.theme === 'dark') {
+      document.body.style.background = '#3f3f3f';
+    }
     console.log(graphObj);
     if (Array.isArray(graphObj.code)) {
       const numCodes = graphObj.code.length;
@@ -30,6 +32,7 @@ const contentLoaded = function() {
       div.innerHTML = graphObj.code;
       document.getElementsByTagName('body')[0].appendChild(div);
     }
+
     global.mermaid.initialize(graphObj.mermaid);
     global.mermaid.init();
   }
