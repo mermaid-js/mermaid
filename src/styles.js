@@ -24,8 +24,10 @@ const themes = {
   journey
 };
 
-const getStyles = (type, userStyles, options) =>
-  ` {
+export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
+
+const getStyles = (type, userStyles, options) => {
+  return ` {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
   }
@@ -73,5 +75,6 @@ const getStyles = (type, userStyles, options) =>
 
   ${userStyles}
 `;
+};
 
 export default getStyles;

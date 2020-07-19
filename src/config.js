@@ -7,7 +7,7 @@ import { logger } from './logger';
 const themes = {};
 
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
-  themes[themeName] = require(`./theme-${themeName}.js`).default;
+  themes[themeName] = require(`./themes/theme-${themeName}.js`);
 }
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
@@ -59,7 +59,7 @@ const config = {
    * </pre>
    */
   theme: 'default',
-  themeVariables: themes.default,
+  themeVariables: themes.get,
   themeCSS: undefined,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
