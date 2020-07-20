@@ -26,7 +26,7 @@ And they are rendered into this and made part of the documentation:
 - The number of integrations that it has. 
 - It is a package that can be deployed to create 
 
-## Creating and Maintaining Diagrams is an expensive and frustrating process.  
+## Creating and Maintaining Diagrams should not be an expensive and frustrating process. 
 
 Anyone who has used Visio, or (God Forbid) Excel to make a Gantt Chart, knows how hard it is to make, edit and maintain good visualizations. 
 
