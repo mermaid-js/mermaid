@@ -1,6 +1,4 @@
-import Color from 'color';
-import { lighten } from 'khroma';
-window.lighten = lighten;
+import { darken, lighten } from 'khroma';
 
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
@@ -103,29 +101,16 @@ class Theme {
     this.labelBoxBorderColor = this.actorBorder;
     this.labelTextColor = this.text;
     this.loopTextColor = this.text;
-    this.noteBorderColor = Color(this.note)
-      .darken(0.6)
-      .hsl()
-      .string();
+    this.noteBorderColor = darken(this.note, 60);
     this.noteBkgColor = this.note;
     this.noteTextColor = this.actorTextColor;
 
     /* Gantt chart variables */
 
-    this.sectionBkgColor = Color(this.contrast)
-      .lighten(0.3)
-      .hsl()
-      .string();
+    this.sectionBkgColor = lighten(this.contrast, 30);
+    this.sectionBkgColor2 = lighten(this.contrast, 30);
 
-    this.sectionBkgColor2 = Color(this.contrast)
-      .lighten(0.3)
-      .hsl()
-      .string();
-
-    this.taskBorderColor = Color(this.contrast)
-      .darken(0.1)
-      .hsl()
-      .string();
+    this.taskBorderColor = darken(this.contrast, 10);
 
     this.taskBkgColor = this.contrast;
     this.taskTextColor = this.taskTextLightColor;
@@ -133,22 +118,18 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextDarkColor;
     this.activeTaskBorderColor = this.taskBorderColor;
     this.activeTaskBkgColor = this.mainBkg;
-    this.gridColor = Color(this.border1)
-      .lighten(0.3)
-      .hsl()
-      .string();
+    this.gridColor = lighten(this.border1, 30);
 
     this.doneTaskBkgColor = this.done;
     this.doneTaskBorderColor = this.lineColor;
     this.critBkgColor = this.critical;
-    this.critBorderColor = Color(this.critBkgColor)
-      .darken(0.1)
-      .hsl()
-      .string();
+    this.critBorderColor = darken(this.critBkgColor, 10);
 
     this.todayLineColor = this.critBkgColor;
 
     /* state colors */
+    /* class */
+    this.classText = this.nodeBorder;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

@@ -114,6 +114,8 @@ class Theme {
 
     /* state colors */
     this.labelColor = this.textColor;
+    /* class */
+    this.classText = this.nodeBorder;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

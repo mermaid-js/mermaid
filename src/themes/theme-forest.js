@@ -96,6 +96,8 @@ class Theme {
     this.activeTaskBkgColor = this.mainBkg;
 
     /* state colors */
+    /* class */
+    this.classText = this.nodeBorder;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

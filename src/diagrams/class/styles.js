@@ -1,9 +1,9 @@
 const getStyles = options =>
   `g.classGroup text {
   fill: ${options.nodeBorder};
+  fill: ${options.classText};
   stroke: none;
-  font-family: 'trebuchet ms', verdana, arial;
-  font-family: var(--mermaid-font-family);
+  font-family: ${options.fontFamily};
   font-size: 10px;
 
   .title {

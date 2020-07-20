@@ -187,7 +187,7 @@ export const drawSection = function(elem, section, conf) {
   rect.fill = section.fill;
   rect.width = conf.width;
   rect.height = conf.height;
-  rect.class = 'journey-section';
+  rect.class = 'journey-section section-type-' + section.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);
@@ -199,7 +199,7 @@ export const drawSection = function(elem, section, conf) {
     rect.y,
     rect.width,
     rect.height,
-    { class: 'journey-section' },
+    { class: 'journey-section section-type-' + section.num },
     conf,
     section.colour
   );
@@ -240,7 +240,7 @@ export const drawTask = function(elem, task, conf) {
   rect.fill = task.fill;
   rect.width = conf.width;
   rect.height = conf.height;
-  rect.class = 'task';
+  rect.class = 'task task-type-' + task.num;
   rect.rx = 3;
   rect.ry = 3;
   drawRect(g, rect);

@@ -6,7 +6,7 @@ import { logger } from './logger';
 
 const themes = {};
 
-for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
+for (const themeName of ['default', 'forest', 'dark', 'neutral', 'base']) {
   themes[themeName] = require(`./themes/theme-${themeName}.js`);
 }
 /**

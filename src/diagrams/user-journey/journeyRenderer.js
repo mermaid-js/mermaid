@@ -232,12 +232,14 @@ export const drawTasks = function(diagram, tasks, verticalPos) {
   let sectionNumber = 0;
   let fill = '#CCC';
   let colour = 'black';
+  let num = 0;
 
   // Draw the tasks
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
     if (lastSection !== task.section) {
       fill = fills[sectionNumber % fills.length];
+      num = sectionNumber % fills.length;
       colour = textColours[sectionNumber % textColours.length];
 
       const section = {
@@ -245,6 +247,7 @@ export const drawTasks = function(diagram, tasks, verticalPos) {
         y: 50,
         text: task.section,
         fill,
+        num,
         colour
       };
 
@@ -269,6 +272,7 @@ export const drawTasks = function(diagram, tasks, verticalPos) {
     task.height = conf.diagramMarginY;
     task.colour = colour;
     task.fill = fill;
+    task.num = num;
     task.actors = taskActors;
 
     // Draw the box with the attached line

@@ -121,6 +121,8 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextDarkColor;
 
     /* state colors */
+    /* class */
+    this.classText = this.nodeBorder;
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {
