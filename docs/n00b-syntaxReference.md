@@ -1,7 +1,7 @@
 ## Diagram syntax
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-syntaxReference.md)
 
-If you are new to mermaid, read the [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics about the basics.
+If you are new to mermaid, read the [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics of mermaid.
 
 This section is a list of diagram types supported by mermaid. Below is a list of links to aricles that explain the syntax of the diagrams or charts that 0can be called. 
 
