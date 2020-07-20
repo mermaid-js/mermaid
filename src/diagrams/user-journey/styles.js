@@ -22,7 +22,7 @@ const getStyles = options =>
 
   .face {
     fill: #FFF8DC;
-    stroke: #999';
+    stroke: #999;
   }
 
   .node rect,

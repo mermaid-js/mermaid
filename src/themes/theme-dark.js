@@ -3,7 +3,7 @@ import { invert, lighten, rgba } from 'khroma';
 class Theme {
   constructor() {
     this.background = '#333';
-    this.mainBkg = '#1f2020';
+    this.mainBkg = lighten('#1f2020', 15);
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
@@ -49,7 +49,7 @@ class Theme {
     this.sectionBkgColor = rgba(255, 255, 255, 30);
     this.altSectionBkgColor = 'white';
     this.sectionBkgColor2 = '#EAE8B9';
-    this.taskBorderColor = rgba(255, 255, 255, 50);
+    this.taskBorderColor = rgba(255, 255, 255, 70);
     this.taskBkgColor = 'calculated';
     this.taskTextColor = 'calculated';
     this.taskTextLightColor = 'calculated';
