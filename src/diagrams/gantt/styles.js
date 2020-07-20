@@ -57,8 +57,8 @@ const getStyles = options =>
     opacity: 0.8;
     shape-rendering: crispEdges;
     text {
-      font-family: 'trebuchet ms', verdana, arial;
-      font-family: var(--mermaid-font-family);
+      font-family: ${options.fontFamily};
+      fill: ${options.textColor};
     }
   }
 

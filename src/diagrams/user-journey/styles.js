@@ -2,11 +2,27 @@ const getStyles = options =>
   `.label {
     font-family: 'trebuchet ms', verdana, arial;
     font-family: var(--mermaid-font-family);
-    color: #333;
+    color: ${options.textColor};
+  }
+  .mouth {
+    stroke: #666;
+  }
+
+  line {
+    stroke: ${options.textColor}
+  }
+
+  .legend {
+    fill: ${options.textColor};
   }
 
   .label text {
     fill: #333;
+  }
+
+  .face {
+    fill: #FFF8DC;
+    stroke: #999;
   }
 
   .node rect,

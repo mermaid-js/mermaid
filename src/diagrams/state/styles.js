@@ -7,7 +7,7 @@ const getStyles = options =>
   font-family: var(--mermaid-font-family);
 }
 g.stateGroup text {
-  fill: ${options.nodeBorder};
+  fill: ${options.textColor};
   stroke: none;
   font-size: 10px;
 
@@ -34,7 +34,7 @@ g.stateGroup line {
 }
 
 .stateGroup .composit {
-  fill: white;
+  fill: ${options.background};
   border-bottom: 1px
 }
 
@@ -93,6 +93,11 @@ g.stateGroup line {
   stroke: ${options.nodeBorder};
   stroke-width: 1px;
 }
+
+.cluster-label, .nodeLabel {
+  color: ${options.textColor};
+}
+
 .statediagram-cluster rect.outer {
   rx: 5px;
   ry: 5px;
@@ -106,7 +111,7 @@ g.stateGroup line {
   ry: 5px;
 }
 .statediagram-cluster.statediagram-cluster .inner {
-  fill: white;
+  fill: ${options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
   fill: #e0e0e0;
@@ -136,6 +141,17 @@ g.stateGroup line {
   stroke-width: 1px;
   rx: 0;
   ry: 0;
+}
+.statediagram-note rect {
+  fill: ${options.noteBkgColor};
+  stroke: ${options.noteBorderColor};
+  stroke-width: 1px;
+  rx: 0;
+  ry: 0;
+}
+
+.statediagram-note .nodeLabel {
+  color: ${options.noteTextColor};
 }
 
 #dependencyStart, #dependencyEnd {

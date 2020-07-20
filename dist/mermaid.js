@@ -49035,43 +49035,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
-
-/***/ }),
-
-/***/ "./src sync recursive ^\\.\\/theme\\-.*\\.js$":
-/*!**************************************!*\
-  !*** ./src sync ^\.\/theme\-.*\.js$ ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var map = {
-	"./theme-dark.js": "./src/theme-dark.js",
-	"./theme-default.js": "./src/theme-default.js",
-	"./theme-forest.js": "./src/theme-forest.js",
-	"./theme-neutral.js": "./src/theme-neutral.js"
-};
-
-
-function webpackContext(req) {
-	var id = webpackContextResolve(req);
-	return __webpack_require__(id);
-}
-function webpackContextResolve(req) {
-	if(!__webpack_require__.o(map, req)) {
-		var e = new Error("Cannot find module '" + req + "'");
-		e.code = 'MODULE_NOT_FOUND';
-		throw e;
-	}
-	return map[req];
-}
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
-};
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = "./src sync recursive ^\\.\\/theme\\-.*\\.js$";
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"khroma\":\"^1.1.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"stylis\":\"^3.5.2\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"color\":\"^3.1.2\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
 
 /***/ }),
 
@@ -49102,7 +49066,7 @@ var themes = {};
 
 for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
   var themeName = _arr[_i];
-  themes[themeName] = __webpack_require__("./src sync recursive ^\\.\\/theme\\-.*\\.js$")("./theme-".concat(themeName, ".js")).default;
+  themes[themeName] = __webpack_require__("./src/themes sync recursive ^\\.\\/theme\\-.*\\.js$")("./theme-".concat(themeName, ".js"));
 }
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
@@ -49156,7 +49120,7 @@ var config = {
    * </pre>
    */
   theme: 'default',
-  themeVariables: themes.default,
+  themeVariables: themes.get,
   themeCSS: undefined,
 
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
@@ -70042,7 +70006,7 @@ var themes = {};
 
 for (var _i = 0, _arr = ['default', 'forest', 'dark', 'neutral']; _i < _arr.length; _i++) {
   var themeName = _arr[_i];
-  themes[themeName] = __webpack_require__("./src sync recursive ^\\.\\/theme\\-.*\\.js$")("./theme-".concat(themeName, ".js"));
+  themes[themeName] = __webpack_require__("./src/themes sync recursive ^\\.\\/theme\\-.*\\.js$")("./theme-".concat(themeName, ".js"));
 }
 
 function parse(text) {
@@ -70526,7 +70490,7 @@ function reinitialize(options) {
 
   if (options.theme && themes[options.theme]) {
     // Todo merge with user options
-    options.themeVariables = themes[options.theme];
+    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
   } // Set default options
 
 
@@ -70541,7 +70505,7 @@ function initialize(options) {
 
   if (options && options.theme && themes[options.theme]) {
     // Todo merge with user options
-    options.themeVariables = themes[options.theme];
+    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
   } else {
     if (options) options.themeVariables = themes.default;
   }
@@ -70648,11 +70612,12 @@ _config__WEBPACK_IMPORTED_MODULE_3__["default"].reset(Object(_config__WEBPACK_IM
 /*!***********************!*\
   !*** ./src/styles.js ***!
   \***********************/
-/*! exports provided: default */
+/*! exports provided: calcThemeVariables, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "calcThemeVariables", function() { return calcThemeVariables; });
 /* harmony import */ var _diagrams_class_styles__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./diagrams/class/styles */ "./src/diagrams/class/styles.js");
 /* harmony import */ var _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./diagrams/flowchart/styles */ "./src/diagrams/flowchart/styles.js");
 /* harmony import */ var _diagrams_gantt_styles__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./diagrams/gantt/styles */ "./src/diagrams/gantt/styles.js");
@@ -70686,6 +70651,9 @@ var themes = {
   er: _diagrams_flowchart_styles__WEBPACK_IMPORTED_MODULE_1__["default"],
   journey: _diagrams_user_journey_styles__WEBPACK_IMPORTED_MODULE_8__["default"]
 };
+var calcThemeVariables = function calcThemeVariables(theme, userOverRides) {
+  return theme.calcColors(userOverRides);
+};
 
 var getStyles = function getStyles(type, userStyles, options) {
   return " {\n    font-family: ".concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  /* Classes common for multiple diagrams */\n\n  .error-icon {\n    fill: ").concat(options.errorBkgColor, ";\n  }\n  .error-text {\n    fill: ").concat(options.errorTextColor, ";\n    stroke: ").concat(options.errorTextColor, ";\n  }\n\n  .edge-thickness-normal {\n    stroke-width: 2px;\n  }\n  .edge-thickness-thick {\n    stroke-width: 3.5px\n  }\n  .edge-pattern-solid {\n    stroke-dasharray: 0;\n  }\n\n  .edge-pattern-dashed{\n    stroke-dasharray: 3;\n  }\n  .edge-pattern-dotted {\n    stroke-dasharray: 2;\n  }\n\n  .marker {\n    fill: ").concat(options.lineColor, ";\n  }\n  .marker.cross {\n    stroke: ").concat(options.lineColor, ";\n  }\n\n  svg {\n    font-family: ").concat(options.fontFamily, ";\n    font-size: ").concat(options.fontSize, ";\n  }\n\n  ").concat(themes[type](options), "\n\n  ").concat(userStyles, "\n");
@@ -70695,519 +70663,719 @@ var getStyles = function getStyles(type, userStyles, options) {
 
 /***/ }),
 
-/***/ "./src/theme-dark.js":
-/*!***************************!*\
-  !*** ./src/theme-dark.js ***!
-  \***************************/
-/*! exports provided: mainBkg, secondBkg, mainContrastColor, darkTextColor, lineColor, border1, border2, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextColor, taskTextLightColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBorderColor, critBkgColor, taskTextDarkColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ "./src/themes sync recursive ^\\.\\/theme\\-.*\\.js$":
+/*!*********************************************!*\
+  !*** ./src/themes sync ^\.\/theme\-.*\.js$ ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./theme-dark.js": "./src/themes/theme-dark.js",
+	"./theme-default.js": "./src/themes/theme-default.js",
+	"./theme-forest.js": "./src/themes/theme-forest.js",
+	"./theme-neutral.js": "./src/themes/theme-neutral.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	if(!__webpack_require__.o(map, req)) {
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return map[req];
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./src/themes sync recursive ^\\.\\/theme\\-.*\\.js$";
+
+/***/ }),
+
+/***/ "./src/themes/theme-dark.js":
+/*!**********************************!*\
+  !*** ./src/themes/theme-dark.js ***!
+  \**********************************/
+/*! exports provided: getThemeVariables */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainContrastColor", function() { return mainContrastColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "darkTextColor", function() { return darkTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var mainBkg = '#1f2020';
-var secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])('#1f2020', 16);
-var mainContrastColor = 'lightgrey';
-var darkTextColor = '#323D47';
-var lineColor = mainContrastColor;
-var border1 = '#81B1DB';
-var border2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.25);
-var arrowheadColor = mainContrastColor;
-var fontFamily = '"trebuchet ms", verdana, arial';
-var fontSize = '16px';
-/* Flowchart variables */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var nodeBkg = mainBkg;
-var nodeBorder = border1;
-var clusterBkg = secondBkg;
-var clusterBorder = border2;
-var defaultLinkColor = lineColor;
-var titleColor = '#F9FFFE';
-var edgeLabelBackground = '#e8e8e8';
-/* Sequence Diagram variables */
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-var actorBorder = border1;
-var actorBkg = mainBkg;
-var actorTextColor = mainContrastColor;
-var actorLineColor = mainContrastColor;
-var signalColor = mainContrastColor;
-var signalTextColor = mainContrastColor;
-var labelBoxBkgColor = actorBkg;
-var labelBoxBorderColor = actorBorder;
-var labelTextColor = mainContrastColor;
-var loopTextColor = mainContrastColor;
-var noteBorderColor = border2;
-var noteBkgColor = '#fff5ad';
-var noteTextColor = mainBkg;
-var activationBorderColor = border1;
-var activationBkgColor = secondBkg;
-var sequenceNumberColor = 'black';
-/* Gantt chart variables */
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.3);
-var altSectionBkgColor = 'white';
-var sectionBkgColor2 = '#EAE8B9';
-var taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
-var taskBkgColor = mainBkg;
-var taskTextColor = darkTextColor;
-var taskTextLightColor = mainContrastColor;
-var taskTextOutsideColor = taskTextLightColor;
-var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
-var activeTaskBkgColor = '#81B1DB';
-var gridColor = mainContrastColor;
-var doneTaskBkgColor = mainContrastColor;
-var doneTaskBorderColor = 'grey';
-var critBorderColor = '#E83737';
-var critBkgColor = '#E83737';
-var taskTextDarkColor = darkTextColor;
-var todayLineColor = '#DB5757';
-/* state colors */
 
-var labelColor = 'black';
-var errorBkgColor = '#a44141';
-var errorTextColor = '#ddd';
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    this.mainBkg = '#1f2020';
+    this.secondBkg = 'calculated';
+    this.mainContrastColor = 'lightgrey';
+    this.darkTextColor = '#323D47';
+    this.lineColor = 'calculated';
+    this.border1 = '#81B1DB';
+    this.border2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.25);
+    this.arrowheadColor = 'calculated';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = '#F9FFFE';
+    this.edgeLabelBackground = '#e8e8e8';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'calculated';
+    this.actorLineColor = 'calculated';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = 'calculated';
+    this.activationBkgColor = 'calculated';
+    this.sequenceNumberColor = 'black';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.3);
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#EAE8B9';
+    this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
+    this.taskBkgColor = 'calculated';
+    this.taskTextColor = 'calculated';
+    this.taskTextLightColor = 'calculated';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(255, 255, 255, 0.5);
+    this.activeTaskBkgColor = '#81B1DB';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#E83737';
+    this.critBkgColor = '#E83737';
+    this.taskTextDarkColor = 'calculated';
+    this.todayLineColor = '#DB5757';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#a44141';
+    this.errorTextColor = '#ddd';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      this.secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.mainBkg, 16);
+      this.lineColor = this.mainContrastColor;
+      this.arrowheadColor = this.mainContrastColor;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = this.border1;
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = this.mainContrastColor;
+      this.actorLineColor = this.mainContrastColor;
+      this.signalColor = this.mainContrastColor;
+      this.signalTextColor = this.mainContrastColor;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.mainContrastColor;
+      this.loopTextColor = this.mainContrastColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.mainBkg;
+      this.activationBorderColor = this.border1;
+      this.activationBkgColor = this.secondBkg;
+      /* Gantt chart variables */
+
+      this.taskBkgColor = this.mainBkg;
+      this.taskTextColor = this.darkTextColor;
+      this.taskTextLightColor = this.mainContrastColor;
+      this.taskTextOutsideColor = this.taskTextLightColor;
+      this.gridColor = this.mainContrastColor;
+      this.doneTaskBkgColor = this.mainContrastColor;
+      this.taskTextDarkColor = this.darkTextColor;
+      /* state colors */
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  return theme;
+};
 
 /***/ }),
 
-/***/ "./src/theme-default.js":
-/*!******************************!*\
-  !*** ./src/theme-default.js ***!
-  \******************************/
-/*! exports provided: mainBkg, secondBkg, lineColor, border1, border2, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBorderColor, critBkgColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
+/***/ "./src/themes/theme-default.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-default.js ***!
+  \*************************************/
+/*! exports provided: getThemeVariables */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
-var mainBkg = '#ECECFF';
-var secondBkg = '#ffffde';
-var lineColor = '#333333';
-var border1 = '#CCCCFF';
-var border2 = '#aaaa33';
-var arrowheadColor = '#333333';
-var fontFamily = '"trebuchet ms", verdana, arial';
-var fontSize = '16px';
-/* Flowchart variables */
-
-var nodeBkg = mainBkg;
-var nodeBorder = '#9370DB';
-var clusterBkg = secondBkg;
-var clusterBorder = border2;
-var defaultLinkColor = lineColor;
-var titleColor = '#333';
-var edgeLabelBackground = '#e8e8e8';
-/* Sequence Diagram variables */
-
-var actorBorder = border1;
-var actorBkg = mainBkg;
-var actorTextColor = 'black';
-var actorLineColor = 'grey';
-var signalColor = '#333';
-var signalTextColor = '#333';
-var labelBoxBkgColor = actorBkg;
-var labelBoxBorderColor = actorBorder;
-var labelTextColor = actorTextColor;
-var loopTextColor = actorTextColor;
-var noteBorderColor = border2;
-var noteBkgColor = '#fff5ad';
-var noteTextColor = actorTextColor;
-var activationBorderColor = '#666';
-var activationBkgColor = '#f4f4f4';
-var sequenceNumberColor = 'white';
-/* Gantt chart variables */
-
-var sectionBkgColor = 'rgba(102; 102; 255; 0.49)';
-var altSectionBkgColor = 'white';
-var sectionBkgColor2 = '#fff400';
-var taskBorderColor = '#534fbc';
-var taskBkgColor = '#8a90dd';
-var taskTextLightColor = 'white';
-var taskTextColor = taskTextLightColor;
-var taskTextDarkColor = 'black';
-var taskTextOutsideColor = taskTextDarkColor;
-var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = '#534fbc';
-var activeTaskBkgColor = '#bfc7ff';
-var gridColor = 'lightgrey';
-var doneTaskBkgColor = 'lightgrey';
-var doneTaskBorderColor = 'grey';
-var critBorderColor = '#ff8888';
-var critBkgColor = 'red';
-var todayLineColor = 'red';
-/* state colors */
-
-var labelColor = 'black';
-var errorBkgColor = '#552222';
-var errorTextColor = '#552222';
-
-/***/ }),
-
-/***/ "./src/theme-forest.js":
-/*!*****************************!*\
-  !*** ./src/theme-forest.js ***!
-  \*****************************/
-/*! exports provided: mainBkg, secondBkg, lineColor, border1, border2, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBorderColor, critBkgColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
-var mainBkg = '#cde498';
-var secondBkg = '#cdffb2';
-var lineColor = 'green';
-var border1 = '#13540c';
-var border2 = '#6eaa49';
-var arrowheadColor = 'green';
-var fontFamily = '"trebuchet ms", verdana, arial';
-var fontSize = '16px';
-/* Flowchart variables */
-
-var nodeBkg = mainBkg;
-var nodeBorder = border1;
-var clusterBkg = secondBkg;
-var clusterBorder = border2;
-var defaultLinkColor = lineColor;
-var titleColor = '#333';
-var edgeLabelBackground = '#e8e8e8';
-/* Sequence Diagram variables */
-
-var actorBorder = border1;
-var actorBkg = mainBkg;
-var actorTextColor = 'black';
-var actorLineColor = 'grey';
-var signalColor = '#333';
-var signalTextColor = '#333';
-var labelBoxBkgColor = actorBkg;
-var labelBoxBorderColor = '#326932';
-var labelTextColor = actorTextColor;
-var loopTextColor = actorTextColor;
-var noteBorderColor = border2;
-var noteBkgColor = '#fff5ad';
-var noteTextColor = actorTextColor;
-var activationBorderColor = '#666';
-var activationBkgColor = '#f4f4f4';
-var sequenceNumberColor = 'white';
-/* Gantt chart variables */
-
-var sectionBkgColor = '#6eaa49';
-var altSectionBkgColor = 'white';
-var sectionBkgColor2 = '#6eaa49';
-var taskBorderColor = border1;
-var taskBkgColor = '#487e3a';
-var taskTextLightColor = 'white';
-var taskTextColor = taskTextLightColor;
-var taskTextDarkColor = 'black';
-var taskTextOutsideColor = taskTextDarkColor;
-var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = taskBorderColor;
-var activeTaskBkgColor = mainBkg;
-var gridColor = 'lightgrey';
-var doneTaskBkgColor = 'lightgrey';
-var doneTaskBorderColor = 'grey';
-var critBorderColor = '#ff8888';
-var critBkgColor = 'red';
-var todayLineColor = 'red';
-/* state colors */
-
-var labelColor = 'black';
-var errorBkgColor = '#552222';
-var errorTextColor = '#552222';
-
-/***/ }),
-
-/***/ "./src/theme-neutral.js":
-/*!******************************!*\
-  !*** ./src/theme-neutral.js ***!
-  \******************************/
-/*! exports provided: mainBkg, contrast, secondBkg, lineColor, border1, border2, note, text, critical, done, arrowheadColor, fontFamily, fontSize, nodeBkg, nodeBorder, clusterBkg, clusterBorder, defaultLinkColor, titleColor, edgeLabelBackground, actorBorder, actorBkg, actorTextColor, actorLineColor, signalColor, signalTextColor, labelBoxBkgColor, labelBoxBorderColor, labelTextColor, loopTextColor, noteBorderColor, noteBkgColor, noteTextColor, activationBorderColor, activationBkgColor, sequenceNumberColor, sectionBkgColor, altSectionBkgColor, sectionBkgColor2, taskBorderColor, taskBkgColor, taskTextLightColor, taskTextColor, taskTextDarkColor, taskTextOutsideColor, taskTextClickableColor, activeTaskBorderColor, activeTaskBkgColor, gridColor, doneTaskBkgColor, doneTaskBorderColor, critBkgColor, critBorderColor, todayLineColor, labelColor, errorBkgColor, errorTextColor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mainBkg", function() { return mainBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "contrast", function() { return contrast; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "secondBkg", function() { return secondBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "lineColor", function() { return lineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border1", function() { return border1; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "border2", function() { return border2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "note", function() { return note; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "text", function() { return text; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critical", function() { return critical; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "done", function() { return done; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "arrowheadColor", function() { return arrowheadColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontFamily", function() { return fontFamily; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fontSize", function() { return fontSize; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBkg", function() { return nodeBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeBorder", function() { return nodeBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBkg", function() { return clusterBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clusterBorder", function() { return clusterBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "defaultLinkColor", function() { return defaultLinkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "titleColor", function() { return titleColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "edgeLabelBackground", function() { return edgeLabelBackground; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBorder", function() { return actorBorder; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorBkg", function() { return actorBkg; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorTextColor", function() { return actorTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "actorLineColor", function() { return actorLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalColor", function() { return signalColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "signalTextColor", function() { return signalTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBkgColor", function() { return labelBoxBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelBoxBorderColor", function() { return labelBoxBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelTextColor", function() { return labelTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "loopTextColor", function() { return loopTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBorderColor", function() { return noteBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteBkgColor", function() { return noteBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "noteTextColor", function() { return noteTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBorderColor", function() { return activationBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activationBkgColor", function() { return activationBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sequenceNumberColor", function() { return sequenceNumberColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor", function() { return sectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "altSectionBkgColor", function() { return altSectionBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sectionBkgColor2", function() { return sectionBkgColor2; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBorderColor", function() { return taskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskBkgColor", function() { return taskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextLightColor", function() { return taskTextLightColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextColor", function() { return taskTextColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextDarkColor", function() { return taskTextDarkColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextOutsideColor", function() { return taskTextOutsideColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "taskTextClickableColor", function() { return taskTextClickableColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBorderColor", function() { return activeTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "activeTaskBkgColor", function() { return activeTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "gridColor", function() { return gridColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBkgColor", function() { return doneTaskBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "doneTaskBorderColor", function() { return doneTaskBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBkgColor", function() { return critBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "critBorderColor", function() { return critBorderColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "todayLineColor", function() { return todayLineColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "labelColor", function() { return labelColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorBkgColor", function() { return errorBkgColor; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "errorTextColor", function() { return errorTextColor; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
 /* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-var mainBkg = '#eee';
-var contrast = '#26a';
-var secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 55);
-var lineColor = '#666';
-var border1 = '#999';
-var border2 = contrast;
-var note = '#ffa';
-var text = '#333';
-var critical = '#d42';
-var done = '#bbb';
-var arrowheadColor = '#333333';
-var fontFamily = '"trebuchet ms", verdana, arial';
-var fontSize = '16px';
-/* Flowchart variables */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var nodeBkg = mainBkg;
-var nodeBorder = border1;
-var clusterBkg = secondBkg;
-var clusterBorder = border2;
-var defaultLinkColor = lineColor;
-var titleColor = text;
-var edgeLabelBackground = 'white';
-/* Sequence Diagram variables */
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-var actorBorder = border1;
-var actorBkg = mainBkg;
-var actorTextColor = text;
-var actorLineColor = lineColor;
-var signalColor = text;
-var signalTextColor = text;
-var labelBoxBkgColor = actorBkg;
-var labelBoxBorderColor = actorBorder;
-var labelTextColor = text;
-var loopTextColor = text;
-var noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(note, 60);
-var noteBkgColor = note;
-var noteTextColor = actorTextColor;
-var activationBorderColor = '#666';
-var activationBkgColor = '#f4f4f4';
-var sequenceNumberColor = 'white';
-/* Gantt chart variables */
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 30);
-var altSectionBkgColor = 'white';
-var sectionBkgColor2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(contrast, 30);
-var taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(contrast, 10);
-var taskBkgColor = contrast;
-var taskTextLightColor = 'white';
-var taskTextColor = taskTextLightColor;
-var taskTextDarkColor = text;
-var taskTextOutsideColor = taskTextDarkColor;
-var taskTextClickableColor = '#003163';
-var activeTaskBorderColor = taskBorderColor;
-var activeTaskBkgColor = mainBkg;
-var gridColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(border1, 30);
-var doneTaskBkgColor = done;
-var doneTaskBorderColor = lineColor;
-var critBkgColor = critical;
-var critBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(critBkgColor, 10);
-var todayLineColor = critBkgColor;
-/* state colors */
 
-var labelColor = 'black';
-var errorBkgColor = '#552222';
-var errorTextColor = '#552222';
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base variables */
+    this.mainBkg = '#ECECFF';
+    this.secondBkg = '#ffffde';
+    this.lineColor = '#333333';
+    this.border1 = '#9370DB';
+    this.border2 = '#aaaa33';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    this.labelBackground = '#e8e8e8';
+    this.textColor = '#333';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = 'calculated';
+    this.edgeLabelBackground = 'calculated';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'black';
+    this.actorLineColor = 'grey';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = 'calculated';
+    this.altSectionBkgColor = 'calculated';
+    this.sectionBkgColor2 = 'calculated';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = 'calculated';
+    this.taskTextLightColor = 'calculated';
+    this.taskTextColor = this.taskTextLightColor;
+    this.taskTextDarkColor = 'calculated';
+    this.taskTextOutsideColor = this.taskTextDarkColor;
+    this.taskTextClickableColor = 'calculated';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'calculated';
+    this.critBorderColor = 'calculated';
+    this.critBkgColor = 'calculated';
+    this.todayLineColor = 'calculated';
+    this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["rgba"])(102, 102, 255, 0.49);
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#fff400';
+    this.taskBorderColor = '#534fbc';
+    this.taskBkgColor = '#8a90dd';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'black';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = '#534fbc';
+    this.activeTaskBkgColor = '#bfc7ff';
+    this.gridColor = 'lightgrey';
+    this.doneTaskBkgColor = 'lightgrey';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#ff8888';
+    this.critBkgColor = 'red';
+    this.todayLineColor = 'red';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+    this.updateColors();
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      /* Flowchart variables */
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1; // border 1
+
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.textColor;
+      this.edgeLabelBackground = this.labelBackground;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = this.border1;
+      this.actorBkg = this.mainBkg;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.signalColor = this.textColor;
+      this.signalTextColor = this.textColor;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      /* state colors */
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-forest.js":
+/*!************************************!*\
+  !*** ./src/themes/theme-forest.js ***!
+  \************************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    /* Base vales */
+    this.mainBkg = '#cde498';
+    this.secondBkg = '#cdffb2';
+    this.lineColor = 'green';
+    this.border1 = '#13540c';
+    this.border2 = '#6eaa49';
+    this.arrowheadColor = 'green';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = '#333';
+    this.edgeLabelBackground = '#e8e8e8';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'black';
+    this.actorLineColor = 'grey';
+    this.signalColor = '#333';
+    this.signalTextColor = '#333';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = '#326932';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = '#fff5ad';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = '#6eaa49';
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = '#6eaa49';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = '#487e3a';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'black';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'lightgrey';
+    this.doneTaskBkgColor = 'lightgrey';
+    this.doneTaskBorderColor = 'grey';
+    this.critBorderColor = '#ff8888';
+    this.critBkgColor = 'red';
+    this.todayLineColor = 'red';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      /* Flowchart variables */
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = this.border1;
+      this.actorBkg = this.mainBkg;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelTextColor = this.actorTextColor;
+      this.loopTextColor = this.actorTextColor;
+      this.noteBorderColor = this.border2;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.taskBorderColor = this.border1;
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.activeTaskBorderColor = this.taskBorderColor;
+      this.activeTaskBkgColor = this.mainBkg;
+      /* state colors */
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  return theme;
+};
+
+/***/ }),
+
+/***/ "./src/themes/theme-neutral.js":
+/*!*************************************!*\
+  !*** ./src/themes/theme-neutral.js ***!
+  \*************************************/
+/*! exports provided: getThemeVariables */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getThemeVariables", function() { return getThemeVariables; });
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! khroma */ "./node_modules/khroma/dist/index.js");
+/* harmony import */ var khroma__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(khroma__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Theme =
+/*#__PURE__*/
+function () {
+  function Theme() {
+    _classCallCheck(this, Theme);
+
+    this.mainBkg = '#eee';
+    this.contrast = '#26a';
+    this.secondBkg = 'calculated';
+    this.lineColor = '#666';
+    this.border1 = '#999';
+    this.border2 = 'calculated';
+    this.note = '#ffa';
+    this.text = '#333';
+    this.critical = '#d42';
+    this.done = '#bbb';
+    this.arrowheadColor = '#333333';
+    this.fontFamily = '"trebuchet ms", verdana, arial';
+    this.fontSize = '16px';
+    /* Flowchart variables */
+
+    this.nodeBkg = 'calculated';
+    this.nodeBorder = 'calculated';
+    this.clusterBkg = 'calculated';
+    this.clusterBorder = 'calculated';
+    this.defaultLinkColor = 'calculated';
+    this.titleColor = 'calculated';
+    this.edgeLabelBackground = 'white';
+    /* Sequence Diagram variables */
+
+    this.actorBorder = 'calculated';
+    this.actorBkg = 'calculated';
+    this.actorTextColor = 'calculated';
+    this.actorLineColor = 'calculated';
+    this.signalColor = 'calculated';
+    this.signalTextColor = 'calculated';
+    this.labelBoxBkgColor = 'calculated';
+    this.labelBoxBorderColor = 'calculated';
+    this.labelTextColor = 'calculated';
+    this.loopTextColor = 'calculated';
+    this.noteBorderColor = 'calculated';
+    this.noteBkgColor = 'calculated';
+    this.noteTextColor = 'calculated';
+    this.activationBorderColor = '#666';
+    this.activationBkgColor = '#f4f4f4';
+    this.sequenceNumberColor = 'white';
+    /* Gantt chart variables */
+
+    this.sectionBkgColor = 'calculated';
+    this.altSectionBkgColor = 'white';
+    this.sectionBkgColor2 = 'calculated';
+    this.taskBorderColor = 'calculated';
+    this.taskBkgColor = 'calculated';
+    this.taskTextLightColor = 'white';
+    this.taskTextColor = 'calculated';
+    this.taskTextDarkColor = 'calculated';
+    this.taskTextOutsideColor = 'calculated';
+    this.taskTextClickableColor = '#003163';
+    this.activeTaskBorderColor = 'calculated';
+    this.activeTaskBkgColor = 'calculated';
+    this.gridColor = 'calculated';
+    this.doneTaskBkgColor = 'calculated';
+    this.doneTaskBorderColor = 'calculated';
+    this.critBkgColor = 'calculated';
+    this.critBorderColor = 'calculated';
+    this.todayLineColor = 'calculated';
+    /* state colors */
+
+    this.labelColor = 'black';
+    this.errorBkgColor = '#552222';
+    this.errorTextColor = '#552222';
+  }
+
+  _createClass(Theme, [{
+    key: "updateColors",
+    value: function updateColors() {
+      window.lighten = khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"];
+      this.secondBkg = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 55);
+      this.border2 = this.contrast;
+      /* Flowchart variables */
+
+      this.nodeBkg = this.mainBkg;
+      this.nodeBorder = this.border1;
+      this.clusterBkg = this.secondBkg;
+      this.clusterBorder = this.border2;
+      this.defaultLinkColor = this.lineColor;
+      this.titleColor = this.text;
+      /* Sequence Diagram variables */
+
+      this.actorBorder = this.border1;
+      this.actorBkg = this.mainBkg;
+      this.actorTextColor = this.text;
+      this.actorLineColor = this.lineColor;
+      this.signalColor = this.text;
+      this.signalTextColor = this.text;
+      this.labelBoxBkgColor = this.actorBkg;
+      this.labelBoxBorderColor = this.actorBorder;
+      this.labelTextColor = this.text;
+      this.loopTextColor = this.text;
+      this.noteBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.note, 60);
+      this.noteBkgColor = this.note;
+      this.noteTextColor = this.actorTextColor;
+      /* Gantt chart variables */
+
+      this.sectionBkgColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
+      this.sectionBkgColor2 = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.contrast, 30);
+      this.taskBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.contrast, 10);
+      this.taskBkgColor = this.contrast;
+      this.taskTextColor = this.taskTextLightColor;
+      this.taskTextDarkColor = this.text;
+      this.taskTextOutsideColor = this.taskTextDarkColor;
+      this.activeTaskBorderColor = this.taskBorderColor;
+      this.activeTaskBkgColor = this.mainBkg;
+      this.gridColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["lighten"])(this.border1, 30);
+      this.doneTaskBkgColor = this.done;
+      this.doneTaskBorderColor = this.lineColor;
+      this.critBkgColor = this.critical;
+      this.critBorderColor = Object(khroma__WEBPACK_IMPORTED_MODULE_0__["darken"])(this.critBkgColor, 10);
+      this.todayLineColor = this.critBkgColor;
+      /* state colors */
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(overrides) {
+      var _this = this;
+
+      if (_typeof(overrides) !== 'object') {
+        // Calculate colors form base colors
+        this.updateColors();
+        return;
+      }
+
+      var keys = Object.keys(overrides); // Copy values from overrides, this is mainly for base colors
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      }); // Calculate colors form base colors
+
+      this.updateColors(); // Copy values from overrides again in case of an override of derived value
+
+      keys.forEach(function (k) {
+        _this[k] = overrides[k];
+      });
+    }
+  }]);
+
+  return Theme;
+}();
+
+var getThemeVariables = function getThemeVariables(userOverrides) {
+  var theme = new Theme();
+  theme.calculate(userOverrides);
+  console.info('Theme', userOverrides, theme);
+  return theme;
+};
 
 /***/ }),
 

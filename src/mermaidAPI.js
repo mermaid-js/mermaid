@@ -54,7 +54,7 @@ import getStyles from './styles';
 const themes = {};
 
 for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
-  themes[themeName] = require(`./theme-${themeName}.js`);
+  themes[themeName] = require(`./themes/theme-${themeName}.js`);
 }
 
 function parse(text) {
@@ -522,7 +522,7 @@ function reinitialize(options) {
   console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
   if (options.theme && themes[options.theme]) {
     // Todo merge with user options
-    options.themeVariables = themes[options.theme];
+    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
   }
 
   // Set default options
@@ -538,7 +538,7 @@ function initialize(options) {
 
   if (options && options.theme && themes[options.theme]) {
     // Todo merge with user options
-    options.themeVariables = themes[options.theme];
+    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
   } else {
     if (options) options.themeVariables = themes.default;
   }
