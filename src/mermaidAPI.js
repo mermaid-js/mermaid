@@ -197,16 +197,20 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
-  const cnf = getConfig();
-  // Check the maximum allowed text size
   let txt = _txt;
-  if (_txt.length > cnf.maxTextSize) {
-    txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
-  }
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     reinitialize(graphInit);
-    assignWithDepth(cnf, getConfig());
+  } else {
+    configApi.reset();
+    const siteConfig = getSiteConfig();
+    updateRendererConfigs(siteConfig);
+  }
+
+  const cnf = getConfig();
+  // Check the maximum allowed text size
+  if (_txt.length > cnf.maxTextSize) {
+    txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
   if (typeof container !== 'undefined') {
