@@ -82,7 +82,7 @@ g.stateGroup line {
 }
 
 .statediagram-cluster rect {
-  fill: $nodeBkg;
+  // fill: $nodeBkg;
   stroke: $nodeBorder;
   stroke-width: 1px;
 }

@@ -1,5 +1,5 @@
 import classDiagram from './diagrams/class/styles';
-import er from './diagrams/flowchart/styles';
+import er from './diagrams/er/styles';
 import flowchart from './diagrams/flowchart/styles';
 import gantt from './diagrams/gantt/styles';
 import git from './diagrams/git/styles';
@@ -75,6 +75,8 @@ const getStyles = (type, userStyles, options) => {
   ${themes[type](options)}
 
   ${userStyles}
+
+  ${type} { fill: apa;}
 `;
 };
 

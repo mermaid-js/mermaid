@@ -1,15 +1,15 @@
-import Color from 'color';
-import { lighten } from 'khroma';
-window.lighten = lighten;
+import { darken, lighten, adjust } from 'khroma';
 
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
 
 class Theme {
   constructor() {
+    this.primaryColor = '#eee';
+    this.contrast = '#26a';
+    this.secondaryColor = lighten(this.contrast, 55);
     this.background = 'white';
     this.mainBkg = '#eee';
-    this.contrast = '#26a';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
     this.border1 = '#999';
@@ -103,29 +103,16 @@ class Theme {
     this.labelBoxBorderColor = this.actorBorder;
     this.labelTextColor = this.text;
     this.loopTextColor = this.text;
-    this.noteBorderColor = Color(this.note)
-      .darken(0.6)
-      .hsl()
-      .string();
+    this.noteBorderColor = darken(this.note, 60);
     this.noteBkgColor = this.note;
     this.noteTextColor = this.actorTextColor;
 
     /* Gantt chart variables */
 
-    this.sectionBkgColor = Color(this.contrast)
-      .lighten(0.3)
-      .hsl()
-      .string();
+    this.sectionBkgColor = lighten(this.contrast, 30);
+    this.sectionBkgColor2 = lighten(this.contrast, 30);
 
-    this.sectionBkgColor2 = Color(this.contrast)
-      .lighten(0.3)
-      .hsl()
-      .string();
-
-    this.taskBorderColor = Color(this.contrast)
-      .darken(0.1)
-      .hsl()
-      .string();
+    this.taskBorderColor = darken(this.contrast, 10);
 
     this.taskBkgColor = this.contrast;
     this.taskTextColor = this.taskTextLightColor;
@@ -133,22 +120,27 @@ class Theme {
     this.taskTextOutsideColor = this.taskTextDarkColor;
     this.activeTaskBorderColor = this.taskBorderColor;
     this.activeTaskBkgColor = this.mainBkg;
-    this.gridColor = Color(this.border1)
-      .lighten(0.3)
-      .hsl()
-      .string();
+    this.gridColor = lighten(this.border1, 30);
 
     this.doneTaskBkgColor = this.done;
     this.doneTaskBorderColor = this.lineColor;
     this.critBkgColor = this.critical;
-    this.critBorderColor = Color(this.critBkgColor)
-      .darken(0.1)
-      .hsl()
-      .string();
+    this.critBorderColor = darken(this.critBkgColor, 10);
 
     this.todayLineColor = this.critBkgColor;
 
     /* state colors */
+    /* class */
+    this.classText = this.nodeBorder;
+    /* journey */
+    this.fillType0 = this.primaryColor;
+    this.fillType1 = this.secondaryColor;
+    this.fillType2 = adjust(this.primaryColor, { h: 64 });
+    this.fillType3 = adjust(this.secondaryColor, { h: 64 });
+    this.fillType4 = adjust(this.primaryColor, { h: -64 });
+    this.fillType5 = adjust(this.secondaryColor, { h: -64 });
+    this.fillType6 = adjust(this.primaryColor, { h: 128 });
+    this.fillType7 = adjust(this.secondaryColor, { h: 128 });
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

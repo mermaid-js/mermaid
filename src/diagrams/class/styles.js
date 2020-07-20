@@ -1,9 +1,9 @@
 const getStyles = options =>
   `g.classGroup text {
   fill: ${options.nodeBorder};
+  fill: ${options.classText};
   stroke: none;
-  font-family: 'trebuchet ms', verdana, arial;
-  font-family: var(--mermaid-font-family);
+  font-family: ${options.fontFamily};
   font-size: 10px;
 
   .title {
@@ -38,7 +38,7 @@ g.classGroup line {
 }
 
 .relation {
-  stroke: ${options.nodeBorder};
+  stroke: ${options.lineColor};
   stroke-width: 1;
   fill: none;
 }
@@ -48,14 +48,14 @@ g.classGroup line {
 }
 
 #compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart, #extensionEnd {
-  fill: ${options.nodeBorder};
-  stroke: ${options.nodeBorder};
+  fill: ${options.lineColor};
+  stroke: ${options.lineColor};
   stroke-width: 1;
 }
 
 #aggregationStart, #aggregationEnd  {
     fill: ${options.nodeBkg};
-  stroke: ${options.nodeBorder};
+  stroke: ${options.lineColor};
   stroke-width: 1;
 }
 `;

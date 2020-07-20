@@ -23,12 +23,12 @@ g.stateGroup rect {
 }
 
 g.stateGroup line {
-  stroke: ${options.nodeBorder};
+  stroke: ${options.lineColor};
   stroke-width: 1;
 }
 
 .transition {
-  stroke: ${options.nodeBorder};
+  stroke: ${options.lineColor};
   stroke-width: 1;
   fill: none;
 }
@@ -85,7 +85,7 @@ g.stateGroup line {
   stroke-width: 1px;
 }
 #statediagram-barbEnd {
-  fill: ${options.nodeBorder};
+  fill: ${options.lineColor};
 }
 
 .statediagram-cluster rect {
@@ -128,7 +128,7 @@ g.stateGroup line {
 }
 .statediagram-state rect.divider {
   stroke-dasharray: 10,10;
-  fill: #efefef;
+  fill: ${options.altBackground ? options.altBackground : '#efefef'};
 }
 
 .note-edge {
@@ -155,8 +155,8 @@ g.stateGroup line {
 }
 
 #dependencyStart, #dependencyEnd {
-  fill: ${options.nodeBorder};
-  stroke: ${options.nodeBorder};
+  fill: ${options.lineColor};
+  stroke: ${options.lineColor};
   stroke-width: 1;
 }
 `;

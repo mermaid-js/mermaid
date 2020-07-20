@@ -53,7 +53,7 @@ import configApi from './config';
 import getStyles from './styles';
 const themes = {};
 
-for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
+for (const themeName of ['default', 'forest', 'dark', 'neutral', 'base']) {
   themes[themeName] = require(`./themes/theme-${themeName}.js`);
 }
 
