@@ -1,13 +1,15 @@
-import { darken, lighten } from 'khroma';
+import { darken, lighten, adjust } from 'khroma';
 
 // const Color = require ( 'khroma/dist/color' ).default
 // Color.format.hex.stringify(Color.parse('hsl(210, 66.6666666667%, 95%)')); // => "#EAF2FB"
 
 class Theme {
   constructor() {
+    this.primaryColor = '#eee';
+    this.contrast = '#26a';
+    this.secondaryColor = lighten(this.contrast, 55);
     this.background = 'white';
     this.mainBkg = '#eee';
-    this.contrast = '#26a';
     this.secondBkg = 'calculated';
     this.lineColor = '#666';
     this.border1 = '#999';
@@ -130,6 +132,15 @@ class Theme {
     /* state colors */
     /* class */
     this.classText = this.nodeBorder;
+    /* journey */
+    this.fillType0 = this.primaryColor;
+    this.fillType1 = this.secondaryColor;
+    this.fillType2 = adjust(this.primaryColor, { h: 64 });
+    this.fillType3 = adjust(this.secondaryColor, { h: 64 });
+    this.fillType4 = adjust(this.primaryColor, { h: -64 });
+    this.fillType5 = adjust(this.secondaryColor, { h: -64 });
+    this.fillType6 = adjust(this.primaryColor, { h: 128 });
+    this.fillType7 = adjust(this.secondaryColor, { h: 128 });
   }
   calculate(overrides) {
     if (typeof overrides !== 'object') {

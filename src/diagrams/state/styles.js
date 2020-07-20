@@ -114,7 +114,7 @@ g.stateGroup line {
   fill: ${options.background};
 }
 .statediagram-cluster.statediagram-cluster-alt .inner {
-  fill: '#e0e0e0';
+  fill: #e0e0e0;
 }
 
 .statediagram-cluster .inner {
