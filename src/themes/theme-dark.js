@@ -114,6 +114,7 @@ class Theme {
 
     /* state colors */
     this.labelColor = this.textColor;
+    this.altBackground = lighten(this.background, 20);
     /* class */
     this.classText = this.nodeBorder;
   }

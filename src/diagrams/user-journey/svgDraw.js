@@ -377,10 +377,11 @@ const _drawTextCandidateFunc = (function() {
 
     text
       .append('div')
+      .attr('class', 'label')
       .style('display', 'table-cell')
       .style('text-align', 'center')
       .style('vertical-align', 'middle')
-      .style('color', colour)
+      // .style('color', colour)
       .text(content);
 
     byTspan(content, body, x, y, width, height, textAttrs, conf);

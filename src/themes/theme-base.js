@@ -1,11 +1,20 @@
-import { darken, lighten, rgba, adjust } from 'khroma';
+import { darken, lighten, adjust } from 'khroma';
 
 class Theme {
   constructor() {
     /* Base variables */
+    this.primaryColor = '#039fbe';
+    this.secondaryColor = '#b20238';
+    this.tertiaryColor = lighten('#e8d21d', 30);
+    this.relationColor = '#000';
     this.primaryColor = '#fa255e';
     this.secondaryColor = '#c39ea0';
     this.tertiaryColor = '#f8e5e5';
+
+    this.primaryColor = '#ECECFF';
+    this.secondaryColor = '#ffffde';
+    this.tertiaryColor = '#ffffde';
+
     this.background = 'white';
     this.lineColor = '#333333';
     this.border1 = '#9370DB';
@@ -55,21 +64,21 @@ class Theme {
 
     this.taskTextColor = this.taskTextLightColor;
     this.taskTextOutsideColor = this.taskTextDarkColor;
-    this.sectionBkgColor = rgba(102, 102, 255, 0.49);
+    this.sectionBkgColor = this.tertiaryColor;
     this.altSectionBkgColor = 'white';
-    this.sectionBkgColor2 = '#fff400';
-    this.sectionBkgColor = rgba(102, 102, 255, 0.49);
+    this.sectionBkgColor = this.secondaryColor;
+    this.sectionBkgColor2 = this.tertiaryColor;
     this.altSectionBkgColor = 'white';
-    this.sectionBkgColor2 = '#fff400';
-    this.taskBorderColor = '#534fbc';
-    this.taskBkgColor = '#8a90dd';
+    this.sectionBkgColor2 = this.primaryColor;
+    this.taskBorderColor = lighten(this.primaryColor, 23);
+    this.taskBkgColor = this.primaryColor;
     this.taskTextLightColor = 'white';
     this.taskTextColor = 'calculated';
     this.taskTextDarkColor = 'black';
     this.taskTextOutsideColor = 'calculated';
     this.taskTextClickableColor = '#003163';
-    this.activeTaskBorderColor = '#534fbc';
-    this.activeTaskBkgColor = '#bfc7ff';
+    this.activeTaskBorderColor = this.primaryColor;
+    this.activeTaskBkgColor = lighten(this.primaryColor, 23);
     this.gridColor = 'lightgrey';
     this.doneTaskBkgColor = 'lightgrey';
     this.doneTaskBorderColor = 'grey';

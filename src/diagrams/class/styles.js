@@ -38,7 +38,7 @@ g.classGroup line {
 }
 
 .relation {
-  stroke: ${options.nodeBorder};
+  stroke: ${options.lineColor};
   stroke-width: 1;
   fill: none;
 }
@@ -48,14 +48,14 @@ g.classGroup line {
 }
 
 #compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart, #extensionEnd {
-  fill: ${options.nodeBorder};
-  stroke: ${options.nodeBorder};
+  fill: ${options.lineColor};
+  stroke: ${options.lineColor};
   stroke-width: 1;
 }
 
 #aggregationStart, #aggregationEnd  {
     fill: ${options.nodeBkg};
-  stroke: ${options.nodeBorder};
+  stroke: ${options.lineColor};
   stroke-width: 1;
 }
 `;

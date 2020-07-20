@@ -19,6 +19,9 @@ const getStyles = options =>
   .label text {
     fill: #333;
   }
+  .label {
+    color: ${options.textColor}
+  }
 
   .face {
     fill: #FFF8DC;

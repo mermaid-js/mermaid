@@ -1,4 +1,4 @@
-Base theme for cusom themeingconst getStyles = options =>
+const getStyles = options =>
   `
   .entityBox {
     fill: ${options.mainBkg};
@@ -13,6 +13,10 @@ Base theme for cusom themeingconst getStyles = options =>
         opacity: 0.5;
       }
   }
+
+    .relationshipLine {
+      stroke: ${options.lineColor};
+    }
 `;
 
 export default getStyles;
