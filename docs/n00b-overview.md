@@ -13,15 +13,15 @@ Anyone who has used Visio, or (God Forbid) Excel to make a Gantt Chart, knows ho
 
 In an environment of constantly changing information , diagrams/charts become obsolete/inaccurate very fast. This hobbles the information transfer and productivity in teams.
 
-# Doc Rot and Dagrams
+# Doc Rot kills Diagrams
 
-The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates  and changes in the app you are documenting. Yet that is often the reality for diagrams and charts.
+The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates and changes in the app you are documenting. Yet that is often the reality for diagrams and charts and the people who make them.
 
-mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams, 
+mermaid seeks to change that. mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than most traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams.  
 
-# The primary objective of mermaid is to help in addressing the problem of Documentation Rot. 
+# The primary objective of mermaid is to help in addressing the problem of Doc Rot. 
 
-with mermaid, diagrams can be created through comments like this in a script:
+With mermaid, diagrams can be created through comments like this in a script:
 
 ```
 graph TD
