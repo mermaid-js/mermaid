@@ -3,7 +3,21 @@
 
 ## Nothing explains a concept like a Good Diagram
 
-mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams, Knowledge Transfer and Documentation
+A picture is worth a thousand words, a good diagram is worth a little more in my opinion, and there is no disputing that they are indeed very useful. Yet very few people use them, even fewer still do so, for documentation.
+
+mermaid aims to change that. 
+
+## Creating and Maintaining Diagrams should not be an expensive and frustrating process. 
+
+Anyone who has used Visio, or (God Forbid) Excel to make a Gantt Chart, knows how hard it is to make, edit and maintain good visualizations. 
+
+In an environment of constantly changing information , diagrams/charts become obsolete/inaccurate very fast. This hobbles the information transfer and productivity in teams.
+
+# Doc Rot and Dagrams
+
+The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates  and changes in the app you are documenting. Yet that is often the reality for diagrams and charts.
+
+mermaid is a javascript based tool that utilizes a markdown inspired syntax to generate documentation, which is actually quicker, less complicated and more convenient than traditional diagramming software. This is a relatively straightforward solution to a major hurdle in software teams, 
 
 # The primary objective of mermaid is to help in addressing the problem of Documentation Rot. 
 
@@ -26,13 +40,6 @@ And they are rendered into this and made part of the documentation:
 - The number of integrations that it has. 
 - It is a package that can be deployed to create 
 
-## Creating and Maintaining Diagrams should not be an expensive and frustrating process. 
-
-Anyone who has used Visio, or (God Forbid) Excel to make a Gantt Chart, knows how hard it is to make, edit and maintain good visualizations. 
-
-In an environment of constantly changing information , diagrams/charts become obsolete/inaccurate very fast. This hobbles the information transfer and productivity in teams.
-
-The fast setting Doc-Rot in diagrams makes it quite hard to rationalize taking hours in a desktop application, to produce a diagram that you would need to recreate again the following week in order to account for updates  and changes in the app you are documenting. Yet that is often the reality for diagrams and charts.
 
 ## Diagramming and charting is a gigantic waste of developer time, but not having diagrams ruins productivity. 
 
