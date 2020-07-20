@@ -1,8 +1,9 @@
 # Usage
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
 ## Installation
 
-### npm package
+### npm package 
 
 ```
 1.You will need to isntall node v10 or 12, which would have npm.
