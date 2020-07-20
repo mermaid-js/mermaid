@@ -1,3 +1,4 @@
+import { darken } from 'khroma';
 class Theme {
   constructor() {
     /* Base vales */
@@ -78,7 +79,7 @@ class Theme {
 
     /* Sequence Diagram variables */
 
-    this.actorBorder = this.border1;
+    this.actorBorder = darken(this.mainBkg, 20);
     this.actorBkg = this.mainBkg;
     this.labelBoxBkgColor = this.actorBkg;
     this.labelTextColor = this.actorTextColor;

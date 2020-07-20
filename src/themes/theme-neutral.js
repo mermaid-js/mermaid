@@ -93,7 +93,7 @@ class Theme {
 
     /* Sequence Diagram variables */
 
-    this.actorBorder = this.border1;
+    this.actorBorder = lighten(this.border1, 23);
     this.actorBkg = this.mainBkg;
     this.actorTextColor = this.text;
     this.actorLineColor = this.lineColor;
