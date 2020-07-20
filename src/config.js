@@ -59,7 +59,7 @@ const config = {
    * </pre>
    */
   theme: 'default',
-  themeVariables: themes.get,
+  themeVariables: themes['default'].getThemeVariables(),
   themeCSS: undefined,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
