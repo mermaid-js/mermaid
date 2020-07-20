@@ -3,8 +3,11 @@
 
 If you are new to mermaid, read [Getting Started](n00b-gettingStarted.md) and [Overview](n00b-overview.md) sections, to learn the basics about the basics.
 
-This section is a list of diagram types supported by mermaid, each one explains the syntax with which a diagram or chart can be called. 
-These are called Diagram Definitions, since they describe the manner with which the diagram is to be rendered by the renderer. 
+This section is a list of diagram types supported by mermaid. Below is a list of links to aricles that explain the syntax of the diagrams or charts that 0can be called. 
+
+They also  detail how diagrams can be defined, or described in the manner with which the diagram is to be rendered by the renderer. 
+
+### Benefits of a text based diagramming is its speed and modifiability, allowing easy maintenance and adaptations, over time. This allows your documentation to closely follow your code/project.  
 
 ## mermaid tag:
 These Diagram Definitions can be entered within a \<div class=mermaid> tag.
@@ -17,7 +20,7 @@ like so :
       B-->D(fa:fa-spinner);
 </div>
 ```
-## live ediotr
+## mermaid Live Editor
 These definitions can also be entered into the [mermaid live editor](https://mermaid-js.github.io/mermaid-live-editor), to render them immediately.
 This would then offer
 
