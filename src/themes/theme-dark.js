@@ -1,9 +1,9 @@
-import { invert, lighten, rgba } from 'khroma';
+import { invert, lighten, darken, rgba } from 'khroma';
 
 class Theme {
   constructor() {
     this.background = '#333';
-    this.mainBkg = lighten('#1f2020', 15);
+    this.mainBkg = '#1f2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
     this.darkTextColor = lighten(invert('#323D47'), 10);
@@ -46,9 +46,9 @@ class Theme {
 
     /* Gantt chart variables */
 
-    this.sectionBkgColor = rgba(255, 255, 255, 30);
-    this.altSectionBkgColor = 'white';
-    this.sectionBkgColor2 = '#EAE8B9';
+    this.sectionBkgColor = darken('#EAE8D9', 30);
+    this.altSectionBkgColor = 'calculated';
+    this.sectionBkgColor2 = '#EAE8D9';
     this.taskBorderColor = rgba(255, 255, 255, 70);
     this.taskBkgColor = 'calculated';
     this.taskTextColor = 'calculated';
@@ -103,7 +103,8 @@ class Theme {
 
     /* Gantt chart variables */
 
-    this.taskBkgColor = this.mainBkg;
+    this.altSectionBkgColor = this.background;
+    this.taskBkgColor = lighten(this.mainBkg, 23);
     this.taskTextColor = this.darkTextColor;
     this.taskTextLightColor = this.mainContrastColor;
     this.taskTextOutsideColor = this.taskTextLightColor;
