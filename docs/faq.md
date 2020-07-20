@@ -1,4 +1,5 @@
 Frequently Asked Questions: 
+
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/faq.md)
 
 1. [How to add title to flowchart?](https://github.com/knsv/mermaid/issues/556#issuecomment-363182217)
