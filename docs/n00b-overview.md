@@ -1,9 +1,9 @@
 # Overview for Beginners
-**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./n00b-overview.md)
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-overview.md)
 
-## Nothing explains a concept like a Good Diagram
+## There is no explanation like a Good Diagram
 
-A picture is worth a thousand words, a good diagram is worth a little more in my opinion, and there is no disputing that they are indeed very useful. Yet very few people use them, even fewer still do so, for documentation.
+A picture is worth a thousand words, a good diagram would be worth more. There is no disputing that they are indeed very useful. Yet very few people use them, even fewer still do so, for documentation.
 
 mermaid aims to change that. 
 
