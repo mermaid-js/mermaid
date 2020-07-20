@@ -29,7 +29,6 @@
     "test": "yarn lint && jest src/.*",
     "test:watch": "jest --watch src",
     "prepublishOnly": "yarn build && yarn test && yarn e2e",
-    "prepush": "yarn test",
     "prepare": "yarn build"
   },
   "repository": {
@@ -106,5 +105,10 @@
   "sideEffects": [
     "**/*.css",
     "**/*.scss"
-  ]
+  ],
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn test"
+    }
+  }
 }
