@@ -359,7 +359,7 @@ const _drawTextCandidateFunc = (function() {
     }
   }
 
-  function byFo(content, g, x, y, width, height, textAttrs, conf, colour) {
+  function byFo(content, g, x, y, width, height, textAttrs, conf) {
     const body = g.append('switch');
     const f = body
       .append('foreignObject')
