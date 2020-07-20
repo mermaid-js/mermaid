@@ -30,6 +30,7 @@ const getStyles = (type, userStyles, options) => {
   return ` {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
+    fill: ${options.textColor}
   }
 
   /* Classes common for multiple diagrams */

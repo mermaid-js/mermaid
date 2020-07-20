@@ -1,4 +1,4 @@
-import { lighten, rgba } from 'khroma';
+import { invert, lighten, rgba } from 'khroma';
 
 class Theme {
   constructor() {
@@ -6,7 +6,7 @@ class Theme {
     this.mainBkg = '#1f2020';
     this.secondBkg = 'calculated';
     this.mainContrastColor = 'lightgrey';
-    this.darkTextColor = '#323D47';
+    this.darkTextColor = lighten(invert('#323D47'), 10);
     this.lineColor = 'calculated';
     this.border1 = '#81B1DB';
     this.border2 = rgba(255, 255, 255, 0.25);

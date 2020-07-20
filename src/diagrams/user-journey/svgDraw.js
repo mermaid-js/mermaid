@@ -24,8 +24,7 @@ export const drawFace = function(element, faceData) {
     .append('circle')
     .attr('cx', faceData.cx)
     .attr('cy', faceData.cy)
-    .attr('fill', '#FFF8DC')
-    .attr('stroke', '#999')
+    .attr('class', 'face')
     .attr('r', radius)
     .attr('stroke-width', 2)
     .attr('overflow', 'visible');
@@ -61,6 +60,7 @@ export const drawFace = function(element, faceData) {
     //mouth
     face
       .append('path')
+      .attr('class', 'mouth')
       .attr('d', arc)
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 2) + ')');
   }
@@ -74,6 +74,7 @@ export const drawFace = function(element, faceData) {
     //mouth
     face
       .append('path')
+      .attr('class', 'mouth')
       .attr('d', arc)
       .attr('transform', 'translate(' + faceData.cx + ',' + (faceData.cy + 7) + ')');
   }
@@ -81,12 +82,13 @@ export const drawFace = function(element, faceData) {
   function ambivalent(face) {
     face
       .append('line')
+      .attr('class', 'mouth')
       .attr('stroke', 2)
       .attr('x1', faceData.cx - 5)
       .attr('y1', faceData.cy + 7)
       .attr('x2', faceData.cx + 5)
       .attr('y2', faceData.cy + 7)
-      .attr('class', 'task-line')
+      .attr('class', 'mouth')
       .attr('stroke-width', '1px')
       .attr('stroke', '#666');
   }
@@ -128,7 +130,8 @@ export const drawText = function(elem, textData) {
   const textElem = elem.append('text');
   textElem.attr('x', textData.x);
   textElem.attr('y', textData.y);
-  textElem.attr('fill', textData.fill);
+  textElem.attr('class', 'legend');
+
   textElem.style('text-anchor', textData.anchor);
 
   if (typeof textData.class !== 'undefined') {

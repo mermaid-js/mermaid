@@ -1,4 +1,4 @@
-import { rgba } from 'khroma';
+import { lighten, rgba } from 'khroma';
 
 class Theme {
   constructor() {
@@ -103,7 +103,8 @@ class Theme {
 
     /* Sequence Diagram variables */
 
-    this.actorBorder = this.border1;
+    // this.actorBorder = lighten(this.border1, 0.5);
+    this.actorBorder = lighten(this.border1, 23);
     this.actorBkg = this.mainBkg;
     this.labelBoxBkgColor = this.actorBkg;
     this.signalColor = this.textColor;
