@@ -7,7 +7,7 @@ This section is a list of diagram types supported by mermaid. Below is a list of
 
 They also  detail how diagrams can be defined, or described in the manner with which the diagram is to be rendered by the renderer. 
 
-### Benefits of a text based diagramming is its speed and modifiability, allowing easy maintenance and adaptations, over time. This allows your documentation to closely follow your code/project.  
+### The benefits of text based diagramming are its speed and modifiability. mermaid allows for easy maintenance and modification of diagrams. This means your diagrams will always be up to date and closely follow your code and improve your documentation.  
 
 ## mermaid tag:
 These Diagram Definitions can be entered within a \<div class=mermaid> tag.
