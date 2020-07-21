@@ -28,4 +28,22 @@ describe('Flowchart v2', () => {
       { flowchart: { diagramPadding: 0 } }
     );
   });
+
+    it('3: a link with correct arrowhead to a subgraph', () => {
+    imgSnapshotTest(
+      `flowchart TD
+        P1
+        P1 -->P1.5
+        subgraph P1.5
+          P2
+          P2.5(( A ))
+          P3
+        end
+        P2 --> P4
+        P3 --> P6
+        P1.5 --> P5
+      `,
+      { flowchart: { diagramPadding: 0 } }
+    );
+  });
 });
