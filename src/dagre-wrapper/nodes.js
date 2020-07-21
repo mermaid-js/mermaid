@@ -5,7 +5,6 @@ import { getConfig } from '../config';
 import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
-import intersectRect from './intersect/intersect-rect';
 
 const question = (parent, node) => {
   const { shapeSvg, bbox } = labelHelper(parent, node, undefined, true);
