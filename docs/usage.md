@@ -1,11 +1,20 @@
 # Usage
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
 ## Installation
 
-### npm package
+### npm package 
 
 ```
-yarn add mermaid
+1.You will need to isntall node v10 or 12, which would have npm.
+
+2. download yarn using npm.
+
+2. enter the following command:
+    yarn add mermaid
+
+3. You can then add mermaid as a dev dependency using this command: 
+    yarn add --dev mermaid
 ```
 
 ### CDN
@@ -27,19 +36,22 @@ locate the graphs on the page and transform them to svg files.
 ### Include mermaid on your web page:
 
 ```html
-<script src="mermaid.min.js"></script>
-<script>mermaid.initialize({startOnLoad:true});</script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
 ```
 
 Further down on your page mermaid will look for tags with `class="mermaid"`. From these tags mermaid will try to
 read the chart definiton and replace it with the svg chart.
 
 
-### Define a chart like this:
+### Define a chart like thi:
 
 ```html
 <div class="mermaid">
-    CHART DEFINITION GOES HERE
+     graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
 </div>
 ```
 
@@ -53,9 +65,51 @@ Would end up like this:
 </div>
 ```
 
+## Simple full example:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <div class="mermaid">
+  graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
+  </div>
+ <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+ <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
+```
+## Try it out, save this code as HTML and load it. 
+
+### To enable click event and tags in nodes	
+
+In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.	
+
+* **true**: (default) tags in text are encoded, click functionality is disabled	
+* false: tags in text are allowed, click functionality is enabled	
+
+⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.	
+
+If your application is taking resposibility for the diagram source security you can set the `securityLevel` accordingly. By doing this clicks and tags are again allowed.	
+
+```javascript	
+    mermaidAPI.initialize({	
+        securityLevel: 'loose'	
+    });	
+```	
+
+## Notes: 
 An id attribute is also added to mermaid tags without one.
 
-### To enable click event and tags in nodes
+Mermaid can load multiple diagrams, in the same page.
+
+## To enable click event and tags in nodes:
 
 In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.
 
@@ -72,26 +126,6 @@ If your application is taking resposibility for the diagram source security you 
     });
 ```
 
-### Simple full example:
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-</head>
-<body>
-  <div class="mermaid">
-  graph LR
-      A --- B
-      B-->C[fa:fa-ban forbidden]
-      B-->D(fa:fa-spinner);
-  </div>
-  <script src="mermaid.min.js"></script>
-  <script>mermaid.initialize({startOnLoad:true});</script>
-</body>
-</html>
-```
 
 ### Labels out of bounds
 
