@@ -10,6 +10,11 @@ g.classGroup text {
   }
 }
 
+.divider {
+  stroke: $nodeBorder;
+  stroke-width: 1;
+}
+
 g.clickable {
   cursor: pointer;
 }

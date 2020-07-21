@@ -85,16 +85,17 @@ export const addClasses = function(classes, g) {
     // Set the shape based parameters
     switch (vertex.type) {
       case 'class':
-        _shape = 'rect';
+        _shape = 'class_box';
         break;
       default:
-        _shape = 'rect';
+        _shape = 'class_box';
     }
     // Add the node
     g.setNode(vertex.id, {
       labelStyle: styles.labelStyle,
       shape: _shape,
       labelText: vertexText,
+      classData: vertex,
       rx: radious,
       ry: radious,
       class: classStr,
