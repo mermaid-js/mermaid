@@ -45,5 +45,5 @@ describe('Flowchart v2', () => {
       `,
       { flowchart: { diagramPadding: 0 } }
     );
-
+  });
 });
