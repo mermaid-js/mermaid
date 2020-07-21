@@ -89,14 +89,15 @@ theme , the CSS style sheet
 
 ## securityLevel
 
-| Parameter     | Description                       | Type   | Required | Values        |
-| ------------- | --------------------------------- | ------ | -------- | ------------- |
-| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose |
+| Parameter     | Description                       | Type   | Required | Values                    |
+| ------------- | --------------------------------- | ------ | -------- | ------------------------- |
+| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
 
 \*\*Notes:
 
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
 -   **loose**: tags in text are allowed, click functionality is enabled
+-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 
 ## startOnLoad
 
@@ -127,6 +128,15 @@ overriding a site's default security.
 ## flowchart
 
 The object containing configurations specific for flowcharts
+
+### diagramPadding
+
+| Parameter      | Description                                     | Type    | Required | Values             |
+| -------------- | ----------------------------------------------- | ------- | -------- | ------------------ |
+| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+
+**Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+**Default value: 8**.
 
 ### htmlLabels
 
@@ -711,8 +721,20 @@ T = top, B = bottom, L = left, and R = right.
 | --------- | ------------------- | ------- | -------- | ------------------ |
 | fontSize  | Font Size in pixels | Integer |          | Any Positive Value |
 
-**Notes:**Font size (expressed as an integer representing a number of  pixels)
+**Notes:**Font size (expressed as an integer representing a number of pixels)
 **Default value: 12 **
+
+### useMaxWidth
+
+| Parameter   | Description | Type    | Required | Values      |
+| ----------- | ----------- | ------- | -------- | ----------- |
+| useMaxWidth | See Notes   | Boolean | Required | true, false |
+
+**Notes:**
+When this flag is set to true, the diagram width is locked to 100% and
+scaled based on available space. If set to false, the diagram reserves its
+absolute width.
+**Default value: true**.
 
 ## render
 
@@ -754,7 +776,19 @@ mermaidAPI.initialize({
     startOnLoad:true,
     arrowMarkerAbsolute:false,
 
+    er:{
+      diagramPadding:20,
+      layoutDirection:'TB',
+      minEntityWidth:100,
+      minEntityHeight:75,
+      entityPadding:15,
+      stroke:'gray',
+      fill:'honeydew',
+      fontSize:12,
+      useMaxWidth:true,
+    },
     flowchart:{
+      diagramPadding:8,
       htmlLabels:true,
       curve:'linear',
     },
@@ -794,10 +828,19 @@ mermaidAPI.initialize({
 
 ## setSiteConfig
 
+## setSiteConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes:**
 Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
 the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
 to the defaultConfig
 Note: currentConfig is set in this function
+
+\*Default value: At default, will mirror Global Config\*\*
 
 ### Parameters
 
@@ -807,13 +850,27 @@ Returns **any** the siteConfig
 
 ## getSiteConfig
 
-Obtains the current siteConfig base configuration
+## getSiteConfig
+
+| Function      | Description                                       | Type        | Values                            |
+| ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
+| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig |
+
+**Notes**:
+Returns **any** values in siteConfig.
 
 Returns **any** 
 
 ## setConfig
 
-Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
+## setConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes**:
+Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
 values found in conf with key found in siteConfig.secure will be replaced with the corresponding
 siteConfig value.
 
@@ -825,11 +882,24 @@ Returns **any** the currentConfig merged with the sanitized conf
 
 ## getConfig
 
-Obtains the currentConfig
+## getConfig
+
+| Function  | Description               | Type        | Return Values                 |
+| --------- | ------------------------- | ----------- | ----------------------------- |
+| getConfig | Obtains the currentConfig | Get Request | Any Values from currentConfig |
+
+**Notes**:
+Returns **any** the currentConfig
 
 Returns **any** the currentConfig
 
 ## sanitize
+
+## sanitize
+
+| Function | Description                            | Type        | Values |
+| -------- | -------------------------------------- | ----------- | ------ |
+| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
 
 Ensures options parameter does not attempt to override siteConfig secure keys
 Note: modifies options in-place
@@ -840,7 +910,18 @@ Note: modifies options in-place
 
 ## reset
 
-Resets this currentConfig to conf
+## reset
+
+| Function | Description                  | Type        | Required | Values |
+| -------- | ---------------------------- | ----------- | -------- | ------ |
+| reset    | Resets currentConfig to conf | Put Request | Required | None   |
+
+| Parameter | Description                                                   | Type       | Required | Values                                       |
+| --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+| conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+
+\*Notes :
+(default: current siteConfig ) (optional, default `getSiteConfig()`)
 
 ### Parameters
 

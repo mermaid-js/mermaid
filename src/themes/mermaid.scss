@@ -1,4 +1,4 @@
-@import 'flowchart';
+// @import 'flowchart';
 @import 'sequence';
 @import 'gantt';
 @import 'class';
@@ -13,8 +13,9 @@
 
 :root {
   --mermaid-font-family: '"trebuchet ms", verdana, arial';
-  --mermaid-font-family: "Comic Sans MS", "Comic Sans", cursive;
-  // --mermaid-alt-font-family: '"Lucida Console", Monaco, monospace';
+  font-family: '"trebuchet ms", verdana, arial';
+  font-family: var(--mermaid-font-family);
+  font-size: 16px;
 }
 
 /* Classes common for multiple diagrams */
@@ -51,4 +52,9 @@
 }
 .marker.cross {
   stroke: $lineColor;
+}
+
+svg {
+  font-family: var(--mermaid-font-family);
+  font-size: 24px;
 }

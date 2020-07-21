@@ -1,6 +1,14 @@
 import { assignWithDepth } from './utils';
 import { logger } from './logger';
+// import themeVariables from './theme-default';
+// import themeForestVariables from './theme-forest';
+// import themeNeutralVariables from './theme-neutral';
 
+const themes = {};
+
+for (const themeName of ['default', 'forest', 'dark', 'neutral', 'base']) {
+  themes[themeName] = require(`./themes/theme-${themeName}.js`);
+}
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
  *
@@ -51,6 +59,7 @@ const config = {
    * </pre>
    */
   theme: 'default',
+  themeVariables: themes['default'].getThemeVariables(),
   themeCSS: undefined,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
@@ -82,11 +91,12 @@ const config = {
   /**
    *| Parameter | Description |Type | Required | Values|
    *| --- | --- | --- | --- | --- |
-   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose |
+   *| securitylevel | Level of trust for parsed diagram|String | Required | Strict, Loose, antiscript |
    *
    ***Notes:
    *-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
    *-   **loose**: tags in text are allowed, click functionality is enabled
+   *-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
    */
   securityLevel: 'strict',
 
@@ -123,6 +133,16 @@ const config = {
    * The object containing configurations specific for flowcharts
    */
   flowchart: {
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| diagramPadding | amount of padding around the diagram as a whole | Integer | Required | Any Positive Value |
+     *
+     ***Notes:**The amount of padding around the diagram as a whole so that embedded diagrams have margins, expressed in pixels
+     ***Default value: 8**.
+     */
+    diagramPadding: 8,
+
     /**
      *| Parameter | Description |Type | Required | Values|
      *| --- | --- | --- | --- | --- |
@@ -806,12 +826,27 @@ const config = {
      *| --- | --- | --- | --- | --- |
      *| fontSize| Font Size in pixels| Integer |  | Any Positive Value |
      *
-     ***Notes:**Font size (expressed as an integer representing a number of  pixels)
+     ***Notes:**Font size (expressed as an integer representing a number of pixels)
      ***Default value: 12 **
      */
-    fontSize: 12
+    fontSize: 12,
+
+    /**
+     *| Parameter | Description |Type | Required | Values|
+     *| --- | --- | --- | --- | --- |
+     *| useMaxWidth | See Notes | Boolean | Required | true, false |
+     *
+     ***Notes:**
+     *When this flag is set to true, the diagram width is locked to 100% and
+     *scaled based on available space. If set to false, the diagram reserves its
+     *absolute width.
+     ***Default value: true**.
+     */
+    useMaxWidth: true
   }
 };
+
+// debugger;
 config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 config.git.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
 export const defaultConfig = Object.freeze(config);
@@ -823,27 +858,29 @@ const currentConfig = assignWithDepth({}, defaultConfig);
  *| Function | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
- 
+
  ***Notes:**
  *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
  *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
  *to the defaultConfig
  *Note: currentConfig is set in this function
-  
+
  **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = conf => {
   assignWithDepth(currentConfig, conf, { clobber: true });
+  // Set theme variables if user has set the theme option
   assignWithDepth(siteConfig, conf);
+
   return getSiteConfig();
 };
 /**
  *| Function | Description         | Type    |  Values             |
  *| --------- | ------------------- | ------- |  ------------------ |
  *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
-  
+
  ***Notes**:
  *Returns **any** values in siteConfig.
  * @returns {*}
@@ -855,8 +892,8 @@ export const getSiteConfig = () => {
  *| Function  | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
-  
-  
+
+
  ***Notes**:
  *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
  *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
@@ -866,6 +903,7 @@ export const getSiteConfig = () => {
  */
 export const setConfig = conf => {
   sanitize(conf);
+
   assignWithDepth(currentConfig, conf);
   return getConfig();
 };
@@ -873,7 +911,7 @@ export const setConfig = conf => {
  *| Function  | Description         | Type    | Return Values            |
  *| --------- | ------------------- | ------- | ------------------ |
  *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
-  
+
  ***Notes**:
  *Returns **any** the currentConfig
  * @returns {*} - the currentConfig
@@ -885,7 +923,7 @@ export const getConfig = () => {
  *| Function | Description         | Type    | Values             |
  *| --------- | ------------------- | ------- | ------------------ |
  *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
-  
+
  *Ensures options parameter does not attempt to override siteConfig secure keys
  *Note: modifies options in-place
  * @param options - the potential setConfig parameter

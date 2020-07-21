@@ -10,8 +10,8 @@
  *
  * @name mermaidAPI
  */
+import Stylis from 'stylis';
 import { select } from 'd3';
-import scope from 'scope-css';
 import pkg from '../package.json';
 import { setConfig, getConfig, setSiteConfig, getSiteConfig } from './config';
 import { logger, setLogLevel } from './logger';
@@ -50,11 +50,11 @@ import journeyParser from './diagrams/user-journey/parser/journey';
 import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import configApi from './config';
-
+import getStyles from './styles';
 const themes = {};
 
-for (const themeName of ['default', 'forest', 'dark', 'neutral']) {
-  themes[themeName] = require(`./themes/${themeName}/index.scss`);
+for (const themeName of ['default', 'forest', 'dark', 'neutral', 'base']) {
+  themes[themeName] = require(`./themes/theme-${themeName}.js`);
 }
 
 function parse(text) {
@@ -197,16 +197,20 @@ export const decodeEntities = function(text) {
  * completed.
  */
 const render = function(id, _txt, cb, container) {
-  const cnf = getConfig();
-  // Check the maximum allowed text size
   let txt = _txt;
-  if (_txt.length > cnf.maxTextSize) {
-    txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
-  }
   const graphInit = utils.detectInit(txt);
   if (graphInit) {
     reinitialize(graphInit);
-    assignWithDepth(cnf, getConfig());
+  } else {
+    configApi.reset();
+    const siteConfig = getSiteConfig();
+    updateRendererConfigs(siteConfig);
+  }
+
+  const cnf = getConfig();
+  // Check the maximum allowed text size
+  if (_txt.length > cnf.maxTextSize) {
+    txt = 'graph TB;a[Maximum text size in diagram exceeded];style a fill:#faa';
   }
 
   if (typeof container !== 'undefined') {
@@ -251,51 +255,52 @@ const render = function(id, _txt, cb, container) {
   const svg = element.firstChild;
   const firstChild = svg.firstChild;
 
-  // pre-defined theme
-  let style = themes[cnf.theme];
-  if (style === undefined) {
-    style = '';
-  }
-
+  let userStyles = '';
   // user provided theme CSS
   if (cnf.themeCSS !== undefined) {
-    style += `\n${cnf.themeCSS}`;
+    userStyles += `\n${cnf.themeCSS}`;
   }
   // user provided theme CSS
   if (cnf.fontFamily !== undefined) {
-    style += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
+    userStyles += `\n:root { --mermaid-font-family: ${cnf.fontFamily}}`;
   }
   // user provided theme CSS
   if (cnf.altFontFamily !== undefined) {
-    style += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
+    userStyles += `\n:root { --mermaid-alt-font-family: ${cnf.altFontFamily}}`;
   }
 
   // classDef
-  if (graphType === 'flowchart' || graphType === 'flowchart-v2') {
+  if (graphType === 'flowchart' || graphType === 'flowchart-v2' || graphType === 'graph') {
     const classes = flowRenderer.getClasses(txt);
     for (const className in classes) {
-      style += `\n.${className} > * { ${classes[className].styles.join(
+      userStyles += `\n.${className} > * { ${classes[className].styles.join(
         ' !important; '
       )} !important; }`;
       if (classes[className].textStyles) {
-        style += `\n.${className} tspan { ${classes[className].textStyles.join(
+        userStyles += `\n.${className} tspan { ${classes[className].textStyles.join(
           ' !important; '
         )} !important; }`;
       }
     }
   }
+  const stylis = new Stylis();
+  const rules = stylis(`#${id}`, getStyles(graphType, userStyles, cnf.themeVariables));
 
   const style1 = document.createElement('style');
-  style1.innerHTML = scope(style, `#${id}`);
+  style1.innerHTML = rules;
   svg.insertBefore(style1, firstChild);
 
-  const style2 = document.createElement('style');
-  const cs = window.getComputedStyle(svg);
-  style2.innerHTML = `#${id} {
-    color: ${cs.color};
-    font: ${cs.font};
-  }`;
-  svg.insertBefore(style2, firstChild);
+  // Verify that the generated svgs are ok before removing this
+
+  // const style2 = document.createElement('style');
+  // const cs = window.getComputedStyle(svg);
+  // style2.innerHTML = `#d${id} * {
+  //   color: ${cs.color};
+  //   // font: ${cs.font};
+  //   // font-family: Arial;
+  //   // font-size: 24px;
+  // }`;
+  // svg.insertBefore(style2, firstChild);
 
   try {
     switch (graphType) {
@@ -518,7 +523,12 @@ function updateRendererConfigs(conf) {
 }
 
 function reinitialize(options) {
-  console.log(`mermaidAPI.reinitialize: v${pkg.version}`, options);
+  console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
+  if (options.theme && themes[options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
+  }
+
   // Set default options
   const config = typeof options === 'object' ? setConfig(options) : getSiteConfig();
   updateRendererConfigs(config);
@@ -527,9 +537,18 @@ function reinitialize(options) {
 }
 
 function initialize(options) {
-  // console.log(`mermaidAPI.initialize: v${pkg.version}`);
+  console.log(`mermaidAPI.initialize: v${pkg.version} ${options}`);
   // Set default options
+
+  if (options && options.theme && themes[options.theme]) {
+    // Todo merge with user options
+    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
+  } else {
+    if (options) options.themeVariables = themes.default;
+  }
+
   const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();
+
   updateRendererConfigs(config);
   setLogLevel(config.logLevel);
   logger.debug('mermaidAPI.initialize: ', config);
@@ -576,7 +595,19 @@ export default mermaidAPI;
  *     startOnLoad:true,
  *     arrowMarkerAbsolute:false,
  *
+ *     er:{
+ *       diagramPadding:20,
+ *       layoutDirection:'TB',
+ *       minEntityWidth:100,
+ *       minEntityHeight:75,
+ *       entityPadding:15,
+ *       stroke:'gray',
+ *       fill:'honeydew',
+ *       fontSize:12,
+ *       useMaxWidth:true,
+ *     },
  *     flowchart:{
+ *       diagramPadding:8,
  *       htmlLabels:true,
  *       curve:'linear',
  *     },
