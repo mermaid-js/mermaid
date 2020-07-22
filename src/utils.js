@@ -343,7 +343,7 @@ const calcCardinalityPosition = (isRelationTypePresent, points, initialPosition)
   const distanceToCardinalityPoint = 25;
 
   let remainingDistance = distanceToCardinalityPoint;
-  let center = { x: 0, y: 0 };
+  let center;
   prevPoint = undefined;
   points.forEach(point => {
     if (prevPoint && !center) {
