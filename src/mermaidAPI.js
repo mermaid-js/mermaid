@@ -52,11 +52,7 @@ import journeyDb from './diagrams/user-journey/journeyDb';
 import journeyRenderer from './diagrams/user-journey/journeyRenderer';
 import configApi from './config';
 import getStyles from './styles';
-const themes = {};
-
-for (const themeName of ['default', 'forest', 'dark', 'neutral', 'base']) {
-  themes[themeName] = require(`./themes/theme-${themeName}.js`);
-}
+import theme from './themes';
 
 function parse(text) {
   const graphInit = utils.detectInit(text);
@@ -534,9 +530,9 @@ function updateRendererConfigs(conf) {
 
 function reinitialize(options) {
   // console.warn(`mermaidAPI.reinitialize: v${pkg.version}`, options);
-  if (options.theme && themes[options.theme]) {
+  if (options.theme && theme[options.theme]) {
     // Todo merge with user options
-    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = options.theme;
   }
 
   // Set default options
@@ -550,11 +546,11 @@ function initialize(options) {
   // console.log(`mermaidAPI.initialize: v${pkg.version} ${options}`);
   // Set default options
 
-  if (options && options.theme && themes[options.theme]) {
+  if (options && options.theme && theme[options.theme]) {
     // Todo merge with user options
-    options.themeVariables = themes[options.theme].getThemeVariables(options.themeVariables);
+    options.themeVariables = theme[options.theme].getThemeVariables(options.themeVariables);
   } else {
-    if (options) options.themeVariables = themes.default;
+    if (options) options.themeVariables = theme.default.getThemeVariables();
   }
 
   const config = typeof options === 'object' ? setSiteConfig(options) : getSiteConfig();

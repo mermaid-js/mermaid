@@ -1,14 +1,22 @@
 import { assignWithDepth } from './utils';
 import { logger } from './logger';
+import theme from './themes';
+
+// import { unflatten } from 'flat';
+// import flatten from 'flat';
+
 // import themeVariables from './theme-default';
 // import themeForestVariables from './theme-forest';
 // import themeNeutralVariables from './theme-neutral';
 
-const themes = {};
+const handleThemeVariables = value => {
+  return theme[value] ? theme[value].getThemeVariables() : theme.default.getThemeVariables();
+};
 
-for (const themeName of ['default', 'forest', 'dark', 'neutral', 'base']) {
-  themes[themeName] = require(`./themes/theme-${themeName}.js`);
-}
+const manipulators = {
+  themeVariables: handleThemeVariables
+};
+
 /**
  * **Configuration methods in Mermaid version 8.6.0 have been updated, to learn more[[click here](8.6.0_docs.md)].**
  *
@@ -59,7 +67,7 @@ const config = {
    * </pre>
    */
   theme: 'default',
-  themeVariables: themes['default'].getThemeVariables(),
+  themeVariables: theme['default'].getThemeVariables(),
   themeCSS: undefined,
   /* **maxTextSize** - The maximum allowed size of the users text diamgram */
   maxTextSize: 50000,
@@ -869,6 +877,11 @@ const currentConfig = assignWithDepth({}, defaultConfig);
  * @returns {*} - the siteConfig
  */
 export const setSiteConfig = conf => {
+  Object.keys(conf).forEach(key => {
+    const manipulator = manipulators[key];
+    conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  });
+
   assignWithDepth(currentConfig, conf, { clobber: true });
   // Set theme variables if user has set the theme option
   assignWithDepth(siteConfig, conf);
@@ -901,6 +914,10 @@ export const getSiteConfig = () => {
  */
 export const setConfig = conf => {
   sanitize(conf);
+  Object.keys(conf).forEach(key => {
+    const manipulator = manipulators[key];
+    conf[key] = manipulator ? manipulator(conf[key]) : conf[key];
+  });
 
   assignWithDepth(currentConfig, conf);
   return getConfig();
