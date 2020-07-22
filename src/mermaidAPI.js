@@ -348,8 +348,8 @@ const render = function(id, _txt, cb, container) {
         classRenderer.draw(txt, id);
         break;
       case 'classDiagram':
-        config.class.arrowMarkerAbsolute = config.arrowMarkerAbsolute;
-        classRendererV2.setConf(config.class);
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        classRendererV2.setConf(cnf.class);
         classRendererV2.draw(txt, id);
         break;
       case 'state':
