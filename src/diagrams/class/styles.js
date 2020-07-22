@@ -12,7 +12,7 @@ const getStyles = options =>
 }
 
 .divider {
-  stroke: $nodeBorder;
+  stroke: ${options.nodeBorder};
   stroke: 1;
 }
 
