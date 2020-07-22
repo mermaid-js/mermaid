@@ -10,6 +10,21 @@ const getStyles = options =>
     font-weight: bolder;
   }
 }
+.node rect,
+  .node circle,
+  .node ellipse,
+  .node polygon,
+  .node path {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+
+
+.divider {
+  stroke: ${options.nodeBorder};
+  stroke: 1;
+}
 
 g.clickable {
   cursor: pointer;
@@ -47,15 +62,51 @@ g.classGroup line {
   stroke-dasharray: 3;
 }
 
-#compositionStart, #compositionEnd, #dependencyStart, #dependencyEnd, #extensionStart, #extensionEnd {
-  fill: ${options.lineColor};
-  stroke: ${options.lineColor};
+#compositionStart, .composition {
+  fill: ${options.lineColor} !important;
+  stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 
-#aggregationStart, #aggregationEnd  {
-    fill: ${options.nodeBkg};
-  stroke: ${options.lineColor};
+#compositionEnd, .composition {
+  fill: ${options.lineColor} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#dependencyStart, .dependency {
+  fill: ${options.lineColor} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#dependencyStart, .dependency {
+  fill: ${options.lineColor} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#extensionStart, .extension {
+  fill: ${options.lineColor} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#extensionEnd, .extension {
+  fill: ${options.lineColor} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#aggregationStart, .aggregation {
+  fill: ${options.nodeBkg} !important;
+  stroke: ${options.lineColor} !important;
+  stroke-width: 1;
+}
+
+#aggregationEnd, .aggregation {
+  fill: ${options.nodeBkg} !important;
+  stroke: ${options.lineColor} !important;
   stroke-width: 1;
 }
 `;

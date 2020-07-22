@@ -197,8 +197,34 @@ export const addEdges = function(edges, g) {
       edgeData.arrowhead = 'normal';
     }
 
-    logger.info(edgeData, edge);
-    edgeData.arrowType = edge.type;
+    // Check of arrow types, placed here in order not to break old rendering
+    edgeData.arrowTypeStart = 'arrow_open';
+    edgeData.arrowTypeEnd = 'arrow_open';
+
+    /* eslint-disable no-fallthrough */
+    switch (edge.type) {
+      case 'double_arrow_cross':
+        edgeData.arrowTypeStart = 'arrow_cross';
+      case 'arrow_cross':
+        edgeData.arrowTypeEnd = 'arrow_cross';
+        break;
+      case 'double_arrow_point':
+        edgeData.arrowTypeStart = 'arrow_point';
+      case 'arrow_point':
+        edgeData.arrowTypeEnd = 'arrow_point';
+        break;
+      case 'double_arrow_circle':
+        edgeData.arrowTypeStart = 'arrow_circle';
+      case 'arrow_circle':
+        edgeData.arrowTypeEnd = 'arrow_circle';
+        break;
+    }
+
+    // logger.info('apa', edgeData, edge);
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowTypeStart = edge.arrowTypeStart;
+    // edgeData.arrowType = edgeData.arrowTypeEnd;
+    // logger.info('apa', edgeData, edge);
 
     let style = '';
     let labelStyle = '';

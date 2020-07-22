@@ -1,8 +1,8 @@
-import intersect from './intersect/index.js';
 import { select } from 'd3';
 import { logger } from '../logger'; // eslint-disable-line
 import { labelHelper, updateNodeBounds, insertPolygonShape } from './shapes/util';
 import { getConfig } from '../config';
+import intersect from './intersect/index.js';
 import createLabel from './createLabel';
 import note from './shapes/note';
 
@@ -539,6 +539,219 @@ const end = (parent, node) => {
   return shapeSvg;
 };
 
+const class_box = (parent, node) => {
+  const halfPadding = node.padding / 2;
+  const rowPadding = 4;
+  const lineHeight = 8;
+
+  let classes;
+  if (!node.classes) {
+    classes = 'node default';
+  } else {
+    classes = 'node ' + node.classes;
+  }
+  // Add outer g element
+  const shapeSvg = parent
+    .insert('g')
+    .attr('class', classes)
+    .attr('id', node.id);
+
+  // Create the title label and insert it after the rect
+  const rect = shapeSvg.insert('rect', ':first-child');
+  const topLine = shapeSvg.insert('line');
+  const bottomLine = shapeSvg.insert('line');
+  let maxWidth = 0;
+  let maxHeight = rowPadding;
+
+  const labelContainer = shapeSvg.insert('g').attr('class', 'label');
+  let verticalPos = 0;
+  const hasInterface = node.classData.annotations && node.classData.annotations[0];
+
+  // 1. Create the labels
+  const interfaceLabel = labelContainer
+    .node()
+    .appendChild(createLabel(node.classData.annotations[0], node.labelStyle, true, true));
+  const interfaceBBox = interfaceLabel.getBBox();
+  if (node.classData.annotations[0]) {
+    maxHeight += interfaceBBox.height + rowPadding;
+    maxWidth += interfaceBBox.width;
+  }
+
+  const classTitleLabel = labelContainer
+    .node()
+    .appendChild(createLabel(node.labelText, node.labelStyle, true, true));
+  const classTitleBBox = classTitleLabel.getBBox();
+  maxHeight += classTitleBBox.height + rowPadding;
+  if (classTitleBBox.width > maxWidth) {
+    maxWidth = classTitleBBox.width;
+  }
+  const classAttributes = [];
+  node.classData.members.forEach(str => {
+    const lbl = labelContainer.node().appendChild(createLabel(str, node.labelStyle, true, true));
+    const bbox = lbl.getBBox();
+    if (bbox.width > maxWidth) {
+      maxWidth = bbox.width;
+    }
+    maxHeight += bbox.height + rowPadding;
+    classAttributes.push(lbl);
+  });
+
+  const classMethods = [];
+  node.classData.methods.forEach(str => {
+    const lbl = labelContainer.node().appendChild(createLabel(str, node.labelStyle, true, true));
+    const bbox = lbl.getBBox();
+    if (bbox.width > maxWidth) {
+      maxWidth = bbox.width;
+    }
+    maxHeight += bbox.height + rowPadding;
+
+    classMethods.push(lbl);
+  });
+
+  maxHeight += lineHeight;
+
+  // 2. Position the labels
+
+  // position the interface label
+  if (hasInterface) {
+    select(interfaceLabel).attr(
+      'transform',
+      'translate( ' +
+        -(maxWidth + node.padding - interfaceBBox.width / 2) / 2 +
+        ', ' +
+        (-1 * maxHeight) / 2 +
+        ')'
+    );
+    verticalPos = interfaceBBox.height + rowPadding;
+  }
+  // Positin the class title label
+  let diffX = (maxWidth - classTitleBBox.width) / 2;
+  select(classTitleLabel).attr(
+    'transform',
+    'translate( ' +
+      ((-1 * maxWidth) / 2 + diffX) +
+      ', ' +
+      ((-1 * maxHeight) / 2 + verticalPos) +
+      ')'
+  );
+  verticalPos += classTitleBBox.height + rowPadding;
+
+  topLine
+    .attr('class', 'divider')
+    .attr('x1', -maxWidth / 2 - halfPadding)
+    .attr('x2', maxWidth / 2 + halfPadding)
+    .attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos)
+    .attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
+
+  verticalPos += lineHeight;
+
+  classAttributes.forEach(lbl => {
+    select(lbl).attr(
+      'transform',
+      'translate( ' +
+        -maxWidth / 2 +
+        ', ' +
+        ((-1 * maxHeight) / 2 + verticalPos + lineHeight / 2) +
+        ')'
+    );
+    verticalPos += classTitleBBox.height + rowPadding;
+  });
+
+  bottomLine
+    .attr('class', 'divider')
+    .attr('x1', -maxWidth / 2 - halfPadding)
+    .attr('x2', maxWidth / 2 + halfPadding)
+    .attr('y1', -maxHeight / 2 - halfPadding + lineHeight + verticalPos)
+    .attr('y2', -maxHeight / 2 - halfPadding + lineHeight + verticalPos);
+
+  verticalPos += lineHeight;
+
+  classMethods.forEach(lbl => {
+    select(lbl).attr(
+      'transform',
+      'translate( ' + -maxWidth / 2 + ', ' + ((-1 * maxHeight) / 2 + verticalPos) + ')'
+    );
+    verticalPos += classTitleBBox.height + rowPadding;
+  });
+  //
+  let bbox;
+  if (getConfig().flowchart.htmlLabels) {
+    const div = interfaceLabel.children[0];
+    const dv = select(interfaceLabel);
+    bbox = div.getBoundingClientRect();
+    dv.attr('width', bbox.width);
+    dv.attr('height', bbox.height);
+  }
+  // bbox = labelContainer.getBBox();
+
+  // logger.info('Text 2', text2);
+  // const textRows = text2.slice(1, text2.length);
+  // let titleBox = text.getBBox();
+  // const descr = label
+  //   .node()
+  //   .appendChild(createLabel(textRows.join('<br/>'), node.labelStyle, true, true));
+
+  // if (getConfig().flowchart.htmlLabels) {
+  //   const div = descr.children[0];
+  //   const dv = select(descr);
+  //   bbox = div.getBoundingClientRect();
+  //   dv.attr('width', bbox.width);
+  //   dv.attr('height', bbox.height);
+  // }
+  // // bbox = label.getBBox();
+  // // logger.info(descr);
+  // select(descr).attr(
+  //   'transform',
+  //   'translate( ' +
+  //     // (titleBox.width - bbox.width) / 2 +
+  //     (bbox.width > titleBox.width ? 0 : (titleBox.width - bbox.width) / 2) +
+  //     ', ' +
+  //     (titleBox.height + halfPadding + 5) +
+  //     ')'
+  // );
+  // select(text).attr(
+  //   'transform',
+  //   'translate( ' +
+  //     // (titleBox.width - bbox.width) / 2 +
+  //     (bbox.width < titleBox.width ? 0 : -(titleBox.width - bbox.width) / 2) +
+  //     ', ' +
+  //     0 +
+  //     ')'
+  // );
+  // // Get the size of the label
+
+  // // Bounding box for title and text
+  // bbox = label.node().getBBox();
+
+  // // Center the label
+  // label.attr(
+  //   'transform',
+  //   'translate(' + -bbox.width / 2 + ', ' + (-bbox.height / 2 - halfPadding + 3) + ')'
+  // );
+
+  rect
+    .attr('class', 'outer title-state')
+    .attr('x', -maxWidth / 2 - halfPadding)
+    .attr('y', -(maxHeight / 2) - halfPadding)
+    .attr('width', maxWidth + node.padding)
+    .attr('height', maxHeight + node.padding);
+
+  // innerLine
+  //   .attr('class', 'divider')
+  //   .attr('x1', -bbox.width / 2 - halfPadding)
+  //   .attr('x2', bbox.width / 2 + halfPadding)
+  //   .attr('y1', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding)
+  //   .attr('y2', -bbox.height / 2 - halfPadding + titleBox.height + halfPadding);
+
+  updateNodeBounds(node, rect);
+
+  node.intersect = function(point) {
+    return intersect.rect(node, point);
+  };
+
+  return shapeSvg;
+};
+
 const shapes = {
   question,
   rect,
@@ -558,7 +771,8 @@ const shapes = {
   note,
   subroutine,
   fork: forkJoin,
-  join: forkJoin
+  join: forkJoin,
+  class_box
 };
 
 let nodeElems = {};

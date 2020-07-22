@@ -84,6 +84,7 @@ This is set by the renderer of the diagram and insert the data that the wrapper 
 | id         | id of the shape                                                                                             |
 | type       | if set to group then this node indicates *a cluster*.                                                       |
 | padding    | Padding. Passed from the render as this might differ between different diagrams. Maybe obsolete.            |
+| data       | Non-generic data specific to the shape.                                                                     |
 
 
 # edge
