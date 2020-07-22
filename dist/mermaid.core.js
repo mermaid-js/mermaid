@@ -812,7 +812,7 @@ module.exports = function(module) {
 /*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.0\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"crypto-random-string\":\"^3.0.1\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"scope-css\":\"^1.2.1\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
+module.exports = JSON.parse("{\"name\":\"mermaid\",\"version\":\"8.6.2\",\"description\":\"Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams, gantt charts and git graphs.\",\"main\":\"dist/mermaid.core.js\",\"keywords\":[\"diagram\",\"markdown\",\"flowchart\",\"sequence diagram\",\"gantt\",\"class diagram\",\"git graph\"],\"scripts\":{\"build:development\":\"webpack --progress --colors\",\"build:production\":\"yarn build:development -p --config webpack.config.prod.babel.js\",\"build\":\"yarn build:development && yarn build:production\",\"postbuild\":\"documentation build src/mermaidAPI.js src/config.js --shallow -f md --markdown-toc false -o docs/Setup.md\",\"build:watch\":\"yarn build --watch\",\"minify\":\"minify ./dist/mermaid.js > ./dist/mermaid.min.js\",\"release\":\"yarn build\",\"lint\":\"eslint src\",\"e2e:depr\":\"yarn lint && jest e2e --config e2e/jest.config.js\",\"cypress\":\"percy exec -- cypress run\",\"e2e\":\"start-server-and-test dev http://localhost:9000/ cypress\",\"e2e-upd\":\"yarn lint && jest e2e -u --config e2e/jest.config.js\",\"dev\":\"webpack-dev-server --config webpack.config.e2e.js\",\"test\":\"yarn lint && jest src/.*\",\"test:watch\":\"jest --watch src\",\"prepublishOnly\":\"yarn build && yarn test && yarn e2e\",\"prepush\":\"yarn test\",\"prepare\":\"yarn build\"},\"repository\":{\"type\":\"git\",\"url\":\"https://github.com/knsv/mermaid\"},\"author\":\"Knut Sveidqvist\",\"license\":\"MIT\",\"standard\":{\"ignore\":[\"**/parser/*.js\",\"dist/**/*.js\",\"cypress/**/*.js\"],\"globals\":[\"page\"]},\"dependencies\":{\"@braintree/sanitize-url\":\"^3.1.0\",\"crypto-random-string\":\"^3.0.1\",\"d3\":\"^5.7.0\",\"dagre\":\"^0.8.4\",\"dagre-d3\":\"^0.6.4\",\"entity-decode\":\"^2.0.2\",\"graphlib\":\"^2.1.7\",\"he\":\"^1.2.0\",\"minify\":\"^4.1.1\",\"moment-mini\":\"^2.22.1\",\"scope-css\":\"^1.2.1\"},\"devDependencies\":{\"@babel/core\":\"^7.2.2\",\"@babel/preset-env\":\"^7.8.4\",\"@babel/register\":\"^7.0.0\",\"@percy/cypress\":\"*\",\"babel-core\":\"7.0.0-bridge.0\",\"babel-jest\":\"^24.9.0\",\"babel-loader\":\"^8.0.4\",\"coveralls\":\"^3.0.2\",\"css-loader\":\"^2.0.1\",\"css-to-string-loader\":\"^0.1.3\",\"cypress\":\"4.0.1\",\"documentation\":\"^12.0.1\",\"eslint\":\"^6.3.0\",\"eslint-config-prettier\":\"^6.3.0\",\"eslint-plugin-prettier\":\"^3.1.0\",\"husky\":\"^1.2.1\",\"identity-obj-proxy\":\"^3.0.0\",\"jest\":\"^24.9.0\",\"jison\":\"^0.4.18\",\"moment\":\"^2.23.0\",\"node-sass\":\"^4.12.0\",\"prettier\":\"^1.18.2\",\"puppeteer\":\"^1.17.0\",\"sass-loader\":\"^7.1.0\",\"start-server-and-test\":\"^1.10.6\",\"terser-webpack-plugin\":\"^2.2.2\",\"webpack\":\"^4.41.2\",\"webpack-bundle-analyzer\":\"^3.7.0\",\"webpack-cli\":\"^3.1.2\",\"webpack-dev-server\":\"^3.4.1\",\"webpack-node-externals\":\"^1.7.2\",\"yarn-upgrade-all\":\"^0.5.0\"},\"files\":[\"dist\"],\"yarn-upgrade-all\":{\"ignore\":[\"babel-core\"]},\"sideEffects\":[\"**/*.css\",\"**/*.scss\"]}");
 
 /***/ }),
 
@@ -1671,10 +1671,19 @@ var defaultConfig = Object.freeze(config);
 var siteConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 var currentConfig = Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, defaultConfig);
 /**
- * Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
- * the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
- * to the defaultConfig
- * Note: currentConfig is set in this function
+ *## setSiteConfig
+  
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array|
+ 
+ ***Notes:**
+ *Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
+ *the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
+ *to the defaultConfig
+ *Note: currentConfig is set in this function
+  
+ **Default value: At default, will mirror Global Config**
  * @param conf - the base currentConfig to use as siteConfig
  * @returns {*} - the siteConfig
  */
@@ -1687,7 +1696,13 @@ var setSiteConfig = function setSiteConfig(conf) {
   return getSiteConfig();
 };
 /**
- * Obtains the current siteConfig base configuration
+ *## getSiteConfig
+ *| Function | Description         | Type    |  Values             |
+ *| --------- | ------------------- | ------- |  ------------------ |
+ *| setSiteConfig|Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig|
+  
+ ***Notes**:
+ *Returns **any** values in siteConfig.
  * @returns {*}
  */
 
@@ -1695,9 +1710,16 @@ var getSiteConfig = function getSiteConfig() {
   return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, siteConfig);
 };
 /**
- * Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
- * values found in conf with key found in siteConfig.secure will be replaced with the corresponding
- * siteConfig value.
+ *## setConfig
+ *| Function  | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| setSiteConfig|Sets the siteConfig to desired values | Put Request| Any Values, except ones in secure array|
+  
+  
+ ***Notes**:
+ *Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
+ *values found in conf with key found in siteConfig.secure will be replaced with the corresponding
+ *siteConfig value.
  * @param conf - the potential currentConfig
  * @returns {*} - the currentConfig merged with the sanitized conf
  */
@@ -1708,7 +1730,13 @@ var setConfig = function setConfig(conf) {
   return getConfig();
 };
 /**
- * Obtains the currentConfig
+ *   ## getConfig
+ *| Function  | Description         | Type    | Return Values            |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| getConfig |Obtains the currentConfig | Get Request | Any Values from currentConfig|
+  
+ ***Notes**:
+ *Returns **any** the currentConfig
  * @returns {*} - the currentConfig
  */
 
@@ -1716,8 +1744,13 @@ var getConfig = function getConfig() {
   return Object(_utils__WEBPACK_IMPORTED_MODULE_0__["assignWithDepth"])({}, currentConfig);
 };
 /**
- * Ensures options parameter does not attempt to override siteConfig secure keys
- * Note: modifies options in-place
+ *## sanitize
+ *| Function | Description         | Type    | Values             |
+ *| --------- | ------------------- | ------- | ------------------ |
+ *| sanitize  |Sets the siteConfig to desired values. | Put Request |None|
+  
+ *Ensures options parameter does not attempt to override siteConfig secure keys
+ *Note: modifies options in-place
  * @param options - the potential setConfig parameter
  */
 
@@ -1732,7 +1765,18 @@ var sanitize = function sanitize(options) {
   });
 };
 /**
- * Resets this currentConfig to conf
+ *## reset
+  
+ *| Function | Description         | Type    | Required | Values             |
+ *| --------- | ------------------- | ------- | -------- | ------------------ |
+ *| reset|Resets currentConfig to conf| Put Request | Required | None|
+ *
+ *| Parameter | Description |Type | Required | Values|
+ *| --- | --- | --- | --- | --- |
+ *| conf| base set of values, which currentConfig coul be **reset** to.| Dictionary | Required | Any Values, with respect to the secure Array|
+ *
+ **Notes :
+ (default: current siteConfig ) (optional, default `getSiteConfig()`)
  * @param conf - the base currentConfig to reset to (default: current siteConfig )
  */
 
@@ -22642,10 +22686,7 @@ var calcCardinalityPosition = function calcCardinalityPosition(isRelationTypePre
 
   var distanceToCardinalityPoint = 25;
   var remainingDistance = distanceToCardinalityPoint;
-  var center = {
-    x: 0,
-    y: 0
-  };
+  var center;
   prevPoint = undefined;
   points.forEach(function (point) {
     if (prevPoint && !center) {
