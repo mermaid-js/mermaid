@@ -2,11 +2,30 @@ const getStyles = options =>
   `.label {
     font-family: 'trebuchet ms', verdana, arial;
     font-family: var(--mermaid-font-family);
-    color: #333;
+    color: ${options.textColor};
+  }
+  .mouth {
+    stroke: #666;
+  }
+
+  line {
+    stroke: ${options.textColor}
+  }
+
+  .legend {
+    fill: ${options.textColor};
   }
 
   .label text {
     fill: #333;
+  }
+  .label {
+    color: ${options.textColor}
+  }
+
+  .face {
+    fill: #FFF8DC;
+    stroke: #999;
   }
 
   .node rect,
@@ -71,6 +90,31 @@ const getStyles = options =>
     border-radius: 2px;
     pointer-events: none;
     z-index: 100;
+  }
+
+  .task-type-0, .section-type-0  {
+    ${options.fillType0 ? `fill: ${options.fillType0}` : ''};
+  }
+  .task-type-1, .section-type-1  {
+    ${options.fillType0 ? `fill: ${options.fillType1}` : ''};
+  }
+  .task-type-2, .section-type-2  {
+    ${options.fillType0 ? `fill: ${options.fillType2}` : ''};
+  }
+  .task-type-3, .section-type-3  {
+    ${options.fillType0 ? `fill: ${options.fillType3}` : ''};
+  }
+  .task-type-4, .section-type-4  {
+    ${options.fillType0 ? `fill: ${options.fillType4}` : ''};
+  }
+  .task-type-5, .section-type-5  {
+    ${options.fillType0 ? `fill: ${options.fillType5}` : ''};
+  }
+  .task-type-6, .section-type-6  {
+    ${options.fillType0 ? `fill: ${options.fillType6}` : ''};
+  }
+  .task-type-7, .section-type-7  {
+    ${options.fillType0 ? `fill: ${options.fillType7}` : ''};
   }
 `;
 

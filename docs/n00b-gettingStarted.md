@@ -4,11 +4,11 @@ Creating diagrams and charts using mermaid code is simple.
 
 But how is the code turned into a diagram in a web page? This is done with the use of a mermaid renderer.
 
-Thankfully the mermaid renderer is very accessible, in essence it is a piece of javascript that can be called. 
+The mermaid renderer is very accessible, in essence it is a piece of javascript that can be called. 
 
 Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot. The web browser also needs access to the online mermaid renderer which it downloads from https://cdn.jsdelivr.net/npm/mermaid
 
-# For beginners, there are three relatively easy ways you can use mermaid:
+## For beginners, there are three relatively easy ways you can use mermaid:
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/)
 2. Using one of the many mermaid plugins
 3. Calling mermaid renderer with HTML, deployed in a friendly browser. 
@@ -30,12 +30,12 @@ It is also an easier way to develop diagrams. You can also click "Copy Markdown"
 
 ![Flowchart](./img/liveEditorOptions.png)
 
-The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
+The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](https://mermaid-js.github.io/mermaid/#/Setup) page.
 
 
 ## 2. Using mermaid plugins:
 
-Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](integrations.md).
+Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](./integrations.md).
 
 One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview) 
 

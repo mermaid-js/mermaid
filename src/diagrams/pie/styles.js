@@ -7,8 +7,11 @@ const getStyles = options =>
   }
   .slice {
     font-family: ${options.fontFamily};
+    fill: ${options.textColor};
+    // fill: white;
   }
   .legend text {
+    fill: ${options.taskTextDarkColor};
     font-family: ${options.fontFamily};
     font-size: 17px;
   }

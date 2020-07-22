@@ -1,5 +1,5 @@
 import classDiagram from './diagrams/class/styles';
-import er from './diagrams/flowchart/styles';
+import er from './diagrams/er/styles';
 import flowchart from './diagrams/flowchart/styles';
 import gantt from './diagrams/gantt/styles';
 import git from './diagrams/git/styles';
@@ -24,10 +24,13 @@ const themes = {
   journey
 };
 
-const getStyles = (type, userStyles, options) =>
-  ` {
+export const calcThemeVariables = (theme, userOverRides) => theme.calcColors(userOverRides);
+
+const getStyles = (type, userStyles, options) => {
+  return ` {
     font-family: ${options.fontFamily};
     font-size: ${options.fontSize};
+    fill: ${options.textColor}
   }
 
   /* Classes common for multiple diagrams */
@@ -72,6 +75,9 @@ const getStyles = (type, userStyles, options) =>
   ${themes[type](options)}
 
   ${userStyles}
+
+  ${type} { fill: apa;}
 `;
+};
 
 export default getStyles;
