@@ -10,6 +10,11 @@ g.classGroup text {
   }
 }
 
+.divider {
+  stroke: $nodeBorder;
+  stroke-width: 1;
+}
+
 g.clickable {
   cursor: pointer;
 }
@@ -47,45 +52,45 @@ g.classGroup line {
 }
 
 @mixin composition {
-  fill: $nodeBorder;
-  stroke: $nodeBorder;
+  fill: $nodeBorder !important ;
+  stroke: $nodeBorder !important ;
   stroke-width: 1;
 }
 
-#compositionStart {
+#compositionStart, .composition {
   @include composition;
 }
 
-#compositionEnd {
+#compositionEnd, .composition {
   @include composition;
 }
 
 @mixin aggregation {
-  fill: $nodeBkg;
-  stroke: $nodeBorder;
+  fill: $nodeBkg !important ;
+  stroke: $nodeBorder !important ;
   stroke-width: 1;
 }
 
-#aggregationStart {
+#aggregationStart, .aggregation {
   @include aggregation;
 }
 
-#aggregationEnd {
+#aggregationEnd, .aggregation {
   @include aggregation;
 }
 
-#dependencyStart {
+#dependencyStart, .dependency {
   @include composition;
 }
 
-#dependencyEnd {
+#dependencyEnd, .dependency {
   @include composition;
 }
 
-#extensionStart {
+#extensionStart , .extension{
   @include composition;
 }
 
-#extensionEnd {
+#extensionEnd, .extension {
   @include composition;
 }

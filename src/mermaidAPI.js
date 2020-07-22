@@ -27,6 +27,7 @@ import ganttRenderer from './diagrams/gantt/ganttRenderer';
 import ganttParser from './diagrams/gantt/parser/gantt';
 import ganttDb from './diagrams/gantt/ganttDb';
 import classRenderer from './diagrams/class/classRenderer';
+import classRendererV2 from './diagrams/class/classRenderer-v2';
 import classParser from './diagrams/class/parser/classDiagram';
 import classDb from './diagrams/class/classDb';
 import stateRenderer from './diagrams/state/stateRenderer';
@@ -91,6 +92,10 @@ function parse(text) {
       parser.parser.yy = ganttDb;
       break;
     case 'class':
+      parser = classParser;
+      parser.parser.yy = classDb;
+      break;
+    case 'classDiagram':
       parser = classParser;
       parser.parser.yy = classDb;
       break;
@@ -341,6 +346,11 @@ const render = function(id, _txt, cb, container) {
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
         classRenderer.setConf(cnf.class);
         classRenderer.draw(txt, id);
+        break;
+      case 'classDiagram':
+        cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
+        classRendererV2.setConf(cnf.class);
+        classRendererV2.draw(txt, id);
         break;
       case 'state':
         cnf.class.arrowMarkerAbsolute = cnf.arrowMarkerAbsolute;
