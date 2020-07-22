@@ -1,16 +1,16 @@
 # A basic mermaid User-Guide for Beginners
 
-Creating diagrams and charts, using mermaid code is simple.
+Creating diagrams and charts using mermaid code is simple.
 
 But how is the code turned into a diagram in a web page? This is done with the use of a mermaid renderer.
 
-Thankfully the mermaid renderer is very accessible, in essence it is a piece of javascript that can be called. 
+The mermaid renderer is very accessible, in essence it is a piece of javascript that can be called. 
 
-Most widely used web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot. The web browser also needs access to the online mermaid renderer which it downloads from https://cdn.jsdelivr.net/npm/mermaid
+Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot. The web browser also needs access to the online mermaid renderer which it downloads from https://cdn.jsdelivr.net/npm/mermaid
 
-# For beginners, there are three relatively easy ways you can use mermaid:
+## For beginners, there are three relatively easy ways you can use mermaid:
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/)
-2. Using a mermaid plugin, such as that for Confluence or [Atom](https://atom.io/packages/atom-mermaid).
+2. Using one of the many mermaid plugins
 3. Calling mermaid renderer with HTML, deployed in a friendly browser. 
 
 # Following either of these examples, you can get started with creating your own diagrams using mermaid code.
@@ -30,12 +30,12 @@ It is also an easier way to develop diagrams. You can also click "Copy Markdown"
 
 ![Flowchart](./img/liveEditorOptions.png)
 
-The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](mermaidAPI.md) page.
+The `Mermaid configuration` is for controlling mermaid behaviour. An easy introduction to mermaid configuration is found in the [Advanced usage](n00b-advanced.md) section. A complete configuration reference cataloguing default values is found on the [mermaidAPI](https://mermaid-js.github.io/mermaid/#/Setup) page.
 
 
 ## 2. Using mermaid plugins:
 
-Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](integrations.md).
+Thanks to the growing popularity of mermaid, many plugins already exist which incorporate a mermaid renderer. An extensive list can be found [here](./integrations.md).
 
 One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview) 
 
@@ -126,10 +126,11 @@ This is what needs to go into the html file:
 
 # *Finally*
 # If the three steps mentioned are followed you will end up with something like this:
+
 ```
 <html>
   <body>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.4.0/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
 
     Here is one mermaid diagram:
@@ -150,7 +151,7 @@ This is what needs to go into the html file:
   </body>
 </html>
 ```
-# Save this to a html file and fetch it with a browser from the web server (or just drag it into your web browser window) and voila!
+# Save this to an html file and open it with a browser from the web server (or just drag it into your web browser window) and voila!
 
 ---
 

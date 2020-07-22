@@ -407,7 +407,7 @@ export const draw = function(text, id) {
     return flowDb.getTooltip(this.id);
   });
 
-  const padding = 8;
+  const padding = conf.diagramPadding;
   const svgBounds = svg.node().getBBox();
   const width = svgBounds.width + padding * 2;
   const height = svgBounds.height + padding * 2;

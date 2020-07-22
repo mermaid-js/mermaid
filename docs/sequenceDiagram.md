@@ -1,5 +1,7 @@
 # Sequence diagrams
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](./sequenceDiagram.md)
+
 > A Sequence diagram is an interaction diagram that shows how processes operate with one another and in what order.
 
 Mermaid can render sequence diagrams.
@@ -15,6 +17,10 @@ sequenceDiagram
     Alice->>John: Hello John, how are you?
     John-->>Alice: Great!
 ```
+
+## A note on nodes, the word "end" could potentially break the diagram, due to the way that the mermaid language is scripted.
+## If unavoidable, one must use parentheses(), quotation marks "", or brackets {},[], to enclose the word "end". i.e : (end), [end], {end}.
+
 
 ## Syntax
 

@@ -1,5 +1,7 @@
 # Change Log
 
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/CHANGELOG.md)
+
 ## [Unreleased](https://github.com/knsv/mermaid/tree/HEAD)
 
 [Full Changelog](https://github.com/knsv/mermaid/compare/8.1.0...HEAD)

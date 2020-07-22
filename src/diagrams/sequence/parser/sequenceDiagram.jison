@@ -230,7 +230,7 @@ argDirective
   ;
 
 closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive'); }
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'sequence'); }
   ;
 
 %%

@@ -107,7 +107,7 @@ export const intersection = (node, outsidePoint, insidePoint) => {
     outsidePoint.y === edges.y1 ||
     outsidePoint.y === edges.y2
   ) {
-    // logger.warn('calc equals on edge');
+    logger.warn('calc equals on edge');
     return outsidePoint;
   }
 
@@ -181,9 +181,18 @@ export const insertEdge = function(elem, e, edge, clusterDb, diagramType, graph)
         logger.trace('inside', edge.toCluster, point, lastPointOutside);
 
         // First point inside the rect
-        const insterection = intersection(node, lastPointOutside, point);
-        logger.trace('intersect', insterection);
-        points.push(insterection);
+        const inter = intersection(node, lastPointOutside, point);
+
+        let pointPresent = false;
+        points.forEach(p => {
+          pointPresent = pointPresent || (p.x === inter.x && p.y === inter.y);
+        });
+        // if (!pointPresent) {
+        if (!points.find(e => e.x === inter.x && e.y === inter.y)) {
+          points.push(inter);
+        } else {
+          logger.warn('no intersect', inter, points);
+        }
         isInside = true;
       } else {
         if (!isInside) points.push(point);
