@@ -10,6 +10,16 @@ const getStyles = options =>
     font-weight: bolder;
   }
 }
+.node rect,
+  .node circle,
+  .node ellipse,
+  .node polygon,
+  .node path {
+    fill: ${options.mainBkg};
+    stroke: ${options.nodeBorder};
+    stroke-width: 1px;
+  }
+
 
 .divider {
   stroke: ${options.nodeBorder};

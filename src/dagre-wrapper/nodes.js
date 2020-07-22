@@ -625,9 +625,14 @@ const class_box = (parent, node) => {
     verticalPos = interfaceBBox.height + rowPadding;
   }
   // Positin the class title label
+  let diffX = (maxWidth - classTitleBBox.width) / 2;
   select(classTitleLabel).attr(
     'transform',
-    'translate( ' + -maxWidth + node.padding / 2 + ', ' + ((-1 * maxHeight) / 2 + verticalPos) + ')'
+    'translate( ' +
+      ((-1 * maxWidth) / 2 + diffX) +
+      ', ' +
+      ((-1 * maxHeight) / 2 + verticalPos) +
+      ')'
   );
   verticalPos += classTitleBBox.height + rowPadding;
 

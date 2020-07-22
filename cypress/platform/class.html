@@ -22,6 +22,12 @@
     <h1>info below</h1>
       <div class="mermaid" style="width: 100%; height: 20%;">
         classDiagram-v2
+         class BankAccount{
+          +String owner
+          +BigDecimal balance
+          +deposit(amount) bool
+          +withdrawl(amount) int
+      }
         classA --|> classB : Inheritance
         classC --* classD : Composition
         classE --o classF : Aggregation
