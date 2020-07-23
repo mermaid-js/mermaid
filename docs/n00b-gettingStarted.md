@@ -45,7 +45,7 @@ Thanks to the growing popularity of mermaid, many plugins already exist which in
 One example in the list is the [Atlassian Confluence mermaid plugin](https://marketplace.atlassian.com/apps/1214124/mermaid-plugin-for-confluence?hosting=server&tab=overview) 
 
 When the mermaid plugin is installed on a Confluence server, one can insert a mermaid object into any Confluence page.
-# Here is a step by step process for using the mermaid-Confluence plugin:
+### Here is a step by step process for using the mermaid-Confluence plugin:
 
 ---
 
