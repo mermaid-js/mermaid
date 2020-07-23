@@ -14,7 +14,7 @@ const themes = {
   'flowchart-v2': flowchart,
   sequence,
   gantt,
-  class: classDiagram,
+  classDiagram,
   'classDiagram-v2': classDiagram,
   class: classDiagram,
   stateDiagram,
