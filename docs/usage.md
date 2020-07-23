@@ -6,15 +6,18 @@
 ### npm package 
 
 ```
-1.You will need to isntall node v10 or 12, which would have npm.
+1.You will need to insall node v10 or 12, which would have npm.
 
 2. download yarn using npm.
 
-2. enter the following command:
+3. enter the following command:
     yarn add mermaid
 
-3. You can then add mermaid as a dev dependency using this command: 
+4. At this point, you can add mermaid as a dev dependency using this command: 
     yarn add --dev mermaid
+
+5. alternatively, you can deploy it using the script tag in an HTML file with mermaid diagram descriptions. This is explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
+ 
 ```
 
 ### CDN
