@@ -16,6 +16,7 @@ const themes = {
   gantt,
   classDiagram,
   'classDiagram-v2': classDiagram,
+  class: classDiagram,
   stateDiagram,
   state: stateDiagram,
   git,

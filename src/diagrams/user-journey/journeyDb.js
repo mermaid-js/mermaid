@@ -1,9 +1,15 @@
+import mermaidAPI from '../../mermaidAPI';
+
 let title = '';
 let currentSection = '';
 
 const sections = [];
 const tasks = [];
 const rawTasks = [];
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(statement, context, type);
+};
 
 export const clear = function() {
   sections.length = 0;
@@ -111,6 +117,7 @@ const getActors = function() {
 };
 
 export default {
+  parseDirective,
   clear,
   setTitle,
   getTitle,
