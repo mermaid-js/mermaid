@@ -190,11 +190,31 @@ npm install -g yarn
 9. Save, load/edit your HTML file to your liking.  
 
  
-**Note** placing the HTML file on the same folder the mermaid filed you've downloaded is a good practice and allows you to shorten the address. 
+**Note** placing the HTML file on the same folder the mermaid filed you've downloaded, is a good practice and allows you to shorten the address on the `src` section.
 
-**As seen here:**
+**As seen here, in this full example:**
 ```
-<script src=".\mermaid\dist\mermaid.min.js"></script>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <div class="mermaid">
+  graph LR
+      A --- B
+      B-->C[fa:fa-ban forbidden]
+      B-->D(fa:fa-spinner);
+  </div>
+  <div class="mermaid">
+     graph TD
+     A[Client] --> B[Load Balancer]
+     B --> C[Server1]
+     B --> D[Server2]
+  </div>
+  <script src="C:\Users\elanc\mermaid\dist\mermaid.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
 ```
 
 
