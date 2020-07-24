@@ -7,10 +7,9 @@ mermaid was made to 0help Documentation catch up with Development, in quickly ch
 
 ## Using mermaid
 
-For the majority of beginners, using the live editor or deploying mermaid through their browsers is all they would have use for mermaid.
+For the majority of beginners, using the live editor or suppoting mermaid on a webpage would cover their uses for mermaid. 
 
-**Learn more on [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).**
-
+**To learn how to use  [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).**
 
 ## Installation
 
