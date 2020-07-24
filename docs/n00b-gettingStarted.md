@@ -10,12 +10,14 @@ This then renders a diagram based on that code in SVG, alternatively it
 Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Internet Explorer however cannot.
 
 ## For beginners, there are four relatively easy ways you can use mermaid:
-1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/) For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
+1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 2. Using one of the many [mermaid plugins](https://mermaid-js.github.io/mermaid/#/integrations).
-3. Calling mermaid renderer with HTML,click here for more in depth information on [Usage](./usage.md).
-4. Installing mermaid with npm and deploying it using a relative link in the `<script>` tag. 
+3. Calling mermaid renderer with an absolute link through HTML.
+4. Installing mermaid with npm and hosting it on a webpage using a relative link in the `<script>` tag. 
+
+**Notes**: More in depth information can be found on [Usage](./usage.md).
 .
-# Following either of these examples, you can get started with creating your own diagrams using mermaid code.
+# Following any of these examples, you can get started with creating your own diagrams using mermaid code.
 
 ## 1. The mermaid live editor:
 
@@ -94,11 +96,11 @@ b. The mermaid code for the diagram we want to create.
 c. The `mermaid.initialize()` command to start the rendering process. 
 
 
-## This is what needs to go into the html file (and all of them are important):
+## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
 
 
 
-### a. The reference to the mermaid renderer has to be contained in a `<script src>` tag like so:
+### a. A reference to the address of the `mermaid.js` or the `mermaid.min.js` file has to be contained in a `<script src>` tag like so:
 
 ```
 <body>
@@ -106,7 +108,7 @@ c. The `mermaid.initialize()` command to start the rendering process.
 </body>
 ```
 
-### b. The embedded mermaid diagram definition is similarly placed inside a `<div>` tag:
+### b. The embedded mermaid diagram definition needs to be contains inside a `<div>` tag that signifies that it is a mermaid diagram:
 
 ```
 <body>
@@ -119,19 +121,23 @@ c. The `mermaid.initialize()` command to start the rendering process.
   </div>
 </body>
 ```
-(take note that every mermaid chart/graph/diagram definition, has to have separate `<div>` tags.)
+**Notes**: every mermaid chart/graph/diagram definition, has to have separate `<div>` tags.
 
-### c. When initializing mermaid using `mermaid.initialize()`, mermaid takes all the `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. This is done like so:
+### c. The `mermaid.initialize()` API call
+
+`mermaid.initialize()` calls take all the definitions contained in `<div class="mermaid">` tags it can find in the html body and starts to render them one by one. It is called this way: 
 
 ```
 <body>
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 ```
+**Notes**:It is good practice to keep the `mermaid.initialize()` API call right next the `mermaid.min.js` `script` tag.
+          
+          startOnLoad is a parameter that can optionally be changed to false, this would then prevent mermaid from immediately rendering upon loading.
 
-### *Finally*
 ### If the three steps mentioned are followed you will end up with something like this:
-### Note that 
+
 
 ```
 <html>
@@ -157,27 +163,32 @@ c. The `mermaid.initialize()` command to start the rendering process.
   </body>
 </html>
 ```
-### Save this to an html file and open it with a browser.
+
+**Notes**: This has to be saved in an `HTML` file and opened with a browser.
 
 ---
 ## 4. Calling mermaid from a relative link. 
-This method is similar to 3, if only a little more involved.  The difference may be very subtle even, insignificant to a majority of people, but it offers its own advantages. 
+
+This method is similar to 3, if only a little more involved. The difference may be very subtle even, but it offers its own advantages, mainly in speed. 
 
 1. install node v10 or 12, which would have npm
 
-2. download yarn using npm.
-npm install -g yarn
+2. download yarn using npm by entering the command below:
+    npm install -g yarn
 
 3. After yarn installs, enter the following command:
     yarn add mermaid
 
-4. After downloading mermaid, you can then open the mermaid you’ve downloaded and go to the `dist` folder.
+4. After downloading mermaid, you can then open the mermaid file you’ve downloaded and go to the `dist` folder.
 
-5. Find the `mermaid.min.js` file, press the shift key and right click on and select copy as path from the options. 
+5. Find the `mermaid.min.js` file,
+    a. select the file.
+    b. press the shift key and right click on it
+    c. select copy as path from the options. 
 
 6. Paste it within the `script` tag as the `src`. 
 ```
-<script src=[Paste the mermaid.min.js file address here]></script>
+<script src="Paste the mermaid.min.js file address here"></script>
  <script>mermaid.initialize({startOnLoad:true});</script>
 ```
 7. It should look something like this
@@ -185,12 +196,13 @@ npm install -g yarn
   <script src="C:\Users\myPC\mermaid\dist\mermaid.js"></script>
   <script>mermaid.initialize({startOnLoad:true});</script>
 ```
-8. Add the graph and diagram definitions as you would in number 3, be mindful of the `div` tags. 
+8. Add the graph and diagram definitions as you would in number 3.
+    a. be mindful of the `div` tags. 
 
 9. Save, load/edit your HTML file to your liking.  
 
  
-**Note** placing the HTML file on the same folder the mermaid filed you've downloaded, is a good practice and allows you to shorten the address on the `src` section.
+**Note** placing the HTML file on the same folder the `mermaid` file you've downloaded is a good practice and allows you to shorten the address on the `src` section.
 
 **As seen here, in this full example:**
 ```
@@ -211,7 +223,7 @@ npm install -g yarn
      B --> C[Server1]
      B --> D[Server2]
   </div>
-  <script src="C:\Users\elanc\mermaid\dist\mermaid.js"></script>
+  <script src="C:\Users\MyPC\mermaid\dist\mermaid.js"></script>
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 </html>
