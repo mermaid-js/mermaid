@@ -1,6 +1,18 @@
 # Usage
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
+mermaid is a javascript tool that makes use of a markdown based syntax to render customizable diagrams and charts, for greater speed and ease. 
+
+mermaid was made to 0help Documentation catch up with Development, in quickly changing projects.
+
+## Using mermaid
+
+For the majority of beginners, using the live editor or deploying mermaid through their browsers is all they would have use for mermaid.
+
+**To learn more go to 
+
+# It only gets geekiers beyond this point.
+
 ## Installation
 
 ### npm package 
@@ -30,7 +42,7 @@ Please note that you can switch versions through the dropdown box at the top rig
 ## Simple usage on a web page
 
 The easiest way to integrate mermaid on a web page requires two elements:
-1. Inclusion of the mermaid framework in the html page using a script tag
+1. Inclusion of the mermaid address in the html page using a script tag
 2. A graph definition on the web page
 
 If these things are in place mermaid listens to the page load event and when fired (when the page has loaded) it will
@@ -39,7 +51,7 @@ locate the graphs on the page and transform them to svg files.
 ### Include mermaid on your web page:
 
 ```html
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
   <script>mermaid.initialize({startOnLoad:true});</script>
 ```
 
@@ -83,7 +95,7 @@ Would end up like this:
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
   </div>
- <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
  <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 </html>
