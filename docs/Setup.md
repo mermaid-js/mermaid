@@ -839,7 +839,6 @@ Sets the siteConfig. The siteConfig is a protected configuration for repeat use.
 the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
 to the defaultConfig
 Note: currentConfig is set in this function
-
 \*Default value: At default, will mirror Global Config\*\*
 
 ### Parameters
