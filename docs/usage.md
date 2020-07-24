@@ -9,13 +9,12 @@ mermaid was made to 0help Documentation catch up with Development, in quickly ch
 
 For the majority of beginners, using the live editor or deploying mermaid through their browsers is all they would have use for mermaid.
 
-**To learn more go to 
+**Learn more on [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).**
 
-# It only gets geekiers beyond this point.
 
 ## Installation
 
-### npm package 
+### Using the npm package 
 
 ```
 1.You will need to insall node v10 or 12, which would have npm.
@@ -42,8 +41,8 @@ Please note that you can switch versions through the dropdown box at the top rig
 ## Simple usage on a web page
 
 The easiest way to integrate mermaid on a web page requires two elements:
-1. Inclusion of the mermaid address in the html page using a script tag
-2. A graph definition on the web page
+1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.
+2. A graph definition, inside `<div>` tags labeled `class=mermaid`.
 
 If these things are in place mermaid listens to the page load event and when fired (when the page has loaded) it will
 locate the graphs on the page and transform them to svg files.
@@ -100,9 +99,11 @@ Would end up like this:
 </body>
 </html>
 ```
-## Try it out, save this code as HTML and load it. 
 
-### To enable click event and tags in nodes	
+### Try it out, save this code as HTML and load it. 
+
+
+## To enable click event and tags in nodes	
 
 In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.	
 
