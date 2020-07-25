@@ -53,8 +53,8 @@ locate the graphs on the page and transform them to svg files.
   <script>mermaid.initialize({startOnLoad:true});</script>
 ```
 
-Further down on your page mermaid will look for tags with `class="mermaid"`. From these tags mermaid will try to
-read the chart definiton and replace it with the svg chart.
+Further down on your page mermaid will look for `div` tags with `class="mermaid"`. From these tags mermaid will try to
+read the chart definiton and render it as an svg chart.
 
 
 ### Define a chart like thi:
@@ -142,7 +142,7 @@ If your application is taking resposibility for the diagram source security you 
 ```
 
 
-### Labels out of bounds
+## Labels out of bounds
 
 If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the
 whole page to load (dom + assets, particularly the fonts file).
