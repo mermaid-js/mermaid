@@ -12,8 +12,8 @@ Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Inter
 ## For beginners, there are four relatively easy ways you can use mermaid:
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 2. Using one of the many [mermaid plugins](https://mermaid-js.github.io/mermaid/#/integrations).
-3. Calling mermaid renderer with an absolute link through HTML.
-4. Installing mermaid with npm and hosting it on a webpage using a relative link in the `<script>` tag. 
+3. Using the mermaid API on your webpage. 
+4. Downloading mermaid and hosting it on your Web Page. 
 
 **Notes**: More in depth information can be found on [Usage](./usage.md).
 .
@@ -74,10 +74,10 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 ![Flowchart](./img/n00b-Confluence4.png)
 
 ---
-## There are two ways of hosting mermaid on a webpage. They will be discussed in 3 and 4, respectively.  
+## The following are two ways of hosting mermaid on a webpage.  
+**This is covered in greater detail in the [Usage section](https://mermaid-js.github.io/mermaid/#/usage)**
 
-## 3. mermaid using any web server (or just a browser):
-**This is covered in detail in the [Usage section](https://mermaid-js.github.io/mermaid/#/usage)**
+## 3. Using the Mermaid API:
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
@@ -93,7 +93,7 @@ a. A reference for fetching the online mermaid renderer, which is written in Jav
 
 b. The mermaid code for the diagram we want to create.
 
-c. The `mermaid.initialize()` command to start the rendering process. 
+c. The `mermaid.initialize()` API call to start the rendering process. 
 
 
 ## This is what needs to go into the html file (and all of them are important), for the mermaidAPI to render the diagrams:
@@ -132,9 +132,8 @@ c. The `mermaid.initialize()` command to start the rendering process.
   <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 ```
-**Notes**:It is good practice to keep the `mermaid.initialize()` API call right next the `mermaid.min.js` `script` tag.
-          
-          startOnLoad is a parameter that can optionally be changed to false, this would then prevent mermaid from immediately rendering upon loading.
+**Notes**: It is good practice to keep the `mermaid.initialize()` API call right next the `mermaid.min.js` `script` tag.
+`startOnLoad` is a parameter that can optionally be changed to false, this would then prevent mermaid from immediately rendering upon loading.
 
 ### If the three steps mentioned are followed you will end up with something like this:
 
