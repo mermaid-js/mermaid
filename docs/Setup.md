@@ -13,7 +13,7 @@ In addition to the render function, a number of behavioral configuration options
 
 ## Configuration
 
-**Configuration methods in Mermaid version 8.6.0 have been updated, to learn more\[[click here][2]].**
+**Configuration methods in Mermaid version 8.6.0 have been updated to include `directives`, to learn more\[[click here][2]].**
 
 ## **What follows are config instructions for older versions**
 
@@ -47,6 +47,29 @@ mermaid.initialize({
 </pre>
 
 A summary of all options and their defaults is found [here][3]. A description of each option follows below.
+
+
+| Parameter  | Description                                            | Type   | Required | Values                        |
+| ---------- | ------------------------------------------------------ | ------ | -------- | ----------------------------- |
+| config     | current mermaid configurations | Object | Required | All parameters and  values, except where prohibited by `secure`.  |
+ 
+**config here is an object that can be created either through `const` or `var` and is loaded by `mermaidAPI.initialize`.
+
+## secure
+
+This option controls which currentConfig keys are considered _secure_ and can only be changed via
+call to mermaidAPI.initialize. Calls to `mermaidAPI.reinitialize` cannot make changes to
+the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+overriding a site's default security.
+
+| Parameter | Description |Type | Required | Values|
+| --- | --- | --- | --- | --- |
+| secure | Array of parameters that cannot be changed the `init` directive| Array | Required | Any parameters|
+
+The modifiable parts of the Configuration are limited by the secure array, which is an array of immutable parameters, this array can be expanded by site owners.
+
+**Notes**: `secure` arrays work like nesting dolls, with the Global Configurations’ secure array being the default and immutable list of immutable parameters, or the smallest doll, to which site owners may add to, but implementors may not modify it.
+
 
 ## theme
 
@@ -117,13 +140,6 @@ theme , the CSS style sheet
 ## Notes\*\*: This matters if you are using base tag settings.
 
 **Default value: false**.
-
-## secure
-
-This option controls which currentConfig keys are considered _secure_ and can only be changed via
-call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
-the `secure` keys in the current currentConfig. This prevents malicious graph directives from
-overriding a site's default security.
 
 ## flowchart
 
