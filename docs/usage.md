@@ -5,13 +5,17 @@ mermaid is a javascript tool that makes use of a markdown based syntax to render
 
 mermaid was made to 0help Documentation catch up with Development, in quickly changing projects.
 
+### CDN
+
+https://unpkg.com/mermaid/
+
+Please note that you can switch versions through the dropdown box at the top right.
+
 ## Using mermaid
 
 For the majority of beginners, using the live editor or suppoting mermaid on a webpage would cover their uses for mermaid. 
 
-**To learn how to use  [Getting Started](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).**
-
-## Installation
+## Installing and Hosting mermaid on a webpage
 
 ### Using the npm package 
 
@@ -26,57 +30,34 @@ For the majority of beginners, using the live editor or suppoting mermaid on a w
 4. At this point, you can add mermaid as a dev dependency using this command: 
     yarn add --dev mermaid
 
-5. alternatively, you can deploy it using the script tag in an HTML file with mermaid diagram descriptions. This is explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
- 
+5. alternatively, you can deploy it using the script tag in an HTML file with mermaid diagram descriptions. 
 ```
+For 
 
-### CDN
+## Hosting mermaid on a web page.
 
-https://unpkg.com/mermaid/
-
-Please note that you can switch versions through the dropdown box at the top right.
-
-
-## Simple usage on a web page
+**Notes**: This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
 
 The easiest way to integrate mermaid on a web page requires two elements:
 1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.
-2. A graph definition, inside `<div>` tags labeled `class=mermaid`.
 
-If these things are in place mermaid listens to the page load event and when fired (when the page has loaded) it will
-locate the graphs on the page and transform them to svg files.
+  `<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>`
+  
+2. The `mermaidAPI` call, in a separate `script` tag.
 
-### Include mermaid on your web page:
+  `<script>mermaid.initialize({startOnLoad:true});</script>`
+  
+3. A graph definition, inside `<div>` tags labeled `class=mermaid`.
 
-```html
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-  <script>mermaid.initialize({startOnLoad:true});</script>
-```
-
-Further down on your page mermaid will look for `div` tags with `class="mermaid"`. From these tags mermaid will try to
-read the chart definiton and render it as an svg chart.
-
-
-### Define a chart like thi:
-
-```html
-<div class="mermaid">
+`<div class="mermaid">
      graph LR
       A --- B
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
-</div>
-```
+</div>`
 
-Would end up like this:
-
-```html
-<div class="mermaid" id="mermaidChart0">
-    <svg>
-        Chart ends up here
-    </svg>
-</div>
-```
+**If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
+locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and transform them to svg charts or diagrams.**
 
 ## Simple full example:
 
@@ -99,7 +80,7 @@ Would end up like this:
 </html>
 ```
 
-### Try it out, save this code as HTML and load it. 
+### Try it out, save this code as HTML and load it using any browser.(Please don't use Internet Explorer though.) 
 
 
 ## To enable click event and tags in nodes	
@@ -142,7 +123,7 @@ If your application is taking resposibility for the diagram source security you 
 ```
 
 
-## Labels out of bounds
+### Labels out of bounds
 
 If you use dynamically loaded fonts that are loaded through CSS, such as Google fonts, mermaid should wait for the
 whole page to load (dom + assets, particularly the fonts file).
@@ -169,7 +150,7 @@ If your page has other fonts in its body those might be used instead of the merm
         font-family: 'trebuchet ms', verdana, arial;
     }
 ```
-
+# This likely requires a `script.js` file, separate from the `HTML`. 
 ### Calling `mermaid.init`
 
 By default, `mermaid.init` will be called when the document is ready, finding all elements with
@@ -399,6 +380,7 @@ mermaid_config.startOnLoad = true;
 
 ## Using the mermaid.init call
 
+# 
 Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
