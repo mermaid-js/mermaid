@@ -1,7 +1,8 @@
 .label {
   font-family: 'trebuchet ms', verdana, arial;
   font-family: var(--mermaid-font-family);
-  color: #333;
+  fill: $titleColor;
+  color: $titleColor;
 }
 
 .label text {
@@ -43,9 +44,12 @@
 .edgeLabel {
   background-color: $edgeLabelBackground;
   rect {
-    opacity: 0.3;
+    opacity: 0.9;
   }
   text-align: center;
+  span {
+    color: $edgeLabelcolor;
+  }
 }
 
 .cluster rect {
