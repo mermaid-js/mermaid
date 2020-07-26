@@ -6,7 +6,7 @@ describe('Sequencediagram', () => {
     cy.visit(url);
     cy.get('body')
       .find('svg')
-      .should('have.length', 2);
+      .should('have.length', 1);
   });
   it('should handle html escapings properly', () => {
     const url = 'http://localhost:9000/webpackUsage.html?test-html-escaping=true';
