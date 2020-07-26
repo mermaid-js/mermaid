@@ -22,10 +22,21 @@ let code2 = `gantt
   Create tests for renderer     :2d
   Add to mermaid                :1d`;
 
+
+const code3 = `graph TD
+A(<img scr='https://iconscout.com/ms-icon-310x310.png' width='20' height='20' />)
+B(<b>Bold text</b>)`;
+
+
+if(location.href.match('test-html-escaping')){
+  code = code3;
+}
+
 mermaid.initialize({
   theme: 'default',
   fontFamily: '"Lucida Console", Monaco, monospace',
   startOnLoad: false,
+  securityLevel: "loose",
   flowchart: {
     htmlLabels: true
   },
