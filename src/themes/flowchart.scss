@@ -5,7 +5,7 @@
 }
 
 .label text {
-  fill: #333;
+  fill: $titleColor;
 }
 
 .node rect,
@@ -20,6 +20,7 @@
 
 .node .label {
   text-align: center;
+  fill: $titleColor;
 }
 .node.clickable {
   cursor: pointer;
@@ -42,7 +43,7 @@
 .edgeLabel {
   background-color: $edgeLabelBackground;
   rect {
-    opacity: 0.5;
+    opacity: 0.3;
   }
   text-align: center;
 }
