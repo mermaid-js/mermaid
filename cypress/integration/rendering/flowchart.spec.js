@@ -685,4 +685,13 @@ describe('Flowchart', () => {
       { flowchart: { diagramPadding: 0 } }
     );
   });
+
+  it('34: testing the label width in percy', () => {
+    imgSnapshotTest(
+      `graph TD
+      A[Christmas]
+      `,
+      {  }
+    );
+  });
 });

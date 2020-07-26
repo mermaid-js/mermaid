@@ -37,7 +37,7 @@ You can also watch some popular mermaid tutorials on the [mermaid Overview](./n0
 
 ## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
 
-## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
+## [New Configuration Protocols in version 8.6.0](./8.6.0_docs.md)
 
 
 ## New diagrams in 8.5

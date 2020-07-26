@@ -3,17 +3,18 @@ import { darken, lighten, adjust } from 'khroma';
 class Theme {
   constructor() {
     /* Base variables */
-    this.primaryColor = '#039fbe';
+    this.primaryColor = '#9f33be';
     this.secondaryColor = '#b20238';
-    this.tertiaryColor = lighten('#e8d21d', 30);
+    this.tertiaryColor = lighten(this.primaryColor, 30);
     this.relationColor = '#000';
-    this.primaryColor = '#fa255e';
-    this.secondaryColor = '#c39ea0';
-    this.tertiaryColor = '#f8e5e5';
 
-    this.primaryColor = '#ECECFF';
-    this.secondaryColor = '#ffffde';
-    this.tertiaryColor = '#ffffde';
+    // this.primaryColor = '#fa255e';
+    // this.secondaryColor = '#c39ea0';
+    // this.tertiaryColor = '#f8e5e5';
+
+    // this.primaryColor = '#ECECFF';
+    // this.secondaryColor = '#ffffde';
+    // this.tertiaryColor = '#ffffde';
 
     this.background = 'white';
     this.lineColor = '#333333';
@@ -36,7 +37,7 @@ class Theme {
     this.mainBkg = this.primaryColor;
     this.nodeBorder = darken(this.primaryColor, 23); // border 1
     this.clusterBkg = this.tertiaryColor;
-    this.clusterBorder = darken(this.tertiaryColor, 10);
+    this.clusterBorder = darken(this.tertiaryColor, 30);
     this.defaultLinkColor = this.lineColor;
     this.titleColor = this.textColor;
     this.edgeLabelBackground = this.labelBackground;
