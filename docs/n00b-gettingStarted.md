@@ -12,7 +12,7 @@ Most web browsers, such as Firefox, Chrome and Safari, can render mermaid, Inter
 ## For beginners, there are four relatively easy ways you can use mermaid:
 1. Using the mermaid [live editor](https://mermaid-js.github.io/mermaid-live-editor/). For some popular video tutorials on the live editor go to [Overview](./n00b-overview.md).
 2. Using one of the many [mermaid plugins](https://mermaid-js.github.io/mermaid/#/integrations).
-3. Using the mermaid API on your webpage. 
+3. Hosting mermaid on a webpage, with an absolute link.
 4. Downloading mermaid and hosting it on your Web Page. 
 
 **Notes**: More in depth information can be found on [Usage](./usage.md).
@@ -77,7 +77,7 @@ When the mermaid plugin is installed on a Confluence server, one can insert a me
 ## The following are two ways of hosting mermaid on a webpage.  
 **This is covered in greater detail in the [Usage section](https://mermaid-js.github.io/mermaid/#/usage)**
 
-## 3. Using the Mermaid API:
+## 3. Using the Mermaid API: The quick and dirty way of deploying mermaid
 
 This method can be used with any common web server. Apache, IIS, nginx, node express [...], you pick your favourite.
 
