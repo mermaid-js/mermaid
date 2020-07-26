@@ -52,8 +52,10 @@ A summary of all options and their defaults is found [here][3]. A description of
 | Parameter  | Description                                            | Type   | Required | Values                        |
 | ---------- | ------------------------------------------------------ | ------ | -------- | ----------------------------- |
 | config     | current mermaid configurations | Object | Required | All parameters and  values, except where prohibited by `secure`.  |
- 
+
+**Notes:**
 **config here is an object that can be created either through `const` or `var` and is loaded by `mermaidAPI.initialize`.
+config, can be overriden using the `%%init%%` directive, after [Version 8.6.0](./8.6.0_docs.md) was introduced.
 
 ## secure
 
