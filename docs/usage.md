@@ -30,31 +30,33 @@ For the majority of beginners, using the live editor or suppoting mermaid on a w
 4. At this point, you can add mermaid as a dev dependency using this command: 
     yarn add --dev mermaid
 
-5. alternatively, you can deploy it using the script tag in an HTML file with mermaid diagram descriptions. 
+5. Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions.
+    as is shown in the example below
 ```
-For 
 
 ## Hosting mermaid on a web page.
 
 **Notes**: This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
 
-The easiest way to integrate mermaid on a web page requires two elements:
-1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.
+The easiest way to integrate mermaid on a web page requires three elements:
+
+1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
 
   `<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>`
   
-2. The `mermaidAPI` call, in a separate `script` tag.
+2. The `mermaidAPI` call, in a separate `script` tag. Example:
 
   `<script>mermaid.initialize({startOnLoad:true});</script>`
   
-3. A graph definition, inside `<div>` tags labeled `class=mermaid`.
-
-`<div class="mermaid">
+3. A graph definition, inside `<div>` tags labeled `class=mermaid`. Example: 
+```
+<div class="mermaid">
      graph LR
       A --- B
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
-</div>`
+</div>
+```
 
 **If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
 locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and transform them to svg charts or diagrams.**
@@ -115,14 +117,6 @@ If you are taking resposibility for the diagram source security you can set the 
     mermaidAPI.initialize({	
         securityLevel: 'loose'	
     });	
-```	
-
-
-
-```javascript
-    mermaidAPI.initialize({
-        securityLevel: 'loose'
-    });
 ```
 
 
