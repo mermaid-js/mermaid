@@ -1,21 +1,9 @@
 # Usage
 **Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/usage.md)
 
-## Installation
+mermaid is a javascript tool that makes use of a markdown based syntax to render customizable diagrams and charts, for greater speed and ease. 
 
-### npm package 
-
-```
-1.You will need to isntall node v10 or 12, which would have npm.
-
-2. download yarn using npm.
-
-2. enter the following command:
-    yarn add mermaid
-
-3. You can then add mermaid as a dev dependency using this command: 
-    yarn add --dev mermaid
-```
+mermaid was made to 0help Documentation catch up with Development, in quickly changing projects.
 
 ### CDN
 
@@ -23,30 +11,45 @@ https://unpkg.com/mermaid/
 
 Please note that you can switch versions through the dropdown box at the top right.
 
+## Using mermaid
 
-## Simple usage on a web page
+For the majority of beginners, using the live editor or suppoting mermaid on a webpage would cover their uses for mermaid. 
 
-The easiest way to integrate mermaid on a web page requires two elements:
-1. Inclusion of the mermaid framework in the html page using a script tag
-2. A graph definition on the web page
+## Installing and Hosting mermaid on a webpage
 
-If these things are in place mermaid listens to the page load event and when fired (when the page has loaded) it will
-locate the graphs on the page and transform them to svg files.
+### Using the npm package 
 
-### Include mermaid on your web page:
+```
+1.You will need to insall node v10 or 12, which would have npm.
 
-```html
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
-  <script>mermaid.initialize({startOnLoad:true});</script>
+2. download yarn using npm.
+
+3. enter the following command:
+    yarn add mermaid
+
+4. At this point, you can add mermaid as a dev dependency using this command: 
+    yarn add --dev mermaid
+
+5. Alternatively, you can also deploy mermaid using the script tag in an HTML file with mermaid diagram descriptions.
+    as is shown in the example below
 ```
 
-Further down on your page mermaid will look for tags with `class="mermaid"`. From these tags mermaid will try to
-read the chart definiton and replace it with the svg chart.
+## Hosting mermaid on a web page.
 
+**Notes**: This topic explored in greater depth in the [User Guide for Beginners](./n00b-gettingStarted.md)
 
-### Define a chart like thi:
+The easiest way to integrate mermaid on a web page requires three elements:
 
-```html
+1. Inclusion of the mermaid address in the html page using a `script` tag, in the `src` section.Example:
+
+  `<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>`
+  
+2. The `mermaidAPI` call, in a separate `script` tag. Example:
+
+  `<script>mermaid.initialize({startOnLoad:true});</script>`
+  
+3. A graph definition, inside `<div>` tags labeled `class=mermaid`. Example: 
+```
 <div class="mermaid">
      graph LR
       A --- B
@@ -55,15 +58,8 @@ read the chart definiton and replace it with the svg chart.
 </div>
 ```
 
-Would end up like this:
-
-```html
-<div class="mermaid" id="mermaidChart0">
-    <svg>
-        Chart ends up here
-    </svg>
-</div>
-```
+**If these things are in place mermaid starts at the page load event and when fired (when the page has loaded) it will
+locate the graph definitions inside the `div` tags with `class="mermaid"` on the page and transform them to svg charts or diagrams.**
 
 ## Simple full example:
 
@@ -80,50 +76,47 @@ Would end up like this:
       B-->C[fa:fa-ban forbidden]
       B-->D(fa:fa-spinner);
   </div>
- <script src="https://cdn.jsdelivr.net/npm/mermaid@8.6.0/dist/mermaid.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
  <script>mermaid.initialize({startOnLoad:true});</script>
 </body>
 </html>
 ```
-## Try it out, save this code as HTML and load it. 
-
-### To enable click event and tags in nodes	
-
-In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.	
-
-* **true**: (default) tags in text are encoded, click functionality is disabled	
-* false: tags in text are allowed, click functionality is enabled	
-
-⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.	
-
-If your application is taking resposibility for the diagram source security you can set the `securityLevel` accordingly. By doing this clicks and tags are again allowed.	
-
-```javascript	
-    mermaidAPI.initialize({	
-        securityLevel: 'loose'	
-    });	
-```	
 
 ## Notes: 
 An id attribute is also added to mermaid tags without one.
 
 Mermaid can load multiple diagrams, in the same page.
 
-## To enable click event and tags in nodes:
+### Try it out, save this code as HTML and load it using any browser.(Please don't use Internet Explorer though.) 
 
-In version 8.2 a security improvement was introduced. A `securityLevel` configuration was introduced which sets the level of trust to be used on the parsed diagrams.
 
-* **true**: (default) tags in text are encoded, click functionality is disabled
-* false: tags in text are allowed, click functionality is enabled
+## To enable click event and tags in nodes	
 
-⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
+ A `securityLevel` configuration has to first be cleared, `securityLevel` sets the level of trust for the parsed diagrams. This was introduce in version 8.2 as a security improvement, aimed at preventing malicious use. 
+ 
+## securityLevel
 
-If your application is taking resposibility for the diagram source security you can set the `securityLevel` accordingly. By doing this clicks and tags are again allowed.
+| Parameter     | Description                       | Type   | Required | Values                    |
+| ------------- | --------------------------------- | ------ | -------- | ------------------------- |
+| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
 
-```javascript
-    mermaidAPI.initialize({
-        securityLevel: 'loose'
-    });
+\*\*Notes:
+
+-   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
+-   **loose**: tags in text are allowed, click functionality is enabled
+-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
+
+
+⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the `securityLevel` is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.	
+
+If you are taking resposibility for the diagram source security you can set the `securityLevel` to a value of your choosing . By doing this clicks and tags are again allowed.	
+
+## To chage `securityLevel` with `mermaidAPI.initialize`: 
+
+```javascript	
+    mermaidAPI.initialize({	
+        securityLevel: 'loose'	
+    });	
 ```
 
 
@@ -154,6 +147,7 @@ If your page has other fonts in its body those might be used instead of the merm
         font-family: 'trebuchet ms', verdana, arial;
     }
 ```
+# This likely requires a `script.js` file, separate from the `HTML`. 
 
 ### Calling `mermaid.init`
 
@@ -384,6 +378,7 @@ mermaid_config.startOnLoad = true;
 
 ## Using the mermaid.init call
 
+# 
 Is it possible to set some configuration via the mermaid object. The two parameters that are supported using this
 approach are:
 
