@@ -3,6 +3,7 @@
   - [mermaid](README.md)
   - [FAQ](faq.md)
   - [Usage](usage.md)
+  - [Integrations](integrations.md)
   - [Examples](examples.md)
   - [mermaid CLI](mermaidCLI.md)
 

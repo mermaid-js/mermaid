@@ -1,4 +1,5 @@
 # Integrations
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/n00b-gettingStarted.md)
 
 The following is a list of different integrations and plugins where mermaid is being used
 
