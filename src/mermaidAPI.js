@@ -206,6 +206,7 @@ const render = function(id, _txt, cb, container) {
     configApi.reset();
     const siteConfig = getSiteConfig();
     updateRendererConfigs(siteConfig);
+    reinitialize(siteConfig);
   }
 
   const cnf = getConfig();
