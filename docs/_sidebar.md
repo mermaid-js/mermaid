@@ -3,6 +3,7 @@
   - [mermaid](README.md)
   - [FAQ](faq.md)
   - [Usage](usage.md)
+  - [Integrations](integrations.md)
   - [Examples](examples.md)
   - [mermaid CLI](mermaidCLI.md)
 
@@ -21,10 +22,10 @@
 - Guide
 
   - [Development](development.md)
-  - [Setup](Setup.md)
+  - [Configurations](Setup.md)
   - [Changelog](CHANGELOG.md)
 
-- I'm a n00b
+- Beginner's Guide
   - [overview](n00b-overview.md)
   - [Getting started - easier](n00b-gettingStarted.md)
   - [Diagram syntax intro](n00b-syntaxReference.md)

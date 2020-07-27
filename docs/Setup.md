@@ -13,6 +13,10 @@ In addition to the render function, a number of behavioral configuration options
 
 ## Configuration
 
+**Configuration methods in Mermaid version 8.6.0 have been updated to include `directives`, to learn more\[[click here][2]].**
+
+## **What follows are config instructions for older versions**
+
 These are the default options which can be overridden with the initialization call like so:
 **Example 1:**
 
@@ -42,16 +46,43 @@ mermaid.initialize({
 &lt;/script>
 </pre>
 
-A summary of all options and their defaults is found [here][2]. A description of each option follows below.
+A summary of all options and their defaults is found [here][3]. A description of each option follows below.
+
+
+| Parameter  | Description                                            | Type   | Required | Values                        |
+| ---------- | ------------------------------------------------------ | ------ | -------- | ----------------------------- |
+| config     | current mermaid configurations | Object | Required | All parameters and  values, except where prohibited by `secure`.  |
+
+**Notes:**
+**config here is an object that can be created either through `const` or `var` and is loaded by `mermaidAPI.initialize`.
+config, can be overriden using the `%%init%%` directive, after [Version 8.6.0](./8.6.0_docs.md) was introduced.
+
+## secure
+
+This option controls which currentConfig keys are considered _secure_ and can only be changed via
+call to mermaidAPI.initialize. Calls to `mermaidAPI.reinitialize` cannot make changes to
+the `secure` keys in the current currentConfig. This prevents malicious graph directives from
+overriding a site's default security.
+
+| Parameter | Description |Type | Required | Values|
+| --- | --- | --- | --- | --- |
+| secure | Array of parameters that cannot be changed the `init` directive| Array | Required | Any parameters|
+
+The modifiable parts of the Configuration are limited by the secure array, which is an array of immutable parameters, this array can be expanded by site owners.
+
+**Notes**: `secure` arrays work like nesting dolls, with the Global Configurations’ secure array being the default and immutable list of immutable parameters, or the smallest doll, to which site owners may add to, but implementors may not modify it.
+
 
 ## theme
 
 theme , the CSS style sheet
 
 theme , the CSS style sheet
-| Parameter | Description |Type | Required | Values|
-\| --- \| --- \| --- \| --- \| --- \|
-| Theme |Built in Themes| String | Optional | Values include, default, forest, dark, neutral, null|
+
+| Parameter | Description     | Type   | Required | Values                                               |
+| --------- | --------------- | ------ | -------- | ---------------------------------------------------- |
+| Theme     | Built in Themes | String | Optional | Values include, default, forest, dark, neutral, null |
+
 **Notes:**To disable any pre-defined mermaid theme, use "null".
 
 <pre>
@@ -83,14 +114,15 @@ theme , the CSS style sheet
 
 ## securityLevel
 
-| Parameter     | Description                       | Type   | Required | Values        |
-| ------------- | --------------------------------- | ------ | -------- | ------------- |
-| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose |
+| Parameter     | Description                       | Type   | Required | Values                    |
+| ------------- | --------------------------------- | ------ | -------- | ------------------------- |
+| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose, antiscript |
 
 \*\*Notes:
 
 -   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
 -   **loose**: tags in text are allowed, click functionality is enabled
+-   **antiscript**: html tags in text are allowed, (only script element is removed), click functionality is enabled
 
 ## startOnLoad
 
@@ -110,13 +142,6 @@ theme , the CSS style sheet
 ## Notes\*\*: This matters if you are using base tag settings.
 
 **Default value: false**.
-
-## secure
-
-This option controls which currentConfig keys are considered _secure_ and can only be changed via
-call to mermaidAPI.initialize. Calls to mermaidAPI.reinitialize cannot make changes to
-the `secure` keys in the current currentConfig. This prevents malicious graph directives from
-overriding a site's default security.
 
 ## flowchart
 
@@ -821,10 +846,19 @@ mermaidAPI.initialize({
 
 ## setSiteConfig
 
+## setSiteConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes:**
 Sets the siteConfig. The siteConfig is a protected configuration for repeat use. Calls to reset() will reset
 the currentConfig to siteConfig. Calls to reset(configApi.defaultConfig) will reset siteConfig and currentConfig
 to the defaultConfig
 Note: currentConfig is set in this function
+
+\*Default value: At default, will mirror Global Config\*\*
 
 ### Parameters
 
@@ -834,13 +868,27 @@ Returns **any** the siteConfig
 
 ## getSiteConfig
 
-Obtains the current siteConfig base configuration
+## getSiteConfig
+
+| Function      | Description                                       | Type        | Values                            |
+| ------------- | ------------------------------------------------- | ----------- | --------------------------------- |
+| setSiteConfig | Returns the current siteConfig base configuration | Get Request | Returns Any Values  in siteConfig |
+
+**Notes**:
+Returns **any** values in siteConfig.
 
 Returns **any** 
 
 ## setConfig
 
-Sets the currentConfig. The param conf is sanitized based on the siteConfig.secure keys. Any
+## setConfig
+
+| Function      | Description                           | Type        | Values                                  |
+| ------------- | ------------------------------------- | ----------- | --------------------------------------- |
+| setSiteConfig | Sets the siteConfig to desired values | Put Request | Any Values, except ones in secure array |
+
+**Notes**:
+Sets the currentConfig. The parameter conf is sanitized based on the siteConfig.secure keys. Any
 values found in conf with key found in siteConfig.secure will be replaced with the corresponding
 siteConfig value.
 
@@ -852,11 +900,24 @@ Returns **any** the currentConfig merged with the sanitized conf
 
 ## getConfig
 
-Obtains the currentConfig
+## getConfig
+
+| Function  | Description               | Type        | Return Values                 |
+| --------- | ------------------------- | ----------- | ----------------------------- |
+| getConfig | Obtains the currentConfig | Get Request | Any Values from currentConfig |
+
+**Notes**:
+Returns **any** the currentConfig
 
 Returns **any** the currentConfig
 
 ## sanitize
+
+## sanitize
+
+| Function | Description                            | Type        | Values |
+| -------- | -------------------------------------- | ----------- | ------ |
+| sanitize | Sets the siteConfig to desired values. | Put Request | None   |
 
 Ensures options parameter does not attempt to override siteConfig secure keys
 Note: modifies options in-place
@@ -867,12 +928,25 @@ Note: modifies options in-place
 
 ## reset
 
-Resets this currentConfig to conf
+## reset
+
+| Function | Description                  | Type        | Required | Values |
+| -------- | ---------------------------- | ----------- | -------- | ------ |
+| reset    | Resets currentConfig to conf | Put Request | Required | None   |
+
+| Parameter | Description                                                   | Type       | Required | Values                                       |
+| --------- | ------------------------------------------------------------- | ---------- | -------- | -------------------------------------------- |
+| conf      | base set of values, which currentConfig coul be **reset** to. | Dictionary | Required | Any Values, with respect to the secure Array |
+
+\*Notes :
+(default: current siteConfig ) (optional, default `getSiteConfig()`)
 
 ### Parameters
 
 -   `conf`  the base currentConfig to reset to (default: current siteConfig ) (optional, default `getSiteConfig()`)
 
-[1]: https://github.com/knsv/mermaid/blob/master/docs/mermaidAPI.md#render
+[1]: Setup.md?id=render
 
-[2]: https://github.com/knsv/mermaid/blob/master/docs/Setup.md#mermaidapi-configuration-defaults
+[2]: 8.6.0_docs.md
+
+[3]: #mermaidapi-configuration-defaults

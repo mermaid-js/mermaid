@@ -1,5 +1,5 @@
 # Breaking changes
-
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/breakingChanges.md)
 ### Breaking changes from history version to latest version:
 
 ## #1
