@@ -17,11 +17,11 @@
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%%(?!\{)[^\n]*                                                 /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
-\%\%[^\n]*\n*           /* do nothing */
-\n+                     return 'NEWLINE';
-\s+                     /* skip whitespace */
+\%\%(?!\{)*[^\n]*                                                 /* skip comments */
+[^\}]\%\%*[^\n]*                                                 /* skip comments */
+\%\%*[^\n]*[\n]*           /* do nothing */
+[\n]+                     return 'NEWLINE';
+[\s]+                     /* skip whitespace */
 "classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
 [\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
@@ -146,11 +146,15 @@ mermaidDoc
     ;
 
 graphConfig
-    : CLASS_DIAGRAM NEWLINE statements EOF
+    : NEWLINE
+    | NEWLINE graphConfig
+    | graphConfig NEWLINE
+    | CLASS_DIAGRAM NEWLINE statements EOF
     ;
 
 statements
     : statement
+    | NEWLINE statement
     | statement NEWLINE
     | statement NEWLINE statements
     ;
