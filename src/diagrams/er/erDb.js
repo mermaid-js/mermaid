@@ -2,6 +2,7 @@
  *
  */
 import { logger } from '../../logger';
+import mermaidAPI from '../../mermaidAPI';
 
 let entities = {};
 let relationships = [];
@@ -17,6 +18,10 @@ const Cardinality = {
 const Identification = {
   NON_IDENTIFYING: 'NON_IDENTIFYING',
   IDENTIFYING: 'IDENTIFYING'
+};
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(statement, context, type);
 };
 
 const addEntity = function(name) {
@@ -67,6 +72,7 @@ const clear = function() {
 export default {
   Cardinality,
   Identification,
+  parseDirective,
   addEntity,
   getEntities,
   addRelationship,

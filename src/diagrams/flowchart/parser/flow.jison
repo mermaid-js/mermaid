@@ -9,8 +9,16 @@
 %x string
 %x dir
 %x vertex
+%x open_directive type_directive arg_directive
+
 %%
-\%\%[^\n]*\n*           /* do nothing */
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%[^\n]*                      { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+\%%(?!\{)[^\n]*                                                 /* skip comments */
+[^\}]\%\%[^\n]*                                                 /* skip comments */
 ["]                     this.begin("string");
 <string>["]             this.popState();
 <string>[^"]*           return "STR";
@@ -193,7 +201,10 @@
 
 %% /* language grammar */
 
-mermaidDoc: graphConfig document;
+mermaidDoc
+  : graphConfig document
+  | directive mermaidDoc
+  ;
 
 document
 	: /* empty */
@@ -207,13 +218,17 @@ document
 	;
 
 line
-	: statement
-	{$$=$1;}
+	: statement {$$=$1;}
 	| SEMI
 	| NEWLINE
 	| SPACE
 	| EOF
 	;
+
+directive
+    : openDirective typeDirective closeDirective separator
+    | openDirective typeDirective ':' argDirective closeDirective separator
+    ;
 
 graphConfig
     : SPACE graphConfig
@@ -274,6 +289,7 @@ statement
     // {$$=yy.addSubGraph($3,$5,$3);}
     | subgraph separator document end
     {$$=yy.addSubGraph(undefined,$3,undefined);}
+    | directive
     ;
 
 separator: NEWLINE | SEMI | EOF ;
@@ -298,8 +314,8 @@ verticeStatement: verticeStatement link node
         { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
     |  verticeStatement link node spaceList
         { /* console.warn('vs',$1.stmt,$3); */ yy.addLink($1.stmt,$3,$2); $$ = { stmt: $3, nodes: $3.concat($1.nodes) } }
-    |node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
-    |node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
+    | node spaceList {/*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
+    | node { /*console.warn('noda', $1);*/ $$ = {stmt: $1, nodes:$1 }}
     ;
 
 node: vertex
@@ -346,7 +362,7 @@ vertex:  idString SQS text SQE
 
 link: linkStatement arrowText
     {$1.text = $2;$$ = $1;}
-    | linkStatement TESTSTR SPACE
+    | linkStatement STR SPACE
     {$1.text = $2;$$ = $1;}
     | linkStatement arrowText SPACE
     {$1.text = $2;$$ = $1;}
@@ -365,24 +381,16 @@ arrowText:
     {$$ = $2;}
     ;
 
-text: textToken
-    {$$=$1;}
-    | text textToken
-    {$$=$1+''+$2;}
-    | STR
-    {$$=$1;}
+text: textToken {$$=$1;}
+    | text textToken {$$=$1+''+$2;}
     ;
-
-
 
 keywords
     : STYLE | LINKSTYLE | CLASSDEF | CLASS | CLICK | GRAPH | DIR | subgraph | end | DOWN | UP;
 
 
-textNoTags: textNoTagsToken
-    {$$=$1;}
-    | textNoTags textNoTagsToken
-    {$$=$1+''+$2;}
+textNoTags: textNoTagsToken {$$=$1;}
+    | textNoTags textNoTagsToken {$$=$1+''+$2;}
     ;
 
 
@@ -424,54 +432,42 @@ linkStyleStatement
           {$$ = $1;yy.updateLinkInterpolate($3,$7);}
     ;
 
-numList: NUM
-        {$$ = [$1]}
-    | numList COMMA NUM
-        {$1.push($3);$$ = $1;}
+numList
+    : NUM {$$ = [$1]}
+    | numList COMMA NUM {$1.push($3);$$ = $1;}
     ;
 
-stylesOpt: style
-        {$$ = [$1]}
-    | stylesOpt COMMA style
-        {$1.push($3);$$ = $1;}
+stylesOpt: style {$$ = [$1]}
+    | stylesOpt COMMA style {$1.push($3);$$ = $1;}
     ;
 
 style: styleComponent
-    |style styleComponent
-    {$$ = $1 + $2;}
+    | style styleComponent {$$ = $1 + $2;}
     ;
 
 styleComponent: ALPHA | COLON | MINUS | NUM | UNIT | SPACE | HEX | BRKT | DOT | STYLE | PCT ;
 
 /* Token lists */
 
-textToken      : textNoTagsToken | TAGSTART | TAGEND | START_LINK | PCT | DEFAULT;
+textToken      : textNoTagsToken | STR {$$=$1;} | TAGSTART | TAGEND | START_LINK | PCT | DEFAULT;
 
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
 idString
-    :idStringToken
-    {$$=$1}
-    | idString idStringToken
-    {$$=$1+''+$2}
+    : idStringToken {$$=$1}
+    | idString idStringToken {$$=$1+''+$2}
     ;
 
 alphaNum
-    : alphaNumStatement
-    {$$=$1;}
-    | alphaNum alphaNumStatement
-    {$$=$1+''+$2;}
+    : alphaNumStatement {$$=$1;}
+    | alphaNum alphaNumStatement {$$=$1+''+$2;}
     ;
 
 alphaNumStatement
-    : DIR
-        {$$=$1;}
-    | alphaNumToken
-        {$$=$1;}
-    | DOWN
-        {$$='v';}
-    | MINUS
-        {$$='-';}
+    : DIR {$$=$1;}
+    | alphaNumToken {$$=$1;}
+    | DOWN {$$='v';}
+    | MINUS {$$='-';}
     ;
 
 alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA | PLUS | EQUALS | MULT | DOT | BRKT| UNDERSCORE ;
@@ -479,4 +475,21 @@ alphaNumToken  : PUNCTUATION | AMP | UNICODE_TEXT | NUM| ALPHA | COLON | COMMA |
 idStringToken  : ALPHA|UNDERSCORE |UNICODE_TEXT | NUM|  COLON | COMMA | PLUS | MINUS | DOWN |EQUALS | MULT | BRKT | DOT | PUNCTUATION | AMP;
 
 graphCodeTokens: STADIUMSTART | STADIUMEND | SUBROUTINESTART | SUBROUTINEEND | CYLINDERSTART | CYLINDEREND | TRAPSTART | TRAPEND | INVTRAPSTART | INVTRAPEND | PIPE | PS | PE | SQS | SQE | DIAMOND_START | DIAMOND_STOP | TAGSTART | TAGEND | ARROW_CROSS | ARROW_POINT | ARROW_CIRCLE | ARROW_OPEN | QUOTE | SEMI;
+
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
+
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'sequence'); }
+  ;
+
 %%

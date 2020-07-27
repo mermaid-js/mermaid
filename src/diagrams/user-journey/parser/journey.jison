@@ -7,20 +7,19 @@
 %options case-insensitive
 
 // Directive states
-%x OPEN_DIRECTIVE
-%x TYPE_DIRECTIVE
-%x ARG_DIRECTIVE
+%x open_directive type_directive arg_directive
+
 
 %%
 
-\%\%\{                                                          { this.begin('OPEN_DIRECTIVE'); return 'open_directive'; }
-<OPEN_DIRECTIVE>((?:(?!\}\%\%)[^:.])*)                          { this.begin('TYPE_DIRECTIVE'); return 'type_directive'; }
-<TYPE_DIRECTIVE>":"                                             { this.popState(); this.begin('ARG_DIRECTIVE'); return ':'; }
-<TYPE_DIRECTIVE,ARG_DIRECTIVE>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<ARG_DIRECTIVE>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
-[\n]+                   return 'NL';
+[\n]+                   return 'NEWLINE';
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
 
@@ -54,13 +53,13 @@ document
 line
 	: SPACE statement { $$ = $2 }
 	| statement { $$ = $1 }
-	| NL { $$=[];}
+	| NEWLINE { $$=[];}
 	| EOF { $$=[];}
 	;
 
 directive
-  : openDirective typeDirective closeDirective 'NL'
-  | openDirective typeDirective ':' argDirective closeDirective 'NL'
+  : openDirective typeDirective closeDirective 'NEWLINE'
+  | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
   ;
 
 statement
@@ -86,4 +85,4 @@ closeDirective
   : close_directive { yy.parseDirective('}%%', 'close_directive', 'sequence'); }
   ;
 
-
+%%
