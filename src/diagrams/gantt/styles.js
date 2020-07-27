@@ -252,7 +252,7 @@ const getStyles = options =>
   .titleText {
     text-anchor: middle;
     font-size: 18px;
-    fill: ${options.taskTextDarkColor}    ;
+    fill: ${options.textColor}    ;
     font-family: 'trebuchet ms', verdana, arial;
     font-family: var(--mermaid-font-family);
   }

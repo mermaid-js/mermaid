@@ -1,73 +1,46 @@
-# Theming
-
-Mermaid as a system for theming in place. With it a site integrator can override a vast majority of attributes used when rendering a diagram.
-
-The settings for a theme can be set globally for the site with the initialize call. The example below highlights how that can look:
-
-```
- // example
-```
-
-It is also possible to override theme settings locally in a diagram using directives.
-
-```
-%%{init: {'theme':'base'}}%%
-  graph TD
-    a --> b
-```
-
-The easiest way to make a custom theme is to start with the base theme, the theme named base and just modify these variables:
-* primaryColor   - the base color for the theme
-
-More specific color variables it is possible to change:
-* lineColor
-* textColor
-
-Here is an example of a showcase flowchart with theme set to base, with the default variables set:
-```mermaid
-%%{init: {'theme':'base'}}%%
-        graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
-```
-
-Here is an example of overriding the primary color and giving everything a little different look.
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {primaryColor: '#ff0000'}}%%
-        graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
-```
-As the theming engine is using color codes to calculate values from the base color/base colors it needs proper color values contrain the actual color data. Aliases like color names is not supported so for instance, the color value 'red' will not work but '#ff0000' will work.
-
-## Showcases
-
-When adjusting a theme it might be helpful to look at the theme with these diagrams to evaluate that everything is visiable and looks good.
-
-### flowchart
-```
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <style>
+      body {
+        /* background: rgb(221, 208, 208); */
+        background: #f4f4f4;
+        /* background: #0c0c0c; */
+        font-family: 'Arial';
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        }
+      h1 { color: grey;}
+      .mermaid2 {
+        display: none;
+      }
+      .height {
+        min-height: 600px;
+        height: 600px;
+      }
+      .height2 {
+        min-height: 600px;
+        height: 1300px;
+      }
+      .width {
+        width: 33%;
+        border: 1px solid blue;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Showcases of diagrams</h1>
+    <div class="flex flex-wrap">
+      <div class="mermaid width height">
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         graph TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -83,27 +56,8 @@ When adjusting a theme it might be helpful to look at the theme with these diagr
             F
             G
           end
-```
-```mermaid
-%%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
-        graph TD
-          A[Christmas] -->|Get money| B(Go shopping)
-          B --> C{Let me think}
-          B --> G[/Another/]
-          C ==>|One| D[Laptop]
-          C -->|Two| E[iPhone]
-          C -->|Three| F[fa:fa-car Car]
-          subgraph section
-            C
-            D
-            E
-            F
-            G
-          end
-```
-
-### flowchart (beta)
-```mermaid
+      </div>
+      <div class="mermaid width height">
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
         flowchart TD
           A[Christmas] -->|Get money| B(Go shopping)
@@ -119,11 +73,8 @@ When adjusting a theme it might be helpful to look at the theme with these diagr
             F
             G
           end
-```
-
-### Sequence diagram
-
-```mermaid
+      </div>
+      <div class="mermaid width height" >
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 
         sequenceDiagram
@@ -141,11 +92,8 @@ When adjusting a theme it might be helpful to look at the theme with these diagr
               loop Every minute
                 John-->Alice: Great!
             end
-```
-
-### Gantt
-
-```mermaid
+      </div>
+      <div class="mermaid width height">
 gantt
        dateFormat                :YYYY-MM-DD
        title                     Adding GANTT diagram functionality to mermaid
@@ -173,10 +121,8 @@ gantt
        Describe gantt syntax               :after doc1, 3d
        Add gantt diagram to demo page      :20h
        Add another diagram to demo page    :48h
-```
-
-### State diagram
-```mermaid
+      </div>
+      <div class="mermaid width height2">
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
       stateDiagram
         [*] --> Active
@@ -204,11 +150,8 @@ gantt
 
         SomethingElse --> [*]
 
-```
-
-### State diagram (beta)
-
-```mermaid
+      </div>
+      <div class="mermaid width height2">
 %%{init: {'securityLevel': 'loose', 'theme':'base'}}%%
 stateDiagram-v2
         [*] --> Active
@@ -235,11 +178,8 @@ stateDiagram-v2
         note right of SomethingElse2 : This is the note to the right.
 
         SomethingElse2 --> [*]
-```
-
-### Entity Relations diagram
-
-```mermaid
+      </div>
+      <div class="mermaid width height2">
       erDiagram
         CUSTOMER }|..|{ DELIVERY-ADDRESS : has
         CUSTOMER ||--o{ ORDER : places
@@ -249,10 +189,8 @@ stateDiagram-v2
         ORDER ||--|{ ORDER-ITEM : includes
         PRODUCT-CATEGORY ||--|{ PRODUCT : contains
         PRODUCT ||--o{ ORDER-ITEM : "ordered in"
-```
-
-### User journet diagram
-```mermaid
+      </div>
+      <div class="mermaid width height">
 journey
             title My working day
             section Go to work
@@ -262,4 +200,28 @@ journey
             section Go home
               Go downstairs: 5: Me
               Sit down: 5: Me
-```
+      </div>
+
+  <script src="./mermaid.js"></script>
+    <script>
+      mermaid.parseError = function (err, hash) {
+          // console.error('Mermaid error: ', err);
+        };
+      mermaid.initialize({
+        theme: 'base',
+        themeVariables: { primaryColor: '#ff0000'},
+        // arrowMarkerAbsolute: true,
+        // themeCSS: '.edgePath .path {stroke: red;} .arrowheadPath {fill: red;}',
+        logLevel: 0,
+        flowchart: { curve: 'cardinal', "htmlLabels": false },
+        // gantt: { axisFormat: '%m/%d/%Y' },
+        sequence: { actorMargin: 50, showSequenceNumbers: true },
+        // sequenceDiagram: { actorMargin: 300 } // deprecated
+        fontFamily: '"arial", sans-serif',
+        curve: 'cardinal',
+        securityLevel: 'strict'
+      });
+      function callback(){alert('It worked');}
+    </script>
+  </body>
+</html>

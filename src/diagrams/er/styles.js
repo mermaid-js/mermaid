@@ -6,9 +6,9 @@ const getStyles = options =>
   }
 
   .relationshipLabelBox {
-    fill: ${options.edgeLabelBackground};
-    fillopactity: 0;
-    background-color: ${options.edgeLabelBackground};
+    fill: ${options.tertiaryColor};
+    opacity: 0.3;
+    background-color: ${options.tertiaryColor};
       rect {
         opacity: 0.5;
       }

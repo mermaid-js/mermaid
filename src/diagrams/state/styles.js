@@ -61,6 +61,14 @@ g.stateGroup line {
   opacity: 0.5;
 }
 
+.edgeLabel .label rect {
+  fill: ${options.tertiaryColor};
+  opacity: 0.3;
+}
+.edgeLabel .label text {
+  fill: ${options.tertiaryTextColor};
+}
+
 .stateLabel text {
   fill: ${options.labelColor};
   font-size: 10px;
@@ -70,12 +78,12 @@ g.stateGroup line {
 }
 
 .node circle.state-start {
-  fill: black;
+  fill: ${options.primaryBorderColor};
   stroke: black;
 }
 .node circle.state-end {
-  fill: black;
-  stroke: white;
+  fill: ${options.primaryBorderColor};
+  stroke: ${options.background};
   stroke-width: 1.5
 }
 
@@ -148,6 +156,10 @@ g.stateGroup line {
   stroke-width: 1px;
   rx: 0;
   ry: 0;
+}
+
+.statediagram-note text {
+  fill: ${options.noteTextColor};
 }
 
 .statediagram-note .nodeLabel {

@@ -1,6 +1,6 @@
 import { getThemeVariables as baseThemeVariables } from './theme-base';
 import { getThemeVariables as darkThemeVariables } from './theme-dark';
-import { getThemeVariables as defaultThemeVariables } from './theme-default';
+import { getThemeVariables as defaultThemeVariables } from './theme-base';
 import { getThemeVariables as forestThemeVariables } from './theme-forest';
 import { getThemeVariables as neutralThemeVariables } from './theme-neutral';
 

@@ -28,5 +28,6 @@
 - Beginner's Guide
   - [overview](n00b-overview.md)
   - [Getting started - easier](n00b-gettingStarted.md)
+  - [Theming](theming.md)
   - [Diagram syntax intro](n00b-syntaxReference.md)
   - [Advanced usage](n00b-advanced.md)
