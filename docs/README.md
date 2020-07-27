@@ -196,7 +196,10 @@ journey
 ```
 ![Journey diagram](./img/user-journey.png)
 
-## Installation
+# Installation
+## In depth guides and examples can be found in [Getting Started](./n00b-gettingStarted.md) and [Usage](./usage.md).
+
+## It would also be helpful to learn more about mermaid's [Syntax](./n00b-syntaxReference.md).
 
 ### CDN
 
@@ -212,33 +215,32 @@ Alternatively, you can also adjust the version number in the page itself.
 
 Latest Version: https://unpkg.com/browse/mermaid@8.6.0/
 
-## Incorporating mermaid to a website
-to support mermaid on your website, all you have to do is add Mermaid’s JavaScript package 
+## Incorporating mermaid to a website 
+To support mermaid on your website, all you have to do is add Mermaid’s JavaScript package 
 
 ```
 1.You will need to isntall node v10 or 12, which would have npm
 
 2. download yarn using npm.
 
-2. enter the following command:
+3. enter the following command:
     yarn add mermaid
 
-3. You can then add mermaid as a dev dependency using this command: 
+4. You can then add mermaid as a dev dependency using this command: 
     yarn add --dev mermaid
    
 ```
 
-## To install mermaid without a bundler, one can use the script tag like so:
-
-<script src="https://unpkg.com/mermaid/"></script>
+## To deploy mermaid without a bundler, one can insert a `script` tag with an absolute address and a `mermaidAPI` call into the HTML like so:
+```
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 <script>mermaid.initialize({startOnLoad:true});</script>
+```
+## doing so will command the mermaid parser to look for the `<div>` tags with `class="mermaid"` in your HTML Document. From these tags mermaid will try to read the diagram/chart definitons and render them as svg charts.
 
-## it can then be followed by the diagram definitions as could be found in the [examples in the documentation](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted).
+## Examples can be found in [Getting Started](./n00b-gettingStarted.md)
 
-
-## On your page mermaid will look for tags with class="mermaid". From these tags mermaid will try to read the chart definiton and replace it with an svg chart.
-
-## Sibling projects
+# Sibling projects
 - [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor)
 - [mermaid CLI](https://github.com/mermaidjs/mermaid.cli)
 - [mermaid webpack demo](https://github.com/mermaidjs/mermaid-webpack-demo)
