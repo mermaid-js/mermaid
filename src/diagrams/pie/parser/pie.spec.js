@@ -12,6 +12,15 @@ describe('when parsing pie', function() {
     pie.parser.yy = pieDb;
     pie.parser.yy.clear();
   });
+  it('should handle very simple pie', function() {
+    const res = pie.parser.parse(`pie
+"ash" : 100
+`);
+    const sections = pieDb.getSections();
+    console.log('sections: ', sections);
+    const section1 = sections['ash'];
+    expect(section1).toBe(100);
+  });
   it('should handle simple pie', function() {
     const res = pie.parser.parse(`pie
 "ash" : 60

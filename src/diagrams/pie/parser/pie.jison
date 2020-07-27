@@ -24,8 +24,8 @@
 [\n\r]+                                                         return 'NEWLINE';
 \%\%[^\n]*                                                      /* do nothing */
 [\s]+ 		                                                      /* ignore */
-title                                                           { console.log('starting title');this.begin("title");return 'title'; }
-<title>([^(?:\n#;)]*)                                           { this.popState(); return "title_value"; }
+title                                                           { this.begin("title");return 'title'; }
+<title>(?!\n|;|#)*[^\n]*                                        { this.popState(); return "title_value"; }
 ["]                                                             { this.begin("string"); }
 <string>["]                                                     { this.popState(); }
 <string>[^"]*                                                   { return "txt"; }
@@ -41,9 +41,9 @@ title                                                           { console.log('s
 %% /* language grammar */
 
 start
-  : eol start { console.warn('NEWLINE start'); }
-  | directive start { console.warn('directive start'); }
-	| PIE document EOF { console.warn('PIE document EOF'); }
+  : eol start
+  | directive start
+	| PIE document
 	;
 
 document
@@ -52,14 +52,13 @@ document
 	;
 
 line
-	: statement { $$ = $1 }
-	| eol { $$=[]; }
+	: statement eol { $$ = $1 }
 	;
 
 statement
   :
-	| txt value         { yy.addSection($1,yy.cleanupValue($2)); }
-	| title title_value { $$=$2.trim();yy.setTitle($$); }
+	| txt value          { yy.addSection($1,yy.cleanupValue($2)); }
+	| title title_value  { $$=$2.trim();yy.setTitle($$); }
 	| directive
 	;
 
@@ -69,10 +68,9 @@ directive
   ;
 
 eol
-  :
-  | SPACE eol
-  | NEWLINE eol
-  | ';' eol
+  : NEWLINE
+  | ';'
+  | EOF
   ;
 
 openDirective

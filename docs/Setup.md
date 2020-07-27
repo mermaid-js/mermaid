@@ -526,7 +526,7 @@ This might need adjustment to match your locale and preferences
 
 ## journey
 
-The object containing configurations specific for sequence diagrams
+The object containing configurations specific for journey diagrams
 
 ### diagramMarginX
 
