@@ -1,11 +1,12 @@
 .label {
   font-family: 'trebuchet ms', verdana, arial;
   font-family: var(--mermaid-font-family);
-  color: #333;
+  fill: $titleColor;
+  color: $titleColor;
 }
 
 .label text {
-  fill: #333;
+  fill: $titleColor;
 }
 
 .node rect,
@@ -20,6 +21,7 @@
 
 .node .label {
   text-align: center;
+  fill: $titleColor;
 }
 .node.clickable {
   cursor: pointer;
@@ -42,9 +44,12 @@
 .edgeLabel {
   background-color: $edgeLabelBackground;
   rect {
-    opacity: 0.5;
+    opacity: 0.9;
   }
   text-align: center;
+  span {
+    color: $edgeLabelcolor;
+  }
 }
 
 .cluster rect {
