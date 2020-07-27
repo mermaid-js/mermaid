@@ -8,7 +8,7 @@ const tasks = [];
 const rawTasks = [];
 
 export const parseDirective = function(statement, context, type) {
-  mermaidAPI.parseDirective(statement, context, type);
+  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 export const clear = function() {

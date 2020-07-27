@@ -26,12 +26,12 @@
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%%(?!\{)[^\n]*                                                 /* skip comments */
-[^\}]\%\%[^\n]*                                                 /* skip comments */
 [\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
 <INITIAL,ID,ALIAS,LINE,arg_directive,type_directive,open_directive>\#[^\n]*   /* skip comments */
+\%%(?!\{)[^\n]*                                                 /* skip comments */
+[^\}]\%\%[^\n]*                                                 /* skip comments */
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)           { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }

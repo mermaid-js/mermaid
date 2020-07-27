@@ -21,7 +21,7 @@ const Identification = {
 };
 
 export const parseDirective = function(statement, context, type) {
-  mermaidAPI.parseDirective(statement, context, type);
+  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 const addEntity = function(name) {

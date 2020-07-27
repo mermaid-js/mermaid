@@ -13,7 +13,7 @@ let sequenceNumbersEnabled = false;
 let wrapEnabled = false;
 
 export const parseDirective = function(statement, context, type) {
-  mermaidAPI.parseDirective(statement, context, type);
+  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 export const addActor = function(id, name, description) {
@@ -140,12 +140,12 @@ export const parseMessage = function(str) {
     text: _str.replace(/^[:]?(?:no)?wrap:/, '').trim(),
     wrap:
       _str.match(/^[:]?(?:no)?wrap:/) === null
-        ? common.hasBreaks(_str) || autoWrap()
+        ? common.hasBreaks(_str) || undefined
         : _str.match(/^[:]?wrap:/) !== null
         ? true
         : _str.match(/^[:]?nowrap:/) !== null
         ? false
-        : autoWrap()
+        : undefined
   };
   logger.debug('parseMessage:', message);
   return message;

@@ -932,7 +932,6 @@ describe('when rendering a sequenceDiagram', function() {
     parser.yy = sequenceDb;
     parser.yy.clear();
     conf = parser.yy.getConfig();
-    renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
     it(`

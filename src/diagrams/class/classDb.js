@@ -16,7 +16,7 @@ let classCounter = 0;
 let funs = [];
 
 export const parseDirective = function(statement, context, type) {
-  mermaidAPI.parseDirective(statement, context, type);
+  mermaidAPI.parseDirective(this, statement, context, type);
 };
 
 const splitClassNameAndType = function(id) {
