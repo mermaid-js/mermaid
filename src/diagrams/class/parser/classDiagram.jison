@@ -147,8 +147,8 @@ mermaidDoc
 
 graphConfig
     : NEWLINE
-    | NEWLINE graphConfig
     | graphConfig NEWLINE
+    | NEWLINE CLASS_DIAGRAM NEWLINE statements EOF
     | CLASS_DIAGRAM NEWLINE statements EOF
     ;
 
