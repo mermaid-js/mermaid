@@ -53,10 +53,10 @@
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"                                                         return 'title';
 "sequenceDiagram"                                               return 'SD';
-"autonumber" 			                                              return 'autonumber';
+"autonumber" 			                                        return 'autonumber';
 ","                                                             return ',';
 ";"                                                             return 'NEWLINE';
-[^\+\->:\n,;]+                                                  { yytext = yytext.trim(); return 'ACTOR'; }
+[^\+\->:\n,;]+((?!(\-x|\-\-x))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
