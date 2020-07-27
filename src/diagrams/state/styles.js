@@ -63,7 +63,7 @@ g.stateGroup line {
 
 .edgeLabel .label rect {
   fill: ${options.tertiaryColor};
-  opacity: 0.3;
+  opacity: 0.2;
 }
 .edgeLabel .label text {
   fill: ${options.tertiaryTextColor};
