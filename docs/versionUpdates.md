@@ -1,4 +1,5 @@
 # Version News and Updates
+**Edit this Page** [![N|Solid](./img/GitHub-Mark-32px.png)](https://github.com/mermaid-js/mermaid/blob/develop/docs/8.6.0_docs.md)
 
 This file will track the progress and the evolution of mermaid over time. 
 
