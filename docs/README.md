@@ -11,18 +11,17 @@
 **Mermaid was nominated and won the JS Open Source Awards (2019) in the category "The most exciting use of technology"!!! Thanks to all involved, people committing pull requests, people answering questions and special thanks to Tyler Long who is helping me maintain the project.**
 
 
-
 Mermaid is a tool that generates diagrams and charts, from markdown-inspired text definitions
 
 This allows for simplified generation and updating of even the most complex diagrams and charts, while avoiding time-damanding and heavy tools like visio. 
 
 mermaid, is a simple markdown-inspired script language for generating charts from text-definitions, via javascript. As such, using it cuts the times it takes to create, modify and render diagrams. 
 
-Even non-programmers can create diagrams through the [mermaid live editor](https://github.com/mermaidjs/mermaid-live-editor).
+**Even non-programmers can create diagrams through the [Mermaid Live Editor](https://github.com/mermaidjs/mermaid-live-editor).**
 
-For a more detailed introduction to mermaid, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) section.
+**To use mermaid with your favorite applications, check out the list of [Integrations and Usages of Mermaid](./integrations.md)**
 
-You should also Check out the list of [Integrations and Usages of Mermaid](./integrations.md)
+For a more detailed introduction to mermaid, look to the [Beginner's Guide](https://mermaid-js.github.io/mermaid/#/n00b-overview) and [Usage](./usage.md).
 
 You can also watch some popular mermaid tutorials on the [mermaid Overview](./n00b-overview.md)
 
@@ -32,47 +31,13 @@ You can also watch some popular mermaid tutorials on the [mermaid Overview](./n0
 
 ## [Contribution](https://github.com/mermaid-js/mermaid/blob/develop/CONTRIBUTING.md)
 
+## [Recent Mermaid Versions](./versionUpdates.md).
 
 # New in Version 8.6.0
 
 ## [New Mermaid Live-Editor Beta](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiJSV7aW5pdDoge1widGhlbWVcIjogXCJmb3Jlc3RcIiwgXCJsb2dMZXZlbFwiOiAxIH19JSVcbmdyYXBoIFREXG4gIEFbQ2hyaXN0bWFzXSAtLT58R2V0IG1vbmV5fCBCKEdvIHNob3BwaW5nKVxuICBCIC0tPiBDe0xldCBtZSB0aGlua31cbiAgQyAtLT58T25lfCBEW0xhcHRvcF1cbiAgQyAtLT58VHdvfCBFW2lQaG9uZV1cbiAgQyAtLT58VGhyZWV8IEZbZmE6ZmEtY2FyIENhcl1cblx0XHQiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGFyayJ9fQ)
 
 ## [New Configuration Protocols in version 8.6.0](https://github.com/NeilCuzon/mermaid/edit/develop/docs/8.6.0_docs.md)
-
-
-## New diagrams in 8.5
-
-With version 8.5 there are some bug fixes and enhancements, plus a new diagram type,  entity relationship diagrams.
-
-![Image showing the new ER diagram type](./img/er.png)
-
-## Special note regarding version 8.2
-
-In version 8.2 a security improvement was introduced. A **securityLevel** configuration was introduced which sets the level of trust to be used on the parsed diagrams.
-
-## securityLevel
-
-| Parameter     | Description                       | Type   | Required | Values        |
-| ------------- | --------------------------------- | ------ | -------- | ------------- |
-| securitylevel | Level of trust for parsed diagram | String | Required | Strict, Loose |
-
-\*\*Notes:
-
--   **strict**: (**default**) tags in text are encoded, click functionality is disabeled
--   **loose**: tags in text are allowed, click functionality is enabled
-
-
-Closed issues:
-
-⚠️ **Note** : This changes the default behaviour of mermaid so that after upgrade to 8.2, if the securityLevel is not configured, tags in flowcharts are encoded as tags and clicking is prohibited.
-
-If your application is taking responsibility for the diagram source security you can set the securityLevel accordingly. By doing this clicks and tags are again allowed.
-
-```javascript
-mermaidAPI.initialize({
-    securityLevel: 'loose'
-});
-```
 
 **🖖 Keep a steady pulse: mermaid needs more Collaborators [#866](https://github.com/knsv/mermaid/issues/866)**
 
