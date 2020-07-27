@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import { logger } from '../../logger';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
@@ -294,6 +294,7 @@ funs.push(setupToolTips);
 
 export default {
   parseDirective,
+  getConfig: () => configApi.getConfig().class,
   addClass,
   bindFunctions,
   clear,

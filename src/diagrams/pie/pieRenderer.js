@@ -153,7 +153,7 @@ export const draw = (txt, id) => {
       });
   } catch (e) {
     logger.error('Error while rendering info diagram');
-    logger.error(e.message);
+    logger.error(e);
   }
 };
 

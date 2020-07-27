@@ -1,7 +1,7 @@
 import moment from 'moment-mini';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { logger } from '../../logger';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
 import utils from '../../utils';
 import mermaidAPI from '../../mermaidAPI';
 
@@ -588,6 +588,7 @@ export const bindFunctions = function(element) {
 
 export default {
   parseDirective,
+  getConfig: () => configApi.getConfig().gantt,
   clear,
   setDateFormat,
   getDateFormat,

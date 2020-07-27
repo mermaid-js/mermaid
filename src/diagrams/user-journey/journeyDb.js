@@ -1,4 +1,5 @@
 import mermaidAPI from '../../mermaidAPI';
+import configApi from '../../config';
 
 let title = '';
 let currentSection = '';
@@ -118,6 +119,7 @@ const getActors = function() {
 
 export default {
   parseDirective,
+  getConfig: () => configApi.getConfig().journey,
   clear,
   setTitle,
   getTitle,

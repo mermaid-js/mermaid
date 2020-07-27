@@ -593,7 +593,7 @@ const config = {
     axisFormat: '%Y-%m-%d'
   },
   /**
-   * The object containing configurations specific for sequence diagrams
+   * The object containing configurations specific for journey diagrams
    */
   journey: {
     /**

@@ -111,7 +111,7 @@ argDirective
   ;
 
 closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'sequence'); }
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'er'); }
   ;
 
 %%

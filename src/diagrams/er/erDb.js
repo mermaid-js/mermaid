@@ -3,6 +3,7 @@
  */
 import { logger } from '../../logger';
 import mermaidAPI from '../../mermaidAPI';
+import configApi from '../../config';
 
 let entities = {};
 let relationships = [];
@@ -73,6 +74,7 @@ export default {
   Cardinality,
   Identification,
   parseDirective,
+  getConfig: () => configApi.getConfig().er,
   addEntity,
   getEntities,
   addRelationship,

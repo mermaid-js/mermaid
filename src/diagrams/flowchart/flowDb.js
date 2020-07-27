@@ -1,6 +1,6 @@
 import { select } from 'd3';
 import utils from '../../utils';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
 import common from '../common/common';
 import mermaidAPI from '../../mermaidAPI';
 
@@ -622,6 +622,7 @@ const destructLink = (_str, _startStr) => {
 
 export default {
   parseDirective,
+  getConfig: () => configApi.getConfig().flowchart,
   addVertex,
   addLink,
   updateLinkInterpolate,
