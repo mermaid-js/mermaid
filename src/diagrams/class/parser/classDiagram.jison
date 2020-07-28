@@ -6,10 +6,7 @@
 
 /* lexical grammar */
 %lex
-%x string generic struct
-// Directive states
-%x open_directive type_directive arg_directive
-
+%x string generic struct open_directive type_directive arg_directive
 
 %%
 \%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
@@ -17,19 +14,18 @@
 <type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
 <type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
 <arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-\%\%(?!\{)*[^\n]*                                                 /* skip comments */
-[^\}]\%\%*[^\n]*                                                 /* skip comments */
-\%\%*[^\n]*[\n]*           /* do nothing */
-[\n]+                     return 'NEWLINE';
-[\s]+                     /* skip whitespace */
+\%\%(?!\{)*[^\n]*(\r?\n)+                                       /* skip comments */
+\%\%[^\n]*(\r?\n)*                                              /* skip comments */
+(\r?\n)+                return 'NEWLINE';
+\s+                     /* skip whitespace */
 "classDiagram-v2"       return 'CLASS_DIAGRAM';
 "classDiagram"          return 'CLASS_DIAGRAM';
-[\{]                    { this.begin("struct"); /*console.log('Starting struct');*/return 'STRUCT_START';}
+[{]                     { this.begin("struct"); /*console.log('Starting struct');*/ return 'STRUCT_START';}
 <struct><<EOF>>         return "EOF_IN_STRUCT";
-<struct>[\{]            return "OPEN_IN_STRUCT";
-<struct>\}              { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
-<struct>[\n]              /* nothing */
-<struct>[^\{\}\n]*      { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
+<struct>[{]             return "OPEN_IN_STRUCT";
+<struct>[}]             { /*console.log('Ending struct');*/this.popState(); return 'STRUCT_STOP';}}
+<struct>[\n]            /* nothing */
+<struct>[^{}\n]*        { /*console.log('lex-member: ' + yytext);*/  return "MEMBER";}
 
 
 
@@ -136,25 +132,46 @@
 
 %left '^'
 
-%start mermaidDoc
+%start start
 
 %% /* language grammar */
 
-mermaidDoc
-    : graphConfig
-    | directive mermaidDoc
+start
+    : mermaidDoc
+    | directive start
     ;
 
+mermaidDoc
+    : graphConfig
+    ;
+
+directive
+  : openDirective typeDirective closeDirective NEWLINE
+  | openDirective typeDirective ':' argDirective closeDirective NEWLINE
+  ;
+
+openDirective
+  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
+  ;
+
+typeDirective
+  : type_directive { yy.parseDirective($1, 'type_directive'); }
+  ;
+
+argDirective
+  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
+  ;
+
+closeDirective
+  : close_directive { yy.parseDirective('}%%', 'close_directive', 'class'); }
+  ;
+
 graphConfig
-    : NEWLINE
-    | graphConfig NEWLINE
-    | NEWLINE CLASS_DIAGRAM NEWLINE statements EOF
-    | CLASS_DIAGRAM NEWLINE statements EOF
+    : CLASS_DIAGRAM NEWLINE statements EOF
     ;
 
 statements
     : statement
-    | NEWLINE statement
     | statement NEWLINE
     | statement NEWLINE statements
     ;
@@ -164,11 +181,6 @@ className
     | alphaNumToken { $$=$1; }
     | alphaNumToken GENERICTYPE className { $$=$1+'~'+$2+$3; }
     | alphaNumToken GENERICTYPE { $$=$1+'~'+$2; }
-    ;
-
-directive
-    : openDirective typeDirective closeDirective 'NEWLINE'
-    | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
     ;
 
 statement
@@ -242,21 +254,4 @@ textToken      : textNoTagsToken | TAGSTART | TAGEND | '=='  | '--' | PCT | DEFA
 textNoTagsToken: alphaNumToken | SPACE | MINUS | keywords ;
 
 alphaNumToken  : UNICODE_TEXT | NUM | ALPHA;
-
-openDirective
-  : open_directive { yy.parseDirective('%%{', 'open_directive'); }
-  ;
-
-typeDirective
-  : type_directive { yy.parseDirective($1, 'type_directive'); }
-  ;
-
-argDirective
-  : arg_directive { $1 = $1.trim().replace(/'/g, '"'); yy.parseDirective($1, 'arg_directive'); }
-  ;
-
-closeDirective
-  : close_directive { yy.parseDirective('}%%', 'close_directive', 'class'); }
-  ;
-
 %%
