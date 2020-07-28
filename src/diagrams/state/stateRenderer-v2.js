@@ -211,11 +211,11 @@ export const draw = function(text, id) {
   parser.yy = stateDb;
 
   // Parse the graph definition
-  try {
-    parser.parse(text);
-  } catch (err) {
-    logger.debug('Parsing failed');
-  }
+  // try {
+  parser.parse(text);
+  // } catch (err) {
+  //   logger.error('Parsing failed', err);
+  // }
 
   // Fetch the default direction, use TD if none was found
   let dir = stateDb.getDirection();

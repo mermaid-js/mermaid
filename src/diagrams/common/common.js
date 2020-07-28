@@ -35,13 +35,14 @@ export const sanitizeText = (text, config) => {
   if (
     config.flowchart &&
     (config.flowchart.htmlLabels === false || config.flowchart.htmlLabels === 'false')
-  )
+  ) {
     htmlLabels = false;
+  }
 
   if (htmlLabels) {
-    var level = config.securityLevel;
+    const level = config.securityLevel;
 
-    if (level == 'antiscript') {
+    if (level === 'antiscript') {
       txt = removeScript(txt);
     } else if (level !== 'loose') {
       // eslint-disable-line

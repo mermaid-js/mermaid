@@ -13,34 +13,29 @@
 %options case-insensitive
 
 // Special states for recognizing aliases
-%x ID
-%x ALIAS
+// A special state for grabbing text up to the first comment/newline
+%x ID ALIAS LINE
 
 // Directive states
-%x OPEN_DIRECTIVE
-%x TYPE_DIRECTIVE
-%x ARG_DIRECTIVE
-
-// A special state for grabbing text up to the first comment/newline
-%x LINE
+%x open_directive type_directive arg_directive
 
 %%
 
-\%\%\{                                                          { this.begin('OPEN_DIRECTIVE'); return 'open_directive'; }
-<OPEN_DIRECTIVE>((?:(?!\}\%\%)[^:.])*)                          { this.begin('TYPE_DIRECTIVE'); return 'type_directive'; }
-<TYPE_DIRECTIVE>":"                                             { this.popState(); this.begin('ARG_DIRECTIVE'); return ':'; }
-<TYPE_DIRECTIVE,ARG_DIRECTIVE>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
-<ARG_DIRECTIVE>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
-[\n]+                                                           return 'NL';
+\%\%\{                                                          { this.begin('open_directive'); return 'open_directive'; }
+<open_directive>((?:(?!\}\%\%)[^:.])*)                          { this.begin('type_directive'); return 'type_directive'; }
+<type_directive>":"                                             { this.popState(); this.begin('arg_directive'); return ':'; }
+<type_directive,arg_directive>\}\%\%                            { this.popState(); this.popState(); return 'close_directive'; }
+<arg_directive>((?:(?!\}\%\%).|\n)*)                            return 'arg_directive';
+[\n]+                                                           return 'NEWLINE';
 \s+                                                             /* skip all whitespace */
 <ID,ALIAS,LINE>((?!\n)\s)+                                      /* skip same-line whitespace */
-<INITIAL,ID,ALIAS,LINE,ARG_DIRECTIVE,TYPE_DIRECTIVE,OPEN_DIRECTIVE>\#[^\n]*   /* skip comments */
+<INITIAL,ID,ALIAS,LINE,arg_directive,type_directive,open_directive>\#[^\n]*   /* skip comments */
 \%%(?!\{)[^\n]*                                                 /* skip comments */
 [^\}]\%\%[^\n]*                                                 /* skip comments */
 "participant"                                                   { this.begin('ID'); return 'participant'; }
 <ID>[^\->:\n,;]+?(?=((?!\n)\s)+"as"(?!\n)\s|[#\n;]|$)           { yytext = yytext.trim(); this.begin('ALIAS'); return 'ACTOR'; }
 <ALIAS>"as"                                                     { this.popState(); this.popState(); this.begin('LINE'); return 'AS'; }
-<ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NL'; }
+<ALIAS>(?:)                                                     { this.popState(); this.popState(); return 'NEWLINE'; }
 "loop"                                                          { this.begin('LINE'); return 'loop'; }
 "rect"                                                          { this.begin('LINE'); return 'rect'; }
 "opt"                                                           { this.begin('LINE'); return 'opt'; }
@@ -58,10 +53,10 @@
 "deactivate"                                                    { this.begin('ID'); return 'deactivate'; }
 "title"                                                         return 'title';
 "sequenceDiagram"                                               return 'SD';
-"autonumber" 			                                              return 'autonumber';
+"autonumber" 			                                        return 'autonumber';
 ","                                                             return ',';
-";"                                                             return 'NL';
-[^\+\->:\n,;]+                                                  { yytext = yytext.trim(); return 'ACTOR'; }
+";"                                                             return 'NEWLINE';
+[^\+\->:\n,;]+((?!(\-x|\-\-x))[\-]*[^\+\->:\n,;]+)*             { yytext = yytext.trim(); return 'ACTOR'; }
 "->>"                                                           return 'SOLID_ARROW';
 "-->>"                                                          return 'DOTTED_ARROW';
 "->"                                                            return 'SOLID_OPEN_ARROW';
@@ -71,7 +66,7 @@
 ":"(?:(?:no)?wrap:)?[^#\n;]+                                    return 'TXT';
 "+"                                                             return '+';
 "-"                                                             return '-';
-<<EOF>>                                                         return 'NL';
+<<EOF>>                                                         return 'NEWLINE';
 .                                                               return 'INVALID';
 
 /lex
@@ -84,7 +79,7 @@
 
 start
 	: SPACE start
-	| NL start
+	| NEWLINE start
 	| directive start
 	| SD document { yy.apply($2);return $2; }
 	;
@@ -97,23 +92,23 @@ document
 line
 	: SPACE statement { $$ = $2 }
 	| statement { $$ = $1 }
-	| NL { $$=[]; }
+	| NEWLINE { $$=[]; }
 	;
 
 directive
-  : openDirective typeDirective closeDirective 'NL'
-  | openDirective typeDirective ':' argDirective closeDirective 'NL'
+  : openDirective typeDirective closeDirective 'NEWLINE'
+  | openDirective typeDirective ':' argDirective closeDirective 'NEWLINE'
   ;
 
 statement
-	: 'participant' actor 'AS' restOfLine 'NL' {$2.description=yy.parseMessage($4); $$=$2;}
-	| 'participant' actor 'NL' {$$=$2;}
-	| signal 'NL'
+	: 'participant' actor 'AS' restOfLine 'NEWLINE' {$2.description=yy.parseMessage($4); $$=$2;}
+	| 'participant' actor 'NEWLINE' {$$=$2;}
+	| signal 'NEWLINE'
 	| autonumber {yy.enableSequenceNumbers()}
-	| 'activate' actor 'NL' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
-	| 'deactivate' actor 'NL' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
-	| note_statement 'NL'
-	| title text2 'NL' {$$=[{type:'setTitle', text:$2}]}
+	| 'activate' actor 'NEWLINE' {$$={type: 'activeStart', signalType: yy.LINETYPE.ACTIVE_START, actor: $2};}
+	| 'deactivate' actor 'NEWLINE' {$$={type: 'activeEnd', signalType: yy.LINETYPE.ACTIVE_END, actor: $2};}
+	| note_statement 'NEWLINE'
+	| title text2 'NEWLINE' {$$=[{type:'setTitle', text:$2}]}
 	| 'loop' restOfLine document end
 	{
 		$3.unshift({type: 'loopStart', loopText:yy.parseMessage($2), signalType: yy.LINETYPE.LOOP_START});

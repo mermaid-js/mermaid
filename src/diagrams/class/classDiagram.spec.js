@@ -242,69 +242,74 @@ describe('class diagram, ', function () {
 
     it('should handle comments at the start', function () {
       const str =
-        '%% Comment\n' +
-        'classDiagram\n' +
-        'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '}';
+        `%% Comment
+        classDiagram
+        class Class1 {
+          int : test
+          string : foo
+          test()
+          foo()
+        }`;
       parser.parse(str);
     });
 
     it('should handle comments at the end', function () {
       const str =
-        'classDiagram\n' +
-        'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '\n}' +
-        '%% Comment\n';
+        `classDiagram
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+
+}
+%% Comment
+`;
 
       parser.parse(str);
     });
 
     it('should handle comments at the end no trailing newline', function () {
       const str =
-      'classDiagram\n' +
-      'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '}\n' +
-        '%% Comment';
+      `classDiagram
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+}
+%% Comment`;
 
       parser.parse(str);
     });
 
     it('should handle a comment with multiple line feeds', function () {
       const str =
-        'classDiagram\n\n\n' +
-        '%% Comment\n\n' +
-        'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '}';
+        `classDiagram
+
+
+%% Comment
+
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+}`;
 
       parser.parse(str);
     });
 
     it('should handle a comment with mermaid class diagram code in them', function () {
       const str =
-        'classDiagram\n' +
-        '%% Comment Class01 <|-- Class02\n' +
-        'class Class1 {\n' +
-        'int : test\n' +
-        'string : foo\n' +
-        'test()\n' +
-        'foo()\n' +
-        '}';
+        `classDiagram
+%% Comment Class01 <|-- Class02
+class Class1 {
+int : test
+string : foo
+test()
+foo()
+}`;
 
       parser.parse(str);
     });
@@ -640,7 +645,7 @@ describe('class diagram, ', function () {
       expect(testClass.cssClasses.length).toBe(1);
       expect(testClass.cssClasses[0]).toBe('clickable');
     });
-    
+
     it('should associate link with tooltip', function () {
       const str = 'classDiagram\n' + 'class Class1\n' + 'Class1 : someMethod()\n' + 'link Class1 "google.com" "A tooltip"';
       parser.parse(str);

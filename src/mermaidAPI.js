@@ -205,7 +205,7 @@ const render = function(id, _txt, cb, container) {
   } else {
     configApi.reset();
     const siteConfig = getSiteConfig();
-    updateRendererConfigs(siteConfig);
+    reinitialize(siteConfig);
   }
 
   const cnf = getConfig();
@@ -438,7 +438,7 @@ const render = function(id, _txt, cb, container) {
 
 let currentDirective = {};
 
-const parseDirective = function(statement, context, type) {
+const parseDirective = function(p, statement, context, type) {
   try {
     if (statement !== undefined) {
       statement = statement.trim();
@@ -453,7 +453,7 @@ const parseDirective = function(statement, context, type) {
           currentDirective.args = JSON.parse(statement);
           break;
         case 'close_directive':
-          handleDirective(currentDirective, type);
+          handleDirective(p, currentDirective, type);
           currentDirective = null;
           break;
       }
@@ -466,7 +466,7 @@ const parseDirective = function(statement, context, type) {
   }
 };
 
-const handleDirective = function(directive, type) {
+const handleDirective = function(p, directive, type) {
   logger.debug(`Directive type=${directive.type} with args:`, directive.args);
   switch (directive.type) {
     case 'init':
@@ -486,17 +486,9 @@ const handleDirective = function(directive, type) {
     }
     case 'wrap':
     case 'nowrap':
-      directive.args = { config: { wrap: directive.type === 'wrap' } };
-      ['config'].forEach(prop => {
-        if (typeof directive.args[prop] !== 'undefined') {
-          if (type === 'flowchart-v2') {
-            type = 'flowchart';
-          }
-          directive.args[type] = directive.args[prop];
-          delete directive.args[prop];
-        }
-      });
-      reinitialize(directive.args);
+      if (p && p['setWrap']) {
+        p.setWrap(directive.type === 'wrap');
+      }
       break;
     default:
       logger.warn(
