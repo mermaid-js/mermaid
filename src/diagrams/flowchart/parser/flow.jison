@@ -25,6 +25,10 @@
 "flowchart"            {if(yy.lex.firstGraph()){this.begin("dir");}  return 'GRAPH';}
 "subgraph"            return 'subgraph';
 "end"\b\s*            return 'end';
+"_self"               return 'LINK_TARGET';
+"_blank"              return 'LINK_TARGET';
+"_parent"             return 'LINK_TARGET';
+"_top"                return 'LINK_TARGET';
 <dir>\s*"LR"             {   this.popState();  return 'DIR'; }
 <dir>\s*"RL"             {   this.popState();  return 'DIR'; }
 <dir>\s*"TB"             {   this.popState();  return 'DIR'; }
@@ -397,10 +401,12 @@ classStatement:CLASS SPACE alphaNum SPACE alphaNum
     ;
 
 clickStatement
-    : CLICK SPACE alphaNum SPACE alphaNum           {$$ = $1;yy.setClickEvent($3, $5, undefined);}
-    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR {$$ = $1;yy.setClickEvent($3, $5, $7)       ;}
-    | CLICK SPACE alphaNum SPACE STR                {$$ = $1;yy.setLink($3, $5, undefined);}
-    | CLICK SPACE alphaNum SPACE STR SPACE STR      {$$ = $1;yy.setLink($3, $5, $7       );}
+    : CLICK SPACE alphaNum SPACE alphaNum                         {$$ = $1;yy.setClickEvent($3, $5, undefined);}
+    | CLICK SPACE alphaNum SPACE alphaNum SPACE STR               {$$ = $1;yy.setClickEvent($3, $5, $7)       ;}
+    | CLICK SPACE alphaNum SPACE STR                              {$$ = $1;yy.setLink($3, $5, undefined, undefined);}
+    | CLICK SPACE alphaNum SPACE STR SPACE STR                    {$$ = $1;yy.setLink($3, $5, $7, undefined       );}
+    | CLICK SPACE alphaNum SPACE STR SPACE LINK_TARGET            {$$ = $1;yy.setLink($3, $5, undefined, $7       );}
+    | CLICK SPACE alphaNum SPACE STR SPACE STR SPACE LINK_TARGET  {$$ = $1;yy.setLink($3, $5, $7, $9              );}
     ;
 
 styleStatement:STYLE SPACE alphaNum SPACE stylesOpt
