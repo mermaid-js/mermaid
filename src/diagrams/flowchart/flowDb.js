@@ -1,8 +1,8 @@
 import { select } from 'd3';
-import { logger } from '../../logger'; // eslint-disable-line
 import utils from '../../utils';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
 import common from '../common/common';
+import mermaidAPI from '../../mermaidAPI';
 
 // const MERMAID_DOM_ID_PREFIX = 'mermaid-dom-id-';
 const MERMAID_DOM_ID_PREFIX = '';
@@ -19,6 +19,10 @@ let firstGraphFlag = true;
 let direction;
 // Functions to be run after graph rendering
 let funs = [];
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 /**
  * Function called by parser when a node definition has been found
@@ -617,6 +621,8 @@ const destructLink = (_str, _startStr) => {
 };
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().flowchart,
   addVertex,
   addLink,
   updateLinkInterpolate,

@@ -1,9 +1,16 @@
 import { logger } from '../../logger';
 import { generateId } from '../../utils';
+import mermaidAPI from '../../mermaidAPI';
+import configApi from '../../config';
 
 const clone = o => JSON.parse(JSON.stringify(o));
 
 let rootDoc = [];
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
+
 const setRootDoc = o => {
   logger.info('Setting root doc', o);
   // rootDoc = { id: 'root', doc: o };
@@ -235,6 +242,8 @@ export const relationType = {
 const trimColon = str => (str && str[0] === ':' ? str.substr(1).trim() : str.trim());
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().state,
   addState,
   clear,
   getState,

@@ -224,6 +224,7 @@ erDiagram
       it('should render a user journey diagram', () => {
         imgSnapshotTest(
           `
+        %%{init: { 'logLevel': 0, 'theme': '${theme}'} }%%
         journey
             title My working day
             section Go to work
@@ -232,7 +233,8 @@ erDiagram
               Do work: 1: Me, Cat
             section Go home
               Go downstairs: 5: Me
-              Sit down: 5: Me          `,
+              Sit down: 5: Me
+                        `,
           {theme}
         );
         cy.get('svg');

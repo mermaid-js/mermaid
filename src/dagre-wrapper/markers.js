@@ -240,7 +240,7 @@ const barb = (elem, type) => {
     .attr('refY', 7)
     .attr('markerWidth', 20)
     .attr('markerHeight', 14)
-    .attr('markerUnits', 0)
+    .attr('markerUnits', 'strokeWidth')
     .attr('orient', 'auto')
     .append('path')
     .attr('d', 'M 19,7 L9,13 L14,7 L9,1 Z');

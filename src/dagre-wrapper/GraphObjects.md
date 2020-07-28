@@ -113,8 +113,8 @@ Required edgeData for proper rendering:
 | label      | overlap between label and labelText?     |
 | labelPos   |                                          |
 | labelType  | overlap between label and labelText?     |
-| thickness  | Sets the thinkess of the edge. Can be ['normal', 'thick'] |
-| pattern    | Sets the pattern of the edge. Can be ['solid', 'dotted', 'dashed']    |
+| thickness  | Sets the thinkess of the edge. Can be \['normal', 'thick'\] |
+| pattern    | Sets the pattern of the edge. Can be \['solid', 'dotted', 'dashed'\]    |
 
 
 # Markers
@@ -122,7 +122,7 @@ Required edgeData for proper rendering:
 Define what markers that should be included in the diagram with the insert markers function. The function takes two arguments, first the element in which the markers should be included and a list of the markers that should be added.
 
 Ex:
-insertMarkers(el, ['point', 'circle'])
+insertMarkers(el, \['point', 'circle'\])
 
 The example above adds the markers point and cross. This means that edges with the arrowTypes arrow_cross, double_arrow_cross, arrow_point and double_arrow_cross will get the corresponding markers but arrowType arrow_cross will have no impact.
 

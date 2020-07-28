@@ -26,6 +26,16 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
+    it('simple with directive', function() {
+      const str = `%%{init: {'logLevel': 0 }}%%
+      stateDiagram\n
+          State1 : this is another string
+          [*] --> State1
+          State1 --> [*]
+      `;
+
+      parser.parse(str);
+    });
     it('should handle relation definitions', function() {
       const str = `stateDiagram\n
         [*] --> State1
@@ -337,6 +347,9 @@ describe('state diagram, ', function() {
 
       parser.parse(str);
     });
+  });
+  describe('when parsing an ignored info graph it', function() {
+
     xit('should handle if statements', function() {
       const str = `stateDiagram\n
       [*] --> "Order Submitted"

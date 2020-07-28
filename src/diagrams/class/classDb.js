@@ -1,8 +1,9 @@
 import { select } from 'd3';
 import { logger } from '../../logger';
-import { getConfig } from '../../config';
+import configApi, { getConfig } from '../../config';
 import common from '../common/common';
 import utils from '../../utils';
+import mermaidAPI from '../../mermaidAPI';
 
 const MERMAID_DOM_ID_PREFIX = 'classid-';
 
@@ -13,6 +14,10 @@ let classes = {};
 let classCounter = 0;
 
 let funs = [];
+
+export const parseDirective = function(statement, context, type) {
+  mermaidAPI.parseDirective(this, statement, context, type);
+};
 
 const splitClassNameAndType = function(id) {
   let genericType = '';
@@ -288,6 +293,8 @@ const setupToolTips = function(element) {
 funs.push(setupToolTips);
 
 export default {
+  parseDirective,
+  getConfig: () => configApi.getConfig().class,
   addClass,
   bindFunctions,
   clear,

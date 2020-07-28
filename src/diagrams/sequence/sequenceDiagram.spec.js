@@ -93,6 +93,23 @@ Bob-->Alice: I am good thanks!`;
     expect(messages[0].from).toBe('Alice');
     expect(messages[1].from).toBe('Bob');
   });
+  it('it should handle dashes in actor names', function() {
+    const str = `
+sequenceDiagram
+Alice-in-Wonderland->Bob:Hello Bob, how are - you?
+Bob-->Alice-in-Wonderland:I am good thanks!`;
+
+    mermaidAPI.parse(str);
+    const actors = parser.yy.getActors();
+    expect(actors["Alice-in-Wonderland"].description).toBe('Alice-in-Wonderland');
+    actors.Bob.description = 'Bob';
+
+    const messages = parser.yy.getMessages();
+
+    expect(messages.length).toBe(2);
+    expect(messages[0].from).toBe('Alice-in-Wonderland');
+    expect(messages[1].from).toBe('Bob');
+  });
   it('it should alias participants', function() {
     const str = `
 sequenceDiagram
@@ -932,7 +949,6 @@ describe('when rendering a sequenceDiagram', function() {
     parser.yy = sequenceDb;
     parser.yy.clear();
     conf = parser.yy.getConfig();
-    renderer.bounds.init();
   });
   ['tspan', 'fo', 'old', undefined].forEach(function(textPlacement) {
     it(`
